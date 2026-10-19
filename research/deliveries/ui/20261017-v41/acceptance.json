@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-17",
+  "scope": "UI first delivery; existing APIs, not complete backend/product vulnerability delivery",
+  "base": "6a41dc9b1aa030158e09be6241e2b14341f9256d",
+  "ui_code_head": "478123175fef6b6d0219eb8b433021c375e86cd1",
+  "integration_code_head": "d23741efaa87cdfb3bb37a4a37353a80716d6ca8",
+  "ui_branch": "work/ui-20261017",
+  "integration_branch": "integration/parallel-baseline-20261017",
+  "public_wiring_commit": "310976ca856ab437cd487bab4cad99ff3fc870c9",
+  "ui_owned_paths": [
+    "research/deliveries/ui/integration-request.md",
+    "web/src/features/audits/AuditFields.tsx",
+    "web/src/features/audits/OperationForms.tsx",
+    "web/src/features/audits/OperationWorkspace.tsx",
+    "web/src/features/audits/RepositoryAudit.tsx",
+    "web/src/features/audits/model.d.ts",
+    "web/src/features/audits/model.js",
+    "web/src/features/workbench/CandidateActions.tsx",
+    "web/src/features/workbench/WorkbenchApp.tsx",
+    "web/src/features/workbench/WorkspaceViews.tsx",
+    "web/src/features/workbench/navigation.d.ts",
+    "web/src/features/workbench/navigation.js",
+    "web/src/pages/Capabilities.tsx",
+    "web/src/pages/Cases.tsx",
+    "web/src/pages/JobDetail.tsx",
+    "web/src/pages/NewScan.tsx",
+    "web/src/pages/Operations.tsx",
+    "web/src/pages/Repositories.tsx",
+    "web/src/style.css",
+    "web/tests/auditRequests.test.js",
+    "web/tests/navigation.test.js"
+  ],
+  "preview": {
+    "url": "http://localhost:18773/#/overview",
+    "runtime_checkout": "/home/audit/ohscanner/worktrees/parallel-integration-20261017",
+    "data": "/home/audit/ohscanner/parallel-20261017/ui/data",
+    "start": "/home/audit/ohscanner/parallel-20261017/ui/start-reviewed.sh",
+    "binding": "127.0.0.1",
+    "dataset": "synthetic UI controls, not product vulnerability findings"
+  },
+  "checks": {
+    "frontend": {
+      "passed": 14,
+      "failed": 0
+    },
+    "build": "TypeScript + production build passed on integration code head",
+    "python": {
+      "total": 523,
+      "passed": 519,
+      "skipped": 4,
+      "failed": 0,
+      "head": "5f2708c369a4f4b643a39330f3529a91b153f870",
+      "later_code_diff": "CSS only; backend and tests byte-identical"
+    },
+    "scope": "UI scope passes against original immutable base; global main.tsx is separate integration-owner wiring",
+    "diff_check": "passed"
+  },
+  "browser": {
+    "scan": "d754c5be742c4dba928e9cdf24636c3f",
+    "case": "e701adadcd82455f89ece3eba15527aa",
+    "running_cancel": "6666205f3a1b413b83509e4ec6d2fd1f",
+    "cancel_first_attempt": "31f942f321c24871a5d4dd44f8a46563 completed before cancellation; not counted as pass",
+    "readonly_investigation": "0409f3a410b64b678562f2b4bd649f71",
+    "operations": [
+      {
+        "id": "0409f3a410b64b678562f2b4bd649f71",
+        "kind": "investigation",
+        "status": "completed",
+        "result_sha256": "c1d8126ec057f8cfff3e6f5558c4f827ea8f6a4d1e1ab0cc0c31a73343c4cce0"
+      },
+      {
+        "id": "0dd656d2d6dd42a395c16c63d04201ef",
+        "kind": "version_matrix",
+        "status": "completed_with_limitations",
+        "result_sha256": "2c1a261e90a9690cbde9815fb7beb3e732cec9b532f8a5b1f7164e1a6ddd492a"
+      },
+      {
+        "id": "ba9501bbb4434a49a068ad15d17dafef",
+        "kind": "branch_comparison",
+        "status": "completed_with_limitations",
+        "result_sha256": "42d4b65adad293c89c96bf372f9d5b6e6d1f4580fb483e5a188bd300868fcbb6"
+      },
+      {
+        "id": "40f219c26e3b42bdaaab727f9e633c95",
+        "kind": "revision_range",
+        "status": "completed_with_limitations",
+        "result_sha256": "ec86c77308b2331498efdab4ba31836f80a91883bcc54ff294d63d12801bcf75"
+      },
+      {
+        "id": "e698ccbded0647fca149e793e1608e91",
+        "kind": "revision_range",
+        "status": "completed_with_limitations",
+        "result_sha256": "e44c5d4ead5656d61bb2d80b4a33941e2457d6e275aa4ab694527e665cb609b4"
+      }
+    ],
+    "legacy_routes": [
+      "/new -> /audits/repository",
+      "/repositories -> /settings/sources",
+      "/cases -> /investigations",
+      "/capabilities -> /settings/capabilities",
+      "/tasks/:id retained",
+      "/operations retained"
+    ],
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "document_client_width": 375,
+      "document_scroll_width": 375,
+      "pages": [
+        "overview",
+        "audits/repository",
+        "audits/time",
+        "impact"
+      ],
+      "viewport_reset_after_test": true
+    },
+    "downloads": {
+      "files": [
+        {
+          "file": "d754c5be742c4dba928e9cdf24636c3f_report.json",
+          "bytes": 15132,
+          "sha256": "fabcb7bd04085106edef6ffd8b6c224957d2e14af0e0767d9ab995ef8b74e11b"
+        },
+        {
+          "file": "d754c5be742c4dba928e9cdf24636c3f_report.md",
+          "bytes": 6905,
+          "sha256": "ed1a3482833b33a1ad17b121196a32045c6e511e1b08157c79945f56fa5b183f"
+        },
+        {
+          "file": "d754c5be742c4dba928e9cdf24636c3f_manifest.json",
+          "bytes": 1009,
+          "sha256": "a99ba6c05fad83d5a52df8b62692e29eb75e8151324aff91cf7da00452911b5b"
+        },
+        {
+          "file": "ohscanner-case-e701adadcd82455f89ece3eba15527aa.json",
+          "bytes": 5790,
+          "sha256": "f0dd69697114f1f88c3fd43d3e950834903de4584b454b629395b29804c5a810"
+        },
+        {
+          "file": "ohscanner-case-e701adadcd82455f89ece3eba15527aa.md",
+          "bytes": 594,
+          "sha256": "e147d51bec4df42969d51fb79dd9eff2c00ca5d7615769759f01afcf7de92943"
+        }
+      ],
+      "source_commit": "a642c90aabddfff92227026aa11478ee6cc6cf77",
+      "candidate_count": 1,
+      "case_source_evidence": 2,
+      "case_reviews": 1,
+      "validated_vulnerability": 0
+    },
+    "risk_background_probe": "d39856b3d6cb47d6a978c2849cb50ac5 was API-seeded, not a browser submission; current source stayed selected",
+    "after_restart": "reviewed integration checkout serves UI data, health ok/Worker running; browser reload retains records"
+  },
+  "historical_reports": {
+    "db": "isolated copy; API-only process on 18775 stopped after reading",
+    "candidate_counts": [
+      {
+        "job_id": "a4eb6e1a203a4ae6834eb7797cfebf90",
+        "total": 0,
+        "items": 0
+      },
+      {
+        "job_id": "59232be9012943d7994286718f26e134",
+        "total": 2,
+        "items": 2
+      },
+      {
+        "job_id": "d36c780d0262441c834df4c0fe4723e2",
+        "total": 0,
+        "items": 0
+      }
+    ],
+    "erratum": "old finding_count=2 counted response keys, not items; actual counts 0,2,0. Historical artifacts were not rewritten"
+  },
+  "not_tested_or_not_implemented": [
+    "new external Git source synchronization in this UI round",
+    "real LLM calls/cost/quality",
+    "standard WSL Docker validation and product runtime exploitability",
+    "official repository identity/catalog, multi-repository orchestration",
+    "backend language/scope RuleExecutionPlan",
+    "arbitrary PoC, patch generation/application or product fix confirmation",
+    "Windows reboot/multi-user production deployment"
+  ],
+  "evidence_boundary": {
+    "validated_vulnerability": 0,
+    "component_harness_is_product_confirmation": false,
+    "impact": "unknown",
+    "synthetic_candidate_status": "candidate"
+  },
+  "local_evidence": "/home/audit/ohscanner/records/ui-line-20261017",
+  "pushed": false,
+  "merged_main": false,
+  "draft_ready": false
+}

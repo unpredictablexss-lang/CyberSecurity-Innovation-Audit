@@ -1,0 +1,117 @@
+{
+  "artifacts": [
+    {
+      "bytes": 3085,
+      "path": "research/evaluation/ark_runtime_holdout_20261019/README.md",
+      "sha256": "ad8ddea6e6c9a5239860c006f45458a8531c4dd6cbf810c8a2562f3e21a2a551"
+    },
+    {
+      "bytes": 43778,
+      "path": "research/evaluation/ark_runtime_holdout_20261019/holdout_pipeline.py",
+      "sha256": "1197ffb7cb8b1baee02f500d56b012c21bcd5f48ca6633bf054e41acbb9d5ab3"
+    },
+    {
+      "bytes": 6263,
+      "path": "research/evaluation/ark_runtime_holdout_20261019/test_holdout_pipeline.py",
+      "sha256": "09896aa0aff12e3f451082a8b70214becc181a95087f6428e6c0755a3e04bc34"
+    },
+    {
+      "bytes": 5510,
+      "path": "research/evaluation/ark_runtime_holdout_20261019/generate_development_leakage_ledger.py",
+      "sha256": "dc5f9fbea6faf05f6aacfea2ebd27351e395a28e7d408a99f78e07fc1c9b0c13"
+    },
+    {
+      "bytes": 2494,
+      "path": "research/evaluation/ark_runtime_holdout_20261019/development_leakage_ledger.schema.json",
+      "sha256": "3f136585918acef8831683e71154990da432bf805f467641d455740708af5499"
+    },
+    {
+      "bytes": 56941,
+      "path": "research/evaluation/ark_runtime_holdout_20261019/development_leakage_ledger.local-development-20261019.json",
+      "sha256": "68fe687f39661e39a4a109e4c5d07462421cfbd8c6a6800349b52488d275d2f1"
+    },
+    {
+      "bytes": 3095,
+      "path": "research/evaluation/ark_runtime_holdout_20261019/real_holdout_input_protocol.v1.json",
+      "sha256": "cb85cfbfe05a6a6e32197783670b427a8bedd38acf48508fbd826542199ef89c"
+    },
+    {
+      "bytes": 66,
+      "path": "research/evaluation/ark_runtime_holdout_20261019/real_holdout_input_protocol.v1.sha256",
+      "sha256": "18161215eadb8802ff9a2ff6a70b27ae7aa363cf5e05d61978de8ed754de305a"
+    },
+    {
+      "bytes": 2527,
+      "path": "research/evaluation/ark_runtime_holdout_20261019/real_holdout_intake.schema.json",
+      "sha256": "7a042fb9be025ae11e4fb98a10b95fb86eb52f1b51c569435915d36143abd64f"
+    },
+    {
+      "bytes": 1141,
+      "path": "research/evaluation/ark_runtime_holdout_20261019/real_holdout_truth.schema.json",
+      "sha256": "7f94c91fba6808c37541ce034bb6ab22d062f78bb4e3b0352c0d22a6c0536058"
+    },
+    {
+      "bytes": 10578,
+      "path": "research/deliveries/product_closure_20261019/generate_c13_product_gate.py",
+      "sha256": "b944b1e3b19b3ad695792245be23310c6f81ff43e2792665b12fb97a511f6376"
+    },
+    {
+      "bytes": 3699,
+      "path": "research/deliveries/product_closure_20261019/product_evidence_gate.schema.json",
+      "sha256": "87cecbf6858f8d16ff9c654340f201f13132fb164ccb922dacc764997c7d2118"
+    },
+    {
+      "bytes": 42876,
+      "path": "research/deliveries/product_closure_20261019/C13_candidate_product_gate_audit.json",
+      "sha256": "c7b4b8247521760efebd14b261010e0b1fa33bf2422eed2154b4bf38aab9af2a"
+    },
+    {
+      "bytes": 6456,
+      "path": "research/deliveries/product_closure_20261019/C13_candidate_product_gate_audit.md",
+      "sha256": "3e25014a847a7d2dd4d241492de27d1ae945ad9b0e4f6a876146829def97317f"
+    },
+    {
+      "bytes": 2142,
+      "path": "research/deliveries/product_closure_20261019/task_tree_g13.json",
+      "sha256": "9b5947851b0f3bf2f52378461d2a5b94176d8983cf5a74dfa4af8eb24af4329c"
+    },
+    {
+      "bytes": 6131,
+      "path": "research/deliveries/product_closure_20261019/G13-HP-parallel-vibe-prompts.md",
+      "sha256": "ed96783e49bdeb1a9486241879adc6e54103276bb56936ae72f93cdbd3a60653"
+    },
+    {
+      "bytes": 3447,
+      "path": "research/deliveries/product_closure_20261019/G13-HP-sustained-goals.md",
+      "sha256": "9d72e67d2f942f0b773d2d7d340839ef0e5e91cbe3207493151221bc0c0e6789"
+    },
+    {
+      "bytes": 3743,
+      "path": "research/deliveries/admission_20261019/C13_HOLDOUT_PRODUCT_GATE_STATUS.md",
+      "sha256": "aec520b3f0d708f1d3e8cbed888ea5a123b50cff8f80fd1315f5fc86e2703b0c"
+    },
+    {
+      "bytes": 1489,
+      "path": "research/deliveries/admission_20261019/C13_validation.txt",
+      "sha256": "9dd5c10ea5dc935f8729ddd84f51832b7ba5c431895d2cd7c2af4e98417725b9"
+    },
+    {
+      "bytes": 14773,
+      "path": "research/deliveries/admission_20261019/C13_validation_raw.txt",
+      "sha256": "7bf76dc5178c0d1fdee59136967193dbe2871d0e709c570cfffbf4b372393905"
+    },
+    {
+      "bytes": 200,
+      "path": "research/deliveries/admission_20261019/C13_synthetic_score.json",
+      "sha256": "f04de4bbbc9ebb62fd69644bfbc60418b3eab39b35e5347e154c9bd8a18bd4d6"
+    },
+    {
+      "bytes": 2938,
+      "path": "research/deliveries/admission_20261019/commands.txt",
+      "sha256": "671d014c72289d0def7f067d8815fce6420dbb2a8b719ddd3ca035e339cd923f"
+    }
+  ],
+  "baseline": "842948084660207fd64399cfd598ed93e5593dcc",
+  "payload_sha256": "48b77cbf8b05b7bfbf9c6e6d1140348a3f1326b33464a59ea7daa1db3f634e82",
+  "schema": "ohscanner.c13-artifact-hashes/v1"
+}

@@ -1,0 +1,6 @@
+{
+  "metrics_computed": false,
+  "reason": "synthetic self-test truth is not reliable independent human truth",
+  "schema": "ohscanner.ark-holdout-selftest/v1",
+  "status": "PASS"
+}

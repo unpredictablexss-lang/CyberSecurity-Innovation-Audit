@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "status": "preregistered_before_scan",
+  "experiment": "D38 curl cleanup-order source holdout",
+  "detector_id": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.15.0",
+  "detector_source_sha256": "8a0cd0fb02a5b24f8e0030059a51708987f4bbedecab74c88d80d407c4923632",
+  "detector_freeze_commit": "0b5627dbb42098ad82387b8054f8da1df18e9fb3",
+  "upstream_repository": "curl/curl",
+  "source_under_test": ["lib/multi.c", "include/curl/curlver.h"],
+  "cases": [
+    {"tag":"curl-8_20_0","commit":"a05f34973e6c4bb629d018f7cb51487be1c904d8","tree":"64f472ae2c2babbad4d771c880a3639ac311987b","multi_c_blob":"7520253d702c108c96e26d1b2e123586bac3a243","curlver_header_blob":"144f5fea17b3bafe74427a50771d7e9931f49376","advisory_expectation":"affected","advisory_basis":"curl CVE-2026-92392 advisory affected range; tag has not been scanned by this detector in recorded replay","independent_human_review":"pending"},
+    {"tag":"curl-8_11_1","commit":"75a2079d5c28debb2eaa848ca9430f1fe0d7844c","tree":"38fd840b7a92452746e943e4d018cdb0f81b9449","multi_c_blob":"1851dc731e657eb13b406d05b38cbbc8cc50d81b","curlver_header_blob":"6e97c13cc45ba8d0ae0c0feaa91ad0d54bf93794","advisory_expectation":"unaffected","advisory_basis":"curl CVE-2026-92392 advisory affected range starts at 8.12.0; tag has not been scanned by this detector in recorded replay","independent_human_review":"pending"}
+  ],
+  "interpretation_limits": [
+    "This preregistration is based on upstream version-scope advisory statements; it is not an independent human-labeled vulnerability holdout.",
+    "A scanner hit is a static candidate and does not establish product reachability, exploitability, or impact.",
+    "A miss or hit here is one narrow disclosed-CVE regression result, not a commercial recall claim."
+  ]
+}

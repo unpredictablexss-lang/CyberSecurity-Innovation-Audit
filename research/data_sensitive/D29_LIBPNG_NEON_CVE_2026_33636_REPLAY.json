@@ -1,0 +1,118 @@
+{
+  "detector_id": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.9.0",
+  "experiment": "D29 libpng ARM NEON palette CVE-2026-33636 source replay",
+  "interpretation": "Pinned component-source regression only. The vulnerable source is a candidate, not an OpenHarmony product vulnerability confirmation. Both runs skip parsing and report blocked coverage.",
+  "rounds": [
+    {
+      "round": 1,
+      "samples": {
+        "libpng-1.6.55-vulnerable": {
+          "candidate_count": 2,
+          "candidate_identities": [
+            "arm/palette_neon_intrinsics.c:108:ohknowncve-libpng-cve-2026-33636:d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41",
+            "arm/palette_neon_intrinsics.c:63:ohknowncve-libpng-cve-2026-33636:d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41"
+          ],
+          "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+          "coverage_limitations": [
+            "arm/palette_neon_intrinsics.c: parse_status=not_run; lexical matches are retained but remaining coverage is unknown."
+          ],
+          "detector_status": "blocked",
+          "git_blob_sha1": "3068e9b6e62be16bee2a8f1ff8271a02f32be97f",
+          "parser_status": "not_run",
+          "source": "libpng-1.6.55-vulnerable",
+          "source_sha256": "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41",
+          "validated_vulnerability": 0
+        },
+        "libpng-1.6.56-fixed": {
+          "candidate_count": 0,
+          "candidate_identities": [],
+          "commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+          "coverage_limitations": [
+            "arm/palette_neon_intrinsics.c: parse_status=not_run; lexical matches are retained but remaining coverage is unknown."
+          ],
+          "detector_status": "blocked",
+          "git_blob_sha1": "0967ea1aebd718907fda1e767957deeddbe676b3",
+          "parser_status": "not_run",
+          "source": "libpng-1.6.56-fixed",
+          "source_sha256": "a844760f611829df29ca583f1b08832cac1440c74a2a22b35bc35a464ddf6b5e",
+          "validated_vulnerability": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "samples": {
+        "libpng-1.6.55-vulnerable": {
+          "candidate_count": 2,
+          "candidate_identities": [
+            "arm/palette_neon_intrinsics.c:108:ohknowncve-libpng-cve-2026-33636:d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41",
+            "arm/palette_neon_intrinsics.c:63:ohknowncve-libpng-cve-2026-33636:d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41"
+          ],
+          "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+          "coverage_limitations": [
+            "arm/palette_neon_intrinsics.c: parse_status=not_run; lexical matches are retained but remaining coverage is unknown."
+          ],
+          "detector_status": "blocked",
+          "git_blob_sha1": "3068e9b6e62be16bee2a8f1ff8271a02f32be97f",
+          "parser_status": "not_run",
+          "source": "libpng-1.6.55-vulnerable",
+          "source_sha256": "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41",
+          "validated_vulnerability": 0
+        },
+        "libpng-1.6.56-fixed": {
+          "candidate_count": 0,
+          "candidate_identities": [],
+          "commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+          "coverage_limitations": [
+            "arm/palette_neon_intrinsics.c: parse_status=not_run; lexical matches are retained but remaining coverage is unknown."
+          ],
+          "detector_status": "blocked",
+          "git_blob_sha1": "0967ea1aebd718907fda1e767957deeddbe676b3",
+          "parser_status": "not_run",
+          "source": "libpng-1.6.56-fixed",
+          "source_sha256": "a844760f611829df29ca583f1b08832cac1440c74a2a22b35bc35a464ddf6b5e",
+          "validated_vulnerability": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "samples": {
+        "libpng-1.6.55-vulnerable": {
+          "candidate_count": 2,
+          "candidate_identities": [
+            "arm/palette_neon_intrinsics.c:108:ohknowncve-libpng-cve-2026-33636:d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41",
+            "arm/palette_neon_intrinsics.c:63:ohknowncve-libpng-cve-2026-33636:d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41"
+          ],
+          "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+          "coverage_limitations": [
+            "arm/palette_neon_intrinsics.c: parse_status=not_run; lexical matches are retained but remaining coverage is unknown."
+          ],
+          "detector_status": "blocked",
+          "git_blob_sha1": "3068e9b6e62be16bee2a8f1ff8271a02f32be97f",
+          "parser_status": "not_run",
+          "source": "libpng-1.6.55-vulnerable",
+          "source_sha256": "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41",
+          "validated_vulnerability": 0
+        },
+        "libpng-1.6.56-fixed": {
+          "candidate_count": 0,
+          "candidate_identities": [],
+          "commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+          "coverage_limitations": [
+            "arm/palette_neon_intrinsics.c: parse_status=not_run; lexical matches are retained but remaining coverage is unknown."
+          ],
+          "detector_status": "blocked",
+          "git_blob_sha1": "0967ea1aebd718907fda1e767957deeddbe676b3",
+          "parser_status": "not_run",
+          "source": "libpng-1.6.56-fixed",
+          "source_sha256": "a844760f611829df29ca583f1b08832cac1440c74a2a22b35bc35a464ddf6b5e",
+          "validated_vulnerability": 0
+        }
+      }
+    }
+  ],
+  "schema": 1,
+  "validated_vulnerability": 0
+}

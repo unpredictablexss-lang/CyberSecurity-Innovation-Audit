@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "phase": "D12 conservative same-name sensitive-type candidate retention",
+  "repository": "unpredictablexss-lang/CyberSecurity-Innovation-Audit",
+  "branch": "feat/teammate-d-sensitive-exposure-20261017",
+  "base_sha": "1c21ac60890fca0ce6be5d50d82e4757dd5e4623",
+  "implementation_commit": "7f37af2e57d822c0bbaf6d6aa82517081af1fcf7",
+  "detector": {
+    "id": "ohscanner.data.sensitive_exposure",
+    "version": "0.8.0",
+    "source_model_version": "0.2.0"
+  },
+  "tests": [
+    {
+      "command": "PYTHONPATH=. /tmp/ohscanner-d10-venv/bin/python -m unittest discover -s tests/detectors/data -q",
+      "result": "passed",
+      "run": 53,
+      "passed": 53,
+      "skipped": 0,
+      "failed": 0
+    },
+    {
+      "command": "PYTHONPATH=. /tmp/ohscanner-d10-venv/bin/python -m unittest discover -s tests -q",
+      "result": "passed",
+      "run": 887,
+      "passed": 882,
+      "skipped": 5,
+      "failed": 0
+    },
+    {
+      "command": "PATH=/home/audit/ohscanner/tools/node/bin:/usr/bin:/bin npm test (from web/)",
+      "result": "passed",
+      "run": 16,
+      "passed": 16,
+      "skipped": 0,
+      "failed": 0
+    },
+    {
+      "command": "PATH=/home/audit/ohscanner/tools/node/bin:/usr/bin:/bin npm run build (from web/)",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -m compileall -q src research/data_sensitive",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m py_compile src/ohscanner/detectors/data/models.py src/ohscanner/detectors/data/sensitive_exposure.py tests/detectors/data/test_sensitive_exposure.py",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "command": "npm ci from web/package-lock.json",
+      "result": "passed",
+      "audit_vulnerabilities": 0
+    }
+  ],
+  "source_replays": {
+    "D10": {
+      "report": "D12_REAL_SOURCE_REPLAY.json",
+      "manifest_files_verified": 10,
+      "hilog_headers_verified": 3,
+      "code_files_scanned": 9,
+      "parse_complete": 3,
+      "parse_partial": 6,
+      "status": "blocked",
+      "candidate_count": 1
+    },
+    "D4_before_after": {
+      "report": "D12_D4_HISTORICAL_REPLAY.json",
+      "files_verified_per_revision": 11,
+      "parse_complete_per_revision": 5,
+      "parse_partial_per_revision": 6,
+      "status_per_revision": "blocked",
+      "candidate_count_before": 1,
+      "candidate_count_after": 0
+    }
+  },
+  "product_validation": {
+    "H01_H08": "not_run",
+    "validated_vulnerability": 0,
+    "product_impact": "unknown",
+    "affected_releases": "unknown",
+    "public_runner_integration": "not_run",
+    "independent_labeled_holdout": "not_run"
+  },
+  "github": {
+    "pr": 17,
+    "last_known_state": "open_draft",
+    "state_mutated": false,
+    "latest_commit_actions": "not_yet_available_before_push"
+  },
+  "gates": {
+    "M0": "not_met",
+    "M1": "not_met",
+    "M2": "not_met",
+    "M3": "not_met"
+  }
+}

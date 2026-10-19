@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "kind": "a-ccr-04-owner-approval",
+  "status": "approved",
+  "approver": "lh",
+  "approval_date": "2026-10-15",
+  "timezone": "Asia/Shanghai",
+  "decision_text": "统统批准",
+  "approval_source": "用户在 A-NULL-01-IMPLEMENT 任务续接消息中明确给出批准人 lh、时间今天（2026-10-15）和决定“统统批准”",
+  "approved_change_request": "A-CCR-04",
+  "approved_artifacts": {
+    "research/contracts/a_ccr_04/A-CCR-04-ReadOnlyFactView.md": {
+      "sha256": "94c9f6616b7d715aa0a154655b95b29e58567aa3b91d78320f9681ad6cec99d1",
+      "git_tracked": true,
+      "git_status": ""
+    },
+    "research/contracts/a_ccr_04/contract.json": {
+      "sha256": "ee2dba0d64d0fcbfdefe864e1433bb1ee110fb395ef0f0412335ee4ef7824feb",
+      "git_tracked": true,
+      "git_status": ""
+    },
+    "research/contracts/a_ccr_04/conformance.py": {
+      "sha256": "ab05f49d404e16fc24ab169a8aee8a63eaa81017d08a70519c70510a218efa83",
+      "git_tracked": true,
+      "git_status": ""
+    },
+    "research/contracts/a_ccr_04/verification.json": {
+      "sha256": "2182c664e9ef6f10c1211a65386a933fb55a70f4f75df08ecde7f1662cc8a7f0",
+      "git_tracked": true,
+      "git_status": ""
+    },
+    "research/specs/cpp/A-NULL-01-IMPLEMENTATION_DESIGN.md": {
+      "sha256": "14c14f46f022705d1882816fd6cda582b9c580d50ad2e29f3b285b5e800bdddc",
+      "git_tracked": false,
+      "git_status": "?? research/specs/cpp/A-NULL-01-IMPLEMENTATION_DESIGN.md"
+    },
+    "research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD.md": {
+      "sha256": "e805c67674bd8e14cbe2f65738bdcde54763e1502448bc659fca49c81ff07cde",
+      "git_tracked": false,
+      "git_status": "?? research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD.md"
+    },
+    "research/tests/a_null_01/regression_matrix.json": {
+      "sha256": "b91fbb81d36e09750fc7321370477addb5c74ab5e32561a5248b1795856eb784",
+      "git_tracked": false,
+      "git_status": "?? research/tests/a_null_01/regression_matrix.json"
+    },
+    "research/tests/a_null_01/manifest.json": {
+      "sha256": "2630248684a61688d2bce9f00d64ae9bb9a4fad3ab47c67bdf386d7aec32a3d3",
+      "git_tracked": false,
+      "git_status": "?? research/tests/a_null_01/manifest.json"
+    }
+  },
+  "approved_commit": "0e94ceafab1b2d79547bdf71c86e26e8b42a6b48",
+  "approved_commit_subject": "docs(contract): submit A-CCR-04 ReadOnlyFactView proposal",
+  "approved_commit_basis": "A-CCR-04 提案实际提交对象；A-NULL-01 未入库设计/fixture 以 approved_artifacts 的 SHA-256 绑定",
+  "approval_recorded_at": "2026-10-15T15:39:14+08:00",
+  "recorded_at_checkout": {
+    "head": "9583db63b772d35ee6c27aeaf494d30a5726123a",
+    "head_tree": "7f0ec1e8faf7511bf0eeb7740f6acc709919d5ed",
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git"
+  },
+  "prior_verification": {
+    "path": "research/contracts/a_ccr_04/verification.json",
+    "sha256": "2182c664e9ef6f10c1211a65386a933fb55a70f4f75df08ecde7f1662cc8a7f0",
+    "recorded_status_before_approval": "awaiting_owner_approval",
+    "append_only_note": "保留原提案验证记录，不改写历史 approval_state；本文件是后续批准事实"
+  },
+  "authorization": {
+    "detector_implementation": true,
+    "fixture_failure_regression": true,
+    "combined_cpp_regression": true,
+    "project_wide_regression": true,
+    "public_catalog_registration": false,
+    "push": false,
+    "merge": false,
+    "mark_ready": false,
+    "candidate_promotion": false,
+    "external_scanner_dependency": false
+  },
+  "limitations": [
+    "“统统批准”解除 A-CCR-04/A-NULL-01 实现门禁，但不证明 CFG、alias、guard dominance、build context 或产品证据门。",
+    "验收后 finding 默认仍为 candidate/unassessed；只有产品入口、触发、CIA 和全部适用 EvidenceObligation 满足才允许晋级。",
+    "公共 Catalog 注册须单独处理，不混入 Detector 算法提交。"
+  ]
+}

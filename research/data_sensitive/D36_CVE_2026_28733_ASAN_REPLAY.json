@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "compiler": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+  "runs_per_case": 3,
+  "cases": {
+    "iterator_escape": {
+      "source": "research/data_sensitive/D36_CVE_2026_28733_ITERATOR_ASAN.cpp",
+      "source_sha256": "9c4e4f373fb8a16a95d15e1c50076eb9db414bee5c0a3b4d7ab42b5fc0dd8c1f",
+      "runs": [
+        {
+          "exit_code": 1,
+          "asan_heap_use_after_free": true,
+          "output_sha256": "8c2a70b8fc1d16b87024d06bcf6d158a5f70dc00e23fdb55310c9ecded8c91f5",
+          "output_excerpt": "==129574==ERROR: AddressSanitizer: heap-use-after-free on address 0x504000000038 at pc 0x621c4d04a1ce bp 0x7819821fece0 sp 0x7819821fecd0"
+        },
+        {
+          "exit_code": 1,
+          "asan_heap_use_after_free": true,
+          "output_sha256": "4ae1985d94ec1ca47012ba54686024e1b2825f177e4b6a8ba4f6895f90255591",
+          "output_excerpt": "==129582==ERROR: AddressSanitizer: heap-use-after-free on address 0x504000000038 at pc 0x5fa82917c1ce bp 0x7424843fece0 sp 0x7424843fecd0"
+        },
+        {
+          "exit_code": 1,
+          "asan_heap_use_after_free": true,
+          "output_sha256": "533160478d28659fc9d0f5cd0f3695eeb5b871189f550d9c681812aa63c9a97c",
+          "output_excerpt": "==129585==ERROR: AddressSanitizer: heap-use-after-free on address 0x504000000038 at pc 0x5cb65ac341ce bp 0x7b0a263fece0 sp 0x7b0a263fecd0"
+        }
+      ],
+      "expected": "3/3 ASan heap-use-after-free"
+    },
+    "safe_update": {
+      "source": "research/data_sensitive/D36_CVE_2026_28733_ITERATOR_SAFE.cpp",
+      "source_sha256": "f79c4a601d8190f450bbb0f486788ba2f840d5abc645f70ef25fcf6765697873",
+      "runs": [
+        {
+          "exit_code": 0,
+          "asan_heap_use_after_free": false,
+          "output_sha256": "b392e0aa441e446c9ed1846354a1679604fb76e1ad7ad5da392f1f1cabea06a9",
+          "output_excerpt": "clean"
+        },
+        {
+          "exit_code": 0,
+          "asan_heap_use_after_free": false,
+          "output_sha256": "b392e0aa441e446c9ed1846354a1679604fb76e1ad7ad5da392f1f1cabea06a9",
+          "output_excerpt": "clean"
+        },
+        {
+          "exit_code": 0,
+          "asan_heap_use_after_free": false,
+          "output_sha256": "b392e0aa441e446c9ed1846354a1679604fb76e1ad7ad5da392f1f1cabea06a9",
+          "output_excerpt": "clean"
+        }
+      ],
+      "expected": "0/3 ASan errors"
+    }
+  }
+}

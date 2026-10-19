@@ -1,0 +1,118 @@
+{
+  "python": {
+    "command": ".venv-web/bin/python -m unittest discover -s tests -v",
+    "total": 834,
+    "passed": 829,
+    "skipped": 5,
+    "failures": 0,
+    "seconds": 53.865,
+    "skips": [
+      "test_existing_rescan_counts_and_identity_gap_are_preserved (test_a_ccr_03_finding_identity.SameScopeRescanRegressionTests) ... skipped 'same-scope rescan artifact is not present in this checkout'",
+      "test_attack_triggers_on_the_vulnerable_revision_only (test_poc_runner.Auth01IntegrationTests) ... skipped 'AUTH-01 runtime harness must execute only through the Docker validation worker'",
+      "test_record_keeps_validated_vulnerability_at_zero (test_poc_runner.Auth01IntegrationTests) ... skipped 'AUTH-01 runtime harness must execute only through the Docker validation worker'",
+      "test_real_historical_sources_produce_linked_detector_candidates (test_shared_ptr_race_poc.SharedPtrRacePocTests) ... skipped 'historical detector replay requires locally preserved source artifacts: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h, outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h'",
+      "test_source_hashes_and_quotes_are_verified (test_shared_ptr_race_poc.SharedPtrRacePocTests) ... skipped 'optional preserved historical source artifacts are unavailable: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h, outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h'"
+    ],
+    "log_sha256": "69ac4b39c564c47d3161ead1e5a78b1a3624c149b56f29e38df39e559b9fb0ec"
+  },
+  "web": {
+    "tests": 16,
+    "passed": 16,
+    "typescript": "passed",
+    "production_build": "passed",
+    "log_sha256": "56b524fea6dbacd53f04aea01d24f646387746f71e73a314b1f7b98b0d34c78b"
+  },
+  "compileall": "passed",
+  "git_diff_check": "passed",
+  "runtime": {
+    "job_id": "658a901bcb3843798e1a83b90aa21e2a",
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "9f922677e147b939d6db899bde181d609d64711b",
+    "git_tree": "4b114179868d96c69eedc4520037552ddc3d65dd",
+    "scope_files": 870,
+    "scope_bytes": 8969000,
+    "parsing_status": {
+      "complete": 446,
+      "partial": 424
+    },
+    "candidate_count": 4,
+    "validated_vulnerability": 0,
+    "report_sha256": "187d8673badd82082afdd7edc9ae5ea493b68167d69ae128c63056ba15f0b003",
+    "snapshot_sha256": "6c351f29930954b5f582475c4f5b047cd1f333c3186c6f8d5a91eed49477d299",
+    "audit_plan_sha256": "2bcb19eac3bf7c1cf2adaebdd6c511eb029551b84c576858bf91771c3a319df9",
+    "engine_sha256": "9bb283077157863e840d146e7b06f1549861b951303d97551bccf4244fd7ac44",
+    "worker_seconds": 52.61031452000316,
+    "cli_seconds": 64.39966285799164,
+    "cli_parity": true,
+    "source_verified": [
+      {
+        "id": "8bec75dd9f9719ca07e6758906cad1dc42d989281e7ffd4b2c6ff60841f36794",
+        "file": "core/bus_center/extend/src/bus_center_ex_obj_stub.cpp",
+        "line": 56,
+        "source_sha256": "ab27bd3035c1e6dc0da97786e3a6fb3dd80675358856b92de1ca2a89e44afd57"
+      },
+      {
+        "id": "61d93a01cc05e9a1ac3dc38259dd23953a81247f14739d5489b8702f9f9e1420",
+        "file": "core/frame/standard/init/src/softbus_server_stub.cpp",
+        "line": 2167,
+        "source_sha256": "d1180ab352290ce4b94c574bde59ee5de305f266dbfd3f7b5c9994cd0bfecd7f"
+      },
+      {
+        "id": "657a116c0a90c375b300f0c1772ece4b2ab770dc7acc6bfc91818d90e9f01039",
+        "file": "core/frame/standard/init/src/softbus_server_stub.cpp",
+        "line": 2184,
+        "source_sha256": "d1180ab352290ce4b94c574bde59ee5de305f266dbfd3f7b5c9994cd0bfecd7f"
+      },
+      {
+        "id": "1c0a0a21d94da9b832e1f1a7c5b213ccb1f77c70c5e916b9b9bf176c2a5076f1",
+        "file": "core/transmission/broadcast/src/trans_spec_object_stub.cpp",
+        "line": 62,
+        "source_sha256": "6e9e1298812c7dbfbf1efc7c56134de25b6649b4576a6a62cd61b9e0341de17a"
+      }
+    ],
+    "downloads": {
+      "report.json": "187d8673badd82082afdd7edc9ae5ea493b68167d69ae128c63056ba15f0b003",
+      "report.md": "82eabd0a78688b9aca460dfb019ef7c604e76c26666a49c56f90a704c6d34602",
+      "review.json": "8ec1e9541ada1c659546f290625304df150d34751c88613b0411b80288adc655",
+      "review.md": "d1ac158d8079ff0cdc651326db0610aa0cb687eb255e73de80e4340c755625d3"
+    },
+    "review_queue": {
+      "schema_version": 1,
+      "queued_batches": 1,
+      "running_batches": 0,
+      "finished_batches": 0,
+      "queued_candidates": 4,
+      "running_candidates": 0,
+      "model_provider_configured": false,
+      "automatic_batch_processing_enabled": false,
+      "limitations": [
+        "Queue summary counts only static findings from completed reports.",
+        "Zero-candidate and partial/unanalyzed source coverage remain in scan reports and are not second-pass Agent reviews."
+      ]
+    },
+    "unconfigured_agent": {
+      "operations/agent-investigations/preview": {
+        "status": 503,
+        "body": {
+          "detail": "真实模型未配置；静态扫描和只读调查仍可使用"
+        }
+      },
+      "operations/agent-investigations": {
+        "status": 503,
+        "body": {
+          "detail": "真实模型未配置；静态扫描和只读调查仍可使用"
+        }
+      }
+    },
+    "cd_explicit_selection_rejected": true,
+    "limitations": [
+      "Static engineering acceptance, not accuracy or product vulnerability confirmation",
+      "No live model call; provider behavior covered with deterministic fakes only"
+    ]
+  },
+  "limits": [
+    "No live LLM invocation; fake-provider tests establish plumbing only",
+    "No Docker or product vulnerability validation",
+    "C/D code and model JSON absent; explicit selection HTTP 409"
+  ]
+}

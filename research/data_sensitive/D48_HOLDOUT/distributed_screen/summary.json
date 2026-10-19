@@ -1,0 +1,912 @@
+{
+  "schema": 1,
+  "repository": "openharmony/distributed_screen",
+  "commit": "373e2b5241c0e5dcb923642059ae83e4e9a1a64e",
+  "tree": "431a2a0be0c140846b6ff1cefb0e7adfa19d2088",
+  "snapshot_sha256": "5b7a5b1da878b6c00b38e781d416bd5b921bed17023dc6551128bdc1d7a2c617",
+  "scope_files": 97,
+  "scope_paths_sha256": "ed0b65517d5b9de40e180a8924b1885d110179675f4497a64c116ee9498db489",
+  "detector_id": "ohscanner.data.sensitive_exposure",
+  "detector_version": "0.21.0",
+  "task_status": "completed_with_limitations",
+  "detector_status": "blocked",
+  "candidate_count": 0,
+  "coverage": {
+    "scope_mode": "per_file",
+    "status": "partial",
+    "applicable_files": 97,
+    "analyzed_files": [],
+    "partially_inspected_files": [
+      "common/include/dscreen_constants.h",
+      "common/include/dscreen_errcode.h",
+      "common/include/dscreen_hisysevent.h",
+      "common/include/dscreen_hitrace.h",
+      "common/include/dscreen_log.h",
+      "common/include/dscreen_sa_process_state.h",
+      "common/include/dscreen_util.h",
+      "common/src/dscreen_hisysevent.cpp",
+      "common/src/dscreen_log.cpp",
+      "common/src/dscreen_sa_process_state.cpp",
+      "common/src/dscreen_util.cpp",
+      "interfaces/innerkits/native_cpp/screen_sink/include/callback/dscreen_sink_load_callback.h",
+      "interfaces/innerkits/native_cpp/screen_sink/include/dscreen_sink_proxy.h",
+      "interfaces/innerkits/native_cpp/screen_sink/src/callback/dscreen_sink_load_callback.cpp",
+      "interfaces/innerkits/native_cpp/screen_sink/src/dscreen_sink_handler.cpp",
+      "interfaces/innerkits/native_cpp/screen_sink/src/dscreen_sink_proxy.cpp",
+      "interfaces/innerkits/native_cpp/screen_source/include/callback/dscreen_source_callback.h",
+      "interfaces/innerkits/native_cpp/screen_source/include/callback/dscreen_source_load_callback.h",
+      "interfaces/innerkits/native_cpp/screen_source/include/dscreen_source_proxy.h",
+      "interfaces/innerkits/native_cpp/screen_source/src/callback/dscreen_source_callback.cpp",
+      "interfaces/innerkits/native_cpp/screen_source/src/callback/dscreen_source_load_callback.cpp",
+      "interfaces/innerkits/native_cpp/screen_source/src/dscreen_source_handler.cpp",
+      "interfaces/innerkits/native_cpp/screen_source/src/dscreen_source_proxy.cpp",
+      "screenhandler/src/dscreen_handler.cpp",
+      "services/common/databuffer/include/data_buffer.h",
+      "services/common/databuffer/src/data_buffer.cpp",
+      "services/common/screen_channel/include/iscreen_channel.h",
+      "services/common/screen_channel/include/iscreen_channel_listener.h",
+      "services/common/utils/include/dscreen_maprelation.h",
+      "services/common/utils/include/video_param.h",
+      "services/common/utils/src/dscreen_maprelation.cpp",
+      "services/common/utils/src/video_param.cpp",
+      "services/screenclient/include/screen_client.h",
+      "services/screenclient/include/screen_client_common.h",
+      "services/screenclient/include/screen_client_window_adapter.h",
+      "services/screenclient/src/screen_client.cpp",
+      "services/screenclient/src/screen_client_window_adapter.cpp",
+      "services/screendemo/decoder_demo.cpp",
+      "services/screendemo/decoder_demo.h",
+      "services/screendemo/test.cpp",
+      "services/screenservice/sinkservice/dscreenservice/include/dscreen_sink_service.h",
+      "services/screenservice/sinkservice/dscreenservice/src/dscreen_sink_service.cpp",
+      "services/screenservice/sinkservice/screenregionmgr/include/screenregion.h",
+      "services/screenservice/sinkservice/screenregionmgr/include/screenregionmgr.h",
+      "services/screenservice/sinkservice/screenregionmgr/src/screenregion.cpp",
+      "services/screenservice/sinkservice/screenregionmgr/src/screenregionmgr.cpp",
+      "services/screenservice/sourceservice/dscreenmgr/include/dscreen.h",
+      "services/screenservice/sourceservice/dscreenmgr/include/dscreen_manager.h",
+      "services/screenservice/sourceservice/dscreenmgr/include/screen_manager_adapter.h",
+      "services/screenservice/sourceservice/dscreenmgr/src/dscreen.cpp",
+      "services/screenservice/sourceservice/dscreenmgr/src/dscreen_manager.cpp",
+      "services/screenservice/sourceservice/dscreenmgr/src/screen_manager_adapter.cpp",
+      "services/screenservice/sourceservice/dscreenservice/include/callback/dscreen_source_callback_proxy.h",
+      "services/screenservice/sourceservice/dscreenservice/include/dscreen_source_service.h",
+      "services/screenservice/sourceservice/dscreenservice/src/callback/dscreen_source_callback_proxy.cpp",
+      "services/screenservice/sourceservice/dscreenservice/src/dscreen_source_service.cpp",
+      "services/screentransport/screendatachannel/include/screen_data_channel_impl.h",
+      "services/screentransport/screendatachannel/src/screen_data_channel_impl.cpp",
+      "services/screentransport/screensinkprocessor/decoder/include/image_decoder_callback.h",
+      "services/screentransport/screensinkprocessor/decoder/include/image_sink_decoder.h",
+      "services/screentransport/screensinkprocessor/decoder/src/image_decoder_callback.cpp",
+      "services/screentransport/screensinkprocessor/decoder/src/image_sink_decoder.cpp",
+      "services/screentransport/screensinkprocessor/include/iimage_sink_processor.h",
+      "services/screentransport/screensinkprocessor/include/iimage_sink_processor_listener.h",
+      "services/screentransport/screensinkprocessor/include/image_sink_processor.h",
+      "services/screentransport/screensinkprocessor/src/image_sink_processor.cpp",
+      "services/screentransport/screensinktrans/include/iscreen_sink_trans.h",
+      "services/screentransport/screensinktrans/include/iscreen_sink_trans_callback.h",
+      "services/screentransport/screensinktrans/include/screen_sink_trans.h",
+      "services/screentransport/screensinktrans/src/screen_sink_trans.cpp",
+      "services/screentransport/screensourceprocessor/encoder/include/image_encoder_callback.h",
+      "services/screentransport/screensourceprocessor/encoder/include/image_source_encoder.h",
+      "services/screentransport/screensourceprocessor/encoder/src/image_encoder_callback.cpp",
+      "services/screentransport/screensourceprocessor/encoder/src/image_source_encoder.cpp",
+      "services/screentransport/screensourceprocessor/include/iimage_source_processor.h",
+      "services/screentransport/screensourceprocessor/include/iimage_source_processor_listener.h",
+      "services/screentransport/screensourceprocessor/include/image_source_processor.h",
+      "services/screentransport/screensourceprocessor/src/image_source_processor.cpp",
+      "services/screentransport/screensourcetrans/include/iscreen_source_trans.h",
+      "services/screentransport/screensourcetrans/include/iscreen_source_trans_callback.h",
+      "services/screentransport/screensourcetrans/include/screen_source_trans.h",
+      "services/screentransport/screensourcetrans/src/screen_source_trans.cpp",
+      "services/softbusadapter/include/isoftbus_listener.h",
+      "services/softbusadapter/include/softbus_adapter.h",
+      "services/softbusadapter/src/softbus_adapter.cpp"
+    ],
+    "source_sha256": {
+      "common/include/dscreen_constants.h": "b9bd936ed4e5a489e4878675747df52a32f74763a6f7e2a80eb96511d1551d04",
+      "common/include/dscreen_errcode.h": "5592a4b55fec33e171e2544190d09664839a1460ae81aa3b5709b3017a4eaf54",
+      "common/include/dscreen_hisysevent.h": "511cc34e8d4989104249df3b06bfef3a226f84de1bf65b04934ed868b7b2bf80",
+      "common/include/dscreen_hitrace.h": "e565a1d2c60513effc2b12ff6eac5c672ea589c9e0aa3aceca0b7776383dae56",
+      "common/include/dscreen_log.h": "9e53cdd14554b0abb7dad534ac033020e79ef88153a3b0dcf94b9a86033f97e8",
+      "common/include/dscreen_sa_process_state.h": "224ad63dbc1d01e6379b367c65c1348b82a58f45e7bc11d46d59784fe8128721",
+      "common/include/dscreen_util.h": "6d08aa596e1e662b2f2b901bd26299c2858e8f4d43313b7a41c7e803980f7440",
+      "common/src/dscreen_hisysevent.cpp": "54bce141e14e54da5c1eb86e51c071a1ac1250178636a669d803f9573c5cd7c6",
+      "common/src/dscreen_log.cpp": "eda5fcf6300e028c518dae2d5efec9b6e7f507a0d22b40021d5269883c4dfd08",
+      "common/src/dscreen_sa_process_state.cpp": "01d2b73ee29148d9260a8fa0e451b41411a351c1dcc9d530f8d5b49cd9d521b4",
+      "common/src/dscreen_util.cpp": "98bc9a512f24ecdc6d2f25e5e4e7db702847efa921bf56f0b2668fb3cc781acc",
+      "interfaces/innerkits/native_cpp/screen_sink/include/callback/dscreen_sink_load_callback.h": "b1e153289ed00a6b9659606c65eb9c3bbe39933e86cdb9f0ef9458fbae133c6b",
+      "interfaces/innerkits/native_cpp/screen_sink/include/dscreen_sink_handler.h": "35c659a302ecf007adaa94a2eb8ed04a31af9256a72264ab30f747f3f8c09539",
+      "interfaces/innerkits/native_cpp/screen_sink/include/dscreen_sink_proxy.h": "5e9d7aabf30c81ee1870e6ea0b8a2f047764f1b08b10a54aabb45511cb6d7a8e",
+      "interfaces/innerkits/native_cpp/screen_sink/include/idscreen_sink.h": "1fe72b70e238006393e85b5ce2247e306d6776030e89264ace9975e578a06318",
+      "interfaces/innerkits/native_cpp/screen_sink/src/callback/dscreen_sink_load_callback.cpp": "d7c6f6c65dba84edc4394d9128ee5a2029381e918b93631044732b16c25d7287",
+      "interfaces/innerkits/native_cpp/screen_sink/src/dscreen_sink_handler.cpp": "fd858c411805beb778af8fed9123c15c2930fcb73131732fb37c8fe45e99713e",
+      "interfaces/innerkits/native_cpp/screen_sink/src/dscreen_sink_proxy.cpp": "78d33d26edce3ad3147cfefa9ce8dbbd014557dc163914279154fd7facba211d",
+      "interfaces/innerkits/native_cpp/screen_source/include/callback/dscreen_source_callback.h": "afc1bdbba08de00f55353866e00443249f06674c1c367993969c343cf442846e",
+      "interfaces/innerkits/native_cpp/screen_source/include/callback/dscreen_source_callback_stub.h": "6cc29e72373e513e17a21201f334b7dfaadd91143ef9534ef2af8b42f9d8a07b",
+      "interfaces/innerkits/native_cpp/screen_source/include/callback/dscreen_source_load_callback.h": "66a10aa2d095193994a4a0e89ebed9d565c7a2e1a09b0c4e8cd83e829fb13a09",
+      "interfaces/innerkits/native_cpp/screen_source/include/callback/idscreen_source_callback.h": "c50e0d39a5ccfc4548c1c2077e23df980dfa276fad08ed521d42059c6398383c",
+      "interfaces/innerkits/native_cpp/screen_source/include/dscreen_source_handler.h": "757ca74f3c043a5134fbe57083fe946f463d663f689fa6eb196023cf683fa862",
+      "interfaces/innerkits/native_cpp/screen_source/include/dscreen_source_proxy.h": "3ede1e5b4abc7229a8d2a1293b651c2c36b173230d2b3e1a55586d549eabcc26",
+      "interfaces/innerkits/native_cpp/screen_source/include/idscreen_source.h": "25852af1df38ff3b05a5ba23064ac926a76fa6b258757600ffc0deaee0efafe2",
+      "interfaces/innerkits/native_cpp/screen_source/src/callback/dscreen_source_callback.cpp": "f91a88ba985863a80e6ecb308300f7a4fc991848293260a003d8bae5aba32e2f",
+      "interfaces/innerkits/native_cpp/screen_source/src/callback/dscreen_source_callback_stub.cpp": "6e6da3017b274f39251075b778d85aaab15dbc2434011af212e5b4eb8f49299b",
+      "interfaces/innerkits/native_cpp/screen_source/src/callback/dscreen_source_load_callback.cpp": "09798a641e9fb4a88c5360a997257fd2f1585b4e24782c99e5737a982c639be7",
+      "interfaces/innerkits/native_cpp/screen_source/src/dscreen_source_handler.cpp": "eec21ad65082676f327e9b8ce450ca041291ace323e80d224ea4526ca40e62e9",
+      "interfaces/innerkits/native_cpp/screen_source/src/dscreen_source_proxy.cpp": "520684c4182112ee8d2e4ea44a9c0e2923ef9f3b29ce226d9509c738787b55f4",
+      "screenhandler/include/dscreen_handler.h": "90f4ab9e33492d490aeab6227eb253f258cdf7293441c68e3b35a8f9ecce2255",
+      "screenhandler/src/dscreen_handler.cpp": "995a55d920597cea8e5587491f04cce886ab5ec928f04e1b15a29912fb566376",
+      "services/common/databuffer/include/data_buffer.h": "aea3f7083e5279fa50b8e7044448db1ae5702034c9aa028cc1a9c32fa9e8cbf6",
+      "services/common/databuffer/src/data_buffer.cpp": "bf2ff2beaaf28d0675e44f55ee7a38ab7fed399bae55cb96c15970bf90fe78d3",
+      "services/common/screen_channel/include/iscreen_channel.h": "3339cceb20a3da55eaaaa077f2188bb57c937ef3378c0d46e1d141ae44991366",
+      "services/common/screen_channel/include/iscreen_channel_listener.h": "56293597ae8a15571d84313ad98a341f73c1b350036b92c06b9ffcfaf020a133",
+      "services/common/utils/include/dscreen_maprelation.h": "1c51c5d3eee94149616c87f00d1235838e4558f38ca508bb2470471ce75fa666",
+      "services/common/utils/include/video_param.h": "06ce4522966a00747487878e46468a3521db64375ccf42918a247d96b711d86e",
+      "services/common/utils/src/dscreen_maprelation.cpp": "8bedb6f576368fc883cc910b35eac256f5cf4f6aab6b4e36d02c90f0ab347f2d",
+      "services/common/utils/src/video_param.cpp": "be503cc409e6ff6f8628b366dc9dd0c0fdb9c3153c346d1f9ba873ef26dad58b",
+      "services/screenclient/include/screen_client.h": "9b416a7f22a7031f05847fbeaa46c57362242a011f39c9f4acbc268352606d8e",
+      "services/screenclient/include/screen_client_common.h": "ccc41ebaf2a0251b5070b7f952110760d79f5126c71b836a680e60826646c152",
+      "services/screenclient/include/screen_client_window_adapter.h": "2dbb7ad859aab79813eddc7cdca5fb1ccbdabd022ca059dea672b85c0db6f83e",
+      "services/screenclient/src/screen_client.cpp": "4a2119f8a44134f59707ca20c6ebb7f1c6e7c3e828fb498d05045b96e1b37f1c",
+      "services/screenclient/src/screen_client_window_adapter.cpp": "70aef7b799b001ab7c50bb793606fed67ba6407e5bbed33e79da8375bd2ba722",
+      "services/screendemo/decoder_demo.cpp": "0197a1457979a95bb2bde0b7a5df2b05f3838651831cdd280f368f97a3369dc4",
+      "services/screendemo/decoder_demo.h": "fe036ccdcbd5f76976570fde75ef721b02b5ced6cb54cb309937bbd8215ce9ca",
+      "services/screendemo/test.cpp": "0a7a3a4540e2122e9e1fafc0a53a3d458211d6302fe659978ec55ed38332b28e",
+      "services/screenservice/sinkservice/dscreenservice/include/dscreen_sink_service.h": "ae182755099c5aa96d1db7c3567e377e92aca0880a15e38698d497f8f7fb5363",
+      "services/screenservice/sinkservice/dscreenservice/include/dscreen_sink_stub.h": "f85673e14b27983a1f031babfb28814d181547dd604d4063784fdeff9865ab69",
+      "services/screenservice/sinkservice/dscreenservice/src/dscreen_sink_service.cpp": "af0d1841676393a683f3174b67b161cf273cae96a07d8e66f646c9a6250f16d6",
+      "services/screenservice/sinkservice/dscreenservice/src/dscreen_sink_stub.cpp": "16b2d77591552b069eed4ffdf22d0facf38a3b8d6d72a0094f7295859c8b1885",
+      "services/screenservice/sinkservice/screenregionmgr/include/screenregion.h": "1f1a5fb10162bb72382287fa5c3f5181e4d9bffebcbe9cb7730f5feb48aa03be",
+      "services/screenservice/sinkservice/screenregionmgr/include/screenregionmgr.h": "08aa28e0f83d41d1c5780863cace3e1689c0074852700bb7a6cb10ee7f5ba969",
+      "services/screenservice/sinkservice/screenregionmgr/src/screenregion.cpp": "0df4792bc25535616544984420c60674916d474ce9430c8c380120853013a84d",
+      "services/screenservice/sinkservice/screenregionmgr/src/screenregionmgr.cpp": "a03febebf36f64b74858531f8896f8a0f85726affcc713d95d89feaff6e1593f",
+      "services/screenservice/sourceservice/dscreenmgr/include/dscreen.h": "4e148b4b260d2dd2f2e8b27a0a8e26a1fe22ae7842b71dc6bf99d9081bce284d",
+      "services/screenservice/sourceservice/dscreenmgr/include/dscreen_manager.h": "ae828fc850294ae5b2ea102cceaa0527f88518938122eacfc2c0a73e55d1f8fb",
+      "services/screenservice/sourceservice/dscreenmgr/include/screen_manager_adapter.h": "2628be28507a518d72c49d54d0ef338a41eb3f4b2e069319abb0f6f0216350ef",
+      "services/screenservice/sourceservice/dscreenmgr/src/dscreen.cpp": "29b466c871780ab8db353eecd65863952486dcfc3b85dff6de3433b93cb50a69",
+      "services/screenservice/sourceservice/dscreenmgr/src/dscreen_manager.cpp": "4d22e6297ca95a18ce1959989f93ea62593b03c6467a5b665cd883e6de7619e1",
+      "services/screenservice/sourceservice/dscreenmgr/src/screen_manager_adapter.cpp": "d79e18957f59f13a7911f76d3f827c030ad8a7b8e3df9f3f198b49cc3cb22725",
+      "services/screenservice/sourceservice/dscreenservice/include/callback/dscreen_source_callback_proxy.h": "a115ab413d937cccd461b04938e1320047c073776715a6f4305b53f2bf265109",
+      "services/screenservice/sourceservice/dscreenservice/include/dscreen_source_service.h": "009dbaa5eb7885d7a5c85d9828b09af508b6ffbdda3928e28f5b0b16ccd230fe",
+      "services/screenservice/sourceservice/dscreenservice/include/dscreen_source_stub.h": "28411d6dff562342e0a31053e23ffce8893394774e078b03a8b27df9be850968",
+      "services/screenservice/sourceservice/dscreenservice/src/callback/dscreen_source_callback_proxy.cpp": "6fab9ca89888d1f20408ba58e86f13c04dd7a9166514876956232c508fa654cf",
+      "services/screenservice/sourceservice/dscreenservice/src/dscreen_source_service.cpp": "0eb1e5e05d06f937dbff66754fa404497730a840b87ff00f9f4b0a9d86dfb0e3",
+      "services/screenservice/sourceservice/dscreenservice/src/dscreen_source_stub.cpp": "ca0ac11316e9558f9c2c4066f6ff25cccad4050853526520f8bfeedef998a163",
+      "services/screentransport/screendatachannel/include/screen_data_channel_impl.h": "c186fcb0dfbbe79206a05238a34be63ec9e9b3e457e2d86c6331ded736435f44",
+      "services/screentransport/screendatachannel/src/screen_data_channel_impl.cpp": "f798b9598ac33f7e5c1a120161eb1f4474f8af124cb809f432142f78f3c551c1",
+      "services/screentransport/screensinkprocessor/decoder/include/image_decoder_callback.h": "c9af43af6f6d274221862159ba87a645bdbf3c3bfd885f69ea6f170956673dbd",
+      "services/screentransport/screensinkprocessor/decoder/include/image_sink_decoder.h": "45eca2bfdacbb75a8152c4516a910ffc32d1dc9806b0a77b0a1c24c775dfe9c9",
+      "services/screentransport/screensinkprocessor/decoder/src/image_decoder_callback.cpp": "42f56eda09508e9343e3141aec504b1bd3ade605dc788fa78e316aeedf13a1cf",
+      "services/screentransport/screensinkprocessor/decoder/src/image_sink_decoder.cpp": "52cb31e6c4e8d06ab56b3b3cbd5a8f335d18145c8b773b10462a392bb02497b4",
+      "services/screentransport/screensinkprocessor/include/iimage_sink_processor.h": "ac40c8756a77dd1adbfaf86b16ff148c603a1d28396a0339b8fda8684c7e2bc2",
+      "services/screentransport/screensinkprocessor/include/iimage_sink_processor_listener.h": "0eb0f1a9bacaa61184638e81a506d0b292e36c2490db4bb7dda3dc1e9251825d",
+      "services/screentransport/screensinkprocessor/include/image_sink_processor.h": "f3b9f87075198ab55366cee7262d3c36eb00c018639d489a956eb44ededa0d08",
+      "services/screentransport/screensinkprocessor/src/image_sink_processor.cpp": "59fe31d6ce312f811ce063d4b49e63dbff4c9a46942126775d4f8191ac3fb10e",
+      "services/screentransport/screensinktrans/include/iscreen_sink_trans.h": "eac7e53d1adb7ea3a60e55934804924b88dfa7a3caba93fd2663d47f16e87a7a",
+      "services/screentransport/screensinktrans/include/iscreen_sink_trans_callback.h": "1e0a22b14ccdc2218126cd7480d09637b0776d76cce57b727729e46c8bbc872b",
+      "services/screentransport/screensinktrans/include/screen_sink_trans.h": "08cc8f5142853e408879de51265ddd7490ba8f560cd07af14c53cb826084f500",
+      "services/screentransport/screensinktrans/src/screen_sink_trans.cpp": "e9c0140b74a68fe4e1bb5b79a78825f972935a3a7f0a108d210829e29cd6a13f",
+      "services/screentransport/screensourceprocessor/encoder/include/image_encoder_callback.h": "4f9606914f429e8b01964d97b8451cc4356dcd11b031d908629b325cd0bd72ed",
+      "services/screentransport/screensourceprocessor/encoder/include/image_source_encoder.h": "57faca676812be23080b317028e7683bf4cdbb960a816e944fd8ec0eac060eac",
+      "services/screentransport/screensourceprocessor/encoder/src/image_encoder_callback.cpp": "21470822f59e50ee090b6b814299f4f120e2ae1d18ea3e63e2211288a3791ea8",
+      "services/screentransport/screensourceprocessor/encoder/src/image_source_encoder.cpp": "8616af834ee3a9cc991019bbd57e032f63c6e28967992119c9d80b0c48cb9f77",
+      "services/screentransport/screensourceprocessor/include/iimage_source_processor.h": "8b79b0a7e9d36d5068ac15eca723c5d432c9376f44f2abf27b756ea34f533d8f",
+      "services/screentransport/screensourceprocessor/include/iimage_source_processor_listener.h": "d31972d8522059c814df014bf2be086fb749b59defc0cd11ec64d95af4afed5f",
+      "services/screentransport/screensourceprocessor/include/image_source_processor.h": "83e08dde51168b67ddc4a12358fd32ffb77cb5b7642e04db3709771830a61001",
+      "services/screentransport/screensourceprocessor/src/image_source_processor.cpp": "2e3821b3a25856fbe33b8e1c9d109d9eb6e93ab778126a093a5ade0fc37881e0",
+      "services/screentransport/screensourcetrans/include/iscreen_source_trans.h": "0f0defd514bc777a5fbeaec1dfe697d7b43b2e42f19d34b72f292d6a3c66e3c0",
+      "services/screentransport/screensourcetrans/include/iscreen_source_trans_callback.h": "c5acce83a233bac2c2d1976a5f021ff04d7a867c6eabe0c977f958fa498f28f1",
+      "services/screentransport/screensourcetrans/include/screen_source_trans.h": "bc8933da45312c5b063578a02710518b33d3195b424359e2283118135d63462d",
+      "services/screentransport/screensourcetrans/src/screen_source_trans.cpp": "53f76aaa5c2050b03cf04a482851955c5aa337a1199bb6f7feeb9629f4a5c3ca",
+      "services/softbusadapter/include/isoftbus_listener.h": "398d2a0b665e67d44e19bff82ccf017e3250b9535f170610482ce7922e9d538a",
+      "services/softbusadapter/include/softbus_adapter.h": "dd2300c76db632e7a0be112c468746ce90cbfdedce2c7566ed0aca9629cb0654",
+      "services/softbusadapter/src/softbus_adapter.cpp": "463aa46def9959e2e1f0935537d826ed8cd11efa4bdf358ca521a702b7160871"
+    },
+    "unexamined": [
+      {
+        "file": "common/include/dscreen_constants.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "common/include/dscreen_errcode.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "common/include/dscreen_hisysevent.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "common/include/dscreen_hitrace.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "common/include/dscreen_log.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "common/include/dscreen_sa_process_state.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "common/include/dscreen_util.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "common/src/dscreen_hisysevent.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "common/src/dscreen_log.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "common/src/dscreen_sa_process_state.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "common/src/dscreen_util.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_sink/include/callback/dscreen_sink_load_callback.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_sink/include/dscreen_sink_handler.h",
+        "parse_status": "partial",
+        "reason": "incomplete_ast:partial",
+        "analysis_status": "not_analyzed"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_sink/include/dscreen_sink_proxy.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_sink/include/idscreen_sink.h",
+        "parse_status": "partial",
+        "reason": "incomplete_ast:partial",
+        "analysis_status": "not_analyzed"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_sink/src/callback/dscreen_sink_load_callback.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_sink/src/dscreen_sink_handler.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_sink/src/dscreen_sink_proxy.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_source/include/callback/dscreen_source_callback.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_source/include/callback/dscreen_source_callback_stub.h",
+        "parse_status": "partial",
+        "reason": "incomplete_ast:partial",
+        "analysis_status": "not_analyzed"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_source/include/callback/dscreen_source_load_callback.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_source/include/callback/idscreen_source_callback.h",
+        "parse_status": "partial",
+        "reason": "incomplete_ast:partial",
+        "analysis_status": "not_analyzed"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_source/include/dscreen_source_handler.h",
+        "parse_status": "partial",
+        "reason": "incomplete_ast:partial",
+        "analysis_status": "not_analyzed"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_source/include/dscreen_source_proxy.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_source/include/idscreen_source.h",
+        "parse_status": "partial",
+        "reason": "incomplete_ast:partial",
+        "analysis_status": "not_analyzed"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_source/src/callback/dscreen_source_callback.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_source/src/callback/dscreen_source_callback_stub.cpp",
+        "parse_status": "partial",
+        "reason": "incomplete_ast:partial",
+        "analysis_status": "not_analyzed"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_source/src/callback/dscreen_source_load_callback.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_source/src/dscreen_source_handler.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "interfaces/innerkits/native_cpp/screen_source/src/dscreen_source_proxy.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "screenhandler/include/dscreen_handler.h",
+        "parse_status": "partial",
+        "reason": "incomplete_ast:partial",
+        "analysis_status": "not_analyzed"
+      },
+      {
+        "file": "screenhandler/src/dscreen_handler.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/common/databuffer/include/data_buffer.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/common/databuffer/src/data_buffer.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/common/screen_channel/include/iscreen_channel.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/common/screen_channel/include/iscreen_channel_listener.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/common/utils/include/dscreen_maprelation.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/common/utils/include/video_param.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/common/utils/src/dscreen_maprelation.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/common/utils/src/video_param.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenclient/include/screen_client.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenclient/include/screen_client_common.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenclient/include/screen_client_window_adapter.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenclient/src/screen_client.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenclient/src/screen_client_window_adapter.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screendemo/decoder_demo.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screendemo/decoder_demo.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screendemo/test.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sinkservice/dscreenservice/include/dscreen_sink_service.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sinkservice/dscreenservice/include/dscreen_sink_stub.h",
+        "parse_status": "partial",
+        "reason": "incomplete_ast:partial",
+        "analysis_status": "not_analyzed"
+      },
+      {
+        "file": "services/screenservice/sinkservice/dscreenservice/src/dscreen_sink_service.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sinkservice/dscreenservice/src/dscreen_sink_stub.cpp",
+        "parse_status": "partial",
+        "reason": "incomplete_ast:partial",
+        "analysis_status": "not_analyzed"
+      },
+      {
+        "file": "services/screenservice/sinkservice/screenregionmgr/include/screenregion.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sinkservice/screenregionmgr/include/screenregionmgr.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sinkservice/screenregionmgr/src/screenregion.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sinkservice/screenregionmgr/src/screenregionmgr.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sourceservice/dscreenmgr/include/dscreen.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sourceservice/dscreenmgr/include/dscreen_manager.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sourceservice/dscreenmgr/include/screen_manager_adapter.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sourceservice/dscreenmgr/src/dscreen.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sourceservice/dscreenmgr/src/dscreen_manager.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sourceservice/dscreenmgr/src/screen_manager_adapter.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sourceservice/dscreenservice/include/callback/dscreen_source_callback_proxy.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sourceservice/dscreenservice/include/dscreen_source_service.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sourceservice/dscreenservice/include/dscreen_source_stub.h",
+        "parse_status": "partial",
+        "reason": "incomplete_ast:partial",
+        "analysis_status": "not_analyzed"
+      },
+      {
+        "file": "services/screenservice/sourceservice/dscreenservice/src/callback/dscreen_source_callback_proxy.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sourceservice/dscreenservice/src/dscreen_source_service.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screenservice/sourceservice/dscreenservice/src/dscreen_source_stub.cpp",
+        "parse_status": "partial",
+        "reason": "incomplete_ast:partial",
+        "analysis_status": "not_analyzed"
+      },
+      {
+        "file": "services/screentransport/screendatachannel/include/screen_data_channel_impl.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screendatachannel/src/screen_data_channel_impl.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensinkprocessor/decoder/include/image_decoder_callback.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensinkprocessor/decoder/include/image_sink_decoder.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensinkprocessor/decoder/src/image_decoder_callback.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensinkprocessor/decoder/src/image_sink_decoder.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensinkprocessor/include/iimage_sink_processor.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensinkprocessor/include/iimage_sink_processor_listener.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensinkprocessor/include/image_sink_processor.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensinkprocessor/src/image_sink_processor.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensinktrans/include/iscreen_sink_trans.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensinktrans/include/iscreen_sink_trans_callback.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensinktrans/include/screen_sink_trans.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensinktrans/src/screen_sink_trans.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensourceprocessor/encoder/include/image_encoder_callback.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensourceprocessor/encoder/include/image_source_encoder.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensourceprocessor/encoder/src/image_encoder_callback.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensourceprocessor/encoder/src/image_source_encoder.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensourceprocessor/include/iimage_source_processor.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensourceprocessor/include/iimage_source_processor_listener.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensourceprocessor/include/image_source_processor.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensourceprocessor/src/image_source_processor.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensourcetrans/include/iscreen_source_trans.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensourcetrans/include/iscreen_source_trans_callback.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensourcetrans/include/screen_source_trans.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/screentransport/screensourcetrans/src/screen_source_trans.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/softbusadapter/include/isoftbus_listener.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/softbusadapter/include/softbus_adapter.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "services/softbusadapter/src/softbus_adapter.cpp",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      }
+    ],
+    "inspected_files": [
+      "common/include/dscreen_constants.h",
+      "common/include/dscreen_errcode.h",
+      "common/include/dscreen_hisysevent.h",
+      "common/include/dscreen_hitrace.h",
+      "common/include/dscreen_log.h",
+      "common/include/dscreen_sa_process_state.h",
+      "common/include/dscreen_util.h",
+      "common/src/dscreen_hisysevent.cpp",
+      "common/src/dscreen_log.cpp",
+      "common/src/dscreen_sa_process_state.cpp",
+      "common/src/dscreen_util.cpp",
+      "interfaces/innerkits/native_cpp/screen_sink/include/callback/dscreen_sink_load_callback.h",
+      "interfaces/innerkits/native_cpp/screen_sink/include/dscreen_sink_proxy.h",
+      "interfaces/innerkits/native_cpp/screen_sink/src/callback/dscreen_sink_load_callback.cpp",
+      "interfaces/innerkits/native_cpp/screen_sink/src/dscreen_sink_handler.cpp",
+      "interfaces/innerkits/native_cpp/screen_sink/src/dscreen_sink_proxy.cpp",
+      "interfaces/innerkits/native_cpp/screen_source/include/callback/dscreen_source_callback.h",
+      "interfaces/innerkits/native_cpp/screen_source/include/callback/dscreen_source_load_callback.h",
+      "interfaces/innerkits/native_cpp/screen_source/include/dscreen_source_proxy.h",
+      "interfaces/innerkits/native_cpp/screen_source/src/callback/dscreen_source_callback.cpp",
+      "interfaces/innerkits/native_cpp/screen_source/src/callback/dscreen_source_load_callback.cpp",
+      "interfaces/innerkits/native_cpp/screen_source/src/dscreen_source_handler.cpp",
+      "interfaces/innerkits/native_cpp/screen_source/src/dscreen_source_proxy.cpp",
+      "screenhandler/src/dscreen_handler.cpp",
+      "services/common/databuffer/include/data_buffer.h",
+      "services/common/databuffer/src/data_buffer.cpp",
+      "services/common/screen_channel/include/iscreen_channel.h",
+      "services/common/screen_channel/include/iscreen_channel_listener.h",
+      "services/common/utils/include/dscreen_maprelation.h",
+      "services/common/utils/include/video_param.h",
+      "services/common/utils/src/dscreen_maprelation.cpp",
+      "services/common/utils/src/video_param.cpp",
+      "services/screenclient/include/screen_client.h",
+      "services/screenclient/include/screen_client_common.h",
+      "services/screenclient/include/screen_client_window_adapter.h",
+      "services/screenclient/src/screen_client.cpp",
+      "services/screenclient/src/screen_client_window_adapter.cpp",
+      "services/screendemo/decoder_demo.cpp",
+      "services/screendemo/decoder_demo.h",
+      "services/screendemo/test.cpp",
+      "services/screenservice/sinkservice/dscreenservice/include/dscreen_sink_service.h",
+      "services/screenservice/sinkservice/dscreenservice/src/dscreen_sink_service.cpp",
+      "services/screenservice/sinkservice/screenregionmgr/include/screenregion.h",
+      "services/screenservice/sinkservice/screenregionmgr/include/screenregionmgr.h",
+      "services/screenservice/sinkservice/screenregionmgr/src/screenregion.cpp",
+      "services/screenservice/sinkservice/screenregionmgr/src/screenregionmgr.cpp",
+      "services/screenservice/sourceservice/dscreenmgr/include/dscreen.h",
+      "services/screenservice/sourceservice/dscreenmgr/include/dscreen_manager.h",
+      "services/screenservice/sourceservice/dscreenmgr/include/screen_manager_adapter.h",
+      "services/screenservice/sourceservice/dscreenmgr/src/dscreen.cpp",
+      "services/screenservice/sourceservice/dscreenmgr/src/dscreen_manager.cpp",
+      "services/screenservice/sourceservice/dscreenmgr/src/screen_manager_adapter.cpp",
+      "services/screenservice/sourceservice/dscreenservice/include/callback/dscreen_source_callback_proxy.h",
+      "services/screenservice/sourceservice/dscreenservice/include/dscreen_source_service.h",
+      "services/screenservice/sourceservice/dscreenservice/src/callback/dscreen_source_callback_proxy.cpp",
+      "services/screenservice/sourceservice/dscreenservice/src/dscreen_source_service.cpp",
+      "services/screentransport/screendatachannel/include/screen_data_channel_impl.h",
+      "services/screentransport/screendatachannel/src/screen_data_channel_impl.cpp",
+      "services/screentransport/screensinkprocessor/decoder/include/image_decoder_callback.h",
+      "services/screentransport/screensinkprocessor/decoder/include/image_sink_decoder.h",
+      "services/screentransport/screensinkprocessor/decoder/src/image_decoder_callback.cpp",
+      "services/screentransport/screensinkprocessor/decoder/src/image_sink_decoder.cpp",
+      "services/screentransport/screensinkprocessor/include/iimage_sink_processor.h",
+      "services/screentransport/screensinkprocessor/include/iimage_sink_processor_listener.h",
+      "services/screentransport/screensinkprocessor/include/image_sink_processor.h",
+      "services/screentransport/screensinkprocessor/src/image_sink_processor.cpp",
+      "services/screentransport/screensinktrans/include/iscreen_sink_trans.h",
+      "services/screentransport/screensinktrans/include/iscreen_sink_trans_callback.h",
+      "services/screentransport/screensinktrans/include/screen_sink_trans.h",
+      "services/screentransport/screensinktrans/src/screen_sink_trans.cpp",
+      "services/screentransport/screensourceprocessor/encoder/include/image_encoder_callback.h",
+      "services/screentransport/screensourceprocessor/encoder/include/image_source_encoder.h",
+      "services/screentransport/screensourceprocessor/encoder/src/image_encoder_callback.cpp",
+      "services/screentransport/screensourceprocessor/encoder/src/image_source_encoder.cpp",
+      "services/screentransport/screensourceprocessor/include/iimage_source_processor.h",
+      "services/screentransport/screensourceprocessor/include/iimage_source_processor_listener.h",
+      "services/screentransport/screensourceprocessor/include/image_source_processor.h",
+      "services/screentransport/screensourceprocessor/src/image_source_processor.cpp",
+      "services/screentransport/screensourcetrans/include/iscreen_source_trans.h",
+      "services/screentransport/screensourcetrans/include/iscreen_source_trans_callback.h",
+      "services/screentransport/screensourcetrans/include/screen_source_trans.h",
+      "services/screentransport/screensourcetrans/src/screen_source_trans.cpp",
+      "services/softbusadapter/include/isoftbus_listener.h",
+      "services/softbusadapter/include/softbus_adapter.h",
+      "services/softbusadapter/src/softbus_adapter.cpp"
+    ],
+    "not_analyzed_files": [
+      "interfaces/innerkits/native_cpp/screen_sink/include/dscreen_sink_handler.h",
+      "interfaces/innerkits/native_cpp/screen_sink/include/idscreen_sink.h",
+      "interfaces/innerkits/native_cpp/screen_source/include/callback/dscreen_source_callback_stub.h",
+      "interfaces/innerkits/native_cpp/screen_source/include/callback/idscreen_source_callback.h",
+      "interfaces/innerkits/native_cpp/screen_source/include/dscreen_source_handler.h",
+      "interfaces/innerkits/native_cpp/screen_source/include/idscreen_source.h",
+      "interfaces/innerkits/native_cpp/screen_source/src/callback/dscreen_source_callback_stub.cpp",
+      "screenhandler/include/dscreen_handler.h",
+      "services/screenservice/sinkservice/dscreenservice/include/dscreen_sink_stub.h",
+      "services/screenservice/sinkservice/dscreenservice/src/dscreen_sink_stub.cpp",
+      "services/screenservice/sourceservice/dscreenservice/include/dscreen_source_stub.h",
+      "services/screenservice/sourceservice/dscreenservice/src/dscreen_source_stub.cpp"
+    ],
+    "coverage_counts": {
+      "complete": 0,
+      "partial": 85,
+      "not_analyzed": 12,
+      "failed": 0
+    },
+    "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+    "evidence_obligations": []
+  },
+  "same_scope_replay_equal": true,
+  "report_hashes": {
+    "first.json": "e8dcf6023443aee180c9d7008d519b7b13db712a66658983f1d6aae22c7e620e",
+    "replay.json": "04940aab24ba54385a417d3339eddfbecf1e6e0bf3684ba5f82516346cb1a4e2"
+  },
+  "wall_seconds_two_runs": 1.1613,
+  "peak_rss_kib": 36732,
+  "validated_vulnerability": 0,
+  "limitations": [
+    "Unreviewed source profile: fallback is candidate-only and reports blocked/partial coverage.",
+    "Two identical executions are a stability check, not an independent holdout.",
+    "No candidate is not evidence of a clean component or no vulnerability."
+  ]
+}

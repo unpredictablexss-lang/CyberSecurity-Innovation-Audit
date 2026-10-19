@@ -1,0 +1,222 @@
+{
+  "schema": 1,
+  "experiment": "D39 Workbench Catalog/API/Worker/report/source-viewer old/fixed replay",
+  "detector": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.16.0",
+  "upstream_repository": "openharmony/bundlemanager_app_domain_verify",
+  "upstream_vulnerable_commit": "7121401db97c3fedba57ae188148249567e09e18",
+  "upstream_fixed_commit": "d01a9581e35a22c0a58e1e446556ae3d3c189af3",
+  "validated_vulnerability": 0,
+  "product_status": "unknown",
+  "independent_human_review": "pending",
+  "repeat_run_count": 2,
+  "repeat_runs_semantically_identical": true,
+  "repeat_run_signatures": [
+    [
+      {
+        "case": "vulnerable",
+        "fixture": "d39_cve_2026_58313_lru_vulnerable.h",
+        "source_sha256": "77cf22fe5fc52a1f365f556344360ba4912341c1b6875f8778e40ca80c576ad4",
+        "local_scan_commit": "3021a83e1d40209a8202709d5265b66ee910962b",
+        "job_status": "completed",
+        "detector_version": "0.16.0",
+        "detector_status": "completed",
+        "candidate_count": 1,
+        "candidate_id": "ohscanner.known_disclosed_cves:599b23160d11165e",
+        "candidate_file": "frameworks/common/include/utils/lru_cache_util.h",
+        "candidate_line": 56,
+        "source_viewer_sha256": "77cf22fe5fc52a1f365f556344360ba4912341c1b6875f8778e40ca80c576ad4",
+        "validated_vulnerability": 0
+      },
+      {
+        "case": "fixed",
+        "fixture": "d39_cve_2026_58313_lru_fixed.h",
+        "source_sha256": "a9bed219a9e789ff71072846d786894cee90042602ddff18f7c2b133e81947ad",
+        "local_scan_commit": "cc0a7c0db1df0b0176bd130579bae8517433191a",
+        "job_status": "completed",
+        "detector_version": "0.16.0",
+        "detector_status": "completed",
+        "candidate_count": 0,
+        "candidate_id": null,
+        "candidate_file": null,
+        "candidate_line": null,
+        "source_viewer_sha256": null,
+        "validated_vulnerability": 0
+      }
+    ],
+    [
+      {
+        "case": "vulnerable",
+        "fixture": "d39_cve_2026_58313_lru_vulnerable.h",
+        "source_sha256": "77cf22fe5fc52a1f365f556344360ba4912341c1b6875f8778e40ca80c576ad4",
+        "local_scan_commit": "3021a83e1d40209a8202709d5265b66ee910962b",
+        "job_status": "completed",
+        "detector_version": "0.16.0",
+        "detector_status": "completed",
+        "candidate_count": 1,
+        "candidate_id": "ohscanner.known_disclosed_cves:599b23160d11165e",
+        "candidate_file": "frameworks/common/include/utils/lru_cache_util.h",
+        "candidate_line": 56,
+        "source_viewer_sha256": "77cf22fe5fc52a1f365f556344360ba4912341c1b6875f8778e40ca80c576ad4",
+        "validated_vulnerability": 0
+      },
+      {
+        "case": "fixed",
+        "fixture": "d39_cve_2026_58313_lru_fixed.h",
+        "source_sha256": "a9bed219a9e789ff71072846d786894cee90042602ddff18f7c2b133e81947ad",
+        "local_scan_commit": "cc0a7c0db1df0b0176bd130579bae8517433191a",
+        "job_status": "completed",
+        "detector_version": "0.16.0",
+        "detector_status": "completed",
+        "candidate_count": 0,
+        "candidate_id": null,
+        "candidate_file": null,
+        "candidate_line": null,
+        "source_viewer_sha256": null,
+        "validated_vulnerability": 0
+      }
+    ]
+  ],
+  "limitations": [
+    "This verifies opt-in Catalog selection, API planning, Worker execution, report persistence and source hash binding; it is not browser automation.",
+    "The repositories contain only one pinned header and are not a complete component or OpenHarmony product build.",
+    "Static candidates and the separate component ASan harness do not establish product reachability or impact."
+  ],
+  "cases": [
+    {
+      "case": "vulnerable",
+      "fixture": "d39_cve_2026_58313_lru_vulnerable.h",
+      "source_sha256": "77cf22fe5fc52a1f365f556344360ba4912341c1b6875f8778e40ca80c576ad4",
+      "local_scan_commit": "3021a83e1d40209a8202709d5265b66ee910962b",
+      "job_status": "completed",
+      "detector_version": "0.16.0",
+      "detector_status": "completed",
+      "coverage": {
+        "scope_mode": "per_file",
+        "status": "complete",
+        "applicable_files": 1,
+        "analyzed_files": [
+          "frameworks/common/include/utils/lru_cache_util.h"
+        ],
+        "partially_inspected_files": [],
+        "source_sha256": {
+          "frameworks/common/include/utils/lru_cache_util.h": "77cf22fe5fc52a1f365f556344360ba4912341c1b6875f8778e40ca80c576ad4"
+        },
+        "unexamined": [],
+        "inspected_files": [
+          "frameworks/common/include/utils/lru_cache_util.h"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 1,
+          "partial": 0,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.known_disclosed_cves:599b23160d11165e",
+            "file": "frameworks/common/include/utils/lru_cache_util.h",
+            "source_sha256": "77cf22fe5fc52a1f365f556344360ba4912341c1b6875f8778e40ca80c576ad4",
+            "analysis_status": "analyzed",
+            "source_binding": {
+              "repository": "fixture/d39-vulnerable",
+              "commit": "3021a83e1d40209a8202709d5265b66ee910962b",
+              "snapshot_sha256": "c22da4f4f945fdfd9f84517d7cbb827a936b467578cb5febb2c547e7a4a6a1ae",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.known_disclosed_cves",
+              "detector_version": "0.16.0",
+              "rule_id": "ohknowncve-appdomainverify-cve-2026-58313",
+              "file": "frameworks/common/include/utils/lru_cache_util.h",
+              "source_sha256": "77cf22fe5fc52a1f365f556344360ba4912341c1b6875f8778e40ca80c576ad4"
+            },
+            "consequence_impact": "availability_or_memory_safety",
+            "consequence_cwe": "CWE-416",
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "component_identity",
+                "description": "Bind source to exact built component/version.",
+                "status": "missing"
+              },
+              {
+                "kind": "product_build",
+                "description": "Confirm component is included in target product build.",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_path",
+                "description": "Trace attacker-controlled input to the vulnerable API/path.",
+                "status": "missing"
+              },
+              {
+                "kind": "impact",
+                "description": "Verify product impact with controlled evidence.",
+                "status": "missing"
+              }
+            ]
+          }
+        ]
+      },
+      "candidate_count": 1,
+      "candidate_id": "ohscanner.known_disclosed_cves:599b23160d11165e",
+      "candidate_file": "frameworks/common/include/utils/lru_cache_util.h",
+      "candidate_line": 56,
+      "source_viewer_sha256": "77cf22fe5fc52a1f365f556344360ba4912341c1b6875f8778e40ca80c576ad4",
+      "validated_vulnerability": 0,
+      "limitations": [
+        "Diagnostics are candidates/evidence only, not proof of security impact.",
+        "Zero diagnostics does NOT mean the component is free of vulnerabilities.",
+        "Git origin name is user declared; source is pinned local objects, not an OH product build.",
+        "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation."
+      ]
+    },
+    {
+      "case": "fixed",
+      "fixture": "d39_cve_2026_58313_lru_fixed.h",
+      "source_sha256": "a9bed219a9e789ff71072846d786894cee90042602ddff18f7c2b133e81947ad",
+      "local_scan_commit": "cc0a7c0db1df0b0176bd130579bae8517433191a",
+      "job_status": "completed",
+      "detector_version": "0.16.0",
+      "detector_status": "completed",
+      "coverage": {
+        "scope_mode": "per_file",
+        "status": "complete",
+        "applicable_files": 1,
+        "analyzed_files": [
+          "frameworks/common/include/utils/lru_cache_util.h"
+        ],
+        "partially_inspected_files": [],
+        "source_sha256": {
+          "frameworks/common/include/utils/lru_cache_util.h": "a9bed219a9e789ff71072846d786894cee90042602ddff18f7c2b133e81947ad"
+        },
+        "unexamined": [],
+        "inspected_files": [
+          "frameworks/common/include/utils/lru_cache_util.h"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 1,
+          "partial": 0,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": []
+      },
+      "candidate_count": 0,
+      "candidate_id": null,
+      "candidate_file": null,
+      "candidate_line": null,
+      "source_viewer_sha256": null,
+      "validated_vulnerability": 0,
+      "limitations": [
+        "Diagnostics are candidates/evidence only, not proof of security impact.",
+        "Zero diagnostics does NOT mean the component is free of vulnerabilities.",
+        "Git origin name is user declared; source is pinned local objects, not an OH product build.",
+        "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation."
+      ]
+    }
+  ]
+}

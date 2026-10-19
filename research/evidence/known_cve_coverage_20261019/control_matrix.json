@@ -1,0 +1,728 @@
+{
+  "schema": "ohscanner.known-cve-control-matrix/1",
+  "detector_id": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.16.0",
+  "review_blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+  "cases": [
+    {
+      "cve": "CVE-2026-46675",
+      "mechanism": "libpng sequential read use-after-free",
+      "review_disposition": "component reproduction confirmed; product unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_libpng_affected_and_fixed_version_markers",
+            "test_libpng_sequence_requires_end_without_row_read"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_libpng_affected_and_fixed_version_markers"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_libpng_sequence_requires_end_without_row_read"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "not_applicable",
+          "tests": [],
+          "note": "No independent unrelated upstream source shape is pinned for this exact disclosed mechanism; a wrong-path zero result would not add semantic evidence."
+        },
+        "unknown": {
+          "status": "covered",
+          "tests": [
+            "test_partial_parse_retains_lexical_candidate_but_blocks_coverage"
+          ],
+          "note": "Partial parsing retains the lexical candidate while run status is blocked and remaining coverage is unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2025-9900",
+      "mechanism": "libtiff palette read out-of-bounds write",
+      "review_disposition": "component reproduction confirmed; product unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_libtiff_vulnerable_fixed_and_unrelated_guard_shapes"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_libtiff_vulnerable_fixed_and_unrelated_guard_shapes"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_libtiff_vulnerable_fixed_and_unrelated_guard_shapes"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "not_applicable",
+          "tests": [],
+          "note": "No independent unrelated upstream source shape is pinned for this exact disclosed mechanism; a wrong-path zero result would not add semantic evidence."
+        },
+        "unknown": {
+          "status": "covered_by_shared_gate",
+          "tests": [
+            "tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_all_matches_remain_candidate_obligated"
+          ],
+          "note": "All rule findings use the shared _finding helper with identity_quality=partial and four missing evidence obligations; product applicability remains unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2026-92391",
+      "mechanism": "libcurl owned MIME recursive free",
+      "review_disposition": "local source path supported; product call chain unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_curl_recursive_owned_mime_cleanup"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_curl_recursive_owned_mime_cleanup"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_curl_recursive_owned_mime_cleanup"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "not_applicable",
+          "tests": [],
+          "note": "No independent unrelated upstream source shape is pinned for this exact disclosed mechanism; a wrong-path zero result would not add semantic evidence."
+        },
+        "unknown": {
+          "status": "covered_by_shared_gate",
+          "tests": [
+            "tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_all_matches_remain_candidate_obligated"
+          ],
+          "note": "All rule findings use the shared _finding helper with identity_quality=partial and four missing evidence obligations; product applicability remains unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2026-67216",
+      "mechanism": "cJSON_Compare exponential CPU complexity",
+      "review_disposition": "local source shape supported; product unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_cjson_recursive_bidirectional_linear_matching"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "not_applicable",
+          "tests": [],
+          "note": "No upstream fixed Git blob is pinned for this mechanism. The non-recursive local source is kept as a safe control and is not mislabeled as a verified fix."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_cjson_non_recursive_or_parse_only_controls"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "covered",
+          "tests": [
+            "test_cjson_non_recursive_or_parse_only_controls"
+          ],
+          "note": "Explicit renamed, parse-only, constant, partial-fix, or wrong-context control is retained."
+        },
+        "unknown": {
+          "status": "covered_by_shared_gate",
+          "tests": [
+            "tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_all_matches_remain_candidate_obligated"
+          ],
+          "note": "All rule findings use the shared _finding helper with identity_quality=partial and four missing evidence obligations; product applicability remains unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2026-67215",
+      "mechanism": "cJSON JSON Patch unbounded recursion",
+      "review_disposition": "local source shape supported; product unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_cjson_json_patch_unbounded_recursion_candidate"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_cjson_json_patch_unbounded_recursion_candidate"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_cjson_json_patch_unbounded_recursion_candidate"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "not_applicable",
+          "tests": [],
+          "note": "No independent unrelated upstream source shape is pinned for this exact disclosed mechanism; a wrong-path zero result would not add semantic evidence."
+        },
+        "unknown": {
+          "status": "covered_by_shared_gate",
+          "tests": [
+            "tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_all_matches_remain_candidate_obligated"
+          ],
+          "note": "All rule findings use the shared _finding helper with identity_quality=partial and four missing evidence obligations; product applicability remains unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2026-27648",
+      "mechanism": "webview FlowBuffer out-of-bounds write",
+      "review_disposition": "public disclosure; product applicability unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_webview_flowbuffer_cve_vulnerable_fixed_and_unrelated_shapes",
+            "test_webview_flowbuffer_candidate_survives_partial_parse"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_webview_flowbuffer_cve_vulnerable_fixed_and_unrelated_shapes"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_webview_flowbuffer_cve_vulnerable_fixed_and_unrelated_shapes"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "covered",
+          "tests": [
+            "test_webview_flowbuffer_cve_vulnerable_fixed_and_unrelated_shapes"
+          ],
+          "note": "Explicit renamed, parse-only, constant, partial-fix, or wrong-context control is retained."
+        },
+        "unknown": {
+          "status": "covered",
+          "tests": [
+            "test_webview_flowbuffer_candidate_survives_partial_parse"
+          ],
+          "note": "Partial parsing retains the lexical candidate while run status is blocked and remaining coverage is unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2025-25212",
+      "mechanism": "pasteboard observer registration local DoS",
+      "review_disposition": "public disclosure; product applicability unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_pasteboard_disclosed_cves_and_guarded_controls"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_pasteboard_disclosed_cves_and_guarded_controls"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_pasteboard_disclosed_cves_and_guarded_controls"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "not_applicable",
+          "tests": [],
+          "note": "No independent unrelated upstream source shape is pinned for this exact disclosed mechanism; a wrong-path zero result would not add semantic evidence."
+        },
+        "unknown": {
+          "status": "covered_by_shared_gate",
+          "tests": [
+            "tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_all_matches_remain_candidate_obligated"
+          ],
+          "note": "All rule findings use the shared _finding helper with identity_quality=partial and four missing evidence obligations; product applicability remains unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2022-45877",
+      "mechanism": "device-manager PIN serialized through SoftBus",
+      "review_disposition": "public disclosure; product applicability unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_device_manager_cve_2022_45877_pin_serialized_to_softbus_and_fixed"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_device_manager_cve_2022_45877_pin_serialized_to_softbus_and_fixed"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_device_manager_cve_2022_45877_pin_serialized_to_softbus_and_fixed"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "covered",
+          "tests": [
+            "test_device_manager_cve_2022_45877_pin_serialized_to_softbus_and_fixed"
+          ],
+          "note": "Explicit renamed, parse-only, constant, partial-fix, or wrong-context control is retained."
+        },
+        "unknown": {
+          "status": "covered",
+          "tests": [
+            "test_device_manager_cve_2022_45877_pin_serialized_to_softbus_and_fixed"
+          ],
+          "note": "Partial parsing retains the lexical candidate while run status is blocked and remaining coverage is unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2026-58313",
+      "mechanism": "app_domain_verify LRU iterator UAF shape",
+      "review_disposition": "public disclosure; local lock is only a protection sign; root mapping unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_appdomainverify_cve_2026_58313_real_lru_fix_pair"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_appdomainverify_cve_2026_58313_real_lru_fix_pair"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_appdomainverify_cve_2026_58313_real_lru_fix_pair"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "covered",
+          "tests": [
+            "test_appdomainverify_cve_2026_58313_real_lru_fix_pair"
+          ],
+          "note": "Explicit renamed, parse-only, constant, partial-fix, or wrong-context control is retained."
+        },
+        "unknown": {
+          "status": "covered",
+          "tests": [
+            "test_appdomainverify_cve_2026_58313_real_lru_fix_pair"
+          ],
+          "note": "Partial parsing retains the lexical candidate while run status is blocked and remaining coverage is unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2026-28733",
+      "mechanism": "storage statistics iterator lifetime UAF shape",
+      "review_disposition": "public disclosure; current protection signs do not close release applicability",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_storage_cve_2026_28733_iterator_escape_survives_mutex_patch"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_storage_cve_2026_28733_iterator_escape_survives_mutex_patch"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_storage_cve_2026_28733_iterator_escape_survives_mutex_patch"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "covered",
+          "tests": [
+            "test_storage_cve_2026_28733_iterator_escape_survives_mutex_patch"
+          ],
+          "note": "Explicit renamed, parse-only, constant, partial-fix, or wrong-context control is retained."
+        },
+        "unknown": {
+          "status": "covered_by_shared_gate",
+          "tests": [
+            "tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_all_matches_remain_candidate_obligated"
+          ],
+          "note": "All rule findings use the shared _finding helper with identity_quality=partial and four missing evidence obligations; product applicability remains unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2026-25850",
+      "mechanism": "external volume recursive permission widening",
+      "review_disposition": "public disclosure; current source seems fixed; release mapping unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_storage_external_volume_cve_2026_25850_vulnerable_fixed_and_unrelated"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_storage_external_volume_cve_2026_25850_vulnerable_fixed_and_unrelated"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_storage_external_volume_cve_2026_25850_vulnerable_fixed_and_unrelated"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "covered",
+          "tests": [
+            "test_storage_external_volume_cve_2026_25850_vulnerable_fixed_and_unrelated"
+          ],
+          "note": "Explicit renamed, parse-only, constant, partial-fix, or wrong-context control is retained."
+        },
+        "unknown": {
+          "status": "covered_by_shared_gate",
+          "tests": [
+            "tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_all_matches_remain_candidate_obligated"
+          ],
+          "note": "All rule findings use the shared _finding helper with identity_quality=partial and four missing evidence obligations; product applicability remains unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2026-28751",
+      "mechanism": "MTP full-length xattr unterminated buffer shape",
+      "review_disposition": "public disclosure; product applicability unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_storage_cve_2026_28751_mtp_full_length_xattr_and_fixed_shape"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_storage_cve_2026_28751_mtp_full_length_xattr_and_fixed_shape"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_storage_cve_2026_28751_mtp_full_length_xattr_and_fixed_shape"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "covered",
+          "tests": [
+            "test_storage_cve_2026_28751_mtp_full_length_xattr_and_fixed_shape"
+          ],
+          "note": "Explicit renamed, parse-only, constant, partial-fix, or wrong-context control is retained."
+        },
+        "unknown": {
+          "status": "covered_by_shared_gate",
+          "tests": [
+            "tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_all_matches_remain_candidate_obligated"
+          ],
+          "note": "All rule findings use the shared _finding helper with identity_quality=partial and four missing evidence obligations; product applicability remains unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2025-27247",
+      "mechanism": "pasteboard permission bypass shape",
+      "review_disposition": "public disclosure; product applicability unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_pasteboard_disclosed_cves_and_guarded_controls"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_pasteboard_disclosed_cves_and_guarded_controls"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_pasteboard_disclosed_cves_and_guarded_controls"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "not_applicable",
+          "tests": [],
+          "note": "No independent unrelated upstream source shape is pinned for this exact disclosed mechanism; a wrong-path zero result would not add semantic evidence."
+        },
+        "unknown": {
+          "status": "covered_by_shared_gate",
+          "tests": [
+            "tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_all_matches_remain_candidate_obligated"
+          ],
+          "note": "All rule findings use the shared _finding helper with identity_quality=partial and four missing evidence obligations; product applicability remains unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2025-57052",
+      "mechanism": "cJSON JSON Pointer array index validation",
+      "review_disposition": "public disclosure; product applicability unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_cjson_array_pointer_cve_2025_57052_vulnerable_and_fixed_shapes"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_cjson_array_pointer_cve_2025_57052_vulnerable_and_fixed_shapes"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_cjson_array_pointer_cve_2025_57052_vulnerable_and_fixed_shapes"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "covered",
+          "tests": [
+            "test_cjson_array_pointer_cve_2025_57052_vulnerable_and_fixed_shapes"
+          ],
+          "note": "Explicit renamed, parse-only, constant, partial-fix, or wrong-context control is retained."
+        },
+        "unknown": {
+          "status": "covered_by_shared_gate",
+          "tests": [
+            "tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_all_matches_remain_candidate_obligated"
+          ],
+          "note": "All rule findings use the shared _finding helper with identity_quality=partial and four missing evidence obligations; product applicability remains unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2026-33636",
+      "mechanism": "libpng ARM NEON palette boundary access",
+      "review_disposition": "main libpng patch present; Flutter/product pin unknown",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_libpng_neon_palette_cve_2026_33636_exact_upstream_pair"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_libpng_neon_palette_cve_2026_33636_exact_upstream_pair"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_libpng_neon_palette_cve_2026_33636_exact_upstream_pair"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "covered",
+          "tests": [
+            "test_libpng_neon_palette_cve_2026_33636_exact_upstream_pair"
+          ],
+          "note": "Explicit renamed, parse-only, constant, partial-fix, or wrong-context control is retained."
+        },
+        "unknown": {
+          "status": "covered_by_shared_gate",
+          "tests": [
+            "tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_all_matches_remain_candidate_obligated"
+          ],
+          "note": "All rule findings use the shared _finding helper with identity_quality=partial and four missing evidence obligations; product applicability remains unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2026-92392",
+      "mechanism": "curl HTTP/2 upload UAF",
+      "review_disposition": "reviewed local curl 8.8.0 is outside affected range; other builds still require version binding",
+      "detector_disposition": "candidate/unassessed when applicable; not-applicable to reviewed 8.8.0",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_curl_cve_2026_92392_version_bound_cleanup_order_and_fix"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_curl_cve_2026_92392_version_bound_cleanup_order_and_fix"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_curl_cve_2026_92392_version_bound_cleanup_order_and_fix"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "not_applicable",
+          "tests": [],
+          "note": "No independent unrelated upstream source shape is pinned for this exact disclosed mechanism; a wrong-path zero result would not add semantic evidence."
+        },
+        "unknown": {
+          "status": "covered",
+          "tests": [
+            "test_curl_cve_2026_92392_version_bound_cleanup_order_and_fix"
+          ],
+          "note": "Partial parsing retains the lexical candidate while run status is blocked and remaining coverage is unknown."
+        }
+      }
+    },
+    {
+      "cve": "CVE-2026-9079",
+      "mechanism": "curl proxy credential residue",
+      "review_disposition": "public disclosure; local status unknown/suspected fixed",
+      "detector_disposition": "candidate/unassessed",
+      "controls": {
+        "vulnerable": {
+          "status": "covered",
+          "tests": [
+            "test_curl_proxy_credentials_null_clear_vulnerable_and_fixed_shapes"
+          ],
+          "note": "Known dangerous source shape is detected and remains a component-source candidate."
+        },
+        "fixed": {
+          "status": "covered",
+          "tests": [
+            "test_curl_proxy_credentials_null_clear_vulnerable_and_fixed_shapes"
+          ],
+          "note": "Local fixed-shaped source produces zero rule findings; this is not a whole-component safe verdict."
+        },
+        "safe": {
+          "status": "covered",
+          "tests": [
+            "test_curl_proxy_credentials_null_clear_vulnerable_and_fixed_shapes"
+          ],
+          "note": "Local rule-safe shape produces zero findings; this is not a security verdict for the component or product."
+        },
+        "unrelated": {
+          "status": "not_applicable",
+          "tests": [],
+          "note": "No independent unrelated upstream source shape is pinned for this exact disclosed mechanism; a wrong-path zero result would not add semantic evidence."
+        },
+        "unknown": {
+          "status": "covered_by_shared_gate",
+          "tests": [
+            "tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_all_matches_remain_candidate_obligated"
+          ],
+          "note": "All rule findings use the shared _finding helper with identity_quality=partial and four missing evidence obligations; product applicability remains unknown."
+        }
+      }
+    }
+  ],
+  "guardrails": [
+    "A zero-finding fixed/safe/unrelated control is local rule behavior only.",
+    "Every hit remains candidate/unassessed with missing component identity, product build, attacker path, and impact obligations.",
+    "No Precision/Recall claim is made; these disclosed cases are not an independent labelled holdout."
+  ]
+}

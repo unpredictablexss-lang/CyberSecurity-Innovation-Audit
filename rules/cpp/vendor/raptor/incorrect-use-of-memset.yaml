@@ -1,0 +1,37 @@
+rules:
+  - id: raptor-incorrect-use-of-memset
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - vuln
+      vulnerability_class: Mishandled Sensitive Information
+      likelihood: MEDIUM
+      impact: MEDIUM
+      confidence: HIGH
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-683: Function Call With Incorrect Order of Arguments"
+      owasp:
+        - A04:2025 - Cryptographic Failures
+      references:
+        - https://lkml.org/lkml/2009/11/11/336
+        - https://bugs.mysql.com/bug.php?id=23181
+    message: >-
+      The invocation of memset() is easy to get wrong. The second argument
+      is the character and the third argument is the size, but sometimes
+      these arguments are in the wrong order. This results in a no-op.
+    severity: ERROR
+    languages:
+      - c
+      - cpp
+    # NOTE: refer also to `c.lang.security.insecure-use-memset.insecure-use-memset` and `cpp.lang.correctness.memset-removal.memset-removal` for a different potential flaw involving `memset` optimization.
+    pattern-either:
+      - pattern: memset($_, $_, 0)
+      - pattern: memset($_, $_, '\0')
+      - pattern: memset($_, sizeof(...), $_)
+      - pattern: memset_explicit($_, $_, 0)
+      - pattern: memset_explicit($_, $_, '\0')
+      - pattern: memset_explicit($_, sizeof(...), $_)

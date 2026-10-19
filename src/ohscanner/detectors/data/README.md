@@ -1,0 +1,67 @@
+# D: sensitive-material log exposure, v0.15.0 (reviewed profiles plus blocked heuristic fallback)
+
+Detector ID: `ohscanner.data.sensitive_exposure`; current rule family:
+`data.log.sensitive-value` (provisional CWE-532). The detector is registered in main as an explicitly selected research candidate; automatic plans keep it off. The panel labels D as experimental. This development branch adds a blocked name-heuristic fallback for unreviewed repositories and revisions.
+
+Entry: `SensitiveExposureDetector().detect(context, units)` or inject one exact source model for isolated research fixtures.
+Requires the existing `ast` fact. Existing Runner/ToolRunResult v2 and obligations
+carry source SHA and trace; no new global schema/CLI/network/scanner invocation.
+
+The default detector dispatches exact reviewed repository/commit profiles in models.py for DSoftBus session-key material, AccessToken authorization identities, and the D27 IoT Connect derived-key-to-public-log path. Unreviewed repositories/revisions use only the D19 lexical fallback: output from recognized log APIs can retain candidates when a variable, field, or return API has a strong sensitive-name shape. This fallback always reports blocked and per-file partial, even when it finds no candidate; it cannot be read as a clean scan. AccessToken IDs are principals, not bearer secrets; their findings remain conditional privacy candidates. Fixtures explicitly inject a synthetic reviewed model.
+
+Algorithm: detailed Tree-sitter statement walk -> typed material fields or reviewed
+callback/output argument -> local assignments/copies/formatting -> modeled HiLog operand. Public operands are direct candidates; private/default-private operands remain conditional candidates with a sink_privacy obligation. Per-operand format mapping handles %% and * width/precision;
+unsupported formats become partial. The unreviewed fallback uses a narrow sensitive-name vocabulary (password, secret, credential, named key families, and non-ID token shapes); names do not establish contents or secret semantics. Buffer
+contents are not written to diagnostics; only symbol/location dependency steps.
+Unknown wrappers retain tentative dependencies and are not assumed sanitizers.
+Branch joins are may-flow, never path proof. Type binding, initialization, API
+identity, return status, aliases, log runtime configuration/readers and impact
+remain unknown obligations. Detailed expression facts need owner frontend review.
+
+Use the project Python environment with requirements.txt. Local test command:
+`python -m unittest tests.detectors.data.test_sensitive_exposure -v`.
+
+Offline real-source experiment (explicitly reviewed programmatic registry):
+`python -m research.data_sensitive.replay --repo-dir /path/to/pinned/dsoftbus.git --output-dir outputs/reports/d-sensitive`.
+The selected paths and hashes are fixed in research/data_sensitive/source_manifest.json.
+No third-party source is bundled. Obtain the official Git objects separately and
+verify the exact commit; do not substitute an unrelated latest checkout.
+
+D_REVIEW.md, D_LIMITATIONS.md and method_card.md under research/data_sensitive
+explain actual results and pending acceptance. No verified real vulnerability,
+independent holdout or Precision/Recall is claimed. Do not deploy as complete
+whole-component taint analysis. No changes to A/B/C detectors or common platform.
+
+D2: branch exits now explicitly remove non-fallthrough paths; lexical bindings
+restore on scope exit; short-circuit/conditional effects use conservative may-flow.
+D1 source/sink model semantics remain0.1.0. Old32 controls unchanged, new39 D2 controls.
+Read research/data_sensitive/D2_HANDOFF.md for current publication/tests; D1 records
+with push=false describe the historical pre-publication snapshot, not current PR #17.
+
+D3 adds an explicitly selected historical profile (0.3.0 detector / 0.2.0-historical.1 model).
+The default entry remains compatible. Read research/data_sensitive/D3_HANDOFF.md
+for real pre/post experiments, public Runner admission limits and separate user docs.
+The real pre-change candidate is research-only; no confirmed vulnerability is claimed.
+
+D7 extends output binding for address-of local destinations and emits an unresolved
+escape candidate when a modeled sensitive copy/format/source writes through a
+member or otherwise unsupported destination. The change is still syntax-bounded;
+it does not establish alias identity, product impact, or a confirmed vulnerability.
+See research/data_sensitive/D7_IMPLEMENTATION.md and D7_VALIDATION.json.
+
+D8 adds the fixed-source `TRANS_LOG*` and `COMM_LOG*` families plus their
+conditional check-and-return wrappers. D9 adds the upstream HiLog C/C++ public
+macro families with pinned format argument positions; formats remain private by
+default. Unsupported/dynamic formats keep an unresolved candidate. See
+`research/data_sensitive/D8_IMPLEMENTATION.md`, `D9_IMPLEMENTATION.md`, and the
+matching validation records. Neither regression fixtures nor macro mapping alone
+confirm a product vulnerability.
+
+D17 expands the default detector from one exact DSoftBus profile to the exact DSoftBus and AccessToken profiles; unknown repositories/commits still block. Detector 0.12.0 and source-model 0.4.0 record this dispatch change. D18 bumps the detector to 0.13.0 and sink-model to 0.6.0 for the HiLog public macro and message API additions. This adds no generic OpenHarmony version support or product-level accuracy claim. See `research/data_sensitive/D17_DSOFTBUS_CALLEE_BINDING.md`, `research/data_sensitive/D18_G_REPO_AND_HILOG.md`, and the AccessToken replay records.
+
+D12 retains a candidate when a modeled sensitive field is used through a same-name local type whose compiler identity is unresolved; the finding carries a `type_identity` obligation and remains candidate-only. The source model explicitly treats `SessionKey.len` as non-sensitive metadata. See `research/data_sensitive/D12_IMPLEMENTATION.md` and the pinned real-source replay; no new candidate was added to that profile.
+D14 adds DSoftBus LNN/CONN/DISC, DFILE/DFINDER and FILLP wrappers plus HiLog base APIs; signatures and format operand positions were checked against pinned upstream headers and covered by regressions. D18 adds the public HiLog `OH_LOG_*` macros and direct message APIs after checking the `hiviewdfx_hilog` header at the recorded snapshot. The regression validates sink recognition only and does not claim a product exposure. D15 adds an exact-commit, exact-file AccessToken identity profile for source experiments; its one-file replay is partial/blocked and retains candidates only. AccessToken IDs are authorization identities, not bearer secrets. See `research/data_sensitive/D15_ACCESS_TOKEN_REPLAY.md` and its JSON evidence. This profile is not catalog-registered, is not a full component scan, and does not establish a vulnerability or impact.
+
+D19 (development branch, detector 0.14.0) adds a candidate-only fallback for unreviewed repository/commit pairs. It uses semantic sensitive-name shapes and preserves tentative flows through unresolved calls; every scanned file remains partial and the aggregate run blocked, including zero-finding files. It can therefore retain credential/configuration values passed to ordinary APIs as candidates. A fixed Netstack replay reduced 76 heuristic candidates to 59 after excluding protocol/API names such as `WSI_TOKEN_HTTP` and `HTTP_API_KEY_FETCH`; the remaining candidates still require review and do not establish logging, exposure, or impact. Same-scope replay proves output stability only. This is not a reviewed source model, a clean-scan claim, or a precision/recall result. See `research/data_sensitive/D19_HIGH_RECALL_FALLBACK.md`.
+
+D27 (detector 0.15.0) adds an exact-revision communication_iot_connect profile for the pinned LocalControl PBKDF2 output -> UtilsHexify -> IOTC_LOGI public sink path. It is tested with positive/fixed/unrelated/wrong-commit/wrong-arity controls and a repeated API/Worker/report/source-view replay. The source finding remains candidate-only; product build, log configuration/read access, and whether the logged authCode-derived value equals the active transKey remain unknown. See research/data_sensitive/D27_IOTC_KEY_LOG_REPLAY.md and D27_IOTC_PANEL_REPLAY.json.

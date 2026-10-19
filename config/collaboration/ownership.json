@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "description": "Delivery scope check, not a sandbox. The integration owner supplies the immutable base SHA.",
+  "lanes": {
+    "cpp": {
+      "allowed": [
+        "src/ohscanner/detectors/cpp/**",
+        "tests/detectors/test_cpp_*.py",
+        "tests/detectors/fixtures/cpp_*/**",
+        "tests/detectors/shared_ptr_race_fixture_support.py",
+        "tests/test_shared_ptr_race_poc.py",
+        "tests/test_lifetime_uaf_poc.py",
+        "research/evidence/cpp/**",
+        "research/methods/cpp/**",
+        "research/deliveries/cpp/**"
+      ]
+    },
+    "ipc": {
+      "allowed": [
+        "src/ohscanner/detectors/interface/**",
+        "tests/test_ipc_*.py",
+        "tests/fixtures/ipc/**",
+        "research/corpus/ipc/**",
+        "research/methods/interface/**",
+        "research/evidence/interface/**",
+        "research/poc/auth01_minimal_loop/**",
+        "research/deliveries/ipc/**"
+      ]
+    },
+    "ui": {
+      "allowed": [
+        "web/src/pages/**",
+        "web/src/features/**",
+        "web/src/components/**",
+        "web/src/style.css",
+        "web/tests/**",
+        "research/deliveries/ui/**"
+      ]
+    },
+    "platform": {
+      "allowed": [
+        "src/workbench/sources/**",
+        "src/workbench/planning/**",
+        "tests/test_source_*.py",
+        "tests/test_audit_plan*.py",
+        "research/deliveries/platform/**"
+      ]
+    }
+  },
+  "shared_owner_only": [
+    "AGENTS.md",
+    "docs/**",
+    ".github/**",
+    "config/**",
+    "scripts/**",
+    "requirements*.txt",
+    "web/package*.json",
+    "web/src/main.tsx",
+    "web/src/api.ts",
+    "web/src/components.tsx",
+    "src/ohscanner/contracts.py",
+    "src/ohscanner/runner.py",
+    "src/ohscanner/execution.py",
+    "src/ohscanner/detectors/catalog.py",
+    "src/workbench/api.py",
+    "src/workbench/service.py",
+    "src/workbench/store.py",
+    "src/workbench/operations*.py",
+    "src/workbench/settings.py",
+    "src/workbench/worker.py",
+    "src/workbench/validation*.py"
+  ]
+}

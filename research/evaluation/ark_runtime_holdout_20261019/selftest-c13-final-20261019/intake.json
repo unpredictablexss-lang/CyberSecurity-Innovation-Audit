@@ -1,0 +1,62 @@
+{
+  "cases": [
+    {
+      "blob": "synthetic-blob-1",
+      "case_id": "SYNTHETIC-1",
+      "commit": "synthetic-commit-1",
+      "development_leakage_match": false,
+      "development_overlap": false,
+      "family_id": "family-1",
+      "family_split": "holdout",
+      "parser_identity": "tree-sitter-cpp-selftest",
+      "repository": "synthetic://local",
+      "sampling_frame_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "selection_rule_id": "selftest-stratified",
+      "snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000001",
+      "source_path": "case_1.cpp",
+      "source_sha256": "cd210a3192acf1614b030482fd496ef245f872e26580a85bf7a63adcc25ae6e6",
+      "tree": "synthetic-tree-1"
+    },
+    {
+      "blob": "synthetic-blob-2",
+      "case_id": "SYNTHETIC-2",
+      "commit": "synthetic-commit-2",
+      "development_leakage_match": false,
+      "development_overlap": false,
+      "family_id": "family-2",
+      "family_split": "holdout",
+      "parser_identity": "tree-sitter-cpp-selftest",
+      "repository": "synthetic://local",
+      "sampling_frame_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "selection_rule_id": "selftest-stratified",
+      "snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000002",
+      "source_path": "case_2.cpp",
+      "source_sha256": "18db728f3c4a1721d1239562c73cef02ad833ff35e679f5b0ec9913e2dab1320",
+      "tree": "synthetic-tree-2"
+    },
+    {
+      "blob": "synthetic-blob-3",
+      "case_id": "SYNTHETIC-3",
+      "commit": "synthetic-commit-3",
+      "development_leakage_match": false,
+      "development_overlap": false,
+      "family_id": "family-3",
+      "family_split": "holdout",
+      "parser_identity": "tree-sitter-cpp-selftest",
+      "repository": "synthetic://local",
+      "sampling_frame_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "selection_rule_id": "selftest-stratified",
+      "snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000003",
+      "source_path": "case_3.cpp",
+      "source_sha256": "dc75c72ade668073a92a6578cbfd3f934b565d74cf1b54595016a8937cd3a37e",
+      "tree": "synthetic-tree-3"
+    }
+  ],
+  "development_leakage_ledger_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "execution_mode": "pipeline_self_test",
+  "family_split_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+  "preregistration_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "protocol_file_sha256": "aec442d34e799f800fb1c265b1f4bc960424884be37eecc0774a708ce1fcd6ca",
+  "sample_size": 3,
+  "schema": "ohscanner.ark-holdout-intake/v2"
+}

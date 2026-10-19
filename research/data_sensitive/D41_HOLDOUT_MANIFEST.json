@@ -1,0 +1,157 @@
+{
+  "schema": 1,
+  "study": "D41 cross-component sensitive-data exposure holdout",
+  "study_status": "preregistered_not_run",
+  "freeze_date": "2026-10-19",
+  "detector_baseline_commit": "efb79ee2397396f38bb0df5d4703f55d7977f138",
+  "detector_id": "ohscanner.data.sensitive_exposure",
+  "detector_version": "0.17.0",
+  "source_model_version": "0.4.0",
+  "source_profile_catalog_version": "0.1.0",
+  "sink_model_version": "0.7.0",
+  "engine_bundle_sha256": "9d0f2763a97f3fcaaa1841355a89cf8fdd93a422042db2f9dc5a0664dfb0ea9e",
+  "engine_files": [
+    {
+      "path": "src/ohscanner/detectors/data/sensitive_exposure.py",
+      "sha256": "ae1e5387cad0c49d94c4e6dfb1faec2757e581ac3b5c0d93a310353198222b72"
+    },
+    {
+      "path": "src/ohscanner/detectors/data/models.py",
+      "sha256": "7bb987f300f33b329128ea53f2b6b7a58c3e203eab0f1bf6c050b2b9f5dcd1b7"
+    },
+    {
+      "path": "src/ohscanner/execution.py",
+      "sha256": "d7c2867b66a79efd4cfefe76b3c150c0eb430ccc8d6f767bd45827b8025cdc10"
+    },
+    {
+      "path": "src/ohscanner/runner.py",
+      "sha256": "8a223bca0a85f7f4d6979cba7f088ff9f74c781f76bfc533c9afddd4e5607def"
+    },
+    {
+      "path": "src/ohscanner/git_source.py",
+      "sha256": "babcaf165b5ad94c3bbe4a2243a84ec569a59ab650f69899488daee670f784ef"
+    },
+    {
+      "path": "src/ohscanner/indexing.py",
+      "sha256": "4d5feaef9d0c85f571e6b1e75667ab2d2cf628bcaf46e249404e69bba014102a"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "d640566eb055a3844d62caa6314a0900f94e7766e5a619c364e4dca6aa69bb2f"
+    },
+    {
+      "path": "requirements-web.txt",
+      "sha256": "87a5f40bae7b075c16911b5d3ea964559f2ac224e36ad9f549cf2bf496d7ddd7"
+    }
+  ],
+  "selection_policy": {
+    "selection_before_scanning": true,
+    "exclude_development_profiles_and_fixtures": [
+      "openharmony/communication_dsoftbus",
+      "openharmony/security_access_token",
+      "openharmony/communication_iot_connect",
+      "openharmony/communication_wifi",
+      "all existing D1-D40 replay repositories and fixtures"
+    ],
+    "scope": "all eligible C/C++ source paths from pinned Git trees using D19 source-path policy",
+    "repeat_count": 2,
+    "replay_comparison": "candidate identities, coverage, source binding, detector status"
+  },
+  "label_protocol": {
+    "independent_labeler_required": true,
+    "labels": [
+      "supported_risk",
+      "protected_safe",
+      "unrelated",
+      "unknown"
+    ],
+    "current_independent_labels": 0,
+    "do_not_use_machine_candidate_count_as_TP_FP_FN": true,
+    "do_not_promote_to_confirmed": true
+  },
+  "repositories": [
+    {
+      "repository": "openharmony/security_huks",
+      "source_alias": "gitcode-corpus/security_huks",
+      "origin_identity": "https://gitcode.com/openharmony/security_huks.git",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "commit_time": "2026-10-15T17:12:04+08:00",
+      "checkout_clean_at_freeze": true,
+      "eligible_source_files": 537,
+      "scope_paths_sha256": "9e650cff1b53accf2295b38eefa6bd5752f900ab7b68d490d3bb75a6cd6518c6",
+      "profile_status": "unreviewed_source_profile",
+      "label_status": "pending_independent_blind_review"
+    },
+    {
+      "repository": "openharmony/security_certificate_manager",
+      "source_alias": "gitcode-corpus/security_certificate_manager",
+      "origin_identity": "https://gitcode.com/openharmony/security_certificate_manager.git",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "commit_time": "2026-10-13T21:15:26+08:00",
+      "checkout_clean_at_freeze": true,
+      "eligible_source_files": 304,
+      "scope_paths_sha256": "fa07fe0ecc01294551ca1a7d6ab832087a497b8db1610d02a791e808217c8cd2",
+      "profile_status": "unreviewed_source_profile",
+      "label_status": "pending_independent_blind_review"
+    },
+    {
+      "repository": "openharmony/inputmethod_imf",
+      "source_alias": "perf-corpus/inputmethod_imf",
+      "origin_identity": "git@github.com:openharmony/inputmethod_imf.git",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "commit_time": "2026-09-29T17:17:22+08:00",
+      "checkout_clean_at_freeze": true,
+      "eligible_source_files": 402,
+      "scope_paths_sha256": "97c39069192d08480918028ccbbbbcdaff32a004cb870e130abdc57a2347af32",
+      "profile_status": "unreviewed_source_profile",
+      "label_status": "pending_independent_blind_review"
+    },
+    {
+      "repository": "openharmony/window_window_manager",
+      "source_alias": "perf-corpus/window_window_manager",
+      "origin_identity": "git@github.com:openharmony/window_window_manager.git",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "commit_time": "2026-10-08T11:45:03+08:00",
+      "checkout_clean_at_freeze": true,
+      "eligible_source_files": 1079,
+      "scope_paths_sha256": "60fa5155008bdf726023e4187213afdf23ec683889b06dc76100b057a2628047",
+      "profile_status": "unreviewed_source_profile",
+      "label_status": "pending_independent_blind_review"
+    },
+    {
+      "repository": "openharmony/telephony_call_manager",
+      "source_alias": "perf-corpus/telephony_call_manager",
+      "origin_identity": "git@github.com:openharmony/telephony_call_manager.git",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "commit_time": "2026-09-29T20:48:55+08:00",
+      "checkout_clean_at_freeze": true,
+      "eligible_source_files": 393,
+      "scope_paths_sha256": "a8ad768042fa43adf056cabe6e1488c6d0f500e6143de99fa24135a1dc9e5c7b",
+      "profile_status": "unreviewed_source_profile",
+      "label_status": "pending_independent_blind_review"
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "source_alias": "perf-corpus/multimedia_camera_framework",
+      "origin_identity": "git@github.com:openharmony/multimedia_camera_framework.git",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "commit_time": "2026-09-28T19:34:26+08:00",
+      "checkout_clean_at_freeze": true,
+      "eligible_source_files": 1105,
+      "scope_paths_sha256": "21458315b00786a4da59cfa742b83cedf65c4310a5c8d7c50532e642c5d181d2",
+      "profile_status": "unreviewed_source_profile",
+      "label_status": "pending_independent_blind_review"
+    }
+  ],
+  "limitations": [
+    "This preregistration is not a holdout result; no detector run has been performed by this script.",
+    "Local Git source identity is commit/tree/blob based; origin names remain declared repository metadata.",
+    "No product build, runtime log visibility, unauthorized reader, or product impact is evaluated here."
+  ]
+}

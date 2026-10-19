@@ -1,0 +1,45 @@
+{
+  "freeze_payload_sha256": "392fe6a5ff463ac7462a96427efa8766ad018631acd6112957f56d649aba2215",
+  "independence_attestations": {
+    "independent_review": true,
+    "model_outputs_not_seen": true,
+    "other_review_not_seen": true,
+    "parent_fixed_pairing_not_seen": true,
+    "scanner_outputs_not_seen": true,
+    "truth_not_seen": true
+  },
+  "labels": [
+    {
+      "case_pseudonym": "1b494e96a3802f02",
+      "confidence": "low",
+      "evidence": [
+        "line 1"
+      ],
+      "label": "unknown",
+      "rationale": "self-test reviewer B deliberately different classification"
+    },
+    {
+      "case_pseudonym": "9913c5093cca2bd9",
+      "confidence": "low",
+      "evidence": [
+        "line 1"
+      ],
+      "label": "not_vulnerable_shape",
+      "rationale": "self-test reviewer B deliberately different classification"
+    },
+    {
+      "case_pseudonym": "c1ef9844318f8019",
+      "confidence": "low",
+      "evidence": [
+        "line 1"
+      ],
+      "label": "not_vulnerable_shape",
+      "rationale": "self-test reviewer B deliberately different classification"
+    }
+  ],
+  "packet_payload_sha256": "6250e8f499aab27bd8f01bd5779e59539b5e8c2bfbda1c389b73f1d77f8da6e1",
+  "payload_sha256": "e7fa9e233030c81535a1eb5a5d9468e0738a3b2dced74e2fe486687b432ad1e4",
+  "reviewer_id": "B",
+  "schema": "ohscanner.ark-holdout-review-lock/v2",
+  "submission_payload_sha256": "f045a2cdf31a020657d270cf0f7b082984ee8067d576d5ac702df34629f91a6b"
+}

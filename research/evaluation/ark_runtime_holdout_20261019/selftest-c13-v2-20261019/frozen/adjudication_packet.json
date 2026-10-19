@@ -1,0 +1,40 @@
+{
+  "adjudicator_independence_required": {
+    "independent_adjudication": true,
+    "model_outputs_not_seen": true,
+    "parent_fixed_pairing_not_seen": true,
+    "scanner_outputs_not_seen": true,
+    "truth_not_seen": true
+  },
+  "agreements": [
+    {
+      "case_pseudonym": "9913c5093cca2bd9",
+      "label": "not_vulnerable_shape",
+      "route": "agreement"
+    },
+    {
+      "case_pseudonym": "c1ef9844318f8019",
+      "label": "not_vulnerable_shape",
+      "route": "agreement"
+    }
+  ],
+  "disagreements": [
+    {
+      "case_pseudonym": "1b494e96a3802f02",
+      "reviewer_1_evidence": [
+        "line 1"
+      ],
+      "reviewer_1_label": "vulnerable_shape",
+      "reviewer_1_rationale": "self-test reviewer A source shape classification",
+      "reviewer_2_evidence": [
+        "line 1"
+      ],
+      "reviewer_2_label": "unknown",
+      "reviewer_2_rationale": "self-test reviewer B deliberately different classification"
+    }
+  ],
+  "freeze_payload_sha256": "392fe6a5ff463ac7462a96427efa8766ad018631acd6112957f56d649aba2215",
+  "payload_sha256": "1ac3382139e36c0b467bd177dd6c2578302d12faa06b555d8d811c745297499d",
+  "schema": "ohscanner.ark-holdout-adjudication/v2",
+  "status": "THIRD_REVIEW_REQUIRED"
+}

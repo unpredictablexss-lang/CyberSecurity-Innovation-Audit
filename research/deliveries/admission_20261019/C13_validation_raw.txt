@@ -1,0 +1,179 @@
+C13 validation raw
+baseline=842948084660207fd64399cfd598ed93e5593dcc
+
+=== py_compile ===
+command=C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe -m py_compile research/evaluation/ark_runtime_holdout_20261019/holdout_pipeline.py research/evaluation/ark_runtime_holdout_20261019/generate_development_leakage_ledger.py research/evaluation/ark_runtime_holdout_20261019/test_holdout_pipeline.py research/deliveries/product_closure_20261019/generate_c13_product_gate.py
+exit=0 expected=0 result=PASS
+
+
+=== product_gate_generator ===
+command=C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe research/deliveries/product_closure_20261019/generate_c13_product_gate.py
+exit=0 expected=0 result=PASS
+{
+  "status": "GENERATED",
+  "reviewed": 28,
+  "ark_cases": 16,
+  "payload_sha256": "45f68841d23a37b32f88f3472025f86b77019796d9f78ed97c227090678a0abd"
+}
+
+=== development_leakage_ledger_generator ===
+command=C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe research/evaluation/ark_runtime_holdout_20261019/generate_development_leakage_ledger.py --root E:\网安\CyberSecurity-Innovation-Audit-c13-holdout-product-20261019 --protocol research/evaluation/ark_runtime_holdout_20261019/real_holdout_input_protocol.v1.json --known-manifest tests/fixtures/known_cases/known_case_manifest.json --product-gate research/deliveries/product_closure_20261019/C13_candidate_product_gate_audit.json --generated-at 2026-10-19T22:30:00+08:00 --output research/evaluation/ark_runtime_holdout_20261019/development_leakage_ledger.local-development-20261019.json
+exit=0 expected=0 result=PASS
+{
+  "status": "COMPLETE_LOCAL_DEVELOPMENT_ARTIFACTS",
+  "excluded_case_ids": 72,
+  "excluded_sources": 120,
+  "payload_sha256": "2a040ae1cf4fdd9600a0aded3c9c8a588c5a0096c7ef4afbfcfadd7fc736b261"
+}
+
+=== schema_validation ===
+command=pwsh -NoProfile -Command $pairs=@(@('research\evaluation\ark_runtime_holdout_20261019\development_leakage_ledger.schema.json','research\evaluation\ark_runtime_holdout_20261019\development_leakage_ledger.local-development-20261019.json'),@('research\deliveries\product_closure_20261019\product_evidence_gate.schema.json','research\deliveries\product_closure_20261019\C13_candidate_product_gate_audit.json')); foreach($pair in $pairs){ $ok=Get-Content -LiteralPath $pair[1] -Raw | Test-Json -SchemaFile $pair[0]; Write-Output ($pair[0] + '=' + $ok); if(-not $ok){ exit 2 } }
+exit=0 expected=0 result=PASS
+research\evaluation\ark_runtime_holdout_20261019\development_leakage_ledger.schema.json=True
+research\deliveries\product_closure_20261019\product_evidence_gate.schema.json=True
+
+=== holdout_selftest ===
+command=C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe research/evaluation/ark_runtime_holdout_20261019/holdout_pipeline.py self-test --work-dir research/evaluation/ark_runtime_holdout_20261019/selftest-c13-closure-20261019
+exit=0 expected=0 result=PASS
+{
+  "status": "FROZEN_PIPELINE_ONLY",
+  "case_count": 3,
+  "truth_status": "pipeline_self_test_not_reliable"
+}
+{
+  "status": "LOCKED",
+  "reviewer": "A",
+  "payload_sha256": "d352a6bb4f0dccaf8c24fb864be2f5975b65230dc2c3a192e1b4995d3e68061c"
+}
+{
+  "status": "LOCKED",
+  "reviewer": "B",
+  "payload_sha256": "14cad0442001b7447d19e69c8081469322a2d474177d66149128495d48b74705"
+}
+{
+  "status": "THIRD_REVIEW_REQUIRED",
+  "agreements": 2,
+  "disagreements": 1
+}
+{
+  "status": "FINAL_LABELS_AVAILABLE",
+  "label_count": 3
+}
+{
+  "schema": "ohscanner.ark-holdout-selftest/v2",
+  "status": "PASS",
+  "metrics_computed": false,
+  "reason": "synthetic self-test truth is not reliable independent human truth"
+}
+
+=== holdout_unit_tests ===
+command=C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe -m unittest -v research.evaluation.ark_runtime_holdout_20261019.test_holdout_pipeline
+exit=0 expected=0 result=PASS
+test_development_ledger_binds_local_development_artifacts (research.evaluation.ark_runtime_holdout_20261019.test_holdout_pipeline.HoldoutContractTests.test_development_ledger_binds_local_development_artifacts) ... ok
+test_development_overlap_is_rejected (research.evaluation.ark_runtime_holdout_20261019.test_holdout_pipeline.HoldoutContractTests.test_development_overlap_is_rejected) ... ok
+test_pipeline_selftest_preserves_unknown_and_disagreement (research.evaluation.ark_runtime_holdout_20261019.test_holdout_pipeline.HoldoutContractTests.test_pipeline_selftest_preserves_unknown_and_disagreement) ... ok
+test_product_gate_never_promotes_incomplete_candidates (research.evaluation.ark_runtime_holdout_20261019.test_holdout_pipeline.HoldoutContractTests.test_product_gate_never_promotes_incomplete_candidates) ... ok
+test_protocol_hash_and_semantics (research.evaluation.ark_runtime_holdout_20261019.test_holdout_pipeline.HoldoutContractTests.test_protocol_hash_and_semantics) ... ok
+test_real_intake_schema_binds_ledger_file_and_payload (research.evaluation.ark_runtime_holdout_20261019.test_holdout_pipeline.HoldoutContractTests.test_real_intake_schema_binds_ledger_file_and_payload) ... ok
+test_schemas_are_json_and_declare_required_contract (research.evaluation.ark_runtime_holdout_20261019.test_holdout_pipeline.HoldoutContractTests.test_schemas_are_json_and_declare_required_contract) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.444s
+
+OK
+{
+  "status": "FROZEN_PIPELINE_ONLY",
+  "case_count": 3,
+  "truth_status": "pipeline_self_test_not_reliable"
+}
+{
+  "status": "LOCKED",
+  "reviewer": "A",
+  "payload_sha256": "d352a6bb4f0dccaf8c24fb864be2f5975b65230dc2c3a192e1b4995d3e68061c"
+}
+{
+  "status": "LOCKED",
+  "reviewer": "B",
+  "payload_sha256": "14cad0442001b7447d19e69c8081469322a2d474177d66149128495d48b74705"
+}
+{
+  "status": "THIRD_REVIEW_REQUIRED",
+  "agreements": 2,
+  "disagreements": 1
+}
+{
+  "status": "FINAL_LABELS_AVAILABLE",
+  "label_count": 3
+}
+{
+  "schema": "ohscanner.ark-holdout-selftest/v2",
+  "status": "PASS",
+  "metrics_computed": false,
+  "reason": "synthetic self-test truth is not reliable independent human truth"
+}
+
+=== focused_scanner_regression ===
+command=C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe -m unittest -v tests.detectors.ark_runtime.test_c12_deep_semantics tests.detectors.ark_runtime.test_c11_alias_cross_helper tests.detectors.test_known_case_corpus
+exit=0 expected=0 result=PASS
+test_constant_helper_is_not_identity (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_constant_helper_is_not_identity) ... ok
+test_direct_identity_is_still_supported (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_direct_identity_is_still_supported) ... ok
+test_forwarding_chain_is_bounded_identity_summary (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_forwarding_chain_is_bounded_identity_summary) ... ok
+test_unknown_forwarding_helper_remains_unknown (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_unknown_forwarding_helper_remains_unknown) ... ok
+test_unrelated_type_helper_is_not_promoted (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_unrelated_type_helper_is_not_promoted) ... ok
+test_effectful_helper_has_explicit_contract_and_is_not_identity (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_effectful_helper_has_explicit_contract_and_is_not_identity) ... ok
+test_fixed_identity_helper_is_effect_free (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_fixed_identity_helper_is_effect_free) ... ok
+test_safe_local_identity_is_not_a_security_verdict (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_safe_local_identity_is_not_a_security_verdict) ... ok
+test_unknown_helper_is_explicitly_effectful (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_unknown_helper_is_explicitly_effectful) ... ok
+test_unrelated_helper_has_no_applicable_contract (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_unrelated_helper_has_no_applicable_contract) ... ok
+test_fixed_exit_has_no_backedge (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_fixed_exit_has_no_backedge) ... ok
+test_host_loop_is_unrelated_to_generated_cfg (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_host_loop_is_unrelated_to_generated_cfg) ... ok
+test_positive_loop_end_backedge_is_audited (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_positive_loop_end_backedge_is_audited) ... ok
+test_safe_zero_iteration_shape_is_not_a_security_verdict (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_safe_zero_iteration_shape_is_not_a_security_verdict) ... ok
+test_unknown_loop_target_is_fail_closed (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_unknown_loop_target_is_fail_closed) ... ok
+test_fixed_unsigned_width_control_has_no_candidate (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_fixed_unsigned_width_control_has_no_candidate) ... ok
+test_positive_signed_narrowing_is_candidate (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_positive_signed_narrowing_is_candidate) ... ok
+test_safe_local_zero_product_is_not_security_verdict (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_safe_local_zero_product_is_not_security_verdict) ... ok
+test_unknown_conversion_is_explicitly_partial (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_unknown_conversion_is_explicitly_partial) ... ok
+test_unrelated_conversion_without_allocation_is_not_applicable (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_unrelated_conversion_without_allocation_is_not_applicable) ... ok
+test_alias_cast_helper_and_loop_controls_are_fail_closed (tests.detectors.ark_runtime.test_c11_alias_cross_helper.C11AliasCrossHelperControls.test_alias_cast_helper_and_loop_controls_are_fail_closed) ... ok
+test_known_case_parent_or_explicit_unknown_and_fixed_controls_do_not_regress (tests.detectors.ark_runtime.test_c11_alias_cross_helper.C11AliasCrossHelperControls.test_known_case_parent_or_explicit_unknown_and_fixed_controls_do_not_regress) ... ok
+test_unknown_wrapper_is_not_promoted_to_safe (tests.detectors.ark_runtime.test_c11_alias_cross_helper.C11AliasCrossHelperControls.test_unknown_wrapper_is_not_promoted_to_safe) ... ok
+test_bounded_p12_json5_rust_adapters_preserve_language_limitations (tests.detectors.test_known_case_corpus.KnownCaseCorpusTests.test_bounded_p12_json5_rust_adapters_preserve_language_limitations) ... ok
+test_exclusions_are_not_applicable_and_never_product_safe (tests.detectors.test_known_case_corpus.KnownCaseCorpusTests.test_exclusions_are_not_applicable_and_never_product_safe) ... ok
+test_manifest_is_28_way_source_bound_disposition_corpus (tests.detectors.test_known_case_corpus.KnownCaseCorpusTests.test_manifest_is_28_way_source_bound_disposition_corpus) ... ok
+test_public_cve_rows_have_existing_positive_fixed_or_boundary_controls (tests.detectors.test_known_case_corpus.KnownCaseCorpusTests.test_public_cve_rows_have_existing_positive_fixed_or_boundary_controls) ... ok
+test_repository_control_public_pairs_replay_parent_to_fixed (tests.detectors.test_known_case_corpus.KnownCaseCorpusTests.test_repository_control_public_pairs_replay_parent_to_fixed) ... ok
+test_review_shape_positive_fixed_safe_unrelated_and_unknown_controls (tests.detectors.test_known_case_corpus.KnownCaseCorpusTests.test_review_shape_positive_fixed_safe_unrelated_and_unknown_controls) ... ok
+test_source_identity_requires_full_object_tree_and_hash_binding (tests.detectors.test_known_case_corpus.KnownCaseCorpusTests.test_source_identity_requires_full_object_tree_and_hash_binding) ... ok
+test_unsupported_manual_candidates_are_explicitly_bounded (tests.detectors.test_known_case_corpus.KnownCaseCorpusTests.test_unsupported_manual_candidates_are_explicitly_bounded) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 0.565s
+
+OK
+
+=== synthetic_score ===
+command=C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe research/evaluation/ark_runtime_holdout_20261019/holdout_pipeline.py score --truth research/evaluation/ark_runtime_holdout_20261019/selftest-c13-closure-20261019/truth.json --final-labels research/evaluation/ark_runtime_holdout_20261019/selftest-c13-closure-20261019/frozen/final_labels.json --freeze-manifest research/evaluation/ark_runtime_holdout_20261019/selftest-c13-closure-20261019/frozen/freeze_manifest.json --cases research/evaluation/ark_runtime_holdout_20261019/selftest-c13-closure-20261019/intake.json --protocol research/evaluation/ark_runtime_holdout_20261019/real_holdout_input_protocol.v1.json --development-leakage-ledger research/evaluation/ark_runtime_holdout_20261019/selftest-c13-closure-20261019/development_leakage_ledger.json --secret-file research/evaluation/ark_runtime_holdout_20261019/selftest-c13-closure-20261019/selftest-secret.txt --output research/deliveries/admission_20261019/C13_synthetic_score.json
+exit=3 expected=3 result=PASS
+{
+  "schema": "ohscanner.ark-holdout-score/v2",
+  "status": "NOT_RUN",
+  "reason": "truth is not reliable independent human adjudicated",
+  "precision": null,
+  "recall": null,
+  "f1": null
+}
+
+=== json_parse ===
+command=C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe -c import json,pathlib; root=pathlib.Path(r'.'); files=[p for p in list((root/'research/evaluation/ark_runtime_holdout_20261019').rglob('*.json'))+list((root/'research/deliveries/admission_20261019').glob('*.json'))+list((root/'research/deliveries/product_closure_20261019').glob('*.json')) if '__pycache__' not in p.parts]; [json.loads(p.read_text(encoding='utf-8')) for p in files]; print(f'JSON_PARSE_OK={len(files)}')
+exit=0 expected=0 result=PASS
+JSON_PARSE_OK=118
+
+=== git_diff_check ===
+command=git diff --check
+exit=0 expected=0 result=PASS
+
+
+=== secret_ignore_check ===
+command=git check-ignore -q research/evaluation/ark_runtime_holdout_20261019/selftest-c13-closure-20261019/selftest-secret.txt
+exit=0 expected=0 result=PASS

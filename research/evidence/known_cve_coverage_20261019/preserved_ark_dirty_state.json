@@ -1,0 +1,1999 @@
+{
+  "schema": "ohscanner.ark-repair-preserved-state/2",
+  "observed_at": "2026-10-19T16:00:00+08:00",
+  "task_write_scope": [
+    "tests/detectors/test_known_disclosed_cves.py",
+    "research/evidence/known_cve_coverage_20261019/"
+  ],
+  "scope_note": "All listed Ark/C10 paths were left untouched. Some paths appeared during concurrent work after this task began and are recorded as final observed state, not as this task's output.",
+  "entries": [
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/analysis.py",
+      "status": " M",
+      "length": 18484,
+      "sha256": "ad6e2854293d72d869fc74cccdd9816b06c7d940cbaf0507e2ede1b3d6dec340"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/receiver_guard.py",
+      "status": " M",
+      "length": 10535,
+      "sha256": "80cb6c3239cfc18be3ef3c47e26a10ac44084ff671df828dd88a70dbe0833461"
+    },
+    {
+      "path": "tests/detectors/test_known_disclosed_cves.py",
+      "status": " M",
+      "length": 34167,
+      "sha256": "00d2436b4d21f589d330fdd00ec802409d994573978b560ad62f5c17fdf72507"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/",
+      "status": "??",
+      "file_count": 377,
+      "files": [
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/capture_run.py",
+          "length": 1154,
+          "sha256": "82105f68427c1aa26228ab18902fef614663e42dafc6da1230d75030cdc0e3f3"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/control_matrix.json",
+          "length": 31870,
+          "sha256": "88cf3ccf546fe8cf408205126d3e134288da81a57343d0169cfcfcbe52252614"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/cve_disposition_summary.md",
+          "length": 3748,
+          "sha256": "99950ea3a718f3025d86e407ff4b8fd614fa011ff5f1f69c325ca9ecc3de949d"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/dispositions.md",
+          "length": 8722,
+          "sha256": "414a094ae95a9805784a8dc05e80869b60cfed41e60efd1f5f5c261fbb69fb40"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/hashes.json",
+          "length": 4821,
+          "sha256": "57cd4961cf03badab5527ffd8e13679f97b9f540a4c26b163a20b276fbe2e188"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/limitations.md",
+          "length": 1364,
+          "sha256": "a1ac741516220c6f232a4dcc230be0428274a7a32e931e2b90af42081884fd34"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration.diff",
+          "length": 4033,
+          "sha256": "038f64ec354b39c64912a380e7720fb0b883949c58b4b8dc3b98b89f8a7044c3"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_baseline_known_cves_run.json",
+          "length": 748,
+          "sha256": "7090d162a4cace8e117f07f475890f2c736b646b96483a8b31892f76c7e0405f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_baseline_known_cves_stderr.txt",
+          "length": 5825,
+          "sha256": "6e4318d6f97253af92614c4bf89e94f7cc2d8adecdbfdbe04417714f8a6ad711"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_baseline_known_cves_stdout.txt",
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_compileall_path_length_failure_run.json",
+          "length": 698,
+          "sha256": "79565fc2313a27ea3af26326b287cc09accf516f7219392607179e7ceb1518a3"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_compileall_path_length_failure_stderr.txt",
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_compileall_path_length_failure_stdout.txt",
+          "length": 430,
+          "sha256": "07c484d5a9a442a67e5be7b72a5f2c7117874a4316438ced06e7ff4ae0027009"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_compileall_prefix_length_failure_run.json",
+          "length": 698,
+          "sha256": "e9744d964a2e32126409c89509f5cc38f3c191f588c1bfc599a178044f4bb30f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_compileall_prefix_length_failure_stderr.txt",
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_compileall_prefix_length_failure_stdout.txt",
+          "length": 430,
+          "sha256": "b3efad5c2d72a5f7bb5735cd7af8478a88ce2e538369f8e9d64a45b20cc11972"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_compileall_run.json",
+          "length": 577,
+          "sha256": "82ef2d3ff482327a5c09998bb2978a23019ec7bb6d313540bf767edc885707c7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_compileall_stderr.txt",
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_compileall_stdout.txt",
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_git_diff_check_run.json",
+          "length": 574,
+          "sha256": "9c69c005aed7ef3455a498962e8ade81f93a4d16d3107fcf2f0e0485fa4e3702"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_git_diff_check_stderr.txt",
+          "length": 286,
+          "sha256": "ddc4a1e99ffbfbe7a3742a809f302da19e1c87091f7df26e2829369710d626b9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_git_diff_check_stdout.txt",
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_known_cves_after_fix_run.json",
+          "length": 751,
+          "sha256": "0f395d7bfe3055f96f0a0b8bb5b295a9ebf56d2876a9c8c94d0faf95646a44fb"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_known_cves_after_fix_stderr.txt",
+          "length": 4111,
+          "sha256": "88a111618a8aa315e61c339fb97ead61de7fa052737f7465e87d2f89e954a96e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/migration_known_cves_after_fix_stdout.txt",
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/minimal.patch",
+          "length": 4033,
+          "sha256": "038f64ec354b39c64912a380e7720fb0b883949c58b4b8dc3b98b89f8a7044c3"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/next_minimal_slice.md",
+          "length": 725,
+          "sha256": "38beaf4c4e2d432c7faabb7ea25071f4a44e524628c0de5a96c925fe14cd95b8"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/preserved_ark_dirty_state.json",
+          "length": 1300,
+          "sha256": "6f4e9f82322199e1f370b2ca1a43160fa25bb49b9757e13707669e2a8b695a2a"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/__future__.cpython-312.pyc",
+          "length": 4771,
+          "sha256": "8cb31d10506a728ea44c29d6e903259b8d8aeac711e00b191a65a786bc2723cb"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/_compression.cpython-312.pyc",
+          "length": 7545,
+          "sha256": "a19f5b53e782c527f2ea003311f773946274ecb1466a70a964b87c91724f8839"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/_weakrefset.cpython-312.pyc",
+          "length": 11804,
+          "sha256": "3c8d4150cb369e1adac5bf055d716794236e04adf3923ef8ab0fce732f2c82c3"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/argparse.cpython-312.pyc",
+          "length": 101122,
+          "sha256": "9b209da2d2245398e1d61bfcfacacf544af632b48c23504f80b553569940fad8"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/ast.cpython-312.pyc",
+          "length": 99801,
+          "sha256": "e9dfe31cdb9b6db09aabc09c7cbf9278a63bb6fa365da3a4118a86eea7d64a32"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/bisect.cpython-312.pyc",
+          "length": 3708,
+          "sha256": "93d0f2c5f846d8e89394fe2f189e79d1b47856b23f98c4fe1bca8ac05cc2b728"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/bz2.cpython-312.pyc",
+          "length": 15200,
+          "sha256": "4e0fb0de0df6da2ec322215fd3423f89751d45ba16233c1f2d64825bfd4e4821"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/collections/__init__.cpython-312.pyc",
+          "length": 73004,
+          "sha256": "003b97b69919d19e9a2eae86c705b6b53da902f18584f8648883b3b59be16768"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/collections/abc.cpython-312.pyc",
+          "length": 316,
+          "sha256": "f6abb6d795ffa80179ef29e0ea1b1d84299d280089f9534458c9c074b82a3093"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/compileall.cpython-312.pyc",
+          "length": 20414,
+          "sha256": "341cc2919489eadb98d0a82e360b8a4729893c6482f35cec2c5288ea6bb392dd"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/contextlib.cpython-312.pyc",
+          "length": 30417,
+          "sha256": "665fea39e86251b714ecfaff19c6ab354beaa68d8fbc5e3b653e6c5360697589"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/copy.cpython-312.pyc",
+          "length": 9824,
+          "sha256": "8ef0261df974490582547b5775905417ff2a569cf0ea824b2b1e94c243ed79d9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/copyreg.cpython-312.pyc",
+          "length": 7466,
+          "sha256": "7cae42f57fa6f8517e89770a0a83d819a594d490cbaf3bab97ab0e8143844203"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/dataclasses.cpython-312.pyc",
+          "length": 44958,
+          "sha256": "a427be1b92fdf8395a9ee44b952e68d8e42e345a2bd955eb9dd6eb2c061638de"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/difflib.cpython-312.pyc",
+          "length": 75446,
+          "sha256": "6504ed9b05074ed012b432de5b7b749e354f319c2910d79ec8a92d26369b7797"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/dis.cpython-312.pyc",
+          "length": 34508,
+          "sha256": "576516186ae693f9b75df7ea8a7ad1daed02a652e0b5dc48d1b408d6f0816a0e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/encodings/__init__.cpython-312.pyc",
+          "length": 5842,
+          "sha256": "16645a758aa5450a8bf297dc55cd41123b6d318cb5e675c2e3f529871885a508"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/encodings/aliases.cpython-312.pyc",
+          "length": 12475,
+          "sha256": "ead4fc5c327cb5ebc88ed414620c74d6eb06c130003b64479dcbbf0765b5f64c"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/encodings/gbk.cpython-312.pyc",
+          "length": 2055,
+          "sha256": "f2a90d92580c103ccf131eec80d463b3244b29805076dccfcac4d85c0dcc6a59"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/encodings/utf_8.cpython-312.pyc",
+          "length": 2214,
+          "sha256": "84935cc72a9757fb4c2bce526e5d16652783c2d35fc4a259b57b7838f8882e6e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/encodings/utf_8_sig.cpython-312.pyc",
+          "length": 6812,
+          "sha256": "4044adae88c538b4dd91c09ef2463eceba031aade5d7359804ce47eaeca0303f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/enum.cpython-312.pyc",
+          "length": 80411,
+          "sha256": "864cbe79c6e0d7e9b9b357c125366c1110c6cf0a5c1cdff82133e0308b52e229"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/filecmp.cpython-312.pyc",
+          "length": 14732,
+          "sha256": "7a57fbfcf7df5f3653ecba03fc3d3561bf130b589e2a83586d66146868f89c66"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/fnmatch.cpython-312.pyc",
+          "length": 6547,
+          "sha256": "2ba2172c27e276f5af8e3d378c51bc03183d293eed2c3e798b08f1d791cd55c9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/functools.cpython-312.pyc",
+          "length": 40409,
+          "sha256": "21baafbe124bf9f7866c9e46bd53c29e6ef052567a5c3b98f00d4ba08e2cd460"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/gettext.cpython-312.pyc",
+          "length": 21850,
+          "sha256": "626c3826cd020d5bd2a46452f1974fb336ef665ee2896a17fc513654e2b6c6cb"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/hashlib.cpython-312.pyc",
+          "length": 8147,
+          "sha256": "7b61b81fae5ad1a501c2d81d90e2273a92282efea2b082b61fc4bd498b8a886d"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/heapq.cpython-312.pyc",
+          "length": 18005,
+          "sha256": "7054c486b218046c65888227c72eb44bc3a86ed2ee86063941879ee1208f13eb"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/importlib/__init__.cpython-312.pyc",
+          "length": 4626,
+          "sha256": "aeb843543452074ce638be3a78ee32eff290563bf4dfa1e902011c7560c16e6e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/importlib/_abc.cpython-312.pyc",
+          "length": 1710,
+          "sha256": "72fc35e97d6d1dcfb0b50b943730dbf228a7f97c8024f090967211dd4f22ecc9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/importlib/resources/__init__.cpython-312.pyc",
+          "length": 704,
+          "sha256": "9a3881175747a9eb602ba1b47c3c398312c0b0fa2055fa29a5b02fa53d0c3d80"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/importlib/resources/_adapters.cpython-312.pyc",
+          "length": 9678,
+          "sha256": "a2ae84f175c59b78e696c16ff2f9b844a441b263d1a888375a0d53b802e79ee3"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/importlib/resources/_common.cpython-312.pyc",
+          "length": 8798,
+          "sha256": "27cc2e2d9f27d2a39694f4820e9f0d98e0a54d94194888e8514b2fc3943d0eef"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/importlib/resources/_legacy.cpython-312.pyc",
+          "length": 4910,
+          "sha256": "06b5c14e1b190439654aafe46b02551323814dbea259112e7828118be3bc8f94"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/importlib/resources/abc.cpython-312.pyc",
+          "length": 8970,
+          "sha256": "f9f6df95341b810953e0bde4cc335bf4d4af78927dda6f2f5ff9eb4ef3c567f8"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/inspect.cpython-312.pyc",
+          "length": 134430,
+          "sha256": "1c8fdb35b039353c41ed5260c04e60f458e9c9d91a921648ef5e9fbdbd4be524"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/ipaddress.cpython-312.pyc",
+          "length": 93843,
+          "sha256": "7d273b3279dfbdff389f935617b2d3f1663cf46835d5c3f2aede8ed30565e59d"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/json/__init__.cpython-312.pyc",
+          "length": 13682,
+          "sha256": "a0e481697973b87e9bd1004579d1d6a3eee1b16428bcc5a9c3f42f055ffed2c7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/json/decoder.cpython-312.pyc",
+          "length": 13980,
+          "sha256": "8308dcb8c49cec5ecd77ad24ca13323dec971226ff477fa3038fc05a7f76d3c7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/json/encoder.cpython-312.pyc",
+          "length": 15155,
+          "sha256": "099bc0a4cc617f379cc6955b3bd76936e123d64092e9ea0a9a976d0477bcc115"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/json/scanner.cpython-312.pyc",
+          "length": 3397,
+          "sha256": "5d9ad515c2a13cfe7f58ef9d3adb2eb8f6a55bbd1522a65f7637637a3eb3328f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/keyword.cpython-312.pyc",
+          "length": 1108,
+          "sha256": "1473e4dc182f0c05766167fe9b30cc911c1d1914d826bb612154e625181fea87"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/linecache.cpython-312.pyc",
+          "length": 6616,
+          "sha256": "67223d45a340654ddb3700cd78317720bc638deeb6216d3c3255700e76d636d3"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/locale.cpython-312.pyc",
+          "length": 59555,
+          "sha256": "1f1b7c09db8988c36fd06b4d01739878084626f06c4a9215f57e37d75c76d90e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/lzma.cpython-312.pyc",
+          "length": 15922,
+          "sha256": "2624dcd8aef8e9f7d6c6dabde1b76f1b8810a80ab8d992e951860599ef7c677b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/opcode.cpython-312.pyc",
+          "length": 14783,
+          "sha256": "610e2ac319fe6de51c881740b4a2fc863aeda3808bee9f0c4d63483663e2b3f9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/operator.cpython-312.pyc",
+          "length": 17419,
+          "sha256": "811561635db5b5d171266a95c2625a82afe292ee4650e614a386ff4752b500ac"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/pathlib.cpython-312.pyc",
+          "length": 61765,
+          "sha256": "ebac2481c2d430803ebebbc896f252c42ca14f001cc548ff1391562aae1bf5e2"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/pkgutil.cpython-312.pyc",
+          "length": 19954,
+          "sha256": "a190c773efd04c78ded9801ee27579c0da034db6c931bed32880818f0d1ee565"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/pprint.cpython-312.pyc",
+          "length": 29495,
+          "sha256": "47bc26e6f94a0215bd512ce4306e0d52cb5a81b40adef007fc6d178c9a02c3bf"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/py_compile.cpython-312.pyc",
+          "length": 10095,
+          "sha256": "c8d5fcd20f46b0ee7f23509c6dd9372c5ea78fb514695ff82be503cdec2c14e5"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/random.cpython-312.pyc",
+          "length": 33212,
+          "sha256": "4cc0892e680faeeb9551f65a0d41605197c614c5844e91b39797145247806ded"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/re/__init__.cpython-312.pyc",
+          "length": 17997,
+          "sha256": "ab788286fe94766280778ab119f72563818900f33dd238dc3aeae71fe3592948"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/re/_casefix.cpython-312.pyc",
+          "length": 1883,
+          "sha256": "7cbd8cf607b0207f572ac160bbb2436d636bda1fb566325bb8f5edf8ff27b9bd"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/re/_compiler.cpython-312.pyc",
+          "length": 26561,
+          "sha256": "f02dbc7d32e800fba1aeeb40d8c1facc0d59b3a3e2f58cca4ab26d6f3f88f905"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/re/_constants.cpython-312.pyc",
+          "length": 5370,
+          "sha256": "1f7bca42592279d38fbf3bcb40eb819df0dfb0f0b2aa5733897c812b9ca28903"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/re/_parser.cpython-312.pyc",
+          "length": 42014,
+          "sha256": "dbc25237cc1c36774663fb6bc7d5dede2b895e629bf618f1caf5899fef715688"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/reprlib.cpython-312.pyc",
+          "length": 10293,
+          "sha256": "c457b653122a5b380e958b86faffa4df0c4769e0439604aeb57a025eead077b1"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/shutil.cpython-312.pyc",
+          "length": 65382,
+          "sha256": "1e299b65eb6f8678d583d4184713bbf288774db0aa99350f274ebbf05f1e09a9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/signal.cpython-312.pyc",
+          "length": 4524,
+          "sha256": "13a7c22f0b0f9afd5e91db862738eb5e668c9e8d8a3317cd8878a6e957f1858b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/site-packages/_distutils_hack/__init__.cpython-312.pyc",
+          "length": 10630,
+          "sha256": "f9425e5f55915c78c5b569418aac3abd381131d5a405d0b1a5c4ac3cc5a50b7f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/struct.cpython-312.pyc",
+          "length": 392,
+          "sha256": "773dd3119e0287377df7b353ac3f59d4dc02ba619527db7b7983e871bc37c6b6"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/subprocess.cpython-312.pyc",
+          "length": 79121,
+          "sha256": "5d817a42adabfe65dee75b1990e344a50c9d2b9618d7c2450b630ada8fe909f3"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/tempfile.cpython-312.pyc",
+          "length": 40667,
+          "sha256": "08a6252ecb65ac2906e552210181732e5ff5ba2c3258c851715de84f3b79ffdb"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/textwrap.cpython-312.pyc",
+          "length": 18347,
+          "sha256": "e8d6b91d4120293d8de50828b0102d32fd7f28e613672b0999e94ac13954add6"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/threading.cpython-312.pyc",
+          "length": 65283,
+          "sha256": "cd17e90e43e4db9ab965d0bd4df92ac2ec5030c4dca62095f1a31f6c160e58f2"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/token.cpython-312.pyc",
+          "length": 3636,
+          "sha256": "a601cc22a7ff88fc84975869ed204cfcad607bdea55efd9aa30ab5e90d31b754"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/tokenize.cpython-312.pyc",
+          "length": 25443,
+          "sha256": "a7ba947c30981e486a44aff7a7772a0d9106b932392a70d1e67da55d71916bec"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/traceback.cpython-312.pyc",
+          "length": 51534,
+          "sha256": "da83dd7e3a31f82bd5f82dd34472c9d284a767fe4cf1c66258b096ace319142a"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/types.cpython-312.pyc",
+          "length": 15012,
+          "sha256": "e17135711baffaf7455a51ad5ed21a92a5d41bb645b381cbfa8698f4ca27e026"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/typing.cpython-312.pyc",
+          "length": 142453,
+          "sha256": "c7d42c918a5b8e4926e2430b64da24ba5e5fe69e1f087d9e870eedb10d80aeb5"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/unittest/__init__.cpython-312.pyc",
+          "length": 3499,
+          "sha256": "6a224ac23339ef2854e503b53232f01ef932144e829ffd69811b2160fff6dad8"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/unittest/__main__.cpython-312.pyc",
+          "length": 683,
+          "sha256": "89986016a5076ca4d8ece2720d6741f2490853971ad587747c9352afcebcbd43"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/unittest/case.cpython-312.pyc",
+          "length": 69822,
+          "sha256": "fd065b84ce80ac7d872a4c9ddd71373615a0d2554ff54e6f1b7e3ca1e5151c9c"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/unittest/loader.cpython-312.pyc",
+          "length": 24084,
+          "sha256": "6a7d434404745466add3d15c691ba8e9cc7810d56157ce5614d599e19e0d2886"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/unittest/main.cpython-312.pyc",
+          "length": 13626,
+          "sha256": "4a4995a351109321ae8a1d0a9e324931ac0182a914289a359d26daa8c0b26699"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/unittest/result.cpython-312.pyc",
+          "length": 12805,
+          "sha256": "87766df9b22cadcc42b6cf58b401359e07bfa81c540f66d66610fc614e7fa67a"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/unittest/runner.cpython-312.pyc",
+          "length": 16526,
+          "sha256": "12cd75382dbfa7ea841193da83d3060924dc6e338eadcfb58cf2bc1faac8a156"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/unittest/signals.cpython-312.pyc",
+          "length": 3675,
+          "sha256": "7fdcd56b57e913e30cc34d6d9f2c7677c92ef87c5e1bccc5b1429d9412617b5d"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/unittest/suite.cpython-312.pyc",
+          "length": 15496,
+          "sha256": "b69a7eb4190699cdaa8d09f4d49bb1c6f65596adcd1a54deab9ca87ded648668"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/unittest/util.cpython-312.pyc",
+          "length": 7324,
+          "sha256": "72836201c75af81251336a6300c338a8c28660b0d13c7bc65e029774e77271d3"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/urllib/__init__.cpython-312.pyc",
+          "length": 202,
+          "sha256": "bfb86a9fd4739900737d721d9c34009b0c985f4968cbd599851be084caff2b46"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/urllib/parse.cpython-312.pyc",
+          "length": 50680,
+          "sha256": "d32f89c8c81525858dfe5abfb0100bbf638474d179b67e21881125bc0d7e5b44"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/warnings.cpython-312.pyc",
+          "length": 23894,
+          "sha256": "89351edebbbac7090d079fd943eb67ed1ca9b17bdc19997d84ca41ba315ec7c2"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/weakref.cpython-312.pyc",
+          "length": 31278,
+          "sha256": "6c4c8dda01c87f79b410958d3ae0f9afad49c4b823e067ce9b360516463facd7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/__init__.cpython-312.pyc",
+          "length": 238,
+          "sha256": "70e6a025367c775e8108137d38b4d4f957c2a29db6057eaf60fe39a25ad65bda"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/analyzer/__init__.cpython-312.pyc",
+          "length": 200,
+          "sha256": "a571788f08f7aec1c39b66e2727069dc3b02ef6efec2e76b916e9ec9167530ef"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/baseline/__init__.cpython-312.pyc",
+          "length": 335,
+          "sha256": "f7478a9e8025d2ade1552c6849c102085b448411cb53d96ba0f03f0a2cc02051"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/baseline/clang_analyzer.cpython-312.pyc",
+          "length": 12809,
+          "sha256": "1c8dafe2d562b63baef0174160a92472f57394fe9589cc5710d3a88fa8972b73"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/benchmark/__init__.cpython-312.pyc",
+          "length": 945,
+          "sha256": "45d8e50d46663feacd464c08d423f9f6076658ce89a1ad6b5ca40a775dff0217"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/benchmark/compare.cpython-312.pyc",
+          "length": 17743,
+          "sha256": "933ecdc8b037099d28399a3fcd38328f11a87ca65d96f048d9852efb5a12ae1a"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/benchmark/historical.cpython-312.pyc",
+          "length": 21466,
+          "sha256": "011c33de2d4ac90dff2c5bb866d6f128d52923d02ad92b60d876b9781475968b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/benchmark/report_inputs.cpython-312.pyc",
+          "length": 14935,
+          "sha256": "f07b539dd49f3e40b8efffcf7981116e107fea75a5f61fd75b63c9f083673f5e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/benchmark/root_cause_matrix.cpython-312.pyc",
+          "length": 13933,
+          "sha256": "3bf3d75947e7877dfaaffd69ba74440fa67e69f2690bc1571ca362557aae31d6"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/benchmark/scanner_compare.cpython-312.pyc",
+          "length": 10326,
+          "sha256": "b82ce69637b0fe399b0331340f0e864eda95c5af673ffe4cb859c9add3afa44b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/benchmark/source_mapping.cpython-312.pyc",
+          "length": 5031,
+          "sha256": "d8e5f2ccb8fda8c9cc0744ad3f74f488925d68613e4fd8c544061d36db327118"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/benchmark/tool_matrix.cpython-312.pyc",
+          "length": 7192,
+          "sha256": "f596087f8bbacfb5e529e4d11f3208b02fd1905383fb87a266fe88f693b85d9b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/benchmark/tool_result.cpython-312.pyc",
+          "length": 14521,
+          "sha256": "e31bbb3c9d165caee71f661212fe4d5c50f16e5a0b9e6f9ac2f18d75791b0fe7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/case/__init__.cpython-312.pyc",
+          "length": 117,
+          "sha256": "791be1557a9413881a098d8e3ed3803a7ebd1c304d34cc21fcddeccc2b2ef5d7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/case/assembler.cpython-312.pyc",
+          "length": 1902,
+          "sha256": "68057befa99b13817ef9a401ed2635049f645f4c347cdea9a2e6d65b053e581b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/cli/__init__.cpython-312.pyc",
+          "length": 116,
+          "sha256": "0468ebdb6f8dd640efb439ef6d4d508c5cbade0915631c2c71f336101813d7d1"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/cli/__main__.cpython-312.pyc",
+          "length": 224,
+          "sha256": "d37a687a5a9544b5858743cb3a6440976b21add949a273ae5e592431f9d65b63"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/cli/main.cpython-312.pyc",
+          "length": 35462,
+          "sha256": "86158308debd19841e79be3e13614d8ddc820e9abc6feacc8d9177320d743837"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/core/__init__.cpython-312.pyc",
+          "length": 184,
+          "sha256": "b06b55225b2a98b958a2cf11d8f10896ee659d2eb0f9ceea93178abe838f168a"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/core/ast_scanner.cpython-312.pyc",
+          "length": 9886,
+          "sha256": "ac85e7db206940de8031262ed85659be9981ba0c64ce02a2135e6bced24d4462"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/core/case.cpython-312.pyc",
+          "length": 3191,
+          "sha256": "368e1bf78aa820d23de88c9a20f6a31e6191f645aba23709bb5185a60c187ce6"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/core/context.cpython-312.pyc",
+          "length": 8225,
+          "sha256": "9b7ae0e0f1995c8cb88cbd663b97d7eb78205d437fa447262ac39fdfd5d3c815"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/core/evidence.cpython-312.pyc",
+          "length": 1181,
+          "sha256": "a8f1d5477f1f8a258ba7789737ee201953b26c5f5fc9a7d699d3654e20179631"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/core/finding.cpython-312.pyc",
+          "length": 1455,
+          "sha256": "bb4b6355cf9170670791f8ec4166bcd109ac98786d916285691e6ad37f90bc97"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/core/report.cpython-312.pyc",
+          "length": 4912,
+          "sha256": "c304b9df23d5d900a279bede2db7e9975d56e5411ee79538f63540aa43c55cb4"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/core/scanner.cpython-312.pyc",
+          "length": 11155,
+          "sha256": "a69bee810586b33d8a3fdbb52388a634fff26a4d901eb7a153af498db07509ea"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/evidence/__init__.cpython-312.pyc",
+          "length": 121,
+          "sha256": "f1fdbd2fa77fdd0b0f28a2db9228e4e82a721d035102771d271887df4ceaad39"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/evidence/from_tool_result.cpython-312.pyc",
+          "length": 1571,
+          "sha256": "f310852d1a65d2e6ffdda7cd3334f889f02978cb137703ddb2eb99b47cc941d5"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/evidence/from_triage.cpython-312.pyc",
+          "length": 2811,
+          "sha256": "18d3a388016be8e1b82f82fb8e069001337c2eb8ebb73cb1a1bfd16393d69bce"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/llm/__init__.cpython-312.pyc",
+          "length": 171,
+          "sha256": "36b33777accaff9106c4f5d80ae1e7d7bbd2efc517eaf51fb607c46660676beb"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/__init__.cpython-312.pyc",
+          "length": 403,
+          "sha256": "8665dd629a85e8bd40b4b10441b020ad7b104d3b5a80dd7ace590f509cb13046"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/contracts.cpython-312.pyc",
+          "length": 12504,
+          "sha256": "095139c07c7c72f2ba79407548249165d653aa3106e5d7e4a6a818d0484b3f96"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/__init__.cpython-312.pyc",
+          "length": 290,
+          "sha256": "d17adf2159123d74c58b4209992a55c07e502ed645f5d963f9257feb22cf6181"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/admission.cpython-312.pyc",
+          "length": 1197,
+          "sha256": "a538d3d3df7a7624b3ad3fb864ee0f71107ed8adb4ca69d0a8f6f50e95d865f1"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/__init__.cpython-312.pyc",
+          "length": 300,
+          "sha256": "775014984fe62c5657730227adb4345508e4dfe6fa96740bc2a53964723518dc"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/analysis.cpython-312.pyc",
+          "length": 24701,
+          "sha256": "837e314940e34c57f1be5fdd1126dd9ef9a181483ccd4da1c25e3a0499df9ac5"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/detector.cpython-312.pyc",
+          "length": 17939,
+          "sha256": "1de796662d877e28f0c54c6b66bd8d010901634a9889babb041beae33d321340"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/exception_guard.cpython-312.pyc",
+          "length": 18247,
+          "sha256": "0dc26bd44d3b8fe1e7ebab7ca3c589f0539976cdc250cc4d107a4944f100d13e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/model.cpython-312.pyc",
+          "length": 14506,
+          "sha256": "6332a0fcfc5c0383b70366b94d6026791ab2f344263582d54d4f9736616f4176"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/receiver_guard.cpython-312.pyc",
+          "length": 12775,
+          "sha256": "f5f8ab3caef2e019d19499c43367b2ec0358ce3d16220ae3e7cc78dda36065bf"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/runtime_exception.cpython-312.pyc",
+          "length": 58742,
+          "sha256": "40ac2cc6b44f23bc5f22546908f6a32b7af010394b7160fc9d4e2f73b750bf93"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/runtime_ir.cpython-312.pyc",
+          "length": 10778,
+          "sha256": "aeb0b554bb4b29b27d0987c7dabe457a3f0d470f7dacd329d73146017c682903"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/size_overflow.cpython-312.pyc",
+          "length": 20006,
+          "sha256": "0c0ffa90e64ae1fdf7c79509046b92049c0ae6f44801f552baaa495b5bcfbe5b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/syntax.cpython-312.pyc",
+          "length": 12542,
+          "sha256": "c8088b4bae9c3d638d8d09a61a077ea3c0fa27d9d500f18055575d8201035525"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/type_origin.cpython-312.pyc",
+          "length": 37716,
+          "sha256": "a2c818283cf8f4a0934dd3e7db306d474f941e82824ea1abf774074527171a4e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/catalog.cpython-312.pyc",
+          "length": 7291,
+          "sha256": "a7db4391750933899c9fd86868a4d7c19ee5f3313d20460f46bc47fffa153916"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/cpp/__init__.cpython-312.pyc",
+          "length": 427,
+          "sha256": "36257546c5270b0b0b80191cc78e8812359aa97223417718030e8cde5f8ed5d6"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/cpp/bounds_detector.cpython-312.pyc",
+          "length": 18028,
+          "sha256": "71387c550ab303fbc4fe42dbc2c1f9dfb2d465c5651fd99153a88ec92062757d"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/cpp/integer_bounds_detector.cpython-312.pyc",
+          "length": 21484,
+          "sha256": "a7f32df7ad70da886026f6bdf4d809331fae64e1e63edcaaa7cae8a19e2337f9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/cpp/lifetime_detector.cpython-312.pyc",
+          "length": 49363,
+          "sha256": "6ff3454339afa888306d7b87a6028e3e60e6c532a5b39b4858138d5450b4a172"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/cpp/m2_adapter.cpython-312.pyc",
+          "length": 6797,
+          "sha256": "4c6d3ac6718600478b9dff428bb8a1b29efa0750b705971431a8ac92263612c9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/cpp/memory_safety.cpython-312.pyc",
+          "length": 24339,
+          "sha256": "6fd56f507e4010906241c22591f58efacb5e2fed476f9aca7ce73eafd9818b89"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/cpp/null_dereference_detector.cpython-312.pyc",
+          "length": 69947,
+          "sha256": "be6fca3c9c67bb0cf745a4b7c375e30015da7b2a4ce6f095e85994b43e8999d9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/cpp/resource_lifetime_detector.cpython-312.pyc",
+          "length": 17367,
+          "sha256": "0e1f68d5ab5e28a437883438a6e5945bba24ef18a0383d36f34f9ca5ad6c3121"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/cpp/shared_ptr_race_detector.cpython-312.pyc",
+          "length": 60734,
+          "sha256": "55438038f4c4eeebe8bc70b34a8f6381dfb50c63fc82632df0f9f34ae340e077"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/cpp/unsafe_memory_call_detector.cpython-312.pyc",
+          "length": 10440,
+          "sha256": "2a08ad1464951f29fb5f19798f01942bcc6f9916f618735f9bb09df80c63ba6a"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/data/__init__.cpython-312.pyc",
+          "length": 204,
+          "sha256": "34b82bb22c8b0845845ed5c1a626fb973cbab686f37df1ac9bf8143284f15f01"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/data/historical.cpython-312.pyc",
+          "length": 22051,
+          "sha256": "e32bcb17473e9f5438096ef041e8b2e44b45abc978eb4f871202b2ad902ea695"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/data/historical_models.cpython-312.pyc",
+          "length": 1505,
+          "sha256": "37433f5cfbc7de8bef6e385b2edd690957e51545b5bb8a2386af39ae43e8f1eb"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/data/models.cpython-312.pyc",
+          "length": 9228,
+          "sha256": "1019d6d3d09443d20419228e6f9503d1eecd487281826869b09ac4c85bc72896"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/data/sensitive_exposure.cpython-312.pyc",
+          "length": 91783,
+          "sha256": "a59b53534b7f3c3e4b8de5791b54a0d8262f5e04e38dedd9fc31b76bed271ae2"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/example.cpython-312.pyc",
+          "length": 3880,
+          "sha256": "9b197923d6d22a46f3680c0224ece9362906ddc21cd43b60784a1f8e767842e9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/__init__.cpython-312.pyc",
+          "length": 295,
+          "sha256": "6d1363f4b0b969728a88869fa5659f8fe144c2145f195446442e9a8bc219e092"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/analysis.cpython-312.pyc",
+          "length": 176479,
+          "sha256": "043cdee0e50a3ae5203afcba856dcf1a58a4f744f17d7b38d9e6269cf12b4ae3"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/arkts_guards.cpython-312.pyc",
+          "length": 11049,
+          "sha256": "35f340d0c9e48fff75de09b69322f676813d20e855370d8b00a5d2e84e205773"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/arkts_js.cpython-312.pyc",
+          "length": 50614,
+          "sha256": "b99c64a70d837e233d7883927d838a8559f0563846730a86ec74030fd8fc70f4"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/auth_transport_status.cpython-312.pyc",
+          "length": 7518,
+          "sha256": "f5478898036c83b4ee2f6e420807869a193546d0e945ea3f1234cccc7e2bc740"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/cpp_macros.cpython-312.pyc",
+          "length": 19731,
+          "sha256": "d9de2a4126f1d80906c9eb58b1f5213ff3902ebf38af209d6ca3dc03d4b518f7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/detector.cpython-312.pyc",
+          "length": 22343,
+          "sha256": "63f8ca77fb517586835ec8704445e3c15e842aeaae77b24ffa4e83a9f30fc732"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/entry_index.cpython-312.pyc",
+          "length": 78148,
+          "sha256": "22ee25232ec77984ef502531a53597719dfd2630f95cd26d47546bb6b7847e0d"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/__init__.cpython-312.pyc",
+          "length": 13607,
+          "sha256": "2dc857ced0d0dca34d61d455340d17037a504e5d5e96fe1f0917eae97d8b8bd8"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/__main__.cpython-312.pyc",
+          "length": 3394,
+          "sha256": "017f40de9605b7f59ce4800e1beebeef40d490c56d7fb5ec558bd0c2cd52cc86"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/auth01.cpython-312.pyc",
+          "length": 1136,
+          "sha256": "98b05a5676ee6b5de1108d77da011e3242d9c793c35c3ea8352069ead71a55a6"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/auth02.cpython-312.pyc",
+          "length": 1429,
+          "sha256": "ee990ea3a24c9c877ad878a97b597a732aa30ed68e2cb5f6538a658ccf7c3923"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/auth03.cpython-312.pyc",
+          "length": 2004,
+          "sha256": "bc3fc019492d21016842809f04bab6817b83a97f4348784eff62e24de2acc9b4"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/auth04.cpython-312.pyc",
+          "length": 1146,
+          "sha256": "8d100edfa5ca3186504c149c5b2827737fef3b49ec9a42e91cca59575d63141c"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/auth05.cpython-312.pyc",
+          "length": 1299,
+          "sha256": "2c81876692e33e553677ab4443789db4b7b19ca83d190f8c2b3304afef2973d7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/auth06.cpython-312.pyc",
+          "length": 470,
+          "sha256": "d5ebbe82cc7343be9622288e9f5a31d99eb66abd51e3432765f2d39d2c50fd90"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/auth07.cpython-312.pyc",
+          "length": 463,
+          "sha256": "81be7ce2b5074639a301c56bc280062f8072fdfdbaf79f0a5479284fe85a420c"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/cap01.cpython-312.pyc",
+          "length": 1085,
+          "sha256": "f4374b7e1e335cbc94c8b0548aa8be1f776f5be23139ed4d0f3dea0a3a0559d9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/data01.cpython-312.pyc",
+          "length": 1224,
+          "sha256": "f07c42aed97ab0698ef7ee8a8117c0cbfcc997d969c5dfab5756bfd4b1078a14"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/data02.cpython-312.pyc",
+          "length": 1528,
+          "sha256": "1cc0ec3a898a17c1954aa3e92474451921aa426d03e8e2661139b3299603efe7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/data03.cpython-312.pyc",
+          "length": 1094,
+          "sha256": "299732b3570883b49aed2fcaccfe079ae7aecf220bcdf0b154e92e81be7dbd4f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/data04.cpython-312.pyc",
+          "length": 1240,
+          "sha256": "361330712edeee402ad5701e2d33527618176075f0b0e3121e1c75d9e8e791ea"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/families/data05.cpython-312.pyc",
+          "length": 444,
+          "sha256": "bab8e0b60d8e94dd91f731c76a09a7d79cc0f893d8c9887a63ab119f2165c9ec"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/m2_adapter.cpython-312.pyc",
+          "length": 5189,
+          "sha256": "4f5c729c1ea7be09d5df8bdaadd9f5e66c77bb427d50e18fa156f5b146be3701"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/models.cpython-312.pyc",
+          "length": 13270,
+          "sha256": "6f0b1396207e0a84f56e55ec2a271e6790f75e8e68093603e93316388718a192"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/network_session_allowlist.cpython-312.pyc",
+          "length": 16061,
+          "sha256": "38ee364a340431305c6d7f379e5cd5682beae22f5bfa47803fbb8a8dd449dc2c"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/interface/tlv_fixed_width.cpython-312.pyc",
+          "length": 6295,
+          "sha256": "73910166dbf262f4f8465574b5cef94df8a868953a9df16885235d8d5ab31e79"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/known_cves.cpython-312.pyc",
+          "length": 32518,
+          "sha256": "dd32ca33945bed4a5debf90d26639a601c31a2be42dc59d23d758e137adccf36"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/execution.cpython-312.pyc",
+          "length": 14634,
+          "sha256": "324d5bc9c684e336ec91a6d02709ef776aad086509f748815d2a14e93e7678be"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/facts.cpython-312.pyc",
+          "length": 3684,
+          "sha256": "fb24a1474c11ac395c72d897edbc96cfd6d4afd3f759b7a36cea2f61a423f725"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/fixture.cpython-312.pyc",
+          "length": 3681,
+          "sha256": "5326ad54fe150868a48c7082ba41712ec9e38607529861148fd35d3e43849dd7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/frontend.cpython-312.pyc",
+          "length": 4146,
+          "sha256": "abe5c42dc9b00cacf4f42074616815e6e3c18c484bd717dc0f248abf4612f76d"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/git_source.cpython-312.pyc",
+          "length": 19524,
+          "sha256": "d62218329cddb6d43c5878dcf0c0e232e0cfa7f96f293a1f2b4220d3cd9c0ec6"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/identity.cpython-312.pyc",
+          "length": 22911,
+          "sha256": "3510618ebf0e66e17c5156636e2c4f25c42710c4bb326f4ffe13ba78d0412815"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/indexing.cpython-312.pyc",
+          "length": 9616,
+          "sha256": "9eb5699b4e1c2b56cecded6817e494996f8624b0221f528f9af9cfcd7e18e611"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/mocks.cpython-312.pyc",
+          "length": 3237,
+          "sha256": "7e89ee3ea2877110c8086a61f3bd75206fad8212671e5980aaf179dbed161214"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/planning.cpython-312.pyc",
+          "length": 3344,
+          "sha256": "75a6a6f4c9202acc148e82d18c4c67bc6a383652548d06b2d9ae25244aa2285f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/poc/__init__.cpython-312.pyc",
+          "length": 1645,
+          "sha256": "893f45266d0c3145d0478e472f7913655e1d738db94536e2d82a8da5a271ddb1"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/poc/cpp_lifetime_uaf.cpython-312.pyc",
+          "length": 19153,
+          "sha256": "be444cca264eda726b8c6cfe921c9ed4cda2415a98c936028708b031f9de7861"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/poc/cpp_shared_ptr_race.cpython-312.pyc",
+          "length": 26792,
+          "sha256": "24c97b4ce38b3c0ae510e9f6256b7c5175b560495bace07a9ed9a002046adc72"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/poc/reachability.cpython-312.pyc",
+          "length": 4961,
+          "sha256": "58937943daf28fc5a66c2aaf3b5f9ff343377ade16b728fbc35de304272705ec"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/poc/records.cpython-312.pyc",
+          "length": 8745,
+          "sha256": "a9964f744db8ae08681a5e98ec3e19331e7f7ba277c19d13daee6b32b45f2cb1"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/poc/runner.cpython-312.pyc",
+          "length": 15948,
+          "sha256": "f76023c90569702be50364c965ce270968d9c57150c6973c9166558ebf2eddf5"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/poc/sources.cpython-312.pyc",
+          "length": 4239,
+          "sha256": "b2202c790c738e92a1fa3598034125c20c3cc66958b9e39e2acd204cbf915d16"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/poc/states.cpython-312.pyc",
+          "length": 3507,
+          "sha256": "5edaf5f7516df45c9f00e859f5c5c9876229eff5938b441cc2fab3e2211a5cb4"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/runner.cpython-312.pyc",
+          "length": 23728,
+          "sha256": "21aaaa762bc1385a105231e6d382f519dd1c096703bf841906d1808b6d737e54"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/smoke.cpython-312.pyc",
+          "length": 2833,
+          "sha256": "abcb287c1aea2465d61a1c7011da7c9d90b91cdba4c2a1c3a349b33708dd9c44"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/parser/__init__.cpython-312.pyc",
+          "length": 247,
+          "sha256": "179245f9261b6c951d258e143e98ce5b22897ea29202d91289817de295e95a62"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/parser/ast.cpython-312.pyc",
+          "length": 10098,
+          "sha256": "47e515411f3f50680ccc4942b9020e59250cf09f81e7956b020c0df4877b3fe6"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/parser/syntax_normalize.cpython-312.pyc",
+          "length": 1513,
+          "sha256": "61efa237658741adc76ccb41b4dacfcd29e2ae75837f70f8f118ca35cea78e78"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/providers/__init__.cpython-312.pyc",
+          "length": 399,
+          "sha256": "99cf7d1c0b75d9419f08e4d43bc0034ea878f0a993ef32e3453dad22f099a66f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/providers/base.cpython-312.pyc",
+          "length": 2740,
+          "sha256": "1e5eac96bf4dd3f8a0fd6023fba1cad17ca3372ec55e9ea0df76202511117972"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/providers/clang_sa.cpython-312.pyc",
+          "length": 3261,
+          "sha256": "123b841ae0d9eb0fe4b14206ccbbf6b248dedd525cd81e2699c98a17e067e437"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/providers/codeql.cpython-312.pyc",
+          "length": 4789,
+          "sha256": "5310930bc3e2e2ded4b485283d4cacf39b56f2186b14e0bfcbb8386563d59c02"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/providers/cppcheck.cpython-312.pyc",
+          "length": 4200,
+          "sha256": "3c8af6e2be1aaa4da2dd4868d5b9b42b52835aec33693f50ad6a0f752a8ec74f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/providers/joern.cpython-312.pyc",
+          "length": 5692,
+          "sha256": "bb70a95d4e29118cf79ee22f3ed2eee022ac484bf903ae7f7719f123b7af2da1"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/providers/registry.cpython-312.pyc",
+          "length": 1790,
+          "sha256": "7a9e033c5ae75e85e4cc0a1e952871519aba14100cfeda78d9f1d6d70f02105b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/providers/semgrep.cpython-312.pyc",
+          "length": 3436,
+          "sha256": "9206ab98ea0527c70cd0e614927d7d185975cd6819c583364fe21a582b91b6ef"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/report/__init__.cpython-312.pyc",
+          "length": 119,
+          "sha256": "7c5e385602ac6c2a9622a56003ed5b217f0bfea162b14c85b924d3dc78b7305f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/report/benchmark_report.cpython-312.pyc",
+          "length": 10099,
+          "sha256": "de3573fe9266d56ee2d8be658e9b4888d8fd1174ee773df53f7a41637597af6b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/rules/__init__.cpython-312.pyc",
+          "length": 160,
+          "sha256": "1b007387afa92c81d0ff94ab1fb3d9b761b12eff4f66d5a14e3ab6aca0d5fd7b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/triage/__init__.cpython-312.pyc",
+          "length": 306,
+          "sha256": "2142653d1cc2ab2595a9d17f3ddffbf9a26c5e4169eb110241a6ff757559d0f9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/triage/callsite.cpython-312.pyc",
+          "length": 5804,
+          "sha256": "59c097d82f184233b1bc225123a2e8bd717266d314c924bb5b5995560d67318a"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/triage/review.cpython-312.pyc",
+          "length": 12189,
+          "sha256": "d332d8543c775c75e0340ac03ef539ad619ca3a8639b8496354b68b8c4d01ad6"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/triage/review_store.cpython-312.pyc",
+          "length": 4164,
+          "sha256": "9323ae585f734a88d44b34be0130557516188cbe3470928e5f11eb7d69e7a113"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/utils/__init__.cpython-312.pyc",
+          "length": 150,
+          "sha256": "b7babded3b4f838f6a8ddf27daa03601d3a258827d593ec9a8dc2b04ec4dedcb"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/validation/__init__.cpython-312.pyc",
+          "length": 370,
+          "sha256": "2a5c0d54568014b9032f0ae4dd61218cd5dcbaa747c48ea3049571e1300a1592"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/validation/cjson_allocator.cpython-312.pyc",
+          "length": 17715,
+          "sha256": "0522d9268bb90f16c6c054e906a741dbf66d1147a17e1e031be4035acf4d0d6b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/__init__.cpython-312.pyc",
+          "length": 195,
+          "sha256": "9611cc4a72d5badad198aabe9a15c2fb49a30063685787abdaaca1537a90ae84"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/__main__.cpython-312.pyc",
+          "length": 5275,
+          "sha256": "7d3bce9b61c60ee71495f105342cd642a51eb683acf9200c16d782612f3cdfa2"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/agent.cpython-312.pyc",
+          "length": 135857,
+          "sha256": "c7923c175b54c1dd08926eb36126b42c7e82c4da5c3abb8bc25975f6a17280e5"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/agent_guidance.cpython-312.pyc",
+          "length": 3963,
+          "sha256": "6e5032697b787be5cb32ddf4e28332da7cdb15e5cc49d6882d9874af112a314d"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/api.cpython-312.pyc",
+          "length": 27544,
+          "sha256": "b4b2cba1ea7c67d17903ee44d33c955acbe2f2579f3c3a21cbb7d23ba38c29ad"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/child.cpython-312.pyc",
+          "length": 4976,
+          "sha256": "7d13eda35ed9d7b9449b249b690b640ee226c8d9ae07a2e40dd0d38cc1aafd67"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/operation_worker.cpython-312.pyc",
+          "length": 9819,
+          "sha256": "734d7b197ca82d2563f17c316c41821bf119060c82aa5df3f8f43d92472ff9a9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/operations.cpython-312.pyc",
+          "length": 24092,
+          "sha256": "ac3f8bbe29df8beecd1ca61524afd585884ae1a08a313489f6a8f77f794462b7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/operations_api.cpython-312.pyc",
+          "length": 123775,
+          "sha256": "ac76e639bb56d336d47b68f92da6c77c843001afd993b322d2d63fd90d84112c"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/operations_store.cpython-312.pyc",
+          "length": 82386,
+          "sha256": "7b0c0d525eefc487cdc8f5c1ee3d0f009b9625fe125397200e1fb46d5b8b27f1"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/plan_child.cpython-312.pyc",
+          "length": 1740,
+          "sha256": "8a6f738b2384fe6a5d0e23175127cecb27e75da2bda932caea7d1f77e6db38d0"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/planning/__init__.cpython-312.pyc",
+          "length": 350,
+          "sha256": "671050488d1fcbe731fbe1912ecfde90b2e6e71bfda84ec0e781c845ad594673"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/planning/audit.cpython-312.pyc",
+          "length": 14994,
+          "sha256": "97e9d1964b6a6a1771333f2a1bd9ae9b82691525553c3329b53939b92a26baa7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/provider_settings.cpython-312.pyc",
+          "length": 15941,
+          "sha256": "1b81c80f06d41bf77ec41556d26377aabdd9cbcfd4e553eb19b8e90feeafdae0"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/service.cpython-312.pyc",
+          "length": 20522,
+          "sha256": "44ce99100b412459d4f8bfb3d37ad645aa01c278969bb7ef3ef37a7a82ec2c05"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/settings.cpython-312.pyc",
+          "length": 2581,
+          "sha256": "42109ed46001903eea6a0f94519ee8f26e37cbf0cde5e8e7ca978d47a148bced"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/sources/__init__.cpython-312.pyc",
+          "length": 332,
+          "sha256": "b40b13839b9a97ad2cddfffc7016f69a6ebcb8bdbc64d565eb4e0d98a1edc016"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/sources/manifest.cpython-312.pyc",
+          "length": 22082,
+          "sha256": "72d7d38353cec12c2dc5409d7332fbb3b7689fd7347100a6d4aa322d835d0dd0"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/store.cpython-312.pyc",
+          "length": 18353,
+          "sha256": "1b533b1ad5b510f6d06ad4869891ae90eadf809e557192c8b9bef273de91e822"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/validation.cpython-312.pyc",
+          "length": 16300,
+          "sha256": "ebcd4ebe963788b7571787725a0c0fceb7dd8bd02970c6e46a598a64027db4fa"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/validation_child.cpython-312.pyc",
+          "length": 8339,
+          "sha256": "a35511c4bb672ba3a5ad797577015852969ac731cefe4f44973e93f48120f3b7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/worker.cpython-312.pyc",
+          "length": 11800,
+          "sha256": "60171f649e812f4277707e37046d5642b883f8b2c1da45556a117d7066d52306"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/workbench/worker_env.cpython-312.pyc",
+          "length": 1310,
+          "sha256": "07a635cec8d1a1be796b892c7d83a9981b407a9e790f0e56d4a11e04fc777feb"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/__init__.cpython-312.pyc",
+          "length": 268,
+          "sha256": "360c2f20b71f2d181b8efc4c5ea664d5d6328dda9a6499edc9c53807edd700b7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/__init__.cpython-312.pyc",
+          "length": 207,
+          "sha256": "e37d0964973e5448bb70f5c6c024155f6d302db9a906fd354bf748953fb4ee6f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/support.cpython-312.pyc",
+          "length": 2905,
+          "sha256": "105c208a75470fe69c3c8335b51a95e7675b2dd55aff4cef20e3f7598b5a3693"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_c10_known_case_controls.cpython-312.pyc",
+          "length": 4188,
+          "sha256": "f8104708e13b110d78d46dbb10221f46e24412670672f8c012095e801fdf6f6e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_c3_mechanisms.cpython-312.pyc",
+          "length": 29961,
+          "sha256": "3a28d4e4e2bee89c30d114dd821e5502f2657230841a488f91f1ec0da6b188bd"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_catalog.cpython-312.pyc",
+          "length": 2154,
+          "sha256": "7270eb37f7772e86c0e32e68388aef347d735a7a2cfc26057f39233ba20af0b8"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_detector_cases.cpython-312.pyc",
+          "length": 15991,
+          "sha256": "ac7e7c3adbb17d416fe31411a5b38cadbfbace71da6dd67c99ab036f3a7ef0ce"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_exception_guard.cpython-312.pyc",
+          "length": 16826,
+          "sha256": "74b62bbac9cbd613b7ff884b35aa74b12786717d7144e12ae034a11d743d2481"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_ir_path.cpython-312.pyc",
+          "length": 10047,
+          "sha256": "30f557e77841cb91e138609d90b76d16346fc8983431efc036e3cd54d7ad517f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_parser_owner.cpython-312.pyc",
+          "length": 19144,
+          "sha256": "9d6c1d6fbbf7a16c22ed379221d03cd56d24fbe466dcff0071df6bc7ac2a11ba"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_receiver_guard.cpython-312.pyc",
+          "length": 6271,
+          "sha256": "eb2900b5c7ae336d7c5c20c391bb698de85ff41379a8d9dc15e24618cb9ecc51"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_runtime_exception.cpython-312.pyc",
+          "length": 32972,
+          "sha256": "76e3502445a04831ac23857f4e7a7561f4a68472041e4974d2103c7754441973"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_size_overflow.cpython-312.pyc",
+          "length": 5076,
+          "sha256": "f69abd557e5dc7056528d51caef3328df163eabad8cd314065cece5d9490c7b9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_type_origin.cpython-312.pyc",
+          "length": 20735,
+          "sha256": "eedb1297865de1b0322ce44f31b964e8069f2d80c66c360168c26428347f16a1"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/data/__init__.cpython-312.pyc",
+          "length": 129,
+          "sha256": "23627b50b2974525108411151b096b4e291395b35712adc366e7ce458a6b85f4"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/data/test_d10_manifest_replay.cpython-312.pyc",
+          "length": 3538,
+          "sha256": "42abe7310585df075b10b8d1a69ceec14e6b37e587fea170f771277f11180328"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/data/test_d11_historical_replay.cpython-312.pyc",
+          "length": 5911,
+          "sha256": "442be69ee0fb287308bad75464c91d0dda1ec6539eb6486e3213baf06f2c8736"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/data/test_d13_source_git_objects.cpython-312.pyc",
+          "length": 5970,
+          "sha256": "58daacbf24936292bd60f4d368c0e46d20772f8af01fad13fb7e6abaabc73350"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/data/test_d2_semantics.cpython-312.pyc",
+          "length": 24253,
+          "sha256": "2191691895ac9f1dc61fecf65077d8a92ea8c09a6e30142e2d7d4e25b7d172cd"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/data/test_d3_historical.cpython-312.pyc",
+          "length": 19995,
+          "sha256": "b1036ffab5b65e45c46a657f8e4bdb070ab574be4058acd95ee5cb7e1fe5cd0a"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/data/test_sensitive_exposure.cpython-312.pyc",
+          "length": 62098,
+          "sha256": "1f962c3fd55adbacc5c90febddff4d7d326340aaad8c4cbca5b07a720fbd7b0e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/fixture_support.cpython-312.pyc",
+          "length": 7068,
+          "sha256": "9890a1285bf5e5e156a52959d882211744ac662b1550831daf16bd00df84723f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/null_dereference_fixture_support.cpython-312.pyc",
+          "length": 9125,
+          "sha256": "077a7a60c2794ef74c62ea0c47b0b88a43bf3627ceeb7ea53c01d9e5b0e7350e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/shared_ptr_race_fixture_support.cpython-312.pyc",
+          "length": 6833,
+          "sha256": "e7fb70c959d97fef7db4cfbbfdd363e51799fadf3d1058078e8df9bef8b0e8d6"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/test_cpp_lifetime_detector.cpython-312.pyc",
+          "length": 40695,
+          "sha256": "beb0e43199507d9d90ad5aa64f657b6cbbf597e5a3d4b677ef9e9b408afab549"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/test_cpp_memory_safety_detectors.cpython-312.pyc",
+          "length": 22071,
+          "sha256": "3ec56ec2df3a9e3553f971713cae28db2693361d7fda4ef255d1ea52bd3f3003"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/test_cpp_null_dereference_detector.cpython-312.pyc",
+          "length": 18778,
+          "sha256": "985dc7d4e201dc962510ca3b5496943f3933eb4cc75b86535b4f88a03d463605"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/test_cpp_null_dereference_signal_controls.cpython-312.pyc",
+          "length": 23371,
+          "sha256": "069d7fcb0c6c1d95bb6239a98dacfb4d2241074ff1b7f53935da43a27d5ff803"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/test_cpp_resource_lifetime_detector.cpython-312.pyc",
+          "length": 7636,
+          "sha256": "ddbc4c50fd7e1b766acf9a7548d6d4509430792b9bb7950dbe7b102c758e456a"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/test_cpp_runner_integration.cpython-312.pyc",
+          "length": 12072,
+          "sha256": "486f6af42f75e25e3522ab7b942ea72cffbae2b044dfecbb3a0975ac8c36ea61"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/test_cpp_shared_ptr_guard_lifetime.cpython-312.pyc",
+          "length": 12878,
+          "sha256": "cd49b4f94c4bb40acb18ae251e0a768065cd0d34d9013bea059b5e142bfe8813"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/test_cpp_shared_ptr_race_detector.cpython-312.pyc",
+          "length": 55578,
+          "sha256": "d709eac2a7d3d9b62d43911e4511c1a3184372fb245e9a85b5c11e66db7cce54"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/test_cpp_unsafe_memory_call_detector.cpython-312.pyc",
+          "length": 7310,
+          "sha256": "f5583a5296453b777ff8b94f186c6d8e7e7b333bef273992dee0193edc0d0cf8"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/test_known_disclosed_cves.cpython-312.pyc",
+          "length": 48933,
+          "sha256": "e0c74195b3cd789354868f5783f893362116d1cfce2c996b6af2908e268e17fe"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_a_ccr_03_finding_identity.cpython-312.pyc",
+          "length": 18381,
+          "sha256": "a041e16c1283af7376b031419ae8711a51783e65ab7140ac11024734ac63b3de"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_agent_guidance.cpython-312.pyc",
+          "length": 4669,
+          "sha256": "939c27902aadb930959cde3548e2e5b784bae98bad19bf2cdf3260b17613acef"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_agent_workflow.cpython-312.pyc",
+          "length": 300730,
+          "sha256": "c3c3816664dcaed23a58fd8fd8bd9e0bf13c4adb288b48fed92cd40cff41e01e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ast.cpython-312.pyc",
+          "length": 6155,
+          "sha256": "0541ab703dd5be12f8b3d71fd6ad68f8fba3652b1779dab0b7e7d0b2f1f3ae21"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ast_coverage_mapping.cpython-312.pyc",
+          "length": 18971,
+          "sha256": "ab29353a0184d2d24a9a8a0bc09ff0b0172f6e80eef36220ccea8ece2fac7ba7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ast_scanner.cpython-312.pyc",
+          "length": 6029,
+          "sha256": "b2cd0e9d513e0cdd60902aaaa7c0ff7dfb73911d1081a0980cade8768e349743"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_audit_plan.cpython-312.pyc",
+          "length": 19287,
+          "sha256": "49b0c6f9f1d600191ae9b9ae746322a9c740320c2453c7c209c676bbca3c370c"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_benchmark_report.cpython-312.pyc",
+          "length": 4540,
+          "sha256": "0ef512ee15f32c2e4fb8538e85ecc45ca6fd0112b99053d8618752764b37c56b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_benchmark_report_inputs.cpython-312.pyc",
+          "length": 22365,
+          "sha256": "ee58c2309689ba8f208340fcd65b66258a02cf73c8df7eaff2c60747c37336ec"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_case.cpython-312.pyc",
+          "length": 4057,
+          "sha256": "573c946a60201684862b541a34efe4ced475d808cfa50c12c5f6cda5c91c502c"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_case_assembler.cpython-312.pyc",
+          "length": 3511,
+          "sha256": "b248323c0d8ea03486e16dee010e8f5353ccfeafe445129b39b3d0489159d0c0"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_change_scope.cpython-312.pyc",
+          "length": 6211,
+          "sha256": "a8c54c89c511c78a02b0cb2cc7f3c0e3db535d11a2427196659cd78a8912d494"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_clang_baseline.cpython-312.pyc",
+          "length": 8171,
+          "sha256": "2a3d82e0d4d8900fa6f98abcc946cda38f43ab0e017aaeaf979db342d0b6f132"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_context.cpython-312.pyc",
+          "length": 5546,
+          "sha256": "a7f9d033c1a2012532fd08659b4b9869fa14d182c7445a3a64726b417965717d"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_contract_v2_source_binding.cpython-312.pyc",
+          "length": 29670,
+          "sha256": "98975f0df0288240cd79f681d9360d206b048babdb77bcb98f00d73c4f10cde7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_evidence.cpython-312.pyc",
+          "length": 5280,
+          "sha256": "516fad1de62a4ea1ec3c214214233231860b9a8bc071e16b0ec8d76b06faa815"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_graph_experiments.cpython-312.pyc",
+          "length": 4954,
+          "sha256": "073e7404649c8c9886e9901709c44539d5d6357ec5365a77ac265657cd5baff8"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_historical_benchmark.cpython-312.pyc",
+          "length": 12412,
+          "sha256": "3329a472c2600455201fa9989913659a52940c6e57615c3fca9d9cac4f5ca578"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_historical_label.cpython-312.pyc",
+          "length": 4527,
+          "sha256": "953f3bc5e17c1c32fa2f9f5e2a3c7694d9afd37417c4f7f0ccd1d973ded7d1dc"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_arkts_guard_regressions.cpython-312.pyc",
+          "length": 12747,
+          "sha256": "c7388af9f4c623ebd7b3980f607b7ab95ea41f7711d25175936fb76f3093e5c9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_arkts_js.cpython-312.pyc",
+          "length": 25529,
+          "sha256": "edcaf1be3e36eb25fbdcd7e949215691ad7ee2d94d9f5e9c1711c935436db4e9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_auth_transport_status.cpython-312.pyc",
+          "length": 4525,
+          "sha256": "0408ff8095716b857fd8fa368dbbc2e77a4117ba348773c81710b531af734c3a"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_cross_file_resolution.cpython-312.pyc",
+          "length": 5808,
+          "sha256": "08db3b82af4e37a1c0aaa26c34618de7edd525d2129821ec8417c3d8b08af252"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_data_flow_rules.cpython-312.pyc",
+          "length": 16595,
+          "sha256": "400d9c5b58a037f30aea4e10459e3cf9c2961d31647b07059f851bfbace53881"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_descriptor_cross_file_identity.cpython-312.pyc",
+          "length": 6328,
+          "sha256": "6c694eed4e374343f5acc4b1577a96c38a7ca00f63f994eb09aa045b0258ad1d"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_descriptor_identity.cpython-312.pyc",
+          "length": 13837,
+          "sha256": "6adcd0233f3ffdb637a31af5831d4f617a9173801e5fbe3bf321e1bcb95fbcaf"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_detector.cpython-312.pyc",
+          "length": 53878,
+          "sha256": "83cc650e248ec95edff4f37310a3b9036ba6454c3322e1f8035fa68a3b12cdc6"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_disclosure_consequence.cpython-312.pyc",
+          "length": 13288,
+          "sha256": "6a713537d3485fa3347ba133f992b1126721017f910115e752084cf3db9cbb5d"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_dispatch_coverage.cpython-312.pyc",
+          "length": 4606,
+          "sha256": "a454d5ad721147b58a675adfd5d20c1dfcc484269ac53303881760ecc250fffb"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_entry_index.cpython-312.pyc",
+          "length": 37315,
+          "sha256": "5fe1b7ca82959f36c7ded44cc630327a1984694eb4dce2c2a081ac6a1621d10f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_family_depth.cpython-312.pyc",
+          "length": 32801,
+          "sha256": "0269b36660ed42bf0730168b909b4cf475e6554d7a7f094aa88267d7d7e73675"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_family_matrix.cpython-312.pyc",
+          "length": 20561,
+          "sha256": "7e11661fb5eaf0f72d753fa1b936216e8d584d78a484a46f542d5d8f3f74aa3b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_holdout_contract.cpython-312.pyc",
+          "length": 4843,
+          "sha256": "5b559008b1f205ef54900523c3422c8b08bd73b21ec07d92538111f54047656e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_integration_safety.cpython-312.pyc",
+          "length": 11282,
+          "sha256": "32e690fc83db0e26958a06d159da976c03524e26bc66cda6bb75693e252a425b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_macro_failfast_descriptor.cpython-312.pyc",
+          "length": 9835,
+          "sha256": "4af456f5a380e331d391ed6e238a0f7eeb2e5a1a62581e39e6f0beb2e8f17558"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_macros.cpython-312.pyc",
+          "length": 20637,
+          "sha256": "8dccb8712c91e45e8a4f13d1c9cf616a0d1886f74fbde5498029905459f75457"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_network_auth_session_allowlist.cpython-312.pyc",
+          "length": 13621,
+          "sha256": "757ac7379d9ecd26e551bfc9d680415bd3cf861c47a0130a5e282e440373044a"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_proxy_chain.cpython-312.pyc",
+          "length": 7902,
+          "sha256": "845bc030c5b2766c56226643b5989a707d92d73655553371dd2e2fc1c82b9a8d"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_relay_guard.cpython-312.pyc",
+          "length": 9190,
+          "sha256": "6fd0b50a3ee0311f8608f09a9afcfa64c40be3a918c2dcea25cafd36e59ff0b9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_repository_caller_contract.cpython-312.pyc",
+          "length": 8190,
+          "sha256": "950020bb2e69cbb58702855464419aad8ed59478339efe3e131b5f9d3c7cd12c"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_system_app_predicate.cpython-312.pyc",
+          "length": 5162,
+          "sha256": "c373c6d9ddde5f4570027d7486becacf55cc528c2a6aa88ed24f068af96420fa"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_system_app_token_fact.cpython-312.pyc",
+          "length": 5993,
+          "sha256": "4cb7e3ee839b7034d89a163a136dd722b8a0a645431b89cd645d8ba2a1293d40"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_tlv_fixed_width.cpython-312.pyc",
+          "length": 5676,
+          "sha256": "c5833f6887ec0f080f283e4c5cfd3ed07e33d58c80e3a9a52390a83efd3e5e45"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ipc_unbounded_observer.cpython-312.pyc",
+          "length": 17947,
+          "sha256": "a4f1730f69b1854f0cfbbb636b4961489f846e2ffdf450b12d2909ea2d8c5c8b"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_lifetime_uaf_poc.cpython-312.pyc",
+          "length": 6377,
+          "sha256": "17f9a304541337930ce84b172aca7f19426773ed3821e9267742c243f6e4ccc8"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ohscanner_contract.cpython-312.pyc",
+          "length": 21279,
+          "sha256": "ba00f90250320f30575f735bc3fd23b7b6cb6cf5fe5f0cbb57769b8693e95f2e"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ohscanner_m1.cpython-312.pyc",
+          "length": 31022,
+          "sha256": "fa946e443c67c67f2147379a7b9954e99aa47513ec9a540a44f332b947d9c167"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ohscanner_m15.cpython-312.pyc",
+          "length": 12949,
+          "sha256": "f9e4dae85525984c3e9afa352f050cd72f8169d274b8c830f57905e18f2cf717"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ohscanner_m2.cpython-312.pyc",
+          "length": 14254,
+          "sha256": "27e062d0ba7e0ff142bb83e29dc43da721c2156d4011d4232dbc49652fabed60"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_ohscanner_m2_a_integration.cpython-312.pyc",
+          "length": 12694,
+          "sha256": "8f0468d955bc9b425a2b0d507e199dd7c58977125d525a6c41749ccb1917cab2"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_owner_cd_admission.cpython-312.pyc",
+          "length": 10695,
+          "sha256": "fb1898509051b8f1b32910a4156d4c742204068e7aa87bfd1b12622cca6a3826"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_owner_integration.cpython-312.pyc",
+          "length": 20523,
+          "sha256": "70fe24b377c58cb408e56ce7c3fa0411d0903c1f44c0bbdc5470a8b1ff89380a"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_owner_ipc_platform.cpython-312.pyc",
+          "length": 19790,
+          "sha256": "49bdccbfb3c3f84bcce7a692151bfe021f236bd11ae03574b02e0cd3449a032f"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_owner_main_integration.cpython-312.pyc",
+          "length": 9350,
+          "sha256": "49d006bd70e2c89a41a3f876cd3f309f0e8e6f167ee860d2cf711620f4fa7d63"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_poc_runner.cpython-312.pyc",
+          "length": 24954,
+          "sha256": "d72d11da4af16485d1b9667e4b818afde308c3e18dfc117c5a65a53895179055"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_provider_adapters.cpython-312.pyc",
+          "length": 9897,
+          "sha256": "8e89de1c758f3f1c62a1d02ce165e977fb792673e0910bfaed3d863508f3dfcf"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_provider_settings.cpython-312.pyc",
+          "length": 15547,
+          "sha256": "297780d47459a0142b33f59ba394ffb33ee65c48c67d17a738bd9f3419827f29"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_review_store.cpython-312.pyc",
+          "length": 6789,
+          "sha256": "e7f04f2ee1b160db9b7a6ecbf6a8c513a75484799d6e29ab62eb4beb8dca18e9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_root_cause_matrix.cpython-312.pyc",
+          "length": 8376,
+          "sha256": "4be1ac48d5e4444f13b84e69feb8f3ab59e971ee5064e0d6cdf34ae739fee4d4"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_runtime_validation.cpython-312.pyc",
+          "length": 10261,
+          "sha256": "f96c6d01d4c0d41724d0ca81b74c1d3c041e89fe611f560b196c749fef2d01e9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_scanner.cpython-312.pyc",
+          "length": 14135,
+          "sha256": "3bd21a1b8dfa0d4749f384ebb5c82fe774d4424ed4b743a1b83b72dd81612000"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_scanner_compare.cpython-312.pyc",
+          "length": 5997,
+          "sha256": "405dc2128dc9515c169489057d2e20925003c0fd2dffc50ad0a19a39677e5a28"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_shared_ptr_race_poc.cpython-312.pyc",
+          "length": 11517,
+          "sha256": "37442363bb692039a9ec363bbdbfe387b08b17313acee514403a9641f78efbdf"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_source_planning_manifest.cpython-312.pyc",
+          "length": 17705,
+          "sha256": "a7a366779d7dcf6e69e461b0b38149800763266fde543632f93f9e03788fb916"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_source_preparation.cpython-312.pyc",
+          "length": 4044,
+          "sha256": "8098bada92b7edb0a252e3f839c7b17ee8b375718c59e76d2089c1dbc759a1b7"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_tool_compare.cpython-312.pyc",
+          "length": 8276,
+          "sha256": "22a47b29004337b35eeb1a166130b9617faed3ceb6418bfaec363eef24ea127c"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_tool_matrix.cpython-312.pyc",
+          "length": 7293,
+          "sha256": "60b1f4faa9aa114f74ea3a5e33cddef5fc7046058d391e1b880787f71df79527"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_tool_result.cpython-312.pyc",
+          "length": 3651,
+          "sha256": "c7749b61b5ab1ff4ec0c4262303c7ed485cb09c2abe0d362553f5fa3c24bac48"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_triage.cpython-312.pyc",
+          "length": 7676,
+          "sha256": "a926f19415cb1da82422cec3d3c2bb6662ad4b49a957f38ed7a416c6b78faf76"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_validation_child.cpython-312.pyc",
+          "length": 4751,
+          "sha256": "5990f1e3d3009d28f7ff7532e2f17e7b7e938d153d824d94346786f6f65839fa"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_verify_owner_cpp_components.cpython-312.pyc",
+          "length": 5601,
+          "sha256": "2973292048272e8a6c8459b02c2420d5f1a309b155d8511071f6425293391fdc"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_workbench.cpython-312.pyc",
+          "length": 73811,
+          "sha256": "7e62a4ca230594dc9ad3e17b63610f33c6857db0f5192658d0c117f299e6b233"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_workbench_clusters.cpython-312.pyc",
+          "length": 5324,
+          "sha256": "cd0a19b566182b7c29c8e96f5a66c2c744af478640c0e2bebb27dfd95d725cd9"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/pycache/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/test_workbench_operations.cpython-312.pyc",
+          "length": 44330,
+          "sha256": "7dce044375b69125228e916545f99a465e1dac8499c08f0dc7c1e9326529fddd"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/README.md",
+          "length": 1678,
+          "sha256": "51153bdc0757380773c5968f6e9f640b1f7be207926f0a97b5e3295817439e65"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/run_manifest.json",
+          "length": 7073,
+          "sha256": "0b2dd9c4bffc19222813e8b64dd1baa8220c5b923e00a28391166d3b2615e667"
+        },
+        {
+          "path": "research/evidence/known_cve_coverage_20261019/source_identity.json",
+          "length": 5958,
+          "sha256": "711297f9a21056684a6bf127ab1a46213d47cecccb78bac050f419832a2859e1"
+        }
+      ]
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/runtime_exception.py",
+      "status": "??",
+      "length": 51608,
+      "sha256": "2ae943563892b8662d84f1060e2ac720a4e24dfbb497d3ca546f1dae08405370"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/runtime_ir.py",
+      "status": "??",
+      "length": 7468,
+      "sha256": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/size_overflow.py",
+      "status": "??",
+      "length": 15518,
+      "sha256": "6d2bab177c9525ddd68d3ff345480765f4d922b76b85918b02234c79f0b1282f"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/syntax.py",
+      "status": "??",
+      "length": 8088,
+      "sha256": "c3616ad6404967927d1a4a98c46257f8df19c3c36990efbae82c859f5108bcf9"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/type_origin.py",
+      "status": "??",
+      "length": 28688,
+      "sha256": "36ecc62b2e8c960bba5c4528e09a1d79b00ab699c375cf4d181f51df366611c9"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/",
+      "status": "??",
+      "file_count": 7,
+      "files": [
+        {
+          "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/cve_2025_24304_fixed.cpp",
+          "length": 490,
+          "sha256": "303f63d41ea9fd01990c0781cc2f93fdcf981f33cdc1f1f5283da6bbe954156c"
+        },
+        {
+          "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/cve_2025_24304_parent.cpp",
+          "length": 478,
+          "sha256": "a6064216d117975ec936b52f10a5b8b2fec1132e60aec8dd6d91992918cdd047"
+        },
+        {
+          "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/ibs5yg_fixed.cpp",
+          "length": 489,
+          "sha256": "c5ebba6c1a1a84b2b85770da45983ca392a2f9c5ed9abcb1bb4b36b63231d799"
+        },
+        {
+          "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/ibs5yg_parent.cpp",
+          "length": 470,
+          "sha256": "83bfca0e7495fc94f3fd93a3d36fe9834261ed61e9d040dc01db578c0dea0eab"
+        },
+        {
+          "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/safe_same_type.cpp",
+          "length": 546,
+          "sha256": "3251ceb73ea351238988247aecb80c69579b589aa502658f3ad83ce5df47b6ae"
+        },
+        {
+          "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/unknown_effect.cpp",
+          "length": 553,
+          "sha256": "2de487836c14955d3e2bbba05a75dce8ef6dad54b2ede7b83d7c27174e769cf2"
+        },
+        {
+          "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/unrelated.cpp",
+          "length": 255,
+          "sha256": "14638294932509da4e92b19cf087578179a12e4c2984b26ae3bc89fb311d7c2f"
+        }
+      ]
+    },
+    {
+      "path": "tests/detectors/ark_runtime/test_c10_known_case_controls.py",
+      "status": "??",
+      "length": 2142,
+      "sha256": "7a67ba01151bc604b78da2c63c7407fa8a86ed628e0fb682296d1ee9475cdb4a"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+test_alias_cast_helper_and_loop_controls_are_fail_closed (tests.detectors.ark_runtime.test_c11_alias_cross_helper.C11AliasCrossHelperControls.test_alias_cast_helper_and_loop_controls_are_fail_closed) ... ok
+test_known_case_parent_or_explicit_unknown_and_fixed_controls_do_not_regress (tests.detectors.ark_runtime.test_c11_alias_cross_helper.C11AliasCrossHelperControls.test_known_case_parent_or_explicit_unknown_and_fixed_controls_do_not_regress) ... ok
+test_unknown_wrapper_is_not_promoted_to_safe (tests.detectors.ark_runtime.test_c11_alias_cross_helper.C11AliasCrossHelperControls.test_unknown_wrapper_is_not_promoted_to_safe) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.053s
+
+OK

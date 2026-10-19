@@ -1,0 +1,630 @@
+{
+  "schema": 1,
+  "experiment": "D4 manifest verification against local complete Git objects",
+  "source_retrieval": "local Git object database; verification subprocesses had GIT_NO_LAZY_FETCH=1",
+  "repository": "openharmony/communication_dsoftbus",
+  "is_shallow": false,
+  "commits": {
+    "d33177135ec6c6aaf4a4c42de1f6878652b330e3": {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "parents": [
+        "033c2b0395cc55131e969616696638948957a181",
+        "81afa0edbdc030be5c6b398d296bce4745f96349"
+      ],
+      "author_date": "2022-03-29T11:33:36+00:00",
+      "subject": "!1271 samgr add accesToken Merge pull request !1271 from 李想/master",
+      "body": ""
+    },
+    "63efce3ff7f2708527eb29216decaf5fe2dc33d0": {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "parents": [
+        "d33177135ec6c6aaf4a4c42de1f6878652b330e3"
+      ],
+      "author_date": "2022-03-30T02:00:46+00:00",
+      "subject": "Remove unused sensitive prints",
+      "body": "Signed-off-by: zgit2021 <zhaowenqiang14@huawei.com>"
+    }
+  },
+  "verified_file_counts": {
+    "d33177135ec6c6aaf4a4c42de1f6878652b330e3": 22,
+    "63efce3ff7f2708527eb29216decaf5fe2dc33d0": 22
+  },
+  "files_verified": 44,
+  "files": [
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "adapter/BUILD.gn",
+      "blob": "1e639b49124ce8f2c61641acbb325105707a7c4b",
+      "sha256": "7f6b30d03e5c86e4014b11fdcb203e0d1b515e33b629f0f5684c9af897980b32",
+      "size": 5892,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "adapter/common/include/softbus_adapter_log.h",
+      "blob": "c91ad41cb765496501204144a63a2b3fe0f53c14",
+      "sha256": "6b953411b9d6163fcd5f13aed62c4895e38b9292261a934ba5ef027bd2037352",
+      "size": 3212,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "adapter/common/log/softbus_adapter_log.c",
+      "blob": "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+      "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79",
+      "size": 1321,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "BUILD.gn",
+      "blob": "d2b40361094430cfdb6f8803cd7e79ec33841482",
+      "sha256": "3fd803947bd10a5071e3bcbefeffca39a6555a0fd4d0dd092f69e458293c1d0a",
+      "size": 779,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/BUILD.gn",
+      "blob": "1229eab9264b654aa3699e1b153748af26ee22f3",
+      "sha256": "b9da90513d5a1424c2075cd6c29797afbaece0bf8aba7304d642e45c963b1838",
+      "size": 1080,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/common/BUILD.gn",
+      "blob": "fdb4134d81ff74875c7fbd0e6d7f327239f3e53a",
+      "sha256": "888f18dbf2b5600d67fda9e97104300fbb8c71757f6a09c210e376ed150e9dc4",
+      "size": 4020,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/common/include/softbus_log.h",
+      "blob": "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+      "sha256": "59fdd037fac0eee9cf904bb8d07a4bfac9a70d177886315b371ba4700af06df8",
+      "size": 1770,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/common/log/softbus_log.c",
+      "blob": "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+      "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b",
+      "size": 2814,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/common/softbus_property/softbus_feature_config.c",
+      "blob": "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+      "sha256": "068244ad006cdb012a6a23ca46f7bddca96a6bcbbd7ee8de21544bf1f9937c01",
+      "size": 9327,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/frame/BUILD.gn",
+      "blob": "79f86c96d0a3423ebbc4e8c516d6fa4a9255c572",
+      "sha256": "47476c390f49730e368603957a1512b2ff9d74dca486587217374db2b2c0a4c4",
+      "size": 7070,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/frame/standard/init/src/softbus_server.cfg",
+      "blob": "8b2f1e4b3afed0f330062f9127b14d62065ab34c",
+      "sha256": "ba9bb91c43d7ee23503237554c3e29bc0bc462fb52c0a1ac7442214898f2cfaa",
+      "size": 242,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/frame/standard/init/src/softbus_server_musl.cfg",
+      "blob": "720e1ada763bd90db8ba3e45b94cce66adbfc3dd",
+      "sha256": "6ce246fe32babe7d5d16197d1f6b963a7aa929d3992157b2f527f26459d7a173",
+      "size": 256,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/transmission/common/include/softbus_app_info.h",
+      "blob": "393c79b2cceb39e781a1680384754f02560bf7a9",
+      "sha256": "db322ec201fb1cd1d8606f339593c2cb08ab5a2de3588a37625bf4977f514500",
+      "size": 2049,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/transmission/common/include/softbus_message_open_channel.h",
+      "blob": "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+      "sha256": "4e22f4cf81aaf6def79785d153f443c0e29da464aba7e0219a5615fb252b7ce5",
+      "size": 1638,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/transmission/common/src/softbus_message_open_channel.c",
+      "blob": "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+      "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5",
+      "size": 8610,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/transmission/trans.gni",
+      "blob": "3b02d1aec3ac52d0fe81f74096319029a5ece9ec",
+      "sha256": "e00e291932cafc8d2380e5223338703c154253a1182ac6a2a81b7981bf4cdd0b",
+      "size": 2459,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_listener.c",
+      "blob": "a1ec743693b4636e2f815216ee5c93815629ae19",
+      "sha256": "993e065f0bac3105ed0d7c9e28bce3ccad56553a3d179e627dea726c87782716",
+      "size": 10963,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+      "blob": "52ade9ae7136204a0174d94a77bf8dd008c9d505",
+      "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc",
+      "size": 26641,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+      "blob": "c8d21576547ddad1f87341d451a895ebb515b90e",
+      "sha256": "eecde0623c13d9718c4e787890fe19672d6305784920b6e8c17afca3a3b042c5",
+      "size": 8686,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/transmission/trans_channel/tcp_direct/tcp_direct.gni",
+      "blob": "af6fbe2b17b275656296952b35159171c4f67484",
+      "sha256": "f4e135609b5858f4f4023025a066a210827496dcacba5deab3956c9c0973af34",
+      "size": 1585,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "core/transmission/trans_channel/trans_channel.gni",
+      "blob": "ab333455f9c87d8ff862a7d7a1f79fe537e4eb58",
+      "sha256": "9503e047ebda431cec5a0461ae71d0a65b0581c3116a5ca83bd51d6de08fccef",
+      "size": 2158,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "path": "dsoftbus.gni",
+      "blob": "5cf8bbf13431d4cd78481423a9680220c8441a26",
+      "sha256": "ab00371c7379a4c8cf36931ecc6134fdaf24faed7979c223e658dbada1fdd186",
+      "size": 2083,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "adapter/BUILD.gn",
+      "blob": "1e639b49124ce8f2c61641acbb325105707a7c4b",
+      "sha256": "7f6b30d03e5c86e4014b11fdcb203e0d1b515e33b629f0f5684c9af897980b32",
+      "size": 5892,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "adapter/common/include/softbus_adapter_log.h",
+      "blob": "c91ad41cb765496501204144a63a2b3fe0f53c14",
+      "sha256": "6b953411b9d6163fcd5f13aed62c4895e38b9292261a934ba5ef027bd2037352",
+      "size": 3212,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "adapter/common/log/softbus_adapter_log.c",
+      "blob": "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+      "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79",
+      "size": 1321,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "BUILD.gn",
+      "blob": "d2b40361094430cfdb6f8803cd7e79ec33841482",
+      "sha256": "3fd803947bd10a5071e3bcbefeffca39a6555a0fd4d0dd092f69e458293c1d0a",
+      "size": 779,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/BUILD.gn",
+      "blob": "1229eab9264b654aa3699e1b153748af26ee22f3",
+      "sha256": "b9da90513d5a1424c2075cd6c29797afbaece0bf8aba7304d642e45c963b1838",
+      "size": 1080,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/common/BUILD.gn",
+      "blob": "fdb4134d81ff74875c7fbd0e6d7f327239f3e53a",
+      "sha256": "888f18dbf2b5600d67fda9e97104300fbb8c71757f6a09c210e376ed150e9dc4",
+      "size": 4020,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/common/include/softbus_log.h",
+      "blob": "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+      "sha256": "59fdd037fac0eee9cf904bb8d07a4bfac9a70d177886315b371ba4700af06df8",
+      "size": 1770,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/common/log/softbus_log.c",
+      "blob": "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+      "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b",
+      "size": 2814,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/common/softbus_property/softbus_feature_config.c",
+      "blob": "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+      "sha256": "068244ad006cdb012a6a23ca46f7bddca96a6bcbbd7ee8de21544bf1f9937c01",
+      "size": 9327,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/frame/BUILD.gn",
+      "blob": "79f86c96d0a3423ebbc4e8c516d6fa4a9255c572",
+      "sha256": "47476c390f49730e368603957a1512b2ff9d74dca486587217374db2b2c0a4c4",
+      "size": 7070,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/frame/standard/init/src/softbus_server.cfg",
+      "blob": "8b2f1e4b3afed0f330062f9127b14d62065ab34c",
+      "sha256": "ba9bb91c43d7ee23503237554c3e29bc0bc462fb52c0a1ac7442214898f2cfaa",
+      "size": 242,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/frame/standard/init/src/softbus_server_musl.cfg",
+      "blob": "720e1ada763bd90db8ba3e45b94cce66adbfc3dd",
+      "sha256": "6ce246fe32babe7d5d16197d1f6b963a7aa929d3992157b2f527f26459d7a173",
+      "size": 256,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/transmission/common/include/softbus_app_info.h",
+      "blob": "393c79b2cceb39e781a1680384754f02560bf7a9",
+      "sha256": "db322ec201fb1cd1d8606f339593c2cb08ab5a2de3588a37625bf4977f514500",
+      "size": 2049,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/transmission/common/include/softbus_message_open_channel.h",
+      "blob": "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+      "sha256": "4e22f4cf81aaf6def79785d153f443c0e29da464aba7e0219a5615fb252b7ce5",
+      "size": 1638,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/transmission/common/src/softbus_message_open_channel.c",
+      "blob": "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+      "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5",
+      "size": 8610,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/transmission/trans.gni",
+      "blob": "3b02d1aec3ac52d0fe81f74096319029a5ece9ec",
+      "sha256": "e00e291932cafc8d2380e5223338703c154253a1182ac6a2a81b7981bf4cdd0b",
+      "size": 2459,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_listener.c",
+      "blob": "a1ec743693b4636e2f815216ee5c93815629ae19",
+      "sha256": "993e065f0bac3105ed0d7c9e28bce3ccad56553a3d179e627dea726c87782716",
+      "size": 10963,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+      "blob": "f929832bb488cef82cbc9c22427f548ae9935c98",
+      "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9",
+      "size": 26736,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+      "blob": "c8d21576547ddad1f87341d451a895ebb515b90e",
+      "sha256": "eecde0623c13d9718c4e787890fe19672d6305784920b6e8c17afca3a3b042c5",
+      "size": 8686,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/transmission/trans_channel/tcp_direct/tcp_direct.gni",
+      "blob": "af6fbe2b17b275656296952b35159171c4f67484",
+      "sha256": "f4e135609b5858f4f4023025a066a210827496dcacba5deab3956c9c0973af34",
+      "size": 1585,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "core/transmission/trans_channel/trans_channel.gni",
+      "blob": "ab333455f9c87d8ff862a7d7a1f79fe537e4eb58",
+      "sha256": "9503e047ebda431cec5a0461ae71d0a65b0581c3116a5ca83bd51d6de08fccef",
+      "size": 2158,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "path": "dsoftbus.gni",
+      "blob": "5cf8bbf13431d4cd78481423a9680220c8441a26",
+      "sha256": "ab00371c7379a4c8cf36931ecc6134fdaf24faed7979c223e658dbada1fdd186",
+      "size": 2083,
+      "checks": {
+        "git_blob_matches": true,
+        "sha256_matches": true,
+        "size_matches": true
+      }
+    }
+  ],
+  "historical_change_commit_message": "Remove unused sensitive prints",
+  "security_advisory_or_product_fix_claim": false,
+  "validated_vulnerability": 0,
+  "limitations": [
+    "Git tree/blob identity proves exact source object provenance, not that a product built or shipped it.",
+    "The later commit message says 'Remove unused sensitive prints'; it is not a security advisory or proof of deployed remediation.",
+    "This verifies the D4 source manifest only; it is not a public OHScanner Runner replay or product PoC."
+  ],
+  "manifest_blobs_downloaded": 0,
+  "source_retrieval_experiment": {
+    "retrieval_method": "raw.githubusercontent.com using each manifest-pinned commit SHA and file path",
+    "isolated_repository": "/tmp/ohscanner-dsoftbus-source/.git",
+    "manifest_rows_retrieved": 44,
+    "digest_checked_before_git_object_insert": [
+      "git_blob_sha1",
+      "sha256",
+      "size"
+    ],
+    "followup_check": "all 44 commit:path blobs verified offline with GIT_NO_LAZY_FETCH=1",
+    "scope": "only files named by D4_SOURCE_MANIFEST.json; no upstream source files copied into OHScanner"
+  }
+}

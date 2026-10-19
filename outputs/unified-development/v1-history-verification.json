@@ -1,0 +1,17 @@
+[
+  {
+    "job": "a4eb6e1a203a4ae6834eb7797cfebf90",
+    "report_sha256": "0c42d372ff6ea993c6289e8da62ac4b0c54c1ead4f038b963f6d4b5529cca54c",
+    "candidate_ids_verified": 0
+  },
+  {
+    "job": "59232be9012943d7994286718f26e134",
+    "report_sha256": "f96150e63a4e205089ea73f7c3bffefe27c4b48b38d6b7316b764e2811920013",
+    "candidate_ids_verified": 2
+  },
+  {
+    "job": "d36c780d0262441c834df4c0fe4723e2",
+    "report_sha256": "f71eb21795f8fd5d7b83b9dd0b4eb99a29890166dd46896add18fc0bc59ffdb0",
+    "candidate_ids_verified": 0
+  }
+]

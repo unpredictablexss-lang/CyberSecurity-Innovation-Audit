@@ -1,0 +1,40 @@
+{
+  "case": "cli_detector_full",
+  "repeat": 1,
+  "environment": {
+    "python": "3.12.14",
+    "git": "git version 2.55.0.windows.5",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4",
+      "tree-sitter-javascript": "0.25.0",
+      "tree-sitter-typescript": "0.23.2"
+    },
+    "parse_profile": "light-ast",
+    "macro_expansion": false
+  },
+  "wall_seconds": 0.7489300999950501,
+  "peak_rss_bytes": 28585984,
+  "result": {
+    "wall_seconds": 0.7485162999946624,
+    "diagnostic_count": 0,
+    "scope": {
+      "tracked_entries": 1384,
+      "out_of_scope": 1206,
+      "non_source": 162,
+      "symlinks": 0,
+      "submodules": 0,
+      "oversize": 0,
+      "binary_or_non_utf8": 0,
+      "selected_source_files": 16,
+      "selected_source_bytes": 18108,
+      "skipped": [],
+      "git_tree": "b4dc74e0cdf75d923f4c6bfc44be6a453ca86915",
+      "declared_scope": [
+        "src"
+      ],
+      "source_archives": []
+    }
+  }
+}

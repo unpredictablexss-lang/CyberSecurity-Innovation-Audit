@@ -1,0 +1,21 @@
+{
+  "labels": [
+    {
+      "case_pseudonym": "90aa750768218a45",
+      "label": "unknown",
+      "rationale": "self-test reviewer B"
+    },
+    {
+      "case_pseudonym": "a71cb7487685b0c6",
+      "label": "not_vulnerable_shape",
+      "rationale": "self-test reviewer B"
+    },
+    {
+      "case_pseudonym": "c8b770fdd617c03b",
+      "label": "not_vulnerable_shape",
+      "rationale": "self-test reviewer B"
+    }
+  ],
+  "packet_sha256": "20618f6c46589ee16d7146d522453fdafd05f5bd140360ff46090e8cac756ff0",
+  "schema": "ohscanner.ark-holdout-review/v1"
+}

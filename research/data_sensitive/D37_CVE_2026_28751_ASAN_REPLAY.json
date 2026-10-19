@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "compiler": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+  "runs_per_case": 3,
+  "cases": {
+    "unterminated_full_length": {
+      "source": "research/data_sensitive/D37_CVE_2026_28751_ASAN.cpp",
+      "source_sha256": "a3d1b90b57aea78f51261ed9e8c7d49d0228fb3f7418fa461d92d7dd78be2400",
+      "expected": "3/3 heap-buffer-overflow",
+      "runs": [
+        {
+          "exit_code": 1,
+          "asan_heap_buffer_overflow": true,
+          "output_sha256": "75de59c026058c30900ddea4b1e0c60cb06c3a475b9348197fd86baa93796234",
+          "output_excerpt": "==151809==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x515000000280 at pc 0x7219f8e3daa7 bp 0x7ffe71e01a10 sp 0x7ffe71e011b8"
+        },
+        {
+          "exit_code": 1,
+          "asan_heap_buffer_overflow": true,
+          "output_sha256": "dec8d1a5cadef751c71d65b71217ea1a59988b2bfae33a07686856b85c52d7e3",
+          "output_excerpt": "==151810==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x515000000280 at pc 0x72cef243daa7 bp 0x7ffcfa16e350 sp 0x7ffcfa16daf8"
+        },
+        {
+          "exit_code": 1,
+          "asan_heap_buffer_overflow": true,
+          "output_sha256": "34c9c5fb5d09ca3840bc0260543f215e52bd26078e4641f8a79836d090c93525",
+          "output_excerpt": "==151811==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x515000000280 at pc 0x7f535cc3daa7 bp 0x7ffe99ff6a10 sp 0x7ffe99ff61b8"
+        }
+      ]
+    },
+    "extra_byte_terminator_control": {
+      "source": "research/data_sensitive/D37_CVE_2026_28751_SAFE.cpp",
+      "source_sha256": "bb11b6c092c13640afa11a5fb3f30b7fe6f6a63719d966f84468756d1e25b619",
+      "expected": "0/3 sanitizer errors",
+      "runs": [
+        {
+          "exit_code": 0,
+          "asan_heap_buffer_overflow": false,
+          "output_sha256": "240269e94afb4bbc4c643851e366bf4f0d870ff0753d250b854f748cf3516285",
+          "output_excerpt": "clean"
+        },
+        {
+          "exit_code": 0,
+          "asan_heap_buffer_overflow": false,
+          "output_sha256": "240269e94afb4bbc4c643851e366bf4f0d870ff0753d250b854f748cf3516285",
+          "output_excerpt": "clean"
+        },
+        {
+          "exit_code": 0,
+          "asan_heap_buffer_overflow": false,
+          "output_sha256": "240269e94afb4bbc4c643851e366bf4f0d870ff0753d250b854f748cf3516285",
+          "output_excerpt": "clean"
+        }
+      ]
+    }
+  }
+}

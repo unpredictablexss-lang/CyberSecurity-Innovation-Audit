@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-bzGcxdQwT1p3lLRLoIZenGutkAOEFKoB2I9UHgrSAUg='; style-src 'unsafe-inline'; connect-src 'none'; img-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>OHScanner 离线盲审</title>
+  <style>
+    :root { color-scheme: light; font: 15px/1.55 system-ui, sans-serif; color: #17212b; background: #f4f6f8; }
+    body { max-width: 1050px; margin: 24px auto; padding: 0 16px; }
+    h1 { font-size: 1.5rem; } h2 { font-size: 1.15rem; margin-top: 0; }
+    .card { background: white; border: 1px solid #d9e0e7; border-radius: 8px; padding: 18px; margin: 14px 0; }
+    .notice { border-left: 4px solid #d98b00; background: #fff8e6; padding: 12px; }
+    .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit,minmax(230px,1fr)); }
+    label { display: block; font-weight: 600; margin: 9px 0 4px; }
+    input, select, textarea, button { font: inherit; }
+    input, select, textarea { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #aeb9c4; border-radius: 5px; background: white; }
+    textarea { min-height: 72px; } button { padding: 9px 14px; border: 0; border-radius: 5px; background: #145fc1; color: white; cursor: pointer; }
+    button:disabled { opacity: .45; cursor: default; } pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #f6f8fa; padding: 12px; border-radius: 5px; }
+    .muted { color: #536474; } .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  </style>
+</head>
+<body>
+  <h1>OHScanner 离线盲审</h1>
+  <p class="notice">本页只读取你手动选择的匿名盲审包，不连接服务器、不发送网络请求。不要打开主工作台或查询原操作；若自然语言、证据数量或内容让你猜到实验组别，请在备注中写明，但仍按证据评价。</p>
+  <section class="card">
+    <h2>加载资料</h2>
+    <label for="packet">匿名盲审包 JSON</label><input id="packet" type="file" accept="application/json,.json">
+    <label for="prior">可选：之前导出的评价进度 JSON</label><input id="prior" type="file" accept="application/json,.json">
+    <p id="status" class="muted">请先由创建者导出盲审包。文件在本页内处理，不会上传。</p>
+  </section>
+  <main id="items"></main>
+  <section class="card">
+    <div class="row"><button id="download" disabled>下载已完成评价 JSON</button><span id="progress" class="muted">尚无评价</span></div>
+    <p class="muted">请将评价 JSON 交回实验负责人导入。这个文件不包含源码、模式、模型或原始操作 ID。</p>
+  </section>
+  <script>
+    const packetInput = document.querySelector("#packet");
+    const priorInput = document.querySelector("#prior");
+    const statusNode = document.querySelector("#status");
+    const itemsNode = document.querySelector("#items");
+    const downloadButton = document.querySelector("#download");
+    const progressNode = document.querySelector("#progress");
+    let session = null;
+    let startedAt = 0;
+    const reviews = new Map();
+    const choices = {
+      usefulness: [["useful", "有用"], ["partially_useful", "部分有用"], ["not_useful", "无用"], ["unsafe", "有误导风险"]],
+      citation_accuracy: [["all_accurate", "全部准确"], ["some_incorrect", "存在错误"], ["mostly_incorrect", "大多错误"], ["not_checked", "未核对"]],
+      post_review_disposition: [["", "不记录"], ["investigate", "值得继续调查"], ["likely_noise", "倾向噪声"], ["unknown", "证据不足，未知"]],
+      guessed_arm: [["unknown", "未猜出 / 不确定"], ["single_shot", "猜测 R1（单次调用）"], ["tool_agent", "猜测 R2（工具调用）"]],
+      obligation_disposition: [["", "请选择"], ["evidence_found", "源码证据支持该义务"],
+        ["contrary_evidence", "源码证据反驳该义务"], ["unresolved", "当前证据无法判断"]],
+      claim_support: [["", "请选择"], ["supported", "证据支持该主张"],
+        ["partially_supported", "只部分支持"], ["unsupported", "证据不支持"],
+        ["unverifiable", "当前证据无法判断"]]
+    };
+    const obligationLabels = { evidence_found: "发现支持证据", contrary_evidence: "存在反向证据", unresolved: "仍未解决" };
+    function displayObligation(value) {
+      if (typeof value === "string") return value;
+      if (value && typeof value === "object") return value.description || JSON.stringify(value);
+      return String(value ?? "unknown");
+    }
+    function node(tag, text, className) {
+      const element = document.createElement(tag);
+      if (text !== undefined) element.textContent = text;
+      if (className) element.className = className;
+      return element;
+    }
+    function selectField(parent, key, label, values, defaultValue) {
+      const wrapper = node("div");
+      wrapper.append(node("label", label));
+      const select = node("select"); select.name = key;
+      for (const [value, title] of values) {
+        const option = node("option", title); option.value = value; select.append(option);
+      }
+      select.value = defaultValue; wrapper.append(select); parent.append(wrapper);
+      return select;
+    }
+    function textField(parent, key, label, multiline = false, maxLength = 1200) {
+      const wrapper = node("div"); wrapper.append(node("label", label));
+      const input = node(multiline ? "textarea" : "input"); input.name = key; input.maxLength = maxLength;
+      wrapper.append(input); parent.append(wrapper); return input;
+    }
+    function renderItem(item, index) {
+      const packet = item.packet;
+      const candidate = packet.candidate || {};
+      const assessment = packet.assessment || {};
+      const card = node("section", undefined, "card");
+      card.append(node("h2", `盲审条目 ${index + 1} · ${item.blind_item_id}`));
+      card.append(node("p", `${candidate.file || "unknown"}:${candidate.line ?? "?"} · ${candidate.symbol || "unknown"}`, "muted"));
+      card.append(node("h3", "候选源码")); card.append(node("pre", candidate.source_excerpt || ""));
+      card.append(node("h3", "证据义务")); card.append(node("p", (candidate.evidence_obligations || []).map(displayObligation).join("；") || "无记录"));
+      card.append(node("h3", "Agent 分诊材料"));
+      card.append(node("p", `${assessment.assessment || "unknown"} · ${assessment.summary_provenance === "server_generated_from_structured_triage" ? "服务端结构化摘要" : "旧版未核验模型摘要"}：${assessment.summary || ""}`));
+      if (assessment.summary_provenance === "server_generated_from_structured_triage" && assessment.model_summary_unverified) {
+        card.append(node("p", `模型原始摘要（未核验）：${assessment.model_summary_unverified}`, "notice"));
+      }
+      for (const claim of assessment.supported_claims || []) {
+        const block = node("div", undefined, "card"); block.append(node("p", claim.claim || ""));
+        for (const citation of claim.citations || []) block.append(node("p", `${citation.evidence_id}: “${citation.quote}”`, "muted"));
+        card.append(block);
+      }
+      for (const [label, values] of [["模型未核验标记的无证据陈述", assessment.unsupported_claims], ["模型未核验列出的未知项", assessment.unknowns], ["模型未核验的建议下一步", assessment.next_steps]]) {
+        card.append(node("h3", label)); card.append(node("p", (values || []).join("；") || "无"));
+      }
+      card.append(node("h3", "匿名证据包")); card.append(node("pre", JSON.stringify(packet.evidence || [], null, 2)));
+      const form = node("form", undefined, "card");
+      form.append(node("h3", "你的评价"));
+      const claimRows = assessment.supported_claims || [];
+      const claimAdjudicationFields = [];
+      if (claimRows.length) {
+        form.append(node("p", "逐条判断每个 Agent 支持性主张是否被其所列引文及当前证据语义支持；这是证据支持度复核，不是漏洞真值。", "notice"));
+        claimRows.forEach((claim, claimIndex) => {
+          const block = node("div", undefined, "card");
+          block.append(node("strong", `支持性主张 ${claimIndex + 1}：${claim.claim || "（空主张）"}`));
+          for (const citation of claim.citations || []) {
+            block.append(node("p", `${citation.evidence_id}: “${citation.quote}”`, "muted"));
+          }
+          const select = selectField(block, `human_claim_${claimIndex}`, "证据语义支持度", choices.claim_support, "");
+          select.required = true;
+          claimAdjudicationFields.push({ claim_index: claimIndex, select });
+          form.append(block);
+        });
+      }
+      const obligationRows = candidate.evidence_obligations || [];
+      const modelReviews = new Map((assessment.obligation_reviews || []).map((item) => [item.obligation_index, item]));
+      const adjudicationFields = [];
+      if (obligationRows.length) {
+        form.append(node("p", "请只依据当前匿名证据包，独立判断 Agent 对每项源码义务的分诊。此评价衡量证据解读一致性，不是漏洞真值。", "notice"));
+        obligationRows.forEach((obligation, obligationIndex) => {
+          const block = node("div", undefined, "card");
+          block.append(node("strong", `${obligationIndex + 1}. ${displayObligation(obligation)}`));
+          const modelReview = modelReviews.get(obligationIndex);
+          block.append(node("p", `Agent 分诊：${obligationLabels[modelReview?.disposition] || "缺失"}`, "muted"));
+          const select = selectField(block, `human_obligation_${obligationIndex}`, "你的独立判定", choices.obligation_disposition, "");
+          select.required = true;
+          adjudicationFields.push({ obligation_index: obligationIndex, select });
+          form.append(block);
+        });
+      }
+      const grid = node("div", undefined, "grid");
+      textField(grid, "reviewer", "复核人", false, 100).required = true;
+      selectField(grid, "usefulness", "分诊实用性", choices.usefulness, "partially_useful");
+      selectField(grid, "citation_accuracy", "引文准确性", choices.citation_accuracy, "not_checked");
+      selectField(grid, "post_review_disposition", "人工分诊（不是漏洞真值）", choices.post_review_disposition, "");
+      selectField(grid, "guessed_arm", "你认为它来自哪种 Agent？", choices.guessed_arm, "unknown");
+      const confidence = textField(grid, "guess_confidence", "组别猜测置信度（0-100，可留空）", false, 3);
+      confidence.type = "number"; confidence.min = "0"; confidence.max = "100";
+      textField(grid, "elapsed_seconds", "复核耗时秒（可留空）", false, 6).type = "number";
+      form.append(grid);
+      textField(form, "claims_to_correct", "需更正陈述", true, 1200);
+      textField(form, "missed_evidence", "遗漏证据", true, 1200);
+      const notes = textField(form, "notes", "备注；若猜到实验组别请在此说明", true, 1000);
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const record = Object.fromEntries(data.entries());
+        for (const item of adjudicationFields) delete record[`human_obligation_${item.obligation_index}`];
+        for (const item of claimAdjudicationFields) delete record[`human_claim_${item.claim_index}`];
+        const incomplete = adjudicationFields.find((item) => !item.select.value);
+        if (incomplete) { incomplete.select.reportValidity(); return; }
+        const incompleteClaim = claimAdjudicationFields.find((item) => !item.select.value);
+        if (incompleteClaim) { incompleteClaim.select.reportValidity(); return; }
+        record.obligation_adjudications = adjudicationFields.map((item) => ({
+          obligation_index: item.obligation_index, disposition: item.select.value
+        }));
+        record.claim_adjudications = claimAdjudicationFields.map((item) => ({
+          claim_index: item.claim_index, disposition: item.select.value
+        }));
+        record.elapsed_seconds = record.elapsed_seconds === "" ? null : Number(record.elapsed_seconds);
+        record.guess_confidence = record.guess_confidence === "" ? null : Number(record.guess_confidence);
+        record.post_review_disposition = record.post_review_disposition || null;
+        record.reviewer = String(record.reviewer).trim();
+        if (!record.reviewer) return;
+        if (record.elapsed_seconds === null) record.elapsed_seconds = Math.round((Date.now() - startedAt) / 1000);
+        reviews.set(item.blind_item_id, { blind_item_id: item.blind_item_id,
+          packet_sha256: item.packet_sha256, ...record });
+        form.querySelector("button").disabled = true;
+        form.querySelector("button").textContent = "已保存到本页";
+        notes.readOnly = true;
+        updateProgress();
+      });
+      const submit = node("button", "保存此条评价"); submit.type = "submit"; form.append(submit);
+      if (reviews.has(item.blind_item_id)) {
+        const previous = reviews.get(item.blind_item_id);
+        for (const key of ["reviewer", "usefulness", "citation_accuracy", "post_review_disposition",
+                           "guessed_arm", "guess_confidence", "elapsed_seconds", "claims_to_correct", "missed_evidence", "notes"]) {
+          const field = form.elements.namedItem(key);
+          if (field && previous[key] !== null && previous[key] !== undefined) field.value = previous[key];
+        }
+        for (const adjudication of previous.obligation_adjudications || []) {
+          const field = adjudicationFields.find((item) => item.obligation_index === adjudication.obligation_index);
+          if (field) field.select.value = adjudication.disposition;
+        }
+        for (const adjudication of previous.claim_adjudications || []) {
+          const field = claimAdjudicationFields.find((item) => item.claim_index === adjudication.claim_index);
+          if (field) field.select.value = adjudication.disposition;
+        }
+        submit.disabled = true; submit.textContent = "已保存到本页";
+      }
+      card.append(form);
+      return card;
+    }
+    function updateProgress() {
+      const total = session?.items?.length || 0;
+      progressNode.textContent = `${reviews.size} / ${total} 条已评价`;
+      downloadButton.disabled = reviews.size === 0;
+    }
+    async function parseFile(file) { return JSON.parse(await file.text()); }
+    async function loadFiles() {
+      try {
+        if (!packetInput.files?.[0]) return;
+        const value = await parseFile(packetInput.files[0]);
+        if (value.schema_version !== 1 || !Array.isArray(value.items) || !value.blind_session_id) throw new Error("不是 OHScanner blind-session v1 文件");
+        session = value; reviews.clear();
+        let skippedOldReviews = 0;
+        if (priorInput.files?.[0]) {
+          const prior = await parseFile(priorInput.files[0]);
+          if (prior.blind_session_id !== session.blind_session_id || !Array.isArray(prior.reviews)) throw new Error("评价文件与盲审会话不匹配");
+          const known = new Map(session.items.map((item) => [item.blind_item_id, item]));
+          for (const review of prior.reviews) {
+            const packetItem = known.get(review.blind_item_id);
+            if (!packetItem || packetItem.packet_sha256 !== review.packet_sha256) throw new Error("评价文件中的条目或包哈希与当前盲审包不匹配");
+            const expectedObligations = packetItem.packet?.candidate?.evidence_obligations?.length || 0;
+            const expectedClaims = packetItem.packet?.assessment?.supported_claims?.length || 0;
+            if ((expectedObligations && (!Array.isArray(review.obligation_adjudications)
+                || review.obligation_adjudications.length !== expectedObligations))
+                || (expectedClaims && (!Array.isArray(review.claim_adjudications)
+                || review.claim_adjudications.length !== expectedClaims))) {
+              skippedOldReviews++;
+              continue;
+            }
+            reviews.set(review.blind_item_id, review);
+          }
+        }
+        startedAt = Date.now(); itemsNode.replaceChildren(...session.items.map(renderItem));
+        statusNode.textContent = `已加载 ${session.items.length} 条匿名条目；session ${session.blind_session_id}。${skippedOldReviews ? `有 ${skippedOldReviews} 条旧评价缺少完整的逐项证据义务或支持性主张判定，已保留为待复核。` : ""}请勿查询实验组别。`;
+        updateProgress();
+      } catch (error) { statusNode.textContent = String(error); }
+    }
+    packetInput.addEventListener("change", () => void loadFiles());
+    priorInput.addEventListener("change", () => void loadFiles());
+    downloadButton.addEventListener("click", () => {
+      const output = { schema_version: 1, blind_session_id: session.blind_session_id,
+        reviews: [...reviews.values()] };
+      const blob = new Blob([JSON.stringify(output, null, 2)], { type: "application/json" });
+      const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
+      link.download = `ohscanner-blind-reviews-${session.blind_session_id}.json`; link.click();
+      URL.revokeObjectURL(link.href);
+    });
+  </script>
+</body>
+</html>

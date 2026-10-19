@@ -1,0 +1,33 @@
+{
+  "status": "planning_reference",
+  "captured_date": "2026-10-17",
+  "documents": [
+    {
+      "file": "OHScanner_PRD.md",
+      "meaning": "requirements or visual prototype; not implemented behavior or verification evidence",
+      "source_sha256": "34328dc927b653587c10bae0c5b24dfcda309e144705261adc181c6c387d6b3e",
+      "source_bytes": 66296,
+      "normalization": "Strip trailing horizontal whitespace only; original retained outside Git.",
+      "stored_sha256": "49b0fa03f48b33ccbe180c005df152d7e53bb41217c9ad73d2a5e9b5303e89f1",
+      "stored_bytes": 66294
+    },
+    {
+      "file": "技术文档1.0.md",
+      "meaning": "requirements or visual prototype; not implemented behavior or verification evidence",
+      "source_sha256": "75e97f54a5cb4844cd904e09ba4d578892b0484334ed6b5478aa2d95f996f061",
+      "source_bytes": 36010,
+      "normalization": "Strip trailing horizontal whitespace only; original retained outside Git.",
+      "stored_sha256": "e19f6cb31d48e7ebdd17abaed47d8972b9639c057c6f3cd88ebb1823b0c15aa0",
+      "stored_bytes": 36006
+    },
+    {
+      "file": "面板ui功能.html",
+      "meaning": "requirements or visual prototype; not implemented behavior or verification evidence",
+      "source_sha256": "f0ceb638508ced6f7bc432955249a3e122376bc7bb838c247585b58832bf90ba",
+      "source_bytes": 46088,
+      "normalization": "none",
+      "stored_sha256": "f0ceb638508ced6f7bc432955249a3e122376bc7bb838c247585b58832bf90ba",
+      "stored_bytes": 46088
+    }
+  ]
+}

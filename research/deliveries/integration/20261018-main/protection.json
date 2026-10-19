@@ -1,0 +1,19 @@
+{
+  "checked_worktrees": 20,
+  "method": "Read-only HEAD/branch and original dirty file SHA256 comparison; no restoration/reset/stash/clean",
+  "observed_changes": [
+    {
+      "path": "/home/audit/ohscanner/worktrees/agent-llm-20261017",
+      "before_head": "1f8c7d31478f64cfd8586a46931b628844f96f64",
+      "after_head": "1f8c7d31478f64cfd8586a46931b628844f96f64",
+      "branch": "refs/heads/work/agent-llm-20261017",
+      "initial_dirty_files_changed": [
+        "web/src/features/audits/OperationForms.tsx",
+        "research/deliveries/agent/agent-investigation-20261017/README.md",
+        "src/workbench/agent.py",
+        "tests/test_agent_workflow.py"
+      ]
+    }
+  ],
+  "interpretation": "Other sessions may advance their own worktrees; observed differences are preserved and never automatically reverted."
+}

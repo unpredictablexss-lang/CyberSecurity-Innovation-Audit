@@ -1,0 +1,84 @@
+test_alias_cast_helper_and_loop_controls_are_fail_closed (tests.detectors.ark_runtime.test_c11_alias_cross_helper.C11AliasCrossHelperControls.test_alias_cast_helper_and_loop_controls_are_fail_closed) ... ok
+test_known_case_parent_or_explicit_unknown_and_fixed_controls_do_not_regress (tests.detectors.ark_runtime.test_c11_alias_cross_helper.C11AliasCrossHelperControls.test_known_case_parent_or_explicit_unknown_and_fixed_controls_do_not_regress) ... ok
+test_unknown_wrapper_is_not_promoted_to_safe (tests.detectors.ark_runtime.test_c11_alias_cross_helper.C11AliasCrossHelperControls.test_unknown_wrapper_is_not_promoted_to_safe) ... ok
+test_constant_helper_is_not_identity (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_constant_helper_is_not_identity) ... ok
+test_direct_identity_is_still_supported (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_direct_identity_is_still_supported) ... ok
+test_forwarding_chain_is_bounded_identity_summary (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_forwarding_chain_is_bounded_identity_summary) ... ok
+test_unknown_forwarding_helper_remains_unknown (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_unknown_forwarding_helper_remains_unknown) ... ok
+test_unrelated_type_helper_is_not_promoted (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_unrelated_type_helper_is_not_promoted) ... ok
+test_effectful_helper_has_explicit_contract_and_is_not_identity (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_effectful_helper_has_explicit_contract_and_is_not_identity) ... ok
+test_fixed_identity_helper_is_effect_free (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_fixed_identity_helper_is_effect_free) ... ok
+test_safe_local_identity_is_not_a_security_verdict (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_safe_local_identity_is_not_a_security_verdict) ... ok
+test_unknown_helper_is_explicitly_effectful (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_unknown_helper_is_explicitly_effectful) ... ok
+test_unrelated_helper_has_no_applicable_contract (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_unrelated_helper_has_no_applicable_contract) ... ok
+test_fixed_exit_has_no_backedge (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_fixed_exit_has_no_backedge) ... ok
+test_host_loop_is_unrelated_to_generated_cfg (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_host_loop_is_unrelated_to_generated_cfg) ... ok
+test_positive_loop_end_backedge_is_audited (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_positive_loop_end_backedge_is_audited) ... ok
+test_safe_zero_iteration_shape_is_not_a_security_verdict (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_safe_zero_iteration_shape_is_not_a_security_verdict) ... ok
+test_unknown_loop_target_is_fail_closed (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_unknown_loop_target_is_fail_closed) ... ok
+test_fixed_unsigned_width_control_has_no_candidate (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_fixed_unsigned_width_control_has_no_candidate) ... ok
+test_positive_signed_narrowing_is_candidate (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_positive_signed_narrowing_is_candidate) ... ok
+test_safe_local_zero_product_is_not_security_verdict (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_safe_local_zero_product_is_not_security_verdict) ... ok
+test_unknown_conversion_is_explicitly_partial (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_unknown_conversion_is_explicitly_partial) ... ok
+test_unrelated_conversion_without_allocation_is_not_applicable (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_unrelated_conversion_without_allocation_is_not_applicable) ... ok
+test_fixed_identity_summary_is_bound_without_effect_contract (tests.detectors.ark_runtime.test_c13_cross_file_facts.CrossFileFactControls.test_fixed_identity_summary_is_bound_without_effect_contract) ... ok
+test_missing_include_and_unresolved_loop_are_explicit_unknown (tests.detectors.ark_runtime.test_c13_cross_file_facts.CrossFileFactControls.test_missing_include_and_unresolved_loop_are_explicit_unknown) ... ok
+test_non_canonical_path_is_rejected (tests.detectors.ark_runtime.test_c13_cross_file_facts.CrossFileFactControls.test_non_canonical_path_is_rejected) ... ok
+test_positive_alias_cast_helper_summary_loop_and_include_are_bound (tests.detectors.ark_runtime.test_c13_cross_file_facts.CrossFileFactControls.test_positive_alias_cast_helper_summary_loop_and_include_are_bound) ... ok
+test_safe_local_shape_is_not_a_security_verdict (tests.detectors.ark_runtime.test_c13_cross_file_facts.CrossFileFactControls.test_safe_local_shape_is_not_a_security_verdict) ... ok
+test_unrelated_source_is_not_promoted_to_a_cross_file_fact (tests.detectors.ark_runtime.test_c13_cross_file_facts.CrossFileFactControls.test_unrelated_source_is_not_promoted_to_a_cross_file_fact) ... ok
+test_nine_known_ark_shapes_have_production_candidate_and_fixed_controls (tests.detectors.ark_runtime.test_c13_cross_file_facts.ProductionNineShapeRegression.test_nine_known_ark_shapes_have_production_candidate_and_fixed_controls) ... E:\����\CyberSecurity-Innovation-Audit-c13-cross-file-20261019\tests\detectors\ark_runtime\test_c13_cross_file_facts.py:147: ResourceWarning: unclosed file <_io.TextIOWrapper name='tests/detectors/ark_runtime/fixtures/c10_semantics/cve_2025_24304_parent.cpp' mode='r' encoding='utf-8'>
+  text = open('tests/detectors/ark_runtime/fixtures/c10_semantics/' + name, encoding='utf-8').read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+E:\����\CyberSecurity-Innovation-Audit-c13-cross-file-20261019\tests\detectors\ark_runtime\test_c13_cross_file_facts.py:147: ResourceWarning: unclosed file <_io.TextIOWrapper name='tests/detectors/ark_runtime/fixtures/c10_semantics/ibs5yg_parent.cpp' mode='r' encoding='utf-8'>
+  text = open('tests/detectors/ark_runtime/fixtures/c10_semantics/' + name, encoding='utf-8').read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+E:\����\CyberSecurity-Innovation-Audit-c13-cross-file-20261019\tests\detectors\ark_runtime\test_c13_cross_file_facts.py:150: ResourceWarning: unclosed file <_io.TextIOWrapper name='tests/detectors/ark_runtime/fixtures/c12_deep_semantics/loop_positive.cpp' mode='r' encoding='utf-8'>
+  loop_positive = open('tests/detectors/ark_runtime/fixtures/c12_deep_semantics/loop_positive.cpp', encoding='utf-8').read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+E:\����\CyberSecurity-Innovation-Audit-c13-cross-file-20261019\tests\detectors\ark_runtime\test_c13_cross_file_facts.py:173: ResourceWarning: unclosed file <_io.TextIOWrapper name='tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_positive.cpp' mode='r' encoding='utf-8'>
+  (source(open('tests/detectors/ark_runtime/fixtures/c10_gap_rules/' + parent_name, encoding='utf-8').read(), parent_path),),
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+E:\����\CyberSecurity-Innovation-Audit-c13-cross-file-20261019\tests\detectors\ark_runtime\test_c13_cross_file_facts.py:175: ResourceWarning: unclosed file <_io.TextIOWrapper name='tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_fixed.cpp' mode='r' encoding='utf-8'>
+  (source(open('tests/detectors/ark_runtime/fixtures/c10_gap_rules/' + fixed_name, encoding='utf-8').read(), fixed_path),),
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+E:\����\CyberSecurity-Innovation-Audit-c13-cross-file-20261019\tests\detectors\ark_runtime\test_c13_cross_file_facts.py:173: ResourceWarning: unclosed file <_io.TextIOWrapper name='tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_positive.cpp' mode='r' encoding='utf-8'>
+  (source(open('tests/detectors/ark_runtime/fixtures/c10_gap_rules/' + parent_name, encoding='utf-8').read(), parent_path),),
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+E:\����\CyberSecurity-Innovation-Audit-c13-cross-file-20261019\tests\detectors\ark_runtime\test_c13_cross_file_facts.py:175: ResourceWarning: unclosed file <_io.TextIOWrapper name='tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_fixed.cpp' mode='r' encoding='utf-8'>
+  (source(open('tests/detectors/ark_runtime/fixtures/c10_gap_rules/' + fixed_name, encoding='utf-8').read(), fixed_path),),
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+E:\����\CyberSecurity-Innovation-Audit-c13-cross-file-20261019\tests\detectors\ark_runtime\test_c13_cross_file_facts.py:173: ResourceWarning: unclosed file <_io.TextIOWrapper name='tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_positive.cpp' mode='r' encoding='utf-8'>
+  (source(open('tests/detectors/ark_runtime/fixtures/c10_gap_rules/' + parent_name, encoding='utf-8').read(), parent_path),),
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+E:\����\CyberSecurity-Innovation-Audit-c13-cross-file-20261019\tests\detectors\ark_runtime\test_c13_cross_file_facts.py:175: ResourceWarning: unclosed file <_io.TextIOWrapper name='tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_fixed.cpp' mode='r' encoding='utf-8'>
+  (source(open('tests/detectors/ark_runtime/fixtures/c10_gap_rules/' + fixed_name, encoding='utf-8').read(), fixed_path),),
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+
+  test_nine_known_ark_shapes_have_production_candidate_and_fixed_controls (tests.detectors.ark_runtime.test_c13_cross_file_facts.ProductionNineShapeRegression.test_nine_known_ark_shapes_have_production_candidate_and_fixed_controls) (rule='ark.runtime.typedarray-buffer-size-multiplication-overflow', parent='tests/detectors/ark_runtime/fixtures/c13_cross_file_facts/loop_positive.cpp') ... FAIL
+  test_nine_known_ark_shapes_have_production_candidate_and_fixed_controls (tests.detectors.ark_runtime.test_c13_cross_file_facts.ProductionNineShapeRegression.test_nine_known_ark_shapes_have_production_candidate_and_fixed_controls) (rule='ark.runtime.callback-exception-before-result-conversion', fixed='tests/detectors/ark_runtime/fixtures/c13_cross_file_facts/runtime_fixed.cpp') ... FAIL
+
+======================================================================
+FAIL: test_nine_known_ark_shapes_have_production_candidate_and_fixed_controls (tests.detectors.ark_runtime.test_c13_cross_file_facts.ProductionNineShapeRegression.test_nine_known_ark_shapes_have_production_candidate_and_fixed_controls) (rule='ark.runtime.typedarray-buffer-size-multiplication-overflow', parent='tests/detectors/ark_runtime/fixtures/c13_cross_file_facts/loop_positive.cpp')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c13-cross-file-20261019\tests\detectors\ark_runtime\test_c13_cross_file_facts.py", line 184, in test_nine_known_ark_shapes_have_production_candidate_and_fixed_controls
+    self.assert_candidate(self.run_rule(rule_id, parent_units, parent_path))
+  File "E:\����\CyberSecurity-Innovation-Audit-c13-cross-file-20261019\tests\detectors\ark_runtime\test_c13_cross_file_facts.py", line 137, in assert_candidate
+    self.assertTrue(result.findings, msg=result.to_dict() if hasattr(result, 'to_dict') else result)
+AssertionError: () is not true : DetectorRun(detector_id='ohscanner.ark.runtime.type_safety', version='0.6.3', status='blocked', analyzed_files=('tests/detectors/ark_runtime/fixtures/c13_cross_file_facts/loop_positive.cpp',), findings=(), limitations=('Narrow local syntax/IR model; no whole-program type or exploitability proof.', 'tests/detectors/ark_runtime/fixtures/c13_cross_file_facts/loop_positive.cpp: bounded_size_product_model_no_general_cpp_ranges_or_cfg'), file_outcomes=(('tests/detectors/ark_runtime/fixtures/c13_cross_file_facts/loop_positive.cpp', 'partial'),))
+
+======================================================================
+FAIL: test_nine_known_ark_shapes_have_production_candidate_and_fixed_controls (tests.detectors.ark_runtime.test_c13_cross_file_facts.ProductionNineShapeRegression.test_nine_known_ark_shapes_have_production_candidate_and_fixed_controls) (rule='ark.runtime.callback-exception-before-result-conversion', fixed='tests/detectors/ark_runtime/fixtures/c13_cross_file_facts/runtime_fixed.cpp')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c13-cross-file-20261019\tests\detectors\ark_runtime\test_c13_cross_file_facts.py", line 186, in test_nine_known_ark_shapes_have_production_candidate_and_fixed_controls
+    self.assert_no_candidate(self.run_rule(rule_id, fixed_units, fixed_path))
+  File "E:\����\CyberSecurity-Innovation-Audit-c13-cross-file-20261019\tests\detectors\ark_runtime\test_c13_cross_file_facts.py", line 141, in assert_no_candidate
+    self.assertFalse(result.findings)
+AssertionError: (DetectorFinding(file='tests/detectors/ark_runtime/fixtures/c13_cross_file_facts/runtime_fixed.cpp', line=7, rule_id='ark.runtime.callback-exception-before-result-conversion', message='Candidate only: callback result conversion may precede a pending-exception exit. trace={"constraints": [], "creation_line": 0, "function_region": [52, 414], "generated_path": [6, 7], "model_sha256": "0ec62ebd704ca877d7ad04339c551375b565756d8da184828a0e150742918497", "target": "callbackOutcome", "token_line": 6, "token_origin": "JSFunction::Call", "unreviewed_effect_sites": []};rule_version=1.1.0', evidence_type='syntax', column=17, candidate_cwe='CWE-755', symbol='BuiltinsTypedArray::Filter', evidence_obligations=(EvidenceObligation(kind='exception_propagation_semantics', description='Verify the callback completion value and pending-exception early-exit semantics.', status='unknown'), EvidenceObligation(kind='cross_file_macro_closure', description='Bind every included guard macro and helper body to the scanned source scope.', status='unknown'), EvidenceObligation(kind='runtime_path_feasibility', description='Establish a reachable callback result conversion without a dominating exception exit.', status='unknown'), EvidenceObligation(kind='product_binding', description='Bind the exact source revision and build configuration to an affected shipped product.', status='unknown'), EvidenceObligation(kind='isolated_validation', description='Reproduce and revalidate the fix only in an authorized isolated environment.', status='unknown')), consequence_impact=None, consequence_cwe=None, source_sha256='06cab796d25f28f1ef86379d0ee1efd058b510dcda510dd9e3aeca2c77be37fe', rule_version=None, rule_lineage_id=None, symbol_identity=None, ast_fingerprint=None, identity_quality='unknown'),) is not false
+
+----------------------------------------------------------------------
+Ran 30 tests in 0.114s
+
+FAILED (failures=2)

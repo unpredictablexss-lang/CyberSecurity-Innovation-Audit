@@ -1,0 +1,16 @@
+{
+  "frozen_at": "2026-10-17T13:25:29.959813+00:00",
+  "development_head": "88528b791323e25ea96108ab6c95cbc8f3ce646f",
+  "file_sha256": {
+    "src/ohscanner/detectors/data/models.py": "ddfa2e262accb12f70f878265125bc80c79461935cffd599e8048222bac1fdca",
+    "src/ohscanner/detectors/data/sensitive_exposure.py": "2a6dbc0563a0aab9e0f4f469c421a1fd9742d1bf4fcdee96157014c024d19e45",
+    "src/ohscanner/detectors/data/historical_models.py": "4287e30ca72deb4ef7e073534292740bf811eb38ada50e50724e59e9ac83f9b3",
+    "src/ohscanner/detectors/data/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/ohscanner/detectors/data/historical.py": "12094ed70857ddf954a2d43e349de915bddd2d80f2d7308e7907f1048dddad60",
+    "src/ohscanner/detectors/data/historical_profiles.json": "34c4c094211990dfe5884cc574815b4012ff6ee3fa49bd1590a2273f91b3904e",
+    "tests/detectors/data/test_d3_historical.py": "0497274301bae09347d185d19fc2d2f1c976f2f86895a0cd33380820ac71b2e8",
+    "tests/fixtures/data_sensitive/d3_cases.json": "30e3d36e757fc589b5c654481d0b2d559f9dcec4778da8e337e967543df9a180"
+  },
+  "holdout_collected_after_freeze": true,
+  "independent_labels_available": false
+}

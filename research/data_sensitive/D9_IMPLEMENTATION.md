@@ -1,0 +1,11 @@
+# D9 implementation: OpenHarmony HiLog macro sinks
+
+D9 expands `ohscanner.data.sensitive_exposure` from detector `0.5.0` to `0.6.0` and introduces `SINK_MODEL_VERSION=0.2.0`. It adds source-level sink models for `HILOG_DEBUG/INFO/WARN/ERROR/FATAL`, `HILOG_COMM_INFO/WARN/ERROR/FATAL`, and C++ `HiLogDebug/Info/Warn/Error/Fatal`. It does not change `SOURCE_MODEL_VERSION` or the default DSoftBus source model.
+
+The model is based on the upstream `openharmony/hiviewdfx_hilog` source at commit `393d7e9a690edb76ed27e710b472623daf650dc8`. In `interfaces/native/innerkits/include/hilog/log_c.h`, `HILOG_*` macros forward to `HILOG_IMPL` with format argument index 1, while `HILOG_COMM_*` uses index 0. `interfaces/native/innerkits/include/hilog/log_cpp.h` maps the C++ `HiLog*` family through `HILOG_IMPL`, with format index 1. The public header `log.h` includes the C and C++ macro headers. Relevant blob IDs and the source-mapping claims are recorded in `D9_VALIDATION.json`.
+
+The detector continues to treat unmarked format slots as private. Explicit `%{public}` values can create a static candidate; `%{private}`, default-private formats, and calls without a sensitive operand do not. These are source-level macro models and synthetic regression controls. No DSoftBus product build was performed to prove which headers/macros a selected product actually compiles, and this work does not establish a product vulnerability.
+
+The added D9 fixture manifest is additive and separate from the historical `cases.json`, whose frozen SHA-256 remains `174ab6425514d5873f9c863047888005c3df2ddde6cf579b3da92942ce7b2741`. Four fixtures cover native public, native private, communication public, and a no-sensitive-operand case. Inline tests additionally exercise all 14 modeled macro spellings and conservative privacy defaults.
+
+This is a detector-surface regression, not an independent real-source holdout. It cannot support a recall claim. The exact DSoftBus commit remains unavailable as a local Git object after the HTTPS fetch timed out; previously retrieved GitHub API source blobs support the D8 DSoftBus macro mapping, but full fixed-source replay remains blocked. Candidate findings remain unconfirmed, and all M0-M3 gates in `D5_MAIN_READINESS.md` remain unmet.

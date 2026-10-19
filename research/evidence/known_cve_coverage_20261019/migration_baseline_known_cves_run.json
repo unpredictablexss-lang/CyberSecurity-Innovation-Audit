@@ -1,0 +1,20 @@
+{
+  "name": "migration_baseline_known_cves",
+  "argv": [
+    "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-m",
+    "unittest",
+    "-v",
+    "tests.detectors.test_known_disclosed_cves"
+  ],
+  "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+  "environment": {
+    "PYTHONPYCACHEPREFIX": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019\\research\\evidence\\known_cve_coverage_20261019\\pycache"
+  },
+  "exit_code": 1,
+  "duration_seconds": 1.927945,
+  "stdout_file": "migration_baseline_known_cves_stdout.txt",
+  "stderr_file": "migration_baseline_known_cves_stderr.txt",
+  "stdout_bytes": 0,
+  "stderr_bytes": 5825
+}

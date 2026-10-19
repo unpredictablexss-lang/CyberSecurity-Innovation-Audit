@@ -1,0 +1,95 @@
+{
+  "job_id": "73589d1f4aad423696ffe1ab05880917",
+  "repository": "openharmony/communication_dsoftbus",
+  "commit": "9f922677e147b939d6db899bde181d609d64711b",
+  "git_tree": "4b114179868d96c69eedc4520037552ddc3d65dd",
+  "scope": [
+    "core"
+  ],
+  "source_files": 870,
+  "source_bytes": 8969000,
+  "source_parsing": {
+    "parsing_status": {
+      "complete": 446,
+      "partial": 424
+    },
+    "languages": {
+      "c": 360,
+      "cpp": 510
+    }
+  },
+  "plan_sha256": "578b38a6d8c0cd0c7a6466d9018ecde1b050b460fbea03aa277ae92c0648c6d4",
+  "status": "completed_with_limitations",
+  "candidate_count": 4,
+  "validated_vulnerability": 0,
+  "source_excerpt_checks": [
+    {
+      "id": "8bec75dd9f9719ca07e6758906cad1dc42d989281e7ffd4b2c6ff60841f36794",
+      "file": "core/bus_center/extend/src/bus_center_ex_obj_stub.cpp",
+      "source_sha256": "ab27bd3035c1e6dc0da97786e3a6fb3dd80675358856b92de1ca2a89e44afd57"
+    },
+    {
+      "id": "61d93a01cc05e9a1ac3dc38259dd23953a81247f14739d5489b8702f9f9e1420",
+      "file": "core/frame/standard/init/src/softbus_server_stub.cpp",
+      "source_sha256": "d1180ab352290ce4b94c574bde59ee5de305f266dbfd3f7b5c9994cd0bfecd7f"
+    },
+    {
+      "id": "657a116c0a90c375b300f0c1772ece4b2ab770dc7acc6bfc91818d90e9f01039",
+      "file": "core/frame/standard/init/src/softbus_server_stub.cpp",
+      "source_sha256": "d1180ab352290ce4b94c574bde59ee5de305f266dbfd3f7b5c9994cd0bfecd7f"
+    },
+    {
+      "id": "1c0a0a21d94da9b832e1f1a7c5b213ccb1f77c70c5e916b9b9bf176c2a5076f1",
+      "file": "core/transmission/broadcast/src/trans_spec_object_stub.cpp",
+      "source_sha256": "6e9e1298812c7dbfbf1efc7c56134de25b6649b4576a6a62cd61b9e0341de17a"
+    }
+  ],
+  "report_sha256": "950bae32260951a7990a0a68e2c15221af187f294da885605ba3d35b442d0468",
+  "cli_parity": true,
+  "worker_seconds": 53.139020086993696,
+  "total_acceptance_seconds": 81.83038508000027,
+  "detectors": [
+    {
+      "id": "ohscanner.cpp.bounds",
+      "version": "0.2.0",
+      "status": "blocked",
+      "candidates": 0
+    },
+    {
+      "id": "ohscanner.cpp.integer_bounds",
+      "version": "0.2.0",
+      "status": "blocked",
+      "candidates": 0
+    },
+    {
+      "id": "ohscanner.cpp.lifetime",
+      "version": "0.4.0",
+      "status": "completed",
+      "candidates": 0
+    },
+    {
+      "id": "ohscanner.cpp.resource_lifetime",
+      "version": "0.1.0",
+      "status": "blocked",
+      "candidates": 0
+    },
+    {
+      "id": "ohscanner.cpp.shared_ptr_race",
+      "version": "0.5.1",
+      "status": "completed",
+      "candidates": 0
+    },
+    {
+      "id": "ohscanner.cpp.unsafe_memory_call",
+      "version": "0.1.0",
+      "status": "blocked",
+      "candidates": 0
+    },
+    {
+      "id": "ohscanner.interface.ipc",
+      "version": "0.9.3",
+      "status": "completed",
+      "candidates": 4
+    }
+  ]
+}

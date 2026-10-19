@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "experiment": "D36 CVE-2026-28733 iterator lifetime source replay",
+  "repository": "openharmony/filemanagement_storage_service",
+  "detector": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.12.0",
+  "root_cause": "locked getter returns shared std::map iterator; another locked method clears that map; handlers use the escaped iterator after the getter lock is gone",
+  "validated_vulnerability": 0,
+  "product_status": "unknown",
+  "limitations": [
+    "Pinned-source static replay only; Tree-sitter was not run, so coverage status remains blocked.",
+    "The companion ASan harness is a source-shaped C++ model, not a build of the OpenHarmony service or a product exploit.",
+    "The official mutex patch adds locks around map operations but leaves iterator lifetime outside those lock scopes.",
+    "No specific OpenHarmony product image, build inclusion, or reachable local attacker path was verified."
+  ],
+  "revisions": {
+    "pre_mutex_patch": {
+      "source": {
+        "commit": "4bd078b3d4034af725f42a69bd67b4806fc6e717",
+        "tree": "4b0cbb0130e7faa9f6f051f3e1dec6e82056ebd3",
+        "path": "services/storage_daemon/ipc/src/storage_daemon_stub.cpp",
+        "blob": "5a37ad52342b142febdad606117aa44b8f10571c",
+        "sha256": "e06307d35da9b63d4156b6dceb53535aef5727cfb2a57be81844570e8f81b07a",
+        "size": 44963
+      },
+      "scan": {
+        "status": "blocked",
+        "parse_status": "not_run",
+        "validated_vulnerability": 0,
+        "findings": [
+          {
+            "file": "services/storage_daemon/ipc/src/storage_daemon_stub.cpp",
+            "line": 113,
+            "rule_id": "ohknowncve-storage-cve-2026-28733",
+            "symbol": "CVE-2026-28733",
+            "cwe": "CWE-416",
+            "source_sha256": "e06307d35da9b63d4156b6dceb53535aef5727cfb2a57be81844570e8f81b07a",
+            "message": "Candidate component-code match for CVE-2026-28733: GetUserStatistics returns an opStatistics_ iterator after its internal lock is released; a caller later dereferences it while GetTempStatistics clears the same map. This iterator-lifetime gap remains in the linked upstream mutex patch and requires concurrency review. Product reachability and vulnerability status remain unconfirmed."
+          }
+        ]
+      }
+    },
+    "linked_mutex_patch": {
+      "source": {
+        "commit": "677d6602226d64631fb136fbeabdc39ab5a7eaca",
+        "tree": "cbee8ce589a1e71552f60c6afaef4852cdc4dda1",
+        "path": "services/storage_daemon/ipc/src/storage_daemon_stub.cpp",
+        "blob": "0867f44d8975e110467c57da3a2f4d4d9cd4fe1c",
+        "sha256": "5824805944cd88868ab9a47d7a548a7ffe909b1a17e23d09c73100feb8a4403e",
+        "size": 45019
+      },
+      "scan": {
+        "status": "blocked",
+        "parse_status": "not_run",
+        "validated_vulnerability": 0,
+        "findings": [
+          {
+            "file": "services/storage_daemon/ipc/src/storage_daemon_stub.cpp",
+            "line": 114,
+            "rule_id": "ohknowncve-storage-cve-2026-28733",
+            "symbol": "CVE-2026-28733",
+            "cwe": "CWE-416",
+            "source_sha256": "5824805944cd88868ab9a47d7a548a7ffe909b1a17e23d09c73100feb8a4403e",
+            "message": "Candidate component-code match for CVE-2026-28733: GetUserStatistics returns an opStatistics_ iterator after its internal lock is released; a caller later dereferences it while GetTempStatistics clears the same map. This iterator-lifetime gap remains in the linked upstream mutex patch and requires concurrency review. Product reachability and vulnerability status remain unconfirmed."
+          }
+        ]
+      }
+    },
+    "release_5_1_current": {
+      "source": {
+        "commit": "3b57e9d315910f390b52545125f5fc3334a35fe0",
+        "tree": "5db0623b398593556fc222c86cf44073f9f39974",
+        "path": "services/storage_daemon/ipc/src/storage_daemon_stub.cpp",
+        "blob": "0867f44d8975e110467c57da3a2f4d4d9cd4fe1c",
+        "sha256": "5824805944cd88868ab9a47d7a548a7ffe909b1a17e23d09c73100feb8a4403e",
+        "size": 45019
+      },
+      "scan": {
+        "status": "blocked",
+        "parse_status": "not_run",
+        "validated_vulnerability": 0,
+        "findings": [
+          {
+            "file": "services/storage_daemon/ipc/src/storage_daemon_stub.cpp",
+            "line": 114,
+            "rule_id": "ohknowncve-storage-cve-2026-28733",
+            "symbol": "CVE-2026-28733",
+            "cwe": "CWE-416",
+            "source_sha256": "5824805944cd88868ab9a47d7a548a7ffe909b1a17e23d09c73100feb8a4403e",
+            "message": "Candidate component-code match for CVE-2026-28733: GetUserStatistics returns an opStatistics_ iterator after its internal lock is released; a caller later dereferences it while GetTempStatistics clears the same map. This iterator-lifetime gap remains in the linked upstream mutex patch and requires concurrency review. Product reachability and vulnerability status remain unconfirmed."
+          }
+        ]
+      }
+    }
+  }
+}

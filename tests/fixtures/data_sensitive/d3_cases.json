@@ -1,0 +1,170 @@
+[
+  {
+    "id": "success-guard",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 1,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "live-success-branch",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1,0,&info) == SOFTBUS_OK) { SoftBusLog(0, 3, \"%s\", info.out); }",
+    "expected_candidates": 1,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "failure-only",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1,0,&info) != SOFTBUS_OK) { SoftBusLog(0, 3, \"%s\", info.out); return; }",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "unchecked-write-status",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } DecryptMessage(1,0,&info); SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "uninitialized-output",
+    "body": "MsgCryptInfo info; if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "nullable-output",
+    "body": "MsgCryptInfo info={0};info.out=(char*)SoftBusCalloc(128);if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "non-exiting-null-branch",
+    "body": "MsgCryptInfo info={0};info.out=(char*)SoftBusCalloc(128);if(info.out==NULL){SoftBusLog(0,3,\"empty\");}if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "overwritten",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } info.out=\"safe\";SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "failure-return-both",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if(DecryptMessage(1,0,&info)!=SOFTBUS_OK){return;}else{return;}SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "alias-unresolved",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } MsgCryptInfo *alias=&info;if(DecryptMessage(1,0,alias)!=SOFTBUS_OK){return;}SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "length-not-material",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0,3,\"%d\",strlen(info.out));",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "status-not-material",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0,3,\"%d\",DecryptMessage(1,0,&info));",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "constant-not-material",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0,3,\"%s\",\"public-description\");",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "private-output",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0,3,\"%{private}s\",info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "same-name-log",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\nvoid SoftBusLog(int a,int b,const char*f,...){}\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "duplicate-summary",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\nstatic int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "summary-absent",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 0,
+    "header": "",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "nested-shadow",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } {MsgCryptInfo info={0};info.out=\"safe\";SoftBusLog(0, 3, \"%s\", info.out);}SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 1,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "shadow-only",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } {MsgCryptInfo info={0};info.out=\"safe\";SoftBusLog(0, 3, \"%s\", info.out);}",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "copy-alias",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } const char *out=info.out;SoftBusLog(0,3,\"%s\",out);",
+    "expected_candidates": 1,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "unknown-format",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0,3,fmt,info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "unrelated-log-function",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } OtherLog(0,3,\"%s\",info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "only-one-branch-allocated",
+    "body": "MsgCryptInfo info={0};if(cond){info.out=(char*)SoftBusCalloc(128);}if(info.out==NULL){return;}if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\n",
+    "kind": "synthetic_design_control"
+  },
+  {
+    "id": "same-name-allocation",
+    "body": "MsgCryptInfo info = {0}; info.out = (char *)SoftBusCalloc(128); if (info.out == NULL) { return; } if (DecryptMessage(1, 0, &info) != SOFTBUS_OK) { return; } SoftBusLog(0, 3, \"%s\", info.out);",
+    "expected_candidates": 0,
+    "header": "static int DecryptMessage(int channelId, int flags, MsgCryptInfo *p) { return SOFTBUS_OK; }\nvoid *SoftBusCalloc(int n){return 0;}",
+    "kind": "synthetic_design_control"
+  }
+]

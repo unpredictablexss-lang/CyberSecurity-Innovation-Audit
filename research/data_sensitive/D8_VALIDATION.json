@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "work_item": "D8 fixed-source DSoftBus logging macro models",
+  "date": "2026-10-18",
+  "detector_id": "ohscanner.data.sensitive_exposure",
+  "detector_version": "0.5.0",
+  "source_model_version": "0.1.0",
+  "source_model_commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+  "validated_vulnerability": 0,
+  "product_impact": "unknown",
+  "source_evidence": [
+    {
+      "path": "dfx/interface/include/trans_log.h",
+      "git_blob": "6589f32dd0334d8aeb73ef3f5d33c81275379d37",
+      "claim": "TRANS_LOG* and conditional wrappers forward format and arguments to SOFTBUS_LOG_INNER"
+    },
+    {
+      "path": "dfx/interface/include/comm_log.h",
+      "git_blob": "9495660e0959a1206ec20f0d6a6a10f2a84ffdc2",
+      "claim": "COMM_LOG* and conditional wrappers forward format and arguments to SOFTBUS_LOG_INNER"
+    },
+    {
+      "path": "dfx/interface/include/softbus_log.h",
+      "git_blob": "9c6a0df46b533c97a2419a38323eefc9458aab87",
+      "claim": "SOFTBUS_LOG_INNER wraps the source format with a public function-name prefix and forwards to HiLogPrint or HILOG_IMPL"
+    }
+  ],
+  "checks": {
+    "macro_model_regression": "passed",
+    "d_detector_suite": "39 passed",
+    "full_python_suite": "868 passed, 5 skipped (873 total)",
+    "compileall": "passed",
+    "git_diff_check": "passed",
+    "real_source_full_component_scan": "not_run; full fixed-commit source tree not available locally",
+    "fixed_source_replay": "not repeated; D8 models do not alter the separate historical D4 analyzer"
+  },
+  "limitations": [
+    "synthetic controls are not an independent holdout",
+    "macro expansion and selected product build are unknown",
+    "shared admission metadata remains at 0.3.0 while this unregistered detector prototype is 0.5.0; shared owner approval is required before synchronizing it",
+    "partial source files remain blocked by the public Runner",
+    "no product build, runtime log, reader authorization, or impact evidence",
+    "Agent queue, panel, Catalog, and shared ownership integration remain pending"
+  ],
+  "remote_state": "not pushed; PR #17 remains unchanged"
+}

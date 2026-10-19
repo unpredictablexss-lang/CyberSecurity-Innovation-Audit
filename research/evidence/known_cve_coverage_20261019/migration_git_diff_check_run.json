@@ -1,0 +1,18 @@
+{
+  "name": "migration_git_diff_check",
+  "argv": [
+    "git",
+    "diff",
+    "--check"
+  ],
+  "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+  "environment": {
+    "PYTHONPYCACHEPREFIX": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019\\research\\evidence\\known_cve_coverage_20261019\\pycache"
+  },
+  "exit_code": 0,
+  "duration_seconds": 0.048521,
+  "stdout_file": "migration_git_diff_check_stdout.txt",
+  "stderr_file": "migration_git_diff_check_stderr.txt",
+  "stdout_bytes": 0,
+  "stderr_bytes": 286
+}

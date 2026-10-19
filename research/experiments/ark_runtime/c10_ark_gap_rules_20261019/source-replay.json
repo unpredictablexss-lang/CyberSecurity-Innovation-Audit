@@ -1,0 +1,298 @@
+{
+  "local_pinned_repository": "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime",
+  "method": "git cat-file blob pinned commit:path; verify raw Git blob SHA-1 and SHA-256 against RuntimeTypeModel before analysis",
+  "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b",
+  "records": [
+    {
+      "finding_id": "IAO7GO",
+      "identity": {
+        "bytes": 75711,
+        "commit": "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724",
+        "git_blob_sha1": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+        "matches_model": true,
+        "path": "ecmascript/compiler/native_inline_lowering.cpp",
+        "sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463",
+        "stream_blob_matches_resolved_object": false,
+        "stream_blob_sha1": "20fe58f76086b73038a447e16a97ad02c2a9b470"
+      },
+      "parse_status": "complete",
+      "result": {
+        "candidate_count": 1,
+        "file_outcome": "partial",
+        "limitations": [
+          "local_sentinel_comparison_does_not_prove_exception_propagation"
+        ],
+        "reasons": [
+          "reflect_apply_result_sentinel_comparison_may_drop_pending_exception"
+        ],
+        "status": "limited",
+        "unknown_count": 0
+      },
+      "role": "vulnerable",
+      "rule_id": "ark.runtime.native-inline-pending-exception-propagation"
+    },
+    {
+      "finding_id": "IAO7GO",
+      "identity": {
+        "bytes": 75627,
+        "commit": "18d8532a200d0c9aa64a6dfe2b146dc841b52bf8",
+        "git_blob_sha1": "df03fdce8a37cf2245577aec23c4c26deeebf02f",
+        "matches_model": true,
+        "path": "ecmascript/compiler/native_inline_lowering.cpp",
+        "sha256": "6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce",
+        "stream_blob_matches_resolved_object": false,
+        "stream_blob_sha1": "6dd2813bbd273180bf65e14c30df982f247a57b2"
+      },
+      "parse_status": "complete",
+      "result": {
+        "candidate_count": 0,
+        "file_outcome": "complete",
+        "limitations": [
+          "fixed_pending_exception_check_control_not_security_verdict"
+        ],
+        "reasons": [],
+        "status": "completed",
+        "unknown_count": 0
+      },
+      "role": "fixed",
+      "rule_id": "ark.runtime.native-inline-pending-exception-propagation"
+    },
+    {
+      "finding_id": "I7W51D",
+      "identity": {
+        "bytes": 35770,
+        "commit": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+        "git_blob_sha1": "c5153346369f0182e73098b8d008eca6d750b36d",
+        "matches_model": true,
+        "path": "ecmascript/base/typed_array_helper.cpp",
+        "sha256": "4be243a68180be845defbcc01b259070db68b18da8500d245eea4929e7b9eca5",
+        "stream_blob_matches_resolved_object": false,
+        "stream_blob_sha1": "891262703fd097a783b112793a9771362e917138"
+      },
+      "parse_status": "complete",
+      "result": {
+        "candidate_count": 1,
+        "file_outcome": "partial",
+        "limitations": [
+          "bounded_length_conversion_model_no_product_impact"
+        ],
+        "reasons": [
+          "signed_32_bit_to_index_result_flows_to_typedarray_allocation"
+        ],
+        "status": "limited",
+        "unknown_count": 0
+      },
+      "role": "vulnerable",
+      "rule_id": "ark.runtime.typedarray-length-signed-to-unsigned-narrowing"
+    },
+    {
+      "finding_id": "I7W51D",
+      "identity": {
+        "bytes": 35773,
+        "commit": "82c21d656880923800c94b53b035c76d219313b5",
+        "git_blob_sha1": "89ffed8b3ff112a271c8a074967b7b5e8ebe2f6f",
+        "matches_model": true,
+        "path": "ecmascript/base/typed_array_helper.cpp",
+        "sha256": "373f5babdd5dd2f93d01512901d02e6b39d6b57c636e72b07b8d80d27eb509ab",
+        "stream_blob_matches_resolved_object": false,
+        "stream_blob_sha1": "591f4331963f8ddd715de8fd36943601b1322a90"
+      },
+      "parse_status": "complete",
+      "result": {
+        "candidate_count": 0,
+        "file_outcome": "complete",
+        "limitations": [
+          "no_local_length_narrowing_candidate"
+        ],
+        "reasons": [],
+        "status": "completed",
+        "unknown_count": 0
+      },
+      "role": "fixed",
+      "rule_id": "ark.runtime.typedarray-length-signed-to-unsigned-narrowing"
+    },
+    {
+      "finding_id": "IB8BCA",
+      "identity": {
+        "bytes": 7176,
+        "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+        "git_blob_sha1": "7fd67717571c6d8fe7b10bf294998e952dc61e36",
+        "matches_model": true,
+        "path": "ecmascript/base/atomic_helper.cpp",
+        "sha256": "f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541",
+        "stream_blob_matches_resolved_object": false,
+        "stream_blob_sha1": "175b6d328c37eb11c66969577fe67c1f6e6c7ce5"
+      },
+      "parse_status": "complete",
+      "result": {
+        "candidate_count": 0,
+        "file_outcome": "partial",
+        "limitations": [
+          "dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::AtomicLoad",
+          "dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::AtomicStore",
+          "dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::ValidateAtomicAccess"
+        ],
+        "reasons": [
+          "dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::AtomicLoad",
+          "dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::AtomicStore",
+          "dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::ValidateAtomicAccess"
+        ],
+        "status": "limited",
+        "unknown_count": 3
+      },
+      "role": "vulnerable",
+      "rule_id": "ark.runtime.dataview-index-width-bounds"
+    },
+    {
+      "finding_id": "IB8BCA",
+      "identity": {
+        "bytes": 6995,
+        "commit": "48fcec3686e45175f95b4600b579026a65149966",
+        "git_blob_sha1": "80d7ad14e70825ef2daf7b3f2fc956a891bf8b2c",
+        "matches_model": true,
+        "path": "ecmascript/base/atomic_helper.cpp",
+        "sha256": "39521f4c6fa6b4b65d8b3daacd80f6e051b5a01c5aa814c9ac2ffc432529b36b",
+        "stream_blob_matches_resolved_object": false,
+        "stream_blob_sha1": "c5c164e1caf1f40e64605af3aa0b9d652fdf00e8"
+      },
+      "parse_status": "complete",
+      "result": {
+        "candidate_count": 0,
+        "file_outcome": "partial",
+        "limitations": [
+          "dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::AtomicLoad",
+          "dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::AtomicStore",
+          "index_width_bounds_arithmetic_not_fully_proven:AtomicHelper::ValidateAtomicAccess"
+        ],
+        "reasons": [
+          "dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::AtomicLoad",
+          "dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::AtomicStore",
+          "index_width_bounds_arithmetic_not_fully_proven:AtomicHelper::ValidateAtomicAccess"
+        ],
+        "status": "limited",
+        "unknown_count": 3
+      },
+      "role": "fixed",
+      "rule_id": "ark.runtime.dataview-index-width-bounds"
+    },
+    {
+      "finding_id": "IB8BCA",
+      "identity": {
+        "bytes": 21732,
+        "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+        "git_blob_sha1": "e6bac984354292405ae62f7728170d7be5e3760e",
+        "matches_model": true,
+        "path": "ecmascript/builtins/builtins_dataview.cpp",
+        "sha256": "bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c",
+        "stream_blob_matches_resolved_object": false,
+        "stream_blob_sha1": "8258e243a86ba203ddb6d3802d4d649a702a2799"
+      },
+      "parse_status": "complete",
+      "result": {
+        "candidate_count": 2,
+        "file_outcome": "partial",
+        "limitations": [
+          "index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::DataViewConstructor"
+        ],
+        "reasons": [
+          "signed_32_bit_index_arithmetic_reaches_dataview_or_atomic_bounds_check",
+          "signed_32_bit_index_arithmetic_reaches_dataview_or_atomic_bounds_check",
+          "index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::DataViewConstructor"
+        ],
+        "status": "limited",
+        "unknown_count": 1
+      },
+      "role": "vulnerable",
+      "rule_id": "ark.runtime.dataview-index-width-bounds"
+    },
+    {
+      "finding_id": "IB8BCA",
+      "identity": {
+        "bytes": 21718,
+        "commit": "48fcec3686e45175f95b4600b579026a65149966",
+        "git_blob_sha1": "a2376e822e995333b2400520ca5b882de9578b5e",
+        "matches_model": true,
+        "path": "ecmascript/builtins/builtins_dataview.cpp",
+        "sha256": "39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b",
+        "stream_blob_matches_resolved_object": false,
+        "stream_blob_sha1": "e1c8a8c57283a36af8461263df5e4ba1f7dc9f8f"
+      },
+      "parse_status": "complete",
+      "result": {
+        "candidate_count": 0,
+        "file_outcome": "partial",
+        "limitations": [
+          "index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::DataViewConstructor",
+          "index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::GetViewValue",
+          "index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::SetViewValue"
+        ],
+        "reasons": [
+          "index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::DataViewConstructor",
+          "index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::GetViewValue",
+          "index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::SetViewValue"
+        ],
+        "status": "limited",
+        "unknown_count": 3
+      },
+      "role": "fixed",
+      "rule_id": "ark.runtime.dataview-index-width-bounds"
+    },
+    {
+      "finding_id": "IB8BCA",
+      "identity": {
+        "bytes": 11399,
+        "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+        "git_blob_sha1": "aedb6d26681535371d1e9ed90b697b923b8100e6",
+        "matches_model": true,
+        "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+        "sha256": "bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548",
+        "stream_blob_matches_resolved_object": false,
+        "stream_blob_sha1": "d75b6aeb654b22b55c224e3611d05be7f4ab4371"
+      },
+      "parse_status": "complete",
+      "result": {
+        "candidate_count": 1,
+        "file_outcome": "partial",
+        "limitations": [
+          "bounded_index_width_model_no_general_bounds_proof"
+        ],
+        "reasons": [
+          "signed_32_bit_index_arithmetic_reaches_dataview_or_atomic_bounds_check"
+        ],
+        "status": "limited",
+        "unknown_count": 0
+      },
+      "role": "vulnerable",
+      "rule_id": "ark.runtime.dataview-index-width-bounds"
+    },
+    {
+      "finding_id": "IB8BCA",
+      "identity": {
+        "bytes": 11561,
+        "commit": "48fcec3686e45175f95b4600b579026a65149966",
+        "git_blob_sha1": "dce9388e8b7e33c87aec33ac4d067fe40370561b",
+        "matches_model": true,
+        "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+        "sha256": "89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386",
+        "stream_blob_matches_resolved_object": false,
+        "stream_blob_sha1": "2e47e918b53a9601e4e67c1c51ada295b3a5c74b"
+      },
+      "parse_status": "complete",
+      "result": {
+        "candidate_count": 0,
+        "file_outcome": "partial",
+        "limitations": [
+          "index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataViewStubBuilder::SetTypedValue"
+        ],
+        "reasons": [
+          "index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataViewStubBuilder::SetTypedValue"
+        ],
+        "status": "limited",
+        "unknown_count": 1
+      },
+      "role": "fixed",
+      "rule_id": "ark.runtime.dataview-index-width-bounds"
+    }
+  ],
+  "repository": "openharmony/arkcompiler_ets_runtime"
+}

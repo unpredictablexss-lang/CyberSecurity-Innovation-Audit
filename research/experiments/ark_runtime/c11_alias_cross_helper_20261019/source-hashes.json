@@ -1,0 +1,221 @@
+{
+  "baseline_commit": "ab30df6a01797af455d2abbbc9533ab15964ee68",
+  "baseline_tree": "b4dc74e0cdf75d923f4c6bfc44be6a453ca86915",
+  "working_head": "ab30df6a01797af455d2abbbc9533ab15964ee68",
+  "working_tree": "b4dc74e0cdf75d923f4c6bfc44be6a453ca86915",
+  "detector_id": "ohscanner.ark.runtime.type_safety",
+  "detector_version": "0.6.2",
+  "rule_versions": {
+    "ark.runtime.typedarray-store-type-origin": "1.1.0",
+    "ark.runtime.typedarray-allocation-exception-guard": "1.1.0",
+    "ark.runtime.typedarray-receiver-type-guard": "1.1.0",
+    "ark.runtime.typedarray-buffer-size-multiplication-overflow": "1.1.0",
+    "ark.runtime.callback-exception-before-result-conversion": "1.1.0",
+    "ark.runtime.call-info-construction-exception-guard": "1.1.0",
+    "ark.runtime.typedarray-length-signed-to-unsigned-narrowing": "1.1.0",
+    "ark.runtime.dataview-index-width-bounds": "1.1.0",
+    "ark.runtime.native-inline-pending-exception-propagation": "1.1.0"
+  },
+  "gap_rule_versions": {
+    "ark.runtime.typedarray-length-signed-to-unsigned-narrowing": "1.1.0",
+    "ark.runtime.dataview-index-width-bounds": "1.1.0",
+    "ark.runtime.native-inline-pending-exception-propagation": "1.1.0"
+  },
+  "scope": [
+    "src/ohscanner/detectors/ark_runtime/",
+    "tests/detectors/ark_runtime/",
+    "research/experiments/ark_runtime/c11_alias_cross_helper_20261019/"
+  ],
+  "profiles": {
+    "production_binding": "light-ast",
+    "research_regression": "unittest"
+  },
+  "files": [
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/analysis.py",
+      "bytes": 18935,
+      "sha256": "3fa86824c56371cb06ba1e2a914daa3936734a995cad11a3f8020b86c29ea799",
+      "git_blob_oid": "9799b8c756647e5cc245749755e459e0bf2cf97b"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/cross_helper.py",
+      "bytes": 6526,
+      "sha256": "5590df1b7e2a2e696f75e200a160955ec44d9d29df0fb902b8cb71eb02b4a07d",
+      "git_blob_oid": "d887ec74910563cceaf298dbd8678a196c89fd9d"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/detector.py",
+      "bytes": 19079,
+      "sha256": "584a43c733519a9b82d205059bb2e68e6159453a9ff3249dd66849ce24093ecc",
+      "git_blob_oid": "25c699fbf4e600ad939a1f73ad99731270624485"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/exception_guard.py",
+      "bytes": 15684,
+      "sha256": "fd124e0ce4fb69722786108d917995462ae82c3ae20d54bb4609c9a1c4b8fd42",
+      "git_blob_oid": "354bbef3fb7c0c327ee1d5f8c9e67f5ca0c0bbed"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/model.py",
+      "bytes": 20542,
+      "sha256": "449fdc167a803e6205326d716302557c695a54e075fff932e8cc9f37badf9135",
+      "git_blob_oid": "ecdd988952182a8f34b89e4828d8f50aa77f0415"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/receiver_guard.py",
+      "bytes": 11236,
+      "sha256": "104f02f02214a56aac7b4b7314cab7305ef3d7414defed9f4bcfac5016786c18",
+      "git_blob_oid": "a4ada6dac1499b93b98060153739aa1f6d01cda6"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/runtime_exception.py",
+      "bytes": 55878,
+      "sha256": "657a2aaf0a8775f7a2922e6336ebc6a09efdf81dfc5a213b2a8d97c2819d06af",
+      "git_blob_oid": "8fdde3d6eee9e25a3d3286ad617a7f0043dc0865"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/size_overflow.py",
+      "bytes": 30621,
+      "sha256": "45bb802513ba1be33f1423ab57c169cdbefbff97ccfaff397bf2ca4255fec621",
+      "git_blob_oid": "e58dc29682636eefc077776d34f587644b0196af"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/type_origin.py",
+      "bytes": 30394,
+      "sha256": "265eb2e63edb89abaf29f73f45ecc5420602b10dc049d47425298659ccfbdecc",
+      "git_blob_oid": "40dcd4a408086354260438c8c8e80357681b4d66"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/test_c10_ark_gap_rules.py",
+      "bytes": 7520,
+      "sha256": "8ea9b274ab9fd561026ac728e0a38bfbdccac155fe88f4d91e2385bc75c9b12e",
+      "git_blob_oid": "ee6263f91f54c82851c86014220b173305e4fdf3"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/test_c11_alias_cross_helper.py",
+      "bytes": 9760,
+      "sha256": "cdc402fc91e42b7b77b2366d92f4f10c1a4b8e24ec6ef5af72507a9dc91bf430",
+      "git_blob_oid": "0cd460fa4a8362428065a316e4c1d53b03145856"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_fixed.cpp",
+      "bytes": 466,
+      "sha256": "86cb98acc200944eb6ef7b277d963976f95c6f080bc4e64c40789ac04d96c723",
+      "git_blob_oid": "479eb9198041a304cbdc018cd25fc8580010e935"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_positive.cpp",
+      "bytes": 458,
+      "sha256": "e4323cb254f46ecce57512a6b27c0d2389f3ed3105ccefd7b9ab26afffadcf5e",
+      "git_blob_oid": "25583de2187c5e38ba15b8eef149e0696e289bb7"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_safe.cpp",
+      "bytes": 518,
+      "sha256": "ae5af609564ce9190b51e46bd86bfb80d50211bc12ff7eb8c3826397ea2585e0",
+      "git_blob_oid": "4ad63cf925a34b9e42a06da509c6656fe95b2f39"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_unknown.cpp",
+      "bytes": 542,
+      "sha256": "7e9927513fd084e820da062d25f7ff3ec5a9abc581dfd48fcd1d632e6ea4e394",
+      "git_blob_oid": "a856db0c05efc91eb8e4e111ac66d1483f3fcaed"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_unrelated.cpp",
+      "bytes": 441,
+      "sha256": "76aff0f51b078c2e2782811fbb5414421001a6344d2a2d8ca2960e94c796fc17",
+      "git_blob_oid": "1100b2a873c2c05e87a473560b3c684736c535fe"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_fixed.cpp",
+      "bytes": 484,
+      "sha256": "17546be72cae31710699b30d8bccc8e54e5af1076d4b814a6671937dff2ec210",
+      "git_blob_oid": "73a7ee58c43981f04701cf1cd25505cd9e983543"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_positive.cpp",
+      "bytes": 476,
+      "sha256": "c28290dc8570ed2e7c13e221aca473801f32f181d12686c785c0c1e8adc7ea6f",
+      "git_blob_oid": "a2823bf0c7ed12ff16ea4855fc48ece6e562fa94"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_safe.cpp",
+      "bytes": 536,
+      "sha256": "c38e42866a891c875f2c2425fbb9ef75cb4963750e78ac9006523b25c5b766d3",
+      "git_blob_oid": "1ee26e0caf2cd27590df84a11ef9cb8b12001140"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_unknown.cpp",
+      "bytes": 560,
+      "sha256": "88ff174f963084d4dcd9e488666008dd669027598d30f30e2c710acfb94747f4",
+      "git_blob_oid": "7189acf2cd1e61ebb4c8c47a07de20eded6ac3f4"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_unrelated.cpp",
+      "bytes": 459,
+      "sha256": "41780b6b457bab486fbbb4b44714e0e0f9c6dbb9934a00fad04f28ff7181cfdc",
+      "git_blob_oid": "70eedf3a1cef97338aeb61c279d39c6bff1db99e"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_fixed.cpp",
+      "bytes": 542,
+      "sha256": "22418f4718f5c6f97c7924dfceb679811c1189a174b84f3e28ef4c7f38a578f4",
+      "git_blob_oid": "ba23efcf2e9660618e09a6eea2dd077f4f8e2644"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_positive.cpp",
+      "bytes": 534,
+      "sha256": "8e1e05814db46a01bc0bd32c0c65970ea7ba8223930f8f32ce0414bb7ebc85b1",
+      "git_blob_oid": "c5ef0cf72fc92eb2b1dc61ec2029fb93fb693efe"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_safe.cpp",
+      "bytes": 581,
+      "sha256": "ebd60b025d4b200f8f7844003dee023c240a022d681a8affb1652d013094899d",
+      "git_blob_oid": "325e162bdc5619285ca4ee1cd793830ab42260c2"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_unknown.cpp",
+      "bytes": 605,
+      "sha256": "e0ba81ff762b9042477f3482e41065941ca79e3007dfa1b0d578018046ed99dd",
+      "git_blob_oid": "f00f596c57c82e61545e43609e7130de16f2032a"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_unrelated.cpp",
+      "bytes": 517,
+      "sha256": "bb33d65ce24c29365b4fad14b0a96ecf49e7998d856bfe89e1026259ba8c6911",
+      "git_blob_oid": "f8ab7607e788c65f4da279c68e9156c763a39b89"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_fixed.cpp",
+      "bytes": 420,
+      "sha256": "06642fcc2d749c7edbb7bfd036db3fabebdddf6e0a68b7628fd66e2f40b01095",
+      "git_blob_oid": "1c9231a7c235b05a541082d8a34a6cc8d85a42c7"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_positive.cpp",
+      "bytes": 397,
+      "sha256": "e472397583cf2c5df6aabdf8e0c30d186910c7f55fd8dd3f85ee86ddcc6ec208",
+      "git_blob_oid": "34abb9b571bf57f57926c0b66eede569495d9079"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_safe.cpp",
+      "bytes": 336,
+      "sha256": "070b2207a8dbb1d7c7cc9dbee038beaf291ddd694169a705b44faff83d74aa34",
+      "git_blob_oid": "df4459527aef87697214cdca1e7c23f7754323e0"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_unknown.cpp",
+      "bytes": 511,
+      "sha256": "9d94dd36eb79626b7600a1541189b03ddf60de6726915bb950a70ffd177c7172",
+      "git_blob_oid": "6d1e257a359d746829ad9a446692a1682042020b"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_unrelated.cpp",
+      "bytes": 41,
+      "sha256": "b960e4fc6b207cbca5ef9f57aaf19132f44ad306f96f99301c373c527cb337bf",
+      "git_blob_oid": "62d9f1d81c8d41b05cd0cfd7cfc38c1f4baf0136"
+    }
+  ]
+}

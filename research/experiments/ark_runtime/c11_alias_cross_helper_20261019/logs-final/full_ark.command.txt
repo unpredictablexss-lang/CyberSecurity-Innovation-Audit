@@ -1,0 +1,1 @@
+"C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe" -m unittest discover -s tests/detectors/ark_runtime -t . -v

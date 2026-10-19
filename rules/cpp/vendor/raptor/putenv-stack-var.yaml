@@ -1,0 +1,85 @@
+rules:
+  - id: raptor-putenv-stack-var
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - vuln
+      vulnerability_class: Memory Issues
+      likelihood: MEDIUM
+      impact: MEDIUM
+      confidence: MEDIUM
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-686: Function Call With Incorrect Argument Type"
+        - "CWE-562: Return of Stack Variable Address"
+      owasp:
+        - A06:2025 - Insecure Design
+      references:
+        - https://www.sei.cmu.edu/downloads/sei-cert-c-coding-standard-2016-v01.pdf
+    message: >-
+      The software calls putenv() with a variable that has a short lifetime,
+      such as a pointer to an automatic variable allocated on the stack. The
+      correct behavior is to call putenv() with a static/global string.
+    severity: INFO
+    languages:
+      - c
+      - cpp
+    # NOTE: global variables declared outside functions and not explicitly tagged as static are not supported.
+    # NOTE: multi-dimensional arrays and other ways to create an array are not covered.
+    # NOTE: multiple pointer assignments and other ways to persist after function returns (e.g., output parameter) are not covered.
+    patterns:
+      - pattern: putenv($PTR)
+      - pattern-either:
+          # array
+          - patterns:
+              - pattern-inside: |
+                  $_ $PTR[$_];
+                  ...
+              - pattern-not-inside: |
+                  static $_ $PTR[$_];
+                  ...
+          - patterns:
+              - pattern-inside: |
+                  $_ $PTR[$_] = ...;
+                  ...
+              - pattern-not-inside: |
+                  static $_ $PTR[$_] = ...;
+                  ...
+          - patterns:
+              - pattern-inside: |
+                  $_ $PTR[] = ...;
+                  ...
+              - pattern-not-inside: |
+                  static $_ $PTR[] = ...;
+                  ...
+          # pointer to array
+          - patterns:
+              - pattern-inside: |
+                  $_ $ARR[$_];
+                  ...
+                  $PTR = $ARR;
+                  ...
+              - pattern-not-inside: |
+                  static $_ $ARR[$_];
+                  ...
+          - patterns:
+              - pattern-inside: |
+                  $_ $ARR[$_] = ...;
+                  ...
+                  $PTR = $ARR;
+                  ...
+              - pattern-not-inside: |
+                  static $_ $ARR[$_] = ...;
+                  ...
+          - patterns:
+              - pattern-inside: |
+                  $_ $ARR[] = ...;
+                  ...
+                  $PTR = $ARR;
+                  ...
+              - pattern-not-inside: |
+                  static $_ $ARR[] = ...;
+                  ...

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "package_id": "cpp-lifetime-unique-ptr-alias-20261014",
+  "detector_id": "ohscanner.cpp.lifetime",
+  "detector_version": "0.3.0",
+  "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+  "source_binding_status": "self_authored_harness_hash_verified",
+  "harness_sha256": "e617b9d4e9dd3efdc9c02e8604cb6d228fdd37977995ae0c4ae6ba536dfc3aad",
+  "variants": [
+    "reset_vulnerable",
+    "null_assignment_vulnerable",
+    "replacement_vulnerable",
+    "move_transfer_vulnerable",
+    "fixed_rebind",
+    "safe_use_before_reset"
+  ],
+  "known_limitations": [
+    "PoC 是自编最小 workload，不是真实 OpenHarmony 产品组件；产品入口、权限边界、攻击者控制和 CIA 影响均未证明。",
+    "AddressSanitizer 触发证明受控生命周期破坏行为，不自动等于稳定可利用漏洞。",
+    "fixed_rebind 与 safe_use_before_reset 是本地控制/修复重验变体，不是上游补丁。",
+    "CFG、异常/提前返回、析构时序、跨函数 alias 转移和真实构建配置仍由检测器作为 unknown 保留。"
+  ]
+}

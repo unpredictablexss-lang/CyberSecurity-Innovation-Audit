@@ -1,0 +1,55 @@
+rules:
+  - id: raptor-double-free
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - vuln
+      vulnerability_class: Memory Issues
+      likelihood: MEDIUM
+      impact: HIGH
+      confidence: MEDIUM
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-415: Double Free"
+      owasp:
+        - A10:2025 - Mishandling of Exceptional Conditions
+      references:
+        - https://github.com/struct/mms
+        - https://www.sei.cmu.edu/downloads/sei-cert-c-coding-standard-2016-v01.pdf
+        - https://docs.microsoft.com/en-us/cpp/sanitizers/asan-error-examples
+        - https://dustri.org/b/playing-with-weggli.html
+    message: >-
+      The software calls free() twice on the same memory address, potentially 
+      leading to memory corruption. This corruption can cause the program to 
+      crash or cause two later calls to malloc() to return the same pointer.
+    severity: ERROR
+    languages:
+      - c
+      - cpp
+    # NOTE: C++ `delete` and `delete[]` operators and custom wrappers to `free` are not covered.
+    # NOTE: `realloc` is not covered.
+    # NOTE: variations on the `free` argument are not covered.
+    patterns:
+      - pattern: |
+          $FREE1($PTR);
+          ...
+          $FREE2($PTR);
+      - pattern-not: |
+          $FREE1($PTR);
+          ...
+          $PTR = ...;
+          ...
+          $FREE2($PTR);
+      - metavariable-pattern:
+          metavariable: $FREE1
+          pattern: free
+          # more patterns could be added here to cover other ways to free memory
+      - metavariable-pattern:
+          metavariable: $FREE2
+          pattern: free
+          # more patterns could be added here to cover other ways to free memory
+      # improve output readability
+      - focus-metavariable: $FREE2

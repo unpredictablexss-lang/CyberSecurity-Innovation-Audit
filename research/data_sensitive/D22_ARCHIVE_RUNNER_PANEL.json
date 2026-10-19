@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "experiment": "D22 real libpng archive Runner and Workbench API/Worker replay",
+  "repository": "OpenHarmony-GitCode-Mirror/third_party_libpng",
+  "commit": "e57b1079564a02a50321ec528aa6e41884979d32",
+  "include_paths": [
+    "libpng-1.6.55.tar.gz"
+  ],
+  "detector": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.3.0",
+  "homepage_http_status": 200,
+  "detector_catalog_http_status": 200,
+  "catalog_includes_known_disclosed_cves": true,
+  "repeat_equal": true,
+  "results": [
+    {
+      "job_id": "ab8277981f8648a3be10c5c9d85f5200",
+      "job_status": "completed_with_limitations",
+      "git_tree": "02b17492f4490ff2e4d17ba74e2080358a500059",
+      "snapshot_sha256": "b5d224b55c41fbb4a37453dd6486259cb9e8798aa5805ae00563bf90704607f5",
+      "report_sha256": "b95f217685706d3d4fef9f733ac934205ad8b012444fb34235b781df2e958d09",
+      "diagnostic_count": 1,
+      "detector_status": "blocked",
+      "candidate_signature": [
+        [
+          "CVE-2026-46675",
+          "libpng-1.6.55.tar.gz.members/libpng-1.6.55/png.h",
+          277,
+          "00e93d3c87cde182df182a3e6090e704b4208d48f9473a6af4c651b8a0be05f1"
+        ]
+      ],
+      "candidate": "CVE-2026-46675",
+      "file": "libpng-1.6.55.tar.gz.members/libpng-1.6.55/png.h",
+      "line": 277,
+      "source_sha256": "00e93d3c87cde182df182a3e6090e704b4208d48f9473a6af4c651b8a0be05f1",
+      "source_blob": null,
+      "archive_binding": {
+        "archive_path": "libpng-1.6.55.tar.gz",
+        "archive_blob_oid": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094",
+        "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6",
+        "member_path": "libpng-1.6.55/png.h",
+        "member_sha256": "00e93d3c87cde182df182a3e6090e704b4208d48f9473a6af4c651b8a0be05f1"
+      },
+      "archive_inventory": [
+        {
+          "archive": "libpng-1.6.55.tar.gz",
+          "archive_blob_oid": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094",
+          "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6",
+          "members_seen": 665,
+          "expanded_bytes": 6297766,
+          "selected_sources": 98,
+          "skipped": [],
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "status": "indexed",
+          "limitations": []
+        }
+      ],
+      "validated_vulnerability": 0
+    },
+    {
+      "job_id": "da461047bc6e4159ac3fe0403264ef3b",
+      "job_status": "completed_with_limitations",
+      "git_tree": "02b17492f4490ff2e4d17ba74e2080358a500059",
+      "snapshot_sha256": "b5d224b55c41fbb4a37453dd6486259cb9e8798aa5805ae00563bf90704607f5",
+      "report_sha256": "e1afaa8ea98a5f600530164adc01d5de255b446a70f4003c7ea102eec24df1e1",
+      "diagnostic_count": 1,
+      "detector_status": "blocked",
+      "candidate_signature": [
+        [
+          "CVE-2026-46675",
+          "libpng-1.6.55.tar.gz.members/libpng-1.6.55/png.h",
+          277,
+          "00e93d3c87cde182df182a3e6090e704b4208d48f9473a6af4c651b8a0be05f1"
+        ]
+      ],
+      "candidate": "CVE-2026-46675",
+      "file": "libpng-1.6.55.tar.gz.members/libpng-1.6.55/png.h",
+      "line": 277,
+      "source_sha256": "00e93d3c87cde182df182a3e6090e704b4208d48f9473a6af4c651b8a0be05f1",
+      "source_blob": null,
+      "archive_binding": {
+        "archive_path": "libpng-1.6.55.tar.gz",
+        "archive_blob_oid": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094",
+        "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6",
+        "member_path": "libpng-1.6.55/png.h",
+        "member_sha256": "00e93d3c87cde182df182a3e6090e704b4208d48f9473a6af4c651b8a0be05f1"
+      },
+      "archive_inventory": [
+        {
+          "archive": "libpng-1.6.55.tar.gz",
+          "archive_blob_oid": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094",
+          "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6",
+          "members_seen": 665,
+          "expanded_bytes": 6297766,
+          "selected_sources": 98,
+          "skipped": [],
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "status": "indexed",
+          "limitations": []
+        }
+      ],
+      "validated_vulnerability": 0
+    }
+  ],
+  "limits": [
+    "All matches remain candidate evidence; validated_vulnerability=0.",
+    "The repository is a component mirror, not a product image or official build manifest.",
+    "libpng parse coverage is partial; detector status blocked and task completed_with_limitations.",
+    "The TestClient exercises the same API/Worker/report/source-viewer path in an isolated data directory; it does not touch the user's running port 8765."
+  ]
+}

@@ -1,0 +1,269 @@
+{
+  "schema": 1,
+  "experiment": "D40 Workbench API/Worker/report/source-viewer replay for Wi-Fi PreSharedKey log candidate",
+  "repository": "openharmony/communication_wifi",
+  "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+  "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+  "source_path": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+  "upstream_blob": "d1c56613712e4703765ce09084a12641dce5c4b0",
+  "detector": "ohscanner.data.sensitive_exposure",
+  "detector_version": "0.17.0",
+  "validated_vulnerability": 0,
+  "product_status": "unknown",
+  "independent_human_review": "pending",
+  "repeat_run_count": 2,
+  "repeat_runs_semantically_identical": true,
+  "repeat_run_signatures": [
+    {
+      "upstream_commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "local_scan_commit": "4c81a2616fd69b657652b88f4e974c64d478943c",
+      "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+      "job_status": "completed_with_limitations",
+      "detector_version": "0.17.0",
+      "detector_status": "blocked",
+      "candidate_id": "ohscanner.data.sensitive_exposure:be19c60060d99f1d",
+      "candidate_rule": "data.log.sensitive-value",
+      "candidate_cwe": "CWE-532",
+      "candidate_file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+      "candidate_line": 93,
+      "source_viewer_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+      "validated_vulnerability": 0
+    },
+    {
+      "upstream_commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "local_scan_commit": "4c81a2616fd69b657652b88f4e974c64d478943c",
+      "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+      "job_status": "completed_with_limitations",
+      "detector_version": "0.17.0",
+      "detector_status": "blocked",
+      "candidate_id": "ohscanner.data.sensitive_exposure:be19c60060d99f1d",
+      "candidate_rule": "data.log.sensitive-value",
+      "candidate_cwe": "CWE-532",
+      "candidate_file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+      "candidate_line": 93,
+      "source_viewer_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+      "validated_vulnerability": 0
+    }
+  ],
+  "limitations": [
+    "The source uses a pre-shared key passed through PassWordAnonymize and emitted by WIFI_LOGI as a public string; the helper masks part of the value, so residual disclosure severity needs human review.",
+    "This is one fixed source file, not a complete Wi-Fi build or independent holdout; the detector run remains blocked/partial.",
+    "The static result is candidate-only and does not prove production log enablement, unauthorized readership, product impact, or a confirmed vulnerability."
+  ],
+  "cases": [
+    {
+      "upstream_commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "local_scan_commit": "4c81a2616fd69b657652b88f4e974c64d478943c",
+      "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+      "job_status": "completed_with_limitations",
+      "detector_version": "0.17.0",
+      "detector_status": "blocked",
+      "coverage": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 1,
+        "analyzed_files": [],
+        "partially_inspected_files": [
+          "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp"
+        ],
+        "source_sha256": {
+          "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388"
+        },
+        "unexamined": [
+          {
+            "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+            "parse_status": "complete",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          }
+        ],
+        "inspected_files": [
+          "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 0,
+          "partial": 1,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:be19c60060d99f1d",
+            "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+            "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "fixture/d40-wifi",
+              "commit": "4c81a2616fd69b657652b88f4e974c64d478943c",
+              "snapshot_sha256": "0842e07c7f08365f6f8eb83e01d15e0acd9b883b77e988c2e8b83548d810016a",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.data.sensitive_exposure",
+              "detector_version": "0.17.0",
+              "rule_id": "data.log.sensitive-value",
+              "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+              "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388"
+            },
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "local_flow",
+                "description": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                "status": "unknown"
+              },
+              {
+                "kind": "source_semantics",
+                "description": "Unreviewed sensitive-name heuristic only; type, content and secret semantics are unknown. Candidate triage required.",
+                "status": "unknown"
+              },
+              {
+                "kind": "type_identity",
+                "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                "status": "unknown"
+              },
+              {
+                "kind": "runtime_log_visibility",
+                "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                "status": "unknown"
+              },
+              {
+                "kind": "execution_and_identity",
+                "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                "status": "unknown"
+              }
+            ]
+          }
+        ]
+      },
+      "candidate_count_in_file": 1,
+      "candidate_id": "ohscanner.data.sensitive_exposure:be19c60060d99f1d",
+      "candidate_rule": "data.log.sensitive-value",
+      "candidate_cwe": "CWE-532",
+      "candidate_file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+      "candidate_line": 93,
+      "source_viewer_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+      "validated_vulnerability": 0,
+      "limitations": [
+        "Diagnostics are candidates/evidence only, not proof of security impact.",
+        "Zero diagnostics does NOT mean the component is free of vulnerabilities.",
+        "Git origin name is user declared; source is pinned local objects, not an OH product build.",
+        "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation."
+      ]
+    },
+    {
+      "upstream_commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "local_scan_commit": "4c81a2616fd69b657652b88f4e974c64d478943c",
+      "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+      "job_status": "completed_with_limitations",
+      "detector_version": "0.17.0",
+      "detector_status": "blocked",
+      "coverage": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 1,
+        "analyzed_files": [],
+        "partially_inspected_files": [
+          "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp"
+        ],
+        "source_sha256": {
+          "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388"
+        },
+        "unexamined": [
+          {
+            "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+            "parse_status": "complete",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          }
+        ],
+        "inspected_files": [
+          "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 0,
+          "partial": 1,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:be19c60060d99f1d",
+            "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+            "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "fixture/d40-wifi",
+              "commit": "4c81a2616fd69b657652b88f4e974c64d478943c",
+              "snapshot_sha256": "0842e07c7f08365f6f8eb83e01d15e0acd9b883b77e988c2e8b83548d810016a",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.data.sensitive_exposure",
+              "detector_version": "0.17.0",
+              "rule_id": "data.log.sensitive-value",
+              "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+              "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388"
+            },
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "local_flow",
+                "description": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                "status": "unknown"
+              },
+              {
+                "kind": "source_semantics",
+                "description": "Unreviewed sensitive-name heuristic only; type, content and secret semantics are unknown. Candidate triage required.",
+                "status": "unknown"
+              },
+              {
+                "kind": "type_identity",
+                "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                "status": "unknown"
+              },
+              {
+                "kind": "runtime_log_visibility",
+                "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                "status": "unknown"
+              },
+              {
+                "kind": "execution_and_identity",
+                "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                "status": "unknown"
+              }
+            ]
+          }
+        ]
+      },
+      "candidate_count_in_file": 1,
+      "candidate_id": "ohscanner.data.sensitive_exposure:be19c60060d99f1d",
+      "candidate_rule": "data.log.sensitive-value",
+      "candidate_cwe": "CWE-532",
+      "candidate_file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+      "candidate_line": 93,
+      "source_viewer_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+      "validated_vulnerability": 0,
+      "limitations": [
+        "Diagnostics are candidates/evidence only, not proof of security impact.",
+        "Zero diagnostics does NOT mean the component is free of vulnerabilities.",
+        "Git origin name is user declared; source is pinned local objects, not an OH product build.",
+        "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+test_all_matches_remain_candidate_obligated (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_all_matches_remain_candidate_obligated) ... ok
+test_appdomainverify_cve_2026_58313_real_lru_fix_pair (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_appdomainverify_cve_2026_58313_real_lru_fix_pair) ... ok
+test_cjson_array_pointer_cve_2025_57052_vulnerable_and_fixed_shapes (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_cjson_array_pointer_cve_2025_57052_vulnerable_and_fixed_shapes) ... ok
+test_cjson_json_patch_unbounded_recursion_candidate (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_cjson_json_patch_unbounded_recursion_candidate) ... ok
+test_cjson_non_recursive_or_parse_only_controls (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_cjson_non_recursive_or_parse_only_controls) ... ok
+test_cjson_recursive_bidirectional_linear_matching (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_cjson_recursive_bidirectional_linear_matching) ... ok
+test_curl_cve_2026_92392_version_bound_cleanup_order_and_fix (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_curl_cve_2026_92392_version_bound_cleanup_order_and_fix) ... ok
+test_curl_proxy_credentials_null_clear_vulnerable_and_fixed_shapes (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_curl_proxy_credentials_null_clear_vulnerable_and_fixed_shapes) ... ok
+test_curl_recursive_owned_mime_cleanup (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_curl_recursive_owned_mime_cleanup) ... ok
+test_device_manager_cve_2022_45877_pin_serialized_to_softbus_and_fixed (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_device_manager_cve_2022_45877_pin_serialized_to_softbus_and_fixed) ... ok
+test_libpng_affected_and_fixed_version_markers (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_libpng_affected_and_fixed_version_markers) ... ok
+test_libpng_neon_palette_cve_2026_33636_exact_upstream_pair (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_libpng_neon_palette_cve_2026_33636_exact_upstream_pair) ... ok
+test_libpng_sequence_requires_end_without_row_read (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_libpng_sequence_requires_end_without_row_read) ... ok
+test_libtiff_vulnerable_fixed_and_unrelated_guard_shapes (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_libtiff_vulnerable_fixed_and_unrelated_guard_shapes) ... ok
+test_partial_parse_retains_lexical_candidate_but_blocks_coverage (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_partial_parse_retains_lexical_candidate_but_blocks_coverage) ... ok
+test_pasteboard_disclosed_cves_and_guarded_controls (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_pasteboard_disclosed_cves_and_guarded_controls) ... ok
+test_storage_cve_2026_28733_iterator_escape_survives_mutex_patch (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_storage_cve_2026_28733_iterator_escape_survives_mutex_patch) ... ok
+test_storage_cve_2026_28751_mtp_full_length_xattr_and_fixed_shape (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_storage_cve_2026_28751_mtp_full_length_xattr_and_fixed_shape) ... ok
+test_storage_external_volume_cve_2026_25850_vulnerable_fixed_and_unrelated (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_storage_external_volume_cve_2026_25850_vulnerable_fixed_and_unrelated) ... ok
+test_webview_flowbuffer_candidate_survives_partial_parse (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_webview_flowbuffer_candidate_survives_partial_parse) ... ok
+test_webview_flowbuffer_cve_vulnerable_fixed_and_unrelated_shapes (tests.detectors.test_known_disclosed_cves.KnownDisclosedCveTests.test_webview_flowbuffer_cve_vulnerable_fixed_and_unrelated_shapes) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.257s
+
+OK

@@ -1,0 +1,25 @@
+{
+  "freeze_payload_sha256": "245f914175f4f13001b3f210d692987efad58cca66e560eab770afc3b19b6bb7",
+  "labels": [
+    {
+      "case_pseudonym": "1b494e96a3802f02",
+      "label": "unknown",
+      "route": "third_review_adjudication"
+    },
+    {
+      "case_pseudonym": "9913c5093cca2bd9",
+      "label": "not_vulnerable_shape",
+      "route": "agreement"
+    },
+    {
+      "case_pseudonym": "c1ef9844318f8019",
+      "label": "not_vulnerable_shape",
+      "route": "agreement"
+    }
+  ],
+  "model_generated": false,
+  "payload_sha256": "2336d8bca6cf65b079156d144a48ec180aa45b32f700b54cced9bee642214e99",
+  "schema": "ohscanner.ark-holdout-final-labels/v2",
+  "status": "FINAL_LABELS_AVAILABLE",
+  "truth_reveal_allowed": false
+}

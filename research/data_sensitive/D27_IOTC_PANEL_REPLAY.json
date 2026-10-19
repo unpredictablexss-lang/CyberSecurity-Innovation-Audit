@@ -1,0 +1,183 @@
+{
+  "schema": 1,
+  "experiment": "D27 exact-revision communication_iot_connect derived-key public log replay",
+  "repository": "openharmony/communication_iot_connect",
+  "commit": "d8c0aef305601770c912dbdedc58a3f1e6efd30c",
+  "git_tree": "78db4611e16df5ee92328ceecf6c14baef8cb1a3",
+  "include_paths": [
+    "core/wifi/application/local_control/local_ctl_coap_api.c"
+  ],
+  "detector": "ohscanner.data.sensitive_exposure",
+  "detector_version": "0.15.0",
+  "catalog_kind": "research_candidate",
+  "catalog_default_enabled": false,
+  "homepage_http_status": 200,
+  "catalog_http_status": 200,
+  "two_runs_identical": true,
+  "runs": [
+    {
+      "job_id": "ac0e075fc9a24101a03d72e125b0c413",
+      "job_status": "completed_with_limitations",
+      "git_tree": "78db4611e16df5ee92328ceecf6c14baef8cb1a3",
+      "snapshot_sha256": "52f792293dfb8bc6dfe7bc326440d75509719df27c5a1175dc3ba6ea08309c9b",
+      "report_sha256": "e7244efe0432dfe192b410573d76dec2b57396fe6cbf9c93dfe40fbd0d664d93",
+      "detector_status": "blocked",
+      "candidate_count": 1,
+      "candidate": {
+        "rule_id": "data.log.sensitive-value",
+        "symbol": "localCtlSessKeyGen",
+        "line": 602,
+        "source_sha256": "a3787e925f011e33c1c7f5458c536dd36920f6f1e708ae98cc47f21a6cd897de",
+        "message": "Candidate local sensitive-material dependency: core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+        "evidence_obligations": [
+          {
+            "kind": "local_flow",
+            "description": "core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+            "status": "unknown"
+          },
+          {
+            "kind": "source_semantics",
+            "description": "Pinned communication_iot_connect source at d8c0aef3: the reviewed PBKDF2 API writes derived key bytes to argument 1, UtilsHexify copies those bytes as hex to argument 2, and IOTC_LOGI routes its format to a public HiLog string sink. The component authCode identity and product log visibility/impact remain unknown.",
+            "status": "unknown"
+          },
+          {
+            "kind": "type_identity",
+            "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+            "status": "unknown"
+          },
+          {
+            "kind": "runtime_log_visibility",
+            "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+            "status": "unknown"
+          },
+          {
+            "kind": "execution_and_identity",
+            "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "source": {
+        "sha256": "a3787e925f011e33c1c7f5458c536dd36920f6f1e708ae98cc47f21a6cd897de",
+        "blob": "5b4a715c7ce7906460d2f1d0e089082cd7a92315"
+      },
+      "validated_vulnerability": 0,
+      "coverage": null,
+      "limitations": [
+        "Candidate only: runtime log readers, production enablement and impact require independent review.",
+        "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+        "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+        "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+        "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: bounded same-file helper expansion; cross-file and deeper call flows remain unknown",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: branch merge is may-flow; no path feasibility proof",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: conditional effects are may-flow; no path feasibility proof",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: conditional value is may-flow; no path feasibility proof",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 169; iteration count/path feasibility unresolved",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 396; iteration count/path feasibility unresolved",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: member/pointer output copy unsupported",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: pointer/member assignment requires alias proof",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: preprocessor/build context not expanded",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: unknown field/alias propagation",
+        "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+        "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+        "Diagnostic does not establish vulnerability, reachability or security impact.",
+        "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+        "Coverage incomplete or unsupported; do not infer safety."
+      ]
+    },
+    {
+      "job_id": "7fab9f013f04476e865efd41cab162fd",
+      "job_status": "completed_with_limitations",
+      "git_tree": "78db4611e16df5ee92328ceecf6c14baef8cb1a3",
+      "snapshot_sha256": "52f792293dfb8bc6dfe7bc326440d75509719df27c5a1175dc3ba6ea08309c9b",
+      "report_sha256": "38e1410be2dfc9a1cdbb2ca257adff9d4199cb99d6381a6d56d99558b2180aee",
+      "detector_status": "blocked",
+      "candidate_count": 1,
+      "candidate": {
+        "rule_id": "data.log.sensitive-value",
+        "symbol": "localCtlSessKeyGen",
+        "line": 602,
+        "source_sha256": "a3787e925f011e33c1c7f5458c536dd36920f6f1e708ae98cc47f21a6cd897de",
+        "message": "Candidate local sensitive-material dependency: core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+        "evidence_obligations": [
+          {
+            "kind": "local_flow",
+            "description": "core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+            "status": "unknown"
+          },
+          {
+            "kind": "source_semantics",
+            "description": "Pinned communication_iot_connect source at d8c0aef3: the reviewed PBKDF2 API writes derived key bytes to argument 1, UtilsHexify copies those bytes as hex to argument 2, and IOTC_LOGI routes its format to a public HiLog string sink. The component authCode identity and product log visibility/impact remain unknown.",
+            "status": "unknown"
+          },
+          {
+            "kind": "type_identity",
+            "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+            "status": "unknown"
+          },
+          {
+            "kind": "runtime_log_visibility",
+            "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+            "status": "unknown"
+          },
+          {
+            "kind": "execution_and_identity",
+            "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "source": {
+        "sha256": "a3787e925f011e33c1c7f5458c536dd36920f6f1e708ae98cc47f21a6cd897de",
+        "blob": "5b4a715c7ce7906460d2f1d0e089082cd7a92315"
+      },
+      "validated_vulnerability": 0,
+      "coverage": null,
+      "limitations": [
+        "Candidate only: runtime log readers, production enablement and impact require independent review.",
+        "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+        "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+        "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+        "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: bounded same-file helper expansion; cross-file and deeper call flows remain unknown",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: branch merge is may-flow; no path feasibility proof",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: conditional effects are may-flow; no path feasibility proof",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: conditional value is may-flow; no path feasibility proof",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 169; iteration count/path feasibility unresolved",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 396; iteration count/path feasibility unresolved",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: member/pointer output copy unsupported",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: pointer/member assignment requires alias proof",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: preprocessor/build context not expanded",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/wifi/application/local_control/local_ctl_coap_api.c: unknown field/alias propagation",
+        "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+        "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+        "Diagnostic does not establish vulnerability, reachability or security impact.",
+        "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+        "Coverage incomplete or unsupported; do not infer safety."
+      ]
+    }
+  ],
+  "classification": "source-bound candidate; product applicability and impact unknown",
+  "limitations": [
+    "G-drive mirror worktree may contain local modifications; only the exact Git commit/blob was scanned.",
+    "The PBKDF2 output and UtilsHexify mapping are source-model facts for this pinned revision.",
+    "The audit found the logged PBKDF2 output and a separate transKey derivation path; equality of their authCode inputs is unknown.",
+    "Product build inclusion, INFO log enablement/collection, log-reader authorization, and security impact remain unknown.",
+    "Workbench TestClient covers API -> Worker -> report -> source-view; it does not exercise the user's live panel server."
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "worktree": "/home/audit/ohscanner/worktrees/teammate-d-20261018",
+  "branch": "work/teammate-d-20261018",
+  "base_sha": "1c21ac60890fca0ce6be5d50d82e4757dd5e4623",
+  "worktree_head_before_changes": "fa824fba421e65f81e64c2d0bc0586cd3513fb14",
+  "remote_pr_17_head_reviewed_previous_snapshot": "1d0c53bc992784c88e31132f6aa75973ff38f19f",
+  "validation_time_local": "2026-10-18",
+  "python_environment": "/home/audit/ohscanner/worktrees/main-integration-20261018/.venv-web",
+  "python": "3.10",
+  "checks": {
+    "d_specific": {
+      "command": "python -m unittest discover -s tests/detectors/data -p 'test_*.py' -q",
+      "total": 37,
+      "passed": 37,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed"
+    },
+    "full_python_suite": {
+      "command": "python -m unittest discover -s tests -q",
+      "total": 871,
+      "passed": 866,
+      "failed": 0,
+      "skipped": 5,
+      "status": "passed"
+    },
+    "compileall": "passed for src/ohscanner/detectors/data and tests/detectors/data",
+    "git_diff_check": "passed",
+    "d5_fixture_json_parse": "passed",
+    "historical_replay": {
+      "status": "reproduced",
+      "before_candidates": 1,
+      "after_candidates": 0,
+      "before_partial_files": 6,
+      "after_partial_files": 6,
+      "before_total_files": 10,
+      "after_total_files": 10,
+      "source_manifest_entries_verified": 20,
+      "unique_blobs_verified": 11,
+      "classification": "candidate delta only; both runs blocked"
+    },
+    "historical_source_verifier": {
+      "status": "passed",
+      "command": "node d4_verify_sources.js --source-cache <verified-cache> --manifest D4_SOURCE_MANIFEST.json --api-evidence D4_SOURCE_API_VERIFICATION.json",
+      "source_objects": 44,
+      "unique_blobs": 23,
+      "source_assertions": 35,
+      "cache_storage": "temporary local cache; not committed"
+    }
+  },
+  "scope": [
+    "src/ohscanner/detectors/data/",
+    "tests/detectors/data/",
+    "tests/fixtures/data_sensitive/",
+    "research/data_sensitive/"
+  ],
+  "not_run_or_blocked": {
+    "remote_latest_main_ci": "not_run",
+    "frontend_node_tests_and_build": "not_run this D6 turn; no frontend sources changed",
+    "exact_d4_historical_git_replay": "Local Git objects are absent; D6 reproduced the replay using exact GitHub commit-ref snapshots and verified size, SHA-256, and Git blob SHA-1 for all profile entries.",
+    "dynamic_component_harness": "not_run",
+    "independent_real_source_holdout": "not_run; zero independently labeled cases",
+    "performance_rss_benchmark": "not_run"
+  },
+  "security_status": {
+    "finding_classification": "candidate_or_unknown_only",
+    "validated_vulnerability": 0,
+    "catalog_registered": false,
+    "default_enabled": false,
+    "agent_panel_integrated": false
+  },
+  "source_replay_report": "research/data_sensitive/D6_REAL_REPLAY.json",
+  "delivery_fixes": [
+    "Restored missing D4_SOURCE_MANIFEST.json from recorded GitHub API tree entries and exact-hash-verified source snapshots; D4 verifier is now executable from a clean checkout when the local source cache is provided."
+  ]
+}

@@ -1,0 +1,81 @@
+[
+  {
+    "sample_id": "export_positive",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": "ipc.capability.export",
+    "file": "export_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "An entry that writes a RemoteObject into the reply with no caller-role guard on any path. The rule asks whether an object capability leaves the service boundary; the only check above the write is the interface descriptor, which establishes the protocol and says nothing about the caller. Candidate at line 6."
+  },
+  {
+    "sample_id": "export_guarded_fixed",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": null,
+    "file": "export_guarded_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "notes": "export_positive plus one line: a reviewed permission check that returns in its failure branch, dominating the write (budget 1, measured). No candidate. The export itself is unchanged, so what the pair isolates is the caller authorization on the path to it.",
+    "control_rules": [
+      "ipc.capability.export"
+    ]
+  },
+  {
+    "sample_id": "export_null_safe",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": null,
+    "file": "export_null_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "notes": "export_positive with the object written into the reply replaced by a null pointer (budget 1). An export of nothing hands no capability to anyone, so nothing is raised. This is the unrelated control for the export pair: it shows the rule reads what is exported and not merely that an export call is present.",
+    "control_rules": [
+      "ipc.capability.export"
+    ]
+  },
+  {
+    "sample_id": "onehop_ungated_positive",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": "ipc.capability.export",
+    "file": "onehop_ungated_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The exported object is produced by an unqualified virtual call inside the dispatch handler, so the guard that matters is in the implementer, one class hop away, outside this translation unit. The implementer the scanned sources give (FixtureOnehopStub::HandleGetObject at :27 dispatching to FixtureOnehopService::GetObject at :32) carries no caller-role gate, so the hop is read and the export stays a candidate at the reply write, line 28. The class names here are literal rather than supplied by the lane header line: measured, an object-like macro on the stub class name stops the entry index from binding the handler at all, which is kept as its own control in onehop_macro_renamed_stub_positive. The unused #define header line is kept so every fixture in the unit starts the same way."
+  },
+  {
+    "sample_id": "onehop_credited_fixed",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": null,
+    "file": "onehop_credited_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "notes": "onehop_ungated_positive with the implementer gaining a reviewed caller-role gate, and no other change (budget 1, measured). The candidate is suppressed and the run records the credited hop: the dispatch site, the implementer and the gate are each cited with file and non-zero line (27, 32, 33), plus the run-level statement of how many implementer guards were read one hop out and what a hop that is not unique, not in scope, or not dominating leaves behind. That citation is the evidence the credit was earned from a body that was read, not inherited from a name.",
+    "control_rules": [
+      "ipc.capability.export"
+    ]
+  },
+  {
+    "sample_id": "onehop_not_unique_positive",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": "ipc.capability.export",
+    "file": "onehop_not_unique_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The same dispatch, with two implementers in the scanned sources and both of them gated. The index refuses rather than choosing: the limitation says the callee is not unique, that the body was not read, and that the call site therefore stays a candidate (line 33). This is the case the credit must not buy: an ambiguous hop is a refusal to suppress, not a suppression. The limitation is written into the run so that a reader of the empty-of-evidence output still sees the hop was attempted and why it stopped."
+  },
+  {
+    "sample_id": "onehop_macro_renamed_stub_positive",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": "ipc.capability.export",
+    "file": "onehop_macro_renamed_stub_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The same gated program as onehop_credited_fixed, with the stub class name supplied by an object-like macro as the rest of this unit does it. The index does not bind the handler -- Dispatch handler not uniquely resolved; not used as an entry -- so the hop is never followed, the implementer gate is never credited, and the export is a candidate at line 28. Recorded as a control, not as a claim: the program is gated, so under a literal class name it raises nothing (see onehop_credited_fixed.cpp). It marks the measured boundary of the hop mechanism inside this unit, so the boundary cannot change unnoticed."
+  }
+]

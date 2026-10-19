@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-17",
+  "main_base": "e510c99c67f31ec6c73365f9ab749c79ca6ff0a1",
+  "tested_code_files_sha256": "bdaa3b0312389b46eea3404983a344332cffa43413914dbfcc9282155d52b528",
+  "python": {
+    "total": 523,
+    "passed": 519,
+    "skipped": 4,
+    "failed": 0
+  },
+  "detector_recheck": {
+    "passed": 66,
+    "included_in_root_total": true
+  },
+  "frontend": {
+    "tests_passed": 1,
+    "production_build": "passed"
+  },
+  "real_component": {
+    "commit": "b807d3dadb7dbb7639fe85b3a5f72da18d318da2",
+    "files": 123,
+    "bytes": 1567031,
+    "parse_complete": 93,
+    "parse_partial": 30,
+    "cli_api_worker_parity": true,
+    "candidate_count": 0,
+    "validated_vulnerability": 0,
+    "status": "completed_with_limitations"
+  },
+  "logs": {
+    "python-root.log": "034716224045a3db680b4b745c1ea367ccb14be794e043f0b115e464762b1357",
+    "python-detectors.log": "b3c7d145a2a16566811a04b9739dd2f12172201738b3214faaa0ad07e5ef32d3",
+    "frontend-test.log": "b964f2cf048631608224663ee7ab694202c517a84d2bd2d9c13fc80fd9001fcd",
+    "build.log": "077d03831d525e8d7ce45090e9f50121018ffb5a1d7a8345fde47595c8a3c771",
+    "real-component.log": "2daf3a4bc99eb6ada4ef91c0b986b7037f922c4a457dbf3508f7fe5d7885b388"
+  },
+  "local_record_directory": "/home/audit/ohscanner/records/parallel-20261017",
+  "limitations": [
+    "Browser smoke for the new date/branch forms not performed in this run.",
+    "A/B latest algorithms are not integrated or accepted by this baseline.",
+    "No precision/recall or product vulnerability conclusion.",
+    "Scope checker is a delivery aid, not an OS sandbox or hosted branch protection.",
+    "CI artifact transfer configuration reviewed locally; GitHub Actions has not run on this unpublished branch."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "case": "limit_2001",
+  "repeat": 2,
+  "environment": {
+    "python": "3.12.14",
+    "git": "git version 2.55.0.windows.5",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4",
+      "tree-sitter-javascript": "0.25.0",
+      "tree-sitter-typescript": "0.23.2"
+    },
+    "parse_profile": "light-ast",
+    "macro_expansion": false
+  },
+  "wall_seconds": 0.03278149999823654,
+  "peak_rss_bytes": 33902592,
+  "result": {
+    "status": "rejected",
+    "error": "source file count exceeds M1 bounded scope",
+    "limit": "M1 bounded scope"
+  }
+}

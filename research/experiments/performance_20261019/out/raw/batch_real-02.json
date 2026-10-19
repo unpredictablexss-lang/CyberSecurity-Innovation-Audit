@@ -1,0 +1,23 @@
+{
+  "case": "batch_real",
+  "repeat": 2,
+  "environment": {
+    "python": "3.12.14",
+    "git": "git version 2.55.0.windows.5",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4",
+      "tree-sitter-javascript": "0.25.0",
+      "tree-sitter-typescript": "0.23.2"
+    },
+    "parse_profile": "light-ast",
+    "macro_expansion": false
+  },
+  "wall_seconds": 0.03943489999801386,
+  "peak_rss_bytes": 29040640,
+  "result": {
+    "source_identity_sha256": "ec6729be83179f92496c5dd4cda6434e006d5505d3dd96c2e53a93793dc6c0ab",
+    "count": 16
+  }
+}

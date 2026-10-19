@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "base_sha": "1c21ac60890fca0ce6be5d50d82e4757dd5e4623",
+  "remote_d_head_reviewed": "1d0c53bc992784c88e31132f6aa75973ff38f19f",
+  "environment": {
+    "os": "Ubuntu 22.04 under WSL",
+    "python": "3.10",
+    "python_environment": "/home/audit/ohscanner/worktrees/main-integration-20261018/.venv-web",
+    "tree_sitter_c_cpp": "loaded from shared local venv",
+    "linux_node_npm_on_path": false,
+    "bundled_windows_node_via_wsl": "v24.19.0",
+    "docker_validation": "not_run"
+  },
+  "tests": {
+    "d_specific_command": "python -m unittest tests.detectors.data.test_sensitive_exposure tests.detectors.data.test_d2_semantics tests.detectors.data.test_d3_historical -v",
+    "d_specific": {"passed": 35, "failed": 0, "skipped": 0},
+    "full_command": "python -m unittest discover -s tests -v",
+    "full_python": {"total": 869, "passed": 864, "failed": 0, "skipped": 5},
+    "skips": [
+      "test_existing_rescan_counts_and_identity_gap_are_preserved: same-scope rescan artifact absent (1)",
+      "AUTH-01 Docker validation-worker-only runtime cases (2)",
+      "shared_ptr historical source evidence artifacts unavailable (2)"
+    ],
+    "frontend_node_tests": {"passed": 16, "failed": 0, "skipped": 0, "runtime": "bundled Windows Node v24.19.0 via WSL interop"},
+    "frontend_build": "not_run; no local web/node_modules. The ignored web/dist artifact was copied from another worktree only after git confirmed web/ source is unchanged from this exact base.",
+    "prebuilt_ui_python_integration": "passed using the above same-source ignored artifact; web source and tracked outputs unchanged",
+    "remote_latest_main_ci": "not_run; local worktree suite only"
+  },
+  "historical_replay": {
+    "status": "blocked",
+    "reason": "Exact D4 commits absent from the shallow local target repository; public-upstream fetch did not complete.",
+    "d5_script_network_attempted": false,
+    "public_runner_invoked": false
+  },
+  "dynamic_harness": {"status": "not_run", "validated_vulnerability": 0},
+  "holdout": {"status": "not_run", "independent_labeled_samples": 0},
+  "source_claims": {"findings_are": "candidate or unknown", "confirmed_product_vulnerabilities": 0}
+}

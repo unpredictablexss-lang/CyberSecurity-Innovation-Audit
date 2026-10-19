@@ -1,0 +1,50 @@
+[
+  {
+    "repository": "semgrep/semgrep",
+    "version_ref": "v1.180.0",
+    "file": "src/engine/Match_patterns.ml",
+    "url": "https://raw.githubusercontent.com/semgrep/semgrep/v1.180.0/src/engine/Match_patterns.ml",
+    "exit": 22,
+    "sha256": null
+  },
+  {
+    "repository": "semgrep/semgrep",
+    "version_ref": "v1.180.0",
+    "file": "src/tainting/Taint.ml",
+    "url": "https://raw.githubusercontent.com/semgrep/semgrep/v1.180.0/src/tainting/Taint.ml",
+    "exit": 0,
+    "sha256": "3bed9e9e308d31b937227b14082acaec2b45f8685b5f1478c6a4078ade971669"
+  },
+  {
+    "repository": "semgrep/semgrep",
+    "version_ref": "v1.180.0",
+    "file": "LICENSE",
+    "url": "https://raw.githubusercontent.com/semgrep/semgrep/v1.180.0/LICENSE",
+    "exit": 0,
+    "sha256": "20c17d8b8c48a600800dfd14f95d5cb9ff47066a9641ddeab48dc54aec96e331"
+  },
+  {
+    "repository": "joernio/joern",
+    "version_ref": "v4.0.652",
+    "file": "joern-cli/frontends/c2cpg/src/main/scala/io/joern/c2cpg/astcreation/AstForStatementsCreator.scala",
+    "url": "https://raw.githubusercontent.com/joernio/joern/v4.0.652/joern-cli/frontends/c2cpg/src/main/scala/io/joern/c2cpg/astcreation/AstForStatementsCreator.scala",
+    "exit": 0,
+    "sha256": "1d7047f8b8806310c134bbb71a164283670078dd474e77784b2f8fa5e33e9d77"
+  },
+  {
+    "repository": "joernio/joern",
+    "version_ref": "v4.0.652",
+    "file": "joern-cli/frontends/c2cpg/src/main/scala/io/joern/c2cpg/astcreation/AstForExpressionsCreator.scala",
+    "url": "https://raw.githubusercontent.com/joernio/joern/v4.0.652/joern-cli/frontends/c2cpg/src/main/scala/io/joern/c2cpg/astcreation/AstForExpressionsCreator.scala",
+    "exit": 0,
+    "sha256": "b39271e5df729c768e7fcc05ead27aba43e3b88da2d9ce5f2ec0af0ddffdce60"
+  },
+  {
+    "repository": "joernio/joern",
+    "version_ref": "v4.0.652",
+    "file": "LICENSE",
+    "url": "https://raw.githubusercontent.com/joernio/joern/v4.0.652/LICENSE",
+    "exit": 0,
+    "sha256": "2e50a6169977b8c7bb3c3fb39e13b4502c0a5f00c79716647bee12731f50c4ce"
+  }
+]

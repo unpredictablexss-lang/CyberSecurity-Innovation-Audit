@@ -1,0 +1,227 @@
+[
+  {
+    "id": "direct_positive",
+    "file": "direct_positive.cpp",
+    "expected_candidates": 1,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "private_fixed",
+    "file": "private_fixed.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "default_private_safe",
+    "file": "default_private_safe.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "alias_positive",
+    "file": "alias_positive.cpp",
+    "expected_candidates": 1,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "overwrite_safe",
+    "file": "overwrite_safe.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "metadata_safe",
+    "file": "metadata_safe.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "keyword_unrelated",
+    "file": "keyword_unrelated.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "constant_safe",
+    "file": "constant_safe.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "slot_mapping_safe",
+    "file": "slot_mapping_safe.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "copy_positive",
+    "file": "copy_positive.cpp",
+    "expected_candidates": 1,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "format_positive",
+    "file": "format_positive.cpp",
+    "expected_candidates": 1,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "callback_positive",
+    "file": "callback_positive.cpp",
+    "expected_candidates": 1,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "generated_positive",
+    "file": "generated_positive.cpp",
+    "expected_candidates": 1,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "generated_status_positive",
+    "file": "generated_status_positive.cpp",
+    "expected_candidates": 1,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "unknown_wrapper_partial",
+    "file": "unknown_wrapper_partial.cpp",
+    "expected_candidates": 1,
+    "split": "design_regression",
+    "partial": true
+  },
+  {
+    "id": "nonliteral_partial",
+    "file": "nonliteral_partial.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": true
+  },
+  {
+    "id": "format_arity_partial",
+    "file": "format_arity_partial.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": true
+  },
+  {
+    "id": "positional_partial",
+    "file": "positional_partial.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": true
+  },
+  {
+    "id": "shadow_sink_partial",
+    "file": "shadow_sink_partial.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": true
+  },
+  {
+    "id": "shadow_type_partial",
+    "file": "shadow_type_partial.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": true
+  },
+  {
+    "id": "scope_safe",
+    "file": "scope_safe.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "branch_partial",
+    "file": "branch_partial.cpp",
+    "expected_candidates": 1,
+    "split": "design_regression",
+    "partial": true
+  },
+  {
+    "id": "loop_partial",
+    "file": "loop_partial.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": true
+  },
+  {
+    "id": "pointer_partial",
+    "file": "pointer_partial.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": true
+  },
+  {
+    "id": "comments_safe",
+    "file": "comments_safe.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "test_scope_safe",
+    "file": "test_scope_safe.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": false,
+    "path": "tests/sample.cpp"
+  },
+  {
+    "id": "comparison_bool_safe",
+    "file": "comparison_bool_safe.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "generated_status_safe",
+    "file": "generated_status_safe.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": false
+  },
+  {
+    "id": "sink_parameter_partial",
+    "file": "sink_parameter_partial.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": true
+  },
+  {
+    "id": "qualified_call_partial",
+    "file": "qualified_call_partial.cpp",
+    "expected_candidates": 0,
+    "split": "design_regression",
+    "partial": true
+  },
+  {
+    "id": "redaction_not_assumed_partial",
+    "file": "redaction_not_assumed_partial.cpp",
+    "expected_candidates": 1,
+    "split": "design_regression",
+    "partial": true
+  },
+  {
+    "id": "taint_star_positive",
+    "file": "taint_star_positive.cpp",
+    "expected_candidates": 1,
+    "split": "design_regression",
+    "partial": false
+  }
+]

@@ -1,0 +1,3 @@
+$ C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe -m compileall -q src tests
+
+[exit_code] 0

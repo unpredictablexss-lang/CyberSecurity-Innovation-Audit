@@ -1,0 +1,22 @@
+{
+  "labels": {
+    "SELFTEST-1": {
+      "label": "vulnerable_shape",
+      "model_generated": false,
+      "root_cause_family": "synthetic"
+    },
+    "SELFTEST-2": {
+      "label": "not_vulnerable_shape",
+      "model_generated": false,
+      "root_cause_family": "synthetic"
+    },
+    "SELFTEST-3": {
+      "label": "unknown",
+      "model_generated": false,
+      "root_cause_family": "synthetic"
+    }
+  },
+  "model_generated": false,
+  "schema": "ohscanner.ark-holdout-truth/v1",
+  "truth_status": "pipeline_self_test_not_reliable"
+}

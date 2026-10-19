@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-17",
+  "implementation_commit": "3b646c881716eb6b0c86195cdeeb1012ac9c921b",
+  "base_main": "e510c99c67f31ec6c73365f9ab749c79ca6ff0a1",
+  "d1_commit": "f11d5fdf4ab01a345a1ffb702b18edb6b5109a38",
+  "detector_version": "0.2.0",
+  "source_model_version": "0.1.0",
+  "full_suite": {
+    "cases": 528,
+    "passed": 517,
+    "skipped": 11,
+    "failed": 0,
+    "errors": 0
+  },
+  "d_targeted_methods": 16,
+  "d1_controls": 32,
+  "d2_controls": 39,
+  "d1_fixture_expectations_unchanged": true,
+  "pre_fix_run": {
+    "d2_controls": 33,
+    "test_methods": 2,
+    "failing_subtests": 12,
+    "log_sha256": "71e8850375651c0733a2112400b1bc57c1cededf7527325d314c4eb9135968ba"
+  },
+  "compileall": "passed",
+  "git_diff_check": "checked before commit/export",
+  "logs": {
+    "d2-final-tests.log": "dcacebd166575bc2f0681594b22308ad157a222e431b7a752630a1b7d3de1041",
+    "d2-after-fix.log": "f27e5ccbe9e36cfc1c406fa72ffe115b83dc642ba4c0a7447c0189763ba7fe28",
+    "d2-coverage.log": "649bf9a4e4a596e05b5830c0ca7826017db520c22ac551e2267e68cd489039f9"
+  },
+  "skip_reasons": [
+    "test_corpus_ipc_object_stub_send_request_dispatch (test_ipc_entry_index.EntryIndexTests) ... skipped 'perf-corpus/communication_ipc not present'",
+    "test_attack_triggers_on_the_vulnerable_revision_only (test_poc_runner.Auth01IntegrationTests) ... skipped 'AUTH-01 runtime harness must execute only through the Docker validation worker'",
+    "test_record_keeps_validated_vulnerability_at_zero (test_poc_runner.Auth01IntegrationTests) ... skipped 'AUTH-01 runtime harness must execute only through the Docker validation worker'",
+    "test_a_changed_digest_fails (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_a_moved_quote_fails_instead_of_describing_other_code (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_no_block_means_no_claim (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_the_harness_declares_a_partial_reachability_block (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_the_rendered_record_states_what_is_not_established (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_verification_checks_the_digest_and_the_quoted_line (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_real_historical_sources_produce_linked_detector_candidates (test_shared_ptr_race_poc.SharedPtrRacePocTests) ... skipped 'historical detector replay requires locally preserved source artifacts: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h, outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h'",
+    "test_source_hashes_and_quotes_are_verified (test_shared_ptr_race_poc.SharedPtrRacePocTests) ... skipped 'optional preserved historical source artifacts are unavailable: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h, outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h'"
+  ],
+  "production_coverage": {
+    "complete": 0,
+    "partial": 3,
+    "not_analyzed": 6,
+    "failed": 0
+  },
+  "d1_real_candidates": 0,
+  "d2_real_candidates": 0,
+  "repeat_equal": true,
+  "holdout_executed": false,
+  "runtime_poc_executed": false,
+  "validated_vulnerability": 0,
+  "implementation_sha256": "63f6ab9a87ce100233ae73629cae3f894a6a3e768154d4dd9c1d54d40ff303b7",
+  "coverage_report_sha256": "cc737fa7515e76812063f588978720b9d79dbef60ae3ec6752d97e5df203464c"
+}

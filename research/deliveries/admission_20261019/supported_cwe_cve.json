@@ -1,0 +1,73 @@
+{
+  "known_cve_detector_cves": [
+    "CVE-2022-45877",
+    "CVE-2025-25212",
+    "CVE-2025-27247",
+    "CVE-2025-57052",
+    "CVE-2025-9900",
+    "CVE-2026-25850",
+    "CVE-2026-27648",
+    "CVE-2026-28733",
+    "CVE-2026-28751",
+    "CVE-2026-33636",
+    "CVE-2026-46675",
+    "CVE-2026-58313",
+    "CVE-2026-67215",
+    "CVE-2026-67216",
+    "CVE-2026-9079",
+    "CVE-2026-92391",
+    "CVE-2026-92392"
+  ],
+  "known_cve_detector_cwes": [
+    "CWE-119",
+    "CWE-125",
+    "CWE-129",
+    "CWE-319",
+    "CWE-407",
+    "CWE-416",
+    "CWE-522",
+    "CWE-674",
+    "CWE-732",
+    "CWE-770",
+    "CWE-787",
+    "CWE-862"
+  ],
+  "historical_samples": [
+    {
+      "sample_id": "arkcompiler_ets_runtime-jsarray-sort-oob-2025-02",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "vulnerable_commit": "aeee3fd12c03193545edea4b8e0fdfa3d9a03d11",
+      "fixed_commit": "1b23531531e768398682582969c2a9f17e72cafe",
+      "cwe": "CWE-787",
+      "cve": "CVE-2025-23420",
+      "runtime_replay_status": "not_run"
+    },
+    {
+      "sample_id": "c_utils-singleton-uaf-2026-01",
+      "repository": "openharmony/commonlibrary_c_utils",
+      "vulnerable_commit": "bdfafdaafddb01ab7ae13354ce2ada9555d7935c",
+      "fixed_commit": "9a3f281120307ec7dcce17fae882dcc4e6a6f4d7",
+      "cwe": "CWE-416",
+      "cve": null,
+      "runtime_replay_status": "not_run"
+    },
+    {
+      "sample_id": "communication_dsoftbus_null_deref_001",
+      "repository": "openharmony/communication_dsoftbus",
+      "vulnerable_commit": "258662cd9840b55a31546a72d91027f6368cea84",
+      "fixed_commit": "192f3e11d74beeaa3d879333471deb8a24a7e1c5",
+      "cwe": "CWE-476",
+      "cve": "CVE-2025-26690",
+      "runtime_replay_status": "not_run"
+    },
+    {
+      "sample_id": "kernel_liteos_a-getgroups-oob-2025-03",
+      "repository": "openharmony/kernel_liteos_a",
+      "vulnerable_commit": "6ac8e246b0efd57a28ea05b6e6973ae0602fe032",
+      "fixed_commit": "940a5a8c2cd1ced84d435933dbcdbb1a7fbf3000",
+      "cwe": "CWE-125",
+      "cve": "CVE-2025-20042",
+      "runtime_replay_status": "not_run"
+    }
+  ]
+}

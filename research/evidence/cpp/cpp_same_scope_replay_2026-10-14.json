@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "kind": "cpp_same_scope_independent_replay_verification",
+  "generated": "2026-10-14 Asia/Shanghai",
+  "canonical_directory": "outputs/reports/a_cpp_rescan_20261014/exact-scope",
+  "replay_directory": "outputs/reports/cpp_same_scope_20261014/run",
+  "runner": "scripts/verify_owner_cpp_components.py",
+  "comparison": [
+    "repository/commit/git_tree/snapshot_sha256/validated_vulnerability exact equality",
+    "detector ID/version/status/scope_files/scope_loc/diagnostic_count exact equality",
+    "sorted diagnostic identity tuples exact equality including diagnostic_id and source_sha256",
+    "raw JSON hash difference is retained because elapsed_seconds is runtime evidence, not normalized identity"
+  ],
+  "rows": [
+    {
+      "component": "update_updateservice",
+      "same_source_binding": true,
+      "same_detector_state": true,
+      "same_diagnostic_identity_set": true,
+      "diagnostics": 1,
+      "canonical_report_sha256": "f14587ff09978136fb96dfa5a6753bed909634afb02e26e270c3022ac5c4e6f1",
+      "replay_report_sha256": "4bf753371d165ba542d11628d8ae72c1eb9414aa015aff85c88336a2b1becc55",
+      "canonical_md_sha256": "d124b807d6f569b472c26c632082fd7bb4ebe10a7fa9980089cde5a0d7460181",
+      "replay_md_sha256": "d124b807d6f569b472c26c632082fd7bb4ebe10a7fa9980089cde5a0d7460181"
+    },
+    {
+      "component": "security_access_token",
+      "same_source_binding": true,
+      "same_detector_state": true,
+      "same_diagnostic_identity_set": true,
+      "diagnostics": 10,
+      "canonical_report_sha256": "412c49972fce82f8e39cc230b2a6b3877792d12ccd0ddd15a03a89d53a4a5590",
+      "replay_report_sha256": "915e1a4c9b4d426253dfcdae93131e73a7cafb0ca06098c943b6a195ef172d05",
+      "canonical_md_sha256": "ffcd7e3b531233b9a078b5c8925c340dcb252a65cd13b801402862595db0cd24",
+      "replay_md_sha256": "ffcd7e3b531233b9a078b5c8925c340dcb252a65cd13b801402862595db0cd24"
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "same_source_binding": true,
+      "same_detector_state": true,
+      "same_diagnostic_identity_set": true,
+      "diagnostics": 167,
+      "canonical_report_sha256": "70e351017dcffc114f37ebfdd275bb318a8ae0bd3031e614810fbc205730863c",
+      "replay_report_sha256": "6a70fa10a70c9910fbf97d795963a49022cb72520f394bf47a21679c910a764a",
+      "canonical_md_sha256": "b172947c6f28abc3480359eeaad7fb0950bbe31a5ec6f33554984f0484b93932",
+      "replay_md_sha256": "b172947c6f28abc3480359eeaad7fb0950bbe31a5ec6f33554984f0484b93932"
+    },
+    {
+      "component": "window_window_manager",
+      "same_source_binding": true,
+      "same_detector_state": true,
+      "same_diagnostic_identity_set": true,
+      "diagnostics": 27,
+      "canonical_report_sha256": "a4da71d36c1e733641e0c1d938de2b26a54583811ff399148877110ba387441c",
+      "replay_report_sha256": "270ea7e00b5c577de829014321e8cccb9356fbcaba78d98f856f946a1bea357d",
+      "canonical_md_sha256": "5ef954be91126829795caaccd3a30d3162d15035951dbbdb8cb318db45a8044b",
+      "replay_md_sha256": "5ef954be91126829795caaccd3a30d3162d15035951dbbdb8cb318db45a8044b"
+    },
+    {
+      "component": "communication_dsoftbus",
+      "same_source_binding": true,
+      "same_detector_state": true,
+      "same_diagnostic_identity_set": true,
+      "diagnostics": 3,
+      "canonical_report_sha256": "d77718d72403f8cae0a3a1a5cd4a7cb95174623d4f165d02b2d405226b8be4f1",
+      "replay_report_sha256": "e31a1ea4c56fb32cf8dbb6e6fea4ea7eb6bec4e3e0a900f8fe7e4632a35011d5",
+      "canonical_md_sha256": "c614830ae9a4fc8e6c828747c06af371d101680d640664afc90207ba1804c8f1",
+      "replay_md_sha256": "c614830ae9a4fc8e6c828747c06af371d101680d640664afc90207ba1804c8f1"
+    }
+  ],
+  "all_same_source_binding": true,
+  "all_same_detector_state": true,
+  "all_same_diagnostic_identity_sets": true,
+  "validated_vulnerability": 0
+}

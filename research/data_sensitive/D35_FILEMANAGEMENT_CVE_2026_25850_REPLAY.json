@@ -1,0 +1,127 @@
+{
+  "schema": 1,
+  "experiment": "D35 CVE-2026-25850 exact source candidate and upstream-fix replay",
+  "repository": "openharmony/filemanagement_storage_service",
+  "detector": "ohscanner.known_disclosed_cves",
+  "validated_vulnerability": 0,
+  "product_status": "unknown",
+  "limitations": [
+    "The rule replay is a fixed-source detector check, not a runtime permission PoC.",
+    "The two merge-request source pairs bind the vulnerable and permission-fix shapes; they do not prove a particular product image contains either revision.",
+    "Tree-sitter parsing was not run in this direct one-file replay; runs remain blocked and findings remain candidates."
+  ],
+  "pairs": {
+    "5.1": {
+      "before_source": {
+        "commit": "bf13f7daa06915e02788086f8450527eeb90f250",
+        "tree": "3bc313e472d1bf54bea37623f86891666969c798",
+        "path": "services/storage_daemon/volume/src/external_volume_info.cpp",
+        "blob": "292fc32c75b40d0d125a0cb8c33f0ef3e4d33663",
+        "sha256": "c8784e1ba51410c5eeb1a5fbb4b5006d60fcff7fbd8b293e6e7ef046c54bf789",
+        "size": 10980
+      },
+      "before_scan": {
+        "detector_version": "0.11.0",
+        "status": "blocked",
+        "parse_status": "not_run",
+        "findings": [
+          {
+            "file": "services/storage_daemon/volume/src/external_volume_info.cpp",
+            "line": 109,
+            "rule_id": "ohknowncve-storage-cve-2026-25850",
+            "symbol": "CVE-2026-25850",
+            "cwe": "CWE-732",
+            "impact": "confidentiality",
+            "source_sha256": "c8784e1ba51410c5eeb1a5fbb4b5006d60fcff7fbd8b293e6e7ef046c54bf789"
+          },
+          {
+            "file": "services/storage_daemon/volume/src/external_volume_info.cpp",
+            "line": 120,
+            "rule_id": "ohknowncve-storage-cve-2026-25850",
+            "symbol": "CVE-2026-25850",
+            "cwe": "CWE-732",
+            "impact": "confidentiality",
+            "source_sha256": "c8784e1ba51410c5eeb1a5fbb4b5006d60fcff7fbd8b293e6e7ef046c54bf789"
+          }
+        ]
+      },
+      "after_source": {
+        "commit": "ef5145b591456f467531b5f6d38c124392b02e80",
+        "tree": "6caf5f2df9babd5b34f0683cc66073b6a08850bd",
+        "path": "services/storage_daemon/volume/src/external_volume_info.cpp",
+        "blob": "ba7f0d5f521675ac05fca8f912e2541af5a06743",
+        "sha256": "5de1a7e2f29b701057d71317897722b0dc10fa2373649ac8649aa9bc4b86a89f",
+        "size": 10858
+      },
+      "after_scan": {
+        "detector_version": "0.11.0",
+        "status": "blocked",
+        "parse_status": "not_run",
+        "findings": []
+      },
+      "helper_source": {
+        "commit": "bf13f7daa06915e02788086f8450527eeb90f250",
+        "path": "services/storage_daemon/utils/file_utils.cpp",
+        "blob": "24247006d6b83a93415b3faddc913fe8cf5db1d9",
+        "sha256": "7760d5f7c50257475118cae57059de5c695011a346bca9ee63dac36d8c79bb75",
+        "recursive_self_call": true
+      }
+    },
+    "6.0": {
+      "before_source": {
+        "commit": "3f0a6a2b0dc3f81fe4562ace4681be50243aaf8f",
+        "tree": "8d5556ae7f3641cb0b932022764e58242a3fb9fb",
+        "path": "services/storage_daemon/volume/src/external_volume_info.cpp",
+        "blob": "a2e416bdc093bf9b8735a7917f4e877e25d4e7ae",
+        "sha256": "c92f00fb756fdc6616d2462be0db29cf6b9504b6810b8e0e5a8b377b51368b03",
+        "size": 19251
+      },
+      "before_scan": {
+        "detector_version": "0.11.0",
+        "status": "blocked",
+        "parse_status": "not_run",
+        "findings": [
+          {
+            "file": "services/storage_daemon/volume/src/external_volume_info.cpp",
+            "line": 110,
+            "rule_id": "ohknowncve-storage-cve-2026-25850",
+            "symbol": "CVE-2026-25850",
+            "cwe": "CWE-732",
+            "impact": "confidentiality",
+            "source_sha256": "c92f00fb756fdc6616d2462be0db29cf6b9504b6810b8e0e5a8b377b51368b03"
+          },
+          {
+            "file": "services/storage_daemon/volume/src/external_volume_info.cpp",
+            "line": 121,
+            "rule_id": "ohknowncve-storage-cve-2026-25850",
+            "symbol": "CVE-2026-25850",
+            "cwe": "CWE-732",
+            "impact": "confidentiality",
+            "source_sha256": "c92f00fb756fdc6616d2462be0db29cf6b9504b6810b8e0e5a8b377b51368b03"
+          }
+        ]
+      },
+      "after_source": {
+        "commit": "7f9e44c24eb27bf2e458f9b7a03c6311983ec912",
+        "tree": "788d533f633aaffe980f8699aede0fae67595bbf",
+        "path": "services/storage_daemon/volume/src/external_volume_info.cpp",
+        "blob": "13d7619f7a0d1b0210002fa64e91749ff2793d79",
+        "sha256": "217ec7692fab927dd2246cc47b923104129021bbc39bbb1e844269ef79421054",
+        "size": 19129
+      },
+      "after_scan": {
+        "detector_version": "0.11.0",
+        "status": "blocked",
+        "parse_status": "not_run",
+        "findings": []
+      },
+      "helper_source": {
+        "commit": "3f0a6a2b0dc3f81fe4562ace4681be50243aaf8f",
+        "path": "services/storage_daemon/utils/file_utils.cpp",
+        "blob": "7111ede2ed344cd3c0944fb2ac965e96d70e8f5b",
+        "sha256": "41a8ade7eab4137172e2ca875eb5739bd407eacacd9fcd32a83a871396f5b7f9",
+        "recursive_self_call": true
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "experiment": "D13 D4 source provenance and verifier regression",
+  "source_verification": {
+    "before_commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+    "after_commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+    "files_verified": 44,
+    "files_per_revision": 22,
+    "lazy_fetch_during_verification": false,
+    "before_subject": "!1271 samgr add accesToken Merge pull request !1271 from 李想/master",
+    "after_subject": "Remove unused sensitive prints"
+  },
+  "tests": {
+    "targeted_data_tests": {
+      "run": 55,
+      "passed": 55,
+      "failed": 0
+    },
+    "full_python_suite": {
+      "run": 889,
+      "passed": 884,
+      "skipped": 5,
+      "failed": 0
+    },
+    "compileall": "passed",
+    "git_diff_check": "passed"
+  },
+  "conclusion_boundary": {
+    "finding_status": "candidate/unknown",
+    "validated_vulnerability": 0,
+    "product_build_or_deployment_proven": false,
+    "security_advisory_proven": false,
+    "exploitability_proven": false
+  }
+}

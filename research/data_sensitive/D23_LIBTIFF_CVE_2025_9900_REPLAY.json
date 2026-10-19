@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "experiment": "D23 libtiff CVE-2025-9900 rule calibration",
+  "detector": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.4.0",
+  "pinned_source": {
+    "repository": "OpenHarmony-GitCode-Mirror/third_party_libtiff",
+    "commit": "d4a0516c477dfbaf1153ae295893ab75aadd63d4",
+    "tree": "33beab3b3b50fe6678b1a74ed48ac3b69084c6ec",
+    "path": "libtiff/tif_getimage.c",
+    "blob": "5121e85b9eb2bc734b557892c0968f629d370b82",
+    "sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"
+  },
+  "public_runner_replay": {
+    "commit": "d4a0516c477dfbaf1153ae295893ab75aadd63d4",
+    "tree": "33beab3b3b50fe6678b1a74ed48ac3b69084c6ec",
+    "snapshot_sha256": "97c42f290a39a34773a8864ab7117104ac385d54b4d2312accb31bef4c769c3f",
+    "status": "blocked",
+    "coverage": {
+      "scope_mode": "per_file",
+      "status": "partial",
+      "applicable_files": 1,
+      "analyzed_files": [],
+      "partially_inspected_files": [
+        "libtiff/tif_getimage.c"
+      ],
+      "source_sha256": {
+        "libtiff/tif_getimage.c": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"
+      },
+      "unexamined": [
+        {
+          "file": "libtiff/tif_getimage.c",
+          "parse_status": "partial",
+          "reason": "detector_model_incomplete",
+          "analysis_status": "partial"
+        }
+      ],
+      "inspected_files": [
+        "libtiff/tif_getimage.c"
+      ],
+      "not_analyzed_files": [],
+      "coverage_counts": {
+        "complete": 0,
+        "partial": 1,
+        "not_analyzed": 0,
+        "failed": 0
+      },
+      "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+      "evidence_obligations": [
+        {
+          "diagnostic_id": "ohscanner.known_disclosed_cves:9db064a8ab4d9602",
+          "file": "libtiff/tif_getimage.c",
+          "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "OpenHarmony-GitCode-Mirror/third_party_libtiff",
+            "commit": "d4a0516c477dfbaf1153ae295893ab75aadd63d4",
+            "snapshot_sha256": "97c42f290a39a34773a8864ab7117104ac385d54b4d2312accb31bef4c769c3f",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.4.0",
+            "rule_id": "ohknowncve-libtiff-cve-2025-9900",
+            "file": "libtiff/tif_getimage.c",
+            "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"
+          },
+          "consequence_impact": "availability_or_memory_safety",
+          "consequence_cwe": "CWE-787",
+          "model_version": null,
+          "obligations": [
+            {
+              "kind": "component_identity",
+              "description": "Bind source to exact built component/version.",
+              "status": "missing"
+            },
+            {
+              "kind": "product_build",
+              "description": "Confirm component is included in target product build.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_path",
+              "description": "Trace attacker-controlled input to the vulnerable API/path.",
+              "status": "missing"
+            },
+            {
+              "kind": "impact",
+              "description": "Verify product impact with controlled evidence.",
+              "status": "missing"
+            }
+          ]
+        }
+      ]
+    },
+    "findings": [
+      {
+        "file": "libtiff/tif_getimage.c",
+        "line": 621,
+        "rule_id": "ohknowncve-libtiff-cve-2025-9900",
+        "symbol": "CVE-2025-9900",
+        "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a",
+        "message": "Candidate component-code match for CVE-2025-9900: TIFFReadRGBAImageOriented shifts raster by (rheight - img.height) before decoding; when caller raster height is smaller than image height, this can underflow the destination pointer. Product reachability and exploitability remain unverified. Product reachability and vulnerability status remain unconfirmed."
+      }
+    ],
+    "repeat_stable": true,
+    "validated_vulnerability": 0
+  },
+  "fixed_shape_control": {
+    "kind": "synthetic_fixed_api_shape",
+    "status": "completed",
+    "cve_2025_9900_findings": 0
+  },
+  "limitations": [
+    "The pinned source scan remains blocked with partial parser coverage; a local candidate is not a complete negative result.",
+    "The synthetic fixed-shape control exercises the API call shape from the upstream patch, not an independently fetched fixed source tree.",
+    "The upstream issue contains a component crash harness and the G-drive audit records a prior isolated ASan reproduction, but this experiment did not rerun the dynamic PoC.",
+    "No OpenHarmony product entry, build inclusion, runtime impact, or affected release is established; validated_vulnerability remains zero."
+  ]
+}

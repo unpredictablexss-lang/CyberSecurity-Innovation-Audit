@@ -1,0 +1,573 @@
+{
+  "schema": 1,
+  "profiles": [
+    {
+      "profile_id": "dsoftbus-tcp-json-d33177135ec6",
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "model_version": "0.2.0-historical.1",
+      "review_status": "research_source_reviewed; owner acceptance pending",
+      "target_file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+      "source_function": "ProcessReceivedData",
+      "summary_function": "DecryptMessage",
+      "summary_parameter": 2,
+      "output_member": "out",
+      "success_constant": "SOFTBUS_OK",
+      "sink": "SoftBusLog",
+      "format_index": 2,
+      "default_private": false,
+      "required_files": [
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+          "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "blob": "f929832bb488cef82cbc9c22427f548ae9935c98",
+          "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9",
+          "size": 26736,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+          "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+          "file": "core/transmission/common/src/softbus_message_open_channel.c",
+          "blob": "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+          "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5",
+          "size": 8610,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/transmission/common/src/softbus_message_open_channel.c"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+          "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+          "file": "core/transmission/common/include/softbus_message_open_channel.h",
+          "blob": "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+          "sha256": "4e22f4cf81aaf6def79785d153f443c0e29da464aba7e0219a5615fb252b7ce5",
+          "size": 1638,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/transmission/common/include/softbus_message_open_channel.h"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+          "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+          "file": "core/transmission/common/include/softbus_app_info.h",
+          "blob": "393c79b2cceb39e781a1680384754f02560bf7a9",
+          "sha256": "db322ec201fb1cd1d8606f339593c2cb08ab5a2de3588a37625bf4977f514500",
+          "size": 2049,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/transmission/common/include/softbus_app_info.h"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+          "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+          "file": "core/common/log/softbus_log.c",
+          "blob": "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+          "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b",
+          "size": 2814,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/common/log/softbus_log.c"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+          "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+          "file": "core/common/include/softbus_log.h",
+          "blob": "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+          "sha256": "59fdd037fac0eee9cf904bb8d07a4bfac9a70d177886315b371ba4700af06df8",
+          "size": 1770,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/common/include/softbus_log.h"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+          "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "blob": "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79",
+          "size": 1321,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/adapter/common/log/softbus_adapter_log.c"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+          "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+          "file": "adapter/common/include/softbus_adapter_log.h",
+          "blob": "c91ad41cb765496501204144a63a2b3fe0f53c14",
+          "sha256": "6b953411b9d6163fcd5f13aed62c4895e38b9292261a934ba5ef027bd2037352",
+          "size": 3212,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/adapter/common/include/softbus_adapter_log.h"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+          "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+          "blob": "c8d21576547ddad1f87341d451a895ebb515b90e",
+          "sha256": "eecde0623c13d9718c4e787890fe19672d6305784920b6e8c17afca3a3b042c5",
+          "size": 8686,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+          "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+          "file": "core/common/softbus_property/softbus_feature_config.c",
+          "blob": "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+          "sha256": "068244ad006cdb012a6a23ca46f7bddca96a6bcbbd7ee8de21544bf1f9937c01",
+          "size": 9327,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/common/softbus_property/softbus_feature_config.c"
+        }
+      ],
+      "evidence": [
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 38,
+          "anchor": "typedef struct {",
+          "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 47,
+          "anchor": "typedef struct {",
+          "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 377,
+          "anchor": "static int32_t DecryptMessage",
+          "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 387,
+          "anchor": "outbuf.buf = (uint8_t *)cryptInfo->out",
+          "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 388,
+          "anchor": "int32_t ret = AuthDecrypt",
+          "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 628,
+          "anchor": "static int32_t ProcessReceivedData",
+          "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 649,
+          "anchor": "if (DecryptMessage",
+          "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 665,
+          "anchor": "cJSON *packet = cJSON_Parse",
+          "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 671,
+          "anchor": "ProcessReceivedData: %s",
+          "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9"
+        },
+        {
+          "file": "core/transmission/common/src/softbus_message_open_channel.c",
+          "line": 52,
+          "anchor": "char *PackRequest",
+          "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5"
+        },
+        {
+          "file": "core/transmission/common/src/softbus_message_open_channel.c",
+          "line": 66,
+          "anchor": "SoftBusBase64Encode",
+          "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5"
+        },
+        {
+          "file": "core/transmission/common/src/softbus_message_open_channel.c",
+          "line": 78,
+          "anchor": "AddStringToJsonObject(json, SESSION_KEY",
+          "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5"
+        },
+        {
+          "file": "core/transmission/common/src/softbus_message_open_channel.c",
+          "line": 100,
+          "anchor": "int UnpackRequest",
+          "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5"
+        },
+        {
+          "file": "core/transmission/common/src/softbus_message_open_channel.c",
+          "line": 122,
+          "anchor": "SoftBusBase64Decode",
+          "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5"
+        },
+        {
+          "file": "core/common/log/softbus_log.c",
+          "line": 45,
+          "anchor": "void SoftBusLog",
+          "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b"
+        },
+        {
+          "file": "core/common/log/softbus_log.c",
+          "line": 58,
+          "anchor": "level < g_logLevel",
+          "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b"
+        },
+        {
+          "file": "core/common/log/softbus_log.c",
+          "line": 70,
+          "anchor": "ret = vsprintf_s",
+          "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b"
+        },
+        {
+          "file": "core/common/log/softbus_log.c",
+          "line": 76,
+          "anchor": "SoftBusOutPrint(szStr",
+          "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b"
+        },
+        {
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "line": 18,
+          "anchor": "void SoftBusOutPrint",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79"
+        },
+        {
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "line": 26,
+          "anchor": "%{public}s",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79"
+        },
+        {
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "line": 29,
+          "anchor": "%{public}s",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79"
+        },
+        {
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "line": 32,
+          "anchor": "%{public}s",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79"
+        },
+        {
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "line": 35,
+          "anchor": "%{public}s",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79"
+        },
+        {
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "line": 21,
+          "anchor": "printf(",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79"
+        },
+        {
+          "file": "core/common/softbus_property/softbus_feature_config.c",
+          "line": 47,
+          "anchor": "#define ADAPTER_LOG_LEVEL",
+          "sha256": "068244ad006cdb012a6a23ca46f7bddca96a6bcbbd7ee8de21544bf1f9937c01"
+        }
+      ],
+      "source_semantics": "Successful DecryptMessage output can contain request JSON with Base64 session key, evidenced by PackRequest/UnpackRequest; not every packet is secret. Request path and contents remain obligations.",
+      "sink_semantics": "SoftBusLog vsprintf_s to 256-byte buffer -> SoftBusOutPrint -> public HiLog or printf. Level/config/format success/truncation/readers remain conditional.",
+      "build_assumptions": [
+        "Reviewed adapter implementation selected by build",
+        "Valid module/level and enabled runtime threshold",
+        "vsprintf_s succeeds within 256-byte buffer",
+        "Successful authenticated request JSON carrying SESSION_KEY; reply/error payload may not carry key"
+      ],
+      "unsupported": [
+        "generic decrypt APIs",
+        "arbitrary cross-file summaries",
+        "indirect calls",
+        "complex aliases",
+        "unreviewed versions",
+        "product permission proof"
+      ]
+    },
+    {
+      "profile_id": "dsoftbus-tcp-json-63efce3ff7f2",
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "model_version": "0.2.0-historical.1",
+      "review_status": "research_source_reviewed; owner acceptance pending",
+      "target_file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+      "source_function": "ProcessReceivedData",
+      "summary_function": "DecryptMessage",
+      "summary_parameter": 2,
+      "output_member": "out",
+      "success_constant": "SOFTBUS_OK",
+      "sink": "SoftBusLog",
+      "format_index": 2,
+      "default_private": false,
+      "required_files": [
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+          "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "blob": "52ade9ae7136204a0174d94a77bf8dd008c9d505",
+          "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc",
+          "size": 26641,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+          "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+          "file": "core/transmission/common/src/softbus_message_open_channel.c",
+          "blob": "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+          "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5",
+          "size": 8610,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/transmission/common/src/softbus_message_open_channel.c"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+          "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+          "file": "core/transmission/common/include/softbus_message_open_channel.h",
+          "blob": "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+          "sha256": "4e22f4cf81aaf6def79785d153f443c0e29da464aba7e0219a5615fb252b7ce5",
+          "size": 1638,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/transmission/common/include/softbus_message_open_channel.h"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+          "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+          "file": "core/transmission/common/include/softbus_app_info.h",
+          "blob": "393c79b2cceb39e781a1680384754f02560bf7a9",
+          "sha256": "db322ec201fb1cd1d8606f339593c2cb08ab5a2de3588a37625bf4977f514500",
+          "size": 2049,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/transmission/common/include/softbus_app_info.h"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+          "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+          "file": "core/common/log/softbus_log.c",
+          "blob": "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+          "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b",
+          "size": 2814,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/common/log/softbus_log.c"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+          "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+          "file": "core/common/include/softbus_log.h",
+          "blob": "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+          "sha256": "59fdd037fac0eee9cf904bb8d07a4bfac9a70d177886315b371ba4700af06df8",
+          "size": 1770,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/common/include/softbus_log.h"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+          "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "blob": "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79",
+          "size": 1321,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/adapter/common/log/softbus_adapter_log.c"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+          "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+          "file": "adapter/common/include/softbus_adapter_log.h",
+          "blob": "c91ad41cb765496501204144a63a2b3fe0f53c14",
+          "sha256": "6b953411b9d6163fcd5f13aed62c4895e38b9292261a934ba5ef027bd2037352",
+          "size": 3212,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/adapter/common/include/softbus_adapter_log.h"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+          "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+          "blob": "c8d21576547ddad1f87341d451a895ebb515b90e",
+          "sha256": "eecde0623c13d9718c4e787890fe19672d6305784920b6e8c17afca3a3b042c5",
+          "size": 8686,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c"
+        },
+        {
+          "repository": "openharmony/communication_dsoftbus",
+          "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+          "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+          "file": "core/common/softbus_property/softbus_feature_config.c",
+          "blob": "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+          "sha256": "068244ad006cdb012a6a23ca46f7bddca96a6bcbbd7ee8de21544bf1f9937c01",
+          "size": 9327,
+          "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/common/softbus_property/softbus_feature_config.c"
+        }
+      ],
+      "evidence": [
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 38,
+          "anchor": "typedef struct {",
+          "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 47,
+          "anchor": "typedef struct {",
+          "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 377,
+          "anchor": "static int32_t DecryptMessage",
+          "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 387,
+          "anchor": "outbuf.buf = (uint8_t *)cryptInfo->out",
+          "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 388,
+          "anchor": "int32_t ret = AuthDecrypt",
+          "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 628,
+          "anchor": "static int32_t ProcessReceivedData",
+          "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 649,
+          "anchor": "if (DecryptMessage",
+          "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc"
+        },
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 665,
+          "anchor": "cJSON *packet = cJSON_Parse",
+          "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc"
+        },
+        {
+          "file": "core/transmission/common/src/softbus_message_open_channel.c",
+          "line": 52,
+          "anchor": "char *PackRequest",
+          "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5"
+        },
+        {
+          "file": "core/transmission/common/src/softbus_message_open_channel.c",
+          "line": 66,
+          "anchor": "SoftBusBase64Encode",
+          "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5"
+        },
+        {
+          "file": "core/transmission/common/src/softbus_message_open_channel.c",
+          "line": 78,
+          "anchor": "AddStringToJsonObject(json, SESSION_KEY",
+          "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5"
+        },
+        {
+          "file": "core/transmission/common/src/softbus_message_open_channel.c",
+          "line": 100,
+          "anchor": "int UnpackRequest",
+          "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5"
+        },
+        {
+          "file": "core/transmission/common/src/softbus_message_open_channel.c",
+          "line": 122,
+          "anchor": "SoftBusBase64Decode",
+          "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5"
+        },
+        {
+          "file": "core/common/log/softbus_log.c",
+          "line": 45,
+          "anchor": "void SoftBusLog",
+          "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b"
+        },
+        {
+          "file": "core/common/log/softbus_log.c",
+          "line": 58,
+          "anchor": "level < g_logLevel",
+          "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b"
+        },
+        {
+          "file": "core/common/log/softbus_log.c",
+          "line": 70,
+          "anchor": "ret = vsprintf_s",
+          "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b"
+        },
+        {
+          "file": "core/common/log/softbus_log.c",
+          "line": 76,
+          "anchor": "SoftBusOutPrint(szStr",
+          "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b"
+        },
+        {
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "line": 18,
+          "anchor": "void SoftBusOutPrint",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79"
+        },
+        {
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "line": 26,
+          "anchor": "%{public}s",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79"
+        },
+        {
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "line": 29,
+          "anchor": "%{public}s",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79"
+        },
+        {
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "line": 32,
+          "anchor": "%{public}s",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79"
+        },
+        {
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "line": 35,
+          "anchor": "%{public}s",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79"
+        },
+        {
+          "file": "adapter/common/log/softbus_adapter_log.c",
+          "line": 21,
+          "anchor": "printf(",
+          "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79"
+        },
+        {
+          "file": "core/common/softbus_property/softbus_feature_config.c",
+          "line": 47,
+          "anchor": "#define ADAPTER_LOG_LEVEL",
+          "sha256": "068244ad006cdb012a6a23ca46f7bddca96a6bcbbd7ee8de21544bf1f9937c01"
+        }
+      ],
+      "source_semantics": "Successful DecryptMessage output can contain request JSON with Base64 session key, evidenced by PackRequest/UnpackRequest; not every packet is secret. Request path and contents remain obligations.",
+      "sink_semantics": "SoftBusLog vsprintf_s to 256-byte buffer -> SoftBusOutPrint -> public HiLog or printf. Level/config/format success/truncation/readers remain conditional.",
+      "build_assumptions": [
+        "Reviewed adapter implementation selected by build",
+        "Valid module/level and enabled runtime threshold",
+        "vsprintf_s succeeds within 256-byte buffer",
+        "Successful authenticated request JSON carrying SESSION_KEY; reply/error payload may not carry key"
+      ],
+      "unsupported": [
+        "generic decrypt APIs",
+        "arbitrary cross-file summaries",
+        "indirect calls",
+        "complex aliases",
+        "unreviewed versions",
+        "product permission proof"
+      ]
+    }
+  ]
+}

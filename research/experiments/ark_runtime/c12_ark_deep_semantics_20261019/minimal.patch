@@ -1,0 +1,547 @@
+diff --git a/src/ohscanner/detectors/ark_runtime/analysis.py b/src/ohscanner/detectors/ark_runtime/analysis.py
+index 9799b8c..836a3f2 100644
+--- a/src/ohscanner/detectors/ark_runtime/analysis.py
++++ b/src/ohscanner/detectors/ark_runtime/analysis.py
+@@ -9,7 +9,7 @@ from dataclasses import asdict, dataclass, replace
+ from hashlib import sha256
+ from time import perf_counter
+ 
+-from .cross_helper import build_identity_helpers
++from .cross_helper import build_helper_contracts, build_identity_helpers
+ from .model import AnalysisBudget, RuntimeTypeModel, OWNER
+ from .runtime_ir import build_graph
+ from .syntax import parse_functions, walk
+@@ -109,6 +109,7 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
+     actual_partial = tree.root_node.has_error
+     if actual_partial and not research_partial:
+         return AnalysisResult('limited', 'not_analyzed', limitations=('actual_parse_is_partial',))
++    helper_contracts = build_helper_contracts(functions)
+     identity_helpers = build_identity_helpers(functions)
+     targets = [f for f in functions if f.qualified_name in model.callers
+                or has_type_origin_flow(f, model)]
+@@ -216,7 +217,7 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
+         limitations.extend(graph.limitations)
+         evaluator = OriginEvaluator(fn, model,
+             ((graph.instructions[i].node.start_byte, graph.instructions[i].node.end_byte) for i in graph.cyclic_nodes),
+-            identity_helpers)
++            identity_helpers, helper_contracts)
+         host_problems = [(inst, evaluator.unsupported_cpp_effect(inst)) for inst in graph.instructions]
+         host_problems = [(inst, problem) for inst, problem in host_problems if problem]
+         generated_control = False
+diff --git a/src/ohscanner/detectors/ark_runtime/cross_helper.py b/src/ohscanner/detectors/ark_runtime/cross_helper.py
+index d887ec7..ca8a4f1 100644
+--- a/src/ohscanner/detectors/ark_runtime/cross_helper.py
++++ b/src/ohscanner/detectors/ark_runtime/cross_helper.py
+@@ -1,29 +1,28 @@
+-"""Finite function-local identity summaries for Ark Runtime semantic passes.
+-
+-Only exact C++ syntax is summarized: casts and parenthesized/pointer wrappers
+-are transparent, and a helper is identity-preserving only when its complete
+-body is a return of one same-typed parameter. Name similarity, unknown macro
+-expansion, side effects, ownership, range, and runtime type stability are never
+-inferred. Unsupported helpers retain the caller's explicit unknown behavior.
++"""Finite local helper summaries for Ark Runtime semantic passes.
++
++Only exact C++ syntax is summarized. Casts and parenthesized/pointer wrappers
++are transparent. A helper preserves source identity only when its complete
++body returns one same-typed parameter or forwards it through another proven
++identity helper. Any other call, update, allocation, deletion or indirect
++write is retained as an explicit effect. Name similarity, macros, ownership,
++range and runtime type stability are never inferred.
+ """
+-from dataclasses import dataclass
++from dataclasses import dataclass, replace
+ from hashlib import sha256
+ import re
+ 
++from .syntax import walk
+ 
+ 
+ _CAST_CALLS = frozenset(('const_cast', 'dynamic_cast', 'reinterpret_cast', 'static_cast'))
+ 
+ 
+-@dataclass(frozen=True)
+-class IdentityHelper:
+-    name: str
+-    qualified_name: str
+-    arity: int
+-    parameter_index: int
+-    normalized_type: str
+-    source_hash: str
++def _normalized_type(text):
++    text = re.sub(r'\b(?:const|volatile|typename)\b', '', text or '')
++    return re.sub(r'\s+', '', text).replace('&&', '').replace('&', '')
++
+ 
++class _Matches:
+     def matches(self, fn, node):
+         if node.type != 'call_expression':
+             return False
+@@ -44,17 +43,60 @@ class IdentityHelper:
+         return written == self.name and fn.resolve(self.name, node) is None
+ 
+ 
+-def _normalized_type(text):
+-    text = re.sub(r'\b(?:const|volatile|typename)\b', '', text or '')
+-    return re.sub(r'\s+', '', text).replace('&&', '').replace('&', '')
++@dataclass(frozen=True)
++class IdentityHelper(_Matches):
++    name: str
++    qualified_name: str
++    arity: int
++    parameter_index: int
++    normalized_type: str
++    source_hash: str
+ 
+ 
+-def build_identity_helpers(functions):
+-    """Index only complete one-statement same-type identity helpers."""
+-    grouped = {}
++@dataclass(frozen=True)
++class HelperContract(_Matches):
++    name: str
++    qualified_name: str
++    arity: int
++    parameter_index: int
++    normalized_type: str
++    source_hash: str
++    returns_parameter: bool = False
++    effects: tuple = ()
++
++
++def _call_identity(fn, node, contracts):
++    matches = [item for item in contracts
++               if item.returns_parameter and not item.effects and item.matches(fn, node)]
++    return matches[0] if len(matches) == 1 else None
++
++
++def build_helper_contracts(functions):
++    """Return complete local helper contracts with bounded fixed-point identity."""
++    contracts = []
+     for fn in functions:
+         if fn.node.has_error or fn.body is None:
+             continue
++        effects = []
++        for node in walk(fn.body):
++            if node.type in ('new_expression', 'delete_expression', 'update_expression'):
++                effects.append(node.type)
++            elif node.type == 'assignment_expression':
++                left = node.child_by_field_name('left')
++                if left is not None and left.type != 'identifier':
++                    effects.append('indirect_assignment')
++            elif node.type == 'call_expression':
++                name = fn.call_name(node).split('::')[-1]
++                if name not in _CAST_CALLS:
++                    effects.append('call:' + name)
++        parameter_bindings = [item for item in fn.bindings if item.parameter]
++        parameter_types = tuple(_normalized_type(item) for item in fn.parameter_types)
++        return_type = _normalized_type(fn.text(fn.node.child_by_field_name('type')))
++        contracts.append(HelperContract(
++            fn.qualified_name.rsplit('::', 1)[-1], fn.qualified_name,
++            len(fn.parameter_types), -1, return_type,
++            sha256(fn.text(fn.body).encode('utf-8')).hexdigest(),
++            False, tuple(sorted(set(effects)))))
+         statements = [item for item in fn.body.named_children
+                       if item.type not in ('comment', 'empty_statement')]
+         if len(statements) != 1 or statements[0].type != 'return_statement':
+@@ -62,29 +104,83 @@ def build_identity_helpers(functions):
+         returned = statements[0].child_by_field_name('value')
+         if returned is None and statements[0].named_children:
+             returned = statements[0].named_children[0]
+-        if returned is None or returned.type != 'identifier':
++        if returned is None:
+             continue
+         root = returned
+-        binding = fn.resolve(fn.text(root), root)
+-        if binding is None or not binding.parameter:
+-            continue
+-        if binding.identity not in {item.identity for item in fn.bindings if item.parameter}:
++        while root.type in ('parenthesized_expression', 'pointer_expression') and root.named_children:
++            root = root.named_children[-1]
++        parameter_index = None
++        if root.type == 'identifier':
++            binding = fn.resolve(fn.text(root), root)
++            if binding is not None and binding.parameter:
++                parameter_index = next((i for i, item in enumerate(parameter_bindings)
++                                        if item.identity == binding.identity), None)
++        elif root.type == 'call_expression':
++            # Forwarding is resolved after direct identities are available.
+             continue
+-        return_type = _normalized_type(fn.text(fn.node.child_by_field_name('type')))
+-        parameter_types = tuple(_normalized_type(item) for item in fn.parameter_types)
+-        parameter_bindings = [item for item in fn.bindings if item.parameter]
+-        parameter_index = next((index for index, item in enumerate(parameter_bindings)
+-                                if item.identity == binding.identity), None)
+         if parameter_index is None or return_type != parameter_types[parameter_index]:
+             continue
+-        helper = IdentityHelper(
+-            fn.qualified_name.rsplit('::', 1)[-1], fn.qualified_name,
+-            len(fn.parameter_types), parameter_index, return_type,
+-            sha256(fn.text(fn.body).encode('utf-8')).hexdigest())
++        contracts[-1] = replace(contracts[-1], parameter_index=parameter_index,
++                                returns_parameter=True)
++    changed = True
++    while changed:
++        changed = False
++        for index, contract in enumerate(contracts):
++            if contract.returns_parameter:
++                continue
++            fn = next((item for item in functions if item.qualified_name == contract.qualified_name), None)
++            if fn is None:
++                continue
++            statements = [item for item in fn.body.named_children
++                          if item.type not in ('comment', 'empty_statement')]
++            if len(statements) != 1 or statements[0].type != 'return_statement':
++                continue
++            returned = statements[0].child_by_field_name('value')
++            if returned is None and statements[0].named_children:
++                returned = statements[0].named_children[0]
++            if returned is None:
++                continue
++            root = returned
++            while root.type in ('parenthesized_expression', 'pointer_expression') and root.named_children:
++                root = root.named_children[-1]
++            if root.type != 'call_expression':
++                continue
++            forwarded = _call_identity(fn, root, contracts)
++            residual = set(contract.effects) - {'call:' + forwarded.name} if forwarded else set(contract.effects)
++            if forwarded is None or residual or contract.normalized_type != forwarded.normalized_type:
++                continue
++            contracts[index] = replace(contract, returns_parameter=True,
++                                       parameter_index=forwarded.parameter_index,
++                                       effects=())
++            changed = True
++    return tuple(contracts)
++
++
++def build_identity_helpers(functions):
++    """Index complete same-type identity helpers, including forwarding chains."""
++    contracts = build_helper_contracts(functions)
++    grouped = {}
++    for contract in contracts:
++        if not contract.returns_parameter or contract.effects:
++            continue
++        helper = IdentityHelper(contract.name, contract.qualified_name, contract.arity,
++                                contract.parameter_index, contract.normalized_type,
++                                contract.source_hash)
+         grouped.setdefault((helper.name, helper.arity), []).append(helper)
+     return tuple(items[0] for items in grouped.values() if len(items) == 1)
+ 
+ 
++def effectful_helper_problem(fn, node, contracts=()):
++    """Return an auditable effect contract, without treating it as identity."""
++    if node.type != 'call_expression':
++        return ''
++    matches = [item for item in contracts if item.effects and item.matches(fn, node)]
++    if len(matches) != 1:
++        return ''
++    item = matches[0]
++    return 'effectful_helper_contract:' + item.qualified_name + ':' + item.source_hash[:12]
++
++
+ def unwrap_identity_expression(fn, node, helpers=()):
+     """Return the root expression and audited identity layers, or (None, ())."""
+     hops = []
+@@ -110,7 +206,6 @@ def unwrap_identity_expression(fn, node, helpers=()):
+             continue
+         if current.type == 'call_expression':
+             args = fn.arguments(current)
+-            callee = current.child_by_field_name('function')
+             name = fn.call_name(current)
+             base = name.split('<', 1)[0].rsplit('::', 1)[-1].removeprefix('this->')
+             if base in _CAST_CALLS and len(args) == 1 and not fn.resolve(base, current):
+@@ -128,8 +223,8 @@ def unwrap_identity_expression(fn, node, helpers=()):
+ 
+ 
+ def same_binding(fn, left, right, helpers=()):
+-    left_root, left_hops = unwrap_identity_expression(fn, left, helpers)
+-    right_root, right_hops = unwrap_identity_expression(fn, right, helpers)
++    left_root, _ = unwrap_identity_expression(fn, left, helpers)
++    right_root, _ = unwrap_identity_expression(fn, right, helpers)
+     if left_root is None or right_root is None:
+         return False
+     if left_root.type != 'identifier' or right_root.type != 'identifier':
+@@ -143,8 +238,6 @@ def in_cyclic_region(node, cyclic_ranges):
+     return any(start <= node.start_byte < end for start, end in cyclic_ranges)
+ 
+ 
+-
+-
+ def binding_matches(fn, node, binding, helpers=()):
+     root, _ = unwrap_identity_expression(fn, node, helpers)
+     if root is None or root.type != 'identifier' or binding is None:
+diff --git a/src/ohscanner/detectors/ark_runtime/runtime_ir.py b/src/ohscanner/detectors/ark_runtime/runtime_ir.py
+index e68e319..4fa9899 100644
+--- a/src/ohscanner/detectors/ark_runtime/runtime_ir.py
++++ b/src/ohscanner/detectors/ark_runtime/runtime_ir.py
+@@ -14,6 +14,15 @@ class Instruction:
+     problem: str = ''
+ 
+ 
++@dataclass(frozen=True)
++class LoopBackedge:
++    begin: int
++    end: int
++    label_identity: str
++    source_start_byte: int
++    source_end_byte: int
++
++
+ @dataclass
+ class GeneratedGraph:
+     instructions: list
+@@ -21,6 +30,7 @@ class GeneratedGraph:
+     external_labels: frozenset
+     limitations: tuple
+     cyclic_nodes: frozenset = frozenset()
++    loop_backedges: tuple = ()
+ 
+ 
+ def cyclic_nodes(instructions):
+@@ -151,6 +161,27 @@ def build_graph(fn, budget):
+             return -1
+         return labels.get(label)
+ 
++    loop_begins = {}
++    loop_backedges = []
++    for index, inst in enumerate(instructions):
++        if inst.kind == 'LoopBegin' and not inst.problem:
++            label = label_identity(fn, inst.arguments[0])
++            if label is not None and label not in loop_begins:
++                loop_begins[label] = index
++    for index, inst in enumerate(instructions):
++        if inst.kind != 'LoopEnd' or inst.problem:
++            continue
++        label = label_identity(fn, inst.arguments[0]) if inst.arguments else None
++        begin = loop_begins.get(label)
++        if begin is None:
++            limitations.append('loop_backedge_begin_unresolved:' + str(inst.node.start_point[0] + 1))
++            continue
++        target = destination(inst.arguments[0])
++        if target != begin:
++            limitations.append('loop_backedge_target_mismatch:' + str(inst.node.start_point[0] + 1))
++            continue
++        loop_backedges.append(LoopBackedge(
++            begin, index, label, inst.node.start_byte, inst.node.end_byte))
+     for index, inst in enumerate(instructions):
+         if inst.problem:
+             limitations.append(inst.problem + ':' + str(inst.node.start_point[0] + 1))
+@@ -170,4 +201,5 @@ def build_graph(fn, budget):
+             # Bind does not reconnect a previously terminated block. Only a
+             # predecessor edge from a branch/jump reaches a detached label.
+             inst.successors.append((index + 1, None))
+-    return GeneratedGraph(instructions, 0, external, tuple(sorted(set(limitations))), cyclic_nodes(instructions))
++    return GeneratedGraph(instructions, 0, external, tuple(sorted(set(limitations))),
++                          cyclic_nodes(instructions), tuple(loop_backedges))
+diff --git a/src/ohscanner/detectors/ark_runtime/size_overflow.py b/src/ohscanner/detectors/ark_runtime/size_overflow.py
+index e58dc29..fa2b19a 100644
+--- a/src/ohscanner/detectors/ark_runtime/size_overflow.py
++++ b/src/ohscanner/detectors/ark_runtime/size_overflow.py
+@@ -43,6 +43,8 @@ class SizeOverflowCandidate:
+     start_byte: int
+     end_byte: int
+     may_overflow: bool
++    sign_width_loss: bool = False
++    conversion_evidence: tuple = ()
+ 
+ 
+ def _width(type_text):
+@@ -197,6 +199,18 @@ def _operand_identity_name(expression, helper_names=()):
+     return normalized if re.fullmatch(r'[A-Za-z_]\w*', normalized) else None
+ 
+ 
++def _factor_identity_name(expression, helper_names=()):
++    direct = _operand_identity_name(expression, helper_names)
++    if direct:
++        return direct
++    cast = re.fullmatch(
++        r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*[^>]+\s*>\s*'
++        r'\(\s*([^;()]+)\s*\)', expression.strip())
++    c_cast = re.fullmatch(r'\(\s*[\w:]+\s*\)\s*([^;()]+)', expression.strip())
++    return _operand_identity_name(cast.group(1) if cast else c_cast.group(1) if c_cast else '',
++                                 helper_names)
++
++
+ def _alias_roots(source, helper_names=()):
+     aliases = {}
+     masked = _mask_cpp_noncode(source)
+@@ -241,22 +255,41 @@ def _split_product(expression):
+     return None
+ 
+ 
+-def _operand_width(expression, type_map, aliases=None, helper_names=()):
++def _signed(type_text):
++    if isinstance(type_text, int):
++        return False
++    normalized = re.sub(r'\b(const|volatile|typename)\b', '', type_text or '')
++    normalized = re.sub(r'\s+', '', normalized).replace('&', '').replace('*', '')
++    if normalized in _INTEGER_WIDTHS:
++        return _INTEGER_WIDTHS[normalized][1]
++    if normalized in ('int', 'signed', 'signedint', 'longlong', 'longlongint'):
++        return True
++    return False
++
++
++def _operand_facts(expression, type_map, aliases=None, helper_names=(), signed_map=None):
+     aliases = aliases or {}
+     expression = expression.strip()
+     cast = re.fullmatch(
+         r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*([^>]+)\s*>\s*'
+-        r'\(\s*([\w:]+)\s*\)', expression)
+-    c_cast = re.fullmatch(r'\(\s*([\w:]+)\s*\)\s*([\w:]+)', expression)
+-    root = _operand_identity_name(expression, helper_names)
++        r'\(\s*([^;()]+)\s*\)', expression)
++    c_cast = re.fullmatch(r'\(\s*([\w:]+)\s*\)\s*([^;()]+)', expression)
++    inner = cast.group(2) if cast else c_cast.group(2) if c_cast else expression
++    root = _operand_identity_name(inner, helper_names)
+     if root is None:
+-        return None, None
+-    source_width = type_map.get(root, type_map.get(next((k for k, v in aliases.items() if v == root), root)))
+-    if cast:
+-        return source_width, _width(cast.group(1))
+-    if c_cast:
+-        return source_width, _width(c_cast.group(1))
+-    return source_width, source_width
++        return None, None, None, None
++    resolved = type_map.get(root, type_map.get(next((k for k, v in aliases.items() if v == root), root)))
++    source_signed = (signed_map or {}).get(root, _signed(resolved))
++    if cast or c_cast:
++        target = cast.group(1) if cast else c_cast.group(1)
++        return resolved, _width(target), source_signed, _signed(target)
++    return resolved, resolved, source_signed, source_signed
++
++
++def _operand_width(expression, type_map, aliases=None, helper_names=(), signed_map=None):
++    source, operation, _, _ = _operand_facts(
++        expression, type_map, aliases, helper_names, signed_map)
++    return source, operation
+ 
+ 
+ def _text_allocations(source, size_name, aliases=None):
+@@ -330,6 +363,7 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
+         r'\((?P<params>[^;{}]*)\)\s*(?:const\s*)?\{')
+     excluded = {'if', 'for', 'while', 'switch', 'catch', 'sizeof', 'alignof'}
+     candidates = []
++    limitations = []
+     cursor = 0
+     while True:
+         function = function_pattern.search(masked, cursor)
+@@ -358,6 +392,7 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
+             r'uintptr_t|intptr_t)|unsigned(?:\s+int)?|signed(?:\s+int)?|int|'
+             r'(?:unsigned\s+)?long\s+long))\s+(?P<name>\w+)\s*=\s*(?P<expr>[^;]+);')
+         type_map = {}
++        signed_map = {}
+         type_pattern = re.compile(
+             r'\b((?:(?:std::)?(?:u?int(?:8|16|32|64)_t|size_t|ssize_t|'
+             r'uintptr_t|intptr_t)|unsigned(?:\s+int)?|signed(?:\s+int)?|int|'
+@@ -365,22 +400,39 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
+         function_region = text[function.start():closing + 1]
+         for declaration in type_pattern.finditer(_mask_cpp_noncode(function_region)):
+             type_map[declaration.group(2)] = _width(declaration.group(1))
++            signed_map[declaration.group(2)] = _signed(declaration.group(1))
+         for declaration in declarations.finditer(body_mask):
+             result_type = _width(declaration.group('type'))
+             product = _split_product(body[declaration.start('expr'):declaration.end('expr')])
+             if product is None or result_type is None:
+                 continue
+             left, right = product
+-            left_source, left_op = _operand_width(left, type_map, aliases, identity_helper_names)
+-            right_source, right_op = _operand_width(right, type_map, aliases, identity_helper_names)
++            left_source, left_op, left_signed, left_target_signed = _operand_facts(
++                left, type_map, aliases, identity_helper_names, signed_map)
++            right_source, right_op, right_signed, right_target_signed = _operand_facts(
++                right, type_map, aliases, identity_helper_names, signed_map)
+             if None in (left_source, right_source, left_op, right_op):
++                unresolved_allocated, _ = _text_allocations(body, declaration.group('name'), aliases)
++                if unresolved_allocated:
++                    limitations.append(
++                        'numeric_conversion_semantics_unmodeled:' + declaration.group('name'))
+                 continue
+             factor_names = tuple(name for operand in (left, right)
+-                                 if (name := _operand_identity_name(operand, identity_helper_names)))
++                                 if (name := _factor_identity_name(operand, identity_helper_names)))
+             if len(factor_names) != 2:
+                 continue
+             operation_width = max(32, left_op, right_op)
+-            may_overflow = operation_width < left_source + right_source
++            width_loss = operation_width < left_source + right_source
++            left_sign_loss = left_signed and left_op < left_source
++            right_sign_loss = right_signed and right_op < right_source
++            sign_width_loss = left_sign_loss or right_sign_loss
++            may_overflow = width_loss or sign_width_loss
++            conversion_evidence = tuple(sorted(set(
++                (side + '_signed_source_to_' + ('signed' if target_signed else 'unsigned') + '_target')
++                for side, source_signed, target_signed in (
++                    ('left', left_signed, left_target_signed),
++                    ('right', right_signed, right_target_signed))
++                if source_signed and not target_signed)))
+             result_name = declaration.group('name')
+             allocated, allocation_lines = _text_allocations(body, result_name, aliases)
+             if not allocated:
+@@ -400,9 +452,9 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
+             candidates.append(SizeOverflowCandidate(
+                 line, column, function_name, result_name, factor_names,
+                 body_line + min(allocation_lines) - 1, loop_line,
+-                start_byte, end_byte, may_overflow))
++                start_byte, end_byte, may_overflow, sign_width_loss, conversion_evidence))
+         cursor = closing + 1
+-    return tuple(candidates), ()
++    return tuple(candidates), tuple(sorted(set(limitations)))
+ 
+ 
+ def analyze_size_overflow(source):
+@@ -419,12 +471,17 @@ def size_overflow_result_from_flows(unit, model_digest, flows, limitations=()):
+     observations = tuple(
+         Observation(
+             kind='candidate', line=flow.line, column=flow.column,
+-            reason='narrow_product_flows_to_allocation_and_copy_loop',
++            reason=('signed_narrowing_product_flows_to_allocation_and_copy_loop'
++                    if flow.sign_width_loss else
++                    'narrow_product_flows_to_allocation_and_copy_loop'),
+             target_identity=flow.result_name,
+             token_origin=' * '.join(flow.factor_names),
+             token_line=flow.line, creation_line=flow.allocation_line,
+             path=(flow.line, flow.allocation_line, flow.loop_line),
+-            constraints=((flow.line, 'product_width_covers_factor_ranges', not flow.may_overflow),
++            constraints=((flow.line, 'product_width_covers_factor_ranges',
++                          not (flow.may_overflow and not flow.sign_width_loss)),
++                         (flow.line, 'conversion_preserves_signed_source_width',
++                          not flow.sign_width_loss),
+                          (flow.loop_line, 'copy_loop_uses_factor_bound', True)),
+             symbol=flow.function, region_start_byte=flow.start_byte,
+             region_end_byte=flow.end_byte,
+diff --git a/src/ohscanner/detectors/ark_runtime/type_origin.py b/src/ohscanner/detectors/ark_runtime/type_origin.py
+index 40dcd4a..7505881 100644
+--- a/src/ohscanner/detectors/ark_runtime/type_origin.py
++++ b/src/ohscanner/detectors/ark_runtime/type_origin.py
+@@ -1,7 +1,7 @@
+ """Local definition identities and provenance, evaluated on generated paths."""
+ from dataclasses import dataclass, replace
+ from .syntax import compact, name_node, walk
+-from .cross_helper import in_cyclic_region, unwrap_identity_expression
++from .cross_helper import effectful_helper_problem, in_cyclic_region, unwrap_identity_expression
+ from .model import NAMESPACE, OWNER
+ 
+ 
+@@ -40,9 +40,10 @@ class OriginState:
+ 
+ 
+ class OriginEvaluator:
+-    def __init__(self, fn, model, cyclic_ranges=(), identity_helpers=()):
++    def __init__(self, fn, model, cyclic_ranges=(), identity_helpers=(), helper_contracts=()):
+         self.fn, self.model = fn, model
+         self.identity_helpers = tuple(identity_helpers)
++        self.helper_contracts = tuple(helper_contracts)
+         self.cyclic_ranges = tuple(cyclic_ranges)
+ 
+     @staticmethod
+@@ -125,6 +126,9 @@ class OriginEvaluator:
+             return ''
+         fn, root = self.fn, instruction.node
+         for node in walk(root):
++            effect_problem = effectful_helper_problem(fn, node, self.helper_contracts)
++            if effect_problem:
++                return effect_problem
+             if node.type in ('new_expression', 'delete_expression', 'update_expression'):
+                 return 'unmodeled_cpp_lifetime_or_update_expression'
+             if node.type == 'assignment_expression':

@@ -1,0 +1,306 @@
+{
+  "detector": {
+    "coverage": {
+      "detectors": {
+        "ohscanner.known_disclosed_cves": {
+          "analyzed_files": [],
+          "applicable_files": 1,
+          "coverage_counts": {
+            "complete": 0,
+            "failed": 0,
+            "not_analyzed": 0,
+            "partial": 1
+          },
+          "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+          "evidence_obligations": [
+            {
+              "analysis_status": "partial",
+              "consequence_cwe": "CWE-787",
+              "consequence_impact": "availability_or_memory_safety",
+              "diagnostic_id": "ohscanner.known_disclosed_cves:9db064a8ab4d9602",
+              "file": "libtiff/tif_getimage.c",
+              "model_version": null,
+              "obligations": [
+                {
+                  "description": "Bind source to exact built component/version.",
+                  "kind": "component_identity",
+                  "status": "missing"
+                },
+                {
+                  "description": "Confirm component is included in target product build.",
+                  "kind": "product_build",
+                  "status": "missing"
+                },
+                {
+                  "description": "Trace attacker-controlled input to the vulnerable API/path.",
+                  "kind": "attacker_path",
+                  "status": "missing"
+                },
+                {
+                  "description": "Verify product impact with controlled evidence.",
+                  "kind": "impact",
+                  "status": "missing"
+                }
+              ],
+              "source_binding": {
+                "commit": "d4a0516c477dfbaf1153ae295893ab75aadd63d4",
+                "detector_id": "ohscanner.known_disclosed_cves",
+                "detector_version": "0.9.0",
+                "file": "libtiff/tif_getimage.c",
+                "profile_id": "light-ast",
+                "repository": "OpenHarmony-GitCode-Mirror/third_party_libtiff",
+                "rule_id": "ohknowncve-libtiff-cve-2025-9900",
+                "snapshot_sha256": "97c42f290a39a34773a8864ab7117104ac385d54b4d2312accb31bef4c769c3f",
+                "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"
+              },
+              "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"
+            }
+          ],
+          "inspected_files": [
+            "libtiff/tif_getimage.c"
+          ],
+          "not_analyzed_files": [],
+          "partially_inspected_files": [
+            "libtiff/tif_getimage.c"
+          ],
+          "scope_mode": "per_file",
+          "source_sha256": {
+            "libtiff/tif_getimage.c": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"
+          },
+          "status": "partial",
+          "unexamined": [
+            {
+              "analysis_status": "partial",
+              "file": "libtiff/tif_getimage.c",
+              "parse_status": "partial",
+              "reason": "detector_model_incomplete"
+            }
+          ]
+        }
+      },
+      "schema_version": 1
+    },
+    "finding": {
+      "candidate_cwe": "CWE-787",
+      "column": 14,
+      "confidence": "unassessed",
+      "consequence_cwe": "CWE-787",
+      "consequence_impact": "availability_or_memory_safety",
+      "diagnostic_id": "ohscanner.known_disclosed_cves:9db064a8ab4d9602",
+      "evidence_type": "syntax",
+      "file": "libtiff/tif_getimage.c",
+      "finding_identity": {
+        "backfilled": false,
+        "historical_ids": [
+          "ohscanner.known_disclosed_cves:9db064a8ab4d9602"
+        ],
+        "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance.",
+        "observation": {
+          "ast_fingerprint": null,
+          "byte_end": 21403,
+          "byte_start": 21325,
+          "detector_id": "ohscanner.known_disclosed_cves",
+          "detector_version": "0.9.0",
+          "file": "libtiff/tif_getimage.c",
+          "identity_quality": "partial",
+          "legacy_diagnostic_id": "ohscanner.known_disclosed_cves:9db064a8ab4d9602",
+          "line": 621,
+          "message": "Candidate component-code match for CVE-2025-9900: TIFFReadRGBAImageOriented shifts raster by (rheight - img.height) before decoding; when caller raster height is smaller than image height, this can underflow the destination pointer. Product reachability and exploitability remain unverified. Product reachability and vulnerability status remain unconfirmed.",
+          "rule_id": "ohknowncve-libtiff-cve-2025-9900",
+          "rule_lineage_id": "OH-KNOWN-CVE:component-source-signatures",
+          "rule_version": "0.9.0",
+          "source_blob_oid": "5121e85b9eb2bc734b557892c0968f629d370b82",
+          "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a",
+          "symbol_identity": "CVE-2025-9900"
+        },
+        "occurrence": {
+          "basis": {
+            "byte_end": 21403,
+            "byte_start": 21325,
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.9.0",
+            "file": "libtiff/tif_getimage.c",
+            "legacy_diagnostic_id": "ohscanner.known_disclosed_cves:9db064a8ab4d9602",
+            "line": 621,
+            "message": "Candidate component-code match for CVE-2025-9900: TIFFReadRGBAImageOriented shifts raster by (rheight - img.height) before decoding; when caller raster height is smaller than image height, this can underflow the destination pointer. Product reachability and exploitability remain unverified. Product reachability and vulnerability status remain unconfirmed.",
+            "repository": "OpenHarmony-GitCode-Mirror/third_party_libtiff",
+            "rule_id": "ohknowncve-libtiff-cve-2025-9900",
+            "rule_version": "0.9.0",
+            "schema": "ohscanner.finding-occurrence.v1",
+            "source_blob_oid": "5121e85b9eb2bc734b557892c0968f629d370b82",
+            "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"
+          },
+          "id": "ohocc:v1:47aee05c5da7e51d9319e695c8dec76cff07f87b8274c1ff45621d991669ff86",
+          "status": "stable",
+          "unknown_reasons": []
+        },
+        "schema_version": "ohscanner.finding-identity-record.v1",
+        "source_binding": {
+          "byte_end": 21403,
+          "byte_start": 21325,
+          "commit": "d4a0516c477dfbaf1153ae295893ab75aadd63d4",
+          "detector_id": "ohscanner.known_disclosed_cves",
+          "detector_version": "0.9.0",
+          "file": "libtiff/tif_getimage.c",
+          "profile_id": "light-ast",
+          "repository": "OpenHarmony-GitCode-Mirror/third_party_libtiff",
+          "rule_id": "ohknowncve-libtiff-cve-2025-9900",
+          "rule_version": "0.9.0",
+          "snapshot_sha256": "97c42f290a39a34773a8864ab7117104ac385d54b4d2312accb31bef4c769c3f",
+          "source_blob_oid": "5121e85b9eb2bc734b557892c0968f629d370b82",
+          "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a",
+          "status": "bound",
+          "verification": "not_performed_by_identity_layer"
+        },
+        "stable": {
+          "basis": null,
+          "id": null,
+          "status": "unknown",
+          "unknown_reasons": [
+            "identity_quality:partial",
+            "missing:ast_fingerprint"
+          ]
+        }
+      },
+      "line": 621,
+      "message": "Candidate component-code match for CVE-2025-9900: TIFFReadRGBAImageOriented shifts raster by (rheight - img.height) before decoding; when caller raster height is smaller than image height, this can underflow the destination pointer. Product reachability and exploitability remain unverified. Product reachability and vulnerability status remain unconfirmed.",
+      "occurrence_id": "ohocc:v1:47aee05c5da7e51d9319e695c8dec76cff07f87b8274c1ff45621d991669ff86",
+      "provider": "ohscanner.known_disclosed_cves",
+      "rule_id": "ohknowncve-libtiff-cve-2025-9900",
+      "severity": "unassessed",
+      "source_binding": "bound",
+      "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a",
+      "symbol": "CVE-2025-9900"
+    },
+    "repeat_equal": true,
+    "status": "candidate",
+    "validated_vulnerability": 0
+  },
+  "experiment": "D31 libtiff CVE-2025-9900 ASan component replay",
+  "fix": {
+    "method": "apply the MR !732 code delta to a second extracted copy of the same pinned 4.7.0 source",
+    "patch_file": "tests/fixtures/data_sensitive/cve_2025_9900_upstream_fix.patch",
+    "patch_sha256": "49696dc0d562252a83df801fb41b49e0c8534841ba2a221c9d1c64153b35411f",
+    "upstream": "libtiff MR !732"
+  },
+  "interpretation": "The pinned component reproduces an ASan invalid write in put8bitcmaptile after TIFFReadRGBAImageOriented computes its raster offset from an undersized caller height. The fixed-source comparison applies the upstream MR !732 delta to the same source snapshot. This is component-level evidence only; product build, caller reachability, affected OpenHarmony release and product impact remain unknown.",
+  "product_status": "unknown",
+  "rounds": [
+    {
+      "cases": [
+        {
+          "any_asan_report": true,
+          "case": "vulnerable-1",
+          "mode": "underflow",
+          "output_excerpt": "AddressSanitizer:DEADLYSIGNAL\n=================================================================\n==25349==ERROR: AddressSanitizer: SEGV on unknown address 0x5063fffffde0 (pc 0x7a0c84b4937d bp 0x7ffc1ed81bd0 sp 0x7ffc1ed81ba0 T0)\n==25349==The signal is caused by a WRITE memory access.\n    #0 0x7a0c84b4937d in put8bitcmaptile /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:1565\n    #1 0x7a0c84b47fbf in gtStripContig /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:1210\n    #2 0x7a0c84b44bdc in TIFFRGBAImageGet /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:603\n    #3 0x7a0c84b44e8a in TIFFReadRGBAImageOriented /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:621\n    #4 0x62745865496c in main /home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/cve_2025_9900_read_small_raster.c:42\n    #5 0x7a0c84829d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #6 0x7a0c84829e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #7 0x6274586542c4 in _start (/tmp/ohscanner-d31-cve9900-x31gkbtp/build-vulnerable/repro-vulnerable+0x12c4)\n\nAddressSanitizer can not provide additional info.\nSUMMARY: AddressSanitizer: SEGV /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:1565 in put8bitcmaptile\n==25349==ABORTING\n",
+          "return_code": 1,
+          "tiff_sha256": "56e48cf0ef6a0a0d17dc302b4c10e2e901f693ae1e50301f249d4513312ce906",
+          "write_overflow_in_put8bitcmaptile": true
+        },
+        {
+          "any_asan_report": false,
+          "case": "fixed-1",
+          "mode": "underflow",
+          "output_excerpt": "read_result=1 raster=16x1\n",
+          "return_code": 0,
+          "tiff_sha256": "56e48cf0ef6a0a0d17dc302b4c10e2e901f693ae1e50301f249d4513312ce906",
+          "write_overflow_in_put8bitcmaptile": false
+        },
+        {
+          "any_asan_report": false,
+          "case": "control-1",
+          "mode": "safe",
+          "output_excerpt": "read_result=1 raster=16x16\n",
+          "return_code": 0,
+          "tiff_sha256": "56e48cf0ef6a0a0d17dc302b4c10e2e901f693ae1e50301f249d4513312ce906",
+          "write_overflow_in_put8bitcmaptile": false
+        }
+      ],
+      "round": 1
+    },
+    {
+      "cases": [
+        {
+          "any_asan_report": true,
+          "case": "vulnerable-2",
+          "mode": "underflow",
+          "output_excerpt": "AddressSanitizer:DEADLYSIGNAL\n=================================================================\n==25352==ERROR: AddressSanitizer: SEGV on unknown address 0x5063fffffde0 (pc 0x7b9c378b737d bp 0x7ffcff085140 sp 0x7ffcff085110 T0)\n==25352==The signal is caused by a WRITE memory access.\n    #0 0x7b9c378b737d in put8bitcmaptile /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:1565\n    #1 0x7b9c378b5fbf in gtStripContig /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:1210\n    #2 0x7b9c378b2bdc in TIFFRGBAImageGet /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:603\n    #3 0x7b9c378b2e8a in TIFFReadRGBAImageOriented /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:621\n    #4 0x607280a5b96c in main /home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/cve_2025_9900_read_small_raster.c:42\n    #5 0x7b9c36a29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #6 0x7b9c36a29e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #7 0x607280a5b2c4 in _start (/tmp/ohscanner-d31-cve9900-x31gkbtp/build-vulnerable/repro-vulnerable+0x12c4)\n\nAddressSanitizer can not provide additional info.\nSUMMARY: AddressSanitizer: SEGV /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:1565 in put8bitcmaptile\n==25352==ABORTING\n",
+          "return_code": 1,
+          "tiff_sha256": "56e48cf0ef6a0a0d17dc302b4c10e2e901f693ae1e50301f249d4513312ce906",
+          "write_overflow_in_put8bitcmaptile": true
+        },
+        {
+          "any_asan_report": false,
+          "case": "fixed-2",
+          "mode": "underflow",
+          "output_excerpt": "read_result=1 raster=16x1\n",
+          "return_code": 0,
+          "tiff_sha256": "56e48cf0ef6a0a0d17dc302b4c10e2e901f693ae1e50301f249d4513312ce906",
+          "write_overflow_in_put8bitcmaptile": false
+        },
+        {
+          "any_asan_report": false,
+          "case": "control-2",
+          "mode": "safe",
+          "output_excerpt": "read_result=1 raster=16x16\n",
+          "return_code": 0,
+          "tiff_sha256": "56e48cf0ef6a0a0d17dc302b4c10e2e901f693ae1e50301f249d4513312ce906",
+          "write_overflow_in_put8bitcmaptile": false
+        }
+      ],
+      "round": 2
+    },
+    {
+      "cases": [
+        {
+          "any_asan_report": true,
+          "case": "vulnerable-3",
+          "mode": "underflow",
+          "output_excerpt": "AddressSanitizer:DEADLYSIGNAL\n=================================================================\n==25355==ERROR: AddressSanitizer: SEGV on unknown address 0x5063fffffde0 (pc 0x7bd2044d737d bp 0x7fffc783aad0 sp 0x7fffc783aaa0 T0)\n==25355==The signal is caused by a WRITE memory access.\n    #0 0x7bd2044d737d in put8bitcmaptile /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:1565\n    #1 0x7bd2044d5fbf in gtStripContig /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:1210\n    #2 0x7bd2044d2bdc in TIFFRGBAImageGet /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:603\n    #3 0x7bd2044d2e8a in TIFFReadRGBAImageOriented /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:621\n    #4 0x56ea8d6b296c in main /home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/cve_2025_9900_read_small_raster.c:42\n    #5 0x7bd203629d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #6 0x7bd203629e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #7 0x56ea8d6b22c4 in _start (/tmp/ohscanner-d31-cve9900-x31gkbtp/build-vulnerable/repro-vulnerable+0x12c4)\n\nAddressSanitizer can not provide additional info.\nSUMMARY: AddressSanitizer: SEGV /tmp/ohscanner-d31-cve9900-x31gkbtp/affected/libtiff/tif_getimage.c:1565 in put8bitcmaptile\n==25355==ABORTING\n",
+          "return_code": 1,
+          "tiff_sha256": "56e48cf0ef6a0a0d17dc302b4c10e2e901f693ae1e50301f249d4513312ce906",
+          "write_overflow_in_put8bitcmaptile": true
+        },
+        {
+          "any_asan_report": false,
+          "case": "fixed-3",
+          "mode": "underflow",
+          "output_excerpt": "read_result=1 raster=16x1\n",
+          "return_code": 0,
+          "tiff_sha256": "56e48cf0ef6a0a0d17dc302b4c10e2e901f693ae1e50301f249d4513312ce906",
+          "write_overflow_in_put8bitcmaptile": false
+        },
+        {
+          "any_asan_report": false,
+          "case": "control-3",
+          "mode": "safe",
+          "output_excerpt": "read_result=1 raster=16x16\n",
+          "return_code": 0,
+          "tiff_sha256": "56e48cf0ef6a0a0d17dc302b4c10e2e901f693ae1e50301f249d4513312ce906",
+          "write_overflow_in_put8bitcmaptile": false
+        }
+      ],
+      "round": 3
+    }
+  ],
+  "runtime": {
+    "compiler": "gcc",
+    "control": "same TIFF with a correctly sized 16x16 raster",
+    "image": "synthetic valid 16x16 8-bit palette TIFF",
+    "instrumentation": "AddressSanitizer",
+    "platform": "Linux x86_64 WSL",
+    "trigger": "request TIFFReadRGBAImageOriented into a 16x1 raster while the TIFF contains 16 rows"
+  },
+  "schema": 1,
+  "source": {
+    "commit": "d4a0516c477dfbaf1153ae295893ab75aadd63d4",
+    "dirty_checkout_policy": "git archive of the pinned commit; uncommitted working-tree bytes are excluded",
+    "repository": "OpenHarmony-GitCode-Mirror/third_party_libtiff",
+    "source_file": "libtiff/tif_getimage.c",
+    "source_git_blob": "5121e85b9eb2bc734b557892c0968f629d370b82",
+    "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a",
+    "tree": "33beab3b3b50fe6678b1a74ed48ac3b69084c6ec",
+    "version": "4.7.0"
+  },
+  "validated_vulnerability": 0
+}

@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "experiment": "D15 exact-snapshot deterministic replay",
+  "repository": "openharmony/security_access_token",
+  "commit": "3be426c558613e7c7af92a591c2bfaeb6af06b60",
+  "tree": "40a7fbc8f09dee1e965ce0d68157fd1dafd2df7f",
+  "blob": "75bc67ca0836b3d5dfca70e3cab6be128ca9f8aa",
+  "source_sha256": "c702336c933dfe3ac5aaba4ee27e3268230a96446681083c490d04d744c6b549",
+  "detector_version": "0.11.0",
+  "source_model_version": "0.3.0",
+  "sink_model_version": "0.5.0",
+  "run_count": 2,
+  "candidate_count": 8,
+  "candidate_identity_sha256": "33a0d4f823eb8e12e8f2e54021db6400efff9e0e1685a778734d99997d94c5eb",
+  "identities_and_obligations_equal": true,
+  "status": "blocked",
+  "file_outcome": "partial",
+  "validated_vulnerability": 0,
+  "interpretation": "Repeatability on one frozen input only; not an independent holdout or accuracy estimate."
+}

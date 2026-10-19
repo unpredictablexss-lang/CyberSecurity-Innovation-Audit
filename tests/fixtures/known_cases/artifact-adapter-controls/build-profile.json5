@@ -1,0 +1,4 @@
+{
+  // bounded recognition only
+  products: { release: { signingConfig: 'OpenHarmony.p12' } },
+}

@@ -1,0 +1,366 @@
+{
+  "schema": 1,
+  "mode": "offline_exact_commit_research",
+  "repository": "openharmony/security_access_token",
+  "commit": "3be426c558613e7c7af92a591c2bfaeb6af06b60",
+  "tree": "40a7fbc8f09dee1e965ce0d68157fd1dafd2df7f",
+  "target": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+  "blob": "75bc67ca0836b3d5dfca70e3cab6be128ca9f8aa",
+  "source_sha256": "c702336c933dfe3ac5aaba4ee27e3268230a96446681083c490d04d744c6b549",
+  "source_size": 37438,
+  "detector_id": "ohscanner.data.sensitive_exposure",
+  "detector_version": "0.13.0",
+  "source_model_version": "0.4.0",
+  "sink_model_version": "0.6.0",
+  "public_runner_invoked": false,
+  "status": "blocked",
+  "parse_summary": {
+    "parsing_status": {
+      "partial": 1
+    },
+    "languages": {
+      "cpp": 1
+    }
+  },
+  "file_outcomes": [
+    [
+      "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+      "partial"
+    ]
+  ],
+  "candidate_count": 8,
+  "candidates": [
+    {
+      "file": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+      "line": 784,
+      "symbol": "AccessTokenKit::GetKernelPermissions",
+      "rule_id": "data.log.sensitive-value",
+      "candidate_cwe": "CWE-532",
+      "source_sha256": "c702336c933dfe3ac5aaba4ee27e3268230a96446681083c490d04d744c6b549",
+      "message": "Candidate local sensitive-material dependency: interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp:782 source AccessTokenKit::GetKernelPermissions parameter 0 -> 784 LOGI public operand 0",
+      "evidence_obligations": [
+        {
+          "kind": "local_flow",
+          "description": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp:782 source AccessTokenKit::GetKernelPermissions parameter 0 -> 784 LOGI public operand 0",
+          "status": "unknown"
+        },
+        {
+          "kind": "source_semantics",
+          "description": "Exact-revision AccessTokenID/FullTokenID API inputs identify authorization principals; they are not bearer secrets. Candidate status asks whether disclosure violates the product privacy/threat model; logging identity alone does not establish impact.",
+          "status": "unknown"
+        },
+        {
+          "kind": "type_identity",
+          "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+          "status": "unknown"
+        },
+        {
+          "kind": "runtime_log_visibility",
+          "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+          "status": "unknown"
+        },
+        {
+          "kind": "execution_and_identity",
+          "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+          "status": "unknown"
+        },
+        {
+          "kind": "security_impact",
+          "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+          "status": "unknown"
+        }
+      ]
+    },
+    {
+      "file": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+      "line": 785,
+      "symbol": "AccessTokenKit::GetKernelPermissions",
+      "rule_id": "data.sensitive.unresolved-escape",
+      "candidate_cwe": null,
+      "source_sha256": "c702336c933dfe3ac5aaba4ee27e3268230a96446681083c490d04d744c6b549",
+      "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp:782 source AccessTokenKit::GetKernelPermissions parameter 0 -> 785 unresolved call AccessTokenManagerClient::GetInstance().GetKernelPermissions",
+      "evidence_obligations": [
+        {
+          "kind": "callee_binding",
+          "description": "Resolve the exact overload, receiver, and implementation for AccessTokenManagerClient::GetInstance().GetKernelPermissions.",
+          "status": "unknown"
+        },
+        {
+          "kind": "sink_behavior",
+          "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+          "status": "unknown"
+        },
+        {
+          "kind": "runtime_log_visibility",
+          "description": "No log exposure or reader reachability is established by this call alone.",
+          "status": "unknown"
+        },
+        {
+          "kind": "security_impact",
+          "description": "Establish recoverable sensitive material and concrete impact independently.",
+          "status": "unknown"
+        }
+      ]
+    },
+    {
+      "file": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+      "line": 791,
+      "symbol": "AccessTokenKit::GetReqPermissionByName",
+      "rule_id": "data.log.sensitive-value",
+      "candidate_cwe": "CWE-532",
+      "source_sha256": "c702336c933dfe3ac5aaba4ee27e3268230a96446681083c490d04d744c6b549",
+      "message": "Candidate local sensitive-material dependency: interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp:789 source AccessTokenKit::GetReqPermissionByName parameter 0 -> 791 LOGI public operand 0",
+      "evidence_obligations": [
+        {
+          "kind": "local_flow",
+          "description": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp:789 source AccessTokenKit::GetReqPermissionByName parameter 0 -> 791 LOGI public operand 0",
+          "status": "unknown"
+        },
+        {
+          "kind": "source_semantics",
+          "description": "Exact-revision AccessTokenID/FullTokenID API inputs identify authorization principals; they are not bearer secrets. Candidate status asks whether disclosure violates the product privacy/threat model; logging identity alone does not establish impact.",
+          "status": "unknown"
+        },
+        {
+          "kind": "type_identity",
+          "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+          "status": "unknown"
+        },
+        {
+          "kind": "runtime_log_visibility",
+          "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+          "status": "unknown"
+        },
+        {
+          "kind": "execution_and_identity",
+          "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+          "status": "unknown"
+        },
+        {
+          "kind": "security_impact",
+          "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+          "status": "unknown"
+        }
+      ]
+    },
+    {
+      "file": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+      "line": 797,
+      "symbol": "AccessTokenKit::GetReqPermissionByName",
+      "rule_id": "data.sensitive.unresolved-escape",
+      "candidate_cwe": null,
+      "source_sha256": "c702336c933dfe3ac5aaba4ee27e3268230a96446681083c490d04d744c6b549",
+      "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp:789 source AccessTokenKit::GetReqPermissionByName parameter 0 -> 797 unresolved call AccessTokenManagerClient::GetInstance().GetReqPermissionByName",
+      "evidence_obligations": [
+        {
+          "kind": "callee_binding",
+          "description": "Resolve the exact overload, receiver, and implementation for AccessTokenManagerClient::GetInstance().GetReqPermissionByName.",
+          "status": "unknown"
+        },
+        {
+          "kind": "sink_behavior",
+          "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+          "status": "unknown"
+        },
+        {
+          "kind": "runtime_log_visibility",
+          "description": "No log exposure or reader reachability is established by this call alone.",
+          "status": "unknown"
+        },
+        {
+          "kind": "security_impact",
+          "description": "Establish recoverable sensitive material and concrete impact independently.",
+          "status": "unknown"
+        }
+      ]
+    },
+    {
+      "file": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+      "line": 819,
+      "symbol": "AccessTokenKit::IsAtomicServiceByFullTokenID",
+      "rule_id": "data.log.sensitive-value",
+      "candidate_cwe": "CWE-532",
+      "source_sha256": "c702336c933dfe3ac5aaba4ee27e3268230a96446681083c490d04d744c6b549",
+      "message": "Candidate local sensitive-material dependency: Sensitive data reaches a modeled logging call, but dynamic/unsupported formatting prevents privacy-slot resolution. path=interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp:817 source AccessTokenKit::IsAtomicServiceByFullTokenID parameter 0 -> 819 LOGI unresolved operand-privacy status",
+      "evidence_obligations": [
+        {
+          "kind": "local_flow",
+          "description": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp:817 source AccessTokenKit::IsAtomicServiceByFullTokenID parameter 0 -> 819 LOGI unresolved operand-privacy status",
+          "status": "unknown"
+        },
+        {
+          "kind": "source_semantics",
+          "description": "Exact-revision AccessTokenID/FullTokenID API inputs identify authorization principals; they are not bearer secrets. Candidate status asks whether disclosure violates the product privacy/threat model; logging identity alone does not establish impact.",
+          "status": "unknown"
+        },
+        {
+          "kind": "type_identity",
+          "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+          "status": "unknown"
+        },
+        {
+          "kind": "format_resolution",
+          "description": "Resolve the runtime format and whether sensitive operands are public or private.",
+          "status": "unknown"
+        },
+        {
+          "kind": "runtime_log_visibility",
+          "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+          "status": "unknown"
+        },
+        {
+          "kind": "security_impact",
+          "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+          "status": "unknown"
+        }
+      ]
+    },
+    {
+      "file": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+      "line": 831,
+      "symbol": "AccessTokenKit::SetPermissionStatusWithPolicy",
+      "rule_id": "data.log.sensitive-value",
+      "candidate_cwe": "CWE-532",
+      "source_sha256": "c702336c933dfe3ac5aaba4ee27e3268230a96446681083c490d04d744c6b549",
+      "message": "Candidate local sensitive-material dependency: interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp:829 source AccessTokenKit::SetPermissionStatusWithPolicy parameter 0 -> 831 LOGI public operand 0",
+      "evidence_obligations": [
+        {
+          "kind": "local_flow",
+          "description": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp:829 source AccessTokenKit::SetPermissionStatusWithPolicy parameter 0 -> 831 LOGI public operand 0",
+          "status": "unknown"
+        },
+        {
+          "kind": "source_semantics",
+          "description": "Exact-revision AccessTokenID/FullTokenID API inputs identify authorization principals; they are not bearer secrets. Candidate status asks whether disclosure violates the product privacy/threat model; logging identity alone does not establish impact.",
+          "status": "unknown"
+        },
+        {
+          "kind": "type_identity",
+          "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+          "status": "unknown"
+        },
+        {
+          "kind": "runtime_log_visibility",
+          "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+          "status": "unknown"
+        },
+        {
+          "kind": "execution_and_identity",
+          "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+          "status": "unknown"
+        },
+        {
+          "kind": "security_impact",
+          "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+          "status": "unknown"
+        }
+      ]
+    },
+    {
+      "file": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+      "line": 834,
+      "symbol": "AccessTokenKit::SetPermissionStatusWithPolicy",
+      "rule_id": "data.log.sensitive-value",
+      "candidate_cwe": "CWE-532",
+      "source_sha256": "c702336c933dfe3ac5aaba4ee27e3268230a96446681083c490d04d744c6b549",
+      "message": "Candidate local sensitive-material dependency: interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp:829 source AccessTokenKit::SetPermissionStatusWithPolicy parameter 0 -> 834 LOGE public operand 0",
+      "evidence_obligations": [
+        {
+          "kind": "local_flow",
+          "description": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp:829 source AccessTokenKit::SetPermissionStatusWithPolicy parameter 0 -> 834 LOGE public operand 0",
+          "status": "unknown"
+        },
+        {
+          "kind": "source_semantics",
+          "description": "Exact-revision AccessTokenID/FullTokenID API inputs identify authorization principals; they are not bearer secrets. Candidate status asks whether disclosure violates the product privacy/threat model; logging identity alone does not establish impact.",
+          "status": "unknown"
+        },
+        {
+          "kind": "type_identity",
+          "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+          "status": "unknown"
+        },
+        {
+          "kind": "runtime_log_visibility",
+          "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+          "status": "unknown"
+        },
+        {
+          "kind": "execution_and_identity",
+          "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+          "status": "unknown"
+        },
+        {
+          "kind": "security_impact",
+          "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+          "status": "unknown"
+        }
+      ]
+    },
+    {
+      "file": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+      "line": 859,
+      "symbol": "AccessTokenKit::SetPermissionStatusWithPolicy",
+      "rule_id": "data.sensitive.unresolved-escape",
+      "candidate_cwe": null,
+      "source_sha256": "c702336c933dfe3ac5aaba4ee27e3268230a96446681083c490d04d744c6b549",
+      "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp:829 source AccessTokenKit::SetPermissionStatusWithPolicy parameter 0 -> 859 unresolved call AccessTokenManagerClient::GetInstance().SetPermissionStatusWithPolicy",
+      "evidence_obligations": [
+        {
+          "kind": "callee_binding",
+          "description": "Resolve the exact overload, receiver, and implementation for AccessTokenManagerClient::GetInstance().SetPermissionStatusWithPolicy.",
+          "status": "unknown"
+        },
+        {
+          "kind": "sink_behavior",
+          "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+          "status": "unknown"
+        },
+        {
+          "kind": "runtime_log_visibility",
+          "description": "No log exposure or reader reachability is established by this call alone.",
+          "status": "unknown"
+        },
+        {
+          "kind": "security_impact",
+          "description": "Establish recoverable sensitive material and concrete impact independently.",
+          "status": "unknown"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Candidate only: runtime log readers, production enablement and impact require independent review.",
+    "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+    "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+    "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+    "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: bounded same-file helper expansion; cross-file and deeper call flows remain unknown",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: branch merge is may-flow; no path feasibility proof",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: break/continue exits need enclosing-loop proof; loops not analyzed",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: conditional effects are may-flow; no path feasibility proof",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: conditional value is may-flow; no path feasibility proof",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: detailed syntax partial",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: loop body analyzed for may-flow only at line 415; iteration count/path feasibility unresolved",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: loop body analyzed for may-flow only at line 438; iteration count/path feasibility unresolved",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: nonliteral/unsupported log format: LOGI",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: pointer/member assignment requires alias proof",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: preprocessor/build context not expanded",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: same-file call expansion stopped by recursion/depth bound: AccessTokenKit::VerifyAccessToken",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: same-file helper call has ambiguous definitions: AccessTokenKit::VerifyAccessToken",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: short-circuit effects are may-flow; no path feasibility proof",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: unknown field/alias propagation",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: unmodeled call may mutate/escape sensitive value: AccessTokenManagerClient::GetInstance().GetKernelPermissions",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: unmodeled call may mutate/escape sensitive value: AccessTokenManagerClient::GetInstance().GetReqPermissionByName",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: unmodeled call may mutate/escape sensitive value: AccessTokenManagerClient::GetInstance().SetPermissionStatusWithPolicy",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: unresolved transform/call AccessTokenManagerClient::GetInstance().GetKernelPermissions",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: unresolved transform/call AccessTokenManagerClient::GetInstance().GetReqPermissionByName",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: unresolved transform/call AccessTokenManagerClient::GetInstance().SetPermissionStatusWithPolicy",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: unsupported statement for_range_loop at line 841",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: unsupported statement for_range_loop at line 86",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: unsupported statement preproc_ifdef at line 145",
+    "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp: unsupported statement preproc_ifdef at line 636"
+  ],
+  "product_impact": "unknown",
+  "validated_vulnerability": 0
+}

@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "work_item": "D7 unresolved output-flow retention",
+  "date": "2026-10-18",
+  "detector_id": "ohscanner.data.sensitive_exposure",
+  "detector_version": "0.4.0",
+  "source_model_version": "0.1.0",
+  "source_model_changed": false,
+  "validated_vulnerability": 0,
+  "product_impact": "unknown",
+  "checks": {
+    "d_detector_suite": "38 passed",
+    "full_python_suite": "872 passed, 5 skipped",
+    "compileall": "passed",
+    "git_diff_check": "passed",
+    "ownership_scope_check": "not available: base ownership.json has no D lane; changed files were manually checked against the D4/D5 lane-owned paths",
+    "real_source_replay": {
+      "status": "completed",
+      "before_candidates": 1,
+      "after_candidates": 0,
+      "interpretation": "Historical D4 candidate delta unchanged; candidate-only, not vulnerability or fix confirmation.",
+      "finding": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c:671, CWE-532 candidate",
+      "coverage": "10 files per profile; 4 complete and 6 partial; run status blocked"
+    },
+    "codeql_experiment": {
+      "status": "exploratory_no_match",
+      "database_mode": "parser-only build mode none",
+      "before_paths": 0,
+      "after_paths": 0,
+      "interpretation": "The custom output-buffer model failed to bind the historical path; no evidence of absence and not integrated."
+    }
+  },
+  "added_regression_scenarios": [
+    "modeled sensitive output through address-of local",
+    "sensitive copy to unresolved member destination",
+    "sensitive formatting to unresolved member destination",
+    "modeled source writing to unresolved member destination",
+    "sensitive formatting with dynamic runtime format"
+  ],
+  "unresolved_gates": [
+    "independent frozen real-source holdout",
+    "component build and runtime harness",
+    "candidate-by-candidate agent review integration",
+    "full-component source coverage and performance/RSS",
+    "catalog admission and panel integration"
+  ],
+  "remote_pr_snapshot": {
+    "url": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/17",
+    "state": "open",
+    "draft": true,
+    "mergeable": false,
+    "head_sha": "1d0c53bc992784c88e31132f6aa75973ff38f19f",
+    "base_sha": "e510c99c67f31ec6c73365f9ab749c79ca6ff0a1",
+    "current_main_sha": "1c21ac60890fca0ce6be5d50d82e4757dd5e4623",
+    "head_commits": 10,
+    "changed_files": 154,
+    "status_checks": "none reported by GitHub combined status"
+  },
+  "local_state": {
+    "branch": "work/teammate-d-20261018",
+    "head": "c6a675dca6bf42343da4e3a570fd8a8d45783af7",
+    "ahead_of_current_main": 4,
+    "pushed": false,
+    "merged": false
+  }
+}

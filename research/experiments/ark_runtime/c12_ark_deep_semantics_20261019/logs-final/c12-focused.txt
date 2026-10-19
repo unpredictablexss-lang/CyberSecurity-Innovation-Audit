@@ -1,0 +1,28 @@
+$ C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe -m unittest tests.detectors.ark_runtime.test_c12_deep_semantics -v
+test_constant_helper_is_not_identity (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_constant_helper_is_not_identity) ... ok
+test_direct_identity_is_still_supported (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_direct_identity_is_still_supported) ... ok
+test_forwarding_chain_is_bounded_identity_summary (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_forwarding_chain_is_bounded_identity_summary) ... ok
+test_unknown_forwarding_helper_remains_unknown (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_unknown_forwarding_helper_remains_unknown) ... ok
+test_unrelated_type_helper_is_not_promoted (tests.detectors.ark_runtime.test_c12_deep_semantics.CrossFunctionSummaryControls.test_unrelated_type_helper_is_not_promoted) ... ok
+test_effectful_helper_has_explicit_contract_and_is_not_identity (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_effectful_helper_has_explicit_contract_and_is_not_identity) ... ok
+test_fixed_identity_helper_is_effect_free (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_fixed_identity_helper_is_effect_free) ... ok
+test_safe_local_identity_is_not_a_security_verdict (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_safe_local_identity_is_not_a_security_verdict) ... ok
+test_unknown_helper_is_explicitly_effectful (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_unknown_helper_is_explicitly_effectful) ... ok
+test_unrelated_helper_has_no_applicable_contract (tests.detectors.ark_runtime.test_c12_deep_semantics.HelperContractControls.test_unrelated_helper_has_no_applicable_contract) ... ok
+test_fixed_exit_has_no_backedge (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_fixed_exit_has_no_backedge) ... ok
+test_host_loop_is_unrelated_to_generated_cfg (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_host_loop_is_unrelated_to_generated_cfg) ... ok
+test_positive_loop_end_backedge_is_audited (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_positive_loop_end_backedge_is_audited) ... ok
+test_safe_zero_iteration_shape_is_not_a_security_verdict (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_safe_zero_iteration_shape_is_not_a_security_verdict) ... ok
+test_unknown_loop_target_is_fail_closed (tests.detectors.ark_runtime.test_c12_deep_semantics.MinimalLoopBackedgeControls.test_unknown_loop_target_is_fail_closed) ... ok
+test_fixed_unsigned_width_control_has_no_candidate (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_fixed_unsigned_width_control_has_no_candidate) ... ok
+test_positive_signed_narrowing_is_candidate (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_positive_signed_narrowing_is_candidate) ... ok
+test_safe_local_zero_product_is_not_security_verdict (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_safe_local_zero_product_is_not_security_verdict) ... ok
+test_unknown_conversion_is_explicitly_partial (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_unknown_conversion_is_explicitly_partial) ... ok
+test_unrelated_conversion_without_allocation_is_not_applicable (tests.detectors.ark_runtime.test_c12_deep_semantics.NumericCastSignWidthControls.test_unrelated_conversion_without_allocation_is_not_applicable) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.010s
+
+OK
+
+[exit_code] 0

@@ -1,0 +1,129 @@
+{
+  "schema": 1,
+  "experiment": "D14 high-recall privacy sink candidates and exact D5 replay",
+  "detector": {
+    "id": "ohscanner.data.sensitive_exposure",
+    "version": "0.10.0",
+    "source_model_version": "0.2.0",
+    "sink_model_version": "0.4.0"
+  },
+  "replay": {
+    "repository": "openharmony/communication_dsoftbus",
+    "model_version": "0.2.0-historical.1",
+    "detector_version": "0.4.0",
+    "detector_implementation": {
+      "historical.py_sha256": "382029834dab451f4af0e34ec207053b52ac2764ab0a6d91a433737590d395ac",
+      "sensitive_exposure.py_sha256": "adf5329c06fec52d0d5f039d49c0f07213a99bd90330620ead2dce02edf2694e"
+    },
+    "before": {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "source_files_verified": 10,
+      "status": "blocked",
+      "parse_summary": {
+        "parsing_status": {
+          "complete": 4,
+          "partial": 6
+        },
+        "languages": {
+          "c": 6,
+          "cpp": 4
+        }
+      },
+      "candidate_count": 1,
+      "candidates": [
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 671,
+          "symbol": "ProcessReceivedData",
+          "rule_id": "data.log.sensitive-value"
+        }
+      ],
+      "elapsed_ms": 142.802,
+      "max_rss_platform_units": 27600
+    },
+    "after": {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "source_files_verified": 10,
+      "status": "blocked",
+      "parse_summary": {
+        "parsing_status": {
+          "complete": 4,
+          "partial": 6
+        },
+        "languages": {
+          "c": 6,
+          "cpp": 4
+        }
+      },
+      "candidate_count": 0,
+      "candidates": [],
+      "elapsed_ms": 113.265,
+      "max_rss_platform_units": 27308
+    },
+    "candidate_delta": 1,
+    "public_runner_invoked": false,
+    "rss_unit": "KiB (Linux ru_maxrss)"
+  },
+  "regression": {
+    "data_suite": {
+      "run": 57,
+      "passed": 57,
+      "failed": 0
+    },
+    "full_python_suite": {
+      "run": 891,
+      "passed": 886,
+      "skipped": 5,
+      "failed": 0
+    },
+    "compileall": "passed",
+    "d5_replay_py_compile": "passed",
+    "git_diff_check": "passed",
+    "scope_check": "blocked: ownership.json has no D lane"
+  },
+  "scope": {
+    "modified_paths": [
+      "src/ohscanner/detectors/data/**",
+      "tests/detectors/data/**",
+      "tests/fixtures/data_sensitive/**",
+      "research/data_sensitive/**"
+    ],
+    "catalog_registered": false,
+    "public_runner_partial_admission_changed": false
+  },
+  "conclusion": {
+    "status": "candidate/unknown",
+    "candidate_delta_is_not_vulnerability_confirmation": true,
+    "validated_vulnerability": 0,
+    "product_build_or_deployment_proven": false,
+    "unauthorized_log_reader_proven": false,
+    "product_poc_run": false
+  },
+  "manifest_wide_replay": {
+    "source_files_per_revision": 11,
+    "before": {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "status": "blocked",
+      "complete": 5,
+      "partial": 6,
+      "candidates": 1
+    },
+    "after": {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "status": "blocked",
+      "complete": 5,
+      "partial": 6,
+      "candidates": 0
+    },
+    "candidate_delta": 1,
+    "validated_vulnerability": 0
+  },
+  "external_interface_check": {
+    "communication_dsoftbus_head": "ccb1a86fff03a6b2de19d39b90a81351ced5acd6",
+    "hiviewdfx_hilog_head": "edbfe7c162e1d3be5838dbb8d6f88080a01206a5",
+    "scope": "read-only header and invocation reconnaissance; no full source-model scan",
+    "result": "sink signatures modeled and covered by regression tests; no product vulnerability confirmation"
+  }
+}

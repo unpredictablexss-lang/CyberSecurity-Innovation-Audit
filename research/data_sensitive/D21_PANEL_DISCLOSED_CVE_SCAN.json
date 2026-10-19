@@ -1,0 +1,541 @@
+{
+  "schema": 1,
+  "experiment": "D21 isolated panel API-Worker replay of disclosed CVE candidates",
+  "base_url": "http://127.0.0.1:18781",
+  "data_dir": "/tmp/ohscanner-d-panel-20261019/data",
+  "health_status": "ok",
+  "web_ui_http_status": 200,
+  "web_ui_has_app_shell": true,
+  "detector_registered": true,
+  "results": [
+    {
+      "job_id": "993a508a1b7941e49e387128a1769975",
+      "job_status": "completed_with_limitations",
+      "repository": "d20/miscservices_pasteboard",
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "include_paths": [
+        "services/core/src/pasteboard_service.cpp",
+        "services/zidl/src/pasteboard_service_stub.cpp"
+      ],
+      "snapshot_sha256": "010bee868a15d363b206b09312efe4e56826d5bb4142afec82524d1659f95ba8",
+      "git_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "report_sha256": "4d72988ff374cee4d6d9d7dac8601810920c693f216370e446e08437fd599654",
+      "manifest_artifact_sha256": "0be852379756ea1f0967a197f3206c7f85dfb277e61cf049cbfdfaeab0c40903",
+      "manifest_report_sha256": "4d72988ff374cee4d6d9d7dac8601810920c693f216370e446e08437fd599654",
+      "detector_status": "blocked",
+      "coverage": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 2,
+        "analyzed_files": [],
+        "partially_inspected_files": [
+          "services/core/src/pasteboard_service.cpp",
+          "services/zidl/src/pasteboard_service_stub.cpp"
+        ],
+        "source_sha256": {
+          "services/core/src/pasteboard_service.cpp": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+          "services/zidl/src/pasteboard_service_stub.cpp": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+        },
+        "unexamined": [
+          {
+            "file": "services/core/src/pasteboard_service.cpp",
+            "parse_status": "complete",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/zidl/src/pasteboard_service_stub.cpp",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          }
+        ],
+        "inspected_files": [
+          "services/core/src/pasteboard_service.cpp",
+          "services/zidl/src/pasteboard_service_stub.cpp"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 0,
+          "partial": 2,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.known_disclosed_cves:5e7088b7e43b3d9b",
+            "file": "services/core/src/pasteboard_service.cpp",
+            "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "d20/miscservices_pasteboard",
+              "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+              "snapshot_sha256": "010bee868a15d363b206b09312efe4e56826d5bb4142afec82524d1659f95ba8",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.known_disclosed_cves",
+              "detector_version": "0.3.0",
+              "rule_id": "ohknowncve-pasteboard-cve-2025-25212",
+              "file": "services/core/src/pasteboard_service.cpp",
+              "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+            },
+            "consequence_impact": "availability_or_memory_safety",
+            "consequence_cwe": "CWE-770",
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "component_identity",
+                "description": "Bind source to exact built component/version.",
+                "status": "missing"
+              },
+              {
+                "kind": "product_build",
+                "description": "Confirm component is included in target product build.",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_path",
+                "description": "Trace attacker-controlled input to the vulnerable API/path.",
+                "status": "missing"
+              },
+              {
+                "kind": "impact",
+                "description": "Verify product impact with controlled evidence.",
+                "status": "missing"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.known_disclosed_cves:24600cb387537484",
+            "file": "services/zidl/src/pasteboard_service_stub.cpp",
+            "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "d20/miscservices_pasteboard",
+              "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+              "snapshot_sha256": "010bee868a15d363b206b09312efe4e56826d5bb4142afec82524d1659f95ba8",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.known_disclosed_cves",
+              "detector_version": "0.3.0",
+              "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+              "file": "services/zidl/src/pasteboard_service_stub.cpp",
+              "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+            },
+            "consequence_impact": "availability_or_memory_safety",
+            "consequence_cwe": "CWE-862",
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "component_identity",
+                "description": "Bind source to exact built component/version.",
+                "status": "missing"
+              },
+              {
+                "kind": "product_build",
+                "description": "Confirm component is included in target product build.",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_path",
+                "description": "Trace attacker-controlled input to the vulnerable API/path.",
+                "status": "missing"
+              },
+              {
+                "kind": "impact",
+                "description": "Verify product impact with controlled evidence.",
+                "status": "missing"
+              }
+            ]
+          }
+        ]
+      },
+      "findings": [
+        {
+          "cve": "CVE-2025-25212",
+          "file": "services/core/src/pasteboard_service.cpp",
+          "line": 222,
+          "rule_id": "ohknowncve-pasteboard-cve-2025-25212",
+          "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+          "identity_quality": null,
+          "evidence_obligations": null
+        },
+        {
+          "cve": "CVE-2025-27247",
+          "file": "services/zidl/src/pasteboard_service_stub.cpp",
+          "line": 41,
+          "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+          "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+          "identity_quality": null,
+          "evidence_obligations": null
+        }
+      ],
+      "validated_vulnerability": 0
+    },
+    {
+      "job_id": "eadd92fa372144adba8e1ee0889ebc80",
+      "job_status": "completed_with_limitations",
+      "repository": "d20/third_party_cJSON",
+      "commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748",
+      "include_paths": [
+        "cJSON.c",
+        "cJSON_Utils.c"
+      ],
+      "snapshot_sha256": "84452a40925b94a82d038150157e5a3514289d21ea9562bc58d1e202b98b537e",
+      "git_tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856",
+      "report_sha256": "a914b998709f1cdae05261a1dad49bfefd0766868f0655b67d9332746b5ed556",
+      "manifest_artifact_sha256": "5cff735e012ba34c747418e82623b6916a3156deb1aaa5fc18ed32259aad664c",
+      "manifest_report_sha256": "a914b998709f1cdae05261a1dad49bfefd0766868f0655b67d9332746b5ed556",
+      "detector_status": "blocked",
+      "coverage": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 2,
+        "analyzed_files": [],
+        "partially_inspected_files": [
+          "cJSON.c",
+          "cJSON_Utils.c"
+        ],
+        "source_sha256": {
+          "cJSON.c": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb",
+          "cJSON_Utils.c": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"
+        },
+        "unexamined": [
+          {
+            "file": "cJSON.c",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "cJSON_Utils.c",
+            "parse_status": "complete",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          }
+        ],
+        "inspected_files": [
+          "cJSON.c",
+          "cJSON_Utils.c"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 0,
+          "partial": 2,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.known_disclosed_cves:7579008a3454ab24",
+            "file": "cJSON.c",
+            "source_sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "d20/third_party_cJSON",
+              "commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748",
+              "snapshot_sha256": "84452a40925b94a82d038150157e5a3514289d21ea9562bc58d1e202b98b537e",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.known_disclosed_cves",
+              "detector_version": "0.3.0",
+              "rule_id": "ohknowncve-cjson-cve-2026-67216",
+              "file": "cJSON.c",
+              "source_sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb"
+            },
+            "consequence_impact": "availability_or_memory_safety",
+            "consequence_cwe": "CWE-407",
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "component_identity",
+                "description": "Bind source to exact built component/version.",
+                "status": "missing"
+              },
+              {
+                "kind": "product_build",
+                "description": "Confirm component is included in target product build.",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_path",
+                "description": "Trace attacker-controlled input to the vulnerable API/path.",
+                "status": "missing"
+              },
+              {
+                "kind": "impact",
+                "description": "Verify product impact with controlled evidence.",
+                "status": "missing"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.known_disclosed_cves:9326978c4040e34b",
+            "file": "cJSON_Utils.c",
+            "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "d20/third_party_cJSON",
+              "commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748",
+              "snapshot_sha256": "84452a40925b94a82d038150157e5a3514289d21ea9562bc58d1e202b98b537e",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.known_disclosed_cves",
+              "detector_version": "0.3.0",
+              "rule_id": "ohknowncve-cjson-cve-2026-67215",
+              "file": "cJSON_Utils.c",
+              "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"
+            },
+            "consequence_impact": "availability_or_memory_safety",
+            "consequence_cwe": "CWE-674",
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "component_identity",
+                "description": "Bind source to exact built component/version.",
+                "status": "missing"
+              },
+              {
+                "kind": "product_build",
+                "description": "Confirm component is included in target product build.",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_path",
+                "description": "Trace attacker-controlled input to the vulnerable API/path.",
+                "status": "missing"
+              },
+              {
+                "kind": "impact",
+                "description": "Verify product impact with controlled evidence.",
+                "status": "missing"
+              }
+            ]
+          }
+        ]
+      },
+      "findings": [
+        {
+          "cve": "CVE-2026-67216",
+          "file": "cJSON.c",
+          "line": 3067,
+          "rule_id": "ohknowncve-cjson-cve-2026-67216",
+          "source_sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb",
+          "identity_quality": null,
+          "evidence_obligations": null
+        },
+        {
+          "cve": "CVE-2026-67215",
+          "file": "cJSON_Utils.c",
+          "line": 808,
+          "rule_id": "ohknowncve-cjson-cve-2026-67215",
+          "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+          "identity_quality": null,
+          "evidence_obligations": null
+        }
+      ],
+      "validated_vulnerability": 0
+    },
+    {
+      "job_id": "6841f91bacb74869913f8b4d3bdaab03",
+      "job_status": "completed",
+      "repository": "d20/third_party_curl",
+      "commit": "1386bb128bb060b284309397b97adcaaec21c003",
+      "include_paths": [
+        "lib/mime.c"
+      ],
+      "snapshot_sha256": "de3e19fa8ee20dd0e89370eaaee0ee017f5da6b33329c30b5954965b1b979885",
+      "git_tree": "b96addd5821a610eb0ceacc7e7a83deda64690c2",
+      "report_sha256": "8386cf928a4d06a9aaf703f80604cf0e4723c785e6af2383cb9245c3eeeec5eb",
+      "manifest_artifact_sha256": "8bf60bfff55c483d1adfcb3be18f1a97323885bb09e85245787d27f25faa9a27",
+      "manifest_report_sha256": "8386cf928a4d06a9aaf703f80604cf0e4723c785e6af2383cb9245c3eeeec5eb",
+      "detector_status": "completed",
+      "coverage": {
+        "scope_mode": "per_file",
+        "status": "complete",
+        "applicable_files": 1,
+        "analyzed_files": [
+          "lib/mime.c"
+        ],
+        "partially_inspected_files": [],
+        "source_sha256": {
+          "lib/mime.c": "e3a41025c00fa47b1b23bff6d28ac66119b7d5bd13035e3436c817a6ca53327b"
+        },
+        "unexamined": [],
+        "inspected_files": [
+          "lib/mime.c"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 1,
+          "partial": 0,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.known_disclosed_cves:b2bcf4ac414eb206",
+            "file": "lib/mime.c",
+            "source_sha256": "e3a41025c00fa47b1b23bff6d28ac66119b7d5bd13035e3436c817a6ca53327b",
+            "analysis_status": "analyzed",
+            "source_binding": {
+              "repository": "d20/third_party_curl",
+              "commit": "1386bb128bb060b284309397b97adcaaec21c003",
+              "snapshot_sha256": "de3e19fa8ee20dd0e89370eaaee0ee017f5da6b33329c30b5954965b1b979885",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.known_disclosed_cves",
+              "detector_version": "0.3.0",
+              "rule_id": "ohknowncve-curl-cve-2026-92391",
+              "file": "lib/mime.c",
+              "source_sha256": "e3a41025c00fa47b1b23bff6d28ac66119b7d5bd13035e3436c817a6ca53327b"
+            },
+            "consequence_impact": "availability_or_memory_safety",
+            "consequence_cwe": "CWE-674",
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "component_identity",
+                "description": "Bind source to exact built component/version.",
+                "status": "missing"
+              },
+              {
+                "kind": "product_build",
+                "description": "Confirm component is included in target product build.",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_path",
+                "description": "Trace attacker-controlled input to the vulnerable API/path.",
+                "status": "missing"
+              },
+              {
+                "kind": "impact",
+                "description": "Verify product impact with controlled evidence.",
+                "status": "missing"
+              }
+            ]
+          }
+        ]
+      },
+      "findings": [
+        {
+          "cve": "CVE-2026-92391",
+          "file": "lib/mime.c",
+          "line": 1146,
+          "rule_id": "ohknowncve-curl-cve-2026-92391",
+          "source_sha256": "e3a41025c00fa47b1b23bff6d28ac66119b7d5bd13035e3436c817a6ca53327b",
+          "identity_quality": null,
+          "evidence_obligations": null
+        }
+      ],
+      "validated_vulnerability": 0
+    },
+    {
+      "job_id": "ebfe3c17fff343f5b5b2083659fe9ea8",
+      "job_status": "completed_with_limitations",
+      "repository": "d20/third_party_libtiff",
+      "commit": "d4a0516c477dfbaf1153ae295893ab75aadd63d4",
+      "include_paths": [
+        "libtiff/tif_getimage.c"
+      ],
+      "snapshot_sha256": "97c42f290a39a34773a8864ab7117104ac385d54b4d2312accb31bef4c769c3f",
+      "git_tree": "33beab3b3b50fe6678b1a74ed48ac3b69084c6ec",
+      "report_sha256": "2a66ecf7c6a4ad73ddcf76231b93100ad0c415257392a0e868dad5f488552f08",
+      "manifest_artifact_sha256": "e02ef653a079e9503bf9b96765c90264a862428b18901a6295af6857b1edd540",
+      "manifest_report_sha256": "2a66ecf7c6a4ad73ddcf76231b93100ad0c415257392a0e868dad5f488552f08",
+      "detector_status": "blocked",
+      "coverage": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 1,
+        "analyzed_files": [],
+        "partially_inspected_files": [
+          "libtiff/tif_getimage.c"
+        ],
+        "source_sha256": {
+          "libtiff/tif_getimage.c": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"
+        },
+        "unexamined": [
+          {
+            "file": "libtiff/tif_getimage.c",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          }
+        ],
+        "inspected_files": [
+          "libtiff/tif_getimage.c"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 0,
+          "partial": 1,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.known_disclosed_cves:7b69a408aeaf8cbe",
+            "file": "libtiff/tif_getimage.c",
+            "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "d20/third_party_libtiff",
+              "commit": "d4a0516c477dfbaf1153ae295893ab75aadd63d4",
+              "snapshot_sha256": "97c42f290a39a34773a8864ab7117104ac385d54b4d2312accb31bef4c769c3f",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.known_disclosed_cves",
+              "detector_version": "0.3.0",
+              "rule_id": "ohknowncve-libtiff-cve-2025-9900",
+              "file": "libtiff/tif_getimage.c",
+              "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"
+            },
+            "consequence_impact": "availability_or_memory_safety",
+            "consequence_cwe": "CWE-787",
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "component_identity",
+                "description": "Bind source to exact built component/version.",
+                "status": "missing"
+              },
+              {
+                "kind": "product_build",
+                "description": "Confirm component is included in target product build.",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_path",
+                "description": "Trace attacker-controlled input to the vulnerable API/path.",
+                "status": "missing"
+              },
+              {
+                "kind": "impact",
+                "description": "Verify product impact with controlled evidence.",
+                "status": "missing"
+              }
+            ]
+          }
+        ]
+      },
+      "findings": [
+        {
+          "cve": "CVE-2025-9900",
+          "file": "libtiff/tif_getimage.c",
+          "line": 621,
+          "rule_id": "ohknowncve-libtiff-cve-2025-9900",
+          "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a",
+          "identity_quality": null,
+          "evidence_obligations": null
+        }
+      ],
+      "validated_vulnerability": 0
+    }
+  ],
+  "limitations": [
+    "Four repositories were scanned through the isolated API and Worker on fixed Git commits; the HTML shell returned successfully, but browser interaction was not manually exercised.",
+    "libpng CVE-2026-46675 is not detected through the ordinary repository Runner because its C source is embedded in a tarball; only the D20 pinned-archive direct detector replay matched it.",
+    "Three of the four repository runs have partial parser coverage and remain blocked; their candidates are retained.",
+    "No product build, product entry, impact or independent holdout is established; validated_vulnerability remains zero."
+  ]
+}

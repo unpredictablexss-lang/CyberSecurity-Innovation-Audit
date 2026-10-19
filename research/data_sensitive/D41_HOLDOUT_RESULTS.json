@@ -1,0 +1,228 @@
+{
+  "schema": 1,
+  "study": "D41 cross-component sensitive-data exposure holdout",
+  "state": "replayed_pending_independent_review",
+  "preregistration_commit": "e33dc02dd64303820e224354e0e47f56a261cae1",
+  "detector_baseline_commit": "efb79ee2397396f38bb0df5d4703f55d7977f138",
+  "detector_id": "ohscanner.data.sensitive_exposure",
+  "detector_version": "0.17.0",
+  "engine_bundle_sha256": "9d0f2763a97f3fcaaa1841355a89cf8fdd93a422042db2f9dc5a0664dfb0ea9e",
+  "component_count": 6,
+  "scope_file_count": 3820,
+  "total_candidate_count": 201,
+  "candidate_rule_counts": {
+    "data.sensitive.unresolved-escape": 201
+  },
+  "candidate_cwe_counts": {
+    "none": 201
+  },
+  "aggregate_coverage_counts": {
+    "complete": 0,
+    "failed": 0,
+    "not_analyzed": 1033,
+    "partial": 2787
+  },
+  "components_with_stable_replays": 6,
+  "independent_labels": {
+    "supported_risk": 0,
+    "protected_safe": 0,
+    "unrelated": 0,
+    "unknown": 0,
+    "status": "pending_external_independent_review"
+  },
+  "validated_vulnerability": 0,
+  "components": [
+    {
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "scope_files": 537,
+      "snapshot_sha256": "9bf3d8079bab3332ae7389514a487866e605244c3e46b4a1c2df2179267adc76",
+      "detector_status": "blocked",
+      "task_status": "completed_with_limitations",
+      "candidate_count": 14,
+      "candidate_rule_counts": {
+        "data.sensitive.unresolved-escape": 14
+      },
+      "candidate_cwe_counts": {
+        "none": 14
+      },
+      "coverage_counts": {
+        "complete": 0,
+        "partial": 150,
+        "not_analyzed": 387,
+        "failed": 0
+      },
+      "same_scope_replay_equal": true,
+      "report_sha256": {
+        "first.json": "09d2e989611132be89ecfb980fa49632adc315d1b61e593fc82d5a156e954e0d",
+        "replay.json": "10e2ef1ceef855b5084b7e478f14c525001280bf1f26da9e4c5c663b17a26d40",
+        "summary.json": "7e6a051450d4e06fe941ff2469609de1cee4d8f01ccd0db0fe613004204d4444"
+      },
+      "two_run_seconds": 7.2885,
+      "peak_rss_kib": 86264,
+      "validated_vulnerability": 0
+    },
+    {
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "scope_files": 304,
+      "snapshot_sha256": "f3c5b31a121145d8e82b71c2f995fe6be66935ceaa48828200f4a2dc6991fc93",
+      "detector_status": "blocked",
+      "task_status": "completed_with_limitations",
+      "candidate_count": 148,
+      "candidate_rule_counts": {
+        "data.sensitive.unresolved-escape": 148
+      },
+      "candidate_cwe_counts": {
+        "none": 148
+      },
+      "coverage_counts": {
+        "complete": 0,
+        "partial": 240,
+        "not_analyzed": 64,
+        "failed": 0
+      },
+      "same_scope_replay_equal": true,
+      "report_sha256": {
+        "first.json": "e525a809d4aec77375a4b9b3558373bbd4975e92bd337d082a9ef3180172b9a5",
+        "replay.json": "cb69c3a4b5d541d591b413e4e0ec045b651a27ee78ca79ff083930a8b78b2467",
+        "summary.json": "e9a6c8bd46c266c89edc2d86a8d04116d0d8d9571fd27ea3254b6aca8875b765"
+      },
+      "two_run_seconds": 5.0805,
+      "peak_rss_kib": 59660,
+      "validated_vulnerability": 0
+    },
+    {
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "scope_files": 402,
+      "snapshot_sha256": "e4ce2f8e2cfbc0a1ba2ea6b0ddf1d48bd2b2e8dd8e4b1be36270df1d3ba11d72",
+      "detector_status": "blocked",
+      "task_status": "completed_with_limitations",
+      "candidate_count": 10,
+      "candidate_rule_counts": {
+        "data.sensitive.unresolved-escape": 10
+      },
+      "candidate_cwe_counts": {
+        "none": 10
+      },
+      "coverage_counts": {
+        "complete": 0,
+        "partial": 330,
+        "not_analyzed": 72,
+        "failed": 0
+      },
+      "same_scope_replay_equal": true,
+      "report_sha256": {
+        "first.json": "56fef522970cef3aaa32300a9c925ad571b7c3f8bbce1da453ff3e40b2d10add",
+        "replay.json": "aea2c4eee2236f495406b6a1627be756a78c4c9617b6ca3e31cfc5a27762bae3",
+        "summary.json": "19baa3d401ad9d20e8d33708d832b28da97f39cad2e5824af2cd5660632373a7"
+      },
+      "two_run_seconds": 5.8839,
+      "peak_rss_kib": 74128,
+      "validated_vulnerability": 0
+    },
+    {
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "scope_files": 1079,
+      "snapshot_sha256": "2f8d692de5f12e6909f6e550b0848553485f62e64eee8d1cadf08500988a2691",
+      "detector_status": "blocked",
+      "task_status": "completed_with_limitations",
+      "candidate_count": 3,
+      "candidate_rule_counts": {
+        "data.sensitive.unresolved-escape": 3
+      },
+      "candidate_cwe_counts": {
+        "none": 3
+      },
+      "coverage_counts": {
+        "complete": 0,
+        "partial": 811,
+        "not_analyzed": 268,
+        "failed": 0
+      },
+      "same_scope_replay_equal": true,
+      "report_sha256": {
+        "first.json": "f2f83b2b92dcbcd195d11f28e77b01a6aab93f995f4771a7d825093da05379dc",
+        "replay.json": "3ceaa5dd7024148ce74bc5f7ba109fb247b420f252453a955c8c0da073daab56",
+        "summary.json": "72de98d0df6d4d4bb5fc62cc6f95120397517ea2733771be564dfd24c7c0881f"
+      },
+      "two_run_seconds": 37.9599,
+      "peak_rss_kib": 316868,
+      "validated_vulnerability": 0
+    },
+    {
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "scope_files": 393,
+      "snapshot_sha256": "50bdf10f285dd10acf022f35bad69f230a8c390db7209d9116d8941f1188abf3",
+      "detector_status": "blocked",
+      "task_status": "completed_with_limitations",
+      "candidate_count": 22,
+      "candidate_rule_counts": {
+        "data.sensitive.unresolved-escape": 22
+      },
+      "candidate_cwe_counts": {
+        "none": 22
+      },
+      "coverage_counts": {
+        "complete": 0,
+        "partial": 324,
+        "not_analyzed": 69,
+        "failed": 0
+      },
+      "same_scope_replay_equal": true,
+      "report_sha256": {
+        "first.json": "03595868ebe56cc019590cca92624bf77b03e06c3ed3ea030109f2228369df8a",
+        "replay.json": "9f14806370396775a98c52effff315d0c8cee1f7c1705370cf766cbed2597eb1",
+        "summary.json": "a7fbab010e9b9d2553e60cc1f716fd9cf930cc01db595328e7808a293dac2966"
+      },
+      "two_run_seconds": 7.4712,
+      "peak_rss_kib": 78100,
+      "validated_vulnerability": 0
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "scope_files": 1105,
+      "snapshot_sha256": "bde2e64f181a1dfe159fabe7325b7d97a0396a22ba1c983138c7daa34fd81d81",
+      "detector_status": "blocked",
+      "task_status": "completed_with_limitations",
+      "candidate_count": 4,
+      "candidate_rule_counts": {
+        "data.sensitive.unresolved-escape": 4
+      },
+      "candidate_cwe_counts": {
+        "none": 4
+      },
+      "coverage_counts": {
+        "complete": 0,
+        "partial": 932,
+        "not_analyzed": 173,
+        "failed": 0
+      },
+      "same_scope_replay_equal": true,
+      "report_sha256": {
+        "first.json": "e0e915d5dd587d1778d0074ba9626783a503bab5f7b43741167875dda27bb04c",
+        "replay.json": "1dcfa35d035a6eb7925093f87fb47b80f7ae373ff6dd70a525304f43e6c6e984",
+        "summary.json": "282f534b82d2066ec0e5ecc1431219f486536a67edd17a6565431b41849d9d0c"
+      },
+      "two_run_seconds": 20.8567,
+      "peak_rss_kib": 174348,
+      "validated_vulnerability": 0
+    }
+  ],
+  "limits": [
+    "All 201 machine observations are unresolved-escape candidates, not CWE findings or vulnerabilities.",
+    "All six DetectorRuns are blocked; zero files were fully analyzed, so not analyzed/partial areas remain unknown.",
+    "Repeatability is not accuracy. No TP/FP/FN/recall/precision claim is possible before independent labels.",
+    "No product build, logging configuration, unauthorized reader, impact, or product fix retest was evaluated."
+  ]
+}

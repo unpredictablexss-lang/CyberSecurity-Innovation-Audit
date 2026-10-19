@@ -1,0 +1,280 @@
+"""Strict first-party Detector adapter for an explicitly opted-in research rule."""
+import json
+from hashlib import sha1, sha256
+from src.ohscanner.contracts import DetectorRun, DetectorFinding, EvidenceObligation
+from .analysis import analyze_unit
+from .exception_guard import analyze_exception_guard
+from .receiver_guard import analyze_receiver_guard
+from .cross_file_facts import build_cross_file_facts
+from .runtime_exception import (analyze_native_inline_exception_propagation,
+                                analyze_runtime_exception_propagation)
+from .size_overflow import (analyze_size_overflow_unit, index_bounds_result,
+                            length_narrowing_result)
+from .model import (AnalysisBudget, RuntimeTypeModel, DETECTOR_ID, RULE_ID,
+                    EXCEPTION_GUARD_RULE_ID, RECEIVER_TYPE_GUARD_RULE_ID,
+                    SIZE_OVERFLOW_RULE_ID, LENGTH_NARROWING_RULE_ID,
+                    INDEX_BOUNDS_RULE_ID, NATIVE_EXCEPTION_RULE_ID,
+                    RUNTIME_EXCEPTION_RULE_ID, RULE_VERSIONS, VERSION)
+
+
+class ArkRuntimeTypeSafetyDetector:
+    detector_id = DETECTOR_ID
+    version = VERSION
+    model_version = VERSION
+    supported_languages = ('cpp',)
+    # Owner runner applies this detector only to the exact upstream source path.
+    # The adapter still validates repository, commit, Git blob and parser facts.
+    required_facts = ()
+    ast_scope = 'per_file'
+
+    def select_applicable_units(self, context, units):
+        if context.request.repository != self.model.source_repository:
+            return ()
+        paths = {row[1] for row in (
+            self.model.target_bindings + self.model.exception_guard_bindings
+            + self.model.receiver_guard_bindings + self.model.size_overflow_bindings
+            + self.model.length_narrowing_bindings + self.model.index_bounds_bindings
+            + self.model.runtime_exception_bindings + self.model.native_exception_bindings)}
+        return tuple(unit for unit in units if unit.path in paths)
+
+    def __init__(self, model=None, budget=None):
+        self.model = model or RuntimeTypeModel()
+        self.budget = budget or AnalysisBudget()
+
+    @staticmethod
+    def _dependency_error(context, path, expected_blob):
+        dependency = next((item for item in context.units if item.path == path), None)
+        blob_oids = context.shared_facts.get('source_blob_oid', {})
+        ast = context.shared_facts.get('ast', {})
+        if dependency is None:
+            return 'creator dependency is outside the scanned source scope: ' + path
+        raw = dependency.text.encode('utf-8')
+        source_digest = sha256(raw).hexdigest()
+        ast_entry = ast.get(path)
+        if (dependency.language != 'cpp' or dependency.sha256 != source_digest
+                or blob_oids.get(path) != expected_blob):
+            return 'creator dependency blob/SHA-256 does not match the version-bound model: ' + path
+        if (not isinstance(ast_entry, dict) or ast_entry.get('parse_status') != 'complete'
+                or dependency.parse_status != 'complete'):
+            return 'creator dependency AST is incomplete: ' + path
+        return ''
+
+    def detect(self, context, units):
+        findings, outcomes, inspected, limitations = [], [], [], []
+        failed = False
+        bound = {u.path: u.sha256 for u in context.units}
+        ast = context.shared_facts.get('ast', {})
+        blob_oids = context.shared_facts.get('source_blob_oid', {})
+        cross_file_facts = build_cross_file_facts(context.units, budget=self.budget)
+        limitations.extend(cross_file_facts.limitations)
+        for unit in sorted(units, key=lambda u: u.path):
+            if bound.get(unit.path) != unit.sha256:
+                raise ValueError('detector_input_outside_bound_context')
+            rule_bindings = []
+            type_binding = next((row for row in self.model.target_bindings
+                                 if row[0] == context.request.commit and row[1] == unit.path), None)
+            exception_binding = next((row for row in self.model.exception_guard_bindings
+                                      if row[0] == context.request.commit and row[1] == unit.path), None)
+            receiver_binding = next((row for row in self.model.receiver_guard_bindings
+                                     if row[0] == context.request.commit and row[1] == unit.path), None)
+            size_binding = next((row for row in self.model.size_overflow_bindings
+                                 if row[0] == context.request.commit and row[1] == unit.path), None)
+            length_binding = next((row for row in self.model.length_narrowing_bindings
+                                   if row[0] == context.request.commit and row[1] == unit.path), None)
+            index_binding = next((row for row in self.model.index_bounds_bindings
+                                  if row[0] == context.request.commit and row[1] == unit.path), None)
+            runtime_binding = next((row for row in self.model.runtime_exception_bindings
+                                    if row[0] == context.request.commit and row[1] == unit.path), None)
+            native_binding = next((row for row in self.model.native_exception_bindings
+                                   if row[0] == context.request.commit and row[1] == unit.path), None)
+            if type_binding is not None:
+                rule_bindings.append((RULE_ID, type_binding))
+            if exception_binding is not None:
+                rule_bindings.append((EXCEPTION_GUARD_RULE_ID, exception_binding))
+            if receiver_binding is not None:
+                rule_bindings.append((RECEIVER_TYPE_GUARD_RULE_ID, receiver_binding))
+            if size_binding is not None:
+                rule_bindings.append((SIZE_OVERFLOW_RULE_ID, size_binding))
+            if length_binding is not None:
+                rule_bindings.append((LENGTH_NARROWING_RULE_ID, length_binding))
+            if index_binding is not None:
+                rule_bindings.append((INDEX_BOUNDS_RULE_ID, index_binding))
+            if runtime_binding is not None:
+                rule_bindings.append((RUNTIME_EXCEPTION_RULE_ID, runtime_binding))
+            if native_binding is not None:
+                rule_bindings.append((NATIVE_EXCEPTION_RULE_ID, native_binding))
+            if not rule_bindings:
+                outcomes.append((unit.path, 'not_analyzed'))
+                limitations.append(unit.path + ': exact upstream repository/commit/path is not in the reviewed model')
+                continue
+            dependency_error = (next((error for path, blob in self.model.source_dependencies
+                                      if (error := self._dependency_error(context, path, blob))), '')
+                                if type_binding is not None else '')
+            if dependency_error:
+                outcomes.append((unit.path, 'not_analyzed'))
+                limitations.append(unit.path + ': ' + dependency_error)
+                continue
+            raw = unit.text.encode('utf-8')
+            git_blob = sha1(b'blob ' + str(len(raw)).encode('ascii') + bytes((0,)) + raw).hexdigest()
+            if (context.request.provenance != 'git_object' or context.request.profile_id != 'light-ast'
+                    or context.request.repository != self.model.source_repository):
+                outcomes.append((unit.path, 'not_analyzed'))
+                limitations.append(unit.path + ': pinned upstream Git provenance and light-ast profile are required')
+                continue
+            source_hash_mismatch = any(unit.sha256 != binding[3] for _, binding in rule_bindings)
+            source_blob_mismatch = blob_oids.get(unit.path) not in {binding[2] for _, binding in rule_bindings}
+            if unit.language not in self.supported_languages or source_hash_mismatch or source_blob_mismatch:
+                outcomes.append((unit.path, 'not_analyzed'))
+                limitations.append(unit.path + ': target source blob/SHA-256 does not match the version-bound model')
+                continue
+            ast_entry = ast.get(unit.path)
+            if (not isinstance(ast_entry, dict) or ast_entry.get('parse_status') != unit.parse_status
+                    or unit.parse_status not in ('complete', 'partial')):
+                outcomes.append((unit.path, 'not_analyzed'))
+                limitations.append(unit.path + ': shared AST status is missing or inconsistent with the source unit')
+                continue
+            results = []
+            for rule_id, _ in rule_bindings:
+                if rule_id == RULE_ID:
+                    result = analyze_unit(unit, model=self.model, budget=self.budget,
+                                          research_partial=unit.parse_status == 'partial')
+                elif rule_id == SIZE_OVERFLOW_RULE_ID:
+                    result = analyze_size_overflow_unit(unit, self.model.digest)
+                elif rule_id == LENGTH_NARROWING_RULE_ID:
+                    result = length_narrowing_result(unit, self.model.digest)
+                elif rule_id == INDEX_BOUNDS_RULE_ID:
+                    result = index_bounds_result(unit, self.model.digest)
+                elif rule_id == RUNTIME_EXCEPTION_RULE_ID:
+                    result = analyze_runtime_exception_propagation(
+                        unit, source_units=cross_file_facts.source_units_for(unit.path),
+                        effect_calls=self.model.runtime_effect_calls,
+                        sensitive_methods=self.model.runtime_sensitive_result_methods,
+                        guards=self.model.runtime_exception_guards,
+                        max_instructions=self.budget.max_instructions)
+                elif rule_id == NATIVE_EXCEPTION_RULE_ID:
+                    result = analyze_native_inline_exception_propagation(unit)
+                elif rule_id == EXCEPTION_GUARD_RULE_ID:
+                    result = analyze_exception_guard(
+                        unit, creator_name=self.model.exception_guard_creator[0],
+                        creator_arity=self.model.exception_guard_creator[1],
+                        sink_name=self.model.exception_guard_sink[0],
+                        sink_arity=self.model.exception_guard_sink[1],
+                        sink_glue_arg=self.model.exception_guard_sink[2],
+                        sink_object_arg=self.model.exception_guard_sink[3],
+                        caller_names=self.model.exception_guard_callers,
+                        caller_types=self.model.exception_guard_caller_types, budget=self.budget)
+                else:
+                    result = analyze_receiver_guard(unit, budget=self.budget)
+                results.append((rule_id, result))
+            file_outcome = ('complete' if all(result.file_outcome == 'complete' for _, result in results)
+                            else 'partial' if any(result.file_outcome in ('complete', 'partial') for _, result in results)
+                            else 'not_analyzed' if all(result.file_outcome == 'not_analyzed' for _, result in results)
+                            else 'failed')
+            outcomes.append((unit.path, file_outcome))
+            if file_outcome in ('complete', 'partial'):
+                inspected.append(unit.path)
+            failed |= any(result.status == 'failed' for _, result in results)
+            for rule_id, result in results:
+                limitations.extend(unit.path + ': ' + x for x in result.limitations)
+                for item in result.observations:
+                    if item.kind != 'candidate':
+                        continue
+                    trace = json.dumps({'target': item.target_identity, 'token_origin': item.token_origin,
+                                        'token_line': item.token_line, 'creation_line': item.creation_line,
+                                        'generated_path': item.path, 'constraints': item.constraints,
+                                        'model_sha256': result.model_digest or self.model.digest,
+                                        'function_region': [item.region_start_byte, item.region_end_byte],
+                                        'unreviewed_effect_sites': item.effect_sites}, sort_keys=True)
+                    rule_version = RULE_VERSIONS.get(rule_id, 'unversioned-rule')
+                    trace += ';rule_version=' + rule_version
+                    if rule_id == RUNTIME_EXCEPTION_RULE_ID:
+                        obligations = (
+                            ('exception_propagation_semantics', 'Verify the callback completion value and pending-exception early-exit semantics.'),
+                            ('cross_file_macro_closure', 'Bind every included guard macro and helper body to the scanned source scope.'),
+                            ('runtime_path_feasibility', 'Establish a reachable callback result conversion without a dominating exception exit.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
+                        )
+                    elif rule_id == NATIVE_EXCEPTION_RULE_ID:
+                        obligations = (
+                            ('exception_propagation_semantics', 'Verify the exact pending-exception condition and generated branch return semantics.'),
+                            ('runtime_path_feasibility', 'Establish that Reflect.apply inlining can reach the unguarded helper under a realistic call.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
+                        )
+                    elif rule_id == LENGTH_NARROWING_RULE_ID:
+                        obligations = (
+                            ('integer_conversion_semantics', 'Prove the ToIndex range, signed-to-unsigned conversion and allocation length semantics.'),
+                            ('memory_safety_impact', 'Establish whether the narrowed length can cause an undersized allocation or out-of-bounds access.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
+                        )
+                    elif rule_id == INDEX_BOUNDS_RULE_ID:
+                        obligations = (
+                            ('index_width_and_bounds', 'Prove index width, overflow behavior and the exact DataView/Atomics bounds comparison.'),
+                            ('memory_safety_impact', 'Establish a concrete out-of-bounds witness or retain the result as unknown.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
+                        )
+                    elif rule_id == SIZE_OVERFLOW_RULE_ID:
+                        obligations = (
+                            ('integer_range_semantics', 'Prove multiplication width and overflow behavior for both operands.'),
+                            ('allocation_and_copy_flow', 'Connect the narrowed product to the exact allocation and copy bound.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
+                        )
+                    elif rule_id == EXCEPTION_GUARD_RULE_ID:
+                        obligations = (
+                            ('exception_path_semantics', 'Verify the builder allocation path can leave a pending exception and the sensitive result use executes before the exception return.'),
+                            ('runtime_impact', 'Establish whether the path causes a product crash, corruption or security impact under a reachable runtime condition.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
+                        )
+                    elif rule_id == RECEIVER_TYPE_GUARD_RULE_ID:
+                        obligations = (
+                            ('guard_semantics', 'Verify that the runtime type predicate accepts only objects valid for the backing-buffer accessor.'),
+                            ('runtime_path_feasibility', 'Establish that attacker-reachable input can reach the unguarded sensitive operation.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('runtime_impact', 'Establish concrete crash, corruption or security impact under an isolated runtime test.'),
+                        )
+                    else:
+                        obligations = (
+                            ('model_applicability', 'Verify exact symbols, signatures, macros and model semantics in the product build.'),
+                            ('runtime_path_feasibility', 'Prove the destination runtime type on the generated path and its relation to the supplied type token.'),
+                            ('security_impact', 'Establish realistic entry, attacker control and concrete CIA impact.'),
+                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
+                        )
+                    if unit.parse_status == 'partial':
+                        obligations += (('parse_completeness_impact',
+                                         'Partial translation-unit parsing may hide declarations, macros or effects; this finding is local candidate evidence only.'),)
+                    findings.append(DetectorFinding(
+                        file=unit.path, line=item.line, column=item.column, rule_id=rule_id,
+                        message=(
+                            'Candidate only: callback result conversion may precede a pending-exception exit. trace=' + trace
+                            if rule_id == RUNTIME_EXCEPTION_RULE_ID else
+                            'Candidate only: Reflect.apply native-inline result uses exception-sentinel comparison without a proven pending-exception exit. trace=' + trace
+                            if rule_id == NATIVE_EXCEPTION_RULE_ID else
+                            'Candidate only: signed 32-bit ToIndex result narrows a TypedArray allocation length. trace=' + trace
+                            if rule_id == LENGTH_NARROWING_RULE_ID else
+                            'Candidate only: 32-bit DataView/Atomics index arithmetic reaches a local bounds check. trace=' + trace
+                            if rule_id == INDEX_BOUNDS_RULE_ID else
+                            'Candidate only: narrowed multiplication feeds allocation and copy bounds. trace=' + trace
+                            if rule_id == SIZE_OVERFLOW_RULE_ID else
+                            'Candidate only: allocation result header is read on a path where the allocation may leave a pending exception. trace=' + trace
+                            if rule_id == EXCEPTION_GUARD_RULE_ID else
+                            'Candidate only: TypedArray backing-buffer access is reachable without a dominating same-receiver runtime type guard. trace=' + trace
+                            if rule_id == RECEIVER_TYPE_GUARD_RULE_ID else
+                            'Candidate only: TypedArray destination and type-token origin differ under '
+                            'the bounded type-changing creation model; generated graph path is symbolic. trace=' + trace
+                        ),
+                        evidence_type='syntax',
+                        candidate_cwe=('CWE-755' if rule_id == RUNTIME_EXCEPTION_RULE_ID else
+                                       'CWE-843' if rule_id == RULE_ID else None),
+                        symbol=item.symbol, source_sha256=unit.sha256,
+                        evidence_obligations=tuple(EvidenceObligation(kind, description) for kind, description in obligations),
+                    ))
+        incomplete = any(state != 'complete' for _, state in outcomes)
+        return DetectorRun(self.detector_id, self.version, 'failed' if failed else 'blocked' if incomplete else 'completed',
+                           tuple(inspected), tuple(findings), tuple(sorted(set(limitations + [
+                               'Narrow local syntax/IR model; no whole-program type or exploitability proof.',
+                           ]))), tuple(outcomes))

@@ -1,0 +1,212 @@
+[
+  {
+    "query": "repo:openharmony/communication_dsoftbus sensitive",
+    "total_count": 12,
+    "returned_count": 10,
+    "incomplete_results": false,
+    "results": [
+      {
+        "sha": "0d93578a8d173473cec51b246761efd57355f3f6",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/0d93578a8d173473cec51b246761efd57355f3f6",
+        "title": "delete sensitive words"
+      },
+      {
+        "sha": "12f5f80e6b2523fbde3c9bc2d417e01494de0adf",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/12f5f80e6b2523fbde3c9bc2d417e01494de0adf",
+        "title": "!10522 delete sensitive words"
+      },
+      {
+        "sha": "98c2002d066103480b8cc20c793e2b296d90b2bf",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/98c2002d066103480b8cc20c793e2b296d90b2bf",
+        "title": "!10510 delete sensitive words"
+      },
+      {
+        "sha": "a174feb3a59be0b9bc73b9657229d28e613a4232",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/a174feb3a59be0b9bc73b9657229d28e613a4232",
+        "title": "delete sensitive words"
+      },
+      {
+        "sha": "273637945ecb7b53d5d9af3bfd4e48a40bb88252",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/273637945ecb7b53d5d9af3bfd4e48a40bb88252",
+        "title": "fix:Delete sensitive information printing"
+      },
+      {
+        "sha": "028aa5fcae8fa01d3574c37a6a86dbaa60a9e0cc",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/028aa5fcae8fa01d3574c37a6a86dbaa60a9e0cc",
+        "title": "!7515 fix:Delete sensitive information printing"
+      },
+      {
+        "sha": "955d716f5688141ee7e4d46a86c4218604731d20",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/955d716f5688141ee7e4d46a86c4218604731d20",
+        "title": "Sensitive word replace"
+      },
+      {
+        "sha": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+        "title": "Remove unused sensitive prints"
+      },
+      {
+        "sha": "6c6fb23703bd38e4301668724783bb40c052acbf",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/6c6fb23703bd38e4301668724783bb40c052acbf",
+        "title": "Processing sensitive words \"PC\""
+      },
+      {
+        "sha": "8c9bc2f84e5f98e7fd59604a9bda6b4a10b0632c",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/8c9bc2f84e5f98e7fd59604a9bda6b4a10b0632c",
+        "title": "!1394 【轻量级 PR】：Remove unused sensitive prints"
+      }
+    ],
+    "result_limit": 10,
+    "truncated_by_result_limit": true
+  },
+  {
+    "query": "repo:openharmony/communication_dsoftbus privacy",
+    "total_count": 4,
+    "returned_count": 4,
+    "incomplete_results": false,
+    "results": [
+      {
+        "sha": "33d2cded693daa51a249d31463d4e75e56b01da3",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/33d2cded693daa51a249d31463d4e75e56b01da3",
+        "title": "privacy compliance"
+      },
+      {
+        "sha": "847bc23830796dac6fb1ff9c4d983be52e9ac0f0",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/847bc23830796dac6fb1ff9c4d983be52e9ac0f0",
+        "title": "privacy compliance"
+      },
+      {
+        "sha": "9015818ac9c9e066355664be317c95349aab3d7b",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/9015818ac9c9e066355664be317c95349aab3d7b",
+        "title": "!9955 privacy compliance"
+      },
+      {
+        "sha": "dfc61dc202c3ffcd3f59f6ca608c4ad67d52a5b9",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/dfc61dc202c3ffcd3f59f6ca608c4ad67d52a5b9",
+        "title": "!9905 privacy compliance"
+      }
+    ],
+    "result_limit": 10,
+    "truncated_by_result_limit": false
+  },
+  {
+    "query": "repo:openharmony/communication_dsoftbus 泄露",
+    "total_count": 15,
+    "returned_count": 10,
+    "incomplete_results": false,
+    "results": [
+      {
+        "sha": "08a8ffcfa4755a622f0b00721e383ad53c4f2b02",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/08a8ffcfa4755a622f0b00721e383ad53c4f2b02",
+        "title": "!12237 merge 260722 into master"
+      },
+      {
+        "sha": "bef1e157f671c6deeb83a534d514b43655569ca9",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/bef1e157f671c6deeb83a534d514b43655569ca9",
+        "title": "修复内存泄露问题"
+      },
+      {
+        "sha": "0491ed15422eda6792072a7b5bda7323083e5760",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/0491ed15422eda6792072a7b5bda7323083e5760",
+        "title": "解决cJSON内存泄露的问题"
+      },
+      {
+        "sha": "9310c872649abe43b107702cbbfbcccd8c2c0df2",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/9310c872649abe43b107702cbbfbcccd8c2c0df2",
+        "title": "解决cJSON内存泄露的问题"
+      },
+      {
+        "sha": "aad52c567afc696a9b215e79a509ce10ad6b6a2a",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/aad52c567afc696a9b215e79a509ce10ad6b6a2a",
+        "title": "解决cJSON内存泄露的问题"
+      },
+      {
+        "sha": "50e33939891e9fbd33744bd6724247048c05aa9a",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/50e33939891e9fbd33744bd6724247048c05aa9a",
+        "title": "解决cJSON内存泄露的问题"
+      },
+      {
+        "sha": "845dfa18354e11594a87bcfceafad8440033acf2",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/845dfa18354e11594a87bcfceafad8440033acf2",
+        "title": "解决cJSON内存泄露的问题"
+      },
+      {
+        "sha": "59cbc69b9b17d145e070dcf3ea7f1997671ebce4",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/59cbc69b9b17d145e070dcf3ea7f1997671ebce4",
+        "title": "解决cJSON内存泄露的问题"
+      },
+      {
+        "sha": "6a247b7caffc250edbab7d0d935c6ed71dc3c1fb",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/6a247b7caffc250edbab7d0d935c6ed71dc3c1fb",
+        "title": "解决cJSON内存泄露的问题"
+      },
+      {
+        "sha": "1d02138d489e3e3d386f5cbb4f2fa0db92b8f571",
+        "url": "https://github.com/openharmony/communication_dsoftbus/commit/1d02138d489e3e3d386f5cbb4f2fa0db92b8f571",
+        "title": "解决cJSON内存泄露的问题"
+      }
+    ],
+    "result_limit": 10,
+    "truncated_by_result_limit": true
+  },
+  {
+    "query": "repo:openharmony/security_access_token log",
+    "total_count": 61,
+    "returned_count": 10,
+    "incomplete_results": false,
+    "results": [
+      {
+        "sha": "45ba56c5784bc990307d63fe34c9f2c080b2b94f",
+        "url": "https://github.com/openharmony/security_access_token/commit/45ba56c5784bc990307d63fe34c9f2c080b2b94f",
+        "title": "style: remove function name prefixes from log messages"
+      },
+      {
+        "sha": "f8da376bac9cd5e1a448128b1321cc7e329eb0e0",
+        "url": "https://github.com/openharmony/security_access_token/commit/f8da376bac9cd5e1a448128b1321cc7e329eb0e0",
+        "title": "fix: use accesstoken_klog.h instead of accesstoken_common_log.h in file_util"
+      },
+      {
+        "sha": "a5c66bf45ce6403abf89d5da3bb14123e5b56eed",
+        "url": "https://github.com/openharmony/security_access_token/commit/a5c66bf45ce6403abf89d5da3bb14123e5b56eed",
+        "title": "style: capitalize first letter of log messages in accesstoken_file_util.cpp"
+      },
+      {
+        "sha": "9f72cb81ff6144dd682861db39a7e8f333f25a6f",
+        "url": "https://github.com/openharmony/security_access_token/commit/9f72cb81ff6144dd682861db39a7e8f333f25a6f",
+        "title": "log: print SubEvent info when off_all for selfPermissionStateChange"
+      },
+      {
+        "sha": "2c43381dd3192d05ae4807a03ae300469a0173f7",
+        "url": "https://github.com/openharmony/security_access_token/commit/2c43381dd3192d05ae4807a03ae300469a0173f7",
+        "title": "!5019 merge fix/file-util-klog into master"
+      },
+      {
+        "sha": "4e7bdf67298ebbeb518a6a91c095a98f4f2a9394",
+        "url": "https://github.com/openharmony/security_access_token/commit/4e7bdf67298ebbeb518a6a91c095a98f4f2a9394",
+        "title": "Optimize access_token log"
+      },
+      {
+        "sha": "f8de32d40028f3ba2280c1173c30c7082a3d0e59",
+        "url": "https://github.com/openharmony/security_access_token/commit/f8de32d40028f3ba2280c1173c30c7082a3d0e59",
+        "title": "update version: ACCESS_DFT_LOG"
+      },
+      {
+        "sha": "94bb648cfadbe7a35eaa496a05cf57fac3a6a62d",
+        "url": "https://github.com/openharmony/security_access_token/commit/94bb648cfadbe7a35eaa496a05cf57fac3a6a62d",
+        "title": "Change database cost log level from LOGI to LOGD"
+      },
+      {
+        "sha": "6807d3bef909e498cd94546f9fb6309ad474c501",
+        "url": "https://github.com/openharmony/security_access_token/commit/6807d3bef909e498cd94546f9fb6309ad474c501",
+        "title": "Refine corruption detection and unify db write retry"
+      },
+      {
+        "sha": "b75c6d95b3b9f68921db845891e3442776d58dd1",
+        "url": "https://github.com/openharmony/security_access_token/commit/b75c6d95b3b9f68921db845891e3442776d58dd1",
+        "title": "add shouldSkip condition to avoid unnecessary log"
+      }
+    ],
+    "result_limit": 10,
+    "truncated_by_result_limit": true
+  }
+]

@@ -1,0 +1,25 @@
+G12-PC validation summary
+========================
+
+Date: 2026-10-19 Asia/Shanghai
+Worktree: E:\网安\CyberSecurity-Innovation-Audit-c12-product-admission-20261019
+Baseline: ddd8556768d679fcc09f1fcb37d10730f49b2c6c
+Tree: 7d102eb9d2f0c2149fe978bb350129b7cf2fac71
+
+PASS py_compile: 3 research scripts.
+PASS build-profile verify-only: verified_blocked_manifest; 16 cases; payload SHA-256 matched.
+PASS holdout pipeline self-test: 3 synthetic cases; 2 agreements; 1 disagreement; third review completed; metrics_computed=false; metadata-leak scan and bounded self-test path guard active.
+PASS metric gate: synthetic score refused with NOT_RUN and exit 3.
+PASS product closure regeneration: 16 cases, BLOCKED, NOT_ADMITTED.
+PASS JSON parse: final 26 JSON files, 0 errors.
+PASS git diff --check: exit 0.
+
+Not run:
+- target product build/preprocess
+- official Ark Git object verification
+- real independent holdout collection/labels
+- authorized dynamic PoC
+- fix build and fixed-product revalidation
+
+Boundary:
+These checks validate research artifact mechanics and fail-closed behavior only. They do not prove scanner accuracy, product vulnerability, exploitability, safety, or competition readiness.

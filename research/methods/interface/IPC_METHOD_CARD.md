@@ -1,0 +1,824 @@
+> Historical method/evidence record; current public implementation and decisions: [项目现状与下一步](../../../docs/项目现状与下一步.md), [架构与公共协议](../../../docs/架构与公共协议.md). Fixed historical links are evidence, not the active contract.
+
+# IPC method card v0.1
+
+> **Owner integration 2026-10-11**: this file preserves B's historical method/experiment
+> records from commit `52b2cd5`. This branch integrates the interpretation only, through
+> a single-pass M2 adapter and the official `ohscan-run` catalog. Historical audit-driver,
+> PoC and baseline counts below are not new validations on this branch. Current coverage
+> semantics and verified tests are in `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/143fa63fa479be79fa80ca5f8322c74afecc273c/docs/testing/ohscanner_owner_ipc_platform_integration.md`
+> and the latest PROGRAM_STATUS section. M1–M6 rule improvements remain pending.
+> **政策更新 2026-10-10**：本文为历史记录（记录某时点实际做了什么），事实性内容保留原样。文中"不做 PoC / 不做动态验证 / 不升级结论状态 / 不计算 Precision-Recall"等限制已于 2026-10-10 **废除**；当前生效政策见 `AGENTS.md` 的 **Competition deliverables — must produce** 章节：PoC、动态验证、CWE/CVE、影响范围、修复建议、性能数据、漏洞报告均为**必须产出**的交付物。
+
+- Detector: `ohscanner.interface.ipc` 0.1.0; model: `oh-ipc-2026.10-v1`.
+- Input: immutable fixed-Git SourceUnit + shared AST presence/status; C/C++ source, no target execution. Runtime imports no external scanner or historical labels.
+- Output: syntax candidates, unassessed confidence, stable root entry/path location, reachability/callee-policy/impact evidence obligations. Any input partial retains inspected candidates and blocks completed coverage.
+- Analysis: private Tree-sitter structured branch interpreter, bounded local same-file/class calls (depth2), path budget96 with intersection of proof facts, zero/one loop approximation, explicit caller token vs UID vs self/request sources.
+- AUTH-01: request Parcel descriptor equality and rejecting mismatch before handler/forward effect. This is narrow boundary protection, not a full cross-SA relay reconstruction.
+- AUTH-02: original caller authorization protecting modeled effect; reviewed service entries include screenshot, camera and telephony controls.
+- AUTH-03: token/UID domain, original identity after reset, owner relation and restricted caller class. Direct requested UID safe binding is a known false positive.
+- AUTH-04: ignored/late guard, one-branch protection, switch entry/fallthrough; authorization facts must exist on effect-reaching path.
+- DATA-01: Parcel length→copy destination-matched nonnegative/upper bound; reviewed transport position subtraction checks. No general bitvector overflow theorem.
+- CAP-01: non-null object/FD export with missing caller authorization; public capability policy and ownership remain review obligations.
+- Model source provenance: research/corpus/interface/ipc/model_sources.json; original queries and vendor-read provenance: research/experiments/interface/ipc/tool_source_manifest.json. No vendor implementation copied.
+- Controls: 29 authored design scenarios across all six families, positive/fixed/safe; tests/test_ipc_detector.py checks bridge, blocked scope, determinism, bounds and identity domains. 218 project tests pass.
+- Historical evidence: twelve S2 design roots, one S1 pending patch; no runtime/S3. Candidate count >0→0 in all pairs; seven pairs partial unknown. Do not publish this as independent recall.
+- Freeze: research/corpus/interface/ipc/design_freeze.json. Thirteen same-origin generated variations tested after freeze, twelve met, one false positive. Not independent real-world holdout.
+- Independent holdout design (not executed): adjudicate remaining advisory patch roots with independent reviewer; split by root/patch lineage and component/time, lock detector/catalog before acquiring holdout inputs, evaluate root-specific vulnerable/fixed/safe behavior and unknown rate separately. Shared PR/CVE aliases cannot cross splits. Prefer unseen components; freeze records, scopes and command manifests before scoring.
+- Limits: no macro expansion/full compiler CFG, arbitrary virtual/indirect target binding, cross-file alias ownership, full permission policy, complete runtime reachability or satisfiability proof. Names/API models are assumptions, not security judgments.
+- Next work: parser/build context, dispatcher/cross-file relation summaries, requestedUID relationship precision, then targeted SMT constraints and independent historical holdout. No target recall guarantee yet.
+
+Detailed Chinese methods and per-root/tool comparison: https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/48bce9eab77fdf22acbb708cd9bf481ca32e7667/docs/research/ipc_scanner_v0_1_2026-10-10.md.
+
+---
+
+# IPC 方法卡 — 当前实现到什么程度：54 个真实组件、六个子类，以及剩下的零从哪里来（2026-10-17）
+
+本 lane `lanes.ipc`、分支 `work/ipc-20261017`、基线 `6a41dc9` 的状态快照。检测器未改
+（`0.8.0`，模型 `oh-ipc-2026.10-v6`，只读固定树 `635b3e0449c5`）。本节是"六个子类实现到
+什么程度"的当前答案；下方带日期的小节是每个结论的形成记录。机器可读表：
+`research/evidence/interface/ipc/family_parity_20261017/parity.json`；记录：
+`research/deliveries/ipc/20261017-family-parity-and-batch3.md` 与
+`20261017-lane-delivery-record.md`。
+
+**语料。** 54 个干净组件，无重复计数，分布在四个 audit 根
+（`wtmp/ipc-audit` 30、`ipc-audit-bline` 12、`ipc-audit-extra` 7、`ipc-audit-batch3` 5）：
+**31,817 个文件 / 274,766,178 字节**，24,150 个完整 + 7,074 个部分 AST，**264 条候选、
+0 条 confirmed**。全部是 2026-10-17 的 `master` 快照；`account_app_account` 没有 `master`，
+未克隆。
+
+## 逐规则状态
+
+控制数按家族 manifest 统计；`fixed`/`safe` 是家族级负控制，`positive` 是逐规则的正控制。
+
+| 族 | 规则 | CWE | 候选数 | 命中组件 | positive | fixed | safe |
+|---|---|---|---:|---:|---:|---:|---:|
+| AUTH-01 | `ipc.relay.descriptor-boundary` | CWE-441 | **175** | 16 | 17 | 6 | 1 |
+| AUTH-02 | `ipc.auth.missing` | CWE-862 | **22** | 7 | 17 | 4 | 3 |
+| AUTH-03 | `ipc.auth.caller-class` | CWE-863 | 0 | 0 | 1 | 5 | 1 |
+| AUTH-03 | `ipc.auth.object-owner` | CWE-863 | **2** | 1 | 1 | 5 | 1 |
+| AUTH-03 | `ipc.auth.identity-domain` | CWE-863 | 0 | 0 | 1 | 5 | 1 |
+| AUTH-03 | `ipc.auth.service-identity` | CWE-863 | 0 | 0 | 2 | 5 | 1 |
+| AUTH-03 | `ipc.auth.request-identity` | CWE-863 | 0 | 0 | 1 | 5 | 1 |
+| AUTH-04 | `ipc.auth.guard-coverage` | CWE-863 | **8** | 3 | 5 | 2 | 2 |
+| CAP-01 | `ipc.capability.export` | CWE-926 | **56** | 8 | 10 | 4 | 2 |
+| DATA-01 | `ipc.parcel.copy-range` | CWE-20 | **1** | 1 | 2 | 2 | 1 |
+| DATA-01 | `ipc.parcel.position-underflow` | CWE-20 | 0 | 0 | 1 | 2 | 1 |
+
+现在每个族都至少有一条由已发布检测器从真实代码产生的候选，且每个族都有
+positive/fixed/safe 控制。"能发射一次"是下限，不是产量对齐：AUTH-01 与 CAP-01 占 264 条中的
+87%，而 AUTH-03 其余四条规则与 `position-underflow` 仍为 0。
+
+## 六条零候选现在分别意味着什么
+
+它们不是同一个结论。每一条都是带仪器的实测陈述，仪器与证据在
+`20261017-family-parity-and-batch3.md` §7 与 `20261017-interpreter-attribution-auth03.md`：
+
+- **`caller-class` — 覆盖问题，入口是 IDL 生成的。** 12 处 `caller_class_sensitive_calls`
+  分布在 6 个组件；其中 6 处在 `*mock*` 路径下。caller-class 探针在持有另外 6 处的三个组件
+  （`multimedia_audio_framework`、`ability_ability_runtime`、`bundlemanager_bundle_framework`）
+  里记录了**零次**求值。没有被建模的入口，就没有路径能走到该调用——这是范围/覆盖事实，
+  不是规则缺陷。
+- **`identity-domain` — 形状本身不存在。** 54 个组件里没有一处 `Verify*Token` 调用的实参是
+  caller UID；同一调用形状以 token-ID 为实参出现 **260** 次。这是语料不同，不是规则要修。
+- **`service-identity` / `request-identity` — 求值了，但 subject 不在。** 谓词探针没有记录到
+  任何入口可达、且消费 self 身份的 `Verify*Token` 站点，也没有记录到这些调用处的
+  caller/self/request subject；在 30 个组件上实测：145 次谓词求值，`caller` 102、`request` 4，
+  **`caller_uid` 0、`self` 0**。
+- **`position-underflow` — 唯一的带减号形状是受检减法。** 5 个组件里有 14 处 `RewindRead`；
+  只有一处 size-minus 形状，位于
+  `readPosition > PIXELMAP_UNMARSHALLING_DEBUG_OFFSET` 之后
+  （`graphic_graphic_2d` `rs_marshalling_helper.cpp:2327`），规则在此处没有发射。
+
+## 已发射站点的源码复核（候选全部保留，未删除）
+
+- **AUTH-03 `object-owner`，2 条。** `resourceschedule_background_task_mgr` 的
+  `bg_continuous_task_mgr.cpp:907/:909`。路径已记录 `CheckPermissionForInner(...) => True`；
+  被调方（`:912-925`）接受两种分支：来自 `g_innerApiReqBgRunningConfig`（`:137-147`，每个 SA
+  固定一种模式）的固定系统 SA uid，或 `callingUid == taskParam->uid_`。前一个分支不绑定目标
+  uid——候选的陈述在源码上成立；它是否构成缺陷属于产品策略问题，静态证据无法判定。保持
+  `candidate`，未升格。
+- **AUTH-02，`ability_form_fwk`。** `form_mgr_stub.cpp:1698` 调用纯虚的
+  `IFormMgr::StartAbility`；`FormMgrService` 继承 `FormMgrStub` 并持有守卫。走查没有绑定
+  一跳的虚分派：已知误报类。
+- **AUTH-02 + AUTH-04，`multimedia_camera_framework`。** `hcamera_service.cpp:1098` 的守卫是
+  `CHECK_RETURN_RET_ELOG`，宏体含 `...` / `##__VA_ARGS__`；宏展开器拒绝展开
+  （`cpp_macros.py:235-237`），守卫因此不可见。这是该类的第三、第四个独立实例，前两个是
+  `FALSE_RETURN_V` 与 `ENFORCE`（都在 AUTH-01）。
+- **DATA-01 `copy-range`，`communication_wifi`。** `wifi_p2p_callback_stub.cpp:385` 把
+  `cfgLen` 字节拷进容量同为 `cfgLen` 的缓冲区，且此前有 `0 < cfgLen <= 1024`；规则只接受
+  与容量键相等的上界，不把 `cap == length` 当作匹配。
+
+## 扫描器能力（按代码实际行为陈述）
+
+已实现并在真实代码上跑过：从基类子句读描述符身份；把一跳同文件/同类委托读成守卫；有界宏
+展开；带路径预算与事实求交的解释执行；身份域（token / uid / self / request）加敏感效果
+前提；属主关系；守卫覆盖（忽略、迟到、单分支、switch）；能力导出；带目的容量匹配的 Parcel
+拷贝范围。
+
+未实现，且每项在上面都有观测到的后果：变参/字符串化宏守卫（`##__VA_ARGS__`、`...`）；
+虚分派或成员指针分派绑定；IDL 生成的 dispatcher 入口（stub 不存在于源码树）；跨翻译单元
+跳转；ArkTS/JS 前端。这些属于 `analysis.py`/`entry_index.py` 的引擎/覆盖工作，由并发导入
+拥有——不是本 lane 可以单方面提交的改动。
+
+**证据等级。** 264 条全部是未验证的静态候选；每份报告里 `validated_vulnerability` 都是 0，
+`confirmed` 为 0。某个组件为 0 不等于它安全，一条候选也不等于一个漏洞。54 个组件是
+2026-10-17 的快照，不代表整个 OpenHarmony 社区。
+
+---
+
+# IPC 方法卡 — 0.9.1：新增四个家族在 54 个真实组件上的执行面（2026-10-17）
+
+本 lane、分支 `work/ipc-20261017`、基线 `6a41dc9`。检测器 **0.9.1** / 模型
+**`oh-ipc-2026.10-v10`**。0.9.1 在 0.9.0 之上加三件事：**显式限定名**的跨文件
+helper 解析（唯一匹配才接受；未限定名仍不做全名搜索）、把守卫陈述拆成
+"符号没有值"与"值有、但策略没有审阅账户归属"两种、以及为**跨服务代理链**保留身份
+变更点（`iface_cast<>` 句柄上的调用记边界，记跨过去的是调用者还是服务自身）。完整记录：
+`research/deliveries/ipc/20261017-bline-parcel-auth-flow.md`；机器可读：
+`research/evidence/interface/ipc/bline_rules_20261017_v10/`（与提交代码同一份；
+`_v9/` 是加边界记录之前的构建，保留备查）。
+
+**新增 5 条规则、4 个族。** DATA-02 `ipc.parcel.bounds` / `write-bounds`（CWE-20，
+越界读/写分开）；DATA-03 `ipc.parcel.lifecycle`（CWE-416，parcel view 被所属 parcel 的
+失效操作释放后仍被读）；AUTH-05 `ipc.auth.flow`（CWE-863，先按原调用者授权、后丢弃
+`ResetCallingIdentity` 返回值、再执行敏感操作）；DATA-04 `ipc.data.sensitive-flow`
+（CWE-200，披露类调用的结果写入 reply 且路径上没有匹配守卫）。每条都有正/修复/安全控制；
+`bounds` 只接受**命中目的缓冲区自身容量**的上界，`write-bounds` 用 `ReadRawData` 的第 2 参，
+不再把 `ReadRawData` 当作 memcpy 的长度位置。
+
+**实测口径。** 54 个固定组件、31,225 个入选文件、24,151 完整 + 7,074 部分 AST。生产 CLI 的
+M1 文件上限会拒绝大组件，所以测量走直接固定树（`git ls-tree` + `cat-file`），两个 pass：
+`complete-ast`（`completed`）**183 条**；`all-files`（含部分 AST、`blocked` 保留候选）
+**337 条**；154 条候选只在部分 AST 中出现。0.9.0 定稿前的中间构建曾给出 141/265，与更早
+CLI 表的 264 相互校验；提交代码在同一批固定 commit 上给出 183/337，差异来自两次测量之间
+对 relay/描述符路径的修改。**本卡与证据以提交代码的实测为准**，旧表已被取代。
+
+| 规则 | complete-ast | all-files | 命中组件（all-files） |
+|---|---:|---:|---:|
+| `ipc.relay.descriptor-boundary` | 143 | 238 | 18 |
+| `ipc.auth.missing` | 16 | 27 | 9 |
+| `ipc.auth.object-owner` | 0 | 2 | 1 |
+| `ipc.auth.guard-coverage` | 0 | 9 | 3 |
+| `ipc.capability.export` | 23 | 59 | 8 |
+| `ipc.parcel.copy-range` | 0 | 1 | 1 |
+| **`ipc.data.sensitive-flow`** | **1** | **1** | **1** |
+| **`ipc.parcel.bounds` / `write-bounds` / `lifecycle` / `auth.flow`** | **0** | **0** | **0** |
+| 其余 AUTH-03 四条 + `position-underflow` | 0 | 0 | 0 |
+
+**0.9.1 的跨文件解析是零候选变化。** 同一 54 组件、同一 commit 上，1d47160（0.9.0）
+与当前代码逐组件逐规则比较：`337/183 → 337/183`，`changed: []`；探针记录到它确实
+解析了跨文件目标：54 个组件共 25,221 次 `resolve` 调用，其中 **158 次命中另一文件**
+（`bundlemanager_bundle_framework` 69、`graphic_graphic_2d` 41、`window_window_manager` 10
+等 37 个组件有计数变化）。所以这次放宽改变的是"读到多少函数体"，不是候选判定。
+
+**跨服务边界：只记身份变更点，不出候选。** `iface_cast<IFoo>(remote)` 得到的句柄上的
+调用被记为一次跨服务边界；记录的是 `(file:line, 被调方法, service|caller)`——默认
+`service`（下游看到的是本服务，不是入口调用者），只有显式
+`SetCallingIdentity(<调用者 token>)` 且未 `ResetCallingIdentity()` 才是 `caller`。
+重置、恢复自身保存身份、非 `iface_cast` 句柄都有反例测试。它满足 B-2 的"保留身份变更点"，
+**不**声称能读下游守卫或追击任意深度代理链；边界计数进入报告的
+`Cross-service boundary coverage` 行。54 组件实测：**10 次边界，全部为 `service`**
+（`bundlemanager_bundle_framework`），**0 次**显式转发调用者身份。
+
+**四个零不是同一个结论，且都是插桩计数。** 包装分析器决策点的只读探针在 54 个组件上记录：
+入口可达函数里 88 个下标站点，**0 个下标来自 request parcel、0 个索引容量已知**；
+入口路径上 **0 个** `ReadRawData(dst,size)` 站点；parcel 失效调用 **0 次**、被失效命中的
+活动 view **0 个**；`ResetCallingIdentity` 之后到达的建模敏感操作 **0 次**。文本上界普查
+给出形状：`ReadRawData(` 163、`ReadBuffer(` 89、`RewindRead(` 32、`SetReadPosition(` 2、
+`Seek(` 152；`Reuse(` 与裸 `ResetCallingIdentity();` 均为 **0**——这 54 个组件的身份操作
+全是"保存—恢复"协议（`SetCallingIdentity(` 380 处）。另：3,305 次 reply 写入中 6 次的实参
+是披露类结果，只有 1 次没有匹配守卫。
+
+**唯一的 DATA-04 候选已按固定源码复核并保留。** `security_access_token`@`17d88bfb`
+`interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp:104`：
+`GetRemoteHapTokenInfoInner` 的守卫是 `if (!IsAccessTokenCalling())`，函数体比较
+`IPCSkeleton::GetCallingUid()` 与 `ACCESSTOKEN_UID`，而后者在同文件 `:34` 初始化为
+`static const int32_t ACCESSTOKEN_UID = 3020;`。**常量值是可解析的**，缺的是审阅过的
+账户归属：默认 `service_account_roles` 为空，没有 reviewed assignment 说 3020 属于哪个
+服务账户、授权哪些操作。消息因此区分两种事实——`does not resolve that symbol to a value`
+（真的读不到）与 `these sources bind to 3020 at ...:34, but no reviewed account assignment
+in this policy credits that value`（读到了、没归属）——本候选是后者。候选保持
+`candidate`，**它不是漏洞**，也不能用白名单压掉；是否内置该账户归属属于 owner 决定。
+
+**性能。** `graphic_graphic_2d`（3,401 入选文件）此前单组件 42 分钟未完成，`faulthandler`
+定位在 `resolve()` 的全量函数扫描；改为 `functions_by_file_name` 索引后 **83.9 秒**完成，
+逐规则结果与索引前一致。提交版本上该组件是 all-files **120** / complete-ast **80**，
+差异来自 relay/描述符路径的修改；54 组件整轮约 16 分钟。
+
+**限制。** A 线的 Bounds/Integer 事实当前不可用，未联动；同文件 `static const` 与无参
+`#define` 的**值**可以解析，但默认策略没有审阅账户归属（见上）；跨服务代理链只记
+`iface_cast<>` 句柄上的边界（同文件/同 owner 一跳与 `GetInstance` 委托、显式限定名一跳），
+不读下游守卫；敏感 source 仍是命名表而非通用 taint；`applications_permission_manager`
+在本语料中是 0 个 C/C++ 单元而非"扫描通过"。动态复现与 B-3 首批的现状见本节之后的
+"0.9.1 + B-3 首批 + AUTH-01 动态复现"一节：AUTH-01 已有一对真实修订的隔离执行，
+Parcel 族没有。所有候选仍是未验证静态候选，`confirmed` 为 0。
+
+---
+
+# IPC 方法卡 — 0.9.1 增补：AUTH-01 / DATA-02 真实修复对已隔离执行，B-3 前端 0.3.0（2026-10-17）
+
+**动态执行不再是零。** 在本地 Docker 验证镜像（`ohscanner-validation-local:20261016`，
+clang 14 + ASan/UBSan，无网络）里重跑了 `auth01_descriptor_bypass` harness：
+`inputmethod_imf` vulnerable `e663b470` 的 `no_token` 攻击用例 **3/3 稳定触发**
+（`messages_sent=1`），fixed `5eaddcab` 对同一用例返回 `-74` 并继续服务 `correct_token`
+对照。这是 B 线第一份**真实修复前/后 + 伪造请求负例 + 无害对照**的隔离执行记录，
+完整记录在 `research/evidence/interface/ipc/auth01_dynamic_20261017/`。
+
+它**不**把任何候选升级：`validated_vulnerability=0`，reachability 仍是 `partial`——
+harness 直接调用 stub，真实 IPC 入口与调用者身份没有被证明。
+
+**Parcel 族第一组真实修复对（DATA-02）。** `pasteboard` `MessageParcelWarp::ReadRawData`
+vulnerable `3287e854` / fixed `ddee7c00`（修复加入 `AshmemGetSize` 与实际容量校验），
+在 WSL 本地隔离目录用 clang 14 + ASan/UBSan 编译两个修订与真实 cutils `Parcel`：
+vulnerable 会用包里带来的任意 fd 做 mmap 并返回文件内容（声明大小超过文件时调用方
+越界读 **SIGBUS**），fixed 对同一请求返回 `null`；小载荷与既有大小校验两个修订一致。
+静态检测器对这对提交是**已记录的假阴性**（规则未把 fd backing 建模为 sink；
+`Interpreter.resolve` 拒绝非 `this` 接收者，探针 `dest_sites=1/dest_request=1`、
+函数体内 0 次 `mmap`/`ReadFileDescriptor` 求值）。记录在
+`research/evidence/interface/ipc/b1_parcel_pasteboard_20261017/`；`validated_vulnerability=0`。
+DATA-01/03 仍无公开修复对。
+
+**B-3 前端 0.3.0。** `src/ohscanner/detectors/interface/arkts_js.py` 用
+tree-sitter-javascript / tree-sitter-typescript 解析 `.js`/`.ts`/`.ets`，硬性输出
+`complete` / `partial` / `unsupported` 三态。ArkTS `struct` 与装饰器不在 TS 语法内，
+`.ets` 通常报 `partial`，结果里明确写"不声称 component/decorator 语义"。五条规则
+（component_exposure、webview_bridge、path_taint、dangerous_eval、native_bridge）都有
+正例与同函数守卫抑制例，含 `want.parameters?.x` 直接作实参的内联形态、一层同文件
+helper 传播（`sink <- helper`），以及 N-API 边界的声明导入/命名导入/namespace/
+`requireNapi`/`.z.so`、unmapped、DevEco `cpp/types/lib<name>/index.d.ts` 路径声明；
+`tests/test_ipc_arkts_js.py` 32 条。
+真实文件上还修了两个绑定级问题（`dfb187a`）：行号改用字节偏移，Parser 每次新建。
+Catalog 注册与 `requirements*.txt` 依赖属 owner 共享面，未改；语法包只在本地 venv 安装。
+可直接套用的注册片段、依赖与来源链见 `research/methods/interface/ARKTS_JS_CATALOG_REGISTRATION.md`。
+
+**N-API binding map。** 只读同一扫描内的 `.d.ts`：`declare module 'lib*.so'`，或
+DevEco 模板的 `cpp/types/lib<name>/index.d.ts`（该精确路径下由目录名给出模块名，
+读取 `export const f: (a: number) => T`）。没有声明的模块/导出只计 `native_unmapped`，
+不按名字猜；finding 带 `native_parameter_check` 义务，明说声明不是运行时校验。
+
+**真实语料。** 对 `applications_settings @ 5e8af0a2` 的 2045 个 `.ets/.ts/.js` 文件
+（ets 1343 complete / 552 partial，ts 122 / 2，js 26）完整跑通：112221 调用点、
+40 个导出的 Ability/Extension 类、30 个路径 sink、1 个 eval 站点、0 个 bridge 注册、
+15 个 N-API 调用点（1 个 `.so` 声明 / 2 个签名；2 个映射，13 个 unmapped），
+**0 条候选**。0 的原因已逐点核对（字面量 `new Function('return this')()`；
+`want.parameters?.bundleName` 送进 `bundleManager` 而非文件 sink；Ability 类无文件
+sink；映射成功的 native 调用实参不是 `want.parameters` 派生值），记录在
+`research/evidence/interface/ipc/b3_arkts_real_20261017/`。这是覆盖结论，不是安全结论。
+
+**口径。** 647 条测试通过（skipped 4），lane 范围检查 `violations: []`。
+
+---
+
+# IPC method card — six-family control depth, and what 18 real components say about the rules (2026-10-17)
+
+Deliverable of lane `lanes.ipc` on branch `work/ipc-20261017`, base `6a41dc9`. Detector unchanged
+(`0.8.0`, model `oh-ipc-2026.10-v6`, pinned read-only tree `635b3e0`). Full records:
+`research/deliveries/ipc/20261017-six-family-depth-unit.md` and
+`research/deliveries/ipc/20261017-six-family-component-measurement.md`; machine-readable evidence in
+`research/evidence/interface/ipc/component_audit_20261017/`.
+
+- **The gap was measured, not asserted.** 18 pinned components, 10,413 files, **1,528,120 lines**
+  analysed (8,364 complete ASTs, 1,874 partial), 719 s: **100 candidates, 0 confirmed**. Five of the
+  eleven catalogued rules fired at all. AUTH-01 (`ipc.relay.descriptor-boundary`) is **54** of the
+  100; AUTH-03 is **2** (only `ipc.auth.object-owner`); **DATA-01 is 0 for both rules**. AUTH-03's
+  `caller-class`/`identity-domain`/`service-identity`/`request-identity` and DATA-01's
+  `copy-range`/`position-underflow` never fired once in 1.53 M lines.
+- **Three of those six silent rules had no positive control at all; they do now.** Added
+  `tests/fixtures/ipc/auth03/{caller_class,identity_domain}*`, `tests/fixtures/ipc/data01/position_underflow_*`
+  and an AUTH-01 `safe` control, with `tests/test_ipc_family_depth.py` asserting the *exact* candidate
+  set per rule and a one-line minimal pair per fixed control. **A rule that has never been made to
+  fire is indistinguishable from one that cannot fire**; that is now a checked invariant, per family
+  and per rule, not a total.
+- **The census was then run, and it separates the six silences into three kinds** — over the same
+  10,413 scoped files, counting the policy's *own* named constants
+  (`research/deliveries/ipc/silent_rule_shape_census.py`, read-only, 18/18 measured):
+  - **Unexercised — the shape simply is not there.** `RewindRead(<expr with minus>)`: **0**
+    occurrences (plain `RewindRead(` exists 19 times). `Verify*Token(<caller UID>)`: **0** — while
+    `Verify*Token(` occurs 190 times and `GetCallingUid` 1130 times, in 14 and 18 components
+    respectively, and the two **never combine**. So `identity-domain` and `position-underflow` are
+    silent because these 18 components contain no instance of what they key on. Different corpus,
+    not a rule fix.
+    **Corrected 2026-10-17: half of this bullet was a measurement defect.** The `RewindRead` count
+    came from `RewindRead\([^)]*-[^)]*\)`, whose `[^)]*` cannot cross the `)` of a nested call, so it
+    scored the rule's real shape as absent. `RewindRead(<args with minus>)` occurs **2** times
+    (`communication_ipc` `hitrace_invoker.cpp:127`,`:132`), both guarded, and both reached only
+    across a translation-unit boundary the walk does not follow — `position-underflow` is a
+    **coverage** fact, not an unexercised one. The `identity-domain` half stands, and was later
+    confirmed by a second, independent method (see the 30-component section below).
+    Detail: `research/deliveries/ipc/20261017-data01-mechanism.md` §4.
+  - **Coverage — the dispatcher is not in the source tree.** `caller_class_sensitive_calls` occurs
+    **70** times and still nothing fires. The cluster is `security_access_token` (59), of which 9 sit
+    in `services/privacymanager/src/service/privacy_manager_service.cpp` — the *implementation*,
+    which ought to be reachable. It is not reachable in the analysed sources because
+    `services/privacymanager/idl/IPrivacyManager.idl` is present while **no
+    `privacy_manager_stub.cpp` is**: the stub with `OnRemoteRequest` is **IDL-generated at build
+    time**, so there is no IPC entry to reach those calls from. (Same for
+    `services/accesstokenmanager/idl/IAccessTokenManager.idl`.) The remainder are client-side
+    (`privacy_kit.*`, `privacy_manager_client.cpp`), i.e. the caller surface, not an entry path.
+    **The fix is coverage — model the IDL entry, or record "this component's entries are generated"
+    as a limitation instead of leaving a bare 0.**
+  - **Needs review, and one exact match.** `copy_calls` occurs **665** times in 15 components and
+    fires nowhere, but they are concentrated in the transport/serializer layer
+    (`serializer.c`, `buffer_object.cpp`, `binder_invoker.cpp`, the client FFI), not in
+    `OnRemoteRequest` handlers — `dbinder_service_stub.cpp`'s 5 are the exception and are **not
+    yet checked one by one**. Contrast `owner_calls`: **2** occurrences, in one component, and
+    `ipc.auth.object-owner` fires **2** times in that same component — an exact shape-to-candidate
+    match, and the one rule here whose firing is fully accounted for.
+- **AUTH-01's descriptor identity is resolved across files, so a single-`.cpp` fixture measures a
+  different branch than a component audit.** `token_sync_manager_stub.cpp` in
+  `security_access_token`@`17d88bfb36be` yields **9 candidates alone and 0 with its own header**;
+  a pairwise bisect over the 35 files under `services/tokensyncmanager` shows **exactly one**
+  companion — `include/service/token_sync_manager_stub.h` — that suppresses, and it is the one that
+  states the base clause (`IRemoteStub<ITokenSyncManager>`), making the comparison
+  `descriptor != ITokenSyncManager::GetDescriptor()` a **matched guard**. 0 is correct; the 9 were
+  the false positive. All 28 existing fixtures feed one file at a time, so a fixture can only
+  express the "identity not stated" branch — a fixture for "compared against a *different*
+  interface" must also supply a base-clause-bearing header.
+- **Checked against all 100: none is that artifact.** The scope includes headers (`.h` is 20–55 % of
+  each component's selection), and every candidate's message falls on an *entry* branch, not an
+  identity branch (`detector.py:27`/`:32`): 24 "no descriptor comparison in the entry", 19 "dispatch
+  path, no matched guard", 2 "unresolved member-pointer dispatch". Spot-verified:
+  `dbinder_service_stub.cpp:164` `DBinderServiceStub::OnRemoteRequest` dispatches on `code` with no
+  `ReadInterfaceToken` at all — a true candidate.
+- **A rejected invocation still writes a report whose counts read zero.** The first driver call passed
+  a bare component name instead of `owner/name`; the driver wrote
+  `counts: {source_files_audited: 1069, candidates: 0}` alongside
+  `shard_errors: [ValueError: invalid declared repository name, files_not_analyzed: 1069]`.
+  Indistinguishable from a component with no candidates if `counts` alone is read. Both aggregators
+  now refuse `shard_errors` non-empty or a `repository` without `/`, and record the refusal with the
+  report hash. `window_window_manager` read 0 from such a leftover and 10 after the rerun.
+- **`variant` was read by no test, so it could lie.** The shared manifest's
+  `account_role_authorized_fixed` was labelled `fixed` while its `expected_rule` named
+  `ipc.auth.missing` — the opposite claim. The matrix test branches on `expected_rule` only, so the
+  relabelling silently converted a negative control into a positive one with every test still green.
+  The label is corrected and `test_ipc_family_depth.ManifestContractTests` now enforces
+  `positive ⟺ expected_rule is not None`. Whether that row should instead be a real negative control
+  (it needs an explicit-policy path — its own `policy_context` says so) is left to the import author.
+- **What this argues for, in cost order:** model the IDL-generated entry so `caller-class` has an
+  entry to reach (coverage, and it is a fix to scope rather than to the rule); check the
+  entry-internal copy calls one by one to decide whether `copy-range`'s silence is right; pick the
+  next corpus **by shape** for `identity-domain`/`position-underflow` rather than by component name;
+  make descriptor identity an explicit recorded field on the candidate instead of a message template,
+  so "unresolved" can be counted rather than read; and give AUTH-02/03/04, CAP-01, DATA-01 the named
+  mechanism fields AUTH-01 has, so a candidate's claim is assertable and not only its prose.
+- **What it does not claim:** nothing here promotes anything. All 100 stay `candidate`; zero
+  candidates is not safety, and a candidate is not a vulnerability. `all-files` runs `blocked` with
+  zero scope counters by design and is the same interpretation applied twice, not a second source.
+  Per-component counts from earlier rounds were taken under other model versions and are not
+  comparable to this table; they were not reconciled.
+
+---
+
+# IPC method card — a shape count is an upper bound: 30 components, and what the identity rules actually require (2026-10-17)
+
+> **Corrected the same day by [交付项 7](../../deliveries/ipc/20261017-interpreter-attribution-auth03.md)**, which
+> measured the interpreter's own attribution instead of a text classifier. Three points below are
+> superseded:
+>
+> 1. The bullet "these rules also require a modelled sensitive effect" holds for **`request-identity`
+>    only**. `service-identity` fails earlier: all 17 census sites are **in scope** and the walk evaluates
+>    **none** of them (every enclosing function is client/kit/utility code), so it is a **coverage**
+>    gap like `caller-class`, not a precondition the corpus fails. Measured over the same 30 components:
+>    **145** predicate calls evaluated, `caller` 102, unattributable 31, same-file-shadowed 8,
+>    `request` 4 — and **`caller_uid` 0, `self` 0**. The silence is the interpreter's, not the corpus's.
+> 2. `ability_manager_stub.cpp:3464-3467` should read **3461/3465** (the four statements; file sha256
+>    `7b59dfca…` unchanged, so it was transcription, not drift).
+> 3. `request` **1** is a **lower bound**. `bundle_installer_host.cpp:1838` is a second request-derived
+>    binding the text classifier refused (its argument arrives via a parameter) and the interpreter
+>    resolves it; measured 2, and no candidate moved — both sites still emit nothing.
+>
+> The both-side control also got stronger: the 102 `caller` evaluations are the negative side (a
+> predicate handed the caller's own identity stays silent) as against the 4 `request` bindings that
+> *did* record identity issues.
+
+Second deliverable of lane `lanes.ipc` on `work/ipc-20261017`, base `6a41dc9`. Detector unchanged
+(`0.8.0`, `oh-ipc-2026.10-v6`, pinned read-only tree `635b3e0`). Records:
+`research/deliveries/ipc/20261017-data01-mechanism.md`,
+`research/deliveries/ipc/20261017-shape-corpus-and-auth03-identity.md`; evidence in
+`research/evidence/interface/ipc/{component_audit_shape_20261017,hitrace_guard_pair_20261017,auth03_identity_probe_20261017}/`.
+
+- **Twelve more repositories, and the split is unchanged.** 30 pinned components, 17,546 files,
+  **2,435,311 lines**: **166 candidates** (from 100 over 18 components). The increase is **entirely**
+  in the three rules that already fired — AUTH-01 54→**92**, CAP-01 24→**43**, AUTH-02 12→**21**;
+  AUTH-04 and AUTH-03's `object-owner` are **flat**, and the six silent rules are **still 0**.
+  Downloading components thickens a signal that exists; it does not create one. That is the answer to
+  "pick a wider corpus" as a route to parity between the families.
+- **Split the shape by argument class before believing it.** Two read-only classifiers now do that
+  with the policy's *own* names and one local-assignment hop (`copy_range_arg_classes.py`,
+  `permission_arg_classes.py`; anything travelling through a container, a member or a function is
+  reported as `identifier`/`unresolved`, never guessed). Result for the AUTH-03 identity rules: 237
+  files contain a permission predicate and **1,608** arguments are classified as
+  `caller_token` **260**, `identifier` 761, `other` 541, `permission-literal` 28, `self` **16**,
+  `request` **1**, `caller_uid` **0**. The safe form dominates the corpus by an order of magnitude.
+- **A shape is not a candidate: these rules also require a modelled sensitive effect.** The identity
+  issues are collected into `state.identity_issues` and emitted only when a `sensitive_calls` name is
+  reached on the same path (`analysis.py:1020`). Nine probes, both passes agreeing: the four real
+  statements from `ability_manager_stub.cpp:3464-3467` (permission name, pid and uid all read out of
+  the parcel, handed to `VerifyPermission`) produce **no finding at all** inside an entry; add one
+  `StartAbility()` on the same path and `ipc.auth.request-identity` fires. Both-side control: the same
+  predicate handed the caller's own `TokenID` stays silent. So the 16 `self` and 1 `request` sites are
+  an **upper bound** on candidates, not a count of them.
+- **An `*Inner` name is not the barrier.** A same-file helper named `VerifyPermissionInner`, called by
+  name from the entry, **is** walked (probe fires). The real component's silence is therefore a
+  cross-translation-unit fact — its caller is the IDL-generated dispatcher — the same gap as
+  `caller-class`, not a naming rule.
+- **A zero can also mean "no detector declares this language".** `applications_permission_manager`
+  is an ArkTS application: 74 selected files, **0 analysed** (65 arkts / 4 js / 5 ts, all
+  `files_in_scope_without_a_claiming_detector`), written out as `counts.candidates = 0` like any
+  other empty result. The second batch's evidence records a `zero_reason` field for it. Pick a corpus
+  by **file language**, not by repository name.
+- **The census at 30 components** (same script, `--detail <label>` prints every site): `copy_calls`
+  665→**1860**, and the `copy-range` claim survives the widening — 0 copy calls take their length from
+  a parcel, while `too few arguments` grew to 184 (`ReadRawData` 139, `ReadBuffer` 45: the rule's
+  `index=2` cannot reach their real length argument). `owner_calls` 2→**57** with candidates **flat at
+  2** — the owner-uid read count is *not* the rule's trigger. `RewindRead(` 19 and
+  `RewindRead(<with minus>)` 2, unchanged. `caller_class_sensitive_calls` 70→71, still 0 candidates,
+  still the IDL gap.
+- **Still not measured:** how many candidates the two coverage gaps (cross-TU hop, IDL entry) would
+  actually yield; both edits fall in `analysis.py`, which a concurrent import owns. The honest bound
+  is 71 `caller_class_sensitive_calls` calls and 17 identity-argument sites — and each still has to
+  pass the sensitive-effect precondition.
+- **What it does not claim:** nothing is promoted; all 166 stay `candidate`. The probes are built from
+  statement text plus fixture declarations, not from the components' real translation units, so they
+  establish which preconditions the rules require, not how those components behave. The single
+  request-derived site is the permission check itself; nothing here says it is a vulnerability.
+
+---
+
+# IPC method card v0.8 — the first candidate review moved the failure from the candidates to the rules (2026-10-11)
+
+Owner's next step was to stop widening the scan and to review the first representative candidates,
+so the review that follows is the deliverable, not more candidates. All 41 were reviewed (not
+sampled): **37 likely false positives, 4 plausible-but-unproven, 0 confirmed**. Full record:
+`https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/143fa63fa479be79fa80ca5f8322c74afecc273c/docs/research/ipc_candidate_review_2026-10-11.md`; reproduction scripts:
+`research/experiments/interface/ipc/review_*.py`.
+
+- **No rule was changed by this review.** Changing a rule moves the candidate set, so it lands
+  separately with its own positive/fixed/safe controls and a five-component re-run. This card is a
+  record of *why* the rules misfire, with file:line, not a claim that they are fixed.
+- **M1 — the descriptor check is discarded by an identity test aimed at the wrong class.**
+  `analysis.py:582-585` accepts `X::GetDescriptor()` only when `X == fn.owner`. A real stub lives in
+  `TokenSyncCallbackStub` and implements the interface `ITokenSyncCallback`, so the qualifier never
+  matches and the guard becomes `UNKNOWN`. Control experiment (relax only that test, nothing else):
+  `security_access_token` goes from **6 AUTH-01 candidates to 0**. Measured: 9 of that component's
+  12 descriptor comparisons are interface-qualified — while **all 28 fixtures use the unqualified
+  form**, which is why 29 design scenarios passed and the corpus shape was never exercised. The
+  interface identity *is* source-derivable (the `IRemoteStub<I>` base-class argument:
+  `IRemoteStub<ITokenSyncCallback>`, `IRemoteStub<OnPermissionUsedRecordCallback>`), and a
+  name-based `FooStub -> IFoo` guess would **fail** — the second example has no `I` prefix.
+- **M2 — the check is delegated one call away.** `screen_session_manager_stub.cpp:42` is a relay;
+  the descriptor check is in `OnRemoteRequestInner:50` of the same file, so the root state has none.
+  Reproduced with a probe that prints the interpreter's own descriptor set.
+- **M3 — the authorization vocabulary is a fixed list of names.** `models.py:130-135` plus the
+  hard-coded names in `analysis.py:596-601` cover `CheckPermission`/`VerifyPermission`/
+  `VerifyAccessToken`/(`IsSystemAppCalling`, `IsPrivilegedCalling`, `IsAccessTokenCalling`, ...) but
+  none of `IsRootCalling`, `IsNativeProcessCalling`, `IsCallerValid`, `IsPermissionGranted`,
+  `IsSystemCalling`, `IsSACalling`. The component proves both directions of this in one repo:
+  `accesstoken_callback_stubs.cpp` uses `IsAccessTokenCalling()` (recognised) and produces no
+  AUTH-02; `token_sync_manager_stub.cpp` uses `IsRootCalling()`/`IsNativeProcessCalling()`
+  (unrecognised) and produces three. The rule also misfires *inversely*: AUTH-01 reports the guard
+  helper itself as the reached handler (`... reaches ... without interface-descriptor validation:
+  TokenSyncManagerStub::IsRootCalling`). "A check exists but was not recognised" is not "no check".
+- **M4 — a recognised permission function compared against a project error enum is not recognised.**
+  `CheckPermission(code)` is in the vocabulary, but the call site is `if (ret != SOFTBUS_OK)`, and
+  `SOFTBUS_OK = 0` is an enum member in *another file* (`softbus_error_code.h:1788`). The success
+  test only accepts `0`/`PERMISSION_GRANTED`/`true` literals.
+- **M5 — the dispatcher guard's dominance is unproven, and the rule says so.** The
+  `update_updateservice` candidates carry `dispatcher-guard-observed`: the detector *saw* the guard
+  and still emitted, because dominance over the transaction was not established. Checked by hand:
+  the guards really do dominate (`update_service_stub.cpp:421-426` precede the single dispatch at
+  `:432`, and the dispatch is a `map.find` + member-pointer call with no bypass). The improvement is
+  to *prove* dominance per dispatch shape and to record "dominates" separately from "exists,
+  dominance unknown" — not to drop the candidate.
+- **M6 — the guard lives in the implementation class, in another translation unit**
+  (`window_manager_stub.cpp:389` -> `window_manager_service.cpp:1608`). That is file-local analysis
+  behaving as designed, not a defect; the bounded improvement is one controlled hop from a stub
+  method to its same-named implementation, recorded with provenance like the alias table.
+- **Partial parses are caused by three mechanical shapes, not by `#if` nests.** Reproduced with the
+  project's own parser, printing every ERROR node: format-macro string concatenation
+  (`PRIu64`/`PRIu32`/`SCNd64`), the member-pointer call `(this->*f)(...)`, and **`return` used as a
+  macro argument** (`ENGINE_CHECK(cond, return ret, "...")` — 20 ERROR nodes in one file). None of
+  those lines is near the candidates in the same file, and `update_service_stub.cpp`'s candidates
+  are anchored on `dispatch=map_member_ptr`, i.e. the entry index recovered the dispatch binding and
+  the dispatcher guard *despite* the partial parse. **Partial affects the coverage counters and the
+  provenance of obligations; it is not the cause of these candidates.**
+- **What the review argues for, in cost order:** fix M1 (removes ~20 of 41 and *raises* accuracy,
+  since today it reads "checked" as "unchecked"); prove M5 dominance; extend M3 to local helper
+  predicates and record each predicate's own criterion, plus a "is this a dispatch target" test for
+  AUTH-01; normalise the three parse shapes; bounded cross-file constants for M4; one hop for M6.
+  What it argues against: deleting M1's qualifier test (that would also erase the stronger "compared
+  against the wrong interface" finding) and dropping M5's candidates (which are honest).
+- **The four candidates worth following — none is a vulnerability claim:** the only export with no
+  caller check anywhere on the path (`screen_session_manager_stub.cpp:1778`), `session_stub.cpp:592`,
+  and the two dsoftbus stubs that genuinely skip the descriptor check and bypass
+  `IRemoteStub<T>`'s default. All four stop at the same wall: the capability surface is outside this
+  repository (the dsoftbus plugin `.so`, `foundation/graphics`) and needs cross-repo source or a
+  runtime observation.
+
+---
+
+# IPC method card v0.7 — partial candidates carry obligations, identity is bound, counts close (2026-10-11)
+
+Owner decision that produced this card: accept the five-component round as a **real-component audit
+experiment**, into pending review — **not** as a formally integrated detector. **Stop expanding
+rules.** The owner fixes the shared platform's expression of partial coverage and its retention of
+obligations; this branch supplies the counterexamples, the obligations for partial candidates, and
+the regression tests. The two-pass scheme is demoted to a **control experiment**, not the long-term
+path. Also required: report test count / candidate count / confirmed count **separately**.
+
+- **Partial-only candidates no longer carry a blank obligation list.** The shared runner emits
+  obligations only for a `completed` run, so the `blocked` pass's candidates had none — and the CCR
+  measured that an empty list reads as "nothing needs proving". The driver now synthesises five
+  **standard questions** for any candidate the runner recorded no obligation for:
+  `entry_reachability`, `caller_identity_conditions`, `guard_effectiveness`,
+  `parse_completeness_impact`, `configuration_path_existence`. Status is `unknown`, origin is
+  `audit_driver`, and each is a **question, not an assertion** — which is why a partial file may
+  legitimately carry it. The driver fabricates no AST fact. An empty list is never "nothing to
+  verify"; `parse_completeness_impact` says so explicitly (a partial AST can hide statements, so
+  the candidate is **kept, not cleared**).
+- **Candidate identity is now bound to repository, full commit and rule version.** Key:
+  `(repository, commit, rule_id, rule_version, file, line, source_sha256)`. `merge_shard_runs`
+  records `rule_version` / `model_version` / `observed_detector_versions` / `observed_detector_ids`
+  / `sources` per candidate, and `merge_audit_reports()` merges **across reports** on the same key.
+  Obligations are **unioned per source** and never overwritten by a later pass.
+- **A real identity split, caught by the fixture.** Putting `rule_version` (built from
+  `detector_id@version`) into the key split every both-pass candidate into two rows — the fixture
+  went 4 → 7 candidates — because the two passes had different detector IDs. The distinction that
+  matters is the **interpretation**, not the variant: both passes now declare
+  `interpretation_id = "ohscanner.interface.ipc"`, so one interpretation at two scope limits stays
+  **one row**, with the variant id kept as recorded metadata. Corollary, and the reason this is
+  written down: **a genuinely different algorithm must declare a different `interpretation_id`**,
+  or it will be silently merged with this one.
+- **File accounting closes, and it is displayed.** `bucket_closure` splits planned files into six
+  named buckets — `parse_complete`, `parse_partial`, `parse_failed`, `unclaimed_by_detector`,
+  `dropped_by_loader`, `not_run_files` — with the residual in `files_unaccounted` printed
+  separately rather than folded into another bucket. Building this found a **real attribution
+  bug**: a non-UTF-8 `.cpp` dropped by the shared loader was being counted as "no detector claims
+  it" although `cpp` is a declared language; the unclaimed bucket is now **declared-language**
+  based and that file lands in `dropped_by_loader`. Across the five components every bucket total
+  closes (`files_unaccounted == 0`); `parse_failed` / `dropped_by_loader` / `not_run_files` are 0
+  by measurement, not by omission.
+- **Report schema v2 counts three things separately.** `counts` gives `source_files_audited`,
+  `candidates`, `candidates_with_runner_obligations`,
+  `candidates_with_driver_synthesized_obligations`, `confirmed_vulnerabilities`,
+  `false_positives_reviewed`; the console prints them on separate lines. Test count, candidate
+  count and confirmed count are never collapsed into one number.
+- **Artifacts are persisted, with provenance.** Default out-dir `outputs/reports/` (gitignored),
+  plus a `*.manifest.json` per component: commit / git tree / snapshot / plan sha, argv, cwd,
+  Python + platform + git versions, counts, bucket closure, and the **sha256 of the JSON and MD
+  artifacts**. The manifest is written next to the JSON it describes.
+- **Shard wording, corrected.** v0.6 said shard invariance "is verified on real code", which reads
+  as a general claim. What was actually shown is: **one component under one alternative shard
+  configuration yields a consistent candidate set** (`window_window_manager`, `--max-files 600`,
+  2 shards vs 1 shard, same 15 candidates, both deltas empty). That is a statement about **that
+  configuration**, not a claim that arbitrary sharding is invariant. Component-global rules need
+  whole-component evaluation, which this pipeline does not do, and cross-file detection needs an
+  explicit **file-local vs component-global** rule-execution semantics that is not yet defined.
+  This is the correction to the v0.6 bullet below.
+- **Test count and candidate count, stated apart.** `tests/test_component_audit.py` **45 items**
+  (+12 this round: 4 closure, 2 cross-report merge, 2 identity/variant, 2 manifest, 1 CLI counts,
+  1 manifest placement); full suite **375 OK**. Five components: 4983 files, **41 candidates**
+  (26 with runner obligations, 15 driver-synthesised), **0 confirmed**.
+- **Still not done:** the platform change itself is the owner's (this branch only files the CCR and
+  the regression tests that must flip); the detector is still not in `catalog.py` and has no CLI
+  subcommand; the 15 partial-only obligations are **standard questions, not runner evidence**;
+  root-cause intersection is `not_measured` in a component audit; artifacts are persisted but
+  **not committed**.
+- **Next work, per owner priority:** review 5–8 representative candidates (covering complete and
+  partial-only) — original code and key context, false positive or not and why, upstream checks /
+  call preconditions / configuration limits, how far confirmation goes, whether build or runtime
+  validation is feasible. The goal is to **use review results to steer the algorithm**, not to add
+  more candidates.
+
+---
+
+# IPC method card v0.6 — auditing a whole component, not just a fixture (2026-10-11)
+
+- Detector: `ohscanner.interface.ipc` unchanged, plus a scope-restricted variant
+  `ohscanner.interface.ipc.complete-ast` (same interpretation, `required_facts = ("ast",)`).
+  New module: `src/ohscanner/detectors/interface/audit.py`. **No public contract, schema, catalog
+  or CLI change.**
+- **What it is.** A driver that takes a component at a pinned commit and produces one reviewable
+  audit: a deterministic scope plan, an explicit list of what was read and what was not, the
+  candidates with the code excerpt they were found in, and the coverage table. It answers
+  "what did this component yield, and what did we not look at", for any component — not the
+  question "is this component safe", which it refuses to answer.
+- **Why two passes.** `ohscanner.interface.ipc` returns `blocked` on any partial parse, and the
+  shared runner then does three things at once: `scope_files`/`scope_loc` become 0, every
+  applicable file is marked `not_analyzed`, and `evidence_obligations` are not emitted (they are
+  gated on `report.status == "completed"`). Measured on `communication_dsoftbus`: 4 candidates
+  were still produced while their obligations were an **empty list**. A conservatism that drops
+  the proof obligations of findings it did produce is not conservative — it removes the review
+  chain. The driver therefore runs the same shard twice: a `complete-ast` pass that *completes*
+  (real scope counters, obligations recorded, incomplete files declared `unexamined:
+  incomplete_ast:<status>`) and an `all-files` pass that keeps recall from partial trees but is
+  `blocked`. Candidates are merged on `(file, line, rule_id, source_sha256)` and each records
+  which passes saw it. The blocked pass's zero is printed **next to that pass's real
+  applicable/analyzed counts**, with the reason, never alone.
+- **The fix belongs to the owner, and is filed as a request, not applied.**
+  `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/143fa63fa479be79fa80ca5f8322c74afecc273c/docs/contracts/ohscanner_blocked_run_coverage_ccr.md` proposes (c) a third run status
+  (`partial`/`completed_with_gaps`, counted as a gap so the overall report stays
+  `completed_with_limitations`) plus (b) emitting obligations from the findings rather than
+  filtering them by run status. This branch changed none of `contracts.py`, `runner.py`,
+  `execution.py`, `catalog.py` or the CLI.
+- **Production scope is excluded by whole path segment**, not substring: `test/tests/unittest/
+  mock/sample/example/demo/benchmark/fuzz/third_party/...`. A substring rule misses `/tests/`; the
+  segment rule is pinned by a regression test. Sharding is deterministic (sorted paths, greedy
+  split under the byte/file bounds, sha256 per shard, `plan_sha256`), and shard invariance is
+  verified on real code, not only on the fixture **(scope of this claim corrected in v0.7: it is
+  "one component under one configuration", not arbitrary sharding)**: `window_window_manager` at `--max-files 600`
+  gives 2 shards and the **identical candidate set** (15, both directions empty) and identical
+  merged coverage as the 1-shard run.
+- **Files no selected detector claims are counted, not lost.** `.js/.ts/.ets` are in
+  `SOURCE_LANGUAGES` but outside this detector's `("c","cpp")`, so
+  `files_selected` can exceed the parse map. `files_in_scope_without_a_claiming_detector` records
+  them — in scope, claimed by nobody, hence neither a miss nor an examined clean file.
+- **Measured (five real components, final code, 4983 files / 51,531,827 B, all
+  `validated_vulnerability: 0`, one shard each):** `security_access_token` 20 candidates
+  (all complete), `window_window_manager` 15 (4 complete / 11 partial-only),
+  `communication_dsoftbus` 4 (2/2), `update_updateservice` 2 (both partial-only),
+  `distributeddatamgr_kv_store` **0**. Of the 41 total, **26 were seen by both passes
+  (obligations recorded) and 15 appear only in partial files (obligations not recorded — flagged
+  per candidate in the report)**.
+- **Honesty by construction.** Excerpts are read from the pinned blob, never the worktree (a test
+  rewrites the worktree and asserts the marker is absent). A shard that raises is reported in
+  `shard_errors` and never rendered as "no candidates". Zero candidates renders as "not proof of
+  safety". Planned-vs-actually-read is measured (`plan_vs_load`), so a dropped non-UTF-8 blob is
+  visible rather than silent.
+- **Tests**: `tests/test_component_audit.py` (33 items: scope/exclusion/sharding determinism,
+  the two-pass merge, blocked-vs-completed counters, pinned-blob excerpts, shard failure
+  reporting, the language gap). Full suite **363 OK**.
+- **Not done, stated:** the detector is not registered in `catalog.py`, so the global CLI cannot
+  select it (owner's decision); the driver is not a CLI subcommand; the 15 partial-only candidates
+  still need manual obligations; the driver costs ~2× wall clock and one interpretation now
+  carries two detector IDs (so `diagnostic_id` differs between passes); root-cause intersection is
+  `not_measured` in a component audit (no labelled set is bound to a component).
+
+---
+
+# IPC method card v0.5 — contract v2: source binding and the consequence field (2026-10-11)
+
+- Detector: `ohscanner.interface.ipc` **0.3.0** (was 0.2.0); model unchanged
+  (`oh-ipc-2026.10-v1`). Contract: **v2**, absorbing three CCRs in one version bump.
+- **What changed for a consumer of the output.** Every diagnostic from a first-party detector now
+  carries `source_sha256` and a derived `source_binding` (`bound` / `unbound`), and diagnostic IDs
+  changed value because the hash is part of their input. The consequence dimension added in v0.3
+  is now a **field**, not only message text: `consequence_impact` / `consequence_cwe`.
+- **Required vs optional, and why the split is where it is.** The source binding is required *in
+  the produced schema*, not at the detector call site: the runner already holds the
+  `SourceUnit.sha256` and binds the finding to it, so a detector has nothing to copy and no way to
+  copy it wrong. A detector that *does* declare a hash must agree with the unit — a disagreeing
+  hash **fails the run**; it is neither rewritten nor downgraded to `unbound`. Correcting a hash is
+  forging evidence, whichever direction it is "fixed". The consequence fields stay optional and
+  coexist with `candidate_cwe`: mechanism (how the boundary failed) and consequence (what it can
+  expose) are two different answers, and neither overwrites the other.
+- **`unbound` means unknown, never "passed".** A v1 payload has no hash, loads with
+  `source_binding="unbound"`, and must not be handed a hash it never had. The field proves **text
+  binding** only: not reachability, not guard dominance, not attacker control, not impact.
+- **The catalogue is still the detector's, not the schema's.** `reviewed_consequence()` returns an
+  impact only if this detector's versioned catalogue reviewed it, and maps the catalogue's own
+  `unknown` sentinel to `None` so no consumer can sort an unclassified consequence as a category.
+  The catalogue's internal consistency is asserted at import time, not at the first finding.
+- **Cross-version comparison is named, not silently allowed** (`compare.py`): a v1-vs-v2
+  comparison runs, records `schema_versions`, and adds a `CROSS-VERSION COMPARISON` limitation —
+  row counts and locations stay comparable, IDs do not.
+- **What did not change.** Every status semantic of v0.4/v0.3 is restated in contract v2 §4:
+  `completed` is not safe, an empty finding list is not proof of safety, an unsupported language is
+  `not_applicable` rather than a miss, and a consequence is a possibility until the Evidence gate
+  is met. Providers (`src/providers/*`) stay at `schema_version=1`: a third-party tool's raw output
+  cannot be claimed as bound to a source revision by us.
+- **Tests**: `tests/test_contract_v2_source_binding.py` (25 items covering each bullet of contract
+  v2 §7), plus machine-readable assertions in `tests/test_ipc_disclosure_consequence.py`. Full
+  suite **323 OK**.
+- Limits: a v1 payload still has no binding, and can only be labelled `unbound`; the comparison
+  names a version split without blocking it; `source_sha256` binds the *scanned* text and does not
+  by itself prove which upstream commit that text came from (the Git-side chain is M1's
+  `git_source.py`, not yet joined to this one). Contract: `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/48bce9eab77fdf22acbb708cd9bf481ca32e7667/docs/contracts/ohscanner_detector_contract_v2.md`.
+
+---
+
+# IPC method card v0.4 — bounded macro expansion (2026-10-11)
+
+- Detector: `ohscanner.interface.ipc` 0.2.0; model unchanged (`oh-ipc-2026.10-v1`). New module:
+  `src/ohscanner/detectors/interface/cpp_macros.py`. No public contract, schema or CLI change.
+- **What it is.** A token-level expander over `#define`s collected from the scan's own sources,
+  with a per-character map back to the original line. **What it is not:** a preprocessor.
+  `#include` is never followed; conditional definitions are recorded, never selected; variadic /
+  stringify / token-paste definitions and conflicting definition variants are refused, not guessed.
+- **Why it is here**, stated against the measurement rather than the intention: it was ported to
+  close two gaps at once, and on ten real components **one of them did not materialise**.
+  - Parse coverage: **+83 complete parses (4,384 → 4,467, +1.9%)**, gained only from expanding
+    statement-carrying macro arguments. Made **monotone** by a gate — an expansion that turns a
+    parseable file into a partial one is dropped (29 drops corpus-wide), so coverage can never
+    regress.
+  - The "guard hidden in a macro" false-negative source: **absent in this corpus.** 12,716
+    invocations expanded, 3,645 of them carrying control flow (`return` / `if`), and **zero**
+    introduced a call the policy models as an authorization guard — hence a candidate delta of
+    exactly **0** on all ten components (88 → 88, no rule changed count).
+  - The competing explanation was measured and excluded, not assumed away: of **314 refused**
+    macro definitions, **0** mention a modelled guard callee. So the pattern is genuinely not
+    there, not hidden behind the refusals. OpenHarmony's variadic macros are logging and
+    error-code checks (`CHECK_AND_RETURN`-style), whose guard is an error code, not a permission.
+- **Deviations from the ported source, both deliberate.** An invocation is replaced whole, argument
+  list included (round1 replaced only the macro-name token, so `#define CHECK(x) Allowed(x)`
+  invoked as `CHECK(c)` became `Allowed(c)(c)`). And refusals are split into *fatal* (the file
+  falls back to its unexpanded bytes) and *refused* (one macro left as written) — round1 collapsed
+  both and blocked the whole file, so a single ambiguous `LOG` cost the file every other expansion.
+- **Kept for a structural reason, not for a finding.** The mechanism is proven to work where the
+  pattern occurs: with expansion off the candidate is reported, with it on it is not, and the
+  control source with the macro removed still reports. That makes a class of false positive the
+  competition penalises — reporting an unguarded path that the source does guard — structurally
+  impossible. **No candidate was added or removed by this round.**
+- **Orthogonal to the entry index, measured.** `analysis` parses expanded text while `entry_index`
+  parses raw text; a probe builds both on all ten components and compares roots and dispatch edges
+  — **0 gained, 0 lost on every component**, including the 186-file, 6,126-invocation
+  `security_access_token` and the 497-root `window_window_manager`. The coupling remains a known
+  design point; it did not fire on this corpus.
+- Limits: the catalogue is the scan's visible sources, never an include resolution; 5 components
+  hit the 400-source / 6 MB budget; a guard inside a macro whose callee is outside
+  `IpcPolicy.boolean_permissions | result_permissions` (e.g. `IsCallerValid`) still creates no
+  authorization fact and stays a `dispatch_binding` obligation. Report:
+  `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/48bce9eab77fdf22acbb708cd9bf481ca32e7667/docs/research/ipc_scanner_v0_4_macro_expansion_2026-10-11.md`.
+
+---
+
+# IPC method card v0.3 — consequence dimension (2026-10-11)
+
+- Detector: `ohscanner.interface.ipc`; model `oh-ipc-2026.10-v1` plus a versioned
+  **consequence catalogue** in `models.py`. No public contract, schema or CLI change.
+- **Why a second dimension.** The competition scores CWE accuracy and completeness
+  separately, and a candidate answers two different questions: *how* the trust
+  boundary failed (the mechanism) and *what it can expose* (the consequence). The
+  mechanism CWE alone cannot answer the second, and the second does not follow the
+  family. Of the 39 advisory records in the corpus, **15 name information disclosure
+  or an out-of-bounds read as the official impact**, spread over AUTH-02 (10),
+  DATA-01 (6), AUTH-03 (5) and AUTH-04 (1); **4 of the 12 verified S2 pairs** are in
+  that set.
+- **Classification.** `consequence_for(rule, calls)` promotes a finding to
+  `information_disclosure` when its modelled operation is one of the reviewed
+  read-type APIs (`DISCLOSURE_CALLS`), whatever the mechanism was; otherwise the
+  rule's baseline applies (`boundary_bypass`, `unauthorized_effect`,
+  `restricted_category_access`, `identity_confusion`, `cross_principal_effect`,
+  `out_of_bounds_read`, `capability_exposure`). The call that drove the promotion is
+  recorded, so the classification can be reviewed rather than trusted.
+- **A CWE only where the catalogue can justify one.** `information_disclosure` →
+  CWE-200, `out_of_bounds_read` → CWE-125, `capability_exposure` → CWE-668. The other
+  consequences are named without a number, because their CWE depends on what the path
+  reaches and asserting one would be over-claiming.
+- **The mechanism CWE is unchanged.** `candidate_cwe` still answers *how*; the
+  consequence is a second, different answer carried in the finding message and in a
+  dedicated `consequence` obligation, never a replacement.
+- Measured on production code of ten real components (5,270 files): 88 candidates,
+  **0 without a consequence**; `information_disclosure` appears on **two different
+  rules** (`ipc.auth.missing` 3, `ipc.relay.descriptor-boundary` 2), which is the
+  measured form of "disclosure is not confined to one family".
+  Report: `outputs/reports/consequence_dimension.md` (ignored artifact,
+  regenerate with `research/experiments/interface/ipc/measure_consequences.py`).
+- **A consequence is a possibility, not an established effect.** Calling a read API
+  does not show that anything was returned to an unauthorized caller; only the
+  evidence gate can promote it. The finding stays `candidate/unassessed`.
+- **Known gap, raised as a CCR:** the consequence is only machine-readable through
+  the message text, because `DetectorFinding` has a single CWE field. The measurement
+  treats a candidate with no recoverable consequence as a hard failure rather than
+  silently counting zero. See `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/48bce9eab77fdf22acbb708cd9bf481ca32e7667/docs/contracts/ohscanner_detector_contract_v1_consequence_ccr.md`.
+
+---
+
+# IPC method card v0.2 — entry discovery (2026-10-10)
+
+- Detector: `ohscanner.interface.ipc` 0.2.0; model unchanged (`oh-ipc-2026.10-v1`). New module:
+  `src/ohscanner/detectors/interface/entry_index.py`. No public contract, schema or CLI change.
+- Entry discovery replaced a hardcoded name allowlist (`OnRemoteRequest` / `*Inner` in `*Stub` /
+  `IpcPolicy.service_entries`) with a source-derived dispatch index:
+  - **Dispatchers by signature, not by name**: a member taking `(uint32_t code, MessageParcel&,
+    MessageParcel&, MessageOption&)`. This is what reaches `IPCObjectStub::SendRequest`, whose class
+    does not contain `Stub` and whose name is not `OnRemoteRequest`.
+  - **Code-to-handler bindings** recovered from the four shapes that actually occur: a
+    member-function-pointer table initialised in a *constructor*, a callable table filled by
+    `map[CODE] = std::bind(&Cls::Fn, this, ...)`, `switch (code)` cases (returning the handler or
+    calling it with parsed business objects), and `if (code == X) { return Handler(...); }`.
+  - **Preprocessor context is recorded, never decided**: a case inside `#ifndef CONFIG_IPC_SINGLE`
+    carries that condition on the entry; reachability under a build configuration is not asserted.
+  - **Graded evidence**: `source_dispatch` > `source_dispatch_case_call` > `virtual_override` >
+    `unresolved_handler`. Ambiguous overloads, unresolvable transaction codes and maps that are
+    defined but never dispatched are emitted explicitly; nothing is guessed.
+  - **Cross-file and one-hop delegation**: a dispatch-bound handler is admitted as a root even when
+    defined in another file; `Type::GetInstance()->Method` is followed only when the receiver type is
+    source-backed (object macro or explicit qualified receiver) and the target has exactly one
+    definition. No general cross-file name resolution was added, and `resolve()` is still same-file.
+- **Dispatcher-level guards are not modelled.** Where a dispatcher guards before dispatch (e.g.
+  `IsCallerValid()` / `IsPermissionGranted(code)`), the resulting candidate is classified
+  `AUTH-04 / ipc.auth.guard-coverage` — the uncertainty is coverage, not absent authorization — and
+  carries a `dispatch_binding` obligation. It is downgraded in classification, never suppressed.
+- Measured (ten real components, production code only, 5,270 files): 135 dispatchers, 592 bindings,
+  690 source-derived entry roots against 109 for the old predicate; 72 unresolved transaction codes.
+  Historical S2 roots indexed at their own revisions: 58 sample×revision records, 33 source-derived,
+  25 reachable only because `models.py` names them, 0 unreached.
+- Parser fixes required to reach that coverage: statement-carrying macro arguments
+  (`ENGINE_CHECK(cond, return ret, "msg")`) and `(this->*(iter->second))(...)` both broke the parse of
+  the very functions being sought; both are now normalised byte-for-byte, each recorded as a
+  limitation rather than assumed away.
+- Limits: no macro expansion, overload resolution or virtual-dispatch proof; `->*` targets are
+  confirmed textually because they are error nodes; entries are not reachability; three components
+  have no dispatcher source in-repo (IDL-generated). Report:
+  `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/48bce9eab77fdf22acbb708cd9bf481ca32e7667/docs/research/ipc_scanner_v0_2_entry_coverage_2026-10-10.md`.

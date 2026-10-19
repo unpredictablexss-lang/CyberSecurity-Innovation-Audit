@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "current_component_source_index",
+  "status": "index_only",
+  "repository": "c11/perf-read-only",
+  "commit": "ab30df6a01797af455d2abbbc9533ab15964ee68",
+  "target_id": "current-component:c11/perf-read-only",
+  "git_tree": "b4dc74e0cdf75d923f4c6bfc44be6a453ca86915",
+  "snapshot_sha256": "dec4682e6b6e3901e06ddefe4c322c2cc5c1bd0da443140adb6f7c9b1c3efc7c",
+  "provenance": "local_git_objects",
+  "profile_id": "light-ast",
+  "environment": {
+    "python": "3.12.14",
+    "git": "git version 2.55.0.windows.5",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4",
+      "tree-sitter-javascript": "0.25.0",
+      "tree-sitter-typescript": "0.23.2"
+    },
+    "parse_profile": "light-ast",
+    "build_profile": "none",
+    "macro_expansion": false,
+    "product_manifest_locked": false
+  },
+  "scope": {
+    "tracked_entries": 1384,
+    "out_of_scope": 1280,
+    "non_source": 88,
+    "symlinks": 0,
+    "submodules": 0,
+    "oversize": 0,
+    "binary_or_non_utf8": 0,
+    "selected_source_files": 16,
+    "selected_source_bytes": 18108,
+    "skipped": [],
+    "git_tree": "b4dc74e0cdf75d923f4c6bfc44be6a453ca86915",
+    "declared_scope": [
+      "src/ohscanner"
+    ],
+    "source_archives": []
+  },
+  "coverage": {
+    "parsing_status": {
+      "complete": 15,
+      "partial": 1
+    },
+    "languages": {
+      "cpp": 16
+    }
+  },
+  "source_units": [
+    {
+      "file": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/harness.cpp",
+      "language": "cpp",
+      "sha256": "8d5cda72a52ecf7396ef0e98f61204cf880767d5b29f3310649a605353cabf8e",
+      "blob_oid": "23c3498fce0a9a84991b1970f17f903e94773ed9",
+      "archive_binding": null,
+      "loc": 78,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 2,
+      "ast_calls": 19
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/observations.h",
+      "language": "cpp",
+      "sha256": "6175c044079545b4522eb69fc4c8cd9f04ad9d289b831902c00c223c50594bee",
+      "blob_oid": "e395d1cfa8a669539b3cc4d0f8b79f7209e2af69",
+      "archive_binding": null,
+      "loc": 23,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 1,
+      "ast_calls": 0
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/poc_compat.h",
+      "language": "cpp",
+      "sha256": "1396fd9f81962c9ae96d398150d4ab0d7c62b2c63cbab6891eb95f27c9713a66",
+      "blob_oid": "242c449af1f1645ae93c97ab2de65a46d1baac30",
+      "archive_binding": null,
+      "loc": 24,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 0,
+      "ast_calls": 0
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/hilog/log.h",
+      "language": "cpp",
+      "sha256": "19ededc6af92b00343cfe9112739302bc52be6708c3d4ec5fee515314e39fd7a",
+      "blob_oid": "402ba13c095a3fa62a4d68de625339ad46229c90",
+      "archive_binding": null,
+      "loc": 70,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 5,
+      "ast_calls": 0
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/ipc_object_stub.h",
+      "language": "cpp",
+      "sha256": "a9f3b2347f824cd20e0c4d4672448a2b3b496197d19db33575364f733864a723",
+      "blob_oid": "61e53399dc1d5677fb9f8d99a31d506a2f1c3b5e",
+      "archive_binding": null,
+      "loc": 25,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 3,
+      "ast_calls": 0
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/ipc_types.h",
+      "language": "cpp",
+      "sha256": "93b2501a7f34c314fa9ceff870392100ed47c3cc7db63196a82dfa561236c80f",
+      "blob_oid": "2273f174ed8954d48ed7eee4983301c02c46ae40",
+      "archive_binding": null,
+      "loc": 13,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 0,
+      "ast_calls": 0
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/iremote_broker.h",
+      "language": "cpp",
+      "sha256": "63e473bc83bf6c8ee38c98d50a16940deff6de02fe9790b3100419009cb8d9e5",
+      "blob_oid": "2949a27da92260a6eee0f25e6b76636c4563e9e9",
+      "archive_binding": null,
+      "loc": 32,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 2,
+      "ast_calls": 0
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/iremote_stub.h",
+      "language": "cpp",
+      "sha256": "cc3711ec83f6aa0876b716efabe048940053d5ccce129d9059cacc7a9809b34f",
+      "blob_oid": "358915ff827e8a1b59c58d17a043c11fd0e8202a",
+      "archive_binding": null,
+      "loc": 34,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 3,
+      "ast_calls": 1
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/message_option.h",
+      "language": "cpp",
+      "sha256": "829b93365fa16a3ff40eda0c43696430f4f56d04ec268a429b5f13912f7bf13a",
+      "blob_oid": "c18cfcd74ba77998b5a32f6cc7046636a850ff7a",
+      "archive_binding": null,
+      "loc": 44,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 6,
+      "ast_calls": 0
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/message_parcel.h",
+      "language": "cpp",
+      "sha256": "2f4ab2e400de85bf01b863a25db46294c7eb6cf73220f9fef278ffef26475ec8",
+      "blob_oid": "fd08e63a52c7635280b11214b7fcec73c872ee0b",
+      "archive_binding": null,
+      "loc": 42,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 5,
+      "ast_calls": 2
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/peer_holder.h",
+      "language": "cpp",
+      "sha256": "bb6f032f93ac2691c7451889cd7fb0c1f59d045b9469c56e502e7bbfa8675816",
+      "blob_oid": "2328fb8c8f71996241eaa879c77f8a14e730af35",
+      "archive_binding": null,
+      "loc": 9,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 0,
+      "ast_calls": 0
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/securec.h",
+      "language": "cpp",
+      "sha256": "f363b77ce60e28ce0e72094999ad64ccaf4d0667537f8ceee58b37b0bb4552ed",
+      "blob_oid": "6fa5b3de8b461bbba80f1c235d746c9364e881d0",
+      "archive_binding": null,
+      "loc": 47,
+      "parse_status": "partial",
+      "parse_issues": [
+        "{\"end_line\": 44, \"kind\": \"missing\", \"start_line\": 44}"
+      ],
+      "ast_functions": 2,
+      "ast_calls": 3
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stubs.cpp",
+      "language": "cpp",
+      "sha256": "4d07393e022f9da4bffe1edb79e5132bb60d01ca36f93fad11641b7845829979",
+      "blob_oid": "1f199d8d1eef9c85fb6a925a67019212fce048f9",
+      "archive_binding": null,
+      "loc": 66,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 9,
+      "ast_calls": 6
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp",
+      "language": "cpp",
+      "sha256": "e617b9d4e9dd3efdc9c02e8604cb6d228fdd37977995ae0c4ae6ba536dfc3aad",
+      "blob_oid": "514b7073bead71afa788242c8d9f20263825010c",
+      "archive_binding": null,
+      "loc": 57,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 3,
+      "ast_calls": 13
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp",
+      "language": "cpp",
+      "sha256": "d90914115fbc4f682a2863e44eb6985ca195f6952e1e9923081ce4fdeb47cb89",
+      "blob_oid": "35d1f1b6bdcbb439f60180ceefad7f30e47df425",
+      "archive_binding": null,
+      "loc": 91,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 5,
+      "ast_calls": 28
+    },
+    {
+      "file": "src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/nocopyable.h",
+      "language": "cpp",
+      "sha256": "7aff44c75bbee99d699c0c91a05c7352e664d983d72c28472521b804f092b841",
+      "blob_oid": "b8b88dad294defb8fbe77ade70c77f2f4932562c",
+      "archive_binding": null,
+      "loc": 16,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "ast_functions": 4,
+      "ast_calls": 0
+    }
+  ],
+  "detector_runs": [],
+  "candidate_count": 0,
+  "validated_vulnerability": 0,
+  "limitations": [
+    "C/C++ and JS/TS syntax are bounded; unsupported ArkTS remains partial/unknown, without type/manifest semantics.",
+    "Source repository name is user-declared; local Git object identity is checked, not official remote ownership.",
+    "Headers default to C++ grammar; no GN/product compile flags, macro instantiation or full device coverage.",
+    "No vulnerability detector executed. candidate_count=0 is not a security finding.",
+    "Non-UTF8 and oversized sources are skipped and counted; report scope reflects actual selected files.",
+    "Tracked tar.gz/tgz archives are read-only and bounded; archive member paths are virtual and bind to archive Git blob plus archive/member SHA-256."
+  ]
+}

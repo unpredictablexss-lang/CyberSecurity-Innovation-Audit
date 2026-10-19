@@ -1,0 +1,254 @@
+{
+  "stage": "D4",
+  "branch": "feat/teammate-d-sensitive-exposure-20261017",
+  "base_head": "c250bd57fa6670c21afa82a2e4684c0bc4c21298",
+  "detector_version": "0.4.0",
+  "source_trace": "Pinned source and standard component build graph verified; adjacent-date HiLog DAC source evidence is conditional; product image selection/runtime ACL remain unverified",
+  "tests": {
+    "targeted_suite": "tests.detectors.data.test_d3_historical",
+    "methods_run": 17,
+    "passed": 17,
+    "failed": 0,
+    "environment": "Windows Python 3.10 workspace venv with tree-sitter-c 0.24.2 and tree-sitter-cpp 0.23.4; source mirrored from WSL working tree",
+    "wsl_native": "not run in this Codex environment: launching WSL returned WSL/E_ACCESSDENIED; prior Ubuntu Python also lacked tree_sitter_c. Windows Python 3.10 workspace venv tests passed."
+  },
+  "compile_check": "python -m py_compile passed",
+  "diff_check": "D4 Markdown trailing-whitespace scan passed; git diff --check unavailable because the local d4-dev mirror has no .git directory; actual project checkout was not modified",
+  "docker_available": false,
+  "runtime_poc_executed": false,
+  "public_runner_admission": "not changed; D3 evidence retains target parse-partial limitation; current public full-source re-scan not performed in D4",
+  "validated_vulnerability": 0,
+  "product_impact": "unknown",
+  "precision_recall": "not measured",
+  "limitations": [
+    "standard SoftBus component target graph and both service identity variants are verified, but product configuration, final target graph, and image inclusion are unverified",
+    "source: 256-byte formatting buffer; Secure-C contract rejects overlength without emitting the original record; target linked Secure-C implementation and runtime boundary behavior unverified",
+    "source default adapter log threshold is 0; target product override/runtime level unverified",
+    "Adjacent-date HiLog source shows a 0600 logd:logd read-control socket and SoftBus uid variants system/dsoftbus, suggesting conditional ordinary-app DAC denial; target product ACL, configuration, and runtime read behavior remain unverified",
+    "no independent holdout",
+    "public local-AST admission pending platform owner"
+  ],
+  "implementation_sha256": "f350b249d191ab987a4d4d7391a48739b88c32579abbdd875d81eb04d2db43a6",
+  "test_sha256": "46c00461987c8081a30b386b6dc3249f31eb958dfcfb78d2a85601d57f39b5ff",
+  "updated_on": "2026-10-18",
+  "additional_static_evidence": {
+    "log_buffer_bytes": 256,
+    "module_prefix": "[TRAN]",
+    "prefix_bytes": 6,
+    "vsprintf_s_dest_max": 250,
+    "dest_max_includes_nul": true,
+    "contract_max_payload_bytes": 249,
+    "overlength_behavior": "vsprintf_s returns -1 by contract; SoftBusLog emits length warning and returns before original SoftBusOutPrint",
+    "default_adapter_log_level": 0,
+    "product_override": "unknown",
+    "hilog_default_persistence": "disabled",
+    "developer_read_path": "hilog/hdc shell",
+    "ordinary_app_or_unauthorized_read": "unverified",
+    "securec_product_version": "unverified",
+    "contemporaneous_hilog_control_socket": "2022-03-28 HiLog commit: hilogControl SOCK_SEQPACKET mode 0600, owner/group logd:logd",
+    "conditional_ordinary_app_access": "Only if hilogd is running, the configured hilogControl socket is created unchanged, and the caller lacks extra privilege, DAC 0600 logd:logd denies a normal app direct socket open; service activation, product config, alternate read paths, and device behavior are unverified.",
+    "softbus_uid_variants": "Pinned DSoftBus configs select system (non-musl) or dsoftbus (musl); product-selected variant is unknown",
+    "securec_reference": {
+      "repository": "openharmony/third_party_bounds_checking_function",
+      "commit": "ebef58f44419d0694e984d25acac231e737d60ff",
+      "commit_date": "2021-03-11",
+      "header_blob": "23bac2c4d83fd6abbeb066da48d076020a44f160",
+      "implementation_blob": "012f522c4987d99a448a5f4b6a157a5d3a271e9f",
+      "facts": "destMax includes NUL; vsprintf_s returns -1 on error and clears destination byte 0",
+      "limit": "libsec_static is declared, but product-resolved exact dependency revision is unknown"
+    },
+    "hilogd_config_disabled_flag": 1
+  },
+  "doc_validation": {
+    "json_files": [
+      "D4_VALIDATION.json",
+      "D4_SOURCE_MANIFEST.json",
+      "D4_SOURCE_API_VERIFICATION.json",
+      "D4_REAL_SOURCE_REPLAY.json",
+      "D4_HILOG_ACCESS_EVIDENCE.json",
+      "D4_HILOG_COMMIT_API.json",
+      "D4_HILOG_TREE_API.json"
+    ],
+    "parse": "passed",
+    "copied_into_repo_mirror": "outputs/d4-dev/research/data_sensitive",
+    "tests_rerun": "D4 targeted tests 17/17, data detector tests 33/33, DSoftBus source verifier 44 rows/35 assertions, and HiLog ACL verifier full saved recursive tree, four exact blobs/path mappings plus config/client/server assertions all passed."
+  },
+  "local_recheck_2026_10_18": {
+    "environment": "Windows Python 3.10 workspace venv; local d4-dev mirror",
+    "d4_targeted_tests": {
+      "command": "python -m unittest discover -s tests\\detectors\\data -p test_d3_historical.py -v",
+      "passed": 17,
+      "failed": 0
+    },
+    "data_detector_suite": {
+      "command": "python -m unittest discover -s tests\\detectors\\data -v",
+      "passed": 33,
+      "failed": 0
+    },
+    "whole_suite_before_snapshot_binding_hardening": {
+      "ran": 493,
+      "failed": 16,
+      "errors": 40,
+      "skipped": 13,
+      "scope_note": "Whole-repository Windows run is not a D4 acceptance gate; failures include sandbox temp-directory Git permission errors, symlink/platform assumptions, and POSIX Clang executable tests."
+    },
+    "source_verifier": {
+      "syntax": "passed",
+      "execution": "passed with --source-cache outputs/d4-source-cache using the pinned byte snapshot and recorded complete GitHub API commit/tree/path evidence",
+      "verified_rows": 44,
+      "unique_cached_blobs": 23,
+      "fact_assertions": 35,
+      "scope": "cache bytes checked against Git blob SHA-1, manifest SHA-256 and size; path mappings from complete recursive trees; 35 assertions cover code, build graph, libsec dependency, service identities, and source-level safe/unrelated controls; securec/hilog references are adjacent-date immutable source only"
+    },
+    "real_source_replay": {
+      "command": "python research/data_sensitive/d4_replay_real_source.py --output research/data_sensitive/D4_REAL_SOURCE_REPLAY.json",
+      "before_commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "before_status": "blocked",
+      "before_candidates": 1,
+      "after_commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "after_status": "blocked",
+      "after_candidates": 0,
+      "partial_files_each_revision": 6,
+      "interpretation": "Direct research detector replay over 10 exact profile source files per revision; partial parsing blocks full-scope conclusion, and candidate delta is not vulnerability/fix proof. Public Runner admission remains unchanged."
+    },
+    "dashboard_integration": "not available: D4 remains a research detector and was not admitted to the public Runner/Catalog or panel",
+    "upload": "none; local-only work",
+    "real_source_replay_rerun": {
+      "rerun": "passed",
+      "matches_recorded_artifact": true,
+      "before_candidates": 1,
+      "before_status": "blocked",
+      "after_candidates": 0,
+      "after_status": "blocked",
+      "partial_files_each_revision": 6
+    }
+  },
+  "source_verifier": {
+    "script": "research/data_sensitive/d4_verify_sources.js",
+    "command": "node research/data_sensitive/d4_verify_sources.js --git-dir <local communication_dsoftbus git object database>",
+    "result": "passed",
+    "source_objects": 44,
+    "commits": 2,
+    "fact_assertions": 35,
+    "scope": "source identity, standard component build graph, libsec dependency, service identities, source-level safe/unrelated controls and static code facts; no target product image/runtime ACL or final dependency revision claim",
+    "local_cache_command": "node research/data_sensitive/d4_verify_sources.js --source-cache outputs/d4-source-cache",
+    "local_cache_result": "passed; offline source bytes compared with recorded GitHub API complete recursive-tree commit/tree/path evidence and manifest Git blob/SHA-256/size",
+    "script_sha256": "f9f37dc2898ebe7e36c5124faa4d0492334d7d87179b1ac5254e5bffe32b56f2"
+  },
+  "reproducible_artifacts": {
+    "D4_REAL_SOURCE_REPLAY.json": "f35dbfb09fca95c16068f2a574ce85c4635643d1dbc8de60326b29a0a3d6ab5c",
+    "d4_replay_real_source.py": "a45fb1c75fdccd3037f49230d6ff180d21335e5c61602f9d29ffee7b469c2b06",
+    "D4_SOURCE_MANIFEST.json": "43c02663d041907acb52a9688cc09379823e0919d8fc4738b6cc60a98e18fb07",
+    "D4_SOURCE_API_VERIFICATION.json": "562757da6c17405115f6b6c646949b84754cc5da879cd6b58826f0a51d3b3862",
+    "DRAFT_PR_BODY.md": "bb47dffd37cd74a7469dc573d470722d27158d21f942475503a0c1fdee6543f6",
+    "D4_HILOG_ACCESS_EVIDENCE.json": "afd73a167ad9c05208680d59470dc712e03d8b35778c02f01e8530530d206a4b",
+    "d4_verify_hilog_access.py": "e30575393f7dffe7a599e195e6154f7cca9c611f7f0ad1dbd6ac15ffa2bdd795",
+    "D4_HILOG_COMMIT_API.json": "f9a1bc1eb870650a649b2b223436df1684ea4c8ae3d4b346f841894eb84edcf9",
+    "D4_HILOG_TREE_API.json": "c1d1a2d71274c6db531d9e388d7c4ea41de3a725ae70c9e484d48eb550c994aa"
+  },
+  "hilog_access_evidence": {
+    "repository": "openharmony/hiviewdfx_hilog",
+    "commit": "45e229a0228a3dc2bb2f01eeb69b2d0ff33c4c31",
+    "commit_date": "2022-03-28",
+    "files": [
+      {
+        "path": "services/hilogd/etc/hilogd.cfg",
+        "blob": "032464a48a69e144d0e51366c5347f0df13c2e9f",
+        "fact": "hilogControl SOCK_SEQPACKET permissions 0600 uid/gid logd; hilogInput is separate and 0666"
+      },
+      {
+        "path": "services/hilogtool/main.cpp",
+        "blob": "85a6900b0eb73bd188bc5457c963045f9cbbfedf",
+        "fact": "client creates controller connection with CONTROL_SOCKET_NAME"
+      },
+      {
+        "path": "frameworks/native/include/hilog_common.h",
+        "blob": "9b9158ed80513b3d39c6afd4e97ffe9e9d9c379b",
+        "fact": "CONTROL_SOCKET_NAME is hilogControl"
+      },
+      {
+        "path": "services/hilogd/service_controller.cpp",
+        "blob": "f13be17310b0630d4152fe5a53a25e55ab843ec5",
+        "fact": "query handler reads hilog buffer and sends log response"
+      }
+    ],
+    "interpretation": "Adjacent-date source shows a conditional direct-socket DAC boundary only. hilogd.cfg also has disabled=1 while start-mode=boot; static config does not prove service activation/socket existence. Product/runtime ACL remains unverified.",
+    "exact_source_snapshot": {
+      "repository": "openharmony/hiviewdfx_hilog",
+      "commit": "45e229a0228a3dc2bb2f01eeb69b2d0ff33c4c31",
+      "tree_sha": "db71e7f70ead8bc90a5ea157884b154a48b33777",
+      "recursive_tree_entries": 151,
+      "tree_truncated": false,
+      "verified_source_blobs": 4,
+      "verified_tree_path_mappings": 4,
+      "offline_evidence": "D4_HILOG_ACCESS_EVIDENCE.json",
+      "verifier": "d4_verify_hilog_access.py",
+      "verifier_sha256": "e30575393f7dffe7a599e195e6154f7cca9c611f7f0ad1dbd6ac15ffa2bdd795",
+      "verification": "passed: blob SHA-1/SHA-256/size, exact recursive-tree paths, disabled flag, distinct socket permissions, client and server read flow",
+      "saved_commit_response": "D4_HILOG_COMMIT_API.json",
+      "saved_tree_response": "D4_HILOG_TREE_API.json",
+      "tree_response_sha256": "c1d1a2d71274c6db531d9e388d7c4ea41de3a725ae70c9e484d48eb550c994aa",
+      "commit_response_sha256": "f9a1bc1eb870650a649b2b223436df1684ea4c8ae3d4b346f841894eb84edcf9"
+    }
+  },
+  "draft_pr_observation": {
+    "number": 17,
+    "url": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/17",
+    "state": "open",
+    "draft": true,
+    "base": "main",
+    "base_sha": "e510c99c67f31ec6c73365f9ab749c79ca6ff0a1",
+    "head": "feat/teammate-d-sensitive-exposure-20261017",
+    "head_sha": "c250bd57fa6670c21afa82a2e4684c0bc4c21298",
+    "observed_on": "2026-10-18",
+    "mutation_performed": false
+  },
+  "local_delta_vs_pr_head": {
+    "reference": "GitHub PR #17 head branch, read-only file fetch at the recorded head SHA",
+    "head_sha": "c250bd57fa6670c21afa82a2e4684c0bc4c21298",
+    "observed_on": "2026-10-18",
+    "method": "GitHub file blob SHA compared with local git hash-object SHA; no local branch checkout or remote write",
+    "files": [
+      {
+        "path": "src/ohscanner/detectors/data/historical.py",
+        "pr_head_blob": "9a3933df6f1a9e68590e642a11decc007295f7cd",
+        "local_blob": "82e5ba7bebc24a49962baa10f5c8fcf3d9ad9f9c",
+        "state": "modified_locally"
+      },
+      {
+        "path": "src/ohscanner/detectors/data/historical_profiles.json",
+        "pr_head_blob": "66e3db6a6dbb494af0aa3c68048863d53a6d07f1",
+        "local_blob": "66e3db6a6dbb494af0aa3c68048863d53a6d07f1",
+        "state": "unchanged"
+      },
+      {
+        "path": "tests/detectors/data/test_d3_historical.py",
+        "pr_head_blob": "22cb7daed15b4936d0c33c0ae157c0f34acb17ea",
+        "local_blob": "782a716b13a8f9501277f563e40fbb84824b0f58",
+        "state": "modified_locally"
+      },
+      {
+        "path": "docs/项目现状与下一步.md",
+        "pr_head_blob": "4e9ba6e0e9fed0fcf7c97ba3462155330f75eead",
+        "local_blob": "9dd4bbe394aa8dd8838515e5b1510cc18ad8e586",
+        "state": "modified_locally"
+      }
+    ],
+    "limitation": "D4镜像本身无 .git。已对照 4 个已核实的现有 PR head 文件 blob 构造隔离基线，并对新增文件构造局部树；19 个路径可以应用且哈希逐个匹配 D4 镜像。但这不是完整 PR head checkout，所有新增路径是否已存在当前远端未重核；没有提交或推送。"
+  },
+  "local_patch_reconstruction": {
+    "artifact": "outputs/D4_PR17_LOCAL.patch (本机工作区内的本地补丁)",
+    "reference_head": "c250bd57fa6670c21afa82a2e4684c0bc4c21298",
+    "changed_paths": 19,
+    "apply_check": "passed",
+    "apply_to_isolated_tree": "passed",
+    "applied_files_sha256_match_local": "19/19",
+    "verification": "git apply --check/apply 通过；隔离树含 4 个已核实的 PR head 现有文件基线和本地新增文件，应用后 19 个路径 SHA-256 与 D4 镜像一致。它不是完整 PR head checkout；当前全部新增路径是否已存在远端尚未重核。",
+    "actual_checkout_mutated": false,
+    "commit_or_push": false,
+    "upload_authorized": false,
+    "baseline_tracked_paths": 4,
+    "new_file_paths": 15,
+    "remote_new_path_absence_fully_verified": false
+  }
+}

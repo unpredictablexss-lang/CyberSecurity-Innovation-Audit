@@ -1,0 +1,491 @@
+{
+  "schema_version": 1,
+  "package_id": "cpp-shared-ptr-delayed-singleton-20261014",
+  "detector": {
+    "id": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.4.0",
+    "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+  },
+  "candidate_status": "candidate/unassessed",
+  "candidate_cwe": "CWE-362",
+  "possible_consequence_cwe": "CWE-416",
+  "source_binding_status": "preserved_artifact_hash_verified",
+  "sources": {
+    "upstream_fix": {
+      "revision": "upstream_fix",
+      "commit": "9a3f281120307ec7dcce17fae882dcc4e6a6f4d7",
+      "path": "outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h",
+      "sha256": "9ed18694defc088c7bfe69327f6e4668d6c23d72a4f3c5516ad4635e9e511606",
+      "verified_sha256": "9ed18694defc088c7bfe69327f6e4668d6c23d72a4f3c5516ad4635e9e511606",
+      "binding": "preserved_artifact_hash_verified",
+      "quotes": [
+        "std::shared_ptr<T> ptr = atomic_load(&instance_);",
+        "instance_ = temp;",
+        "atomic_store(&instance_, std::shared_ptr<T>(nullptr));"
+      ]
+    },
+    "vulnerable": {
+      "revision": "vulnerable",
+      "commit": "bdfafdaafddb01ab7ae13354ce2ada9555d7935c",
+      "path": "outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h",
+      "sha256": "ce04ace5a2ad702d3f56e30be347dc9583c808dcf5aac80ee761bd70e05f1ad4",
+      "verified_sha256": "ce04ace5a2ad702d3f56e30be347dc9583c808dcf5aac80ee761bd70e05f1ad4",
+      "binding": "preserved_artifact_hash_verified",
+      "quotes": [
+        "if (instance_ == nullptr) {",
+        "instance_ = temp;",
+        "instance_.reset();"
+      ]
+    }
+  },
+  "environment": {
+    "compiler": "clang++",
+    "compiler_version": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+    "sanitizers": [
+      "thread"
+    ],
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "aslr_workaround": true,
+    "readers": 4,
+    "iterations": 20000
+  },
+  "builds": [
+    {
+      "revision": "vulnerable",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-g",
+        "-O1",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=thread",
+        "-no-pie",
+        "-I",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/include",
+        "-I",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp",
+        "-lpthread",
+        "-o",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.8488900159999986,
+      "stdout": "",
+      "stderr": "",
+      "outcome": "build_success"
+    },
+    {
+      "revision": "upstream_fix",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-g",
+        "-O1",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=thread",
+        "-no-pie",
+        "-I",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/include",
+        "-I",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp",
+        "-lpthread",
+        "-o",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.7148369309999936,
+      "stdout": "",
+      "stderr": "",
+      "outcome": "build_success"
+    },
+    {
+      "revision": "fully_atomic_patch",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-g",
+        "-O1",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=thread",
+        "-no-pie",
+        "-I",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/fully_atomic_patch/include",
+        "-I",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp",
+        "-lpthread",
+        "-o",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/fully_atomic_patch/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.939726551000007,
+      "stdout": "",
+      "stderr": "",
+      "outcome": "build_success"
+    }
+  ],
+  "runs": [
+    {
+      "revision": "vulnerable",
+      "mode": "single",
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/poc",
+        "single"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.030168701999997438,
+      "stdout": "RESULT=single_ok\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "revision": "upstream_fix",
+      "mode": "single",
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/poc",
+        "single"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.026743240000001833,
+      "stdout": "RESULT=single_ok\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "revision": "fully_atomic_patch",
+      "mode": "single",
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/fully_atomic_patch/poc",
+        "single"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.025652035000007345,
+      "stdout": "RESULT=single_ok\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "revision": "vulnerable",
+      "mode": "race",
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/poc",
+        "race",
+        "4",
+        "20000"
+      ],
+      "exit_code": 66,
+      "elapsed_seconds": 0.057600672000006625,
+      "stdout": "",
+      "stderr": "==================\nWARNING: ThreadSanitizer: data race (pid=856)\n  Write of size 8 at 0x0000018f76e8 by thread T2 (mutexes: write M0):\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1153:69 (poc+0x4cf45e) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 std::shared_ptr<Widget>::operator=(std::shared_ptr<Widget> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:359:65 (poc+0x4cf45e)\n    #2 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/include/singleton.h:129:23 (poc+0x4cf45e)\n    #3 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf031) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #4 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf031)\n    #5 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf031)\n    #6 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf031)\n    #7 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf031)\n    #8 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf031)\n    #9 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Previous read of size 8 at 0x0000018f76e8 by thread T4:\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator bool() const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1300:16 (poc+0x4cf378) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 bool std::operator==<Widget>(std::shared_ptr<Widget> const&, std::nullptr_t) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:444:15 (poc+0x4cf378)\n    #2 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/include/singleton.h:125:19 (poc+0x4cf378)\n    #3 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf031) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #4 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf031)\n    #5 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf031)\n    #6 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf031)\n    #7 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf031)\n    #8 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf031)\n    #9 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Location is global 'OHOS::DelayedSingleton<Widget>::instance_' of size 16 at 0x0000018f76e8 (poc+0x18f76e8)\n\n  Mutex M0 (0x0000018f7700) created at:\n    #0 pthread_mutex_lock <null> (poc+0x46b06a) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 __gthread_mutex_lock(pthread_mutex_t*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/x86_64-linux-gnu/c++/11/bits/gthr-default.h:749:12 (poc+0x4cf392) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #2 std::mutex::lock() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_mutex.h:100:17 (poc+0x4cf392)\n    #3 std::lock_guard<std::mutex>::lock_guard(std::mutex&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_mutex.h:229:19 (poc+0x4cf392)\n    #4 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/include/singleton.h:126:37 (poc+0x4cf392)\n    #5 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf031) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #6 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf031)\n    #7 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf031)\n    #8 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf031)\n    #9 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf031)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf031)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Thread T2 (tid=859, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d4dd) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\n  Thread T4 (tid=861, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d4dd) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: ThreadSanitizer: data race /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1153:69 in std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&)\n==================\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "revision": "upstream_fix",
+      "mode": "race",
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/poc",
+        "race",
+        "4",
+        "20000"
+      ],
+      "exit_code": 66,
+      "elapsed_seconds": 0.0550150529999911,
+      "stdout": "",
+      "stderr": "==================\nWARNING: ThreadSanitizer: data race (pid=864)\n  Read of size 8 at 0x0000018f76e8 by thread T3 (mutexes: write M0):\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::__shared_ptr(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1152:7 (poc+0x4cf3a8) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 std::shared_ptr<Widget>::shared_ptr(std::shared_ptr<Widget> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:150:7 (poc+0x4cf3a8)\n    #2 std::shared_ptr<Widget> std::atomic_load_explicit<Widget>(std::shared_ptr<Widget> const*, std::memory_order) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_atomic.h:106:14 (poc+0x4cf3a8)\n    #3 std::shared_ptr<Widget> std::atomic_load<Widget>(std::shared_ptr<Widget> const*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_atomic.h:112:14 (poc+0x4cf3a8)\n    #4 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/include/singleton.h:126:30 (poc+0x4cf3a8)\n    #5 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf051) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #6 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf051)\n    #7 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf051)\n    #8 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf051)\n    #9 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf051)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf051)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Previous write of size 8 at 0x0000018f76e8 by thread T2 (mutexes: write M1):\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1153:69 (poc+0x4cf53d) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 std::shared_ptr<Widget>::operator=(std::shared_ptr<Widget> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:359:65 (poc+0x4cf53d)\n    #2 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/include/singleton.h:134:19 (poc+0x4cf53d)\n    #3 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf051) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #4 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf051)\n    #5 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf051)\n    #6 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf051)\n    #7 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf051)\n    #8 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf051)\n    #9 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Location is global 'OHOS::DelayedSingleton<Widget>::instance_' of size 16 at 0x0000018f76e8 (poc+0x18f76e8)\n\n  Mutex M0 (0x7ffff7e2b080) created at:\n    #0 pthread_mutex_lock <null> (poc+0x46b08a) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 std::_Sp_locker::_Sp_locker(void const*) <null> (libstdc++.so.6+0xdb89c) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf051) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #3 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf051)\n    #4 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf051)\n    #5 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf051)\n    #6 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf051)\n    #7 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf051)\n    #8 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Mutex M1 (0x0000018f7700) created at:\n    #0 pthread_mutex_lock <null> (poc+0x46b08a) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 __gthread_mutex_lock(pthread_mutex_t*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/x86_64-linux-gnu/c++/11/bits/gthr-default.h:749:12 (poc+0x4cf942) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #2 std::mutex::lock() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_mutex.h:100:17 (poc+0x4cf942)\n    #3 std::lock_guard<std::mutex>::lock_guard(std::mutex&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_mutex.h:229:19 (poc+0x4cf942)\n    #4 OHOS::DelayedSingleton<Widget>::DestroyInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/include/singleton.h:143:33 (poc+0x4cf942)\n    #5 RunRace(int, long)::$_1::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:66:13 (poc+0x4cf234) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #6 void std::__invoke_impl<void, RunRace(int, long)::$_1>(std::__invoke_other, RunRace(int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf234)\n    #7 std::__invoke_result<RunRace(int, long)::$_1>::type std::__invoke<RunRace(int, long)::$_1>(RunRace(int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf234)\n    #8 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_1> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf234)\n    #9 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_1> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf234)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_1> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf234)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Thread T3 (tid=868, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d4fd) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\n  Thread T2 (tid=867, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d4fd) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: ThreadSanitizer: data race /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1152:7 in std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::__shared_ptr(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&)\n==================\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "revision": "fully_atomic_patch",
+      "mode": "race",
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/fully_atomic_patch/poc",
+        "race",
+        "4",
+        "20000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.17219842299999755,
+      "stdout": "RESULT=race_ok observed=80000\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "revision": "vulnerable",
+      "mode": "race",
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/poc",
+        "race",
+        "4",
+        "20000"
+      ],
+      "exit_code": 66,
+      "elapsed_seconds": 0.05453572400000439,
+      "stdout": "",
+      "stderr": "==================\nWARNING: ThreadSanitizer: data race (pid=879)\n  Write of size 8 at 0x0000018f76e8 by thread T2 (mutexes: write M0):\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1153:69 (poc+0x4cf45e) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 std::shared_ptr<Widget>::operator=(std::shared_ptr<Widget> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:359:65 (poc+0x4cf45e)\n    #2 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/include/singleton.h:129:23 (poc+0x4cf45e)\n    #3 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf031) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #4 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf031)\n    #5 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf031)\n    #6 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf031)\n    #7 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf031)\n    #8 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf031)\n    #9 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Previous read of size 8 at 0x0000018f76e8 by thread T3:\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator bool() const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1300:16 (poc+0x4cf378) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 bool std::operator==<Widget>(std::shared_ptr<Widget> const&, std::nullptr_t) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:444:15 (poc+0x4cf378)\n    #2 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/include/singleton.h:125:19 (poc+0x4cf378)\n    #3 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf031) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #4 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf031)\n    #5 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf031)\n    #6 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf031)\n    #7 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf031)\n    #8 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf031)\n    #9 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Location is global 'OHOS::DelayedSingleton<Widget>::instance_' of size 16 at 0x0000018f76e8 (poc+0x18f76e8)\n\n  Mutex M0 (0x0000018f7700) created at:\n    #0 pthread_mutex_lock <null> (poc+0x46b06a) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 __gthread_mutex_lock(pthread_mutex_t*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/x86_64-linux-gnu/c++/11/bits/gthr-default.h:749:12 (poc+0x4cf392) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #2 std::mutex::lock() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_mutex.h:100:17 (poc+0x4cf392)\n    #3 std::lock_guard<std::mutex>::lock_guard(std::mutex&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_mutex.h:229:19 (poc+0x4cf392)\n    #4 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/include/singleton.h:126:37 (poc+0x4cf392)\n    #5 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf031) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #6 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf031)\n    #7 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf031)\n    #8 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf031)\n    #9 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf031)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf031)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Thread T2 (tid=882, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d4dd) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\n  Thread T3 (tid=883, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d4dd) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: ThreadSanitizer: data race /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1153:69 in std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&)\n==================\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "revision": "upstream_fix",
+      "mode": "race",
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/poc",
+        "race",
+        "4",
+        "20000"
+      ],
+      "exit_code": 66,
+      "elapsed_seconds": 0.056494991999997524,
+      "stdout": "",
+      "stderr": "==================\nWARNING: ThreadSanitizer: data race (pid=887)\n  Read of size 8 at 0x0000018f76e8 by thread T1 (mutexes: write M0):\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::__shared_ptr(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1152:7 (poc+0x4cf3a8) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 std::shared_ptr<Widget>::shared_ptr(std::shared_ptr<Widget> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:150:7 (poc+0x4cf3a8)\n    #2 std::shared_ptr<Widget> std::atomic_load_explicit<Widget>(std::shared_ptr<Widget> const*, std::memory_order) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_atomic.h:106:14 (poc+0x4cf3a8)\n    #3 std::shared_ptr<Widget> std::atomic_load<Widget>(std::shared_ptr<Widget> const*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_atomic.h:112:14 (poc+0x4cf3a8)\n    #4 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/include/singleton.h:126:30 (poc+0x4cf3a8)\n    #5 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf051) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #6 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf051)\n    #7 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf051)\n    #8 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf051)\n    #9 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf051)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf051)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Previous write of size 8 at 0x0000018f76e8 by thread T2 (mutexes: write M1):\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1153:69 (poc+0x4cf53d) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 std::shared_ptr<Widget>::operator=(std::shared_ptr<Widget> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:359:65 (poc+0x4cf53d)\n    #2 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/include/singleton.h:134:19 (poc+0x4cf53d)\n    #3 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf051) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #4 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf051)\n    #5 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf051)\n    #6 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf051)\n    #7 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf051)\n    #8 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf051)\n    #9 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Location is global 'OHOS::DelayedSingleton<Widget>::instance_' of size 16 at 0x0000018f76e8 (poc+0x18f76e8)\n\n  Mutex M0 (0x7ffff7e2b080) created at:\n    #0 pthread_mutex_lock <null> (poc+0x46b08a) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 std::_Sp_locker::_Sp_locker(void const*) <null> (libstdc++.so.6+0xdb89c) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf051) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #3 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf051)\n    #4 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf051)\n    #5 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf051)\n    #6 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf051)\n    #7 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf051)\n    #8 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Mutex M1 (0x0000018f7700) created at:\n    #0 pthread_mutex_lock <null> (poc+0x46b08a) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 __gthread_mutex_lock(pthread_mutex_t*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/x86_64-linux-gnu/c++/11/bits/gthr-default.h:749:12 (poc+0x4cf942) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #2 std::mutex::lock() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_mutex.h:100:17 (poc+0x4cf942)\n    #3 std::lock_guard<std::mutex>::lock_guard(std::mutex&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_mutex.h:229:19 (poc+0x4cf942)\n    #4 OHOS::DelayedSingleton<Widget>::DestroyInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/include/singleton.h:143:33 (poc+0x4cf942)\n    #5 RunRace(int, long)::$_1::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:66:13 (poc+0x4cf234) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #6 void std::__invoke_impl<void, RunRace(int, long)::$_1>(std::__invoke_other, RunRace(int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf234)\n    #7 std::__invoke_result<RunRace(int, long)::$_1>::type std::__invoke<RunRace(int, long)::$_1>(RunRace(int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf234)\n    #8 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_1> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf234)\n    #9 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_1> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf234)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_1> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf234)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Thread T1 (tid=889, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d4fd) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\n  Thread T2 (tid=890, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d4fd) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: ThreadSanitizer: data race /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1152:7 in std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::__shared_ptr(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&)\n==================\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "revision": "fully_atomic_patch",
+      "mode": "race",
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/fully_atomic_patch/poc",
+        "race",
+        "4",
+        "20000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.15459053499999698,
+      "stdout": "RESULT=race_ok observed=80000\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "revision": "vulnerable",
+      "mode": "race",
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/poc",
+        "race",
+        "4",
+        "20000"
+      ],
+      "exit_code": 66,
+      "elapsed_seconds": 0.05437625900000853,
+      "stdout": "",
+      "stderr": "==================\nWARNING: ThreadSanitizer: data race (pid=902)\n  Write of size 8 at 0x0000018f76e8 by thread T4 (mutexes: write M0):\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1153:69 (poc+0x4cf45e) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 std::shared_ptr<Widget>::operator=(std::shared_ptr<Widget> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:359:65 (poc+0x4cf45e)\n    #2 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/include/singleton.h:129:23 (poc+0x4cf45e)\n    #3 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf031) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #4 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf031)\n    #5 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf031)\n    #6 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf031)\n    #7 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf031)\n    #8 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf031)\n    #9 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Previous read of size 8 at 0x0000018f76e8 by thread T1:\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator bool() const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1300:16 (poc+0x4cf378) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 bool std::operator==<Widget>(std::shared_ptr<Widget> const&, std::nullptr_t) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:444:15 (poc+0x4cf378)\n    #2 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/include/singleton.h:125:19 (poc+0x4cf378)\n    #3 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf031) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #4 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf031)\n    #5 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf031)\n    #6 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf031)\n    #7 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf031)\n    #8 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf031)\n    #9 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Location is global 'OHOS::DelayedSingleton<Widget>::instance_' of size 16 at 0x0000018f76e8 (poc+0x18f76e8)\n\n  Mutex M0 (0x0000018f7700) created at:\n    #0 pthread_mutex_lock <null> (poc+0x46b06a) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 __gthread_mutex_lock(pthread_mutex_t*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/x86_64-linux-gnu/c++/11/bits/gthr-default.h:749:12 (poc+0x4cf792) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #2 std::mutex::lock() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_mutex.h:100:17 (poc+0x4cf792)\n    #3 std::lock_guard<std::mutex>::lock_guard(std::mutex&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_mutex.h:229:19 (poc+0x4cf792)\n    #4 OHOS::DelayedSingleton<Widget>::DestroyInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/vulnerable/include/singleton.h:139:33 (poc+0x4cf792)\n    #5 RunRace(int, long)::$_1::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:66:13 (poc+0x4cf214) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #6 void std::__invoke_impl<void, RunRace(int, long)::$_1>(std::__invoke_other, RunRace(int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf214)\n    #7 std::__invoke_result<RunRace(int, long)::$_1>::type std::__invoke<RunRace(int, long)::$_1>(RunRace(int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf214)\n    #8 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_1> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf214)\n    #9 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_1> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf214)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_1> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf214)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Thread T4 (tid=907, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d4dd) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\n  Thread T1 (tid=904, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d4dd) (BuildId: d9b02d57d3f11bedb9eb3a7edc1bf0ee4e1cf6e3)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: ThreadSanitizer: data race /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1153:69 in std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&)\n==================\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "revision": "upstream_fix",
+      "mode": "race",
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/poc",
+        "race",
+        "4",
+        "20000"
+      ],
+      "exit_code": 66,
+      "elapsed_seconds": 0.05253408699999795,
+      "stdout": "",
+      "stderr": "==================\nWARNING: ThreadSanitizer: data race (pid=910)\n  Read of size 4 at 0x7b0400000010 by thread T3:\n    #0 Widget::Touch() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:18:32 (poc+0x4cf062) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:55:31 (poc+0x4cf062)\n    #2 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf062)\n    #3 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf062)\n    #4 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf062)\n    #5 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf062)\n    #6 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf062)\n    #7 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Previous write of size 8 at 0x7b0400000010 by thread T1 (mutexes: write M0):\n    #0 operator new(unsigned long, std::nothrow_t const&) <null> (poc+0x4cd675) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/include/singleton.h:133:33 (poc+0x4cf4a7) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #2 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf051) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #3 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf051)\n    #4 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf051)\n    #5 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf051)\n    #6 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf051)\n    #7 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf051)\n    #8 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Location is heap block of size 4 at 0x7b0400000010 allocated by thread T1:\n    #0 operator new(unsigned long, std::nothrow_t const&) <null> (poc+0x4cd675) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 OHOS::DelayedSingleton<Widget>::GetInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/include/singleton.h:133:33 (poc+0x4cf4a7) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #2 RunRace(int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:53:21 (poc+0x4cf051) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #3 void std::__invoke_impl<void, RunRace(int, long)::$_0>(std::__invoke_other, RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf051)\n    #4 std::__invoke_result<RunRace(int, long)::$_0>::type std::__invoke<RunRace(int, long)::$_0>(RunRace(int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf051)\n    #5 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf051)\n    #6 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf051)\n    #7 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf051)\n    #8 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Mutex M0 (0x0000018f7700) created at:\n    #0 pthread_mutex_lock <null> (poc+0x46b08a) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 __gthread_mutex_lock(pthread_mutex_t*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/x86_64-linux-gnu/c++/11/bits/gthr-default.h:749:12 (poc+0x4cf942) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #2 std::mutex::lock() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_mutex.h:100:17 (poc+0x4cf942)\n    #3 std::lock_guard<std::mutex>::lock_guard(std::mutex&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_mutex.h:229:19 (poc+0x4cf942)\n    #4 OHOS::DelayedSingleton<Widget>::DestroyInstance() /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/upstream_fix/include/singleton.h:143:33 (poc+0x4cf942)\n    #5 RunRace(int, long)::$_1::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:66:13 (poc+0x4cf234) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #6 void std::__invoke_impl<void, RunRace(int, long)::$_1>(std::__invoke_other, RunRace(int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cf234)\n    #7 std::__invoke_result<RunRace(int, long)::$_1>::type std::__invoke<RunRace(int, long)::$_1>(RunRace(int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cf234)\n    #8 void std::thread::_Invoker<std::tuple<RunRace(int, long)::$_1> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cf234)\n    #9 std::thread::_Invoker<std::tuple<RunRace(int, long)::$_1> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cf234)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, long)::$_1> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cf234)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Thread T3 (tid=914, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d4fd) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\n  Thread T1 (tid=912, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d4fd) (BuildId: 5535ac4ed2a161aa40000405264e2767f3eb41e1)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: ThreadSanitizer: data race /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp:18:32 in Widget::Touch() const\n==================\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "revision": "fully_atomic_patch",
+      "mode": "race",
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-delayed-singleton-20261014/run-002/work/fully_atomic_patch/poc",
+        "race",
+        "4",
+        "20000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.1569464619999934,
+      "stdout": "RESULT=race_ok observed=80000\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    }
+  ],
+  "repeats": 3,
+  "outcome": "stable_reproduced_mixed_fix_residual",
+  "evidence_level": "controlled_dynamic_reproduction",
+  "validated_vulnerability": 0,
+  "patch_revalidation": {
+    "status": "passed",
+    "variant": "fully_atomic_patch"
+  },
+  "limitations": [
+    "当前本地 commonlibrary_c_utils Git 对象库缺少两个历史提交，Git object provenance 保持 unknown；只验证保留源码字节、SHA-256 和关键代码引文。",
+    "PoC 使用自编 workload 调用未修改的 singleton.h，证明组件级并发行为，不证明 OpenHarmony 产品入口、权限边界或攻击者控制。",
+    "ThreadSanitizer 数据竞争不等价于稳定 use-after-free 崩溃；CWE-416 仍只是可能后果。",
+    "fully_atomic_patch 是本地修复重验变体，不是上游补丁，也不自动构成 reportable 修复建议。",
+    "线程调度、迭代规模、编译器和 sanitizer 版本会影响动态复现；原始日志和环境必须随结果保存。"
+  ],
+  "detector_runs": {
+    "vulnerable": {
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "version": "0.4.0",
+      "status": "completed",
+      "finding_count": 2,
+      "findings": [
+        {
+          "line": 125,
+          "column": 9,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "candidate_cwe": "CWE-362",
+          "symbol": "instance_",
+          "source_sha256": "ce04ace5a2ad702d3f56e30be347dc9583c808dcf5aac80ee761bd70e05f1ad4",
+          "evidence_obligations": [
+            {
+              "kind": "synchronization_proof",
+              "status": "unknown",
+              "description": "Synchronization proof is unknown: one-sided mutex leaves one access unprotected; one-sided mutex leaves one access unprotected; cross-function synchronization protocol is unknown. Prove the complete access protocol, lock identity/dominance and cross-function ordering before promotion."
+            }
+          ]
+        },
+        {
+          "line": 133,
+          "column": 12,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "candidate_cwe": "CWE-362",
+          "symbol": "instance_",
+          "source_sha256": "ce04ace5a2ad702d3f56e30be347dc9583c808dcf5aac80ee761bd70e05f1ad4",
+          "evidence_obligations": [
+            {
+              "kind": "synchronization_proof",
+              "status": "unknown",
+              "description": "Synchronization proof is unknown: one-sided mutex leaves one access unprotected; one-sided mutex leaves one access unprotected; cross-function synchronization protocol is unknown. Prove the complete access protocol, lock identity/dominance and cross-function ordering before promotion."
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+        "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+        "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+        "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+        "outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h: 9 potential conflicting pair(s) for 'OHOS::DelayedSingleton::instance_' share reliable lexical mutex 'mutex_'; remaining pairs were not suppressed.",
+        "outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h: pairwise analysis of 'OHOS::DelayedSingleton::instance_' leaves synchronization unproven for the mixed atomic/non-atomic synchronization protocol, different or one-sided mutexes, conditional/deferred locks, unresolved lock aliases or cross-function paths."
+      ]
+    },
+    "upstream_fix": {
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "version": "0.4.0",
+      "status": "completed",
+      "finding_count": 3,
+      "findings": [
+        {
+          "line": 132,
+          "column": 9,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "candidate_cwe": "CWE-362",
+          "symbol": "instance_",
+          "source_sha256": "9ed18694defc088c7bfe69327f6e4668d6c23d72a4f3c5516ad4635e9e511606",
+          "evidence_obligations": [
+            {
+              "kind": "synchronization_proof",
+              "status": "unknown",
+              "description": "Synchronization proof is unknown: mixed atomic/non-atomic access pair has no proven common synchronization protocol. Prove the complete access protocol, lock identity/dominance and cross-function ordering before promotion."
+            }
+          ]
+        },
+        {
+          "line": 134,
+          "column": 9,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "candidate_cwe": "CWE-362",
+          "symbol": "instance_",
+          "source_sha256": "9ed18694defc088c7bfe69327f6e4668d6c23d72a4f3c5516ad4635e9e511606",
+          "evidence_obligations": [
+            {
+              "kind": "synchronization_proof",
+              "status": "unknown",
+              "description": "Synchronization proof is unknown: mixed atomic/non-atomic access pair has no proven common synchronization protocol. Prove the complete access protocol, lock identity/dominance and cross-function ordering before promotion."
+            }
+          ]
+        },
+        {
+          "line": 137,
+          "column": 12,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "candidate_cwe": "CWE-362",
+          "symbol": "instance_",
+          "source_sha256": "9ed18694defc088c7bfe69327f6e4668d6c23d72a4f3c5516ad4635e9e511606",
+          "evidence_obligations": [
+            {
+              "kind": "synchronization_proof",
+              "status": "unknown",
+              "description": "Synchronization proof is unknown: mixed atomic/non-atomic access pair has no proven common synchronization protocol. Prove the complete access protocol, lock identity/dominance and cross-function ordering before promotion."
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+        "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+        "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+        "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+        "outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h: outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h: 5 potential conflicting pair(s) for 'OHOS::DelayedSingleton::instance_' share reliable lexical mutex 'mutex_'; remaining pairs were not suppressed.",
+        "outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h: outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h: pairwise analysis of 'OHOS::DelayedSingleton::instance_' leaves synchronization unproven for the mixed atomic/non-atomic synchronization protocol, different or one-sided mutexes, conditional/deferred locks, unresolved lock aliases or cross-function paths."
+      ]
+    },
+    "fully_atomic_patch": {
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "version": "0.4.0",
+      "status": "completed",
+      "finding_count": 0,
+      "findings": [],
+      "limitations": [
+        "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+        "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+        "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+        "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+        "generated/fully_atomic_patch/singleton.h: generated/fully_atomic_patch/singleton.h: modeled accesses to 'OHOS::DelayedSingleton::instance_' use only the atomic_load/atomic_store shared_ptr API; this narrow atomic-only shape is not a concurrency proof."
+      ]
+    }
+  }
+}

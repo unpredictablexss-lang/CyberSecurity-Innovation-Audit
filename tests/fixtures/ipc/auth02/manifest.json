@@ -1,0 +1,68 @@
+[
+  {
+    "sample_id": "caller_role_shadowed_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "caller_role_shadowed_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "A caller-role predicate whose reviewed name is also defined in the scanned sources. The name is not credited for the call; the body at file:line 12 is read instead, and what that body derives is what the entry gets. The run says so: the shadowing limitation names the definition and the line the call was read from, on both sides of the pair, and the reviewed name itself is never the thing credited. Here the shadowing body compares the calling UID against SERVICE_UID (4096), which is not a reviewed service-account value, so no caller-role fact is established for the sensitive DeleteUserData below it and the call site is a candidate at line 20. 4096 is chosen deliberately: a comparison against ROOT_UID would be credited from the account model, so the positive would prove nothing about the shadowed name."
+  },
+  {
+    "sample_id": "caller_role_shadowed_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": null,
+    "file": "caller_role_shadowed_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "notes": "caller_role_shadowed_positive with one line changed: the shadowing body ends in a comparison against a reviewed service-account value instead of 4096, so the body read under the reviewed name derives the fact and the call site is no longer a candidate. The pair differs in exactly that line (budget 1, measured), so the suppression is attributable to the derived caller-role fact and not to a widened guard set or service-account set. The shadowing limitation is still recorded: the reviewed name was still not credited -- the body's own account-model line was.",
+    "control_rules": [
+      "ipc.auth.missing"
+    ]
+  },
+  {
+    "sample_id": "caller_role_shadowed_unmodelled_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": null,
+    "file": "caller_role_shadowed_unmodelled_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "notes": "The same shadowing body and the same caller-role call, with the operation swapped for one that is not on the reviewed sensitive set (budget 1). Nothing is left for the caller-role fact to authorize, so nothing is raised. This separates \"this predicate does not establish the fact\" from \"this entry is not sensitive\", which the positive alone cannot: it is the unrelated control for this pair.",
+    "control_rules": [
+      "ipc.auth.missing"
+    ]
+  },
+  {
+    "sample_id": "entry_const_reference_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "entry_const_reference_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "An entry handler whose MessageParcel parameter is a const reference. Whether the parcel is bound by const reference or by reference does not bear on whether the entry has caller authorization, so this is a positive: the entry carries the descriptor guard and nothing else, and the sensitive call is a candidate at line 6. It exists to be the other half of the invariance pair with entry_reference_positive."
+  },
+  {
+    "sample_id": "entry_reference_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "entry_reference_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "entry_const_reference_positive with the const qualifier dropped from the parcel parameter and no other change (budget 1, measured). The two runs are equal -- same rule, same line 6, same status -- so the entry is read the same way under both reference kinds. Invariance is asserted in both directions: neither kind may be credited for authorization it does not carry, and neither kind may be read as a different entry."
+  },
+  {
+    "sample_id": "caller_role_shadowed_free_predicate_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "caller_role_shadowed_free_predicate_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The other definitional form of the same shadowed name: the entry and the call are those of caller_role_shadowed_positive, and the reviewed name is defined at file scope instead of as a member of the entry's class. The run then refuses the name outright -- Local caller-role definition is unresolved, reviewed-name credit refused, caller authorization remains unknown -- and does not use the body at all, where the member form records that a call was read from the body. So the suppression in caller_role_shadowed_fixed comes from that body being read, which only the member form does; this fixture is the other side of that asymmetry and is why the pair is written with a member predicate. Measured, not inferred, and asserted in EngineCaseCoverageTests."
+  }
+]

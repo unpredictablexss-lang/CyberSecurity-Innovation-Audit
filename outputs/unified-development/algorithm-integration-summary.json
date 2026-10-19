@@ -1,0 +1,282 @@
+{
+  "schema_version": 1,
+  "updated_local_date": "2026-10-14",
+  "baseline_commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+  "integrated_sources": {
+    "B_branch": "feat/interface-ipc-detector",
+    "B_commit": "48bce9eab77fdf22acbb708cd9bf481ca32e7667",
+    "A_branch": "codex/teammate-a-static-module-20261013",
+    "A_commit": "e27f744acb60d3c1bd45f6d3d9a4d07f9b2528cf"
+  },
+  "ipc_algorithm_delta": [
+    {
+      "component": "update_updateservice",
+      "baseline_candidates": 2,
+      "after_algorithm_candidates": 2,
+      "candidate_set_equal": true,
+      "removed": [],
+      "added": [],
+      "partial_candidates_with_obligations": 2,
+      "validated_vulnerability": 0,
+      "removed_count": 0,
+      "added_count": 0
+    },
+    {
+      "component": "security_access_token",
+      "baseline_candidates": 20,
+      "after_algorithm_candidates": 3,
+      "candidate_set_equal": false,
+      "removed": [
+        {
+          "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+          "line": 78,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340"
+        },
+        {
+          "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+          "line": 81,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340"
+        },
+        {
+          "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+          "line": 84,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340"
+        },
+        {
+          "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+          "line": 103,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340"
+        },
+        {
+          "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+          "line": 116,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340"
+        },
+        {
+          "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+          "line": 131,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340"
+        },
+        {
+          "file": "interfaces/innerkits/privacy/src/on_permission_used_record_callback_stub.cpp",
+          "line": 45,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "390e9224c26d4e7200057304d89f3a554073a06d03d80869430784cc988bfc90"
+        },
+        {
+          "file": "interfaces/innerkits/privacy/src/on_permission_used_record_callback_stub.cpp",
+          "line": 54,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "390e9224c26d4e7200057304d89f3a554073a06d03d80869430784cc988bfc90"
+        },
+        {
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 48,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1"
+        },
+        {
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 51,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1"
+        },
+        {
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 54,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1"
+        },
+        {
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 83,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1"
+        },
+        {
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 104,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1"
+        },
+        {
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 110,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1"
+        },
+        {
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 121,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1"
+        },
+        {
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 127,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1"
+        },
+        {
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 136,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1"
+        }
+      ],
+      "added": [],
+      "partial_candidates_with_obligations": 0,
+      "validated_vulnerability": 0,
+      "removed_count": 17,
+      "added_count": 0
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "baseline_candidates": 0,
+      "after_algorithm_candidates": 0,
+      "candidate_set_equal": true,
+      "removed": [],
+      "added": [],
+      "partial_candidates_with_obligations": 0,
+      "validated_vulnerability": 0,
+      "removed_count": 0,
+      "added_count": 0
+    },
+    {
+      "component": "window_window_manager",
+      "baseline_candidates": 15,
+      "after_algorithm_candidates": 14,
+      "candidate_set_equal": false,
+      "removed": [
+        {
+          "file": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+          "line": 42,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "404969d13de038e6deb4231dd68ba11af43e04f467c75e1866146a1df57de2ab"
+        }
+      ],
+      "added": [],
+      "partial_candidates_with_obligations": 10,
+      "validated_vulnerability": 0,
+      "removed_count": 1,
+      "added_count": 0
+    },
+    {
+      "component": "communication_dsoftbus",
+      "baseline_candidates": 4,
+      "after_algorithm_candidates": 4,
+      "candidate_set_equal": true,
+      "removed": [],
+      "added": [],
+      "partial_candidates_with_obligations": 2,
+      "validated_vulnerability": 0,
+      "removed_count": 0,
+      "added_count": 0
+    }
+  ],
+  "ipc_total_removed": 18,
+  "ipc_total_added": 0,
+  "a_shared_ptr_component_runs": [
+    {
+      "component": "update_updateservice",
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "selected_source_files": 219,
+      "applicable_files": 217,
+      "coverage_counts": {
+        "complete": 186,
+        "partial": 0,
+        "not_analyzed": 31,
+        "failed": 0
+      },
+      "candidate_diagnostics": 3,
+      "source_files_with_candidates": 2,
+      "validated_vulnerability": 0,
+      "json_sha256": "d69eb34b7c9b436b42f2837a3677bb686977f66dc14fd4efcf52f96fd32c9a6e",
+      "md_sha256": "8376e95aef5907dd3450133852b4ecec6170e4a34792838b11d296ea63587cca",
+      "partial_candidate_obligations": 0
+    },
+    {
+      "component": "security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "selected_source_files": 550,
+      "applicable_files": 539,
+      "coverage_counts": {
+        "complete": 483,
+        "partial": 0,
+        "not_analyzed": 56,
+        "failed": 0
+      },
+      "candidate_diagnostics": 12,
+      "source_files_with_candidates": 9,
+      "validated_vulnerability": 0,
+      "json_sha256": "d45e9e823176d612f0514e3ae4697787aba44e716fdd497516b12dff6be7d0dc",
+      "md_sha256": "855b5c30593ebae88927c9e7c0bd4d9e334e04864d7d52c377c17a929aeefd9f",
+      "partial_candidate_obligations": 0
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "selected_source_files": 1446,
+      "applicable_files": 1439,
+      "coverage_counts": {
+        "complete": 1126,
+        "partial": 3,
+        "not_analyzed": 310,
+        "failed": 0
+      },
+      "candidate_diagnostics": 180,
+      "source_files_with_candidates": 4,
+      "validated_vulnerability": 0,
+      "json_sha256": "fd9ecc6056b3f00b9f1c852d2601258d5de8e7aeedc9f7d441edffbfe4cf0043",
+      "md_sha256": "52459e5284e47584ce127bd90a52097099287139c5ff1ec14a60fd2fb65d5289",
+      "partial_candidate_obligations": 0
+    },
+    {
+      "component": "window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "selected_source_files": 1112,
+      "applicable_files": 1079,
+      "coverage_counts": {
+        "complete": 807,
+        "partial": 4,
+        "not_analyzed": 268,
+        "failed": 0
+      },
+      "candidate_diagnostics": 31,
+      "source_files_with_candidates": 14,
+      "validated_vulnerability": 0,
+      "json_sha256": "8171c1817c8433e07ad389c0ca784e4b086b480d76a9bcd7e4fb10ab105e19cb",
+      "md_sha256": "ea1db20a0bca1e53f30a04dfcdd231a7f1b0fd8abe36f521badfa36590127b51",
+      "partial_candidate_obligations": 0
+    },
+    {
+      "component": "communication_dsoftbus",
+      "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "selected_source_files": 1656,
+      "applicable_files": 1025,
+      "coverage_counts": {
+        "complete": 298,
+        "partial": 0,
+        "not_analyzed": 727,
+        "failed": 0
+      },
+      "candidate_diagnostics": 3,
+      "source_files_with_candidates": 1,
+      "validated_vulnerability": 0,
+      "json_sha256": "a1fd587fd8d1ceb9621bc48e0ae95697857962ef48ee9de6435b748f8a0c2987",
+      "md_sha256": "e3a944620510afb23330302d3d18a85a0f829727d47ccc79a5b450421c913a15",
+      "partial_candidate_obligations": 0
+    }
+  ],
+  "a_total_candidate_diagnostics": 229,
+  "a_confirmed_vulnerabilities": 0,
+  "interpretation": "These are detector diagnostics, not root-cause counts or confirmed vulnerabilities. A outputs are per-access syntax candidates and need grouping/manual review; partial parse files are not analyzed. IPC removals are algorithm corrections; do not label removed candidates as proven false positives without manual adjudication.",
+  "local_evidence_dir": "/home/audit/ohscanner/records/unified-development/algorithm-components",
+  "a_local_evidence_dir": "/home/audit/ohscanner/records/unified-development/a-components"
+}

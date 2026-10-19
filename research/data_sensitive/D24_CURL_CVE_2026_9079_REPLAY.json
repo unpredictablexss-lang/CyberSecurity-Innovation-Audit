@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "experiment": "D24 curl CVE-2026-9079 fixed-shape source replay",
+  "detector": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.5.0",
+  "repository": "OpenHarmony-GitCode-Mirror/third_party_curl",
+  "commit": "1386bb128bb060b284309397b97adcaaec21c003",
+  "tree": "b96addd5821a610eb0ceacc7e7a83deda64690c2",
+  "snapshot_sha256": "a9a26e44f9bb41e05b3e427ca59dc9e61a5dc04b6e9bd93902da8bd02152bc2f",
+  "source_bindings": {
+    "include/curl/curlver.h": {
+      "blob": "3e8f2f8ffd467a89d4e069a2ea699276676f3c44",
+      "sha256": "66c6c01abae7abb2c4ce4c6d3594ca38cfde64ec4335ce6e859d1d1d27a126c4"
+    },
+    "lib/setopt.c": {
+      "blob": "a1a90d1eb89bf212919964e34f93a865af2aa359",
+      "sha256": "67e236893bdb317cb0e7363ce10da46dda1049ab430990f2856aec0bdea145c1"
+    }
+  },
+  "status": "blocked",
+  "coverage": {
+    "scope_mode": "per_file",
+    "status": "partial",
+    "applicable_files": 2,
+    "analyzed_files": [],
+    "partially_inspected_files": [
+      "include/curl/curlver.h",
+      "lib/setopt.c"
+    ],
+    "source_sha256": {
+      "include/curl/curlver.h": "66c6c01abae7abb2c4ce4c6d3594ca38cfde64ec4335ce6e859d1d1d27a126c4",
+      "lib/setopt.c": "67e236893bdb317cb0e7363ce10da46dda1049ab430990f2856aec0bdea145c1"
+    },
+    "unexamined": [
+      {
+        "file": "include/curl/curlver.h",
+        "parse_status": "complete",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      },
+      {
+        "file": "lib/setopt.c",
+        "parse_status": "partial",
+        "reason": "detector_model_incomplete",
+        "analysis_status": "partial"
+      }
+    ],
+    "inspected_files": [
+      "include/curl/curlver.h",
+      "lib/setopt.c"
+    ],
+    "not_analyzed_files": [],
+    "coverage_counts": {
+      "complete": 0,
+      "partial": 2,
+      "not_analyzed": 0,
+      "failed": 0
+    },
+    "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+    "evidence_obligations": []
+  },
+  "cve_2026_9079_candidates": [],
+  "repeat_stable": true,
+  "validated_vulnerability": 0,
+  "limitations": [
+    "The source has partial Tree-sitter coverage; no candidate is not a safe verdict for the whole source or repository.",
+    "The selected files show curl 8.8.0 and unconditional proxy-credential clearing equivalent to upstream fix commit 88c7e16cceec816a2df45c89; this does not prove cherry-pick ancestry.",
+    "The positive vulnerable shape is a regression fixture based on the upstream patch diff; no vulnerable product build was run.",
+    "No OpenHarmony product build inclusion, caller sequence, credential exposure in a product, or impact is established."
+  ]
+}

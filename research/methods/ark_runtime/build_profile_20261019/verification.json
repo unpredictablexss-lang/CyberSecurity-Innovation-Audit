@@ -1,0 +1,8 @@
+{
+  "case_count": 16,
+  "errors": [],
+  "expected_payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
+  "recomputed_payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
+  "schema": "ohscanner.ark-parent-fix-build-preprocess-verification/v1",
+  "status": "verified_blocked_manifest"
+}

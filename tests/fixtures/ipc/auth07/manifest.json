@@ -1,0 +1,35 @@
+[
+  {
+    "sample_id": "auth07_denial_transport_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-07",
+    "expected_rule": "ipc.auth.denial-transport-success",
+    "file": "denial_transport_success_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "auth07_denial_transport_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-07",
+    "expected_rule": null,
+    "file": "denial_transport_success_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.auth.denial-transport-success"
+    ]
+  },
+  {
+    "sample_id": "auth07_unrelated_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-07",
+    "expected_rule": null,
+    "file": "unrelated_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.auth.denial-transport-success"
+    ]
+  }
+]

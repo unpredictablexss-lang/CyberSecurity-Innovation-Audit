@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "scope": "Product-level H01-H08 validation matrix; the extracted-function component harness is recorded separately in D5_COMPONENT_HARNESS.json.",
+  "execution": "not_run",
+  "reason": "No reproducible product build, production log service, or authorized-reader boundary is available in this experiment. The component harness does not satisfy product H01-H08.",
+  "validated_vulnerability": 0,
+  "tests": [
+    {
+      "id": "H01",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "H02",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "H03",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "H04",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "H05",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "H06",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "H07",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "H08",
+      "status": "not_run",
+      "evidence": null
+    }
+  ],
+  "component_harness": {
+    "status": "passed",
+    "evidence": "D5_COMPONENT_HARNESS.json",
+    "scope": "Exact extracted function with deterministic stubs; component behavior only."
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "work_item": "D9 public OpenHarmony HiLog macro sink expansion",
+  "date": "2026-10-18",
+  "detector_id": "ohscanner.data.sensitive_exposure",
+  "detector_version": "0.6.0",
+  "source_model_version": "0.1.0",
+  "sink_model_version": "0.2.0",
+  "source_model_commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+  "api_source": {
+    "repository": "openharmony/hiviewdfx_hilog",
+    "commit": "393d7e9a690edb76ed27e710b472623daf650dc8",
+    "tree": "c2d29126676b26aa0ad8c6e2797b3acae1106e54",
+    "files": [
+      {
+        "path": "interfaces/native/innerkits/include/hilog/log_c.h",
+        "git_blob": "db7eef60ccfcd2db46f5b68fd951455f4bf4cb69",
+        "mapping": "HILOG_DEBUG/INFO/WARN/ERROR/FATAL -> HILOG_IMPL, format argument 1; HILOG_COMM_INFO/WARN/ERROR/FATAL -> HILOG_IMPL, format argument 0"
+      },
+      {
+        "path": "interfaces/native/innerkits/include/hilog/log_cpp.h",
+        "git_blob": "51b126bc92568a6d370cba73fa79fdddfc7c0ef6",
+        "mapping": "HiLogDebug/Info/Warn/Error/Fatal -> HILOG_IMPL, format argument 1"
+      },
+      {
+        "path": "interfaces/native/innerkits/include/hilog/log.h",
+        "git_blob": "f905b409bf6ea38b369c5e79910302a9b4fe2f84",
+        "mapping": "Public umbrella header includes the C and C++ macro headers"
+      }
+    ]
+  },
+  "frozen_historical_cases_sha256": "174ab6425514d5873f9c863047888005c3df2ddde6cf579b3da92942ce7b2741",
+  "d9_fixture_manifest_sha256": "5fb23663db7aefc9a289987719298a97b481963b3028365f802085da7d6dbe19",
+  "validated_vulnerability": 0,
+  "product_impact": "unknown",
+  "candidate_status": "research_candidate",
+  "checks": {
+    "d_detector_suite": "41 passed",
+    "full_python_suite": "870 passed, 5 skipped (875 total)",
+    "compileall": "passed",
+    "scoped_git_diff_check": "passed",
+    "d9_macro_spellings": "14 explicit-public positive spellings; private/default-private/no-sensitive-operand controls passed",
+    "historical_fixture_manifest": "unchanged; pinned SHA-256 verified",
+    "full_fixed_source_replay": "blocked; exact DSoftBus commit fetch timed out and commit is absent from local target repository",
+    "product_build_or_runtime_validation": "not_run"
+  },
+  "limitations": [
+    "D9 fixtures are synthetic design regressions, not an independent labeled holdout",
+    "no recall, precision, or product vulnerability claim is supported by these tests",
+    "the HiLog API macro definitions are pinned to their own upstream commit; selected product dependency/build binding remains unknown",
+    "the detector remains unregistered and partial source remains blocked by public Runner admission",
+    "no runtime logging configuration, reader authorization, product impact, or remediation build evidence",
+    "D5 M0, M1, M2, and M3 acceptance gates remain unmet"
+  ],
+  "remote_state": "This validation record tracks tests and source evidence only; inspect the branch and PR for current hosting state."
+}

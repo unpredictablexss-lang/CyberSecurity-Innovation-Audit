@@ -1,0 +1,2012 @@
+{
+  "schema_version": 1,
+  "kind": "pinned_component_scan_manifest",
+  "component": "update_updateservice",
+  "repository": "openharmony/update_updateservice",
+  "source_repo_path": "E:\\网安\\audit-sources-20261014\\home\\audit\\openharmony-audit\\perf-corpus\\update_updateservice",
+  "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+  "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+  "scope_algorithm": {
+    "source": "src/ohscanner/detectors/interface/audit.py@f077e85:plan_scope",
+    "includes": [
+      "."
+    ],
+    "excludes": [],
+    "production_only": true,
+    "excluded_path_segments": [
+      "3rdparty",
+      "benchmark",
+      "benchmarks",
+      "demo",
+      "demos",
+      "example",
+      "examples",
+      "fuzz",
+      "fuzztest",
+      "mock",
+      "mocks",
+      "sample",
+      "samples",
+      "test",
+      "tests",
+      "third_party",
+      "thirdparty",
+      "unittest",
+      "unittests"
+    ],
+    "source_suffix_languages": {
+      ".c": "c",
+      ".cc": "cpp",
+      ".cpp": "cpp",
+      ".cxx": "cpp",
+      ".ets": "arkts",
+      ".h": "cpp",
+      ".hh": "cpp",
+      ".hpp": "cpp",
+      ".js": "js",
+      ".ts": "ts"
+    },
+    "max_files": 2000,
+    "max_total_bytes": 33554432,
+    "max_blob_bytes": 1048576
+  },
+  "counts": {
+    "tracked_entries": 289,
+    "excluded_pattern": 45,
+    "non_source": 25,
+    "symlinks": 0,
+    "submodules": 0,
+    "oversize": 0,
+    "selected_files": 219,
+    "selected_bytes": 851345,
+    "shards": 1
+  },
+  "plan_sha256": "e5903393e19b8e7bb4aa97daf20b7fa089c10af38c5ef42163bfdbf00aa43cd6",
+  "shards": [
+    {
+      "shard_id": 0,
+      "files": 219,
+      "bytes": 851345,
+      "shard_sha256": "28731a3c57d29f6d2543bd62ff274028e1b95733196d963e97c685d2f73a2883",
+      "paths": [
+        "frameworks/js/napi/base/include/client_define.h",
+        "frameworks/js/napi/base/include/client_helper.h",
+        "frameworks/js/napi/base/include/define_property.h",
+        "frameworks/js/napi/base/include/iupdater.h",
+        "frameworks/js/napi/base/include/napi_util.h",
+        "frameworks/js/napi/base/include/session_manager.h",
+        "frameworks/js/napi/base/src/client_helper.cpp",
+        "frameworks/js/napi/base/src/define_property.cpp",
+        "frameworks/js/napi/base/src/iupdater.cpp",
+        "frameworks/js/napi/base/src/napi_util.cpp",
+        "frameworks/js/napi/base/src/session_manager.cpp",
+        "frameworks/js/napi/client/iupdate_session.h",
+        "frameworks/js/napi/client/local_updater.cpp",
+        "frameworks/js/napi/client/local_updater.h",
+        "frameworks/js/napi/client/restorer.cpp",
+        "frameworks/js/napi/client/restorer.h",
+        "frameworks/js/napi/client/update_client.cpp",
+        "frameworks/js/napi/client/update_client.h",
+        "frameworks/js/napi/client/update_module.cpp",
+        "frameworks/js/napi/client/update_session.cpp",
+        "frameworks/js/napi/client/update_session.h",
+        "interfaces/inner_api/engine/update_service_kits_impl.cpp",
+        "interfaces/inner_api/engine/update_service_ondemand.cpp",
+        "interfaces/inner_api/engine/update_service_proxy.cpp",
+        "interfaces/inner_api/include/iservice_local_updater.h",
+        "interfaces/inner_api/include/iservice_online_updater.h",
+        "interfaces/inner_api/include/iservice_restorer.h",
+        "interfaces/inner_api/include/iupdate_callback.h",
+        "interfaces/inner_api/include/iupdate_service.h",
+        "interfaces/inner_api/include/json_builder.h",
+        "interfaces/inner_api/include/message_parcel_helper.h",
+        "interfaces/inner_api/include/update_constant.h",
+        "interfaces/inner_api/include/update_helper.h",
+        "interfaces/inner_api/include/update_service_kits.h",
+        "interfaces/inner_api/include/update_service_kits_impl.h",
+        "interfaces/inner_api/include/update_service_ondemand.h",
+        "interfaces/inner_api/include/update_system_event.h",
+        "interfaces/inner_api/include/updater_sa_ipc_interface_code.h",
+        "interfaces/kits/js/declaration/@ohos.update.d.ts",
+        "services/callback/include/update_callback.h",
+        "services/callback/include/update_callback_proxy.h",
+        "services/callback/include/update_callback_stub.h",
+        "services/callback/src/update_callback.cpp",
+        "services/callback/src/update_callback_proxy.cpp",
+        "services/callback/src/update_callback_stub.cpp",
+        "services/core/ability/adapter/include/config_parse.h",
+        "services/core/ability/adapter/include/device_adapter.h",
+        "services/core/ability/adapter/src/config_parse.cpp",
+        "services/core/ability/adapter/src/device_adapter.cpp",
+        "services/core/ability/alarm/include/alarm_helper.h",
+        "services/core/ability/alarm/include/alarm_manager.h",
+        "services/core/ability/alarm/include/timer_manager.h",
+        "services/core/ability/alarm/src/alarm_manager.cpp",
+        "services/core/ability/alarm/src/timer_manager.cpp",
+        "services/core/ability/callback/include/base_callback_utils.h",
+        "services/core/ability/callback/src/base_callback_utils.cpp",
+        "services/core/ability/callback/src/base_callback_utils_empty.cpp",
+        "services/core/ability/common/include/constant.h",
+        "services/core/ability/define/include/update_define.h",
+        "services/core/ability/download/data/include/download_info.h",
+        "services/core/ability/log/include/update_log.h",
+        "services/core/ability/log/src/update_log.cpp",
+        "services/core/ability/model/include/device_info.h",
+        "services/core/ability/net/include/network_response.h",
+        "services/core/ability/preference/include/preferences_utils.h",
+        "services/core/ability/preference/src/preference_utils.cpp",
+        "services/core/ability/preference/src/preference_utils_empty.cpp",
+        "services/core/ability/sqlite/core/include/idatabase.h",
+        "services/core/ability/sqlite/core/include/itable.h",
+        "services/core/ability/sqlite/core/include/itable_operator.h",
+        "services/core/ability/sqlite/core/include/sqlite_db.h",
+        "services/core/ability/sqlite/core/include/table_base_operator.h",
+        "services/core/ability/sqlite/core/src/sqlite_db.cpp",
+        "services/core/ability/status_cache/include/status_cache.h",
+        "services/core/ability/status_cache/src/status_cache.cpp",
+        "services/core/ability/utils/include/encrypt_utils.h",
+        "services/core/ability/utils/include/file_utils.h",
+        "services/core/ability/utils/include/json_utils.h",
+        "services/core/ability/utils/include/sha256_utils.h",
+        "services/core/ability/utils/include/string_utils.h",
+        "services/core/ability/utils/include/time_utils.h",
+        "services/core/ability/utils/include/time_utils_proxy.h",
+        "services/core/ability/utils/src/file_utils.cpp",
+        "services/core/ability/utils/src/sha256_utils.cpp",
+        "services/core/ability/utils/src/time_utils_proxy.cpp",
+        "services/engine/include/progress_thread.h",
+        "services/engine/include/update_no_constructor.h",
+        "services/engine/include/update_notify.h",
+        "services/engine/include/update_service.h",
+        "services/engine/include/update_service_cache.h",
+        "services/engine/include/update_service_impl_firmware.h",
+        "services/engine/include/update_service_impl_manager.h",
+        "services/engine/include/update_service_local_updater.h",
+        "services/engine/include/update_service_proxy.h",
+        "services/engine/include/update_service_restorer.h",
+        "services/engine/include/update_service_stub.h",
+        "services/engine/include/update_service_util.h",
+        "services/engine/src/message_parcel_helper.cpp",
+        "services/engine/src/progress_thread.cpp",
+        "services/engine/src/update_helper.cpp",
+        "services/engine/src/update_notify.cpp",
+        "services/engine/src/update_service.cpp",
+        "services/engine/src/update_service_cache.cpp",
+        "services/engine/src/update_service_impl_firmware.cpp",
+        "services/engine/src/update_service_impl_manager.cpp",
+        "services/engine/src/update_service_local_updater.cpp",
+        "services/engine/src/update_service_restorer.cpp",
+        "services/engine/src/update_service_stub.cpp",
+        "services/engine/src/update_service_util_hmos.cpp",
+        "services/firmware/callback/include/firmware_callback_utils.h",
+        "services/firmware/callback/src/firmware_callback_utils.cpp",
+        "services/firmware/check/include/firmware_icheck.h",
+        "services/firmware/common/include/firmware_common.h",
+        "services/firmware/common/include/firmware_constant.h",
+        "services/firmware/common/include/firmware_update_adapter.h",
+        "services/firmware/common/include/firmware_update_helper.h",
+        "services/firmware/common/src/firmware_update_adapter.cpp",
+        "services/firmware/common/src/firmware_update_helper.cpp",
+        "services/firmware/data/db/include/firmware_component.h",
+        "services/firmware/data/db/include/firmware_component_operator.h",
+        "services/firmware/data/db/include/firmware_component_table.h",
+        "services/firmware/data/db/include/firmware_database.h",
+        "services/firmware/data/db/include/firmware_database_callback.h",
+        "services/firmware/data/db/include/firmware_task.h",
+        "services/firmware/data/db/include/firmware_task_operator.h",
+        "services/firmware/data/db/include/firmware_task_table.h",
+        "services/firmware/data/db/src/firmware_component_operator.cpp",
+        "services/firmware/data/db/src/firmware_component_operator_empty.cpp",
+        "services/firmware/data/db/src/firmware_component_table.cpp",
+        "services/firmware/data/db/src/firmware_component_table_empty.cpp",
+        "services/firmware/data/db/src/firmware_database.cpp",
+        "services/firmware/data/db/src/firmware_database_callback.cpp",
+        "services/firmware/data/db/src/firmware_database_empty.cpp",
+        "services/firmware/data/db/src/firmware_task_operator.cpp",
+        "services/firmware/data/db/src/firmware_task_operator_empty.cpp",
+        "services/firmware/data/db/src/firmware_task_table.cpp",
+        "services/firmware/data/db/src/firmware_task_table_empty.cpp",
+        "services/firmware/data/manager/include/firmware_preferences_utils.h",
+        "services/firmware/data/manager/src/firmware_preferences_utils.cpp",
+        "services/firmware/event/include/firmware_event_listener.h",
+        "services/firmware/event/src/firmware_event_listener.cpp",
+        "services/firmware/upgrade/data_processor/include/firmware_check_data_processor.h",
+        "services/firmware/upgrade/data_processor/include/firmware_download_data_processor.h",
+        "services/firmware/upgrade/data_processor/include/firmware_install_data_processor.h",
+        "services/firmware/upgrade/data_processor/src/firmware_check_data_processor.cpp",
+        "services/firmware/upgrade/data_processor/src/firmware_download_data_processor.cpp",
+        "services/firmware/upgrade/data_processor/src/firmware_install_data_processor.cpp",
+        "services/firmware/upgrade/executor/include/firmware_apply_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_check_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_download_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_iexecutor.h",
+        "services/firmware/upgrade/executor/include/firmware_install_executor.h",
+        "services/firmware/upgrade/executor/src/firmware_apply_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_check_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_download_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_install_executor.cpp",
+        "services/firmware/upgrade/flow/include/firmware_flow_manager.h",
+        "services/firmware/upgrade/flow/include/firmware_manager.h",
+        "services/firmware/upgrade/flow/src/firmware_flow_manager.cpp",
+        "services/firmware/upgrade/flow/src/firmware_manager.cpp",
+        "services/firmware/upgrade/install/include/firmware_install.h",
+        "services/firmware/upgrade/install/include/firmware_install_factory.h",
+        "services/firmware/upgrade/install/include/firmware_sys_installer_callback.h",
+        "services/firmware/upgrade/install/include/firmware_sys_installer_install.h",
+        "services/firmware/upgrade/install/include/firmware_updater_install.h",
+        "services/firmware/upgrade/install/src/firmware_install.cpp",
+        "services/firmware/upgrade/install/src/firmware_install_factory.cpp",
+        "services/firmware/upgrade/install/src/firmware_sys_installer_callback.cpp",
+        "services/firmware/upgrade/install/src/firmware_sys_installer_install.cpp",
+        "services/firmware/upgrade/install/src/firmware_updater_install.cpp",
+        "services/firmware/upgrade/mode/include/firmware_download_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_iexecute_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_install_apply_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_manual_check_mode.h",
+        "services/firmware/upgrade/mode/src/firmware_download_mode.cpp",
+        "services/firmware/upgrade/mode/src/firmware_install_apply_mode.cpp",
+        "services/firmware/upgrade/mode/src/firmware_manual_check_mode.cpp",
+        "services/firmware/upgrade/status/include/firmware_result_process.h",
+        "services/firmware/upgrade/status/include/firmware_status_cache.h",
+        "services/firmware/upgrade/status/src/firmware_result_process.cpp",
+        "services/firmware/upgrade/status/src/firmware_status_cache.cpp",
+        "services/firmware/utils/include/firmware_changelog_utils.h",
+        "services/firmware/utils/include/firmware_check_analyze_utils.h",
+        "services/firmware/utils/include/firmware_combine_version_utils.h",
+        "services/firmware/utils/include/firmware_file_utils.h",
+        "services/firmware/utils/include/firmware_log.h",
+        "services/firmware/utils/src/firmware_changelog_utils.cpp",
+        "services/firmware/utils/src/firmware_check_analyze_utils.cpp",
+        "services/firmware/utils/src/firmware_combine_version_utils.cpp",
+        "services/service/include/dupdate_errno.h",
+        "services/service/include/dupdate_log.h",
+        "services/service/include/dupdate_upgrade_helper.h",
+        "services/startup/access/include/access_factory.h",
+        "services/startup/access/include/access_manager.h",
+        "services/startup/access/include/default_access.h",
+        "services/startup/access/include/firmware_access.h",
+        "services/startup/access/include/i_access.h",
+        "services/startup/access/src/access_factory.cpp",
+        "services/startup/access/src/access_manager.cpp",
+        "services/startup/access/src/default_access.cpp",
+        "services/startup/access/src/firmware_access.cpp",
+        "services/startup/manage/include/schedule_config.h",
+        "services/startup/manage/include/schedule_manager.h",
+        "services/startup/manage/include/startup_manager.h",
+        "services/startup/manage/include/startup_schedule.h",
+        "services/startup/manage/src/schedule_config.cpp",
+        "services/startup/manage/src/schedule_manager.cpp",
+        "services/startup/manage/src/startup_manager.cpp",
+        "services/startup/manage/src/startup_schedule.cpp",
+        "services/startup/model/include/schedule_task.h",
+        "services/startup/model/include/startup_constant.h",
+        "services/utils/include/dupdate_inet_observer.h",
+        "services/utils/include/dupdate_net_manager.h",
+        "services/utils/include/dupdate_net_observer.h",
+        "services/utils/include/dupdate_timer.h",
+        "services/utils/src/dupdate_net_manager.cpp",
+        "services/utils/src/dupdate_net_manager_empty.cpp",
+        "services/utils/src/dupdate_net_observer.cpp",
+        "services/utils/src/dupdate_timer.c"
+      ],
+      "entries": [
+        {
+          "path": "frameworks/js/napi/base/include/client_define.h",
+          "oid": "4ba60912f2300a0bb5e6b25930e00ec794aa49fc",
+          "size": 1780,
+          "language": "cpp",
+          "sha256": "a3e64d0116f7a815c3e3f2ec277ef0f1ef9457aab0074b12467f6cc3fcb2f469"
+        },
+        {
+          "path": "frameworks/js/napi/base/include/client_helper.h",
+          "oid": "48f1e6c13cd0d5a51c174a67d1327f16f8bede05",
+          "size": 10636,
+          "language": "cpp",
+          "sha256": "4eb37a173690d09c1f97f891e29b3b3a0691eb11dfa5a10d79c3bcb22c945e11"
+        },
+        {
+          "path": "frameworks/js/napi/base/include/define_property.h",
+          "oid": "3cc9c29085121c85c22c7b564880acd375380106",
+          "size": 1898,
+          "language": "cpp",
+          "sha256": "5f7438ce3d87dce3467505b8ae866e64135c6bb0008694806d12e1f9a52154b9"
+        },
+        {
+          "path": "frameworks/js/napi/base/include/iupdater.h",
+          "oid": "55223f45df037b9ca7dd5e8bc9b21d14c06ab334",
+          "size": 1837,
+          "language": "cpp",
+          "sha256": "8348c27d8c51048c70c2ed002a2345f59543865cfb2caf3e198576b5af10064f"
+        },
+        {
+          "path": "frameworks/js/napi/base/include/napi_util.h",
+          "oid": "ae2eb712172beb29079a33bab50265d1594d5a74",
+          "size": 3169,
+          "language": "cpp",
+          "sha256": "c703c528225385c3531c4fe9f83d4431e4a6fdbf8faa2e7d147d2741522ecad1"
+        },
+        {
+          "path": "frameworks/js/napi/base/include/session_manager.h",
+          "oid": "3a3b31f827726fffc0ff8aed3b375db7e31e788f",
+          "size": 2045,
+          "language": "cpp",
+          "sha256": "9d87598eaa2b95593fde93e4856c643528b1953aceba83b4db15d63ac6dc7428"
+        },
+        {
+          "path": "frameworks/js/napi/base/src/client_helper.cpp",
+          "oid": "5280f72f2e324bd4ce8efe56b5a79dc1696a8e85",
+          "size": 33795,
+          "language": "cpp",
+          "sha256": "96275ad90b75d3175e922165e449d2b24091bcdc5e11f15e79b8a0866314bd10"
+        },
+        {
+          "path": "frameworks/js/napi/base/src/define_property.cpp",
+          "oid": "97041099df66e0deb306e5dca10b6649b3b0db3b",
+          "size": 9645,
+          "language": "cpp",
+          "sha256": "f8c8b99d96ce9bd9aef8043a0d0d8bc53fdf1c9a49f0f1e4600595de070edf28"
+        },
+        {
+          "path": "frameworks/js/napi/base/src/iupdater.cpp",
+          "oid": "4ad65b730ed9b0c90f25f02e3f6a2c5953c2e056",
+          "size": 5727,
+          "language": "cpp",
+          "sha256": "fdea5c081c5bab5e445f197a34e23ed73beb46483f0838ce44fdcf20a504ac14"
+        },
+        {
+          "path": "frameworks/js/napi/base/src/napi_util.cpp",
+          "oid": "808157fc39be68749bc1a0b8a0454f753acb3952",
+          "size": 7084,
+          "language": "cpp",
+          "sha256": "cab3e100578f6a5dfa23da103721707b76ddd0466faccb211456db92b260ebbb"
+        },
+        {
+          "path": "frameworks/js/napi/base/src/session_manager.cpp",
+          "oid": "98fdbd979ed93fce04103775b7ff12f0ecb8c2ad",
+          "size": 9657,
+          "language": "cpp",
+          "sha256": "ba44395a3f7dbb59e62a3090f9a90dafa5da0f10f35c52c3edf9ec6df994d4b4"
+        },
+        {
+          "path": "frameworks/js/napi/client/iupdate_session.h",
+          "oid": "2526d0da97fd1f86d367a5f0bf3e2f7b4aba03d9",
+          "size": 1400,
+          "language": "cpp",
+          "sha256": "9a235540f826fcbd452673196133e0128049124b3bac195e3db92fe489ec2c3f"
+        },
+        {
+          "path": "frameworks/js/napi/client/local_updater.cpp",
+          "oid": "ec90456a77561d153b65fae32333980c29ed93ec",
+          "size": 6401,
+          "language": "cpp",
+          "sha256": "7242a1516a4d75fbdf30da250374bf5ba8ea672919a493216370c61c2a3c0bc0"
+        },
+        {
+          "path": "frameworks/js/napi/client/local_updater.h",
+          "oid": "6b40baf94a88b7dcde4bbd01e3491ffdce8ddee0",
+          "size": 1808,
+          "language": "cpp",
+          "sha256": "09ec7083877f92c8993f77f35cec1175f4258f12ce828950ecc0ebce6eb5a728"
+        },
+        {
+          "path": "frameworks/js/napi/client/restorer.cpp",
+          "oid": "7fe62b80ca6202f06ada91055160bee5f0964609",
+          "size": 1953,
+          "language": "cpp",
+          "sha256": "7c8869b096e8742c3d9cac91e87a36e77490124c905f7f135b27000efdfebe15"
+        },
+        {
+          "path": "frameworks/js/napi/client/restorer.h",
+          "oid": "48964aab822cb9a419b35cb5b6c852ee3ea5eccf",
+          "size": 1214,
+          "language": "cpp",
+          "sha256": "9facb87b2098ead6808253938b6bf61d98ec8976e6c2f6d9018ffd84d44aa361"
+        },
+        {
+          "path": "frameworks/js/napi/client/update_client.cpp",
+          "oid": "d8822d7d7691a32e37d4c15da7c55931977ada0a",
+          "size": 23318,
+          "language": "cpp",
+          "sha256": "9cbd3b285af50d4601b288e020a4158806af5f75e4d79117dd25aab3846e5dc4"
+        },
+        {
+          "path": "frameworks/js/napi/client/update_client.h",
+          "oid": "c3ac19d84ca00e2ce63f25ec17f43c448d60ec23",
+          "size": 4534,
+          "language": "cpp",
+          "sha256": "3ac26f7ab8713b4dc59dfa96f196ab110d07a0b3c9bd6dbb6c62ac7a0c297bb7"
+        },
+        {
+          "path": "frameworks/js/napi/client/update_module.cpp",
+          "oid": "1824f0b3f950cc10b39d1f707b049969144575e1",
+          "size": 16463,
+          "language": "cpp",
+          "sha256": "14f2fc1cad32f7d163900f4ea787821b80ea4cedd91fd41b707ee4ccf71d7a94"
+        },
+        {
+          "path": "frameworks/js/napi/client/update_session.cpp",
+          "oid": "33fdb55a3326df3c2ee6bf0b70f6aaf0ee9ef94e",
+          "size": 14865,
+          "language": "cpp",
+          "sha256": "d29069b9f3da7af424c72683b66dfab33f5c7e5c74cb575dc4b2bbb16c155902"
+        },
+        {
+          "path": "frameworks/js/napi/client/update_session.h",
+          "oid": "1de59b5e48fe25355f5020ce4ab352901f9771f0",
+          "size": 11402,
+          "language": "cpp",
+          "sha256": "39bf1b9869036a86ac454726a82b64655adab7dbc0732862c0a35fcb934d254d"
+        },
+        {
+          "path": "interfaces/inner_api/engine/update_service_kits_impl.cpp",
+          "oid": "67fc9ea97f5870be81e7d6bdd4e8a0998db3c5af",
+          "size": 12522,
+          "language": "cpp",
+          "sha256": "32099c95dc3ce19b532848ff2ede8b2ef41616e4a83df8c44c00306036452c86"
+        },
+        {
+          "path": "interfaces/inner_api/engine/update_service_ondemand.cpp",
+          "oid": "c0894011be2c2668e8f788a4c13933f4a57b6569",
+          "size": 3499,
+          "language": "cpp",
+          "sha256": "4fad0a8b1bb62aadfa4e7d3d4c5b6ee62da2846cb7f509b774ffd03d067dcad6"
+        },
+        {
+          "path": "interfaces/inner_api/engine/update_service_proxy.cpp",
+          "oid": "30cc013c6a031fa4ec56a168984e1d37d4d5aada",
+          "size": 20509,
+          "language": "cpp",
+          "sha256": "fbf8ad60349355c04fb201b65c7ebd7d37ddb0dfe4ac728f0d0052f1b7634d3b"
+        },
+        {
+          "path": "interfaces/inner_api/include/iservice_local_updater.h",
+          "oid": "1d3be0cdde6b5c4fed9563fe93cc7e6555961b15",
+          "size": 1274,
+          "language": "cpp",
+          "sha256": "3114fc03f48af65c98b74cd0f883269d33484e2cbdfd70a03ca09e8275244f82"
+        },
+        {
+          "path": "interfaces/inner_api/include/iservice_online_updater.h",
+          "oid": "1f5481ec449fb3eee0de191e4df398e1d275e9e1",
+          "size": 3337,
+          "language": "cpp",
+          "sha256": "de76759964e30723eae65febf04e4051115a7a8d3172993d361c4823337d9c19"
+        },
+        {
+          "path": "interfaces/inner_api/include/iservice_restorer.h",
+          "oid": "67f13f6664f4c26f30ee2e9a1e738ae2e37ec3a9",
+          "size": 1009,
+          "language": "cpp",
+          "sha256": "5266a725f073262211e8653a38136c7fb4bbe81ff35b7e2695e8591c6cd25fee"
+        },
+        {
+          "path": "interfaces/inner_api/include/iupdate_callback.h",
+          "oid": "a2eb28233919ae5ac296c91641ca9a12e0d8416f",
+          "size": 1297,
+          "language": "cpp",
+          "sha256": "95d40216d178f29039196b7b179df3b820c391bfe66bfd280af0ce3a961e680b"
+        },
+        {
+          "path": "interfaces/inner_api/include/iupdate_service.h",
+          "oid": "7fac82b415c5bbe229963cc444de8ce1007f283f",
+          "size": 1410,
+          "language": "cpp",
+          "sha256": "723fc6cd3f8bca3ffe55db34f678fc60c80687df92331837fc4539f58ce03b7e"
+        },
+        {
+          "path": "interfaces/inner_api/include/json_builder.h",
+          "oid": "2af33cc0e468cd069f5fd0ca88826654646bd024",
+          "size": 2919,
+          "language": "cpp",
+          "sha256": "2969ba79a96b4b818b61e9e74b438122c92d6102fc7b94358d9a97542b67469b"
+        },
+        {
+          "path": "interfaces/inner_api/include/message_parcel_helper.h",
+          "oid": "1d73cac48fc3ae01ea42dc91797aa7cfa5cfeb1d",
+          "size": 4210,
+          "language": "cpp",
+          "sha256": "86a92047c375735ba03efb988c9f1e0646f3bd42dfe4bb67186c94c6ed39adf6"
+        },
+        {
+          "path": "interfaces/inner_api/include/update_constant.h",
+          "oid": "b29d4839266319336737482764c84b03f9046762",
+          "size": 842,
+          "language": "cpp",
+          "sha256": "e6837ed9f287db931c83aae738a5740c8a049091b9b0a99ba361cf2ff7d53f7a"
+        },
+        {
+          "path": "interfaces/inner_api/include/update_helper.h",
+          "oid": "12a4a6ffaa2052ea39bcfc228a214b71285b51ac",
+          "size": 14291,
+          "language": "cpp",
+          "sha256": "43afa4981146bfc22aa76a04b2cd4304c35e67f692d5a98501f22c00e7b43a92"
+        },
+        {
+          "path": "interfaces/inner_api/include/update_service_kits.h",
+          "oid": "e90b7fc07ab973f1fa896a52758230a5282fb895",
+          "size": 4094,
+          "language": "cpp",
+          "sha256": "a7a38feed182c97ce83e6f29d197c2538ed1cf395a4a92e6e046e03967299160"
+        },
+        {
+          "path": "interfaces/inner_api/include/update_service_kits_impl.h",
+          "oid": "0306f28133866de273e08f7f87d2fc0d4e0c9cb3",
+          "size": 5212,
+          "language": "cpp",
+          "sha256": "c0e7f8903c4d95d8eef4e772b006a94d6812900cf57c5ad3b83ac34a90af6466"
+        },
+        {
+          "path": "interfaces/inner_api/include/update_service_ondemand.h",
+          "oid": "73d58bb2d5a57ecfa0d53f2cb809a4f08270603f",
+          "size": 1766,
+          "language": "cpp",
+          "sha256": "087adcef75c4b43806d8380c2ffb17c4dd15cee7790aaf903e184dfbd88fae73"
+        },
+        {
+          "path": "interfaces/inner_api/include/update_system_event.h",
+          "oid": "6473ef8a63ced2a811212c478ce53781c2e86835",
+          "size": 3083,
+          "language": "cpp",
+          "sha256": "9e2acec90e7d876bf685a64c1a14aea4d68143005be084ff83f1f7fe909d2785"
+        },
+        {
+          "path": "interfaces/inner_api/include/updater_sa_ipc_interface_code.h",
+          "oid": "d4bfa39480937bed8a1aea125b0abf85c8391daa",
+          "size": 1304,
+          "language": "cpp",
+          "sha256": "0a8a36126c5904fac8a15d9f3435cfd54fa13051f559c40902447df52a5bc787"
+        },
+        {
+          "path": "interfaces/kits/js/declaration/@ohos.update.d.ts",
+          "oid": "f3f87fc3a35eb950296eee624e1fd64aceac17b1",
+          "size": 55453,
+          "language": "ts",
+          "sha256": "19c5c519b1eeefd7a6e7588068feff620c7328345354441fba908d6a9aa10b39"
+        },
+        {
+          "path": "services/callback/include/update_callback.h",
+          "oid": "c51293652cb77490e8588719a073e52fd78a89e5",
+          "size": 1141,
+          "language": "cpp",
+          "sha256": "3e7104d7662901e9dc4d0f49042b6e16656ff39adf7695d202ab862b183011a3"
+        },
+        {
+          "path": "services/callback/include/update_callback_proxy.h",
+          "oid": "f87cd2430d8869b01c7993afe687e560ede64087",
+          "size": 1382,
+          "language": "cpp",
+          "sha256": "12476972d13c3a49c4da7e6c4d5876a558ded1e6f649ce3571f46c0011400a76"
+        },
+        {
+          "path": "services/callback/include/update_callback_stub.h",
+          "oid": "2a78f9d404524ea9694426fd6a86a2758563cab1",
+          "size": 1083,
+          "language": "cpp",
+          "sha256": "802dc2901639f936f26c8c3adba178b9951f5788daf96a89326ba3d266b6212b"
+        },
+        {
+          "path": "services/callback/src/update_callback.cpp",
+          "oid": "51718fba1a7700eafa1e9f2af6e43a6e3e8b6e9b",
+          "size": 1085,
+          "language": "cpp",
+          "sha256": "a17e21690c46485dc5ca8c27026703c1a67becf5e428bb9934db0c9c049381cc"
+        },
+        {
+          "path": "services/callback/src/update_callback_proxy.cpp",
+          "oid": "a3f29d855e249cdd8452ffbe4566846e71a24783",
+          "size": 2531,
+          "language": "cpp",
+          "sha256": "dcd3b4f4eccf1d0f322b9f46ae1abb517222297a984464beb9f8608e1502ecad"
+        },
+        {
+          "path": "services/callback/src/update_callback_stub.cpp",
+          "oid": "781bec1cabda871ca69e2bbde710c7f27d3ffc45",
+          "size": 1866,
+          "language": "cpp",
+          "sha256": "9f56cbb7842d5b549ae2701270fd54ecc3f4f548e8136a14a70a4243efb443c6"
+        },
+        {
+          "path": "services/core/ability/adapter/include/config_parse.h",
+          "oid": "c1e159af364217bd5b072dcab47830d362b80199",
+          "size": 1041,
+          "language": "cpp",
+          "sha256": "6840dbff4864544c510a3a6eda9d538d3d93553e45eb590324724e84e9329532"
+        },
+        {
+          "path": "services/core/ability/adapter/include/device_adapter.h",
+          "oid": "2bd2987a68dcc87187b6f73188e022c061445fc7",
+          "size": 1211,
+          "language": "cpp",
+          "sha256": "4ad9f57f85ef050ac198472454e91611d4246ea858d4f1e33e2bc46050386329"
+        },
+        {
+          "path": "services/core/ability/adapter/src/config_parse.cpp",
+          "oid": "86ef65cb3af4aefc733992314a5e44fe054cfac2",
+          "size": 1754,
+          "language": "cpp",
+          "sha256": "d5c493c64c6f29f87777bfa1e4621466b3c8a89b4ea0edc7734b9a9e0d56b224"
+        },
+        {
+          "path": "services/core/ability/adapter/src/device_adapter.cpp",
+          "oid": "81709a690d8eadb2d73b6a5100856b117b2aae89",
+          "size": 2409,
+          "language": "cpp",
+          "sha256": "5c8b1b66ef290166ac4ff880f3332f4b9a6875154deb0c787e3c5d9aff23e33f"
+        },
+        {
+          "path": "services/core/ability/alarm/include/alarm_helper.h",
+          "oid": "a35f35f2a48acb50b07faa93c22b75e3c428e7ae",
+          "size": 1500,
+          "language": "cpp",
+          "sha256": "0cfe412a92b44b048992906ef443321fc990cd3ac979fc4319995042ab575367"
+        },
+        {
+          "path": "services/core/ability/alarm/include/alarm_manager.h",
+          "oid": "6b0cbe05a679a8ad9564cdeaf17a8643b6349b49",
+          "size": 1574,
+          "language": "cpp",
+          "sha256": "dcffc57dbd2b166af80fc8db843ce11288cd137ef0e185359df322b0d952867e"
+        },
+        {
+          "path": "services/core/ability/alarm/include/timer_manager.h",
+          "oid": "87f2e41e06653346d087ccd1bb4082510bd31e4a",
+          "size": 1438,
+          "language": "cpp",
+          "sha256": "0b6677bcb95d889cc580b7d34413364519be8ec363f44fbe84f69d5aa6e0f16a"
+        },
+        {
+          "path": "services/core/ability/alarm/src/alarm_manager.cpp",
+          "oid": "300af386e66e394b4b1dff8854dd9b569de276c9",
+          "size": 2235,
+          "language": "cpp",
+          "sha256": "e51f87303ab412e19569320897b33ad0b360324d129f40d7eca41b9e48452c93"
+        },
+        {
+          "path": "services/core/ability/alarm/src/timer_manager.cpp",
+          "oid": "021ff6ee5a1bbf1b6e6d0d9e7d8871a2e745b62b",
+          "size": 2662,
+          "language": "cpp",
+          "sha256": "8ea23e49535dc44ae7a2e9ef0f0a456877a57798abec5de86799a50116200134"
+        },
+        {
+          "path": "services/core/ability/callback/include/base_callback_utils.h",
+          "oid": "1aa4a794bc649060323e5185b15d38454233ca64",
+          "size": 1442,
+          "language": "cpp",
+          "sha256": "94e280c09f7a23b30eb2db90aeb9fb5d902d83ce053e7eeff00fd237e95efa7a"
+        },
+        {
+          "path": "services/core/ability/callback/src/base_callback_utils.cpp",
+          "oid": "d079f465064505c85341c04ae925a004090012d1",
+          "size": 4241,
+          "language": "cpp",
+          "sha256": "0826b7ffc30943479d5989364828feb8e83d0302e3f808f104dc25a270c10248"
+        },
+        {
+          "path": "services/core/ability/callback/src/base_callback_utils_empty.cpp",
+          "oid": "059dfe987d70b74732cd072707d7f838c5ac7f94",
+          "size": 1705,
+          "language": "cpp",
+          "sha256": "950e6fe8ccac9736a3a70bfe7bb12d3fb519aeaf8a3a1cca4e540dcfdf9b2c12"
+        },
+        {
+          "path": "services/core/ability/common/include/constant.h",
+          "oid": "369560ec2d751aa4389153f81618c2d4e0ee8bb4",
+          "size": 2774,
+          "language": "cpp",
+          "sha256": "0a0eb2af4e8eabc79db9013334ee896a2ed82632acfb6da9cdf28343aebbc65b"
+        },
+        {
+          "path": "services/core/ability/define/include/update_define.h",
+          "oid": "43afea8b809b434a61a4e338141e219daea7a550",
+          "size": 1290,
+          "language": "cpp",
+          "sha256": "2686a4efc72a0e0ea88d022ddd8f58f3459084627340fd13693a2d4bce76d20f"
+        },
+        {
+          "path": "services/core/ability/download/data/include/download_info.h",
+          "oid": "ac944eec8e99904cf8e7904537a80ee96e0e7cca",
+          "size": 2307,
+          "language": "cpp",
+          "sha256": "6c9933448a882c4cf2bcce422e829f0d01245276da960dd29c32e98cbe460f04"
+        },
+        {
+          "path": "services/core/ability/log/include/update_log.h",
+          "oid": "9b20ef5c9b51274eb1016014f5280b2dfaf67d36",
+          "size": 4569,
+          "language": "cpp",
+          "sha256": "102d821bba6ed2acb2de146445c47747f853493cd96e7c3a140c5ea9c9a8b054"
+        },
+        {
+          "path": "services/core/ability/log/src/update_log.cpp",
+          "oid": "c104ed6d9fa11b3d7cb333a53c48bfd11aef396b",
+          "size": 5018,
+          "language": "cpp",
+          "sha256": "55997c8761d3c0a404fd8d25e8934f1a23f27bdd3092465a6af8e959d8579c15"
+        },
+        {
+          "path": "services/core/ability/model/include/device_info.h",
+          "oid": "10e7593a87bb8c3eaf01ae1d3ff8474e8fe0bc74",
+          "size": 1239,
+          "language": "cpp",
+          "sha256": "6ee5fefa0f45654cb56118c3d3cba9f6f67912d4fbfeeb271ef20b4bf1abd329"
+        },
+        {
+          "path": "services/core/ability/net/include/network_response.h",
+          "oid": "46c7df6f1dc85e4f9c14cfa79a8365396799a92b",
+          "size": 1095,
+          "language": "cpp",
+          "sha256": "f2867bbd0313471409d926be06d1d5b6c26d24ae453632136a30b48dfe762b7c"
+        },
+        {
+          "path": "services/core/ability/preference/include/preferences_utils.h",
+          "oid": "31cf81e7ab2765a9e2772db5ad0dd80378a047c3",
+          "size": 3507,
+          "language": "cpp",
+          "sha256": "5f7baaef4029780df06712daa7be9c0dd7dad55ddd71ffa8f0cc56a2bbad7c3d"
+        },
+        {
+          "path": "services/core/ability/preference/src/preference_utils.cpp",
+          "oid": "afe8a01cef8948b8afa5e166a906334aa29c7955",
+          "size": 6458,
+          "language": "cpp",
+          "sha256": "5ed0ef30f743c533e53de192ac26750ff367b5a3740354fd6710525b95d5351c"
+        },
+        {
+          "path": "services/core/ability/preference/src/preference_utils_empty.cpp",
+          "oid": "23a97144475e2badd7af216db79d5b477739685e",
+          "size": 2317,
+          "language": "cpp",
+          "sha256": "d53a95824be23e977fdace9bb70de8c02890b06ae13190e8106f929cc2c42503"
+        },
+        {
+          "path": "services/core/ability/sqlite/core/include/idatabase.h",
+          "oid": "a6e15ff1384add477fee6c08f23e0b3e3ce95f45",
+          "size": 1463,
+          "language": "cpp",
+          "sha256": "75511346a282eb25aa80a995ccf3069fbe53c0362449e4f16f5cbfeb5cce8818"
+        },
+        {
+          "path": "services/core/ability/sqlite/core/include/itable.h",
+          "oid": "3ba7ca052864465b8d7cd4e7152a300613bf68da",
+          "size": 4322,
+          "language": "cpp",
+          "sha256": "c34e4eabd2fb1612b851cc251d991010c5451a677ae6a2be75a5fc4fddc2697e"
+        },
+        {
+          "path": "services/core/ability/sqlite/core/include/itable_operator.h",
+          "oid": "fa83b39bdf3f0100c3b111ab183d95fee85b4dce",
+          "size": 1449,
+          "language": "cpp",
+          "sha256": "99c6487a1ca2f04ac4562b9628f2b4818a84efc03b147e8090e506f72a747a34"
+        },
+        {
+          "path": "services/core/ability/sqlite/core/include/sqlite_db.h",
+          "oid": "b09d9d66c7d41b5f4c976f8a39d8a817f2f252a3",
+          "size": 2023,
+          "language": "cpp",
+          "sha256": "01ecc9d6b760f784d1de05cd85118b807926f38c546242a7fe9c3a35524e6d68"
+        },
+        {
+          "path": "services/core/ability/sqlite/core/include/table_base_operator.h",
+          "oid": "66580a2e335de90f0dc7966a6e75753c958a2d5b",
+          "size": 5800,
+          "language": "cpp",
+          "sha256": "bb4b6269b1050c62925859aa3e18d352e796fc8adb8ee45db819ab2c480723a0"
+        },
+        {
+          "path": "services/core/ability/sqlite/core/src/sqlite_db.cpp",
+          "oid": "bb3852581bd9ef0853831d6218b0397336b2674f",
+          "size": 3925,
+          "language": "cpp",
+          "sha256": "119c7a48ee4817517e164ba292582b03151038402c81598cab3244bc194a6b30"
+        },
+        {
+          "path": "services/core/ability/status_cache/include/status_cache.h",
+          "oid": "1ab7136b8fcc050976b33febff457fcc9fa04177",
+          "size": 1224,
+          "language": "cpp",
+          "sha256": "cd9dbbd3a2e16405198c2e6bc63f8178d4c45106b5d8a31a00f713d0f66bc6d9"
+        },
+        {
+          "path": "services/core/ability/status_cache/src/status_cache.cpp",
+          "oid": "9fdca16aa283d14b030123e61b91b59b4dc77345",
+          "size": 1410,
+          "language": "cpp",
+          "sha256": "c668f38071a7b4ac17773671873e5010fb4f3bfca5b31ce563057d389ce3a73b"
+        },
+        {
+          "path": "services/core/ability/utils/include/encrypt_utils.h",
+          "oid": "0f8b53e44b52cd44b3c62eb7557a2d7093279c73",
+          "size": 2652,
+          "language": "cpp",
+          "sha256": "8ab6e3068e1809394b73d35d02c197669f8d270a246602e00b79f8f91de5499d"
+        },
+        {
+          "path": "services/core/ability/utils/include/file_utils.h",
+          "oid": "085d185a96fa0b09362e249f85c1732dc915006e",
+          "size": 2032,
+          "language": "cpp",
+          "sha256": "ce6fb9fa3ef210af184f56710b17ab6f76213c8008b47b72c170dbfc4c356336"
+        },
+        {
+          "path": "services/core/ability/utils/include/json_utils.h",
+          "oid": "d97a5b3397e125ccb3bb98552043685b5f54e0f4",
+          "size": 3023,
+          "language": "cpp",
+          "sha256": "d241ecdd485f31e22affcb29fa7629fbd620d776580751a5ad7e20022773ae09"
+        },
+        {
+          "path": "services/core/ability/utils/include/sha256_utils.h",
+          "oid": "dee12a9e7d8174f4d3634885a0357121039ee681",
+          "size": 1446,
+          "language": "cpp",
+          "sha256": "a88deb0ff90cc27c554a98b055451a5f89a105dce9166ad59622487836a00079"
+        },
+        {
+          "path": "services/core/ability/utils/include/string_utils.h",
+          "oid": "a29aa53a0ac01633f84a93cff5e921f157bd4d06",
+          "size": 4538,
+          "language": "cpp",
+          "sha256": "b449c052413d0830a2aff9ca89b14de9c0c2fa6f873273ac1363eee9f4b5a28a"
+        },
+        {
+          "path": "services/core/ability/utils/include/time_utils.h",
+          "oid": "c39fb132181c78887f16298b2804d05c78276c5a",
+          "size": 2416,
+          "language": "cpp",
+          "sha256": "882bdf4f8ea2fcf928cba493f90000c2870ae7936c9e2caf40e7de057892e2b6"
+        },
+        {
+          "path": "services/core/ability/utils/include/time_utils_proxy.h",
+          "oid": "d071fe9c043295d560203769afd292020dd5ae8c",
+          "size": 1038,
+          "language": "cpp",
+          "sha256": "1424fe22a1dc42eb3afb767ff42a7bedaffa83aba8183c541b0e988de532e87b"
+        },
+        {
+          "path": "services/core/ability/utils/src/file_utils.cpp",
+          "oid": "7c60701750257deeaaafc5b7f41152f126ab412e",
+          "size": 7088,
+          "language": "cpp",
+          "sha256": "25d1fc534c24c40f557d6ff4de200b53907b12e72c11a26c03864fcc145d9c8e"
+        },
+        {
+          "path": "services/core/ability/utils/src/sha256_utils.cpp",
+          "oid": "5931ced308bb04e8a57120b0598839a03d148876",
+          "size": 5263,
+          "language": "cpp",
+          "sha256": "7a7dc91cbe2626e72f3a65d343b9e04be5144f8262589aa999fa704d6e67d530"
+        },
+        {
+          "path": "services/core/ability/utils/src/time_utils_proxy.cpp",
+          "oid": "6def1296dcb8ea9e1da4c33db036df46e7f0acf5",
+          "size": 1064,
+          "language": "cpp",
+          "sha256": "b7c4af43b3aad39f6c6585b96c674045efeee6dfbca3de98b847ea7719ed06bd"
+        },
+        {
+          "path": "services/engine/include/progress_thread.h",
+          "oid": "0115c0b9793e7ca12e3fdbdb476a1b3a788cf41d",
+          "size": 3293,
+          "language": "cpp",
+          "sha256": "013987e775219130e6970be2a7dfe3b9af254c4c0477979adba5daa5a59cd3c4"
+        },
+        {
+          "path": "services/engine/include/update_no_constructor.h",
+          "oid": "7b10bdc6b5cbcc12fb748b48eb96f5525a165fb0",
+          "size": 964,
+          "language": "cpp",
+          "sha256": "35e836d56e745e4d0091e6b6d52b08b2fde1e1640665fd0552aed131bbeafb79"
+        },
+        {
+          "path": "services/engine/include/update_notify.h",
+          "oid": "7866eae46d6a8ceed2193908da71ff56889f293a",
+          "size": 2264,
+          "language": "cpp",
+          "sha256": "b2b73b4a03a7d18b8ed5863f8cb99403d23adf5472171cde427ac6b4893fa257"
+        },
+        {
+          "path": "services/engine/include/update_service.h",
+          "oid": "44f284abe01512c52956da2b66c857470d22f4cb",
+          "size": 5529,
+          "language": "cpp",
+          "sha256": "599bd9a721569f9b79b33fa42690bf2a959834705843fea7893eafaab1917f2d"
+        },
+        {
+          "path": "services/engine/include/update_service_cache.h",
+          "oid": "75e616ef371d037f2dbc4325c4394cf04f50904f",
+          "size": 2034,
+          "language": "cpp",
+          "sha256": "3316803ba67b118cf7d4689f1ad7012c8ef11e9272a8d36b631f419a027e5b74"
+        },
+        {
+          "path": "services/engine/include/update_service_impl_firmware.h",
+          "oid": "865319b47417fe60c334238522c785a86c1cb9d9",
+          "size": 3621,
+          "language": "cpp",
+          "sha256": "7cb260c5d3365654b21e8c8c8681f6c97c738036622093bbf696101050543269"
+        },
+        {
+          "path": "services/engine/include/update_service_impl_manager.h",
+          "oid": "66186d67da1a96d21126789dce195727cb3a7272",
+          "size": 1255,
+          "language": "cpp",
+          "sha256": "3f0a0aa2b827207fbe7b2bcd36abf19713faa5c3b53d56d8c29ebbd5140e04b1"
+        },
+        {
+          "path": "services/engine/include/update_service_local_updater.h",
+          "oid": "206cfce7162b925762f446834099d1f7ba507c67",
+          "size": 1407,
+          "language": "cpp",
+          "sha256": "fa1ed0a4ef0525c4ae8afc9dac0b2fbc1b95cdcdb68eab3ee9fd985899c51143"
+        },
+        {
+          "path": "services/engine/include/update_service_proxy.h",
+          "oid": "c480249e4a9370911f19c2acd0f3b068ca45647d",
+          "size": 4005,
+          "language": "cpp",
+          "sha256": "b799762178f83a0c602608efe71ac241730bf179c5a2748bde48d63de9fafcf0"
+        },
+        {
+          "path": "services/engine/include/update_service_restorer.h",
+          "oid": "881533f8e99593fdf2a7e18757d7d2671aeeaba0",
+          "size": 1134,
+          "language": "cpp",
+          "sha256": "421a5ed4b0999a6e3334bc43ad5b36c18b6ed15483b95e43988e31d14ad8d27f"
+        },
+        {
+          "path": "services/engine/include/update_service_stub.h",
+          "oid": "14fe1c85e1538e07b327ffc363f424c5ed73325d",
+          "size": 4321,
+          "language": "cpp",
+          "sha256": "0dd9962b56f7610b8187dd818b74e0fd2f44f46e4eb2df3019d7fa471b0d6311"
+        },
+        {
+          "path": "services/engine/include/update_service_util.h",
+          "oid": "8b65551306bfd2b002fd90a7307ed40a8a526d14",
+          "size": 1168,
+          "language": "cpp",
+          "sha256": "665b51a2c8c7ceb2fdd3f820510ca2ced4aa9e86f2cff0584988eaa18be7470f"
+        },
+        {
+          "path": "services/engine/src/message_parcel_helper.cpp",
+          "oid": "52d7b318964f122f5280ce975634948461535a99",
+          "size": 15301,
+          "language": "cpp",
+          "sha256": "7cec61c9c16e0124a8bddb9f8cc36f59f574167dfdb16fef5998b2418bb54b1f"
+        },
+        {
+          "path": "services/engine/src/progress_thread.cpp",
+          "oid": "333239a04b63442defcee1740f4ef044c4df824b",
+          "size": 9087,
+          "language": "cpp",
+          "sha256": "522f5ea9634b6392b3b498185e88b1cb2e8c33e70e65f2900286516f6f28c572"
+        },
+        {
+          "path": "services/engine/src/update_helper.cpp",
+          "oid": "ff683276a833c45d9e0e6c2143ce3b048a56d552",
+          "size": 5453,
+          "language": "cpp",
+          "sha256": "44785fd44a0eb094239db4938e084709de2bf427dcc538e89d43f020cc3078d6"
+        },
+        {
+          "path": "services/engine/src/update_notify.cpp",
+          "oid": "bef0a1b28d15463b9feba40bb52e76c95122b59d",
+          "size": 4702,
+          "language": "cpp",
+          "sha256": "7a71cd3e12bcfb591bb88fe19d6ef3ccb24500fdbb235c271b3d20f659312eb3"
+        },
+        {
+          "path": "services/engine/src/update_service.cpp",
+          "oid": "606533e9be6603324049b163dbc46d966b596e4c",
+          "size": 16514,
+          "language": "cpp",
+          "sha256": "adb112be45671bb10994d785712eb44aea949e350f3b9fe2d2551f7775099267"
+        },
+        {
+          "path": "services/engine/src/update_service_cache.cpp",
+          "oid": "61394bdc66813591c8b1ac1fd5638772889a4a73",
+          "size": 4252,
+          "language": "cpp",
+          "sha256": "cc9594af32195301e390fec3d8f69c7ea74b3e6eb01de8c520f14923f922259d"
+        },
+        {
+          "path": "services/engine/src/update_service_impl_firmware.cpp",
+          "oid": "a18791567c7988560de8490f9b9d187a20975662",
+          "size": 13644,
+          "language": "cpp",
+          "sha256": "1731154094031748cc8e1cbb75392ccc6a8cd40f3bb1bc79027f9c59bc177ae2"
+        },
+        {
+          "path": "services/engine/src/update_service_impl_manager.cpp",
+          "oid": "3c0629bd900dd8977a8273db3b503cc2de5a6c08",
+          "size": 1797,
+          "language": "cpp",
+          "sha256": "7be55708ca955d0f17a5225d57ea01b0f384ec7e27a8dc96b0d887b505f11d23"
+        },
+        {
+          "path": "services/engine/src/update_service_local_updater.cpp",
+          "oid": "7f290737b30c417dbac78d76af79ace59f2eb569",
+          "size": 2172,
+          "language": "cpp",
+          "sha256": "5d715e29cf1399bbc67c9d67c5a9cae5c10f29b94284277c7402ebc642d3b451"
+        },
+        {
+          "path": "services/engine/src/update_service_restorer.cpp",
+          "oid": "37a8fad728f3fe225b963bee1d837fe9b0f9d2c4",
+          "size": 1816,
+          "language": "cpp",
+          "sha256": "41a2b2750965ab9a0cf61ee2fdadf3ec5c06887334457849789036645adbb246"
+        },
+        {
+          "path": "services/engine/src/update_service_stub.cpp",
+          "oid": "51ab923c63520965b13c95cab7c1674d799c93e9",
+          "size": 20183,
+          "language": "cpp",
+          "sha256": "9f0076ef97d099258e38f55568dee05d8926d5ee686336c43af3b8a268765768"
+        },
+        {
+          "path": "services/engine/src/update_service_util_hmos.cpp",
+          "oid": "a6306ae01058fd67765b5437b061668dc942f0e6",
+          "size": 2286,
+          "language": "cpp",
+          "sha256": "928c6a9ced8ead118158b23c2276cf490265021ad5346ed6003d4b9cec008050"
+        },
+        {
+          "path": "services/firmware/callback/include/firmware_callback_utils.h",
+          "oid": "27ce08598a3a955c5331782ff51649427c672bda",
+          "size": 1089,
+          "language": "cpp",
+          "sha256": "5fffbb1117c2cd2105c9348b09c21397eda2eb64ba06612b5f6b9edd4bf13116"
+        },
+        {
+          "path": "services/firmware/callback/src/firmware_callback_utils.cpp",
+          "oid": "9fa412769e82e1b774709361b6709ba54c150ccf",
+          "size": 941,
+          "language": "cpp",
+          "sha256": "bc4c29efa6b7914f79fc32f4c20cf2e7f0d3f6c4ad158e91937401a331c4f6d7"
+        },
+        {
+          "path": "services/firmware/check/include/firmware_icheck.h",
+          "oid": "def394f0616a98f12bfb0803fb44950ef4c5961a",
+          "size": 6815,
+          "language": "cpp",
+          "sha256": "0bc32cb68c865a12bac5adf281e36ceec80c0c3969c805d374b4c1455841b59a"
+        },
+        {
+          "path": "services/firmware/common/include/firmware_common.h",
+          "oid": "3865d51b9a14969d1f5aa2b4edc9e17f9ef61cd5",
+          "size": 4095,
+          "language": "cpp",
+          "sha256": "31440e1d743fe820ad0a8e49f98084c5d7d738347673ae4a3bc66050f4db592e"
+        },
+        {
+          "path": "services/firmware/common/include/firmware_constant.h",
+          "oid": "adf5c4bd1bb96aa99ce81a7383c1b48f2c331d59",
+          "size": 2147,
+          "language": "cpp",
+          "sha256": "b80b5884bf8484757a69a37a29bf562c3db7ae863bc5260cd9f349d571313636"
+        },
+        {
+          "path": "services/firmware/common/include/firmware_update_adapter.h",
+          "oid": "a5802cd29f33bd261c5335896c708e1f9c5a946d",
+          "size": 1093,
+          "language": "cpp",
+          "sha256": "19c8945ded8566d735af90c40b49f9674a2aaa79f0f1745751c7e7024f99ced6"
+        },
+        {
+          "path": "services/firmware/common/include/firmware_update_helper.h",
+          "oid": "1a2e24348fb8f983c7dc5c69b80aee12555be716",
+          "size": 2004,
+          "language": "cpp",
+          "sha256": "e22f4c78bda908f3c916436ebcdf3f3b020dae380504edd78a80d01a713ef831"
+        },
+        {
+          "path": "services/firmware/common/src/firmware_update_adapter.cpp",
+          "oid": "febe4b78f8235488d485224c83b706c01676e2e0",
+          "size": 2660,
+          "language": "cpp",
+          "sha256": "ef6eb972d03402e94010aceff8cca66751c44e3e271e661d8dc6a59ea26a8cd0"
+        },
+        {
+          "path": "services/firmware/common/src/firmware_update_helper.cpp",
+          "oid": "3f05c8420d3afee414f61402632fbd796143840e",
+          "size": 5970,
+          "language": "cpp",
+          "sha256": "15660778ecdf68fd0c06d0b55ef5654c074bde46b0caf56b7074e35fde372566"
+        },
+        {
+          "path": "services/firmware/data/db/include/firmware_component.h",
+          "oid": "fd83ae9c1a3bef6f34591da1b0002f70afd0c442",
+          "size": 3551,
+          "language": "cpp",
+          "sha256": "14c523c53e4667000bc448c70c9d6c595908f916456851b770af28fbdea01922"
+        },
+        {
+          "path": "services/firmware/data/db/include/firmware_component_operator.h",
+          "oid": "9d14f08cfd7356b055b8fc94935b8195185c3933",
+          "size": 2006,
+          "language": "cpp",
+          "sha256": "6daad15f03ab5928c7e823b74f6038da735ddf08d79ec73bee1f871ac0e98a0c"
+        },
+        {
+          "path": "services/firmware/data/db/include/firmware_component_table.h",
+          "oid": "f4a96a9efd41eea23a0d2466533934a27ea94611",
+          "size": 3466,
+          "language": "cpp",
+          "sha256": "c1cde60432266051e0c3d0b207b1a2c4430dcd2fe40100aa7053fcc7413b6e26"
+        },
+        {
+          "path": "services/firmware/data/db/include/firmware_database.h",
+          "oid": "6b18ea9c5b91bd42a7888146a0e31b053f25b8d6",
+          "size": 1735,
+          "language": "cpp",
+          "sha256": "7a0c504fc538c9f30e9e4ec1b59f30c648481ed0c8e4dd2347cd3a07e543c99c"
+        },
+        {
+          "path": "services/firmware/data/db/include/firmware_database_callback.h",
+          "oid": "77574d9d5b9ca0152cd5709dab8620d4e7bae99b",
+          "size": 1447,
+          "language": "cpp",
+          "sha256": "59d803ca71e0492be28aa8ed99cfc7d17703aafc711ab0bb50e7266efc3f5551"
+        },
+        {
+          "path": "services/firmware/data/db/include/firmware_task.h",
+          "oid": "55646f5f6afaeb894f3edf6c9d664e654867fa70",
+          "size": 2987,
+          "language": "cpp",
+          "sha256": "22d5f6725b1751f24961c2c637512e1b9ccec3aff578738458bf0e9512739692"
+        },
+        {
+          "path": "services/firmware/data/db/include/firmware_task_operator.h",
+          "oid": "2438203b6d36cb2f30d0635313e29cf6c663e655",
+          "size": 2735,
+          "language": "cpp",
+          "sha256": "89fcf233a0182f81f97c4f3b0dcec6dd2fafa262f2004fa34ef76c95dca8a875"
+        },
+        {
+          "path": "services/firmware/data/db/include/firmware_task_table.h",
+          "oid": "9c266a7ca4e1a50d01472d5fe3d29d373f95baaa",
+          "size": 2978,
+          "language": "cpp",
+          "sha256": "a067aa33072390609e27e316a0bcdb8674735fd690d74cf9d359b612580f6468"
+        },
+        {
+          "path": "services/firmware/data/db/src/firmware_component_operator.cpp",
+          "oid": "551f795dc3237aa5beb82d418c9fce8b2467ac06",
+          "size": 2456,
+          "language": "cpp",
+          "sha256": "70ed01c1ada868c6b1ee564a98304b418f7411d749f8ca8f8d99ac8fc6597e7d"
+        },
+        {
+          "path": "services/firmware/data/db/src/firmware_component_operator_empty.cpp",
+          "oid": "6f4779ac7265cd6f7d491b247142b0fb74ce1050",
+          "size": 1558,
+          "language": "cpp",
+          "sha256": "fec1430865d0a4367041dd10d7bbf0b9cf823f66f25a93a732a7a5addf6b1257"
+        },
+        {
+          "path": "services/firmware/data/db/src/firmware_component_table.cpp",
+          "oid": "022da2d9cd3ddf32c3cd261dc065523cc3213ff0",
+          "size": 7006,
+          "language": "cpp",
+          "sha256": "4480821835172be954722ae003fdbb7b6582ccc9e112d45541a016a0e9771aff"
+        },
+        {
+          "path": "services/firmware/data/db/src/firmware_component_table_empty.cpp",
+          "oid": "aba59f86c996acdceb00d4ba26030a7ea47b6d8e",
+          "size": 941,
+          "language": "cpp",
+          "sha256": "dfd3dece7bdb35e7841ab9a5fe83527f8ea3df2ae5bc5cf2552f6034b80077de"
+        },
+        {
+          "path": "services/firmware/data/db/src/firmware_database.cpp",
+          "oid": "304609dadd1a2fd3e2466190d4410850762886eb",
+          "size": 1403,
+          "language": "cpp",
+          "sha256": "ed60fe2c9f6fd7631863ac14cb4745ba4a6b01f8810e9df3818036e3cecf0a28"
+        },
+        {
+          "path": "services/firmware/data/db/src/firmware_database_callback.cpp",
+          "oid": "f0d318c2c72c301b2dac79dcded284c21dfa338e",
+          "size": 2135,
+          "language": "cpp",
+          "sha256": "8d99509189d789ce64582c0208237a398d661aec3be2757cb0b8bb629673327f"
+        },
+        {
+          "path": "services/firmware/data/db/src/firmware_database_empty.cpp",
+          "oid": "d10b6163a3c7e2abfb8efa2c9133dee8b5bd814a",
+          "size": 1367,
+          "language": "cpp",
+          "sha256": "b112ba2d6f6de710f8e55182fda7f05c308146bf9f40bb003e95ec9640adcc1d"
+        },
+        {
+          "path": "services/firmware/data/db/src/firmware_task_operator.cpp",
+          "oid": "a4811a809f2b512c9c5e4999ae9dbba046d832fb",
+          "size": 4402,
+          "language": "cpp",
+          "sha256": "085a09edbe1e1838cf0e55266187ba29723c5965532ad2165850f755478cd5b3"
+        },
+        {
+          "path": "services/firmware/data/db/src/firmware_task_operator_empty.cpp",
+          "oid": "f7ce5f37de464f3f201e7ebad4349c1a64ad2352",
+          "size": 2470,
+          "language": "cpp",
+          "sha256": "bb489559498ee9a4f6e620ae0a423d6338dc8506166914035622200851e4ffb3"
+        },
+        {
+          "path": "services/firmware/data/db/src/firmware_task_table.cpp",
+          "oid": "db83937efced2a3a196c8de965503048ba00985a",
+          "size": 6285,
+          "language": "cpp",
+          "sha256": "6134fc5ddf6d4bb872299e6ad96208feba054ad3db0bd6b40b2826653f9a46f8"
+        },
+        {
+          "path": "services/firmware/data/db/src/firmware_task_table_empty.cpp",
+          "oid": "d14701f64aceb1ba2a0ff1e2b899a95189a2aab7",
+          "size": 916,
+          "language": "cpp",
+          "sha256": "e3fcc7c480d2569abbc15b62b40959e5fb78dde49ebd382e8386af962c298f9c"
+        },
+        {
+          "path": "services/firmware/data/manager/include/firmware_preferences_utils.h",
+          "oid": "4ace0221b654187ea6c94a49c01edc6a4612bc22",
+          "size": 1079,
+          "language": "cpp",
+          "sha256": "511e5a2bd21288b31671ba4661ac451c92e7a3020f19a19001e6d414dfbdddf9"
+        },
+        {
+          "path": "services/firmware/data/manager/src/firmware_preferences_utils.cpp",
+          "oid": "fed15301ef501ba86e98ffd6620e3e5b4abbc7b7",
+          "size": 1118,
+          "language": "cpp",
+          "sha256": "7154f189e635a30e8999d1b990af7cf9d24d9cbef1d9ef59dfe45b2c91dbab67"
+        },
+        {
+          "path": "services/firmware/event/include/firmware_event_listener.h",
+          "oid": "1fbd87c223451e4046b2538e907ba47a938fdc7a",
+          "size": 1115,
+          "language": "cpp",
+          "sha256": "abf22ba49df87bf5908940ad8366dcf78f200cc6ca7973025ae207abbcc84183"
+        },
+        {
+          "path": "services/firmware/event/src/firmware_event_listener.cpp",
+          "oid": "89590644b47da33de9751f2c0f8ad7da37091381",
+          "size": 1941,
+          "language": "cpp",
+          "sha256": "13b43874a72262c92903ae0ab1eb9348951e43f9617008dbc98831c2143231c7"
+        },
+        {
+          "path": "services/firmware/upgrade/data_processor/include/firmware_check_data_processor.h",
+          "oid": "bdc43c4b7cd89211b2786f8991cc49e1131ccfba",
+          "size": 2115,
+          "language": "cpp",
+          "sha256": "6da48f09cdee3de40ce23a0ee319d41b453e5e23ecdff1e83fc15ade26d27f08"
+        },
+        {
+          "path": "services/firmware/upgrade/data_processor/include/firmware_download_data_processor.h",
+          "oid": "189bfafe386abeb91b1505cfeb3a314b0b010204",
+          "size": 1339,
+          "language": "cpp",
+          "sha256": "e90987ba348e4d841c6d188f490be6fb79a38a0d13a1b339d10d9f2ca1648aab"
+        },
+        {
+          "path": "services/firmware/upgrade/data_processor/include/firmware_install_data_processor.h",
+          "oid": "a02c066c25f7b55b15c893dab1a5375a214c80e2",
+          "size": 1317,
+          "language": "cpp",
+          "sha256": "d566c878bc876cf8efb31623c272683b6b2b8b3a8faa39c4dffef12c0c0295ab"
+        },
+        {
+          "path": "services/firmware/upgrade/data_processor/src/firmware_check_data_processor.cpp",
+          "oid": "62de4e82e46bc4544b2e13a9b16680403ecbef8a",
+          "size": 9015,
+          "language": "cpp",
+          "sha256": "474328e76a100ce555620f1e04091642501fa5fe0cc36b48e759d8f3d1836969"
+        },
+        {
+          "path": "services/firmware/upgrade/data_processor/src/firmware_download_data_processor.cpp",
+          "oid": "14e19d912ecb2235287bec787a1610c803acfb7a",
+          "size": 2880,
+          "language": "cpp",
+          "sha256": "b218a4e313ec5a7ab6c564953e8d7d1c98306a5f543a8583cfed9a557c53742a"
+        },
+        {
+          "path": "services/firmware/upgrade/data_processor/src/firmware_install_data_processor.cpp",
+          "oid": "9db57956117809468ce8f868b2625bc8b6cde383",
+          "size": 3558,
+          "language": "cpp",
+          "sha256": "817df6ab9f4c1e72e20d2aeebfc68112d2cdab7484ab43b81266f69989365cc3"
+        },
+        {
+          "path": "services/firmware/upgrade/executor/include/firmware_apply_executor.h",
+          "oid": "4501cec93bef1b62aa818cb3b0e2b79b1d7e0272",
+          "size": 1443,
+          "language": "cpp",
+          "sha256": "1efe94337f4c853f090301686f349c34686d4aff8ddda8e46f9fdfcaf6e644ef"
+        },
+        {
+          "path": "services/firmware/upgrade/executor/include/firmware_check_executor.h",
+          "oid": "c341eb9fe20955173ebda5fe254099fb4f05df26",
+          "size": 1500,
+          "language": "cpp",
+          "sha256": "5bfbb0aea4f53d84c3b4c5c76cc52e537660aa8343d288a603b4c7250bb58d4b"
+        },
+        {
+          "path": "services/firmware/upgrade/executor/include/firmware_download_executor.h",
+          "oid": "809affbb137bba907e9b035b4d09e9b6166ca2be",
+          "size": 1829,
+          "language": "cpp",
+          "sha256": "9ff1df0c8c0efefd23ac239a7558ce7d6250f4c85ca8882b829fa20cbd6299ad"
+        },
+        {
+          "path": "services/firmware/upgrade/executor/include/firmware_iexecutor.h",
+          "oid": "f13c76ca5fc71d354cb8016ead9a8f4568e04305",
+          "size": 1833,
+          "language": "cpp",
+          "sha256": "ce5faff0fd8bb648022f3d88ba4b53c16ccc9860899049cbde2798e4a626cb7d"
+        },
+        {
+          "path": "services/firmware/upgrade/executor/include/firmware_install_executor.h",
+          "oid": "de2fb9b804406d6c36c4dcc98abb136d119d8a0a",
+          "size": 1918,
+          "language": "cpp",
+          "sha256": "ba90f98ff88eedb954ca4d384f2cef4c0bf590f4f678f777b1ff7149660b1125"
+        },
+        {
+          "path": "services/firmware/upgrade/executor/src/firmware_apply_executor.cpp",
+          "oid": "6113454f177b63985adfa46ad3d599ba71bd653f",
+          "size": 1945,
+          "language": "cpp",
+          "sha256": "c3f2675cc17e015db160c021adb20b268cb1e5b5c5f3e5ef046c5c60905a9210"
+        },
+        {
+          "path": "services/firmware/upgrade/executor/src/firmware_check_executor.cpp",
+          "oid": "d4e9b079a240e3b23e0d378a89ab9b0ecc0b9924",
+          "size": 2837,
+          "language": "cpp",
+          "sha256": "cb9aa2774bc2ed8db70f4f87a24d6532508508310279aff321ddfcd56545e1fa"
+        },
+        {
+          "path": "services/firmware/upgrade/executor/src/firmware_download_executor.cpp",
+          "oid": "3b24149a2dbd423e52b4c79f759d35139bb982f7",
+          "size": 7098,
+          "language": "cpp",
+          "sha256": "9b8936c0c601a8535ea76d0a7d4b9d34b6fa5fb750027366dab512661152695d"
+        },
+        {
+          "path": "services/firmware/upgrade/executor/src/firmware_install_executor.cpp",
+          "oid": "0f8c5376ba5eeddf75ff7bdb1ef0dafad3981feb",
+          "size": 5325,
+          "language": "cpp",
+          "sha256": "b7d95c622f3f602d8f270d59862704e10efa52e1158fad19a3921f096c6d1c53"
+        },
+        {
+          "path": "services/firmware/upgrade/flow/include/firmware_flow_manager.h",
+          "oid": "f297c964a6e1914a0e6d502842b49e2ba78f0d26",
+          "size": 1803,
+          "language": "cpp",
+          "sha256": "193f32638a5030294afa0bd0d399c1fb4b98e3ed96c06cec2d9d2e6787a506b1"
+        },
+        {
+          "path": "services/firmware/upgrade/flow/include/firmware_manager.h",
+          "oid": "4b6729409d809b10998fc10cbd76e83a8677d5e6",
+          "size": 2931,
+          "language": "cpp",
+          "sha256": "f648e5f2851fa37e88b0aeb6b7af0b3b188871263efb14689c3d96618c913ce8"
+        },
+        {
+          "path": "services/firmware/upgrade/flow/src/firmware_flow_manager.cpp",
+          "oid": "b41ca8678e686537dd729bde81346faf625132fa",
+          "size": 5618,
+          "language": "cpp",
+          "sha256": "7fe90670d53367379d31b840cf4f7125966bd0956661aeea0a520762c779615e"
+        },
+        {
+          "path": "services/firmware/upgrade/flow/src/firmware_manager.cpp",
+          "oid": "fcc2a98cd7caf78d420a26254c32915142eff1bb",
+          "size": 18134,
+          "language": "cpp",
+          "sha256": "b76207346f97230cd509bca1a3de500c726fc01463b3004c388c50d4cc76414d"
+        },
+        {
+          "path": "services/firmware/upgrade/install/include/firmware_install.h",
+          "oid": "98b05634b9472df6f1b20019ca71e14e66ddd900",
+          "size": 2211,
+          "language": "cpp",
+          "sha256": "ea42d12ccb814388a4351b6afa23c86ae3c3f3268a12176ff375eeed9f0a7a9c"
+        },
+        {
+          "path": "services/firmware/upgrade/install/include/firmware_install_factory.h",
+          "oid": "2c339e02f54d5d0d80ece00fe2b8e838616dd03e",
+          "size": 995,
+          "language": "cpp",
+          "sha256": "62096ec033c0d3f30cb9c672109d7bdce67fed2d6a57bf4aee1b12d28613bcc1"
+        },
+        {
+          "path": "services/firmware/upgrade/install/include/firmware_sys_installer_callback.h",
+          "oid": "1f8445882150594cf3d18931dc597b2b91a7538e",
+          "size": 1306,
+          "language": "cpp",
+          "sha256": "9dba7e3d27c97ecb205c1e55a75e545df3705133c90a7c14e082c4569f07db62"
+        },
+        {
+          "path": "services/firmware/upgrade/install/include/firmware_sys_installer_install.h",
+          "oid": "65954ee77d48360ece157a668e1b5eb09161d4a4",
+          "size": 1540,
+          "language": "cpp",
+          "sha256": "8ed12b7b2439ff651ad4b66327ede94b7b934c4c70ec1945db360328c28eca64"
+        },
+        {
+          "path": "services/firmware/upgrade/install/include/firmware_updater_install.h",
+          "oid": "5b7d74c8995480fee30aea7404756914c982543b",
+          "size": 1207,
+          "language": "cpp",
+          "sha256": "72cb58a3b783b244a3e2eb355cba614d773b87d1f67f1fae99002e8cdd909db9"
+        },
+        {
+          "path": "services/firmware/upgrade/install/src/firmware_install.cpp",
+          "oid": "ea82c5e9bdfec91ddd8cfbb33b927bcfcad959a8",
+          "size": 2228,
+          "language": "cpp",
+          "sha256": "2109a88d99c0e7a8a6936f12b3bb47168134586ec1b7986da504f50de2f596bf"
+        },
+        {
+          "path": "services/firmware/upgrade/install/src/firmware_install_factory.cpp",
+          "oid": "696a72a90a0ce810ea113f2ea8b8de96936f7012",
+          "size": 1101,
+          "language": "cpp",
+          "sha256": "90a53cfea96e3a70143de4a71230a8de10fcc2dd8550109b44dbdf33499980d7"
+        },
+        {
+          "path": "services/firmware/upgrade/install/src/firmware_sys_installer_callback.cpp",
+          "oid": "16054bb9f7103a6821d323eec75267096d5ccec2",
+          "size": 1986,
+          "language": "cpp",
+          "sha256": "fa290e8397a9d633a450ec3eefdf72fb48660e404760ad5397c17f4f2460a2e1"
+        },
+        {
+          "path": "services/firmware/upgrade/install/src/firmware_sys_installer_install.cpp",
+          "oid": "5b6c32103d6e2368c05f9a1ef3f4e7c86cb337b8",
+          "size": 5243,
+          "language": "cpp",
+          "sha256": "3fb23082756f9381073a9f7e681478b412076aebe7a1595ddcffb0d13751ab08"
+        },
+        {
+          "path": "services/firmware/upgrade/install/src/firmware_updater_install.cpp",
+          "oid": "e54d0d163d673af8c3c8b88084aa824b52bee45b",
+          "size": 2289,
+          "language": "cpp",
+          "sha256": "09db0d07ab92dd4a6459cb57e2019c3a130b46d8573ab4841bfa963017589bce"
+        },
+        {
+          "path": "services/firmware/upgrade/mode/include/firmware_download_mode.h",
+          "oid": "ca2499cba74dfed94b4715d7b7aa747117bc8da6",
+          "size": 2348,
+          "language": "cpp",
+          "sha256": "b0755b9ac1ff280f3ee5b121f37fdea1e9498226b18cc7d91a6900edf6d03588"
+        },
+        {
+          "path": "services/firmware/upgrade/mode/include/firmware_iexecute_mode.h",
+          "oid": "a0a2356b561707c5b1f76adf053b8c41323033ff",
+          "size": 2187,
+          "language": "cpp",
+          "sha256": "c436d0215a23de42cb7edd31bb6d104011367e8eeba0ba93cdbeab7666f58283"
+        },
+        {
+          "path": "services/firmware/upgrade/mode/include/firmware_install_apply_mode.h",
+          "oid": "e102de466207f274a99ceb468eeeae07eb55be01",
+          "size": 2507,
+          "language": "cpp",
+          "sha256": "65a1ac703feb7982fe658fbb0a7cfb40680d3503a7eb54c0822707bf3fc8e9f9"
+        },
+        {
+          "path": "services/firmware/upgrade/mode/include/firmware_manual_check_mode.h",
+          "oid": "89d278937195179e8d1256e2e2465c4aa2bc8ad8",
+          "size": 1662,
+          "language": "cpp",
+          "sha256": "c71e670efe633f796e3ba513217621dd01eaa57c0611339ef6e8f3d04364ca4f"
+        },
+        {
+          "path": "services/firmware/upgrade/mode/src/firmware_download_mode.cpp",
+          "oid": "638e99c1e64a8361d0f685a998f69538b6e4cf13",
+          "size": 7527,
+          "language": "cpp",
+          "sha256": "a3990b57421bcccde84dbede102d6130dfff9eca27b5bf24fb117b1d3d55bbe9"
+        },
+        {
+          "path": "services/firmware/upgrade/mode/src/firmware_install_apply_mode.cpp",
+          "oid": "513aa5abc2e9859aeab17c08d87e92db27067e64",
+          "size": 5659,
+          "language": "cpp",
+          "sha256": "434297d84b3f84ab4e3b81e2aacc45bd5a0a4cc3205808d208c8af6a26ae640c"
+        },
+        {
+          "path": "services/firmware/upgrade/mode/src/firmware_manual_check_mode.cpp",
+          "oid": "2d72310c7269f306d40cde95a50ac597ea966753",
+          "size": 4606,
+          "language": "cpp",
+          "sha256": "db4aefc964234b48fcf59721ad11ff99761fb8aaa43f22bafd5f53e3c7560ade"
+        },
+        {
+          "path": "services/firmware/upgrade/status/include/firmware_result_process.h",
+          "oid": "a5b240af5de861d0e812090bd6a67edf59aa6cdc",
+          "size": 2437,
+          "language": "cpp",
+          "sha256": "d770f3a91abb48f1e0078a1bf6314249a5fb34f741c9eb0af70e9183aac25cca"
+        },
+        {
+          "path": "services/firmware/upgrade/status/include/firmware_status_cache.h",
+          "oid": "8b19781c8eb91c0b1c504faad003d471eb3a7d55",
+          "size": 1118,
+          "language": "cpp",
+          "sha256": "4ec81ecff183a6659e5d266ab83b2a78cb533bafcc5996ede2be45c9537378c6"
+        },
+        {
+          "path": "services/firmware/upgrade/status/src/firmware_result_process.cpp",
+          "oid": "837079d7cebc1b89023fd771eb3978707db657df",
+          "size": 6418,
+          "language": "cpp",
+          "sha256": "62b1a32a6c87a76fabb5dbbe25b67e5b32c28574e4c49e1a536e8b736fc2c075"
+        },
+        {
+          "path": "services/firmware/upgrade/status/src/firmware_status_cache.cpp",
+          "oid": "8b436a2c1fa4e485d204611d9dfad7113bec5a76",
+          "size": 1411,
+          "language": "cpp",
+          "sha256": "3e1aad604c978b41383c9b0b90d0750628eb7fd56c36570882c3e8ebde3dfc9c"
+        },
+        {
+          "path": "services/firmware/utils/include/firmware_changelog_utils.h",
+          "oid": "c335da96e473ec6750d92bcab33486c9ad9f8898",
+          "size": 1273,
+          "language": "cpp",
+          "sha256": "44c441ee5cd85d152f36203c0b5f42d7d5edeae716351c3200f6550fa2acdd94"
+        },
+        {
+          "path": "services/firmware/utils/include/firmware_check_analyze_utils.h",
+          "oid": "e56d9c1d34802562671690f91dd27bb379053781",
+          "size": 1475,
+          "language": "cpp",
+          "sha256": "7359ec7e20aded2836937867375bc77335f5e2a361636a56ea8010faf78f755d"
+        },
+        {
+          "path": "services/firmware/utils/include/firmware_combine_version_utils.h",
+          "oid": "7d59f51e57f8cc328913e3c64440452c841c4a9d",
+          "size": 1343,
+          "language": "cpp",
+          "sha256": "853172aa573a8b8c33397cebf26a710d6afa43b4f5e7f7ca8b41d113728936e0"
+        },
+        {
+          "path": "services/firmware/utils/include/firmware_file_utils.h",
+          "oid": "705c226431345641d963f33baa62ba2e8924a05c",
+          "size": 1209,
+          "language": "cpp",
+          "sha256": "42eb1882cb98b66ceb0861265a5086d9ef52e634b273d36b80a0d116c6106c4a"
+        },
+        {
+          "path": "services/firmware/utils/include/firmware_log.h",
+          "oid": "b78454e99c214baa0246bdea9423aa2b1dd3b132",
+          "size": 1454,
+          "language": "cpp",
+          "sha256": "72893fc51502e4c796e13487b30e3c5cb2364ad1c8bd2db5a9123648a1dee712"
+        },
+        {
+          "path": "services/firmware/utils/src/firmware_changelog_utils.cpp",
+          "oid": "edbc41e5098d24619bf5274cad4ea4c273fb9206",
+          "size": 3124,
+          "language": "cpp",
+          "sha256": "d6d5ebbc6b01bba65297700ce4c7df01f3b168881bce814c045c5c08dc94f15d"
+        },
+        {
+          "path": "services/firmware/utils/src/firmware_check_analyze_utils.cpp",
+          "oid": "e702b0f361d5b089f56d7e48e9660324cac984c6",
+          "size": 7449,
+          "language": "cpp",
+          "sha256": "dfbe2ebb769ea6da0e428add0c834290726293dadae6f04aab37a18f5627dfa2"
+        },
+        {
+          "path": "services/firmware/utils/src/firmware_combine_version_utils.cpp",
+          "oid": "d33ca7585130f75ba6f963e6f6f6a018fe81b2ed",
+          "size": 4064,
+          "language": "cpp",
+          "sha256": "8594098fa827bbb69090e31d18844e83fd3dd6fc8810fcf800d4215390b94ee6"
+        },
+        {
+          "path": "services/service/include/dupdate_errno.h",
+          "oid": "21cc80c6bb3ab73bcc80ad37becd624ef05c77e4",
+          "size": 4003,
+          "language": "cpp",
+          "sha256": "ede57f2afc51a8793916033c4f286af97b0929c9a7d01406e0d408547331f313"
+        },
+        {
+          "path": "services/service/include/dupdate_log.h",
+          "oid": "8f0730f512eb285d20c73f144c81b71bb1f9cad8",
+          "size": 2600,
+          "language": "cpp",
+          "sha256": "d9b68e1124f91d5fb09f209c9841d7a40bad1fb0c0d414c4383acc54cf40d2d2"
+        },
+        {
+          "path": "services/service/include/dupdate_upgrade_helper.h",
+          "oid": "a381405fee32e0aa59e1428d63cb88b3c781dcb7",
+          "size": 861,
+          "language": "cpp",
+          "sha256": "d1808d2511cb66828af99ff2ad4a95c9b84573f4a2a1ed6123428ce296b25492"
+        },
+        {
+          "path": "services/startup/access/include/access_factory.h",
+          "oid": "4fc40f2378b4a69c994acf94f91deefc307ef91f",
+          "size": 953,
+          "language": "cpp",
+          "sha256": "04899aee912bf478618b467518522906d3b9ec1e88d1374a37666c78b0bf094f"
+        },
+        {
+          "path": "services/startup/access/include/access_manager.h",
+          "oid": "eb24e0a11fc320c8f3f905233d566486cffbb070",
+          "size": 1880,
+          "language": "cpp",
+          "sha256": "36dbfb659e013cdf729f136897c6304f5adcbed03a2f4fa0de598fba72ed1b02"
+        },
+        {
+          "path": "services/startup/access/include/default_access.h",
+          "oid": "4de22fbf23159abcefca9ef7003bacce426b9cc0",
+          "size": 1120,
+          "language": "cpp",
+          "sha256": "6e4c1ce2a6f317754fcb7026a9197d4ba92e4cb73afb00fb5e0cf2d8f247d108"
+        },
+        {
+          "path": "services/startup/access/include/firmware_access.h",
+          "oid": "c73d4dc3f48f747ee8fcca383a10588823c1ac42",
+          "size": 1126,
+          "language": "cpp",
+          "sha256": "5de2725b4a0cd3e0ee4e7b8ba8ae24878f6e069c7de7900f5849abbc73444899"
+        },
+        {
+          "path": "services/startup/access/include/i_access.h",
+          "oid": "9e3455ec19bceae4dd21e9371b077b55877e4f9d",
+          "size": 1044,
+          "language": "cpp",
+          "sha256": "010f894f7c470571e2967064056b77cb97776fea9f4d0d1c0035ed2fcd4cf633"
+        },
+        {
+          "path": "services/startup/access/src/access_factory.cpp",
+          "oid": "5fb84253e3dfecdba068aec60d592ca4ed6dcef9",
+          "size": 1071,
+          "language": "cpp",
+          "sha256": "163a9e7a6bc90243ec5e59bacc3c3dfe424b3cf3ff082052710e555767283b71"
+        },
+        {
+          "path": "services/startup/access/src/access_manager.cpp",
+          "oid": "3b32af7c462c4cf77797efc820d9bf6f03aefb50",
+          "size": 3112,
+          "language": "cpp",
+          "sha256": "9f14fbefad40f1875ae1d8054c7a4e5e1dd42ab24df8a161da2f4daa0772c44e"
+        },
+        {
+          "path": "services/startup/access/src/default_access.cpp",
+          "oid": "a8944d0ec7fc0626acfe68946e6e825a13f76815",
+          "size": 1196,
+          "language": "cpp",
+          "sha256": "e6b93e0d5ba63656b99ebcacb213c43e5a50cd0c25cecc239e17737cc1fc759a"
+        },
+        {
+          "path": "services/startup/access/src/firmware_access.cpp",
+          "oid": "9f81b58e93d53b567e1e6ed51593ee96113dc32e",
+          "size": 1655,
+          "language": "cpp",
+          "sha256": "8f9e7df1dc70a726dd6afae2afeb6e9fae43154f077936df37b49610b07348c0"
+        },
+        {
+          "path": "services/startup/manage/include/schedule_config.h",
+          "oid": "48d98116084f96d1f19ee2848cb7eb357d3bcfd2",
+          "size": 1188,
+          "language": "cpp",
+          "sha256": "4c7616c97eaeb78d4952534f589d5fad7a1cf43a329d37d606b51d243606009b"
+        },
+        {
+          "path": "services/startup/manage/include/schedule_manager.h",
+          "oid": "418946b0673106576ebe909975accf0c7cf6e9e6",
+          "size": 1419,
+          "language": "cpp",
+          "sha256": "f77b2a1346bbcdcac5d614080095baa021c0625659ab86b26907b8909c22cc78"
+        },
+        {
+          "path": "services/startup/manage/include/startup_manager.h",
+          "oid": "1f01cd205567d824deef8fdf0ccd34d090056d84",
+          "size": 1307,
+          "language": "cpp",
+          "sha256": "9bdfaf7eedc1bee6d13f232ee7c0f172a0ae7e7701b5ba986e34a0eac6569512"
+        },
+        {
+          "path": "services/startup/manage/include/startup_schedule.h",
+          "oid": "d76099fb5337f03e29442b193f0e5dcbc03ebc9f",
+          "size": 1479,
+          "language": "cpp",
+          "sha256": "93b00290e4b2d3a9098f25d4150c95b587d4727c3cb26cc22e78835d07586e41"
+        },
+        {
+          "path": "services/startup/manage/src/schedule_config.cpp",
+          "oid": "c0ee70b35d6066c1c9d949eb61f5619e080259d4",
+          "size": 2106,
+          "language": "cpp",
+          "sha256": "2d37485572c8eb0e54f6f11aa94737ad3ab4b93669c1717916168ae4470b00c3"
+        },
+        {
+          "path": "services/startup/manage/src/schedule_manager.cpp",
+          "oid": "2af66fb248a8bac02e76249fd4d234e809de055a",
+          "size": 2071,
+          "language": "cpp",
+          "sha256": "f7b21c6514c6d7bdc8dd98723b6e73a011229b96cd27f4c3784876d473afd138"
+        },
+        {
+          "path": "services/startup/manage/src/startup_manager.cpp",
+          "oid": "ff6e56197b5344ef3f1e3d1815aaf9b494313b9b",
+          "size": 4725,
+          "language": "cpp",
+          "sha256": "e442bee0e43e953bc9b6acde65da70cb7eef0d38a78cc343f3d8512f418aebc0"
+        },
+        {
+          "path": "services/startup/manage/src/startup_schedule.cpp",
+          "oid": "4270dad42479e8681cd311e719ecd95f27bcb1c5",
+          "size": 2232,
+          "language": "cpp",
+          "sha256": "6eb94a8bee2b35bbc22724561d45c19416825d676cadd9f42fd53f3b8bee81d9"
+        },
+        {
+          "path": "services/startup/model/include/schedule_task.h",
+          "oid": "56e48c696e7d6a7865f3cce6417068fd72758af6",
+          "size": 2672,
+          "language": "cpp",
+          "sha256": "021abd2971ec3c6548e4cfa8e11379162727fb5ad3b6dfab62e70bb7e0afa39e"
+        },
+        {
+          "path": "services/startup/model/include/startup_constant.h",
+          "oid": "bc8e1b67fee444132d1d933c7c847e39dc1a7def",
+          "size": 1872,
+          "language": "cpp",
+          "sha256": "66d215d693c8ff5f85049674519496cf1f51cc405ae5f27f7b27767a3da8ae13"
+        },
+        {
+          "path": "services/utils/include/dupdate_inet_observer.h",
+          "oid": "c5d33ec45819b328d5ddfbda527ab885ca33522a",
+          "size": 1302,
+          "language": "cpp",
+          "sha256": "3834264cdd95ae79493db0640e0a4e0af1d90d544511120dfc4fb704237d99eb"
+        },
+        {
+          "path": "services/utils/include/dupdate_net_manager.h",
+          "oid": "43a462a9ad0faf20a8b269769c74862ba7aef59e",
+          "size": 1846,
+          "language": "cpp",
+          "sha256": "d1ed3cd580bc0624048e8c20703e9f74f639364502ef77b349105855ec63b3d4"
+        },
+        {
+          "path": "services/utils/include/dupdate_net_observer.h",
+          "oid": "61363ec442ca323bc64daadd5d650ddbaf8301f6",
+          "size": 1504,
+          "language": "cpp",
+          "sha256": "d4c62e9d4c3e4224193359c83333d536de7594bdbb617923e4d7c6aa09c145ac"
+        },
+        {
+          "path": "services/utils/include/dupdate_timer.h",
+          "oid": "744177e52e208a2af73de683006f5ead18212151",
+          "size": 1215,
+          "language": "cpp",
+          "sha256": "2d411d734a1a93870ece54705d84044b54fb18f3d6f3253fb325f255de3673c6"
+        },
+        {
+          "path": "services/utils/src/dupdate_net_manager.cpp",
+          "oid": "80b74b0a0b662491f951f5868fd3cb2c10bae029",
+          "size": 3328,
+          "language": "cpp",
+          "sha256": "6121ba77061d8b762d4c12f5a97306bb829cc2809670821ff954a22964c5dd02"
+        },
+        {
+          "path": "services/utils/src/dupdate_net_manager_empty.cpp",
+          "oid": "c87b803e78a689c35b5d0a7a6aef2a2ec1e6d44f",
+          "size": 1631,
+          "language": "cpp",
+          "sha256": "07acc84f57a637732f41dac9f513e3627d3ae7c59f3df4e4bacdc32431bd025a"
+        },
+        {
+          "path": "services/utils/src/dupdate_net_observer.cpp",
+          "oid": "3e245d844fd93cb7a7931335c5800c57e8fa5009",
+          "size": 3524,
+          "language": "cpp",
+          "sha256": "8065e9f0f2b5204bb7cc4e22f828a743354bd1bbd7f18a9d6a99f544ae2c7e72"
+        },
+        {
+          "path": "services/utils/src/dupdate_timer.c",
+          "oid": "76c572de47669b7f283e0a9e5a26c691130b2cd4",
+          "size": 5663,
+          "language": "c",
+          "sha256": "64848f7aabdd2c8baff1755db8dd21d847b4d197efae7fde2c2e45d2fd84c9a6"
+        }
+      ]
+    }
+  ],
+  "skipped_examples": [
+    {
+      "file": "services/core/ability/utils/test/unittest/BUILD.gn",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "services/core/ability/utils/test/unittest/string_utils_test.cpp",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/common/fuzztest_helper.cpp",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/common/fuzztest_helper.h",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicecancel_fuzzer/BUILD.gn",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicecancel_fuzzer/corpus/init",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicecancel_fuzzer/project.xml",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicecancel_fuzzer/updateservicecancel_fuzzer.cpp",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicecancel_fuzzer/updateservicecancel_fuzzer.h",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicechecknewversion_fuzzer/BUILD.gn",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicechecknewversion_fuzzer/corpus/init",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicechecknewversion_fuzzer/project.xml",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicechecknewversion_fuzzer/updateservicechecknewversion_fuzzer.cpp",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicechecknewversion_fuzzer/updateservicechecknewversion_fuzzer.h",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicedownload_fuzzer/BUILD.gn",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicedownload_fuzzer/corpus/init",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicedownload_fuzzer/project.xml",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicedownload_fuzzer/updateservicedownload_fuzzer.cpp",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicedownload_fuzzer/updateservicedownload_fuzzer.h",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicegetnewversion_fuzzer/BUILD.gn",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicegetnewversion_fuzzer/corpus/init",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicegetnewversion_fuzzer/project.xml",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicegetnewversion_fuzzer/updateservicegetnewversion_fuzzer.cpp",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicegetnewversion_fuzzer/updateservicegetnewversion_fuzzer.h",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicegetupgradepolicy_fuzzer/BUILD.gn",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicegetupgradepolicy_fuzzer/corpus/init",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicegetupgradepolicy_fuzzer/project.xml",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicegetupgradepolicy_fuzzer/updateservicegetupgradepolicy_fuzzer.cpp",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicegetupgradepolicy_fuzzer/updateservicegetupgradepolicy_fuzzer.h",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateserviceregisterupdatecallback_fuzzer/BUILD.gn",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateserviceregisterupdatecallback_fuzzer/corpus/init",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateserviceregisterupdatecallback_fuzzer/project.xml",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateserviceregisterupdatecallback_fuzzer/updateserviceregisterupdatecallback_fuzzer.cpp",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateserviceregisterupdatecallback_fuzzer/updateserviceregisterupdatecallback_fuzzer.h",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicesetupgradepolicy_fuzzer/BUILD.gn",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicesetupgradepolicy_fuzzer/corpus/init",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicesetupgradepolicy_fuzzer/project.xml",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicesetupgradepolicy_fuzzer/updateservicesetupgradepolicy_fuzzer.cpp",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateservicesetupgradepolicy_fuzzer/updateservicesetupgradepolicy_fuzzer.h",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateserviceunregisterupdatecallback_fuzzer/BUILD.gn",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateserviceunregisterupdatecallback_fuzzer/corpus/init",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateserviceunregisterupdatecallback_fuzzer/project.xml",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateserviceunregisterupdatecallback_fuzzer/updateserviceunregisterupdatecallback_fuzzer.cpp",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/fuzztest/updateserviceunregisterupdatecallback_fuzzer/updateserviceunregisterupdatecallback_fuzzer.h",
+      "reason": "production_exclude:test"
+    },
+    {
+      "file": "test/unittest/BUILD.gn",
+      "reason": "production_exclude:test"
+    }
+  ],
+  "skipped_count": 45
+}

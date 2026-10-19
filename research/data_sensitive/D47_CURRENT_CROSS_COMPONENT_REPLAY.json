@@ -1,0 +1,450 @@
+{
+  "schema": 1,
+  "study": "D47 current detector cross-component repeatability replay",
+  "date": "2026-10-19",
+  "code_commit": "1f170e0810405974d613bd43e1a5d62817d215a6",
+  "detector_id": "ohscanner.data.sensitive_exposure",
+  "detector_version": "0.21.0",
+  "source_model_version": "0.4.0",
+  "source_profile_catalog_version": "0.2.0",
+  "sink_model_version": "0.8.0",
+  "engine_file_sha256": {
+    "src/ohscanner/detectors/data/sensitive_exposure.py": "62fcbca2b58e2d527e78c9d6827aa114b83bf1c818dfe9993e1c050a9dcb8f46",
+    "src/ohscanner/detectors/data/models.py": "174432ffb40a9bbb0aaee65f5a8161da7227dc5a88060a71965261d7f8ae10c2"
+  },
+  "study_classification": "development regression and performance sample; not holdout",
+  "components": [
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "9f922677e147b939d6db899bde181d609d64711b",
+      "tree": "4b114179868d96c69eedc4520037552ddc3d65dd",
+      "snapshot_sha256": "eb8b331388a31fa279d939b607ce322365bb7bccb898988f9b9e228d9e7d9168",
+      "scope_files": 6,
+      "detector_version": "0.21.0",
+      "task_status": "completed_with_limitations",
+      "detector_status": "blocked",
+      "candidate_count": 5,
+      "same_scope_replay_equal": true,
+      "round_seconds": [
+        0.5759576339987689,
+        0.5498420750009245
+      ],
+      "peak_rss_kib": 41680,
+      "validated_vulnerability": 0,
+      "candidate_observations": [
+        {
+          "file": "core/authentication/src/auth_hichain.c",
+          "line": 136,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "OnSessionKeyReturned",
+          "source_sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b"
+        },
+        {
+          "file": "core/authentication/src/auth_session_fsm.c",
+          "line": 393,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "NewMessagePara",
+          "source_sha256": "e88faf7f21b0ec9d78e8219d397aac692ab3d7e88d566d8bc0b736fc9a143b85"
+        },
+        {
+          "file": "core/authentication/src/auth_session_fsm.c",
+          "line": 499,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "SaveDeviceKey",
+          "source_sha256": "e88faf7f21b0ec9d78e8219d397aac692ab3d7e88d566d8bc0b736fc9a143b85"
+        },
+        {
+          "file": "core/authentication/src/auth_session_fsm.c",
+          "line": 508,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "SaveDeviceKey",
+          "source_sha256": "e88faf7f21b0ec9d78e8219d397aac692ab3d7e88d566d8bc0b736fc9a143b85"
+        },
+        {
+          "file": "core/authentication/src/auth_session_fsm.c",
+          "line": 1902,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "PostMessageToAuthFsm",
+          "source_sha256": "e88faf7f21b0ec9d78e8219d397aac692ab3d7e88d566d8bc0b736fc9a143b85"
+        }
+      ],
+      "label_status": "development profile; D46 is not an independent holdout"
+    },
+    {
+      "repository": "openharmony/security_access_token",
+      "commit": "3be426c558613e7c7af92a591c2bfaeb6af06b60",
+      "tree": "40a7fbc8f09dee1e965ce0d68157fd1dafd2df7f",
+      "snapshot_sha256": "486d920e019f24ba840c32f0ff03004409f2c4ddb9b87c70b2d15216aa7f9a6e",
+      "scope_files": 440,
+      "scope_paths_sha256": "a9e597a22f6b77cd23fda055430c7b0c6c5572a97d40c4c3c2b03999095bbc8e",
+      "detector_version": "0.21.0",
+      "task_status": "completed_with_limitations",
+      "detector_status": "blocked",
+      "candidate_count": 0,
+      "same_scope_replay_equal": true,
+      "wall_seconds_two_runs": 3.5496,
+      "peak_rss_kib": 65772,
+      "validated_vulnerability": 0,
+      "report_hashes": {
+        "first.json": "cd61fa79339320d1c9a4b3ad57470826b1e021a95949ab0b5bd9c2be28e04cb0",
+        "replay.json": "9d29e2c8622be80fdbc8f27d13152737748cebccf1581083208c40a16843ebb3"
+      },
+      "candidate_observations": [],
+      "label_status": "no independent labels; profile/source previously used in D development"
+    },
+    {
+      "repository": "openharmony/communication_iot_connect",
+      "commit": "d8c0aef305601770c912dbdedc58a3f1e6efd30c",
+      "tree": "78db4611e16df5ee92328ceecf6c14baef8cb1a3",
+      "snapshot_sha256": "e1bedd590ca70b9adb2e7e1c4ebea2b52358b28904060f9373f877da4d06deec",
+      "scope_files": 542,
+      "scope_paths_sha256": "8a981868f2c01f1f483f81d4a2c7a6305b237d8f56346b2e4a95e7ecdc26046f",
+      "detector_version": "0.21.0",
+      "task_status": "completed_with_limitations",
+      "detector_status": "blocked",
+      "candidate_count": 9,
+      "same_scope_replay_equal": true,
+      "wall_seconds_two_runs": 6.6539,
+      "peak_rss_kib": 68876,
+      "validated_vulnerability": 0,
+      "report_hashes": {
+        "first.json": "a19875af685155776debef02ce55ecd0699823a167407f53adfa9b5e3fe823f4",
+        "replay.json": "b060fa06752d8cd9587bdc1529ceb09a8b667ca9b77e208ed4d040b9ebb273e8"
+      },
+      "candidate_observations": [
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:ee992a3a48b88779",
+          "file": "adapter/crypto/mbedtls/iotc_md.c",
+          "line": 54,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "IsMdLenValid",
+          "source_sha256": "7e89d7eebefe0a4e635c296e1d36d6eaabd38a1e6769456d47bc392d79853f4e"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:1de8eba58e54d0f0",
+          "file": "adapter/crypto/mbedtls/iotc_md.c",
+          "line": 82,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "IotcHmacCalc",
+          "source_sha256": "7e89d7eebefe0a4e635c296e1d36d6eaabd38a1e6769456d47bc392d79853f4e"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:1de6a19bfab9f26d",
+          "file": "adapter/crypto/mbedtls/iotc_md.c",
+          "line": 85,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "IotcHmacCalc",
+          "source_sha256": "7e89d7eebefe0a4e635c296e1d36d6eaabd38a1e6769456d47bc392d79853f4e"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:e68574ec75160aad",
+          "file": "core/ble/application/base/ble_session_mngr.c",
+          "line": 184,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "BleSessKeyGen",
+          "source_sha256": "e5a415b48043b21817ea4c87310b164f39770129e9fd40a1f80de9528b7979de"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:a59f8aacbfc7737a",
+          "file": "core/ble/application/base/ble_session_mngr.c",
+          "line": 310,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "BleSessCalHmac",
+          "source_sha256": "e5a415b48043b21817ea4c87310b164f39770129e9fd40a1f80de9528b7979de"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:a6689bed0416cbe9",
+          "file": "core/infrastructure/security/security_sess_key.c",
+          "line": 119,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "SecuritySessKeyGenTransKey",
+          "source_sha256": "e1fa2e70ace6fa624d9ea59325867726f114447abeae5bd7aa95ec662964cd8d"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:8a7b0e35b72647b9",
+          "file": "core/infrastructure/security/security_sess_key.c",
+          "line": 121,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "SecuritySessKeyGenTransKey",
+          "source_sha256": "e1fa2e70ace6fa624d9ea59325867726f114447abeae5bd7aa95ec662964cd8d"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:b593cb0487558539",
+          "file": "core/infrastructure/security/security_sess_key.c",
+          "line": 164,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "SecuritySessKeyGenAuthKey",
+          "source_sha256": "e1fa2e70ace6fa624d9ea59325867726f114447abeae5bd7aa95ec662964cd8d"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:7d9851bb0db87bc8",
+          "file": "core/infrastructure/security/security_sess_key.c",
+          "line": 166,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "SecuritySessKeyGenAuthKey",
+          "source_sha256": "e1fa2e70ace6fa624d9ea59325867726f114447abeae5bd7aa95ec662964cd8d"
+        }
+      ],
+      "label_status": "no independent labels; profile/source previously used in D development"
+    },
+    {
+      "repository": "openharmony/communication_wifi",
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+      "snapshot_sha256": "06fce7ce7932e5e76692d7f7ab67fd656756dcaad57d2812636a981d3b8abb81",
+      "scope_files": 761,
+      "scope_paths_sha256": "e3b17049479d707df64228b7ac4910ab8c3d727f51fc328e330193324d7ea2b2",
+      "detector_version": "0.21.0",
+      "task_status": "completed_with_limitations",
+      "detector_status": "blocked",
+      "candidate_count": 21,
+      "same_scope_replay_equal": true,
+      "wall_seconds_two_runs": 31.6241,
+      "peak_rss_kib": 160136,
+      "validated_vulnerability": 0,
+      "report_hashes": {
+        "first.json": "085e3914f959cc2531e90200a94402d7ad1c42b0498e63de876702b96c2af578",
+        "replay.json": "48029a6b064c0b83035c93cbc854bf7ec88a663fe334c6397cb39e796a63be6f"
+      },
+      "candidate_observations": [
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:42106ddab51070c3",
+          "file": "wifi/frameworks/cj/src/wifi_ffi.cpp",
+          "line": 158,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "ProcessPassphrase",
+          "source_sha256": "722e1ae294fdbf82301f786a8864803d6e508f9523fa57e17dd4b362d5828a14"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:ee2fce88cce65d03",
+          "file": "wifi/frameworks/cj/src/wifi_ffi.cpp",
+          "line": 723,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "FfiWifiAddCandidateConfig",
+          "source_sha256": "722e1ae294fdbf82301f786a8864803d6e508f9523fa57e17dd4b362d5828a14"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:0410e20eeab27999",
+          "file": "wifi/frameworks/cj/src/wifi_ffi.cpp",
+          "line": 739,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "FfiWifiAddCandidateConfig",
+          "source_sha256": "722e1ae294fdbf82301f786a8864803d6e508f9523fa57e17dd4b362d5828a14"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:77fac00adcd5eaa9",
+          "file": "wifi/frameworks/cj/src/wifi_ffi.cpp",
+          "line": 746,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "FfiWifiAddCandidateConfig",
+          "source_sha256": "722e1ae294fdbf82301f786a8864803d6e508f9523fa57e17dd4b362d5828a14"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:8edfe8401b06197d",
+          "file": "wifi/frameworks/cj/src/wifi_ffi.cpp",
+          "line": 762,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "FfiWifiAddCandidateConfig",
+          "source_sha256": "722e1ae294fdbf82301f786a8864803d6e508f9523fa57e17dd4b362d5828a14"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:4de3a0e6ddc47d66",
+          "file": "wifi/frameworks/cj/src/wifi_ffi.cpp",
+          "line": 764,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "FfiWifiAddCandidateConfig",
+          "source_sha256": "722e1ae294fdbf82301f786a8864803d6e508f9523fa57e17dd4b362d5828a14"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:3b40ec5b1263e0a5",
+          "file": "wifi/frameworks/native/src/hotspot_config_parcel.cpp",
+          "line": 70,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "HotspotConfigParcel::ToHotspotConfig",
+          "source_sha256": "a5bbdc3ed010dbd433b47847ecf418add3c93d91ebea4c8f5425e5e0d1108559"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:e8f628d264953976",
+          "file": "wifi/frameworks/native/src/hotspot_config_parcel.cpp",
+          "line": 89,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "HotspotConfigParcel::Marshalling",
+          "source_sha256": "a5bbdc3ed010dbd433b47847ecf418add3c93d91ebea4c8f5425e5e0d1108559"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:40488c584aa1b5a2",
+          "file": "wifi/frameworks/native/src/hotspot_config_parcel.cpp",
+          "line": 121,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "HotspotConfigParcel::Unmarshalling",
+          "source_sha256": "a5bbdc3ed010dbd433b47847ecf418add3c93d91ebea4c8f5425e5e0d1108559"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:547cf837e8e100c8",
+          "file": "wifi/frameworks/native/src/wifi_device_proxy.cpp",
+          "line": 324,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "WifiDeviceProxy::WriteEapConfig",
+          "source_sha256": "abc53d7b5b9ccc524adf5528372fb71fdb57bb6d079f0818ded259a310d12a4d"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:5b4a863ca7059b3d",
+          "file": "wifi/frameworks/native/src/wifi_device_proxy.cpp",
+          "line": 331,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "WifiDeviceProxy::WriteEapConfig",
+          "source_sha256": "abc53d7b5b9ccc524adf5528372fb71fdb57bb6d079f0818ded259a310d12a4d"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:d2e3f4dd84351497",
+          "file": "wifi/frameworks/native/src/wifi_device_proxy.cpp",
+          "line": 332,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "WifiDeviceProxy::WriteEapConfig",
+          "source_sha256": "abc53d7b5b9ccc524adf5528372fb71fdb57bb6d079f0818ded259a310d12a4d"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:4d2f8b54b97020d6",
+          "file": "wifi/frameworks/native/src/wifi_device_proxy.cpp",
+          "line": 353,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "WifiDeviceProxy::WriteDeviceConfig",
+          "source_sha256": "abc53d7b5b9ccc524adf5528372fb71fdb57bb6d079f0818ded259a310d12a4d"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:02ed4691d71741c9",
+          "file": "wifi/frameworks/native/src/wifi_device_proxy.cpp",
+          "line": 662,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "WifiDeviceProxy::ReadEapConfig",
+          "source_sha256": "abc53d7b5b9ccc524adf5528372fb71fdb57bb6d079f0818ded259a310d12a4d"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:83feaef721766d08",
+          "file": "wifi/frameworks/native/src/wifi_device_proxy_lite.cpp",
+          "line": 84,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "ReadEapConfig",
+          "source_sha256": "55a66c181dc108f6c8ad3d1e88f2897b1004692e3e12a154c9522941fe7604c5"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:438d599b3876f728",
+          "file": "wifi/frameworks/native/src/wifi_device_proxy_lite.cpp",
+          "line": 158,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "ParseDeviceConfigs",
+          "source_sha256": "55a66c181dc108f6c8ad3d1e88f2897b1004692e3e12a154c9522941fe7604c5"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:4d636f050d85a386",
+          "file": "wifi/frameworks/native/src/wifi_device_proxy_lite.cpp",
+          "line": 567,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "WifiDeviceProxy::WriteEapConfig",
+          "source_sha256": "55a66c181dc108f6c8ad3d1e88f2897b1004692e3e12a154c9522941fe7604c5"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:887d9b3a2e0a5250",
+          "file": "wifi/frameworks/native/src/wifi_device_proxy_lite.cpp",
+          "line": 573,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "WifiDeviceProxy::WriteEapConfig",
+          "source_sha256": "55a66c181dc108f6c8ad3d1e88f2897b1004692e3e12a154c9522941fe7604c5"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:47400ad09e3ddab3",
+          "file": "wifi/frameworks/native/src/wifi_device_proxy_lite.cpp",
+          "line": 574,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "WifiDeviceProxy::WriteEapConfig",
+          "source_sha256": "55a66c181dc108f6c8ad3d1e88f2897b1004692e3e12a154c9522941fe7604c5"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:4f4544e344d5ce96",
+          "file": "wifi/frameworks/native/src/wifi_device_proxy_lite.cpp",
+          "line": 594,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "WifiDeviceProxy::WriteDeviceConfig",
+          "source_sha256": "55a66c181dc108f6c8ad3d1e88f2897b1004692e3e12a154c9522941fe7604c5"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:10b585e1c228a960",
+          "file": "wifi/relation_services/wifi_hal_service/wifi_hal_module/hostapd_hal/wifi_hostapd_hal.c",
+          "line": 499,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "candidate_cwe": null,
+          "symbol": "SetApPasswd",
+          "source_sha256": "28878e543619bcab90842ed5eb6fb378220c03a083f8632f0ff3d0ae4ee06076"
+        }
+      ],
+      "label_status": "no independent labels; profile/source previously used in D development"
+    }
+  ],
+  "workbench_replay": {
+    "experiment": "D40 Workbench API/Worker/report/source-viewer replay for Wi-Fi PreSharedKey log candidate",
+    "detector_version": "0.21.0",
+    "upstream_commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+    "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+    "source_path": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+    "repeat_run_count": 2,
+    "repeat_runs_semantically_identical": true,
+    "candidate_id": "ohscanner.data.sensitive_exposure:be19c60060d99f1d",
+    "rule_id": "data.log.sensitive-value",
+    "candidate_cwe": "CWE-532",
+    "line": 93,
+    "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+    "source_viewer_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+    "detector_status": "blocked",
+    "job_status": "completed_with_limitations",
+    "validated_vulnerability": 0
+  },
+  "accuracy": {
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "tn": null,
+    "unknown": "all observations pending independent human labels",
+    "precision": null,
+    "recall": null
+  },
+  "limitations": [
+    "All source profiles in this replay were used in prior D development or calibration; no independent holdout claim is made.",
+    "All detector runs are blocked/partial; a zero-candidate run is not safe or a miss label.",
+    "Static findings do not establish product build inclusion, entry/reachability, attacker control, log visibility, CIA impact, affected versions, or product fix effectiveness.",
+    "The Workbench run uses an isolated synthetic Git wrapper containing one pinned upstream source file; it verifies API/Worker/report/source-viewer binding, not product behavior."
+  ]
+}

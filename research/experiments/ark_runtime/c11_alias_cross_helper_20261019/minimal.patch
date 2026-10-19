@@ -1,0 +1,1424 @@
+diff --git a/src/ohscanner/detectors/ark_runtime/analysis.py b/src/ohscanner/detectors/ark_runtime/analysis.py
+index 9181940..9799b8c 100644
+--- a/src/ohscanner/detectors/ark_runtime/analysis.py
++++ b/src/ohscanner/detectors/ark_runtime/analysis.py
+@@ -9,6 +9,7 @@ from dataclasses import asdict, dataclass, replace
+ from hashlib import sha256
+ from time import perf_counter
+ 
++from .cross_helper import build_identity_helpers
+ from .model import AnalysisBudget, RuntimeTypeModel, OWNER
+ from .runtime_ir import build_graph
+ from .syntax import parse_functions, walk
+@@ -108,6 +109,7 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
+     actual_partial = tree.root_node.has_error
+     if actual_partial and not research_partial:
+         return AnalysisResult('limited', 'not_analyzed', limitations=('actual_parse_is_partial',))
++    identity_helpers = build_identity_helpers(functions)
+     targets = [f for f in functions if f.qualified_name in model.callers
+                or has_type_origin_flow(f, model)]
+     if not targets:
+@@ -213,7 +215,8 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
+                                   tuple(sorted(set(limitations + [str(error)]))), total_steps, model.digest)
+         limitations.extend(graph.limitations)
+         evaluator = OriginEvaluator(fn, model,
+-            ((graph.instructions[i].node.start_byte, graph.instructions[i].node.end_byte) for i in graph.cyclic_nodes))
++            ((graph.instructions[i].node.start_byte, graph.instructions[i].node.end_byte) for i in graph.cyclic_nodes),
++            identity_helpers)
+         host_problems = [(inst, evaluator.unsupported_cpp_effect(inst)) for inst in graph.instructions]
+         host_problems = [(inst, problem) for inst, problem in host_problems if problem]
+         generated_control = False
+diff --git a/src/ohscanner/detectors/ark_runtime/cross_helper.py b/src/ohscanner/detectors/ark_runtime/cross_helper.py
+new file mode 100644
+index 0000000..d887ec7
+--- /dev/null
++++ b/src/ohscanner/detectors/ark_runtime/cross_helper.py
+@@ -0,0 +1,152 @@
++"""Finite function-local identity summaries for Ark Runtime semantic passes.
++
++Only exact C++ syntax is summarized: casts and parenthesized/pointer wrappers
++are transparent, and a helper is identity-preserving only when its complete
++body is a return of one same-typed parameter. Name similarity, unknown macro
++expansion, side effects, ownership, range, and runtime type stability are never
++inferred. Unsupported helpers retain the caller's explicit unknown behavior.
++"""
++from dataclasses import dataclass
++from hashlib import sha256
++import re
++
++
++
++_CAST_CALLS = frozenset(('const_cast', 'dynamic_cast', 'reinterpret_cast', 'static_cast'))
++
++
++@dataclass(frozen=True)
++class IdentityHelper:
++    name: str
++    qualified_name: str
++    arity: int
++    parameter_index: int
++    normalized_type: str
++    source_hash: str
++
++    def matches(self, fn, node):
++        if node.type != 'call_expression':
++            return False
++        args = fn.arguments(node)
++        if len(args) != self.arity:
++            return False
++        callee = node.child_by_field_name('function')
++        if callee is None:
++            return False
++        if callee.type == 'identifier':
++            written = fn.text(callee)
++        elif callee.type == 'field_expression':
++            written = fn.text(callee.child_by_field_name('field'))
++        elif callee.type == 'template_function':
++            written = fn.text(callee.child_by_field_name('name'))
++        else:
++            return False
++        return written == self.name and fn.resolve(self.name, node) is None
++
++
++def _normalized_type(text):
++    text = re.sub(r'\b(?:const|volatile|typename)\b', '', text or '')
++    return re.sub(r'\s+', '', text).replace('&&', '').replace('&', '')
++
++
++def build_identity_helpers(functions):
++    """Index only complete one-statement same-type identity helpers."""
++    grouped = {}
++    for fn in functions:
++        if fn.node.has_error or fn.body is None:
++            continue
++        statements = [item for item in fn.body.named_children
++                      if item.type not in ('comment', 'empty_statement')]
++        if len(statements) != 1 or statements[0].type != 'return_statement':
++            continue
++        returned = statements[0].child_by_field_name('value')
++        if returned is None and statements[0].named_children:
++            returned = statements[0].named_children[0]
++        if returned is None or returned.type != 'identifier':
++            continue
++        root = returned
++        binding = fn.resolve(fn.text(root), root)
++        if binding is None or not binding.parameter:
++            continue
++        if binding.identity not in {item.identity for item in fn.bindings if item.parameter}:
++            continue
++        return_type = _normalized_type(fn.text(fn.node.child_by_field_name('type')))
++        parameter_types = tuple(_normalized_type(item) for item in fn.parameter_types)
++        parameter_bindings = [item for item in fn.bindings if item.parameter]
++        parameter_index = next((index for index, item in enumerate(parameter_bindings)
++                                if item.identity == binding.identity), None)
++        if parameter_index is None or return_type != parameter_types[parameter_index]:
++            continue
++        helper = IdentityHelper(
++            fn.qualified_name.rsplit('::', 1)[-1], fn.qualified_name,
++            len(fn.parameter_types), parameter_index, return_type,
++            sha256(fn.text(fn.body).encode('utf-8')).hexdigest())
++        grouped.setdefault((helper.name, helper.arity), []).append(helper)
++    return tuple(items[0] for items in grouped.values() if len(items) == 1)
++
++
++def unwrap_identity_expression(fn, node, helpers=()):
++    """Return the root expression and audited identity layers, or (None, ())."""
++    hops = []
++    current = node
++    guard = 0
++    while current is not None and guard < 32:
++        guard += 1
++        if current.type in ('parenthesized_expression', 'pointer_expression'):
++            children = current.named_children
++            if not children:
++                return None, tuple(hops)
++            hops.append(current.type)
++            current = children[-1]
++            continue
++        if current.type == 'cast_expression':
++            value = current.child_by_field_name('value')
++            if value is None and current.named_children:
++                value = current.named_children[-1]
++            if value is None:
++                return None, tuple(hops)
++            hops.append('cast_expression')
++            current = value
++            continue
++        if current.type == 'call_expression':
++            args = fn.arguments(current)
++            callee = current.child_by_field_name('function')
++            name = fn.call_name(current)
++            base = name.split('<', 1)[0].rsplit('::', 1)[-1].removeprefix('this->')
++            if base in _CAST_CALLS and len(args) == 1 and not fn.resolve(base, current):
++                hops.append('cpp_cast:' + base)
++                current = args[0]
++                continue
++            matches = [helper for helper in helpers if helper.matches(fn, current)]
++            if len(matches) == 1 and len(args) == matches[0].arity:
++                helper = matches[0]
++                hops.append('identity_helper:' + helper.qualified_name + ':' + helper.source_hash[:12])
++                current = args[helper.parameter_index]
++                continue
++        return current, tuple(hops)
++    return None, tuple(hops)
++
++
++def same_binding(fn, left, right, helpers=()):
++    left_root, left_hops = unwrap_identity_expression(fn, left, helpers)
++    right_root, right_hops = unwrap_identity_expression(fn, right, helpers)
++    if left_root is None or right_root is None:
++        return False
++    if left_root.type != 'identifier' or right_root.type != 'identifier':
++        return left_root == right_root
++    left_binding = fn.resolve(fn.text(left_root), left_root)
++    right_binding = fn.resolve(fn.text(right_root), right_root)
++    return left_binding is not None and left_binding == right_binding
++
++
++def in_cyclic_region(node, cyclic_ranges):
++    return any(start <= node.start_byte < end for start, end in cyclic_ranges)
++
++
++
++
++def binding_matches(fn, node, binding, helpers=()):
++    root, _ = unwrap_identity_expression(fn, node, helpers)
++    if root is None or root.type != 'identifier' or binding is None:
++        return False
++    return fn.resolve(fn.text(root), root) == binding
+diff --git a/src/ohscanner/detectors/ark_runtime/detector.py b/src/ohscanner/detectors/ark_runtime/detector.py
+index 296b3bd..25c699f 100644
+--- a/src/ohscanner/detectors/ark_runtime/detector.py
++++ b/src/ohscanner/detectors/ark_runtime/detector.py
+@@ -12,7 +12,7 @@ from .model import (AnalysisBudget, RuntimeTypeModel, DETECTOR_ID, RULE_ID,
+                     EXCEPTION_GUARD_RULE_ID, RECEIVER_TYPE_GUARD_RULE_ID,
+                     SIZE_OVERFLOW_RULE_ID, LENGTH_NARROWING_RULE_ID,
+                     INDEX_BOUNDS_RULE_ID, NATIVE_EXCEPTION_RULE_ID,
+-                    GAP_RULE_VERSIONS, VERSION)
++                    RULE_VERSIONS, VERSION)
+ 
+ 
+ class ArkRuntimeTypeSafetyDetector:
+@@ -170,7 +170,7 @@ class ArkRuntimeTypeSafetyDetector:
+                                         'model_sha256': result.model_digest or self.model.digest,
+                                         'function_region': [item.region_start_byte, item.region_end_byte],
+                                         'unreviewed_effect_sites': item.effect_sites}, sort_keys=True)
+-                    rule_version = GAP_RULE_VERSIONS.get(rule_id, 'existing-rule-v1')
++                    rule_version = RULE_VERSIONS.get(rule_id, 'unversioned-rule')
+                     trace += ';rule_version=' + rule_version
+                     if rule_id == NATIVE_EXCEPTION_RULE_ID:
+                         obligations = (
+diff --git a/src/ohscanner/detectors/ark_runtime/exception_guard.py b/src/ohscanner/detectors/ark_runtime/exception_guard.py
+index 6cd8545..354bbef 100644
+--- a/src/ohscanner/detectors/ark_runtime/exception_guard.py
++++ b/src/ohscanner/detectors/ark_runtime/exception_guard.py
+@@ -3,6 +3,7 @@ from collections import deque
+ from dataclasses import dataclass
+ 
+ from .analysis import Observation
++from .cross_helper import binding_matches, build_identity_helpers, unwrap_identity_expression
+ from .model import OWNER, AnalysisBudget
+ from .runtime_ir import build_graph
+ from .syntax import name_node, walk
+@@ -50,22 +51,20 @@ def _creator_assignment(fn, instruction, creator_name, creator_arity):
+             yield binding
+ 
+ 
+-def _critical_use(fn, instruction, binding, sink_name, sink_arity, glue_index, object_index):
++def _critical_use(fn, instruction, binding, sink_name, sink_arity, glue_index, object_index, identity_helpers=()):
+     for node in walk(instruction.node):
+         if node.type != "call_expression" or fn.call_name(node) != sink_name:
+             continue
+         args = fn.arguments(node)
+-        refers_to_object = any(
+-            arg.type == "identifier" and fn.resolve(fn.text(arg), arg) == binding
+-            for arg in args
+-        )
++        refers_to_object = any(binding_matches(fn, arg, binding, identity_helpers)
++                               for arg in args)
+         if not refers_to_object:
+             continue
+         valid = fn.resolve(sink_name, node) is None
+         valid = valid and len(args) == sink_arity and max(glue_index, object_index) < len(args)
+         if valid:
+             object_arg = args[object_index]
+-            valid = object_arg.type == "identifier" and fn.resolve(fn.text(object_arg), object_arg) == binding
++            valid = binding_matches(fn, object_arg, binding, identity_helpers)
+             glue_arg = args[glue_index]
+             if glue_arg.type != "identifier":
+                 valid = False
+@@ -78,10 +77,12 @@ def _critical_use(fn, instruction, binding, sink_name, sink_arity, glue_index, o
+             # argument-nested call could have effects that happen in the same IR
+             # instruction, so the inter-instruction effect walk cannot see it.
+             calls = [child for child in walk(instruction.node) if child.type == "call_expression"]
+-            wrappers = [call for call in calls if fn.call_name(call) == "GetObjectType"]
+-            sinks = [call for call in calls if fn.call_name(call) == sink_name]
++            semantic_calls = [call for call in calls
++                              if not any(helper.matches(fn, call) for helper in identity_helpers)]
++            wrappers = [call for call in semantic_calls if fn.call_name(call) == "GetObjectType"]
++            sinks = [call for call in semantic_calls if fn.call_name(call) == sink_name]
+             valid = (
+-                len(calls) == 2 and len(wrappers) == 1 and len(sinks) == 1
++                len(semantic_calls) == 2 and len(wrappers) == 1 and len(sinks) == 1
+                 and fn.arguments(wrappers[0]) == (node,)
+                 and fn.resolve("GetObjectType", wrappers[0]) is None
+             )
+@@ -100,7 +101,7 @@ def _writes_binding(fn, instruction, binding):
+     return False
+ 
+ 
+-def _has_pending_exception(fn, branch):
++def _has_pending_exception(fn, branch, identity_helpers=()):
+     if branch.kind != "BRANCH" or not branch.arguments:
+         return False
+     condition = branch.arguments[0]
+@@ -109,10 +110,10 @@ def _has_pending_exception(fn, branch):
+     args = fn.arguments(condition)
+     if fn.resolve("HasPendingException", condition) or len(args) != 1:
+         return False
+-    arg = args[0]
+-    if arg.type != "identifier":
++    root, _ = unwrap_identity_expression(fn, args[0], identity_helpers)
++    if root is None or root.type != "identifier":
+         return False
+-    binding = fn.resolve(fn.text(arg), arg)
++    binding = fn.resolve(fn.text(root), root)
+     return binding is not None and binding.name == "glue" and binding.parameter and binding.type_name == "GateRef"
+ 
+ 
+@@ -146,7 +147,7 @@ def _known_exception_result_write(fn, instruction):
+         and binding.type_name == "Variable*"
+     )
+ 
+-def _trace_use(fn, graph, start, sink_index, budget):
++def _trace_use(fn, graph, start, sink_index, budget, identity_helpers=()):
+     queue = deque()
+     for target, _ in graph.instructions[start].successors:
+         if target is not None and target >= 0:
+@@ -176,7 +177,7 @@ def _trace_use(fn, graph, start, sink_index, budget):
+         if instruction.kind == "unknown" or instruction.problem:
+             unknown.append(next_path)
+             continue
+-        if _has_pending_exception(fn, instruction):
++        if _has_pending_exception(fn, instruction, identity_helpers):
+             for target, truth in instruction.successors:
+                 if target is not None and target >= 0:
+                     queue.append((target, bool(truth), next_path))
+@@ -214,6 +215,7 @@ def analyze_exception_guard(unit, *, creator_name="NewTypedArray", creator_arity
+     except (ValueError, RuntimeError) as error:
+         return ExceptionGuardResult("failed", "failed",
+                                     limitations=("parser_failure:" + type(error).__name__,))
++    identity_helpers = build_identity_helpers(functions)
+     owner_functions = [fn for fn in functions
+                        if fn.qualified_name in caller_names]
+     if not owner_functions:
+@@ -253,7 +255,7 @@ def analyze_exception_guard(unit, *, creator_name="NewTypedArray", creator_arity
+                 index != start and _writes_binding(fn, instruction, binding)
+                 for index, instruction in enumerate(graph.instructions)
+             )
+-            uses = [(index, _critical_use(fn, instruction, binding, sink_name, sink_arity, sink_glue_arg, sink_object_arg))
++            uses = [(index, _critical_use(fn, instruction, binding, sink_name, sink_arity, sink_glue_arg, sink_object_arg, identity_helpers))
+                     for index, instruction in enumerate(graph.instructions)
+                     if index > start]
+             uses = [(index, result) for index, result in uses if result is not None]
+@@ -281,7 +283,7 @@ def analyze_exception_guard(unit, *, creator_name="NewTypedArray", creator_arity
+                 limitations.append(limitation)
+                 continue
+             status, paths, limitation, used_steps = _trace_use(
+-                fn, graph, start, sink_index, budget)
++                fn, graph, start, sink_index, budget, identity_helpers)
+             steps += used_steps
+             line = sink_node.start_point[0] + 1
+             kind = status
+diff --git a/src/ohscanner/detectors/ark_runtime/model.py b/src/ohscanner/detectors/ark_runtime/model.py
+index 3c33092..ecdd988 100644
+--- a/src/ohscanner/detectors/ark_runtime/model.py
++++ b/src/ohscanner/detectors/ark_runtime/model.py
+@@ -18,9 +18,18 @@ LENGTH_NARROWING_RULE_ID = 'ark.runtime.typedarray-length-signed-to-unsigned-nar
+ INDEX_BOUNDS_RULE_ID = 'ark.runtime.dataview-index-width-bounds'
+ NATIVE_EXCEPTION_RULE_ID = 'ark.runtime.native-inline-pending-exception-propagation'
+ GAP_RULE_VERSIONS = {
+-    LENGTH_NARROWING_RULE_ID: '1.0.0',
+-    INDEX_BOUNDS_RULE_ID: '1.0.0',
+-    NATIVE_EXCEPTION_RULE_ID: '1.0.0',
++    LENGTH_NARROWING_RULE_ID: '1.1.0',
++    INDEX_BOUNDS_RULE_ID: '1.1.0',
++    NATIVE_EXCEPTION_RULE_ID: '1.1.0',
++}
++RULE_VERSIONS = {
++    RULE_ID: '1.1.0',
++    EXCEPTION_GUARD_RULE_ID: '1.1.0',
++    RECEIVER_TYPE_GUARD_RULE_ID: '1.1.0',
++    SIZE_OVERFLOW_RULE_ID: '1.1.0',
++    RUNTIME_EXCEPTION_RULE_ID: '1.1.0',
++    CALL_INFO_EXCEPTION_RULE_ID: '1.1.0',
++    **GAP_RULE_VERSIONS,
+ }
+ VERSION = '0.6.2'
+ NAMESPACE = 'panda::ecmascript::kungfu'
+diff --git a/src/ohscanner/detectors/ark_runtime/receiver_guard.py b/src/ohscanner/detectors/ark_runtime/receiver_guard.py
+index abd68c9..a4ada6d 100644
+--- a/src/ohscanner/detectors/ark_runtime/receiver_guard.py
++++ b/src/ohscanner/detectors/ark_runtime/receiver_guard.py
+@@ -9,6 +9,7 @@ from collections import deque
+ from dataclasses import dataclass
+ 
+ from .analysis import Observation
++from .cross_helper import binding_matches, build_identity_helpers, unwrap_identity_expression
+ from .model import OWNER, AnalysisBudget
+ from .runtime_ir import build_graph
+ from .syntax import parse_functions, walk
+@@ -24,12 +25,11 @@ class ReceiverGuardResult:
+     model_digest: str = ''
+ 
+ 
+-def _same_binding(fn, expression, binding):
+-    return (expression is not None and expression.type == 'identifier'
+-            and fn.resolve(fn.text(expression), expression) == binding)
++def _same_binding(fn, expression, binding, identity_helpers=()):
++    return binding_matches(fn, expression, binding, identity_helpers)
+ 
+ 
+-def _typed_array_guard(fn, instruction, receiver):
++def _typed_array_guard(fn, instruction, receiver, identity_helpers=()):
+     if instruction.kind != 'BRANCH' or not instruction.arguments:
+         return False
+     condition = instruction.arguments[0]
+@@ -39,7 +39,7 @@ def _typed_array_guard(fn, instruction, receiver):
+         args = fn.arguments(call)
+         if len(args) != 1:
+             continue
+-        if fn.call_name(call) == 'IsTypedArray' and _same_binding(fn, args[0], receiver):
++        if fn.call_name(call) == 'IsTypedArray' and _same_binding(fn, args[0], receiver, identity_helpers):
+             return True
+         if args[0].type != 'identifier':
+             continue
+@@ -51,13 +51,15 @@ def _typed_array_guard(fn, instruction, receiver):
+             if node.type != 'call_expression' or fn.call_name(node) != 'GetObjectType':
+                 continue
+             outer_args = fn.arguments(node)
+-            if len(outer_args) != 1 or outer_args[0].type != 'call_expression':
++            if len(outer_args) != 1:
++                continue
++            load, _ = unwrap_identity_expression(fn, outer_args[0], identity_helpers)
++            if load is None or load.type != 'call_expression':
+                 continue
+-            load = outer_args[0]
+             if fn.call_name(load) != 'LoadHClass':
+                 continue
+             load_args = fn.arguments(load)
+-            if (len(load_args) == 1 and _same_binding(fn, load_args[0], receiver)
++            if (len(load_args) == 1 and _same_binding(fn, load_args[0], receiver, identity_helpers)
+                     and type_binding.name):
+                 parent = node.parent
+                 while parent is not None and parent.type not in ('init_declarator', 'assignment_expression'):
+@@ -73,13 +75,13 @@ def _typed_array_guard(fn, instruction, receiver):
+     return False
+ 
+ 
+-def _sink_receiver(fn, instruction, sink_name, receiver):
++def _sink_receiver(fn, instruction, sink_name, receiver, identity_helpers=()):
+     found = []
+     for node in walk(instruction.node):
+         if node.type != 'call_expression' or fn.call_name(node) != sink_name:
+             continue
+         args = fn.arguments(node)
+-        if len(args) == 1 and _same_binding(fn, args[0], receiver):
++        if len(args) == 1 and _same_binding(fn, args[0], receiver, identity_helpers):
+             found.append(node)
+     return found
+ 
+@@ -118,7 +120,7 @@ def _reachable_without_successful_guard(graph, sink_index, matching_guards, budg
+     return False, steps
+ 
+ 
+-def analyze_receiver_guard(unit, *, caller_name=None,
++def analyze_receiver_guard(unit, *, caller_name=None, identity_helpers=None,
+                            caller_types=('GateRef', 'GateRef', 'GateRef', 'Variable*', 'Label*', 'Label*'),
+                            sink_name='GetViewedArrayBuffer', budget=None):
+     budget = budget or AnalysisBudget()
+@@ -130,6 +132,7 @@ def analyze_receiver_guard(unit, *, caller_name=None,
+     except (ValueError, RuntimeError) as error:
+         return ReceiverGuardResult('failed', 'failed',
+                                    limitations=('parser_failure:' + type(error).__name__,))
++    identity_helpers = build_identity_helpers(functions) if identity_helpers is None else tuple(identity_helpers)
+     if caller_name is None:
+         applicable = [fn.qualified_name for fn in functions
+                       if fn.qualified_name.startswith(OWNER + '::')
+@@ -138,7 +141,8 @@ def analyze_receiver_guard(unit, *, caller_name=None,
+         if not applicable:
+             return ReceiverGuardResult('completed', 'complete')
+         results = [analyze_receiver_guard(unit, caller_name=name, caller_types=caller_types,
+-                                          sink_name=sink_name, budget=budget) for name in applicable]
++                                          sink_name=sink_name, budget=budget,
++                                          identity_helpers=identity_helpers) for name in applicable]
+         observations = tuple(item for result in results for item in result.observations)
+         limitations = tuple(sorted({item for result in results for item in result.limitations}))
+         steps = sum(result.steps for result in results)
+@@ -167,12 +171,12 @@ def analyze_receiver_guard(unit, *, caller_name=None,
+     observations, limitations, total_steps = [], [], 0
+     for receiver in candidates:
+         sinks = [(index, node) for index, instruction in enumerate(graph.instructions)
+-                 for node in _sink_receiver(fn, instruction, sink_name, receiver)]
++                 for node in _sink_receiver(fn, instruction, sink_name, receiver, identity_helpers)]
+         if not sinks:
+             continue
+         guards = {index for index, instruction in enumerate(graph.instructions)
+                   if instruction.kind == 'BRANCH'
+-                  and _typed_array_guard(fn, instruction, receiver)}
++                  and _typed_array_guard(fn, instruction, receiver, identity_helpers)}
+         if not guards:
+             for index, node in sinks:
+                 observations.append(Observation('unknown', node.start_point[0] + 1,
+diff --git a/src/ohscanner/detectors/ark_runtime/runtime_exception.py b/src/ohscanner/detectors/ark_runtime/runtime_exception.py
+index 058e691..8fdde3d 100644
+--- a/src/ohscanner/detectors/ark_runtime/runtime_exception.py
++++ b/src/ohscanner/detectors/ark_runtime/runtime_exception.py
+@@ -8,6 +8,7 @@ from dataclasses import dataclass
+ import re
+ 
+ from .analysis import Observation
++from .cross_helper import build_identity_helpers, unwrap_identity_expression
+ from .syntax import name_node, parse_functions, walk
+ 
+ 
+@@ -210,7 +211,7 @@ def _context_thread(fn, source_call):
+     return None
+ 
+ 
+-def _callback_result_source(fn, node, effect_calls):
++def _callback_result_source(fn, node, effect_calls, identity_helpers=()):
+     """Return (binding, value, direct_spec, nested_source) for bounded flows."""
+     if node.type == "init_declarator":
+         declarator = node.child_by_field_name("declarator")
+@@ -229,7 +230,11 @@ def _callback_result_source(fn, node, effect_calls):
+     if ident is None or ident.type != "identifier" or value is None:
+         return None
+ 
+-    source_calls = [item for item in walk(value)
++    raw_value = value
++    value, _ = unwrap_identity_expression(fn, raw_value, identity_helpers)
++    if value is None:
++        value = raw_value
++    source_calls = [item for item in walk(raw_value)
+                     if item.type == "call_expression"
+                     and any(fn.call_name(item) == spec[0]
+                             and len(fn.arguments(item)) == spec[1]
+@@ -600,7 +605,7 @@ def _include_unit(source_units, unit):
+                         for item in units) else units + (unit,)
+ 
+ 
+-def _unknown_result_wrapper_sources(fn, function_nodes, effect_calls, sensitive_methods):
++def _unknown_result_wrapper_sources(fn, function_nodes, effect_calls, sensitive_methods, identity_helpers=()):
+     sensitive_bindings = set()
+     for call in function_nodes:
+         if call.type != "call_expression":
+@@ -620,7 +625,7 @@ def _unknown_result_wrapper_sources(fn, function_nodes, effect_calls, sensitive_
+     for node in function_nodes:
+         if node.type not in ("init_declarator", "assignment_expression"):
+             continue
+-        source = _callback_result_source(fn, node, effect_calls)
++        source = _callback_result_source(fn, node, effect_calls, identity_helpers)
+         if source is None:
+             continue
+         ident, binding, value, direct_spec, source_present = source
+@@ -723,6 +728,7 @@ def analyze_runtime_exception_propagation(
+         _include_unit(source_units, unit), effect_calls, guards, macro_contracts,
+         parsed_functions=functions, parsed_path=unit.path)
+ 
++    identity_helpers = build_identity_helpers(functions)
+     owners = _verified_generated_branch_owners(_include_unit(source_units, unit))
+     generated_applicable, observations, limitations = (
+         _analyze_generated_callback_paths(unit, owners))
+@@ -733,12 +739,12 @@ def analyze_runtime_exception_propagation(
+             continue
+         function_nodes = tuple(walk(fn.body))
+         has_source = any(
+-            (source := _callback_result_source(fn, node, effective_calls)) is not None
++            (source := _callback_result_source(fn, node, effective_calls, identity_helpers)) is not None
+             and source[4]
+             for node in function_nodes
+         )
+         unknown_wrappers = _unknown_result_wrapper_sources(
+-            fn, function_nodes, effective_calls, sensitive_methods)
++            fn, function_nodes, effective_calls, sensitive_methods, identity_helpers)
+         if not has_source and not unknown_wrappers:
+             continue
+         if unknown_wrappers:
+@@ -749,7 +755,7 @@ def analyze_runtime_exception_propagation(
+             return RuntimeExceptionResult("limited", "partial", tuple(observations),
+                                           tuple(sorted(set(limitations + ["instruction_budget_exhausted"]))), steps)
+         for node in function_nodes:
+-            source = _callback_result_source(fn, node, effective_calls)
++            source = _callback_result_source(fn, node, effective_calls, identity_helpers)
+             if source is None:
+                 continue
+             ident, binding, value, source_spec, nested_source = source
+diff --git a/src/ohscanner/detectors/ark_runtime/size_overflow.py b/src/ohscanner/detectors/ark_runtime/size_overflow.py
+index 3778a3e..e58dc29 100644
+--- a/src/ohscanner/detectors/ark_runtime/size_overflow.py
++++ b/src/ohscanner/detectors/ark_runtime/size_overflow.py
+@@ -57,7 +57,7 @@ def _width(type_text):
+     return None
+ 
+ 
+-def _loop_uses_allocated_copy(source, factor_names, allocation_names, body_line):
++def _loop_uses_allocated_copy(source, factor_names, allocation_names, body_line, aliases=None):
+     # Keep offsets stable while ignoring braces and parentheses in comments and
+     # literals. The production AST completeness gate is checked before this
+     # lexically bounded scan; this code does not claim full C++ syntax coverage.
+@@ -86,8 +86,11 @@ def _loop_uses_allocated_copy(source, factor_names, allocation_names, body_line)
+             break
+         header = source[opening + 1:closing]
+         cursor = closing + 1
++        expanded_factors = set(factor_names)
++        for name in factor_names:
++            expanded_factors |= _related_names(name, aliases or {})
+         if not any(re.search(r'\b' + re.escape(name) + r'\b', header)
+-                   for name in factor_names):
++                   for name in expanded_factors):
+             continue
+         body_open = masked.find('{', closing + 1)
+         next_loop = loop_pattern.search(masked, closing + 1)
+@@ -148,6 +151,83 @@ def _balanced_delimiter(source, opening, left='(', right=')'):
+     return None
+ 
+ 
++def _full_parenthesized(expression):
++    if not (expression.startswith('(') and expression.endswith(')')):
++        return False
++    depth = 0
++    for index, char in enumerate(expression):
++        if char == '(':
++            depth += 1
++        elif char == ')':
++            depth -= 1
++            if depth == 0 and index != len(expression) - 1:
++                return False
++    return depth == 0
++
++
++def _strip_identity_text_layers(expression, helper_names=()):
++    """Strip only syntax-transparent casts/parentheses and exact 1:1 helpers."""
++    current = expression.strip()
++    helper_pattern = re.compile(r'(?P<name>[A-Za-z_]\w*)\s*\(\s*(?P<arg>[^;()]*)\s*\)')
++    for _ in range(16):
++        previous = current
++        while _full_parenthesized(current):
++            current = current[1:-1].strip()
++        cast = re.fullmatch(
++            r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*[^>]+\s*>\s*\(\s*(?P<arg>[^;()]*)\s*\)',
++            current)
++        if cast:
++            current = cast.group('arg').strip()
++            continue
++        c_cast = re.fullmatch(r'\(\s*[A-Za-z_:][\w:\s*]*\s*\)\s*(?P<arg>[^;()]+)', current)
++        if c_cast:
++            current = c_cast.group('arg').strip()
++            continue
++        helper = helper_pattern.fullmatch(current)
++        if helper and helper.group('name') in helper_names:
++            current = helper.group('arg').strip()
++            continue
++        if current == previous:
++            break
++    return current
++
++
++def _operand_identity_name(expression, helper_names=()):
++    normalized = _strip_identity_text_layers(expression, helper_names)
++    return normalized if re.fullmatch(r'[A-Za-z_]\w*', normalized) else None
++
++
++def _alias_roots(source, helper_names=()):
++    aliases = {}
++    masked = _mask_cpp_noncode(source)
++    pattern = re.compile(r'\b(?:[A-Za-z_:][\w:\s*<>]*\s+)?(?P<name>\w+)\s*=\s*(?P<expr>[^;]+);')
++    for match in pattern.finditer(masked):
++        root = _operand_identity_name(match.group('expr'), helper_names)
++        if root and root != match.group('name'):
++            aliases[match.group('name')] = root
++    changed = True
++    while changed:
++        changed = False
++        for name, root in list(aliases.items()):
++            next_root = aliases.get(root, root)
++            if next_root != root:
++                aliases[name] = next_root
++                changed = True
++    return aliases
++
++
++def _related_names(name, aliases):
++    root = aliases.get(name, name)
++    return {item for item, source in aliases.items() if source == root} | {root}
++
++
++def _expand_alias_text(source, aliases):
++    if not aliases:
++        return source
++    pattern = re.compile(r'\b(?:' + '|'.join(re.escape(item) for item in sorted(aliases)) + r')\b')
++    return pattern.sub(lambda match: aliases.get(match.group(0), match.group(0)), source)
++
++
+ def _split_product(expression):
+     masked = _mask_cpp_noncode(expression)
+     depth = 0
+@@ -161,22 +241,25 @@ def _split_product(expression):
+     return None
+ 
+ 
+-def _operand_width(expression, type_map):
++def _operand_width(expression, type_map, aliases=None, helper_names=()):
++    aliases = aliases or {}
+     expression = expression.strip()
+-    cast = re.fullmatch(r'static_cast\s*<\s*([^>]+)\s*>\s*\(\s*(\w+)\s*\)', expression)
++    cast = re.fullmatch(
++        r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*([^>]+)\s*>\s*'
++        r'\(\s*([\w:]+)\s*\)', expression)
++    c_cast = re.fullmatch(r'\(\s*([\w:]+)\s*\)\s*([\w:]+)', expression)
++    root = _operand_identity_name(expression, helper_names)
++    if root is None:
++        return None, None
++    source_width = type_map.get(root, type_map.get(next((k for k, v in aliases.items() if v == root), root)))
+     if cast:
+-        return type_map.get(cast.group(2)), _width(cast.group(1))
+-    c_cast = re.fullmatch(r'\(\s*([\w:]+)\s*\)\s*(\w+)', expression)
++        return source_width, _width(cast.group(1))
+     if c_cast:
+-        return type_map.get(c_cast.group(2)), _width(c_cast.group(1))
+-    ident = re.fullmatch(r'\w+', expression)
+-    if ident:
+-        width = type_map.get(expression)
+-        return width, width
+-    return None, None
++        return source_width, _width(c_cast.group(1))
++    return source_width, source_width
+ 
+ 
+-def _text_allocations(source, size_name):
++def _text_allocations(source, size_name, aliases=None):
+     masked = _mask_cpp_noncode(source)
+     names, sites = set(), []
+     for allocator in _ALLOCATORS:
+@@ -196,7 +279,9 @@ def _text_allocations(source, size_name):
+             if closing is None:
+                 continue
+             args = source[opening + 1:closing]
+-            if not re.search(r'\b' + re.escape(size_name) + r'\b', args):
++            size_names = _related_names(size_name, aliases or {})
++            if not any(re.search(r'\b' + re.escape(name) + r'\b', args)
++                       for name in size_names):
+                 continue
+             prefix = masked[max(masked.rfind(';', 0, match.start()),
+                                 masked.rfind('{', 0, match.start()),
+@@ -218,6 +303,14 @@ def _text_allocations(source, size_name):
+     return names, sites
+ 
+ 
++def _index_text_identity_helpers(text):
++    pattern = re.compile(
++        r'\b(?P<type>[A-Za-z_:][\w:\s*<>]*)\s+(?P<name>[A-Za-z_]\w*)\s*'
++        r'\(\s*(?P<ptype>[A-Za-z_:][\w:\s*<>]*)\s+(?P<param>\w+)\s*\)\s*'
++        r'\{\s*return\s+(?P=param)\s*;\s*\}')
++    return {match.group('name') for match in pattern.finditer(_mask_cpp_noncode(text))}
++
++
+ def analyze_size_flows(source, *, functions=None, parse_complete=None):
+     """Return bounded textual flows within lexically delimited C++ functions.
+ 
+@@ -229,6 +322,8 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
+     if parse_complete is False:
+         return (), ('actual_parse_is_partial',)
+     text = data.decode('utf-8')
++    identity_helper_names = _index_text_identity_helpers(text)
++    aliases = _alias_roots(text, identity_helper_names)
+     masked = _mask_cpp_noncode(text)
+     function_pattern = re.compile(
+         r'\b(?P<name>(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*)\s*'
+@@ -276,21 +371,21 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
+             if product is None or result_type is None:
+                 continue
+             left, right = product
+-            left_source, left_op = _operand_width(left, type_map)
+-            right_source, right_op = _operand_width(right, type_map)
++            left_source, left_op = _operand_width(left, type_map, aliases, identity_helper_names)
++            right_source, right_op = _operand_width(right, type_map, aliases, identity_helper_names)
+             if None in (left_source, right_source, left_op, right_op):
+                 continue
+-            factor_names = tuple(match.group(1) for operand in (left, right)
+-                                 if (match := re.search(r'(\w+)\s*\)?\s*$', operand)))
++            factor_names = tuple(name for operand in (left, right)
++                                 if (name := _operand_identity_name(operand, identity_helper_names)))
+             if len(factor_names) != 2:
+                 continue
+             operation_width = max(32, left_op, right_op)
+             may_overflow = operation_width < left_source + right_source
+             result_name = declaration.group('name')
+-            allocated, allocation_lines = _text_allocations(body, result_name)
++            allocated, allocation_lines = _text_allocations(body, result_name, aliases)
+             if not allocated:
+                 continue
+-            loop_line = _loop_uses_allocated_copy(body, factor_names, allocated, body_line)
++            loop_line = _loop_uses_allocated_copy(body, factor_names, allocated, body_line, aliases)
+             if loop_line is None:
+                 continue
+             expression_start = declaration.start('expr')
+@@ -403,6 +498,8 @@ def analyze_length_narrowing_flows(source):
+     memory-safety impact.
+     """
+     text = source.decode('utf-8') if isinstance(source, bytes) else source
++    identity_helper_names = _index_text_identity_helpers(text)
++    aliases = _alias_roots(text, identity_helper_names)
+     candidates, limitations, applicable = [], [], False
+     signed_types = r'(?:int32_t|std::int32_t|signed\s+int|int)'
+     for name, body, body_line, body_byte in _bounded_function_regions(text):
+@@ -415,12 +512,15 @@ def analyze_length_narrowing_flows(source):
+         for declaration in declarations:
+             signed_found = True
+             result_name = declaration.group('name')
++            related = _related_names(result_name, aliases)
++            name_pattern = '(?:' + '|'.join(re.escape(item) for item in sorted(related)) + ')'
+             conversion = re.search(
+-                r'\b' + re.escape(result_name) + r'\s*=\s*(?:'
+-                r'static_cast\s*<\s*(?:std::)?int32_t\s*>\s*\([^;]+\)|'
++                r'\b(?P<name>' + name_pattern + r')\s*=\s*(?:'
++                r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*(?:std::)?int32_t\s*>\s*\([^;]+\)|'
++                r'\(\s*(?:std::)?int32_t\s*\)\s*[^;]+|'
+                 r'base::NumberHelper::DoubleInRangeInt32\s*\([^;]+\))\s*;', body)
+             allocation = re.search(
+-                r'\bAllocateTypedArray\s*\([^;]*\b' + re.escape(result_name) + r'\b[^;]*\)', body)
++                r'\bAllocateTypedArray\s*\([^;]*\b(?:' + name_pattern + r')\b[^;]*\)', body)
+             if conversion is None or allocation is None:
+                 continue
+             expression = conversion.group(0)
+@@ -478,8 +578,11 @@ class IndexBoundsCandidate:
+ def analyze_index_bounds_flows(source):
+     """Find 32-bit index arithmetic reaching DataView/Atomics buffer access."""
+     text = source.decode('utf-8') if isinstance(source, bytes) else source
++    identity_helper_names = _index_text_identity_helpers(text)
++    aliases = _alias_roots(text, identity_helper_names)
+     candidates, limitations, applicable = [], [], False
+     for name, body, body_line, body_byte in _bounded_function_regions(text):
++        body_for_aliases = _expand_alias_text(body, aliases)
+         semantic_name = any(token in name for token in ('DataView', 'Atomic', 'ValidateAtomicAccess'))
+         buffer_flow = any(token in body for token in (
+             'GetValueFromBuffer', 'SetValueInBuffer', 'GetDataPointFromBuffer', 'ValidateAtomicAccess'))
+@@ -495,7 +598,7 @@ def analyze_index_bounds_flows(source):
+         arithmetic = re.search(
+             r'(?:Int32Add\s*\([^;]+\)|static_cast\s*<\s*uint32_t\s*>\s*\([^;]+\)\s*\+\s*\w+|'
+             r'\buint32_t\s+\w+\s*=\s*[^;]*\+)', body)
+-        bounds = any(token in body for token in (
++        bounds = any(token in body or token in body_for_aliases for token in (
+             'Int32GreaterThan', 'getIndex +elementSize >', 'index * elementSize + offset',
+             'index + elementSize >', 'index) + elementSize >'))
+         if narrow and arithmetic and bounds:
+diff --git a/src/ohscanner/detectors/ark_runtime/type_origin.py b/src/ohscanner/detectors/ark_runtime/type_origin.py
+index 9da75f1..40dcd4a 100644
+--- a/src/ohscanner/detectors/ark_runtime/type_origin.py
++++ b/src/ohscanner/detectors/ark_runtime/type_origin.py
+@@ -1,6 +1,7 @@
+ """Local definition identities and provenance, evaluated on generated paths."""
+-from dataclasses import dataclass
++from dataclasses import dataclass, replace
+ from .syntax import compact, name_node, walk
++from .cross_helper import in_cyclic_region, unwrap_identity_expression
+ from .model import NAMESPACE, OWNER
+ 
+ 
+@@ -39,8 +40,9 @@ class OriginState:
+ 
+ 
+ class OriginEvaluator:
+-    def __init__(self, fn, model, cyclic_ranges=()):
++    def __init__(self, fn, model, cyclic_ranges=(), identity_helpers=()):
+         self.fn, self.model = fn, model
++        self.identity_helpers = tuple(identity_helpers)
+         self.cyclic_ranges = tuple(cyclic_ranges)
+ 
+     @staticmethod
+@@ -238,6 +240,8 @@ class OriginEvaluator:
+         base = name.removeprefix('this->')
+         if self._logic_and_chain(node) or self._copy_buffer_runtime_call(node) or self._copy_buffer_runtime_id(node):
+             return True
++        if any(helper.matches(fn, node) for helper in self.identity_helpers):
++            return True
+         if fn.resolve(base, node):
+             return False
+         if (base in dict(self.model.reviewed_graph_read_overloads)
+@@ -347,8 +351,13 @@ class OriginEvaluator:
+         if node is None:
+             return UNKNOWN
+         fn = self.fn
+-        if node.type in ('parenthesized_expression', 'pointer_expression'):
+-            return self.value(node.named_children[-1], state) if node.named_children else UNKNOWN
++        root, hops = unwrap_identity_expression(fn, node, self.identity_helpers)
++        if root is not None and root is not node:
++            value = self.value(root, state)
++            if any(item.startswith('identity_helper:') for item in hops) and value.kind != 'unknown':
++                detail = '+'.join(item for item in (value.detail, 'cross_helper_identity') if item)
++                return replace(value, detail=detail)
++            return value
+         if node.type == 'identifier':
+             binding = fn.resolve(fn.text(node), node)
+             return state.values.get(binding.identity, UNKNOWN) if binding else UNKNOWN
+@@ -413,6 +422,10 @@ class OriginEvaluator:
+                     val = Value('builder', binding.identity, detail=(typ if '::' in typ else NAMESPACE + '::' + typ))
+                 else:
+                     val = self.value(child.child_by_field_name('value'), state)
++                if (val.kind in ('object', 'type', 'hclass')
++                        and in_cyclic_region(node, self.cyclic_ranges)):
++                    detail = '+'.join(item for item in (val.detail, 'loop_backedge_rebinding') if item)
++                    val = replace(val, may_differ=True, detail=detail)
+                 state.values[binding.identity] = val
+         elif node.type == 'assignment_expression':
+             # A graph expression at one lexical site can produce a different
+@@ -423,8 +436,13 @@ class OriginEvaluator:
+                 binding = fn.resolve(fn.text(left), left)
+                 if binding:
+                     operator = node.child_by_field_name('operator')
+-                    state.values[binding.identity] = (self.value(node.child_by_field_name('right'), state)
+-                                                      if fn.text(operator) == '=' else UNKNOWN)
++                    val = (self.value(node.child_by_field_name('right'), state)
++                           if fn.text(operator) == '=' else UNKNOWN)
++                    if (val.kind in ('object', 'type', 'hclass')
++                            and in_cyclic_region(node, self.cyclic_ranges)):
++                        detail = '+'.join(item for item in (val.detail, 'loop_backedge_rebinding') if item)
++                        val = replace(val, may_differ=True, detail=detail)
++                    state.values[binding.identity] = val
+ 
+     def store_arguments(self, node, state):
+         fn, model = self.fn, self.model
+diff --git a/tests/detectors/ark_runtime/test_c10_ark_gap_rules.py b/tests/detectors/ark_runtime/test_c10_ark_gap_rules.py
+index 926c47a..ee6263f 100644
+--- a/tests/detectors/ark_runtime/test_c10_ark_gap_rules.py
++++ b/tests/detectors/ark_runtime/test_c10_ark_gap_rules.py
+@@ -70,7 +70,7 @@ class NativeInlineExceptionGapTests(unittest.TestCase):
+         self.assertEqual(selected, (source,))
+ 
+     def test_rule_versions_are_stable(self):
+-        self.assertEqual(GAP_RULE_VERSIONS[NATIVE_EXCEPTION_RULE_ID], '1.0.0')
++        self.assertEqual(GAP_RULE_VERSIONS[NATIVE_EXCEPTION_RULE_ID], '1.1.0')
+ 
+ 
+ class TypedArrayLengthGapTests(unittest.TestCase):
+@@ -114,7 +114,7 @@ class TypedArrayLengthGapTests(unittest.TestCase):
+                             for x in result.limitations))
+ 
+     def test_rule_version_is_stable(self):
+-        self.assertEqual(GAP_RULE_VERSIONS[LENGTH_NARROWING_RULE_ID], '1.0.0')
++        self.assertEqual(GAP_RULE_VERSIONS[LENGTH_NARROWING_RULE_ID], '1.1.0')
+ 
+ 
+ class DataViewIndexBoundsGapTests(unittest.TestCase):
+@@ -155,7 +155,7 @@ class DataViewIndexBoundsGapTests(unittest.TestCase):
+         self.assertFalse(any(item.kind == 'candidate' for item in result.observations))
+ 
+     def test_rule_version_is_stable(self):
+-        self.assertEqual(GAP_RULE_VERSIONS[INDEX_BOUNDS_RULE_ID], '1.0.0')
++        self.assertEqual(GAP_RULE_VERSIONS[INDEX_BOUNDS_RULE_ID], '1.1.0')
+ 
+ 
+ if __name__ == '__main__':
+diff --git a/tests/detectors/ark_runtime/test_c11_alias_cross_helper.py b/tests/detectors/ark_runtime/test_c11_alias_cross_helper.py
+new file mode 100644
+index 0000000..0cd460f
+--- /dev/null
++++ b/tests/detectors/ark_runtime/test_c11_alias_cross_helper.py
+@@ -0,0 +1,174 @@
++import hashlib
++from pathlib import Path
++import unittest
++
++from src.ohscanner.detectors.ark_runtime.analysis import analyze_unit
++from src.ohscanner.detectors.ark_runtime.exception_guard import analyze_exception_guard
++from src.ohscanner.detectors.ark_runtime.receiver_guard import analyze_receiver_guard
++from src.ohscanner.detectors.ark_runtime.runtime_exception import (
++    analyze_native_inline_exception_propagation,
++    analyze_runtime_exception_propagation,
++)
++from src.ohscanner.detectors.ark_runtime.size_overflow import (
++    analyze_index_bounds_flows,
++    analyze_length_narrowing_flows,
++    analyze_size_overflow,
++)
++from .support import unit, wrap, PREFIX
++
++FIXTURES = Path(__file__).parent / "fixtures" / "c11_alias_cross_helper"
++GAP = Path(__file__).parent / "fixtures" / "c10_gap_rules"
++SEM = Path(__file__).parent / "fixtures" / "c10_semantics"
++
++
++def fixture(path):
++    text = path.read_text(encoding="utf-8")
++    source = unit(text, "tests/detectors/ark_runtime/fixtures/" + path.parent.name + "/" + path.name)
++    assert source.sha256 == hashlib.sha256(text.encode("utf-8")).hexdigest()
++    return source
++
++
++def type_result(name):
++    return analyze_unit(fixture(FIXTURES / name))
++
++
++def type_kinds(result):
++    return tuple(item.kind for item in result.observations)
++
++
++class C11AliasCrossHelperControls(unittest.TestCase):
++    def test_alias_cast_helper_and_loop_controls_are_fail_closed(self):
++        for mechanism in ("alias", "cast", "helper"):
++            with self.subTest(mechanism=mechanism):
++                positive = type_result(mechanism + "_positive.cpp")
++                self.assertIn("candidate", type_kinds(positive))
++                self.assertFalse(any(kind in ("matched", "confirmed", "reportable")
++                                     for kind in type_kinds(positive)))
++                fixed = type_result(mechanism + "_fixed.cpp")
++                self.assertIn("matched", type_kinds(fixed))
++                self.assertNotIn("candidate", type_kinds(fixed))
++                safe = type_result(mechanism + "_safe.cpp")
++                self.assertIn("matched", type_kinds(safe))
++                self.assertNotIn("candidate", type_kinds(safe))
++                unrelated = type_result(mechanism + "_unrelated.cpp")
++                self.assertFalse(type_kinds(unrelated))
++                self.assertFalse(unrelated.observations)
++                self.assertIn("not_applicable_to_rule", unrelated.limitations)
++                unknown = type_result(mechanism + "_unknown.cpp")
++                self.assertIn("unknown", type_kinds(unknown))
++                self.assertFalse(any(kind in ("candidate", "matched") for kind in type_kinds(unknown)))
++
++        positive, limitations = analyze_size_overflow(
++            (FIXTURES / "loop_positive.cpp").read_text(encoding="utf-8"))
++        self.assertEqual(len(positive), 1)
++        self.assertEqual(positive[0].factor_names, ("stride", "count"))
++        self.assertEqual(limitations, ())
++        fixed, _ = analyze_size_overflow((FIXTURES / "loop_fixed.cpp").read_text(encoding="utf-8"))
++        self.assertFalse(fixed)
++        safe, _ = analyze_size_overflow((FIXTURES / "loop_safe.cpp").read_text(encoding="utf-8"))
++        self.assertFalse(safe)
++        unrelated, _ = analyze_size_overflow((FIXTURES / "loop_unrelated.cpp").read_text(encoding="utf-8"))
++        self.assertFalse(unrelated)
++        unknown_text = (FIXTURES / "loop_unknown.cpp").read_text(encoding="utf-8")
++        macros = '#define RETURN_EXCEPTION_IF_ABRUPT_COMPLETION(thread) do { if ((thread)->HasPendingException()) { return JSTaggedValue::Exception(); } } while (false)\n'
++        unknown = analyze_runtime_exception_propagation(
++            unit(unknown_text, "ecmascript/builtins/builtins_typedarray.cpp"),
++            source_units=(unit(macros, "ecmascript/ecma_macros.h"),))
++        self.assertFalse(any(item.kind == "candidate" for item in unknown.observations))
++        self.assertTrue(any("wrapper" in item for item in unknown.limitations))
++
++    def test_unknown_wrapper_is_not_promoted_to_safe(self):
++        text = (FIXTURES / "loop_unknown.cpp").read_text(encoding="utf-8")
++        result = analyze_unit(unit(text))
++        self.assertFalse(any(item.kind in ("candidate", "matched") for item in result.observations))
++
++    def test_known_case_parent_or_explicit_unknown_and_fixed_controls_do_not_regress(self):
++        for name in ("cve_2025_24304", "ibs5yg"):
++            parent = analyze_unit(fixture(SEM / (name + "_parent.cpp")))
++            fixed = analyze_unit(fixture(SEM / (name + "_fixed.cpp")))
++            self.assertIn("candidate", type_kinds(parent))
++            self.assertIn("matched", type_kinds(fixed))
++            self.assertNotIn("candidate", type_kinds(fixed))
++
++        size_parent = '''void convert(uint32_t stride, uint32_t count) {
++    uint32_t byteCount = stride * count;
++    auto temporary = AllocateArrayBuffer(byteCount);
++    BufferHandle destination;
++    destination.Update(temporary);
++    for (uint32_t i = count; i > 0; --i) {
++        SetValueInBuffer(thread, destination.GetTaggedValue(), cursor, value);
++        cursor += stride;
++    }
++}
++'''
++        self.assertEqual(len(analyze_size_overflow(size_parent)[0]), 1)
++        self.assertFalse(analyze_size_overflow(size_parent.replace(
++            "uint32_t byteCount = stride * count",
++            "uint64_t byteCount = static_cast<uint64_t>(stride) * count"))[0])
++
++        exception_parent = unit(wrap(PREFIX + "GateRef klass = GetObjectType(LoadHClass(glue, output));"))
++        exception_fixed = unit(wrap(PREFIX + (
++            "Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label exit(GetEnvironment());\n"
++            "BRANCH(HasPendingException(glue), &exception, &normal);\n"
++            "Bind(&exception); result->WriteVariable(Exception()); Jump(&exit);\n"
++            "Bind(&normal); GateRef klass = GetObjectType(LoadHClass(glue, output)); Jump(&exit);\n"
++            "Bind(&exit);")))
++        self.assertEqual([item.kind for item in analyze_exception_guard(exception_parent).observations],
++                         ["candidate"])
++        self.assertNotIn("candidate", [item.kind for item in analyze_exception_guard(exception_fixed).observations])
++
++        runtime_parent = '''class BuiltinsTypedArray {
++JSTaggedValue Filter(EcmaRuntimeCallInfo *argv) {
++    JSThread *thread = argv->GetThread();
++    EcmaRuntimeCallInfo *info = EcmaInterpreter::NewRuntimeCallInfo(thread, callback, thisArg, undefined, 3);
++    JSTaggedValue callbackOutcome = JSFunction::Call(info);
++    bool accepted = callbackOutcome.ToBoolean();
++    return accepted ? JSTaggedValue::True() : JSTaggedValue::False();
++}
++};
++'''
++        runtime_fixed = runtime_parent.replace(
++            "    bool accepted = callbackOutcome.ToBoolean();",
++            "    RETURN_EXCEPTION_IF_ABRUPT_COMPLETION(thread);\n    bool accepted = callbackOutcome.ToBoolean();")
++        macros = '#define RETURN_EXCEPTION_IF_ABRUPT_COMPLETION(thread) do { if ((thread)->HasPendingException()) { return JSTaggedValue::Exception(); } } while (false)\n'
++        self.assertEqual(len(analyze_runtime_exception_propagation(
++            unit(runtime_parent, "ecmascript/builtins/builtins_typedarray.cpp"),
++            source_units=(unit(macros, "ecmascript/ecma_macros.h"),)).observations), 1)
++        self.assertFalse(analyze_runtime_exception_propagation(
++            unit(runtime_fixed, "ecmascript/builtins/builtins_typedarray.cpp"),
++            source_units=(unit(macros, "ecmascript/ecma_macros.h"),)).observations)
++
++        ia_parent = (GAP / "ia_positive.cpp").read_text(encoding="utf-8")
++        ia_fixed = (GAP / "ia_fixed.cpp").read_text(encoding="utf-8")
++        self.assertEqual(analyze_native_inline_exception_propagation(unit(ia_parent)).observations[0].kind,
++                         "candidate")
++        self.assertFalse(analyze_native_inline_exception_propagation(unit(ia_fixed)).observations)
++
++        self.assertEqual(len(analyze_length_narrowing_flows(
++            (GAP / "length_positive.cpp").read_text(encoding="utf-8"))[0]), 1)
++        self.assertFalse(analyze_length_narrowing_flows(
++            (GAP / "length_fixed.cpp").read_text(encoding="utf-8"))[0])
++        self.assertEqual(len(analyze_index_bounds_flows(
++            (GAP / "index_positive.cpp").read_text(encoding="utf-8"))[0]), 1)
++        self.assertFalse(analyze_index_bounds_flows(
++            (GAP / "index_fixed.cpp").read_text(encoding="utf-8"))[0])
++
++        receiver_parent = wrap(
++            "Label exists(GetEnvironment()); Label typed(GetEnvironment());\n"
++            "BRANCH(TaggedIsUndefinedOrNull(input), slowPath, &exists); Bind(&exists);\n"
++            "GateRef buffer = GetViewedArrayBuffer(input);\n"
++            "GateRef inputTag = GetObjectType(LoadHClass(input));\n"
++            "BRANCH(IsFastTypeArray(inputTag), &typed, slowPath); Bind(&typed);")
++        receiver_fixed = wrap(
++            "Label exists(GetEnvironment()); Label typed(GetEnvironment());\n"
++            "BRANCH(TaggedIsUndefinedOrNull(input), slowPath, &exists); Bind(&exists);\n"
++            "GateRef inputTag = GetObjectType(LoadHClass(input));\n"
++            "BRANCH(IsFastTypeArray(inputTag), &typed, slowPath); Bind(&typed);\n"
++            "GateRef buffer = GetViewedArrayBuffer(input);")
++        self.assertEqual([item.kind for item in analyze_receiver_guard(unit(receiver_parent)).observations],
++                         ["candidate"])
++        self.assertNotIn("candidate", [item.kind for item in analyze_receiver_guard(unit(receiver_fixed)).observations])
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_fixed.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_fixed.cpp
+new file mode 100644
+index 0000000..479eb91
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_fixed.cpp
+@@ -0,0 +1,10 @@
++namespace panda::ecmascript::kungfu {
++void BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArraySameType(glue, input, inputTag, count);
++GateRef target = output;
++GateRef token = inputTag;
++StoreTypedArrayElement(glue, target, count, input, token);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_positive.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_positive.cpp
+new file mode 100644
+index 0000000..25583de
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_positive.cpp
+@@ -0,0 +1,10 @@
++namespace panda::ecmascript::kungfu {
++void BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArray(glue, input, inputTag, count);
++GateRef target = output;
++GateRef token = inputTag;
++StoreTypedArrayElement(glue, target, count, input, token);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_safe.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_safe.cpp
+new file mode 100644
+index 0000000..4ad63cf
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_safe.cpp
+@@ -0,0 +1,11 @@
++namespace panda::ecmascript::kungfu {
++void BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArray(glue, input, inputTag, count);
++GateRef target = output;
++GateRef token = inputTag;
++GateRef outputTag = GetObjectType(LoadHClass(output));
++StoreTypedArrayElement(glue, target, count, input, outputTag);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_unknown.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_unknown.cpp
+new file mode 100644
+index 0000000..a856db0
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_unknown.cpp
+@@ -0,0 +1,12 @@
++namespace panda::ecmascript::kungfu {
++void BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArray(glue, input, inputTag, count);
++GateRef target = output;
++GateRef token = inputTag;
++GateRef outputTag = GetObjectType(LoadHClass(output));
++UnknownGlobalEffect();
++StoreTypedArrayElement(glue, target, count, input, outputTag);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_unrelated.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_unrelated.cpp
+new file mode 100644
+index 0000000..1100b2a
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_unrelated.cpp
+@@ -0,0 +1,10 @@
++namespace panda::ecmascript::kungfu {
++void OtherBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArray(glue, input, inputTag, count);
++GateRef target = output;
++GateRef token = inputTag;
++StoreTypedArrayElement(glue, target, count, input, token);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_fixed.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_fixed.cpp
+new file mode 100644
+index 0000000..73a7ee5
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_fixed.cpp
+@@ -0,0 +1,10 @@
++namespace panda::ecmascript::kungfu {
++void BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArraySameType(glue, input, inputTag, count);
++GateRef target = (GateRef)output;
++GateRef token = (GateRef)inputTag;
++StoreTypedArrayElement(glue, target, count, input, token);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_positive.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_positive.cpp
+new file mode 100644
+index 0000000..a2823bf
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_positive.cpp
+@@ -0,0 +1,10 @@
++namespace panda::ecmascript::kungfu {
++void BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArray(glue, input, inputTag, count);
++GateRef target = (GateRef)output;
++GateRef token = (GateRef)inputTag;
++StoreTypedArrayElement(glue, target, count, input, token);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_safe.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_safe.cpp
+new file mode 100644
+index 0000000..1ee26e0
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_safe.cpp
+@@ -0,0 +1,11 @@
++namespace panda::ecmascript::kungfu {
++void BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArray(glue, input, inputTag, count);
++GateRef target = (GateRef)output;
++GateRef token = (GateRef)inputTag;
++GateRef outputTag = GetObjectType(LoadHClass(output));
++StoreTypedArrayElement(glue, target, count, input, outputTag);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_unknown.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_unknown.cpp
+new file mode 100644
+index 0000000..7189acf
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_unknown.cpp
+@@ -0,0 +1,12 @@
++namespace panda::ecmascript::kungfu {
++void BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArray(glue, input, inputTag, count);
++GateRef target = (GateRef)output;
++GateRef token = (GateRef)inputTag;
++GateRef outputTag = GetObjectType(LoadHClass(output));
++UnknownGlobalEffect();
++StoreTypedArrayElement(glue, target, count, input, outputTag);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_unrelated.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_unrelated.cpp
+new file mode 100644
+index 0000000..70eedf3
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_unrelated.cpp
+@@ -0,0 +1,10 @@
++namespace panda::ecmascript::kungfu {
++void OtherBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArray(glue, input, inputTag, count);
++GateRef target = (GateRef)output;
++GateRef token = (GateRef)inputTag;
++StoreTypedArrayElement(glue, target, count, input, token);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_fixed.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_fixed.cpp
+new file mode 100644
+index 0000000..ba23efc
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_fixed.cpp
+@@ -0,0 +1,10 @@
++GateRef PassObject(GateRef value) { return value; }
++GateRef PassType(GateRef value) { return value; }
++namespace panda::ecmascript::kungfu {
++void BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArraySameType(glue, input, inputTag, count);
++StoreTypedArrayElement(glue, PassObject(output), count, input, PassType(inputTag));
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_positive.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_positive.cpp
+new file mode 100644
+index 0000000..c5ef0cf
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_positive.cpp
+@@ -0,0 +1,10 @@
++GateRef PassObject(GateRef value) { return value; }
++GateRef PassType(GateRef value) { return value; }
++namespace panda::ecmascript::kungfu {
++void BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArray(glue, input, inputTag, count);
++StoreTypedArrayElement(glue, PassObject(output), count, input, PassType(inputTag));
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_safe.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_safe.cpp
+new file mode 100644
+index 0000000..325e162
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_safe.cpp
+@@ -0,0 +1,11 @@
++GateRef PassObject(GateRef value) { return value; }
++GateRef PassType(GateRef value) { return value; }
++namespace panda::ecmascript::kungfu {
++void BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArray(glue, input, inputTag, count);
++GateRef outputTag = GetObjectType(LoadHClass(output));
++StoreTypedArrayElement(glue, PassObject(output), count, input, outputTag);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_unknown.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_unknown.cpp
+new file mode 100644
+index 0000000..f00f596
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_unknown.cpp
+@@ -0,0 +1,12 @@
++GateRef PassObject(GateRef value) { return value; }
++GateRef PassType(GateRef value) { return value; }
++namespace panda::ecmascript::kungfu {
++void BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArray(glue, input, inputTag, count);
++GateRef outputTag = GetObjectType(LoadHClass(output));
++UnknownGlobalEffect();
++StoreTypedArrayElement(glue, PassObject(output), count, input, outputTag);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_unrelated.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_unrelated.cpp
+new file mode 100644
+index 0000000..f8ab760
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_unrelated.cpp
+@@ -0,0 +1,10 @@
++GateRef PassObject(GateRef value) { return value; }
++GateRef PassType(GateRef value) { return value; }
++namespace panda::ecmascript::kungfu {
++void OtherBuilder::Filter(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
++GateRef inputTag = GetObjectType(LoadHClass(input));
++NewObjectStubBuilder builder(this);
++GateRef output = builder.NewTypedArray(glue, input, inputTag, count);
++StoreTypedArrayElement(glue, PassObject(output), count, input, PassType(inputTag));
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_fixed.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_fixed.cpp
+new file mode 100644
+index 0000000..1c9231a
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_fixed.cpp
+@@ -0,0 +1,10 @@
++void convert(uint32_t stride, uint32_t count) {
++    uint64_t byteCount = static_cast<uint64_t>(stride) * count;
++    auto temporary = AllocateArrayBuffer(byteCount);
++    BufferHandle destination;
++    destination.Update(temporary);
++    for (uint32_t remaining = count; remaining > 0; --remaining) {
++        SetValueInBuffer(thread, destination.GetTaggedValue(), cursor, value);
++        cursor += stride;
++    }
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_positive.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_positive.cpp
+new file mode 100644
+index 0000000..34abb9b
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_positive.cpp
+@@ -0,0 +1,10 @@
++void convert(uint32_t stride, uint32_t count) {
++    uint32_t byteCount = stride * count;
++    auto temporary = AllocateArrayBuffer(byteCount);
++    BufferHandle destination;
++    destination.Update(temporary);
++    for (uint32_t remaining = count; remaining > 0; --remaining) {
++        SetValueInBuffer(thread, destination.GetTaggedValue(), cursor, value);
++        cursor += stride;
++    }
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_safe.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_safe.cpp
+new file mode 100644
+index 0000000..df44595
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_safe.cpp
+@@ -0,0 +1,10 @@
++void convert(uint32_t stride, uint32_t count) {
++    uint32_t byteCount = stride * count;
++    print(byteCount);
++    BufferHandle destination;
++    
++    for (uint32_t remaining = count; remaining > 0; --remaining) {
++        SetValueInBuffer(thread, destination.GetTaggedValue(), cursor, value);
++        cursor += stride;
++    }
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_unknown.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_unknown.cpp
+new file mode 100644
+index 0000000..6d1e257
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_unknown.cpp
+@@ -0,0 +1,12 @@
++class BuiltinsTypedArray {
++JSTaggedValue Filter(EcmaRuntimeCallInfo *argv) {
++    JSThread *thread = argv->GetThread();
++    EcmaRuntimeCallInfo *info = EcmaInterpreter::NewRuntimeCallInfo(thread, callback, thisArg, undefined, 3);
++    JSTaggedValue callbackOutcome = Normalize(JSFunction::Call(info));
++    while (condition) {
++        bool accepted = callbackOutcome.ToBoolean();
++    }
++    return JSTaggedValue::Undefined();
++}
++};
++JSTaggedValue Normalize(JSTaggedValue value) { Touch(); return value; }
+diff --git a/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_unrelated.cpp b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_unrelated.cpp
+new file mode 100644
+index 0000000..62d9f1d
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_unrelated.cpp
+@@ -0,0 +1 @@
++int add(int x, int y) { return x + y; }

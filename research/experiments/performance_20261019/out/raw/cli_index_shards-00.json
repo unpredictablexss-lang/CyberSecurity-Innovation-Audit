@@ -1,0 +1,47 @@
+{
+  "case": "cli_index_shards",
+  "repeat": 0,
+  "environment": {
+    "python": "3.12.14",
+    "git": "git version 2.55.0.windows.5",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4",
+      "tree-sitter-javascript": "0.25.0",
+      "tree-sitter-typescript": "0.23.2"
+    },
+    "parse_profile": "light-ast",
+    "macro_expansion": false
+  },
+  "wall_seconds": 4.487963200001104,
+  "peak_rss_bytes": 31219712,
+  "result": {
+    "full": {
+      "wall_seconds": 0.6551386999999522,
+      "peak_rss_bytes": 30289920,
+      "source_count": 16,
+      "source_bytes": 18108,
+      "parse": {
+        "parsing_status": {
+          "complete": 15,
+          "partial": 1
+        },
+        "languages": {
+          "cpp": 16
+        }
+      },
+      "source_identity_sha256": "11a0de3e3d8c100d2e1350d31eb35998cacaced00756aabeb5026eac42ccd8ca",
+      "coverage_signature_sha256": "58294223de02ad627ba764b6c60699db31a010b414683fbaf7e01732bc10e49a"
+    },
+    "shards": [
+      {
+        "source_identity_sha256": "11a0de3e3d8c100d2e1350d31eb35998cacaced00756aabeb5026eac42ccd8ca",
+        "parse_signature_sha256": null,
+        "diagnostic_signature_sha256": null,
+        "diagnostic_count": null
+      }
+    ],
+    "invariant": true
+  }
+}

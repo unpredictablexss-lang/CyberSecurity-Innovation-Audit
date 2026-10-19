@@ -1,0 +1,94 @@
+{
+  "schema": "ohscanner.ark-holdout-real-input-protocol/v1",
+  "protocol_id": "G13-HP-REAL-HOLDOUT-20261019",
+  "status": "FROZEN_NOT_EXECUTED",
+  "execution_mode": "real_holdout",
+  "frozen_at": "2026-10-19T22:30:00+08:00",
+  "scope": {
+    "target": "Ark Runtime C/C++ source-shape cases",
+    "product_claim": false,
+    "purpose": "family-level scanner discrimination after development is closed"
+  },
+  "sampling_frame": {
+    "required_case_identity": [
+      "blob",
+      "commit",
+      "parser_identity",
+      "repository",
+      "snapshot_sha256",
+      "source_path",
+      "source_sha256",
+      "tree"
+    ],
+    "selection_must_be_preregistered": true,
+    "family_split_must_be_frozen": true,
+    "development_overlap_allowed": false,
+    "development_leakage_match_allowed": false,
+    "known_case_fixture_allowed_as_truth": false,
+    "scanner_output_allowed_as_truth": false,
+    "model_output_allowed_as_truth": false
+  },
+  "double_blind_review": {
+    "reviewers": 2,
+    "reviewer_count": 2,
+    "adjudicators": 1,
+    "adjudicator_count": 1,
+    "allowed_labels": [
+      "not_vulnerable_shape",
+      "unknown",
+      "vulnerable_shape"
+    ],
+    "reviewer_attestations": [
+      "truth_not_seen",
+      "other_review_not_seen",
+      "scanner_outputs_not_seen",
+      "model_outputs_not_seen",
+      "parent_fixed_pairing_not_seen",
+      "independent_review"
+    ],
+    "adjudicator_attestations": [
+      "truth_not_seen",
+      "scanner_outputs_not_seen",
+      "model_outputs_not_seen",
+      "parent_fixed_pairing_not_seen",
+      "independent_adjudication"
+    ],
+    "reviewer_independence_required": true,
+    "disagreement_rule": "matching labels agree; every disagreement requires independent third review",
+    "unknown_rule": "unknown is preserved through adjudication and blocks metric release"
+  },
+  "truth_commitment": {
+    "scheme": "hmac-sha256-custodian-secret-v1",
+    "secret_keeper": "truth custodian who does not review or adjudicate",
+    "secret_file_must_not_enter_git": true,
+    "truth_fields_committed": [
+      "schema",
+      "execution_mode",
+      "truth_status",
+      "model_generated",
+      "labels"
+    ]
+  },
+  "metric_gate": {
+    "required_conditions": [
+      "protocol_file_hash_verified",
+      "truth_commitment_verified",
+      "truth_status_reliable_independent_human_adjudicated",
+      "model_generated_false",
+      "development_overlap_false",
+      "reviewer_independence_attested",
+      "adjudication_complete",
+      "source_identity_complete",
+      "case_set_exact",
+      "no_unknown_labels"
+    ],
+    "before_gate": "confusion counts may be reported only as non-release diagnostics; precision, recall and F1 remain null",
+    "after_gate": "family-level precision, recall and F1 may be released with limitations and confidence intervals",
+    "zero_fp_fn_claim_forbidden_without_reliable_holdout": true
+  },
+  "secret_handling": {
+    "commit_secrets_to_git": false,
+    "allowed_secret_storage": "custodian-controlled location outside Git",
+    "synthetic_selftest_secret_is_not_real_truth": true
+  }
+}

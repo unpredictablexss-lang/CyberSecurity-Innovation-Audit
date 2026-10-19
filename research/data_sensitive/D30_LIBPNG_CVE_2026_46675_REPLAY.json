@@ -1,0 +1,135 @@
+{
+  "experiment": "D30 libpng CVE-2026-46675 ASan component replay",
+  "interpretation": "Confirmed component-level heap-use-after-free in pinned libpng 1.6.55 archive under advisory call sequence. Applying the upstream fix removes the ASan finding on the same input. This does not establish an OpenHarmony product build, reachable application call sequence, or product vulnerability.",
+  "product_status": "unknown",
+  "rounds": [
+    {
+      "results": {
+        "affected_source": {
+          "asan_heap_use_after_free": true,
+          "exit_code": 1,
+          "mode": "read-end",
+          "output": "libpng warning: zTXt: invalid window size (libpng)\nPNG_INFO_OK\n=================================================================\n==18416==ERROR: AddressSanitizer: heap-use-after-free on address 0x503000000049 at pc 0x5def2831b44e bp 0x7fffc281e5c0 sp 0x7fffc281e5b0\nREAD of size 1 at 0x503000000049 thread T0\n    #0 0x5def2831b44d in png_zlib_inflate /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:529\n    #1 0x5def2832bf9a in png_read_IDAT_data /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:4268\n    #2 0x5def2832c49c in png_read_finish_IDAT /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:4334\n    #3 0x5def282ecb60 in png_read_end /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngread.c:691\n    #4 0x5def282d3275 in main /home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/cve_2026_46675/read_png_end.c:25\n    #5 0x75db08229d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #6 0x75db08229e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #7 0x5def282d2814 in _start (/tmp/ohscanner-d30-cve46675-umucz8yt/build-vulnerable/read_png_end_asan+0xa814)\n\n0x503000000049 is located 9 bytes inside of 27-byte region [0x503000000040,0x50300000005b)\nfreed by thread T0 here:\n    #0 0x75db086b4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x5def282ea245 in png_free_default /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngmem.c:255\n    #2 0x5def282ea212 in png_free /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngmem.c:244\n    #3 0x5def2831abe6 in png_read_buffer /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:386\n    #4 0x5def28325fc1 in png_handle_tEXt /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:2415\n    #5 0x5def28328843 in png_handle_chunk /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:3201\n    #6 0x5def282ea9fd in png_read_info /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngread.c:165\n    #7 0x5def282d2dc5 in main /home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/cve_2026_46675/read_png_end.c:15\n    #8 0x75db08229d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\npreviously allocated by thread T0 here:\n    #0 0x75db086b4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145\n    #1 0x5def282e9ec4 in png_malloc_base /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngmem.c:98\n    #2 0x5def2831ac0c in png_read_buffer /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:392\n    #3 0x5def2832654c in png_handle_zTXt /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:2489\n    #4 0x5def28328843 in png_handle_chunk /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:3201\n    #5 0x5def282ea9fd in png_read_info /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngread.c:165\n    #6 0x5def282d2dc5 in main /home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/cve_2026_46675/read_png_end.c:15\n    #7 0x75db08229d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\nSUMMARY: AddressSanitizer: heap-use-after-free /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:529 in png_zlib_inflate\nShadow bytes around the buggy address:\n  0x0a067fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a067fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a067fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a067fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a067fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0a067fff8000: fa fa 00 00 00 fa fa fa fd[fd]fd fd fa fa fa fa\n  0x0a067fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a067fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a067fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a067fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a067fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n  Shadow gap:              cc\n==18416==ABORTING\n",
+          "png_info_reached": true,
+          "png_rows_reached": false
+        },
+        "read_rows_before_end_control": {
+          "asan_heap_use_after_free": false,
+          "exit_code": 0,
+          "mode": "read-rows",
+          "output": "libpng warning: zTXt: invalid window size (libpng)\nPNG_INFO_OK\nPNG_ROWS_OK\nPNG_READ_END_OK\n",
+          "png_info_reached": true,
+          "png_rows_reached": true
+        },
+        "short_text_no_reallocation_control": {
+          "asan_heap_use_after_free": false,
+          "exit_code": 2,
+          "mode": "read-end",
+          "output": "libpng warning: zTXt: invalid window size (libpng)\nPNG_INFO_OK\nlibpng warning: IDAT: incorrect header check\nlibpng error: P[30][00][00]: bad header (invalid type)\nPNG_ERROR\n",
+          "png_info_reached": true,
+          "png_rows_reached": false
+        },
+        "upstream_fix_applied": {
+          "asan_heap_use_after_free": false,
+          "exit_code": 2,
+          "mode": "read-end",
+          "output": "libpng warning: zTXt: invalid window size (libpng)\nPNG_INFO_OK\nlibpng warning: IDAT: Too much image data\nlibpng error: [00][00][00][00]: bad header (invalid type)\nPNG_ERROR\n",
+          "png_info_reached": true,
+          "png_rows_reached": false
+        }
+      },
+      "round": 1
+    },
+    {
+      "results": {
+        "affected_source": {
+          "asan_heap_use_after_free": true,
+          "exit_code": 1,
+          "mode": "read-end",
+          "output": "libpng warning: zTXt: invalid window size (libpng)\nPNG_INFO_OK\n=================================================================\n==18420==ERROR: AddressSanitizer: heap-use-after-free on address 0x503000000049 at pc 0x64a41be7f44e bp 0x7ffdafd9cbd0 sp 0x7ffdafd9cbc0\nREAD of size 1 at 0x503000000049 thread T0\n    #0 0x64a41be7f44d in png_zlib_inflate /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:529\n    #1 0x64a41be8ff9a in png_read_IDAT_data /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:4268\n    #2 0x64a41be9049c in png_read_finish_IDAT /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:4334\n    #3 0x64a41be50b60 in png_read_end /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngread.c:691\n    #4 0x64a41be37275 in main /home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/cve_2026_46675/read_png_end.c:25\n    #5 0x7224cec29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #6 0x7224cec29e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #7 0x64a41be36814 in _start (/tmp/ohscanner-d30-cve46675-umucz8yt/build-vulnerable/read_png_end_asan+0xa814)\n\n0x503000000049 is located 9 bytes inside of 27-byte region [0x503000000040,0x50300000005b)\nfreed by thread T0 here:\n    #0 0x7224cf0b4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x64a41be4e245 in png_free_default /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngmem.c:255\n    #2 0x64a41be4e212 in png_free /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngmem.c:244\n    #3 0x64a41be7ebe6 in png_read_buffer /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:386\n    #4 0x64a41be89fc1 in png_handle_tEXt /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:2415\n    #5 0x64a41be8c843 in png_handle_chunk /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:3201\n    #6 0x64a41be4e9fd in png_read_info /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngread.c:165\n    #7 0x64a41be36dc5 in main /home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/cve_2026_46675/read_png_end.c:15\n    #8 0x7224cec29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\npreviously allocated by thread T0 here:\n    #0 0x7224cf0b4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145\n    #1 0x64a41be4dec4 in png_malloc_base /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngmem.c:98\n    #2 0x64a41be7ec0c in png_read_buffer /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:392\n    #3 0x64a41be8a54c in png_handle_zTXt /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:2489\n    #4 0x64a41be8c843 in png_handle_chunk /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:3201\n    #5 0x64a41be4e9fd in png_read_info /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngread.c:165\n    #6 0x64a41be36dc5 in main /home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/cve_2026_46675/read_png_end.c:15\n    #7 0x7224cec29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\nSUMMARY: AddressSanitizer: heap-use-after-free /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:529 in png_zlib_inflate\nShadow bytes around the buggy address:\n  0x0a067fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a067fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a067fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a067fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a067fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0a067fff8000: fa fa 00 00 00 fa fa fa fd[fd]fd fd fa fa fa fa\n  0x0a067fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a067fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a067fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a067fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a067fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n  Shadow gap:              cc\n==18420==ABORTING\n",
+          "png_info_reached": true,
+          "png_rows_reached": false
+        },
+        "read_rows_before_end_control": {
+          "asan_heap_use_after_free": false,
+          "exit_code": 0,
+          "mode": "read-rows",
+          "output": "libpng warning: zTXt: invalid window size (libpng)\nPNG_INFO_OK\nPNG_ROWS_OK\nPNG_READ_END_OK\n",
+          "png_info_reached": true,
+          "png_rows_reached": true
+        },
+        "short_text_no_reallocation_control": {
+          "asan_heap_use_after_free": false,
+          "exit_code": 2,
+          "mode": "read-end",
+          "output": "libpng warning: zTXt: invalid window size (libpng)\nPNG_INFO_OK\nlibpng warning: IDAT: incorrect header check\nlibpng error: P[30][00][00]: bad header (invalid type)\nPNG_ERROR\n",
+          "png_info_reached": true,
+          "png_rows_reached": false
+        },
+        "upstream_fix_applied": {
+          "asan_heap_use_after_free": false,
+          "exit_code": 2,
+          "mode": "read-end",
+          "output": "libpng warning: zTXt: invalid window size (libpng)\nPNG_INFO_OK\nlibpng warning: IDAT: Too much image data\nlibpng error: [00][00][00][00]: bad header (invalid type)\nPNG_ERROR\n",
+          "png_info_reached": true,
+          "png_rows_reached": false
+        }
+      },
+      "round": 2
+    },
+    {
+      "results": {
+        "affected_source": {
+          "asan_heap_use_after_free": true,
+          "exit_code": 1,
+          "mode": "read-end",
+          "output": "libpng warning: zTXt: invalid window size (libpng)\nPNG_INFO_OK\n=================================================================\n==18424==ERROR: AddressSanitizer: heap-use-after-free on address 0x503000000049 at pc 0x5a12ab29744e bp 0x7ffcaef52260 sp 0x7ffcaef52250\nREAD of size 1 at 0x503000000049 thread T0\n    #0 0x5a12ab29744d in png_zlib_inflate /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:529\n    #1 0x5a12ab2a7f9a in png_read_IDAT_data /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:4268\n    #2 0x5a12ab2a849c in png_read_finish_IDAT /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:4334\n    #3 0x5a12ab268b60 in png_read_end /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngread.c:691\n    #4 0x5a12ab24f275 in main /home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/cve_2026_46675/read_png_end.c:25\n    #5 0x7daa45829d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #6 0x7daa45829e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #7 0x5a12ab24e814 in _start (/tmp/ohscanner-d30-cve46675-umucz8yt/build-vulnerable/read_png_end_asan+0xa814)\n\n0x503000000049 is located 9 bytes inside of 27-byte region [0x503000000040,0x50300000005b)\nfreed by thread T0 here:\n    #0 0x7daa45cb4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x5a12ab266245 in png_free_default /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngmem.c:255\n    #2 0x5a12ab266212 in png_free /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngmem.c:244\n    #3 0x5a12ab296be6 in png_read_buffer /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:386\n    #4 0x5a12ab2a1fc1 in png_handle_tEXt /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:2415\n    #5 0x5a12ab2a4843 in png_handle_chunk /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:3201\n    #6 0x5a12ab2669fd in png_read_info /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngread.c:165\n    #7 0x5a12ab24edc5 in main /home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/cve_2026_46675/read_png_end.c:15\n    #8 0x7daa45829d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\npreviously allocated by thread T0 here:\n    #0 0x7daa45cb4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145\n    #1 0x5a12ab265ec4 in png_malloc_base /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngmem.c:98\n    #2 0x5a12ab296c0c in png_read_buffer /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:392\n    #3 0x5a12ab2a254c in png_handle_zTXt /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:2489\n    #4 0x5a12ab2a4843 in png_handle_chunk /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:3201\n    #5 0x5a12ab2669fd in png_read_info /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngread.c:165\n    #6 0x5a12ab24edc5 in main /home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/cve_2026_46675/read_png_end.c:15\n    #7 0x7daa45829d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\nSUMMARY: AddressSanitizer: heap-use-after-free /tmp/ohscanner-d30-cve46675-umucz8yt/libpng-1.6.55/pngrutil.c:529 in png_zlib_inflate\nShadow bytes around the buggy address:\n  0x0a067fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a067fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a067fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a067fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a067fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0a067fff8000: fa fa 00 00 00 fa fa fa fd[fd]fd fd fa fa fa fa\n  0x0a067fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a067fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a067fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a067fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a067fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n  Shadow gap:              cc\n==18424==ABORTING\n",
+          "png_info_reached": true,
+          "png_rows_reached": false
+        },
+        "read_rows_before_end_control": {
+          "asan_heap_use_after_free": false,
+          "exit_code": 0,
+          "mode": "read-rows",
+          "output": "libpng warning: zTXt: invalid window size (libpng)\nPNG_INFO_OK\nPNG_ROWS_OK\nPNG_READ_END_OK\n",
+          "png_info_reached": true,
+          "png_rows_reached": true
+        },
+        "short_text_no_reallocation_control": {
+          "asan_heap_use_after_free": false,
+          "exit_code": 2,
+          "mode": "read-end",
+          "output": "libpng warning: zTXt: invalid window size (libpng)\nPNG_INFO_OK\nlibpng warning: IDAT: incorrect header check\nlibpng error: P[30][00][00]: bad header (invalid type)\nPNG_ERROR\n",
+          "png_info_reached": true,
+          "png_rows_reached": false
+        },
+        "upstream_fix_applied": {
+          "asan_heap_use_after_free": false,
+          "exit_code": 2,
+          "mode": "read-end",
+          "output": "libpng warning: zTXt: invalid window size (libpng)\nPNG_INFO_OK\nlibpng warning: IDAT: Too much image data\nlibpng error: [00][00][00][00]: bad header (invalid type)\nPNG_ERROR\n",
+          "png_info_reached": true,
+          "png_rows_reached": false
+        }
+      },
+      "round": 3
+    }
+  ],
+  "runtime": {
+    "compiler": "gcc with AddressSanitizer",
+    "control_input_sha256": "a1a9361f86489e4c39863433145444deb8216d6a1466cd07aa2eb36fdd94a576",
+    "host_architecture": "x86_64",
+    "libpng_config": "static debug build; PNG_TESTS=OFF; PNG_TOOLS=OFF",
+    "poc_input_sha256": "b46c2e24a0866c307cfe0a42360a78819e21282f8c0dd228445cf86373bcc68b",
+    "vulnerable_call_order": "png_read_info then png_read_end without reading rows"
+  },
+  "schema": 1,
+  "source": {
+    "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6",
+    "component_version": "1.6.55",
+    "fixed_tree_method": "apply exact upstream pngrutil.c fix commit to extracted copy of pinned 1.6.55 source archive",
+    "origin": "G-drive OpenHarmony third_party_libpng tracked build input",
+    "upstream_fix_commit": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d"
+  },
+  "validated_vulnerability": 0
+}

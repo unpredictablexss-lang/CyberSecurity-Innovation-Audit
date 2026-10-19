@@ -1,0 +1,460 @@
+{
+  "status": "measured",
+  "statistics": [
+    {
+      "case": "batch_real",
+      "attempts": 5,
+      "successful_runs": 5,
+      "failed_runs": 0,
+      "wall_median_seconds": 0.038279600004898384,
+      "wall_tail_seconds": 0.041153700003633276,
+      "rss_median_bytes": 29130752,
+      "rss_tail_bytes": 29200384
+    },
+    {
+      "case": "cache_cold",
+      "attempts": 5,
+      "successful_runs": 5,
+      "failed_runs": 0,
+      "wall_median_seconds": 5.3178258999978425,
+      "wall_tail_seconds": 5.502174599998398,
+      "rss_median_bytes": 52944896,
+      "rss_tail_bytes": 53088256
+    },
+    {
+      "case": "cache_warm",
+      "attempts": 5,
+      "successful_runs": 5,
+      "failed_runs": 0,
+      "wall_median_seconds": 1.3427156999969156,
+      "wall_tail_seconds": 1.387077400002454,
+      "rss_median_bytes": 55414784,
+      "rss_tail_bytes": 55656448
+    },
+    {
+      "case": "cli_detector_full",
+      "attempts": 3,
+      "successful_runs": 3,
+      "failed_runs": 0,
+      "wall_median_seconds": 0.7100639999989653,
+      "wall_tail_seconds": 0.7489300999950501,
+      "rss_median_bytes": 28450816,
+      "rss_tail_bytes": 28585984
+    },
+    {
+      "case": "cli_index_full",
+      "attempts": 3,
+      "successful_runs": 3,
+      "failed_runs": 0,
+      "wall_median_seconds": 0.6359685999996145,
+      "wall_tail_seconds": 0.6363472000011825,
+      "rss_median_bytes": 29327360,
+      "rss_tail_bytes": 29409280
+    },
+    {
+      "case": "cli_index_shards",
+      "attempts": 3,
+      "successful_runs": 3,
+      "failed_runs": 0,
+      "wall_median_seconds": 4.512468399996578,
+      "wall_tail_seconds": 4.686808200000087,
+      "rss_median_bytes": 31145984,
+      "rss_tail_bytes": 31219712
+    },
+    {
+      "case": "full_no_cache",
+      "attempts": 5,
+      "successful_runs": 5,
+      "failed_runs": 0,
+      "wall_median_seconds": 0.5715446999965934,
+      "wall_tail_seconds": 0.5727372999972431,
+      "rss_median_bytes": 51752960,
+      "rss_tail_bytes": 52178944
+    },
+    {
+      "case": "limit_1999",
+      "attempts": 3,
+      "successful_runs": 3,
+      "failed_runs": 0,
+      "wall_median_seconds": 0.03211149999697227,
+      "wall_tail_seconds": 0.03288419999444159,
+      "rss_median_bytes": 33730560,
+      "rss_tail_bytes": 33816576
+    },
+    {
+      "case": "limit_2000",
+      "attempts": 3,
+      "successful_runs": 3,
+      "failed_runs": 0,
+      "wall_median_seconds": 0.03178620000107912,
+      "wall_tail_seconds": 0.03183089999947697,
+      "rss_median_bytes": 33939456,
+      "rss_tail_bytes": 34050048
+    },
+    {
+      "case": "limit_2001",
+      "attempts": 3,
+      "successful_runs": 3,
+      "failed_runs": 0,
+      "wall_median_seconds": 0.03278149999823654,
+      "wall_tail_seconds": 0.0331886999993003,
+      "rss_median_bytes": 33902592,
+      "rss_tail_bytes": 33992704
+    },
+    {
+      "case": "limit_blob_exact",
+      "attempts": 3,
+      "successful_runs": 3,
+      "failed_runs": 0,
+      "wall_median_seconds": 0.0023498000009567477,
+      "wall_tail_seconds": 0.0024741000015637837,
+      "rss_median_bytes": 31354880,
+      "rss_tail_bytes": 31477760
+    },
+    {
+      "case": "limit_blob_plus_1",
+      "attempts": 3,
+      "successful_runs": 3,
+      "failed_runs": 0,
+      "wall_median_seconds": 0.0021943999963696115,
+      "wall_tail_seconds": 0.002247799995529931,
+      "rss_median_bytes": 31326208,
+      "rss_tail_bytes": 31350784
+    },
+    {
+      "case": "limit_total_32mib",
+      "attempts": 3,
+      "successful_runs": 3,
+      "failed_runs": 0,
+      "wall_median_seconds": 0.06975940000120318,
+      "wall_tail_seconds": 0.07618279999587685,
+      "rss_median_bytes": 64053248,
+      "rss_tail_bytes": 64094208
+    },
+    {
+      "case": "limit_total_32mib_plus_1",
+      "attempts": 3,
+      "successful_runs": 3,
+      "failed_runs": 0,
+      "wall_median_seconds": 0.0686786999940523,
+      "wall_tail_seconds": 0.07097449999855598,
+      "rss_median_bytes": 63787008,
+      "rss_tail_bytes": 64012288
+    },
+    {
+      "case": "shard_no_cache",
+      "attempts": 5,
+      "successful_runs": 5,
+      "failed_runs": 0,
+      "wall_median_seconds": 0.9045750000004773,
+      "wall_tail_seconds": 0.9185964999996941,
+      "rss_median_bytes": 52252672,
+      "rss_tail_bytes": 52379648
+    },
+    {
+      "case": "unbatch_real",
+      "attempts": 5,
+      "successful_runs": 5,
+      "failed_runs": 0,
+      "wall_median_seconds": 0.5920361000025878,
+      "wall_tail_seconds": 0.6043101999966893,
+      "rss_median_bytes": 29171712,
+      "rss_tail_bytes": 29241344
+    }
+  ],
+  "invariance_checks": {
+    "batch_source_identity_invariant": true,
+    "cache_cold_identity_parse_verdict_invariant": true,
+    "cache_warm_identity_parse_verdict_invariant": true,
+    "synthetic_shard_aggregate_invariant": true,
+    "cli_shard_aggregate_source_and_parse_invariant": true,
+    "limit_boundaries_exact": true
+  },
+  "all_invariance_checks_pass": true,
+  "partial_unknown_changes": {
+    "synthetic": {
+      "observed": {
+        "full_no_cache": {
+          "parsing_status": {
+            "complete": 2000
+          },
+          "languages": {
+            "cpp": 2000
+          }
+        },
+        "cache_cold": {
+          "parsing_status": {
+            "complete": 2000
+          },
+          "languages": {
+            "cpp": 2000
+          }
+        },
+        "cache_warm": {
+          "parsing_status": {
+            "complete": 2000
+          },
+          "languages": {
+            "cpp": 2000
+          }
+        },
+        "shard_no_cache_full": {
+          "parsing_status": {
+            "complete": 2000
+          },
+          "languages": {
+            "cpp": 2000
+          }
+        }
+      },
+      "all_equal": true,
+      "delta": "none; all 2000 synthetic C++ units complete in every mode"
+    },
+    "real_cli": {
+      "full": {
+        "parsing_status": {
+          "complete": 15,
+          "partial": 1
+        },
+        "languages": {
+          "cpp": 16
+        }
+      },
+      "shard_aggregate": {
+        "parsing_status": {
+          "complete": 15,
+          "partial": 1
+        },
+        "languages": {
+          "cpp": 16
+        }
+      },
+      "delta": "none; aggregate preserves complete/partial counts"
+    }
+  },
+  "verdict_drift": {
+    "synthetic_full_candidate_count": 2000,
+    "synthetic_shard_aggregate_candidate_count": 2000,
+    "cache_cold_candidate_count": 2000,
+    "cache_warm_candidate_count": 2000,
+    "candidate_identity_drift": false,
+    "interpretation": "No candidate identity/count drift across batch/cache/shard modes on this fixed synthetic set. This is not a safe/miss or validated-vulnerability verdict."
+  },
+  "failure_boundaries": {
+    "limits": {
+      "limit_1999": {
+        "expected": "accepted",
+        "actual": "accepted",
+        "error": null
+      },
+      "limit_2000": {
+        "expected": "accepted",
+        "actual": "accepted",
+        "error": null
+      },
+      "limit_2001": {
+        "expected": "rejected",
+        "actual": "rejected",
+        "error": "source file count exceeds M1 bounded scope"
+      },
+      "limit_total_32mib": {
+        "expected": "accepted",
+        "actual": "accepted",
+        "error": null
+      },
+      "limit_total_32mib_plus_1": {
+        "expected": "rejected",
+        "actual": "rejected",
+        "error": "total source size exceeds M1 bounded scope"
+      },
+      "limit_blob_exact": {
+        "expected": "accepted",
+        "actual": "accepted",
+        "error": null
+      },
+      "limit_blob_plus_1": {
+        "expected": "accepted_with_oversize_skip",
+        "actual": "accepted_with_oversize_skip",
+        "error": null
+      }
+    },
+    "failed_runs_by_case": {}
+  },
+  "verdict_drift_semantics": "candidate diagnostic identity/coverage drift only; not safe/miss/validated-vulnerability drift",
+  "limits": {
+    "limit_1999": {
+      "expected": "accepted",
+      "actual": "accepted",
+      "result": {
+        "status": "accepted",
+        "selected_source_files": 1999,
+        "selected_source_bytes": 2046976,
+        "inventory": {
+          "tracked_entries": 1999,
+          "out_of_scope": 0,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 1999,
+          "selected_source_bytes": 2046976,
+          "skipped": [],
+          "git_tree": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "declared_scope": [
+            "."
+          ],
+          "source_archives": []
+        },
+        "batch_calls": [
+          512,
+          512,
+          512,
+          463
+        ]
+      }
+    },
+    "limit_2000": {
+      "expected": "accepted",
+      "actual": "accepted",
+      "result": {
+        "status": "accepted",
+        "selected_source_files": 2000,
+        "selected_source_bytes": 2048000,
+        "inventory": {
+          "tracked_entries": 2000,
+          "out_of_scope": 0,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 2000,
+          "selected_source_bytes": 2048000,
+          "skipped": [],
+          "git_tree": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "declared_scope": [
+            "."
+          ],
+          "source_archives": []
+        },
+        "batch_calls": [
+          512,
+          512,
+          512,
+          464
+        ]
+      }
+    },
+    "limit_2001": {
+      "expected": "rejected",
+      "actual": "rejected",
+      "result": {
+        "status": "rejected",
+        "error": "source file count exceeds M1 bounded scope",
+        "limit": "M1 bounded scope"
+      }
+    },
+    "limit_total_32mib": {
+      "expected": "accepted",
+      "actual": "accepted",
+      "result": {
+        "status": "accepted",
+        "selected_source_files": 32,
+        "selected_source_bytes": 33554432,
+        "inventory": {
+          "tracked_entries": 32,
+          "out_of_scope": 0,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 32,
+          "selected_source_bytes": 33554432,
+          "skipped": [],
+          "git_tree": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "declared_scope": [
+            "."
+          ],
+          "source_archives": []
+        },
+        "batch_calls": [
+          32
+        ]
+      }
+    },
+    "limit_total_32mib_plus_1": {
+      "expected": "rejected",
+      "actual": "rejected",
+      "result": {
+        "status": "rejected",
+        "error": "total source size exceeds M1 bounded scope",
+        "limit": "M1 bounded scope"
+      }
+    },
+    "limit_blob_exact": {
+      "expected": "accepted",
+      "actual": "accepted",
+      "result": {
+        "status": "accepted",
+        "selected_source_files": 2,
+        "selected_source_bytes": 1049600,
+        "inventory": {
+          "tracked_entries": 2,
+          "out_of_scope": 0,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 2,
+          "selected_source_bytes": 1049600,
+          "skipped": [],
+          "git_tree": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "declared_scope": [
+            "."
+          ],
+          "source_archives": []
+        },
+        "batch_calls": [
+          2
+        ]
+      }
+    },
+    "limit_blob_plus_1": {
+      "expected": "accepted_with_oversize_skip",
+      "actual": "accepted_with_oversize_skip",
+      "result": {
+        "status": "accepted",
+        "selected_source_files": 1,
+        "selected_source_bytes": 1024,
+        "inventory": {
+          "tracked_entries": 2,
+          "out_of_scope": 0,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 1,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 1,
+          "selected_source_bytes": 1024,
+          "skipped": [
+            {
+              "file": "f0000.cpp",
+              "reason": "oversize"
+            }
+          ],
+          "git_tree": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "declared_scope": [
+            "."
+          ],
+          "source_archives": []
+        },
+        "batch_calls": [
+          1
+        ]
+      }
+    }
+  }
+}

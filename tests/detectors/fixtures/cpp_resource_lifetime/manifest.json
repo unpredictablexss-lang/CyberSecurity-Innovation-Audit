@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "change_request_id": "A-RES-01",
+  "source": "self-authored synthetic controls",
+  "cases": [
+    {
+      "fixture": "positive_double_free.cpp",
+      "category": "positive",
+      "expected_rule": "double_free",
+      "expected_min": 1,
+      "sha256": "0cf6a9abd87f88a283f64db8a6caa5d1ac18e1e99a441e0ff6a62412d64c7f24",
+      "byte_length": 110
+    },
+    {
+      "fixture": "positive_alias_uaf.cpp",
+      "category": "positive",
+      "expected_rule": "use_after_free",
+      "expected_min": 1,
+      "sha256": "035c222dda688a83d57f7e065696e5290c0920612f05288b2e0ea9a2ca346b04",
+      "byte_length": 134
+    },
+    {
+      "fixture": "fixed_null_after_free.cpp",
+      "category": "fixed",
+      "expected_max": 0,
+      "sha256": "4263c5f4a96f48fca3defc22d1226c49b39b2acf5e197765a48213ca0f6f1cf8",
+      "byte_length": 163
+    },
+    {
+      "fixture": "fixed_reallocate.cpp",
+      "category": "fixed",
+      "expected_max": 0,
+      "sha256": "006e3097e6380b5fb5675e7f80103bb3daad9d09f7fa39b46598385f906c2fd8",
+      "byte_length": 148
+    },
+    {
+      "fixture": "unrelated_release.cpp",
+      "category": "unrelated",
+      "expected_max": 0,
+      "sha256": "1dd6411ae53fd0f69999d9da68b4ef8f77943b871be0df91995c323d8ce15328",
+      "byte_length": 136
+    },
+    {
+      "fixture": "unknown_partial.cpp",
+      "category": "unknown",
+      "expected_status": "blocked",
+      "sha256": "21b68f96e2df4bc69abca2bb146c248674ad0bd3de67cad19c6035fc6048e8c8",
+      "byte_length": 90
+    }
+  ]
+}
