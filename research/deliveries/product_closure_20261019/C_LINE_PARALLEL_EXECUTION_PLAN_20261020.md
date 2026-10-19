@@ -275,3 +275,13 @@ T3（独立测试线）：独立检查 loop_backedges 的生产与消费语义�
 ```
 
 D3/T3 此轮状态：D3/T3 开发/独立测试已完成；D3/T3 分支各自 scope check 相对基线 74971572e3eac6b743c0e91d75c6c45d00c2067c 无违规，git diff --check 通过，T3 在精确 D3 SHA 上通过。下一轮优先推进 G12-PC-1 的 IBS5YG 产品 profile 证据：需产品 owner 提供具体发行版本与源码 pin、GN/build action/args、toolchain/sysroot、完整 include/generated inputs、预处理 TU 与 binary 映射；缺任一项就保持 BLOCKED。真实 holdout PC-2 仍需独立抽样框、两名 reviewer 和一名 adjudicator。
+
+### D4/T4 第四轮：IBS5YG 产品画像证据盘点
+
+```text
+D4（产品画像证据开发线）：目标仅为判断本地已有材料能否闭合 IBS5YG 的产品 build/preprocess profile，不得把另一个案例的 args.gn、host-tools 产物或其他 checkout 的记录拼接过来。检查冻结身份 `2ea501258ab4155826b64f01b499b43d1911e0e2` → `919e4fbb011f610427e788889083fa8e28d2f951` 与本地产品 manifest/component revisions、GN target/action/args、toolchain/sysroot、include/generated inputs、预处理 TU、binary/image 对应关系。每条证据记录来源路径、SHA-256、对象身份、直接支持的主张及局限；本地官方 Gitee bare store 自报 origin 不等于独立 custody。允许把当前输出标为 `BLOCKED`，禁止猜测字段、调用网络获取缺失工件、修改产品源码或执行设备 PoC。仅写 `research/methods/ark_runtime/ibs5yg_profile_gap_20261020/**`，输出机器可读证据矩阵和精确缺项/责任方。向 T4 交接路径、hash 和关键 claim，收到反例后修订并记录。按 `c_d4` scope check 与 diff-check。
+
+T4（独立证据验收线）：不参与 D4 盘点实现。复算 D4 证据工件 hash；独立验证 IBS5YG parent/fix commit、tree、ancestry 与 D4 声称的产品 component revision 关系；审查每个 build/preprocess 字段是否由正确目标版本的直接工件支持，特别检查 host-tools 与设备产品混淆、不同案/分支拼接、伪造/缺失 include closure、只有 args.gn 却没有成功 target/build/TU/binary 映射的情形。对任一身份或构建环节失败，要求 profile 保持 BLOCKED。只写 `research/methods/ark_runtime/ibs5yg_profile_gap_20261020/review/**`；逐 claim 给出 pass/fail/unknown 和可复现命令，反例回传 D4修订并重测，按 `c_t4` scope check 与 diff-check。独立验收通过也只说明材料盘点可审计，不自动关闭 PC-1。
+```
+
+D4/T4 基线为 owner 提交 `c78f90e0495a68e13171a858740b8fe34fdc55b9`。本轮已知本地 `outputs/ark-runtime-isolated-validation-20261018` 是 Sort 候选 `CVE-2025-23420` 的 OpenHarmony 5.0.2 host-tools 失败尝试；该目录的产品关联明确为 unknown，不能挪作 IBS5YG profile。IBS5YG 的 parent/fix (`2ea5012…` / `919e4fb…`) 均不在其记录的 runtime component commit `1b235315…` 的祖先链上。GitHub fetch 在 2026-10-20 重新尝试仍因 HTTPS 443 连接失败，本地源分支无法据此声称已同步到更新远端。
