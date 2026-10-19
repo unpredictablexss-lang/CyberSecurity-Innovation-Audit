@@ -1,0 +1,7 @@
+工作线,实验对象/版本,输入/样本,观测结果,结论边界
+B,IPC detector 0.8.11,发布分支 commit 7579a16344fa3164bfbea3e26db783854a1793b6,564 tests passed; 48 replay JSON; 18 SHA256SUMS covering 59 files,回归证据；不是独立 holdout 或产品漏洞确认
+D,D50 known-disclosed-CVEs 0.16.0 / light-AST,3 个固定 OpenHarmony 组件快照；1113 文件；各报告记录 commit/tree,storage 0 diagnostics; pasteboard 2 candidates; app-domain 0 diagnostics; all completed_with_limitations,0 结果不代表安全；2 候选未确认；存在 partial/blocked 覆盖
+Agent,R1 Fake single-shot,固定 security_access_token 源码候选,1 fake call; 0 source tools; 4 obligations unresolved; needs_more_evidence,流程对照；不评价真实模型
+Agent,R2 Fake Taskflow,同一固定候选,4 fake calls; 3 readonly source tools; 4 obligations unresolved; needs_more_evidence,端到端离线烟测；不证明语义正确或漏洞存在
+Agent,旧版 DeepSeek R1,旧工作流；真实固定源码候选,1 call; 2818 input / 800 output tokens; 3 of 4 obligations unresolved,旧版观察；不是当前 Taskflow 准确率
+Agent,旧版 DeepSeek R2,旧工作流；真实固定源码候选,3 calls; 12169 input / 317 output tokens; final and repair JSON validation failed,服务端丢弃结论并失败关闭；显示格式兼容风险
