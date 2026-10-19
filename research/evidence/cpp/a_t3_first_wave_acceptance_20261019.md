@@ -228,3 +228,27 @@ For 46675, all four T4 runs are `completed_with_limitations`, detector run `bloc
 These T4 artifacts record the PR #30 `0.1.0` baseline only. D4 reports were produced from the D3-era baseline `940409d3670dafd036b0e8afcbdbe479d815230c` using detector `0.3.0`. For both libpng cases D4 also records zero findings and partial parsing; its evidence is a distinct later run and must not be merged into the T4 v0.1.0 result. In the cJSON case, D4 v0.3.0 emits two separate partial-identity candidates (tree amplification and recursive comparison cost), while T4 v0.1.0 emits none and has one complete / one partial parser result. This difference reflects detector version and must remain version-labeled. Neither version establishes complete detector coverage or a security conclusion for the partial inputs.
 
 **T4 audit disposition: PASS for GitHub file-OID-to-synthetic-blob correspondence and completeness of the seven original JSON/Markdown report pairs; PARTIAL for all underlying CVE cases.** Remaining limitations are those in T4 and D4: parser/detector coverage stays incomplete, libpng 46675 upstream full trees are unavailable, cJSON has no trusted fixed source, and product call paths/builds are unbound.
+
+## D6 / T5 independent path-traversal acceptance
+
+T3 integrated frozen D6 development commit `21ba7dcc2df6f7882afde344d5d7d7506f833239` and guard-order fix `24b114094886b8d3e606afbbcd7b64af1dfa69ac`, then T5 independent evidence commit `0cb18a13aa11f762291f42edec137deff18fc79d`. Local cherry-pick commits are `1f7909e`, `57ee942`, and `edb183d`. D6 initially conflicted in the D5/D6 Contacts request and replay narratives and the exact-source JSON; T3 resolved those paths to the incoming D6 exact-object evidence. T5's guard-order probe had a modify/delete conflict after the fix removed the earlier probe file; T3 retained T5's independent probe artifact.
+
+### Independent D6 rule regression
+
+T3 independently ran `python -m unittest tests.detectors.test_cpp_path_traversal_detector -v`: all 12 tests passed. It also ran `python research/evidence/cpp/a_static_baseline_20261019/contacts-t5-guard-order-probe-20261019.py`; the six outcomes matched expectations: reject-on-separator before both sinks is quiet (0); a guard between sinks retains the earlier candidate (1); a guard after both sinks retains both (2); reversed polarity, a guard on another tainted parameter, and an unrelated receiver each retain both candidates (2). The full C++ detector suite `python -m unittest discover -s tests/detectors -p 'test_cpp_*.py' -v` passed all 157 tests.
+
+**Rule regression disposition: PASS.** D6 preserves the earlier unguarded sink and suppresses only file sinks following an effective, correctly polarized separator check for the same tainted value in the same function. The controls cover safe pre-sink validation, sink ordering, reversed polarity, unrelated receiver/parameter, and partial parse behavior.
+
+### Exact A0 Contacts replay and case disposition
+
+T3 independently replayed the direct detector against the source copy whose SHA-256 matches the pinned A0 file: repository `openharmony/applications_contacts_data`, commit `b02aadfc2d801ee30573fcb2d13490298e146fea`, tree `ef183625ccbc842f47b076eb75e68b665d7c21c6`, path `dataBusiness/contacts/src/contacts_data_ability.cpp`, blob `32c6a26a9a6c1f4ec3172f45bc3dbe4d3668abe6`, 80,944 bytes, SHA-256 `70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383`. T3 ran:
+
+```powershell
+python research/evidence/cpp/contacts_path_traversal_20261019/direct_replay.py D:\openHarmonyScanner\tmp\contacts-t5-b02aadfc-20261019\contacts_data_ability.cpp --parse-status complete
+```
+
+The replay completed with parser status complete and reproduced three source-to-file-sink candidates at `HandleContactPortrait` lines 789, 790, and 794 under rule version `0.3.0`, with complete syntax identity. Lines 789/794 involve the disclosed `PortraitFileName` path chain; line 790 is a separate bucket-ID-derived path candidate and remains semantically unresolved. This is direct detector execution, not production CLI execution.
+
+**Contacts case disposition: PARTIAL/BLOCK.** The exact A0 source and candidate locations are reproducible, but there is no trusted fixed source for a fixed-source comparison, the detector is not registered in the owner-controlled Catalog in this checkout, and product build, permission assignment, filesystem root semantics, and application reachability are unknown. Complete syntax identity does not resolve those gaps or confirm a product vulnerability.
+
+`git diff --check` and `python -m scripts.check_change_scope --base 8ec5f56a12e90bba56953b39eb17faa20e154da9 --lane cpp` were run after integration and reported no whitespace errors or change-scope violations.
