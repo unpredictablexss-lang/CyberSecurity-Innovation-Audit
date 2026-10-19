@@ -9,6 +9,7 @@ from .cpp.bounds_detector import CppBoundsDetector
 from .cpp.integer_bounds_detector import CppIntegerBoundsDetector
 from .cpp.m2_adapter import M2LifetimeDetector, M2SharedPtrRaceDetector
 from .cpp.null_dereference_detector import NullDereferenceDetector
+from .cpp.path_traversal_detector import CppPathTraversalDetector
 from .cpp.resource_lifetime_detector import CppResourceLifetimeDetector
 from .cpp.unsafe_memory_call_detector import CppUnsafeMemoryCallDetector
 from .interface.m2_adapter import M2IpcInterfaceDetector
@@ -67,6 +68,13 @@ _APPROVED = {
         "default_enabled": False,
         "admission_reason": "explicit_selection_required: unknown-return nullability is a weak observation and may produce broad candidate volumes; use bounded research scope",
         "summary": "A: bounded same-function NULL candidates plus separately identified weak unknown-return observations; default disabled",
+    },
+    "ohscanner.cpp.path_traversal": {
+        "factory": CppPathTraversalDetector,
+        "kind": "research_candidate",
+        "default_enabled": False,
+        "admission_reason": "explicit_selection_required: bounded lexical source-to-file-sink candidates; path semantics, fixed source and product impact remain unverified",
+        "summary": "A: bounded C/C++ path traversal candidates; syntax matches do not prove taint, containment or impact",
     },
     "ohscanner.cpp.resource_lifetime": {
         "factory": CppResourceLifetimeDetector,
