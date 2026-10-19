@@ -6,7 +6,7 @@
 
 本计划基于已 fetch 的 C 优化分支快照 `origin/codex/c-line-known-vuln-optimization-20261019`，HEAD `842948084660207fd64399cfd598ed93e5593dcc`。文档在该分支隔离 worktree 中新增；没有改生产 detector、测试代码、公共接口或 PR 状态。
 
-最新仓库复核：本轮 `git fetch --prune` 因 GitHub:443 连接超时失败；随后通过 GitHub API 直接读取两个 ref，确认 `main=db77164fdc2af0da02e4d3efc056d84694fd68e8`、C 专用 source ref=`842948084660207fd64399cfd598ed93e5593dcc`，与本地 tracking ref 完全一致，因此本轮无新提交可拉取。当前 C 线负责人分支 HEAD `663e4f4b915da88de4b7ed2157dd46c6eb911e68` 以该 main commit 为 merge-base，领先 47 个提交，未落后 main。C detector、G12-PC task tree 和这组交付只存在于 C topic branch，尚未进入 main；因此继续以 C topic branch 的 task tree/ownership 作为 C 线工作真源，不把 main 中没有这些路径误判成任务完成或删除。本次复核没有发现可闭合 PC-1/PC-3 的产品工件。
+最新仓库复核：本轮 `git fetch --prune` 因 GitHub:443 连接超时失败；随后通过 GitHub API 直接读取两个 ref，确认 `main=db77164fdc2af0da02e4d3efc056d84694fd68e8`、C 专用 source ref=`842948084660207fd64399cfd598ed93e5593dcc`，与本地 tracking ref 完全一致，因此本轮无新提交可拉取。负责人工作分支以该 main commit 为 merge-base；其代码和任务树保留在 C topic branch 隔离线上。C detector、G12-PC task tree 和这组交付只存在于 C topic branch，尚未进入 main；因此继续以 C topic branch 的 task tree/ownership 作为 C 线工作真源，不把 main 中没有这些路径误判成任务完成或删除。本次复核没有发现可闭合 PC-1/PC-3 的产品工件。
 
 本轮核对的状态来源和边界：
 
