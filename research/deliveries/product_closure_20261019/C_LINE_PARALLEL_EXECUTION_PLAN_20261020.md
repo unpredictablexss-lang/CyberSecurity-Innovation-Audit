@@ -6,7 +6,7 @@
 
 本计划基于已 fetch 的 C 优化分支快照 `origin/codex/c-line-known-vuln-optimization-20261019`，HEAD `842948084660207fd64399cfd598ed93e5593dcc`。文档在该分支隔离 worktree 中新增；没有改生产 detector、测试代码、公共接口或 PR 状态。
 
-最新仓库复核：`git fetch --prune` 成功，`origin/main` 为 `db77164fdc2af0da02e4d3efc056d84694fd68e8`；当前 C 线负责人分支 HEAD `0df31457cba5a6f308318879673bb63ccc448e4f` 以该 main commit 为 merge-base，领先 43 个提交，未落后 main。C detector、G12-PC task tree 和这组交付只存在于 C topic branch，尚未进入 main；因此继续以 C topic branch 的 task tree/ownership 作为 C 线工作真源，不把 main 中没有这些路径误判成任务完成或删除。专用 C source ref 仍停在 `842948084660207fd64399cfd598ed93e5593dcc`。本次复核没有发现可闭合 PC-1/PC-3 的产品工件。
+最新仓库复核：本轮 `git fetch --prune` 因 GitHub:443 连接超时失败；随后通过 GitHub API 直接读取两个 ref，确认 `main=db77164fdc2af0da02e4d3efc056d84694fd68e8`、C 专用 source ref=`842948084660207fd64399cfd598ed93e5593dcc`，与本地 tracking ref 完全一致，因此本轮无新提交可拉取。当前 C 线负责人分支 HEAD `99848e07cad50e0b761b5bc9f7a27259484dfe6b` 以该 main commit 为 merge-base，领先 44 个提交，未落后 main。C detector、G12-PC task tree 和这组交付只存在于 C topic branch，尚未进入 main；因此继续以 C topic branch 的 task tree/ownership 作为 C 线工作真源，不把 main 中没有这些路径误判成任务完成或删除。本次复核没有发现可闭合 PC-1/PC-3 的产品工件。
 
 本轮核对的状态来源和边界：
 
@@ -299,6 +299,8 @@ D4 提交 `fc3d2d4b52acc43949a540a4cccc96a2c67f5248` 的证据矩阵 `evidence_m
 
 **启动门：** 先取得目标 OpenHarmony release/build、branch/locked manifest 与 product/board。当前没有 IBS5YG exact parent/fixed build/runtime artifact；D4 manifest 的 build/preprocess profile 为 BLOCKED，缺产品 manifest、args.gn、GN target/action、compile database、toolchain/sysroot、include/generated-input closure、preprocessed TU、macro log 和 binary/image mapping。Sort 5.0.2 host-tools 失败尝试及 C1 的其他 Ark Runtime revision 均不匹配，不得借用。
 
+为缩短等待并避免产品身份猜测，最小输入已结构化为 `D5_PRODUCT_TARGET_INTAKE_20261020.json`。只有六项最小字段共同指向唯一产品构建后才启动画像收集；GN/build/TU/binary 细节由 D5 负责取证，不要求产品 owner 预先提供技术证据。
+
 ### D5 — 产品画像与构建身份绑定（开发/证据整理线）
 
 **任务：** 用户提供产品版本后，按 G12-PC-1 收集并绑定产品 manifest、Ark Runtime revision、GN target/action/args、toolchain/sysroot、完整 include/generated-input closure、compile database、preprocessed TU/macro log 和 shipped binary/image SHA。逐项区分 source pair ancestry、产品组件来源和目标产品构建，不修改产品源码，不以相邻版本或其他 CVE 的构建填空。若证据缺失，保留 BLOCKED/UNKNOWN。
@@ -315,6 +317,10 @@ D4 提交 `fc3d2d4b52acc43949a540a4cccc96a2c67f5248` 的证据矩阵 `evidence_m
 
 > 角色：独立 Ark Runtime build-profile 测试审计员，不参与 D5 收集或构造证据。只读审查 D5 指定的 profile manifest 与 artifact ledger。独立重算文件 SHA、commit/tree/blob 与 ancestry；核对 product manifest、component revision、GN action/args、工具链/sysroot、generated/include closure、preprocessed TU 和 binary/image mapping 是否属于同一目标 build。逐字段给出 PASS/FAIL/UNKNOWN、证据和反例；发现错配即列出 D5 可修复的精确缺项并等待重交，不得用兼容版本推定。交付：独立 review JSON、manifest digest、复算命令、字段差异。验收门：G12-PC-1 required fields 全部有同一 profile 的可验证证据，否则维持 BLOCKED。
 
-### D5/T5 通过后的候选专项运行时测试（T6，需先满足 G12-PC-1/3/4）
+### T6 候选专项运行时测试设计（现在可设计；执行需满足对应 case 的 PC-1/3/4）
 
-测试设计固定为 Int32Array Filter callback 将 `this.constructor[Symbol.species]` 改为返回 `new Uint8Array(3)`；parent 观察 index 2 的四字节写越界，fixed 与同类型/边界反例不越界。用隔离构建与 ASan/guarded allocator 记录目标 ByteArray 实际分配边界，并保留精确 build identity、命令、完整输出和 artifact hashes。只有产品 applicability、攻击面/触发/CIA 和授权门闭合后才运行目标产品 PoC；在此前仅允许受控 pinned-source harness 计划，不声称产品影响。
+测试设计固定为 Int32Array Filter callback 将 `this.constructor[Symbol.species]` 改为返回 `new Uint8Array(3)`；parent 观察 index 2 的四字节写越界，fixed 与同类型/边界反例不越界。用隔离构建与 ASan/guarded allocator 记录目标 ByteArray 实际分配边界，并保留精确 build identity、命令、完整输出和 artifact hashes。产品目标 runtime 执行需满足对应 case 的 PC-1 profile、PC-3 入口/影响证据和 PC-4 明确授权；PC-1 其余 15 案仍可阻止 portfolio 整体关闭，但不应抹除 IBS5YG 单案状态。
+
+**结构化 Vibe Coding 提示词（设计阶段，不运行）：**
+
+> 角色：T6 独立运行时验证设计员。基于 frozen parent/fixed、第二层候选审查与对应 case profile，先把“callback 内安装 species”与“Filter 调用前原型已改变”的两种触发顺序分开；设计可证明实际 Filter stub/路径的观测手段。矩阵至少覆盖 parent/fixed、Int32→Uint8 exact-n、Int32→同宽/同类型安全对照、ContentType 不匹配、species 长度不足、n=1 边界与跨元素类型固定回归输入。为每项规定可观察结果、ASan/guard allocator 断言、stub/path 证据、重复策略、环境与 artifact hashes。当前只交测试设计和静态路径证据需求，不编译、不运行 PoC、不声称动态或产品结果。将来执行前必须核验该案例 PC-1 profile、PC-3 入口/攻击面/CIA 和 PC-4 授权；执行后把 parent/fixed 差异交回 L2 复核。

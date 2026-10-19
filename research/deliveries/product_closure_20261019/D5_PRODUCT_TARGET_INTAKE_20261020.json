@@ -1,0 +1,85 @@
+{
+  "schema": "ohscanner.g12-pc-d5-target-intake/v1",
+  "case_id": "IBS5YG",
+  "status": "WAITING_FOR_PRODUCT_OWNER_INPUT",
+  "handling": "Use null for unavailable values. Do not infer a product or release from unrelated build artifacts.",
+  "preflight_evidence": {
+    "d4_evidence_matrix": {
+      "path": "D:/openHarmonyScanner/worktrees/c-d4-ibs5yg-profile-gap-20261020/research/methods/ark_runtime/ibs5yg_profile_gap_20261020/evidence_matrix.json",
+      "sha256": "9c418aed98045a0bf9b16170552c2df7cdb11a8261da59700b7093899d669815",
+      "status": "BLOCKED; exact product manifest/build/preprocess/binary relationship missing"
+    },
+    "excluded_material": [
+      {
+        "path": "D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/validation.json",
+        "sha256": "b00296c6db01ab7a4a421ea1bd56e6a1f6c08098dc017f4f61cabb05f19e5d26",
+        "reason": "CVE-2025-23420 Sort 5.0.2 host-tools failed attempt; no shipped image or runtime artifact; source/profile does not match IBS5YG"
+      },
+      {
+        "path": "D:/openHarmonyScanner/records/parallel-20261020/build-profile-verification.json",
+        "sha256": "e4fd659ea24b262f52a95cad0242989977f8a85a1244078f3d7aa5afc6e89e1b",
+        "reason": "payload drift / verification failed; not a product profile"
+      }
+    ],
+    "local_target_product_artifact_search": "No exact IBS5YG target product identity or same-profile build artifact found in reviewed local records/outputs."
+  },
+  "minimum_inputs_to_start_d5": {
+    "openharmony_release": null,
+    "product_build_id_or_image_version": null,
+    "source_branch_or_release_tag": null,
+    "locked_manifest_uri_or_commit": null,
+    "product_name": null,
+    "board_or_device_target": null
+  },
+  "optional_known_bindings": {
+    "arkcompiler_ets_runtime_revision": null,
+    "shipped_binary_or_image_uri": null,
+    "binary_or_image_sha256": null,
+    "product_build_owner_or_evidence_contact": null
+  },
+  "evidence_owner_map": [
+    {
+      "owner_role": "Product/release owner",
+      "evidence": ["release/build identity", "branch/tag", "locked manifest", "Ark Runtime revision and product relationship"]
+    },
+    {
+      "owner_role": "Build integration owner",
+      "evidence": ["successful GN generation", "target/action", "exact build args", "compile/link logs"]
+    },
+    {
+      "owner_role": "Toolchain/build infrastructure owner",
+      "evidence": ["compiler/linker/GN/Ninja identities", "target triple/sysroot", "complete include/generated-input closure"]
+    },
+    {
+      "owner_role": "Preprocess/build evidence owner",
+      "evidence": ["compile database entry", "preprocess command", "macro log", "same-build preprocessed TU and hash"]
+    },
+    {
+      "owner_role": "Product release/verification owner",
+      "evidence": ["shipped binary/image hash", "auditable source-to-product inclusion mapping"]
+    },
+    {
+      "owner_role": "Evidence custodian",
+      "evidence": ["independent acquisition/custody attestation for source objects, if required by the admission profile"]
+    }
+  ],
+  "owner_tasks_after_intake": [
+    "Resolve the locked manifest and exact component revision.",
+    "Collect successful GN target/action/args, toolchain/sysroot, compile database, generated inputs and complete include closure.",
+    "Bind preprocessed translation unit and macro log to the same build.",
+    "Bind shipped binary/image digest to the same product build."
+  ],
+  "test_tasks_after_intake": [
+    "Independently recompute all source, manifest, build, preprocessed-input and binary identities.",
+    "Reject artifacts from a different product, release, candidate, failed build or host-tools configuration.",
+    "Return field-level discrepancies to D5 and re-audit the revised manifest digest."
+  ],
+  "acceptance": {
+    "route_to_target_when": "All six minimum_inputs_to_start_d5 fields identify one concrete product build without ambiguity.",
+    "close_ibs5yg_case_profile_when": "D5 has bound the exact locked manifest digest, Ark Runtime component revision, successful build inputs, preprocessed TU and shipped binary/image to that same product build, and T5 has independently recomputed the identities and hashes.",
+    "portfolio_pc1_completion_when": "All 16 cases in the G12-PC-1 portfolio have independently auditable required source-to-product build/preprocess/binary profiles; closing IBS5YG alone closes only its case profile and does not change portfolio PC-1 from IN_PROGRESS_BLOCKED.",
+    "close_pc3_when": "The product entry, privilege boundary, attacker-controlled trigger, reachable sensitive operation and concrete CIA impact are independently evidenced.",
+    "current_pc1": "IN_PROGRESS_BLOCKED",
+    "current_pc3": "BLOCKED"
+  }
+}
