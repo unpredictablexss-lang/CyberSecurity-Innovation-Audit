@@ -1,0 +1,63 @@
+{
+  "audit_id": "T47-battery-stats-sharedptr-CR-0252-0254",
+  "status": "PARTIAL/BLOCK",
+  "source": {
+    "repository": "openharmony/powermgr_battery_statistics",
+    "project_path": "base/powermgr/battery_statistics",
+    "commit": "271a545acc0ececc746cfe0bb7c1501943df7c64",
+    "tree": "fd32c4da257effb689a86f7946f51805360fbf70",
+    "path": "test/unittest/include/stats_test.h",
+    "blob": "adaadee18b512e92c3f4afd1d9a566a1fc90f4a6",
+    "sha256": "c1113bea553ef18ffe9450df4b13865075bb2e54b42b44188f424e9cfb127c91",
+    "identity_source": "A0 queue.csv and exact local Git project objects; standalone checkout independently verifies commit/tree/blob/SHA"
+  },
+  "cli": {
+    "command": "python -m src.cli.main ohscan-run --repo-dir D:\\openHarmonyScanner\\tmp\\t47-battery-source-20261027 --repository openharmony/powermgr_battery_statistics --commit 271a545acc0ececc746cfe0bb7c1501943df7c64 --detector ohscanner.cpp.shared_ptr_race --include test/unittest/include/stats_test.h --json-out research/evidence/cpp/t47_battery_stats_cli_20261027.json --md-out research/evidence/cpp/t47_battery_stats_cli_20261027.md",
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "detector_version": "0.5.1",
+    "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+    "rule_version": null,
+    "parse_status": "complete",
+    "scope_files": 1,
+    "diagnostic_count": 3,
+    "validated_vulnerabilities": 0,
+    "candidate_lines": [41, 42, 43],
+    "interpretation": "All three original candidate lines recur in current CLI as syntax-level shared_ptr race candidates. This does not prove a data race, reachability, attacker control or security impact."
+  },
+  "queue": {
+    "states_changed": false,
+    "ids": [
+      {"queue_id":"CR-0252","candidate_id":"ohscanner.cpp.shared_ptr_race:82be0d988f40b61d","repository":"openharmony/powermgr_battery_statistics","commit":"271a545acc0ececc746cfe0bb7c1501943df7c64","tree":"fd32c4da257effb689a86f7946f51805360fbf70","path":"test/unittest/include/stats_test.h","line":"41","blob":"adaadee18b512e92c3f4afd1d9a566a1fc90f4a6","source_sha256":"c1113bea553ef18ffe9450df4b13865075bb2e54b42b44188f424e9cfb127c91","original_status":"not_testable","queue_status":"paused_pending_evidence"},
+      {"queue_id":"CR-0253","candidate_id":"ohscanner.cpp.shared_ptr_race:ca7804377ddba788","repository":"openharmony/powermgr_battery_statistics","commit":"271a545acc0ececc746cfe0bb7c1501943df7c64","tree":"fd32c4da257effb689a86f7946f51805360fbf70","path":"test/unittest/include/stats_test.h","line":"42","blob":"adaadee18b512e92c3f4afd1d9a566a1fc90f4a6","source_sha256":"c1113bea553ef18ffe9450df4b13865075bb2e54b42b44188f424e9cfb127c91","original_status":"not_testable","queue_status":"paused_pending_evidence"},
+      {"queue_id":"CR-0254","candidate_id":"ohscanner.cpp.shared_ptr_race:a22821788014872e","repository":"openharmony/powermgr_battery_statistics","commit":"271a545acc0ececc746cfe0bb7c1501943df7c64","tree":"fd32c4da257effb689a86f7946f51805360fbf70","path":"test/unittest/include/stats_test.h","line":"43","blob":"adaadee18b512e92c3f4afd1d9a566a1fc90f4a6","source_sha256":"c1113bea553ef18ffe9450df4b13865075bb2e54b42b44188f424e9cfb127c91","original_status":"not_testable","queue_status":"paused_pending_evidence"}
+    ],
+    "original_status_counts": {"not_reproduced": 9, "not_testable": 336},
+    "queue_status_counts": {"queued_not_reproduced": 9, "queued_first_batch": 5, "paused_pending_evidence": 331}
+  },
+  "source_semantics": {
+    "member": "StatsTest::g_statsParser",
+    "read_write_sites": [
+      {"line":41,"operation":"read in null check"},
+      {"line":42,"operation":"assignment of make_shared<BatteryStatsParser>()"},
+      {"line":43,"operation":"read for Init() call"}
+    ],
+    "initializer": "header definition initializes g_statsParser to nullptr",
+    "guard": "ParserAveragePowerFile checks for nullptr; no mutex/atomic is visible in the exact header",
+    "callers": "ParserAveragePowerFile is called from unittest SetUpTestCase methods in service/client suites; the inspected call sites do not establish concurrent invocation",
+    "build": "test/BUILD.gn marks unittest group testonly=true and depends on clienttest/servicetest unittest groups; both BUILD.gn files declare ohos_unittest targets. No product-build membership or product configuration was established.",
+    "context_files": [
+      {"path":"test/BUILD.gn","blob":"f13c2f224dd7c8250df6d69907feddfdc4b3a4a4","sha256":"37bf2eada1e51d6f00a10f8d31e9bc17c8c3f09e48f5da2e1b5e2fa639ca9e12"},
+      {"path":"test/unittest/src/servicetest/BUILD.gn","blob":"845f862c84b28071bd3e764d13c2e604fbb279f6","sha256":"f254d66d80bd7e1fc366edc265b9f77f7e81d1d2ec8617da918de387e7ad2662"},
+      {"path":"test/unittest/src/clienttest/BUILD.gn","blob":"6bd83ac3e86be0841ffbac392cca86fbe4674117","sha256":"1e4f050f0b4523db6d97597fae9a3624b0ed7cfd57941fdf7a18448b03b67926"},
+      {"path":"test/unittest/src/servicetest/stats_service_alarm_test.cpp","blob":"44c5d501f2823e1e9b7949b16db288546cdd4424","sha256":"87de8e53f95f7f27bb9aa7f3f291c33ede6680c1f68daaf91fbf6963be49b1bf"},
+      {"path":"test/unittest/src/clienttest/stats_alarm_test.cpp","blob":"81ae1a53b3d80d7cf81828d0e0c5af62e372f0d4","sha256":"d257de1919b4ab0be12f36758b485507dc0a397c1fbdc8e2970df693b8314c54"}
+    ]
+  },
+  "blockers": [
+    "No complete target-derived concurrency proof or concurrent test execution evidence.",
+    "No product-build membership, runtime product profile, attacker-controlled entry or security impact evidence; source is in test/unittest and unittest group is explicitly testonly.",
+    "No target-derived race harness was run; no fixed-source comparison is available or appropriate for this queue candidate."
+  ],
+  "next_evidence": "Keep all three rows at original not_testable / paused_pending_evidence. If this test harness is in scope, establish the exact unittest target/linkage and whether SetUpTestCase can be invoked concurrently; then run a target-derived concurrency harness. Do not infer product vulnerability from syntax candidates.",
+  "classification": "PARTIAL/BLOCK; not a product vulnerability finding and not a safety result"
+}
