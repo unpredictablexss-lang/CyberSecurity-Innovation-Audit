@@ -17,7 +17,7 @@
   "file_outcomes": {
     "dataBusiness/contacts/src/contacts_data_ability.cpp": "complete"
   },
-  "elapsed_seconds": 0.1388268999999127,
+  "elapsed_seconds": 0.13190639999993437,
   "findings": [
     {
       "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",

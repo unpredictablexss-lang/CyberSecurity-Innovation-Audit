@@ -28,7 +28,7 @@ Result: detector `ohscanner.cpp.path_traversal`, version `0.3.0`; rule `ohcpp-pa
 
 Source inspection confirms `PortraitFileName`, `contactId`, and `rawContactId` are read from the supplied data-share bucket; the local helper checks field lookup validity/type and non-empty strings. The visible function joins `groupPath + portraitFileName` and `groupPath + contactId + "_" + rawContactId`, then passes those paths into portrait processing and deletion. I found no slash/backslash, dot-segment, basename, or canonical-containment check in the reviewed methods. This supports source-to-sink candidates, but does not establish caller trust/reachability, actual root semantics, filesystem impact, product build inclusion, or exploitability.
 
-The D1 head's `direct_replay.py` accepts the command above, validates the canonical repository-relative source path, and this invocation succeeded. History inspection found that an earlier draft at `52d57f1` accepted only positional `SOURCE`, so the pinned-object command was incompatible with that earlier draft. The mismatch is resolved in D1 history from `7abd4fb` onward. As extra reproducibility evidence, I also ran the later owner-review branch script at `6167cf6` against the same bare Git object; it independently returned the same tree/blob/SHA, parser status and three candidate locations. Its JSON is `contacts_path_traversal_20261019/contacts_61lts_exact_object_replay_T20_owner_review_20261020.json`. The earlier script limitation is not a current-head replay failure.
+The D1 head's `direct_replay.py` accepts the command above, validates the canonical repository-relative source path, and this invocation succeeded. History inspection found that an earlier draft at `52d57f1` accepted only positional `SOURCE`, so the pinned-object command was incompatible with that earlier draft. The mismatch is resolved in D1 history from `7abd4fb` onward. As extra reproducibility evidence, I ran the final owner-review script from commit `63916ab5425b9d1e9c3e15797a07f74a3b5828d5` against the same bare Git object; it independently returned the same tree/blob/SHA, parser status, and three candidate locations. The script blob at that commit is `972bb7e4a2bbbbff6c0e3ef1a0300db312cb2e06`. Its JSON is `contacts_path_traversal_20261019/contacts_61lts_exact_object_replay_T20_owner_review_20261020.json`. The earlier script limitation is not a current-head replay failure.
 
 ## Controls and test results
 
@@ -48,6 +48,8 @@ py -3.10 research/evidence/cpp/verify_a_t20_contacts_path_traversal.py `
   --git-dir D:/openHarmonyScanner/openharmony/.repo/project-objects/applications_contacts_data.git
 ```
 
+The verifier also checks the secondary replay against the final owner-review commit and the pinned A0 identity, parser status, and candidate lines.
+
 The `cpp` scope check against full PR #30 base `8ec5f56a12e90bba56953b39eb17faa20e154da9` also passed with 0 violations. The check covered 13 changed paths in this worktree, including the existing D1 implementation/test paths and the T20 evidence additions.
 
 I independently queried `catalog_metadata()` and attempted `build_registry(["ohscanner.cpp.path_traversal"])`: the detector is absent from Catalog and selection raises `ValueError: unknown or not-yet-approved detector`. Therefore production CLI coverage is unavailable on this checkout. The direct class replay is prototype evidence only.
@@ -58,7 +60,7 @@ I independently queried `catalog_metadata()` and attempted `build_registry(["ohs
 - A0 case acceptance: **BLOCK**. No trusted fixed Contacts source was found in the request's recorded local object search; no fixed differential can be independently evaluated. Catalog admission and production CLI replay are also outstanding. Caller trust/reachability and filesystem-root semantics remain unknown.
 - Claim boundary: these observations establish source-bound static candidates only. They do not establish a confirmed vulnerability, exploitability, accuracy, or product exposure.
 
-Machine-readable record: `a_t20_contacts_path_traversal_acceptance_20261020.json`. Exact replay outputs: `contacts_path_traversal_20261019/contacts_61lts_exact_object_replay_T20_20261020.json` (D1 checkout) and `contacts_path_traversal_20261019/contacts_61lts_exact_object_replay_T20_owner_review_20261020.json` (later owner-review script).
+Machine-readable record: `a_t20_contacts_path_traversal_acceptance_20261020.json`. Exact replay outputs: `contacts_path_traversal_20261019/contacts_61lts_exact_object_replay_T20_20261020.json` (D1 checkout) and `contacts_path_traversal_20261019/contacts_61lts_exact_object_replay_T20_owner_review_20261020.json` (owner-review commit `63916ab5425b9d1e9c3e15797a07f74a3b5828d5`).
 
 ## T20 queue entry
 
