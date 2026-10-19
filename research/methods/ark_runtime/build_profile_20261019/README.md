@@ -1,21 +1,21 @@
 # Ark parent/fix build/preprocess profile
 
-日期：2026-10-19（Asia/Shanghai）。工作只发生在 `E:\网安\CyberSecurity-Innovation-Audit-c12-product-admission-20261019`。本轮未执行 fetch、checkout、commit、push、merge、reset，也未运行目标构建、预处理器或动态 PoC。
+历史基线日期：2026-10-19（Asia/Shanghai），原工作发生在 `E:\网安\CyberSecurity-Innovation-Audit-c12-product-admission-20261019`。C D2 后续工作在独立 worktree 进行，没有改写上述历史 manifest 或 raw-source 记录，也未运行目标构建、预处理器或动态 PoC。
 
 ## 状态
 
 `BLOCKED / NOT_ADMITTED`。
 
-`ark_parent_fix_build_profile_manifest.v1.json` 从本地 pinned Git blob `ark-runtime-coverage-ledger-20261019.json` 可复算出 16 个 Ark parent/fix 开发案例；其中 6 个案例具备完整的 commit/tree/blob/source-sha 记录，但 0 个具备完整产品 build/preprocess profile。这里的“完整记录”只表示身份字段完整，不表示已在本地 official Ark Git store 中验证源对象。
+`ark_parent_fix_build_profile_manifest.v1.json` 从本地 pinned Git blob `ark-runtime-coverage-ledger-20261019.json` 记录 16 个 Ark parent/fix 开发案例；其中 6 个案例有完整的 commit/tree/blob/source-SHA 字段，0 个有完整产品 build/preprocess profile。2026-10-20 后续 D2 对这 6 案的 12 个 commit/tree 对、26 个登记文件和 parent→fixed ancestry 增加了独立 object-store 检查记录，见下文 `official_git_object_evidence.v1.json`。这仍不证明对象库获取/保管链或服务器真实性。
 
-当前 `OHSCANNER_ARK_OFFICIAL_GIT` 未绑定；产品 `args.gn`、GN target、compile database、实际 include closure、产品编译器/链接器/sysroot、预处理 TU、宏展开日志、产品 manifest、二进制/版本/分支映射均缺失。因此所有案例保持 `build_profile.status=BLOCKED`、`preprocess_profile.status=BLOCKED`。
+产品 `args.gn`、GN target、compile database、实际 include closure、产品编译器/链接器/sysroot、预处理 TU、宏展开日志、产品 manifest、二进制/版本/分支映射均缺失。因此所有 16 案保持 `build_profile.status=BLOCKED`、`preprocess_profile.status=BLOCKED`。
 
 ## 身份绑定
 
 - OHScanner HEAD/tree、source audit commit/tree/blob/SHA、ledger blob、Detector、parser source、parser module、config/profile 和 host toolchain 均写入 manifest。
 - host Python/Git/Clang/CMake/Ninja/GN probe 只是环境观测，不是 Ark 产品 toolchain。
 - source audit blob `dbedea677c8dc70c1b0066c7bc52df27bcff06ea` 的 SHA-256 与既有导入验证一致。
-- 缺少 official Ark Git store 时，不把 ledger 中记录的 commit/tree/blob 当作已经本地复核的源对象。
+- manifest 中的 historical source identity 字段本身不是对象验证；本地 object-store 核验结果独立保存在 D2 evidence record，并保留获取/保管链限制。
 
 ## 可复算命令
 
@@ -48,7 +48,25 @@ python research/methods/ark_runtime/build_profile_20261019/source_identity_evide
 
 也可在网络隔离环境把源字节放在 `<evidence-dir>/<commit>/<path>` 后，以 `--evidence-dir <evidence-dir>` 离线重算。`--verify-only` 仅检查记录结构、文件集、预期身份、实测哈希字段、逐项检查状态和记录摘要；要独立重放原始字节，应重新运行 `--fetch` 或提供离线字节。
 
-这 26 个文件字节匹配不能证明 Git commit/tree 对象、parent/fix ancestry 或依赖闭包；记录中的 12 个 parent/fix tree SHA 明确为 `NOT_VERIFIED`。它也不是产品 source identity 到 shipped binary 的关联。16 个 G12-PC-1 案例的 build/preprocess profile 仍为 0/16 完整，PC-1 状态维持 `IN_PROGRESS_BLOCKED`，不得由此结论关闭。
+raw-source record 自身不能证明 Git commit/tree 对象、parent/fix ancestry 或依赖闭包；其中记录的 12 个 parent/fix tree SHA 在该 record 内仍标 `NOT_VERIFIED`。另见下一节独立的 object-store evidence record。raw source / Git object 均不是产品 source identity 到 shipped binary 的关联。16 个 G12-PC-1 案例的 build/preprocess profile 仍为 0/16 完整，PC-1 状态维持 `IN_PROGRESS_BLOCKED`，不得由来源核验结论关闭。
+
+## 本地 bare Git object-store 核验（不等于 source authenticity 或 PC-1 完成）
+
+`official_git_object_evidence.py` 先 pin profile manifest 的 payload SHA-256 `a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214`、schema、required identity fields、16 案集和精确的 6 个 `recorded_complete` case ID；被替换或仅保持 6/26/12 数量但身份不同的 manifest 会 fail closed。随后对这些固定案例执行只读检查：commit/tree 类型与 OID、commit 指向的 tree、每条登记 path 对应的 blob OID、blob SHA-256/字节数（仅对有登记长度者比对），以及 parent 是否为 fixed commit 的祖先。它要求 bare store 的唯一 `origin` fetch/push URL 都精确指向官方 Gitee Ark Runtime 仓库；不会 fetch、checkout 或写 object store。store path 可通过 `--git-dir` 给出，或用 `OHSCANNER_ARK_OFFICIAL_GIT` 提供。
+
+```powershell
+& $python "$root\research\methods\ark_runtime\build_profile_20261019\official_git_object_evidence.py" --git-dir "D:\openHarmonyScanner\tmp\cve-2025-arkruntime-official.git"
+```
+
+输出的 `official_git_object_evidence.v1.json` 记录 pinned manifest identity、store path、声明的 remote、时间、逐 commit/tree/blob/hash/ancestry 结果和摘要。官方 remote 配置与对象哈希/祖先关系一致，只能证明这些内容与本地 object store 的声明相符；获取过程、保管链和服务器真实性没有独立签名/API 证明，字段为 `NOT_INDEPENDENTLY_VERIFIED`。因此不得称作 source authenticity 或 source provenance 的独立认证。
+
+本证据仅覆盖 6 案、12 个 commit/tree 对和 26 个文件；其余 10 案未验证。12 个文件缺少登记 byte length，明确为 `not_recorded`，只可校验 Git blob OID 与 SHA-256。产品 build/preprocess profile 仍为 0/16 完整，PC-1 继续 `IN_PROGRESS_BLOCKED`。
+
+focused self-tests（含合成 bare store，不把其作为产品或上游证据）：
+
+```powershell
+& $python -m unittest discover -s "$root\research\methods\ark_runtime\build_profile_20261019\selftest" -p "test_*.py"
+```
 
 仍需产品 owner/数据保管人提供：只读 official Ark Git object store；精确产品 manifest、版本/分支和 GN target；对应 parent/fix 的 `args.gn`、compile database/实际 compile action、编译器/链接器/sysroot 与生成输入；精确 TU 的完整 include closure、预处理输出及宏日志；以及目标源码到 shipped binary/version/branch 的可审计映射。缺任一项继续标为 blocked。
 

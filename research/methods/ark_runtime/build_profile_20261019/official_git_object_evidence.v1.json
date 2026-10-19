@@ -1,0 +1,613 @@
+{
+  "acquisition_and_custody": {
+    "note": "Remote configuration and content-addressed object checks do not independently attest acquisition, custody, or server authenticity; no external signature/API attestation was supplied.",
+    "status": "NOT_INDEPENDENTLY_VERIFIED"
+  },
+  "cases": [
+    {
+      "ancestry": {
+        "error": null,
+        "fixed_commit": "30571a40879bb2092dcb9ae994d6970c1dfd5fc1",
+        "is_ancestor": true,
+        "parent_commit": "d6d18548750373cd4e93e9af24eda3e84f6f1b8e",
+        "status": "matched"
+      },
+      "case_id": "OH-I7E0FM-TYPEDARRAY-FILTER-ABRUPT-COMPLETION",
+      "errors": [],
+      "fixed": {
+        "commit": "30571a40879bb2092dcb9ae994d6970c1dfd5fc1",
+        "commit_object_type": "commit",
+        "errors": [],
+        "files": [
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "6d90d4ad72893f5868922b77ecae4ab3f6a52366",
+            "expected_bytes": 79277,
+            "expected_source_sha256": "74ef900791fd859c45909dc840ab02f898df90584b3a400daed0640625c0579c",
+            "observed_blob_oid": "6d90d4ad72893f5868922b77ecae4ab3f6a52366",
+            "observed_bytes": 79277,
+            "observed_source_sha256": "74ef900791fd859c45909dc840ab02f898df90584b3a400daed0640625c0579c",
+            "path": "ecmascript/builtins/builtins_typedarray.cpp",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "not_recorded",
+            "errors": [],
+            "expected_blob_oid": "2a8554b7221e645ecaa8c3f2e9a73f872d0af08a",
+            "expected_bytes": null,
+            "expected_source_sha256": "6f945253749f671ee94637065186ad6c68c0eff917926076d30bdd8b83352a3f",
+            "observed_blob_oid": "2a8554b7221e645ecaa8c3f2e9a73f872d0af08a",
+            "observed_bytes": 37459,
+            "observed_source_sha256": "6f945253749f671ee94637065186ad6c68c0eff917926076d30bdd8b83352a3f",
+            "path": "ecmascript/ecma_macros.h",
+            "status": "matched"
+          }
+        ],
+        "observed_commit_tree": "4bd116e73eb8acf94d6471427d86f837964bb998",
+        "recorded_tree": "4bd116e73eb8acf94d6471427d86f837964bb998",
+        "status": "matched",
+        "tree_status": "matched"
+      },
+      "parent": {
+        "commit": "d6d18548750373cd4e93e9af24eda3e84f6f1b8e",
+        "commit_object_type": "commit",
+        "errors": [],
+        "files": [
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "f8e21e95919b5607fc167962d390995f4a031f14",
+            "expected_bytes": 79222,
+            "expected_source_sha256": "057f0d43d1f2ed7b2a915025f8030259d711793846bd0273fb007e94e1546a5b",
+            "observed_blob_oid": "f8e21e95919b5607fc167962d390995f4a031f14",
+            "observed_bytes": 79222,
+            "observed_source_sha256": "057f0d43d1f2ed7b2a915025f8030259d711793846bd0273fb007e94e1546a5b",
+            "path": "ecmascript/builtins/builtins_typedarray.cpp",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "not_recorded",
+            "errors": [],
+            "expected_blob_oid": "2a8554b7221e645ecaa8c3f2e9a73f872d0af08a",
+            "expected_bytes": null,
+            "expected_source_sha256": "6f945253749f671ee94637065186ad6c68c0eff917926076d30bdd8b83352a3f",
+            "observed_blob_oid": "2a8554b7221e645ecaa8c3f2e9a73f872d0af08a",
+            "observed_bytes": 37459,
+            "observed_source_sha256": "6f945253749f671ee94637065186ad6c68c0eff917926076d30bdd8b83352a3f",
+            "path": "ecmascript/ecma_macros.h",
+            "status": "matched"
+          }
+        ],
+        "observed_commit_tree": "0eb7add76ad0766233c53bea41e2db334e441406",
+        "recorded_tree": "0eb7add76ad0766233c53bea41e2db334e441406",
+        "status": "matched",
+        "tree_status": "matched"
+      },
+      "status": "matched"
+    },
+    {
+      "ancestry": {
+        "error": null,
+        "fixed_commit": "7fb7ec3107e5117c8c00c66fca64d02eea087d38",
+        "is_ancestor": true,
+        "parent_commit": "493a73ba63c4a74ce1c67122e55e2a4f1e0d383b",
+        "status": "matched"
+      },
+      "case_id": "ARK-ARRAY-EVERY-WRAPPED-CALLBACK-EXCEPTION-I5XZRO",
+      "errors": [],
+      "fixed": {
+        "commit": "7fb7ec3107e5117c8c00c66fca64d02eea087d38",
+        "commit_object_type": "commit",
+        "errors": [],
+        "files": [
+          {
+            "byte_length_status": "not_recorded",
+            "errors": [],
+            "expected_blob_oid": "43427fd60bab017dbca3312e8c2a1e2794edf251",
+            "expected_bytes": null,
+            "expected_source_sha256": "b8a45acbbfa7c198d06c5f324be826956334a7beffb615b7c7056dd9949ae210",
+            "observed_blob_oid": "43427fd60bab017dbca3312e8c2a1e2794edf251",
+            "observed_bytes": 130533,
+            "observed_source_sha256": "b8a45acbbfa7c198d06c5f324be826956334a7beffb615b7c7056dd9949ae210",
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "not_recorded",
+            "errors": [],
+            "expected_blob_oid": "9b6b0e392cbb05d455657b1210426a4b25515962",
+            "expected_bytes": null,
+            "expected_source_sha256": "4b1e6b6675fdfa1e409345d9410bb95752700f00514e0e756f576ec09e56f7d6",
+            "observed_blob_oid": "9b6b0e392cbb05d455657b1210426a4b25515962",
+            "observed_bytes": 30819,
+            "observed_source_sha256": "4b1e6b6675fdfa1e409345d9410bb95752700f00514e0e756f576ec09e56f7d6",
+            "path": "ecmascript/js_stable_array.cpp",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "not_recorded",
+            "errors": [],
+            "expected_blob_oid": "e36fff930c34aa8d30eddc34361d9821373c79ce",
+            "expected_bytes": null,
+            "expected_source_sha256": "ddccb14a23e9186bf45a77aafa465444a251db5e44cb0e5c172ae5bc66d83e9a",
+            "observed_blob_oid": "e36fff930c34aa8d30eddc34361d9821373c79ce",
+            "observed_bytes": 3693,
+            "observed_source_sha256": "ddccb14a23e9186bf45a77aafa465444a251db5e44cb0e5c172ae5bc66d83e9a",
+            "path": "ecmascript/js_stable_array.h",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "not_recorded",
+            "errors": [],
+            "expected_blob_oid": "fbfbd2b8b986f4c9cdc6626d0d62209497a78740",
+            "expected_bytes": null,
+            "expected_source_sha256": "f9685fef22df50d266e54a53e114488bab6d9c5962b66be9e761ca26093b18aa",
+            "observed_blob_oid": "fbfbd2b8b986f4c9cdc6626d0d62209497a78740",
+            "observed_bytes": 35793,
+            "observed_source_sha256": "f9685fef22df50d266e54a53e114488bab6d9c5962b66be9e761ca26093b18aa",
+            "path": "ecmascript/ecma_macros.h",
+            "status": "matched"
+          }
+        ],
+        "observed_commit_tree": "dd3a4d1d12c46266d4644ae7d91d54dc1d1cf075",
+        "recorded_tree": "dd3a4d1d12c46266d4644ae7d91d54dc1d1cf075",
+        "status": "matched",
+        "tree_status": "matched"
+      },
+      "parent": {
+        "commit": "493a73ba63c4a74ce1c67122e55e2a4f1e0d383b",
+        "commit_object_type": "commit",
+        "errors": [],
+        "files": [
+          {
+            "byte_length_status": "not_recorded",
+            "errors": [],
+            "expected_blob_oid": "a4c56e3895bb225c3d8f1b57558e46e7db95ff8e",
+            "expected_bytes": null,
+            "expected_source_sha256": "a8fabb941c60a10557ae3ae665d1f24db2dcb6b585d80015492dc1e6523018bb",
+            "observed_blob_oid": "a4c56e3895bb225c3d8f1b57558e46e7db95ff8e",
+            "observed_bytes": 130478,
+            "observed_source_sha256": "a8fabb941c60a10557ae3ae665d1f24db2dcb6b585d80015492dc1e6523018bb",
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "not_recorded",
+            "errors": [],
+            "expected_blob_oid": "de93eb8533c32dc12e39e56c0fd4e6ac09f5d14c",
+            "expected_bytes": null,
+            "expected_source_sha256": "dad8b9438f0bd5dfb5a0893f845b2450c62dc4afafa6c3a5395e79721e7a3326",
+            "observed_blob_oid": "de93eb8533c32dc12e39e56c0fd4e6ac09f5d14c",
+            "observed_bytes": 31105,
+            "observed_source_sha256": "dad8b9438f0bd5dfb5a0893f845b2450c62dc4afafa6c3a5395e79721e7a3326",
+            "path": "ecmascript/js_stable_array.cpp",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "not_recorded",
+            "errors": [],
+            "expected_blob_oid": "e36fff930c34aa8d30eddc34361d9821373c79ce",
+            "expected_bytes": null,
+            "expected_source_sha256": "ddccb14a23e9186bf45a77aafa465444a251db5e44cb0e5c172ae5bc66d83e9a",
+            "observed_blob_oid": "e36fff930c34aa8d30eddc34361d9821373c79ce",
+            "observed_bytes": 3693,
+            "observed_source_sha256": "ddccb14a23e9186bf45a77aafa465444a251db5e44cb0e5c172ae5bc66d83e9a",
+            "path": "ecmascript/js_stable_array.h",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "not_recorded",
+            "errors": [],
+            "expected_blob_oid": "fbfbd2b8b986f4c9cdc6626d0d62209497a78740",
+            "expected_bytes": null,
+            "expected_source_sha256": "f9685fef22df50d266e54a53e114488bab6d9c5962b66be9e761ca26093b18aa",
+            "observed_blob_oid": "fbfbd2b8b986f4c9cdc6626d0d62209497a78740",
+            "observed_bytes": 35793,
+            "observed_source_sha256": "f9685fef22df50d266e54a53e114488bab6d9c5962b66be9e761ca26093b18aa",
+            "path": "ecmascript/ecma_macros.h",
+            "status": "matched"
+          }
+        ],
+        "observed_commit_tree": "94feee5b5439029a9194cecc53fe953e9eb452a2",
+        "recorded_tree": "94feee5b5439029a9194cecc53fe953e9eb452a2",
+        "status": "matched",
+        "tree_status": "matched"
+      },
+      "status": "matched"
+    },
+    {
+      "ancestry": {
+        "error": null,
+        "fixed_commit": "c333bfc148f0ecc2e0db8c84c821a7560f904906",
+        "is_ancestor": true,
+        "parent_commit": "9824afc4c09441f4e504b679c70d9876ba90607c",
+        "status": "matched"
+      },
+      "case_id": "ARK-ARRAY-FINDINDEX-STABLE-ABRUPT-RETURN-C333",
+      "errors": [],
+      "fixed": {
+        "commit": "c333bfc148f0ecc2e0db8c84c821a7560f904906",
+        "commit_object_type": "commit",
+        "errors": [],
+        "files": [
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "e9e3c9aaeee63bcbf8e060232b4a044550d55120",
+            "expected_bytes": 151356,
+            "expected_source_sha256": "9c21cb837b8b6844e50de334dd446a547952c776b44710070655ee3ec5766c0a",
+            "observed_blob_oid": "e9e3c9aaeee63bcbf8e060232b4a044550d55120",
+            "observed_bytes": 151356,
+            "observed_source_sha256": "9c21cb837b8b6844e50de334dd446a547952c776b44710070655ee3ec5766c0a",
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "e8fbb74b0f112762c7ea4af8b16d9260103791fd",
+            "expected_bytes": 45153,
+            "expected_source_sha256": "3d6fab882b08749e49ce2c641bdc32c3b298a6d5f262c89519e8c847261dbd52",
+            "observed_blob_oid": "e8fbb74b0f112762c7ea4af8b16d9260103791fd",
+            "observed_bytes": 45153,
+            "observed_source_sha256": "3d6fab882b08749e49ce2c641bdc32c3b298a6d5f262c89519e8c847261dbd52",
+            "path": "ecmascript/js_stable_array.cpp",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "adf8464ab36eafafdda193d51196c7322bcef6e5",
+            "expected_bytes": 6508,
+            "expected_source_sha256": "f93b5ecde741a118f10742081f3dac23c9a0d84a2e54d6ee8f83b4760b1a0814",
+            "observed_blob_oid": "adf8464ab36eafafdda193d51196c7322bcef6e5",
+            "observed_bytes": 6508,
+            "observed_source_sha256": "f93b5ecde741a118f10742081f3dac23c9a0d84a2e54d6ee8f83b4760b1a0814",
+            "path": "ecmascript/js_stable_array.h",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "53e552027e86f7d72802170f66acec3e7aa4c4ba",
+            "expected_bytes": 38487,
+            "expected_source_sha256": "30677741255a50c47eae10c147734203293e0e972b816c0fd27032f2f77bd14c",
+            "observed_blob_oid": "53e552027e86f7d72802170f66acec3e7aa4c4ba",
+            "observed_bytes": 38487,
+            "observed_source_sha256": "30677741255a50c47eae10c147734203293e0e972b816c0fd27032f2f77bd14c",
+            "path": "ecmascript/ecma_macros.h",
+            "status": "matched"
+          }
+        ],
+        "observed_commit_tree": "a2f5ca235eb7da24897bd4e477f4361e4b4da0d5",
+        "recorded_tree": "a2f5ca235eb7da24897bd4e477f4361e4b4da0d5",
+        "status": "matched",
+        "tree_status": "matched"
+      },
+      "parent": {
+        "commit": "9824afc4c09441f4e504b679c70d9876ba90607c",
+        "commit_object_type": "commit",
+        "errors": [],
+        "files": [
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "8749c9de8ad6cfc0a967efbd0d9275b8894d74f9",
+            "expected_bytes": 151301,
+            "expected_source_sha256": "7f11e788354f81cee4b4eabbc8302954881ba2fffc44e99281f4f16c2b1faf4a",
+            "observed_blob_oid": "8749c9de8ad6cfc0a967efbd0d9275b8894d74f9",
+            "observed_bytes": 151301,
+            "observed_source_sha256": "7f11e788354f81cee4b4eabbc8302954881ba2fffc44e99281f4f16c2b1faf4a",
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "e8fbb74b0f112762c7ea4af8b16d9260103791fd",
+            "expected_bytes": 45153,
+            "expected_source_sha256": "3d6fab882b08749e49ce2c641bdc32c3b298a6d5f262c89519e8c847261dbd52",
+            "observed_blob_oid": "e8fbb74b0f112762c7ea4af8b16d9260103791fd",
+            "observed_bytes": 45153,
+            "observed_source_sha256": "3d6fab882b08749e49ce2c641bdc32c3b298a6d5f262c89519e8c847261dbd52",
+            "path": "ecmascript/js_stable_array.cpp",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "adf8464ab36eafafdda193d51196c7322bcef6e5",
+            "expected_bytes": 6508,
+            "expected_source_sha256": "f93b5ecde741a118f10742081f3dac23c9a0d84a2e54d6ee8f83b4760b1a0814",
+            "observed_blob_oid": "adf8464ab36eafafdda193d51196c7322bcef6e5",
+            "observed_bytes": 6508,
+            "observed_source_sha256": "f93b5ecde741a118f10742081f3dac23c9a0d84a2e54d6ee8f83b4760b1a0814",
+            "path": "ecmascript/js_stable_array.h",
+            "status": "matched"
+          },
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "53e552027e86f7d72802170f66acec3e7aa4c4ba",
+            "expected_bytes": 38487,
+            "expected_source_sha256": "30677741255a50c47eae10c147734203293e0e972b816c0fd27032f2f77bd14c",
+            "observed_blob_oid": "53e552027e86f7d72802170f66acec3e7aa4c4ba",
+            "observed_bytes": 38487,
+            "observed_source_sha256": "30677741255a50c47eae10c147734203293e0e972b816c0fd27032f2f77bd14c",
+            "path": "ecmascript/ecma_macros.h",
+            "status": "matched"
+          }
+        ],
+        "observed_commit_tree": "6b4323d58cfa7128ee10a7e7257b9480caad5604",
+        "recorded_tree": "6b4323d58cfa7128ee10a7e7257b9480caad5604",
+        "status": "matched",
+        "tree_status": "matched"
+      },
+      "status": "matched"
+    },
+    {
+      "ancestry": {
+        "error": null,
+        "fixed_commit": "18d8532a200d0c9aa64a6dfe2b146dc841b52bf8",
+        "is_ancestor": true,
+        "parent_commit": "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724",
+        "status": "matched"
+      },
+      "case_id": "ARK-COMPILER-REFLECT-APPLY-PENDING-EXCEPTION-IAO7GO",
+      "errors": [],
+      "fixed": {
+        "commit": "18d8532a200d0c9aa64a6dfe2b146dc841b52bf8",
+        "commit_object_type": "commit",
+        "errors": [],
+        "files": [
+          {
+            "byte_length_status": "not_recorded",
+            "errors": [],
+            "expected_blob_oid": "df03fdce8a37cf2245577aec23c4c26deeebf02f",
+            "expected_bytes": null,
+            "expected_source_sha256": "6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce",
+            "observed_blob_oid": "df03fdce8a37cf2245577aec23c4c26deeebf02f",
+            "observed_bytes": 75627,
+            "observed_source_sha256": "6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce",
+            "path": "ecmascript/compiler/native_inline_lowering.cpp",
+            "status": "matched"
+          }
+        ],
+        "observed_commit_tree": "372e6906218c245e59643a7437f2d92e435401d6",
+        "recorded_tree": "372e6906218c245e59643a7437f2d92e435401d6",
+        "status": "matched",
+        "tree_status": "matched"
+      },
+      "parent": {
+        "commit": "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724",
+        "commit_object_type": "commit",
+        "errors": [],
+        "files": [
+          {
+            "byte_length_status": "not_recorded",
+            "errors": [],
+            "expected_blob_oid": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+            "expected_bytes": null,
+            "expected_source_sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463",
+            "observed_blob_oid": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+            "observed_bytes": 75711,
+            "observed_source_sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463",
+            "path": "ecmascript/compiler/native_inline_lowering.cpp",
+            "status": "matched"
+          }
+        ],
+        "observed_commit_tree": "0c8d65e759bf96b4632573561748a180a93cf413",
+        "recorded_tree": "0c8d65e759bf96b4632573561748a180a93cf413",
+        "status": "matched",
+        "tree_status": "matched"
+      },
+      "status": "matched"
+    },
+    {
+      "ancestry": {
+        "error": null,
+        "fixed_commit": "1b0ac0aa076b91d92b5d5aba91e92bc6c2a06c50",
+        "is_ancestor": true,
+        "parent_commit": "087449d3d657d081611cf1bf4c731ff048748812",
+        "status": "matched"
+      },
+      "case_id": "ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7",
+      "errors": [],
+      "fixed": {
+        "commit": "1b0ac0aa076b91d92b5d5aba91e92bc6c2a06c50",
+        "commit_object_type": "commit",
+        "errors": [],
+        "files": [
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "319347a5ea62df52e8427ad6822f65e70c997a11",
+            "expected_bytes": 35080,
+            "expected_source_sha256": "f698f40394524b5b95a1bbef4fe8b1ccef05e52226d9d1f30ef54decca711a62",
+            "observed_blob_oid": "319347a5ea62df52e8427ad6822f65e70c997a11",
+            "observed_bytes": 35080,
+            "observed_source_sha256": "f698f40394524b5b95a1bbef4fe8b1ccef05e52226d9d1f30ef54decca711a62",
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "status": "matched"
+          }
+        ],
+        "observed_commit_tree": "48ac0d65b920c7401055fcfae68d538e03a25e6c",
+        "recorded_tree": "48ac0d65b920c7401055fcfae68d538e03a25e6c",
+        "status": "matched",
+        "tree_status": "matched"
+      },
+      "parent": {
+        "commit": "087449d3d657d081611cf1bf4c731ff048748812",
+        "commit_object_type": "commit",
+        "errors": [],
+        "files": [
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "caa5467917bbd9079a4d72cdfb419266e315a624",
+            "expected_bytes": 34880,
+            "expected_source_sha256": "170660d6f15ad88ddee04db4ded3e76932832631d0613e78318edf2b0ad6fc85",
+            "observed_blob_oid": "caa5467917bbd9079a4d72cdfb419266e315a624",
+            "observed_bytes": 34880,
+            "observed_source_sha256": "170660d6f15ad88ddee04db4ded3e76932832631d0613e78318edf2b0ad6fc85",
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "status": "matched"
+          }
+        ],
+        "observed_commit_tree": "cc51f309bf6446ae401597235fe5ebd3477ec63e",
+        "recorded_tree": "cc51f309bf6446ae401597235fe5ebd3477ec63e",
+        "status": "matched",
+        "tree_status": "matched"
+      },
+      "status": "matched"
+    },
+    {
+      "ancestry": {
+        "error": null,
+        "fixed_commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+        "is_ancestor": true,
+        "parent_commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+        "status": "matched"
+      },
+      "case_id": "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG",
+      "errors": [],
+      "fixed": {
+        "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+        "commit_object_type": "commit",
+        "errors": [],
+        "files": [
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+            "expected_bytes": 150509,
+            "expected_source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+            "observed_blob_oid": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+            "observed_bytes": 150509,
+            "observed_source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "status": "matched"
+          }
+        ],
+        "observed_commit_tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "recorded_tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "status": "matched",
+        "tree_status": "matched"
+      },
+      "parent": {
+        "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+        "commit_object_type": "commit",
+        "errors": [],
+        "files": [
+          {
+            "byte_length_status": "matched",
+            "errors": [],
+            "expected_blob_oid": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+            "expected_bytes": 150433,
+            "expected_source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+            "observed_blob_oid": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+            "observed_bytes": 150433,
+            "observed_source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "status": "matched"
+          }
+        ],
+        "observed_commit_tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+        "recorded_tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+        "status": "matched",
+        "tree_status": "matched"
+      },
+      "status": "matched"
+    }
+  ],
+  "errors": [],
+  "evidence_scope": {
+    "case_ids": [
+      "OH-I7E0FM-TYPEDARRAY-FILTER-ABRUPT-COMPLETION",
+      "ARK-ARRAY-EVERY-WRAPPED-CALLBACK-EXCEPTION-I5XZRO",
+      "ARK-ARRAY-FINDINDEX-STABLE-ABRUPT-RETURN-C333",
+      "ARK-COMPILER-REFLECT-APPLY-PENDING-EXCEPTION-IAO7GO",
+      "ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7",
+      "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG"
+    ],
+    "commit_tree_pair_count": 12,
+    "complete_case_count": 6,
+    "file_count": 26,
+    "out_of_scope_case_count": 10,
+    "out_of_scope_cases": [
+      "ARK-ARRAY-CALLBACK-ABRUPT-COMPLETION-HISTORY-VARIANT",
+      "ARK-RUNTIME-CALLINFO-CONSTRUCTION-PENDING-EXCEPTION-I7K7L6",
+      "ARK-RUNTIME-NEWCALLINFO-EXCEPTION-GUARD-IB40SU",
+      "ARK-RUNTIME-INSTANCEOF-EXCEPTION-RETURN-VALUE-I7SDBG",
+      "ARK-SHAREDARRAY-FINDINDEX-EXCEPTION-PROPAGATION-PARTIAL-2A9BCFB",
+      "ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304",
+      "ARK-TYPEDARRAY-MAP-NEWARRAY-PENDING-EXCEPTION-IC7B8Q",
+      "ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D",
+      "ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA",
+      "ARK-TYPEDARRAY-FILTER-RECEIVER-TYPE-GUARD-IAO7E8"
+    ]
+  },
+  "evidence_sha256": "21b31e6c648229f4f732a9d99263d1570cb6401671d503a0ca63b30ddf15a592",
+  "generated_at_utc": "2026-10-19T18:03:16.884546+00:00",
+  "limitations": [
+    "Configured origin URL and object hashes/ancestry only establish consistency with the local store's declared remote; acquisition, custody, and server authenticity are not independently verified.",
+    "Only six source_identity_status=recorded_complete development cases are in scope; the other ten cases remain unverified.",
+    "Twelve commit/tree identities and their source objects are checked here; dependent repository closure beyond the listed commits/files is not evaluated.",
+    "No product manifest, product build, preprocess output, shipped binary mapping, exploitability, or holdout truth is verified."
+  ],
+  "manifest_identity": {
+    "computed_payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
+    "errors": [],
+    "expected_complete_case_ids": [
+      "OH-I7E0FM-TYPEDARRAY-FILTER-ABRUPT-COMPLETION",
+      "ARK-ARRAY-EVERY-WRAPPED-CALLBACK-EXCEPTION-I5XZRO",
+      "ARK-ARRAY-FINDINDEX-STABLE-ABRUPT-RETURN-C333",
+      "ARK-COMPILER-REFLECT-APPLY-PENDING-EXCEPTION-IAO7GO",
+      "ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7",
+      "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG"
+    ],
+    "expected_payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
+    "observed_complete_case_ids": [
+      "OH-I7E0FM-TYPEDARRAY-FILTER-ABRUPT-COMPLETION",
+      "ARK-ARRAY-EVERY-WRAPPED-CALLBACK-EXCEPTION-I5XZRO",
+      "ARK-ARRAY-FINDINDEX-STABLE-ABRUPT-RETURN-C333",
+      "ARK-COMPILER-REFLECT-APPLY-PENDING-EXCEPTION-IAO7GO",
+      "ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7",
+      "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG"
+    ],
+    "recorded_payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
+    "scope_note": "The pinned hash locks this evidence input to the reviewed manifest snapshot; it is not a signature or provenance attestation.",
+    "status": "pinned_manifest"
+  },
+  "object_checks": {
+    "commit_objects_checked": 12,
+    "file_sha256_and_blob_oid_recomputed": true,
+    "parent_ancestor_fixed_pairs_checked": 6,
+    "path_blob_records_checked": 26,
+    "recorded_byte_lengths": "checked_when_present; missing recorded lengths remain not_recorded",
+    "tree_objects_checked": 12
+  },
+  "product_profile": {
+    "build_profile_status": "BLOCKED",
+    "complete_case_count": 0,
+    "note": "Git source object verification does not establish a product build or preprocess profile.",
+    "preprocess_profile_status": "BLOCKED"
+  },
+  "schema": "ohscanner.ark-parent-fix-official-git-object-evidence/v1",
+  "status": "verified_against_configured_store",
+  "store": {
+    "bare": true,
+    "expected_official_remote": "https://gitee.com/openharmony/arkcompiler_ets_runtime.git",
+    "git_dir": "D:\\openHarmonyScanner\\tmp\\cve-2025-arkruntime-official.git",
+    "network_used": false,
+    "origin_fetch_urls": [
+      "https://gitee.com/openharmony/arkcompiler_ets_runtime.git"
+    ],
+    "origin_push_urls": [
+      "https://gitee.com/openharmony/arkcompiler_ets_runtime.git"
+    ],
+    "remote_validation": "matched",
+    "shallow": false
+  }
+}
