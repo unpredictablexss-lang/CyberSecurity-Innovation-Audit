@@ -285,6 +285,24 @@
       }
     },
     {
+      "bytes": 145,
+      "reason": "development fixture/review artifact excluded from real holdout",
+      "repository_path": "tests/detectors/ark_runtime/fixtures/C11.cpp",
+      "sha256": "82dfda91db9dc0c838d103170be0138125cc05fb7ddd49819318963f1d78d64b",
+      "source_identity": {
+        "role": "development_artifact"
+      }
+    },
+    {
+      "bytes": 572,
+      "reason": "development fixture/review artifact excluded from real holdout",
+      "repository_path": "tests/detectors/ark_runtime/fixtures/C12.cpp",
+      "sha256": "9a211a1fa854fe4ee39307a4a85b0c60ef77c1ea57989e8efb04c145a80450dd",
+      "source_identity": {
+        "role": "development_artifact"
+      }
+    },
+    {
       "bytes": 538,
       "reason": "development fixture/review artifact excluded from real holdout",
       "repository_path": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_fixed.cpp",
@@ -483,15 +501,6 @@
       }
     },
     {
-      "bytes": 145,
-      "reason": "development fixture/review artifact excluded from real holdout",
-      "repository_path": "tests/detectors/ark_runtime/fixtures/C11.cpp",
-      "sha256": "82dfda91db9dc0c838d103170be0138125cc05fb7ddd49819318963f1d78d64b",
-      "source_identity": {
-        "role": "development_artifact"
-      }
-    },
-    {
       "bytes": 466,
       "reason": "development fixture/review artifact excluded from real holdout",
       "repository_path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_fixed.cpp",
@@ -667,15 +676,6 @@
       "reason": "development fixture/review artifact excluded from real holdout",
       "repository_path": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_unrelated.cpp",
       "sha256": "b960e4fc6b207cbca5ef9f57aaf19132f44ad306f96f99301c373c527cb337bf",
-      "source_identity": {
-        "role": "development_artifact"
-      }
-    },
-    {
-      "bytes": 572,
-      "reason": "development fixture/review artifact excluded from real holdout",
-      "repository_path": "tests/detectors/ark_runtime/fixtures/C12.cpp",
-      "sha256": "9a211a1fa854fe4ee39307a4a85b0c60ef77c1ea57989e8efb04c145a80450dd",
       "source_identity": {
         "role": "development_artifact"
       }
@@ -861,15 +861,6 @@
       }
     },
     {
-      "bytes": 101,
-      "reason": "development fixture/review artifact excluded from real holdout",
-      "repository_path": "tests/fixtures/known_cases/artifact-adapter-controls/build-profile.json5",
-      "sha256": "b662cf0baae06356407df0cbedce60c91eeeb8528c46f34f46943f1e78b6f079",
-      "source_identity": {
-        "role": "development_artifact"
-      }
-    },
-    {
       "bytes": 8,
       "reason": "development fixture/review artifact excluded from real holdout",
       "repository_path": "tests/fixtures/known_cases/artifact-adapter-controls/OpenHarmony.p12",
@@ -883,6 +874,15 @@
       "reason": "development fixture/review artifact excluded from real holdout",
       "repository_path": "tests/fixtures/known_cases/artifact-adapter-controls/README.md",
       "sha256": "afb88d8605af24aed9ce4e91137f5a700f8d84b9b6c8e5a6b054c99ddc7eae96",
+      "source_identity": {
+        "role": "development_artifact"
+      }
+    },
+    {
+      "bytes": 101,
+      "reason": "development fixture/review artifact excluded from real holdout",
+      "repository_path": "tests/fixtures/known_cases/artifact-adapter-controls/build-profile.json5",
+      "sha256": "b662cf0baae06356407df0cbedce60c91eeeb8528c46f34f46943f1e78b6f079",
       "source_identity": {
         "role": "development_artifact"
       }
@@ -1285,8 +1285,8 @@
     }
   ],
   "generated_at": "2026-10-19T22:30:00+08:00",
-  "payload_sha256": "2a040ae1cf4fdd9600a0aded3c9c8a588c5a0096c7ef4afbfcfadd7fc736b261",
-  "protocol_file_sha256": "cb85cfbfe05a6a6e32197783670b427a8bedd38acf48508fbd826542199ef89c",
+  "payload_sha256": "e959088cdadc0ad119ec0ee50bdf42f819148222e306a58efa4a8e0710cd7f39",
+  "protocol_file_sha256": "c13382c8b7df812d0fefae75354c53688aabb25854535ad6baf62e4e5cd02731",
   "schema": "ohscanner.ark-holdout-development-leakage-ledger/v1",
   "selection_frame_sha256": "a17b812dcf663a5057b4f668f038c9fa85a82eb72703d3c46265c3570792b5f0",
   "status": "COMPLETE_LOCAL_DEVELOPMENT_ARTIFACTS"
