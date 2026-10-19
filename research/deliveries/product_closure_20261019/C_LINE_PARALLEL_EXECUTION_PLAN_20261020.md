@@ -284,10 +284,34 @@ D4（产品画像证据开发线）：目标仅为判断本地已有材料能否
 T4（独立证据验收线）：不参与 D4 盘点实现。复算 D4 证据工件 hash；独立验证 IBS5YG parent/fix commit、tree、ancestry 与 D4 声称的产品 component revision 关系；审查每个 build/preprocess 字段是否由正确目标版本的直接工件支持，特别检查 host-tools 与设备产品混淆、不同案/分支拼接、伪造/缺失 include closure、只有 args.gn 却没有成功 target/build/TU/binary 映射的情形。对任一身份或构建环节失败，要求 profile 保持 BLOCKED。只写 `research/methods/ark_runtime/ibs5yg_profile_gap_20261020/review/**`；逐 claim 给出 pass/fail/unknown 和可复现命令，反例回传 D4修订并重测，按 `c_t4` scope check 与 diff-check。独立验收通过也只说明材料盘点可审计，不自动关闭 PC-1。
 ```
 
-D4/T4 worktree 基线为 owner 计划提交 `9c44ab73ad9363a699ccfe3ec268b0eac41a5a87`；ownership 授权提交 `c78f90e0495a68e13171a858740b8fe34fdc55b9` 已包含在该基线。本轮已知本地 `outputs/ark-runtime-isolated-validation-20261018` 是 Sort 候选 `CVE-2025-23420` 的 OpenHarmony 5.0.2 host-tools 失败尝试；该目录的产品关联明确为 unknown，不能挪作 IBS5YG profile。IBS5YG 的 parent/fix (`2ea5012…` / `919e4fb…`) 均不在其记录的 runtime component commit `1b235315…` 的祖先链上。之前一次 GitHub fetch 曾因 HTTPS 443 连接失败；本轮重试成功，FETCH_HEAD、ls-remote 与本地 tracking ref 均确认源分支为 `842948084660207fd64399cfd598ed93e5593dcc`，远端当前无更新。
+D4/T4 worktree 基线为 owner 计划提交 `9c44ab73ad9363a699ccfe3ec268b0eac41a5a87`；ownership 授权提交 `c78f90e0495a68e13171a858740b8fe34fdc55b9` 已包含在该基线。本轮已知本地 `outputs/ark-runtime-isolated-validation-20261018` 是 Sort 候选 `CVE-2025-23420` 的 OpenHarmony 5.0.2 host-tools 失败尝试；该目录的产品关联明确为 unknown，不能挪作 IBS5YG profile。IBS5YG 的 parent/fix (`2ea5012…` / `919e4fb…`) 均不在其记录的 runtime component commit `1b235315…` 的祖先链上。截至上一轮，fetch/ls-remote 已核实源分支为 `842948084660207fd64399cfd598ed93e5593dcc`；本轮 fetch 在连接 GitHub 时被 reset，本地 tracking ref 是 last-known 值，本轮未能确认远端是否前进。
 #### D4/T4 执行结果
 
 D4 提交 `fc3d2d4b52acc43949a540a4cccc96a2c67f5248` 的证据矩阵 `evidence_matrix.json` SHA-256 为 `9c418aed98045a0bf9b16170552c2df7cdb11a8261da59700b7093899d669815`；T4 提交 `dc5990f76ad38c12d33d06875753563af3b43c39` 复核矩阵/README 及 14 个引用证据哈希，均一致。source pair commit/tree/blob/length/SHA 与 parent→fix ancestry 在本地配置对象库中匹配；其 origin URL/custody 仍未独立证明。T4 找出并促使 D4 修正一个日志 SHA 拼写错误，并将“5.0.2 component 不匹配”限定为已核验的替代 revision `1b235315…`，实际 IBS5YG release pin 仍为 unknown。结论：现有产品证据不能闭合 IBS5YG profile；args/build属于 Sort host-tools 失败尝试，应排除；产品 manifest/version、GN target/action/args、toolchain/sysroot、include/generated inputs、preprocessed TU 与 shipped binary 映射仍缺。PC-1 保持 `IN_PROGRESS_BLOCKED`、产品 profile 0/16。后续需用户/产品 owner 指定目标 release、branch/manifest 与 product/board 后，才能按该目标搜集正确 artifact；未指定前不拼接其它候选构建材料。
 #### IBS5YG 第二层逐候选审查
 
 负责人基于本地对象库固定的 parent/fix 与共享依赖完成第二层审查，记录于 `IBS5YG_L2_REVIEW_20261020.json`。结论为 source-level `static_root_cause=supported`、`decision=candidate_supported`、fixed comparison `same_root_cause_fixed`。新增的 `TypedArraySpeciesCreate` 源码证据表明，用户 callback 可在输出创建前安装 receiver constructor；species 路径只要求结果为 TypedArray、长度不小于请求且 ContentType 相同，并未要求元素类型相同。具体静态候选：Int32Array Filter callback 安装 species，返回 Uint8Array(3)；parent 的结果写回仍传源 Int32 `jsType`。index 2 通过目标长度检查后，按 Int32 算出偏移 8 并写 4 字节。目标 ByteArray 只有 3 字节数据区，8 字节对齐后的对象分配仍被越过 4 字节。该源级 OOB candidate 的数据流、species 长度/ContentType 条件和对象尺寸均由 pinned source 支持；实际生成 stub 执行、ASan/runtime 结果仍待验证。fixed 在写入前改用新目标 HClass 类型。当前没有 pinned build/runtime/ASan 复现，且完整编译路径、产品适用性、入口/攻击者控制、CIA 影响、本地对象库 custody 和 IBS5YG profile 仍未闭合；不据此宣称产品漏洞。下一步对 pinned parent/fixed 构建执行上述 exact-length species 场景和内存边界验证，再做同 profile 回归。
+
+## 下一轮 IBS5YG 任务队列：产品画像闭环 D5/T5
+
+**启动门：** 先取得目标 OpenHarmony release/build、branch/locked manifest 与 product/board。当前没有 IBS5YG exact parent/fixed build/runtime artifact；D4 manifest 的 build/preprocess profile 为 BLOCKED，缺产品 manifest、args.gn、GN target/action、compile database、toolchain/sysroot、include/generated-input closure、preprocessed TU、macro log 和 binary/image mapping。Sort 5.0.2 host-tools 失败尝试及 C1 的其他 Ark Runtime revision 均不匹配，不得借用。
+
+### D5 — 产品画像与构建身份绑定（开发/证据整理线）
+
+**任务：** 用户提供产品版本后，按 G12-PC-1 收集并绑定产品 manifest、Ark Runtime revision、GN target/action/args、toolchain/sysroot、完整 include/generated-input closure、compile database、preprocessed TU/macro log 和 shipped binary/image SHA。逐项区分 source pair ancestry、产品组件来源和目标产品构建，不修改产品源码，不以相邻版本或其他 CVE 的构建填空。若证据缺失，保留 BLOCKED/UNKNOWN。
+
+**结构化 Vibe Coding 提示词：**
+
+> 角色：OpenHarmony Ark Runtime 产品构建画像负责人。输入：用户指定的 release/build、branch、product/board 与已冻结 IBS5YG parent/fixed source identities。目标：为同一目标产品建立可复算的 source-to-product build/preprocess profile。先绑定 manifest 与 component revision，再追踪 GN target/action/args、compile DB、compiler/linker/sysroot、generated inputs、include closure、preprocessed TU/macro log、最终 binary/image SHA。每个字段输出值、来源文件、SHA-256、核验方法及状态。严禁借用其他产品/版本/候选的构建材料，严禁修改产品源码或把 UNKNOWN 改成 PASS。交付：profile manifest、artifact hash ledger、缺项/责任方、重算命令和 scope/diff 检查。停止条件：产品输入不全或身份不匹配时报告 BLOCKED 并列明最小缺项。
+
+### T5 — D5 独立画像审计与候选边界验收（测试线）
+
+**任务：** 独立复算 D5 每个身份和 artifact hash，确认 parent/fixed 与 product component 的精确关系，检查配置闭包、TU 和 shipped binary mapping；挑战任何跨版本拼接或 source-only 证据冒充 product proof。向 D5 回传字段级反例，D5 修正后 T5 对新 manifest SHA 再验收。通过后将该候选交给 PC-3 applicability 审查；T5 不执行 PoC。
+
+**结构化 Vibe Coding 提示词：**
+
+> 角色：独立 Ark Runtime build-profile 测试审计员，不参与 D5 收集或构造证据。只读审查 D5 指定的 profile manifest 与 artifact ledger。独立重算文件 SHA、commit/tree/blob 与 ancestry；核对 product manifest、component revision、GN action/args、工具链/sysroot、generated/include closure、preprocessed TU 和 binary/image mapping 是否属于同一目标 build。逐字段给出 PASS/FAIL/UNKNOWN、证据和反例；发现错配即列出 D5 可修复的精确缺项并等待重交，不得用兼容版本推定。交付：独立 review JSON、manifest digest、复算命令、字段差异。验收门：G12-PC-1 required fields 全部有同一 profile 的可验证证据，否则维持 BLOCKED。
+
+### D5/T5 通过后的候选专项运行时测试（T6，需先满足 G12-PC-1/3/4）
+
+测试设计固定为 Int32Array Filter callback 将 `this.constructor[Symbol.species]` 改为返回 `new Uint8Array(3)`；parent 观察 index 2 的四字节写越界，fixed 与同类型/边界反例不越界。用隔离构建与 ASan/guarded allocator 记录目标 ByteArray 实际分配边界，并保留精确 build identity、命令、完整输出和 artifact hashes。只有产品 applicability、攻击面/触发/CIA 和授权门闭合后才运行目标产品 PoC；在此前仅允许受控 pinned-source harness 计划，不声称产品影响。
