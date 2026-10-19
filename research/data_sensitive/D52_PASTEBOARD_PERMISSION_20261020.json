@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "task": "D52",
+  "decision": "no_change_preserve_unknown",
+  "baseline": {
+    "scanner_head": "842948084660207fd64399cfd598ed93e5593dcc",
+    "detector": "ohscanner.known_disclosed_cves",
+    "detector_version": "0.18.0",
+    "historical_D50_detector_version": "0.16.0"
+  },
+  "target": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "scope": ".",
+    "source_path": "services/zidl/src/pasteboard_service_stub.cpp",
+    "blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+    "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+  },
+  "current_rule_replay": {
+    "command": "python -c: run_reviewed_detectors(repo, repository, commit, ('.',), registry(KnownDisclosedCveDetector))",
+    "detector_run_status": "blocked",
+    "task_status": "completed_with_limitations",
+    "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+    "selected_source_files": 68,
+    "parse_counts": {
+      "complete": 59,
+      "partial": 8,
+      "not_run": 1
+    },
+    "target_file_parse_status": "partial",
+    "detector_coverage": "partial",
+    "repeat_equal": true,
+    "findings_for_target_rule": [
+      {
+        "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+        "symbol": "CVE-2025-27247",
+        "file": "services/zidl/src/pasteboard_service_stub.cpp",
+        "line": 41,
+        "location_scope": "OnRemoteRequest method entry; not the transaction mapping or data-return statement",
+        "diagnostic_id": "ohscanner.known_disclosed_cves:24600cb387537484",
+        "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+        "assessment": "candidate retained for review; complete authorization boundary unknown"
+      }
+    ],
+    "all_component_findings": 2,
+    "validated_vulnerability": 0,
+    "historical_D50_parse_counts": {
+      "complete": 57,
+      "partial": 10,
+      "not_run": 1
+    }
+  },
+  "source_chain": [
+    {
+      "step": "transaction selector registration",
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+      "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+      "lines": "25-37",
+      "fact": "GET_PASTE_DATA maps to PasteboardServiceStub::OnGetPasteData"
+    },
+    {
+      "step": "Binder request validation and dispatch",
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "lines": "39-63",
+      "fact": "OnRemoteRequest checks interface descriptor, captures calling pid/uid for logging, finds the transaction code, and invokes the mapped member. The descriptor comparison is interface identity validation; no permission/token authorization call is visible in this method."
+    },
+    {
+      "step": "handler to service method",
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "lines": "73-87",
+      "fact": "OnGetPasteData calls GetPasteData(pasteData); on success it serializes the value with reply.WriteParcelable. No in-method permission check is visible."
+    },
+    {
+      "step": "service data lookup",
+      "path": "services/core/src/pasteboard_service.cpp",
+      "blob": "c380ac266a85edd818caa811f11b99722d351788",
+      "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+      "fact": "GetPasteData selects the caller's OS user via GetUserId and returns that user's clip. GetUserId maps IPCSkeleton calling UID to a local OS account; this is user scoping, not an explicit permission decision."
+    },
+    {
+      "step": "interface and caller wrapper",
+      "paths": [
+        "services/core/include/i_pasteboard_service.h",
+        "services/zidl/src/pasteboard_service_proxy.cpp",
+        "framework/innerkits/src/pasteboard_client.cpp"
+      ],
+      "fact": "The interface declares GetPasteData without a permission annotation; the proxy writes the interface token and sends GET_PASTE_DATA. The client wrapper delegates to the proxy."
+    },
+    {
+      "step": "permission helper inventory",
+      "path": "utils/native/src/pasteboard_permission.cpp",
+      "blob": "5e7bf43287374eb21a8200400cbe350e8d234368",
+      "sha256": "b1241967b47b12ffbcc980c4f9514e32406d04b0652ff66fa7f88e4bd29f5761",
+      "fact": "The component contains PasteboardPermission::CheckCallingPermission, but repository-wide permission-reference search found no call from the GET_PASTE_DATA stub, service GetPasteData implementation, proxy, or service registration path."
+    },
+    {
+      "step": "service publication",
+      "path": "services/core/src/pasteboard_service.cpp",
+      "fact": "PasteboardService inherits external SystemAbility and PasteboardServiceStub classes and calls Publish during Init. The full SystemAbility/IPC skeleton enforcement implementation and product-side policy are outside this repository snapshot."
+    }
+  ],
+  "inspected_source_objects": [
+    {
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+      "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+    },
+    {
+      "path": "services/zidl/include/pasteboard_service_stub.h",
+      "blob": "67b267c6e68b8e3bd49c68958d46951c6be76929",
+      "sha256": "d949deeb769a8b96b88d0548b665039c6c3ec9c30d9dc6ff43eefec7ebc256ec"
+    },
+    {
+      "path": "services/core/include/i_pasteboard_service.h",
+      "blob": "1a5b83f314d6188f0b3465a13ac1668cb9933839",
+      "sha256": "ffef3626d4dcd2d0757381e64e652a8a023d352dd59bc9afa20deafb2fd8e3fc"
+    },
+    {
+      "path": "services/zidl/src/pasteboard_service_proxy.cpp",
+      "blob": "679117492f1207fc9aa424899daa143d4df07249",
+      "sha256": "61f66fbbe53a1190ec31a8ff34b41a0d6b3ea28cdea72df8f0d3bc921d21f600"
+    },
+    {
+      "path": "framework/innerkits/src/pasteboard_client.cpp",
+      "blob": "c204c426cff25c7ee637068143ecaaccc98614ec",
+      "sha256": "ace24f733b0f0590c8a3d2b723dc41fda8ea80dfd9cfdf99bcb7d9699c20598a"
+    },
+    {
+      "path": "services/core/src/pasteboard_service.cpp",
+      "blob": "c380ac266a85edd818caa811f11b99722d351788",
+      "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+    },
+    {
+      "path": "utils/native/src/pasteboard_permission.cpp",
+      "blob": "5e7bf43287374eb21a8200400cbe350e8d234368",
+      "sha256": "b1241967b47b12ffbcc980c4f9514e32406d04b0652ff66fa7f88e4bd29f5761"
+    },
+    {
+      "path": "interfaces/declaration/api/@ohos.pasteboard.d.ts",
+      "blob": "19aada1ca1db00fce294eed14e86b06b1af47cb4",
+      "sha256": "7e09e2d56289d62af6255b4a84354bc0b43c8be9fa1937f9715cbece8a64d012"
+    },
+    {
+      "path": "etc/init/pasteboardservice.cfg",
+      "blob": "a44bf3066c8631ecc34db1684019c97439e9e28d",
+      "sha256": "6c7a7da14cd1b8b02da941cd5527d8d97dc37bdd34fed24a03962daa32df6f97"
+    },
+    {
+      "path": "etc/init/pasteboardservice.rc",
+      "blob": "a42e1f47c6735f5ab8dc3ae2575d656dbb2cb0de",
+      "sha256": "0b824b7f1d05a3437b9d3bf83ec8b404c5a26c398347d3c6b87caea5e614675d"
+    }
+  ],
+  "controls": [
+    {
+      "name": "fixed historical D50 source",
+      "source_identity": "Exact pinned old source blob; no trustworthy fixed commit found in shallow local repository history.",
+      "actual": "candidate emitted by current 0.18.0 replay",
+      "status": "candidate_control_only"
+    },
+    {
+      "name": "permission-guarded handler synthetic control",
+      "actual": "no CVE-2025-27247 finding",
+      "status": "pass_synthetic"
+    },
+    {
+      "name": "required-permission sibling synthetic control using VerifyCallingPermission(PERMISSION_READ_PASTEBOARD)",
+      "actual": "no CVE-2025-27247 finding",
+      "status": "pass_synthetic"
+    },
+    {
+      "name": "public-read other selector synthetic control",
+      "actual": "no CVE-2025-27247 finding",
+      "status": "pass_synthetic"
+    },
+    {
+      "name": "metadata-only sibling HAS_PASTE_DATA synthetic control",
+      "actual": "no CVE-2025-27247 finding",
+      "status": "pass_synthetic"
+    },
+    {
+      "name": "different transaction SET_PASTE_DATA synthetic control",
+      "actual": "no CVE-2025-27247 finding",
+      "status": "pass_synthetic"
+    },
+    {
+      "name": "unresolved external skeleton with partial parser state synthetic control",
+      "actual": "candidate retained; run status blocked and limitation says remaining coverage unknown",
+      "status": "pass_unknown_preserved"
+    },
+    {
+      "name": "exact upstream fixed source",
+      "actual": "not available: local source repository history is a single grafted commit and contains no fixed comparison object",
+      "status": "unavailable"
+    }
+  ],
+  "rule_decision": {
+    "code_changed": false,
+    "reason": "The in-component route is source-bound and contains no visible permission decision in the stub/service path, but external SystemAbility/IPC skeleton and product policy may supply an authorization boundary not available in the component repository. This prevents a narrow claim that authorization is wholly absent. Preserve the candidate as unassessed review evidence and retain the full-boundary conclusion as unknown.",
+    "location_precision": "Current _finding offset is the opening brace of OnRemoteRequest (line 41), not the transaction mapping at lines 27-37, dispatch at 54-58, handler at 73-87, or data serialization at 82. Treat line 41 as method-level scope only; do not claim it is the exact vulnerable statement.",
+    "component_candidate": "unassessed; source-level path lacks visible in-component permission check",
+    "authorization_boundary": "unknown",
+    "product_applicability": "unknown",
+    "validated_vulnerability": false
+  },
+  "commands": [
+    "git -C D:/OpenHarmony807/repos/miscservices_pasteboard cat-file -e 'dd22c7cb5e5f207a6c38c50f45b7369ee8575840^{tree}'",
+    "git -C D:/OpenHarmony807/repos/miscservices_pasteboard ls-tree dd22c7cb5e5f207a6c38c50f45b7369ee8575840 services/zidl/src/pasteboard_service_stub.cpp",
+    "git -C D:/OpenHarmony807/repos/miscservices_pasteboard show dd22c7cb5e5f207a6c38c50f45b7369ee8575840:services/zidl/src/pasteboard_service_stub.cpp",
+    "python -c: run_reviewed_detectors over full pinned component at current 0.18.0",
+    "python one-off controls via KnownDisclosedCveTests.run_source",
+    "python -m unittest tests.detectors.test_known_disclosed_cves -q",
+    "git diff --check",
+    "Manual D52 ownership audit against the D52 plan: changed paths are only research/data_sensitive/D52_PASTEBOARD_PERMISSION_20261020.{json,md}; the frozen baseline ownership.json defines no d lane, so check_change_scope is N/A."
+  ],
+  "verification": {
+    "targeted_detector_suite": "21 tests passed",
+    "git_diff_check": "pass",
+    "scope_check": "N/A; baseline ownership.json has no d lane; task-specific allowed paths manually checked",
+    "json_parse": "pass"
+  },
+  "limitations": [
+    "The source commit is an old component snapshot, not a product build manifest or current product binary.",
+    "No exact fixed source commit was present in local shallow history; synthetic fixed controls do not replace one.",
+    "SystemAbility/IPC skeleton implementation and product permission policy are external to the component tree and remain unresolved.",
+    "The target stub file has partial parser status; full component coverage remains partial and the detector run is blocked.",
+    "No runtime exploit, product entry reachability, affected product version, or impact was validated.",
+    "Controls are detector regression fixtures, not independent holdout labels."
+  ]
+}
