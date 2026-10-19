@@ -232,3 +232,5 @@ Boundaries: do not modify detector, tests, fixtures or A0 IDs/statuses; do not i
 ```
 
 T19 completed in branch `codex/a-t19-samgr-test-proxy-20261020`: CR-0227–CR-0230 bind to one test-only `MultiUserProxyRemoteStub::OnRemoteRequest` implementation. Lines 74/76 synthesize `IRemoteObject`/bool replies for real client proxy calls, but do not execute the product `SystemAbilityManagerStub`; no descriptor operation appears. All four remain **PARTIAL**, with original `not_testable` / `paused_pending_evidence` states. See [T19 report](a_t19_samgr_test_proxy_0227_0230_20261020.md) and run [the source verifier](verify_t19_samgr_test_proxy_0227_0230.py).
+
+T20 Contacts independent acceptance is recorded in [its addendum](a_line_parallel_queue_20261020_T20_addendum.md): the rule mechanism passed controls, while the case remains BLOCK for the missing trusted fix and Catalog/production CLI admission. D22 recovered and replayed the exact CVE-2025-26690 upstream pair; see [the D22 addendum](a_line_parallel_queue_20261020_D22_addendum.md). The source differential is now reproducible, but semantic detector coverage and product-context evidence remain partial.
