@@ -339,6 +339,8 @@ D2 的验收说明 `research/methods/ark_runtime/build_profile_20261019/CASE_VS_
 
 **开发—测试当前反馈：** D5 初版 `67bc597cc415c0ea1f0de3cc12a9b8a4fd651e3c` 的 11 项合成自测通过，T5 对该精确 SHA 的 20 项独立 harness 有 18 项符合预期，但发现 manifest HTTPS URL 的 query/fragment digest 只检查格式：任意 64 位值及不可解析 URL 仍会让 intake 被判为 `STRUCTURE_COMPLETE_REQUIRES_INDEPENDENT_REVIEW`，digest 尚未与 evidence-root 中的 manifest 字节绑定。T5 已将失败输入和复现提交给 D5；D5 修复后必须由 T5 在新精确 SHA 重跑该反例及其余 20 项，再决定 intake gate 是否通过。该问题暂不使 `admission_ready` 为 true，但必须修复才能认定结构校验可靠。真实产品字段保持 null，PC-1 不变。
 
+**D5/T5 回归闭环结果：** D5 在 `8f176b7a5d35b58050ff1a062424ea4b5205f151` 将 manifest URI 的 SHA 与 evidence-root 内本地 manifest 字节重算值绑定，并要求 immutable commit 可在本地对象库解析且对象字节与证据文件一致；不访问远程。D5 新 self-test 14/14 通过。T5 对该精确 D5 SHA 独立复测 21/21 通过，包括 URI 摘要不匹配、不可解析 URL/无匹配本地字节、假 commit、路径/权限边界和字段冲突。正例仍只有 `STRUCTURE_COMPLETE_REQUIRES_INDEPENDENT_REVIEW`、`admission_ready=false`。T5 报告 `research/methods/ark_runtime/ibs5yg_profile_gap_20261020/review/intake/T5_D5_INTAKE_GATE_REVIEW_20261020.md` SHA-256 `2fede8aa5fb4f16e6ce4f0ab2e957e87ff8c1f504a2cb3531b67e5470ef694ea`。此门只核结构和证据字节绑定，不证明 URL 可达、issuer 真实、证据含义充分、custody 或产品关联；六项真实产品输入仍 null，PC-1 仍 0/16 `IN_PROGRESS_BLOCKED`。
+
 ### T6 候选专项运行时测试设计（现在可设计；执行需满足对应 case 的 PC-1/3/4）
 
 测试设计固定为 Int32Array Filter callback 将 `this.constructor[Symbol.species]` 改为返回 `new Uint8Array(3)`；parent 观察 index 2 的四字节写越界，fixed 与同类型/边界反例不越界。用隔离构建与 ASan/guarded allocator 记录目标 ByteArray 实际分配边界，并保留精确 build identity、命令、完整输出和 artifact hashes。产品目标 runtime 执行需满足对应 case 的 PC-1 profile、PC-3 入口/影响证据和 PC-4 明确授权；PC-1 其余 15 案仍可阻止 portfolio 整体关闭，但不应抹除 IBS5YG 单案状态。
