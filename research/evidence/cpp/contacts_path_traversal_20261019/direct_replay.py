@@ -72,7 +72,7 @@ def main() -> int:
     }, ensure_ascii=False, indent=2)
     if args.json_out:
         args.json_out.parent.mkdir(parents=True, exist_ok=True)
-        args.json_out.write_text(result + "\n", encoding="utf-8")
+        args.json_out.write_text(result + "\n", encoding="utf-8", newline="\n")
     print(result)
     return 0
 
