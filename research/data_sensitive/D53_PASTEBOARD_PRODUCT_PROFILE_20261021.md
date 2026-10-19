@@ -77,7 +77,7 @@ Commands were read-only against source mirrors; paths are Windows PowerShell pat
 git -C D:\OpenHarmony807\repos\distributeddatamgr_pasteboard rev-parse HEAD 'HEAD^{tree}'
 git -C D:\OpenHarmony807\repos\productdefine_common rev-parse HEAD 'HEAD^{tree}'
 git -C D:\OpenHarmony807\repos\vendor_hihope rev-parse HEAD 'HEAD^{tree}'
-git -C D:\OpenHarmony807\repos\device_hihope rev-parse HEAD 'HEAD^{tree}'
+git -C D:\OpenHarmony807\repos\build rev-parse HEAD 'HEAD^{tree}'
 git -C D:\OpenHarmony807\repos\distributeddatamgr_pasteboard show HEAD:services/core/src/pasteboard_service.cpp
 rg -n 'GetPasteDataInner|VerifyPermission|GetPasteData\(' D:\OpenHarmony807\repos\distributeddatamgr_pasteboard\services\core\src\pasteboard_service.cpp D:\OpenHarmony807\repos\distributeddatamgr_pasteboard\services\IPasteboardService.idl
 rg -n '"component": "pasteboard"' D:\OpenHarmony807\repos\productdefine_common\inherit
