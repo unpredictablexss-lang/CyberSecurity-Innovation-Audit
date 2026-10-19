@@ -1,0 +1,139 @@
+{
+  "schema": "ohscanner.c_t4_ibs5yg_profile_independent_review.v1",
+  "reviewer_lane": "T4 independent evidence acceptance",
+  "review_base": "9c44ab73ad9363a699ccfe3ec268b0eac41a5a87",
+  "case_id": "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG",
+  "expected_source_pair": {
+    "parent": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+    "fix": "919e4fbb011f610427e788889083fa8e28d2f951",
+    "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+  },
+  "review_decision": "BLOCKED",
+  "claims": [
+    {
+      "id": "S1",
+      "claim": "Pinned IBS5YG parent/fix commit, tree, path blob, byte length and source SHA-256 match the existing build-profile manifest.",
+      "status": "PASS",
+      "evidence": [
+        "research/methods/ark_runtime/build_profile_20261019/ark_parent_fix_build_profile_manifest.v1.json (SHA256 E45469A0F6ABFED30797FB58C2CB5B0154B4125C66F82620B52AE88489A27E42)",
+        "D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git local object database"
+      ],
+      "observed": "Parent tree 579712c1ebbb703d17cea422b1572023bed5d8a4; fix tree 82af11ced4297818410ccf61906b703d25b69165. Parent path blob 054451b1be4f39254d56a1683cc9d1c1b5e55018, 150433 bytes, SHA256 847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422. Fix path blob 95f54f2875f401afe3167c62f8c1e7799782be8c, 150509 bytes, SHA256 8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e. Both values recomputed from git cat-file blob output."
+    },
+    {
+      "id": "S2",
+      "claim": "IBS5YG fix descends from the declared parent.",
+      "status": "PASS",
+      "evidence": [
+        "local bare object database commit metadata",
+        "merge-base ancestry command"
+      ],
+      "observed": "The fix commit has parent 2ea501258ab4155826b64f01b499b43d1911e0e2; merge-base --is-ancestor returns exit 0."
+    },
+    {
+      "id": "P1",
+      "claim": "OpenHarmony 5.0.2 runtime component revision 1b23531531e768398682582969c2a9f17e72cafe is a compatible IBS5YG parent/fix product source pin.",
+      "status": "FAIL",
+      "evidence": [
+        "outputs/ark-runtime-isolated-validation-20261018/validation.json (SHA256 B00296C6DB01AB7A4A421EA1BD56E6A1F6C08098DC017F4F61CABB05F19E5D26)",
+        "outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/arkcompiler/ets_runtime/.git/HEAD",
+        "local bare object database commit metadata and ancestry commands"
+      ],
+      "observed": "The isolated validation identifies the exact component revision as 1b23531531e768398682582969c2a9f17e72cafe. Local object metadata identifies it as 'Cherry-Pick 10670 to 5.0.2 Sort', parent aeee3fd12c03193545edea4b8e0fdfa3d9a03d11. Neither IBS5YG parent nor fix is its ancestor (both ancestry checks exit 1). This evidence belongs to Sort/CVE-2025-23420 and cannot stand in for IBS5YG. The product release identity has not been established independently beyond the cached validation record."
+    },
+    {
+      "id": "B1",
+      "claim": "Existing args.gn and GN target evidence are for the exact IBS5YG parent/fix product profile.",
+      "status": "FAIL",
+      "evidence": [
+        "outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/out/rk3568/args.gn (SHA256 84FAC8CED2C9ED71285EB04DAD37D05ACD65D4273BD32254D061F1979F50C262)",
+        "outputs/ark-runtime-isolated-validation-20261018/validation.json (SHA256 B00296C6DB01AB7A4A421EA1BD56E6A1F6C08098DC017F4F61CABB05F19E5D26)",
+        "outputs/ark-runtime-isolated-validation-20261018/README.md (SHA256 09FB420DADC72D2D33C2E3802B6CD0EFE00103A5AB9C495F87E3730929239CC6)"
+      ],
+      "observed": "The args.gn is generated under the rk3568/hihope context and has product_name rk3568, target_cpu arm, debug and ASan settings. The associated validation names CVE-2025-23420 Sort and target ark_js_host_linux_tools_packages (Linux host tools), not the IBS5YG device runtime target. The build log build-fixed-rk3568-hihope.log SHA256 AE9182AE2D773988BAC89EC28C77D8BC74DA1701E1F6F75C79CF0F60F8D375DE records target generation failure ('find component ability_base failed'); no successful Ark Runtime compilation is evidenced."
+    },
+    {
+      "id": "B2",
+      "claim": "Successful target build, compile database, complete include/generated-input closure and preprocessed IBS5YG TU are bound to the target product.",
+      "status": "UNKNOWN",
+      "evidence": [
+        "IBS5YG entry in research/methods/ark_runtime/build_profile_20261019/ark_parent_fix_build_profile_manifest.v1.json",
+        "outputs/ark-runtime-isolated-validation-20261018/validation.json"
+      ],
+      "observed": "IBS5YG manifest fields args_gn, compile_commands_json, include_closure, product_target, compiler/linker/sysroot, macro expansion log and TU outputs are null/empty; preprocess status NOT_RUN and both profile statuses BLOCKED. The Sort artifact is an unsuccessful host-tools attempt and cannot fill these fields."
+    },
+    {
+      "id": "B3",
+      "claim": "IBS5YG source revision is mapped to a shipped 5.0.2 device binary/image with a verified artifact hash.",
+      "status": "UNKNOWN",
+      "evidence": [
+        "IBS5YG manifest product_association and blockers",
+        "isolated validation.json validation.binary_or_image_sha256"
+      ],
+      "observed": "No IBS5YG-matched binary/image or source-to-binary mapping is supplied. The unrelated Sort validation explicitly records no binary/image hash and product correspondence unknown."
+    },
+    {
+      "id": "C1",
+      "claim": "The local official Git object database is an independently authenticated official upstream custody source.",
+      "status": "UNKNOWN",
+      "evidence": [
+        "local bare repository remote configuration: https://gitee.com/openharmony/arkcompiler_ets_runtime.git"
+      ],
+      "observed": "Object checks are reproducible against this local store. Its configured origin is self-reported; no independent acquisition, signature, custody, or remote state verification is included in this audit."
+    }
+  ],
+  "final_disposition": {
+    "profile_status": "BLOCKED",
+    "reason": "The only identified 5.0.2 build profile is for a different Sort case/component revision and a failed Linux host-tools target attempt. IBS5YG lacks exact product args/GN target, successful build, compiler/toolchain, compile database/include closure, preprocessed TU, and shipped-binary mapping.",
+    "pc1_closed": false,
+    "source_pair_identity_alone_is_sufficient": false
+  },
+  "reproducible_commands": [
+    "git --git-dir=D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git show -s --format='%H%n%T%n%P%n%s' 2ea501258ab4155826b64f01b499b43d1911e0e2",
+    "git --git-dir=D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git show -s --format='%H%n%T%n%P%n%s' 919e4fbb011f610427e788889083fa8e28d2f951",
+    "git --git-dir=D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git ls-tree 2ea501258ab4155826b64f01b499b43d1911e0e2 ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "git --git-dir=D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git ls-tree 919e4fbb011f610427e788889083fa8e28d2f951 ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "git --git-dir=D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git merge-base --is-ancestor 2ea501258ab4155826b64f01b499b43d1911e0e2 919e4fbb011f610427e788889083fa8e28d2f951",
+    "git --git-dir=D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git merge-base --is-ancestor 2ea501258ab4155826b64f01b499b43d1911e0e2 1b23531531e768398682582969c2a9f17e72cafe",
+    "git --git-dir=D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git merge-base --is-ancestor 919e4fbb011f610427e788889083fa8e28d2f951 1b23531531e768398682582969c2a9f17e72cafe",
+    "python -c \"import subprocess,hashlib; g=r'D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git'; ids=['054451b1be4f39254d56a1683cc9d1c1b5e55018','95f54f2875f401afe3167c62f8c1e7799782be8c']; [print(x,len(b:=subprocess.check_output(['git',f'--git-dir={g}','cat-file','blob',x])),hashlib.sha256(b).hexdigest()) for x in ids]\"",
+    "Get-FileHash <artifact-path> -Algorithm SHA256"
+  ],
+  "review_limits": [
+    "No network fetch was used. The object store custody/authenticity is not independently established.",
+    "The audit checks evidence identity and binding, not product vulnerability, exploitability, severity or safety.",
+    "D4 evidence matrix and README were reviewed by exact SHA; the matrix remains BLOCKED and does not close PC-1."
+  ],
+  "d4_matrix_review": {
+    "matrix_path": "D:/openHarmonyScanner/worktrees/c-d4-ibs5yg-profile-gap-20261020/research/methods/ark_runtime/ibs5yg_profile_gap_20261020/evidence_matrix.json",
+    "matrix_sha256": "9c418aed98045a0bf9b16170552c2df7cdb11a8261da59700b7093899d669815",
+    "readme_sha256": "035ce9d25172f1afe47e35f70e213226d6b0dea56ff263619046c208731b0460",
+    "matrix_hash_recomputed": true,
+    "readme_hash_recomputed": true,
+    "evidence_path_hashes_checked": 14,
+    "evidence_path_hash_mismatches": 0,
+    "claim_results": {
+      "source_pair_commit_tree_blob_byte_length_sha256": "PASS",
+      "parent_to_fix_ancestry": "PASS",
+      "IBS5YG_exact_product_component_pin": "UNKNOWN; unrelated 1b235 Sort pin excluded",
+      "5_0_2_args_gn_and_target_binding": "FAIL for IBS5YG; evidence belongs to Sort host-tools trial",
+      "successful_build_compile_db_include_closure_preprocessed_tu": "UNKNOWN or missing; profile remains BLOCKED",
+      "shipped_binary_source_mapping": "UNKNOWN or missing",
+      "object_store_custody_and_authenticity": "UNKNOWN; local origin self-reported"
+    },
+    "feedback_resolution": "An incorrect 65-character SHA-256 for build-fixed-first.log was reported to D4; the corrected 64-character SHA is in the final matrix and matches the artifact. The component-revision field was narrowed to UNKNOWN for the unpinned IBS5YG product, while the Sort 1b235 candidate is excluded as a substitute.",
+    "reproducible_rechecks": [
+      "Get-FileHash <D4 evidence_matrix.json> -Algorithm SHA256",
+      "Get-FileHash <D4 README.md> -Algorithm SHA256",
+      "Python hashlib.sha256 over all evidence[].path entries in D4 evidence_matrix.json",
+      "Test-Path <5.0.2 out/rk3568/build.ninja>",
+      "Test-Path <5.0.2 out/rk3568/compile_commands.json>",
+      "Get-ChildItem <5.0.2 out/rk3568> -Recurse -File | Where-Object { $_.Extension -in @('.i','.ii','.o','.a','.so','.elf','.img','.bin','.abc') } | Measure-Object"
+    ],
+    "observed_build_artifact_checks": {
+      "build_ninja": false,
+      "compile_commands_json": false,
+      "listed_compiled_artifact_count": 0
+    }
+  }
+}
