@@ -247,3 +247,21 @@ manifest 字段齐全的 6 案仅表示 source identity 字段被填写。只读
 ## 持续执行目标
 
 持续目标为：在同一可审计冻结身份下，让每条 Ark Runtime 规则经过“静态候选 → 独立反例验收 → source/build profile → 第二层逐案审查 → 产品适用性 → 授权动态验证/修复复验”的闭环；逐案更新唯一状态表与任务树。每轮至少推进一个具体 blocker，或留下带 owner、证据请求和下一验收命令的明确阻塞记录。候选数、单测通过、零 findings、自测或 LLM 自信都不能单独关闭任务或提升准入。
+
+## 独立二层复核反馈与下一轮任务（2026-10-20）
+
+### D1/T1 第二轮：绑定真实上游源码，测试先行
+
+独立复核认为 D1 候选/固定控制/unknown 的分层总体清楚，detector binding 仍校验 repository、commit、path、blob、SHA、profile 与 parse 状态；但 `test_c12_native_inline_exact_rule.py` 的新增控制主要由归一化合成片段生成，未直接以绑定的 upstream parent/fix 原始 blob 回放。因此 37/37 是局部规则回归，不是来源精度或产品适用性证据。T1 现正补真实 parent/fix blob 重放与身份/触发位置断言，并针对语义核实后的否定比较、分支反转、StateDepend 交换等形态增添负例；D1 等待 T1 给出可复现反例后再决定最小修复，保持互相反馈。任何 API 语义未经 pinned source/API 确认前不得规定 expected classification。
+
+### D2/T2 第二轮：拆分记录完整性与环境复现
+
+D2 的 profile `--verify-only` 会重建当前 checkout/主机上的整个 payload，包含工作树身份、绝对路径、当前源码、Python/parser 和 Git 工具指纹，再与历史 SHA 比较；因此它是环境复现比较，不是跨环境的稳定记录完整性验证。D2 正设计分离两种操作：对存档 payload 做 canonical bytes/hash 的可移植完整性检查；对预期环境身份执行明确的复现/漂移比较。新增验证只证明记录字节一致性或环境吻合，不能证明官方 Git 对象、产品 profile 或 PC-1 闭合。PC-1 仍需 16/16 产品 build/preprocess profile。
+
+### C12 CFG 元数据消费者缺口
+
+运行时复核发现 `runtime_ir.py` 生成 `loop_backedges`，现有 `test_c12_deep_semantics.py` 只检查配对数量与解析限制；8429480 分析路径未消费该 metadata，循环处理仍用 `graph.cyclic_nodes`。因此只能声称“记录并审计指定 LoopEnd→LoopBegin 配对”，不能声称 metadata 已改善 detector reachability 或 finding。下一轮需单独设计 D3/T3：D3 要么将 backedge 关联接入一个真实 observation 并以正/修/安/unknown 对照证明变化，要么明确维持 instrumentation-only；T3 独立增加可复现的行为断言。没有 observation 层差异则不合并声称检测能力提升。
+
+### 产品证据优先级
+
+在产品 profile 阶段，优先追踪 IBS5YG TypedArray Filter pair（parent `2ea5012…`，fix `919e4fb…`），因为现有记录提供了明确 parent/fix 语义且 source identity 字段完整。顺序为：只读 official Ark Git object store 的 commit/tree/blob/SHA 验真 → 锁定具体产品版本和 GN/build/toolchain/include/preprocess/TU 产物并映射 shipped binary → 同 profile parent/fix regression 与安全控制 → 入口/权限/攻击者输入/触发/CIA 证据 → 授权隔离 PoC 与 fixed-product 重验。C4/C8/C12 的不同身份回放不能替代这条证据链；任何依赖缺失时保持 unknown/blocked。
