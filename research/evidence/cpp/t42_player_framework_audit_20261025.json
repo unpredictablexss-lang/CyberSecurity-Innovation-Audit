@@ -1,0 +1,2228 @@
+{
+  "schema_version": 1,
+  "audit_id": "T42",
+  "purpose": "Independent current-production IPC CLI replay and source/proxy/authorization review for A0 CR-0174 through CR-0196; not vulnerability confirmation.",
+  "scanner_checkout_base": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+  "scanner_baseline": "3ce72e3bcbd0bb534a4daab1bd16fa08bf30bc7e",
+  "repository": "openharmony/multimedia_player_framework",
+  "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+  "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+  "queue_file": "research/deliveries/cpp/a0_triage_20261019/queue.csv",
+  "a0_row_count": 23,
+  "a0_original_status_counts": {
+    "not_testable": 23
+  },
+  "a0_queue_status_counts": {
+    "paused_pending_evidence": 23
+  },
+  "cli": {
+    "command": "python -m src.cli.main ohscan-run --repo-dir D:/openHarmonyScanner/tmp/t42-player-framework-source-20261025 --repository openharmony/multimedia_player_framework --commit 71ab1e0881e0a79f2b9528742677467e7bb8dde5 --include <each of the 11 unique A0 paths> --detector ohscanner.interface.ipc --json-out research/evidence/cpp/t42_player_framework_cli_20261025.json --md-out research/evidence/cpp/t42_player_framework_cli_20261025.md",
+    "json": "research/evidence/cpp/t42_player_framework_cli_20261025.json",
+    "json_sha256": "7a69519ac0be6aa08fef13d8be3055dc36cfecb046e178a0861ec586f1a62cd6",
+    "status": "completed_with_limitations",
+    "profile_id": "light-ast",
+    "detector_version": "0.12.12",
+    "diagnostic_count": 24,
+    "validated_vulnerability": 0,
+    "parse_counts": {
+      "complete": 1,
+      "partial": 10
+    },
+    "coverage": {
+      "scope_mode": "per_file",
+      "status": "partial",
+      "applicable_files": 11,
+      "analyzed_files": [
+        "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp"
+      ],
+      "partially_inspected_files": [
+        "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+        "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+        "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+        "services/services/media_source/ipc/media_source_loader_stub.cpp",
+        "services/services/player/ipc/player_listener_stub.cpp",
+        "services/services/player/ipc/player_service_stub.cpp",
+        "services/services/recorder/ipc/recorder_service_stub.cpp",
+        "services/services/screen_capture_monitor/ipc/screen_capture_monitor_service_stub.cpp",
+        "services/services/transcoder/ipc/transcoder_listener_stub.cpp",
+        "services/services/transcoder/ipc/transcoder_service_stub.cpp"
+      ],
+      "source_sha256": {
+        "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af",
+        "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp": "275ab05c4c017d1b0a583ace2b08d87c327e9d61ca6ffb7b403cd41266ebbe5a",
+        "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp": "56428347857ecd879c68a1d8551efeddbe1d8a2453a971365bc38d20de37b273",
+        "services/services/media_source/ipc/media_source_loader_stub.cpp": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed",
+        "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp": "0e0292b7e4c28d6d3b63accd8e10f053b224849ebf74edf4f9011318e47d540c",
+        "services/services/player/ipc/player_listener_stub.cpp": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+        "services/services/player/ipc/player_service_stub.cpp": "479d554f58f059143ce595521d6c6e40f832b6b49b673ba836cf363ce09de746",
+        "services/services/recorder/ipc/recorder_service_stub.cpp": "30ca38f8cb2372ed82bb666714593a629dc929bc67c5b4c21edc5bf3ed2f84ad",
+        "services/services/screen_capture_monitor/ipc/screen_capture_monitor_service_stub.cpp": "17e35cd20fdfe6bdff9710244067b1f18b994c476e89816d4cf0b6accf2aa196",
+        "services/services/transcoder/ipc/transcoder_listener_stub.cpp": "7b53294897ae58d20c047c705f62b1d7ad45d8140bbbf5a0db455ecf409c65fd",
+        "services/services/transcoder/ipc/transcoder_service_stub.cpp": "4dc2a6b1513194f574d5bb8920d056fd95701a6a32b2d5e8bd4e8b9d626ee452"
+      },
+      "unexamined": [
+        {
+          "file": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+          "parse_status": "partial",
+          "reason": "detector_model_incomplete",
+          "analysis_status": "partial"
+        },
+        {
+          "file": "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+          "parse_status": "partial",
+          "reason": "detector_model_incomplete",
+          "analysis_status": "partial"
+        },
+        {
+          "file": "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+          "parse_status": "partial",
+          "reason": "detector_model_incomplete",
+          "analysis_status": "partial"
+        },
+        {
+          "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+          "parse_status": "partial",
+          "reason": "detector_model_incomplete",
+          "analysis_status": "partial"
+        },
+        {
+          "file": "services/services/player/ipc/player_listener_stub.cpp",
+          "parse_status": "partial",
+          "reason": "detector_model_incomplete",
+          "analysis_status": "partial"
+        },
+        {
+          "file": "services/services/player/ipc/player_service_stub.cpp",
+          "parse_status": "partial",
+          "reason": "detector_model_incomplete",
+          "analysis_status": "partial"
+        },
+        {
+          "file": "services/services/recorder/ipc/recorder_service_stub.cpp",
+          "parse_status": "partial",
+          "reason": "detector_model_incomplete",
+          "analysis_status": "partial"
+        },
+        {
+          "file": "services/services/screen_capture_monitor/ipc/screen_capture_monitor_service_stub.cpp",
+          "parse_status": "partial",
+          "reason": "detector_model_incomplete",
+          "analysis_status": "partial"
+        },
+        {
+          "file": "services/services/transcoder/ipc/transcoder_listener_stub.cpp",
+          "parse_status": "partial",
+          "reason": "detector_model_incomplete",
+          "analysis_status": "partial"
+        },
+        {
+          "file": "services/services/transcoder/ipc/transcoder_service_stub.cpp",
+          "parse_status": "partial",
+          "reason": "detector_model_incomplete",
+          "analysis_status": "partial"
+        }
+      ],
+      "inspected_files": [
+        "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+        "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+        "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+        "services/services/media_source/ipc/media_source_loader_stub.cpp",
+        "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp",
+        "services/services/player/ipc/player_listener_stub.cpp",
+        "services/services/player/ipc/player_service_stub.cpp",
+        "services/services/recorder/ipc/recorder_service_stub.cpp",
+        "services/services/screen_capture_monitor/ipc/screen_capture_monitor_service_stub.cpp",
+        "services/services/transcoder/ipc/transcoder_listener_stub.cpp",
+        "services/services/transcoder/ipc/transcoder_service_stub.cpp"
+      ],
+      "not_analyzed_files": [],
+      "coverage_counts": {
+        "complete": 1,
+        "partial": 10,
+        "not_analyzed": 0,
+        "failed": 0
+      },
+      "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+      "evidence_obligations": [
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:69862a19b285f208",
+          "file": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+          "source_sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+            "source_sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:0a18d344f489fdb7",
+          "file": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+          "source_sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+            "source_sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:f4a4d04093c25644",
+          "file": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+          "source_sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+            "source_sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:43e8a27f1a7e651f",
+          "file": "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+          "source_sha256": "275ab05c4c017d1b0a583ace2b08d87c327e9d61ca6ffb7b403cd41266ebbe5a",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+            "source_sha256": "275ab05c4c017d1b0a583ace2b08d87c327e9d61ca6ffb7b403cd41266ebbe5a"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:8ceef15520c9e709",
+          "file": "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+          "source_sha256": "275ab05c4c017d1b0a583ace2b08d87c327e9d61ca6ffb7b403cd41266ebbe5a",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+            "source_sha256": "275ab05c4c017d1b0a583ace2b08d87c327e9d61ca6ffb7b403cd41266ebbe5a"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:e0c83313013ccb3a",
+          "file": "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+          "source_sha256": "56428347857ecd879c68a1d8551efeddbe1d8a2453a971365bc38d20de37b273",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+            "source_sha256": "56428347857ecd879c68a1d8551efeddbe1d8a2453a971365bc38d20de37b273"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:1a9ffa86a5eac23f",
+          "file": "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+          "source_sha256": "56428347857ecd879c68a1d8551efeddbe1d8a2453a971365bc38d20de37b273",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+            "source_sha256": "56428347857ecd879c68a1d8551efeddbe1d8a2453a971365bc38d20de37b273"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:2e6de3ec8ffac2ad",
+          "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+          "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+            "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:102652a18e89ee97",
+          "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+          "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+            "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:0e0126085ac28c6a",
+          "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+          "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+            "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:3424715ce64ebb61",
+          "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+          "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+            "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:c373dccca3e20e34",
+          "file": "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp",
+          "source_sha256": "0e0292b7e4c28d6d3b63accd8e10f053b224849ebf74edf4f9011318e47d540c",
+          "analysis_status": "analyzed",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp",
+            "source_sha256": "0e0292b7e4c28d6d3b63accd8e10f053b224849ebf74edf4f9011318e47d540c"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:fc5957497aa904dc",
+          "file": "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp",
+          "source_sha256": "0e0292b7e4c28d6d3b63accd8e10f053b224849ebf74edf4f9011318e47d540c",
+          "analysis_status": "analyzed",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp",
+            "source_sha256": "0e0292b7e4c28d6d3b63accd8e10f053b224849ebf74edf4f9011318e47d540c"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:e7bc1e6ffa196304",
+          "file": "services/services/player/ipc/player_listener_stub.cpp",
+          "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/player/ipc/player_listener_stub.cpp",
+            "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:2554eaead15d2b8f",
+          "file": "services/services/player/ipc/player_listener_stub.cpp",
+          "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/player/ipc/player_listener_stub.cpp",
+            "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:21b90abae1437824",
+          "file": "services/services/player/ipc/player_listener_stub.cpp",
+          "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/player/ipc/player_listener_stub.cpp",
+            "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:fcbf595a7d61885c",
+          "file": "services/services/player/ipc/player_listener_stub.cpp",
+          "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/player/ipc/player_listener_stub.cpp",
+            "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:59ec084f0a008f99",
+          "file": "services/services/player/ipc/player_service_stub.cpp",
+          "source_sha256": "479d554f58f059143ce595521d6c6e40f832b6b49b673ba836cf363ce09de746",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/player/ipc/player_service_stub.cpp",
+            "source_sha256": "479d554f58f059143ce595521d6c6e40f832b6b49b673ba836cf363ce09de746"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:08c6ca5648a924bf",
+          "file": "services/services/recorder/ipc/recorder_service_stub.cpp",
+          "source_sha256": "30ca38f8cb2372ed82bb666714593a629dc929bc67c5b4c21edc5bf3ed2f84ad",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/recorder/ipc/recorder_service_stub.cpp",
+            "source_sha256": "30ca38f8cb2372ed82bb666714593a629dc929bc67c5b4c21edc5bf3ed2f84ad"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:4234f4766d6495bb",
+          "file": "services/services/recorder/ipc/recorder_service_stub.cpp",
+          "source_sha256": "30ca38f8cb2372ed82bb666714593a629dc929bc67c5b4c21edc5bf3ed2f84ad",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/recorder/ipc/recorder_service_stub.cpp",
+            "source_sha256": "30ca38f8cb2372ed82bb666714593a629dc929bc67c5b4c21edc5bf3ed2f84ad"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:c19cba72a935afd6",
+          "file": "services/services/screen_capture_monitor/ipc/screen_capture_monitor_service_stub.cpp",
+          "source_sha256": "17e35cd20fdfe6bdff9710244067b1f18b994c476e89816d4cf0b6accf2aa196",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/screen_capture_monitor/ipc/screen_capture_monitor_service_stub.cpp",
+            "source_sha256": "17e35cd20fdfe6bdff9710244067b1f18b994c476e89816d4cf0b6accf2aa196"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:fe6d4c1e8570773c",
+          "file": "services/services/transcoder/ipc/transcoder_listener_stub.cpp",
+          "source_sha256": "7b53294897ae58d20c047c705f62b1d7ad45d8140bbbf5a0db455ecf409c65fd",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/transcoder/ipc/transcoder_listener_stub.cpp",
+            "source_sha256": "7b53294897ae58d20c047c705f62b1d7ad45d8140bbbf5a0db455ecf409c65fd"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:7c9a7ed28819d20d",
+          "file": "services/services/transcoder/ipc/transcoder_listener_stub.cpp",
+          "source_sha256": "7b53294897ae58d20c047c705f62b1d7ad45d8140bbbf5a0db455ecf409c65fd",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/transcoder/ipc/transcoder_listener_stub.cpp",
+            "source_sha256": "7b53294897ae58d20c047c705f62b1d7ad45d8140bbbf5a0db455ecf409c65fd"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:81789eae6b5ac2b7",
+          "file": "services/services/transcoder/ipc/transcoder_service_stub.cpp",
+          "source_sha256": "4dc2a6b1513194f574d5bb8920d056fd95701a6a32b2d5e8bd4e8b9d626ee452",
+          "analysis_status": "partial",
+          "source_binding": {
+            "repository": "openharmony/multimedia_player_framework",
+            "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+            "snapshot_sha256": "8e110aa2716aca406ef311967f5d8135075ac7160ab6c3516ed6b18c95e326d9",
+            "profile_id": "light-ast",
+            "detector_id": "ohscanner.interface.ipc",
+            "detector_version": "0.12.12",
+            "rule_id": "ipc.relay.descriptor-boundary",
+            "file": "services/services/transcoder/ipc/transcoder_service_stub.cpp",
+            "source_sha256": "4dc2a6b1513194f574d5bb8920d056fd95701a6a32b2d5e8bd4e8b9d626ee452"
+          },
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "model_version": "oh-ipc-2026.10-v32",
+          "obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "parse_completeness_impact",
+              "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+              "status": "unknown"
+            }
+          ]
+        }
+      ]
+    },
+    "a0_exact_position_hits": 23,
+    "out_of_group_diagnostics": [
+      {
+        "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+        "line": 86,
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "diagnostic_id": "ohscanner.interface.ipc:3424715ce64ebb61"
+      }
+    ]
+  },
+  "source_review": {
+    "macro_guard": {
+      "path": "services/utils/include/media_log.h",
+      "evidence": "CHECK_AND_RETURN_RET_LOG expands to if (!(cond)) { MEDIA_LOGE(...); return ret; } while (0). All 23 A0 dispatcher positions occur after ReadInterfaceToken and a Stub::GetDescriptor() == remoteDescriptor check using this macro, before the transaction switch/map dispatch.",
+      "assessment": "The specific missing interface-descriptor check claim is contradicted by the exact source and macro definition. This is strong static counterevidence to the rule root, but does not establish overall product safety or caller policy."
+    },
+    "transaction_and_policy": {
+      "callback_stubs": {
+        "files": [
+          "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+          "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+          "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+          "services/services/media_source/ipc/media_source_loader_stub.cpp",
+          "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp",
+          "services/services/player/ipc/player_listener_stub.cpp",
+          "services/services/transcoder/ipc/transcoder_listener_stub.cpp"
+        ],
+        "transaction_flow": "Proxy methods construct MessageParcel, write their interface token, then call SendRequest with a transaction code. The paired Stub reads that token before dispatching its callback/request cases. Listener/PCM/helper/LPP callbacks flow from media_service toward a remote callback object; MediaSourceLoader transactions are the loader-request direction and may carry the caller-supplied IStandardMediaSourceLoadingRequest remote object on INIT.",
+        "authorization": "No per-callback caller AccessToken/permission check was established in these receiver methods. Their process/object reachability depends on who owns or receives the IRemoteObject and on conditional media_client feature inclusion; the source alone does not establish an attacker-controlled remote reference.",
+        "classification": "client-side or callback capability receivers; not independent SA registration points"
+      },
+      "player_service": {
+        "files": [
+          "services/services/player/ipc/player_service_stub.cpp"
+        ],
+        "transaction_flow": "PlayerServiceProxy writes its interface token and sends transaction codes to PlayerServiceStub; the stub dispatches a code-indexed member-function map, reads/writes Parcel values and enqueues the member function. Callback references are separately set through listener-object transactions.",
+        "authorization": "OnRemoteRequest contains the descriptor guard and freeze/unfreeze handling, and captures calling UID/PID in service state. No caller-token VerifyAccessToken check is present in the reviewed dispatch function. Effective IPC/SA policy and product exposure remain unknown.",
+        "classification": "service-side IPC stub compiled conditionally into media_service"
+      },
+      "recorder_service": {
+        "files": [
+          "services/services/recorder/ipc/recorder_service_stub.cpp"
+        ],
+        "transaction_flow": "RecorderServiceProxy sends code plus Parcel values to RecorderServiceStub; the stub checks the interface descriptor, then resolves code through AUDIO_REQUEST/COMMON_REQUEST and recFuncs_.",
+        "authorization": "For AUDIO_REQUEST and (after audio permission was requested) COMMON_REQUEST, CheckPermission uses IPCSkeleton::GetCallingTokenID and AccessTokenKit::VerifyAccessToken; denied requests return MSERR_NO_PERMISSION_5400102 before member dispatch. Other requests intentionally bypass this local audio permission branch. Product policy/configuration still needs verification.",
+        "classification": "service-side IPC stub compiled conditionally into media_service"
+      },
+      "screen_capture_monitor": {
+        "files": [
+          "services/services/screen_capture_monitor/ipc/screen_capture_monitor_service_stub.cpp"
+        ],
+        "transaction_flow": "ScreenCaptureMonitorServiceProxy sends code/Parcel to a member-function map; handlers can install/remove a listener callback or query monitor state. The reviewed dispatch has an interface descriptor check.",
+        "authorization": "No explicit per-call AccessToken guard was found in this OnRemoteRequest path. The service init config declares CAPTURE_SCREEN and permission_acls, but that process/SA declaration alone does not prove caller policy for each method, product installation, or reachability.",
+        "classification": "service-side IPC stub compiled conditionally into media_service"
+      },
+      "transcoder_service": {
+        "files": [
+          "services/services/transcoder/ipc/transcoder_service_stub.cpp"
+        ],
+        "transaction_flow": "TransCoderServiceProxy writes the interface token and sends transaction code/Parcel data to a code-indexed member-function map; selected handlers may return data in reply.",
+        "authorization": "The service records calling PID/UID in reviewed code, but no caller permission verification appears in OnRemoteRequest. Whether other service state, SA policy or product configuration constrains callers remains unknown.",
+        "classification": "service-side IPC stub compiled conditionally into media_service"
+      }
+    },
+    "service_registration_and_build": {
+      "server_sources": "The player, recorder, screen_capture_monitor and transcoder service stub translation units are listed conditionally in services/services/BUILD.gn's media_service target. Callback/client-side stubs are listed conditionally in interfaces/inner_api/native/BUILD.gn's installable media_client target. These establish build capability in the component source, not inclusion in a particular product image.",
+      "service_assembly": "services/BUILD.gn includes media_service in media_services_package; bundle.json declares that package. services/etc/BUILD.gn selects normal versus on-demand process/SA-profile files based on player_framework_enable_start_stop_on_demand; service profile identifies SA 3002/media_service.",
+      "process_policy": "services/etc/media_service.cfg declares the media_service UID/GIDs, service permissions and CAPTURE_SCREEN ACL. This is process/SA configuration; it does not alone prove an IPC-level caller policy for every transaction or a concrete product build selection.",
+      "unknowns": [
+        "product/device manifest selecting this part and relevant feature flags",
+        "runtime SA registration/profile and service start mode for the target product",
+        "effective Binder/IPC caller policy and token type for the exposed endpoints",
+        "who receives callback/listener remote-object capabilities and whether an untrusted app can obtain them",
+        "target-version runtime behavior and security impact"
+      ]
+    },
+    "disposition": "The IPC CLI replay reproduces A0 candidate positions, but exact source guards contradict the cited descriptor-missing root. Since the run is parser-partial (10/11 files) and product/entry/permission/configuration are not bound, record PARTIAL/BLOCK rather than confirming vulnerability or deleting/promoting A0 candidates."
+  },
+  "supporting_sources": {
+    "bundle.json": {
+      "blob": "c928a0df5ffb77bc4b9c5ffb37953869f35eaf74",
+      "sha256": "938bb4260e2297566b3e6cdb249afca4ef61bc70f1796bd44b96aa429d6914f1",
+      "size_bytes": 11231
+    },
+    "interfaces/inner_api/native/BUILD.gn": {
+      "blob": "c986c5a3774053f3f6a24e8619feedde9196375c",
+      "sha256": "b37a55a1abca5c6d4500ff4f2cfe0371c1387a1b1c986c02211ae46f4b24ab24",
+      "size_bytes": 14024
+    },
+    "services/BUILD.gn": {
+      "blob": "f2d6c547b774af61df9e1854379c542e43304e45",
+      "sha256": "54454aa6ce6e3908304cf527eb13fb1515cd9b76738541c5d76888a3a61b161e",
+      "size_bytes": 1851
+    },
+    "services/etc/3002.json": {
+      "blob": "3c72b4a93e10de606c7dfce550ebba8f9c5e7303",
+      "sha256": "203e5754a39e129744c3c375ab552f569ab6e7181cc9c763297d900a5a124c86",
+      "size_bytes": 255
+    },
+    "services/etc/BUILD.gn": {
+      "blob": "78c2cb0ff0469411bba111d6a62b53ef851d8d1f",
+      "sha256": "235147ed690255b5cab78f9fa11b44d9d60dedd855cf724072793f98e323be71",
+      "size_bytes": 2968
+    },
+    "services/etc/media_service.cfg": {
+      "blob": "c1e47187cd5fce4bd2b6f470267ac8b7e5f97f15",
+      "sha256": "5b3e4d06aae0fcdcc2f439f3a6d4ec60b4c82695fade1af893883050d42fd53e",
+      "size_bytes": 1449
+    },
+    "services/etc/on_demand/3002.json": {
+      "blob": "c37169bee8a83040938534b594c4e3e5dbbc8aed",
+      "sha256": "d1fe7d7b15c7099746d986c0a481bd37946ac4ac6ff8e6383f1fa71423ea5bbc",
+      "size_bytes": 626
+    },
+    "services/etc/on_demand/media_service.cfg": {
+      "blob": "10b87b3ad8c98a902f03cc340168c633ea8e1fa1",
+      "sha256": "d02748bc83638defa103227d42eec0f3ed88316e3df8a4f7b7b3388575ec635a",
+      "size_bytes": 1131
+    },
+    "services/services/BUILD.gn": {
+      "blob": "599fa852682028fb77ecfe7c11414964be9418e9",
+      "sha256": "f02ce851066850c986a3410c23f537f1c04ca3011fe2dc590419a7e0b066fed4",
+      "size_bytes": 12899
+    },
+    "services/services/avmetadatahelper/ipc/helper_listener_proxy.cpp": {
+      "blob": "b968ddaa760d61d634ecc46cc30938b978f71aad",
+      "sha256": "fbf4c1a2ce90bf9b014e86aaf7c705c02f75d1944309e69e9e2b8e99ea5703b7",
+      "size_bytes": 5173
+    },
+    "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp": {
+      "blob": "4ba971bc47e269607a7ace05ba6599f9716fb9e6",
+      "sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af",
+      "size_bytes": 4810
+    },
+    "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_proxy.cpp": {
+      "blob": "81202dfe5a2308b1cb7186789379baa707cb1f91",
+      "sha256": "d9ff455d2b1784c2ea7912d6a4fd8af94c7ae33012e6703f1cf8d42774aedb79",
+      "size_bytes": 3448
+    },
+    "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp": {
+      "blob": "e130c8835343f8d9df265bde1c23a6ae86bf0590",
+      "sha256": "275ab05c4c017d1b0a583ace2b08d87c327e9d61ca6ffb7b403cd41266ebbe5a",
+      "size_bytes": 3390
+    },
+    "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_proxy.cpp": {
+      "blob": "b1afcb1acba386265a8fad86fc6eb38342e966c4",
+      "sha256": "c7a0c4c7a0847b3277e8d8e8178132cf4ca53dbae27afb5a357b61f2676c0207",
+      "size_bytes": 3448
+    },
+    "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp": {
+      "blob": "87b2bb47fa59ecf6453db6a25b96208974269a6e",
+      "sha256": "56428347857ecd879c68a1d8551efeddbe1d8a2453a971365bc38d20de37b273",
+      "size_bytes": 3358
+    },
+    "services/services/media_source/ipc/media_source_loader_proxy.cpp": {
+      "blob": "d781db54db957ee7193075a83d9f81a9a4595e0f",
+      "sha256": "850b94b9d1513a19156a1f687a94d6b31fcfbd0664d0bbf009150b75587fcec0",
+      "size_bytes": 6906
+    },
+    "services/services/media_source/ipc/media_source_loader_stub.cpp": {
+      "blob": "119887d6560d10115f817e9ddacbc17e971050c5",
+      "sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed",
+      "size_bytes": 5831
+    },
+    "services/services/pcm_output/ipc/pcm_output_callback_proxy.cpp": {
+      "blob": "f82e7d583288b90a80b3a182b94b4a3bc620709d",
+      "sha256": "9369b5df84aa5fd972c591f9a01897d0d7cc4d16f0ebf25c78ea5876d14aec65",
+      "size_bytes": 3406
+    },
+    "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp": {
+      "blob": "f100ad0af6c2d8f889b5424e4ba5e710b595f399",
+      "sha256": "0e0292b7e4c28d6d3b63accd8e10f053b224849ebf74edf4f9011318e47d540c",
+      "size_bytes": 3503
+    },
+    "services/services/player/ipc/player_listener_proxy.cpp": {
+      "blob": "b2a8bd75902d838ca1ccb32233e790e949d679f2",
+      "sha256": "fd91eb5bd959a40b171aea48846123d302d187e91706b5553b6cac2b5a5b9710",
+      "size_bytes": 5043
+    },
+    "services/services/player/ipc/player_listener_stub.cpp": {
+      "blob": "f1e35bca24172ade9b33d5262d923334f7301e08",
+      "sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+      "size_bytes": 5436
+    },
+    "services/services/player/ipc/player_service_proxy.cpp": {
+      "blob": "fa540274603849862076c19b2a1c7723d8890c63",
+      "sha256": "3e9e5e573dc7177e82346758dd7cf0cec7ece66644af4f6376bbdd1dea907f06",
+      "size_bytes": 79135
+    },
+    "services/services/player/ipc/player_service_stub.cpp": {
+      "blob": "2c2c0c6ca1bc22be74b45fd3689c3069c428e912",
+      "sha256": "479d554f58f059143ce595521d6c6e40f832b6b49b673ba836cf363ce09de746",
+      "size_bytes": 93384
+    },
+    "services/services/recorder/ipc/recorder_service_proxy.cpp": {
+      "blob": "7f01823fd49112d24c39f5e1a396ec85877bcb07",
+      "sha256": "2703497cc3fca9448cd60862b3a8b70d2017b7991dd6bdee528109307ed9439e",
+      "size_bytes": 44928
+    },
+    "services/services/recorder/ipc/recorder_service_stub.cpp": {
+      "blob": "86a0a21d700fa7a7db5ad0a063c31c155eed9477",
+      "sha256": "30ca38f8cb2372ed82bb666714593a629dc929bc67c5b4c21edc5bf3ed2f84ad",
+      "size_bytes": 46391
+    },
+    "services/services/screen_capture_monitor/ipc/screen_capture_monitor_service_proxy.cpp": {
+      "blob": "445da2df084463d14a9df11814748d8b9fbfa9e3",
+      "sha256": "968a2ce69d3a628ba3b4f8690707061e89a605bddbae7b66d138c040fa2c50b8",
+      "size_bytes": 5510
+    },
+    "services/services/screen_capture_monitor/ipc/screen_capture_monitor_service_stub.cpp": {
+      "blob": "5ed6d58d83bc4202640a47f54fe9745a75c0c87b",
+      "sha256": "17e35cd20fdfe6bdff9710244067b1f18b994c476e89816d4cf0b6accf2aa196",
+      "size_bytes": 8021
+    },
+    "services/services/transcoder/ipc/transcoder_listener_proxy.cpp": {
+      "blob": "7e5f3ec94db63dc177bb5a19e73fefae4201b9a7",
+      "sha256": "c8dca66cac59e2c2a0e195257c075530bebf3c256a7bb7036930266bd193d6a7",
+      "size_bytes": 3226
+    },
+    "services/services/transcoder/ipc/transcoder_listener_stub.cpp": {
+      "blob": "aaf0f3d72f625ed46742ba01915af4c31fb7e8e9",
+      "sha256": "7b53294897ae58d20c047c705f62b1d7ad45d8140bbbf5a0db455ecf409c65fd",
+      "size_bytes": 3463
+    },
+    "services/services/transcoder/ipc/transcoder_service_proxy.cpp": {
+      "blob": "c3384dbd63493680c8908ebc860e3082912709b9",
+      "sha256": "9edc07d7861778d6a54d21f14aaec6d4ad2b16c9c2f8b9757113d26382ffefe4",
+      "size_bytes": 14653
+    },
+    "services/services/transcoder/ipc/transcoder_service_stub.cpp": {
+      "blob": "02c7ef4401b40b16418f28ad060f0c3236c968a9",
+      "sha256": "4dc2a6b1513194f574d5bb8920d056fd95701a6a32b2d5e8bd4e8b9d626ee452",
+      "size_bytes": 16593
+    },
+    "services/utils/include/media_log.h": {
+      "blob": "9df1636ff4e5f3a94309ca7ce9774e4a6a6e4fcd",
+      "sha256": "32818998db2c97179342572ca1a27d30c4ad2bd21622f51042dc93287f0a6832",
+      "size_bytes": 8766
+    }
+  },
+  "per_id": [
+    {
+      "queue_id": "CR-0174",
+      "candidate_id": "ohscanner.interface.ipc:6860efd3bc04c393",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+      "line": 55,
+      "line_text": "            OnInfo(static_cast<HelperOnInfoType>(type), extra, format);",
+      "blob": "4ba971bc47e269607a7ace05ba6599f9716fb9e6",
+      "source_sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:69862a19b285f208",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+        "line": 55,
+        "symbol": "HelperListenerStub::OnRemoteRequest",
+        "source_sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnInfo without a matched interface-descriptor guard; relay/exposure still requires review. Entry=HelperListenerStub::OnRemoteRequest [entry-source=services/services/avmetadatahelper/ipc/helper_listener_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((47, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0175",
+      "candidate_id": "ohscanner.interface.ipc:099f7ddc4ac016cc",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+      "line": 69,
+      "line_text": "            OnPixelComplete(static_cast<HelperOnInfoType>(type), reAvbuffer_, info, param);",
+      "blob": "4ba971bc47e269607a7ace05ba6599f9716fb9e6",
+      "source_sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:0a18d344f489fdb7",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+        "line": 69,
+        "symbol": "HelperListenerStub::OnRemoteRequest",
+        "source_sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnPixelComplete without a matched interface-descriptor guard; relay/exposure still requires review. Entry=HelperListenerStub::OnRemoteRequest [entry-source=services/services/avmetadatahelper/ipc/helper_listener_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((58, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0176",
+      "candidate_id": "ohscanner.interface.ipc:d8e7d606f22f35e3",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+      "line": 75,
+      "line_text": "            OnError(errorCode, errorMsg);",
+      "blob": "4ba971bc47e269607a7ace05ba6599f9716fb9e6",
+      "source_sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:f4a4d04093c25644",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+        "line": 75,
+        "symbol": "HelperListenerStub::OnRemoteRequest",
+        "source_sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnError without a matched interface-descriptor guard; relay/exposure still requires review. Entry=HelperListenerStub::OnRemoteRequest [entry-source=services/services/avmetadatahelper/ipc/helper_listener_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((72, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0177",
+      "candidate_id": "ohscanner.interface.ipc:90c9f5705e3b008f",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+      "line": 48,
+      "line_text": "            OnError(errorCode, errorMsg);",
+      "blob": "e130c8835343f8d9df265bde1c23a6ae86bf0590",
+      "source_sha256": "275ab05c4c017d1b0a583ace2b08d87c327e9d61ca6ffb7b403cd41266ebbe5a",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:43e8a27f1a7e651f",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+        "line": 48,
+        "symbol": "LppAudioStreamerListenerStub::OnRemoteRequest",
+        "source_sha256": "275ab05c4c017d1b0a583ace2b08d87c327e9d61ca6ffb7b403cd41266ebbe5a",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnError without a matched interface-descriptor guard; relay/exposure still requires review. Entry=LppAudioStreamerListenerStub::OnRemoteRequest [entry-source=services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((45, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0178",
+      "candidate_id": "ohscanner.interface.ipc:82a6cada67c112f0",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+      "line": 59,
+      "line_text": "            OnInfo(static_cast<AudioStreamerOnInfoType>(type), extra, format);",
+      "blob": "e130c8835343f8d9df265bde1c23a6ae86bf0590",
+      "source_sha256": "275ab05c4c017d1b0a583ace2b08d87c327e9d61ca6ffb7b403cd41266ebbe5a",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:8ceef15520c9e709",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+        "line": 59,
+        "symbol": "LppAudioStreamerListenerStub::OnRemoteRequest",
+        "source_sha256": "275ab05c4c017d1b0a583ace2b08d87c327e9d61ca6ffb7b403cd41266ebbe5a",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnInfo without a matched interface-descriptor guard; relay/exposure still requires review. Entry=LppAudioStreamerListenerStub::OnRemoteRequest [entry-source=services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((51, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0179",
+      "candidate_id": "ohscanner.interface.ipc:895a0f3cf5f8dcb8",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+      "line": 48,
+      "line_text": "            OnError(errorCode, errorMsg);",
+      "blob": "87b2bb47fa59ecf6453db6a25b96208974269a6e",
+      "source_sha256": "56428347857ecd879c68a1d8551efeddbe1d8a2453a971365bc38d20de37b273",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:e0c83313013ccb3a",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+        "line": 48,
+        "symbol": "LppVideoStreamerListenerStub::OnRemoteRequest",
+        "source_sha256": "56428347857ecd879c68a1d8551efeddbe1d8a2453a971365bc38d20de37b273",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnError without a matched interface-descriptor guard; relay/exposure still requires review. Entry=LppVideoStreamerListenerStub::OnRemoteRequest [entry-source=services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((45, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0180",
+      "candidate_id": "ohscanner.interface.ipc:4d7fb22089733cad",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+      "line": 59,
+      "line_text": "            OnInfo(static_cast<VideoStreamerOnInfoType>(type), extra, format);",
+      "blob": "87b2bb47fa59ecf6453db6a25b96208974269a6e",
+      "source_sha256": "56428347857ecd879c68a1d8551efeddbe1d8a2453a971365bc38d20de37b273",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:1a9ffa86a5eac23f",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+        "line": 59,
+        "symbol": "LppVideoStreamerListenerStub::OnRemoteRequest",
+        "source_sha256": "56428347857ecd879c68a1d8551efeddbe1d8a2453a971365bc38d20de37b273",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnInfo without a matched interface-descriptor guard; relay/exposure still requires review. Entry=LppVideoStreamerListenerStub::OnRemoteRequest [entry-source=services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((51, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0181",
+      "candidate_id": "ohscanner.interface.ipc:6d6d198ab16bb18e",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+      "line": 61,
+      "line_text": "            reply.WriteInt32(Init(requestCallback_));",
+      "blob": "119887d6560d10115f817e9ddacbc17e971050c5",
+      "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:2e6de3ec8ffac2ad",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+        "line": 61,
+        "symbol": "MediaSourceLoaderStub::OnRemoteRequest",
+        "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed",
+        "message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: MediaSourceLoaderStub::Init Entry=MediaSourceLoaderStub::OnRemoteRequest [entry-source=services/services/media_source/ipc/media_source_loader_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((53, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0182",
+      "candidate_id": "ohscanner.interface.ipc:1b31de85dde966d2",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+      "line": 75,
+      "line_text": "            reply.WriteInt64(Open(url, header));",
+      "blob": "119887d6560d10115f817e9ddacbc17e971050c5",
+      "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:102652a18e89ee97",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+        "line": 75,
+        "symbol": "MediaSourceLoaderStub::OnRemoteRequest",
+        "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed",
+        "message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: MediaSourceLoaderStub::Open Entry=MediaSourceLoaderStub::OnRemoteRequest [entry-source=services/services/media_source/ipc/media_source_loader_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((64, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0183",
+      "candidate_id": "ohscanner.interface.ipc:6c95379d834a93cb",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+      "line": 82,
+      "line_text": "            Read(uuid, requestedOffset, requestedLength);",
+      "blob": "119887d6560d10115f817e9ddacbc17e971050c5",
+      "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:0e0126085ac28c6a",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+        "line": 82,
+        "symbol": "MediaSourceLoaderStub::OnRemoteRequest",
+        "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed",
+        "message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: MediaSourceLoaderStub::Read Entry=MediaSourceLoaderStub::OnRemoteRequest [entry-source=services/services/media_source/ipc/media_source_loader_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((78, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0184",
+      "candidate_id": "ohscanner.interface.ipc:45c62af2eb17e570",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp",
+      "line": 46,
+      "line_text": "            OnPCMOutput(buffer);",
+      "blob": "f100ad0af6c2d8f889b5424e4ba5e710b595f399",
+      "source_sha256": "0e0292b7e4c28d6d3b63accd8e10f053b224849ebf74edf4f9011318e47d540c",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:c373dccca3e20e34",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp",
+        "line": 46,
+        "symbol": "PCMOutputCallbackStub::OnRemoteRequest",
+        "source_sha256": "0e0292b7e4c28d6d3b63accd8e10f053b224849ebf74edf4f9011318e47d540c",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnPCMOutput without a matched interface-descriptor guard; relay/exposure still requires review. Entry=PCMOutputCallbackStub::OnRemoteRequest [entry-source=services/services/pcm_output/ipc/pcm_output_callback_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((39, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "complete",
+        "analysis_status": "analyzed",
+        "analysis_reason": ""
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0185",
+      "candidate_id": "ohscanner.interface.ipc:5a3c85c3a0b318b2",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp",
+      "line": 56,
+      "line_text": "            OnPCMProcessor(buffer);",
+      "blob": "f100ad0af6c2d8f889b5424e4ba5e710b595f399",
+      "source_sha256": "0e0292b7e4c28d6d3b63accd8e10f053b224849ebf74edf4f9011318e47d540c",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:fc5957497aa904dc",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp",
+        "line": 56,
+        "symbol": "PCMOutputCallbackStub::OnRemoteRequest",
+        "source_sha256": "0e0292b7e4c28d6d3b63accd8e10f053b224849ebf74edf4f9011318e47d540c",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnPCMProcessor without a matched interface-descriptor guard; relay/exposure still requires review. Entry=PCMOutputCallbackStub::OnRemoteRequest [entry-source=services/services/pcm_output/ipc/pcm_output_callback_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((49, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "complete",
+        "analysis_status": "analyzed",
+        "analysis_reason": ""
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0186",
+      "candidate_id": "ohscanner.interface.ipc:7a749a3e03e58308",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/player/ipc/player_listener_stub.cpp",
+      "line": 50,
+      "line_text": "            OnError(static_cast<PlayerErrorType>(errorType), errorCode);",
+      "blob": "f1e35bca24172ade9b33d5262d923334f7301e08",
+      "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:e7bc1e6ffa196304",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/player/ipc/player_listener_stub.cpp",
+        "line": 50,
+        "symbol": "PlayerListenerStub::OnRemoteRequest",
+        "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnError without a matched interface-descriptor guard; relay/exposure still requires review. Entry=PlayerListenerStub::OnRemoteRequest [entry-source=services/services/player/ipc/player_listener_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((47, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0187",
+      "candidate_id": "ohscanner.interface.ipc:ec58f66fdfe786fc",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/player/ipc/player_listener_stub.cpp",
+      "line": 61,
+      "line_text": "            OnInfo(static_cast<PlayerOnInfoType>(type), extra, format);",
+      "blob": "f1e35bca24172ade9b33d5262d923334f7301e08",
+      "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:2554eaead15d2b8f",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/player/ipc/player_listener_stub.cpp",
+        "line": 61,
+        "symbol": "PlayerListenerStub::OnRemoteRequest",
+        "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnInfo without a matched interface-descriptor guard; relay/exposure still requires review. Entry=PlayerListenerStub::OnRemoteRequest [entry-source=services/services/player/ipc/player_listener_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((53, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0188",
+      "candidate_id": "ohscanner.interface.ipc:c4cbf8d10e347796",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/player/ipc/player_listener_stub.cpp",
+      "line": 67,
+      "line_text": "            OnError(errorCode, errorMsg);",
+      "blob": "f1e35bca24172ade9b33d5262d923334f7301e08",
+      "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:21b90abae1437824",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/player/ipc/player_listener_stub.cpp",
+        "line": 67,
+        "symbol": "PlayerListenerStub::OnRemoteRequest",
+        "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnError without a matched interface-descriptor guard; relay/exposure still requires review. Entry=PlayerListenerStub::OnRemoteRequest [entry-source=services/services/player/ipc/player_listener_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((64, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0189",
+      "candidate_id": "ohscanner.interface.ipc:b34ca9220b323d04",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/player/ipc/player_listener_stub.cpp",
+      "line": 124,
+      "line_text": "    OnMonitor(type, extra, infoBody);",
+      "blob": "f1e35bca24172ade9b33d5262d923334f7301e08",
+      "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:fcbf595a7d61885c",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/player/ipc/player_listener_stub.cpp",
+        "line": 124,
+        "symbol": "PlayerListenerStub::OnInfo",
+        "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e",
+        "message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: PlayerListenerStub::OnMonitor Entry=PlayerListenerStub::OnRemoteRequest [entry-source=services/services/player/ipc/player_listener_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((53, 'switch entry'), (116, 'type == INFO_TYPE_STATE_CHANGE => True'), (116, 'extra != lastStateExtra_ => True'))"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0190",
+      "candidate_id": "ohscanner.interface.ipc:0b676b990f15e651",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/player/ipc/player_service_stub.cpp",
+      "line": 376,
+      "line_text": "                auto res = CheckandDoUnFreeze();",
+      "blob": "2c2c0c6ca1bc22be74b45fd3689c3069c428e912",
+      "source_sha256": "479d554f58f059143ce595521d6c6e40f832b6b49b673ba836cf363ce09de746",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:59ec084f0a008f99",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/player/ipc/player_service_stub.cpp",
+        "line": 376,
+        "symbol": "PlayerServiceStub::OnRemoteRequest",
+        "source_sha256": "479d554f58f059143ce595521d6c6e40f832b6b49b673ba836cf363ce09de746",
+        "message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: PlayerServiceStub::CheckandDoUnFreeze Entry=PlayerServiceStub::OnRemoteRequest [entry-source=services/services/player/ipc/player_service_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((363, 'itFunc != playerFuncs_.end() => True'), (366, 'funcName.compare(\"Player::SetVolume\") == 0 => True'), (373, 'memberFunc != nullptr => True'))"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0191",
+      "candidate_id": "ohscanner.interface.ipc:5ae6377fbc2eb33a",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/recorder/ipc/recorder_service_stub.cpp",
+      "line": 215,
+      "line_text": "        permissionResult = CheckPermission();",
+      "blob": "86a0a21d700fa7a7db5ad0a063c31c155eed9477",
+      "source_sha256": "30ca38f8cb2372ed82bb666714593a629dc929bc67c5b4c21edc5bf3ed2f84ad",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:08c6ca5648a924bf",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/recorder/ipc/recorder_service_stub.cpp",
+        "line": 215,
+        "symbol": "RecorderServiceStub::OnRemoteRequest",
+        "source_sha256": "30ca38f8cb2372ed82bb666714593a629dc929bc67c5b4c21edc5bf3ed2f84ad",
+        "message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: RecorderServiceStub::CheckPermission Entry=RecorderServiceStub::OnRemoteRequest [entry-source=services/services/recorder/ipc/recorder_service_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((205, 'code == SET_AUDIO_SOURCE => True'), (214, 'AUDIO_REQUEST.count(code) != 0 => True'))"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0192",
+      "candidate_id": "ohscanner.interface.ipc:8cec080a7f422700",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/recorder/ipc/recorder_service_stub.cpp",
+      "line": 218,
+      "line_text": "        permissionResult = CheckPermission();",
+      "blob": "86a0a21d700fa7a7db5ad0a063c31c155eed9477",
+      "source_sha256": "30ca38f8cb2372ed82bb666714593a629dc929bc67c5b4c21edc5bf3ed2f84ad",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:4234f4766d6495bb",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/recorder/ipc/recorder_service_stub.cpp",
+        "line": 218,
+        "symbol": "RecorderServiceStub::OnRemoteRequest",
+        "source_sha256": "30ca38f8cb2372ed82bb666714593a629dc929bc67c5b4c21edc5bf3ed2f84ad",
+        "message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: RecorderServiceStub::CheckPermission Entry=RecorderServiceStub::OnRemoteRequest [entry-source=services/services/recorder/ipc/recorder_service_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((205, 'code == SET_AUDIO_SOURCE => True'), (214, 'AUDIO_REQUEST.count(code) != 0 => False'), (217, 'COMMON_REQUEST.count(code) != 0 => True'), (217, 'needAudioPermissionCheck => True'))"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0193",
+      "candidate_id": "ohscanner.interface.ipc:45b8d12e5f05cb8f",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/screen_capture_monitor/ipc/screen_capture_monitor_service_stub.cpp",
+      "line": 92,
+      "line_text": "            int32_t ret = (this->*memberFunc)(data, reply);",
+      "blob": "5ed6d58d83bc4202640a47f54fe9745a75c0c87b",
+      "source_sha256": "17e35cd20fdfe6bdff9710244067b1f18b994c476e89816d4cf0b6accf2aa196",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:c19cba72a935afd6",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/screen_capture_monitor/ipc/screen_capture_monitor_service_stub.cpp",
+        "line": 92,
+        "symbol": "ScreenCaptureMonitorServiceStub::OnRemoteRequest",
+        "source_sha256": "17e35cd20fdfe6bdff9710244067b1f18b994c476e89816d4cf0b6accf2aa196",
+        "message": "AUTH-01 candidate: Unresolved member-pointer IPC dispatch lacks interface-descriptor validation; callee remains unknown. Entry=ScreenCaptureMonitorServiceStub::OnRemoteRequest [entry-source=services/services/screen_capture_monitor/ipc/screen_capture_monitor_service_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((88, 'itFunc != screenCaptureMonitorStubFuncs_.end() => True'), (90, 'memberFunc != nullptr => True'))"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0194",
+      "candidate_id": "ohscanner.interface.ipc:29c9ebb50db15fb6",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/transcoder/ipc/transcoder_listener_stub.cpp",
+      "line": 47,
+      "line_text": "            OnError(errorCode, errorMsg);",
+      "blob": "aaf0f3d72f625ed46742ba01915af4c31fb7e8e9",
+      "source_sha256": "7b53294897ae58d20c047c705f62b1d7ad45d8140bbbf5a0db455ecf409c65fd",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:fe6d4c1e8570773c",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/transcoder/ipc/transcoder_listener_stub.cpp",
+        "line": 47,
+        "symbol": "TransCoderListenerStub::OnRemoteRequest",
+        "source_sha256": "7b53294897ae58d20c047c705f62b1d7ad45d8140bbbf5a0db455ecf409c65fd",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnError without a matched interface-descriptor guard; relay/exposure still requires review. Entry=TransCoderListenerStub::OnRemoteRequest [entry-source=services/services/transcoder/ipc/transcoder_listener_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((44, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0195",
+      "candidate_id": "ohscanner.interface.ipc:2785907db3979fff",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/transcoder/ipc/transcoder_listener_stub.cpp",
+      "line": 53,
+      "line_text": "            OnInfo(type, extra);",
+      "blob": "aaf0f3d72f625ed46742ba01915af4c31fb7e8e9",
+      "source_sha256": "7b53294897ae58d20c047c705f62b1d7ad45d8140bbbf5a0db455ecf409c65fd",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:7c9a7ed28819d20d",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/transcoder/ipc/transcoder_listener_stub.cpp",
+        "line": 53,
+        "symbol": "TransCoderListenerStub::OnRemoteRequest",
+        "source_sha256": "7b53294897ae58d20c047c705f62b1d7ad45d8140bbbf5a0db455ecf409c65fd",
+        "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnInfo without a matched interface-descriptor guard; relay/exposure still requires review. Entry=TransCoderListenerStub::OnRemoteRequest [entry-source=services/services/transcoder/ipc/transcoder_listener_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((50, 'switch entry'),)"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    },
+    {
+      "queue_id": "CR-0196",
+      "candidate_id": "ohscanner.interface.ipc:6fc99d32bee51c50",
+      "repository": "openharmony/multimedia_player_framework",
+      "project_path": "foundation/multimedia/player_framework",
+      "commit": "71ab1e0881e0a79f2b9528742677467e7bb8dde5",
+      "tree": "9cc6c53506a70424485885c4c10b29dfbfaa8d1b",
+      "path": "services/services/transcoder/ipc/transcoder_service_stub.cpp",
+      "line": 128,
+      "line_text": "            int32_t ret = (this->*memberFunc)(data, reply);",
+      "blob": "02c7ef4401b40b16418f28ad060f0c3236c968a9",
+      "source_sha256": "4dc2a6b1513194f574d5bb8920d056fd95701a6a32b2d5e8bd4e8b9d626ee452",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "diagnostic_id": "ohscanner.interface.ipc:81789eae6b5ac2b7",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "file": "services/services/transcoder/ipc/transcoder_service_stub.cpp",
+        "line": 128,
+        "symbol": "TransCoderServiceStub::OnRemoteRequest",
+        "source_sha256": "4dc2a6b1513194f574d5bb8920d056fd95701a6a32b2d5e8bd4e8b9d626ee452",
+        "message": "AUTH-01 candidate: Unresolved member-pointer IPC dispatch lacks interface-descriptor validation; callee remains unknown. Entry=TransCoderServiceStub::OnRemoteRequest [entry-source=services/services/transcoder/ipc/transcoder_service_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((123, 'itFunc != recFuncs_.end() => True'), (125, 'memberFunc != nullptr => True'))"
+      },
+      "parse_status": {
+        "parse_status": "partial",
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      },
+      "source_assessment": "The cited line is inside a dispatcher whose source reads the interface token and applies an exact Stub::GetDescriptor() equality check before dispatch; the exact project macro definition returns immediately on a false condition. This contradicts the specific missing-descriptor root cause claimed by this rule. Candidate remains a static scanner diagnostic, not a confirmed vulnerability. A0's original not_testable/paused_pending_evidence labels are preserved."
+    }
+  ],
+  "limitations": [
+    "This is an independently run static CLI replay on the exact A0 component commit; no product build or runtime IPC transaction was executed.",
+    "The production IPC detector reports 1 complete and 10 partial files; all 23 A0 line matches therefore remain subject to parser/model coverage limitations.",
+    "A parser candidate is not a confirmed vulnerability. Source-level macro guard evidence conflicts with the specific missing-descriptor explanation.",
+    "No A0 IDs, review statuses, queue statuses, detector, tests, fixtures or shared API were modified."
+  ]
+}
