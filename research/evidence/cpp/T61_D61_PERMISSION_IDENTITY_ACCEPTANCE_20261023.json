@@ -1,0 +1,168 @@
+{
+  "schema_version": "1.0",
+  "task_id": "T61",
+  "date": "2026-10-23",
+  "phase": "independent-acceptance-complete",
+  "frozen_patch": {
+    "commit": "b0ce27a3e3b08f085e46a22468e890ac8808d1c1",
+    "parent_baseline": "c8f83b82291e82b3272c73b943623336a3c836c3",
+    "detector_id": "ohscanner.known_disclosed_cves",
+    "detector_version": "0.19.6",
+    "detector_blob": "be2fe31147506a0c08a1bd80b5aeaad1cba575cb",
+    "independent_worktree": "D:/openHarmonyScanner/worktrees/t61-d61-permission-identity-review-20261023"
+  },
+  "pinned_D52_source": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+    "path": "services/zidl/src/pasteboard_service_stub.cpp",
+    "git_blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+    "raw_bytes": 6288,
+    "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "parse_status": "partial"
+  },
+  "permission_identity_matrix": [
+    {
+      "id": "read_pasteboard_permission",
+      "exact_handler_guard": "if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data);",
+      "result": "suppressed_syntactically",
+      "expected": "suppressed_syntactically"
+    },
+    {
+      "id": "secure_paste_permission_status",
+      "exact_handler_guard": "if (VerifyPermission(SECURE_PASTE_PERMISSION) != PERMISSION_GRANTED) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data);",
+      "result": "suppressed_syntactically",
+      "expected": "suppressed_syntactically"
+    },
+    {
+      "id": "generic_helper_with_read_pasteboard_token",
+      "exact_handler_guard": "if (!CheckPermission(READ_PASTEBOARD_PERMISSION)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data);",
+      "result": "suppressed_syntactically",
+      "expected": "suppressed_syntactically"
+    },
+    {
+      "id": "unrelated_bluetooth_permission",
+      "exact_handler_guard": "if (!CheckBluetoothPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data);",
+      "result": "candidate_retained",
+      "expected": "candidate_retained"
+    },
+    {
+      "id": "generic_check_permission_without_identity",
+      "exact_handler_guard": "if (!CheckPermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data);",
+      "result": "candidate_retained",
+      "expected": "candidate_retained"
+    },
+    {
+      "id": "generic_check_permission_network",
+      "exact_handler_guard": "if (!CheckPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data);",
+      "result": "candidate_retained",
+      "expected": "candidate_retained"
+    },
+    {
+      "id": "verify_calling_permission_network",
+      "exact_handler_guard": "if (!VerifyCallingPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data);",
+      "result": "candidate_retained",
+      "expected": "candidate_retained"
+    },
+    {
+      "id": "ignored_read_permission_result",
+      "exact_handler_guard": "VerifyPermission(PERMISSION_READ_PASTEBOARD); GetPasteData(); reply.WriteParcelable(data);",
+      "result": "candidate_retained",
+      "expected": "candidate_retained"
+    },
+    {
+      "id": "read_permission_denial_after_read",
+      "exact_handler_guard": "GetPasteData(); if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; reply.WriteParcelable(data);",
+      "result": "candidate_retained",
+      "expected": "candidate_retained"
+    },
+    {
+      "id": "read_permission_denial_after_parcel_write",
+      "exact_handler_guard": "GetPasteData(); reply.WriteParcelable(data); if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION;",
+      "result": "candidate_retained",
+      "expected": "candidate_retained"
+    },
+    {
+      "id": "read_permission_guard_inside_if_false",
+      "exact_handler_guard": "if (false) { if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data);",
+      "result": "candidate_retained",
+      "expected": "candidate_retained"
+    },
+    {
+      "id": "read_permission_guard_under_conditional_outer_branch",
+      "exact_handler_guard": "if (is_privileged) { if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data);",
+      "result": "candidate_retained",
+      "expected": "candidate_retained"
+    },
+    {
+      "id": "mixed_read_permission_and_other_predicate",
+      "exact_handler_guard": "if (!VerifyPermission(PERMISSION_READ_PASTEBOARD) && caller_is_special) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data);",
+      "result": "candidate_retained",
+      "expected": "candidate_retained"
+    }
+  ],
+  "source_backed_helper_controls": [
+    {
+      "helper": "CheckPastePermission",
+      "source_commit": "e13a4ad3b72be7650ccb75de560790c04fa84795",
+      "source_path": "services/core/src/pasteboard_service.cpp",
+      "source_file_sha256": "84d41db5fcb90b7766e011c6bfe5c8f932e3404a7994ea61116e28186ec9b96f",
+      "helper_body_sha256": "675ceb0432b9a8c7fa9b38a539572c1d3652545c74ab31d5cfb2c0036a4a3307",
+      "test_call": "if (!CheckPastePermission(userId, appId, shareOption)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data);",
+      "result": "suppressed_syntactically",
+      "observed_source_behavior": "focus/default-IME eligibility and ShareOption handling, including app-id matching for InApp",
+      "interpretation": "The name is source-backed; this is not proof of a generic READ_PASTEBOARD grant or of the actual caller path. The helper and stub were assembled in an in-memory syntax control."
+    },
+    {
+      "helper": "HasPastePermission",
+      "source_commit": "cedbaeb9f55f524fb93c9d76ec06a4dc7b213ba7",
+      "source_path": "services/core/src/pasteboard_service.cpp",
+      "source_file_sha256": "9c46a4c6eeb3752a38660d84b3bbf87bb535b19f2d462dca8d24e745e1024d6a",
+      "helper_body_sha256": "0b6797098121f1e62f30865432233b602de1b9659d157ee9154e637abd9b400d",
+      "test_call": "if (!HasPastePermission(appId, shareOption)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data);",
+      "result": "suppressed_syntactically",
+      "observed_source_behavior": "caller AppInfo/token type, focus/default-IME eligibility for HAP callers, and ShareOption handling",
+      "interpretation": "The name is source-backed; this is not proof of a generic READ_PASTEBOARD grant or of the actual caller path. The helper and stub were assembled in an in-memory syntax control."
+    }
+  ],
+  "independent_test_results": {
+    "focused_command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "focused_result": "PASS",
+    "focused_tests": 32,
+    "matrix_all_expected": true,
+    "baseline_and_D61_67_unit_replay": {
+      "source_snapshot": "D50 exact commit/tree and parser-state packet",
+      "unit_count": 67,
+      "parser_states": {"complete": 57, "partial": 10},
+      "baseline_version": "0.19.3",
+      "D61_version": "0.19.6",
+      "both_status": "blocked",
+      "findings_identical": ["CVE-2025-25212", "CVE-2025-27247"],
+      "D51_anchor_and_sha_unchanged": true,
+      "D52_anchor_and_sha_unchanged": true
+    },
+    "scope": {
+      "diff_base": "c8f83b82291e82b3272c73b943623336a3c836c3",
+      "changed_paths": 10,
+      "insertions": 391,
+      "deletions": 12,
+      "diff_check": "PASS",
+      "unrelated_detector_implementation": false
+    },
+    "strict_json_duplicate_key_check": "PASS"
+  },
+  "verdict": {
+    "fix_correctness": "PASS for the tested syntactic identity/order matrix",
+    "candidate_retention": "PASS; exact pinned D52 candidate and D51 sibling candidate preserved; unrelated permission controls retain D52",
+    "coverage": "PARTIAL; exact component replay blocked with 57 complete and 10 partial units",
+    "scope": "PASS; diff covers D52 matcher, focused tests/corpus and bindings, and D59/D61 evidence packets only"
+  },
+  "limitations": [
+    "Permission identifier/name recognition is not permission-token identity or runtime authorization proof.",
+    "The CheckPastePermission and HasPastePermission names are accepted as source-backed syntax; their historical implementations are focus/IME/share-option policy, not interchangeable with later READ/SECURE grants.",
+    "The synthetic helper controls place helper definitions and the stub call in one in-memory unit; they do not establish the real cross-file call path.",
+    "No CFG/dominance beyond the tested top-level rule, helper semantics for arbitrary source, framework ACL, product inclusion, CVE causality, or runtime impact is proven.",
+    "D52 remains a pinned-source candidate; product applicability and product vulnerability remain UNKNOWN."
+  ]
+}
