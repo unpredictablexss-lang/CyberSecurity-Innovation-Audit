@@ -52,8 +52,25 @@ python -m src.cli ohscan-run --repo-dir D:\openHarmonyScanner\tmp\cve-2025-arkru
 
 The fixed-only web_webview replay used the same production CLI against a temporary local repository containing the exact fixed source bytes. Its synthetic commit/tree are recorded in `webwebview-fixed-only.json`; source SHA-256 was checked against the supplied read-only identity record. The vulnerable full TU was unavailable, so this is `BLOCK`, not a fixed-pair pass.
 
+## Source-bound synthetic negative controls
+
+Added one safe and one unrelated self-authored C++ source for each historical root cause. The integer safe control checks the wide value before conversion and uses checked wide offset arithmetic; its unrelated control has a numeric narrowing/check but no offset or memory sink. The bounds safe control routes sort reads/writes through stability and length guards; its unrelated control uses direct `ElementAccessor` operations in a copy routine outside a sort function. Every file has an explicit `SYNTHETIC` label in its source and manifest.
+
+These are not real-world fixed sources and do not establish vulnerability prevalence or detector accuracy. They are bound to source commit `67cdad2ad709a1d9c24245ef029e4034a0764c55`, tree `a2e4a35365d76220cae71064d293fd3807d35521`, their individual Git blob IDs and SHA-256 values in `synthetic-control-manifest.json`. Production CLI runs used the same `light-ast` profile and detector version 0.2.0 as the real historical pairs. Results: all four controls parsed complete, completed, and produced zero diagnostics. Per-run JSON/Markdown is adjacent.
+
+Exact replay commands from the D2 worktree root:
+
+```powershell
+python -m src.cli ohscan-run --repo-dir D:\openHarmonyScanner\worktrees\a-d2-bounds-pr30-20261019 --repository synthetic/D2-controls --commit 67cdad2ad709a1d9c24245ef029e4034a0764c55 --include tests/detectors/fixtures/cpp_memory_safety/synthetic_cve2025_0587_safe.cpp --detector ohscanner.cpp.integer_bounds --json-out research/evidence/cpp/d2_bounds_replay_20261019/cve2025-0587-safe.json --md-out research/evidence/cpp/d2_bounds_replay_20261019/cve2025-0587-safe.md
+python -m src.cli ohscan-run --repo-dir D:\openHarmonyScanner\worktrees\a-d2-bounds-pr30-20261019 --repository synthetic/D2-controls --commit 67cdad2ad709a1d9c24245ef029e4034a0764c55 --include tests/detectors/fixtures/cpp_memory_safety/synthetic_cve2025_0587_unrelated.cpp --detector ohscanner.cpp.integer_bounds --json-out research/evidence/cpp/d2_bounds_replay_20261019/cve2025-0587-unrelated.json --md-out research/evidence/cpp/d2_bounds_replay_20261019/cve2025-0587-unrelated.md
+python -m src.cli ohscan-run --repo-dir D:\openHarmonyScanner\worktrees\a-d2-bounds-pr30-20261019 --repository synthetic/D2-controls --commit 67cdad2ad709a1d9c24245ef029e4034a0764c55 --include tests/detectors/fixtures/cpp_memory_safety/synthetic_cve2025_23420_safe.cpp --detector ohscanner.cpp.bounds --json-out research/evidence/cpp/d2_bounds_replay_20261019/cve2025-23420-safe.json --md-out research/evidence/cpp/d2_bounds_replay_20261019/cve2025-23420-safe.md
+python -m src.cli ohscan-run --repo-dir D:\openHarmonyScanner\worktrees\a-d2-bounds-pr30-20261019 --repository synthetic/D2-controls --commit 67cdad2ad709a1d9c24245ef029e4034a0764c55 --include tests/detectors/fixtures/cpp_memory_safety/synthetic_cve2025_23420_unrelated.cpp --detector ohscanner.cpp.bounds --json-out research/evidence/cpp/d2_bounds_replay_20261019/cve2025-23420-unrelated.json --md-out research/evidence/cpp/d2_bounds_replay_20261019/cve2025-23420-unrelated.md
+```
+
+The complete control matrix is therefore: real vulnerable/fixed pairs `1/0` for CVE-2025-0587 and `5/0` for CVE-2025-23420, plus complete synthetic safe/unrelated controls `0/0` per case. Only the real vulnerable/fixed source pairs carry historical CVE identity; synthetic labels stay synthetic.
+
 ## Regression check and disposition
 
-`python -m unittest tests.detectors.test_cpp_memory_safety_detectors -v`: 17/17 passed. This covers detector-level positive, fixed, safe, unrelated, narrow integer promotion, rename-independent semantic shapes, and partial/failed/budget fail-closed controls. It does not substitute for the missing web_webview vulnerable TU or complete parsing of libtiff.
+`python -m unittest tests.detectors.test_cpp_memory_safety_detectors -v`: 17/17 passed. This covers detector-level positive, fixed, safe, unrelated, narrow integer promotion, rename-independent semantic shapes, and partial/failed/budget fail-closed controls. The adjacent production CLI runs add source-bound complete-parse controls for the two historical root causes. Neither substitutes for the missing web_webview vulnerable TU or complete parsing of libtiff.
 
 Disposition: no detector code changed. Keep CVE-2025-9900 and CVE-2026-27648 as `PARTIAL/BLOCK`. CVE-2025-0587 and CVE-2025-23420 replay as complete vulnerable/fixed differential capability checks on these fixed objects. Product build, entry, reachability and impact remain outside this static replay.
