@@ -321,6 +321,10 @@ The scoped finding row for Recorder permission callsites corresponds to `CheckPe
 
 Owner follow-up: [D42 B-owner detector review request](d42_b_owner_ipc_review_request_20261025.md). No owner code was changed.
 
+## T45 — safwk ExpireLruCache shared_ptr candidates CR-0231–CR-0240
+
+T45 rebound all ten A0 rows to exact `systemabilitymgr_safwk` commit/tree/blob/SHA and reran `shared_ptr_race` 0.5.1 on the one target header: parse complete, zero diagnostics. `ExpireLruCache` public methods hold the same instance mutex while calling private read/write helpers; `ApiCacheManager` calls also hold the outer `cachesMutex_`. The production-capable `api_cache_manager` GN target and test-only `ExpireLruCacheTest` target were source-hash bound. This does not prove runtime product profile or scheduling behavior; keep all ten rows `not_testable / paused_pending_evidence`, PARTIAL/BLOCK. See [T45 audit](t45_safwk_expire_lru_cache_audit_20261027.md), [machine mapping](t45_safwk_expire_lru_cache_audit_20261027.json), [raw CLI JSON](d42_safwk_expire_lru_cache_20261027.json), and [verifier](verify_t45_safwk_expire_lru_cache_audit_20261027.py).
+
 ## T43 — Taihe FFI independent audit CR-0197–CR-0213
 
 T43 independently replayed the exact Taihe source objects: both files parsed completely, 16 current `shared_ptr_race` findings mapped to 16/17 A0 rows, with CR-0213 unmapped (not a safety result). The root `BUILD.gn` is for Taihe tooling and does not reference the audited author files; product target/build inclusion and same-object cross-thread overlap remain unknown. Preserve all 17 rows as PARTIAL/BLOCK and `not_testable / paused_pending_evidence`. See [T43 addendum](a_line_parallel_queue_20261020_T43_addendum.md), [audit](t43_taihe_ffi_audit_20261026.md), [independent checkout attestation](t43_independent_checkout_attestation_20261026.md), and [verifier](verify_t43_taihe_ffi_audit_20261026.py).

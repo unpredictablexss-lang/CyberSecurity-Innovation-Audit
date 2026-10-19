@@ -1,0 +1,223 @@
+{
+  "audit_id": "T45-safwk-expire-lru-cache-CR-0231-0240",
+  "source": {
+    "repository": "openharmony/systemabilitymgr_safwk",
+    "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+    "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+    "target": {
+      "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+      "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+      "sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+      "bytes": 5125
+    }
+  },
+  "queue": {
+    "ids": [
+      {
+        "queue_id": "CR-0231",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:9924796b946b5d25",
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+        "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "line": "105",
+        "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      {
+        "queue_id": "CR-0232",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:706b84f9a5394e56",
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+        "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "line": "106",
+        "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      {
+        "queue_id": "CR-0233",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:8c2d0cd54167f57e",
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+        "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "line": "109",
+        "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      {
+        "queue_id": "CR-0234",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:daf2d3262ce4de5e",
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+        "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "line": "110",
+        "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      {
+        "queue_id": "CR-0235",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:7b13699626d9b262",
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+        "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "line": "112",
+        "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      {
+        "queue_id": "CR-0236",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:3a1f7435037193d3",
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+        "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "line": "127",
+        "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      {
+        "queue_id": "CR-0237",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:d83a75a7b69b5048",
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+        "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "line": "133",
+        "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      {
+        "queue_id": "CR-0238",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:91fd5ac0d9f423c6",
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+        "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "line": "142",
+        "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      {
+        "queue_id": "CR-0239",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:7aff32e96a1a9ccb",
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+        "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "line": "143",
+        "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      {
+        "queue_id": "CR-0240",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:ca804a3f4cb7c23e",
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+        "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "line": "149",
+        "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      }
+    ],
+    "states_changed": false
+  },
+  "cli": {
+    "artifact": "d42_safwk_expire_lru_cache_20261027.json",
+    "tool": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "parse_status": "complete",
+    "diagnostic_count": 0,
+    "validated_vulnerability": 0,
+    "candidate_line_matches": 0,
+    "limitations": [
+      "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+      "First-party A algorithm: syntax candidates only; no CVE or validated vulnerability.",
+      "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+      "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+      "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+      "interfaces/innerkits/safwk/expire_lru_cache.h: modeled non-atomic accesses to 'interfaces/innerkits/safwk/expire_lru_cache.h::OHOS::ExpireLruCache::data_' are read-only and do not form a potential conflicting pair in this narrow model.",
+      "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+      "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+      "Diagnostic does not establish vulnerability, reachability or security impact."
+    ]
+  },
+  "context_files": [
+    {
+      "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+      "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+      "sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+      "bytes": 5125
+    },
+    {
+      "path": "interfaces/innerkits/safwk/api_cache_manager.h",
+      "blob": "5d276757a0a170bf09fe99e245d2d9107ae21819",
+      "sha256": "ed115b57708c840e8fc43c920d606969a5ae35ba445cef072c5ee6226b9f3ee8",
+      "bytes": 2044
+    },
+    {
+      "path": "services/safwk/src/api_cache_manager.cpp",
+      "blob": "2f22ad0ae09c105bb1332c4e8bfc2b02eb10c1bd",
+      "sha256": "a77030831c5df972dae0a6d18bed1a8b672c8a1ef4566e66339d5ea7e8bb7f55",
+      "bytes": 5861
+    },
+    {
+      "path": "interfaces/innerkits/safwk/BUILD.gn",
+      "blob": "a04a67165d42c965e6374b1912aab7ce0e13f3c1",
+      "sha256": "8a137145d3b5f261d86f972403e6a19caa5be9965566931d885fa0d4ff010b91",
+      "bytes": 4367
+    },
+    {
+      "path": "test/services/safwk/unittest/BUILD.gn",
+      "blob": "6cee0d85e65ce94a12dfab663e85b50738cc0cca",
+      "sha256": "9078edaaa9da83a9710a55341debdb56752bf40518977967f98c3d183d41c4cb",
+      "bytes": 11891
+    },
+    {
+      "path": "test/services/safwk/unittest/expire_lru_cache_test.cpp",
+      "blob": "c502a8457d12117c9758b163a28dc3de875a5b1e",
+      "sha256": "b789ac7972ae6286fe88dd2bbcda9cc66c1b6a664f1ea3f0f8abd77e1b1603a1",
+      "bytes": 14522
+    }
+  ],
+  "source_assessment": {
+    "member": "ExpireLruCache::data_",
+    "reads": [
+      "DoGet: data_.find and return dataIter->second (header lines 142-158)"
+    ],
+    "writes": [
+      "DoAdd insert/erase; DoGet expired erase; DoRemove erase; DoClear clear; DoClearExpiredCache erase (header lines 102-188)"
+    ],
+    "guards": [
+      "Add/Get/Remove/Clear each takes lock_guard on this->lock_ then calls only corresponding Do* helper; helpers are private and have no other call sites in the exact header.",
+      "ApiCacheManager call sites retain outer cachesMutex_ lock while forwarding to inner cache methods."
+    ],
+    "test_only_observation": "ExpireLruCacheTest BUILD target is ohos_unittest; test source #defines private public and directly inspects cache.data_ sequentially in tests. This is test-only access, not evidence of production race."
+  },
+  "disposition": "PARTIAL/BLOCK: exact source parse complete and zero findings; modeled data_ reads are read-only and no conflicting pair is formed. Keep A0 syntax observations not_testable/paused_pending_evidence. No vulnerability or safety conclusion."
+}
