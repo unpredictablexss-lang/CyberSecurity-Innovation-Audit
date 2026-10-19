@@ -1,7 +1,13 @@
 {
   "task": "T59",
   "date": "2026-10-23",
-  "phase": "baseline-recorded-awaiting-D59-frozen-commit",
+  "phase": "frozen-D59-reviewed-follow-up-requested",
+  "patch": {
+    "commit": "7182aaf7c2334a3cf91dcf9a1016116b4709fccd",
+    "parent_baseline": "c8f83b82291e82b3272c73b943623336a3c836c3",
+    "detector_version": "0.19.4",
+    "independent_worktree": "D:/openHarmonyScanner/worktrees/t59-d59-patch-review-20261023"
+  },
   "baseline": {
     "scanner_commit": "c8f83b82291e82b3272c73b943623336a3c836c3",
     "scanner_tree": "8d1a0d414a6605bc42a69a0dfb2c2a4e74fadc57",
@@ -71,6 +77,13 @@
       "baseline_observed": "suppressed",
       "expected_after_D59": "suppressed",
       "purpose": "syntactic guard-shape negative control only"
+    },
+    {
+      "id": "visible-denial-throw-before-read",
+      "shape": "if (!VerifyCallingPermission(...)) throw denial; GetPasteData; parcel write",
+      "baseline_observed": "suppressed",
+      "expected_after_D59": "suppressed",
+      "purpose": "syntactic early-exit control; exception/catch behavior is not modeled"
     }
   ],
   "sibling_candidate_retention": {
@@ -80,10 +93,10 @@
     "expected_after_D59": "no change in D51 rule behavior or unrelated CVE identities"
   },
   "acceptance_scope": {
-    "fix_correctness": "pending D59 frozen commit and replay",
-    "candidate_retention": "baseline reproduced; post-patch pending exact pinned source replay",
-    "coverage": "baseline target unit is partial and run blocked; parser/whole-component coverage must not be overstated",
-    "scope": "pending D59 diff audit; detector, fixture, and expected-output edits are disallowed in T59"
+    "fix_correctness": "FAIL_PENDING_FOLLOWUP; required counterexamples pass, but an additional non-dominating guard probe still suppresses the candidate",
+    "candidate_retention": "PASS; exact pinned D52 candidate and D51 sibling candidate retained with same IDs, anchors, and source hashes",
+    "coverage": "PARTIAL; exact source-unit and 67-unit component runs are blocked; parser states are 57 complete / 10 partial; full framework/product coverage is not established",
+    "scope": "PASS for frozen commit 7182aaf7; patch diff is limited to D52 matcher, focused regression/corpus controls, fixture binding updates, and D59 evidence; T59 modified no detector, fixture, or expected-output file"
   },
   "semantic_limit": "All matrix expectations concern source-local syntactic candidate behavior. They do not prove control-flow dominance, helper semantics, real permission enforcement, complete IPC/framework authorization, CVE causality, product inclusion, or runtime exploitability.",
   "baseline_replay": {
@@ -97,5 +110,52 @@
       "denial-branch-under-dead-if-false": "CVE-2025-27247 absent",
       "visible-denial-branch-before-read": "CVE-2025-27247 absent"
     }
+  },
+  "patch_acceptance": {
+    "focused_test_command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "focused_test_result": "PASS",
+    "focused_test_count": 32,
+    "diff_base": "c8f83b82291e82b3272c73b943623336a3c836c3",
+    "diff_stat": {
+      "files_changed": 8,
+      "insertions": 237,
+      "deletions": 12,
+      "non_evidence_scope_paths": 6,
+      "unexpected_or_unrelated_rule_files": []
+    },
+    "diff_check": "PASS",
+    "changed_paths": [
+      "src/ohscanner/detectors/known_cves.py",
+      "tests/detectors/test_known_disclosed_cves.py",
+      "tests/detectors/test_known_case_corpus.py",
+      "tests/fixtures/known_cases/known_case_manifest.json",
+      "tests/fixtures/known_cases/local-pasteboard-historical-read/fixed.cpp",
+      "tests/fixtures/known_cases/local-pasteboard-historical-read/safe.cpp",
+      "research/evidence/cpp/D59_PASTEBOARD_PERMISSION_SUPPRESSION_20261023.md",
+      "research/evidence/cpp/D59_PASTEBOARD_PERMISSION_SUPPRESSION_20261023.json"
+    ],
+    "full_component_replay": {
+      "source_commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+      "unit_count": 67,
+      "parser_states": {"complete": 57, "partial": 10},
+      "baseline_status": "blocked",
+      "patched_status": "blocked",
+      "baseline_findings": [
+        {"symbol": "CVE-2025-25212", "rule_id": "ohknowncve-pasteboard-cve-2025-25212", "file": "services/core/src/pasteboard_service.cpp", "line": 241, "column": 5, "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"},
+        {"symbol": "CVE-2025-27247", "rule_id": "ohknowncve-pasteboard-cve-2025-27247", "file": "services/zidl/src/pasteboard_service_stub.cpp", "line": 41, "column": 1, "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"}
+      ],
+      "patched_findings_identical": true
+    },
+    "broader_suite": "not independently run; D59 report records 3 failures and 17 errors in full discovery, with environment/baseline causes. No full-suite pass is claimed."
+  },
+  "supplemental_precision_failure": {
+    "id": "denial-guard-under-conditional-outer-branch",
+    "shape": "if (is_privileged) { if (!VerifyCallingPermission(...)) return denial; } GetPasteData(); parcel write",
+    "baseline_observed": "suppressed",
+    "frozen_D59_observed": "suppressed",
+    "expected_candidate_behavior": "retain candidate because the outer condition can bypass the only denial exit before the read",
+    "disposition": "actionable non-dominating-guard false suppression; notified D59 developer and root; awaiting follow-up commit",
+    "semantic_limit": "This probe reasons about a concrete branch bypass in the synthetic control. It does not establish any real permission helper or product behavior."
   }
 }
