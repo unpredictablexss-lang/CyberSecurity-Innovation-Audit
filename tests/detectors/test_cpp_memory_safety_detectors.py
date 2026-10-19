@@ -104,6 +104,63 @@ void SortElementsByObject(Handle h, Value v, unsigned int len) {
         self.assertGreaterEqual(len(run.findings), 2)
         self.assertIn("ohcpp-memory-bounds-element-access-candidate-003", {item.rule_id for item in run.findings})
 
+    def test_unsigned_dimension_underflow_in_pointer_offset_is_candidate(self) -> None:
+        source = unit("positive/unsigned_raster_offset.cpp", """
+typedef unsigned int uint32_t;
+struct Image { uint32_t height; };
+void consume(uint32_t *, uint32_t, uint32_t);
+int read_image(uint32_t rwidth, uint32_t rheight, uint32_t *raster, Image img) {
+    return consume(raster + (rheight - img.height) * rwidth, rwidth, img.height), 1;
+}
+""")
+        run = self.detector.detect(context_for(source), (source,))
+        findings = [item for item in run.findings if item.rule_id == "ohcpp-memory-bounds-pointer-offset-candidate-004"]
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].rule_version, "0.1.0")
+        self.assertEqual(findings[0].candidate_cwe, "CWE-191")
+
+    def test_unsigned_dimension_offset_guard_and_unrelated_shapes_are_quiet(self) -> None:
+        guarded = unit("fixed/guarded_raster_offset.cpp", """
+typedef unsigned int uint32_t;
+struct Image { uint32_t height; };
+void consume(uint32_t *, uint32_t, uint32_t);
+int fixed(uint32_t width, uint32_t height, uint32_t *raster, Image img) {
+    if (height >= img.height) {
+        consume(raster + (height - img.height) * width, width, img.height);
+    }
+    return 0;
+}
+""")
+        signed_offset = unit("safe/signed_pointer_offset.cpp", """
+typedef unsigned int uint32_t;
+void consume(uint32_t *, uint32_t, uint32_t);
+int safe(int delta, uint32_t width, uint32_t *raster) {
+    consume(raster + (delta - 1) * width, width, 0);
+    return 0;
+}
+""")
+        unrelated = unit("unrelated/unsigned_subtraction.cpp", """
+typedef unsigned int uint32_t;
+uint32_t subtract(uint32_t a, uint32_t b) { return a - b; }
+""")
+        run = self.detector.detect(context_for(guarded, signed_offset, unrelated), (guarded, signed_offset, unrelated))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
+
+        partial = unit("unknown/unsigned_raster_offset.cpp", """
+typedef unsigned int uint32_t;
+struct Image { uint32_t height; };
+void consume(uint32_t *, uint32_t, uint32_t);
+int partial_case(uint32_t width, uint32_t height, uint32_t *raster, Image img) {
+    consume(raster + (height - img.height) * width, width, img.height);
+    return 0;
+}
+""", "partial")
+        blocked = self.detector.detect(context_for(partial), (partial,))
+        self.assertEqual(blocked.status, "blocked")
+        self.assertEqual(blocked.findings, ())
+
     def test_stable_array_wrapper_and_unrelated_accessor_are_quiet(self) -> None:
         source = unit("fixed/stable_element_access.cpp", """
 struct Handle {};
