@@ -30,3 +30,11 @@ must be labeled `unknown` rather than forced into a binary class.
 ## Current-version note (2026-10-19)
 
 D41 is frozen against detector 0.17.0 and cannot be used as an independent accuracy result for 0.21.0. D47 freezes the current detector/model source hashes at code commit 1f170e0810405974d613bd43e1a5d62817d215a6 and repeats four already-used development profiles for stability/performance only. D47 does not create independent labels. The next valid holdout must use source snapshots not used in D development, keep the scanner/model frozen during review, and have an independent reviewer assign line-bound labels before the prediction key is revealed.
+
+
+## D48 distributed_screen
+
+D48 freezes distributed_screen at commit 373e2b5241c0e5dcb923642059ae83e4e9a1a64e and the 0.21.0 detector before its run. Two rounds matched with zero candidates, but coverage is partial for all 97 files and blocked. There are no independent labels; this is not an accuracy result or a clean bill of health. Keep D48 results sealed from tuning; use a new frozen source set after any model change. See the [preregistration](D48_HOLDOUT_PREREGISTRATION.md) and [replay report](D48_HOLDOUT/distributed_screen/README.md).
+
+
+D48 also has a separate, reused synthetic panel control at detector 0.21.0. It is explicitly excluded from holdout scoring; see D48_PANEL_SMOKE/README.md. The distributed_screen source replay has no independent labels and is not scored.
