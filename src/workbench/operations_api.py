@@ -11,6 +11,7 @@ from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, ConfigDict, Field
 from .operations import approved_url, date_selection, enqueue_branch_comparison, enqueue_range
 from .operations_store import Operations, END
+from .operation_limits import MAX_DETECTOR_IDS
 from .store import now
 from . import service
 from .agent_guidance import recommend_investigation_route
@@ -70,7 +71,7 @@ class RangeRequest(Strict):
     baseline: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
     endpoint: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
-    detector_ids: list[str] = Field(min_length=1, max_length=10)
+    detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
@@ -82,7 +83,7 @@ class DateRangeRequest(Strict):
     end: str = Field(min_length=10, max_length=40)
     timezone: str = Field(min_length=1, max_length=100)
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
-    detector_ids: list[str] = Field(min_length=1, max_length=10)
+    detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
@@ -100,7 +101,7 @@ class MatrixRequest(Strict):
     repository_id: str
     commits: list[str] = Field(min_length=2, max_length=8)
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
-    detector_ids: list[str] = Field(min_length=1, max_length=10)
+    detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
@@ -110,7 +111,7 @@ class BranchComparisonRequest(Strict):
     baseline_ref: str = Field(min_length=1, max_length=200)
     endpoint_ref: str = Field(min_length=1, max_length=200)
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
-    detector_ids: list[str] = Field(min_length=1, max_length=10)
+    detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 

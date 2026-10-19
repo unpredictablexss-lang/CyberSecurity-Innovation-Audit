@@ -16,15 +16,15 @@ CASES = (
     ("positive_local_null_read.cpp", "positive", "complete", 1, "none", "not_applicable"),
     ("positive_member_default_initializer.cpp", "positive", "complete", 1, "none", "not_applicable"),
     ("positive_reference_alias.cpp", "positive", "complete", 1, "none", "not_applicable"),
-    ("positive_error_path_falls_through.cpp", "positive", "complete", 1, "not_dominating", "error_branch_falls_through"),
+    ("positive_error_path_falls_through.cpp", "positive", "partial", 1, "unknown", "lexical_error_branch_falls_through"),
     ("positive_return_value_unknown.cpp", "positive", "partial", 1, "none", "not_applicable"),
-    ("fixed_error_path_multistatement.cpp", "fixed", "complete", 0, "dominating", "early_return"),
-    ("fixed_else_branch.cpp", "fixed", "complete", 0, "dominating", "else_branch_only"),
-    ("fixed_alias_early_return.cpp", "fixed", "complete", 0, "dominating", "early_return"),
+    ("fixed_error_path_multistatement.cpp", "fixed", "partial", 0, "unknown", "lexical_protecting_early_return_pattern"),
+    ("fixed_else_branch.cpp", "fixed", "partial", 0, "unknown", "lexical_protecting_else_branch_pattern"),
+    ("fixed_alias_early_return.cpp", "fixed", "partial", 0, "unknown", "lexical_protecting_early_return_pattern"),
     ("fixed_local_rebind_nonnull.cpp", "fixed", "complete", 0, "not_applicable", "not_applicable"),
     ("fixed_short_circuit.cpp", "fixed", "complete", 0, "not_applicable", "not_applicable"),
     ("safe_address_of_local.cpp", "safe", "complete", 0, "not_applicable", "not_applicable"),
-    ("safe_guarded_alias.cpp", "safe", "complete", 0, "dominating", "early_return"),
+    ("safe_guarded_alias.cpp", "safe", "partial", 0, "unknown", "lexical_protecting_early_return_pattern"),
     ("safe_reference_to_local.cpp", "safe", "complete", 0, "not_applicable", "not_applicable"),
     ("safe_nonpointer_member.cpp", "safe", "complete", 0, "not_applicable", "not_applicable"),
     ("unrelated_null_check_without_sink.cpp", "unrelated", "complete", 0, "not_applicable", "not_applicable"),
@@ -70,9 +70,9 @@ def build_manifest() -> dict:
         "change_request_id": "A-NULL-02",
         "detector": {
             "detector_id": "ohscanner.cpp.null_dereference",
-            "detector_version": "0.2.0",
+            "detector_version": "0.6.0",
             "rule_id": "ohcpp-null-dereference-candidate-001",
-            "rule_version": "1.2.0",
+            "rule_version": "1.4.0",
         },
         "categories": {
             "positive": "must retain a bounded candidate",
@@ -91,9 +91,8 @@ def main() -> int:
     args = parser.parse_args()
     expected = build_manifest()
     if args.write:
-        MANIFEST_PATH.write_text(
-            json.dumps(expected, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
+        MANIFEST_PATH.write_bytes(
+            (json.dumps(expected, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
         )
         print(MANIFEST_PATH)
         return 0

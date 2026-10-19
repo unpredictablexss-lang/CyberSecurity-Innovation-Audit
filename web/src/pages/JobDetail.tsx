@@ -426,6 +426,8 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                         title: "规则 / CWE 候选",
                         render: (_: any, f: any) => (
                           <>
+                            {f.rule_id === "ohcpp-null-dereference-unknown-return-observation-001" &&
+                              <Tag color="gold">弱候选 · 待复核</Tag>}
                             <Text code>{f.rule_id}</Text>
                             <div className="muted">{f.candidate_cwe}</div>
                           </>
@@ -728,7 +730,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           <>
             <Alert
               type="warning"
-              message={detail.rule_id + " · " + detail.candidate_cwe}
+              message={(detail.rule_id === "ohcpp-null-dereference-unknown-return-observation-001" ? "弱候选 · 待复核 · " : "") + detail.rule_id + " · " + detail.candidate_cwe}
               description={detail.message}
             />
             <CandidateActions job={job} candidate={detail} />
