@@ -1,0 +1,390 @@
+{
+  "date": "2026-10-19",
+  "baseline": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "profile_id": "light-ast",
+  "profile_definition": "Exact default-enabled detector IDs from catalog.default_detector_ids(), explicitly passed because ohscan-run CLI requires --detector",
+  "detectors": [
+    "ohscanner.cpp.bounds",
+    "ohscanner.cpp.integer_bounds",
+    "ohscanner.cpp.lifetime",
+    "ohscanner.cpp.resource_lifetime",
+    "ohscanner.cpp.shared_ptr_race",
+    "ohscanner.cpp.unsafe_memory_call",
+    "ohscanner.interface.ipc",
+    "ohscanner.oh.arkts_js"
+  ],
+  "cases": [
+    {
+      "case": "curl-fixed",
+      "report": "curl-fixed.json",
+      "report_sha256": "c86e8203e10a8c7cbfdeab495c72e1a7415d62e140e7f724545c73c24c758f1f",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 15,
+      "parsing_status": {
+        "complete": 1
+      },
+      "selected_source_files": 1,
+      "source_snapshot_sha256": "cbc4bf484c7dacefd8869f7917b00983569e8d012470e88f278fc6104744c2f6",
+      "detector_runs": [
+        {
+          "id": "ohscanner.cpp.bounds",
+          "version": "0.2.0",
+          "status": "completed",
+          "diagnostics": 13
+        },
+        {
+          "id": "ohscanner.cpp.integer_bounds",
+          "version": "0.2.1",
+          "status": "completed",
+          "diagnostics": 2
+        },
+        {
+          "id": "ohscanner.cpp.lifetime",
+          "version": "0.4.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.resource_lifetime",
+          "version": "0.3.0",
+          "status": "completed",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.shared_ptr_race",
+          "version": "0.5.1",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.unsafe_memory_call",
+          "version": "0.1.0",
+          "status": "completed",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.interface.ipc",
+          "version": "0.12.12",
+          "status": "completed",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.oh.arkts_js",
+          "version": "0.3.1",
+          "status": "blocked",
+          "diagnostics": 0
+        }
+      ]
+    },
+    {
+      "case": "curl-vulnerable",
+      "report": "curl-vulnerable.json",
+      "report_sha256": "81910dd4c4abad65e19a5064285886ef1e1976c93f1b97e80dbd20ff6a9fa8af",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 16,
+      "parsing_status": {
+        "complete": 1
+      },
+      "selected_source_files": 1,
+      "source_snapshot_sha256": "c0ca047682dce16d7aec8a1607b06f7a0420602a6a0ae13b8195f6629a1ac730",
+      "detector_runs": [
+        {
+          "id": "ohscanner.cpp.bounds",
+          "version": "0.2.0",
+          "status": "completed",
+          "diagnostics": 13
+        },
+        {
+          "id": "ohscanner.cpp.integer_bounds",
+          "version": "0.2.1",
+          "status": "completed",
+          "diagnostics": 2
+        },
+        {
+          "id": "ohscanner.cpp.lifetime",
+          "version": "0.4.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.resource_lifetime",
+          "version": "0.3.0",
+          "status": "completed",
+          "diagnostics": 1
+        },
+        {
+          "id": "ohscanner.cpp.shared_ptr_race",
+          "version": "0.5.1",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.unsafe_memory_call",
+          "version": "0.1.0",
+          "status": "completed",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.interface.ipc",
+          "version": "0.12.12",
+          "status": "completed",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.oh.arkts_js",
+          "version": "0.3.1",
+          "status": "blocked",
+          "diagnostics": 0
+        }
+      ]
+    },
+    {
+      "case": "libpng-fixed",
+      "report": "libpng-fixed.json",
+      "report_sha256": "5fb7625fa5206b38f8dfed5b6395519f8c8cbd6d111fb23103e8cc2516314d4a",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 0,
+      "parsing_status": {
+        "partial": 4
+      },
+      "selected_source_files": 4,
+      "source_snapshot_sha256": "21cfd3bac010b1ba63611630ac8381487a9455c24591618cb16bb52e0a600eae",
+      "detector_runs": [
+        {
+          "id": "ohscanner.cpp.bounds",
+          "version": "0.2.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.integer_bounds",
+          "version": "0.2.1",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.lifetime",
+          "version": "0.4.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.resource_lifetime",
+          "version": "0.3.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.shared_ptr_race",
+          "version": "0.5.1",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.unsafe_memory_call",
+          "version": "0.1.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.interface.ipc",
+          "version": "0.12.12",
+          "status": "completed",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.oh.arkts_js",
+          "version": "0.3.1",
+          "status": "blocked",
+          "diagnostics": 0
+        }
+      ]
+    },
+    {
+      "case": "libpng-vulnerable",
+      "report": "libpng-vulnerable.json",
+      "report_sha256": "cfd81aea564cbff9935a9fa8b28152a6bfc30fc19dd9be342c4cb4d1eb5910cc",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 2,
+      "parsing_status": {
+        "partial": 4
+      },
+      "selected_source_files": 4,
+      "source_snapshot_sha256": "f80ae78bc09612fd5b8c5a925f858b41e15711319d0a794cafeb4764f7ec73d9",
+      "detector_runs": [
+        {
+          "id": "ohscanner.cpp.bounds",
+          "version": "0.2.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.integer_bounds",
+          "version": "0.2.1",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.lifetime",
+          "version": "0.4.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.resource_lifetime",
+          "version": "0.3.0",
+          "status": "blocked",
+          "diagnostics": 2
+        },
+        {
+          "id": "ohscanner.cpp.shared_ptr_race",
+          "version": "0.5.1",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.unsafe_memory_call",
+          "version": "0.1.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.interface.ipc",
+          "version": "0.12.12",
+          "status": "completed",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.oh.arkts_js",
+          "version": "0.3.1",
+          "status": "blocked",
+          "diagnostics": 0
+        }
+      ]
+    },
+    {
+      "case": "libtiff-fixed",
+      "report": "libtiff-fixed.json",
+      "report_sha256": "e609a300ecdaf3d479689f81afb02f0ba73d26583ed350b63d9cb08de7eb8323",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 0,
+      "parsing_status": {
+        "partial": 2
+      },
+      "selected_source_files": 2,
+      "source_snapshot_sha256": "c7b380f2774adc947c493f919086e4a48cd4c0dfd1e6d6041e6e9ae2587817d5",
+      "detector_runs": [
+        {
+          "id": "ohscanner.cpp.bounds",
+          "version": "0.2.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.integer_bounds",
+          "version": "0.2.1",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.lifetime",
+          "version": "0.4.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.resource_lifetime",
+          "version": "0.3.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.shared_ptr_race",
+          "version": "0.5.1",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.unsafe_memory_call",
+          "version": "0.1.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.interface.ipc",
+          "version": "0.12.12",
+          "status": "completed",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.oh.arkts_js",
+          "version": "0.3.1",
+          "status": "blocked",
+          "diagnostics": 0
+        }
+      ]
+    },
+    {
+      "case": "libtiff-vulnerable",
+      "report": "libtiff-vulnerable.json",
+      "report_sha256": "2dfb899743cf1ad11f8099c39638d0fd7aca0cfde0c01ba7e719d3b4721e1983",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 1,
+      "parsing_status": {
+        "partial": 2
+      },
+      "selected_source_files": 2,
+      "source_snapshot_sha256": "dda2fe1af73132372d00a491714b80dcf51a6056a1acc0e60259fc4e922a748a",
+      "detector_runs": [
+        {
+          "id": "ohscanner.cpp.bounds",
+          "version": "0.2.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.integer_bounds",
+          "version": "0.2.1",
+          "status": "blocked",
+          "diagnostics": 1
+        },
+        {
+          "id": "ohscanner.cpp.lifetime",
+          "version": "0.4.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.resource_lifetime",
+          "version": "0.3.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.shared_ptr_race",
+          "version": "0.5.1",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.cpp.unsafe_memory_call",
+          "version": "0.1.0",
+          "status": "blocked",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.interface.ipc",
+          "version": "0.12.12",
+          "status": "completed",
+          "diagnostics": 0
+        },
+        {
+          "id": "ohscanner.oh.arkts_js",
+          "version": "0.3.1",
+          "status": "blocked",
+          "diagnostics": 0
+        }
+      ]
+    }
+  ]
+}
