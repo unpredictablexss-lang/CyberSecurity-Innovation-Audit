@@ -301,6 +301,10 @@ D4 提交 `fc3d2d4b52acc43949a540a4cccc96a2c67f5248` 的证据矩阵 `evidence_m
 
 为缩短等待并避免产品身份猜测，最小输入已结构化为 `D5_PRODUCT_TARGET_INTAKE_20261020.json`。只有六项最小字段共同指向唯一产品构建后才启动画像收集；GN/build/TU/binary 细节由 D5 负责取证，不要求产品 owner 预先提供技术证据。
 
+### D2/T2 case-vs-portfolio 验收反馈闭环
+
+D2 的验收说明 `research/methods/ark_runtime/build_profile_20261019/CASE_VS_PORTFOLIO_PROFILE_ACCEPTANCE_20261020.md` 最终 SHA-256 为 `0cb727bf2ac73a711fd78dd75cec6b5d47912a540e6273827476582b59c075d3`；D5 intake 最终 SHA 为 `689b374626deae64765e4ef38f89c115e8ad175c4a6be21e8138818321099c6b`。T2 首轮 `T2_CASE_VS_PORTFOLIO_PROFILE_ACCEPTANCE_REVIEW_20261020.md`（SHA `eb562b14be55bf343c5ba8b92dc69901b649c093c8fedecda0b1d540594c6f32`）给出 partial acceptance：要求锁 immutable manifest，并补齐 profile spec 的身份/build 字段。D2/D5 已按字段修订；T2 follow-up `T2_CASE_VS_PORTFOLIO_PROFILE_ACCEPTANCE_FOLLOWUP_20261020.md`（SHA `9cb06033b805ce1d1498f66c020fb8df1aa1d332078c322c03c0a777d95f3e9`）独立复算 profile spec 对照数组均 10/10 匹配，且确认 case/portfolio 门与同一构建闭包表述 PASS。此 PASS 只验收画像契约，不闭合 IBS5YG case profile 或 16 案 PC-1；目标输入仍 null。source object custody 是否为强制验收条件仍需按准入政策明确。
+
 ### D5 — 产品画像与构建身份绑定（开发/证据整理线）
 
 **任务：** 用户提供产品版本后，按 G12-PC-1 收集并绑定产品 manifest、Ark Runtime revision、GN target/action/args、toolchain/sysroot、完整 include/generated-input closure、compile database、preprocessed TU/macro log 和 shipped binary/image SHA。逐项区分 source pair ancestry、产品组件来源和目标产品构建，不修改产品源码，不以相邻版本或其他 CVE 的构建填空。若证据缺失，保留 BLOCKED/UNKNOWN。

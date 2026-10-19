@@ -21,13 +21,13 @@
         "reason": "payload drift / verification failed; not a product profile"
       }
     ],
-    "local_target_product_artifact_search": "No exact IBS5YG target product identity or same-profile build artifact found in reviewed local records/outputs."
+    "local_target_product_artifact_search": "Scoped review of the D4 evidence matrix and the cited Sort/C1/build-profile records found no exact IBS5YG target-product artifact. This is not an exhaustive search of all local worktrees and must not be treated as evidence that no such artifact exists."
   },
   "minimum_inputs_to_start_d5": {
     "openharmony_release": null,
     "product_build_id_or_image_version": null,
     "source_branch_or_release_tag": null,
-    "locked_manifest_uri_or_commit": null,
+    "locked_manifest_uri_plus_sha256_or_immutable_commit": null,
     "product_name": null,
     "board_or_device_target": null
   },
@@ -69,14 +69,46 @@
     "Bind preprocessed translation unit and macro log to the same build.",
     "Bind shipped binary/image digest to the same product build."
   ],
+  "case_profile_required_identity_fields": [
+    "commit",
+    "tree",
+    "blob",
+    "source_sha256",
+    "detector_rule_version",
+    "scope",
+    "profile",
+    "config_hash",
+    "parser_identity",
+    "toolchain_identity"
+  ],
+  "case_profile_required_build_inputs": [
+    "product_manifest",
+    "exact_args_gn",
+    "gn_target",
+    "compile_commands_json",
+    "actual_include_closure",
+    "compiler_identity",
+    "linker_identity",
+    "sysroot_identity",
+    "preprocessed_translation_units",
+    "macro_expansion_log"
+  ],
+  "same_build_evidence_closure": [
+    "Immutable product manifest identity and digest",
+    "Exact Ark Runtime product component revision and source relationship",
+    "Successful GN generation, target/action, exact args, compile/link logs",
+    "Compiler/linker identities, target triple, sysroot, compile database, generated inputs and complete direct/transitive include closure",
+    "Preprocess command, macro log, preprocessed TU bytes and digest",
+    "Shipped binary/image digest and auditable source-to-product integration mapping"
+  ],
   "test_tasks_after_intake": [
     "Independently recompute all source, manifest, build, preprocessed-input and binary identities.",
     "Reject artifacts from a different product, release, candidate, failed build or host-tools configuration.",
     "Return field-level discrepancies to D5 and re-audit the revised manifest digest."
   ],
   "acceptance": {
-    "route_to_target_when": "All six minimum_inputs_to_start_d5 fields identify one concrete product build without ambiguity.",
-    "close_ibs5yg_case_profile_when": "D5 has bound the exact locked manifest digest, Ark Runtime component revision, successful build inputs, preprocessed TU and shipped binary/image to that same product build, and T5 has independently recomputed the identities and hashes.",
+    "route_to_target_when": "All six minimum_inputs_to_start_d5 fields identify one concrete product build without ambiguity; the locked manifest must be an immutable commit or a URI paired with a verified digest.",
+    "close_ibs5yg_case_profile_when": "D5 has bound every case_profile_required_identity_fields and case_profile_required_build_inputs item, exact immutable manifest identity/digest, Ark Runtime component revision, and every same_build_evidence_closure item to one product build; T5 independently recomputes all identities and hashes and checks their relationships.",
     "portfolio_pc1_completion_when": "All 16 cases in the G12-PC-1 portfolio have independently auditable required source-to-product build/preprocess/binary profiles; closing IBS5YG alone closes only its case profile and does not change portfolio PC-1 from IN_PROGRESS_BLOCKED.",
     "close_pc3_when": "The product entry, privilege boundary, attacker-controlled trigger, reachable sensitive operation and concrete CIA impact are independently evidenced.",
     "current_pc1": "IN_PROGRESS_BLOCKED",
