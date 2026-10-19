@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "task": "T51 independent acceptance of D51",
+  "date": "2026-10-20",
+  "role": "independent_test_only",
+  "scanner_base": "842948084660207fd64399cfd598ed93e5593dcc",
+  "developer_commits": {
+    "initial_location_refinement": "ed0123ba525e2a812934c4b2c3a91b2746d2a69d",
+    "final_flow_guard_revision": "2302caec9d812e70b281d195dc24f895827d373a"
+  },
+  "final_rule_version": "0.19.1",
+  "modified_detector_tests_fixtures_expected_outputs_or_policy_in_acceptance_checkout": false,
+  "acceptance": {
+    "rule_regression": "PASS_SCOPED_OBSERVER_QUOTA_SHAPE",
+    "static_source_case": "PARTIAL",
+    "component_root_cause": "CANDIDATE_SUPPORTED_UNASSESSED",
+    "product_cve_status": "UNKNOWN",
+    "validated_vulnerability": 0,
+    "summary": "Current rule binds the candidate to the exact observer set insertion and preserves candidates for two no-op quota controls; valid direct and consumed-helper exit guards suppress. The full component run is blocked, exact fixed API is refactored so its zero hit is non-diagnostic, and product entry/build/impact remain unverified."
+  },
+  "vulnerable_source": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "local_object_store": "D:/OpenHarmony807/repos/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+    "path": "services/core/src/pasteboard_service.cpp",
+    "blob": "c380ac266a85edd818caa811f11b99722d351788",
+    "bytes": 17335,
+    "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+    "candidate_location": {
+      "line": 241,
+      "column": 5,
+      "statement": "observers->insert(observer)",
+      "rule_id": "ohknowncve-pasteboard-cve-2025-25212"
+    },
+    "source_relationship": {
+      "map_key": "OS local userId derived from IPCSkeleton::GetCallingUid()",
+      "map_type": "map<int32_t, shared_ptr<set<observer>>>",
+      "set_comparator": "compares observer AsObject references",
+      "duplicate_semantics": "same remote observer reference deduplicates; distinct observer objects remain distinct",
+      "hard_observer_count_bound_in_pinned_source": false,
+      "explicit_lifecycle": ["single remove", "remove all for user"],
+      "automatic_observer_death_cleanup": "not found in inspected component repository",
+      "binder_registration_route": "ADD_OBSERVER -> OnAddPasteboardChangedObserver -> read/cast remote object -> AddPasteboardChangedObserver"
+    }
+  },
+  "fixed_mechanism_source": {
+    "repository": "openharmony/distributeddatamgr_pasteboard",
+    "branch": "OpenHarmony-5.0.3-Release",
+    "pull_request": "https://gitee.com/openharmony/distributeddatamgr_pasteboard/pulls/1539",
+    "commit": "836cf6990579451d6521e9177d749660b07ad34e",
+    "tree": "8db5ac5a62c018c80818c85482e4914a836a4765",
+    "path": "services/core/src/pasteboard_service.cpp",
+    "blob": "af95e87bed596cc9f159bbf020536ea361835977",
+    "sha256": "e8202191adf1d660a7a6c3149481013747e1a40b6bb166aa5947fb28b67ad3d4",
+    "verified_mechanism": "count observer categories by (userId, callingPid), reject at MAX_OBSERVER_COUNT=10 before insert",
+    "api_refactored": true,
+    "zero_finding_is_diagnostic": false
+  },
+  "current_component_replay": {
+    "command": "python -m src.cli.main ohscan-run --repo-dir D:/OpenHarmony807/repos/miscservices_pasteboard --repository openharmony/miscservices_pasteboard --commit dd22c7cb5e5f207a6c38c50f45b7369ee8575840 --detector ohscanner.known_disclosed_cves",
+    "repetitions": 2,
+    "repeat_equal": true,
+    "detector_version": "0.19.1",
+    "task_status": "completed_with_limitations",
+    "detector_run_status": "blocked",
+    "scope_files": 67,
+    "scope_loc": 7104,
+    "parse_counts": {
+      "complete": 59,
+      "partial": 8,
+      "not_run": 1
+    },
+    "target_parser_status": "complete",
+    "target_analysis_status": "partial",
+    "target_analysis_reason": "detector_model_incomplete",
+    "validated_vulnerability": 0,
+    "diagnostics": [
+      {
+        "symbol": "CVE-2025-25212",
+        "file": "services/core/src/pasteboard_service.cpp",
+        "line": 241,
+        "column": 5,
+        "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+      },
+      {
+        "symbol": "CVE-2025-27247",
+        "file": "services/zidl/src/pasteboard_service_stub.cpp",
+        "line": 41,
+        "column": 1,
+        "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+        "interpretation": "unrelated existing candidate; method-opening location"
+      }
+    ]
+  },
+  "baseline_history": {
+    "D50_version": "0.16.0",
+    "D50_parse_counts": {"complete": 57, "partial": 10, "not_run": 1},
+    "scanner_base_version": "0.18.0",
+    "scanner_base_candidate_line": 222,
+    "initial_D51_version": "0.19.0",
+    "initial_D51_candidate_line": 241,
+    "initial_D51_control_issue": "no-op direct quota comparisons and ignored helper returns incorrectly suppressed candidate; fixed in final 0.19.1 commit"
+  },
+  "independent_probes": [
+    {
+      "name": "exact vulnerable source with partial input status",
+      "expected": "candidate retained, line 241:5; run blocked",
+      "observed": "candidate retained, line 241:5; run blocked",
+      "status": "pass"
+    },
+    {
+      "name": "direct hard quota exits before insertion",
+      "expected": "no candidate",
+      "observed": "no candidate",
+      "status": "pass"
+    },
+    {
+      "name": "same-file boolean quota helper result consumed by exiting caller guard",
+      "expected": "no candidate",
+      "observed": "no candidate",
+      "status": "pass"
+    },
+    {
+      "name": "log-only at-cap comparison followed by insert",
+      "expected": "candidate retained",
+      "observed": "candidate retained",
+      "status": "pass"
+    },
+    {
+      "name": "hard-quota helper called but return ignored before insert",
+      "expected": "candidate retained",
+      "observed": "candidate retained",
+      "status": "pass"
+    },
+    {
+      "name": "unrelated historyMap growth",
+      "expected": "no candidate",
+      "observed": "no candidate",
+      "status": "pass"
+    },
+    {
+      "name": "exact fixed source",
+      "expected": "zero result treated as non-diagnostic due API refactor",
+      "observed": "zero candidate; not counted as differential pass",
+      "status": "partial"
+    }
+  ],
+  "test_results": {
+    "command": "python -m pytest tests/detectors/test_known_disclosed_cves.py tests/detectors/test_known_case_corpus.py -q",
+    "passed": 31,
+    "failed": 0,
+    "diff_check": "pass"
+  },
+  "scope_audit": {
+    "scope_check": "N/A; frozen ownership.json has no D lane",
+    "manual_review": "changed paths are D51 detector, focused detector/corpus tests, known-case fixtures/manifest, and D51 evidence; no shared runner/parser/API/Catalog/policy/checker or unrelated detector changes",
+    "changed_paths_from_base": [
+      "research/data_sensitive/D51_PASTEBOARD_OBSERVER_QUOTA.json",
+      "research/data_sensitive/D51_PASTEBOARD_OBSERVER_QUOTA.md",
+      "src/ohscanner/detectors/known_cves.py",
+      "tests/detectors/test_known_case_corpus.py",
+      "tests/detectors/test_known_disclosed_cves.py",
+      "tests/fixtures/known_cases/known_case_manifest.json",
+      "tests/fixtures/known_cases/local-pasteboard-historical-read/fixed.cpp",
+      "tests/fixtures/known_cases/local-pasteboard-historical-read/positive.cpp",
+      "tests/fixtures/known_cases/local-pasteboard-historical-read/safe.cpp",
+      "tests/fixtures/known_cases/local-pasteboard-historical-read/unknown.cpp"
+    ],
+    "D_queue_changed": false
+  },
+  "product_task_tree": {
+    "root": "G12-PC-PRODUCT-ADMISSION-CLOSURE",
+    "status": "ACTIVE_NOT_ADMITTED",
+    "states": {
+      "G12-PC-1": "IN_PROGRESS_BLOCKED",
+      "G12-PC-2": "PIPELINE_IMPLEMENTED_NOT_EXECUTED",
+      "G12-PC-3": "BLOCKED",
+      "G12-PC-4": "NOT_RUN",
+      "G12-PC-5": "NOT_RUN",
+      "G12-PC-6": "NOT_ADMITTED"
+    }
+  },
+  "official_cve_context": {
+    "public_record": "https://nvd.nist.gov/vuln/detail/CVE-2025-25212",
+    "record_scope": "local denial of service through improper input in OpenHarmony v5.0.3 and prior",
+    "exact_source_line_identified_by_record": false,
+    "product_inclusion_proved": false
+  },
+  "remaining_unknowns": [
+    "product build identity and component inclusion",
+    "service ability ACL and caller entry/reachability",
+    "automatic observer callback cleanup on caller death",
+    "runtime availability impact and controlled reproduction",
+    "fixed-product rebuild and revalidation",
+    "detector coverage beyond its narrow local helper/guard patterns"
+  ]
+}
