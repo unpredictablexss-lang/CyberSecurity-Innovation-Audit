@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "task": "T52 independent acceptance of D52",
+  "date": "2026-10-20",
+  "role": "independent_test_only",
+  "developer_commit": "9d3b1e653a6e56a3f2f6aea376e30ac9f61ef4e",
+  "scanner_base": "842948084660207fd64399cfd598ed93e5593dcc",
+  "modified_detector_tests_fixtures_expected_outputs_or_policy": false,
+  "result": {
+    "rule_regression": "PASS_SCOPED_SIGNATURE_BEHAVIOR",
+    "static_source_case": "PARTIAL",
+    "component_vulnerability": "UNASSESSED_CANDIDATE",
+    "product_cve_status": "UNKNOWN",
+    "validated_vulnerability": 0,
+    "reason": "Pinned source and current rule candidate are reproducible; synthetic guards and unrelated controls are silent; the target source is partial and the full detector run is blocked; external IPC/SystemAbility authorization and product build policy are unresolved."
+  },
+  "source_identity": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "local_object_store": "D:/OpenHarmony807/repos/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+    "target": {
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+      "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+    },
+    "related_objects": [
+      {
+        "path": "services/core/src/pasteboard_service.cpp",
+        "blob": "c380ac266a85edd818caa811f11b99722d351788",
+        "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+      },
+      {
+        "path": "utils/native/src/pasteboard_permission.cpp",
+        "blob": "5e7bf43287374eb21a8200400cbe350e8d234368",
+        "sha256": "b1241967b47b12ffbcc980c4f9514e32406d04b0652ff66fa7f88e4bd29f5761"
+      }
+    ],
+    "exact_fixed_source_available": false,
+    "source_repository_shallow": true,
+    "local_commit_count": 1
+  },
+  "current_rule_replay": {
+    "command": "python -m src.cli.main ohscan-run --repo-dir D:/OpenHarmony807/repos/miscservices_pasteboard --repository openharmony/miscservices_pasteboard --commit dd22c7cb5e5f207a6c38c50f45b7369ee8575840 --detector ohscanner.known_disclosed_cves",
+    "repeat_equal": true,
+    "repeat_count": 2,
+    "scanner_base": "842948084660207fd64399cfd598ed93e5593dcc",
+    "detector": "ohscanner.known_disclosed_cves",
+    "detector_version": "0.18.0",
+    "task_status": "completed_with_limitations",
+    "detector_run_status": "blocked",
+    "scope_files": 67,
+    "scope_loc": 7104,
+    "parse_counts": {
+      "complete": 59,
+      "partial": 8,
+      "not_run": 1
+    },
+    "target_parse_status": "partial",
+    "diagnostics": [
+      {
+        "symbol": "CVE-2025-25212",
+        "file": "services/core/src/pasteboard_service.cpp",
+        "line": 222,
+        "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+      },
+      {
+        "symbol": "CVE-2025-27247",
+        "file": "services/zidl/src/pasteboard_service_stub.cpp",
+        "line": 41,
+        "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+        "line_scope": "OnRemoteRequest method opening brace, not the specific root statement"
+      }
+    ],
+    "historical_D50": {
+      "detector_version": "0.16.0",
+      "parse_counts": {
+        "complete": 57,
+        "partial": 10,
+        "not_run": 1
+      },
+      "interpretation": "Separate historical run; not substituted for the current 0.18.0 replay."
+    }
+  },
+  "source_chain": [
+    {
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "lines": "25-37",
+      "fact": "GET_PASTE_DATA maps to OnGetPasteData."
+    },
+    {
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "lines": "39-63",
+      "fact": "OnRemoteRequest checks the interface descriptor, records caller identity for logging, and dispatches the mapped transaction; no permission decision is visible in this method."
+    },
+    {
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "lines": "73-87",
+      "fact": "OnGetPasteData reads through GetPasteData and writes the returned object to the reply parcel."
+    },
+    {
+      "path": "services/core/src/pasteboard_service.cpp",
+      "lines": {
+        "get_paste_data": "155-177",
+        "get_user_id": "211-219"
+      },
+      "fact": "GetPasteData maps the caller UID to an OS user, looks up that user's clip, copies it, and returns success; no permission allow/deny decision is visible in the traced method."
+    },
+    {
+      "path": "utils/native/src/pasteboard_permission.cpp",
+      "fact": "Permission helpers exist, but repository search found no call from the traced read path; external IPC/SystemAbility policy is unresolved."
+    }
+  ],
+  "independent_controls": [
+    {
+      "name": "GET_PASTE_DATA dispatch to data-return handler",
+      "result": "candidate emitted"
+    },
+    {
+      "name": "generic CheckPermission guard",
+      "result": "no target candidate"
+    },
+    {
+      "name": "VerifyCallingPermission(PERMISSION_READ_PASTEBOARD) guard",
+      "result": "no target candidate"
+    },
+    {
+      "name": "other public-read selector/name",
+      "result": "no target candidate"
+    },
+    {
+      "name": "metadata-only HAS_PASTE_DATA sibling",
+      "result": "no target candidate"
+    },
+    {
+      "name": "SET_PASTE_DATA transaction control",
+      "result": "no target candidate"
+    },
+    {
+      "name": "candidate shape with partial parser status",
+      "result": "candidate retained and run blocked"
+    }
+  ],
+  "verification": {
+    "focused_command": "python -m unittest tests.detectors.test_known_disclosed_cves -q",
+    "focused_tests_passed": 21,
+    "focused_tests_failed": 0,
+    "diff_check": "pass",
+    "frozen_worktree_clean": true,
+    "changed_paths": [
+      "research/data_sensitive/D52_PASTEBOARD_PERMISSION_20261020.json",
+      "research/data_sensitive/D52_PASTEBOARD_PERMISSION_20261020.md"
+    ],
+    "scope_check": "N/A; frozen ownership policy has no D lane; task evidence-only paths manually audited",
+    "D_queue_update": "not part of frozen D52 evidence-only commit"
+  },
+  "product_task_tree": {
+    "root": "G12-PC-PRODUCT-ADMISSION-CLOSURE",
+    "status": "ACTIVE_NOT_ADMITTED",
+    "states": {
+      "G12-PC-1": "IN_PROGRESS_BLOCKED",
+      "G12-PC-2": "PIPELINE_IMPLEMENTED_NOT_EXECUTED",
+      "G12-PC-3": "BLOCKED",
+      "G12-PC-4": "NOT_RUN",
+      "G12-PC-5": "NOT_RUN",
+      "G12-PC-6": "NOT_ADMITTED"
+    }
+  },
+  "limitations": [
+    "Target stub parse status is partial and the full detector run is blocked.",
+    "No exact fixed upstream source commit was available in the shallow component object store.",
+    "External IPC/SystemAbility skeleton authorization and product access policy remain unknown.",
+    "Product build identity, attacker reachability, impact, dynamic exploitation and fixed-product revalidation were not established.",
+    "Synthetic controls are regression fixtures, not independent holdout labels."
+  ]
+}
