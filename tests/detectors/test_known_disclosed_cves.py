@@ -585,6 +585,18 @@ class KnownDisclosedCveTests(unittest.TestCase):
         self.assertTrue(aggregate_payload["observations_truncated"])
         self.assertEqual("unresolved_control_flow", aggregate_payload["state"])
 
+        ninth_direct_if = (
+            first_eight + " if (condition) CheckPermission(READ_PASTEBOARD);"
+        )
+        direct_if_aggregate = json.loads(
+            _pasteboard_guard_observation(ninth_direct_if).description
+        )
+        self.assertEqual(9, direct_if_aggregate["total_matches"])
+        self.assertEqual(1, direct_if_aggregate["observations_omitted_count"])
+        self.assertEqual(
+            "unresolved_control_flow", direct_if_aggregate["state"]
+        )
+
         routed_findings = self.run_source(
             "PasteboardServiceStub::PasteboardServiceStub(){ "
             "memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; } "
@@ -626,6 +638,39 @@ class KnownDisclosedCveTests(unittest.TestCase):
             "if (is_privileged) if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return denied; GetPasteData();"
         )
         self.assertEqual("unresolved_control_flow", json.loads(unbraced.description)["state"])
+
+        # A control body may begin at the first character of the extracted
+        # handler body; equality with body_start is still nested control flow.
+        starts_at_zero = _pasteboard_guard_observation(
+            "if (condition) CheckPermission(READ_PASTEBOARD);"
+        )
+        self.assertEqual(
+            "unresolved_control_flow", json.loads(starts_at_zero.description)["state"]
+        )
+        starts_later = _pasteboard_guard_observation(
+            "int marker = 0; if (condition) CheckPermission(READ_PASTEBOARD);"
+        )
+        self.assertEqual(
+            "unresolved_control_flow", json.loads(starts_later.description)["state"]
+        )
+        nested_if = _pasteboard_guard_observation(
+            "if (outer) if (inner) CheckPermission(READ_PASTEBOARD);"
+        )
+        self.assertEqual(
+            "unresolved_control_flow", json.loads(nested_if.description)["state"]
+        )
+        braced_control = _pasteboard_guard_observation(
+            "if (condition) { CheckPermission(READ_PASTEBOARD); }"
+        )
+        self.assertEqual(
+            "unresolved_control_flow", json.loads(braced_control.description)["state"]
+        )
+        top_level_only = _pasteboard_guard_observation(
+            "CheckPermission(READ_PASTEBOARD); CheckPermission(SECURE_PASTE);"
+        )
+        self.assertEqual(
+            "observed_unresolved", json.loads(top_level_only.description)["state"]
+        )
 
     def test_pasteboard_quota_helper_and_unrelated_growth_controls(self):
         helper_quota = """bool IsObserverQuotaExceeded(ObserverSet *observers) {

@@ -7,7 +7,7 @@ from .adapters.artifacts import classify_artifact, limitation_message
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.19.11"
+VERSION = "0.19.12"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -248,7 +248,7 @@ def _inside_unbraced_control(text: str, position: int) -> bool:
         body_start = closing + 1
         while body_start < len(text) and text[body_start].isspace():
             body_start += 1
-        if body_start >= position:
+        if body_start > position:
             continue
         if text[body_start] == "{":
             block_end = _matching_delimiter(text, body_start, "{", "}")

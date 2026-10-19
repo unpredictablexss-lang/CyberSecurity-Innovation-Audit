@@ -1,0 +1,66 @@
+{
+  "task": "D72",
+  "base_commit": "f628c90901d71510e60869c027e4c7903d2d4de6",
+  "detector": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.19.12",
+  "change": "Treat a match at the start of a brace-less if/loop/switch/catch body as unresolved control flow.",
+  "semantics": {
+    "aggregate_scans_all_matches": true,
+    "permission_guard": "unknown",
+    "suppression": false,
+    "authorization_inference": false
+  },
+  "constructive_probes": {
+    "brace_less_body_at_handler_offset_zero": "unresolved_control_flow",
+    "brace_less_body_after_prefix": "unresolved_control_flow",
+    "eighth_top_level_then_ninth_direct_if_call": "unresolved_control_flow; 9 matches; 8 records; 1 omitted",
+    "eighth_top_level_then_ninth_nested_if_call": "unresolved_control_flow; 9 matches; 8 records; 1 omitted",
+    "nested_if": "unresolved_control_flow",
+    "braced_control_body": "unresolved_control_flow",
+    "top_level_permission_calls": "observed_unresolved"
+  },
+  "d68_limits_preserved": {
+    "max_observation_records": 8,
+    "max_tokens_per_record": 16,
+    "max_snippet_characters": 120,
+    "max_description_characters": 4096,
+    "balanced_call_spans": true,
+    "truncation_counts_and_markers": true
+  },
+  "focused_tests": {
+    "command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "passed": 33,
+    "failed": 0,
+    "git_diff_check": "passed"
+  },
+  "raw_replay": {
+    "report": "research/evidence/cpp/D72_PASTEBOARD_RAW67_REPLAY_20261023.json",
+    "sha256": "f36d5cf6032a2415af0e1296d51c12677fc576e566abf60ef8065a14ebd00cf8",
+    "source_commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "source_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "status": "completed_with_limitations",
+    "parse_status": {
+      "complete": 59,
+      "partial": 8,
+      "not_run": 1
+    },
+    "detector_status": "blocked",
+    "findings": 2,
+    "validated_vulnerability": 0
+  },
+  "retained_candidates": [
+    {
+      "cve": "CVE-2025-25212",
+      "file": "services/core/src/pasteboard_service.cpp",
+      "line": 241,
+      "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+    },
+    {
+      "cve": "CVE-2025-27247",
+      "file": "services/zidl/src/pasteboard_service_stub.cpp",
+      "line": 41,
+      "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+    }
+  ],
+  "claim_boundary": "Candidates remain source-only. Product applicability, permission semantics, CVE causality, and vulnerability status are unknown."
+}
