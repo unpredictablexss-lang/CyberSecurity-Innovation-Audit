@@ -337,6 +337,8 @@ D2 的验收说明 `research/methods/ark_runtime/build_profile_20261019/CASE_VS_
 
 两条只读线对当前材料独立核验后一致：intake SHA-256 `689b374626deae64765e4ef38f89c115e8ad175c4a6be21e8138818321099c6b` 的六项最低输入全为 null；任务树 SHA-256 `1861a62e864949e506ec935db8ecd1313fecefe4130995bcd72c66d2970fbb84`，仍 `ACTIVE_NOT_ADMITTED`。T5 复核 profile-spec SHA-256 `3e65da9ac5119708d5c081d5550f4d1f3753ea834f54cc163fa7e1c7362ddb03` 的 case/portfolio 分离条件完整；D4 matrix SHA-256 与引用一致，但其中产品 manifest、GN args/target、compile DB/include closure、预处理 TU、binary/image 关联仍缺。已知 Sort/C1/build-profile 材料与 IBS5YG 的来源或构建身份不符，且 intake 明确搜索范围并非所有 worktree 的穷尽检索。D5/T5 结构校验器工作只负责阻止“填表即准入”的结构性错误；外部六项输入仍必须由产品 owner 提供，T5 还须验证来源与同一构建关系后才能把材料送入 D5 profile 收集。
 
+**开发—测试当前反馈：** D5 初版 `67bc597cc415c0ea1f0de3cc12a9b8a4fd651e3c` 的 11 项合成自测通过，T5 对该精确 SHA 的 20 项独立 harness 有 18 项符合预期，但发现 manifest HTTPS URL 的 query/fragment digest 只检查格式：任意 64 位值及不可解析 URL 仍会让 intake 被判为 `STRUCTURE_COMPLETE_REQUIRES_INDEPENDENT_REVIEW`，digest 尚未与 evidence-root 中的 manifest 字节绑定。T5 已将失败输入和复现提交给 D5；D5 修复后必须由 T5 在新精确 SHA 重跑该反例及其余 20 项，再决定 intake gate 是否通过。该问题暂不使 `admission_ready` 为 true，但必须修复才能认定结构校验可靠。真实产品字段保持 null，PC-1 不变。
+
 ### T6 候选专项运行时测试设计（现在可设计；执行需满足对应 case 的 PC-1/3/4）
 
 测试设计固定为 Int32Array Filter callback 将 `this.constructor[Symbol.species]` 改为返回 `new Uint8Array(3)`；parent 观察 index 2 的四字节写越界，fixed 与同类型/边界反例不越界。用隔离构建与 ASan/guarded allocator 记录目标 ByteArray 实际分配边界，并保留精确 build identity、命令、完整输出和 artifact hashes。产品目标 runtime 执行需满足对应 case 的 PC-1 profile、PC-3 入口/影响证据和 PC-4 明确授权；PC-1 其余 15 案仍可阻止 portfolio 整体关闭，但不应抹除 IBS5YG 单案状态。
