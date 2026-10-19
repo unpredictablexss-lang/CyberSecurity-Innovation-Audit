@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "task_id": "D60",
+  "date": "2026-10-23",
+  "role": "independent_read_only_second_layer_review",
+  "decision": "narrow",
+  "confidence": {
+    "candidate_handling_decision": 0.9,
+    "pinned_snapshot_component_candidate": 0.82,
+    "product_vulnerability": null
+  },
+  "downstream_second_layer_model": {
+    "send_candidate": true,
+    "scope": "source-only candidate with explicit source identity, route, line-anchor limitation, partial parse and blocked replay",
+    "allowed_question": "Review source-level authorization semantics and exact fix/advisory mapping.",
+    "prohibited_upgrade_without_new_evidence": "product_vulnerability"
+  },
+  "product_and_cve": {
+    "product_fingerprint_available": false,
+    "component_inclusion_manifest_available": false,
+    "cve_causality": "unknown",
+    "product_applicability": "unknown",
+    "runtime_authorization": "unknown",
+    "exploitability": "unknown",
+    "affected_or_fixed_device_status": "unknown",
+    "validated_vulnerability": 0
+  },
+  "frozen_commits": {
+    "D59": "da0195610f2203ce97af1f43385f0091f040504e",
+    "T59": "648fe48537cd2f226ef69a9a74006c586d9474f6",
+    "D59_baseline": "c8f83b82291e82b3272c73b943623336a3c836c3",
+    "D57_prior_second_layer": "ca2020e7b6d838e05175dc9b541a7d63d79461f1"
+  },
+  "rule": {
+    "id": "ohscanner.known_disclosed_cves",
+    "version": "0.19.5",
+    "suppression_requirements": [
+      "complete local if condition is a recognized permission-denial syntax",
+      "if body begins with return or throw",
+      "if is top-level by local brace-count check",
+      "if statement ends before the relevant GetPasteData or it->second route",
+      "candidate denial guard is not nested under literal if(false)"
+    ],
+    "recognized_permission_name_patterns": [
+      "Check*Permission",
+      "Verify*Permission",
+      "Enforce*Permission",
+      "PermissionManager",
+      "CheckPermission"
+    ],
+    "permission_identity_or_contract_bound": false,
+    "cfg_or_dominance_proof": false
+  },
+  "T59_evidence": {
+    "focused_command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "focused_status": "PASS",
+    "focused_test_count": 32,
+    "cumulative_diff_base": "c8f83b82291e82b3272c73b943623336a3c836c3",
+    "cumulative_diff_files": 8,
+    "cumulative_diff_insertions": 243,
+    "cumulative_diff_deletions": 12,
+    "full_component_replay": {
+      "unit_count": 67,
+      "parser_states": {
+        "complete": 57,
+        "partial": 10
+      },
+      "baseline_status": "blocked",
+      "patched_status": "blocked",
+      "patched_findings_identical_to_baseline": true,
+      "D52_finding": {
+        "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+        "path": "services/zidl/src/pasteboard_service_stub.cpp",
+        "line": 41,
+        "column": 1,
+        "line_scope": "OnRemoteRequest method opening brace",
+        "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+      },
+      "D51_sibling_finding_preserved": true
+    },
+    "broader_suite": {
+      "independently_rerun_by_T59": false,
+      "D59_reported_failures": 3,
+      "D59_reported_errors": 17,
+      "full_suite_pass_claimed": false
+    },
+    "scope_acceptance": "PASS_REPORTED_BY_T59"
+  },
+  "precision_assessment": {
+    "demonstrated_false_suppression_patterns_fixed": [
+      "ignored permission result",
+      "permission check after data read",
+      "permission check after parcel serialization",
+      "denial guard under a bypassable conditional outer branch",
+      "denial guard under literal if(false)"
+    ],
+    "syntactic_suppression_controls": [
+      "direct pre-read permission denial with immediate return",
+      "direct pre-read permission denial with immediate throw",
+      "permission status != PERMISSION_GRANTED with return"
+    ],
+    "concrete_unrelated_permission_negative_control": {
+      "method_shape": "mapped GET_PASTE_DATA handler checks CheckBluetoothPermission(PERMISSION_NETWORK) with immediate return, then unconditionally calls GetPasteData and WriteParcelable",
+      "execution": "read-only in-memory direct KnownDisclosedCveDetector invocation against frozen D59 0.19.5",
+      "observed_status": "completed",
+      "observed_pasteboard_candidate": false,
+      "observed_findings": [],
+      "assessment": "confirmed semantic false suppression: unrelated Bluetooth/network permission name matches the generic denial grammar and removes the Pasteboard read candidate",
+      "files_modified": false
+    },
+    "remaining_risks": [
+      "confirmed: unrelated Check*Permission-like call can satisfy naming pattern and suppress a Pasteboard candidate without proving pasteboard read authorization",
+      "throw/catch and function-try-block recovery are not modeled or tested",
+      "top-level detection is a local brace-count approximation, not CFG dominance",
+      "permission API return semantics and required permission identity are not bound",
+      "checks in core getter helpers, inherited framework, SystemAbility, or product ACL are not inspected",
+      "D52 target parse and complete component replay remain partial/blocked",
+      "line 41 is method entry rather than root statement"
+    ]
+  },
+  "source_identity": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "path": "services/zidl/src/pasteboard_service_stub.cpp",
+    "blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+    "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "parse_status": "partial",
+    "finding_anchor": "OnRemoteRequest opening brace, line 41"
+  },
+  "review_constraints": {
+    "scanner_modified": false,
+    "tests_modified": false,
+    "fixtures_modified": false,
+    "original_reports_modified": false,
+    "additional_control_was_in_memory_only": true,
+    "added_files": [
+      "D60_PASTEBOARD_GUARD_SECOND_LAYER_REVIEW_20261023.md",
+      "D60_PASTEBOARD_GUARD_SECOND_LAYER_REVIEW_20261023.json"
+    ]
+  }
+}
