@@ -1,0 +1,75 @@
+{
+  "review_id": "T54-D55-REVIEW-650B207-20261021",
+  "review_date": "2026-10-21",
+  "reviewer_checkout": "D:/openHarmonyScanner/worktrees/t51-pasteboard-independent-20261020",
+  "reviewed_checkout": "D:/openHarmonyScanner/worktrees/d55-holdout-protocol-20261021",
+  "reviewed_commit": "650b2072c33bdbd24f919a61e97fc42453084cb6",
+  "previous_review_commit": "e99b733dd84f7a5bab6c6274967ce68e1c955528",
+  "decision": "NOT_READY_FOR_EXECUTION",
+  "m2_status": "NOT_MET",
+  "protocol_design_gaps": {
+    "thresholds_owner_approval": "PASS_DESIGN_APPROVAL_PENDING",
+    "workload_floors_formula_and_simulation": "PASS_DESIGN_PLANNING_PENDING",
+    "fixed_cluster_ci_and_small_cluster_rules": "PASS_DESIGN",
+    "known_cve_catalog_identity": "PASS_INDEPENDENTLY_VERIFIED",
+    "known_cve_advisory_manifest": "BLOCKED_NOT_COLLECTED_HARD_STOP_CORRECTLY_SPECIFIED",
+    "coverage_unknown_stops_and_finding_matcher": "PASS_DESIGN",
+    "source_label_product_applicability_separation": "PASS_IN_PROSE_JSON_DUPLICATE_KEY_DEFECT",
+    "source_identity_edge_cases": "PARTIAL_NEEDS_OPERATIONAL_RULES"
+  },
+  "known_cve_catalog": {
+    "identifier_count": 17,
+    "unique_identifier_count": 17,
+    "git_blob": "5e71601423a3247b45fb4ce9adf28323b471dcb5",
+    "sha256_raw_blob": "577731fe7f2b252e895c4e1ec93e6ee494db7d3583fc848bb9173ba47eb660e0",
+    "raw_bytes": 20364,
+    "identity_check": "PASS",
+    "advisory_snapshots_and_hashes_collected": false,
+    "known_cve_track_execution": "NOT_READY_UNTIL_ADVISORY_MANIFEST_FROZEN"
+  },
+  "json_validation": {
+    "syntax_parse": "PASS",
+    "duplicate_key_check": "FAIL",
+    "duplicate_keys": [
+      "product_applicability_field",
+      "product_applicability_values",
+      "product_applicability_is_independent_of_source_label",
+      "source_only_product_applicability"
+    ],
+    "location": "labeling object",
+    "effect": "common parsers silently keep one value; machine record is ambiguous until duplicates are removed"
+  },
+  "execution_state": {
+    "protocol_status": "preregistered_protocol_only",
+    "accuracy_evaluation_started": false,
+    "labels_created": false,
+    "metrics_computed": false,
+    "scanner_modified": false,
+    "owner_threshold_approval_present": false,
+    "sampling_frame_and_cohort_present": false,
+    "scanner_freeze_present": false,
+    "advisory_manifest_present": false,
+    "reviewer_assignments_present": false,
+    "planning_simulation_present": false
+  },
+  "validation": {
+    "reviewed_diff_paths": [
+      "research/data_sensitive/D55_HOLDOUT_EXECUTION_TASK.md",
+      "research/data_sensitive/D55_HOLDOUT_PROTOCOL_20261021.json",
+      "research/data_sensitive/D55_INDEPENDENT_HOLDOUT_PREREGISTRATION.md"
+    ],
+    "no_detector_or_test_changes": true,
+    "catalog_blob_and_sha_recomputed": true,
+    "git_diff_check": "PASS_EXIT_0",
+    "scanner_tests_run": false
+  },
+  "required_before_execution": [
+    "Remove duplicated JSON keys and add duplicate-key validation",
+    "Specify operational submodule, symlink, cross-repository identical-blob, and vendored-copy inclusion/deduplication rules",
+    "Record D-owner approval of the track-specific proposed thresholds before source selection or label access",
+    "Create and freeze independent frame, cohort, overlap ledger, scanner bundle, and design-planning simulation",
+    "Complete per-CVE primary advisory snapshots, raw-byte hashes, and version scopes before known-CVE execution",
+    "Assign independent reviewers/adjudicator and prepare sealed prediction/label custody"
+  ],
+  "boundary": "No samples, labels, expected outcomes, scan results, or accuracy metrics were produced or inspected. M2 remains NOT MET; no M3/product conclusion follows."
+}
