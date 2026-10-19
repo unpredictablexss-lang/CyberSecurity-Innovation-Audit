@@ -24,6 +24,7 @@ from .memory_safety import (
     MAX_TOTAL_BYTES,
     MAX_UNIT_BYTES,
     ArrayShape,
+    balanced_end,
     call_argument_span,
     declarations,
     expression_interval,
@@ -40,7 +41,9 @@ from .memory_safety import (
 RULE_COPY = "ohcpp-memory-bounds-copy-candidate-001"
 RULE_INDEX = "ohcpp-memory-bounds-index-candidate-002"
 RULE_ELEMENT_ACCESS = "ohcpp-memory-bounds-element-access-candidate-003"
+RULE_POINTER_OFFSET = "ohcpp-memory-bounds-pointer-offset-candidate-004"
 RULE_VERSION = "0.2.0"
+RULE_POINTER_OFFSET_VERSION = "0.1.0"
 RULE_LINEAGE_ID = "A-BOF-01:ohcpp-memory-bounds-candidate"
 
 _OBLIGATIONS = (
@@ -105,6 +108,7 @@ def _finding(
     message: str,
     candidate_cwe: str,
     consequence_cwe: str,
+    rule_version: str = RULE_VERSION,
 ) -> DetectorFinding:
     line, column = line_column(text, position)
     return DetectorFinding(
@@ -120,7 +124,7 @@ def _finding(
         consequence_impact="memory_safety",
         consequence_cwe=consequence_cwe,
         source_sha256=unit.sha256,
-        rule_version=RULE_VERSION,
+        rule_version=rule_version,
         rule_lineage_id=RULE_LINEAGE_ID,
         identity_quality="partial",
     )
@@ -178,6 +182,61 @@ def _nonnegative_symbols(masked: str) -> Set[str]:
     return symbols
 
 
+def _pointer_offset_underflow_is_guarded(
+    function_text: str,
+    expression_start: int,
+    left: str,
+    right: str,
+) -> bool:
+    """Recognize only direct, local guards for unsigned dimension subtraction."""
+    left = re.escape(left)
+    right = re.escape(right)
+    # A positive comparison enclosing the offset proves the subtraction order
+    # on that branch (for example, if (h > image.height) { p += (h-height)*w; }).
+    for guard in re.finditer(
+        r"\bif\s*\(\s*" + left + r"\s*(?:>=|>)\s*" + right + r"\s*\)\s*\{",
+        function_text,
+    ):
+        open_brace = function_text.find("{", guard.start(), guard.end())
+        close_brace = balanced_end(function_text, open_brace)
+        if close_brace is not None and open_brace < expression_start < close_brace:
+            return True
+    # A reject-on-underflow guard must exit before the pointer expression.
+    prefix = function_text[:expression_start]
+    if re.search(
+        r"\bif\s*\(\s*" + left + r"\s*<\s*" + right +
+        r"\s*\)\s*(?:\{\s*return\b[^}]*\}|return\b[^;]*;)",
+        prefix,
+    ):
+        return True
+    return False
+
+
+def _unsigned_scalar_names(function_text: str, integers: Dict[str, object]) -> Set[str]:
+    names = {
+        name for name, shape in integers.items()
+        if not getattr(shape, "signed", True)
+    }
+    # The shared lexical declaration helper intentionally models locals and
+    # fields only; collect simple unsigned function parameters here.
+    for match in re.finditer(
+        r"\b(?:unsigned\s+(?:char|short|int|long)|size_t|u?int(?:8|16|32|64)_t|uintptr_t)"
+        r"\s*\*?\s*(?P<name>[A-Za-z_]\w*)\b",
+        function_text,
+    ):
+        names.add(match.group("name"))
+    return names
+
+
+def _pointer_names(function_text: str) -> Set[str]:
+    return {
+        match.group("name") for match in re.finditer(
+            r"\b[A-Za-z_]\w*\s*\*\s*(?P<name>[A-Za-z_]\w*)\b",
+            function_text,
+        )
+    }
+
+
 def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bool]:
     findings: List[DetectorFinding] = []
     limitations: List[str] = []
@@ -189,7 +248,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
 
     masked = mask_comments_and_literals(unit.text)
     functions = function_shapes(masked)
-    arrays, _integers, constants = declarations(masked)
+    arrays, integers, constants = declarations(masked)
     guards = guard_shapes(masked, functions)
     nonnegative = _nonnegative_symbols(masked)
     sizeof_values = {
@@ -275,6 +334,39 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                 "CWE-125" if not definite or interval.maximum is not None and interval.maximum < 0 else "CWE-787",
                 "CWE-125" if interval.maximum is not None and interval.maximum < 0 else "CWE-787",
             ))
+
+    # Unsigned dimension underflow can create a huge pointer displacement even
+    # when no array-index syntax or allocation expression is present.
+    pointer_offset_re = re.compile(
+        r"\b(?P<base>[A-Za-z_]\w*)\s*\+\s*\(\s*"
+        r"(?P<left>[A-Za-z_]\w*)\s*-\s*"
+        r"(?P<right>[A-Za-z_]\w*(?:\s*\.\s*[A-Za-z_]\w*)?)\s*\)\s*"
+        r"\*\s*(?P<scale>[A-Za-z_]\w*)"
+    )
+    for match in pointer_offset_re.finditer(masked):
+        function = function_at(functions, match.start())
+        if function is None:
+            continue
+        function_text = function.text
+        local_start = match.start() - function.start
+        base = match.group("base")
+        left = match.group("left")
+        right_expression = re.sub(r"\s+", "", match.group("right"))
+        right = right_expression.rsplit(".", 1)[-1]
+        unsigned_names = _unsigned_scalar_names(function_text, integers)
+        pointer_names = _pointer_names(function_text)
+        if base not in pointer_names or left not in unsigned_names or right not in unsigned_names:
+            continue
+        if _pointer_offset_underflow_is_guarded(function_text, local_start, left, right_expression):
+            continue
+        findings.append(_finding(
+            unit, unit.text, match.start(), RULE_POINTER_OFFSET, base,
+            f"Candidate only: pointer `{base}` is offset by unsigned dimension difference "
+            f"`{match.group('left')} - {match.group('right').strip()}` times "
+            f"`{match.group('scale')}` without a modeled ordering guard; underflow may move "
+            "the pointer outside its raster or buffer. Object extent and reachability remain unknown.",
+            "CWE-191", "CWE-787", RULE_POINTER_OFFSET_VERSION,
+        ))
     for match in re.finditer(r"\bElementAccessor::(?P<kind>Get|Set)\s*\(", masked):
         function = function_at(functions, match.start())
         if function is None or not re.search(r"SortElements", function.name):
