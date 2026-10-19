@@ -1,0 +1,79 @@
+{
+  "task": "T68",
+  "reviewed_commit": "3da049887999bd3cacb3d48da9ffa7baefa18ac5",
+  "base_commit": "dd7881d81e49d333ac2bd52062706ed06c5694c5",
+  "verdicts": {
+    "fix-correctness": "pass_metadata_only",
+    "candidate-retention": "pass",
+    "coverage": "partial",
+    "scope": "pass"
+  },
+  "probe_results": {
+    "all_obligations_unknown": true,
+    "no_guard_state": "absent",
+    "guard_like_state": "observed_unresolved",
+    "nested_control_state": "unresolved_control_flow",
+    "unbraced_nested_control_state": "unresolved_control_flow",
+    "nested_call_balanced_span": true,
+    "twelve_matches": {
+      "total": 12,
+      "records": 8,
+      "omitted": 4,
+      "truncation_marked": true
+    },
+    "three_thousand_identifiers": {
+      "records": 1,
+      "tokens_in_record": 16,
+      "tokens_omitted": 2986,
+      "tokens_truncated": true,
+      "serialized_characters": 602
+    },
+    "long_identifier_payload": {
+      "serialized_characters": 4075,
+      "limit": 4096,
+      "payload_truncated": true,
+      "max_snippet_characters": 120
+    }
+  },
+  "raw_replay": {
+    "source_commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "source_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "declared_paths": 68,
+    "cpp_parse_rows": 67,
+    "typescript_boundary": 1,
+    "cpp_parse_status": {
+      "complete": 59,
+      "partial": 8
+    },
+    "typescript_status": "not_run",
+    "detector_status": "blocked",
+    "findings": [
+      {
+        "cve": "CVE-2025-25212",
+        "file": "services/core/src/pasteboard_service.cpp",
+        "line": 241,
+        "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+      },
+      {
+        "cve": "CVE-2025-27247",
+        "file": "services/zidl/src/pasteboard_service_stub.cpp",
+        "line": 41,
+        "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+      }
+    ],
+    "raw_report_sha256": "491c63b8a5cf68497722c0c3f8c444857678c28848c07d0a9133538faaf5e13d",
+    "historical_D50_runtime_recreated": false
+  },
+  "validation": {
+    "focused_tests": {
+      "passed": 33,
+      "failed": 0
+    },
+    "diff_check": "passed"
+  },
+  "limitations": [
+    "Observation states are descriptive and do not prove authorization or control-flow dominance.",
+    "Coverage remains incomplete; D68 is not a rerun of D50's Python 3.10.12 runtime.",
+    "No product applicability, framework permission, CVE causality, reachability, exploitability, or safety conclusion is established."
+  ]
+}
