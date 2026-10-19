@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "batch": "D55 known-CVE primary advisory evidence, batch B",
+  "scope": "Exactly the eight IDs assigned to batch B; does not alter the frozen 17-ID catalog or D55 protocol.",
+  "baseline_commit": "c86e0b0321eb38b0ff403e98b8597622c7cd556c",
+  "retrieval_date_utc": "2026-10-19",
+  "retrieval_run_started_at_utc": "2026-10-19T18:06:22Z",
+  "entries": [
+    {
+      "cve_id": "CVE-2026-33636",
+      "publisher": "pnggroup/libpng maintainer advisory published through GitHub Security Advisories (GHSA-wjr5-c57x-95m2)",
+      "advisory_review_status": "vendor-maintainer-authored GHSA",
+      "canonical_url": "https://github.com/pnggroup/libpng/security/advisories/GHSA-wjr5-c57x-95m2",
+      "retrieval_date_utc": "2026-10-19",
+      "source_version_scope": {
+        "component": "libpng ARM/AArch64 Neon palette expansion",
+        "affected": "libpng >= 1.6.36 and <= 1.6.55 when ARM Neon hardware optimizations are enabled; generic C and the listed SSE2, PowerPC VSX, and LoongArch LSX implementations are not affected per advisory.",
+        "fixed": "libpng 1.6.56; 1.8.0 trunk",
+        "evidence_basis": "Primary GHSA rendered page, sections Affected versions, Affected platforms and versions, Patched versions (lines 141-159 when retrieved by web reader).",
+        "fixed_version_claim": "As stated in the GHSA only."
+      },
+      "snapshot_status": "blocked",
+      "immutable_response_bytes_sha256": null,
+      "response_body_file": null,
+      "response_headers_file": "CVE-2026-33636.headers (zero bytes; no HTTP headers received)",
+      "capture_attempt": {
+        "requested_url": "https://github.com/pnggroup/libpng/security/advisories/GHSA-wjr5-c57x-95m2",
+        "method": "curl.exe -L --http1.1 --max-time 12 -sS -D <headers> -o <body> -w <metadata> -A D55-advisory-evidence/1.0 --url <URL>",
+        "curl_exit_code": 28,
+        "http_status": null,
+        "curl_result": "000; connection timed out after 12015 ms; 0 response bytes",
+        "headers_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_sha256": null
+      },
+      "minimum_missing_evidence": "Obtain the primary GHSA response body bytes and response headers from a network path that can reach github.com, then recompute and freeze SHA-256. The browser-readable rendering was not treated as a byte snapshot."
+    },
+    {
+      "cve_id": "CVE-2026-46675",
+      "publisher": "pnggroup/libpng maintainer advisory published through GitHub Security Advisories (GHSA-qvg3-h654-xq3j)",
+      "advisory_review_status": "vendor-maintainer-authored GHSA",
+      "canonical_url": "https://github.com/pnggroup/libpng/security/advisories/GHSA-qvg3-h654-xq3j",
+      "retrieval_date_utc": "2026-10-19",
+      "source_version_scope": {
+        "component": "libpng sequential read API; stale zlib input in png_read_end after incomplete zTXt, iTXt, or iCCP decompression",
+        "affected": "libpng 1.6.0 through 1.6.58; unreleased 1.8.0 development branch. Application sequence is part of applicability: calls png_read_end after png_read_info and before starting to read image rows.",
+        "fixed": "libpng 1.6.59; 1.8.0 trunk",
+        "evidence_basis": "Primary GHSA rendered page, sections Affected versions, Affected applications, and Fix (lines 141-169 and 183-187 when retrieved by web reader).",
+        "fixed_version_claim": "As stated in the GHSA only."
+      },
+      "snapshot_status": "blocked",
+      "immutable_response_bytes_sha256": null,
+      "response_body_file": null,
+      "response_headers_file": "CVE-2026-46675.headers (zero bytes; no HTTP headers received)",
+      "capture_attempt": {
+        "requested_url": "https://github.com/pnggroup/libpng/security/advisories/GHSA-qvg3-h654-xq3j",
+        "method": "curl.exe -L --http1.1 --max-time 12 -sS -D <headers> -o <body> -w <metadata> -A D55-advisory-evidence/1.0 --url <URL>",
+        "curl_exit_code": 28,
+        "http_status": null,
+        "curl_result": "000; connection timed out after 12009 ms; 0 response bytes; api.github.com/advisories endpoint separately returned HTTP 404",
+        "headers_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_sha256": null
+      },
+      "minimum_missing_evidence": "Obtain the primary GHSA response body bytes and response headers from a network path that can reach github.com, then recompute and freeze SHA-256. The browser-readable rendering was not treated as a byte snapshot."
+    },
+    {
+      "cve_id": "CVE-2026-67215",
+      "publisher": "GitHub Advisory Database (official GHSA record; unreviewed; original CNA/vendor publisher is not identified by this record)",
+      "advisory_review_status": "unreviewed GHSA; github_reviewed_at is null",
+      "canonical_url": "https://github.com/advisories/GHSA-5q3m-r3x7-8phg",
+      "retrieval_url": "https://api.github.com/advisories/GHSA-5q3m-r3x7-8phg",
+      "retrieval_date_utc": "2026-10-19",
+      "source_version_scope": {
+        "component": "cJSON; cJSONUtils_ApplyPatches() and cJSONUtils_ApplyPatchesCaseSensitive() recursion/stack exhaustion on attacker-supplied RFC 6902 patches",
+        "affected": "Description states cJSON through 1.7.19. Structured vulnerabilities array is empty; affected and patched package ranges are not specified by the GHSA API record.",
+        "fixed": "Unknown; no fixed version is stated in the primary record.",
+        "evidence_basis": "Saved official GHSA API response description and empty vulnerabilities array."
+      },
+      "snapshot_status": "captured",
+      "immutable_response_bytes_sha256": "aa785168dec0e37803f92ddf084e777a29c2e60d97a0f56e139524ce8e89cda2",
+      "response_body_bytes": 2319,
+      "response_body_file": "CVE-2026-67215.body",
+      "response_headers_file": "CVE-2026-67215.headers",
+      "response_headers_sha256": "2b8ac5f83af088e3655e433d68edd44dd45fc6778ff7671999d06f07fdcbfde2",
+      "http_status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "minimum_missing_evidence": "For a CNA/vendor-grade scope and fixed version, obtain a primary cJSON maintainer or CNA advisory; this GHSA is unreviewed and does not state a fixed version."
+    },
+    {
+      "cve_id": "CVE-2026-67216",
+      "publisher": "GitHub Advisory Database (official GHSA record; unreviewed; original CNA/vendor publisher is not identified by this record)",
+      "advisory_review_status": "unreviewed GHSA; github_reviewed_at is null",
+      "canonical_url": "https://github.com/advisories/GHSA-ff2v-f99f-wm3f",
+      "retrieval_url": "https://api.github.com/advisories/GHSA-ff2v-f99f-wm3f",
+      "retrieval_date_utc": "2026-10-19",
+      "source_version_scope": {
+        "component": "cJSON cJSON_Compare() object comparison; exponential algorithmic complexity",
+        "affected": "Description states cJSON through 1.7.19. Structured vulnerabilities array is empty; affected and patched package ranges are not specified by the GHSA API record.",
+        "fixed": "Unknown; no fixed version is stated in the primary record.",
+        "evidence_basis": "Saved official GHSA API response description and empty vulnerabilities array."
+      },
+      "snapshot_status": "captured",
+      "immutable_response_bytes_sha256": "9ef9cb1d01583e01fdd3bb250ec8a46c9ea83aec7084d6075a849a223ea75ce7",
+      "response_body_bytes": 2220,
+      "response_body_file": "CVE-2026-67216.body",
+      "response_headers_file": "CVE-2026-67216.headers",
+      "response_headers_sha256": "8c9ba66f6d2157b38ae0365b08b1495e67866524306dc05d83b82be304bd89ee",
+      "http_status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "minimum_missing_evidence": "For a CNA/vendor-grade scope and fixed version, obtain a primary cJSON maintainer or CNA advisory; this GHSA is unreviewed and does not state a fixed version."
+    },
+    {
+      "cve_id": "CVE-2026-92391",
+      "publisher": "curl project (vendor/maintainer security advisory; official curl.se domain)",
+      "canonical_url": "https://curl.se/docs/CVE-2026-92391.html",
+      "retrieval_url": "https://curl.se/docs/CVE-2026-92391.json",
+      "retrieval_date_utc": "2026-10-19",
+      "source_version_scope": {
+        "component": "libcurl MIME cleanup; curl_mime_free recursive stack exhaustion",
+        "affected": "The official machine-readable record lists SEMVER events: introduced 7.56.0/fixed 8.14.3; introduced 8.15.0/fixed 8.16.2; introduced 8.17.0/fixed 8.20.2; introduced 8.21.0/fixed 8.23.0. Its last_affected field is 8.22.0.",
+        "fixed": "The exact fixed events above are transcribed from the captured official JSON; advisory HTML also names commit d7546809d5bd548b69ec49fca2.",
+        "evidence_basis": "Saved curl project OSV-format advisory JSON (affected SEMVER events, database_specific.last_affected, and database_specific.affects)."
+      },
+      "snapshot_status": "captured",
+      "immutable_response_bytes_sha256": "ce88cdf4cce411a2d77df8eaa9f2957e028b4b2aa6b4b263b889a5c068ab30dc",
+      "response_body_bytes": 2739,
+      "response_body_file": "CVE-2026-92391.body",
+      "response_headers_file": "CVE-2026-92391.headers",
+      "response_headers_sha256": "c73f7c8ced643f5f4747167cf3f3719afd4437c4b8a97f77899d88b7189fc1c6",
+      "http_status": 200,
+      "content_type": "application/json",
+      "minimum_missing_evidence": null
+    },
+    {
+      "cve_id": "CVE-2026-9079",
+      "publisher": "curl project (vendor/maintainer security advisory; official curl.se domain)",
+      "canonical_url": "https://curl.se/docs/CVE-2026-9079.html",
+      "retrieval_url": "https://curl.se/docs/CVE-2026-9079.json",
+      "retrieval_date_utc": "2026-10-19",
+      "source_version_scope": {
+        "component": "libcurl proxy credential clearing; stale proxy password leak",
+        "affected": "The official machine-readable record lists SEMVER events: introduced 8.8.0/fixed 8.14.2; introduced 8.15.0/fixed 8.16.1; introduced 8.17.0/fixed 8.20.1; introduced 8.21.0/fixed 8.21.0. database_specific.last_affected is 8.20.0 and its versions array enumerates versions through 8.20.0.",
+        "fixed": "The exact fixed events above are transcribed from captured official JSON; advisory HTML also names commit 88c7e16cceec816a2df45c899d49b1e85513f193.",
+        "evidence_basis": "Saved curl project OSV-format advisory JSON (affected SEMVER events, database_specific.last_affected, and versions array)."
+      },
+      "snapshot_status": "captured",
+      "immutable_response_bytes_sha256": "ebe4fde1e2bf5fd39c2fff79c5530fe400b3d8c6535893966b503f95bd887424",
+      "response_body_bytes": 2158,
+      "response_body_file": "CVE-2026-9079.body",
+      "response_headers_file": "CVE-2026-9079.headers",
+      "response_headers_sha256": "307207a63d36ed140e31e441d35b9a160eb9ce61c63e7a9de7b12ebfb7bfdbc2",
+      "http_status": 200,
+      "content_type": "application/json",
+      "minimum_missing_evidence": "The published version event sequence for 8.21.0 is internally unusual (introduced and fixed both 8.21.0); this manifest preserves it verbatim and does not infer a broader version range."
+    },
+    {
+      "cve_id": "CVE-2026-92392",
+      "publisher": "curl project (vendor/maintainer security advisory; official curl.se domain)",
+      "canonical_url": "https://curl.se/docs/CVE-2026-92392.html",
+      "retrieval_url": "https://curl.se/docs/CVE-2026-92392.json",
+      "retrieval_date_utc": "2026-10-19",
+      "source_version_scope": {
+        "component": "curl and libcurl HTTP/2 upload; Curl_easy use-after-free on specified RST_STREAM responses",
+        "affected": "The official machine-readable record lists SEMVER events: introduced 8.12.0/fixed 8.14.3; introduced 8.15.0/fixed 8.16.2; introduced 8.17.0/fixed 8.20.2; introduced 8.21.0/fixed 8.23.0. Its last_affected field is 8.22.0.",
+        "fixed": "The exact fixed events above are transcribed from the captured official JSON; advisory HTML also names commit 8b0744af5b1b631da5b938ca31c3f9895ad5a321.",
+        "evidence_basis": "Saved curl project OSV-format advisory JSON (affected SEMVER events, database_specific.last_affected, and database_specific.affects)."
+      },
+      "snapshot_status": "captured",
+      "immutable_response_bytes_sha256": "c5fdab909e95d7e2b5608a67ccd1a06035d4018b0391c773efc217d7bcd8f6e3",
+      "response_body_bytes": 1933,
+      "response_body_file": "CVE-2026-92392.body",
+      "response_headers_file": "CVE-2026-92392.headers",
+      "response_headers_sha256": "de705c4fbb3b99e46d5d421d533834b8c36fffac98833a808b7f877ac42e3231",
+      "http_status": 200,
+      "content_type": "application/json",
+      "minimum_missing_evidence": null
+    },
+    {
+      "cve_id": "CVE-2026-58313",
+      "publisher": "OpenHarmony security bulletin, posted by Wang Chen to the official security@openharmony.io mailing list and archived by OpenAtom",
+      "canonical_url": "https://lists.openatom.io/hyperkitty/list/security@openharmony.io/thread/IJ5WNUSUCN7CDCFQLO4FWYGJONVN2WYL/",
+      "retrieval_date_utc": "2026-10-19",
+      "source_version_scope": {
+        "component": "bundlemanager_app_domain_verify; UAF; bulletin states local attacker and arbitrary code execution",
+        "affected": "OpenHarmony-v6.1-Release, version line 6.1.x",
+        "fixed": "Unknown; the bulletin does not provide an exact fixed component revision/version for this entry.",
+        "evidence_basis": "Saved official OpenHarmony security-list HTML message dated 2026-08-04; bulletin table entry for CVE-2026-58313."
+      },
+      "snapshot_status": "captured",
+      "immutable_response_bytes_sha256": "782d7b605509ccae7034e008241d855a8ef246861835b3453d393a65b9d376e3",
+      "response_body_bytes": 22309,
+      "response_body_file": "CVE-2026-58313.body",
+      "response_headers_file": "CVE-2026-58313.headers",
+      "response_headers_sha256": "62fe36152bdbf33053a2b0e657c6a237270c309dd064ce239236d63db62d119e",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "minimum_missing_evidence": "An exact fixed release/component commit is not supplied in the bulletin; an OpenHarmony vendor follow-up naming that mapping is required."
+    }
+  ],
+  "capture_method": {
+    "tool": "curl.exe",
+    "command_template": "curl.exe -L --http1.1 --max-time 12 -sS -D <ID>.headers -o <ID>.body -w '%{http_code}|%{url_effective}|%{content_type}|%{size_download}' -A 'D55-advisory-evidence/1.0' --url <requested URL>",
+    "bytes_definition": "SHA-256 is computed over the exact body file saved by curl, without parsing, newline normalization, or reserialization. Header files contain curl -D output; their SHA-256 is separately recorded. Redirects are followed; curl metadata records final URL, status, content type, and downloaded byte count.",
+    "verification": "Recompute SHA-256 directly from each .body and .headers file. No search snippet or browser-rendered text is treated as a raw-response snapshot.",
+    "retrieval_started_at_utc": "2026-10-19T18:06:22Z",
+    "user_agent": "D55-advisory-evidence/1.0",
+    "network_note": "github.com timed out from the command-line retrieval path for the two libpng GHSA pages; api.github.com/advisories for those GHSA identifiers returned HTTP 404. Browser-readable primary text was used only to transcribe scope and is not claimed as hashed response bytes."
+  }
+}
