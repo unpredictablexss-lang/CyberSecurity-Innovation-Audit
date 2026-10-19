@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "audit": "T7 independent A-line static regression and provenance audit",
+  "date": "2026-10-20",
+  "checkout": "D:/openHarmonyScanner/worktrees/a-t7-independent-audit-20261020",
+  "branch": "codex/a-t7-independent-audit-20261020",
+  "base_commit": "7e8083314f854780a0f606ecc6382208e8a02e8a",
+  "role": "independent_test_only",
+  "modified_detector_tests_fixtures_or_development_code": false,
+  "cases": [
+    {
+      "case_id": "libtiff-CVE-2025-9900-D7",
+      "status": "PARTIAL",
+      "source_pair_verified": true,
+      "vulnerable": {
+        "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+        "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a",
+        "file": "libtiff/tif_getimage.c",
+        "blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e",
+        "sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3"
+      },
+      "fixed": {
+        "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+        "tree": "77361ef7262189e16a2010b5c333f6b275d17f09",
+        "file": "libtiff/tif_getimage.c",
+        "blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db",
+        "sha256": "de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8"
+      },
+      "t7_cli": {
+        "tool": "ohscanner.cpp.bounds",
+        "tool_version": "0.2.0",
+        "scope": ["libtiff/tif_getimage.c", "libtiff/tiffio.h"],
+        "vulnerable_diagnostics": 0,
+        "fixed_diagnostics": 0,
+        "vulnerable_parse": {"partial": 2},
+        "fixed_parse": {"partial": 2},
+        "vulnerable_detector_coverage": "blocked",
+        "fixed_detector_coverage": "blocked",
+        "interpretation": "partial zero-finding runs are unknown, not a differential pass or safe result"
+      },
+      "focused_tests": {"passed": 2, "failed": 0}
+    },
+    {
+      "case_id": "cJSON-CVE-2026-67216-D8-compare-cost",
+      "status": "PARTIAL",
+      "fixed_comparison": "BLOCK",
+      "source": {
+        "commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+        "tree": "3c07134d5a05aa546b15739e32503a2ca192d258",
+        "file": "third_party/cjson/cJSON.c",
+        "blob": "152b2caa479c9f448001652913c980a6dafb82e0",
+        "sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb"
+      },
+      "t7_cli": {
+        "tool": "ohscanner.cpp.resource_lifetime",
+        "tool_version": "0.4.0",
+        "rule": "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005",
+        "location": "third_party/cjson/cJSON.c:3161",
+        "findings": 1,
+        "file_parse": "partial",
+        "detector_coverage": "partial",
+        "trusted_fixed_source": false
+      }
+    },
+    {
+      "case_id": "cJSON-CVE-2026-67215-D8-tree-amplification",
+      "status": "PARTIAL",
+      "fixed_comparison": "BLOCK",
+      "source": {
+        "commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+        "tree": "3c07134d5a05aa546b15739e32503a2ca192d258",
+        "file": "third_party/cjson/cJSON_Utils.c",
+        "blob": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+        "sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"
+      },
+      "t7_cli": {
+        "tool": "ohscanner.cpp.resource_lifetime",
+        "tool_version": "0.4.0",
+        "rule": "ohcpp-resource-exhaustion-tree-amplification-candidate-004",
+        "location": "third_party/cjson/cJSON_Utils.c:861",
+        "findings": 1,
+        "file_parse": "complete",
+        "selected_scope_parse": {"complete": 1, "partial": 1},
+        "detector_coverage": "partial",
+        "trusted_fixed_source": false
+      }
+    },
+    {
+      "case_id": "web_webview-CVE-2026-27648-D7-followup",
+      "status": "PARTIAL",
+      "upstream_objects": {
+        "mirror": "D:/openHarmonyScanner/tmp/chromium-src-cve-2026-27648-audit.git",
+        "path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+        "vulnerable": {
+          "commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+          "tree": "4ed3b46721fbfe04059af4ddb18bcd5272ce4762",
+          "blob": "78e83fea67a2db3297cc59f07566a0c0b6153e7a",
+          "bytes": 185698,
+          "sha256": "aa401c305ed30b70007917d97b726986a26aff2d00fb49649466533f4a48a920",
+          "commit_tree_blob_hash_verified": true
+        },
+        "fixed": {
+          "commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+          "tree": "a7769bf612be457e6e368f14ee355f3ea8ed2935",
+          "blob": "27e93e338ced03aeed6e7d892e29d4d0740f3653",
+          "bytes": 185982,
+          "sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483",
+          "commit_tree_blob_hash_verified": true
+        }
+      },
+      "full_translation_unit": {
+        "t1_baseline": {"vulnerable": "partial/blocked/0", "fixed": "partial/blocked/0", "parse_issue_count_each": 23},
+        "t7_current_cli_on_byte_identical_synthetic_snapshots": {"vulnerable": "partial/blocked/0", "fixed": "partial/blocked/0", "tool_version": "0.2.0"},
+        "direct_cli_on_large_upstream_mirror": "timed_out_during_recursive_git_ls_tree_after_30s"
+      },
+      "function_fragment_v036": {
+        "source_derived": true,
+        "synthetic_snapshots_not_upstream_commits": true,
+        "parse": "complete",
+        "rule": "ohcpp-memory-bounds-vector-index-candidate-004",
+        "vulnerable_total_findings_each_6_0_and_5_1": 12,
+        "fixed_total_findings_each_6_0_and_5_1": 6,
+        "patched_while_loop_root_findings": {"vulnerable": 6, "fixed": 0},
+        "ordinary_argument_loop_residuals": {"vulnerable": 6, "fixed": 6},
+        "five_one_holdout_consumed": true,
+        "artifact_root": "D:/openHarmonyScanner/CyberSecurity-Innovation-Audit/research/evidence/cpp/web_webview_cve_2026_27648_20261019"
+      },
+      "reconciliation": "The exact 6.0 source object is available and verified; the earlier T3 statement that the vulnerable source/object is unavailable is stale. Overall BLOCK is superseded to PARTIAL because the root-specific fragment differential exists, while full-TU coverage remains blocked and fixed-side residuals remain unresolved. Frozen T1 baseline remains unchanged."
+    }
+  ],
+  "focused_test_results": {
+    "d7_bounds_controls": {"command": "python -m unittest tests.detectors.test_cpp_memory_safety_detectors.BoundsDetectorControlTests.test_unsigned_dimension_underflow_in_pointer_offset_is_candidate tests.detectors.test_cpp_memory_safety_detectors.BoundsDetectorControlTests.test_unsigned_dimension_offset_guard_and_unrelated_shapes_are_quiet -v", "passed": 2, "failed": 0},
+    "d8_resource_controls": {"command": "python -m unittest tests.detectors.test_cpp_resource_lifetime_detector -v", "passed": 8, "failed": 0},
+    "cpp_detector_suite": {"command": "python -m unittest discover -s tests/detectors -p 'test_cpp_*.py' -v", "passed": 159, "failed": 0}
+  },
+  "queue_audit": {
+    "verifier": "research/deliveries/cpp/a0_triage_20261019/verify_triage.py",
+    "overall_ok": true,
+    "source_candidate_count": 345,
+    "queue_rows": 345,
+    "unique_ids": 345,
+    "original_status_counts": {"not_reproduced": 9, "not_testable": 336},
+    "queue_status_counts": {"queued_not_reproduced": 9, "queued_first_batch": 5, "paused_pending_evidence": 331},
+    "inspected_next_five": {
+      "ids": ["CR-0219", "CR-0220", "CR-0221", "CR-0222", "CR-0223"],
+      "common_source_key": {
+        "repository": "openharmony/systemabilitymgr_samgr",
+        "commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff",
+        "tree": "b7a89e95be788f2f2372258e341f7be842c7826d",
+        "blob": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
+        "source_sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433"
+      },
+      "original_status_preserved": "not_reproduced",
+      "evidence_files_available": {"report": true, "result": true, "run_meta": true},
+      "recorded_artifact_hashes_match": {"report": true, "result": true, "run_meta": true},
+      "raw_source_in_a0_package": false,
+      "pinned_commit_in_examined_local_samgr_clone": false,
+      "triage_conclusion_changed": false,
+      "minimum_next_action": "Acquire exact pinned source object/file; verify tree/blob/SHA and line context; then assess transaction, caller permissions, inputs, FD/data flow, and sensitive operation while preserving all five IDs."
+    }
+  },
+  "scope": {
+    "changed_files": [
+      "research/evidence/cpp/a_t7_independent_audit_20261020.md",
+      "research/evidence/cpp/a_t7_independent_audit_20261020.json"
+    ],
+    "detector_tests_fixtures_development_code_changed": false,
+    "scope_check_base": "7e8083314f854780a0f606ecc6382208e8a02e8a",
+    "lane": "cpp"
+  }
+}
