@@ -6,10 +6,10 @@
     "openharmony_release": "SYNTHETIC-REL-01",
     "product_build_id_or_image_version": "SYNTHETIC-BUILD-01",
     "source_branch_or_release_tag": "refs/tags/synthetic-release-01",
-    "locked_manifest_uri_plus_sha256_or_immutable_commit": "synthetic://manifest/01#sha256=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "locked_manifest_uri_plus_sha256_or_immutable_commit": "https://synthetic.invalid/manifest.xml#sha256=36e18510c6c316e92a8077b2c18c866d2aa84d292dd810cca586aa25bfc0013d",
     "product_name": "SYNTHETIC-PRODUCT-01",
     "board_or_device_target": "SYNTHETIC-BOARD-01",
-    "field_binding_rule": "Each field has an evidence reference, exact evidence-byte SHA-256, and issuer label; each binding names the same product/build tuple.",
+    "field_binding_rule": "Each field has an evidence reference, exact evidence-byte SHA-256, and issuer label; each binding names the same product/build tuple. The manifest field references bytes `<manifest>synthetic</manifest>\\n`, whose SHA-256 is the digest in the URI.",
     "issuer": "SYNTHETIC-ISSUER-UNVERIFIED",
     "caller_status": "READY"
   },
@@ -33,7 +33,9 @@
     {"id":"N15-status-spoof-incomplete","mutation":"set caller-supplied status=READY while one required field/evidence binding is absent","expected":"ignore/reject caller status; effective result WAITING or BLOCKED"},
     {"id":"N16-status-spoof-hash-failure","mutation":"set caller-supplied status=READY with a hash mismatch","expected":"ignore/reject caller status; effective result BLOCKED"},
     {"id":"N17-issuer-label-not-authenticated","mutation":"issuer string exists but has no verifiable identity credential or trusted signature","expected":"at most STRUCTURE_READY_ONLY; output must not claim issuer verified/authentic"},
-    {"id":"N18-manifest-digest-not-recomputed","mutation":"manifest URI carries a syntactically valid SHA-256 but retrieved bytes/immutable commit cannot be resolved and recomputed","expected":"BLOCKED; format-valid digest alone is insufficient"}
+    {"id":"N18-manifest-digest-not-recomputed","mutation":"manifest URI carries a syntactically valid SHA-256 but referenced local manifest bytes have another digest","expected":"BLOCKED; format-valid digest alone is insufficient"},
+    {"id":"N19-manifest-reference-unresolved","mutation":"immutable HTTPS URI digest has no matching local evidence bytes","expected":"BLOCKED; do not fetch network or accept the bare URI as verified"},
+    {"id":"N20-fake-immutable-commit","mutation":"40-hex commit-shaped value has no matching local Git commit object and evidence bytes","expected":"BLOCKED; do not infer object existence from hex syntax"}
   ],
   "cross_case_invariants": [
     "No status field supplied by the input can override failed or missing checks.",

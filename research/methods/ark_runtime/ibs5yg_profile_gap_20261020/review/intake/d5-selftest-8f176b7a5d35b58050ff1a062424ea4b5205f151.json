@@ -1,0 +1,128 @@
+{
+  "schema": "ohscanner.ark-runtime.ibs5yg-d5-intake-selftest/v1",
+  "passed": true,
+  "checks": [
+    {
+      "name": "synthetic_complete_structure",
+      "passed": true,
+      "status": "STRUCTURE_COMPLETE_REQUIRES_INDEPENDENT_REVIEW",
+      "error_codes": []
+    },
+    {
+      "name": "missing_field_value",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "error_codes": [
+        "field_value_conflicts_with_build_identity",
+        "field_value_missing"
+      ]
+    },
+    {
+      "name": "missing_issuer",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "error_codes": [
+        "issuer_missing"
+      ]
+    },
+    {
+      "name": "tampered_bytes",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "error_codes": [
+        "evidence_sha256_mismatch"
+      ]
+    },
+    {
+      "name": "path_traversal",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "error_codes": [
+        "evidence_path_not_safe_relative"
+      ]
+    },
+    {
+      "name": "absolute_path",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "error_codes": [
+        "evidence_path_not_safe_relative"
+      ]
+    },
+    {
+      "name": "missing_file",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "error_codes": [
+        "evidence_file_missing"
+      ]
+    },
+    {
+      "name": "conflicting_build_identity",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "error_codes": [
+        "conflicting_build_identity",
+        "evidence_sha256_mismatch"
+      ]
+    },
+    {
+      "name": "value_disagrees_with_binding",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "error_codes": [
+        "evidence_sha256_mismatch",
+        "field_value_conflicts_with_build_identity"
+      ]
+    },
+    {
+      "name": "mutable_manifest_reference",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "error_codes": [
+        "evidence_sha256_mismatch",
+        "field_value_conflicts_with_build_identity",
+        "manifest_reference_not_immutable"
+      ]
+    },
+    {
+      "name": "manifest_uri_digest_mismatch",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "error_codes": [
+        "conflicting_build_identity",
+        "evidence_sha256_mismatch",
+        "manifest_digest_does_not_match_evidence_bytes"
+      ]
+    },
+    {
+      "name": "unresolved_manifest_uri_digest",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "error_codes": [
+        "conflicting_build_identity",
+        "evidence_sha256_mismatch",
+        "manifest_digest_does_not_match_evidence_bytes"
+      ]
+    },
+    {
+      "name": "commit_without_local_object_store",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "error_codes": [
+        "conflicting_build_identity",
+        "evidence_sha256_mismatch",
+        "manifest_commit_unresolved_or_evidence_bytes_mismatch"
+      ]
+    },
+    {
+      "name": "junction_or_symlink_escape",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "error_codes": [
+        "evidence_path_contains_symlink_or_reparse_point"
+      ]
+    }
+  ],
+  "note": "Synthetic structure/byte-binding checks only; no product or issuer authenticity is tested."
+}
