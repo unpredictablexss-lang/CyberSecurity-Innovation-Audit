@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "audit": "T13 independent A0 first-batch source triage",
+  "queue_id": "CR-0017",
+  "candidate_id": "ohscanner.interface.ipc:98e3ffbbf0c01b4f",
+  "original_status": "not_testable",
+  "queue_status": "queued_first_batch",
+  "evidence_disposition": "PARTIAL/QUEUED",
+  "source": {
+    "repository": "openharmony/distributeddatamgr_data_share",
+    "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+    "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+    "path": "frameworks/native/provider/src/datashare_stub.cpp",
+    "blob": "cb62502d82c0534a6b9466f7a5d0a9e122d85693",
+    "bytes": 26370,
+    "sha256": "cc742b1811c6c6ce2c351e27619a74ec1e5f472502a7a712c50d49fbaeed667a"
+  },
+  "related_source": {
+    "path": "frameworks/native/provider/src/datashare_stub_impl.cpp",
+    "blob": "4ef431998b11042ce96e449eacf4dbd14549d764",
+    "bytes": 32292,
+    "sha256": "77f46f95b78da2bd329dd202f8006368efa1f555854f157e273c3b257d9048eb"
+  },
+  "confirmed_facts": [
+    "CmdOpenFile calls OpenFileInner, rejects negative FDs, writes the valid descriptor to the IPC reply at source line 221, and closes its local tagged FD.",
+    "OpenFileInner reaches the same provider OpenFile implementation with mode-dependent read/write permission checks recorded for CR-0016."
+  ],
+  "unknowns": [
+    "Whether the target provider has effective read/write permissions and which caller tokens satisfy them.",
+    "Whether the returned descriptor reaches data beyond the intended recipient's authorization boundary.",
+    "Whether an unauthorized external caller can reach the target transaction in the product build."
+  ],
+  "minimum_next_evidence": "Resolve provider policy, service reachability, caller identities, and the resource behind the FD; run authorized/unauthorized target-derived controls and demonstrate recipient access. Treat CR-0016/0017 as a shared source root unless a distinct cause is established."
+}

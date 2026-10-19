@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "audit": "T13 independent A0 first-batch queue and source verifier",
+  "base_commit": "8e79a238c3689ec6ffc2d98559a801e1620042ed",
+  "full_queue_ids": 345,
+  "full_queue_pairs_identical_to_base": true,
+  "first_batch_ids": [
+    "CR-0016",
+    "CR-0017",
+    "CR-0018",
+    "CR-0336",
+    "CR-0342"
+  ],
+  "selected_rows_remain_not_testable_queued": true,
+  "T12_queue_verifier": {
+    "command": "python research/deliveries/cpp/a0_triage_20261019/verify_triage.py",
+    "overall_ok": true,
+    "source_hash_manifest_entries": 97,
+    "queue_rows": 345,
+    "unique_queue_ids": 345,
+    "original_status_counts": {
+      "not_reproduced": 9,
+      "not_testable": 336
+    },
+    "queue_status_counts": {
+      "queued_not_reproduced": 9,
+      "queued_first_batch": 5,
+      "paused_pending_evidence": 331
+    },
+    "ids_and_statuses_preserved": true
+  },
+  "original_A0_verifier": {
+    "overall_ok": true,
+    "source_hash_manifest_entries": 97,
+    "source_hash_manifest_bytes": 4364747,
+    "queue_rows": 345,
+    "unique_queue_ids": 345,
+    "original_status_counts": {
+      "not_reproduced": 9,
+      "not_testable": 336
+    },
+    "queue_status_counts": {
+      "paused_pending_evidence": 331,
+      "queued_first_batch": 5,
+      "queued_not_reproduced": 9
+    }
+  },
+  "source_objects": [
+    {
+      "queue_id": "CR-0016",
+      "repository": "distributeddatamgr_data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/native/provider/src/datashare_stub.cpp",
+      "blob": "cb62502d82c0534a6b9466f7a5d0a9e122d85693",
+      "bytes": 26370,
+      "sha256": "cc742b1811c6c6ce2c351e27619a74ec1e5f472502a7a712c50d49fbaeed667a",
+      "verified": true
+    },
+    {
+      "queue_id": "CR-0016",
+      "repository": "distributeddatamgr_data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/native/provider/src/datashare_stub_impl.cpp",
+      "blob": "4ef431998b11042ce96e449eacf4dbd14549d764",
+      "bytes": 32292,
+      "sha256": "77f46f95b78da2bd329dd202f8006368efa1f555854f157e273c3b257d9048eb",
+      "verified": true
+    },
+    {
+      "queue_id": "CR-0017",
+      "repository": "distributeddatamgr_data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/native/provider/src/datashare_stub.cpp",
+      "blob": "cb62502d82c0534a6b9466f7a5d0a9e122d85693",
+      "bytes": 26370,
+      "sha256": "cc742b1811c6c6ce2c351e27619a74ec1e5f472502a7a712c50d49fbaeed667a",
+      "verified": true
+    },
+    {
+      "queue_id": "CR-0017",
+      "repository": "distributeddatamgr_data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/native/provider/src/datashare_stub_impl.cpp",
+      "blob": "4ef431998b11042ce96e449eacf4dbd14549d764",
+      "bytes": 32292,
+      "sha256": "77f46f95b78da2bd329dd202f8006368efa1f555854f157e273c3b257d9048eb",
+      "verified": true
+    },
+    {
+      "queue_id": "CR-0018",
+      "repository": "distributeddatamgr_data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/native/provider/src/datashare_stub.cpp",
+      "blob": "cb62502d82c0534a6b9466f7a5d0a9e122d85693",
+      "bytes": 26370,
+      "sha256": "cc742b1811c6c6ce2c351e27619a74ec1e5f472502a7a712c50d49fbaeed667a",
+      "verified": true
+    },
+    {
+      "queue_id": "CR-0018",
+      "repository": "distributeddatamgr_data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/native/provider/src/datashare_stub_impl.cpp",
+      "blob": "4ef431998b11042ce96e449eacf4dbd14549d764",
+      "bytes": 32292,
+      "sha256": "77f46f95b78da2bd329dd202f8006368efa1f555854f157e273c3b257d9048eb",
+      "verified": true
+    },
+    {
+      "queue_id": "CR-0336",
+      "repository": "communication_wifi",
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+      "path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_sta_sa/wifi_device_mgr_stub.cpp",
+      "blob": "6106eb782ab6ffb605ec6ebff9e47ed5df923375",
+      "bytes": 2088,
+      "sha256": "b23dc2a3573232cf9b2c4c682f20062b3a17d29335ec2b69799a8df01fd71793",
+      "verified": true
+    },
+    {
+      "queue_id": "CR-0336",
+      "repository": "communication_wifi",
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+      "path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_sta_sa/wifi_device_mgr_service_impl.cpp",
+      "blob": "6764cab322c82d860905316ace540f839816f7bf",
+      "bytes": 12438,
+      "sha256": "053b74d3f95dded15ed95f49a2c31d4768e4777bf633066abdb45e326638916b",
+      "verified": true
+    },
+    {
+      "queue_id": "CR-0342",
+      "repository": "security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "path": "services/huks_standard/huks_service/extension/ukey_client_service/inc/hks_ukey_async_task.h",
+      "blob": "3719b03ef01f215b3188a236503ff973a1cb6e5d",
+      "bytes": 7931,
+      "sha256": "6a656b45b3809a77b4fe124cff3c1b0b668ef754640667fcddedf576117a2974",
+      "verified": true
+    },
+    {
+      "queue_id": "CR-0342",
+      "repository": "security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "path": "services/huks_standard/huks_service/extension/ukey_client_service/src/hks_ukey_async_task.cpp",
+      "blob": "134560c9947c0a8553ed58fd5bfe4ee73c8981cd",
+      "bytes": 10887,
+      "sha256": "07e7920b4ffa8888c3cfaa386933bb7e784a79e017937e6857bbbba9e653eb91",
+      "verified": true
+    }
+  ],
+  "overall_ok": true
+}
