@@ -1761,8 +1761,8 @@
     },
     {
       "case_id": "openharmony-cve-2025-26690",
-      "status": "PARTIAL",
-      "note": "D22 retrieved and verified the exact upstream vulnerable/fixed Git objects and replayed both with the current CLI: 5 vulnerable null-dereference candidates and 0 same-rule fixed candidates. Source parsing is complete, but detector semantic coverage remains partial/blocked (0/1 semantically complete), so this is not a full static PASS or a safety verdict.",
+      "status": "BLOCK",
+      "note": "Exact commit IDs are listed in the source ledger, but no local Git object store contains the vulnerable/fixed pair; required trees, blobs, and source hashes cannot be verified or replayed.",
       "source_ledger_case": {
         "sources_verification_date": {
           "date": "2026-10-19",
@@ -1823,45 +1823,7 @@
         "real_source_rescan": "Historical summary: vulnerable 5 candidates, fixed 0; raw diagnostics unavailable here and not revalidated on current scanner. Candidate-to-root mapping not individually confirmed.",
         "component_dynamic_reproduction": "not established by recoverable current-checkout artifacts."
       },
-      "replays": [
-        {
-          "id": "D22-20261020",
-          "report": "research/evidence/cpp/a_static_baseline_20261019/d22_cve_2025_26690_upstream_object_replay_20261020.md",
-          "source_identity": "research/evidence/cpp/a_static_baseline_20261019/d22_cve_2025_26690_upstream_object_replay_20261020.json",
-          "scanner_base": "a8e83ad18dd3befece75ae8fc049291c0e0d20a9",
-          "detector": "ohscanner.cpp.null_dereference",
-          "detector_version": "0.6.0",
-          "rule": "ohcpp-null-dereference-candidate-001",
-          "rule_version": "1.4.0",
-          "scope": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
-          "vulnerable": {
-            "commit": "258662cd9840b55a31546a72d91027f6368cea84",
-            "tree": "366a4ced9400653c9628c0b677e4ae657c0e7bd8",
-            "blob": "a82b71fb5520b02278a4af695bbe918d14c1048e",
-            "sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
-            "parse": "complete 1/1",
-            "coverage": "partial/blocked 0/1 semantically complete",
-            "candidate_lines": [71, 82, 97, 108, 123],
-            "report": "research/evidence/cpp/a_static_baseline_20261019/d22-cve-2025-26690-vulnerable.json"
-          },
-          "fixed": {
-            "commit": "192f3e11d74beeaa3d879333471deb8a24a7e1c5",
-            "tree": "1d58ba0ef706a6f69dd372bd496c8058810882aa",
-            "blob": "13ddbe93a7f617784dec0f3761e09f66b5c3217c",
-            "sha256": "5a093d91efc624147d40bf3f4dbbe3ab7ab6d724b17978298e9d5c30d9e5eb81",
-            "parse": "complete 1/1",
-            "coverage": "partial/blocked 0/1 semantically complete",
-            "same_rule_candidates": 0,
-            "report": "research/evidence/cpp/a_static_baseline_20261019/d22-cve-2025-26690-fixed.json"
-          },
-          "case_disposition": "PARTIAL",
-          "blockers": [
-            "detector semantic coverage remains partial/blocked",
-            "no product build profile, runtime allocation-failure test, or caller/reachability/impact evidence",
-            "no dsoftbus-specific safe/unrelated source controls"
-          ]
-        }
-      ]
+      "replays": []
     },
     {
       "case_id": "openharmony-cve-2025-0587",
