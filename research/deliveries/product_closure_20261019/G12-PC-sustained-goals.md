@@ -47,3 +47,9 @@
 ## 本轮持续目标检查点（2026-10-20）
 
 D3/T2/T6 并行交付已完成：D3 完成 source-side PC-3 定位但产品入口/权限/CIA 仍未知；T2 保留反例优先的窄候选；T6 仅完成运行时验证设计。下一轮优先级仍由准入门决定：先取得六项 IBS5YG 目标身份并绑定同一 build profile，再补产品入口/攻击面证据；随后才考虑 PC-4 授权执行。没有目标身份时，保持 G12-PC-1/3 blocked，允许继续做受限的源码证据整理与治理模板审查。
+
+## 本轮增量（2026-10-20）
+
+- **PC-1:** D2 对 7 个仍有提交锚点的案例补充本地 Gitee bare-store 身份复算（14 commit/tree、24 个存在的 path blob、7/7 parent→fix ancestry）；3 个无可靠锚点案例仍 `UNKNOWN`。T4 已独立复算并反馈 verifier 对缺失/错误类型对象和 ancestry 异常的 gate 缺口，D2 正修复。上述内容不证明 acquisition custody、产品关联或产品构建画像；PC-1 portfolio 仍 0/16。
+- **PC-2:** T2 将非合成 leakage evidence 绑定到 evidence-root 下的安全相对路径及原始字节 SHA；22 项合成单测和 pipeline self-test 通过，`metrics_computed=false`。真实独立 source set、custodian 与评审人员尚无，真实 PC-2 继续 `NOT_RUN`。
+- **持续反馈:** 每个 D2 source verifier 更新由 T4 复算对象统计和错误门；每个 T2 pipeline 更新先用合成负例验证，再由 owner/T2 独立复跑。获得产品 owner 或独立 holdout owner 的真实材料前，维持所有对应 blocked/unknown 状态。
