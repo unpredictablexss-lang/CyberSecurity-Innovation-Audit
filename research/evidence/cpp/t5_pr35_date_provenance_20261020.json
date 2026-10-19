@@ -1,0 +1,1062 @@
+{
+  "schema_version": "a-line-run-date-provenance-inventory-v1",
+  "audit_date_local": "2026-10-20",
+  "integration_head": "91747d4cad7503e58c466402e905088153f1deb4",
+  "t3_confirmation_set_reference": "research/evidence/cpp/t3_pr35_queue_scope_acceptance_20261020.md; 13 D54/T61/T62 paths are excluded from this inventory and not renamed again",
+  "classification_semantics": "date-proven means a specific file exists in its originating working tree with direct per-file 2026-10-20 local write-time evidence, corroborated by the frozen task worktree HEAD containing that artifact. Filenames/report date fields remain unchanged.",
+  "classification_strength": "weak_local_workstation_corroboration; timestamps come from the OS filesystem and are not signed, immutable, or independently trusted execution logs; do not present this as strong proof",
+  "date_proven_tasks": [
+    {
+      "task_id": "T44",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t44-samgr-callback-audit-20261027",
+      "origin_head": "e778960cb9e06ce7312e5d2a61aa7d79ef3907ca",
+      "artifact_count": 4,
+      "artifact_paths": [
+        "research/evidence/cpp/a_t44_samgr_callback_audit_20261027.json",
+        "research/evidence/cpp/a_t44_samgr_callback_audit_20261027.md",
+        "research/evidence/cpp/a_t44_samgr_callback_cli_20261027.json",
+        "research/evidence/cpp/a_t44_samgr_callback_cli_20261027.md"
+      ]
+    },
+    {
+      "task_id": "T45",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t45-safwk-audit-20261027",
+      "origin_head": "c6ff0be828d01d8abfc8869be6d8e30e3a341f6b",
+      "artifact_count": 4,
+      "artifact_paths": [
+        "research/evidence/cpp/a_t45_safwk_cli_20261027.json",
+        "research/evidence/cpp/a_t45_safwk_cli_20261027.md",
+        "research/evidence/cpp/a_t45_safwk_ipc_audit_20261027.json",
+        "research/evidence/cpp/a_t45_safwk_ipc_audit_20261027.md"
+      ]
+    },
+    {
+      "task_id": "D47",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d47-camera-20261027",
+      "origin_head": "a2a0364047265373446e703d0c3ead3e90f73565",
+      "artifact_count": 2,
+      "artifact_paths": [
+        "research/evidence/cpp/d47_camera_sharedptr_cli_20261027.json",
+        "research/evidence/cpp/d47_camera_sharedptr_cli_20261027.md"
+      ]
+    },
+    {
+      "task_id": "D48",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d48-ai-voice-ipc-20261028",
+      "origin_head": "63dbe5b0b5ade4086080d9b041331e12429c10b0",
+      "artifact_count": 3,
+      "artifact_paths": [
+        "research/evidence/cpp/d48_ai_voice_cr0305_no_change_20261028.json",
+        "research/evidence/cpp/d48_ai_voice_cr0305_no_change_20261028.md",
+        "research/evidence/cpp/d48_ai_voice_cr0305_no_change_20261028.py"
+      ]
+    },
+    {
+      "task_id": "D49",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d49-edm-ipc-20261028",
+      "origin_head": "564567a99011d9b2abff13af308d134ed1f02242",
+      "artifact_count": 5,
+      "artifact_paths": [
+        "research/evidence/cpp/d49_edm_ipc_cli_20261028.json",
+        "research/evidence/cpp/d49_edm_ipc_cli_20261028.md",
+        "research/evidence/cpp/d49_edm_ipc_no_change_20261028.json",
+        "research/evidence/cpp/d49_edm_ipc_no_change_20261028.md",
+        "research/evidence/cpp/d49_edm_ipc_no_change_20261028.py"
+      ]
+    },
+    {
+      "task_id": "D51",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d51-huks-cr0341-20261029",
+      "origin_head": "c317d7d9919eb8ead8954ccd65535df6ee93f504",
+      "artifact_count": 3,
+      "artifact_paths": [
+        "research/evidence/cpp/d51_huks_cr0341_cli_20261029.json",
+        "research/evidence/cpp/d51_huks_cr0341_cli_20261029.md",
+        "research/evidence/cpp/d51_huks_cr0341_sharedptr_assessment_20261029.md"
+      ]
+    },
+    {
+      "task_id": "D52",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d52-global-i18n-20261029",
+      "origin_head": "abdd82bed3ccdef9a43eb45cb78736aa4397a6ff",
+      "artifact_count": 6,
+      "artifact_paths": [
+        "research/evidence/cpp/d52_global_i18n_cli_20261029.json",
+        "research/evidence/cpp/d52_global_i18n_cli_20261029.md",
+        "research/evidence/cpp/d52_global_i18n_cli_wide_20261029.json",
+        "research/evidence/cpp/d52_global_i18n_cli_wide_20261029.md",
+        "research/evidence/cpp/d52_global_i18n_sharedptr_assessment_20261029.json",
+        "research/evidence/cpp/d52_global_i18n_sharedptr_assessment_20261029.md"
+      ]
+    },
+    {
+      "task_id": "T48",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t48-camera-audit-20261027",
+      "origin_head": "f8642a3df192bd7866bdaf1fdb6965746d9edc70",
+      "artifact_count": 3,
+      "artifact_paths": [
+        "research/evidence/cpp/t48_camera_callback_audit_20261027.json",
+        "research/evidence/cpp/t48_camera_callback_audit_20261027.md",
+        "research/evidence/cpp/t48_camera_cli_20261027.json"
+      ]
+    },
+    {
+      "task_id": "T53",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t53-wifi-event-handler-20261028",
+      "origin_head": "564b9a6070f8199740f7c98f2fb196224f2d4fa7",
+      "artifact_count": 4,
+      "artifact_paths": [
+        "research/evidence/cpp/t53_wifi_event_handler_cli_20261028.json",
+        "research/evidence/cpp/t53_wifi_event_handler_cli_20261028.md",
+        "research/evidence/cpp/t53_wifi_event_handler_shared_ptr_audit_20261028.json",
+        "research/evidence/cpp/t53_wifi_event_handler_shared_ptr_audit_20261028.md"
+      ]
+    },
+    {
+      "task_id": "T55",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t55-wifi-fuzz-audit-20261029",
+      "origin_head": "cd956ea5ae691a7afd8235748d5ddf307dd53b78",
+      "artifact_count": 11,
+      "artifact_paths": [
+        "research/evidence/cpp/t55_cr0337_cli_20261029.json",
+        "research/evidence/cpp/t55_cr0337_cli_20261029.md",
+        "research/evidence/cpp/t55_cr0338_cli_20261029.json",
+        "research/evidence/cpp/t55_cr0338_cli_20261029.md",
+        "research/evidence/cpp/t55_cr0339_cli_20261029.json",
+        "research/evidence/cpp/t55_cr0339_cli_20261029.md",
+        "research/evidence/cpp/t55_cr0340_cli_20261029.json",
+        "research/evidence/cpp/t55_cr0340_cli_20261029.md",
+        "research/evidence/cpp/t55_wifi_fuzz_ipc_audit_20261029.json",
+        "research/evidence/cpp/t55_wifi_fuzz_ipc_audit_20261029.md",
+        "research/evidence/cpp/verify_t55_wifi_fuzz_ipc_audit_20261029.py"
+      ]
+    },
+    {
+      "task_id": "T56",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t3-acceptance-pr30-20261019",
+      "origin_head": "91747d4cad7503e58c466402e905088153f1deb4",
+      "artifact_count": 9,
+      "artifact_paths": [
+        "research/evidence/cpp/t56_telephony_sms_cli_20261028.json",
+        "research/evidence/cpp/t56_telephony_sms_cli_20261028.md",
+        "research/evidence/cpp/t56_telephony_sms_ipc_cli_20261028.json",
+        "research/evidence/cpp/t56_telephony_sms_ipc_cli_20261028.md",
+        "research/evidence/cpp/t56_telephony_sms_mms_audit_20261028.json",
+        "research/evidence/cpp/t56_telephony_sms_mms_audit_20261028.md",
+        "research/evidence/cpp/t56_telephony_sms_mms_audit_20261028.py",
+        "research/evidence/cpp/t56_telephony_sms_sharedptr_context_cli_20261028.json",
+        "research/evidence/cpp/t56_telephony_sms_sharedptr_context_cli_20261028.md"
+      ]
+    },
+    {
+      "task_id": "T57",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t57-safwk-test-stubs-20261029",
+      "origin_head": "e05e5c0a3f9b329ba38a4323fe711ecba42c8cf0",
+      "artifact_count": 8,
+      "artifact_paths": [
+        "research/evidence/cpp/t57_safwk_listen_cli_20261029.json",
+        "research/evidence/cpp/t57_safwk_listen_cli_20261029.md",
+        "research/evidence/cpp/t57_safwk_probe_cli_20261029.json",
+        "research/evidence/cpp/t57_safwk_probe_cli_20261029.md",
+        "research/evidence/cpp/t57_safwk_replay_20261029.py",
+        "research/evidence/cpp/t57_safwk_test_stubs_audit_20261029.json",
+        "research/evidence/cpp/t57_safwk_test_stubs_audit_20261029.md",
+        "research/evidence/cpp/verify_t57_safwk_test_stubs_audit_20261029.py"
+      ]
+    },
+    {
+      "task_id": "T58",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t58-mechbody-controller-20261029",
+      "origin_head": "ea7f20c9de78b6332595f554846e634e18433d6f",
+      "artifact_count": 3,
+      "artifact_paths": [
+        "research/evidence/cpp/t58_mechbody_controller_ipc_audit_20261029.json",
+        "research/evidence/cpp/t58_mechbody_controller_ipc_audit_20261029.md",
+        "research/evidence/cpp/t58_mechbody_controller_ipc_audit_20261029.py"
+      ]
+    },
+    {
+      "task_id": "T60",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t60-cjson-cve-acceptance-20261029",
+      "origin_head": "bdf15f940d50f118f2f941c2125faab099a07eaa",
+      "artifact_count": 5,
+      "artifact_paths": [
+        "research/evidence/cpp/t60_cjson_cli_20261029.json",
+        "research/evidence/cpp/t60_cjson_compare_controls_20261029.json",
+        "research/evidence/cpp/t60_cjson_cve_2026_67215_67216_acceptance_20261029.json",
+        "research/evidence/cpp/t60_cjson_cve_2026_67215_67216_acceptance_20261029.md",
+        "research/evidence/cpp/verify_t60_cjson_cve_acceptance_20261029.py"
+      ]
+    },
+    {
+      "task_id": "D53",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\d53-camera-sharedptr-20261030",
+      "origin_head": "037bee3da62827884fc2c7c03f5a857924f5d935",
+      "artifact_count": 5,
+      "artifact_paths": [
+        "research/evidence/cpp/d53_camera_sharedptr_assessment_20261030.json",
+        "research/evidence/cpp/d53_camera_sharedptr_assessment_20261030.md",
+        "research/evidence/cpp/d53_camera_sharedptr_assessment_20261030.py",
+        "research/evidence/cpp/d53_camera_sharedptr_cli_20261030.json",
+        "research/evidence/cpp/verify_d53_camera_sharedptr_20261030.py"
+      ]
+    },
+    {
+      "task_id": "T59",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t59-camera-acceptance-20261030",
+      "origin_head": "c2e12c1fcb8b834b70db68cc8c035928a1bb6383",
+      "artifact_count": 4,
+      "artifact_paths": [
+        "research/evidence/cpp/t59_camera_sharedptr_audit_20261030.json",
+        "research/evidence/cpp/t59_camera_sharedptr_cli_20261030.json",
+        "research/evidence/cpp/t59_camera_sharedptr_cli_20261030.md",
+        "research/evidence/cpp/verify_t59_camera_sharedptr_20261030.py"
+      ]
+    }
+  ],
+  "date_proven_files": [
+    {
+      "task_id": "T44",
+      "path": "research/evidence/cpp/a_t44_samgr_callback_audit_20261027.json",
+      "sha256": "4c0db9fca2f6b2bb4bc12300dc9aeed32c4701118acc837ec2969501dc81ee8a",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t44-samgr-callback-audit-20261027",
+      "origin_last_write_local": "2026-10-20T05:10:27+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T44",
+      "path": "research/evidence/cpp/a_t44_samgr_callback_audit_20261027.md",
+      "sha256": "2047ae28a4edd4122ebb6733422e5c465bd076da5103d77093959cc4f9b0ae79",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t44-samgr-callback-audit-20261027",
+      "origin_last_write_local": "2026-10-20T05:10:15+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T44",
+      "path": "research/evidence/cpp/a_t44_samgr_callback_cli_20261027.json",
+      "sha256": "d10101b2016854871ea2de98c062a1b8586025c394830efede85c973e3c8b544",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t44-samgr-callback-audit-20261027",
+      "origin_last_write_local": "2026-10-20T05:09:26+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T44",
+      "path": "research/evidence/cpp/a_t44_samgr_callback_cli_20261027.md",
+      "sha256": "d2623688833090086a9ed96f16e6c9aa3a00d52caa3abe489c0b47566b752737",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t44-samgr-callback-audit-20261027",
+      "origin_last_write_local": "2026-10-20T05:09:26+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T45",
+      "path": "research/evidence/cpp/a_t45_safwk_cli_20261027.json",
+      "sha256": "e518c68536a74565d15261a2cfd20812345df5379cdee3eb0cb3d0c1590d4b1d",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t45-safwk-audit-20261027",
+      "origin_last_write_local": "2026-10-20T05:24:05+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T45",
+      "path": "research/evidence/cpp/a_t45_safwk_cli_20261027.md",
+      "sha256": "a33216c99c4a60b6e3570a9fbd978c753700d0031c29d9d3810f03db8003e14b",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t45-safwk-audit-20261027",
+      "origin_last_write_local": "2026-10-20T05:24:05+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T45",
+      "path": "research/evidence/cpp/a_t45_safwk_ipc_audit_20261027.json",
+      "sha256": "ae055c8f4701a3aa1caa079e724395fa0388e147c42990e34f403611058e54a7",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t45-safwk-audit-20261027",
+      "origin_last_write_local": "2026-10-20T05:24:57+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T45",
+      "path": "research/evidence/cpp/a_t45_safwk_ipc_audit_20261027.md",
+      "sha256": "348315e580f129f16f5fc8fca3bda06d73c5accdab87d3f7f7f347799ca6cc76",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t45-safwk-audit-20261027",
+      "origin_last_write_local": "2026-10-20T05:24:46+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D47",
+      "path": "research/evidence/cpp/d47_camera_sharedptr_cli_20261027.json",
+      "sha256": "2b85c2eb6f221955fed214a3c9f9ed2d738aebb7c7a443bdfb6fed9b7c26dbed",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d47-camera-20261027",
+      "origin_last_write_local": "2026-10-20T05:33:02+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D47",
+      "path": "research/evidence/cpp/d47_camera_sharedptr_cli_20261027.md",
+      "sha256": "30eb6dee86c89937be23f4c0679529b70f6e4efe621552b068256a4c825fca28",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d47-camera-20261027",
+      "origin_last_write_local": "2026-10-20T05:33:02+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D48",
+      "path": "research/evidence/cpp/d48_ai_voice_cr0305_no_change_20261028.json",
+      "sha256": "b07d9b9778b93c1c0370bd1c4edb21113a554f915560c67dd6c7b23aafc646e7",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d48-ai-voice-ipc-20261028",
+      "origin_last_write_local": "2026-10-20T05:44:50+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D48",
+      "path": "research/evidence/cpp/d48_ai_voice_cr0305_no_change_20261028.md",
+      "sha256": "0d84cff4cb2cfd117f6d294c688b5ab8df5aad0c9bbb497301f72f2da3b2d687",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d48-ai-voice-ipc-20261028",
+      "origin_last_write_local": "2026-10-20T05:43:59+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D48",
+      "path": "research/evidence/cpp/d48_ai_voice_cr0305_no_change_20261028.py",
+      "sha256": "b5b14cff29abac1c3aaa078dad4b0380bf4c831bd8400274f99cc62f2dba9eb5",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d48-ai-voice-ipc-20261028",
+      "origin_last_write_local": "2026-10-20T05:44:43+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D49",
+      "path": "research/evidence/cpp/d49_edm_ipc_cli_20261028.json",
+      "sha256": "6001c244b32b8a18fed7e55c25004d3a133090eaf212f48ec501282dd15094f2",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d49-edm-ipc-20261028",
+      "origin_last_write_local": "2026-10-20T06:00:04+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D49",
+      "path": "research/evidence/cpp/d49_edm_ipc_cli_20261028.md",
+      "sha256": "433c2b4a1a2d467997354553a557a2438f342240bd6f9d7375b522a6861f38f8",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d49-edm-ipc-20261028",
+      "origin_last_write_local": "2026-10-20T06:00:04+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D49",
+      "path": "research/evidence/cpp/d49_edm_ipc_no_change_20261028.json",
+      "sha256": "02b87b91afcb42ee071c1f7e52b45325c1b86192ce939e3487452893862177ca",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d49-edm-ipc-20261028",
+      "origin_last_write_local": "2026-10-20T06:00:05+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D49",
+      "path": "research/evidence/cpp/d49_edm_ipc_no_change_20261028.md",
+      "sha256": "0cb28c67f89bb4613f170c368f829270e42526f0f329c3c780c5d20eb2ac9ae1",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d49-edm-ipc-20261028",
+      "origin_last_write_local": "2026-10-20T05:59:48+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D49",
+      "path": "research/evidence/cpp/d49_edm_ipc_no_change_20261028.py",
+      "sha256": "9a7c2acac427d0efb3552db10531cbf597a12001db712e2370ad7cfc90a72de2",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d49-edm-ipc-20261028",
+      "origin_last_write_local": "2026-10-20T05:59:40+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D51",
+      "path": "research/evidence/cpp/d51_huks_cr0341_cli_20261029.json",
+      "sha256": "82be6e586a8275507fbe079342bc283dce74332084113c959f17b81528da4d3c",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d51-huks-cr0341-20261029",
+      "origin_last_write_local": "2026-10-20T06:27:43+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D51",
+      "path": "research/evidence/cpp/d51_huks_cr0341_cli_20261029.md",
+      "sha256": "dfe3da442ad80d2ff533c52af7e727f3942f0beebebb301f47607d4063757021",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d51-huks-cr0341-20261029",
+      "origin_last_write_local": "2026-10-20T06:27:43+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D51",
+      "path": "research/evidence/cpp/d51_huks_cr0341_sharedptr_assessment_20261029.md",
+      "sha256": "f8c8cdcf342c078488d3cbdb81ec4891116798fbc98ac359871999431d9a5728",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d51-huks-cr0341-20261029",
+      "origin_last_write_local": "2026-10-20T06:29:09+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D52",
+      "path": "research/evidence/cpp/d52_global_i18n_cli_20261029.json",
+      "sha256": "2a3fbadc0add9c785d0e5ddce1692f15a0a190a846331f67a72f9b10a9ec0a9b",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d52-global-i18n-20261029",
+      "origin_last_write_local": "2026-10-20T06:42:22+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D52",
+      "path": "research/evidence/cpp/d52_global_i18n_cli_20261029.md",
+      "sha256": "60695ed031df94f65eade0ec6556b57fb485414e621a98cef1bd604612c9dcb4",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d52-global-i18n-20261029",
+      "origin_last_write_local": "2026-10-20T06:42:22+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D52",
+      "path": "research/evidence/cpp/d52_global_i18n_cli_wide_20261029.json",
+      "sha256": "a83cb6d387c100b543b4d35c03af06699fd5597f2e58d77765be5de989108d0f",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d52-global-i18n-20261029",
+      "origin_last_write_local": "2026-10-20T06:42:54+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D52",
+      "path": "research/evidence/cpp/d52_global_i18n_cli_wide_20261029.md",
+      "sha256": "f8dbc97b6d71213ae72e5304abd8e0c6d94ceeef5b681908c758a2e2451b6086",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d52-global-i18n-20261029",
+      "origin_last_write_local": "2026-10-20T06:42:54+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D52",
+      "path": "research/evidence/cpp/d52_global_i18n_sharedptr_assessment_20261029.json",
+      "sha256": "628dc3ff97230df4b51bdf5d8b7b73b5210112734b798604f3994e1f97a2fe29",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d52-global-i18n-20261029",
+      "origin_last_write_local": "2026-10-20T06:44:55+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D52",
+      "path": "research/evidence/cpp/d52_global_i18n_sharedptr_assessment_20261029.md",
+      "sha256": "2f8f7a344dfbe408f28665c49021721ba7349eee51ba3b718fc9eb563e22a7d2",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-d52-global-i18n-20261029",
+      "origin_last_write_local": "2026-10-20T06:44:55+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T48",
+      "path": "research/evidence/cpp/t48_camera_callback_audit_20261027.json",
+      "sha256": "f35c2bf2f269c43d119757240ff8a94ca84ed8da81edcb041257cd6ea4a5c132",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t48-camera-audit-20261027",
+      "origin_last_write_local": "2026-10-20T05:42:13+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T48",
+      "path": "research/evidence/cpp/t48_camera_callback_audit_20261027.md",
+      "sha256": "138fc4f5121a25edab450077839812d12e775c1ea5e4d85792ce7c4b2a8f06ac",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t48-camera-audit-20261027",
+      "origin_last_write_local": "2026-10-20T05:41:13+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T48",
+      "path": "research/evidence/cpp/t48_camera_cli_20261027.json",
+      "sha256": "99c4c2b7bf90d4a6afbc6c79d9ae8e25cc3672ba30d9b3a353af43b03a299aa0",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t48-camera-audit-20261027",
+      "origin_last_write_local": "2026-10-20T05:42:12+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T53",
+      "path": "research/evidence/cpp/t53_wifi_event_handler_cli_20261028.json",
+      "sha256": "fb3c6bd8ddf6aad27227c7969ea2b4ad6a90570268f8fb9a45e8e867b8c0ada6",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t53-wifi-event-handler-20261028",
+      "origin_last_write_local": "2026-10-20T06:21:00+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T53",
+      "path": "research/evidence/cpp/t53_wifi_event_handler_cli_20261028.md",
+      "sha256": "a3912b65cd0c388ad241654b49ef9d4f7782f0e79f7120fb5975ce64e6818766",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t53-wifi-event-handler-20261028",
+      "origin_last_write_local": "2026-10-20T06:21:00+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T53",
+      "path": "research/evidence/cpp/t53_wifi_event_handler_shared_ptr_audit_20261028.json",
+      "sha256": "0b9bae56665cdf226bc4fd129c570a8c8625ca90370fa6682b7ec7e70fb0c20b",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t53-wifi-event-handler-20261028",
+      "origin_last_write_local": "2026-10-20T06:21:00+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T53",
+      "path": "research/evidence/cpp/t53_wifi_event_handler_shared_ptr_audit_20261028.md",
+      "sha256": "ea85550be799ee0b9af43b1783b4c6989982944b7002b0aef75e9690c9375136",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t53-wifi-event-handler-20261028",
+      "origin_last_write_local": "2026-10-20T06:21:00+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T55",
+      "path": "research/evidence/cpp/t55_cr0337_cli_20261029.json",
+      "sha256": "fa05e3bc13d46a78c37ef5bd0b53099bc79909b076c82ae405b2590309caef3d",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t55-wifi-fuzz-audit-20261029",
+      "origin_last_write_local": "2026-10-20T06:28:09+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T55",
+      "path": "research/evidence/cpp/t55_cr0337_cli_20261029.md",
+      "sha256": "bd4614a61e7535cd3e15826555384b7d717cc1be847e47b7441c64eb48114df2",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t55-wifi-fuzz-audit-20261029",
+      "origin_last_write_local": "2026-10-20T06:28:09+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T55",
+      "path": "research/evidence/cpp/t55_cr0338_cli_20261029.json",
+      "sha256": "2ad7f69768410b6b20b203bbf7ce8db77577b1addfca1afd859a70f8117f5849",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t55-wifi-fuzz-audit-20261029",
+      "origin_last_write_local": "2026-10-20T06:28:09+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T55",
+      "path": "research/evidence/cpp/t55_cr0338_cli_20261029.md",
+      "sha256": "dd74c406b5c5fcaab0a41c22d0721f438551535506fc9e728952b521afed2728",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t55-wifi-fuzz-audit-20261029",
+      "origin_last_write_local": "2026-10-20T06:28:09+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T55",
+      "path": "research/evidence/cpp/t55_cr0339_cli_20261029.json",
+      "sha256": "8d7dbbb63cffd67c5d046c9ded749a545997f41e5efb85c8a1798a82a19f370f",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t55-wifi-fuzz-audit-20261029",
+      "origin_last_write_local": "2026-10-20T06:28:09+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T55",
+      "path": "research/evidence/cpp/t55_cr0339_cli_20261029.md",
+      "sha256": "9ed3873f4ffb31680b7fa95eafc4742f99b8b04546b24cc3e1f3089363a4bc61",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t55-wifi-fuzz-audit-20261029",
+      "origin_last_write_local": "2026-10-20T06:28:09+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T55",
+      "path": "research/evidence/cpp/t55_cr0340_cli_20261029.json",
+      "sha256": "b9f65cb627ebe661a42fa0dc28f30ab3d8268de64e38c5ab71a939f115ceeeb9",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t55-wifi-fuzz-audit-20261029",
+      "origin_last_write_local": "2026-10-20T06:28:09+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T55",
+      "path": "research/evidence/cpp/t55_cr0340_cli_20261029.md",
+      "sha256": "72367260037bebb983d4201b57a9fbf7906e46acc70d660509aee3649264d9b8",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t55-wifi-fuzz-audit-20261029",
+      "origin_last_write_local": "2026-10-20T06:28:09+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T55",
+      "path": "research/evidence/cpp/t55_wifi_fuzz_ipc_audit_20261029.json",
+      "sha256": "9191d38809de5f08f8b1950d0de3b29652c5d17a4cb2ab798ca4f20451460999",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t55-wifi-fuzz-audit-20261029",
+      "origin_last_write_local": "2026-10-20T06:29:44+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T55",
+      "path": "research/evidence/cpp/t55_wifi_fuzz_ipc_audit_20261029.md",
+      "sha256": "cfab45a4d400efb2942f20b4c719d4774ce3fb57f914eee60d24bd93d96f8952",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t55-wifi-fuzz-audit-20261029",
+      "origin_last_write_local": "2026-10-20T06:29:44+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T55",
+      "path": "research/evidence/cpp/verify_t55_wifi_fuzz_ipc_audit_20261029.py",
+      "sha256": "f3c514cccfb626080b071b48cd0316fb25e5e29c3c0ede3f9519c1c37fed3c8b",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t55-wifi-fuzz-audit-20261029",
+      "origin_last_write_local": "2026-10-20T06:32:12+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T56",
+      "path": "research/evidence/cpp/t56_telephony_sms_cli_20261028.json",
+      "sha256": "382c94741b1d0c59b25596233c6bbece5db77454bdca4410f36f8e599cbf7c47",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t3-acceptance-pr30-20261019",
+      "origin_last_write_local": "2026-10-20T06:29:24+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T56",
+      "path": "research/evidence/cpp/t56_telephony_sms_cli_20261028.md",
+      "sha256": "31b6e99349659b097b515a45705995f808393fcc1981d4d914a3fa72533529cc",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t3-acceptance-pr30-20261019",
+      "origin_last_write_local": "2026-10-20T06:29:24+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T56",
+      "path": "research/evidence/cpp/t56_telephony_sms_ipc_cli_20261028.json",
+      "sha256": "07ee705cf051e57c113e254e64dcfc0f41c83733b7ef73994255c3c0deace7f7",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t3-acceptance-pr30-20261019",
+      "origin_last_write_local": "2026-10-20T06:29:36+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T56",
+      "path": "research/evidence/cpp/t56_telephony_sms_ipc_cli_20261028.md",
+      "sha256": "a2f30fecf8de7206ccf4cae1cefb62a5d142abb6ae3c542e53019a128d15e53e",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t3-acceptance-pr30-20261019",
+      "origin_last_write_local": "2026-10-20T06:29:36+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T56",
+      "path": "research/evidence/cpp/t56_telephony_sms_mms_audit_20261028.json",
+      "sha256": "1105187b02c129d48ea2be8a628e399f4fb4959a1414d84ff5ef6f15ad2693fb",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t3-acceptance-pr30-20261019",
+      "origin_last_write_local": "2026-10-20T06:34:27+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T56",
+      "path": "research/evidence/cpp/t56_telephony_sms_mms_audit_20261028.md",
+      "sha256": "6aae5d8dab7fc8e7c43d72b2f4c66ef4a4a20f88e69382b2ec5dde81823942dc",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t3-acceptance-pr30-20261019",
+      "origin_last_write_local": "2026-10-20T06:32:28+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T56",
+      "path": "research/evidence/cpp/t56_telephony_sms_mms_audit_20261028.py",
+      "sha256": "5b85bb61fb33e5c212a09d90544a18f8ca6ab551b1d26b106463973e4230667b",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t3-acceptance-pr30-20261019",
+      "origin_last_write_local": "2026-10-20T06:33:38+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T56",
+      "path": "research/evidence/cpp/t56_telephony_sms_sharedptr_context_cli_20261028.json",
+      "sha256": "b9a102c73b49567a5592142173de03e2417ea9c2d48ced11eab7884297af0142",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t3-acceptance-pr30-20261019",
+      "origin_last_write_local": "2026-10-20T06:30:40+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T56",
+      "path": "research/evidence/cpp/t56_telephony_sms_sharedptr_context_cli_20261028.md",
+      "sha256": "fa31af8db9fb3e8c7d1ec69576c2bebe6b970ca92c501e7f7f9aa2bda66f0cfe",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t3-acceptance-pr30-20261019",
+      "origin_last_write_local": "2026-10-20T06:30:40+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T57",
+      "path": "research/evidence/cpp/t57_safwk_listen_cli_20261029.json",
+      "sha256": "5cef6b6e668095e801df4440d2169425245543edf54fac68decf09a90ff4702d",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t57-safwk-test-stubs-20261029",
+      "origin_last_write_local": "2026-10-20T06:43:22+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T57",
+      "path": "research/evidence/cpp/t57_safwk_listen_cli_20261029.md",
+      "sha256": "2c30f5056264b2b4528d470b33d8bf08a22dd21c110aaeda7500c463955b2b1b",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t57-safwk-test-stubs-20261029",
+      "origin_last_write_local": "2026-10-20T06:43:22+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T57",
+      "path": "research/evidence/cpp/t57_safwk_probe_cli_20261029.json",
+      "sha256": "a0ba1644e01333dc4a28a970682494464698cc6cf59fbe861eb5aecfdc01cefc",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t57-safwk-test-stubs-20261029",
+      "origin_last_write_local": "2026-10-20T06:43:23+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T57",
+      "path": "research/evidence/cpp/t57_safwk_probe_cli_20261029.md",
+      "sha256": "0bba45a1e922134b893c80edb976f3620f31aa6416452937a883eb921a421c43",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t57-safwk-test-stubs-20261029",
+      "origin_last_write_local": "2026-10-20T06:43:23+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T57",
+      "path": "research/evidence/cpp/t57_safwk_replay_20261029.py",
+      "sha256": "86373bad9afe1bd9b3986b9e219b9864e3373d6acc915887c52d39f99df3ce33",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t57-safwk-test-stubs-20261029",
+      "origin_last_write_local": "2026-10-20T06:43:17+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T57",
+      "path": "research/evidence/cpp/t57_safwk_test_stubs_audit_20261029.json",
+      "sha256": "8c307681b857265fc312dd818981cc3755025745f3766d3458901753415003b1",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t57-safwk-test-stubs-20261029",
+      "origin_last_write_local": "2026-10-20T06:42:41+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T57",
+      "path": "research/evidence/cpp/t57_safwk_test_stubs_audit_20261029.md",
+      "sha256": "a645227495c7b2ecad4dc23e85cd045904c1c72b341b67e0227dbf19fc3eb678",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t57-safwk-test-stubs-20261029",
+      "origin_last_write_local": "2026-10-20T06:42:41+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T57",
+      "path": "research/evidence/cpp/verify_t57_safwk_test_stubs_audit_20261029.py",
+      "sha256": "010f4ae7ad7a639f409218e1c86147782aa111782439b1cf6595cc123364ec3a",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t57-safwk-test-stubs-20261029",
+      "origin_last_write_local": "2026-10-20T06:43:29+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T58",
+      "path": "research/evidence/cpp/t58_mechbody_controller_ipc_audit_20261029.json",
+      "sha256": "3501746c649e1f360396a9068adf61a0425169ce02badb47c243e5731a8e8e4c",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t58-mechbody-controller-20261029",
+      "origin_last_write_local": "2026-10-20T06:43:15+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T58",
+      "path": "research/evidence/cpp/t58_mechbody_controller_ipc_audit_20261029.md",
+      "sha256": "1e8871527f4588668c877d77f15f5d288b04d862fb1c5b98084eee945bcfbcc0",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t58-mechbody-controller-20261029",
+      "origin_last_write_local": "2026-10-20T06:43:15+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T58",
+      "path": "research/evidence/cpp/t58_mechbody_controller_ipc_audit_20261029.py",
+      "sha256": "1ac9753ae65f48ceaa3f01dcef8e1305d05c60a764e35f6acf1b2f1171dd6b68",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t58-mechbody-controller-20261029",
+      "origin_last_write_local": "2026-10-20T06:44:16+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T60",
+      "path": "research/evidence/cpp/t60_cjson_cli_20261029.json",
+      "sha256": "829c3d5bf0b713646634030eb1c1e2ca34d554409d8fc28c5335e0d4adafffa6",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t60-cjson-cve-acceptance-20261029",
+      "origin_last_write_local": "2026-10-20T06:58:14+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T60",
+      "path": "research/evidence/cpp/t60_cjson_compare_controls_20261029.json",
+      "sha256": "7715f3d20a327bb5d489d2d3cfb4b8ec2c9ad334dc9edd545b7a1f849fccfa15",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t60-cjson-cve-acceptance-20261029",
+      "origin_last_write_local": "2026-10-20T06:59:24+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T60",
+      "path": "research/evidence/cpp/t60_cjson_cve_2026_67215_67216_acceptance_20261029.json",
+      "sha256": "12a0a923ab105d511d62c2bc9c4c1d1a8851e32b9cff892a825ef5d9662bfb98",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t60-cjson-cve-acceptance-20261029",
+      "origin_last_write_local": "2026-10-20T06:59:42+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T60",
+      "path": "research/evidence/cpp/t60_cjson_cve_2026_67215_67216_acceptance_20261029.md",
+      "sha256": "bc9396641e8781fed9db4cf662c4170f706da5d640930a18e294c63c46105717",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t60-cjson-cve-acceptance-20261029",
+      "origin_last_write_local": "2026-10-20T07:00:08+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T60",
+      "path": "research/evidence/cpp/verify_t60_cjson_cve_acceptance_20261029.py",
+      "sha256": "4d8abfd5b5dc123b6ada628b9f9921304bd7cbb01078ecf55ae9b3e6cc7ec151",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\t60-cjson-cve-acceptance-20261029",
+      "origin_last_write_local": "2026-10-20T07:00:55+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D53",
+      "path": "research/evidence/cpp/d53_camera_sharedptr_assessment_20261030.json",
+      "sha256": "2f468e0fb9ed23763c88151b770113466bd1bfa67153a8f47c18d77980f283cf",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\d53-camera-sharedptr-20261030",
+      "origin_last_write_local": "2026-10-20T07:00:40+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D53",
+      "path": "research/evidence/cpp/d53_camera_sharedptr_assessment_20261030.md",
+      "sha256": "f1758d838ad7348de5ec47e42e6ff4932befb4f81bcde701c9da18fb9bcd7057",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\d53-camera-sharedptr-20261030",
+      "origin_last_write_local": "2026-10-20T07:00:49+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D53",
+      "path": "research/evidence/cpp/d53_camera_sharedptr_assessment_20261030.py",
+      "sha256": "b25e52106c881b107e5b431456c3a87f75197f48caf69354814652990ecc4055",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\d53-camera-sharedptr-20261030",
+      "origin_last_write_local": "2026-10-20T07:00:09+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D53",
+      "path": "research/evidence/cpp/d53_camera_sharedptr_cli_20261030.json",
+      "sha256": "579782f759632c5ff664408e29bd391619c02b7d1f9a31fdb976fb09abf608ea",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\d53-camera-sharedptr-20261030",
+      "origin_last_write_local": "2026-10-20T07:00:15+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "D53",
+      "path": "research/evidence/cpp/verify_d53_camera_sharedptr_20261030.py",
+      "sha256": "c3f00e50735e1b1af5f83b3b49b8b072646c58297afb9b7171a58669304b7a8e",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\d53-camera-sharedptr-20261030",
+      "origin_last_write_local": "2026-10-20T07:00:59+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T59",
+      "path": "research/evidence/cpp/t59_camera_sharedptr_audit_20261030.json",
+      "sha256": "d4d4cd1678975dccb23e9303979cacb516d9b1272df641eb97677dc8a2b646cd",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t59-camera-acceptance-20261030",
+      "origin_last_write_local": "2026-10-20T07:01:35+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T59",
+      "path": "research/evidence/cpp/t59_camera_sharedptr_cli_20261030.json",
+      "sha256": "4ac195e2dd4a3c554d3759edf9fa083ffd1454af55ee0def0dc82af37859d4c7",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t59-camera-acceptance-20261030",
+      "origin_last_write_local": "2026-10-20T06:59:10+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T59",
+      "path": "research/evidence/cpp/t59_camera_sharedptr_cli_20261030.md",
+      "sha256": "1b7db7506e5377f2909e4a59002caedcde11b2a4293e87a2a3b3e3ee4f82c6e1",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t59-camera-acceptance-20261030",
+      "origin_last_write_local": "2026-10-20T06:59:10+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    },
+    {
+      "task_id": "T59",
+      "path": "research/evidence/cpp/verify_t59_camera_sharedptr_20261030.py",
+      "sha256": "a6c3c042503c0309ef6a644ab8e2780dff3232ad51419e230572e3be5c6e752e",
+      "origin_worktree": "D:\\openHarmonyScanner\\worktrees\\a-t59-camera-acceptance-20261030",
+      "origin_last_write_local": "2026-10-20T07:00:38+08:00",
+      "evidence_kind": "original_worktree_artifact_timestamp"
+    }
+  ],
+  "t3_corrected_paths_excluded": [
+    "research/evidence/cpp/d54_libpng33416_fixed_cli_20261020.json",
+    "research/evidence/cpp/d54_libpng33416_vulnerable_cli_20261020.json",
+    "research/evidence/cpp/d54_libpng46675_fixed_cli_20261020.json",
+    "research/evidence/cpp/d54_libpng46675_vulnerable_cli_20261020.json",
+    "research/evidence/cpp/d54_libpng_lifetime_assessment_20261020.json",
+    "research/evidence/cpp/d54_libpng_lifetime_assessment_20261020.md",
+    "research/evidence/cpp/t61_libpng_current_replay_20261020.json",
+    "research/evidence/cpp/t61_libpng_independent_acceptance_20261020.json",
+    "research/evidence/cpp/t61_libpng_independent_acceptance_20261020.md",
+    "research/evidence/cpp/t62_dsoftbus_cve_2025_26690_independent_acceptance_20261020.json",
+    "research/evidence/cpp/t62_dsoftbus_cve_2025_26690_independent_acceptance_20261020.md",
+    "research/evidence/cpp/verify_d54_libpng_lifetime_20261020.py",
+    "research/evidence/cpp/verify_t61_libpng_acceptance_20261020.py"
+  ],
+  "blocked_paths": [
+    "research/evidence/cpp/a_d30_samgr_ipc_cli_20261021.json",
+    "research/evidence/cpp/a_d30_samgr_ipc_cli_20261021.md",
+    "research/evidence/cpp/a_d30_samgr_ipc_replay_20261021.json",
+    "research/evidence/cpp/a_d30_samgr_ipc_replay_20261021.md",
+    "research/evidence/cpp/a_line_parallel_queue_20261021_D30_addendum.md",
+    "research/evidence/cpp/a_line_parallel_queue_20261022_D32_addendum.md",
+    "research/evidence/cpp/a_line_parallel_queue_20261023_D33_addendum.md",
+    "research/evidence/cpp/a_line_parallel_queue_20261023_T34_addendum.md",
+    "research/evidence/cpp/d31_cr0335_wifi_ipc_cli_20261022.json",
+    "research/evidence/cpp/d31_cr0335_wifi_ipc_cli_20261022.md",
+    "research/evidence/cpp/d31_cr0335_wifi_ipc_replay_20261022.json",
+    "research/evidence/cpp/d31_cr0335_wifi_ipc_replay_20261022.md",
+    "research/evidence/cpp/d32_curl92391_current_replay_20261022.json",
+    "research/evidence/cpp/d32_curl92391_current_replay_20261022.md",
+    "research/evidence/cpp/d32_curl92391_fixed_20261022.json",
+    "research/evidence/cpp/d32_curl92391_fixed_20261022.md",
+    "research/evidence/cpp/d32_curl92391_vulnerable_20261022.json",
+    "research/evidence/cpp/d32_curl92391_vulnerable_20261022.md",
+    "research/evidence/cpp/d33_cjson_current_cli_20261023.json",
+    "research/evidence/cpp/d33_cjson_current_cli_20261023.md",
+    "research/evidence/cpp/d33_cjson_current_cli_20261023_report.md",
+    "research/evidence/cpp/d34_libpng46675_model_assessment_20261024.json",
+    "research/evidence/cpp/d34_libpng46675_model_assessment_20261024.md",
+    "research/evidence/cpp/d34_libpng46675_model_assessment_20261024.py",
+    "research/evidence/cpp/d35_preferences_fuzz_20261024.json",
+    "research/evidence/cpp/d35_preferences_fuzz_20261024.md",
+    "research/evidence/cpp/d35_preferences_fuzz_replay_20261024.py",
+    "research/evidence/cpp/d35_preferences_source_replay_20261024.json",
+    "research/evidence/cpp/d36_preferences_basevalue_20261024.json",
+    "research/evidence/cpp/d36_preferences_basevalue_20261024.md",
+    "research/evidence/cpp/d36_preferences_basevalue_replay_20261024.json",
+    "research/evidence/cpp/d36_preferences_basevalue_replay_20261024.py",
+    "research/evidence/cpp/d37_preferences_get_fuzzer_20261024.json",
+    "research/evidence/cpp/d37_preferences_get_fuzzer_20261024.md",
+    "research/evidence/cpp/d37_preferences_get_fuzzer_replay_20261024.json",
+    "research/evidence/cpp/d37_preferences_get_fuzzer_replay_20261024.py",
+    "research/evidence/cpp/d38_preferences_vector_fuzzer_20261024.json",
+    "research/evidence/cpp/d38_preferences_vector_fuzzer_20261024.md",
+    "research/evidence/cpp/d38_preferences_vector_fuzzer_replay_20261024.json",
+    "research/evidence/cpp/d38_preferences_vector_fuzzer_replay_20261024.py",
+    "research/evidence/cpp/d39_preferences_fuzzer_20261024.md",
+    "research/evidence/cpp/d39_preferences_fuzzer_cli_20261024.json",
+    "research/evidence/cpp/d39_preferences_fuzzer_replay_20261024.json",
+    "research/evidence/cpp/d39_preferences_fuzzer_replay_20261024.py",
+    "research/evidence/cpp/d40_faultloggerd_sharedptr_20261024.json",
+    "research/evidence/cpp/d40_faultloggerd_sharedptr_20261024.md",
+    "research/evidence/cpp/d40_faultloggerd_sharedptr_replay_20261024.json",
+    "research/evidence/cpp/d41_faultloggerd_tail_cli_20261025.json",
+    "research/evidence/cpp/d41_faultloggerd_tail_cli_20261025.md",
+    "research/evidence/cpp/d41_faultloggerd_tail_replay_20261025.json",
+    "research/evidence/cpp/d41_faultloggerd_tail_report_20261025.md",
+    "research/evidence/cpp/d42_b_owner_ipc_review_request_20261025.md",
+    "research/evidence/cpp/d42_player_framework_cli_20261025.json",
+    "research/evidence/cpp/d42_player_framework_cli_20261025.md",
+    "research/evidence/cpp/d42_player_framework_cli_with_headers_20261025.json",
+    "research/evidence/cpp/d42_player_framework_cli_with_headers_20261025.md",
+    "research/evidence/cpp/d42_player_framework_ipc_prompt_20261025.md",
+    "research/evidence/cpp/d42_player_framework_ipc_source_audit_20261025.json",
+    "research/evidence/cpp/d42_player_framework_ipc_source_audit_20261025.md",
+    "research/evidence/cpp/d42_safwk_expire_lru_cache_20261027.json",
+    "research/evidence/cpp/d42_safwk_expire_lru_cache_20261027.md",
+    "research/evidence/cpp/d43_taihe_ffi_gen_cli_20261025.json",
+    "research/evidence/cpp/d43_taihe_ffi_gen_cli_20261025.md",
+    "research/evidence/cpp/d43_taihe_ffi_gen_replay_20261025.json",
+    "research/evidence/cpp/d43_taihe_ffi_gen_report_20261025.md",
+    "research/evidence/cpp/d50_ability_user_object_wrapper_20261028.json",
+    "research/evidence/cpp/d50_ability_user_object_wrapper_20261028.md",
+    "research/evidence/cpp/d50_ability_user_object_wrapper_20261028.py",
+    "research/evidence/cpp/d_libtiff9900_current_cli_20261026.md",
+    "research/evidence/cpp/t31_cr0335_wifi_p2p_audit_20261021.json",
+    "research/evidence/cpp/t31_cr0335_wifi_p2p_cli_20261021.json",
+    "research/evidence/cpp/t31_cr0335_wifi_p2p_cli_20261021.md",
+    "research/evidence/cpp/t32_curl_92391_independent_audit_20261023.json",
+    "research/evidence/cpp/t32_curl_92391_independent_audit_20261023.md",
+    "research/evidence/cpp/t32_curl_fixed_cli_20261023.json",
+    "research/evidence/cpp/t32_curl_vulnerable_cli_20261023.json",
+    "research/evidence/cpp/t33_cjson_cve_2026_67215_20261023.json",
+    "research/evidence/cpp/t33_cjson_cve_2026_67215_20261023.md",
+    "research/evidence/cpp/t33_cjson_cve_2026_67216_20261023.json",
+    "research/evidence/cpp/t33_cjson_cve_2026_67216_20261023.md",
+    "research/evidence/cpp/t33_cjson_m2_audit_20261023.json",
+    "research/evidence/cpp/t33_cjson_m2_cli_20261023.json",
+    "research/evidence/cpp/t33_cjson_m2_cli_20261023.md",
+    "research/evidence/cpp/t33_cjson_m2_independent_audit_20261023.md",
+    "research/evidence/cpp/t34_libpng46675_d12_fragment_replay_20261023.json",
+    "research/evidence/cpp/t34_libpng46675_fixed_cli_20261023.json",
+    "research/evidence/cpp/t34_libpng46675_fixed_cli_20261023.md",
+    "research/evidence/cpp/t34_libpng46675_independent_audit_20261023.json",
+    "research/evidence/cpp/t34_libpng46675_independent_audit_20261023.md",
+    "research/evidence/cpp/t34_libpng46675_vulnerable_cli_20261023.json",
+    "research/evidence/cpp/t34_libpng46675_vulnerable_cli_20261023.md",
+    "research/evidence/cpp/t36_preferences_basevalue_audit_20261024.json",
+    "research/evidence/cpp/t36_preferences_basevalue_audit_20261024.md",
+    "research/evidence/cpp/t36_preferences_basevalue_cli_20261024.json",
+    "research/evidence/cpp/t37_preferences_get_fuzzer_20261024.json",
+    "research/evidence/cpp/t37_preferences_get_fuzzer_20261024.md",
+    "research/evidence/cpp/t37_preferences_get_fuzzer_independent_audit_20261024.md",
+    "research/evidence/cpp/t37_preferences_get_fuzzer_replay_20261024.json",
+    "research/evidence/cpp/t37_preferences_get_fuzzer_replay_20261024.py",
+    "research/evidence/cpp/t38_preferences_vector_20261024.py",
+    "research/evidence/cpp/t38_preferences_vector_cli_20261024.json",
+    "research/evidence/cpp/t38_preferences_vector_independent_audit_20261024.md",
+    "research/evidence/cpp/t38_preferences_vector_replay_20261024.json",
+    "research/evidence/cpp/t39_preferences_fuzzer_audit_20261024.json",
+    "research/evidence/cpp/t39_preferences_fuzzer_audit_20261024.py",
+    "research/evidence/cpp/t39_preferences_fuzzer_cli_20261024.json",
+    "research/evidence/cpp/t39_preferences_fuzzer_cli_20261024.md",
+    "research/evidence/cpp/t39_preferences_fuzzer_independent_audit_20261024.md",
+    "research/evidence/cpp/t40_faultloggerd_sharedptr_audit_20261024.json",
+    "research/evidence/cpp/t40_faultloggerd_sharedptr_audit_20261024.md",
+    "research/evidence/cpp/t40_faultloggerd_sharedptr_audit_20261024.py",
+    "research/evidence/cpp/t40_faultloggerd_sharedptr_cli_20261024.json",
+    "research/evidence/cpp/t40_faultloggerd_sharedptr_cli_20261024.md",
+    "research/evidence/cpp/t41_faultloggerd_tail_audit_20261024.json",
+    "research/evidence/cpp/t41_faultloggerd_tail_audit_20261024.md",
+    "research/evidence/cpp/t41_faultloggerd_tail_audit_20261024.py",
+    "research/evidence/cpp/t41_faultloggerd_tail_cli_20261024.json",
+    "research/evidence/cpp/t42_player_framework_audit_20261025.json",
+    "research/evidence/cpp/t42_player_framework_audit_20261025.md",
+    "research/evidence/cpp/t42_player_framework_cli_20261025.json",
+    "research/evidence/cpp/t42_player_framework_cli_20261025.md",
+    "research/evidence/cpp/t42_player_framework_independent_audit_20261025.py",
+    "research/evidence/cpp/t43_independent_checkout_attestation_20261026.json",
+    "research/evidence/cpp/t43_independent_checkout_attestation_20261026.md",
+    "research/evidence/cpp/t43_independent_checkout_attestation_20261026.py",
+    "research/evidence/cpp/t43_independent_cli_20261026.json",
+    "research/evidence/cpp/t43_independent_cli_20261026.md",
+    "research/evidence/cpp/t43_taihe_ffi_audit_20261026.json",
+    "research/evidence/cpp/t43_taihe_ffi_audit_20261026.md",
+    "research/evidence/cpp/t43_taihe_ffi_audit_20261026.py",
+    "research/evidence/cpp/t43_taihe_ffi_cli_20261026.json",
+    "research/evidence/cpp/t43_taihe_ffi_cli_20261026.md",
+    "research/evidence/cpp/t45_safwk_expire_lru_cache_audit_20261027.json",
+    "research/evidence/cpp/t45_safwk_expire_lru_cache_audit_20261027.md",
+    "research/evidence/cpp/t46_safwk_expire_lru_cache_audit_20261027.json",
+    "research/evidence/cpp/t46_safwk_expire_lru_cache_audit_20261027.md",
+    "research/evidence/cpp/t46_safwk_expire_lru_cache_cli_20261027.json",
+    "research/evidence/cpp/t46_safwk_expire_lru_cache_cli_20261027.md",
+    "research/evidence/cpp/t47_battery_stats_audit_20261027.json",
+    "research/evidence/cpp/t47_battery_stats_audit_20261027.md",
+    "research/evidence/cpp/t47_battery_stats_cli_20261027.json",
+    "research/evidence/cpp/t47_battery_stats_cli_20261027.md",
+    "research/evidence/cpp/t49_hapsigner_audit_20261028.json",
+    "research/evidence/cpp/t49_hapsigner_audit_20261028.md",
+    "research/evidence/cpp/t49_hapsigner_cli_20261028.json",
+    "research/evidence/cpp/t49_hapsigner_cli_20261028.md",
+    "research/evidence/cpp/t50_ai_voice_cr0301_cr0305_independent_20261028.json",
+    "research/evidence/cpp/t50_ai_voice_cr0301_cr0305_independent_20261028.md",
+    "research/evidence/cpp/t50_ai_voice_cr0301_cr0305_independent_20261028.py",
+    "research/evidence/cpp/t51_edm_cr0313_audit_20261028.json",
+    "research/evidence/cpp/t51_edm_cr0313_audit_20261028.md",
+    "research/evidence/cpp/t51_edm_cr0313_cli_20261028.json",
+    "research/evidence/cpp/t51_edm_cr0313_cli_20261028.md",
+    "research/evidence/cpp/t51_edm_cr0313_replay_20261028.py",
+    "research/evidence/cpp/t52_certmgr_audit_20261028.json",
+    "research/evidence/cpp/t52_certmgr_audit_20261028.md",
+    "research/evidence/cpp/t52_certmgr_context_identity_20261028.json",
+    "research/evidence/cpp/t52_certmgr_cr0315_shared_ptr_cli_20261028.json",
+    "research/evidence/cpp/t52_certmgr_cr0315_shared_ptr_cli_20261028.md",
+    "research/evidence/cpp/t52_certmgr_cr0316_ipc_cli_20261028.json",
+    "research/evidence/cpp/t52_certmgr_cr0316_ipc_cli_20261028.md",
+    "research/evidence/cpp/t54_wifi_cr0336_current_cli_20261027.json",
+    "research/evidence/cpp/t54_wifi_cr0336_current_cli_20261027.md",
+    "research/evidence/cpp/t54_wifi_cr0336_current_cli_audit_20261027.md",
+    "research/evidence/cpp/t_libtiff9900_independent_acceptance_20261027.json",
+    "research/evidence/cpp/t_libtiff9900_independent_acceptance_20261027.md",
+    "research/evidence/cpp/verify_d36_preferences_basevalue_20261024.py",
+    "research/evidence/cpp/verify_d37_preferences_get_fuzzer_20261024.py",
+    "research/evidence/cpp/verify_d38_preferences_vector_fuzzer_20261024.py",
+    "research/evidence/cpp/verify_d39_preferences_fuzzer_20261024.py",
+    "research/evidence/cpp/verify_d40_faultloggerd_sharedptr_20261024.py",
+    "research/evidence/cpp/verify_d41_faultloggerd_tail_20261025.py",
+    "research/evidence/cpp/verify_d43_taihe_ffi_gen_20261025.py",
+    "research/evidence/cpp/verify_d47_camera_sharedptr_20261027.py",
+    "research/evidence/cpp/verify_t37_preferences_get_fuzzer_20261024.py",
+    "research/evidence/cpp/verify_t38_preferences_vector_20261024.py",
+    "research/evidence/cpp/verify_t39_preferences_fuzzer_audit_20261024.py",
+    "research/evidence/cpp/verify_t40_faultloggerd_sharedptr_audit_20261024.py",
+    "research/evidence/cpp/verify_t41_faultloggerd_tail_audit_20261024.py",
+    "research/evidence/cpp/verify_t42_player_framework_audit_20261025.py",
+    "research/evidence/cpp/verify_t43_taihe_ffi_audit_20261026.py",
+    "research/evidence/cpp/verify_t44_samgr_callback_audit_20261027.py",
+    "research/evidence/cpp/verify_t45_safwk_expire_lru_cache_audit_20261027.py",
+    "research/evidence/cpp/verify_t45_safwk_ipc_audit_20261027.py",
+    "research/evidence/cpp/verify_t46_safwk_expire_lru_cache_audit_20261027.py",
+    "research/evidence/cpp/verify_t47_battery_stats_audit_20261027.py",
+    "research/evidence/cpp/verify_t48_camera_callback_audit_20261027.py",
+    "research/evidence/cpp/verify_t49_hapsigner_audit_20261028.py",
+    "research/evidence/cpp/verify_t51_edm_cr0313_audit_20261028.py",
+    "research/evidence/cpp/verify_t52_certmgr_audit_20261028.py",
+    "research/evidence/cpp/verify_t53_wifi_event_handler_audit_20261028.py",
+    "research/evidence/cpp/verify_t54_wifi_cr0336_audit_20261027.py"
+  ],
+  "blocked_reason": "No direct originating-worktree per-run evidence located in this audit; Git author/committer dates, detached checkout mtimes, source-object identity, and the file contents themselves are insufficient alone.",
+  "generation_errors": []
+}
