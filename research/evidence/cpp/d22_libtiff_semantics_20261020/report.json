@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "task": "D22 libtiff CVE-2025-9900 semantic and bounds review",
+  "date": "2026-10-20",
+  "disposition": "PARTIAL",
+  "detector_change": false,
+  "rule": {
+    "detector_id": "ohscanner.cpp.bounds",
+    "detector_version": "0.3.0",
+    "rule_id": "ohcpp-memory-bounds-pointer-offset-candidate-004",
+    "rule_version": "0.1.0"
+  },
+  "sources": {
+    "repository_declared": "libtiff/libtiff",
+    "vulnerable": {
+      "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+      "parent": "95911a1c2cb5f701e3d6678a95493d9692027ab6",
+      "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a",
+      "path": "libtiff/tif_getimage.c",
+      "blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e",
+      "sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3",
+      "candidate_original_line": 621,
+      "translation_unit_parse": "partial",
+      "bounded_function_and_field_parse": "complete",
+      "findings": 1
+    },
+    "fixed": {
+      "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+      "parent": "14da830be4bf4d6d3daafcbd892426aa6c164242",
+      "fix_commit": "14da830be4bf4d6d3daafcbd892426aa6c164242",
+      "tree": "77361ef7262189e16a2010b5c333f6b275d17f09",
+      "path": "libtiff/tif_getimage.c",
+      "blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db",
+      "sha256": "de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8",
+      "translation_unit_parse": "partial",
+      "bounded_function_and_field_parse": "complete",
+      "findings": 0
+    },
+    "type_evidence": {
+      "config_template": "libtiff/tiffconf.h.in:18 includes <stdint.h>",
+      "public_type_header": "libtiff/tiff.h documents uint32_t as the 32-bit intrinsic unsigned type",
+      "struct_field": "libtiff/tiffio.h:_TIFFRGBAImage.height is uint32_t",
+      "shim_limitation": "The existing bounded replay uses typedef unsigned int uint32_t; this models unsigned 32-bit behavior but does not establish the platform's exact underlying typedef."
+    }
+  },
+  "semantics": {
+    "operation": "raster + (rheight - img.height) * rwidth",
+    "unsigned_subtraction": true,
+    "multiplication_type": "uint32_t unsigned arithmetic",
+    "pointer_element_type": "uint32_t",
+    "decode_height_argument_before_fix": "img.height",
+    "decode_height_argument_after_fix": "rheight",
+    "caller_capacity_contract": "Documented raster capacity is width * height 32-bit entries; smaller raster height crops image data.",
+    "specific_caller_capacity_proven": false,
+    "fix_scope": "The exact vulnerable operation is removed in TIFFReadRGBAImageOriented and the requested height is passed to TIFFRGBAImageGet; helper-level dimensions are capped to image dimensions."
+  },
+  "controls": {
+    "fixed_function_quiet": true,
+    "guarded_unsigned_control_quiet": true,
+    "signed_pointer_offset_control_quiet": true,
+    "unrelated_unsigned_subtraction_control_quiet": true,
+    "partial_input_status": "blocked; zero findings is unknown"
+  },
+  "whole_file": {
+    "vulnerable_parse": "partial",
+    "fixed_parse": "partial",
+    "detector_status": "blocked",
+    "zero_findings_interpretation": "unknown; not safe and not a fixed differential pass"
+  },
+  "decision": "No-change: available controls did not reproduce a detector false positive or missed unsigned-underflow candidate requiring a narrow rule edit. Preserve the existing source-level candidate; keep the complete case PARTIAL.",
+  "not_established": [
+    "complete translation-unit semantic coverage",
+    "specific caller allocation and capacity flow",
+    "product build and reachable product call path",
+    "product impact or exploitability"
+  ],
+  "minimum_follow_up": [
+    "complete exact vulnerable/fixed translation-unit parsing or justified isolated-fragment admission evidence",
+    "exact caller allocation dataflow for caller-specific capacity",
+    "exact product revision/build and reachable call path if product applicability is examined"
+  ]
+}
