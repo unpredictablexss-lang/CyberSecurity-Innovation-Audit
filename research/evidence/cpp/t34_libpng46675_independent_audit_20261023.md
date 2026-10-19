@@ -1,7 +1,7 @@
 # T34: libpng CVE-2026-46675 independent audit
 
-Date: 2026-10-23  
-Baseline: `1cb2178c88715b6c8f908ac7826cb684a35730f7`  
+Date: 2026-10-23
+Baseline: `1cb2178c88715b6c8f908ac7826cb684a35730f7`
 Disposition: **PARTIAL/BLOCK**
 
 ## Scope and source identity
