@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "audit": "T30 independent current IPC CLI and source-flow audit for A0 CR-0219-CR-0226",
+  "basis_commit": "3aa6acc13ab7f39b0ebaee092a3e3e5b9b83bfa2",
+  "source": {
+    "repository": "openharmony/systemabilitymgr_samgr",
+    "mirror": "D:/openHarmonyScanner/openharmony/.repo/project-objects/systemabilitymgr_samgr.git",
+    "commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff",
+    "tree": "b7a89e95be788f2f2372258e341f7be842c7826d",
+    "path": "services/samgr/native/source/system_ability_manager_stub.cpp",
+    "blob": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
+    "bytes": 78212,
+    "sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433"
+  },
+  "cli": {
+    "command": "python -m src.cli ohscan-run --repo-dir <pinned-samgr-checkout> --repository openharmony/systemabilitymgr_samgr --commit 08e2a552b839ea7727251cb9b749a5c1dd9cfeff --detector ohscanner.interface.ipc --include services/samgr/native/source/system_ability_manager_stub.cpp",
+    "report": "research/evidence/cpp/a_t30_samgr_cli_20261020.json",
+    "markdown": "research/evidence/cpp/a_t30_samgr_cli_20261020.md",
+    "scope_files": 1,
+    "scope_bytes": 78212,
+    "parse_status": "partial",
+    "coverage": {"complete": 0, "partial": 1, "not_analyzed": 0, "failed": 0},
+    "total_diagnostics": 10,
+    "queue_family_matches": 8,
+    "other_diagnostics": [298, 302],
+    "interpretation": "Current rule candidates only; partial file analysis and missing product policy/reachability do not establish vulnerability or safety."
+  },
+  "shared_facts": {
+    "dispatcher": "OnRemoteRequest enforces SAMANAGER_INTERFACE_TOKEN and dispatches memberFuncMap_ (source lines 293-309); this is protocol validation, not caller authorization.",
+    "selinux": "CheckGetSAPermission/CheckGetRemoteSAPermission call ServiceChecker only under WITH_SELINUX; non-SELinux source branch returns true.",
+    "outputs": "Reviewed methods export IRemoteObject capabilities; no FD read/write found in the reviewed methods.",
+    "product_facts_unknown": ["build flags", "effective SELinux policy", "caller SID/UID/native-token/user mapping", "service and transaction reachability", "selected SA/extension exposure", "returned interface permissions and impact", "target-derived IPC harness"],
+    "family_independence": "All eight records share one source file/family; they are not independent holdout cases."
+  },
+  "cases": [
+    {"queue_id":"CR-0219","candidate_id":"ohscanner.interface.ipc:04a66a31ff68330e","line":464,"method":"CheckRemtSystemAbilityInner","transaction":"CHECK_REMOTE_SYSTEM_ABILITY_TRANSACTION; map 155-156","flow":"SA/device parcel inputs; CanRequest native-token gate; SA validation; CheckGetRemoteSAPermission before lookup; returns remote object","diagnostic_id":"ohscanner.interface.ipc:2af8fbf91642cbbf","rule_id":"ipc.capability.export","disposition":"PARTIAL","original_status":"not_reproduced","queue_status":"queued_not_reproduced","missing":"Product caller/policy, SELinux configuration, device and SA exposure."},
+    {"queue_id":"CR-0220","candidate_id":"ohscanner.interface.ipc:d25bf1cd70fc1a15","line":551,"method":"CheckSystemAbilityImmeInner","transaction":"CHECK_SYSTEM_ABILITY_IMMEDIATELY_TRANSACTION; map 159-160","flow":"SA ID and isExist inputs; CanRequest; SA validation; CheckGetSAPermission; returns remote object and bool","diagnostic_id":"ohscanner.interface.ipc:e6305216fc6e7a94","rule_id":"ipc.capability.export","disposition":"PARTIAL","original_status":"not_reproduced","queue_status":"queued_not_reproduced","missing":"Product caller/token policy, SELinux configuration, selected SA exposure."},
+    {"queue_id":"CR-0221","candidate_id":"ohscanner.interface.ipc:38dbb42209c3b6bc","line":668,"method":"GetSystemAbilityInner","transaction":"GET_SYSTEM_ABILITY_TRANSACTION; map 143-144","flow":"SA ID input; SA validation; CheckGetSAPermission; no local CanRequest in this method; returns remote object","diagnostic_id":"ohscanner.interface.ipc:b810e0670174d80e","rule_id":"ipc.capability.export","disposition":"PARTIAL","original_status":"not_reproduced","queue_status":"queued_not_reproduced","missing":"WITH_SELINUX build state, effective caller SID rules, selected SA exposure."},
+    {"queue_id":"CR-0222","candidate_id":"ohscanner.interface.ipc:f4b4ee6abf220a93","line":706,"method":"CheckSystemAbilityInner","transaction":"CHECK_SYSTEM_ABILITY_TRANSACTION; map 145-146","flow":"SA ID input; SA validation; CheckGetSAPermission; no local CanRequest in this method; returns remote object","diagnostic_id":"ohscanner.interface.ipc:c50c9e08852ab64f","rule_id":"ipc.capability.export","disposition":"PARTIAL","original_status":"not_reproduced","queue_status":"queued_not_reproduced","missing":"WITH_SELINUX build state, effective caller SID rules, selected SA exposure."},
+    {"queue_id":"CR-0223","candidate_id":"ohscanner.interface.ipc:a89d4fbb76239732","line":1485,"method":"GetExtensionRunningSaListInner","transaction":"GET_EXTERNSION_SA_LIST_TRANSCATION; map 213-214","flow":"CanRequest native-token gate; extension string input; returns list of remote objects; adjacent extension-info method has named permission absent here","diagnostic_id":"ohscanner.interface.ipc:d21108b21819c7b8","rule_id":"ipc.capability.export","disposition":"PARTIAL","original_status":"not_reproduced","queue_status":"queued_not_reproduced","missing":"API contract, intended extension policy, native-token provisioning and product exposure; neighbor difference alone is not bypass evidence."},
+    {"queue_id":"CR-0224","candidate_id":"ohscanner.interface.ipc:1ab7b873ef0e71d2","line":1692,"method":"GetSystemAbilityWithUserIdInner","transaction":"GET_SYSTEM_ABILITY_WITH_USERID_TRANSACTION; code 45; SUPPORT_MULTI_INSTANCE map 229-245","flow":"SA validation; optional PengLai check; CheckGetSAPermission before user input/lookup; manager checks BASE_USER, target validity and manager; returns remote object","diagnostic_id":"ohscanner.interface.ipc:cfca2b2cdef00a5b","rule_id":"ipc.capability.export","disposition":"PARTIAL","original_status":"not_reproduced","queue_status":"queued_not_reproduced","missing":"Product feature/build flags, caller identity mapping, policy, SA exposure and returned-object impact."},
+    {"queue_id":"CR-0225","candidate_id":"ohscanner.interface.ipc:79b120286d7e2168","line":1735,"method":"CheckSystemAbilityWithUserIdInner","transaction":"CHECK_SYSTEM_ABILITY_WITH_USERID_TRANSACTION; code 46; SUPPORT_MULTI_INSTANCE map 229-245","flow":"SA validation; optional PengLai check; CheckGetSAPermission before user input/lookup; manager checks BASE_USER, target validity and manager; returns remote object","diagnostic_id":"ohscanner.interface.ipc:2ffa938ee632d9d4","rule_id":"ipc.capability.export","disposition":"PARTIAL","original_status":"not_reproduced","queue_status":"queued_not_reproduced","missing":"Product feature/build flags, caller identity mapping, policy, SA exposure and returned-object impact."},
+    {"queue_id":"CR-0226","candidate_id":"ohscanner.interface.ipc:c85193fe8d815688","line":1784,"method":"CheckSystemAbilityByUserIdInner","transaction":"CHECK_SYSTEM_ABILITY_BY_USERID_TRANSACTION; code 47; SUPPORT_MULTI_INSTANCE map 229-245","flow":"SA validation; optional PengLai check; CheckGetSAPermission; reads bool and user ID; manager initializes isExist=false and checks BASE_USER/target/manager; returns remote object and bool","diagnostic_id":"ohscanner.interface.ipc:5f76290f7adec957","rule_id":"ipc.capability.export","disposition":"PARTIAL","original_status":"not_reproduced","queue_status":"queued_not_reproduced","missing":"Product feature/build flags, caller identity mapping, policy, SA exposure and returned-object impact; caller bool alone does not show bypass."}
+  ],
+  "queue_preservation": {"all_ids":"CR-0219..CR-0226","states_unchanged":true,"status_changed":false},
+  "fixed_source": "No trusted fixed source counterpart was identified for these rows; no fixed-version pass is claimed."
+}
