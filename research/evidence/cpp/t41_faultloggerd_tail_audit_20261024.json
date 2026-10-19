@@ -1,0 +1,425 @@
+{
+  "schema_version": "t41-faultloggerd-tail-audit-v1",
+  "task": "T41",
+  "integration_base": "1ebe2d809719cc7b445fe6e723c452e0634c8dd3",
+  "target_source": {
+    "repository": "openharmony/hiviewdfx_faultloggerd",
+    "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+    "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+  },
+  "scanner": {
+    "tool": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "profile": "light-ast",
+    "scope_files": 4,
+    "scope_loc": 874,
+    "parse_status": {
+      "complete": 4
+    },
+    "diagnostic_count": 7,
+    "elapsed_seconds": 0.04792269999961718,
+    "raw": "t41_faultloggerd_tail_cli_20261024.json"
+  },
+  "source_file_identities": [
+    {
+      "path": "tools/process_dump/dfx_process.h",
+      "blob": "4ebafe6a77e464e099864f32e845ad512cd492cf",
+      "sha256": "8806f468a40a0f837ce0046161abec7a7f681f7742b9ac68132228c28b80131c",
+      "bytes": 4375
+    },
+    {
+      "path": "tools/process_dump/dfx_thread.h",
+      "blob": "2a1d9cb775a014cd64ccd522cc4728fc39a9332b",
+      "sha256": "b770b4c897ed50e8867fe1c3a466fe1bf50aea624a2dfe5f3f775145ef5244c2",
+      "bytes": 3186
+    },
+    {
+      "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+      "blob": "72ce94a929b23f3ea69d58befe1e7109fb733278",
+      "sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+      "bytes": 4005
+    },
+    {
+      "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "blob": "9e8e8d41cca9ef6d9aa42a50ab482ff7c3cd67a1",
+      "sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+      "bytes": 16219
+    }
+  ],
+  "build_file_identities": [
+    {
+      "path": "tools/process_dump/BUILD.gn",
+      "blob": "ec9e0a401a83461d64374a5e62fd07aa1f393d4e",
+      "sha256": "ad33cc7e9c576b80a1fa2f5233d1a606e0a61a3848760b08b542f719ed010142",
+      "bytes": 10525
+    },
+    {
+      "path": "tools/process_dump/minidump_parser/BUILD.gn",
+      "blob": "13955a046973b33fb586607590dfbf62637d6074",
+      "sha256": "3d0eb8914e9e9070c725c982cea7709ec73aecc23f51fba62064fdb9164fb30c",
+      "bytes": 1930
+    }
+  ],
+  "reviewed_context_file_identities": [
+    {
+      "path": "tools/process_dump/dfx_process.cpp",
+      "blob": "1b894410a069f1156a99c97371280011d30a3214",
+      "sha256": "0d49d37eb471aa82d383c8cfe7dd6dffd86e316d976c91a5ab3b24648c6ef3a5",
+      "bytes": 6223
+    },
+    {
+      "path": "tools/process_dump/dfx_thread.cpp",
+      "blob": "810975fa3f187afd1ba1565cbfa3e03e0a63f913",
+      "sha256": "1ebdacba5c4bf8e64f8032470003d8909a4b8765cfa2f0fb80eb61ee646bae5e",
+      "bytes": 4239
+    },
+    {
+      "path": "tools/process_dump/minidump_dumper.cpp",
+      "blob": "bee681a0e209d1fdab16ebf48d6c8f0bbf8b7560",
+      "sha256": "9bd73fa7a4d26ab4c4d5a08b01dd747bbb9aae4e61cc54c0f028433360d892d1",
+      "bytes": 25196
+    },
+    {
+      "path": "tools/process_dump/minidump_parser/minidump_parser.cpp",
+      "blob": "a5e87053497a2ea8d9000c7f347b09c00dc85253",
+      "sha256": "d021d3431db4998543f1225f97b469ac430eed9431a55450b4847dc56400f828",
+      "bytes": 17797
+    },
+    {
+      "path": "tools/process_dump/minidump_parser/minidump_memory.cpp",
+      "blob": "116e76675f5b75f629bf31f8b97caa8a2b040758",
+      "sha256": "a18987f72401757512564ef5a1cbf183c856dd694a4a9733d8bd911378d1dbc6",
+      "bytes": 11805
+    },
+    {
+      "path": "tools/process_dump/minidump_parser/minidump_thread.cpp",
+      "blob": "d39d6e30edd253df79d577edd5b66d309863557c",
+      "sha256": "e505ee20bdb5fceb2a29491b09f33c327b066dbedb90bd177624b69c5a357b1e",
+      "bytes": 9253
+    }
+  ],
+  "a0_rows": [
+    {
+      "queue_id": "CR-0161",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:b11b741aa67036e8",
+      "path": "tools/process_dump/dfx_process.h",
+      "line": 74,
+      "line_text": "return regs_;",
+      "source": {
+        "path": "tools/process_dump/dfx_process.h",
+        "blob": "4ebafe6a77e464e099864f32e845ad512cd492cf",
+        "sha256": "8806f468a40a0f837ce0046161abec7a7f681f7742b9ac68132228c28b80131c",
+        "bytes": 4375
+      },
+      "a0_source_sha256": "8806f468a40a0f837ce0046161abec7a7f681f7742b9ac68132228c28b80131c",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "parse_status": "complete",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:6d5edfb3cf9c579b"
+      },
+      "assessment": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0162",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:d2a646c59c6bb1da",
+      "path": "tools/process_dump/dfx_thread.h",
+      "line": 64,
+      "line_text": "stackBuf_ = stackBuf;",
+      "source": {
+        "path": "tools/process_dump/dfx_thread.h",
+        "blob": "2a1d9cb775a014cd64ccd522cc4728fc39a9332b",
+        "sha256": "b770b4c897ed50e8867fe1c3a466fe1bf50aea624a2dfe5f3f775145ef5244c2",
+        "bytes": 3186
+      },
+      "a0_source_sha256": "b770b4c897ed50e8867fe1c3a466fe1bf50aea624a2dfe5f3f775145ef5244c2",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "parse_status": "complete",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:359b91f5f5ac9612"
+      },
+      "assessment": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0163",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:58f319493c195843",
+      "path": "tools/process_dump/dfx_thread.h",
+      "line": 69,
+      "line_text": "return stackBuf_;",
+      "source": {
+        "path": "tools/process_dump/dfx_thread.h",
+        "blob": "2a1d9cb775a014cd64ccd522cc4728fc39a9332b",
+        "sha256": "b770b4c897ed50e8867fe1c3a466fe1bf50aea624a2dfe5f3f775145ef5244c2",
+        "bytes": 3186
+      },
+      "a0_source_sha256": "b770b4c897ed50e8867fe1c3a466fe1bf50aea624a2dfe5f3f775145ef5244c2",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "parse_status": "complete",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:4c18713fd27833ff"
+      },
+      "assessment": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0164",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:312237fa1743b146",
+      "path": "tools/process_dump/dfx_thread.h",
+      "line": 87,
+      "line_text": "return processInfo_;",
+      "source": {
+        "path": "tools/process_dump/dfx_thread.h",
+        "blob": "2a1d9cb775a014cd64ccd522cc4728fc39a9332b",
+        "sha256": "b770b4c897ed50e8867fe1c3a466fe1bf50aea624a2dfe5f3f775145ef5244c2",
+        "bytes": 3186
+      },
+      "a0_source_sha256": "b770b4c897ed50e8867fe1c3a466fe1bf50aea624a2dfe5f3f775145ef5244c2",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "parse_status": "complete",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null
+      },
+      "assessment": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0165",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:3539aa4913a62737",
+      "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+      "line": 50,
+      "line_text": "std::shared_ptr<MinidumpSubject> GetSubject() const { return minidumpSubject_; }",
+      "source": {
+        "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+        "blob": "72ce94a929b23f3ea69d58befe1e7109fb733278",
+        "sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+        "bytes": 4005
+      },
+      "a0_source_sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "parse_status": "complete",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null
+      },
+      "assessment": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0166",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:8c81f90bf4b4f1f3",
+      "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+      "line": 86,
+      "line_text": ": streamMap_(std::make_shared<MinidumpStreamMap>()),",
+      "source": {
+        "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+        "blob": "72ce94a929b23f3ea69d58befe1e7109fb733278",
+        "sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+        "bytes": 4005
+      },
+      "a0_source_sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "parse_status": "complete",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null
+      },
+      "assessment": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0167",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:2f7f9246c936742d",
+      "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+      "line": 88,
+      "line_text": "minidumpSubject_(std::make_shared<MinidumpSubject>()) {}",
+      "source": {
+        "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+        "blob": "72ce94a929b23f3ea69d58befe1e7109fb733278",
+        "sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+        "bytes": 4005
+      },
+      "a0_source_sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "parse_status": "complete",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null
+      },
+      "assessment": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0168",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:ccadf60188fdbf59",
+      "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+      "line": 90,
+      "line_text": "MinidumpStreamInfo() : streamIndex_(0), stream_(nullptr) {}",
+      "source": {
+        "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+        "blob": "72ce94a929b23f3ea69d58befe1e7109fb733278",
+        "sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+        "bytes": 4005
+      },
+      "a0_source_sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "parse_status": "complete",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null
+      },
+      "assessment": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0169",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:36bad8fc19ad0554",
+      "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "line": 76,
+      "line_text": "arm64Context_ = std::move(context);",
+      "source": {
+        "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+        "blob": "9e8e8d41cca9ef6d9aa42a50ab482ff7c3cd67a1",
+        "sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+        "bytes": 16219
+      },
+      "a0_source_sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "parse_status": "complete",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:b93d88a86d9485b8"
+      },
+      "assessment": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0170",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:c5ccfb938d6e811e",
+      "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "line": 162,
+      "line_text": "const std::vector<std::shared_ptr<MinidumpMemoryRegion>>& GetMemoryRegions() { return regions_; }",
+      "source": {
+        "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+        "blob": "9e8e8d41cca9ef6d9aa42a50ab482ff7c3cd67a1",
+        "sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+        "bytes": 16219
+      },
+      "a0_source_sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "parse_status": "complete",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null
+      },
+      "assessment": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0171",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:c331274255457314",
+      "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "line": 259,
+      "line_text": "return modules_;",
+      "source": {
+        "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+        "blob": "9e8e8d41cca9ef6d9aa42a50ab482ff7c3cd67a1",
+        "sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+        "bytes": 16219
+      },
+      "a0_source_sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "parse_status": "complete",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null
+      },
+      "assessment": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0172",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:c9b720606eb1735b",
+      "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "line": 353,
+      "line_text": "const std::vector<std::shared_ptr<MinidumpThreadName>>& GetThreadNames() { return threadNames_;}",
+      "source": {
+        "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+        "blob": "9e8e8d41cca9ef6d9aa42a50ab482ff7c3cd67a1",
+        "sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+        "bytes": 16219
+      },
+      "a0_source_sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "parse_status": "complete",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null
+      },
+      "assessment": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0173",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:2ecb435c1d596ef0",
+      "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "line": 403,
+      "line_text": "std::shared_ptr<std::vector<MinidumpThread>> GetThreads() { return isValid_ ? threads_ : nullptr; }",
+      "source": {
+        "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+        "blob": "9e8e8d41cca9ef6d9aa42a50ab482ff7c3cd67a1",
+        "sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+        "bytes": 16219
+      },
+      "a0_source_sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "parse_status": "complete",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null
+      },
+      "assessment": "PARTIAL"
+    }
+  ],
+  "exact_line_findings": 4,
+  "additional_cli_findings_outside_group": [
+    {
+      "path": "tools/process_dump/dfx_process.h",
+      "line": 55,
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:e8bc5bf3de23df86"
+    },
+    {
+      "path": "tools/process_dump/dfx_process.h",
+      "line": 60,
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:b95bbc62436d4be7"
+    },
+    {
+      "path": "tools/process_dump/dfx_process.h",
+      "line": 69,
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:93f311701435a067"
+    }
+  ],
+  "a0_unchanged": {
+    "queue_rows": 345,
+    "group_rows": 13,
+    "group_original_status_counts": {
+      "not_testable": 13
+    },
+    "group_queue_status_counts": {
+      "paused_pending_evidence": 13
+    },
+    "modified": false
+  },
+  "overall_disposition": "PARTIAL",
+  "limitations": [
+    "No trusted fixed source",
+    "No product manifest/runtime entry or same-object overlap proof",
+    "Complete parse is syntactic coverage only"
+  ]
+}

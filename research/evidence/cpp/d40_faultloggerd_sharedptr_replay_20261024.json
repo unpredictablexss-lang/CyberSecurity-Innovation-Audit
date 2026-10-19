@@ -1364,5 +1364,121 @@
       "disposition": "PARTIAL",
       "queue_preserved": true
     }
-  ]
+  ],
+  "production_call_context_followup": {
+    "task": "T40 independent source-bound follow-up",
+    "source_identity": {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "files": [
+        {
+          "path": "tools/process_dump/lite_process_dumper.cpp",
+          "blob": "1ec5922714ba276d2e47d7c5906210b4d4c0088e",
+          "sha256": "3919cf5c58f55e93b0d1ef3e8668bd85218a0173daacca619b6bc216c02633fe",
+          "bytes": 24947
+        },
+        {
+          "path": "tools/process_dump/minidump_dumper.cpp",
+          "blob": "bee681a0e209d1fdab16ebf48d6c8f0bbf8b7560",
+          "sha256": "9bd73fa7a4d26ab4c4d5a08b01dd747bbb9aae4e61cc54c0f028433360d892d1",
+          "bytes": 25196
+        },
+        {
+          "path": "tools/process_dump/BUILD.gn",
+          "blob": "ec9e0a401a83461d64374a5e62fd07aa1f393d4e",
+          "sha256": "ad33cc7e9c576b80a1fa2f5233d1a606e0a61a3848760b08b542f719ed010142",
+          "bytes": 10525
+        },
+        {
+          "path": "interfaces/innerkits/unwinder_refactor/src/unwind_local/local_unwinder.cpp",
+          "blob": "94c9b9891b963811c3c1d15504cecf18d4b4bd99",
+          "sha256": "261b99e00d76430fb6793a72180b93f68660c9129f23d038d7d00fe53bc687de",
+          "bytes": 8606
+        },
+        {
+          "path": "interfaces/innerkits/unwinder_refactor/BUILD.gn",
+          "blob": "2c78c001d7cb24135eae5ca3a52b1b60a13b5450",
+          "sha256": "c1f9766068b5c665e057a123494add4f0db8df5141dc6b10370ebdedd1cb76e0",
+          "bytes": 12343
+        },
+        {
+          "path": "interfaces/innerkits/unwinder/src/unwind_local/thread_context.cpp",
+          "blob": "4c179172a1864a3d5e05975abcacd4b74d6e1884",
+          "sha256": "6ef04a8f2671ce61983f8dad75ae582e8b4194e4b3b03aaf154d26cc7f6f0136",
+          "bytes": 16220
+        },
+        {
+          "path": "interfaces/innerkits/unwinder/include/thread_context.h",
+          "blob": "623f36a17f406fbd0e2a3208867c21df359afe42",
+          "sha256": "b4878aca6f1f468397a6901fe800c5bbbf067753aec1abfb6d99d6a8359de365",
+          "bytes": 4363
+        },
+        {
+          "path": "BUILD.gn",
+          "blob": "cc24ea6ac67f838d5b9cdbaf3b910a503bbe9cf3",
+          "sha256": "5c3de9dc706d3eafa45cb3770a3f8f32f2f8358a7b98cb093c16d8df068d692d",
+          "bytes": 2257
+        }
+      ]
+    },
+    "verified_contexts": [
+      {
+        "path": "tools/process_dump/lite_process_dumper.cpp",
+        "line": 362,
+        "method": "LiteProcessDumper::Unwind",
+        "call": "instance.SetMaps(dfxMaps_)",
+        "context": "The same method subsequently configures stack state/accessors and runs unwinder operations using the local context."
+      },
+      {
+        "path": "tools/process_dump/minidump_dumper.cpp",
+        "line": 514,
+        "method": "MinidumpDumper::UnwindProcess",
+        "call": "instance.SetMaps(dfxMaps_)",
+        "context": "The same method subsequently configures stack state/accessors and performs unwinding."
+      },
+      {
+        "path": "interfaces/innerkits/unwinder_refactor/src/unwind_local/local_unwinder.cpp",
+        "lines": [
+          168,
+          176,
+          181
+        ],
+        "method": "LocalUnwinder::DoUnwindLocalByOtherTid",
+        "calls": [
+          "CollectThreadContext(tid)",
+          "ReleaseCollectThreadContext() on failure",
+          "ReleaseCollectThreadContext() after DoUnwindOtherTid"
+        ],
+        "context": "This call sequence bounds a different production-capable LocalThreadContextMix use; CollectThreadContext assigns maps_ and signal-path methods read it."
+      },
+      {
+        "path": "tools/process_dump/BUILD.gn",
+        "lines": [
+          16,
+          33,
+          222,
+          223,
+          230
+        ],
+        "target": "processdump_sources contains lite_process_dumper.cpp and minidump_dumper.cpp; ohos_executable(\"processdump\") consumes processdump_sources and has install_enable = true."
+      },
+      {
+        "path": "interfaces/innerkits/unwinder_refactor/BUILD.gn",
+        "lines": [
+          30,
+          36,
+          192
+        ],
+        "target": "dfx_unwinder_refactor_sources includes local_unwinder.cpp; ohos_shared_library(\"libunwinder_refactor\") consumes the source list."
+      }
+    ],
+    "correction": "D40 initial statement that no production SetMaps caller was found was wrong. Two source-bound process-dump callers exist in a production-capable installed executable target. This raises a concrete shared-singleton overlap question; it does not establish that product config includes the exact target or that SetMaps/Collect/Release can overlap. Preserve PARTIAL; no detector change is justified without concurrency evidence.",
+    "remaining_unknowns": [
+      "Product manifest/config selection for the BUILD targets is not bound.",
+      "Whether processdump/minidump/lite dump paths can execute concurrently on separate threads or reenter during crash handling is not established.",
+      "The caller flows do not show a shared mutex held across SetMaps through use; absence in inspected snippets is not proof no outer serialization exists.",
+      "CollectThreadContext/ReleaseCollectThreadContext has per-operation locking and a condition-variable wait, but no proof yet that external paths serialize all accesses to singleton maps_."
+    ]
+  }
 }

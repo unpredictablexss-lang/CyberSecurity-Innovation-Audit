@@ -16,10 +16,10 @@ python -m src.cli.main ohscan-run --repo-dir <faultloggerd exact checkout> --rep
 
 - **CR-0119–0123, `FpBacktraceImpl::maps_`:** `Init()` 创建 maps 并在 `CreateInstance()` 返回对象前完成初始化；代码中未见发布后的 `maps_` 重写。`SymbolicAddress()` 用 `mutex_` 保护 frame cache。返回实例是否被并发共享没有被绑定证据证明。
 - **CR-0124–0142, unwinder/parser:** 多数是构造函数持有的内存/映射 shared_ptr 或其成员读取。当前精确行 CLI 未复现这些 A0 行。片段没有证明同一个 wrapper 被并发写入。
-- **CR-0143, `LocalThreadContextMix::SetMaps`:** 类是进程内 singleton，内联 setter 不加锁；本组件 production 源码中未找到该 setter 调用（引用在单元测试）。生产 `CollectThreadContext()` 在发信号前设置 `maps_`，`ReleaseCollectThreadContext()` 在等待结束后持锁清理，信号回调路径读取它。并发进入 collect/release 的调用序列化及信号路径完整生命周期仍未知，不能据此确认或排除竞争，保留为补证项。
+- **CR-0143, `LocalThreadContextMix::SetMaps`:** 后续 T40 source audit 修正了初版结论：生产源码确有 `LiteProcessDumper::Unwind()` (`lite_process_dumper.cpp:362`) 与 `MinidumpDumper::UnwindProcess()` (`minidump_dumper.cpp:514`) 两个 `SetMaps(dfxMaps_)` caller；两文件列在 `tools/process_dump/BUILD.gn` 的 `processdump_sources`，并被 `install_enable = true` 的 `ohos_executable("processdump")` 使用。`LocalUnwinder::DoUnwindLocalByOtherTid()` 在 `local_unwinder.cpp:168–181` 另有 collect / release 路径；refactor 源文件列在 `libunwinder_refactor` shared-library target。call-site、BUILD 和实现文件的完整 source hash 见逐 ID JSON 内 `production_call_context_followup`。这些证据建立 production-capable callers，不绑定具体产品 manifest，也未证明调用能跨线程/重入重叠；片段未见覆盖整个 SetMaps 到 use 生命周期的共同锁，但不能排除外层串行化。`CollectThreadContext()` 的 signal/wait lifecycle 与这些 setter 之间是否可能 overlap 仍未知，故保留 PARTIAL，不确认也不排除竞争。
 - **CR-0157–0160, `keyRegs_`、`keyThread_`、`regs_`:** setter 及读取存在于 process-dump 对象；写入在初始化/请求组装阶段，之后在格式化或提交路径读取。当前组件源码未证明同一对象有并发读写，也未证明产品任务/构建路径排除了它。
 
-报告限制：扫描只覆盖这 11 个候选文件；未绑定产品构建清单、外部调用线程模型或目标运行时 harness，也没有可信 fixed source。完整解析仅表示语法解析完成。
+报告限制：初始 detector 回放只覆盖这 11 个候选文件；T40 随后对上述调用上下文、GN targets 和 `Collect/Release` 实现补做独立 hash 绑定。尚未绑定具体产品 manifest、外部调用线程模型或目标运行时 harness，也没有可信 fixed source。完整解析仅表示语法解析完成。
 
 ## 持续结构化 vibe coding 提示词
 

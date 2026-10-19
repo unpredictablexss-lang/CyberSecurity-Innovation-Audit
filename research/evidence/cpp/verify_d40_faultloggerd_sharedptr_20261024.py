@@ -52,9 +52,31 @@ def main() -> int:
         assert (blob, sha) == (row["blob"], row["source_sha256"])
         assert item["source"]["blob"] == blob and item["source"]["sha256"] == sha
         assert item["replay"]["result"] == ("matched_exact_line" if (row["path"], int(row["line"])) in ds else "no_current_finding_at_a0_line")
+    followup = replay["production_call_context_followup"]
+    assert followup["source_identity"]["commit"] == COMMIT
+    assert followup["source_identity"]["tree"] == TREE
+    expected_paths = {"tools/process_dump/lite_process_dumper.cpp", "tools/process_dump/minidump_dumper.cpp", "tools/process_dump/BUILD.gn", "interfaces/innerkits/unwinder_refactor/src/unwind_local/local_unwinder.cpp", "interfaces/innerkits/unwinder_refactor/BUILD.gn", "interfaces/innerkits/unwinder/src/unwind_local/thread_context.cpp", "interfaces/innerkits/unwinder/include/thread_context.h", "BUILD.gn"}
+    identities = {x["path"]: x for x in followup["source_identity"]["files"]}
+    assert set(identities) == expected_paths
+    for path, ident in identities.items():
+        content = git(gd, "show", f"{COMMIT}:{path}")
+        assert git(gd, "hash-object", "--stdin", data=content).decode().strip() == ident["blob"]
+        assert hashlib.sha256(content).hexdigest() == ident["sha256"]
+    lite = git(gd, "show", f"{COMMIT}:tools/process_dump/lite_process_dumper.cpp").decode().splitlines()
+    mini = git(gd, "show", f"{COMMIT}:tools/process_dump/minidump_dumper.cpp").decode().splitlines()
+    local = git(gd, "show", f"{COMMIT}:interfaces/innerkits/unwinder_refactor/src/unwind_local/local_unwinder.cpp").decode().splitlines()
+    assert "SetMaps(dfxMaps_)" in lite[361] and "SetMaps(dfxMaps_)" in mini[513]
+    assert "CollectThreadContext(tid)" in local[175] and "ReleaseCollectThreadContext()" in local[176] and "ReleaseCollectThreadContext()" in local[180]
+    build = git(gd, "show", f"{COMMIT}:tools/process_dump/BUILD.gn").decode()
+    refbuild = git(gd, "show", f"{COMMIT}:interfaces/innerkits/unwinder_refactor/BUILD.gn").decode()
+    assert '"lite_process_dumper.cpp"' in build and '"minidump_dumper.cpp"' in build
+    assert 'ohos_executable("processdump")' in build and "install_enable = true" in build
+    assert '"src/unwind_local/local_unwinder.cpp"' in refbuild and 'ohos_shared_library("libunwinder_refactor")' in refbuild
+    assert followup["correction"].startswith("D40 initial statement that no production SetMaps caller was found was wrong")
     assert replay["queue"]["states_changed"] is False
     print("D40 exact source commit/tree and 11-file parse-complete CLI replay: PASS")
     print("D40 42 A0 source hashes, candidate-line mapping and unchanged states: PASS")
+    print("T40 exact production caller, LocalUnwinder lifecycle, and BUILD identities/context: PASS")
     print("A0 345-row count and original/queue state cross-check: PASS")
     return 0
 if __name__ == "__main__": raise SystemExit(main())

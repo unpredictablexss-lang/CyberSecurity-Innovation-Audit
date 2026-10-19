@@ -7,3 +7,7 @@ D40 对 A0 中 11 个唯一文件重跑 CLI：11/11 完整解析，2,498 LOC，1
 未证明生产级同一 shared_ptr wrapper 的跨线程未同步读写根因，故无 detector 修改。`LocalThreadContextMix` singleton 的 `maps_` signal/collect 生命周期存在未闭合的并发序列化问题，但 A0 `SetMaps` 在生产源码中无调用；不把这个不确定性结论转为 race 或安全结论。所有 42 条继续 `not_testable / paused_pending_evidence`，A0 345 行状态未变。运行 [D40 verifier](verify_d40_faultloggerd_sharedptr_20261024.py) 可复核来源、raw replay、逐行映射及队列状态。
 
 **持续目标：** 继续查明 `LocalThreadContextMix` collect/release 调用串行化与 process-dump 对象任务生命周期；只有获取具体生产调用/构建和同对象并发证据后再决定 detector 规则变化。否则保持 PARTIAL/BLOCK，补证到达前不声称安全。
+
+### T40 — 独立生产调用点身份校正
+
+T40 独立从同一精确 faultloggerd commit/tree 绑定并核验 `lite_process_dumper.cpp:362` 和 `minidump_dumper.cpp:514` 的生产调用上下文、`tools/process_dump/BUILD.gn` 的 `processdump_sources` 与已安装 executable target；并核验 `LocalUnwinder::DoUnwindLocalByOtherTid()` 的 `CollectThreadContext` / `ReleaseCollectThreadContext` 路径及其 refactor shared-library GN source。完整 identities、blob/SHA 和限制见 [D40 逐 ID replay 的 follow-up 区块](d40_faultloggerd_sharedptr_replay_20261024.json)。这更正了 D40 初版“production 未找到 SetMaps caller”的表述：production-capable caller 确实存在。具体 product manifest、目标选择、跨线程/重入 overlap 及外层序列化尚未绑定；故仍 PARTIAL，不能确认 race 或安全，也不改 detector。
