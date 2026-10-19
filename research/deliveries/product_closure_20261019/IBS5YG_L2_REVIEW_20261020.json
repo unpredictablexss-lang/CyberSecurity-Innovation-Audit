@@ -30,7 +30,7 @@
       "path": "D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git",
       "declared_remote": "https://gitee.com/openharmony/arkcompiler_ets_runtime.git",
       "commit_tree_blob_byte_length_sha256_and_parent_ancestry": "matched",
-      "acquisition_and_custody": "not_independently_verified"
+      "acquisition_and_custody": "local historical acquisition/custody not independently verified; source commit/object bytes independently matched against official Gitee API and Git endpoints"
     },
     "shared_dependency": {
       "path": "ecmascript/compiler/new_object_stub_builder.cpp",
@@ -97,7 +97,65 @@
         "same_blob_in_parent_and_fixed": true,
         "object_verification": "verified"
       }
-    ]
+    ],
+    "external_source_verification": {
+      "repository": "https://gitee.com/openharmony/arkcompiler_ets_runtime",
+      "verified_at": "2026-10-20",
+      "method": "Direct official Gitee API v5 commit/content endpoints and git ls-remote; exact commit/tree/parent plus Git blob OID, raw SHA-256, and byte length compared against local bare store.",
+      "parent_commit_api": {
+        "url": "https://gitee.com/api/v5/repos/openharmony/arkcompiler_ets_runtime/commits/2ea501258ab4155826b64f01b499b43d1911e0e2",
+        "http_status": 200,
+        "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+        "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+        "parents": [
+          "112f6e8e73756ef46c7577d5fa40993184c3d2cc",
+          "c6f95de1f50cde79e9fb690e77e256fbc7ed8b6d"
+        ]
+      },
+      "fixed_commit_api": {
+        "url": "https://gitee.com/api/v5/repos/openharmony/arkcompiler_ets_runtime/commits/919e4fbb011f610427e788889083fa8e28d2f951",
+        "http_status": 200,
+        "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "parents": [
+          "2ea501258ab4155826b64f01b499b43d1911e0e2"
+        ]
+      },
+      "pull_request": {
+        "url": "https://gitee.com/api/v5/repos/openharmony/arkcompiler_ets_runtime/pulls/11196",
+        "http_status": 200,
+        "state": "merged",
+        "head_sha": "919e4fbb011f610427e788889083fa8e28d2f951",
+        "base": "master",
+        "merged_at": "2025-03-13"
+      },
+      "issue": {
+        "url": "https://gitee.com/api/v5/repos/openharmony/arkcompiler_ets_runtime/issues/IBS5YG",
+        "http_status": 200,
+        "state": "closed",
+        "title": "typed array filter wrong type cause outbound"
+      },
+      "contents_verification": {
+        "paths": [
+          "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+          "ecmascript/base/typed_array_helper.cpp",
+          "ecmascript/js_typed_array.cpp",
+          "ecmascript/builtins/builtins_arraybuffer.cpp"
+        ],
+        "commit_count": 2,
+        "matched_pairs": 8,
+        "result": "all official API content decoded to raw bytes matched local Git blob OID, SHA-256, and byte length"
+      },
+      "latest_remote_ref": {
+        "method": "git ls-remote https://gitee.com/openharmony/arkcompiler_ets_runtime.git HEAD refs/heads/master",
+        "head_and_master": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+        "verification_scope": "tip observed at audit time; this does not establish product binding"
+      },
+      "limitations": [
+        "Independent external source identity is verified; custody/history of the local bare store is not.",
+        "No source-to-product build or shipped binary mapping is established."
+      ]
+    }
   },
   "static_root_cause": "supported",
   "decision": "candidate_supported",
@@ -318,6 +376,19 @@
       "parent:BuiltinsTypedArrayStubBuilder::StoreTypedArrayElement:113-138"
     ]
   },
+  "related_fixed_regression_test": {
+    "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "parent": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+    "path": "test/aottest/typedarrayfilter/typedarrayfilter.ts",
+    "blob": "ef25a446c3d91d3019a7fa09d6a9702fe8e670e6",
+    "sha256": "510e8e96f06d585a98db5e6f32568568f5e7f1c6b87f379329032f779ebb3037",
+    "bytes": 781,
+    "scenario": "Float32Array(3924) receiver; replace __proto__ with Uint8ClampedArray(3594); call a.filter(Array, a). Array callback results are truthy, so expected species result length is 3924 and species constructor resolves to Uint8ClampedArray.",
+    "assertion": "prints success only; does not assert result type, length, values, memory bounds, sanitizer outcome, or exact Filter stub/path",
+    "review_status": "source-reviewed-not-run",
+    "interpretation": "Related fixed regression coverage for cross-element-type species input; it is not a dynamic proof of the parent out-of-bounds write or product impact."
+  },
   "safe_unrelated_comparison": [],
   "entry_attacker_trigger_impact": {
     "entry": "unknown",
@@ -326,14 +397,14 @@
     "cia_impact": "unknown at product level; source supports a plausible backing-storage out-of-bounds write candidate in the stated static scenario."
   },
   "missing_evidence": [
-    "Independent acquisition/custody or server-authenticity evidence for the local object store",
     "A concrete shipped product revision and a source-to-product component binding for IBS5YG",
     "Exact GN target/action/args, compiler/linker/sysroot, include/generated-input closure, and preprocessed translation unit",
     "A product-reachable entry, attacker-controlled trigger, and security-relevant impact",
     "Same-profile fixed-product build and regression revalidation",
     "Runtime reproduction proving callback-mediated type divergence under the exact guarded product path",
     "Confirmation that the shipped product executes this exact Filter stub and helper path, plus attacker reachability and security impact",
-    "Pinned build/runtime or sanitizer proof that the exact-length Int32Array-to-Uint8Array scenario crosses the actual backing allocation boundary; verify inline/heap layout and full execution path"
+    "Pinned build/runtime or sanitizer proof that the exact-length Int32Array-to-Uint8Array scenario crosses the actual backing allocation boundary; verify inline/heap layout and full execution path",
+    "Historical acquisition/custody chain for the local bare store (external official Gitee commit and file bytes have now been independently matched)"
   ],
   "recommended_next_check": [
     "On a build of the pinned source revision, run a focused runtime test with Int32Array Filter callback installing a Uint8Array species of exact requested length, and use a memory sanitizer/guard allocation to verify final-index write bounds.",
