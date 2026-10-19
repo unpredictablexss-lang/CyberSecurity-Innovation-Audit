@@ -61,12 +61,11 @@ def scan_context(*units: SourceUnit) -> ScanContext:
 
 
 class CatalogPathTraversalIntegrationTests(unittest.TestCase):
-    def test_research_candidate_is_explicit_and_conservatively_not_default(self) -> None:
+    def test_research_candidate_is_enabled_for_default_coverage(self) -> None:
         metadata = catalog_metadata()[DETECTOR_ID]
         self.assertEqual(metadata["kind"], "research_candidate")
-        self.assertFalse(metadata["default_enabled"])
-        self.assertTrue(metadata["admission_reason"].startswith("explicit_selection_required:"))
-        self.assertNotIn(DETECTOR_ID, default_detector_ids())
+        self.assertNotIn("default_enabled", metadata)
+        self.assertIn(DETECTOR_ID, default_detector_ids())
         self.assertEqual(resolve_detector_ids([DETECTOR_ID]), (DETECTOR_ID,))
 
     def test_explicit_selection_builds_registry_and_metadata_is_detached(self) -> None:

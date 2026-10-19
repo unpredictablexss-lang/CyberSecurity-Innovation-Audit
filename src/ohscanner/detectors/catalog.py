@@ -61,14 +61,9 @@ _APPROVED = {
     "ohscanner.cpp.path_traversal": {
         "factory": CppPathTraversalDetector,
         "kind": "research_candidate",
-        "default_enabled": False,
-        "admission_reason": (
-            "explicit_selection_required: bounded same-file research source-to-file-sink "
-            "candidate; product entry/privilege/impact and wrapper/cross-file semantics remain unknown"
-        ),
         "summary": (
             "A: bounded C/C++ path composition to direct file sink candidate; "
-            "candidate/unassessed only, never a safe verdict"
+            "enabled for ordinary coverage, candidate/unassessed only, never a safe verdict"
         ),
     },
     "ohscanner.cpp.unsafe_memory_call": {
