@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "task": "T56 independent review of D52-to-current Pasteboard source lineage",
+  "date": "2026-10-21",
+  "checkout": {
+    "path": "D:/openHarmonyScanner/worktrees/t56-independent-lineage-20261021",
+    "branch": "codex/t56-independent-lineage-20261021",
+    "base_head": "6d65b5220"
+  },
+  "decision": {
+    "d52_snapshot_identity": "PASS",
+    "d52_to_current_git_ancestry": "PASS",
+    "administrative_repository_rename_or_copy_event": "UNKNOWN_NOT_REQUIRED_FOR_COMMIT_ANCESTRY",
+    "permission_gate_absent_in_d52_reviewed_get_path": "PASS",
+    "first_later_permission_gate_commit": "e13a4ad3b72be7650ccb75de560790c04fa84795",
+    "release_source_gate_presence": "PASS_FOR_CHECKED_V5_PLUS_TAGS",
+    "cve_2025_27247_fix_attribution": "OFFICIAL_PATCH_LINEAGE_IDENTIFIED_D52_CANDIDATE_MAPPING_UNKNOWN",
+    "product_applicability": "UNKNOWN",
+    "disposition": "PRESERVE_D52_AS_UNASSESSED_HISTORICAL_COMPONENT_CANDIDATE",
+    "earliest_later_getter_gate_commit": "e13a4ad3b72be7650ccb75de560790c04fa84795",
+    "permission_gate_evolution": [
+      "e13a4ad3b72be7650ccb75de560790c04fa84795",
+      "cedbaeb9f55f524fb93c9d76ec06a4dc7b213ba7",
+      "721fecac75d9c51b0b145469abc6c9c78c17753e"
+    ]
+  },
+  "official_gitcode_remotes": {
+    "old": {
+      "url": "https://gitcode.com/openharmony/miscservices_pasteboard.git",
+      "review_clone": "D:/OpenHarmony807/t56-miscservices-official.git",
+      "remote_master": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840"
+    },
+    "current": {
+      "url": "https://gitcode.com/openharmony/distributeddatamgr_pasteboard.git",
+      "review_clone": "D:/OpenHarmony807/t56-distributeddatamgr-official.git",
+      "remote_refs": {
+        "master": "e73747b227104e6743e957ce31040edf58507221",
+        "weekly_20261005": "e73747b227104e6743e957ce31040edf58507221",
+        "weekly_20261012": "e73747b227104e6743e957ce31040edf58507221",
+        "weekly_20261019": "e73747b227104e6743e957ce31040edf58507221"
+      }
+    }
+  },
+  "objects": {
+    "d52_snapshot": {
+      "repository": "openharmony/miscservices_pasteboard",
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "core_path": "services/core/src/pasteboard_service.cpp",
+      "core_blob": "c380ac266a85edd818caa811f11b99722d351788",
+      "stub_path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "stub_blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+      "verified_in_current_repository_object_store": true,
+      "tree_same_in_old_and_current_repositories": true
+    },
+    "first_gate": {
+      "commit": "e13a4ad3b72be7650ccb75de560790c04fa84795",
+      "parent": "9fd07a8a7c5b9ef2087a551e90efadf838078b04",
+      "tree": "a4969d1d7e4186603696c1de7cba2b9f686f7b3d",
+      "date": "2022-08-15",
+      "message": "剪贴板数据范围限制在应用内",
+      "gate": "GetPasteData checks CheckPastePermission after finding the clip and before copying its PasteData; HasPasteData also checks it",
+      "gate_logic": [
+        "focused app or default IME",
+        "InApp share option must match current appId"
+      ],
+      "d52_is_ancestor": true,
+      "is_ancestor_of_current": true,
+      "prior_search_caveat": "A pickaxe search for HasPastePermission alone misses this earlier CheckPastePermission spelling."
+    },
+    "current_snapshot": {
+      "repository": "openharmony/distributeddatamgr_pasteboard",
+      "commit": "e73747b227104e6743e957ce31040edf58507221",
+      "tree": "4128cdf9ad11d393c30f2839f43419e97a5a466d",
+      "core_path": "services/core/src/pasteboard_service.cpp",
+      "core_blob": "fa6a08cdbaa18f34dcb6632babc70f22a700c860",
+      "old_stub_path_present": false,
+      "current_path_note": "Handwritten service stub is removed by 44143ebd05d946229649865d675831126799c4fb on 2025-03-28 (`pasteboard idl`); current Binder glue is generated from IDL. GetPasteDataInner calls VerifyPermission before GetData, with developer-mode test-server bypass."
+    },
+    "lineage_checks": {
+      "d52_commit_exists_in_current_object_store": true,
+      "merge_base": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "d52_is_ancestor_of_current_commit": true,
+      "d52_tree_in_old_repository": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "d52_tree_in_current_repository": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "separate_administrative_rename_or_copy_commit_proven": false
+    },
+    "later_gate_has_paste_permission": {
+      "commit": "cedbaeb9f55f524fb93c9d76ec06a4dc7b213ba7",
+      "tree": "412a91863c0163b18a54e2a23ab32bf39964cbbc",
+      "date": "2022-08-30",
+      "message": "!113 inApp 默认输入法校验 Merge pull request !113 from cy7717/master",
+      "gate": "HasPastePermission gate; later than e13a CheckPastePermission"
+    },
+    "later_gate_read_secure_verify_permission": {
+      "commit": "721fecac75d9c51b0b145469abc6c9c78c17753e",
+      "date": "2024-03-23",
+      "message": "!586 新增权限校验",
+      "pull_request": "!586",
+      "gate": "GetPasteData calls VerifyPermission(tokenId) before GetData; denial returns E_NO_PERMISSION",
+      "logic_exceptions": [
+        "No grant and SDK below ADD_PERMISSION_CHECK_SDK_VERSION may proceed",
+        "READ_PASTEBOARD or SECURE_PASTE grant accepted",
+        "Default IME privilege path",
+        "invalid SDK version lookup denied",
+        "Ctrl+V affects continuation/toast behavior"
+      ]
+    },
+    "cve_fix": {
+      "advisory_repo": "https://gitee.com/openharmony/security.git",
+      "advisory_commit": "3ab66b799f5fe23b58ad7e1793f576727710bc87",
+      "advisory_path": "zh/security-disclosure/2025/2025-06.md",
+      "advisory_blob": "3d29b0704275db717d19a0f63bf2ca896801834b",
+      "advisory_sha256": "618bd902a93f12702e3b0c92599a17e914352a13c781b2e1caa914050fedb45e",
+      "cve": "CVE-2025-27247",
+      "affected_release_scope": "OpenHarmony-v5.0.3-Release",
+      "upstream_fix_commit": "f27fb584ee3dd14ec38b66d64e50cd7e70325bca",
+      "upstream_fix_tree": "1fc6df6efc5a5f9c9b072a570c6486f62c0478cd",
+      "merge_commit": "79e872271d39b7a7090badd3a7e3343ae447f8b8",
+      "merge_tree": "2ef81f9b81b66cdeca2d6e6e28cf92844e499573",
+      "backport_commit": "7ea520735f926b1f4720390e3d56f353642dbfa7",
+      "backport_tree": "69a592799ce6ed3877fe5a571aebcda90d355864",
+      "backport_is_ancestor_of_v503_tag": true,
+      "source_change": "Removes default-IME bundle allowlist and isPrivilegeApp from grant decision.",
+      "current_source_is_descendant_of_upstream_fix": true,
+      "d52_candidate_root_cause_match": "UNKNOWN",
+      "product_image_fixed_status": "UNKNOWN"
+    },
+    "read_secure_gate_721fec": {
+      "commit": "721fecac75d9c51b0b145469abc6c9c78c17753e",
+      "tree": "947cb76b49ff4575f0fe3b8a5400558894bc5f47",
+      "date": "2024-03-23",
+      "message": "!586 新增权限校验",
+      "pull_request": "!586",
+      "core_blob": "0a47eec7bf847aaafe6c97da08ba008cd8be37ca",
+      "stub_blob": "75094b67321ff3d38e3db4377a2aab429e67c4c7",
+      "gate": "PasteboardService::GetPasteData calls VerifyPermission(tokenId) before GetData; denial returns PasteboardError::E_NO_PERMISSION"
+    }
+  },
+  "release_tags": [
+    {
+      "ref": "OpenHarmony-v4.1-Release",
+      "tag_object_or_commit": "ae11962072207bd4b444631ac1ce818560e68327",
+      "object_type": "commit",
+      "peeled_commit": "ae11962072207bd4b444631ac1ce818560e68327",
+      "tree": "c89ca043f0989d9682b7b8d91c9ee6787562fa8b",
+      "permission_gate_content": false,
+      "earliest_getter_gate_e13a_is_ancestor": true,
+      "read_secure_verify_gate_721_is_ancestor": false
+    },
+    {
+      "ref": "OpenHarmony-v5.0.0-Release",
+      "tag_object_or_commit": "a2af6a831b6167f024c2eb157c9e481799e3cf4b",
+      "object_type": "tag",
+      "peeled_commit": "8972d1c68ed74839e26999abdac74a64584d0b92",
+      "tree": "f6550fb02df6bba8c0e45588377acaef30dc4583",
+      "permission_gate_content": true,
+      "earliest_getter_gate_e13a_is_ancestor": true,
+      "read_secure_verify_gate_721_is_ancestor": true
+    },
+    {
+      "ref": "OpenHarmony-v5.0.1-Release",
+      "tag_object_or_commit": "28ed6bc96449d3f12afd28bf68dbdd14a08b55bd",
+      "object_type": "tag",
+      "peeled_commit": "6102fdd1b2e5f954bad1718d9f96a11efb215886",
+      "tree": "0a5e2ef8fe42ae445f4ae4d33091896c1e2deaf7",
+      "permission_gate_content": true,
+      "earliest_getter_gate_e13a_is_ancestor": true,
+      "read_secure_verify_gate_721_is_ancestor": true
+    },
+    {
+      "ref": "OpenHarmony-v5.0.2-Release",
+      "tag_object_or_commit": "61545a5c3154c72a8de8dce29139f7bbfa830ea7",
+      "object_type": "tag",
+      "peeled_commit": "fbed84bb3608e7b41c41309a59420d162ae086c9",
+      "tree": "a581f06cc258d62360eed605dfb576753c049c2b",
+      "permission_gate_content": true,
+      "earliest_getter_gate_e13a_is_ancestor": true,
+      "read_secure_verify_gate_721_is_ancestor": true
+    },
+    {
+      "ref": "OpenHarmony-v5.0.3-Release",
+      "tag_object_or_commit": "043b7df6b7a0095eee7a29d5f0566b68909b9a8f",
+      "object_type": "tag",
+      "peeled_commit": "d91a9b38fc801a269dc684c0c9735dc68ddbb0b8",
+      "tree": "049d9e811ecb5c3533ab64fc66be3548e92c954f",
+      "permission_gate_content": true,
+      "earliest_getter_gate_e13a_is_ancestor": true,
+      "read_secure_verify_gate_721_is_ancestor": true
+    },
+    {
+      "ref": "OpenHarmony-v5.1.0-Release",
+      "tag_object_or_commit": "cd8d8ca5e92e78700e81ecc84bc4c7268e785268",
+      "object_type": "tag",
+      "peeled_commit": "6612a43911742211e2b7c30e775c53719424dc03",
+      "tree": "b74dacc6526e5e37743d95d64dd4e507525fbbb5",
+      "permission_gate_content": true,
+      "earliest_getter_gate_e13a_is_ancestor": true,
+      "read_secure_verify_gate_721_is_ancestor": true
+    },
+    {
+      "ref": "OpenHarmony-v6.0-Release",
+      "tag_object_or_commit": "b98eb30eb9f835bea25b45fcf4ff7da817756eb3",
+      "object_type": "tag",
+      "peeled_commit": "5cb72bd04083029992b8efb4b69a380c9a12e048",
+      "tree": "89a5dc9603132f3050d43d343a25afac817ac332",
+      "permission_gate_content": true,
+      "earliest_getter_gate_e13a_is_ancestor": true,
+      "read_secure_verify_gate_721_is_ancestor": true
+    },
+    {
+      "ref": "OpenHarmony-v6.1-LTS",
+      "tag_object_or_commit": "cc3f9892f6219dd19f21dbf5e9c083ee91967809",
+      "object_type": "tag",
+      "peeled_commit": "6bc6fa101cf3e846a68907b318d9083349888707",
+      "tree": "c41fdbea2fc6e9f5ede37c3c282406515c8dbd47",
+      "permission_gate_content": true,
+      "earliest_getter_gate_e13a_is_ancestor": true,
+      "read_secure_verify_gate_721_is_ancestor": true
+    }
+  ],
+  "validation": {
+    "official_bare_clone_full_history": true,
+    "no_scanner_or_d56_files_changed": true,
+    "cve_specific_fix_commit_found": true,
+    "product_build_or_installed_image_evidence_found": false,
+    "d52_candidate_to_cve_mapping_found": false
+  },
+  "report_path": "research/evidence/cpp/T56_PASTEBOARD_LINEAGE_REVIEW_20261021.md"
+}
