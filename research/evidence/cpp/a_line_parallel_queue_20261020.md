@@ -29,6 +29,7 @@ Date: 2026-10-20 (Asia/Shanghai)
 - D20 completed no-change source analysis for libpng CVE-2026-33416: all four vulnerable/fixed target slices remain partial, so cross-file member alias and call-order evidence is not parser-supported. No rule was changed; the case remains PARTIAL/BLOCK.
 - D21 completed no-change source replay for libtiff CVE-2025-9900: the complete `_TIFFRGBAImage` function fragment reports the existing pointer-offset candidate at vulnerable line 621 and no finding for the fixed fragment; whole translation units remain partial/blocked. T17 is independently accepting both D20/D21 evidence packages.
 - T17 independently accepted the D20/D21 source identities, fragment outcomes, and whole-TU limits. Both cases remain PARTIAL/BLOCK; A0 and T13 queues remain 345/345 with original states.
+- T24 independently audited DataShare shared-pointer race candidates CR-0005–CR-0012 against eight frozen source objects. Source identity and queue preservation pass; unsynchronized concurrent access remains unproven, so all eight remain PARTIAL/BLOCK. See [T24 addendum](a_line_parallel_queue_20261020_T24_addendum.md) and [audit report](a_t24_datashare_race_source_audit_20261020.md).
 
 T12 completion note: the independent wave audit is committed as `1262d0ab9` and reports 3 PASS / 8 PARTIAL / 0 BLOCK / 2 N/A, with all 345 A0 IDs and original states retained. After that audit, D14's historical JSON/Markdown tree-null fields were reconciled to T11/T12's verified commit trees; this metadata cleanup does not change replay outcomes or case disposition.
 
