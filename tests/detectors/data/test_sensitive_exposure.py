@@ -26,6 +26,21 @@ class SensitiveTests(unittest.TestCase):
     def analyze(self,source,**kwargs):
         c=self.context(source,**kwargs)
         return SensitiveExposureDetector(MODEL).detect(c,c.units)
+
+    def analyze_many(self, sources):
+        git_sources=[]
+        for path,source in sources:
+            data=source.encode()
+            git_sources.append(GitSource(
+                path,'cpp',
+                hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest(),
+                data))
+        units,ast,_=index_sources(tuple(git_sources))
+        units=tuple(sorted(units,key=lambda unit:unit.path))
+        request=ScanRequest('d-interfile',MODEL.repository,MODEL.commit,
+                            snapshot_digest(units),'current-component:'+MODEL.repository)
+        context=ScanContext(request,units,{'ast':ast})
+        return SensitiveExposureDetector(MODEL).detect(context,units)
     def test_controls_from_manifest(self):
         cases=json.loads((ROOT/'fixtures/data_sensitive/cases.json').read_text())
         d5=json.loads((ROOT/'fixtures/data_sensitive/d5_cases.json').read_text())
@@ -115,6 +130,58 @@ class SensitiveTests(unittest.TestCase):
         self.assertTrue(any(item.kind == 'source_semantics' and 'Unreviewed' in item.description
                             for item in finding.evidence_obligations))
         self.assertIn('heuristic candidates are incomplete', ' '.join(run.limitations))
+
+    def test_cross_file_unique_helper_reaches_public_log_sink(self):
+        run=self.analyze_many((
+            ('service.cpp','void Callback(const char *key) { relay(key); }'),
+            ('logging.cpp','void relay(const char *value) { HILOG_INFO(1,"%{public}s",value); }'),
+        ))
+        self.assertEqual(len(run.findings),1)
+        finding=run.findings[0]
+        self.assertEqual(finding.file,'logging.cpp')
+        self.assertEqual(finding.rule_id,'data.log.sensitive-value')
+        self.assertIn('service.cpp:1 source Callback parameter 0',finding.message)
+        self.assertIn('call relay argument 0',finding.message)
+        self.assertIn('HILOG_INFO public operand 0',finding.message)
+        self.assertEqual(run.status,'blocked')
+        self.assertTrue(all(state=='partial' for _,state in run.file_outcomes))
+
+    def test_cross_file_helper_return_reaches_caller_sink(self):
+        run=self.analyze_many((
+            ('service.cpp','void Callback(const char *key) { const char *copy = relay(key); HILOG_INFO(1,"%{public}s",copy); }'),
+            ('relay.cpp','const char *relay(const char *value) { return value; }'),
+        ))
+        self.assertEqual(len(run.findings),1)
+        self.assertEqual(run.findings[0].file,'service.cpp')
+        self.assertEqual(run.findings[0].rule_id,'data.log.sensitive-value')
+        self.assertIn('call relay argument 0',run.findings[0].message)
+        self.assertIn('return from relay',run.findings[0].message)
+        self.assertEqual(run.status,'blocked')
+
+    def test_cross_file_local_sink_name_is_not_credited_without_body_binding(self):
+        run=self.analyze_many((
+            ('service.cpp','void Callback(const char *key) { HILOG_INFO(1,"%{public}s",key); }'),
+            ('logger.cpp','void HILOG_INFO(int tag, const char *format, const char *value) { (void)tag; (void)format; (void)value; }'),
+        ))
+        self.assertEqual(len(run.findings),1)
+        self.assertEqual(run.findings[0].rule_id,'data.sensitive.unresolved-escape')
+        self.assertNotIn('data.log.sensitive-value',
+                         {finding.rule_id for finding in run.findings})
+        self.assertIn('helper body did not establish',run.findings[0].message)
+        self.assertEqual(run.status,'blocked')
+
+    def test_cross_file_ambiguous_helper_preserves_candidate_without_crediting_sink(self):
+        run=self.analyze_many((
+            ('service.cpp','void Callback(const char *key) { relay(key); }'),
+            ('a.cpp','void relay(const char *value) { HILOG_INFO(1,"%{public}s",value); }'),
+            ('b.cpp','void relay(const char *value) { (void)value; }'),
+        ))
+        self.assertEqual(len(run.findings),1)
+        self.assertEqual(run.findings[0].rule_id,'data.sensitive.unresolved-escape')
+        self.assertNotIn('data.log.sensitive-value',
+                         {finding.rule_id for finding in run.findings})
+        self.assertIn('ambiguous',run.findings[0].message)
+        self.assertEqual(run.status,'blocked')
 
     def test_wifi_log_macro_detects_preshared_key_candidate(self):
         source = 'void dump(const char *preSharedKey) { WIFI_LOGI("%{public}s", preSharedKey); }'

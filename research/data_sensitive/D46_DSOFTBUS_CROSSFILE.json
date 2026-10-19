@@ -1,0 +1,415 @@
+{
+  "candidate_and_coverage_stable": true,
+  "checkout_or_ref_change": "not performed",
+  "commit": "9f922677e147b939d6db899bde181d609d64711b",
+  "detector": {
+    "id": "ohscanner.data.sensitive_exposure",
+    "sink_model_version": "0.8.0",
+    "source_model_version": "0.4.0",
+    "source_profile_catalog_version": "0.2.0",
+    "version": "0.20.0"
+  },
+  "files": [
+    {
+      "blob": "ca31a384eaf5bc147997ba4a21a41b6cae9a7410",
+      "path": "interfaces/kits/authentication/auth_session_key_struct.h",
+      "sha256": "30a86e2bce66b686133456f5af4820054169b0bddd1dfaade2cfb726290176db",
+      "size": 1232
+    },
+    {
+      "blob": "0799d2acad2d876d9d02e206be40dd39927c8101",
+      "path": "adapter/common/include/softbus_adapter_crypto.h",
+      "sha256": "1a999bf0c65d68b6e46a7dfecf23caac96bf599561df1b84e2192e0bed393dea",
+      "size": 3780
+    },
+    {
+      "blob": "1aadc4dafe81bc42f9916b9bd7aa3f9f0a616c2d",
+      "path": "core/authentication/src/auth_hichain.c",
+      "sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+      "size": 22279
+    },
+    {
+      "blob": "c3b3ebba9eaebcb1b64fed20b954daa9955d8d6f",
+      "path": "dfx/interface/include/auth_log.h",
+      "sha256": "8572980b13d1425c1423618b258c4259ac89ec153e9221d7d610b9860f67145f",
+      "size": 2593
+    },
+    {
+      "blob": "f499877ece96baee3173bd43326607ad0fb91268",
+      "path": "dfx/log/src/auth_log.c",
+      "sha256": "66efee6c3dc668112c46f1f412290b92e3830472f506f4778523736e4a78c9ca",
+      "size": 1041
+    },
+    {
+      "blob": "22edfa1cdb517cfcda42bcad75dbd103e8643d24",
+      "path": "core/authentication/src/auth_session_fsm.c",
+      "sha256": "e88faf7f21b0ec9d78e8219d397aac692ab3d7e88d566d8bc0b736fc9a143b85",
+      "size": 91922
+    }
+  ],
+  "labels": "development compatibility regression; not independent holdout",
+  "network": "disabled for Git operations",
+  "peak_rss_kib": 41300,
+  "profile_contract_anchors": {
+    "auth_log_wrapper_preserves_format_position": true,
+    "crypto_source_writes_key_output_argument": true,
+    "queue_payload_copies_bytes": true,
+    "session_callback_key_is_argument_one": true,
+    "session_key_material_and_length": true,
+    "session_key_save_is_queued": true
+  },
+  "repository": "openharmony/communication_dsoftbus",
+  "round_seconds": [
+    0.7397656380016997,
+    0.7213781450009265
+  ],
+  "rounds": [
+    {
+      "file_outcomes": [
+        [
+          "adapter/common/include/softbus_adapter_crypto.h",
+          "partial"
+        ],
+        [
+          "core/authentication/src/auth_hichain.c",
+          "partial"
+        ],
+        [
+          "core/authentication/src/auth_session_fsm.c",
+          "partial"
+        ],
+        [
+          "dfx/interface/include/auth_log.h",
+          "partial"
+        ],
+        [
+          "dfx/log/src/auth_log.c",
+          "partial"
+        ],
+        [
+          "interfaces/kits/authentication/auth_session_key_struct.h",
+          "partial"
+        ]
+      ],
+      "finding_count": 2,
+      "findings": [
+        {
+          "candidate_cwe": null,
+          "file": "core/authentication/src/auth_hichain.c",
+          "line": 136,
+          "message": "Candidate sensitive-data escape with unresolved binding: cross-file definition is ambiguous, partial, or over budget; path=core/authentication/src/auth_hichain.c:126 source OnSessionKeyReturned parameter 1 -> 136 unresolved call AuthSessionSaveSessionKey",
+          "obligations": [
+            {
+              "description": "Resolve the exact overload, receiver, and implementation for AuthSessionSaveSessionKey.",
+              "kind": "callee_binding"
+            },
+            {
+              "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+              "kind": "sink_behavior"
+            },
+            {
+              "description": "No log exposure or reader reachability is established by this call alone.",
+              "kind": "runtime_log_visibility"
+            },
+            {
+              "description": "Establish recoverable sensitive material and concrete impact independently.",
+              "kind": "security_impact"
+            }
+          ],
+          "rule_id": "data.sensitive.unresolved-escape",
+          "source_sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+          "symbol": "OnSessionKeyReturned"
+        },
+        {
+          "candidate_cwe": null,
+          "file": "core/authentication/src/auth_session_fsm.c",
+          "line": 499,
+          "message": "Candidate sensitive-data escape with unresolved binding: sensitive input is copied to a destination whose identity is unresolved; path=core/authentication/src/auth_session_fsm.c:499 source SessionKey.value -> 499 unresolved call memcpy_s",
+          "obligations": [
+            {
+              "description": "Resolve pointer/member aliases and the exact destination object written by memcpy_s.",
+              "kind": "destination_binding"
+            },
+            {
+              "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+              "kind": "sink_behavior"
+            },
+            {
+              "description": "No log exposure or reader reachability is established by this call alone.",
+              "kind": "runtime_log_visibility"
+            },
+            {
+              "description": "Establish recoverable sensitive material and concrete impact independently.",
+              "kind": "security_impact"
+            }
+          ],
+          "rule_id": "data.sensitive.unresolved-escape",
+          "source_sha256": "e88faf7f21b0ec9d78e8219d397aac692ab3d7e88d566d8bc0b736fc9a143b85",
+          "symbol": "SaveDeviceKey"
+        }
+      ],
+      "limitations": [
+        "Candidate only: runtime log readers, production enablement and impact require independent review.",
+        "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+        "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+        "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+        "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+        "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+        "adapter/common/include/softbus_adapter_crypto.h: detailed syntax partial",
+        "adapter/common/include/softbus_adapter_crypto.h: local type definition needs identity review",
+        "adapter/common/include/softbus_adapter_crypto.h: preprocessor/build context not expanded",
+        "core/authentication/src/auth_hichain.c: bounded same-file helper expansion; compiler type identity remains unknown",
+        "core/authentication/src/auth_hichain.c: branch merge is may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain.c: conditional effects are may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain.c: conditional value is may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain.c: cross-file helper call could not be bound uniquely: AuthSessionSaveSessionKey",
+        "core/authentication/src/auth_hichain.c: helper call has unresolved overload/arity: UnregTrustDataChangeListener",
+        "core/authentication/src/auth_hichain.c: member/pointer output copy unsupported",
+        "core/authentication/src/auth_hichain.c: nonliteral/unsupported log format: AUTH_LOGE",
+        "core/authentication/src/auth_hichain.c: nonliteral/unsupported log format: AUTH_LOGI",
+        "core/authentication/src/auth_hichain.c: pointer/member assignment requires alias proof",
+        "core/authentication/src/auth_hichain.c: preprocessor/build context not expanded",
+        "core/authentication/src/auth_hichain.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain.c: unknown field/alias propagation",
+        "core/authentication/src/auth_session_fsm.c: bounded same-file helper expansion; compiler type identity remains unknown",
+        "core/authentication/src/auth_session_fsm.c: branch merge is may-flow; no path feasibility proof",
+        "core/authentication/src/auth_session_fsm.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+        "core/authentication/src/auth_session_fsm.c: conditional effects are may-flow; no path feasibility proof",
+        "core/authentication/src/auth_session_fsm.c: conditional value is may-flow; no path feasibility proof",
+        "core/authentication/src/auth_session_fsm.c: detailed syntax partial",
+        "core/authentication/src/auth_session_fsm.c: helper call has unresolved overload/arity: GetNextAuthFsmId",
+        "core/authentication/src/auth_session_fsm.c: helper call has unresolved overload/arity: TryAddSyncPtkListenerServer",
+        "core/authentication/src/auth_session_fsm.c: helper definition lacks a complete supported body: CreateAuthFsm",
+        "core/authentication/src/auth_session_fsm.c: helper definition lacks a complete supported body: GetAuthFsmByAuthSeq",
+        "core/authentication/src/auth_session_fsm.c: helper definition lacks a complete supported body: GetAuthFsmByConnId",
+        "core/authentication/src/auth_session_fsm.c: helper definition lacks a complete supported body: GetAuthFsmByConnInfo",
+        "core/authentication/src/auth_session_fsm.c: helper definition lacks a complete supported body: GetAuthFsmByRequestId",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: AuditReportSetLocalDevInfo",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: AuditReportSetPeerDevInfo",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: CompleteAuthSession",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: ConvertAuthLinkTypeToHisysEvtLinkType",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: DfxRecordLnnAuthEnd",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: GetAuthFsmByAuthSeq",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: GetAuthFsmByConnInfo",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: GetLocalDevReportInfo",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: NewMessagePara",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: PostMessageToAuthFsm",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: ProcessTimeoutErrorCode",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: ReportAuthResultEvt",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: SaveDeviceKey",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: StopAuthFsm",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: UpdateDpAclSKId",
+        "core/authentication/src/auth_session_fsm.c: loop body analyzed for may-flow only at line 1043; iteration count/path feasibility unresolved",
+        "core/authentication/src/auth_session_fsm.c: loop body analyzed for may-flow only at line 1111; iteration count/path feasibility unresolved",
+        "core/authentication/src/auth_session_fsm.c: loop body analyzed for may-flow only at line 331; iteration count/path feasibility unresolved",
+        "core/authentication/src/auth_session_fsm.c: member/pointer output copy unsupported",
+        "core/authentication/src/auth_session_fsm.c: nonliteral/unsupported log format: AUTH_LOGE",
+        "core/authentication/src/auth_session_fsm.c: nonliteral/unsupported log format: AUTH_LOGI",
+        "core/authentication/src/auth_session_fsm.c: nonliteral/unsupported log format: AUTH_LOGW",
+        "core/authentication/src/auth_session_fsm.c: pointer/member assignment requires alias proof",
+        "core/authentication/src/auth_session_fsm.c: preprocessor/build context not expanded",
+        "core/authentication/src/auth_session_fsm.c: record binding and initialization require compiler facts",
+        "core/authentication/src/auth_session_fsm.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/authentication/src/auth_session_fsm.c: unknown field/alias propagation",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement goto_statement at line 1479; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement goto_statement at line 1493; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement preproc_ifdef at line 1199; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement preproc_ifdef at line 1386; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 1151; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 1178; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 1250; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 1512; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 1809; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 206; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 2257; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 410; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 638; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 861; nested call effects inspected as may-flow",
+        "cross-file helper lookup encountered partial definitions; overload/type identity remains unknown: AuthSessionSaveSessionKey",
+        "dfx/interface/include/auth_log.h: detailed syntax partial",
+        "dfx/interface/include/auth_log.h: preprocessor/build context not expanded",
+        "dfx/log/src/auth_log.c: preprocessor/build context not expanded",
+        "interfaces/kits/authentication/auth_session_key_struct.h: detailed syntax partial",
+        "interfaces/kits/authentication/auth_session_key_struct.h: local type definition needs identity review",
+        "interfaces/kits/authentication/auth_session_key_struct.h: preprocessor/build context not expanded"
+      ],
+      "status": "blocked"
+    },
+    {
+      "file_outcomes": [
+        [
+          "adapter/common/include/softbus_adapter_crypto.h",
+          "partial"
+        ],
+        [
+          "core/authentication/src/auth_hichain.c",
+          "partial"
+        ],
+        [
+          "core/authentication/src/auth_session_fsm.c",
+          "partial"
+        ],
+        [
+          "dfx/interface/include/auth_log.h",
+          "partial"
+        ],
+        [
+          "dfx/log/src/auth_log.c",
+          "partial"
+        ],
+        [
+          "interfaces/kits/authentication/auth_session_key_struct.h",
+          "partial"
+        ]
+      ],
+      "finding_count": 2,
+      "findings": [
+        {
+          "candidate_cwe": null,
+          "file": "core/authentication/src/auth_hichain.c",
+          "line": 136,
+          "message": "Candidate sensitive-data escape with unresolved binding: cross-file definition is ambiguous, partial, or over budget; path=core/authentication/src/auth_hichain.c:126 source OnSessionKeyReturned parameter 1 -> 136 unresolved call AuthSessionSaveSessionKey",
+          "obligations": [
+            {
+              "description": "Resolve the exact overload, receiver, and implementation for AuthSessionSaveSessionKey.",
+              "kind": "callee_binding"
+            },
+            {
+              "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+              "kind": "sink_behavior"
+            },
+            {
+              "description": "No log exposure or reader reachability is established by this call alone.",
+              "kind": "runtime_log_visibility"
+            },
+            {
+              "description": "Establish recoverable sensitive material and concrete impact independently.",
+              "kind": "security_impact"
+            }
+          ],
+          "rule_id": "data.sensitive.unresolved-escape",
+          "source_sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+          "symbol": "OnSessionKeyReturned"
+        },
+        {
+          "candidate_cwe": null,
+          "file": "core/authentication/src/auth_session_fsm.c",
+          "line": 499,
+          "message": "Candidate sensitive-data escape with unresolved binding: sensitive input is copied to a destination whose identity is unresolved; path=core/authentication/src/auth_session_fsm.c:499 source SessionKey.value -> 499 unresolved call memcpy_s",
+          "obligations": [
+            {
+              "description": "Resolve pointer/member aliases and the exact destination object written by memcpy_s.",
+              "kind": "destination_binding"
+            },
+            {
+              "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+              "kind": "sink_behavior"
+            },
+            {
+              "description": "No log exposure or reader reachability is established by this call alone.",
+              "kind": "runtime_log_visibility"
+            },
+            {
+              "description": "Establish recoverable sensitive material and concrete impact independently.",
+              "kind": "security_impact"
+            }
+          ],
+          "rule_id": "data.sensitive.unresolved-escape",
+          "source_sha256": "e88faf7f21b0ec9d78e8219d397aac692ab3d7e88d566d8bc0b736fc9a143b85",
+          "symbol": "SaveDeviceKey"
+        }
+      ],
+      "limitations": [
+        "Candidate only: runtime log readers, production enablement and impact require independent review.",
+        "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+        "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+        "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+        "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+        "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+        "adapter/common/include/softbus_adapter_crypto.h: detailed syntax partial",
+        "adapter/common/include/softbus_adapter_crypto.h: local type definition needs identity review",
+        "adapter/common/include/softbus_adapter_crypto.h: preprocessor/build context not expanded",
+        "core/authentication/src/auth_hichain.c: bounded same-file helper expansion; compiler type identity remains unknown",
+        "core/authentication/src/auth_hichain.c: branch merge is may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain.c: conditional effects are may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain.c: conditional value is may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain.c: cross-file helper call could not be bound uniquely: AuthSessionSaveSessionKey",
+        "core/authentication/src/auth_hichain.c: helper call has unresolved overload/arity: UnregTrustDataChangeListener",
+        "core/authentication/src/auth_hichain.c: member/pointer output copy unsupported",
+        "core/authentication/src/auth_hichain.c: nonliteral/unsupported log format: AUTH_LOGE",
+        "core/authentication/src/auth_hichain.c: nonliteral/unsupported log format: AUTH_LOGI",
+        "core/authentication/src/auth_hichain.c: pointer/member assignment requires alias proof",
+        "core/authentication/src/auth_hichain.c: preprocessor/build context not expanded",
+        "core/authentication/src/auth_hichain.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain.c: unknown field/alias propagation",
+        "core/authentication/src/auth_session_fsm.c: bounded same-file helper expansion; compiler type identity remains unknown",
+        "core/authentication/src/auth_session_fsm.c: branch merge is may-flow; no path feasibility proof",
+        "core/authentication/src/auth_session_fsm.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+        "core/authentication/src/auth_session_fsm.c: conditional effects are may-flow; no path feasibility proof",
+        "core/authentication/src/auth_session_fsm.c: conditional value is may-flow; no path feasibility proof",
+        "core/authentication/src/auth_session_fsm.c: detailed syntax partial",
+        "core/authentication/src/auth_session_fsm.c: helper call has unresolved overload/arity: GetNextAuthFsmId",
+        "core/authentication/src/auth_session_fsm.c: helper call has unresolved overload/arity: TryAddSyncPtkListenerServer",
+        "core/authentication/src/auth_session_fsm.c: helper definition lacks a complete supported body: CreateAuthFsm",
+        "core/authentication/src/auth_session_fsm.c: helper definition lacks a complete supported body: GetAuthFsmByAuthSeq",
+        "core/authentication/src/auth_session_fsm.c: helper definition lacks a complete supported body: GetAuthFsmByConnId",
+        "core/authentication/src/auth_session_fsm.c: helper definition lacks a complete supported body: GetAuthFsmByConnInfo",
+        "core/authentication/src/auth_session_fsm.c: helper definition lacks a complete supported body: GetAuthFsmByRequestId",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: AuditReportSetLocalDevInfo",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: AuditReportSetPeerDevInfo",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: CompleteAuthSession",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: ConvertAuthLinkTypeToHisysEvtLinkType",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: DfxRecordLnnAuthEnd",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: GetAuthFsmByAuthSeq",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: GetAuthFsmByConnInfo",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: GetLocalDevReportInfo",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: NewMessagePara",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: PostMessageToAuthFsm",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: ProcessTimeoutErrorCode",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: ReportAuthResultEvt",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: SaveDeviceKey",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: StopAuthFsm",
+        "core/authentication/src/auth_session_fsm.c: interprocedural call expansion stopped by recursion/depth bound: UpdateDpAclSKId",
+        "core/authentication/src/auth_session_fsm.c: loop body analyzed for may-flow only at line 1043; iteration count/path feasibility unresolved",
+        "core/authentication/src/auth_session_fsm.c: loop body analyzed for may-flow only at line 1111; iteration count/path feasibility unresolved",
+        "core/authentication/src/auth_session_fsm.c: loop body analyzed for may-flow only at line 331; iteration count/path feasibility unresolved",
+        "core/authentication/src/auth_session_fsm.c: member/pointer output copy unsupported",
+        "core/authentication/src/auth_session_fsm.c: nonliteral/unsupported log format: AUTH_LOGE",
+        "core/authentication/src/auth_session_fsm.c: nonliteral/unsupported log format: AUTH_LOGI",
+        "core/authentication/src/auth_session_fsm.c: nonliteral/unsupported log format: AUTH_LOGW",
+        "core/authentication/src/auth_session_fsm.c: pointer/member assignment requires alias proof",
+        "core/authentication/src/auth_session_fsm.c: preprocessor/build context not expanded",
+        "core/authentication/src/auth_session_fsm.c: record binding and initialization require compiler facts",
+        "core/authentication/src/auth_session_fsm.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/authentication/src/auth_session_fsm.c: unknown field/alias propagation",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement goto_statement at line 1479; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement goto_statement at line 1493; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement preproc_ifdef at line 1199; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement preproc_ifdef at line 1386; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 1151; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 1178; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 1250; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 1512; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 1809; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 206; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 2257; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 410; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 638; nested call effects inspected as may-flow",
+        "core/authentication/src/auth_session_fsm.c: unsupported statement switch_statement at line 861; nested call effects inspected as may-flow",
+        "cross-file helper lookup encountered partial definitions; overload/type identity remains unknown: AuthSessionSaveSessionKey",
+        "dfx/interface/include/auth_log.h: detailed syntax partial",
+        "dfx/interface/include/auth_log.h: preprocessor/build context not expanded",
+        "dfx/log/src/auth_log.c: preprocessor/build context not expanded",
+        "interfaces/kits/authentication/auth_session_key_struct.h: detailed syntax partial",
+        "interfaces/kits/authentication/auth_session_key_struct.h: local type definition needs identity review",
+        "interfaces/kits/authentication/auth_session_key_struct.h: preprocessor/build context not expanded"
+      ],
+      "status": "blocked"
+    }
+  ],
+  "schema": 1,
+  "snapshot_sha256": "eb8b331388a31fa279d939b607ce322365bb7bccb898988f9b9e228d9e7d9168",
+  "study": "D46 bounded cross-file DSoftBus source-to-sink replay",
+  "tree": "4b114179868d96c69eedc4520037552ddc3d65dd",
+  "validated_vulnerability": 0
+}
