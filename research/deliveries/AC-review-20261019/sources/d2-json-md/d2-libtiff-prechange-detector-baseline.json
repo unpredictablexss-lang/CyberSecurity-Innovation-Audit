@@ -1,0 +1,26 @@
+{
+  "scanner_base_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "source_repository": "OSGeo/libtiff",
+  "source_commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+  "source_tree": "986499c84247e9a1f49560128bbe7580d8ebea1a",
+  "snapshot_sha256": "dda2fe1af73132372d00a491714b80dcf51a6056a1acc0e60259fc4e922a748a",
+  "profile_id": "light-ast",
+  "detector_id": "ohscanner.cpp.integer_bounds",
+  "detector_version": "0.2.0",
+  "status": "blocked",
+  "analyzed_files": [],
+  "diagnostic_count": 0,
+  "source_files": [
+    {
+      "path": "libtiff/tif_getimage.c",
+      "sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3",
+      "parse_status": "partial"
+    },
+    {
+      "path": "libtiff/tiffio.h",
+      "sha256": "70119b9db897a364821a108ff0adc09f26c20ad9b6d9e943eb376ee3edb6166f",
+      "parse_status": "partial"
+    }
+  ],
+  "interpretation": "pre-change detector baseline direct invocation, source parsing states copied from production M2 baseline; zero findings are not a safety result"
+}

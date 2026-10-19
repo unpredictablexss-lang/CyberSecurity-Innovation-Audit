@@ -1,0 +1,12 @@
+detector,lane,admission,projects_with_run,completed,partial,blocked,failed,not_applicable,applicable_files,analyzed_files,partially_inspected_files,not_analyzed_files,failed_files,candidate_count,elapsed_seconds
+ohscanner.ark.runtime.type_safety,C,research_unadmitted,400,0,311,7,0,69,82121,58680,0,23441,0,0,83.994
+ohscanner.cpp.bounds,A,production_research_candidate,400,0,310,3,9,62,92228,82,63337,28809,0,1284,220.881
+ohscanner.cpp.integer_bounds,A,production_research_candidate,400,0,319,3,0,62,92228,82,64663,27483,0,516,172.183
+ohscanner.cpp.lifetime,A,production_research_candidate,400,0,311,7,0,69,82121,57913,767,23441,0,9,220.53
+ohscanner.cpp.null_dereference,A,production_research_candidate,400,0,335,0,0,62,92228,23526,68702,0,0,403359,2817.626
+ohscanner.cpp.resource_lifetime,A,production_research_candidate,400,0,319,3,0,62,92228,82,64663,27483,0,324,151.384
+ohscanner.cpp.shared_ptr_race,A,production_research_candidate,400,0,308,7,3,69,82121,57597,118,24406,0,1415,366.067
+ohscanner.cpp.unsafe_memory_call,A,production_research_candidate,400,0,318,3,1,62,92228,82,64642,27504,0,9323,66.804
+ohscanner.data.sensitive_exposure,D,research_unadmitted,400,0,0,338,0,62,92228,0,0,92228,0,0,0.014
+ohscanner.interface.ipc,B,production_research_candidate,400,0,322,0,0,62,92228,64745,27483,0,0,314,1080.5
+ohscanner.oh.arkts_js,B,production_research_candidate,400,0,114,0,0,212,14049,11262,2787,0,0,31,198.671
