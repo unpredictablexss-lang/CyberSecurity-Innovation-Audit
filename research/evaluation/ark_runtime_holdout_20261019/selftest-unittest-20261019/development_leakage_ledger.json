@@ -1,0 +1,37 @@
+{
+  "case_set_commitment_sha256": "cb60410ec26ba9b1758c25f2309ed109427683c040d8895c08514a169752d8d1",
+  "coverage": {
+    "known_case_manifest_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "limitations": [
+      "synthetic self-test ledger is not real holdout evidence"
+    ],
+    "product_gate_payload_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "roots_complete": true
+  },
+  "development_artifact_roots": [
+    "research/evaluation/ark_runtime_holdout_20261019/selftest-c13-source-decoys"
+  ],
+  "excluded_case_ids": [
+    "SELFTEST-EXCLUDED-DEVELOPMENT-CASE"
+  ],
+  "excluded_source_sha256": [
+    "220c28740f45a1e10a84f9da8106e82f09e1a0e63f1e1a69b7a0a3208d9dc6b4"
+  ],
+  "excluded_sources": [
+    {
+      "bytes": 16,
+      "reason": "synthetic development decoy excluded from holdout self-test",
+      "repository_path": "research/evaluation/ark_runtime_holdout_20261019/selftest-c13-source-decoys/decoy.cpp",
+      "sha256": "220c28740f45a1e10a84f9da8106e82f09e1a0e63f1e1a69b7a0a3208d9dc6b4",
+      "source_identity": {
+        "role": "synthetic_development_decoy"
+      }
+    }
+  ],
+  "generated_at": "2026-10-19T00:00:00+08:00",
+  "payload_sha256": "bcd1226bc36885d5f52d1b2d13b78eef7e2db91ccdb04fb46f0fa129e0955a90",
+  "protocol_file_sha256": "aec442d34e799f800fb1c265b1f4bc960424884be37eecc0774a708ce1fcd6ca",
+  "schema": "ohscanner.ark-holdout-development-leakage-ledger/v1",
+  "selection_frame_sha256": "cc157c9a2b718e1a80c7e2b88c3beac7f4c0765b457ec90ad0361fde012b29fd",
+  "status": "COMPLETE_LOCAL_DEVELOPMENT_ARTIFACTS"
+}

@@ -1,41 +1,39 @@
-# Ark Runtime independent holdout pipeline
+# G13-HP real independent holdout input protocol
 
-日期：2026-10-19（Asia/Shanghai）。本目录只实现并自测独立 holdout 的冻结、双盲评审锁和分歧裁决机制。没有把开发控制、C11 known-case corpus 或 D48 便利抽样当独立真值，没有计算 Precision/Recall。
+日期：2026-10-19（Asia/Shanghai）。本目录已冻结真实独立 holdout 的**输入协议**，但没有冻结或执行真实样本，也没有生成真实 truth。开发 fixture、C11/C12 known-case、scanner verdict、模型输出和 parent/fixed 配对均不得作为真值或 reviewer 上下文。
 
-## 当前状态
+## Frozen protocol
 
-- 管线实现：`holdout_pipeline.py`。
-- 机制自测：PASS；3 个纯合成 case，2 个一致、1 个分歧，第三评审完成。
-- 真实独立 holdout：`NOT RUN`。缺少独立抽样框、无泄漏样本、两名独立人工评审和一名分歧裁决人。
-- 真实标签：`BLOCKED`。任何模型输出、开发 fixture、scanner verdict 或历史 review 都不是真值。
-- Precision/Recall：未计算；自测 truth 明确为 `pipeline_self_test_not_reliable`，score 命令返回 `NOT_RUN`。
+- 协议：`real_holdout_input_protocol.v1.json`
+- 文件 SHA-256：`real_holdout_input_protocol.v1.sha256`
+- Intake schema：`real_holdout_intake.schema.json`
+- Truth schema：`real_holdout_truth.schema.json`
+- 泄漏账本：`development_leakage_ledger.local-development-20261019.json`；schema：`development_leakage_ledger.schema.json`；生成脚本：`generate_development_leakage_ledger.py`
+- freeze/score 现在绑定泄漏账本文件 SHA-256 与 canonical payload SHA-256，并拒绝开发 case/source hash 重叠。
+- 执行管线：`holdout_pipeline.py`
 
-## 双盲与隔离职责
+`real_holdout` 输入必须绑定 repo/commit/tree/blob/source SHA/parser/snapshot，并绑定预注册抽样框、家族 split 和开发泄漏账本。任一身份缺失、开发重叠或来源文本泄漏 case id、路径、URL、CVE、issue/PR、scanner rule/verdict 时，freeze fail-closed。
 
-1. 数据保管人执行 freeze，持有 secret，不参与评审或裁决。
-2. Reviewer A/B 只收到去路径、去 case id、去 parent/fixed 配对、去 scanner verdict 的源码文本和伪匿名 ID。
-3. 两名评审独立提交 `vulnerable_shape / not_vulnerable_shape / unknown`、理由和源码证据位置。
-4. lock-review 对 packet hash、case set、标签枚举和理由完整性 fail-closed。
-5. 一致项接受；不一致项生成匿名第三评审包，由独立裁决人给出决定。
-6. 只有 truth custodian 声明 `reliable_independent_human_adjudicated` 且 `model_generated=false` 后，score 才允许输出 TP/FP/FN/TN/unknown。
+## Double-blind packet boundary
 
-## 可复现命令
+Reviewer packet 只允许伪匿名 ID、去身份源码文本、分类问题、标签枚举和提交要求。禁止包含真实 case id、路径、repo/commit/source hash、parent/fixed 配对、scanner verdict 或模型输出。Reviewer 提交必须包含独立性 attestation、confidence、至少 20 字符 rationale 和非空源码 evidence。
 
-```powershell
-$python = "C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
-$root = "E:\网安\CyberSecurity-Innovation-Audit-c12-product-admission-20261019"
-$script = "$root\research\evaluation\ark_runtime_holdout_20261019\holdout_pipeline.py"
-$work = "$root\research\evaluation\ark_runtime_holdout_20261019\selftest"
-& $python $script self-test --work-dir $work
-& $python $script score --truth "$work\truth.json" --final-labels "$work\frozen\final_labels.json" --secret-file "$work\selftest-secret.txt" --output "$work\score-attempt.json"
-```
+Reviewer A/B 的顺序独立反转，但标签集合一致。分歧必须由第三名独立裁决人处理；裁决人不得见 truth、scanner/model output 或 parent/fixed 配对。unknown 必须保留，不能为了计算指标而强制改判。
 
-self-test 退出码为 0；score 对非可靠 truth 返回退出码 3 和 `NOT_RUN`。
+## Truth commitment and metric gate
 
-## 真实 holdout 最小补救
+Truth custodian 不参与评审或裁决，secret 只保存在 Git 外。Commitment 使用 `hmac-sha256-custodian-secret-v1`，覆盖 schema、execution mode、truth status、model_generated 和 labels。Score 必须同时校验协议文件哈希、freeze manifest、truth commitment、final labels、完整 case set 和 reviewer/adjudicator attestation。
 
-1. 预注册抽样框、家族拆分规则、排除规则、样本量和分歧裁决规则，冻结后再看标签。
-2. 从开发规则、fixture、known-case、benchmark 和人工审查使用过的 source hash 中建立泄漏账本并去重。
-3. 每个 case 绑定 repo/commit/tree/blob/source hash/parser/config/toolchain。
-4. 两名独立人工评审和一名独立裁决人均不得查看 truth、对方意见、scanner 输出或 parent/fixed 配对。
-5. 保留 unknown；只有可靠标签完成后计算 family-level confusion matrix，不声称零 FP/FN。
+只有真实独立人工裁决完成、开发重叠为 false、身份完整、分歧裁决闭合且没有 unknown 时，才输出 family-level Precision/Recall/F1。否则 confusion counts 最多作为 non-release diagnostics，Precision/Recall/F1 保持 null。
+
+## Real execution still blocked
+
+当前缺少：
+
+1. 经预注册的独立抽样框和 family split；
+2. 覆盖开发 fixture、known-case、benchmark、人工审查源 hash 的完整泄漏账本；
+3. 真实无泄漏 case 集及完整 Git/source identity；
+4. 两名独立人工评审和一名独立裁决人；
+5. 真实 truth custodian commitment 与揭示流程。
+
+因此状态是 `FROZEN_NOT_EXECUTED`。本目录 `selftest*` 只验证机制，truth 明确为 synthetic/self-test，不计算指标。

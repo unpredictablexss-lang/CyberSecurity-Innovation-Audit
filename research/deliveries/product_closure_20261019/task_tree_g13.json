@@ -1,0 +1,56 @@
+{
+  "nodes": [
+    {
+      "id": "G13-HP-1",
+      "next": "Pre-register sampling frame and family split; generate complete development leakage ledger.",
+      "status": "FROZEN_NOT_EXECUTED",
+      "title": "Real independent holdout input protocol"
+    },
+    {
+      "id": "G13-HP-2",
+      "next": "Freeze real cases, recruit two independent reviewers and one adjudicator, preserve unknown.",
+      "status": "PIPELINE_READY_NOT_EXECUTED",
+      "title": "Double-blind review and adjudication"
+    },
+    {
+      "id": "G13-HP-3",
+      "next": "Bind official Ark Git objects and exact product manifest, GN target, args.gn and compile database.",
+      "status": "IN_PROGRESS_BLOCKED",
+      "title": "Product source and build identity"
+    },
+    {
+      "id": "G13-HP-4",
+      "next": "For identity-complete candidates close entry, permission, trigger, attacker control, sensitive operation and CIA.",
+      "status": "BLOCKED",
+      "title": "Per-candidate product applicability"
+    },
+    {
+      "id": "G13-HP-5",
+      "next": "Run only after G13-HP-3 and G13-HP-4 close and isolation authorization is recorded.",
+      "status": "NOT_RUN_GATED",
+      "title": "Authorized isolated PoC"
+    },
+    {
+      "id": "G13-HP-6",
+      "next": "Patch, rebuild the same product profile, replay PoC and controls, preserve hashes and logs.",
+      "status": "NOT_RUN_GATED",
+      "title": "Fix and fixed-product revalidation"
+    },
+    {
+      "id": "G13-HP-7",
+      "next": "Release family metrics only after reliable human adjudication, exact case set and zero unknown.",
+      "status": "BLOCKED_NO_RELIABLE_TRUTH",
+      "title": "Reliable metric gate"
+    },
+    {
+      "id": "G13-HP-8",
+      "next": "Re-review after all mandatory product, PoC, fix and evaluation gates close.",
+      "status": "NOT_ADMITTED",
+      "title": "Competition admission"
+    }
+  ],
+  "payload_sha256": "62a90d3a449e8098cb092c4bcf9508dbf3f80fca9b2264e83a2e12b2515129f2",
+  "root": "G13-HP-HOLDOUT-PRODUCT-GATE",
+  "schema": "ohscanner.g13-hp-task-tree/v1",
+  "status": "ACTIVE_NOT_ADMITTED"
+}

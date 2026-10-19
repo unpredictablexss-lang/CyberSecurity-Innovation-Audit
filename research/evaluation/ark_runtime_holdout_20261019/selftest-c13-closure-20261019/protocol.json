@@ -1,0 +1,62 @@
+{
+  "double_blind_review": {
+    "adjudicator_attestations": [
+      "truth_not_seen",
+      "scanner_outputs_not_seen",
+      "model_outputs_not_seen",
+      "parent_fixed_pairing_not_seen",
+      "independent_adjudication"
+    ],
+    "adjudicator_count": 1,
+    "adjudicators": 1,
+    "allowed_labels": [
+      "not_vulnerable_shape",
+      "unknown",
+      "vulnerable_shape"
+    ],
+    "reviewer_attestations": [
+      "truth_not_seen",
+      "other_review_not_seen",
+      "scanner_outputs_not_seen",
+      "model_outputs_not_seen",
+      "parent_fixed_pairing_not_seen",
+      "independent_review"
+    ],
+    "reviewer_count": 2,
+    "reviewer_independence_required": true,
+    "reviewers": 2
+  },
+  "execution_mode": "pipeline_self_test",
+  "metric_gate": {
+    "required_conditions": [
+      "protocol_file_hash_verified",
+      "truth_commitment_verified",
+      "truth_status_reliable_independent_human_adjudicated",
+      "model_generated_false",
+      "development_overlap_false",
+      "reviewer_independence_attested",
+      "adjudication_complete",
+      "source_identity_complete",
+      "case_set_exact",
+      "no_unknown_labels"
+    ]
+  },
+  "protocol_id": "G13-HP-SYNTHETIC-SELFTEST",
+  "sampling_frame": {
+    "required_case_identity": [
+      "blob",
+      "commit",
+      "parser_identity",
+      "repository",
+      "snapshot_sha256",
+      "source_path",
+      "source_sha256",
+      "tree"
+    ]
+  },
+  "schema": "ohscanner.ark-holdout-real-input-protocol/v1",
+  "secret_handling": {
+    "commit_secrets_to_git": false
+  },
+  "status": "FROZEN_NOT_EXECUTED"
+}

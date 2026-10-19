@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ohscanner.ark-holdout-truth/v2",
+  "type": "object",
+  "required": [
+    "schema",
+    "execution_mode",
+    "truth_status",
+    "model_generated",
+    "scanner_outputs_used",
+    "development_artifacts_used",
+    "model_outputs_used",
+    "labels"
+  ],
+  "properties": {
+    "schema": {"const": "ohscanner.ark-holdout-truth/v2"},
+    "execution_mode": {"const": "real_holdout"},
+    "truth_status": {"const": "reliable_independent_human_adjudicated"},
+    "model_generated": {"const": false},
+    "scanner_outputs_used": {"const": false},
+    "development_artifacts_used": {"const": false},
+    "model_outputs_used": {"const": false},
+    "labels": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["label", "model_generated"],
+        "properties": {
+          "label": {"enum": ["vulnerable_shape", "not_vulnerable_shape", "unknown"]},
+          "model_generated": {"const": false}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

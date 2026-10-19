@@ -1,0 +1,8 @@
+{
+  "commitment_sha256": "4644cc9e38f4ee1bb0dc5dd01e1398ca0ce82afcf3bfb22bb557ddab62a87b2f",
+  "protocol_file_sha256": "aec442d34e799f800fb1c265b1f4bc960424884be37eecc0774a708ce1fcd6ca",
+  "schema": "ohscanner.ark-holdout-truth-commitment/v2",
+  "scheme": "hmac-sha256-custodian-secret-v1",
+  "secret_not_published": true,
+  "truth_status": "pipeline_self_test_not_reliable"
+}

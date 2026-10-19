@@ -1,0 +1,132 @@
+{
+  "attestation_required": {
+    "independent_review": true,
+    "model_outputs_not_seen": true,
+    "other_review_not_seen": true,
+    "parent_fixed_pairing_not_seen": true,
+    "scanner_outputs_not_seen": true,
+    "truth_not_seen": true
+  },
+  "blindness_contract": {
+    "adjudicator_attestations": [
+      "truth_not_seen",
+      "scanner_outputs_not_seen",
+      "model_outputs_not_seen",
+      "parent_fixed_pairing_not_seen",
+      "independent_adjudication"
+    ],
+    "adjudicator_count": 1,
+    "adjudicators": 1,
+    "allowed_labels": [
+      "not_vulnerable_shape",
+      "unknown",
+      "vulnerable_shape"
+    ],
+    "reviewer_attestations": [
+      "truth_not_seen",
+      "other_review_not_seen",
+      "scanner_outputs_not_seen",
+      "model_outputs_not_seen",
+      "parent_fixed_pairing_not_seen",
+      "independent_review"
+    ],
+    "reviewer_count": 2,
+    "reviewer_independence_required": true,
+    "reviewers": 2
+  },
+  "cases": [
+    {
+      "allowed_labels": [
+        "not_vulnerable_shape",
+        "unknown",
+        "vulnerable_shape"
+      ],
+      "case_pseudonym": "1b494e96a3802f02",
+      "forbidden_context": [
+        "true label",
+        "case id",
+        "source path",
+        "repository or commit identity",
+        "source hash",
+        "parent/fixed pairing",
+        "scanner verdict",
+        "model output"
+      ],
+      "source_text": "int f(int x) { return x; }\r\n",
+      "submission_requirements": {
+        "evidence": "Non-empty bounded source locations or quoted code facts.",
+        "fields": [
+          "case_pseudonym",
+          "label",
+          "confidence",
+          "rationale",
+          "evidence"
+        ]
+      },
+      "task": "Classify only the source shape. Do not infer product exploitability."
+    },
+    {
+      "allowed_labels": [
+        "not_vulnerable_shape",
+        "unknown",
+        "vulnerable_shape"
+      ],
+      "case_pseudonym": "9913c5093cca2bd9",
+      "forbidden_context": [
+        "true label",
+        "case id",
+        "source path",
+        "repository or commit identity",
+        "source hash",
+        "parent/fixed pairing",
+        "scanner verdict",
+        "model output"
+      ],
+      "source_text": "int g(int x) { return x + 1; }\r\n",
+      "submission_requirements": {
+        "evidence": "Non-empty bounded source locations or quoted code facts.",
+        "fields": [
+          "case_pseudonym",
+          "label",
+          "confidence",
+          "rationale",
+          "evidence"
+        ]
+      },
+      "task": "Classify only the source shape. Do not infer product exploitability."
+    },
+    {
+      "allowed_labels": [
+        "not_vulnerable_shape",
+        "unknown",
+        "vulnerable_shape"
+      ],
+      "case_pseudonym": "c1ef9844318f8019",
+      "forbidden_context": [
+        "true label",
+        "case id",
+        "source path",
+        "repository or commit identity",
+        "source hash",
+        "parent/fixed pairing",
+        "scanner verdict",
+        "model output"
+      ],
+      "source_text": "int h(int x) { return x - 1; }\r\n",
+      "submission_requirements": {
+        "evidence": "Non-empty bounded source locations or quoted code facts.",
+        "fields": [
+          "case_pseudonym",
+          "label",
+          "confidence",
+          "rationale",
+          "evidence"
+        ]
+      },
+      "task": "Classify only the source shape. Do not infer product exploitability."
+    }
+  ],
+  "packet_role": "reviewer",
+  "reviewer_id": "A",
+  "schema": "ohscanner.ark-holdout-review/v2"
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ohscanner.ark-holdout-intake/v2",
+  "type": "object",
+  "required": [
+    "schema",
+    "execution_mode",
+    "protocol_file_sha256",
+    "preregistration_sha256",
+    "development_leakage_ledger_sha256",
+    "development_leakage_ledger_payload_sha256",
+    "family_split_sha256",
+    "sample_size",
+    "cases"
+  ],
+  "properties": {
+    "schema": {"const": "ohscanner.ark-holdout-intake/v2"},
+    "execution_mode": {"const": "real_holdout"},
+    "protocol_file_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "preregistration_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "development_leakage_ledger_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "development_leakage_ledger_payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "family_split_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sample_size": {"type": "integer", "minimum": 1},
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "case_id", "source_path", "source_sha256", "repository", "commit",
+          "tree", "blob", "parser_identity", "snapshot_sha256",
+          "selection_rule_id", "sampling_frame_sha256", "family_id",
+          "family_split", "development_overlap", "development_leakage_match"
+        ],
+        "properties": {
+          "case_id": {"type": "string", "minLength": 1},
+          "source_path": {"type": "string", "minLength": 1},
+          "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "repository": {"type": "string", "minLength": 1},
+          "commit": {"type": "string", "minLength": 40},
+          "tree": {"type": "string", "minLength": 40},
+          "blob": {"type": "string", "minLength": 40},
+          "parser_identity": {"type": "string", "minLength": 1},
+          "snapshot_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "selection_rule_id": {"type": "string", "minLength": 1},
+          "sampling_frame_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "family_id": {"type": "string", "minLength": 1},
+          "family_split": {"enum": ["holdout"]},
+          "development_overlap": {"const": false},
+          "development_leakage_match": {"const": false}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
