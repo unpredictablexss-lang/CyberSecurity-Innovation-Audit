@@ -24,7 +24,9 @@ python scripts/check_change_scope.py --base 91747d4cad7503e58c466402e905088153f1
 git diff --check
 ```
 
-The verifier checks the recorded originating worktree HEADs, exact source and integration file hashes, per-file write timestamps, the 79/192/13 partition, and exclusion of T3's confirmation set. For a spot review, inspect an originating worktree directly:
+The verifier checks the recorded originating worktree HEADs, exact source and integration file hashes, per-file write timestamps, the 79/192/13 partition, and exclusion of T3's confirmation set. T56's originating worktree is the integration checkout itself. Once T5 is cherry-picked there, the verifier allows that checkout HEAD to advance only if the recorded origin HEAD is its ancestor; for every T56 file it also reads the blob at the recorded origin HEAD and checks that blob's SHA-256 against the inventory and current file. All other origin worktrees still require an exact HEAD match. This accommodates integration history without weakening checks on the remaining source worktrees.
+
+For a spot review, inspect an originating worktree directly:
 
 ```powershell
 Get-Item D:\openHarmonyScanner\worktrees\t55-wifi-fuzz-audit-20261029\research\evidence\cpp\t55_cr0337_cli_20261029.json |
