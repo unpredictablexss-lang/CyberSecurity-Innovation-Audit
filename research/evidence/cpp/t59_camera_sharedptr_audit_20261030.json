@@ -1,0 +1,785 @@
+{
+  "schema_version": 1,
+  "task": "T59 independent camera framework shared_ptr_race acceptance",
+  "result": "PARTIAL/BLOCK",
+  "source": {
+    "repository": "openharmony/multimedia_camera_framework",
+    "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+    "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+    "git_object_source": "local pinned project object database"
+  },
+  "replay": {
+    "command": "python -m src.cli.main ohscan-run --repo-dir <pinned-checkout> --repository openharmony/multimedia_camera_framework --commit 35445b57d739a41cb916330935e61f1e83d982ca --include <13 A0 paths> --detector ohscanner.cpp.shared_ptr_race",
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "parse": {
+      "complete": 13
+    },
+    "selected_files": 13,
+    "diagnostics": 13,
+    "run_status": "blocked",
+    "a0_exact_line_column_symbol_hits": 10,
+    "a0_exact_line_column_symbol_misses": 20,
+    "scope": "13 files uniquely referenced by CR-0261–CR-0290"
+  },
+  "a0_queue": {
+    "csv_rows": 345,
+    "json_rows": 345,
+    "target_rows": 30,
+    "ids_unchanged": true,
+    "original_and_queue_states_unchanged": true
+  },
+  "limitations": [
+    "All 30 rows remain not_testable / paused_pending_evidence; line-level findings are syntax candidates, not confirmed races or vulnerabilities.",
+    "Complete syntax parsing does not establish full detector semantic coverage, cross-function ownership/aliasing, lock dominance, actual thread overlap, attacker control, product inclusion, or security impact.",
+    "GN product/testonly status is not established per row/header; enabled product profile and test target dependencies need owner build evidence.",
+    "No trusted fixed-source pair or target-derived runtime/TSan harness was provided for these A0 rows."
+  ],
+  "minimum_followup": [
+    "For each candidate member, enumerate all reads/writes, object aliases, lock identity/guard dominance, and callback/executor lifecycle in callers.",
+    "Resolve exact GN production target and feature/macro profile, and distinguish testonly harnesses from product-linked targets.",
+    "For remaining concrete conflicting accesses, provide target-derived reproducer/TSan evidence and a trustworthy fixed revision; otherwise retain PARTIAL/BLOCK."
+  ],
+  "rows": [
+    {
+      "queue_id": "CR-0261",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "frameworks/taihe/include/camera_auto_ref_taihe.h",
+        "line": 52,
+        "column": 16,
+        "symbol": "callbackRef_",
+        "blob": "7696d21cf0dff92e54416f7f6131644c6d2e5a48",
+        "sha256": "d43b2035615f59cfd6307730ae8e247f6f89153597b954d1a02dc6b6b42005ba",
+        "line_text": "return callbackRef_;"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ff05e7a3b49ec12d",
+        "line": 52,
+        "column": 16,
+        "symbol": "callbackRef_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0262",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "frameworks/taihe/include/camera_event_listener_taihe.h",
+        "line": 58,
+        "column": 19,
+        "symbol": "eventListenerMap_",
+        "blob": "0cb85f150ec88ece3c06cc3ebec4ece465060d72",
+        "sha256": "4af3371f674207beed7d1331e2757493df6b6c886fe4dfd7fdb306a7ee55a37a",
+        "line_text": "auto it = eventListenerMap_.find(env);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0263",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "frameworks/taihe/include/camera_event_listener_taihe.h",
+        "line": 59,
+        "column": 19,
+        "symbol": "eventListenerMap_",
+        "blob": "0cb85f150ec88ece3c06cc3ebec4ece465060d72",
+        "sha256": "4af3371f674207beed7d1331e2757493df6b6c886fe4dfd7fdb306a7ee55a37a",
+        "line_text": "if (it == eventListenerMap_.end()) {"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0264",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "frameworks/taihe/include/camera_event_listener_taihe.h",
+        "line": 67,
+        "column": 9,
+        "symbol": "eventListenerMap_",
+        "blob": "0cb85f150ec88ece3c06cc3ebec4ece465060d72",
+        "sha256": "4af3371f674207beed7d1331e2757493df6b6c886fe4dfd7fdb306a7ee55a37a",
+        "line_text": "eventListenerMap_[env] = eventListener;"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0265",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "frameworks/taihe/include/picker/camera_picker_taihe.h",
+        "line": 192,
+        "column": 90,
+        "symbol": "asyncCtx_",
+        "blob": "1cd105d15ac9a675a1b510ce50f903fb0aa6b7ff",
+        "sha256": "598fd456de5b98d57cc5e045b2eff624a2451fabd23d528f3594e87220615942",
+        "line_text": "CameraPickerJsAsyncContextImpl(std::shared_ptr<CameraPickerAsyncContext> asyncCtx) : asyncCtx_(asyncCtx) {};"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0266",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "interfaces/inner_api/native/camera/include/session/capture_session.h",
+        "line": 2162,
+        "column": 16,
+        "symbol": "metadataResultProcessor_",
+        "blob": "161b794306a6af15fd0484f4fdd85d287dce69b5",
+        "sha256": "333c4315015c28194261e63203250398cf76000737a48505a10cf933c0ce29ba",
+        "line_text": "return metadataResultProcessor_;"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0267",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "interfaces/kits/js/camera_napi/include/camera_napi_event_listener.h",
+        "line": 60,
+        "column": 19,
+        "symbol": "eventListenerMap_",
+        "blob": "73e7dd958a15c21e245a291513cf3c6d04bf8658",
+        "sha256": "34eb42f47c43789d9583f8bb646b6aebf45e25bfcd9ce914f4b5cf48394df7a6",
+        "line_text": "auto it = eventListenerMap_.find(env);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0268",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "interfaces/kits/js/camera_napi/include/camera_napi_event_listener.h",
+        "line": 61,
+        "column": 19,
+        "symbol": "eventListenerMap_",
+        "blob": "73e7dd958a15c21e245a291513cf3c6d04bf8658",
+        "sha256": "34eb42f47c43789d9583f8bb646b6aebf45e25bfcd9ce914f4b5cf48394df7a6",
+        "line_text": "if (it == eventListenerMap_.end()) {"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0269",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "interfaces/kits/js/camera_napi/include/camera_napi_event_listener.h",
+        "line": 69,
+        "column": 9,
+        "symbol": "eventListenerMap_",
+        "blob": "73e7dd958a15c21e245a291513cf3c6d04bf8658",
+        "sha256": "34eb42f47c43789d9583f8bb646b6aebf45e25bfcd9ce914f4b5cf48394df7a6",
+        "line_text": "eventListenerMap_[env] = eventListener;"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0270",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "interfaces/kits/js/camera_napi/include/camera_napi_object_types.h",
+        "line": 43,
+        "column": 9,
+        "symbol": "ptrHolder_",
+        "blob": "b97ca84d919b7bd8493c8a609dc1648badcc8f28",
+        "sha256": "cbacf1e12a5143262096a319a1dc4af300e2fc1b44e3970a91de14758cadadaa",
+        "line_text": "ptrHolder_.emplace_back(ptr);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0271",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "interfaces/kits/js/camera_napi/include/camera_napi_param_parser.h",
+        "line": 208,
+        "column": 22,
+        "symbol": "asyncFunction_",
+        "blob": "cdb4c82e08c50be500aab060b6875c3d4be31ee5",
+        "sha256": "e9d4009f7a81fc6fc8e9fc5edf30c86437fd9dafc08c2e32d0939927447b5d9c",
+        "line_text": ": env_(env), asyncFunction_(asyncFunction)"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0272",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "interfaces/kits/js/camera_napi/include/camera_napi_param_parser.h",
+        "line": 210,
+        "column": 60,
+        "symbol": "asyncFunction_",
+        "blob": "cdb4c82e08c50be500aab060b6875c3d4be31ee5",
+        "sha256": "e9d4009f7a81fc6fc8e9fc5edf30c86437fd9dafc08c2e32d0939927447b5d9c",
+        "line_text": "size_t paramSizeIncludeAsyncFun = napiParamSize + (asyncFunction_ == nullptr ? 0 : 1);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0273",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "interfaces/kits/js/camera_napi/include/camera_napi_param_parser.h",
+        "line": 217,
+        "column": 13,
+        "symbol": "asyncFunction_",
+        "blob": "cdb4c82e08c50be500aab060b6875c3d4be31ee5",
+        "sha256": "e9d4009f7a81fc6fc8e9fc5edf30c86437fd9dafc08c2e32d0939927447b5d9c",
+        "line_text": "if (asyncFunction_ != nullptr) {"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0274",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "interfaces/kits/js/camera_napi/include/camera_napi_param_parser.h",
+        "line": 224,
+        "column": 33,
+        "symbol": "asyncFunction_",
+        "blob": "cdb4c82e08c50be500aab060b6875c3d4be31ee5",
+        "sha256": "e9d4009f7a81fc6fc8e9fc5edf30c86437fd9dafc08c2e32d0939927447b5d9c",
+        "line_text": "napiError = asyncFunction_->CreateCallback(paramValue_[paramSize_ - 1]);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0275",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "interfaces/kits/js/camera_napi/include/camera_napi_param_parser.h",
+        "line": 229,
+        "column": 29,
+        "symbol": "asyncFunction_",
+        "blob": "cdb4c82e08c50be500aab060b6875c3d4be31ee5",
+        "sha256": "e9d4009f7a81fc6fc8e9fc5edf30c86437fd9dafc08c2e32d0939927447b5d9c",
+        "line_text": "napiError = asyncFunction_->CreatePromise();"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0276",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "mediastream/include/buffer/buffer_wrapper_base.h",
+        "line": 47,
+        "column": 9,
+        "symbol": "encodedBuffer_",
+        "blob": "a01f6d1ae4a2f2045dcc0b529d40ccd8b73cb9f8",
+        "sha256": "575d137d75a281a88e0cf411d8330574d89495a25f2eb71188c3a7415cc32ce9",
+        "line_text": "encodedBuffer_= nullptr;"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2092ac90185d02b3",
+        "line": 47,
+        "column": 9,
+        "symbol": "encodedBuffer_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0277",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "mediastream/include/buffer/buffer_wrapper_base.h",
+        "line": 122,
+        "column": 9,
+        "symbol": "encodedBuffer_",
+        "blob": "a01f6d1ae4a2f2045dcc0b529d40ccd8b73cb9f8",
+        "sha256": "575d137d75a281a88e0cf411d8330574d89495a25f2eb71188c3a7415cc32ce9",
+        "line_text": "encodedBuffer_ = buffer;"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:63d2f5815d82469c",
+        "line": 122,
+        "column": 9,
+        "symbol": "encodedBuffer_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0278",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "mediastream/include/buffer/buffer_wrapper_base.h",
+        "line": 127,
+        "column": 16,
+        "symbol": "encodedBuffer_",
+        "blob": "a01f6d1ae4a2f2045dcc0b529d40ccd8b73cb9f8",
+        "sha256": "575d137d75a281a88e0cf411d8330574d89495a25f2eb71188c3a7415cc32ce9",
+        "line_text": "return encodedBuffer_;"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:afe5c40a97a3033b",
+        "line": 127,
+        "column": 16,
+        "symbol": "encodedBuffer_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0279",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "mediastream/include/filter/moving_photo_video_encoder_filter.h",
+        "line": 82,
+        "column": 16,
+        "symbol": "configureParameter_",
+        "blob": "645cdc780b7ea2499af2d0b1d51f5ad9198ab6a4",
+        "sha256": "b40c147dabd728eb7943ccaef1b3b4fda0b0ff99b121ac9575a144c1ea81d8c6",
+        "line_text": "return configureParameter_;"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0280",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "moviefile/include/pipeline/producer/unified_pipeline_audio_capture_wrap.h",
+        "line": 75,
+        "column": 16,
+        "symbol": "audioCapturer_",
+        "blob": "f0d8f9e04aba7fcee04c48707d9303427a0fb73e",
+        "sha256": "cc83094c7138a82dbe167edcd31476b8b829daae63a8e8c06d342da90ed2b0c6",
+        "line_text": "return audioCapturer_->SetCapturerReadCallback(callback);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:96ac764c4bb65ac3",
+        "line": 75,
+        "column": 16,
+        "symbol": "audioCapturer_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0281",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "moviefile/include/pipeline/producer/unified_pipeline_audio_capture_wrap.h",
+        "line": 81,
+        "column": 16,
+        "symbol": "audioCapturer_",
+        "blob": "f0d8f9e04aba7fcee04c48707d9303427a0fb73e",
+        "sha256": "cc83094c7138a82dbe167edcd31476b8b829daae63a8e8c06d342da90ed2b0c6",
+        "line_text": "return audioCapturer_->SetCapturerMetaDataCallback(callback);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:95ff2f93c5b57455",
+        "line": 81,
+        "column": 16,
+        "symbol": "audioCapturer_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0282",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "moviefile/include/pipeline/producer/unified_pipeline_audio_capture_wrap.h",
+        "line": 86,
+        "column": 87,
+        "symbol": "audioCapturer_",
+        "blob": "f0d8f9e04aba7fcee04c48707d9303427a0fb73e",
+        "sha256": "cc83094c7138a82dbe167edcd31476b8b829daae63a8e8c06d342da90ed2b0c6",
+        "line_text": "MEDIA_INFO_LOG(\"SetCaptureMode enter, audioCapturer_ is nullptr: %{public}d\", audioCapturer_ == nullptr);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:a341e991e1a360ea",
+        "line": 86,
+        "column": 87,
+        "symbol": "audioCapturer_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0283",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "moviefile/include/pipeline/producer/unified_pipeline_audio_capture_wrap.h",
+        "line": 87,
+        "column": 16,
+        "symbol": "audioCapturer_",
+        "blob": "f0d8f9e04aba7fcee04c48707d9303427a0fb73e",
+        "sha256": "cc83094c7138a82dbe167edcd31476b8b829daae63a8e8c06d342da90ed2b0c6",
+        "line_text": "return audioCapturer_->SetCaptureMode(captureMode);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c92bcec702e1c1ca",
+        "line": 87,
+        "column": 16,
+        "symbol": "audioCapturer_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0284",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "moviefile/include/pipeline/producer/unified_pipeline_audio_capture_wrap.h",
+        "line": 205,
+        "column": 99,
+        "symbol": "wrapPtr_",
+        "blob": "f0d8f9e04aba7fcee04c48707d9303427a0fb73e",
+        "sha256": "cc83094c7138a82dbe167edcd31476b8b829daae63a8e8c06d342da90ed2b0c6",
+        "line_text": "explicit MyAudioCapturerReadCallback(std::shared_ptr<UnifiedPipelineAudioCaptureWrap> wrap) : wrapPtr_(wrap) {}"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0285",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "moviefile/include/pipeline/producer/unified_pipeline_audio_capture_wrap.h",
+        "line": 220,
+        "column": 103,
+        "symbol": "wrapPtr_",
+        "blob": "f0d8f9e04aba7fcee04c48707d9303427a0fb73e",
+        "sha256": "cc83094c7138a82dbe167edcd31476b8b829daae63a8e8c06d342da90ed2b0c6",
+        "line_text": "explicit MyAudioCapturerMetaDataCallback(std::shared_ptr<UnifiedPipelineAudioCaptureWrap> wrap) : wrapPtr_(wrap) {}"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0286",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "services/camera_service/include/camera_rotate_strategy_parser.h",
+        "line": 40,
+        "column": 9,
+        "symbol": "curNode_",
+        "blob": "ec39591b222dbc01b98349d4e31eb317d24cf185",
+        "sha256": "fdfebd429798df1bca8ddcb5253192f0c03a52844d36aafb7b734ba4e8498606",
+        "line_text": "curNode_ = CameraXmlNode::Create();"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ca35dc8f874eef8c",
+        "line": 40,
+        "column": 9,
+        "symbol": "curNode_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0287",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "services/camera_service/include/camera_rotate_strategy_parser.h",
+        "line": 48,
+        "column": 9,
+        "symbol": "curNode_",
+        "blob": "ec39591b222dbc01b98349d4e31eb317d24cf185",
+        "sha256": "fdfebd429798df1bca8ddcb5253192f0c03a52844d36aafb7b734ba4e8498606",
+        "line_text": "curNode_ = nullptr;"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:96922f477e039b6b",
+        "line": 48,
+        "column": 9,
+        "symbol": "curNode_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0288",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "services/deferred_processing_service/include/schedule/video_processor/deferred_video_controller.h",
+        "line": 38,
+        "column": 16,
+        "symbol": "videoProcessor_",
+        "blob": "c4bff670af6b01cb69c77808b602df03c51bac12",
+        "sha256": "973959d919a4c533355dd94ba5e5118bb4b40c98665cffeb702bd04c2ef81133",
+        "line_text": "return videoProcessor_;"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0289",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "services/deferred_processing_service/include/schedule/video_processor/deferred_video_processor.h",
+        "line": 65,
+        "column": 16,
+        "symbol": "repository_",
+        "blob": "e2a80a1b8b5da186b66e65254231b4242be50ed9",
+        "sha256": "bf0bf468b2bdd9d325aadfe6c11017531ddd231c72bac7ad9c7597c6e6a356d9",
+        "line_text": "return repository_;"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    },
+    {
+      "queue_id": "CR-0290",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "source": {
+        "path": "services/deferred_processing_service/include/schedule/video_processor/deferred_video_processor.h",
+        "line": 70,
+        "column": 16,
+        "symbol": "postProcessor_",
+        "blob": "e2a80a1b8b5da186b66e65254231b4242be50ed9",
+        "sha256": "bf0bf468b2bdd9d325aadfe6c11017531ddd231c72bac7ad9c7597c6e6a356d9",
+        "line_text": "return postProcessor_;"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_cli": {
+        "matched": false
+      },
+      "parse_status": "complete",
+      "build_context": "GN product inclusion, enabled feature profile, and testonly status not established for this individual header/row",
+      "safety_or_vulnerability_verdict": "unknown"
+    }
+  ]
+}
