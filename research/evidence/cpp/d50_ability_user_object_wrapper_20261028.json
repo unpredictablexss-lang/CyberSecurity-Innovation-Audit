@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "task": "D50",
+  "review_id": "CR-0314",
+  "original_a0_status": "not_testable",
+  "original_queue_status": "paused_pending_evidence",
+  "a0_status_mutated": false,
+  "source": {
+    "repository": "openharmony/ability_ability_base",
+    "commit": "eaeaa31a6d07cf74fdec1c4e48dfe19c64e25cae",
+    "tree": "678c1c3a52e810919cc591b010cde7f97ff4d23c",
+    "a0_snapshot_sha256": "088feb3c9186b35dfc9dc3eb52732cd5bfe1df0786b83e63e529909111160886",
+    "target_file": "interfaces/inner_api/base/include/user_object_wrapper.h",
+    "target": {
+      "blob": "95ffabb86645db1109526e4a388f206d310a138e",
+      "sha256": "842a7ca8d07d419dff53521ab502cd5de8880c50052d48d9c8f1e679d47e91dc",
+      "bytes": 1657
+    },
+    "supporting_files": {
+      "interfaces/inner_api/base/src/user_object_wrapper.cpp": {
+        "blob": "716ea7ded87b8808ee5e4c03468e9b76e77a4bfc",
+        "sha256": "7a10b3fffcbeea1a5bf5fce5e874a5c724027901f40261046778469a10c3f185",
+        "bytes": 3625
+      },
+      "test/unittest/base/user_object_wrapper_test.cpp": {
+        "blob": "571aa5a468a1b408483539a7dd7546daca2234c6",
+        "sha256": "bd0951c8693b1ba65dc92e0d7879e6947021020c2f026419bf2ea4a63345fe2c",
+        "bytes": 9278
+      },
+      "BUILD.gn": {
+        "blob": "00b34512453d1cf891c1e2aed0b09442a6d4a623",
+        "sha256": "e36589829e19f319c875fd8bc92fc4946088df51315d77830d352bf911d38186",
+        "bytes": 11536
+      },
+      "test/unittest/BUILD.gn": {
+        "blob": "6b9b3569fd7c7d14bdd07cbcbe9eb221c4922f22",
+        "sha256": "f06ced085eb47f40da778c619df3f60dafd4120a8366a1ca8d2be52b63bf5425",
+        "bytes": 19199
+      },
+      "interfaces/kits/native/want/src/pac_map.cpp": {
+        "blob": "69c235388717e6ecc677b3f75efb056ef26d1ab4",
+        "sha256": "c7322aedfa68d9aa6495876340fb2a531c2baf8b8024ff7d11c0e6027048cc72",
+        "bytes": 66565
+      }
+    }
+  },
+  "scanner": {
+    "baseline_checkout": "564567a99011d9b2abff13af308d134ed1f02242",
+    "detector_id": "ohscanner.cpp.shared_ptr_race",
+    "detector_version": "0.5.1",
+    "run_scope": [
+      "interfaces/inner_api/base/include/user_object_wrapper.h"
+    ],
+    "run_snapshot_sha256": "9a2c898574d46343ce72dbd095728428c1656dba0311697ad71785884ec94ffe",
+    "parse_status": "complete",
+    "parse_issues": [],
+    "run_status": "completed",
+    "findings": [],
+    "limitations": [
+      "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+      "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+      "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+      "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+      "interfaces/inner_api/base/include/user_object_wrapper.h: modeled accesses to 'interfaces/inner_api/base/include/user_object_wrapper.h::OHOS::UserObject::value_' are constructor initialization only; stable-owner shape is not a concurrency proof."
+    ],
+    "analysis_coverage": "exact header detector replay; implementation/callsite/build context separately source-bound"
+  },
+  "source_review": {
+    "field": "UserObject::value_",
+    "write_sites": [
+      "constructor initializer at user_object_wrapper.h:25 (initialization before normal publication)",
+      "field default initializer at user_object_wrapper.h:48"
+    ],
+    "post_construction_assignment_in_implementation": false,
+    "read_sites": [
+      "GetValue copies value_ to caller output",
+      "Equals reads value_ and otherObj->value_",
+      "ToString reads value_"
+    ],
+    "guard_or_atomic": "No lock/atomic is present around value_; source evidence does not establish a shared_ptr write after construction to race with these reads.",
+    "component_call_context": "Pinned PacMap::PutObject and GetObject acquire mapLock_; PutObject constructs/stores the wrapper while locked, and GetObject calls Unbox/GetValue while locked. This covers these component call paths only; external IUserObject callers remain unbound.",
+    "build": "The pinned root BUILD.gn includes user_object_wrapper.cpp in ohos_shared_library(\"base\"); exact product profile/image inclusion is not verified.",
+    "tests": "Pinned test/unittest/BUILD.gn registers user_object_wrapper_test as an ohos_unittest; it does not establish concurrent product call paths."
+  },
+  "assessment": {
+    "finding_at_a0_location": false,
+    "specific_detector_gap_proven": false,
+    "classification": "no_change; source shows constructor-only holder initialization and read-only post-construction accesses; no actual unsynchronized same-member write/read pair was established",
+    "result": "PARTIAL/BLOCK",
+    "limitations": [
+      "No trusted vulnerable/fixed pair or target-derived concurrent harness is bound.",
+      "Product build/profile and downstream call/thread lifecycle are unknown.",
+      "The wrapped UserObjectBase object's own mutability is outside the reported shared_ptr holder race and requires separate evidence.",
+      "Static source evidence and a quiet detector result do not prove product safety."
+    ]
+  },
+  "a0_reconciliation": {
+    "queue_rows": 345,
+    "original_statuses_unchanged": true
+  }
+}
