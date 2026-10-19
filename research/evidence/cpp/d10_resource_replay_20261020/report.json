@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "first_party_detector_execution",
+  "branch_base": "7e8083314f854780a0f606ecc6382208e8a02e8a",
+  "detector": "ohscanner.cpp.resource_lifetime",
+  "detector_version": "0.4.0",
+  "cjson": {
+    "repository": "openharmony/third_party_cjson",
+    "commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+    "tree": "3c07134d5a05aa546b15739e32503a2ca192d258",
+    "snapshot_sha256": "c0482c314ead7b9131426e7aa74f1073f734341c2ac56fb9a2578efecb51b3e7",
+    "run_status": "blocked",
+    "files": [
+      {
+        "path": "third_party/cjson/cJSON.c",
+        "bytes": 80529,
+        "sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb",
+        "parse_status": "partial",
+        "finding": {
+          "line": 3161,
+          "rule_id": "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005",
+          "symbol": "cJSON_Compare"
+        }
+      },
+      {
+        "path": "third_party/cjson/cJSON_Utils.c",
+        "bytes": 40736,
+        "sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+        "parse_status": "complete",
+        "finding": {
+          "line": 861,
+          "rule_id": "ohcpp-resource-exhaustion-tree-amplification-candidate-004",
+          "symbol": "apply_patch"
+        }
+      }
+    ],
+    "fixed_sources": "no trusted root-matched fixed source bound"
+  },
+  "libpng_cve_2026_46675": {
+    "source_repository": "pnggroup/libpng",
+    "historical_synthetic_snapshot": {
+      "commit": "e283ed5d3a74c0112f092ddb1003c97e0e9a4717",
+      "tree": "c78da20c3ffe37b09653eaa3b49c5213745ac4bd"
+    },
+    "upstream_vulnerable": {
+      "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+      "blob": "a4eda54c8cb3d36cf1651dba159067b65030e3aa",
+      "bytes": 153112,
+      "sha256": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e",
+      "parse_status": "partial",
+      "run_status": "blocked",
+      "findings": 0
+    },
+    "upstream_fixed": {
+      "commit": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+      "blob": "482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a",
+      "bytes": 152477,
+      "sha256": "a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e",
+      "parse_status": "partial",
+      "run_status": "blocked",
+      "findings": 0
+    },
+    "conclusion": "partial_block_inconclusive_zero_findings"
+  },
+  "implementation_decision": "no_change_justified_without_parser_context_contract",
+  "required_next_evidence": [
+    "parser-visible zstream ownership transitions across affected functions or reviewed local-candidate contract isolated from unrelated parse errors",
+    "source-bound vulnerable/fixed and safe/unrelated controls",
+    "for product claims, selected build and application call path"
+  ]
+}
