@@ -1,0 +1,1513 @@
+{
+  "schema_version": "t40-faultloggerd-sharedptr-independent-audit-v1",
+  "task": "T40",
+  "integration_base": "c5c7ea0989c91b884f96ecd1527aad57a7f3a635",
+  "scanner": {
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "profile": "light-ast",
+    "scope_files": 11,
+    "scope_loc": 2498,
+    "parse": {
+      "complete": 11
+    },
+    "diagnostic_count": 11,
+    "validated_vulnerability": 0,
+    "elapsed_seconds": 0.13221250000060536,
+    "snapshot_sha256": "cb5f512feb52edfd8074c2e1ce9cfbedb53531b04bbf847cd92d7306b7cdf497",
+    "raw": "t40_faultloggerd_sharedptr_cli_20261024.json",
+    "command": "python -m src.cli.main ohscan-run --repo-dir D:\\openHarmonyScanner\\tmp\\t40-faultloggerd-source-20261024 --repository openharmony/hiviewdfx_faultloggerd --commit 50c7dffc057a32987d5eeb7626c20e1b3717c77b --include interfaces/innerkits/backtrace/fp_backtrace.cpp --include interfaces/innerkits/stack_printer/src/stack_printer.cpp --include interfaces/innerkits/unwinder/include/dfx_accessors.h --include interfaces/innerkits/unwinder/include/dfx_elf_parser.h --include interfaces/innerkits/unwinder/include/dwarf_cfa_instructions.h --include interfaces/innerkits/unwinder/include/dwarf_op.h --include interfaces/innerkits/unwinder/include/thread_context.h --include interfaces/innerkits/unwinder/include/unwind_entry_parser.h --include interfaces/innerkits/unwinder_refactor/include/unwinder_base.h --include tools/process_dump/coredump/coredump_note_segment_writer.h --include tools/process_dump/dfx_process.h --detector ohscanner.cpp.shared_ptr_race"
+  },
+  "target_source": {
+    "repository": "openharmony/hiviewdfx_faultloggerd",
+    "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+    "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+  },
+  "source_file_identities": [
+    {
+      "path": "interfaces/innerkits/backtrace/fp_backtrace.cpp",
+      "blob": "76ec2418aebaf8954f7030a0968793f87cd316a6",
+      "sha256": "8c2638e165b098c315184590fddbd1c76341e414fea3917dfcac591277cdd99a",
+      "bytes": 9046
+    },
+    {
+      "path": "interfaces/innerkits/stack_printer/src/stack_printer.cpp",
+      "blob": "0decd48434c604ad9afb5f95841b32311fca23e4",
+      "sha256": "92c18a362b873488d2914e0dd41586be3c2e87cbe666d9f61664447efa21165c",
+      "bytes": 21574
+    },
+    {
+      "path": "interfaces/innerkits/unwinder/include/dfx_accessors.h",
+      "blob": "6968467031119e68d879a314a2d7b565388f8b17",
+      "sha256": "b0c66ce0565eeb9d452b1961411ec5148f56fe528cc9f63b9065c8e3d34f37d1",
+      "bytes": 3349
+    },
+    {
+      "path": "interfaces/innerkits/unwinder/include/dfx_elf_parser.h",
+      "blob": "54d8b1e07d06682c64312663e77de71a6788823a",
+      "sha256": "6b34c59b6da7ecbe131fc0d4393338c8b5827f7dbe8ff74d0559aafa3b8d4161",
+      "bytes": 6173
+    },
+    {
+      "path": "interfaces/innerkits/unwinder/include/dwarf_cfa_instructions.h",
+      "blob": "6b403693143a31f2ee739eceda6e98709d457a65",
+      "sha256": "52f9075e35b5f2aca76fc7b5efad3d12eed5f281f88e9dd387afb3dab6b4cb10",
+      "bytes": 1576
+    },
+    {
+      "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+      "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+      "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+      "bytes": 12805
+    },
+    {
+      "path": "interfaces/innerkits/unwinder/include/thread_context.h",
+      "blob": "623f36a17f406fbd0e2a3208867c21df359afe42",
+      "sha256": "b4878aca6f1f468397a6901fe800c5bbbf067753aec1abfb6d99d6a8359de365",
+      "bytes": 4363
+    },
+    {
+      "path": "interfaces/innerkits/unwinder/include/unwind_entry_parser.h",
+      "blob": "b8ea2baca77c86d4fead346fab320c0914fbf818",
+      "sha256": "fc3d2eb7b0d880b801ae07d52ccc166499c84c2af98247be815bee48e696d5e6",
+      "bytes": 1483
+    },
+    {
+      "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+      "blob": "f8c18f37155deea5197351349ce4f3307575ccec",
+      "sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5",
+      "bytes": 6540
+    },
+    {
+      "path": "tools/process_dump/coredump/coredump_note_segment_writer.h",
+      "blob": "09e827ee765e62ba1611e9dd3fce71d71f65c746",
+      "sha256": "faa56802951b2f318008cca68e02ea96d2d59deadf0d2b5c1a77c5a989a0915e",
+      "bytes": 7273
+    },
+    {
+      "path": "tools/process_dump/dfx_process.h",
+      "blob": "4ebafe6a77e464e099864f32e845ad512cd492cf",
+      "sha256": "8806f468a40a0f837ce0046161abec7a7f681f7742b9ac68132228c28b80131c",
+      "bytes": 4375
+    }
+  ],
+  "build_file_identities": [
+    {
+      "path": "interfaces/innerkits/backtrace/BUILD.gn",
+      "blob": "f634deeb205e8cd68e36fb827ed4f9a2e115b6d6",
+      "sha256": "b4e2e74288b00bcef1182112ff630174aea8c5f586926562a40a540999d1c8a3",
+      "bytes": 4123
+    },
+    {
+      "path": "interfaces/innerkits/stack_printer/BUILD.gn",
+      "blob": "55984c2bfc0fd3a0130b8e200b186b378a208af5",
+      "sha256": "40448bfe16c7acd3f142602e3d7c8045cc1c5dbd2eb7457d3d1deec609d013b4",
+      "bytes": 2021
+    },
+    {
+      "path": "interfaces/innerkits/unwinder/BUILD.gn",
+      "blob": "30836e523aafce5cc24b7a268795edc3e6efd2d7",
+      "sha256": "2f81cde43c839c27dedd6ad579fa055d56ebdefab96b5da44bcd513170569062",
+      "bytes": 10480
+    },
+    {
+      "path": "interfaces/innerkits/unwinder_refactor/BUILD.gn",
+      "blob": "2c78c001d7cb24135eae5ca3a52b1b60a13b5450",
+      "sha256": "c1f9766068b5c665e057a123494add4f0db8df5141dc6b10370ebdedd1cb76e0",
+      "bytes": 12343
+    },
+    {
+      "path": "tools/process_dump/BUILD.gn",
+      "blob": "ec9e0a401a83461d64374a5e62fd07aa1f393d4e",
+      "sha256": "ad33cc7e9c576b80a1fa2f5233d1a606e0a61a3848760b08b542f719ed010142",
+      "bytes": 10525
+    }
+  ],
+  "reviewed_context_file_identities": [
+    {
+      "path": "tools/process_dump/lite_process_dumper.cpp",
+      "blob": "1ec5922714ba276d2e47d7c5906210b4d4c0088e",
+      "sha256": "3919cf5c58f55e93b0d1ef3e8668bd85218a0173daacca619b6bc216c02633fe",
+      "bytes": 24947
+    },
+    {
+      "path": "tools/process_dump/minidump_dumper.cpp",
+      "blob": "bee681a0e209d1fdab16ebf48d6c8f0bbf8b7560",
+      "sha256": "9bd73fa7a4d26ab4c4d5a08b01dd747bbb9aae4e61cc54c0f028433360d892d1",
+      "bytes": 25196
+    },
+    {
+      "path": "interfaces/innerkits/unwinder_refactor/src/unwind_local/local_unwinder.cpp",
+      "blob": "94c9b9891b963811c3c1d15504cecf18d4b4bd99",
+      "sha256": "261b99e00d76430fb6793a72180b93f68660c9129f23d038d7d00fe53bc687de",
+      "bytes": 8606
+    },
+    {
+      "path": "interfaces/innerkits/unwinder/src/unwind_local/thread_context.cpp",
+      "blob": "4c179172a1864a3d5e05975abcacd4b74d6e1884",
+      "sha256": "6ef04a8f2671ce61983f8dad75ae582e8b4194e4b3b03aaf154d26cc7f6f0136",
+      "bytes": 16220
+    }
+  ],
+  "build_review": {
+    "targets": [
+      {
+        "build_file": "interfaces/innerkits/backtrace/BUILD.gn",
+        "production_target": "ohos_shared_library(\"libbacktrace_local\")",
+        "includes": "fp_backtrace.cpp through backtrace_local_sources",
+        "testonly": false
+      },
+      {
+        "build_file": "interfaces/innerkits/stack_printer/BUILD.gn",
+        "production_target": "ohos_shared_library(\"libstack_printer\")",
+        "includes": "src/stack_printer.cpp",
+        "testonly": false
+      },
+      {
+        "build_file": "interfaces/innerkits/unwinder/BUILD.gn",
+        "production_target": "libunwinder variants",
+        "includes": "thread_context.cpp and dwarf_op.cpp; relevant headers consumed by these targets",
+        "testonly": false
+      },
+      {
+        "build_file": "interfaces/innerkits/unwinder_refactor/BUILD.gn",
+        "production_target": "libunwinder_refactor variants",
+        "includes": "refactored base/header implementation and reused unwinder sources",
+        "testonly": false
+      },
+      {
+        "build_file": "tools/process_dump/BUILD.gn",
+        "production_target": "process_info_src / process_dump targets",
+        "includes": "dfx_process.cpp and arm64 coredump writer source",
+        "testonly": false
+      }
+    ],
+    "limitations": [
+      "GN declarations show production-capable targets, not that a specific product manifest/profile includes them.",
+      "No build was performed; target CPU, defines, feature flags, and product configuration were not frozen.",
+      "Relevant targets are not declared as testonly fuzz targets; this establishes source/build classification only, not runtime reachability."
+    ]
+  },
+  "source_concurrency_review": {
+    "method": "Read exact-source declarations, assignments, reads, call sites, mutexes/atomics, and adjacent GN source lists; no runtime or TSan claim.",
+    "findings": [
+      {
+        "family": "FpBacktraceImpl::maps_ (CR-0119–0123)",
+        "facts": "Assigned from DfxMaps::Create in Init before CreateInstance returns; subsequently read by BacktraceFromFp and SymbolicAddress. SymbolicAddress serializes its cache/unwind path with mutex_; no later maps_ assignment found in this object.",
+        "thread_overlap_proven": false,
+        "assessment": "Creation/publication ordering is consistent with one-time initialization, but API ownership and external lifetime are not fully bound; syntax candidates do not establish a race."
+      },
+      {
+        "family": "StackPrinter::Impl (CR-0124)",
+        "facts": "Queue line 127 is the Impl constructor initializer and contains no shared_ptr. The same source has SetUnwindInfo assigning unwinder_/maps_ without mutex_; GetFullStack/GetTreeStack read them without mutex_, while GetHeaviestStack locks only after an initial null check.",
+        "thread_overlap_proven": false,
+        "assessment": "This row is a source/model mismatch: current CLI has no diagnostic at the A0 line and the row points to a constructor initializer, not the unsynchronized member operations. The separate access pattern is an independent review lead; no caller lifecycle/thread-safety contract establishes concurrent use."
+      },
+      {
+        "family": "DfxAccessorsCustomize / ElfParser / Dwarf* / UnwindEntryParser (CR-0125–0142)",
+        "facts": "Rows are constructor initialization or reads through the held memory/accessor objects. No post-construction reassignment of those shared_ptr members is shown at the queue lines; exact selected files parse completely.",
+        "thread_overlap_proven": false,
+        "assessment": "Shared ownership/copying alone does not establish a pointee race; pointee synchronization and object sharing remain unproven."
+      },
+      {
+        "family": "LocalThreadContextMix::maps_ (CR-0143)",
+        "facts": "Singleton. Production-capable write sites: CollectThreadContext, ReleaseCollectThreadContext, and SetMaps. SetMaps call sites are tools/process_dump/lite_process_dumper.cpp:362 and minidump_dumper.cpp:514; Collect/Release are called at local_unwinder.cpp:176-181 by LocalUnwinder::DoUnwindLocalByOtherTid. Reads: GetMapByPc, FindUnwindTable, AccessMem, GetMaps in thread_context.cpp. Assignment sites do not hold mtx_; Collect sets maps before signal delivery and waits for a condition-variable status before returning; Release clears maps while holding mtx_. The two process-dumper call sites are under their respective production-capable process dump targets.",
+        "thread_overlap_proven": false,
+        "assessment": "The singleton shared state and unsynchronized SetMaps writes are real source facts and justify a focused follow-up. The exact product service call topology and whether Lite/Minidump dumper instances can overlap with each other or LocalUnwinder collection were not proven from this component checkout; do not promote to a data race."
+      },
+      {
+        "family": "UnwinderSharedState (CR-0145–0156)",
+        "facts": "UnwinderBase wrappers write/read shared state regs/maps and expose references; internal components share the state. No lock is present at the queue lines.",
+        "thread_overlap_proven": false,
+        "assessment": "Per-Unwinder ownership and external concurrent calls are not established; state sharing inside one object alone is not concurrent access."
+      },
+      {
+        "family": "CoredumpThread / DfxProcess members (CR-0157–0160)",
+        "facts": "CoredumpThread::Init assigns keyRegs_; DfxProcess setters/getters assign/expose keyThread_ and regs_. Call sites use process-local dump objects and then populate/report them; no cross-thread access contract or same-object concurrent mutation is established from these files.",
+        "thread_overlap_proven": false,
+        "assessment": "Candidate syntax does not prove sharing across threads; keep unresolved pending service-level object lifetime evidence."
+      }
+    ],
+    "global_limitations": [
+      "No product build/profile or caller thread topology is pinned.",
+      "No unambiguous same-object concurrent read/write interval has been established, including for the LocalThreadContextMix singleton; its production-capable call sites are recorded above but product service serialization is not pinned.",
+      "No fixed-source, safe-control, or product-labeled ground truth was available in this task scope.",
+      "Complete parsing of 11 selected source files does not imply complete repository or product semantic coverage."
+    ]
+  },
+  "a0_rows": [
+    {
+      "queue_id": "CR-0119",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:07c82c80bd64becf",
+      "source": {
+        "path": "interfaces/innerkits/backtrace/fp_backtrace.cpp",
+        "blob": "76ec2418aebaf8954f7030a0968793f87cd316a6",
+        "sha256": "8c2638e165b098c315184590fddbd1c76341e414fea3917dfcac591277cdd99a",
+        "bytes": 9046,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 80,
+      "candidate_line_text": "maps_ = DfxMaps::Create(0, false);",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:825a4e514c81aaec",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "maps_",
+        "evidence_type": "syntax",
+        "finding_line": 80,
+        "source_sha256": "8c2638e165b098c315184590fddbd1c76341e414fea3917dfcac591277cdd99a"
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0120",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:de9ccfab64764759",
+      "source": {
+        "path": "interfaces/innerkits/backtrace/fp_backtrace.cpp",
+        "blob": "76ec2418aebaf8954f7030a0968793f87cd316a6",
+        "sha256": "8c2638e165b098c315184590fddbd1c76341e414fea3917dfcac591277cdd99a",
+        "bytes": 9046,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 81,
+      "candidate_line_text": "if (maps_ == nullptr) {",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:43071211c68328f4",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "maps_",
+        "evidence_type": "syntax",
+        "finding_line": 81,
+        "source_sha256": "8c2638e165b098c315184590fddbd1c76341e414fea3917dfcac591277cdd99a"
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0121",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:9228af895f25b225",
+      "source": {
+        "path": "interfaces/innerkits/backtrace/fp_backtrace.cpp",
+        "blob": "76ec2418aebaf8954f7030a0968793f87cd316a6",
+        "sha256": "8c2638e165b098c315184590fddbd1c76341e414fea3917dfcac591277cdd99a",
+        "bytes": 9046,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 85,
+      "candidate_line_text": "maps_->GetStackRange(mainStackBegin_, mainStackEnd_);",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:072aad444b4c0cad",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "maps_",
+        "evidence_type": "syntax",
+        "finding_line": 85,
+        "source_sha256": "8c2638e165b098c315184590fddbd1c76341e414fea3917dfcac591277cdd99a"
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0122",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:a1794fa2c7544e7b",
+      "source": {
+        "path": "interfaces/innerkits/backtrace/fp_backtrace.cpp",
+        "blob": "76ec2418aebaf8954f7030a0968793f87cd316a6",
+        "sha256": "8c2638e165b098c315184590fddbd1c76341e414fea3917dfcac591277cdd99a",
+        "bytes": 9046,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 86,
+      "candidate_line_text": "maps_->GetStaticArkRange(staticArkBegin_, staticArkEnd_);",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:08e55eb42d49c393",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "maps_",
+        "evidence_type": "syntax",
+        "finding_line": 86,
+        "source_sha256": "8c2638e165b098c315184590fddbd1c76341e414fea3917dfcac591277cdd99a"
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0123",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:1cef05412a9fd466",
+      "source": {
+        "path": "interfaces/innerkits/backtrace/fp_backtrace.cpp",
+        "blob": "76ec2418aebaf8954f7030a0968793f87cd316a6",
+        "sha256": "8c2638e165b098c315184590fddbd1c76341e414fea3917dfcac591277cdd99a",
+        "bytes": 9046,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 92,
+      "candidate_line_text": "if (!maps_ || startFp == nullptr || pcArray == nullptr || size == 0) {",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3113990f32f9e532",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "maps_",
+        "evidence_type": "syntax",
+        "finding_line": 92,
+        "source_sha256": "8c2638e165b098c315184590fddbd1c76341e414fea3917dfcac591277cdd99a"
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0124",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:ce6b089e83646b5b",
+      "source": {
+        "path": "interfaces/innerkits/stack_printer/src/stack_printer.cpp",
+        "blob": "0decd48434c604ad9afb5f95841b32311fca23e4",
+        "sha256": "92c18a362b873488d2914e0dd41586be3c2e87cbe666d9f61664447efa21165c",
+        "bytes": 21574,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 127,
+      "candidate_line_text": "Impl() : root_(nullptr)",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0125",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:c2aa07a6d7bf75b2",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dfx_accessors.h",
+        "blob": "6968467031119e68d879a314a2d7b565388f8b17",
+        "sha256": "b0c66ce0565eeb9d452b1961411ec5148f56fe528cc9f63b9065c8e3d34f37d1",
+        "bytes": 3349,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 85,
+      "candidate_line_text": "DfxAccessorsCustomize(std::shared_ptr<UnwindAccessors> accessors) : accessors_(accessors) {}",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0126",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:4429b2467cb2976e",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dfx_elf_parser.h",
+        "blob": "54d8b1e07d06682c64312663e77de71a6788823a",
+        "sha256": "6b34c59b6da7ecbe131fc0d4393338c8b5827f7dbe8ff74d0559aafa3b8d4161",
+        "bytes": 6173,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 46,
+      "candidate_line_text": "ElfParser(const std::shared_ptr<DfxMmap>& mmap) : mmap_(mmap) {}",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0127",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:1f2ac62f90420405",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_cfa_instructions.h",
+        "blob": "6b403693143a31f2ee739eceda6e98709d457a65",
+        "sha256": "52f9075e35b5f2aca76fc7b5efad3d12eed5f281f88e9dd387afb3dab6b4cb10",
+        "bytes": 1576,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 31,
+      "candidate_line_text": "DwarfCfaInstructions(std::shared_ptr<DfxMemory> memory) : memory_(memory) {};",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0128",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:2d20287e3f4eb353",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 40,
+      "candidate_line_text": "DwarfOp(std::shared_ptr<DfxMemory> memory) : memory_(memory) {};",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0129",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:213dc36bbb1f555b",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 85,
+      "candidate_line_text": "memory_->Read<uintptr_t>(addr, &val);",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0130",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:53452555f94fff82",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 98,
+      "candidate_line_text": "memory_->Read<uint8_t>(exprPtr, &operand, true);",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0131",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:6306eb1dab661aa0",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 102,
+      "candidate_line_text": "memory_->Read<uint8_t>(addr, &u8, true);",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0132",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:bec351f3e1107055",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 108,
+      "candidate_line_text": "memory_->Read<uint16_t>(addr, &u16, true);",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0133",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:583869fede79ec63",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 115,
+      "candidate_line_text": "memory_->Read<uint32_t>(addr, &u32, true);",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0134",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:7a6fd797313c615e",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 124,
+      "candidate_line_text": "memory_->Read<uint64_t>(addr, &u64, true);",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0135",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:b480354ef83f2cc2",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 165,
+      "candidate_line_text": "memory_->Read<uint8_t>(exprPtr, &reg, true);",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0136",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:5c2fdced647a5a84",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 307,
+      "candidate_line_text": "stack_[0] += memory_->ReadUleb128(exprPtr);",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0137",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:a3191eaf188540d6",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 350,
+      "candidate_line_text": "memory_->Read<int16_t>(exprPtr, &offset, true);",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0138",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:b6d4212917b1258d",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 362,
+      "candidate_line_text": "memory_->Read<int16_t>(exprPtr, &offset, true);",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0139",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:3c14b0c5c466249a",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 443,
+      "candidate_line_text": "auto reg = static_cast<uint32_t>(memory_->ReadUleb128(exprPtr));",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0140",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:42e31e09cd7c6f14",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 460,
+      "candidate_line_text": "auto value = static_cast<SignedType>(memory_->ReadSleb128(exprPtr));",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0141",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:617e477d582f9fc7",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 467,
+      "candidate_line_text": "auto reg = static_cast<uint32_t>(memory_->ReadUleb128(exprPtr));",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0142",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:e19f5e5076ec125f",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "blob": "8239b8ad4070ad7f308accea48d04b8c0cd1b0c8",
+        "sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7",
+        "bytes": 12805,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 473,
+      "candidate_line_text": "auto value = static_cast<SignedType>(memory_->ReadSleb128(exprPtr));",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0143",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:262d0a7fbe1ebc00",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/thread_context.h",
+        "blob": "623f36a17f406fbd0e2a3208867c21df359afe42",
+        "sha256": "b4878aca6f1f468397a6901fe800c5bbbf067753aec1abfb6d99d6a8359de365",
+        "bytes": 4363,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 105,
+      "candidate_line_text": "void SetMaps(std::shared_ptr<DfxMaps> maps) { maps_ = maps; }",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:9e6a516877c1c8d1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "maps_",
+        "evidence_type": "syntax",
+        "finding_line": 105,
+        "source_sha256": "b4878aca6f1f468397a6901fe800c5bbbf067753aec1abfb6d99d6a8359de365"
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0144",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:45d12dc2f894cd8d",
+      "source": {
+        "path": "interfaces/innerkits/unwinder/include/unwind_entry_parser.h",
+        "blob": "b8ea2baca77c86d4fead346fab320c0914fbf818",
+        "sha256": "fc3d2eb7b0d880b801ae07d52ccc166499c84c2af98247be815bee48e696d5e6",
+        "bytes": 1483,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 29,
+      "candidate_line_text": "explicit UnwindEntryParser(const std::shared_ptr<DfxMemory>& memory) : memory_(memory) {}",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0145",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:b50bd9c77447cc62",
+      "source": {
+        "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+        "blob": "f8c18f37155deea5197351349ce4f3307575ccec",
+        "sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5",
+        "bytes": 6540,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 82,
+      "candidate_line_text": "state_->regs = regs;",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0146",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:b938615dd70fc752",
+      "source": {
+        "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+        "blob": "f8c18f37155deea5197351349ce4f3307575ccec",
+        "sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5",
+        "bytes": 6540,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 83,
+      "candidate_line_text": "state_->firstFrameSp = regs->GetSp();",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0147",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:6e95bb82e24486e0",
+      "source": {
+        "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+        "blob": "f8c18f37155deea5197351349ce4f3307575ccec",
+        "sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5",
+        "bytes": 6540,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 91,
+      "candidate_line_text": "state_->maps = maps;",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0148",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:2ecc0ed05aa124ba",
+      "source": {
+        "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+        "blob": "f8c18f37155deea5197351349ce4f3307575ccec",
+        "sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5",
+        "bytes": 6540,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 96,
+      "candidate_line_text": "return state_->regs;",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0149",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:f783f65e790056e7",
+      "source": {
+        "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+        "blob": "f8c18f37155deea5197351349ce4f3307575ccec",
+        "sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5",
+        "bytes": 6540,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 101,
+      "candidate_line_text": "return state_->maps;",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0150",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:c2667c48e872d1f0",
+      "source": {
+        "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+        "blob": "f8c18f37155deea5197351349ce4f3307575ccec",
+        "sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5",
+        "bytes": 6540,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 106,
+      "candidate_line_text": "return state_->lastErrorData.GetCode();",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0151",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:403f3a9f736b7815",
+      "source": {
+        "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+        "blob": "f8c18f37155deea5197351349ce4f3307575ccec",
+        "sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5",
+        "bytes": 6540,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 111,
+      "candidate_line_text": "return state_->lastErrorData.GetAddr();",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0152",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:11821da7e52b5b65",
+      "source": {
+        "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+        "blob": "f8c18f37155deea5197351349ce4f3307575ccec",
+        "sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5",
+        "bytes": 6540,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 208,
+      "candidate_line_text": "return state_->jitCache;",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0153",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:f17e17adc6da4ae7",
+      "source": {
+        "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+        "blob": "f8c18f37155deea5197351349ce4f3307575ccec",
+        "sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5",
+        "bytes": 6540,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 248,
+      "candidate_line_text": ": state_(state),",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0154",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:e5a739280c9b3888",
+      "source": {
+        "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+        "blob": "f8c18f37155deea5197351349ce4f3307575ccec",
+        "sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5",
+        "bytes": 6540,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 249,
+      "candidate_line_text": "frameMgr_(*state_),",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0155",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:e2dde60d3dfe634a",
+      "source": {
+        "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+        "blob": "f8c18f37155deea5197351349ce4f3307575ccec",
+        "sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5",
+        "bytes": 6540,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 250,
+      "candidate_line_text": "mixedStack_(*state_),",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0156",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:7cbb540b7558b083",
+      "source": {
+        "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+        "blob": "f8c18f37155deea5197351349ce4f3307575ccec",
+        "sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5",
+        "bytes": 6540,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 251,
+      "candidate_line_text": "unwindCore_(*state_, frameMgr_, mixedStack_)",
+      "current_cli": {
+        "exact_line_finding": false,
+        "diagnostic_id": null,
+        "rule_id": null,
+        "symbol": null,
+        "evidence_type": null,
+        "finding_line": null,
+        "source_sha256": null
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0157",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:c0090ba365e7b6d3",
+      "source": {
+        "path": "tools/process_dump/coredump/coredump_note_segment_writer.h",
+        "blob": "09e827ee765e62ba1611e9dd3fce71d71f65c746",
+        "sha256": "faa56802951b2f318008cca68e02ea96d2d59deadf0d2b5c1a77c5a989a0915e",
+        "bytes": 7273,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 103,
+      "candidate_line_text": "keyRegs_ =  regs;",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:30c5704b904e3cff",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "keyRegs_",
+        "evidence_type": "syntax",
+        "finding_line": 103,
+        "source_sha256": "faa56802951b2f318008cca68e02ea96d2d59deadf0d2b5c1a77c5a989a0915e"
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0158",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:25d726d46347f080",
+      "source": {
+        "path": "tools/process_dump/dfx_process.h",
+        "blob": "4ebafe6a77e464e099864f32e845ad512cd492cf",
+        "sha256": "8806f468a40a0f837ce0046161abec7a7f681f7742b9ac68132228c28b80131c",
+        "bytes": 4375,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 55,
+      "candidate_line_text": "return keyThread_;",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:e8bc5bf3de23df86",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "keyThread_",
+        "evidence_type": "syntax",
+        "finding_line": 55,
+        "source_sha256": "8806f468a40a0f837ce0046161abec7a7f681f7742b9ac68132228c28b80131c"
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0159",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:43fc67205563358d",
+      "source": {
+        "path": "tools/process_dump/dfx_process.h",
+        "blob": "4ebafe6a77e464e099864f32e845ad512cd492cf",
+        "sha256": "8806f468a40a0f837ce0046161abec7a7f681f7742b9ac68132228c28b80131c",
+        "bytes": 4375,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 60,
+      "candidate_line_text": "keyThread_ = keyThread;",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:b95bbc62436d4be7",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "keyThread_",
+        "evidence_type": "syntax",
+        "finding_line": 60,
+        "source_sha256": "8806f468a40a0f837ce0046161abec7a7f681f7742b9ac68132228c28b80131c"
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0160",
+      "a0_candidate_id": "ohscanner.cpp.shared_ptr_race:e637ca11d51a24cd",
+      "source": {
+        "path": "tools/process_dump/dfx_process.h",
+        "blob": "4ebafe6a77e464e099864f32e845ad512cd492cf",
+        "sha256": "8806f468a40a0f837ce0046161abec7a7f681f7742b9ac68132228c28b80131c",
+        "bytes": 4375,
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+        "tree": "8b54f17921ba15ff306bcbef280078003a7b1055"
+      },
+      "candidate_line": 69,
+      "candidate_line_text": "regs_ = regs;",
+      "current_cli": {
+        "exact_line_finding": true,
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:93f311701435a067",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "regs_",
+        "evidence_type": "syntax",
+        "finding_line": 69,
+        "source_sha256": "8806f468a40a0f837ce0046161abec7a7f681f7742b9ac68132228c28b80131c"
+      },
+      "a0_state": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "recorded_parse_status": ""
+      },
+      "disposition": "PARTIAL"
+    }
+  ],
+  "a0_unchanged": {
+    "queue_rows": 345,
+    "group_rows": 42,
+    "group_original_status_counts": {
+      "not_testable": 42
+    },
+    "group_queue_status_counts": {
+      "paused_pending_evidence": 42
+    },
+    "modified": false
+  },
+  "overall_disposition": "PARTIAL"
+}
