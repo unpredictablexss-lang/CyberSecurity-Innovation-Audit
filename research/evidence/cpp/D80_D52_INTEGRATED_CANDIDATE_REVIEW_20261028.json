@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "task": "D80 integrated second-layer review of D52 GET_PASTE_DATA candidate",
+  "status": "pending_independent_T80_acceptance",
+  "decision": "retain_narrow_source_only_with_historical_dispatch_ast_limitation",
+  "source_candidate": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "candidate_path": "services/zidl/src/pasteboard_service_stub.cpp",
+    "candidate_line": 41,
+    "candidate_line_semantics": "opening brace of OnRemoteRequest method; not selector map, permission check, dispatch, or data sink"
+  },
+  "candidate_statement": "At the pinned D52 component source snapshot, hash-pinned source text traces GET_PASTE_DATA through selector mapping and the stub handler to a per-user core lookup/copy, with no explicit caller read-permission predicate visible in that component path before lookup/copy. The historical D50 parser does not establish the dispatch-to-handler AST edge.",
+  "source_route_identity": [
+    {
+      "path": "services/core/include/i_pasteboard_service.h",
+      "blob_oid": "1a5b83f314d6188f0b3465a13ac1668cb9933839",
+      "sha256": "ffef3626d4dcd2d0757381e64e652a8a023d352dd59bc9afa20deafb2fd8e3fc",
+      "source_anchor": "GET_PASTE_DATA = 0 line 28; GetPasteData declaration line 37",
+      "D50": {"status": "partial", "issues": [{"kind": "error", "start_line": 43, "end_line": 43}]},
+      "D68": {"status": "partial", "issues": [{"kind": "error", "start_line": 43, "end_line": 43}]},
+      "limitation": "descriptor macro diagnostic is away from the route declarations, but file remains partial"
+    },
+    {
+      "path": "framework/innerkits/src/pasteboard_client.cpp",
+      "blob_oid": "c204c426cff25c7ee637068143ecaaccc98614ec",
+      "sha256": "ace24f733b0f0590c8a3d2b723dc41fda8ea80dfd9cfdf99bcb7d9699c20598a",
+      "source_anchor": "GetPasteData forwarding lines 113-126",
+      "D50": {"status": "complete", "issues": []},
+      "D68": {"status": "complete", "issues": []}
+    },
+    {
+      "path": "services/zidl/src/pasteboard_service_proxy.cpp",
+      "blob_oid": "679117492f1207fc9aa424899daa143d4df07249",
+      "sha256": "61f66fbbe53a1190ec31a8ff34b41a0d6b3ea28cdea72df8f0d3bc921d21f600",
+      "source_anchor": "GetPasteData and SendRequest(GET_PASTE_DATA) lines 147-156",
+      "D50": {"status": "complete", "issues": []},
+      "D68": {"status": "complete", "issues": []}
+    },
+    {
+      "path": "services/zidl/include/pasteboard_service_stub.h",
+      "blob_oid": "67b267c6e68b8e3bd49c68958d46951c6be76929",
+      "sha256": "d949deeb769a8b96b88d0548b665039c6c3ec9c30d9dc6ff43eefec7ebc256ec",
+      "source_anchor": "pointer-to-member handler map declaration",
+      "D50": {"status": "partial", "issues": [{"kind": "missing", "start_line": 35, "end_line": 35}]},
+      "D68": {"status": "partial", "issues": [{"kind": "missing", "start_line": 35, "end_line": 35}]},
+      "limitation": "handler-map declaration AST is partial"
+    },
+    {
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "blob_oid": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+      "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+      "source_anchor": "map line 27; OnRemoteRequest lines 39-57; handler lines 73-78; D52 candidate anchor line 41",
+      "D50": {"status": "partial", "issues": [{"kind": "error", "start_line": 58, "end_line": 58}]},
+      "D68": {"status": "complete", "issues": []},
+      "limitation": "D50 ERROR:58 intersects actual (this->*memberFunc)(data, reply) dispatch expression; D50 parser-derived dispatch-to-handler AST edge is incomplete; D68 cannot backfill historical D50"
+    },
+    {
+      "path": "services/core/src/pasteboard_service.cpp",
+      "blob_oid": "c380ac266a85edd818caa811f11b99722d351788",
+      "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+      "source_anchor": "GetPasteData entry line 155 onward; caller OS user and per-user data lookup/copy",
+      "D50": {"status": "complete", "issues": []},
+      "D68": {"status": "complete", "issues": []},
+      "limitation": "parser coverage of this file does not prove product behavior or complete authorization boundary"
+    }
+  ],
+  "evidence_artifacts": [
+    {"id": "D52", "commit": "9d3b1e653a6e56a3f2f6aea376e30ac9f61ef4e", "tree": "20b429ea24ae69c594429ea19718ae3d77f2c551", "json": "research/data_sensitive/D52_PASTEBOARD_PERMISSION_20261020.json", "json_sha256": "991b7b13516b12a28feceae2e4a507490c2d607c24344350f5012c2f2134a5d4", "markdown": "research/data_sensitive/D52_PASTEBOARD_PERMISSION_20261020.md", "markdown_sha256": "4f46c0b2c4da6fc1b6eca85326c5c73fd744f3ce00fbbd17fb9d89e1bf92d606"},
+    {"id": "T52", "commit": "184356d0f9863cf1e610c419452a0f3be6d62a1f", "tree": "12033331a3e4142e02645964230d7f1ef9106cab", "json": "research/evidence/cpp/t52_pasteboard_permission_acceptance_20261020.json", "json_sha256": "0dc5d894c40f28f1eca5730a2edb312964704582ede673478eb4e3a8035a674c", "markdown": "research/evidence/cpp/t52_pasteboard_permission_acceptance_20261020.md", "markdown_sha256": "7e64ba494cf7266b29eece92d8b47e8223a725070242d15c91bbcc9f4bd43080", "result": "rule_signature_PASS; source_case_PARTIAL; component_candidate_UNASSESSED; product_CVE_UNKNOWN"},
+    {"id": "D74", "commit": "a29275f7a795da17171fd3df2c712ef3a8576cb7", "tree": "d8468ae00a58a6ace81f13ad7c55c3db78c6c892", "json": "research/evidence/cpp/D74_PASTEBOARD_SOURCE_TRACE_20261020.json", "json_sha256": "bf3b9fc8ae382b99c96d4318e91596eef9d30d70e9e85ca5b7ce08c79d330e4d", "markdown": "research/evidence/cpp/D74_PASTEBOARD_SOURCE_TRACE_20261020.md", "markdown_sha256": "66cad9896a0a07a0c1a6ecca106693185bb858678dbd4e4e10052302358b5b69"},
+    {"id": "T74", "commit": "fb45fcc4d61d1ce3a56eff8386b83f9f3a652ec7", "tree": "850372819d62de5589fe629d0e4e69bf078a937a", "json": "research/evidence/cpp/T74_D74_INDEPENDENT_ACCEPTANCE_20261020.json", "json_sha256": "6a0af1d2b8209d688d3903ce2e056b94b5e38f5305359a589ee8873cf71edf87", "markdown": "research/evidence/cpp/T74_D74_INDEPENDENT_ACCEPTANCE_20261020.md", "markdown_sha256": "ead27df59c8e86f521a1db4686a41582ebec9d23df5aa387cb648395c85e6cb9"},
+    {"id": "D75", "commit": "f3171a784c0e256c5d879ace3aeb78d6acfaf121", "tree": "3373f3155737b5397e001c3acc78b2b685898354", "json": "research/evidence/cpp/D75_PASTEBOARD_SEMANTIC_REVIEW_20261023.json", "json_sha256": "27a3adde1ed7a307e71c2ab1f3b5838836a413e0d93755352a4e98869109d621", "markdown": "research/evidence/cpp/D75_PASTEBOARD_SEMANTIC_REVIEW_20261023.md", "markdown_sha256": "cb8b90648ef24c1a07c8d1b5fdaf8c93df3f6400bf40157d02d2cfe176fda4f0"},
+    {"id": "D76", "commit": "88b357fa0f7d4906e3baff9392c6b27126c88d40", "tree": "343826cf1c147bb8e808874a16d7da9a8c04214e", "json": "research/evidence/cpp/D76_SAMGR_PROFILE_POLICY_TRACE_20261020.json", "json_sha256": "89fafa409087ec1c0424d54c88ba30c55a6ce164a0310d65db4ae2d2b8b0ae00", "markdown": "research/evidence/cpp/D76_SAMGR_PROFILE_POLICY_TRACE_20261020.md", "markdown_sha256": "2951d5416f14e1d0049bcbddb4daec74e3a44196fc329c8210ff6bf9f76e911f"},
+    {"id": "T76", "commit": "968ea9852bab858a8eab35ccdd6c4fcc45281cca", "tree": "bb17c61c717680e29bb5b523774f7da8d7beb75d", "json": "research/evidence/cpp/T76_D76_INDEPENDENT_ACCEPTANCE_20261020.json", "json_sha256": "52fb95a0e17712dbacff9c96a31b735f6a8df7e91aef255aa6c002b02e45e000", "markdown": "research/evidence/cpp/T76_D76_INDEPENDENT_ACCEPTANCE_20261020.md", "markdown_sha256": "ecc11704a38efd47608092495049aefe053cefbf7a87176518faf9913fda293b"},
+    {"id": "D77", "commit": "a99334031575a184840fff9ed9a486237543fd64", "tree": "5bfb73de18cda86ab879a3fbadcf3d392ba01388", "json": "research/evidence/cpp/D77_PASTEBOARD_ADVERSARIAL_20261020.json", "json_sha256": "fdea63b3b964a2582aad0e8bcd1dbf2bf8b57b24ebf32272662868e174bc75fa", "markdown": "research/evidence/cpp/D77_PASTEBOARD_ADVERSARIAL_20261020.md", "markdown_sha256": "c3c15878cc8bb6089ab774b43b9c5ad75213c0aa7493600889c1af338af98c6b"},
+    {"id": "T77", "commit": "7f456a2457a931bbfee50abeadc9c006ef8aabbc", "tree": "2410609cc7fd0c3ec342adcb46339ddf0e448a03", "json": "research/evidence/cpp/T77_D77_ACCEPTANCE_20261020.json", "json_sha256": "8773dc7917e516a63a766260a77e68eb3fdeee4e6443e6a552d17f1b6e699eb8", "markdown": "research/evidence/cpp/T77_D77_ACCEPTANCE_20261020.md", "markdown_sha256": "0dbd946856e4a31b8b06fe98bdb89c3119653d538fd90f13d029ccf2ca155d83", "result": "accepted_with_limitations"},
+    {"id": "D78", "commit": "5cc9c4c9c05ac42da280ca9d08d13cc18742028f", "tree": "8d70fcbfc9e4eb787aed479bc7b2f90e91694770", "json": "research/evidence/cpp/D76_SAMGR_PROFILE_POLICY_TRACE_20261020.json", "json_sha256": "e816a2507f24d571cb3e17ce94c735c13499039cfbbdadab4350d3b96771a81c", "markdown": "research/evidence/cpp/D76_SAMGR_PROFILE_POLICY_TRACE_20261020.md", "markdown_sha256": "dda12437ade36875ec0629967f6c4cb1ccf2a8b3129872f6b922fd1fcf2e2b59"},
+    {"id": "T78", "commit": "a400b437ad015d73975ccf34df201f250f912e4a", "tree": "9707ac5cff2566e4755239149d81f00de0e5cec6", "json": "research/evidence/cpp/T78_D78_INDEPENDENT_ACCEPTANCE_20261020.json", "json_sha256": "a7bd02f948e0221a34637f617371e24a9c0db202e067da3c95cffdf299117066", "markdown": "research/evidence/cpp/T78_D78_INDEPENDENT_ACCEPTANCE_20261020.md", "markdown_sha256": "5a26c56986580e2386c6148cb89c606cd80993222a8ff07ce99606699fed6866", "result": "accepted_with_limitations"},
+    {"id": "D79", "commit": "ab6bf538e81a06ef85a9353a8b8aa4ab9704d65a", "tree": "24981ee9f31d2be1e244c422ebaacbffb8a74a9b", "json": "research/evidence/cpp/D79_D52_GET_PASTE_DATA_PARSE_COVERAGE_20261026.json", "json_sha256": "ff8c409048b48239ce2d9b223d80ca8e9e83fa84410a27f794b6236ca8f606be", "markdown": "research/evidence/cpp/D79_D52_GET_PASTE_DATA_PARSE_COVERAGE_20261026.md", "markdown_sha256": "00715d818b58e04bd2255359ddffce1422bb6326c93ede8d566297334a71a53c"},
+    {"id": "T79", "commit": "982c7c592f3716c0ffc942ec6cf289499cc6085f", "tree": "77b46baedf5f12c97da551289415334714be640b", "json": "research/evidence/cpp/T79_D79_INDEPENDENT_ACCEPTANCE_20261026.json", "json_sha256": "3f083babb4828e42e2cfc1f18655b17f033dc95e600b618a2f41786362c30b1e", "markdown": "research/evidence/cpp/T79_D79_INDEPENDENT_ACCEPTANCE_20261026.md", "markdown_sha256": "9cbf80d5f12f3ba5b15fa6b6313ec732e4f68dbee8623294cbd8f58046fe6dc9", "result": "accepted"}
+  ],
+  "D79_replay": {
+    "result": "pass",
+    "command_scope": "six route rows, four upstream evidence files, six raw D52 source blobs",
+    "verified_evidence_files": [
+      {"id": "D50", "commit": "0f4560c4712dbf914d762948e2220942f16324ad", "tree": "92c00c127523253d298498bf06f4e5361df214c2", "path": "research/data_sensitive/D50_COMPONENT_CVE_REPLAY/pasteboard.json", "sha256": "b4279e00373c889f0c5142e2582412fc04c489dd4271167aa7b0223936edf9f4"},
+      {"id": "D67", "commit": "ef215e737daee00c9fa659d14cd273974cf4fc2f", "tree": "bb8432940be00e5c170d3b2fed8a5df5f0accd69", "path": "research/evidence/cpp/D67_PASTEBOARD_PARSE_AUDIT_20261023.json", "sha256": "620579cbd7308e05b2e030ac341c3073c2eae015d7304e39609ccc1729e1fbd9"},
+      {"id": "D68", "commit": "3da049887999bd3cacb3d48da9ffa7baefa18ac5", "tree": "00547fc77bce9d23e65b38c3fd675eace3747494", "path": "research/evidence/cpp/D68_PASTEBOARD_RAW67_REPLAY_20261023.json", "sha256": "491c63b8a5cf68497722c0c3f8c444857678c28848c07d0a9133538faaf5e13d"},
+      {"id": "D74", "commit": "a29275f7a795da17171fd3df2c712ef3a8576cb7", "tree": "d8468ae00a58a6ace81f13ad7c55c3db78c6c892", "path": "research/evidence/cpp/D74_PASTEBOARD_SOURCE_TRACE_20261020.json", "sha256": "bf3b9fc8ae382b99c96d4318e91596eef9d30d70e9e85ca5b7ce08c79d330e4d"}
+    ],
+    "negative_controls": ["D50 trailing-whitespace mutation rejected by SHA-256 binding", "duplicate JSON key rejected by T79", "initial D79 whitespace mutation defect recorded and fixed in accepted revision"],
+    "T79_status": "accepted_for_bounded_source/parser_coverage_artifact"
+  },
+  "framework_policy_pins": {
+    "samgr": {"commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff", "tree": "b7a89e95be788f2f2372258e341f7be842c7826d"},
+    "startup_init": {"commit": "e06651300f349e728c76edda806dbf6496fd620d", "tree": "b77ef22dfc6fa75db5f3707970db9d908a1b6302"},
+    "security_access_token": {"commit": "c53a55c371d88c46b0785cc4adb444876e6a9628", "tree": "4942df10e6ed926dab1106e5752cf294305240d6"},
+    "manifest_snapshot_sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+    "D78_finding": "WITH_SELINUX and SUPPORT_PENGLAI_MODE are conditional SA acquisition/loading gates; neither establishes authorization for every subsequent Pasteboard Binder method",
+    "D78_timing_caveat": "penglaiFunc_ static initialization and stub-constructor isPengLai_ snapshot read ohos.boot.minisys.mode separately; source guarantees neither ordering/alignment nor parameter immutability",
+    "D78_fail_open": "CheckPengLaiPermission returns true when the checker function pointer is null",
+    "product_binding": "not established"
+  },
+  "claim_matrix": {
+    "source_text_route": "supported_by_hash_pinned_source",
+    "parser_derived_client_proxy_core": "complete_in_D50_and_D68_as_reported",
+    "parser_derived_interface_and_stub_header": "partial_in_D50_and_D68",
+    "parser_derived_stub_dispatch_edge": "incomplete_in_D50_ERROR_58_hits_dispatch_expression; D68_complete_is_later_and_not_historical_repair",
+    "in_component_missing_local_read_predicate": "bounded_source_review_supported",
+    "system_wide_missing_authorization": "unknown",
+    "product_applicability_and_reachability": "unknown",
+    "validated_vulnerability_or_CVE_causality": "not_established"
+  },
+  "minimum_missing_evidence": [
+    "D50-era parser AST or reproducible historical parser environment proving the node/binding at stub.cpp:58",
+    "exact target product fingerprint, build manifest/arguments, source provenance, final installed profiles, and XML-to-installed-path mapping",
+    "matching SAMgr/init/AccessToken/generated IPC/framework versions and configuration, including build_selinux, support_penglai_mode, SELinux policy, PengLai parameter lifecycle/value, and checker library/policy",
+    "service-side GET_PASTE_DATA authorization contract and exact-image authorized/unauthorized caller result matrix"
+  ],
+  "scope": {
+    "scanner_rule_changes": 0,
+    "source_repository_changes": 0,
+    "product_security_verdict": false,
+    "cve_causality_verdict": false
+  }
+}
