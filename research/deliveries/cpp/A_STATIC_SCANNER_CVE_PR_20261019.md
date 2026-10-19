@@ -6,7 +6,7 @@
 - 默认可达的 `resource_lifetime` 增加跨结构成员别名释放后读取和 callback-mediated recursive cleanup 关系，覆盖 libpng CVE-2026-33416、curl CVE-2026-92391 的候选根因形态；Runner partial finding 归一化保留 blocked 状态和 finding。
 - 增加 `ohscanner.cpp.path_source_file_sink` 的静态候选模块与安全/无关/partial 回归。它尚未 Catalog 注册，不会被普通生产 profile 调度；注册和具名 profile 由 shared owner 后续审查。
 - 增加 `run_a_disclosed_cve_scan.ps1`，通过 M2 CLI 显式调用默认内存/生命周期检测器和已注册的 `ohscanner.known_disclosed_cves`，用于定向静态扫描，不改变全局默认 detector 集。
-- 补充 exact-source / fixed / safe / unrelated / partial CLI 结果与整合报告全文 24 个 CVE 编号的 A 线可达性矩阵。Ark CVE-2025-0587 和 CVE-2025-23420 的当前 CLI vulnerable/fixed 结果分别为 1/0、5/0；旧 23420 patch digest 分歧保留为审计项。
+- 补充 exact-source / fixed / safe / unrelated / partial CLI 结果与整合报告全文 24 个 CVE 编号的 A 线可达性矩阵。CVE-2025-26690 当前 CLI 精确 vulnerable/fixed 对照为 5/0，完整解析，检测器保持显式 opt-in。Ark CVE-2025-0587 和 CVE-2025-23420 的当前 CLI vulnerable/fixed 结果分别为 1/0、5/0；旧 23420 patch digest 分歧保留为审计项。
 
 ## 本地验证
 
@@ -17,4 +17,4 @@
 
 ## 状态边界
 
-所有 findings 都是静态候选，不是产品漏洞确认。libtiff/libpng exact translation-unit replay 仍有 partial/blocked；CVE-2026-46675 根因、cJSON 67216/67215 exact-source coverage、DSoftBus 26690 current replay仍未闭环。CJSON 复杂度和 libpng shared-state 原型尚未注册，且未通过 exact-source CLI discrimination，因此不在本次生产代码合入范围。`known_disclosed_cves` 仍显式 opt-in；普通默认 profile 不会自动启用它。此 PR 不修改 Catalog、Runner、contracts 或 API。
+所有 findings 都是静态候选，不是产品漏洞确认。libtiff/libpng exact translation-unit replay 仍有 partial/blocked；CVE-2026-46675 根因、cJSON 67216/67215 vulnerable/fixed source discrimination 仍未闭环。DSoftBus 26690 已有当前 CLI 源码差分候选，但 default profile 准入和产品适用性仍未闭环。CJSON 复杂度和 libpng shared-state 原型尚未注册，且未通过 exact-source CLI discrimination，因此不在本次生产代码合入范围。`known_disclosed_cves` 仍显式 opt-in；普通默认 profile 不会自动启用它。此 PR 不修改 Catalog、Runner、contracts 或 API。
