@@ -1,0 +1,171 @@
+{
+  "schema_version": "1.0",
+  "task_id": "T64",
+  "date": "2026-10-20",
+  "phase": "independent-acceptance-complete",
+  "frozen_patch": {
+    "commit": "594abe600d731c72e760e730526dadb8931a9985",
+    "parent": "c2447a0449ba90622ee77ddc5434e282f28fb7db",
+    "detector": "ohscanner.known_disclosed_cves@0.19.8",
+    "detector_blob": "0bb13b5e72f0bec3080212a0e506c87693a7c49d",
+    "independent_worktree": "D:/openHarmonyScanner/worktrees/t64-d64-permission-provenance-acceptance-20261020"
+  },
+  "pinned_source": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+    "stub": {
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+      "bytes": 6288,
+      "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+      "parse": "partial"
+    },
+    "observer_core": {
+      "path": "services/core/src/pasteboard_service.cpp",
+      "blob": "c380ac266a85edd818caa811f11b99722d351788",
+      "bytes": 17335,
+      "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+      "parse": "partial"
+    }
+  },
+  "independent_matrix": {
+    "cases": 22,
+    "result": "Every D52 candidate was retained with permission_guard status unknown; every synthetic multi-finding run also retained D51 CVE-2025-25212.",
+    "groups": [
+      {
+        "group": "Route baseline",
+        "shapes": [
+          "unguarded mapped/routed read-and-return handler"
+        ],
+        "result": "CVE-2025-27247 retained; permission_guard=unknown"
+      },
+      {
+        "group": "Recognized read-permission spellings",
+        "shapes": [
+          "inline VerifyPermission(PERMISSION_READ_PASTEBOARD) denial return",
+          "inline VerifyPermission(SECURE_PASTE_PERMISSION) status denial",
+          "inline CheckPermission(READ_PASTEBOARD_PERMISSION) denial",
+          "same-unit permissionMap[PERMISSION_READ_PASTEBOARD] helper",
+          "same-unit permissionMap[SECURE_PASTE_PERMISSION] helper"
+        ],
+        "result": "candidate retained; permission_guard=unknown"
+      },
+      {
+        "group": "D62 false-suppression adversaries",
+        "shapes": [
+          "CheckBluetoothPermission(PERMISSION_READ_PASTEBOARD)",
+          "CheckPastePermission always true",
+          "CheckPastePermission delegates Bluetooth with READ_PASTEBOARD",
+          "untrustedState[PERMISSION_READ_PASTEBOARD] helper",
+          "bluetoothResult[PERMISSION_READ_PASTEBOARD] helper"
+        ],
+        "result": "candidate retained; permission_guard=unknown"
+      },
+      {
+        "group": "Unrelated or generic permissions",
+        "shapes": [
+          "Bluetooth/network permission",
+          "CheckPermission() without identity",
+          "CheckPermission(PERMISSION_NETWORK)",
+          "VerifyCallingPermission(PERMISSION_NETWORK)",
+          "permissionMap[PERMISSION_NETWORK] helper"
+        ],
+        "result": "candidate retained; permission_guard=unknown"
+      },
+      {
+        "group": "D59/D61 result/order/reachability controls",
+        "shapes": [
+          "bare ignored permission result before read",
+          "check after GetPasteData",
+          "check after WriteParcelable",
+          "literal false nested guard",
+          "guard under outer conditional",
+          "mixed permission and caller predicate",
+          "accepted helper under dead/outer branch",
+          "accepted helper after serialization",
+          "immediate throw from helper denial"
+        ],
+        "result": "candidate retained with unknown obligation, including immediate throw under D64"
+      }
+    ],
+    "guard_presence_observation": {
+      "unguarded_handler": {
+        "status": "unknown",
+        "message": "permission-guard provenance is unknown to this source-only matcher"
+      },
+      "visible_matching_inline_guard": {
+        "status": "unknown",
+        "message": "permission-guard provenance is unknown to this source-only matcher"
+      },
+      "visible_helper_or_token_shape": {
+        "status": "unknown",
+        "message": "permission-guard provenance is unknown to this source-only matcher"
+      },
+      "distinguishes_present_from_absent": false,
+      "token_or_guard_span_recorded": false,
+      "review": "Conservative candidate retention works; downstream second-layer review cannot tell absent guard from observed-but-unresolved guard based on finding metadata."
+    }
+  },
+  "candidate_identity": {
+    "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+    "symbol": "CVE-2025-27247",
+    "pinned_file": "services/zidl/src/pasteboard_service_stub.cpp",
+    "line": 41,
+    "column": 1,
+    "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "comparison_to_D63": "rule/CVE/file/anchor/source hash unchanged; permission_guard=unknown added to D52 finding"
+  },
+  "sibling_candidate": {
+    "symbol": "CVE-2025-25212",
+    "file": "services/core/src/pasteboard_service.cpp",
+    "line": 241,
+    "column": 5,
+    "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+    "comparison": "unchanged"
+  },
+  "exact_component_replay": {
+    "source_units": 67,
+    "parser_states": {
+      "complete": 57,
+      "partial": 10,
+      "failed": 0,
+      "not_run": 0
+    },
+    "status": "blocked",
+    "analyzed_units": 67,
+    "findings": [
+      "CVE-2025-25212 at pasteboard_service.cpp:241:5 with unchanged source hash",
+      "CVE-2025-27247 at pasteboard_service_stub.cpp:41:1 with unchanged source hash and permission_guard=unknown"
+    ]
+  },
+  "validation": {
+    "focused_command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "focused_result": "PASS",
+    "focused_tests": 32,
+    "exact_raw_git_replay": "PASS",
+    "strict_json_duplicate_key_check": "PASS",
+    "diff_check": "PASS",
+    "diff_base": "c2447a0449ba90622ee77ddc5434e282f28fb7db",
+    "changed_paths": 5,
+    "insertions": 119,
+    "deletions": 139,
+    "unrelated_detector_implementation": false
+  },
+  "verdict": {
+    "candidate_retention": "PASS; D51/D52 pinned candidates retain exact route identity across all tested guard shapes.",
+    "guard_provenance_conservatism": "PASS; ambiguous or token-bearing guards no longer suppress the D52 route candidate.",
+    "evidence_completeness": "PARTIAL; permission_guard=unknown is explicit, but findings do not distinguish guard absent from guard observed/unresolved and record no token/guard span.",
+    "coverage": "PARTIAL; full component replay blocked with 10 partial units.",
+    "scope": "PASS; detector delta is confined to known-CVE route behavior; changed tests/corpus bindings and D64 evidence."
+  },
+  "recommended_followup": "Keep the route candidate and unknown obligation. Add a bounded guard_observation field such as absent / observed_unresolved / unresolved_control_flow plus source span and normalized permission tokens; do not label a guard authorized or effective without source/API and dominance proof.",
+  "limitations": [
+    "permission_guard=unknown is not proof that a guard exists or is absent",
+    "No API contract, map/value provenance, CFG/dominance, product inclusion, runtime authorization, CVE causality, or vulnerability status is established",
+    "D52 remains a pinned-source candidate; product/framework/CVE conclusion is unknown"
+  ]
+}
+
+
