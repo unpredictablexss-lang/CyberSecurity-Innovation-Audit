@@ -1,0 +1,38 @@
+[
+  {
+    "sample_id": "sensitive_reply_positive",
+    "family": "DATA-04",
+    "expected_rule": "ipc.data.sensitive-flow",
+    "file": "reply_positive.cpp"
+  },
+  {
+    "sample_id": "sensitive_reply_fixed",
+    "family": "DATA-04",
+    "expected_rule": null,
+    "file": "reply_fixed.cpp"
+  },
+  {
+    "sample_id": "sensitive_result_not_replied",
+    "family": "DATA-04",
+    "expected_rule": null,
+    "file": "reply_not_written.cpp"
+  },
+  {
+    "sample_id": "unmodeled_result_not_disclosure",
+    "family": "DATA-04",
+    "expected_rule": null,
+    "file": "unmodeled_source.cpp"
+  },
+  {
+    "sample_id": "sensitive_out_param_reply_positive",
+    "family": "DATA-04",
+    "expected_rule": "ipc.data.sensitive-flow",
+    "file": "out_param_positive.cpp"
+  },
+  {
+    "sample_id": "sensitive_out_param_reply_fixed",
+    "family": "DATA-04",
+    "expected_rule": null,
+    "file": "out_param_fixed.cpp"
+  }
+]

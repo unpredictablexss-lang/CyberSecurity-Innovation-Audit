@@ -19,7 +19,7 @@ import tree_sitter_c
 from .cpp_macros import Expansion, catalog_for_units, expand_with_catalog
 from .entry_index import EntryIndex
 from .families import merge_policy
-from .models import IpcPolicy, consequence_for
+from .models import DISCLOSURE_CALLS, IpcPolicy, consequence_for
 
 
 def parses_clean(source, grammar):
@@ -53,6 +53,7 @@ class Value:
     permission: str = ""
     predicate: tuple = ()
     terms: tuple = ()
+    provenance: str = ''
 
 
 UNKNOWN = Value()
@@ -162,6 +163,9 @@ class Function:
     ref_params: tuple = ()
     # 1-based line of the definition, when the frame came from the index.
     line: int = 0
+    # Parcel references after the incoming request parcel. Writes to these
+    # parameters may be visible to the remote transaction caller.
+    reply_params: tuple = ()
 
     def text(self, node):
         if node is None:
@@ -407,6 +411,11 @@ class Interpreter:
                               for entry in policy.service_account_roles}
         self.account_accepts = {entry.role: frozenset(entry.accepted_operations)
                                for entry in policy.service_account_roles}
+        self.account_handlers = {entry.role: {
+            operation: frozenset(handler for op, handler in entry.operation_handlers
+                                 if op == operation)
+            for operation, _handler in entry.operation_handlers
+        } for entry in policy.service_account_roles}
         self.account_notes = set()
         self.functions = []
         self.observations = []
@@ -492,8 +501,228 @@ class Interpreter:
                 body = node.child_by_field_name("body")
                 if body and not node.has_error:
                     self.functions.append(Function(unit.path, terminal(q), q, owner, node, body,
-                                                   source, tuple(params), tuple(parcels[:1])))
+                                                   source, tuple(params), tuple(parcels[:1]),
+                                                   reply_params=tuple(parcels[1:])))
         self._build_index(units)
+
+    def unbounded_observer_registrations(self):
+        """Find unbounded observer sinks and bind direct source paths when possible.
+
+        Candidate discovery remains conservative when the hierarchy is missing or
+        ambiguous. A path note is attached only when one scanned stub implementation
+        is unique and the observer argument is forwarded unchanged through the
+        implementation to the collection insertion.
+        """
+        def body_text(fn):
+            return fn.text(fn.body)
+
+        def named_calls(fn, name):
+            for node in walk(fn.body, "call_expression"):
+                callee_node = node.child_by_field_name("function")
+                if callee_node is None or terminal(fn.text(callee_node)) != name:
+                    continue
+                arguments_node = node.child_by_field_name("arguments")
+                arguments = tuple(fn.text(arg).strip() for arg in
+                                  (arguments_node.named_children if arguments_node else ()))
+                yield node, arguments
+
+        roots = [fn for fn in self.functions
+                 if fn.name.startswith("On") and "Observer" in fn.name
+                 and re.search(r"\bSubscribeObserver\s*\(", body_text(fn))]
+        if not roots:
+            return ()
+        subscribe_impls = [fn for fn in self.functions if fn.name == "SubscribeObserver"
+                           and re.search(r"\bAddObserver\s*\(", body_text(fn))]
+        if not subscribe_impls:
+            return ()
+        sink_owners = {fn.owner for fn in subscribe_impls if fn.owner}
+        if not sink_owners:
+            return ()
+        sinks = []
+        for fn in self.functions:
+            if fn.name != "AddObserver" or fn.owner not in sink_owners:
+                continue
+            body = body_text(fn)
+            insert = re.search(
+                r"(?:->|\.)\s*(?:insert|push_back|emplace|emplace_back)\s*\(\s*[^)]*\b(observer|callback)\b",
+                body,
+            )
+            if insert is None:
+                continue
+            aggregate_count = re.search(
+                r"\b(?:auto|uint(?:32_t)?|size_t)\s+(\w+)\s*=\s*GetAllObserversSize\s*\(", body
+            )
+            aggregate_name = aggregate_count.group(1) if aggregate_count and "MAX_OBSERVER_COUNT" in body else None
+            insertion_byte = fn.body.start_byte + len(body[:insert.start()].encode("utf-8"))
+            bounded = False
+            for branch in walk(fn.body, "if_statement"):
+                if branch.end_byte > insertion_byte:
+                    continue
+                condition = fn.text(branch.child_by_field_name("condition"))
+                consequence_node = branch.child_by_field_name("consequence")
+                direct_exit = consequence_node is not None and (
+                    consequence_node.type in ("return_statement", "throw_statement")
+                    or any(child.type in ("return_statement", "throw_statement")
+                           for child in consequence_node.named_children)
+                )
+                if (aggregate_name
+                        and re.search(r"\bMAX_OBSERVER_COUNT\b", condition)
+                        and re.search(r"\b" + re.escape(aggregate_name) + r"\b", condition)
+                        and re.search(r"(?:>=|>)", condition)
+                        and direct_exit):
+                    bounded = True
+                    break
+            if bounded:
+                continue
+            line = fn.body.start_point[0] + 1 + body[:insert.start()].count("\n")
+            path_notes = []
+            if self.index is not None:
+                sink_param_name = insert.group(1)
+                sink_positions = [i for i, name in enumerate(fn.params) if name == sink_param_name]
+                if len(sink_positions) == 1:
+                    sink_observer_pos = sink_positions[0]
+                    for root in roots:
+                        entry = self.index.one_hop_definition(root.owner, "SubscribeObserver")
+                        if entry is None:
+                            continue
+                        implementations = [candidate for candidate in self.functions_by_owner_name.get(
+                            (entry.owner.rsplit("::", 1)[-1], entry.name), ())
+                            if candidate.file == entry.file and candidate.qualified == entry.qualified]
+                        if len(implementations) != 1:
+                            continue
+                        implementation = implementations[0]
+                        observer_positions = [i for i, name in enumerate(implementation.params)
+                                              if name in ("observer", "callback")]
+                        if len(observer_positions) != 1:
+                            continue
+                        observer_pos = observer_positions[0]
+                        root_calls = list(named_calls(root, "SubscribeObserver"))
+                        if len(root_calls) != 1:
+                            continue
+                        root_node, root_args = root_calls[0]
+                        if observer_pos >= len(root_args):
+                            continue
+                        root_value = root_args[observer_pos]
+                        if not re.fullmatch(r"[A-Za-z_]\w*", root_value):
+                            continue
+                        add_calls = [(node, args) for node, args in named_calls(implementation, "AddObserver")
+                                     if sink_observer_pos < len(args)
+                                     and args[sink_observer_pos] == implementation.params[observer_pos]]
+                        if not add_calls:
+                            continue
+                        root_name = (root.qualified if "::" in root.qualified or not root.owner
+                                     else root.owner + "::" + root.name)
+                        implementation_name = (
+                            implementation.qualified if "::" in implementation.qualified
+                            or not implementation.owner else implementation.owner + "::" + implementation.name)
+                        sink_name = (fn.qualified if "::" in fn.qualified or not fn.owner
+                                     else fn.owner + "::" + fn.name)
+                        add_lines = ",".join(str(node.start_point[0] + 1) for node, _ in add_calls)
+                        path_notes.append(
+                            "source-indexed direct-argument path: " + root_name + " at "
+                            + root.file + ":" + str(root_node.start_point[0] + 1) + " forwards "
+                            + root_value + " to " + implementation_name + " at "
+                            + implementation.file + ":" + str(implementation.line or
+                                implementation.body.start_point[0] + 1) + "; AddObserver call site(s) "
+                            + implementation.file + ":" + add_lines + " forward its "
+                            + implementation.params[observer_pos] + " parameter unchanged to "
+                            + sink_name + " at " + fn.file + ":" + str(line)
+                            + ", where that parameter is inserted. This is source-path evidence only."
+                        )
+            path_note = path_notes[0] if len(set(path_notes)) == 1 else None
+            sinks.append((fn, line, insert.group(1), path_note))
+        return tuple(sinks)
+
+    def privileged_permission_grants(self):
+        """Find a default-app exemption and bind it to the scanned IPC path.
+
+        Keep conservative candidate discovery when a unique source hierarchy is
+        unavailable, but attach a concrete path only when the source index resolves
+        the stub virtual call to one implementation and that implementation calls
+        the verifier. A missing or partial class graph is not proof that no path
+        exists.
+        """
+        roots = [fn for fn in self.functions
+                 if fn.name == "OnGetPasteData"
+                 and re.search(r"\bGetPasteData\s*\(", fn.text(fn.body))]
+        if not roots:
+            return ()
+
+        paths_by_owner = {}
+        if self.index is not None:
+            for root in roots:
+                entry = self.index.one_hop_definition(root.owner, "GetPasteData")
+                if entry is None:
+                    continue
+                implementations = [
+                    fn for fn in self.functions_by_owner_name.get(
+                        (entry.owner.rsplit("::", 1)[-1], entry.name), ())
+                    if fn.file == entry.file and fn.qualified == entry.qualified
+                ]
+                if len(implementations) != 1:
+                    continue
+                implementation = implementations[0]
+                if not re.search(r"\bVerifyPermission\s*\(",
+                                 implementation.text(implementation.body)):
+                    continue
+                root_line = root.body.start_point[0] + 1
+                implementation_line = implementation.body.start_point[0] + 1
+                root_name = (root.qualified if "::" in root.qualified or not root.owner
+                             else root.owner + "::" + root.name)
+                implementation_name = (
+                    implementation.qualified if "::" in implementation.qualified
+                    or not implementation.owner else implementation.owner + "::" + implementation.name)
+                paths_by_owner.setdefault(implementation.owner, []).append(
+                    "source-indexed within this scope: " + root_name + " at "
+                    + root.file + ":" + str(root_line) + " -> "
+                    + implementation_name + " at " + implementation.file + ":"
+                    + str(implementation_line) + " -> VerifyPermission"
+                )
+
+        results = []
+        for verifier in self.functions:
+            if verifier.name != "VerifyPermission" or not verifier.owner:
+                continue
+            body = verifier.text(verifier.body)
+            privilege = re.search(
+                r"\b(?:auto|bool)\s+(\w+)\s*=\s*IsDefaultIME\s*\(", body
+            )
+            grant = re.search(
+                r"\b(?:auto|bool)\s+isGrant\s*=\s*([^;]+);", body
+            )
+            if privilege is None or grant is None:
+                continue
+            if not re.search(r"\b" + re.escape(privilege.group(1)) + r"\b", grant.group(1)):
+                continue
+            callers = [fn for fn in self.functions
+                       if fn.name == "GetPasteData" and fn.owner == verifier.owner
+                       and re.search(r"\bVerifyPermission\s*\(", fn.text(fn.body))]
+            if not callers:
+                continue
+            line = verifier.body.start_point[0] + 1 + body[:grant.start()].count("\n")
+            path_notes = paths_by_owner.get(verifier.owner, ())
+            path_note = path_notes[0] if len(set(path_notes)) == 1 else None
+            helper_candidates = [candidate for candidate in self.functions
+                                 if candidate.name == "IsDefaultIME"
+                                 and candidate.owner == verifier.owner]
+            empty_branch_note = None
+            if len(helper_candidates) == 1:
+                helper = helper_candidates[0]
+                helper_body = helper.text(helper.body)
+                empty_true = re.search(
+                    r"if\s*\(\s*(\w+(?:->\w+|\.\w+)*)\s*\.\s*empty\s*\(\s*\)\s*\)\s*\{\s*return\s+true\s*;",
+                    helper_body,
+                )
+                if empty_true is not None:
+                    helper_line = helper.body.start_point[0] + 1 + helper_body[:empty_true.start()].count("\n")
+                    empty_branch_note = (
+                        helper.qualified + " returns true when " + empty_true.group(1)
+                        + " is empty at " + helper.file + ":" + str(helper_line)
+                        + "; because the result contributes to isGrant, empty configuration "
+                        + "can contribute to the verifier grant. Configuration state is unknown."
+                    )
+            results.append((verifier, line, privilege.group(1), path_note, empty_branch_note))
+        return tuple(results)
 
     def _build_macro_catalog(self, units):
         """Catalogue the scan's own `#define`s, headers first.
@@ -650,7 +879,7 @@ class Interpreter:
                    and f.name == terminal(name) and f.owner == prefix]
         return matches[0] if len(matches) == 1 else None
 
-    def delegated(self, callee):
+    def delegated(self, callee, owner=""):
         """One hop from a handler into the service singleton it delegates to.
 
         OpenHarmony stubs hand the request to the service implementation, which
@@ -662,12 +891,134 @@ class Interpreter:
         """
         if self.index is None:
             return None
-        target = self.index.resolve_receiver(callee)
+        target = self.index.resolve_receiver(callee, owner=owner)
         if not target or "::" not in target:
             return None
         owner, name = target.rsplit("::", 1)
         matches = self.functions_by_owner_name.get((owner.rsplit("::", 1)[-1], name), [])
         return matches[0] if len(matches) == 1 else None
+
+    @staticmethod
+    def _return_expression(node, fn):
+        text = fn.text(node).strip()
+        match = re.fullmatch(r"return\s+(.+?)\s*;", text, re.S)
+        return match.group(1).strip() if match else ""
+
+    def _safe_rejecting_prefix(self, statement, fn):
+        """Only accept a wrapper prefix that rejects and returns an error."""
+        if statement.type != "if_statement" or statement.child_by_field_name("alternative") is not None:
+            return False
+        consequence = statement.child_by_field_name("consequence")
+        if consequence is None:
+            return False
+        returns = list(walk(consequence, "return_statement"))
+        if len(returns) != 1:
+            return False
+        result = self._return_expression(returns[0], fn)
+        if not (result.startswith("ERR_") or result in ("nullptr", "NULL", "false")
+                or re.fullmatch(r"-\d+", result)):
+            return False
+        for call in walk(consequence, "call_expression"):
+            callee = terminal(fn.text(call.child_by_field_name("function")))
+            if not callee.startswith("HILOG_"):
+                return False
+        return True
+
+    def caller_class_contract_through(self, implementation, depth=0, visited=()):
+        """Resolve one narrow service-wrapper chain to an exact role contract.
+
+        Cross-class propagation is accepted only for a unique source-typed member
+        receiver, a direct return of the delegated call with arguments forwarded
+        positionally unchanged, and fail-closed early returns. The destination
+        method's role gate is separately checked before its reviewed effect calls.
+        """
+        if implementation is None or implementation.body is None or depth > 2:
+            return None
+        identity = (implementation.file, implementation.qualified)
+        if identity in visited:
+            return None
+        direct = self.repository_caller_class_contract(implementation.qualified)
+        if direct:
+            return direct, self.dispatch_guard(implementation), (implementation.qualified,)
+        next_visited = visited + (identity,)
+        candidates = []
+        for call in walk(implementation.body, "call_expression"):
+            callee_node = call.child_by_field_name("function")
+            callee = implementation.text(callee_node)
+            target = self.index.resolve_receiver(callee, owner=implementation.owner) if self.index else None
+            if not target or "::" not in target:
+                continue
+            owner, method = target.rsplit("::", 1)
+            matches = self.functions_by_owner_name.get((owner.rsplit("::", 1)[-1], method), [])
+            if len(matches) != 1:
+                continue
+            helper = matches[0]
+            nested = self.caller_class_contract_through(helper, depth + 1, next_visited)
+            if nested is None:
+                continue
+            role_contract, gate, chain = nested
+            # The target operation must be returned directly; wrappers that inspect,
+            # transform, or discard its result are outside this summary.
+            returned = call
+            while returned is not None and returned.type != "return_statement":
+                returned = returned.parent
+            if returned is None:
+                continue
+            returned_text = re.sub(r"\s+", "", implementation.text(returned))
+            call_text = re.sub(r"\s+", "", implementation.text(call))
+            if returned_text != "return" + call_text + ";":
+                continue
+            arguments = call.child_by_field_name("arguments")
+            supplied = [implementation.text(arg).strip()
+                        for arg in (arguments.named_children if arguments else ())]
+            if supplied != list(implementation.params):
+                continue
+            # Every other return must be an error-only early rejection under an if.
+            valid_returns = True
+            for ret in walk(implementation.body, "return_statement"):
+                if ret == returned:
+                    continue
+                expression = self._return_expression(ret, implementation)
+                parent = ret.parent
+                inside_if = False
+                while parent is not None and parent != implementation.body:
+                    if parent.type == "if_statement":
+                        inside_if = True
+                        break
+                    parent = parent.parent
+                if not inside_if or not (
+                    expression.startswith("ERR_") or expression in ("nullptr", "NULL", "false")
+                    or re.fullmatch(r"-\d+", expression)
+                ):
+                    valid_returns = False
+                    break
+            if not valid_returns:
+                continue
+            statements = list(implementation.body.named_children)
+            top_statement = next((item for item in statements
+                                  if item.start_byte <= call.start_byte
+                                  and call.end_byte <= item.end_byte), None)
+            if top_statement is None:
+                continue
+            preceding = statements[:statements.index(top_statement)]
+            if any(not self._safe_rejecting_prefix(item, implementation) for item in preceding):
+                continue
+            if self._modelled_before(implementation, preceding + [top_statement]):
+                # The contract's identity lookup may only be reached after its
+                # caller-role check; do not credit a later guard.
+                target_contract = self.repository_caller_class_contract(helper.qualified)
+                if target_contract is None:
+                    continue
+                effects = set(target_contract[1])
+                if any(terminal(implementation.text(item.child_by_field_name("function")))
+                       in effects
+                       for statement in preceding + [top_statement]
+                       for item in walk(statement, "call_expression")
+                       if item != call):
+                    continue
+            candidates.append((role_contract, gate,
+                               (implementation.qualified,) + tuple(chain)))
+        return candidates[0] if len(candidates) == 1 else None
 
     def one_hop_dispatch(self, fn, node, callee, name, args, state):
         """Read one class hop past an unqualified virtual dispatch, when it guards.
@@ -728,15 +1079,20 @@ class Interpreter:
         # `WriteRemoteObject` of one of those values exports *that* call's product.
         self.bind_result(state, implementation, args,
                          Value("call_result", implementation.qualified,
-                               "guarded" if gate else "unguarded"))
+                               "guarded" if gate else "unguarded"),
+                         disclosure_positions=dict(self.policy.disclosure_output_calls).get(name, ()),
+                         disclosure_guarded=bool(gate))
         if gate is not None:
+            gate_function, gate_node, gate_roles = gate
             self.hop_notes.add(
                 "Cross-TU one-hop guard credited: " + fn.qualified + " at "
                 + self._where(fn.file, fn, node) + " dispatches to "
                 + implementation.qualified + " at " + implementation.file + ":"
-                + str(implementation.line) + ", whose caller-role gate at "
-                + self._where(implementation.file, implementation, gate[0])
-                + " admits " + ", ".join(gate[1]) + ".")
+                + str(implementation.line) + ", whose source-derived delegation chain "
+                + "reaches caller-role gate at "
+                + self._where(gate_function.file, gate_function, gate_node)
+                + " in " + gate_function.qualified + ", whose caller-role gate admits "
+                + ", ".join(gate_roles) + ".")
         return implementation, gate
 
     def _where(self, file, fn, node):
@@ -747,7 +1103,8 @@ class Interpreter:
         line = node.start_point[0] + 1
         return file + ":" + str(line_map.get(line, line))
 
-    def bind_result(self, state, implementation, args, produced):
+    def bind_result(self, state, implementation, args, produced,
+                    disclosure_positions=(), disclosure_guarded=False):
         """Bind what a dispatched call hands back, so a later export can be traced.
 
         A stub receives the remote object from the implementation it dispatches to
@@ -758,12 +1115,20 @@ class Interpreter:
         Pointer out-parameters are not bound: a pointer argument does not say
         whether it is written to.
         """
+        if not disclosure_positions:
+            disclosure_positions = dict(self.policy.disclosure_output_calls).get(implementation.name, ())
+        disclosure_guarded = disclosure_guarded or produced.subject == "guarded"
         params = implementation.params
         for position in range(min(len(params), len(args))):
             if params[position] not in implementation.ref_params:
                 continue
             if args[position].key:
-                state.env[args[position].key] = produced
+                if position in disclosure_positions:
+                    state.env[args[position].key] = Value(
+                        "sensitive_result", implementation.qualified, implementation.name,
+                        provenance="caller-guarded" if disclosure_guarded else "")
+                else:
+                    state.env[args[position].key] = produced
 
     @staticmethod
     def _leaves(branch):
@@ -782,14 +1147,18 @@ class Interpreter:
         """
         modelled = (self.policy.sensitive_calls | self.policy.object_sensitive_calls
                     | self.policy.capability_calls | self.policy.copy_calls
-                    | self.policy.boolean_permissions | self.policy.result_permissions)
+                    | self.policy.boolean_permissions | self.policy.result_permissions
+                    | frozenset({"ResetCallingIdentity", "SetCallingIdentity"}))
+        contract = self.repository_caller_class_contract(implementation.qualified)
+        if contract:
+            modelled = modelled | frozenset(contract[1])
         for statement in statements:
             for call in walk(statement, "call_expression"):
                 if terminal(implementation.text(call.child_by_field_name("function"))) in modelled:
                     return True
         return False
 
-    def dispatch_guard(self, implementation, bindings=None):
+    def dispatch_guard(self, implementation, bindings=None, seen=None):
         """What a cross-TU one-hop dispatch lands on, when the callee gates on role.
 
         Returns ``(gate_node, roles)`` when the implementer's own body rejects
@@ -817,8 +1186,11 @@ class Interpreter:
         are declined, so an unread or partial guard leaves the call a candidate
         rather than being read as one.
         """
-        if implementation.body is None:
+        seen = set() if seen is None else set(seen)
+        key = (implementation.file, implementation.qualified, implementation.line)
+        if implementation.body is None or key in seen or len(seen) >= 3:
             return None
+        seen.add(key)
         frame = State(env={name: Value("request", name)
                            for name in implementation.params if name})
         # What the call site proves about the parameters. `&& errorCode` is true
@@ -850,7 +1222,32 @@ class Interpreter:
                 continue
             roles = sorted(set().union(*(s.auth | s.caller_class for s in no)))
             if roles:
-                return item, roles
+                return implementation, item, roles
+
+        # Follow only a unique terminal return through a source-typed member
+        # receiver. No modeled operation may occur before this delegation.
+        returns = [(i, item) for i, item in enumerate(statements)
+                   if item.type == "return_statement"]
+        if len(returns) == 1:
+            position, returned = returns[0]
+            expression = returned.named_children[0] if returned.named_children else None
+            if (position == len(statements) - 1 and expression is not None
+                    and expression.type == "call_expression"
+                    and not self._modelled_before(implementation, statements[:position])):
+                callee = implementation.text(expression.child_by_field_name("function"))
+                helper = self.delegated(callee, implementation.owner)
+                if helper is not None:
+                    arguments = expression.child_by_field_name("arguments")
+                    supplied = list(arguments.named_children) if arguments is not None else []
+                    nested_bindings = {}
+                    for index, name in enumerate(helper.params):
+                        if index < len(supplied) and name:
+                            decided = self._decisive(implementation, supplied[index])
+                            if decided is not None:
+                                nested_bindings[name] = decided
+                    nested_gate = self.dispatch_guard(helper, nested_bindings, seen)
+                    if nested_gate is not None:
+                        return nested_gate
         return None
 
     @staticmethod
@@ -877,6 +1274,13 @@ class Interpreter:
                 return Value("constant", "1")
         return None
 
+    def repository_caller_class_contract(self, qualified):
+        repository = self.request.repository if self.request is not None else None
+        for owner, method, role, effects in self.policy.repository_caller_class_contracts:
+            if owner == repository and method == qualified:
+                return role, tuple(effects)
+        return None
+
     def expected_permission(self, name, qualified=""):
         repository = self.request.repository if self.request is not None else None
         for owner, method, expected in self.policy.repository_expected_permissions:
@@ -893,8 +1297,14 @@ class Interpreter:
         # record names. Recognizing the account that guards an interface is not a
         # statement that the account may do anything else, so this set is computed
         # per operation rather than read as a general authorization.
-        account = {role for role in state.service_account
-                   if name in self.account_accepts.get(role, ())}
+        account = set()
+        for role in state.service_account:
+            if name not in self.account_accepts.get(role, ()):
+                continue
+            exact_handlers = self.account_handlers.get(role, {}).get(name)
+            if exact_handlers and qualified not in exact_handlers:
+                continue
+            account.add(role)
         if name in ("GetRemoteHapTokenInfo","DeleteRemoteHapTokenInfo","UpdateRemoteHapTokenInfo"):
             return bool(state.auth or state.caller_class.intersection({"TOKEN_NATIVE"}) or account)
         return bool(state.auth or account)
@@ -925,6 +1335,16 @@ class Interpreter:
             entry = self.account_roles.get(terminal(other.key))
             if entry is None:
                 continue
+            repository = self.request.repository if self.request is not None else None
+            if repository != entry.repository:
+                self.account_notes.add(
+                    "Caller-UID guard in " + fn.qualified + " at "
+                    + self._where(fn.file, fn, node) + " compares the calling UID with "
+                    + entry.constant + ", but the reviewed account role " + entry.role
+                    + " is scoped to " + entry.repository + "; this scan is bound to "
+                    + (repository or "an unstated repository") + ". The role was not derived, "
+                    "so the protected call remains a candidate.")
+                return None
             definition = (self.index.define_constant(entry.constant, fn.file)
                           if self.index is not None else None)
             if definition is None:
@@ -954,6 +1374,10 @@ class Interpreter:
             note += (" The role " + entry.role + " is accepted for "
                     + ", ".join(entry.accepted_operations) + " and for nothing else; target "
                     + self._target() + "; policy origin: " + entry.origin + ".")
+            if entry.operation_handlers:
+                note += (" Exact operation-handler scope: " + "; ".join(
+                    operation + " only in " + handler
+                    for operation, handler in entry.operation_handlers) + ".")
             self.account_notes.add(note)
             return entry.role
         # A reviewed account constant compared with something that is not the
@@ -1020,7 +1444,7 @@ class Interpreter:
             "a comparison it makes against a reviewed service account is recorded on its "
             "own account-model line when the source resolves it.")
 
-    def action(self, fn, node, state, name, args, depth=0, guard=None):
+    def action(self, fn, node, state, name, args, depth=0, guard=None, required_role=None):
         """Report the candidate a modelled call is, unless `guard` explains it.
 
         `guard` is what `dispatch_guard` read one class hop away, when this call is
@@ -1034,7 +1458,9 @@ class Interpreter:
         if self.root is None:
             return
         root_key = (self.root.file, self.root.qualified)
-        sensitive = name in self.policy.sensitive_calls or name in self.policy.object_sensitive_calls
+        sensitive = (name in self.policy.sensitive_calls
+                     or name in self.policy.object_sensitive_calls
+                     or required_role is not None)
         # A reviewed method contract can reject a wrong permission at the check
         # itself, even where no separate sensitive sink is modeled in this body.
         expected_contract = (self.expected_permission(fn.name, fn.qualified)
@@ -1055,14 +1481,17 @@ class Interpreter:
                 self.emit("AUTH-03",issue_rule,issue_fn,issue_node,state,issue_message,call=name)
         expected = self.expected_permission(name, fn.qualified)
         mismatch = expected and state.auth and expected not in state.auth
-        if sensitive and mismatch and guard is None:
+        guard_covers = bool(guard and (not required_role or required_role in guard[2]))
+        if sensitive and mismatch and not guard_covers:
             if root_key not in self.permission_mismatch_roots:
                 observed = ", ".join(sorted(state.auth))
                 self.emit("AUTH-02", "ipc.auth.missing", fn, node, state,
                           "Sensitive modeled call " + name + " has a permission mismatch: "
                           "reviewed contract requires " + expected + ", but this path checks "
                           + observed + ".", call=name)
-        elif sensitive and not self.authorized(state, name, fn.qualified) and guard is None:
+        elif (sensitive and not self.authorized(state, name, fn.qualified)
+              and not guard_covers
+              and not (required_role and required_role in state.caller_class)):
             if self.root_grade == "dispatch" and "dispatcher-guard-observed" in self.root_note:
                 # A guard runs before dispatch, so this is a guard-coverage question
                 # (does it dominate this transaction?), not an absent-authorization
@@ -1075,7 +1504,16 @@ class Interpreter:
                 self.emit("AUTH-02", "ipc.auth.missing", fn, node, state,
                           "Sensitive modeled call " + name + " has a structured path without a recognized caller authorization.",
                           call=name)
-        if name in self.policy.caller_class_sensitive_calls and not state.caller_class:
+        role_guarded = bool(required_role and required_role in state.caller_class)
+        if required_role:
+            role_guarded = role_guarded or guard_covers
+            if not role_guarded:
+                self.emit("AUTH-03","ipc.auth.caller-class",fn,node,state,
+                          "Reviewed operation contract requires caller class "
+                          + required_role + " for " + name + "; no matching gate was established.",
+                          call=name)
+        elif (name in self.policy.caller_class_sensitive_calls
+              and not state.caller_class and guard is None):
             self.emit("AUTH-03","ipc.auth.caller-class",fn,node,state,
                       "Sensitive token/privacy operation lacks a caller-class/system-application boundary: "+name,
                       call=name)
@@ -1347,12 +1785,35 @@ class Interpreter:
                           "Unresolved member-pointer IPC dispatch lacks interface-descriptor validation; callee remains unknown.")
             helper = self.resolve(fn, callee)
             if helper is None:
-                helper = self.delegated(callee)
+                helper = self.delegated(callee, fn.owner)
             if helper is not None:
                 self.note_shadowed_role_predicate(helper)
             implementation = guard = None
             if helper is None:
                 implementation, guard = self.one_hop_dispatch(fn, node, callee, name, args, state)
+            # Reviewed framework role predicates may be nested behind a receiver
+            # factory. The unknown factory result must not hide the exact terminal
+            # predicate from branch refinement. Local definitions resolve above.
+            if helper is None and implementation is None:
+                for role_name, role_kind, role_label in self.policy.caller_role_guards:
+                    if role_name == name:
+                        return Value("predicate", predicate=(role_kind, role_label, True))
+            contract_target = helper or implementation
+            summary = None
+            if contract_target is not None:
+                with self.lookahead():
+                    summary = self.caller_class_contract_through(contract_target)
+            contract = summary[0] if summary else None
+            required_role = contract[0] if contract else None
+            if summary:
+                role_guard = summary[1]
+                if role_guard is not None and required_role not in role_guard[2]:
+                    role_guard = None
+                if role_guard is not None:
+                    guard = role_guard
+                    self.hop_notes.add(
+                        "Cross-TU caller-role contract path: "
+                        + " -> ".join(summary[2]) + " requires " + required_role + ".")
                 if implementation is None:
                     # Reviewed caller-role predicates, by exact name, and only for a
                     # call this file does not itself define: a local function of the
@@ -1365,7 +1826,22 @@ class Interpreter:
                     for role_name, role_kind, role_label in self.policy.caller_role_guards:
                         if role_name == name:
                             return Value("predicate", predicate=(role_kind, role_label, True))
-            self.action(fn, node, state, name, args, depth, guard=guard)
+            source_guarded = bool(guard and (not required_role or required_role in guard[2]))
+            if implementation is not None:
+                for position in dict(self.policy.disclosure_output_calls).get(name, ()):
+                    if (position < len(implementation.params) and position < len(args)
+                            and implementation.params[position] in implementation.ref_params
+                            and args[position].key):
+                        output = state.env.get(args[position].key, UNKNOWN)
+                        if output.kind == "sensitive_result" and output.subject == implementation.qualified:
+                            state.env[args[position].key] = replace(
+                                output, provenance="caller-guarded" if source_guarded else "")
+            self.action(fn, node, state, name, args, depth, guard=guard,
+                        required_role=required_role)
+            if name in self.policy.reply_write_calls:
+                reply = state.env.get(receiver, UNKNOWN)
+                if reply.kind == "reply_parcel":
+                    self.reply_flow(fn, node, state, name, args)
             if helper and self.root.name in self.policy.entry_names and not state.descriptor:
                 with self.lookahead():
                     relay = self.relay_guard(fn, node, args, helper, state, depth)
@@ -1430,6 +1906,9 @@ class Interpreter:
                 return Value(kind, text, subject, perm)
             if helper and (depth >= self.policy.max_call_depth or helper in self.active):
                 self.limitations.add("Call depth/recursion budget reached at " + helper.qualified)
+            if name in DISCLOSURE_CALLS:
+                return Value("sensitive_result", text, name,
+                             provenance="caller-guarded" if source_guarded else "")
             return Value("unknown", text)
         if node.type == "binary_expression":
             left = self.value(fn,node.child_by_field_name("left"),state,depth)
@@ -1522,6 +2001,19 @@ class Interpreter:
         # Visit nested calls without treating comments or strings as executable.
         for child in node.named_children:self.value(fn,child,state,depth)
         return Value("unknown",text)
+
+    def reply_flow(self, fn, node, state, name, args):
+        """Report only when a reviewed sensitive result reaches the reply parcel."""
+        for value in args:
+            if value.kind != "sensitive_result":
+                continue
+            source = value.subject
+            if value.provenance == "caller-guarded" or self.authorized(state, source):
+                continue
+            self.emit("DATA-04", "ipc.data.sensitive-flow", fn, node, state,
+                      "Result of " + source + " is written into the reply parcel by "
+                      + name + " on a path without a matched caller authorization.")
+            return
 
     def check_subtractions(self,fn,node,state,value):
         if not value.terms or value.terms[0]!="-":return
@@ -1723,7 +2215,8 @@ class Interpreter:
         for fn, grade, note in self._entry_roots():
             self.root=fn;self.root_grade=grade;self.root_note=note
             self.capacities={};self.active=(fn,)
-            env={p:Value("parcel",p) if p in fn.parcel_params else Value("request",p)
+            env={p:(Value("parcel",p) if p in fn.parcel_params else
+                    Value("reply_parcel",p) if p in fn.reply_params else Value("request",p))
                  for p in fn.params}
             self.block(fn,fn.body,[State(env=env)],0)
         revised=[]

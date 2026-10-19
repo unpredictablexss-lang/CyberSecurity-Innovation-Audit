@@ -1,0 +1,6 @@
+[
+  {"sample_id":"auth06_missing_guard","data_origin":"synthetic","family":"AUTH-06","expected_rule":"ipc.network.auth-session-whitelist","file":"missing_guard.c","split":"design","variant":"positive"},
+  {"sample_id":"auth06_prefix_guard_candidate","data_origin":"synthetic","family":"AUTH-06","expected_rule":"ipc.network.auth-session-whitelist","file":"prefix_guard_candidate.c","split":"design","variant":"fixed"},
+  {"sample_id":"auth06_exact_guard_fixed","data_origin":"synthetic","family":"AUTH-06","expected_rule":null,"file":"exact_guard_fixed.c","split":"design","variant":"fixed"},
+  {"sample_id":"auth06_reversed_guard_positive","data_origin":"synthetic","family":"AUTH-06","expected_rule":"ipc.network.auth-session-whitelist","file":"reversed_guard_positive.c","split":"design","variant":"positive"}
+]

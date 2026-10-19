@@ -13,8 +13,9 @@ from src.ohscanner.detectors.interface.models import IpcPolicy
 BASE=Path(__file__).parent/'fixtures/ipc'
 
 def context(text, path='sample.cpp', repository='fixture/ipc'):
-    index=parse_source(text,language='cpp')
-    unit=SourceUnit(path,'cpp',text,hashlib.sha256(text.encode()).hexdigest(),index.parse_status)
+    language = 'c' if path.endswith('.c') else 'cpp'
+    index=parse_source(text,language=language)
+    unit=SourceUnit(path,language,text,hashlib.sha256(text.encode()).hexdigest(),index.parse_status)
     request=ScanRequest('ipc-test',repository,'synthetic-ipc-v1',snapshot_digest((unit,)),'current-component:'+repository)
     return ScanContext(request,(unit,),{'ast':{path:index.to_dict()}})
 
@@ -28,7 +29,11 @@ class IpcDetectorTests(unittest.TestCase):
     def test_synthetic_semantic_matrix(self):
         for item in json.loads((BASE/'manifest.json').read_text()):
             with self.subTest(sample=item['sample_id']):
-                ctx=context((BASE/item['file']).read_text())
+                repository = ('openharmony/security_access_token'
+                              if item['sample_id'] == 'account_role_authorized_fixed'
+                              else 'fixture/ipc')
+                sample_path = 'sample.c' if item['sample_id'].startswith('auth06_') else 'sample.cpp'
+                ctx=context((BASE/item['file']).read_text(),path=sample_path,repository=repository)
                 run=IpcInterfaceDetector().detect(ctx,ctx.units)
                 self.assertEqual(run.status,'completed')
                 rules={f.rule_id for f in run.findings}
@@ -315,7 +320,8 @@ class IpcDetectorTests(unittest.TestCase):
         text, the accepted-operation list, the scan target and the policy origin.
         A credit that cannot be checked line by line is not reviewable.
         """
-        ctx=context((BASE/'account_role_authorized_fixed.cpp').read_text())
+        ctx=context((BASE/'account_role_authorized_fixed.cpp').read_text(),
+                    repository='openharmony/security_access_token')
         run=IpcInterfaceDetector().detect(ctx,ctx.units)
         self.assertEqual({f.rule_id for f in run.findings},set())
         credited=[s for s in run.limitations if s.startswith('Service-account role credited:')]
@@ -329,8 +335,8 @@ class IpcDetectorTests(unittest.TestCase):
         self.assertIn('ACCESSTOKEN_UID, "static const int32_t ACCESSTOKEN_UID = 3020;"',note)
         self.assertIn('The role <caller-account:access-token-service> is accepted for '
                       'GetRemoteHapTokenInfo, DeleteRemoteHapTokenInfo, '
-                      'UpdateRemoteHapTokenInfo and for nothing else',note)
-        self.assertIn('target fixture/ipc@synthetic-ipc-v1',note)
+                      'UpdateRemoteHapTokenInfo, RemovePermissionUsedRecords and for nothing else',note)
+        self.assertIn('target openharmony/security_access_token@synthetic-ipc-v1',note)
         self.assertIn('policy origin: ',note)
         self.assertTrue(any(s.startswith('Service-account model: ') and 'not a permission' in s
                             for s in run.limitations))
@@ -358,7 +364,8 @@ class IpcDetectorTests(unittest.TestCase):
                             ('account_role_request_value_positive',
                              'against a request-derived value')):
             with self.subTest(sample=name):
-                ctx=context((BASE/(name+'.cpp')).read_text())
+                ctx=context((BASE/(name+'.cpp')).read_text(),
+                            repository='openharmony/security_access_token')
                 run=IpcInterfaceDetector().detect(ctx,ctx.units)
                 self.assertIn('ipc.auth.missing',{f.rule_id for f in run.findings})
                 self.assertTrue(any(phrase in s for s in run.limitations),
@@ -367,13 +374,32 @@ class IpcDetectorTests(unittest.TestCase):
                                   if s.startswith('Service-account role credited:')],[])
         # The scope control: the account is credited and the call still survives,
         # so the three credits above cannot be read as "credited means covered".
-        ctx=context((BASE/'account_role_unrelated_call_positive.cpp').read_text())
+        ctx=context((BASE/'account_role_unrelated_call_positive.cpp').read_text(),
+                    repository='openharmony/security_access_token')
         run=IpcInterfaceDetector().detect(ctx,ctx.units)
         self.assertIn('ipc.auth.missing',{f.rule_id for f in run.findings})
         credited=[s for s in run.limitations if s.startswith('Service-account role credited:')]
         self.assertEqual(len(credited),1)
         self.assertIn('<caller-account:access-token-service> is accepted for '
                       'GetRemoteHapTokenInfo, DeleteRemoteHapTokenInfo, '
-                      'UpdateRemoteHapTokenInfo and for nothing else',credited[0])
+                      'UpdateRemoteHapTokenInfo, RemovePermissionUsedRecords and for nothing else',credited[0])
+
+    def test_service_account_role_does_not_cross_repository_boundary(self):
+        ctx=context((BASE/'account_role_authorized_fixed.cpp').read_text(),
+                    repository='openharmony/window_window_manager')
+        run=IpcInterfaceDetector().detect(ctx,ctx.units)
+        self.assertIn('ipc.auth.missing',{f.rule_id for f in run.findings})
+        self.assertTrue(any('is scoped to openharmony/security_access_token' in note
+                            for note in run.limitations))
+        self.assertFalse(any(note.startswith('Service-account role credited:')
+                             for note in run.limitations))
+
+    def test_service_account_exception_is_bound_to_its_exact_handler(self):
+        text=(BASE/'account_role_authorized_fixed.cpp').read_text()
+        text=text.replace('GetRemoteHapTokenInfo(1, 2)',
+                          'RemovePermissionUsedRecords(1, 2)')
+        ctx=context(text,repository='openharmony/security_access_token')
+        run=IpcInterfaceDetector().detect(ctx,ctx.units)
+        self.assertIn('ipc.auth.missing',{f.rule_id for f in run.findings})
 
 if __name__=='__main__':unittest.main()

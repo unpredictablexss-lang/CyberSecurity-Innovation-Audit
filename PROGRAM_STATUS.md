@@ -464,6 +464,14 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   - **与入口索引正交（实测，不是推断）**：`analysis.py` 解析的是展开后文本、`entry_index.py` 解析的是原始文本，二者若对类名/owner 不一致就会静默丢 root。探针 `research/experiments/interface/ipc/probe_entry_index_expansion.py` 在 10 个组件上同时建两份索引比对：**root 与分发边 0 增 0 减**（含展开 186 个文件的 `security_access_token`、497 条 root 的 `window_window_manager`）。
 - **结论（如实）**：移植的第二个预期收益在**本语料上落空**，第一个收益真实但只有 +1.9%。保留它的理由不是「找到了东西」，而是它把一个**会让源码已守住的路径被误报为未守卫**的假阳性类变成结构性不可能（测试证明机制在模式出现时有效：关闭时报、开启不报、去掉宏的对照组仍然报），并让解析覆盖单调不减。**`validated_vulnerability` 仍为 0；本轮没有产生任何新候选，也没有删掉任何旧候选。**
 - **仍未做到**：`#include` 从不跟随，条件定义只记录不选择，变参 / 字符串化 / token 粘连 / 冲突定义变体一律拒绝（91,189 次拒绝中变参类占绝对多数）；目录预算 400 源 / 6 MB，3 个组件因此截断；宏体内部的守卫若调用不在 `IpcPolicy.boolean_permissions | result_permissions` 内（例如自定义 `IsCallerValid`），展开后依旧不构成授权事实——那部分不确定性走既有的 `dispatch_binding` 义务，不假装已解决。
+- **2026-10-17 追记（供后来的读者）**：本节的动机段说"**宏体内部**的 `return` 守卫仍然看不见"，
+  这句话**已被推翻**——宏体自 v0.4 起就是被展开的（本节改动段即为此），守卫看不见的原因在
+  **循环体判定**：OHOS 惯用宏的定义体是 `do { if (cond) { return ret; } } while (0)`，而
+  `analysis.py:1571-1579` 为每个循环保留一条**零次迭代逃逸路径**（`analysis.py:1575`），它绕过守卫、
+  却仍是循环之后唯一活着的路径。所以本节"候选集增量恰好为 0"的归因
+  （`expansions_introducing_a_modelled_guard = 0`）**在本语料上仍然成立**，但它与 58 节量到的那个 0
+  是**两个不同的 0**，别合并。详见 58.4.1 的 12 格分离对照（`s0_dowhile_split.py` /
+  `s0_dowhile_trace.py`）。
 - **测试**：新增 `tests/test_ipc_macros.py`（23 项：11 项扩展语义 + 5 项目录构建 + 6 项集成，含「控制组」与「展开不得发明 finding」）。全量 **295 项 OK**（272 既有 + 23 新增）。本轮改动**未推送**，等负责人授权。
 
 ## 27. 2026-10-11 契约 v2：source 绑定必填 + 后果字段转正（一次版本吸收三份 CCR）
@@ -2279,3 +2287,601 @@ AUTH-01/02/03/04、DATA-01、CAP-01 六个键。
 - 没有改 A 目录或 A 分支；没有改 `catalog.py`、`src/report/`、`src/case/`、`src/benchmark/`、`src/evidence/`。
 - **没有修改全局 `trusted_uids`**；没有为降低候选数加入任何白名单；没有新增/撤销任何候选。
 - 没有做动态验证；门状态与候选等级全部未变：`entry_controlled` 仍未建立、`validated_vulnerability` 仍为 0。
+
+## 58. 2026-10-17 IDL 声明的 IPC 面作为入口来源：量完，停在两处负责人共享面（队友 B / S0）
+
+一条**能力线的测量报告，不是落地**。本轮的产出是"这条线值多少、边界在哪、落地要谁点头"的定量答案。
+**未切分支、未碰 A 目录与负责人共享面、未 push/PR/merge、未做动态验证**；`validated_vulnerability` 仍为 0、
+`entry_controlled` 仍未建立、候选集一行未动。完整测量在仓库外
+`artifacts-2026-10-16/s0-idl-entry-source.md`，探针在 `/home/audit/wtmp/`（均不入库）。
+
+### 58.1 为什么要看它
+
+OpenHarmony 的 IPC 服务端分发器由 idl 生成器产出、**不在仓库里**。于是 `EntryIndex` 的源码派生入口
+（函数指针表 / switch 分发 / 虚函数覆盖）在这些服务上产出 **0 根**，`Interpreter._entry_roots()` 只剩两条手工路：
+`policy.entry_names` + Parcel 参数，以及 `policy.service_entries` —— **一张手写白名单，共 9 条**
+（`models.py:197-202` 逐条读：`CallManagerService` 7 条 + `HCameraService::CreateCameraDevice` +
+`BgContinuousTaskMgr::RequestBackgroundRunningForInner`）。白名单的边界很直白：
+`telephony_call_manager` 占 7 条但该组件树内 `.idl` 数为 0，而 `multimedia_camera_framework`
+只占 1 条却树内有 39 个 `.idl`。**树内有 `.idl` 的组件本可以自动获得这张清单** ——
+IDL 就是那份声明的树内唯一陈述。
+
+### 58.2 已核实的四个环境事实
+
+1. **`.idl` 今天进不了扫描**：`git_source.SOURCE_LANGUAGES`（`src/ohscanner/git_source.py:12`）只有
+   `.c/.cc/.cpp/.cxx/.h/.hh/.hpp/.js/.ts/.ets`；即便进了，`contracts.SourceUnit.__post_init__`
+   （`src/ohscanner/contracts.py:34`）也会以 `unsupported language` 拒绝任何不在 `("c","cpp","js","ts","arkts")`
+   里的语言标签。**这两处都是负责人共享面。**
+2. **分发器确实不在树内**（account 为例）：`services/` 下没有 `OnRemoteRequest` 实现（只有 `test/` 有），
+   没有任何吃 `MessageParcel` 的 `CreateOsAccount` 形态处理器，`IAppAccountIpcCode::COMMAND_*` 只在测试里被引用。
+3. **绑定规则**：生成 stub 类名 = 接口短名去前导 `I` 再拼 `Stub`（`ICameraDeviceService`→`CameraDeviceServiceStub`、
+   `IOsAccount`→`OsAccountStub`）。15 个组件合计 **105 接口 / 1114 操作**（接口/操作解析不受下述缺陷影响）。
+   **类声明形状是这条规则的一个坑**：第一版的类名正则要求类名是 `class` 之后的第一个标识符，于是
+   `class EXPORT_API HStreamCapture : public StreamCaptureStub` 与换行的
+   `class EXPORT_API HCameraService\n : public SystemAbility, public CameraServiceStub` 两类写法
+   整个看不见（前者把类名读成 `EXPORT_API`，后者连 `:` 都取不到）。同一口径算两遍：
+   **绑定接口 85（缺陷版）→ 90（修好）**、**绑定操作对 910 → 1136**，差额全部在 camera 一个组件上（见 58.3.1）。
+4. **IDL 自带可用的键**：操作前可带 `[ipccode N]`（camera 200 处、sat 71、imf 2），重载靠 code 区分
+   （camera 的 `Open` 有 0/12/20 三个 code）。
+
+### 58.3 方法与结果
+
+探针（猴子补丁 `EntryIndex.root_bindings()`/`dispatch_note()`，在源码派生根之外**追加** IDL 绑定的 `(类, 操作)`），
+解释器 / 守卫 / families / 后果目录全部走生产路径。每个组件跑两遍逐项 diff；三种模式（盘上读 `.idl`、
+`.idl` 进单元集、歧义重载全放行）同一条链；**探针基线复现生产**，用两个组件核对过
+（`security_access_token` 报 `blocked 545 0`、`inputmethod_imf` 报 `blocked 408 4`，与探针基线 0 / 4 一致）。
+
+| 组件 | IDL 绑定根 | 候选 before → after | 增量 |
+|---|---|---|---|
+| account_os_account | 232 | 0 → 2 | **+2** |
+| security_access_token | 104 | 0 → 7 | **+7** |
+| multimedia_camera_framework | 400（37 声明 / 29 绑定） | 9 → 19 | **+10** |
+| window_window_manager | 65 | 9 → 10 | **+1** |
+| inputmethod_imf | 126 | 4 → 5 | **+1** |
+| usb / useriam / background_task / sensors / notification | 63 / 65 / 61 / 19 / 1 | 6→6、0→0、2→2、0→0、0→0 | 0 |
+
+**探针覆盖 15 个组件里的 10 个，+21 是这 10 个的合计**：6 个来自 perf-corpus（imf、notification、
+background_task、sat、window、camera），4 个来自 gitcode-corpus（account、sensors、usb、useriam）。
+**没跑的 5 个是树内 `.idl` 数为 0 的那 5 个** —— perf-corpus 的 `communication_ipc`、
+`multimedia_player_framework`、`telephony_call_manager`、`update_updateservice` 与 gitcode-corpus 的
+`distributedhardware_device_manager`（逐组件 `find -name '*.idl' | wc -l` 核实；不是 gitcode 那 5 棵，
+gitcode 里 account/sensors/usb/useriam 都有 `.idl` 且都量过）—— 它们**按构造不受影响，没有跑探针**：
+这条能力的边界就是"`.idl` 在树内"，反过来说正是这些组件才需要 `service_entries` 那张手写白名单。
+
+**重载上界为 0**：account 有 25 条根因 `(owner, name)` 不唯一被拒（`OsAccountManagerService::CreateOsAccount`
+5 处真实定义、`AuthorizationManagerService::CheckAuthorization` 2 处、`AppAccountManagerCallback::OnResult`
+2 处不同目录同名类），全部放行后候选仍是 0 → 2，`added 0 removed 0`。被拒的不是"找不到定义"（0 匹配为 0 条）
+而是同名多定义，所以形状消歧只是精度项，不是产量项。
+
+### 58.3.1 一处测量工具的形状缺陷：`class EXPORT_API X : public XStub`（已修并重测）
+
+第一版绑定的类名正则是 `\bclass\s+([A-Za-z_]\w*)\s*(?:final\s*)?:` —— 它要求类名紧跟 `class`。OHOS 的
+stub 实现类普遍写成
+
+```cpp
+class EXPORT_API HStreamCapture : public StreamCaptureStub, public HStreamCommon, ...
+class EXPORT_API HCameraService
+    : public SystemAbility, public CameraServiceStub, ...        // 折行
+```
+
+导出宏占据第一个标识符的位置，正则把类名读成 `EXPORT_API`，真正的 `(owner, operation)` 全部不可见；
+折行的基类表更连 `:` 都取不到。**只有 camera 受影响**（其余 9 个探针组件的 stub 类没这个写法），但量级不小：
+
+| | 绑定接口 / 37 个 IDL 声明 | 绑定根 | 候选 | 合计 |
+|---|---|---|---|---|
+| 缺陷版（第一版）| 24 | 174 | 9 → 11（+2）| +13 |
+| 修复版（58.3 表的数字）| 29 | 400（+226）| 9 → 19（**+10**）| **+21** |
+
+恢复的 5 个接口（`s0_idl_bind_fix.py`，只重算绑定、不跑检测器）：`ICameraService(+79)`、`IStreamCapture(+27)`、
+`IStreamRepeat(+21)`、`ICameraRecorder(+19)`、`IStreamMetadata(+9)`。副作用：同一预算下 camera 的分析上限
+从 419 涨到 701，多出的 282 条注记以 "Call depth/recursion budget reached" 为主 —— **入口变多会把每个入口的
+分析深度摊薄**，所以 58.6.2 的验收必须逐项 diff，不能只看候选数。缺陷的方向是**低估**，第一版的 camera 数字
+（+2）与建立在它上面的"camera 增量很小"的说法一并作废。
+
+### 58.4 增量候选的成色：六类"授权在模型看不到的地方"，没有一条是缺授权
+
+本节**两次推翻自己的初稿**：第一稿断言"新增候选全是'源码有守卫、模型认不出'"，逐条读源码后不成立；
+改写为"五类"之后，58.3.1 修好绑定让 camera 增量从 2 条变 10 条，再逐条读，发现 camera 的 7 条落在一类
+前五类都没有的机制上——**OHOS 惯用宏（`CHECK_RETURN_RET_ELOG` 等）里的守卫，报出来的路径上没有它**
+（机制见 58.4.1 勘误：宏体是被展开的，但它落在 `do { … } while (0)` 里，模型保留了循环的零次迭代逃逸
+路径）。
+21 条按机制分**六类**，每条都读了源码：
+
+| 组件 | 条数 | 入场函数体内可见的守卫 | 授权实际在哪 | 机制 |
+|---|---|---|---|---|
+| security_access_token | 7 | 有合取守卫，但第三项认不出 | 就在入场函数里 | 谓词不可命名 |
+| account_os_account | 2 | 有 `!PermissionCheck(...)`，helper 摘要未解析 | 就在 helper 里 | helper 摘要不成立 |
+| window_window_manager | 1 | **没有**（整文件无权限调用） | 委托一跳之内的内层服务 | 跨 owner 委托一跳 |
+| multimedia_camera_framework | 10 | 一半**没有**（操作体里没有） | 钩子 / `do/while(0)` 包装 / 无名谓词，三类叠加 | 见 58.4.1 |
+| inputmethod_imf | 1 | **没有**（全链无检查） | 树内看不到 | 生成面不可见 |
+
+- **SAT（谓词不可命名）**：`!IsPrivilegedCalling() && VerifyAccessToken(...)==PERMISSION_DENIED &&
+  !IsShellCallingForDebugHap(tokenID)` —— 前两项都被规则认识，**第三项没有任何规则命名**。合成对照矩阵
+  （`s0_guard_shape.py`，同一入口同一敏感调用只改守卫一行）确认这就是成因：同形状把第三项换成
+  `!IsRootCalling()` 就被记账；而"取反的析取"与"取反的合取"都被正确记账，所以成因不是布尔结构。
+- **account（helper 摘要不成立）**：`PermissionCheck` 摘要未解析是**对的** —— 它的 true 路径有两条，
+  一条在 `#ifndef IS_RELEASE_VERSION` 里 `callerUid == ROOT_UID` 直通，所以"返回 true"不蕴含权限事实。
+- **window（跨 owner 委托一跳）**：`DisplayManagerIpcService::GetDisplaySnapshot`
+  （`dmserver/src/display_manager_ipc_service.cpp:135`）是纯转发器，**整文件 grep 权限调用 0 命中**；
+  守卫在内层 `DisplayManagerService::GetDisplaySnapshot`（`display_manager_service.cpp:311`：
+  `IsSystemCalling() && (CheckCallingPermission(SCREEN_CAPTURE_PERMISSION) || CheckCallingPermission(CUSTOM_SCREEN_RECORDING_PERMISSION)) || IsStartByHdcd()`）。
+  候选在它自己看得到的那一层成立，假报来自**没有跟这一跳**。
+- **imf（生成面不可见）**：`DisplayOptionalInputMethod`(1645) → `OnDisplayOptionalInputMethod`(2491) →
+  `StartAbility(want)`，want 写死 `SELECT_DIALOG_ACTION`/`SELECT_DIALOG_HAP`，链上无权限调用；
+  守卫若存在就在生成的分发器里，且 IDL 本身不携带权限注解可供读取。
+
+#### 58.4.1 camera 的 10 条：三类机制叠加（第六类：`do { … } while (0)` 循环包装）
+
+10 条按入口归并成 7 个入口，逐条读了源码：
+
+| 入口（IDL 操作）| 条数 | 规则变体 | 入场函数体内有守卫？ | 守卫在哪 |
+|---|---|---|---|---|
+| `HCameraService::MuteCameraPersist` | 3 | caller-class + guard-coverage + missing | **有，就在函数里** | 常量拼写（决定性）+ 宏体 + 无名谓词 |
+| `HCameraDevice::OpenSecureCamera` | 2 | caller-class + missing | 没有（在另一个函数）| stub 钩子 + caller 类判断 |
+| `HCameraDevice::Close` | 1 | missing | 没有 | stub 钩子（报点函数还不在链上）|
+| `HStreamCapture::Capture` | 1 | missing | 没有 | stub 钩子（token 相等）|
+| `HStreamCapture::ConfirmCapture` | 1 | missing | 没有 | stub 钩子（`!CheckSystemApp()`）|
+| `HStreamDepthData::SetDataAccuracy` | 1 | missing | 没有 | **树内确实没有** |
+| `HStreamDepthData::Start` | 1 | missing | 没有 | stub 钩子（token 相等）|
+
+**机制 a：`do/while(0)` 循环包装 × 常量拼写（本轮新发现；两者叠加，缺一不可）。** `MuteCameraPersist`（`hcamera_service.cpp:2606`，
+报点 2621 = `PrivacyKit::SetMutePolicy`）的守卫就写在入场函数里：
+
+```cpp
+CHECK_RETURN_RET_ELOG(!CheckSystemApp(), CAMERA_NO_PERMISSION, "HCameraService::CheckSystemApp fail");
+...
+int32_t ret = CheckPermission(OHOS_PERMISSION_CAMERA_CONTROL, callerToken);
+CHECK_RETURN_RET_ELOG(ret != CAMERA_OK, ret, "CheckPermission arguments failed!");
+```
+
+`HCameraService::CallbackEnter`（`:3808`）只有 `DisableJeMalloc()` —— 该组件**没有钩子层可依赖**
+（虽然 `ICameraService.idl:44` 写着 `option_stub_hooks on`），所以守卫只可能在这两行里，而两行都是宏。
+合成对照矩阵（`s0_guard_macro.py`，基线"无守卫"= 2 条，**记账 = 降到 1 条**）把三个因子分离，全部有对照：
+
+| 变体 | findings | 记账 |
+|---|---|---|
+| `if (!IsPrivilegedCalling()) return;` | 1 | **是** |
+| `CHECK_RETURN_RET_ELOG(!IsPrivilegedCalling(), …)` | 2 | **否**（`do/while(0)` 包装）|
+| `if (!CheckSystemApp()) return;` | 2 | **否**（名字）|
+| `int32_t ret = CheckPermission(...); if (ret != 0) return;` | 1 | **是** |
+| 同上 `if (ret != CAMERA_OK) return;` | 3 | **否**（常量）|
+| `if (CheckPermission(...) == PERMISSION_DENIED) return;` | 3 | **否**（布尔谓词表达）|
+| `if (VerifyAccessToken(...) == PERMISSION_DENIED) return;` | 1 | **是**（对照）|
+| camera 惯用式，写成**裸 `if`**（= 展开宏 + 去包装，保留 `!CheckSystemApp()` 与 `ret != CAMERA_OK`）| 3 | **否** |
+| camera 惯用式，**源码原样**（两道守卫都在 `do/while(0)` 宏里）| 3 | **否** |
+| camera 惯用式，写成裸 `if` 且**只把常量换成 `0`** | 1 | **是** |
+
+四点：**宏调用处**的守卫**不进入报出来的那条调用者路径**（真实机制见下面的勘误：宏体是被展开的，但它落在
+`do { … } while (0)` 里，模型保留了循环的零次迭代逃逸路径）；`CheckSystemApp` **无规则名**（写成 `if` 也不记账）；`CAMERA_OK`
+**不在 `success` 集合**而**变量中转本身不是问题**（`!= 0` 记账）；`CheckPermission` 表达不出失败
+（它在 `boolean_permissions`，失败只认 `== "false"`；`VerifyAccessToken` 在 `result_permissions`，
+失败认 `PERMISSION_DENIED`）。不记账时 findings 是 3 条而非 2 条——多一条 `guard-coverage`，
+即模型不是沉默，而是**更确信**地报。
+
+**三个因子有主次，末三行就是为这个加的**：把 camera 那两道守卫**手工写成裸 `if`**
+（= 展开宏 **并且** 去掉 `do/while(0)` 包装，58.4.1 勘误证明后者才是起作用的那个）后**仍然不记账**
+（3 条），只有再把 `CAMERA_OK` 换成 `0` 才记账（1 条）。所以在这条守卫上**决定性因子是常量拼写，
+不是循环包装**；`CheckSystemApp` 无名是最次要的——旁边那条 `CheckPermission` 守卫已足以建立授权，认不出
+它也不影响结论。**反过来，只去包装而常量照旧，收益是 0**，这正是 58.5 的常量实验在真源码上量到 0 的
+另一半原因：① 与 ③ 在这里**互为前提**（真源码里常量比较写在宏体内、外面还裹着 `do/while(0)` → ③ 挡住；
+去包装后常量照旧是 `CAMERA_OK` → ① 挡住），**必须同批做才有收益**。这不影响 ③ 自身成立：在没有常量
+问题的守卫上（`!IsPrivilegedCalling()`、`VerifyAccessToken(...) == PERMISSION_DENIED`）去掉循环包装
+单独就是决定性的。
+
+**跨会话勘误（2026-10-17，session `71e3ab5f`，同一检出 v6 / `0.8.0` / `635b3e0`；机制已由
+`s0_dowhile_split.py` + `s0_dowhile_trace.py` 分离完毕）**：另一会话做的是**另一刀**——不改调用处，
+改 `common/utils/camera_log.h:96-101` 里 `CHECK_RETURN_RET` 的**定义体**
+（`do { if (cond) { return ret; } } while (0)` → 等价的 `if (cond) { return ret; }`），宏名/参数/调用点
+不动 → camera **9 → 2**，7 条 `ipc.relay.descriptor-boundary` 消失，2 条 `ipc.auth.*` **逐条不变**。
+它也自己标注过"改写做了两件事（守卫移出宏体 + 去掉 `do/while(0)` 包装），贡献未分离"。**现已分离**：
+
+**12 格合成对照**（`s0_dowhile_split.py`，只变守卫形状，其余单元逐字相同；记账 = findings 从基线 2 降到 1）：
+
+| # | 守卫形状 | 记账？ | | # | 守卫形状 | 记账？ |
+|---|---|---|---|---|---|---|
+| 1 | 裸 `if`（基线）| **是** | | 7 | 调用处 + 定义体写成裸 `if` | **是** |
+| 2 | 裸 `do{…}while(0)` | 否 | | 8 | 调用处 + 定义体写成裸块 `{}` | 否 |
+| 3 | 裸块 `{ … }` | **是** | | 9 | 裸 `for(i=0;i!=1;++i){…break;}` | 否 |
+| 4 | 裸 `while(0){…}` | 否 | | 10 | 裸 `switch(0){default:…}` | **是** |
+| 5 | 调用处，**无**定义 | 否 | | 11 | 调用处 + 定义体（同 6）| 否 |
+| 6 | 调用处 + 定义体 `do{…}while(0)` | 否 | | 12 | 裸 `if`（重复 1）| **是** |
+
+三条结论，每条都有对照：
+
+1. **宏体会到达调用处**（格 5 vs 7：定义体写成裸 `if`、调用处一字不动就记账）。所以"宏体是被读的"
+   这半边**成立**，58.4.1 里"宏调用处的守卫不进入路径"要读作"**报出来的那条**路径上没有它"，不是
+   "调用处不展开"。
+2. **阻断面是循环体，不是宏**：格 2 没有宏也阻断，格 4/9 两种循环同样阻断，而裸块（格 3）与 `switch`
+   （格 10）不阻断。机制在 `analysis.py:1571-1579`——模型把每个循环叉成两条路径，第一条是**零次迭代
+   逃逸**（`analysis.py:1575` 的 `result.append(s.fork())`，不施加任何守卫），第二条才进循环体；循环体里
+   的守卫只作用在"进了一次"的那条上，而那条状态是 `flow == "return"`，**走不到循环之后的敏感调用**。
+   于是**循环之后那段代码上唯一活着的路径，恰好是不带守卫的那条**。
+3. **这条路径对 `do { … } while (0)` 在 C 语义下不存在**：`do` 的循环体至少执行一次。所以修法是
+   **对 `do_statement` 不生成零次迭代逃逸分支**（`analysis.py:1575` 按 `kind` 分情况），有语言语义依据、
+   有界、非白名单。**不是解析层展开宏**——模型已经会展开。
+
+`s0_dowhile_trace.py` 把模型的账本直接打出来核对过（格 1/2/6/7）：
+
+```
+1 裸 if（记账）        findings 1  path=((12, 'IsPrivilegedCalling() => True'),)
+2 裸 do/while(0)       findings 2  path=()   loop-note: Loops are conservatively explored zero/one iterations
+6 调用处+do/while 定义  findings 2  path=()   同上
+7 调用处+裸 if 定义     findings 1  path=((14, 'IsPrivilegedCalling() => True'),)
+```
+
+格 2/6 报出来的 path 是**空的**——那正是零次逃逸路径的 `trace`。格 6 展开后恰好等于格 2 的文本，
+两格互为验证。所以另一会话的 9→2 是**两个因子同一刀切掉**的结果，它的归因"宏体可见"**不完整**。
+
+**这不改变 58.5 对 ③ 的处置**：③ 要的是"让守卫进入路径"，证据仍是 path 从 `()` 到两条；变的只是
+**性质**——从"解析保真度"改成"控制流建模"，修法从"展开宏"改成"`do_statement` 不生成零次逃逸路径"。
+
+**机制 b：stub 钩子**（`option_stub_hooks on` 生成器回调，与操作体分离）：`CallbackEnter` /
+`OperatePermissionCheck`。`COMMAND_START`/`COMMAND_CAPTURE` 那两项是**令牌相等（所有权）检查**
+（`callerToken_` 在 `hstream_common.cpp:92/105` 由构造时 `IPCSkeleton::GetCallingTokenID()` 写入，
+"你是这个流的主人"而非"你有相机权限"）；`ConfirmCapture` 的钩子在 `CallbackEnter` 第二个 switch 里
+（`COMMAND_CONFIRM_CAPTURE` → `!CheckSystemApp()`），同时属机制 a 与 b（机制 a 的那半边是它外层的
+`do/while(0)` 包装）。`Close` 还有一处独立失真：
+报点 `NotifyCameraStatus`（`:2219` 的 `PublishCommonEvent`）**不在 `Close` 的调用链上**（调用它的是
+`RemoveResourceWhenHostDied`），产物 path 写着 `conservative path join` —— 这是**路径构造**的问题，
+与守卫识别无关。
+
+**机制 c：布尔谓词的失败表达**：`CheckPermission` 属 `models.py:157` 的 `boolean_permissions`，
+而 `analysis.py:1394-1395` 给布尔谓词的失败只认 `== "false"`，所以
+`CheckPermission(...) == PERMISSION_DENIED` 表达不出失败（对照见上表最后两行）。
+
+**结论**：这条能力把"授权识别边界"的**六个位置**同时暴露成候选，而不是发现缺授权。21 条里只有 camera 的
+`SetDataAccuracy` 与 imf 的 `DisplayOptionalInputMethod` 是树内确实没有检查的，它们缺的都是**可达性论证**
+（拿流代理 / 写死 want 的那个 dialog hap），不是缺一条权限调用。这也正是 AUTH-04（`ipc.auth.guard-coverage`）
+子类型该发挥作用的地方——camera 的 `MuteCameraPersist` 一个报点同时出了 AUTH-02 / AUTH-03 / AUTH-04 三个
+变体，`OpenSecureCamera` 出了 AUTH-02 / AUTH-03 两个。**六类里没有一类是"分析看不全代码"**——第六类
+（宏）的宏体也是被读的（见 58.4.1 勘误的格 5/7），它属于"看得全，但那条守则被一条 C 语义下不存在的
+零次迭代路径绕过了"，性质是**控制流建模**；其余五类是"看得全、但认不出这行是什么"，性质是**规则覆盖**。
+这个区分决定了 58.5 的处置。
+
+**+21 的变体分布**（从四份探针产物的 `added` 键聚合，不是重新推导；camera 用的是 58.3.1 修好绑定后的产物）：
+`ipc.auth.missing` **12**（camera 7、SAT 2、imf 1、account 1、window 1）、`ipc.auth.caller-class` **5**
+（SAT 3、camera 2）、`ipc.auth.guard-coverage` **4**（SAT 2、account 1、camera 1）。**没有一条落在
+CAP-01 / DATA-01**，增量全在授权类；12/21 是 `missing`。注意变体是**叠加**的：同一个 `(入口, 报点)`
+可以同时出 2–3 条，聚合时不能按"每个报点一条"去重。
+
+**IDL 面不能替代 `service_entries`**（9 条逐条查，这是评估这条能力时最容易被高估的一点）：
+call_manager 那 **7 条构造上不可派生**（该组件树内 `.idl` 文件数为 0，也正是这张白名单当初被写出来的原因）；
+`HCameraService::CreateCameraDevice` **会被派生因此变冗余**（`ICameraService.idl:47` 的
+`[ipccode 0]`，且 `class EXPORT_API HCameraService : public SystemAbility, public CameraServiceStub, …`
+@ `services/camera_service/include/hcamera_service.h:131` 正是绑定规则给出的 stub 实现）；
+`BgContinuousTaskMgr::RequestBackgroundRunningForInner` **不会** —— 该操作确实是 IDL 操作
+（`interfaces/innerkits/IBackgroundTaskMgr.idl:52`），但绑定规则给出的实现类是
+`BackgroundTaskMgrService : public BackgroundTaskMgrStub`（`services/core/include/background_task_mgr_service.h:53`），
+而 `BgContinuousTaskMgr`（`bg_continuous_task_mgr.h:100`）是 `DelayedSingleton`、不是 stub 实现类，
+IDL 面会派生另一对 `(owner, op)`。所以 **9 条里至多 1 条变冗余**，这条能力不能算成"能省掉白名单"。
+
+### 58.5 三条量过的缺口，与它们的处置
+
+原稿把缺口写成"一条：`!= ERR_OK` 拼写"，而且**规模写错了**：普查脚本要求权限调用与常量**紧邻**，
+漏掉了所有经变量中转的写法，也漏掉了 camera 的全部（camera 的前置检查根本不在 `if` 里）。重测后是三条：
+
+| 缺口 | 语料出现（非 test，`s0_guard_spelling_survey2.sh`）| 性质 |
+|---|---|---|
+| ① 0 值成功常量拼写（`CAMERA_OK`/`ERR_OK`/`RET_SUCCESS`）| 直接比较：camera 2、account 2、useriam 4；经变量中转（**上界**）：camera 15、account 23、SAT 6、useriam 6 | 规则覆盖（加常量）|
+| ② 无名谓词 `CheckSystemApp` | camera **49**（`!CheckSystemApp()`），全语料裸调用 camera 518 / account 96 / player 1 | 规则覆盖（加名字）|
+| ③ `do { … } while (0)` 包装里的守卫（OHOS 宏定义体的通用写法）| 58.4.1 勘误已分离：循环体内的 `return` 不被当作守卫退出（`analysis.py:1575` 的零次迭代逃逸路径）；camera 的 49 处 `!CheckSystemApp()` 全在宏里，而宏定义体都是 `do/while(0)` | **判定保真度**（控制流建模，不是解析）|
+
+② 乍看像"给 camera 开后门"，普查后不是：`caller_role_guards`（`models.py:175-188`）认三种写法，
+语料里**四种都在用**（`s0_systemapp_spelling.sh`）——`IsSystemCalling`（window 348、sensor 6）、
+`IsSystemAppCalling`（SAT 42）、`CheckCallerIsSystemApp`（telephony 79、CES 3、useriam 4）都有名，
+唯独**用得最多的 `CheckSystemApp` 无名**，且横跨 3 个组件、不是 camera 专有。这改变了 ② 的性质描述
+（谓词词表的覆盖缺口，不是项目特例），但**不改变处置**：它依然是在给名字开口子。且合成矩阵显示，
+在 camera 那条上有它没它都一样（旁边那条 `CheckPermission` 守卫足以建立授权）。
+
+**① 做过候选级对照实验，收益是 0。** 在 `/home/audit/wtmp/wsrc`（仓库副本，只改 `analysis.py:1394` 的
+`success` 集合，加入 `CAMERA_OK`/`CAMERA_NO_ERROR`/`MEDIA_OK`/`NO_ERROR`/`RET_SUCCESS`/`ERR_OK`/`SUCCESS`；
+**仓库本身未动**）重跑 camera：候选**仍是 10 条，`added` 逐条完全相同**
+（`widen_camera.json` 对 `idl_probe_camera_loose.json`）。这修正了原稿"收益上限约 6 处、很可能 0 条候选"
+的说法：**规模比原稿大，但收益是 0**。
+
+原因不是缺口小，而是 **① 与 ③ 互为前提**：真实源码里那个常量比较写在 `CHECK_RETURN_RET_ELOG` 体内、
+外面还裹着 `do { … } while (0)`（③ 挡住），而去掉循环包装之后常量照旧是 `CAMERA_OK`（① 挡住）。
+**单修 ① 是 0，单修 ③ 也是 0，两个一起才有收益**——即 58.4.1 末三行的差别（`if form` 3 条不记账 vs
+`if + 0` 1 条记账）。
+
+**处置。** ③ 与 ①② 的分界是最重要的一句；58.4.1 的勘误之后这句话换了个说法。旧稿说"**宏体内的 `if`
+在语义上就是 `if`，识别它属于解析保真度**"——**这一半不成立**：解析层本来就读得进宏体，而且它已经把
+那个 `if` 应用在循环体里了（格 5/7）。真实缺陷在**控制流建模**（`analysis.py:1571-1579`）；分界因此是
+三档：**③ 控制流建模（可立项，有 C 语义依据）**、**① 常量词表覆盖（可立项，须与 ③ 同批）**、
+**② 给谓词名开口子（不做，需复审）**。
+
+- ③ **可以立项**（本轮不做）：方向是**对 `do_statement` 不生成零次迭代逃逸分支**
+  （`analysis.py:1575` 按 `kind` 分情况）——`do` 的循环体至少执行一次，那条路径在 C 语义下不存在。
+  **不是解析层展开宏**（模型已经会展开）。影响面是**全语料**而非只有 camera，收益方向**单向**（只会让
+  更多守卫被识别 → 候选只减不增）。量级用 `s0_idl_probe_macro.py` 在探针层量过——注意那次文本改写
+  一次性做了两件事（展开宏调用 **+** 去掉 `do/while(0)` 包装），事后分离说明**起作用的是后者**；
+  `s0_macro_dryrun.py` 先在真语料行上核对改写正确性：
+
+  ```
+  candidates 2 -> 12 | added 10 removed 0     ← 与未展开的 idl_probe_camera_loose.json 逐条相同
+  limitations 406 -> 714 | new notes: 308     ← 预算注记翻倍
+  ```
+
+  `s0_macro_vs_loose.py` 逐字段比过：**宏独有 0 条、宽松独有 0 条**。所以 ③ 成立了、但**候选级收益 0**。
+  它成立在哪看 path：`MuteCameraPersist` 的路径**从 `()` 变成
+  `((2609, 'CheckSystemApp() => True'), (2613, 'ret != CAMERA_OK => False'))`** —— 去掉循环包装后守卫
+  才第一次走到这个入口的路径上（包装还在时，报出来的正是那条空的零次逃逸路径）；10 条里 **8 条的 path
+  变了**，只有 `ConfirmCapture`（守卫在 `CallbackEnter` 钩子里、不在入场函数体）和 `SetDataAccuracy`
+  （树内本来没检查）一字未动。**摆在路径上了，但仍旧认不出**：`CheckSystemApp` 无规则名、`CAMERA_OK`
+  不在 `success` 集合，摆上路径也判不成授权——**这一层是 ①，与 ③ 是两件事**。
+  **立项条件必须写上"与 ① 同批"**。这不影响 ③ 自身成立——在没有常量问题的守卫上它单独就是决定性的。
+
+  **全语料对照**（`s0_macro_rest.sh`，14 个非 camera 组件的 loose 基线与去包装版同批跑）：
+  `TOTAL macro=11 loose=11 | macro-only=0 loose-only=0`，一个组件一条都没动。但这个 0 有三个
+  **互不相同**的原因（`s0_macro_census.sh`）：
+
+  | 组件 | `CHECK_RETURN*` 调用数 | 去包装后候选变化 |
+  |---|---|---|
+  | multimedia_camera_framework | 8675 | 0（10→10，逐条相同；path 变了 8 条）|
+  | inputmethod_imf | 155 | 0（1→1）|
+  | 其余 13 个 | **0** | 0（**无 `CHECK_RETURN*` 可用**）|
+
+  13 个组件根本没有这个宏族，它们的 0 是平凡的；imf 有 155 处却也不动，因为它那条候选
+  （`DisplayOptionalInputMethod`）树内全链无守卫，没有守则可被去包装。**所以 ③ 的候选级收益为 0
+  是在"被零次逃逸绕过（相机）""没有可绕（13 个）""本来就没有（imf）"三种情况下各自成立——它证明的是
+  单修 ③ 不划算，不是 ③ 无意义。** 同时也修正了"OHOS 普遍用宏写前置检查"这句话：本语料只有 2/15
+  组件用这个宏族，它是 camera 的主导写法。
+- ① 健全，但**不能单独做**：与 ③ 互为前提，见上，本轮不改。
+- ② **不做**：给 `CheckSystemApp` 加规则正是"为降低候选数加白名单"，需复审决定。SAT 的
+  `IsShellCallingForDebugHap` 属同一类，同样不动。
+
+### 58.6 落地需要什么（**需要负责人点头，本轮未做**）
+
+1. **两处负责人共享面**：`contracts.py:34` 的语言集加 `"idl"`（`js/ts/arkts` 已是"仅作文本索引"先例），
+   `git_source.py:12` 的 `SOURCE_LANGUAGES` 加 `.idl`。都是小改，但会改变**每个**会话的单元集。
+2. **Track B 侧**（不需要别人）：从**单元**里读 IDL 的派生入口源 —— 新等级（弱于 `SOURCE_DISPATCH`，note 写明
+   "分发器是生成的、不在扫描内"）、只在绑定唯一时准入、被拒按原因计数、`.idl` 单元不得被当 C++ 解析
+   （否则每个 `.idl` 带一条 partial 与无意义符号）；验收 = 接口测试 + 全语料逐项 diff（预期只增不减）。
+   单元通道的可行性已用 `s0_idl_probe_units.py` 证过（`.idl` 作为 `SourceUnit` 进扫描，0 → 2 复现）。
+   落地实现还**必须容错类声明形状**（58.3.1）：`class EXPORT_API X : public XStub` 与换行的多基底表都要取到
+   真类名，否则 camera 少 5 个接口 / 226 个操作对；绑定时读 AST 基底列表比文本正则稳。
+3. **模型版本**：落地会让候选集变化（本语料 **+21**），必须与 `MODEL_VERSION` 一起记账。
+4. **落地不会自动修好 58.4 的六类机制**：IDL 只换入口来源，window 的委托一跳、camera 的 stub 钩子、
+   imf 的生成面照旧看不见。要收它们，形状已经明确（跨 owner 一跳的内层授权、按 ipccode 分派的
+   `CallbackEnter` 钩子），是**有界**的规则项，不是白名单。**但第六类（`do { … } while (0)` 循环包装）
+   在另一层**：它在控制流判定层（`analysis.py:1571-1579`），不在 IDL 面里，而且影响的入口远不止 IDL 来的
+   那些——任何入口只要守则写在 OHOS 惯用宏里就会被零次逃逸路径绕过；**且它与 ①（常量拼写）互为前提，
+   必须同批做**，否则单修任一侧收益为 0 —— 见 58.5 的处置。足迹要先认清：本语料只有 camera（8675 处
+   `CHECK_RETURN*`）与 imf（155 处）用这个宏族，全语料去包装的候选级收益是 **0**，所以它**不是**这次
+   落地的配套收益项。
+5. **分析预算要一起记账**（58.3.1 的副作用）：绑定修好让 camera 入口从 174 涨到 400，同一预算上限下多出
+   282 条 "Call depth/recursion budget reached" 注记。入口数增长要么调预算、要么接受**同一入口的分析深度
+   被摊薄**——两者都会改变候选集，所以验收只能逐项 diff。
+
+### 58.7 本节没有做的事
+
+- 没有 push、没有开/改/合并 PR；没有切另一会话占用的分支；没有改 A 目录。
+- 没有改 `catalog.py`、`src/report/`、`src/case/`、`src/benchmark/`、`src/evidence/`；
+  **没有改 `contracts.py` / `git_source.py`**（58.6.1 的两处共享面一处未动）。
+- **没有修改全局 `trusted_uids`**；没有为降低候选数加入任何白名单或命名规则。
+- **没有落地任何代码**：58.1–58.6 全部证据来自 `/home/audit/wtmp/` 下的探针与只读 grep，未入库。
+- **没有改 `analysis.py` 的常量集**：58.5 的常量实验跑在 `/home/audit/wtmp/wsrc` 这个副本树上，
+  仓库源码一个字未动（`git status` 只有本文件）。
+- **没有落地 ③（去掉 `do { … } while (0)` 包装）**：58.5 的对照是在探针层用文本改写做的
+  （`s0_idl_probe_macro.py` 包住 `load_units`，只改内存里的单元文本），而且它一次性做了两件事
+  （展开宏调用 **+** 去掉循环包装）——58.4.1 的分离实验事后说明，**起作用的是后者**。修法的位置也随之
+  明确：**不在解析层展开宏**（模型已经会展开），而在 `analysis.py:1571-1579` 的循环处理里，**对
+  `do_statement` 不生成零次迭代逃逸路径**（`analysis.py:1575`）。且**必须与常量集合同批**，否则候选数
+  一条不变。
+- 没有做动态验证；门状态与候选等级全部未变：`entry_controlled` 仍未建立、`validated_vulnerability` 仍为 0；
+  本轮入库的候选数为 **0**（+21 是探针口径的假如落地，不是仓库现状）。
+
+
+
+## 59. 2026-10-19 B线披露修复对复核：固定 Git 回放与窄范围账号语义（0.8.4）
+
+本轮以本仓库分支 `feat/interface-ipc-detector` 的提交 `42c4d7140b67813105d6b8a9d3bea241f25a1209` 为基线。检测器改为 `0.8.4`，解释模型 `oh-ipc-2026.10-v10`。
+
+### 已完成
+
+- 新增固定 Git 父子提交重放工具，要求输入完整 commit SHA，记录 commit/tree/blob、源码 SHA-256、显式文件 scope、解析状态和 candidates。
+- EntryIndex 现在能索引 C++ 类成员中直接字面量初始化的 `static const` 字段；表达式 initializer 仍不解析。
+- ServiceAccountRole 新增仓库绑定，并为 `RemovePermissionUsedRecords` 附加精确 handler 限制。错误仓库、错误身份域、错误操作或错误 handler 不会得到该角色信用。
+- CVE-2025-27563：同一固定 Git scope（PrivacyManagerStub 的 .h/.cpp）由 0.8.3 的 5→2 收敛到 0.8.4 的 3→0。三条漏洞端 caller-class 候选对应补丁增加的调用者类别门。两端各两文件均 partial，run blocked；不把归零解释为完整覆盖。
+- CVE-2025-26691：固定父子提交 `911c6c99872e3a6a421747815bc8c1f6b201db26` → `6018446d576b84d8893f8f7ad5d46353236fb8e0`，同一完整解析的实现文件获得 9→0 权限错配候选差分。
+- 13 组旧归档 patch-file replay 与 0.8.3 的候选数量逐项一致；该归档缺少 27563 的 UID 头文件，不能代替固定 Git 两文件 scope。
+- 全量测试 525 项通过，compileall 和 git diff --check 通过。
+
+### 限制与交付
+
+以上是公开披露修复对的静态候选回归，不是独立 holdout，不支持 Precision/Recall 结论；没有跑产品构建、设备 PoC、Harness 或 Agent，`validated_vulnerability` 保持 0。
+
+复现工具与 JSON/SHA-256 在 `research/deliveries/ipc/20261019-disclosure-regression-v0.8.4/`，详细说明见该目录 README 和 G 盘 ABCD 线实测分析报告末尾的 0.8.4 补充节。
+
+
+## 60. 2026-10-19 B 线 CVE-2025-26693 三文件固定范围复核（0.8.4）
+
+基于 B 分支 Detector 0.8.4 / model oh-ipc-2026.10-v10，固定对象为 vulnerability 89953b22ba58654beda0ff3154125d6779550e2b → fixed 31ed3b9f31b029b0ae4dec48a9f95b6356f924c0。三文件固定 scope 纳入 accesstoken_manager_stub.cpp、accesstoken_manager_stub.h 和 i_accesstoken_manager.h：目标 AUTH-02 与 AUTH-03 候选 2→0；但两侧所有文件均 partial，run blocked。单 cpp 辅助 scope 为 3→1，剩余是缺少接口声明时产生的 AUTH-01 relay/descriptor 候选。扩展声明范围去掉该无关候选，目标候选变化与披露补丁相符。
+
+此为已披露 CVE 的 B 分支固定 Git 回放复核，不新增唯一披露样本。不得把 blocked 端点的零候选视为完整扫描、漏洞确认或产品可利用；validated_vulnerability 保持 0。复现包：research/deliveries/ipc/20261019-disclosure-regression-v0.8.4/。
+
+
+## 61. 2026-10-19 B 线 CVE-2024-12082 跨 TU 授权修复对回归（0.8.5）
+
+在 B 分支 `feat/interface-ipc-detector` 的 0.8.4/v10 工作基础上，新增仓库与完整方法绑定的 caller-role 契约、显式智能指针字段类型索引，以及限深的 `Stub → Service → Inner` 返回值委托摘要。目标契约只适用于 `openharmony/ability_ability_runtime::AppMgrServiceInner::GetBundleNameByPid`，要求 `<sa-caller>`，并把 `GetAppRunningRecordByPid` 视为授权前敏感操作；未把类名或 CVE 名称做全局授权白名单。当前 Detector 版本为 0.8.5、模型为 `oh-ipc-2026.10-v11`。
+
+固定 Git 修复对为易受影响提交 `bc986f66230f4d4a3421c84dfa126409ef53e892` → 修复提交 `38336b1c461f8775f6767e6688c30ddb60d44b74`（直接父子）。同一六文件范围两端总候选为 4→2；漏洞端 `AppMgrStub::HandleGetBundleNameByPid` 有 AUTH-02 与 AUTH-03 两条目标候选，修复端这两条消失。修复端剩余两条 CAP-01 与该 CVE 无关。固定报告见 `research/deliveries/ipc/20261019-cve-2024-12082-v0.8.5/`。
+
+该结果是公开披露补丁的固定源码回归，不是独立 holdout。两侧仅 1/6 文件 complete、5/6 partial，DetectorRun 均 `blocked`；故只说明模型沿受限跨 TU 委托链观察到与公开补丁相符的候选差分，不表示完整扫描、产品构建纳入、普通应用可达、运行时影响或设备可利用。JSON 标记 `product_or_exploit_validation=false`，没有产品构建、设备 PoC、Harness 或 Agent 验证。另加 5 个 repository caller contract 回归用例覆盖有守卫、无守卫、晚守卫、错误角色及跨仓隔离。
+
+全量测试第一次运行 532 项时有 1 项旧版本字符串断言失败；修正 `test_component_audit.py` 中 0.8.4 预期后，定向 6 项通过，随后全量复测 **532 项 OK**。`compileall`、`git diff --check` 和交付包 SHA256SUMS 校验通过。
+
+
+## 62. 2026-10-19 B 线 CVE-2023-25176 TLV 固定宽度读取回归（0.8.5）
+
+当前 B 分支 Detector 0.8.5 / model `oh-ipc-2026.10-v11`，以相同固定 Git scope `framework/tlv/tlv_object.h` 重放 `openharmony/distributeddatamgr_pasteboard` 的易受影响提交 `693a188bb719f547724638ac39888353aca7db81` 与修复提交 `9408af4fe6e85f70fc46427b7ba779e683a12ec3`。易受影响端出现 1 条 DATA-05 / `ipc.tlv.fixed-width-length` 候选（`ReadBasicValue:271`），修复端 0 条。官方补丁在 `head.len == 0` 判断上增加 `head.len != sizeof(T)`，与候选指出的“声明长度未约束固定宽度 memcpy_s”条件直接对应。
+
+该固定修复对差分支持 B 线能够识别此 TLV 长度检查模式；不是独立 holdout。两侧源文件均 partial、DetectorRun 均 blocked。候选仍保留输入绑定、实际物理长度、产品入口可达性和影响判断义务；没有证明该 helper 在产品中可由攻击者到达，也没有运行产品或 PoC。JSON 标记 `product_or_exploit_validation=false`。交付包在 `research/deliveries/ipc/20261019-cve-2023-25176-v0.8.5/`。
+
+全量单测 532 项通过（代码未再变更），交付包 SHA256SUMS 校验通过。
+
+
+## 63. 2026-10-19 B 线 CVE-2024-39775 当前版受限负回归复核（0.8.5）
+
+使用固定父子提交 `eb00c2b458c26c10ab4e7ea5f7af0c529be0f6b7` → `7d0c987f0cd4134040935384d50e17f226507463`，同扫 `services/netstatsmanager/src/stub/net_stats_service_stub.cpp`。Detector 0.8.5 两端均为 0 候选；源文件两端均 partial、run blocked。补丁确实将权限拒绝分支的外层返回值由 `NETMANAGER_SUCCESS` 改成对应错误码。
+
+但 CVE 公告描述为越界读取/信息泄露；目前只有返回码修复观察，未证明其与公告根因的因果关联，也未在该 scope 中形成 OOB 候选。该结果记为“受限未复现/根因关联 unknown”，不能解释为确认漏报或安全通过。禁止按 CVE 名称直接增加规则；下一步先核对官方公告根因、调用方如何区分 transport 与 reply 错误，以及实际 OOB 源码路径。归档：`research/deliveries/ipc/20261019-cve-2024-39775-v0.8.5-review/`。
+## 64. 2026-10-19 B 线 AUTH-06 披露回归：CVE-2022-42463（0.8.6）
+
+新增受限网络认证回调会话白名单规则。Detector 0.8.6 / model oh-ipc-2026.10-v12，固定仓库 openharmony/communication_dsoftbus：0db7315e38331e1f28df7ca9e1b8ad62c71c018b → 07f33ab96652b06f6b84852ea59645d73ff064c7。同扫 trans_auth_manager.c 与 trans_session_manager.c，回放为 1→1：漏洞端 OnRecvAuthChannelRequest 缺 validator；修复端有拒绝门，但 helper 用白名单项长度进行 strncmp，精确成员语义和影响未知。不能据此说补丁无效。
+
+两端 2/2 文件 partial，run blocked；未构建产品、未跑 PoC/Harness，也未证明普通应用可达。候选保留 reachability、session policy、authorization effect、impact 四项义务，不计为确认漏洞或 holdout。合成正反例与 family matrix 18 项通过。详见 research/deliveries/ipc/20261019-cve-2022-42463-v0.8.6/。
+
+隔离 runner 分进程运行两个 Git 端点后成功；旧 pair runner 当前在 cpp_macros._origin_lines 段错误。全量 unittest 538 项通过；compileall、git diff --check、SHA256SUMS 校验通过。改动未提交、未推送。
+
+
+## 65. 2026-10-19 B 线 CVE-2024-38382 委托守卫回归（0.8.7）
+
+在既有 0.8.6 AUTH-06 工作基础上，检测器提升为 0.8.7 / `oh-ipc-2026.10-v13`。新增 `GetAppRunningStateByBundleName` 敏感读取模型，并将 caller-role 守卫推理扩展到最多三层、循环检测的源码类型委托链：仅接受唯一末尾 `return` 到唯一类型化成员目标，且目标守卫前无已建模效果或调用者身份重置。目标角色必须匹配该敏感操作的仓库级角色契约；错误角色仍报告 AUTH-02/AUTH-03。未作名称全局白名单，也没有按 CVE 名称硬编码结果。
+
+固定回放 `openharmony/ability_ability_runtime`：漏洞端 `fd8cd59c2f98c9b5365ee422f58bd82064fe2359`，修复端 `f2898e72966a8fcc59ecebc3cdea8d9aab063b1d`，同一 7 文件 scope。候选总数 **5→4**：漏洞端新增/保留 `app_mgr_stub.cpp:601` 的 `HandleGetAppRunningStateByBundleName` AUTH-02；修复端该目标候选消失，JSON 记录的委托链到达 `AppMgrServiceInner::GetAppRunningStateByBundleName` 中 `IsSACall()` 的 `<sa-caller>` gate。四条其余候选不变，未把它们归到此 CVE。**该 CVE 仍未完整吸收：集成线历史回归还报 DATA-04，而本交付分支本轮未产生 DATA-04。**下一步需要单独还原其数据源/导出路径候选，再同一提交对回归；不可称本轮 5→4 为根因全覆盖。
+
+两端 DetectorRun 均 `blocked`，解析为 1 complete / 6 partial / 0 failed。该结果只支持公开修复差分与静态候选规则相符；不是全仓安全结论、独立 holdout、产品构建或漏洞确认。没有运行设备 PoC/Harness，`validated_vulnerability` 保持 0。新增 1 个合成回归覆盖缺失/存在目标守卫、前置敏感效果、身份重置和缺少成员类型；再保留 5 个仓库 caller-role 契约测试。定向 6 项通过，全量 **539 项 OK**，compileall 与 `git diff --check` 通过。另以 0.8.7 回跑 CVE-2025-26691 单文件完整解析修复对，保持 **9→0、completed/completed**，作为此次跨 TU 改动的既有规则回归保护；结果在 `research/deliveries/ipc/20261019-preserved-cve-2025-26691-v0.8.7/`。CVE-2023-25176 的当前隔离重放尝试在独立子进程内仍触发原生段错误，本轮不宣称已复核该规则。复现报告与 JSON 位于 `research/deliveries/ipc/20261019-cve-2024-38382-v0.8.7/`。本轮未提交、未推送。
+
+## 66. 2026-10-19 B线 DATA-04 来源到 IPC reply 与披露回归（0.8.8）
+
+### 改动
+
+检测器升至 `0.8.8`、模型升至 `oh-ipc-2026.10-v14`。新增 DATA-04 `ipc.data.sensitive-flow`：只有经审核的敏感结果流到模型化 reply parcel 写入点时才报候选；单独调用敏感 API 不构成 DATA-04。来源守卫标记使用独立 provenance 字段，不借用 permission 语义。
+
+首批源码模型包括 `GetAppRunningStateByBundleName` 的直接返回值，以及 `GetBundleNameByPid` 精确引用输出位置 1/2（`bundleName`、`uid`）。输出引用模型仅针对这一个审核过的 API；它不推广为任意引用参数污点分析。跨 TU 权限契约的守卫会传递到输出值，正例、修复守卫、结果未写 reply、未知来源、跨 TU 输出参数分别纳入 fixture 对照。
+
+### 固定披露回归
+
+| 披露修复对 | 漏洞端→修复端 | 本轮观察 | 覆盖状态 |
+|---|---:|---|---|
+| CVE-2024-12082 `GetBundleNameByPid` | 总候选 8→4；目标 4→0 | AUTH-02、AUTH-03、`WriteString(bundleName)` 与 `WriteInt32(uid)` 两条 DATA-04 目标候选均只在漏洞端 | 两侧 1 complete / 5 partial，blocked |
+| CVE-2024-38382 `GetAppRunningStateByBundleName` | 总候选 8→6 | 目标 AUTH-02 + DATA-04 在修复端消失；修复端仍有 2 条属于另一 AppMgr 接口 `GetBundleNameByPid` 的 DATA-04，不能计入本 CVE 修复差分 | 两侧 1 complete / 6 partial，blocked |
+| CVE-2025-26693 `GetReqPermissionsInner` | 3→0 | AUTH-02、AUTH-03、DATA-04 三条目标候选在固定端点消失 | 两侧 3/3 partial，blocked |
+| CVE-2025-26691 Telephony 权限错配 | 9→0 | 修改后旧候选回归仍保持 | 两端 complete，completed |
+
+报告和 pinned Git 证据分别在 `research/deliveries/ipc/20261019-cve-2024-12082-v0.8.8/`、`20261019-cve-2024-38382-v0.8.8/`、`20261019-cve-2025-26693-v0.8.8/`、`20261019-preserved-cve-2025-26691-v0.8.8/`。
+
+### 验证和边界
+
+`python -m unittest discover -s tests -q`：539 项通过；`compileall` 通过。逐条固定端点均由隔离 runner 在独立子进程扫描，JSON 绑定完整 commit/tree/blob 与源码哈希。候选仍为 `candidate/unassessed`；公开 CVE 的披露状态与工具 finding 的验证状态分开，`validated_vulnerability` 未升级。未运行产品构建、设备 PoC、Harness/Agent 或普通应用可达性测试。没有据 partial/blocked 的零候选下“安全”结论。
+
+本节代码和产物还在本地未提交工作树，未推送 GitHub；本节不覆盖本工作树中本轮之前已有的其他未提交修改。
+
+
+## 67. 2026-10-19 B 线披露回归：CVE-2024-39775 AUTH-07（0.8.9）
+
+### 实现与固定修复对
+
+将 AUTH-07 ipc.auth.denial-transport-success 选择性接入交付分支。规则只报告授权拒绝分支已向 reply 写入错误、但 helper 返回传输成功的源码形状；它不推断 Binder 代理忽略 reply 载荷，不升级影响结论。模型版本为 oh-ipc-2026.10-v15，Detector 为 0.8.9。
+
+对 openharmony/communication_netmanager_base 的固定直接父子修复提交 c172839fd6354d9bff189c8b1ade2cf621f4b24f → b99cb78281915a9a2587aca981fa69c969ba8f93，同扫 services/netstatsmanager/src/stub/net_stats_service_stub.cpp，AUTH-07 候选 2→0。漏洞端两条拒绝分支分别为 IsSystemCaller（第 413 行）和 CheckPermission（第 419 行），均写入 reply 错误后返回 NETMANAGER_SUCCESS；修复端改为对应拒绝状态，候选消失。
+
+### 验证与限制
+
+新增正例、修复例、无关安全例；AUTH-07 定向测试与 family matrix 共 19 项通过。第一次全量运行发现一条测试仍硬编码 0.8.8；已修正为 0.8.9；最终全量复跑 545 项通过，compileall 与 git diff --check 通过。固定回放的两端均只有 1 个 partial 文件，DetectorRun 为 blocked。这只支持源码观察与公开修复差分相符；客户端对 transport/reply 两状态的消费、产品构建与漏洞影响仍需 Agent/Harness 或人工证据核验。报告 finding 仍是候选，validated_vulnerability 未改变。未运行产品构建、设备 PoC 或 Agent。
+
+证据包：research/deliveries/ipc/20261019-cve-2024-39775-v0.8.9-auth07/，JSON 包含固定 commit/tree/blob 与源码 SHA-256。当前改动未提交、未推送。
+
+
+## 68. 2026-10-19 B 线当前版披露回归复验：CVE-2024-21816（0.8.9）
+
+对固定 OpenHarmony v4.0.0 / v4.0.1 对应提交 4a0b86b5506c103406cad2d81aefad634dbdcdeb → cd8578f5e11c761cb6e4a48ce36cf79177dd9807，以同一六文件 scope 使用当前 B 交付分支 Detector 0.8.9 / model oh-ipc-2026.10-v15 重放。结果保持两条 ipc.auth.object-owner 候选 2→0，位于 BgContinuousTaskMgr::RequestBackgroundRunningForInner 启动/停止分支（漏洞端第 530、532 行）。固定补丁在目标文件中加入调用 UID 与 taskParam->uid_ 一致性检查；这项当前版本复验不增加唯一 CVE 组数。
+
+两端各 5 complete / 1 partial，DetectorRun 均 blocked。结果支持候选机制与固定补丁差分相符，不证明完整覆盖、可达性、产品影响或运行时漏洞确认。Finding 保持 candidate/unassessed，validated_vulnerability 未改；未运行产品构建、PoC、Harness 或 Agent。
+
+当前版 JSON、README 与 SHA256SUMS 见 research/deliveries/ipc/20261019-cve-2024-21816-v0.8.9-owner-retest/。全量测试沿用本轮 0.8.9 AUTH-07 改动后的 545 项通过结果；本次仅新增实验产物与文档，没有改代码。未提交、未推送。
+
+
+## 69. 2026-10-19 B 线当前版 AUTH-01 披露回归复验：CVE-2023-0035 / 0036（0.8.9）
+
+对两组固定公开修复对使用当前 B 交付分支 Detector 0.8.9 / model oh-ipc-2026.10-v15 重放。CVE-2023-0035（communication_dsoftbus，固定提交 fe305c9fba103c1d5a1e2139d18c1d4d70b7e92c → 319168676be4b58127e49b38fa96703991c5a203，单文件 sdk/frame/standard/src/softbus_client_stub.cpp）在漏洞端第 71 行出现 1 条 AUTH-01 描述符边界候选，修复端为 0；两端均 partial / blocked。CVE-2023-0036（inputmethod_imf，1da19fb5651d23e5969cabe7e10cf79897961b36 → 540daea718730751ed21eabc6674c912c0fae5fd，单文件 services/src/platform_callback_stub.cpp）在漏洞端第 46 行为 1 条，修复端为 0；两端 complete / completed。
+
+两组均为已记录披露样本在当前代码版的重复回归，不增加唯一 CVE 样本组数。结果只支持静态候选与固定补丁差分相符；0035 的 blocked 限制保留，0036 单文件 complete 不代表组件级覆盖或产品确认。Finding 仍为 candidate/unassessed，validated_vulnerability 未改；未运行产品构建、PoC、Harness 或 Agent。
+
+证据包 research/deliveries/ipc/20261019-cve-2023-0035-0036-v0.8.9-auth01-retest/ 包含固定对象 JSON、README 和 SHA256SUMS。沿用当前 0.8.9 完整测试集 545 项通过结果；此轮没有改生产代码。未提交、未推送。
+
+
+## 70. 2026-10-19 B 线公开披露扩展回归（Detector 0.8.9）
+
+使用 B 交付分支当前 Detector 0.8.9 / model oh-ipc-2026.10-v15，对三组固定公开披露修复对进行同版重放。CVE-2025-27563（security_access_token）在固定两文件范围中由 3 条 AUTH-03 候选降至 0；三条漏洞端候选对应 RemovePermissionUsedRecordsInner、IsAllowedUsingPermissionInner、SetMutePolicyInner。服务账号 UID 3020 仅按仓库与 RemovePermissionUsedRecords 操作授权，修复端三条方法级 caller-class 候选消失。此为新增一组源码修复差分匹配，finding 仍是 candidate，validated_vulnerability=0。
+
+另对 pasteboard 两组不同机制作当前版缺口回放：CVE-2025-27247（默认输入法授权绕过）为 2→2；CVE-2025-25212（观察者聚合资源上限）亦为 2→2。前者仅有通用 AUTH-02/DATA-04 GetPasteData 候选，没有识别默认 IME grant 移除；后者没有生成 observer-growth 候选。两组端点都只有 partial 文件、run blocked；因此登记为“当前规则未吸收/分析受限”，不作为安全结论或完整漏报计数。
+
+三组的固定 SHA、tree/blob、source SHA-256 与逐条义务见 B 仓 research/deliveries/ipc/20261019-disclosure-expansion-v0.8.9/。所有 JSON 均 validated_vulnerability=0，未构建产品、未运行 PoC/Harness/Agent，也不是独立 holdout。代码未在本轮改动。全量单测 545 项通过；SHA256SUMS 校验通过。
+
+建议下一步优先选择性接入/重做两个可复用机制：默认应用身份参与 permission grant 的 AUTH-08 候选，以及 observer 注册跨 IPC → SubscribeObserver → AddObserver 的有限调用路径与聚合限额识别。每条规则须有正例、官方修复端、无关 owner/安全限额反例；仅候选差分稳定后再做局部 parse 模型改进，不把 partial/blocked 报告升级为 confirmed。
+
+## 71. 2026-10-19 B 线吸收两类公开披露机制（0.8.10）
+
+### 代码与回归
+
+基于上一版 pasteboard 回放中发现的两个明确规则缺口，选择性增加两类源码模型：AUTH-02 的 `ipc.auth.privileged-app-bypass`，以及 RESOURCE-01 的 `ipc.resource.unbounded-observer-registration`。Detector 升为 0.8.10，模型为 `oh-ipc-2026.10-v16`。没有改公共 Runner、协议、Catalog 或 CLI。
+
+默认 IME 授权模型要求从 `PasteboardServiceStub::OnGetPasteData` 绑定到 `GetPasteData → VerifyPermission`，且 `IsDefaultIME` 结果确实进入 grant 决策。观察者模型要求追到 IPC 入口、`SubscribeObserver → AddObserver` 和容器插入；只把清晰的插入前聚合计数上限视作安全控制。两项均有合成正例、修复例与安全/无关对照，观察者测试另覆盖路径歧义与限额。
+
+### 固定披露修复对结果
+
+| CVE | 仓库与固定漏洞端→修复端 | 目标机制差分 | 覆盖情况 |
+|---|---|---:|---|
+| CVE-2025-27247 | `distributeddatamgr_pasteboard`，`59360e6d675a1d6c553e1aeb3a5e265aa3591045` → `f27fb584ee3dd14ec38b66d64e50cd7e70325bca` | privileged-app 候选 1→0；总候选 4→3 | 4 文件皆 partial，blocked |
+| CVE-2025-25212 | `distributeddatamgr_pasteboard`，`d91a9b38fc801a269dc684c0c9735dc68ddbb0b8` → `836cf6990579451d6521e9177d749660b07ad34e` | observer-growth 候选 1→0；总候选 3→2 | 4 文件皆 partial，blocked |
+| CVE-2025-27563 | `security_access_token`，`85ead8f16d070dd66e4ea906b1246018d747ec7b` → `e232d8ed63b53ba883265972872695bb5aab756a` | AUTH-03 保持 3→0 | 2 文件 partial，blocked |
+
+前两组是对 0.8.9 中“未识别对应补丁机制”缺口的针对性改进；第三组是已有回归保护。固定端点差分说明特定源码模型在披露补丁两侧有预期变化，但因为文件解析不完整、run 为 blocked，不能据此宣称完整组件覆盖或产品层确认。所有结果仍是 `candidate/unassessed`，`validated_vulnerability=0`；样本是开发回归，不是独立 holdout，不能据此计算 Precision/Recall。
+
+### 验证与交付
+
+B 仓 `python -m unittest discover -s tests -q`：**563 项通过**。定向行为与 family-matrix 检查 31 项通过；compileall、`git diff --check` 通过。交付目录 `research/deliveries/ipc/20261019-disclosure-expansion-v0.8.10/` 保存三份 JSON 和 README；SHA-256 清单用于发现产物变动。方法卡见 `research/methods/interface/IPC_METHOD_CARD.md` v0.14。G 盘实测建议已同步此轮结果。
+
+本轮只记录代码与固定源码回归证据；没有产品构建、设备 PoC/Harness 或 Agent 验证，没有提交或推送。B 工作树原本已有其他未提交改动；本节不代表那些改动都经过本轮检查。
+
+
+## 72. 2026-10-19 B 线 AUTH-06 跨语言崩溃修复与披露复验（0.8.11）
+
+### 缺陷与修复
+
+固定回放 CVE-2023-25176 时发现：AUTH-06 的 find_auth_session_allowlist_candidates 是 C 网络回调模型，却被无条件应用于所有 SourceUnit，并用 Tree-sitter C 语法重解析 C++ 头文件。对 partial 的 framework/tlv/tlv_object.h，遍历触发 native segmentation fault，导致扫描进程退出。当前修复将 AUTH-06 限定到 unit.language == "c"；C++ 内容不送入 C 专用解析器。正例/修复例仍按 C 源文件测试，新增检测器层回归保证 C++ 单元跳过此模型。Detector 升至 0.8.11，模型升至 oh-ipc-2026.10-v17。
+
+### 当前版固定修复对复验
+
+| CVE | 固定目标 | 漏洞端→修复端 | 解析与执行状态 |
+|---|---|---:|---|
+| CVE-2022-42463 | AUTH-06 whitelist candidate | 1→1 | 2 文件 partial，两端 blocked |
+| CVE-2023-25176 | DATA-05 ipc.tlv.fixed-width-length | 1→0 | 1 文件 partial，两端 blocked |
+| CVE-2024-39775 | AUTH-07 ipc.auth.denial-transport-success | 2→0 | 1 文件 partial，两端 blocked |
+| CVE-2025-27247 | AUTH-02 ipc.auth.privileged-app-bypass | 1→0；总候选 4→3 | 4 文件 partial，两端 blocked |
+| CVE-2025-25212 | RESOURCE-01 ipc.resource.unbounded-observer-registration | 1→0；总候选 3→2 | 4 文件 partial，两端 blocked |
+| CVE-2025-27563 | AUTH-03 既有 caller-class 规则 | 3→0 | 2 文件 partial，两端 blocked |
+
+CVE-2023-25176 的 DATA-05 候选在漏洞端锚定 framework/tlv/tlv_object.h:271；修复端因 head.len == sizeof(T) 限制而消失。该样本此前已有 0.8.5 的 1→0 记录，本轮 0.8.11 重放证明新版本仍保持，不把它重复计作新的披露组。G 盘文档较早的“当前 0→0”记录应由本节和本轮固定 JSON 更正。
+
+### 验证与限制
+
+AUTH-06 与相关 family/semantic matrix 定向 10 项通过。全量 PYTHONPATH=. .venv/bin/python -m unittest discover -s tests -q：564 项通过；compileall、git diff --check 通过。六组回放均由隔离脚本完成，JSON 绑定完整 commit/tree/blob 与源码 SHA-256，位于 research/deliveries/ipc/20261019-disclosure-expansion-v0.8.11/，README 与 SHA256SUMS 同目录。
+
+四组全部属于已公开披露修复对，不是盲标 holdout。扫描仍 partial/blocked，静态候选均为 candidate/unassessed，validated_vulnerability=0。未跑产品构建、PoC/Harness、Agent、普通应用可达性或产品影响验证；不能宣称完整组件覆盖或 Precision/Recall。未提交、未推送，工作树保留此前其他未提交的 A/B 线改动。
+
+## 73. 2026-10-19 B 线披露样本扩展复测（Detector 0.8.11）
+
+在当前交付分支 `42c4d7140b67813105d6b8a9d3bea241f25a1209` 上，用固定 Git commit/tree/blob 重放 4 组公开披露修复对。CVE-2023-0035（communication_dsoftbus）AUTH-01 relay 描述符候选 1→0，两端 partial / blocked；CVE-2023-0036（inputmethod_imf）同类候选 1→0，两端 complete / completed；CVE-2024-12082（ability_ability_runtime）在 `AppMgrStub::HandleGetBundleNameByPid` 的 caller-class/敏感结果路径产生候选，合计 8→4，两端各 1 complete、5 partial / blocked，修复端残留 4 条与该披露点无关的候选。前两项是既有披露组在当前版的复验，不增加唯一组数；CVE-2024-12082 在当前 0.8.11 上出现与补丁相符的差分。此前不同代码版本曾记录 4→4，因此这里只报告本版本的固定源码差分，不跨版本合并候选数。
+
+CVE-2025-26691 的同一固定提交对在本版得到 7→9，且两端完整解析。修复提交的新增调用者/权限检查触发了当前已审查权限契约候选。端点变化表明“系统调用者限制”和“具体权限常量要求”需分开核证；未澄清官方根因、修复 PR 与逐方法权限契约前，本组不计吸收成功，也不把修复端新增候选直接判作误报或新漏洞。
+
+证据包：`research/deliveries/ipc/20261019-disclosure-expansion-followup-v0.8.11/`（4 份固定重放 JSON、README、SHA256SUMS）。基准包 `research/deliveries/ipc/20261019-disclosure-expansion-v0.8.11/` 的六份原 JSON 均保留；README 按其原始数据重建，SHA256SUMS 已覆盖原有及后来加入的 JSON 与 README，校验通过。
+
+aafwk_standard 旧 16 条观察的定向复跑范围共 5 个文件，全部 partial / blocked，16 条都不能作已验证候选；详见 `research/deliveries/ipc/20261019-candidate-review-aafwk-v0.8.11/`。CVE-2024-12082 的仓库限定调用者契约已有正确 SA gate、缺 gate、错误角色、晚检查、跨仓不继承的正反例测试。
+
+全量测试：`PYTHONPATH=. .venv/bin/python -m unittest discover -s tests -q`，564 项通过、0 失败；版本影响摘要检查通过；`git diff --check` 通过。全体披露样本均属有标签开发/回归集，不是盲标 holdout；Finding 保持 candidate/unassessed，`validated_vulnerability=0`。未运行产品构建、设备 PoC、Harness 或 Agent。本轮未修改检测器生产代码、未提交、未推送；B 工作树原有其他未提交改动继续保留。
+
+## 74. 2026-10-19 B 线补充复验：CVE-2025-26693（0.8.11）
+
+在当前交付分支对 `openharmony/security_access_token` 的固定提交 `89953b22ba58654beda0ff3154125d6779550e2b` → `31ed3b9f31b029b0ae4dec48a9f95b6356f924c0` 重放 `services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_stub.cpp`。目标路径 `AccessTokenManagerStub::GetReqPermissionsInner` 的 AUTH-03 caller-class、AUTH-02 missing-auth 与 DATA-04 reply-flow 候选随修复消失；总诊断 4→1，修复端保留一条与该方法修复点无关的 AUTH-01 描述符候选。
+
+两端文件均 partial，DetectorRun blocked。因此只记录为公开修复源码差分匹配，不推断组件覆盖完整，也不称漏洞已由扫描器验证。固定对象、树、blob、SHA-256 与解析状态见 `research/deliveries/ipc/20261019-disclosure-expansion-followup-v0.8.11/cve-2025-26693.json`。本轮全量测试沿用同一代码 HEAD 的 564 项通过结果；本次只新增 replay 产物与文档，没有改检测器代码。未运行产品构建、PoC、Harness 或 Agent，未提交或推送。
+
+## 75. 2026-10-19 B 线本地快照复验（0.8.11 / model v17）
+
+在提交前核对的本地分支为 `feat/interface-ipc-detector`，起点 HEAD `42c4d7140b67813105d6b8a9d3bea241f25a1209` 与当时 GitHub 同名分支一致。工作区另有 57 项未提交改动（13 个跟踪文件、44 个新增条目），本节之后的测试针对这份本地快照。`PYTHONPATH=. .venv/bin/python -m unittest discover -s tests -q`：564 项通过；`compileall`、`git diff --check` 通过；本轮 48 个交付 JSON 全部可解析，18 份 `SHA256SUMS` 共 59 个文件校验通过。
+
+该快照包含 AUTH-06/07、DATA-04、RESOURCE-01 等 B 线规则与固定源码复验材料。披露修复对只是开发回归，不是独立盲标集；分析覆盖仍有 partial/blocked，发现仍为 candidate/unassessed，`validated_vulnerability=0`。没有产品构建、设备 PoC/Harness、普通应用可达性验证或产品影响确认。此处记录的是提交前本地验证事实，不替代推送后的远端 SHA 核验。

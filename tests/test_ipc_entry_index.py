@@ -504,6 +504,31 @@ class EntryIndexTests(unittest.TestCase):
         self.assertIn("SVC", index.aliases)
         self.assertEqual(index.resolve_receiver("SVC->Method"), "Demand::Method")
 
+    def test_explicit_smart_pointer_member_receiver_resolves_from_owner(self):
+        source = """
+namespace OHOS { namespace App {
+class AppMgrServiceInner {};
+class AppMgrService {
+    std::shared_ptr<AppMgrServiceInner> appMgrServiceInner_;
+};
+} }
+"""
+        index = build(unit("app_mgr_service.h", source))
+        self.assertEqual(
+            index.resolve_receiver("appMgrServiceInner_->GetBundleNameByPid",
+                                   owner="AppMgrService"),
+            "AppMgrServiceInner::GetBundleNameByPid")
+        self.assertIsNone(index.resolve_receiver("mystery_->GetBundleNameByPid",
+                                                 owner="AppMgrService"))
+
+    def test_conflicting_smart_pointer_member_types_are_not_resolved(self):
+        source = """
+namespace First { class AppMgrService { std::shared_ptr<InnerA> inner_; }; }
+namespace Second { class AppMgrService { std::shared_ptr<InnerB> inner_; }; }
+"""
+        index = build(unit("services.h", source))
+        self.assertIsNone(index.resolve_receiver("inner_->Lookup", owner="AppMgrService"))
+
     # -- 14. counts -----------------------------------------------------------
     def test_counts_keys_and_totals(self):
         index = build(unit("foo.cpp", SWITCH_ENUM), unit("cls.cpp", MEMBER_PTR_CTOR))
@@ -600,6 +625,26 @@ class EntryIndexTests(unittest.TestCase):
     def test_one_hop_declines_when_no_implementer_is_in_the_scanned_sources(self):
         index = build(unit("zidl/svc_stub.cpp", HOP_BASE))
         self.assertIsNone(index.one_hop_definition("SvcStub", "Get"))
+
+    def test_class_static_const_literal_is_resolved_across_scanned_files(self):
+        header = """
+class PrivacyManagerStub {
+    static const int32_t ACCESSTOKEN_UID = 3020;
+};
+"""
+        implementation = """
+bool PrivacyManagerStub::IsAccessTokenCalling() const {
+    return IPCSkeleton::GetCallingUid() == ACCESSTOKEN_UID;
+}
+"""
+        index = build(unit("privacy_manager_stub.h", header),
+                      unit("privacy_manager_stub.cpp", implementation))
+        definition = index.define_constant("ACCESSTOKEN_UID",
+                                           "privacy_manager_stub.cpp")
+        self.assertIsNotNone(definition)
+        self.assertEqual(definition.value, "3020")
+        self.assertEqual(definition.file, "privacy_manager_stub.h")
+        self.assertIn("static const int32_t ACCESSTOKEN_UID = 3020", definition.text)
 
 
 if __name__ == "__main__":

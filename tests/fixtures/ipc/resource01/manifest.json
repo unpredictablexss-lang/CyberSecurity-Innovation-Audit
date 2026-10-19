@@ -1,0 +1,12 @@
+[
+  {
+    "sample_id": "observer_growth_positive",
+    "data_origin": "synthetic",
+    "family": "RESOURCE-01",
+    "expected_rule": "ipc.resource.unbounded-observer-registration",
+    "file": "observer_growth_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The IPC observer argument flows through one SubscribeObserver implementation into an unbounded AddObserver collection insertion; this is a candidate fixture, not a product vulnerability."
+  }
+]

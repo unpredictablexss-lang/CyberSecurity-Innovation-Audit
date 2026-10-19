@@ -1,16 +1,18 @@
-"""Contract-compatible first-party IPC candidate detector (six families)."""
+"""Contract-compatible first-party IPC candidate detector (nine families)."""
 from typing import Tuple
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation, ScanContext, SourceUnit
 from .analysis import Interpreter
 from .families import cwes, merge_policy
 from .models import IMPACT_DESCRIPTION, MODEL_VERSION, reviewed_consequence
+from .network_session_allowlist import find_auth_session_allowlist_candidates
 from .tlv_fixed_width import find_fixed_width_tlv_overreads
+from .auth_transport_status import find_permission_denial_transport_success
 
 # Which family reports which mechanism CWE. Read from the family modules rather
 # than repeated here, so a family's id, its rules and its CWE land together and a
 # new family cannot be emitted without declaring the CWE it reports.
 _CWE = cwes()
-assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "DATA-01", "DATA-05", "CAP-01"}, sorted(_CWE)
+assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "AUTH-06", "AUTH-07", "DATA-01", "DATA-04", "DATA-05", "CAP-01", "RESOURCE-01"}, sorted(_CWE)
 
 _BASE_OBLIGATIONS = (
     EvidenceObligation("entry_reachability","Verify actual caller reachability and product build/macro conditions."),
@@ -65,7 +67,7 @@ def _finding_message(o):
 
 class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
-    version = "0.8.3"
+    version = "0.8.11"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -145,6 +147,129 @@ class IpcInterfaceDetector:
                     ),
                 ))
         findings = findings + tuple(tlv_findings)
+        # AUTH-06: narrow source model; it makes no transport reachability claim.
+        auth06_findings = []
+        for unit in applicable:
+            if unit.language != "c" or unit.parse_status in ("failed", "not_run"):
+                continue
+            for observation in find_auth_session_allowlist_candidates(unit.text):
+                auth06_findings.append(DetectorFinding(
+                    file=unit.path, line=observation.line, symbol=observation.symbol,
+                    rule_id="ipc.network.auth-session-whitelist",
+                    message="AUTH-06 candidate: " + observation.message,
+                    evidence_type="syntax", candidate_cwe="CWE-862",
+                    consequence_impact=None,
+                    evidence_obligations=(
+                        EvidenceObligation("callback_reachability",
+                            "Bind the callback to a remotely reachable product transport and identify attacker-controlled fields."),
+                        EvidenceObligation("session_name_policy",
+                            "Verify the protocol's exact session-name policy and whether prefix matches are intentional."),
+                        EvidenceObligation("authorization_effect",
+                            "Trace the accepted name into channel state and downstream authorization decisions."),
+                        EvidenceObligation("security_impact",
+                            "Reproduce the disclosed consequence on the fixed product configuration; source shape alone is not confirmation."),
+                    )))
+        findings = findings + tuple(auth06_findings)
+        # AUTH-07 records only a mismatch between a reply-payload denial and the
+        # transport status returned from that branch. It does not infer that the
+        # Binder proxy ignores the payload or that protected work is reachable.
+        auth07_findings = []
+        for unit in applicable:
+            if unit.language != "cpp" or unit.parse_status in ("failed", "not_run"):
+                continue
+            for line, symbol, predicate, status_value in find_permission_denial_transport_success(unit.text):
+                auth07_findings.append(DetectorFinding(
+                    file=unit.path,
+                    line=line,
+                    symbol=symbol,
+                    rule_id="ipc.auth.denial-transport-success",
+                    message=("AUTH-07 candidate: a failed " + predicate
+                             + " guard writes an error to the reply but returns transport success "
+                             + status_value + ". This status mismatch does not establish an authorization bypass; "
+                             "inspect the proxy, Binder wrapper and reply-consumption path."),
+                    evidence_type="syntax",
+                    candidate_cwe="CWE-863",
+                    consequence_impact=None,
+                    evidence_obligations=(
+                        EvidenceObligation("transport_reply_semantics",
+                            "Determine whether transport status is consumed separately from the reply payload and whether success changes caller behavior."),
+                        EvidenceObligation("permission_failure_path",
+                            "Verify the predicate's authorization policy and that this branch is the actual denial path."),
+                        EvidenceObligation("client_binding",
+                            "Bind the transaction to the pinned proxy or caller that consumes the transport result and reply."),
+                        EvidenceObligation("security_impact",
+                            "Establish whether the mismatch permits protected data or effects despite denial."),
+                    ),
+                ))
+        findings = findings + tuple(auth07_findings)
+
+        resource_findings = []
+        for fn, line, container, path_note in analysis.unbounded_observer_registrations():
+            resource_findings.append(DetectorFinding(
+                file=fn.file, line=line, symbol=fn.qualified,
+                rule_id="ipc.resource.unbounded-observer-registration",
+                message=("Observer-growth candidate: AddObserver inserts " + container
+                         + " without the reviewed aggregate observer-cap shape. "
+                         + (("Source-derived path within the scanned scope: " + path_note + " ")
+                            if path_note else
+                            "No unique direct-argument path from the IPC observer entry was established. ")
+                         + "Complete insertion accounting, caller reachability, and product-level denial "
+                         + "of service remain unverified."),
+                evidence_type="syntax", candidate_cwe="CWE-400",
+                evidence_obligations=(
+                    EvidenceObligation("call_path_binding",
+                        (("The pinned scan follows one source-derived implementation and unchanged observer "
+                          "argument to this insertion; verify product registration, runtime dispatch and "
+                          "overrides outside the scanned scope.") if path_note else
+                         "Bind the On*Observer entry, SubscribeObserver implementation and AddObserver "
+                         "sink through interface/virtual dispatch in the pinned component.")),
+                    EvidenceObligation("entry_reachability",
+                        "Verify the pinned product build registers this IPC entry and an untrusted caller "
+                        "can reach it with distinct observer objects."),
+                    EvidenceObligation("resource_bound",
+                        "Review all insertion paths and cross-type aggregate accounting; this rule "
+                        "recognizes only a local limit comparison followed by an early exit."),
+                    EvidenceObligation("product_impact",
+                        "Measure resource growth and service availability in a supported product "
+                        "configuration before assigning denial-of-service impact."),
+                ),
+            ))
+        privileged_findings = []
+        for fn, line, grant_name, path_note, empty_branch_note in analysis.privileged_permission_grants():
+            privileged_findings.append(DetectorFinding(
+                file=fn.file, line=line, symbol=fn.qualified,
+                rule_id="ipc.auth.privileged-app-bypass",
+                message=("Authorization-policy candidate: default-app/IME predicate " + grant_name
+                         + " contributes to the VerifyPermission grant. "
+                         + (("Source-derived path within the scanned scope: " + path_note + ". "
+                             "Product build reachability and other overrides remain unverified. ")
+                            if path_note else
+                            "No unique source-derived entry-to-implementation path was established. ")
+                         + (("Source evidence: " + empty_branch_note + " ")
+                            if empty_branch_note else "")
+                         + "Review whether this alternate grant exceeds the documented permission policy."),
+                evidence_type="syntax", candidate_cwe="CWE-862",
+                consequence_impact="information_disclosure", consequence_cwe="CWE-200",
+                evidence_obligations=(
+                    EvidenceObligation("call_path_binding",
+                        (("The pinned scan resolves this entry through one source-derived implementation "
+                          "to this verifier; verify product registration, dispatch and any overrides "
+                          "outside the scanned scope.") if path_note else
+                         "Bind the OnGetPasteData entry to this GetPasteData/VerifyPermission implementation "
+                         "through the pinned interface and virtual-dispatch hierarchy.")),
+                    EvidenceObligation("grant_policy",
+                        "Verify the privileged-app exception against the permission policy and fixed-version "
+                        "security patch; a named exception is not automatically safe."),
+                    EvidenceObligation("entry_reachability",
+                        "Verify the pinned product build and caller identities that can reach the "
+                        "GetPasteData transaction."),
+                    EvidenceObligation("disclosure_impact",
+                        "Confirm whether an unauthorized caller can retrieve protected pasteboard data "
+                        "in the product configuration."),
+                ),
+            ))
+        findings = findings + tuple(resource_findings) + tuple(privileged_findings)
+
         status = "blocked" if any(u.parse_status != "complete" for u in applicable) else "completed"
         return DetectorRun(self.detector_id,self.version,status,tuple(u.path for u in applicable),findings,
             ("Model="+MODEL_VERSION+"; first-party bounded structured syntax interpretation, no external scanner execution.",

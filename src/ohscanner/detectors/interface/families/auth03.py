@@ -34,3 +34,16 @@ RULES = (
     "ipc.auth.service-identity",
     "ipc.auth.request-identity",
 )
+
+# CVE-2024-12082 discloses that AppMgrServiceInner::GetBundleNameByPid is
+# restricted to system-ability callers. Keep this exact contract scoped to its
+# owning repository and require the gate to precede the PID-to-record lookup.
+# This is a reviewed API contract, not a CVE-name rule.
+POLICY = {
+    "repository_caller_class_contracts": (
+        ("openharmony/ability_ability_runtime",
+         "AppMgrServiceInner::GetBundleNameByPid",
+         "<sa-caller>",
+         ("GetAppRunningRecordByPid",)),
+    ),
+}

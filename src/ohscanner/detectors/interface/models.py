@@ -6,7 +6,7 @@ Additional components should supply reviewed exact-name models via IpcPolicy.
 from dataclasses import dataclass, field
 from typing import FrozenSet, Tuple
 
-MODEL_VERSION = "oh-ipc-2026.10-v9"
+MODEL_VERSION = "oh-ipc-2026.10-v17"
 
 # ---------------------------------------------------------------------------
 # Reviewed consequence catalogue (v1), kept separate from the mechanism rules.
@@ -31,6 +31,7 @@ DISCLOSURE_CALLS = frozenset({
     "IsAllowedUsingPermission", "Dump", "ReadFile", "GetDisplaySnapshot",
     "Capture", "GetImsConfig", "GetImsFeatureValue",
     "GetUserData", "ReadUserData", "OpenUserFile",
+    "GetAppRunningStateByBundleName",
 })
 
 # Baseline consequence per rule, for findings that do not reach a read API.
@@ -43,10 +44,16 @@ IMPACT_BY_RULE = {
     "ipc.auth.request-identity": "identity_confusion",
     "ipc.auth.service-identity": "identity_confusion",
     "ipc.auth.object-owner": "cross_principal_effect",
+    "ipc.data.sensitive-flow": "information_disclosure",
     "ipc.parcel.copy-range": "out_of_bounds_read",
     "ipc.parcel.position-underflow": "out_of_bounds_read",
     "ipc.tlv.fixed-width-length": "out_of_bounds_read",
     "ipc.capability.export": "capability_exposure",
+    "ipc.network.auth-session-whitelist": "unknown",
+    # Transport success after an authorization rejection is an observation only.
+    "ipc.auth.denial-transport-success": "unknown",
+    "ipc.auth.privileged-app-bypass": "information_disclosure",
+    "ipc.resource.unbounded-observer-registration": "unknown",
 }
 
 # Only the consequences whose CWE the catalogue can actually justify carry one.
@@ -121,9 +128,9 @@ class ServiceAccountRole:
     there credits every guard that names it, in every component, for every
     operation -- which is the generalization this record exists to avoid. An
     account is not a permission and not a general caller role, so an entry names
-    the operations that account's role authorizes, the constant a guard has to
-    compare against, and the value the scanned definitions have to bind that
-    constant to.
+    the operations that account's role authorizes, the repository where that
+    account assignment applies, the constant a guard has to compare against, and
+    the value the scanned definitions have to bind that constant to.
 
     Nothing here is credited from a name. The constant has to resolve, in the
     scanned sources, to a definition whose literal is `uid`; a same-named constant
@@ -134,8 +141,10 @@ class ServiceAccountRole:
     constant: str                        # the name a guard compares the calling UID with
     uid: str                             # the value the reviewed definitions bind it to
     role: str                            # the fact derived, e.g. "<caller-account:...>"
+    repository: str                      # repository whose account assignment was reviewed
     accepted_operations: Tuple[str, ...]  # operations this role authorizes, and no others
     origin: str                          # the reviewed source of the account assignment
+    operation_handlers: Tuple[Tuple[str, str], ...] = ()  # optional exact (operation, handler) gates
 
 
 @dataclass(frozen=True)
@@ -153,6 +162,7 @@ class IpcPolicy:
         "GetReqPermissions", "StartUsingPermissionCallback", "RemovePermissionUsedRecords",
         "GetPermissionUsedRecordsAsync", "IsAllowedUsingPermission", "SetMutePolicy",
         "StartRtt", "StopRtt", "GetImsConfig", "SetImsConfig", "GetImsFeatureValue", "SetImsFeatureValue", "SetCameraZoom",
+        "GetAppRunningStateByBundleName",
     })
     capability_calls: FrozenSet[str] = frozenset({"WriteRemoteObject", "WriteFileDescriptor"})
     boolean_permissions: FrozenSet[str] = frozenset({"CheckPermission", "VerifyPermission", "CheckCallerPermission"})
@@ -166,6 +176,19 @@ class IpcPolicy:
     copy_calls: FrozenSet[str] = frozenset({"memcpy", "memmove", "memcpy_s", "memmove_s", "ReadRawData", "ReadBuffer"})
     entry_names: FrozenSet[str] = frozenset({"OnRemoteRequest", "OnRemoteMessageRequest"})
     caller_class_sensitive_calls: FrozenSet[str] = frozenset({"GetReqPermissions", "StartUsingPermissionCallback", "RemovePermissionUsedRecords", "GetPermissionUsedRecordsAsync", "IsAllowedUsingPermission", "SetMutePolicy"})
+    # A disclosure-class result is caller-visible only when written into the
+    # reply parcel, never merely because a sensitive source was called.
+    # Exact reviewed APIs whose listed reference-parameter positions carry data
+    # back to the IPC handler. This is intentionally not a general out-param taint model.
+    disclosure_output_calls: FrozenSet[Tuple[str, Tuple[int, ...]]] = frozenset()
+    reply_write_calls: FrozenSet[str] = frozenset({
+        "WriteInt8", "WriteInt16", "WriteInt32", "WriteInt64",
+        "WriteUint8", "WriteUint16", "WriteUint32", "WriteUint64",
+        "WriteFloat", "WriteDouble", "WriteBool", "WriteChar",
+        "WriteString", "WriteString16", "WriteStringVector", "WriteBuffer",
+        "WriteRawData", "WriteParcelable", "WriteParcelableVector", "WriteByteArray",
+        "WriteRemoteObject", "WriteFileDescriptor", "WriteInterfaceToken", "WriteVector",
+    })
     # Reviewed caller-role authorization predicates, by exact name: `(name, kind,
     # label)`. Each answers whether the *caller* holds a privileged role and none
     # takes a permission argument, so a path carrying one is not a path carrying a
@@ -176,6 +199,7 @@ class IpcPolicy:
     caller_role_guards: Tuple[Tuple[str, str, str], ...] = (
         ("IsSystemCalling", "caller_class", "<system-caller>"),
         ("IsSACalling", "caller_class", "<sa-caller>"),
+        ("IsSACall", "caller_class", "<sa-caller>"),
         ("IsShellCall", "caller_class", "<shell-caller>"),
         ("IsSystemAppCalling", "caller_class", "system_app"),
         ("CheckCallerIsSystemApp", "caller_class", "system_app"),
@@ -222,6 +246,11 @@ class IpcPolicy:
         ("openharmony/telephony_call_manager", "CallManagerService::ReportOttCallDetailsInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
         ("openharmony/telephony_call_manager", "CallManagerService::ReportOttCallEventInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
     )
+    # Reviewed exact repository/method caller-class contracts. Each record is
+    # (repository, fully-qualified method, required role, effect calls that
+    # must not occur before the gate). These are source- and disclosure-backed
+    # operation contracts, not name-wide authorization shortcuts.
+    repository_caller_class_contracts: Tuple[Tuple[str, str, str, Tuple[str, ...]], ...] = ()
     expected_permissions: Tuple[Tuple[str, str], ...] = ()
     object_sensitive_calls: FrozenSet[str] = frozenset({"OpenUserFile", "GetUserData", "DeleteUserData", "ReadUserData"})
     # Bounded macro expansion (cpp_macros). It is a coverage/accuracy switch, not a

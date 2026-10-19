@@ -271,6 +271,8 @@ class EntryIndex:
         self._func_by_owner_name = {}
         self._classes = {}
         self._classes_by_terminal = {}
+        self._field_types = {}
+        self._field_type_conflicts = set()
         self._enum_members = {}
         self._macros = {}
         self._constants = {}        # name -> [ConstantDefinition, ...]
@@ -314,6 +316,8 @@ class EntryIndex:
                 self._record_macro(node, source, functional=True, path=path)
             elif kind in ("declaration", "field_declaration"):
                 self._record_constant(node, source, path)
+                if kind == "field_declaration":
+                    self._record_field_type(node, source)
             elif kind == "function_definition":
                 self._record_function(node, source, path)
             elif kind == "initializer_list":
@@ -397,6 +401,25 @@ class EntryIndex:
         """
         if not _CONST_QUALIFIER.search(_text(source, node)):
             return
+        if node.type == "field_declaration":
+            # A class-scoped `static const` is represented differently from a
+            # namespace declaration: the declarator and initializer are direct
+            # named children, rather than an `init_declarator` wrapper. Record
+            # only a literal initializer; do not guess through expressions.
+            declarator = node.child_by_field_name("declarator")
+            if declarator is None:
+                return
+            raw = next((child for child in node.named_children
+                        if child.start_byte >= declarator.end_byte
+                        and child.type in ("number_literal", "true", "false")), None)
+            name = _last_identifier(source, declarator)
+            value = _literal_value(source, raw) if raw is not None else None
+            if name and value is not None:
+                self._constants.setdefault(name, []).append(
+                    ConstantDefinition(name, value, path, declarator.start_point[0] + 1,
+                                       _scope_prefix(source, node, name),
+                                       _text(source, node).strip()))
+            return
         for item in node.named_children:
             if item.type != "init_declarator":
                 continue
@@ -411,6 +434,36 @@ class EntryIndex:
                 ConstantDefinition(name, value, path, item.start_point[0] + 1,
                                    _scope_prefix(source, node, name),
                                    _text(source, node).strip()))
+
+    def _record_field_type(self, node, source):
+        """Index explicit smart-pointer member types for bounded delegation.
+
+        A receiver is usable only when its declaration is in the scanned source
+        and its enclosing class is unique. Typedefs, assignments and arbitrary
+        pointer expressions are deliberately not followed.
+        """
+        declarator = node.child_by_field_name("declarator")
+        type_node = node.child_by_field_name("type")
+        if declarator is None or type_node is None:
+            return
+        name = _last_identifier(source, declarator)
+        field_type = _text(source, type_node).strip()
+        match = re.search(
+            r"(?:std::)?(?:shared_ptr|unique_ptr|sptr)\s*<\s*(?:const\s+)?([\w:]+)",
+            field_type)
+        if not name or not match:
+            return
+        owner_scope = _scope_prefix(source, node, name).rsplit("::", 1)[0]
+        if not owner_scope:
+            return
+        key = (owner_scope, name)
+        target = _last_component(match.group(1))
+        previous = self._field_types.get(key)
+        if previous is not None and previous != target:
+            self._field_types.pop(key, None)
+            self._field_type_conflicts.add(key)
+        elif key not in self._field_type_conflicts:
+            self._field_types[key] = target
 
     def _record_function(self, node, source, path):
         declared = node.child_by_field_name("declarator")
@@ -1048,7 +1101,7 @@ class EntryIndex:
             note += " dispatcher-guard-observed"
         return note
 
-    def resolve_receiver(self, expression):
+    def resolve_receiver(self, expression, owner=""):
         """Map a source-backed receiver to `Type::Method`; never guesses."""
         expression = expression.strip()
         if "->" not in expression:
@@ -1058,6 +1111,19 @@ class EntryIndex:
             return None
         if receiver in self.aliases:
             return self.aliases[receiver] + "::" + method
+        target = self._field_types.get((owner, receiver)) if owner else None
+        if target is None and owner:
+            owner_matches = [
+                candidate for (scope, field), candidate in self._field_types.items()
+                if field == receiver and _last_component(scope) == _last_component(owner)
+            ]
+            # Out-of-class method definitions in C++ commonly omit namespace
+            # qualification in the declarator. Accept that spelling only when the
+            # scanned scope contains exactly one matching owner declaration.
+            if len(owner_matches) == 1:
+                target = owner_matches[0]
+        if target:
+            return target + "::" + method
         match = re.fullmatch(
             r"(?:DelayedSingleton\s*<\s*)?([\w:]+?)\s*>?\s*::\s*GetInstance\s*\(\s*\)", receiver)
         if match:

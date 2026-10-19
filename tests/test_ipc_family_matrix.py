@@ -33,18 +33,23 @@ REVIEWED_CWE = {
     'AUTH-02': 'CWE-862',
     'AUTH-03': 'CWE-863',
     'AUTH-04': 'CWE-863',
+    'AUTH-06': 'CWE-862',
+    'AUTH-07': 'CWE-863',
+    'RESOURCE-01': 'CWE-400',
     'DATA-01': 'CWE-20',
+    'DATA-04': 'CWE-200',
     'DATA-05': 'CWE-125',
     'CAP-01': 'CWE-926',
 }
 
 
-def context(text, path='sample.cpp'):
-    index = parse_source(text, language='cpp')
-    unit = SourceUnit(path, 'cpp', text, hashlib.sha256(text.encode()).hexdigest(),
+def context(text, path='sample.cpp', repository='fixture/ipc'):
+    language = 'c' if path.endswith('.c') else 'cpp'
+    index = parse_source(text, language=language)
+    unit = SourceUnit(path, language, text, hashlib.sha256(text.encode()).hexdigest(),
                       index.parse_status)
-    request = ScanRequest('ipc-test', 'fixture/ipc', 'synthetic-ipc-v1',
-                          snapshot_digest((unit,)), 'current-component:fixture/ipc')
+    request = ScanRequest('ipc-test', repository, 'synthetic-ipc-v1',
+                          snapshot_digest((unit,)), 'current-component:' + repository)
     return ScanContext(request, (unit,), {'ast': {path: index.to_dict()}})
 
 
@@ -85,6 +90,7 @@ class FamilyRegistryTests(unittest.TestCase):
                 self.assertTrue(declared.module.startswith('src.ohscanner.detectors.interface.families.'))
         self.assertEqual(families.cwes(), REVIEWED_CWE)
         self.assertEqual(_CWE, REVIEWED_CWE)
+        self.assertEqual(families.family_of_rule('ipc.auth.privileged-app-bypass').family_id, 'AUTH-02')
 
     def test_a_module_that_declares_nothing_is_rejected(self):
         with self.assertRaises(ValueError) as caught:
@@ -169,9 +175,13 @@ class PolicyCompositionTests(unittest.TestCase):
         role = merged.service_account_roles[0]
         self.assertIsInstance(role, ServiceAccountRole)
         self.assertEqual((role.constant, role.uid), ('ACCESSTOKEN_UID', '3020'))
+        self.assertEqual(role.repository, 'openharmony/security_access_token')
         self.assertEqual(role.accepted_operations,
                          ('GetRemoteHapTokenInfo', 'DeleteRemoteHapTokenInfo',
-                          'UpdateRemoteHapTokenInfo'))
+                          'UpdateRemoteHapTokenInfo', 'RemovePermissionUsedRecords'))
+        self.assertEqual(role.operation_handlers,
+                         (('RemovePermissionUsedRecords',
+                           'PrivacyManagerStub::RemovePermissionUsedRecordsInner'),))
         owner = families.family_of_rule('ipc.auth.missing')
         self.assertEqual(owner.family_id, 'AUTH-02')
         self.assertIn(('service_account_roles', (role,)), owner.policy)
@@ -212,7 +222,12 @@ class FamilyFixtureMatrixTests(unittest.TestCase):
                     self.assertEqual(item['family'], expected_family,
                                      'a fixture under ' + expected_family + "'s directory declares "
                                      + str(item['family']))
-                ctx = context((manifest_path.parent / item['file']).read_text())
+                repository = ('openharmony/security_access_token'
+                              if item['sample_id'] == 'account_role_authorized_fixed'
+                              else 'fixture/ipc')
+                sample_path = 'sample.c' if item['family'] == 'AUTH-06' else 'sample.cpp'
+                ctx = context((manifest_path.parent / item['file']).read_text(),
+                              path=sample_path, repository=repository)
                 run = IpcInterfaceDetector().detect(ctx, ctx.units)
                 self.assertEqual(run.status, 'completed')
                 rules = {f.rule_id for f in run.findings}

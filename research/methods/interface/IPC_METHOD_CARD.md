@@ -622,3 +622,20 @@ path. Also required: report test count / candidate count / confirmed count **sep
   confirmed textually because they are error nodes; entries are not reachability; three components
   have no dispatcher source in-repo (IDL-generated). Report:
   `docs/research/ipc_scanner_v0_2_entry_coverage_2026-10-10.md`.
+
+# IPC method card v0.14 — privileged grant and observer growth (2026-10-19)
+
+- Detector: `ohscanner.interface.ipc` 0.8.10; model `oh-ipc-2026.10-v16`. This card records two narrowly sourced models added to the B delivery branch. No public runner, contract, or CLI was changed.
+- `AUTH-02 / ipc.auth.privileged-app-bypass` detects the reviewed pasteboard grant shape only when the source-backed path binds `PasteboardServiceStub::OnGetPasteData` to `PasteboardService::GetPasteData` and then to `VerifyPermission`, and the `IsDefaultIME` result reaches the grant decision. A helper's empty-allowlist behavior is recorded as evidence, not generalized as a rule based on names or a CVE ID.
+- `RESOURCE-01 / ipc.resource.unbounded-observer-registration` reports only when the observer is traced from an IPC entry through `SubscribeObserver` to `AddObserver` and a container insertion is present without a recognized effective pre-insertion aggregate cap. A clear count + limit + early-return shape is a safe control. Missing path or limit facts stay as explicit obligations.
+- Synthetic positive, fixed, safe-cap, unrelated-owner, and ambiguous-path controls are covered by 18 focused observer tests plus family-matrix checks. Fixed-source regression runs: CVE-2025-27247 target rule 1→0; CVE-2025-25212 target rule 1→0; CVE-2025-27563 retained AUTH-03 regression 3→0. All three component scopes remain partial and all runs are blocked; total test suite 563 OK after updating the expected detector/model version.
+- Boundaries: these are source-level regression candidates against public patches, not independent holdout samples, runtime validation, ordinary-app reachability, product exploitability, or precision/recall measurements. Finding state remains `candidate/unassessed`; `validated_vulnerability` remains 0. The detector does not claim that every registry path or aggregate policy has been resolved.
+- Replay JSON and this run's pinned-source identity are in `research/deliveries/ipc/20261019-disclosure-expansion-v0.8.10/`; see `PROGRAM_STATUS.md` §71 for the verification record.
+
+
+# IPC method card v0.15 — AUTH-06 stays within C translation units (2026-10-19)
+
+- Detector 0.8.11 / model oh-ipc-2026.10-v17. AUTH-06 models the C-language SoftBus authentication callback and must not parse arbitrary C++ headers with the C grammar.
+- IpcInterfaceDetector now invokes the callback model only for C SourceUnits. The synthetic AUTH-06 fixtures are parsed as C; a detector-level regression asserts a C++ unit bypasses this model.
+- Trigger: the CVE-2023-25176 fixed-pair replay crashed in AUTH-06 while walking a partial C++ TLV header; limiting the model to C removed that crash and allowed the DATA-05 replay to finish at 1→0.
+- Remaining C++ parse errors remain partial/unknown for the C++ analysis path. This fix is a parser dispatch boundary, not evidence that the TLV component is fully analyzed or that the disclosed vulnerability is product-confirmed.

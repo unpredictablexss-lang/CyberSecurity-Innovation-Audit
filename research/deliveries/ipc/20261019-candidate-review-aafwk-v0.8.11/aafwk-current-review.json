@@ -1,0 +1,2694 @@
+{
+  "candidates": [
+    {
+      "candidate_cwe": "CWE-441",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": null,
+      "consequence_impact": "boundary_bypass",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "2325ec4623fca550d7bc1c76624997a55bbd5979",
+        "end_line": 67,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 59,
+            "text": "    auto iter = requestFuncMap_.find(code);"
+          },
+          {
+            "candidate": false,
+            "number": 60,
+            "text": "    if (iter != requestFuncMap_.end()) {"
+          },
+          {
+            "candidate": false,
+            "number": 61,
+            "text": "        auto func = iter->second;"
+          },
+          {
+            "candidate": false,
+            "number": 62,
+            "text": "        if (func != nullptr) {"
+          },
+          {
+            "candidate": true,
+            "number": 63,
+            "text": "            return (this->*func)(data, reply);"
+          },
+          {
+            "candidate": false,
+            "number": 64,
+            "text": "        } else {"
+          },
+          {
+            "candidate": false,
+            "number": 65,
+            "text": "            HILOG_WARN(\"ReverseContinuationSchedulerPrimaryStub::OnRemoteRequest failed, func is nullptr\");"
+          },
+          {
+            "candidate": false,
+            "number": 66,
+            "text": "        }"
+          },
+          {
+            "candidate": false,
+            "number": 67,
+            "text": "    } else {"
+          }
+        ],
+        "start_line": 59
+      },
+      "file": "frameworks/kits/ability/native/src/continuation/distributed/reverse_continuation_scheduler_primary_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 63,
+      "message": "AUTH-01 candidate: Unresolved member-pointer IPC dispatch lacks interface-descriptor validation; callee remains unknown. Entry=ReverseContinuationSchedulerPrimaryStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((54, 'descriptor != token => False'), (60, 'iter != requestFuncMap_.end() => True'), (62, 'func != nullptr => True'))",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "185021995fa87a1b38eb80d3d47f6158c43ffc07d1f82208c108d349fb2768a4",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:3b4fab2aea1ed063",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "ReverseContinuationSchedulerPrimaryStub::OnRemoteRequest"
+    },
+    {
+      "candidate_cwe": "CWE-441",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": null,
+      "consequence_impact": "boundary_bypass",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "d169d04056deec09a2b6d4087a299a1610e16df5",
+        "end_line": 72,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 64,
+            "text": "    auto localFuncIt = memberFuncMap_.find(code);"
+          },
+          {
+            "candidate": false,
+            "number": 65,
+            "text": "    if (localFuncIt != memberFuncMap_.end()) {"
+          },
+          {
+            "candidate": false,
+            "number": 66,
+            "text": "        auto memberFunc = localFuncIt->second;"
+          },
+          {
+            "candidate": false,
+            "number": 67,
+            "text": "        if (memberFunc != nullptr) {"
+          },
+          {
+            "candidate": true,
+            "number": 68,
+            "text": "            return (this->*memberFunc)(data, reply);"
+          },
+          {
+            "candidate": false,
+            "number": 69,
+            "text": "        }"
+          },
+          {
+            "candidate": false,
+            "number": 70,
+            "text": "    }"
+          },
+          {
+            "candidate": false,
+            "number": 71,
+            "text": "    HILOG_INFO(\"ConnectCallbackStub::OnRemoteRequest, default case, need check.\");"
+          },
+          {
+            "candidate": false,
+            "number": 72,
+            "text": "    return IPCObjectStub::OnRemoteRequest(code, data, reply, option);"
+          }
+        ],
+        "start_line": 64
+      },
+      "file": "frameworks/kits/ability/native/src/continuation/remote_register_service/connect_callback_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 68,
+      "message": "AUTH-01 candidate: Unresolved member-pointer IPC dispatch lacks interface-descriptor validation; callee remains unknown. Entry=ConnectCallbackStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((60, 'token.compare(IConnectCallback::GetDescriptor()) != 0 => False'), (65, 'localFuncIt != memberFuncMap_.end() => True'), (67, 'memberFunc != nullptr => True'))",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "9c3889484ad0ce859045035efb45f92d6ba892977ad5c866b24f917162fe7ac5",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:5a546b88a9d3afb4",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "ConnectCallbackStub::OnRemoteRequest"
+    },
+    {
+      "candidate_cwe": "CWE-926",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": "CWE-668",
+      "consequence_impact": "capability_exposure",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "62301fe0ec1b8b829261395fce6c6bcb2e170341",
+        "end_line": 172,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 164,
+            "text": "    if (!amsMgr) {"
+          },
+          {
+            "candidate": false,
+            "number": 165,
+            "text": "        HILOG_ERROR(\"abilitymgr instance is nullptr\");"
+          },
+          {
+            "candidate": false,
+            "number": 166,
+            "text": "        result = ERR_NO_INIT;"
+          },
+          {
+            "candidate": false,
+            "number": 167,
+            "text": "    } else {"
+          },
+          {
+            "candidate": true,
+            "number": 168,
+            "text": "        if (!reply.WriteRemoteObject(amsMgr->AsObject())) {"
+          },
+          {
+            "candidate": false,
+            "number": 169,
+            "text": "            HILOG_ERROR(\"failed to reply abilitymgr instance to client, for write parcel error\");"
+          },
+          {
+            "candidate": false,
+            "number": 170,
+            "text": "            result = ERR_APPEXECFWK_PARCEL_ERROR;"
+          },
+          {
+            "candidate": false,
+            "number": 171,
+            "text": "        }"
+          },
+          {
+            "candidate": false,
+            "number": 172,
+            "text": "    }"
+          }
+        ],
+        "start_line": 164
+      },
+      "file": "interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 168,
+      "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=AppMgrStub::HandleGetAmsMgr [dispatch=map_member_ptr codes=static_cast<uint32_t>(IAppMgr::Message::APP_GET_MGR_INSTANCE)]; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((164, 'amsMgr => True'),)",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Handler was admitted as an entry from a source-derived dispatch binding. Verify dispatcher-level guards (e.g. IsCallerValid/IsPermissionGranted), their dominance over this transaction code, and the overload/receiver binding.",
+          "kind": "dispatch_binding",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Handler was admitted as an entry from a source-derived dispatch binding. Verify dispatcher-level guards (e.g. IsCallerValid/IsPermissionGranted), their dominance over this transaction code, and the overload/receiver binding.",
+            "kind": "dispatch_binding",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.capability.export",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "bd5cec80057f1df5a2d6e19048daa25eeaa3d9b7b47f5bdf577578993310fa6d",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:f9737b88508f90cc",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AppMgrStub::HandleGetAmsMgr"
+    },
+    {
+      "candidate_cwe": "CWE-926",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": "CWE-668",
+      "consequence_impact": "capability_exposure",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "62301fe0ec1b8b829261395fce6c6bcb2e170341",
+        "end_line": 363,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 355,
+            "text": "    std::vector<sptr<IRemoteObject>> tokens;"
+          },
+          {
+            "candidate": false,
+            "number": 356,
+            "text": "    auto result = GetAbilityRecordsByProcessID(pid, tokens);"
+          },
+          {
+            "candidate": false,
+            "number": 357,
+            "text": "    reply.WriteInt32(tokens.size());"
+          },
+          {
+            "candidate": false,
+            "number": 358,
+            "text": "    for (auto &it : tokens) {"
+          },
+          {
+            "candidate": true,
+            "number": 359,
+            "text": "        if (!reply.WriteRemoteObject(it)) {"
+          },
+          {
+            "candidate": false,
+            "number": 360,
+            "text": "            HILOG_ERROR(\"failed to write query result.\");"
+          },
+          {
+            "candidate": false,
+            "number": 361,
+            "text": "            return ERR_FLATTEN_OBJECT;"
+          },
+          {
+            "candidate": false,
+            "number": 362,
+            "text": "        }"
+          },
+          {
+            "candidate": false,
+            "number": 363,
+            "text": "    }"
+          }
+        ],
+        "start_line": 355
+      },
+      "file": "interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 359,
+      "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=AppMgrStub::HandleGetAbilityRecordsByProcessID [dispatch=map_member_ptr codes=static_cast<uint32_t>(IAppMgr::Message::APP_GET_ABILITY_RECORDS_BY_PROCESS_ID)]; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=()",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Handler was admitted as an entry from a source-derived dispatch binding. Verify dispatcher-level guards (e.g. IsCallerValid/IsPermissionGranted), their dominance over this transaction code, and the overload/receiver binding.",
+          "kind": "dispatch_binding",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Handler was admitted as an entry from a source-derived dispatch binding. Verify dispatcher-level guards (e.g. IsCallerValid/IsPermissionGranted), their dominance over this transaction code, and the overload/receiver binding.",
+            "kind": "dispatch_binding",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.capability.export",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "bd5cec80057f1df5a2d6e19048daa25eeaa3d9b7b47f5bdf577578993310fa6d",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:9a48dfd76a69ad75",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AppMgrStub::HandleGetAbilityRecordsByProcessID"
+    },
+    {
+      "candidate_cwe": "CWE-926",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": "CWE-668",
+      "consequence_impact": "capability_exposure",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "9d9d65813728e6d6da0716f93813e63228f3a3fd",
+        "end_line": 298,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 290,
+            "text": "    sptr<IRemoteObject> callerToken = data.ReadRemoteObject();"
+          },
+          {
+            "candidate": false,
+            "number": 291,
+            "text": "    sptr<IAbilityScheduler> result = AcquireDataAbility(*uri, tryBind, callerToken);"
+          },
+          {
+            "candidate": false,
+            "number": 292,
+            "text": "    HILOG_DEBUG(\"acquire data ability %{public}s\", result ? \"ok\" : \"failed\");"
+          },
+          {
+            "candidate": false,
+            "number": 293,
+            "text": "    if (result) {"
+          },
+          {
+            "candidate": true,
+            "number": 294,
+            "text": "        reply.WriteRemoteObject(result->AsObject());"
+          },
+          {
+            "candidate": false,
+            "number": 295,
+            "text": "    } else {"
+          },
+          {
+            "candidate": false,
+            "number": 296,
+            "text": "        reply.WriteParcelable(nullptr);"
+          },
+          {
+            "candidate": false,
+            "number": 297,
+            "text": "    }"
+          },
+          {
+            "candidate": false,
+            "number": 298,
+            "text": "    return NO_ERROR;"
+          }
+        ],
+        "start_line": 290
+      },
+      "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 294,
+      "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=AbilityManagerStub::AcquireDataAbilityInner; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((293, 'result => True'),)",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.capability.export",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "182fc1f0f1d52a3c543b3dd360871334af41d41a3189782eee37af0e6f9e6d4c",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:99f359f24b59fd20",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AbilityManagerStub::AcquireDataAbilityInner"
+    },
+    {
+      "candidate_cwe": "CWE-862",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": null,
+      "consequence_impact": "unauthorized_effect",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "9d9d65813728e6d6da0716f93813e63228f3a3fd",
+        "end_line": 358,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 350,
+            "text": "        return ERR_INVALID_VALUE;"
+          },
+          {
+            "candidate": false,
+            "number": 351,
+            "text": "    }"
+          },
+          {
+            "candidate": false,
+            "number": 352,
+            "text": "    int32_t userId = data.ReadInt32();"
+          },
+          {
+            "candidate": false,
+            "number": 353,
+            "text": "    int requestCode = data.ReadInt32();"
+          },
+          {
+            "candidate": true,
+            "number": 354,
+            "text": "    int32_t result = StartAbility(*want, userId, requestCode);"
+          },
+          {
+            "candidate": false,
+            "number": 355,
+            "text": "    reply.WriteInt32(result);"
+          },
+          {
+            "candidate": false,
+            "number": 356,
+            "text": "    delete want;"
+          },
+          {
+            "candidate": false,
+            "number": 357,
+            "text": "    return NO_ERROR;"
+          },
+          {
+            "candidate": false,
+            "number": 358,
+            "text": "}"
+          }
+        ],
+        "start_line": 350
+      },
+      "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 354,
+      "message": "AUTH-02 candidate: Sensitive modeled call StartAbility has a structured path without a recognized caller authorization. Entry=AbilityManagerStub::StartAbilityInner; possible consequence (not established): an operation intended to require authorization may run without it [unauthorized_effect]; path=((348, 'want == nullptr => False'),)",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.auth.missing",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "182fc1f0f1d52a3c543b3dd360871334af41d41a3189782eee37af0e6f9e6d4c",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:b8c8a7d4d4a9a77f",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AbilityManagerStub::StartAbilityInner"
+    },
+    {
+      "candidate_cwe": "CWE-862",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": null,
+      "consequence_impact": "unauthorized_effect",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "9d9d65813728e6d6da0716f93813e63228f3a3fd",
+        "end_line": 419,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 411,
+            "text": "    }"
+          },
+          {
+            "candidate": false,
+            "number": 412,
+            "text": ""
+          },
+          {
+            "candidate": false,
+            "number": 413,
+            "text": "    int32_t userId = data.ReadInt32();"
+          },
+          {
+            "candidate": false,
+            "number": 414,
+            "text": "    int requestCode = data.ReadInt32();"
+          },
+          {
+            "candidate": true,
+            "number": 415,
+            "text": "    int32_t result = StartAbility(*want, callerToken, userId, requestCode);"
+          },
+          {
+            "candidate": false,
+            "number": 416,
+            "text": "    reply.WriteInt32(result);"
+          },
+          {
+            "candidate": false,
+            "number": 417,
+            "text": "    delete want;"
+          },
+          {
+            "candidate": false,
+            "number": 418,
+            "text": "    return NO_ERROR;"
+          },
+          {
+            "candidate": false,
+            "number": 419,
+            "text": "}"
+          }
+        ],
+        "start_line": 411
+      },
+      "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 415,
+      "message": "AUTH-02 candidate: Sensitive modeled call StartAbility has a structured path without a recognized caller authorization. Entry=AbilityManagerStub::StartAbilityAddCallerInner; possible consequence (not established): an operation intended to require authorization may run without it [unauthorized_effect]; path=((403, 'want == nullptr => False'), (409, 'data.ReadBool() => True'))",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.auth.missing",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "182fc1f0f1d52a3c543b3dd360871334af41d41a3189782eee37af0e6f9e6d4c",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:5ca1e619f01f709d",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AbilityManagerStub::StartAbilityAddCallerInner"
+    },
+    {
+      "candidate_cwe": "CWE-862",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": null,
+      "consequence_impact": "unauthorized_effect",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "9d9d65813728e6d6da0716f93813e63228f3a3fd",
+        "end_line": 441,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 433,
+            "text": "    if (data.ReadBool()) {"
+          },
+          {
+            "candidate": false,
+            "number": 434,
+            "text": "        token = data.ReadRemoteObject();"
+          },
+          {
+            "candidate": false,
+            "number": 435,
+            "text": "    }"
+          },
+          {
+            "candidate": false,
+            "number": 436,
+            "text": "    int32_t userId = data.ReadInt32();"
+          },
+          {
+            "candidate": true,
+            "number": 437,
+            "text": "    int32_t result = ConnectAbility(*want, callback, token, userId);"
+          },
+          {
+            "candidate": false,
+            "number": 438,
+            "text": "    reply.WriteInt32(result);"
+          },
+          {
+            "candidate": false,
+            "number": 439,
+            "text": "    delete want;"
+          },
+          {
+            "candidate": false,
+            "number": 440,
+            "text": "    return NO_ERROR;"
+          },
+          {
+            "candidate": false,
+            "number": 441,
+            "text": "}"
+          }
+        ],
+        "start_line": 433
+      },
+      "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 437,
+      "message": "AUTH-02 candidate: Sensitive modeled call ConnectAbility has a structured path without a recognized caller authorization. Entry=AbilityManagerStub::ConnectAbilityInner; possible consequence (not established): an operation intended to require authorization may run without it [unauthorized_effect]; path=((424, 'want == nullptr => False'), (430, 'data.ReadBool() => True'), (433, 'data.ReadBool() => True'))",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.auth.missing",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "182fc1f0f1d52a3c543b3dd360871334af41d41a3189782eee37af0e6f9e6d4c",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:638c709e2a151ff4",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AbilityManagerStub::ConnectAbilityInner"
+    },
+    {
+      "candidate_cwe": "CWE-862",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": null,
+      "consequence_impact": "unauthorized_effect",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "9d9d65813728e6d6da0716f93813e63228f3a3fd",
+        "end_line": 527,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 519,
+            "text": "        callerToken = data.ReadRemoteObject();"
+          },
+          {
+            "candidate": false,
+            "number": 520,
+            "text": "    }"
+          },
+          {
+            "candidate": false,
+            "number": 521,
+            "text": "    int32_t userId = data.ReadInt32();"
+          },
+          {
+            "candidate": false,
+            "number": 522,
+            "text": "    int requestCode = data.ReadInt32();"
+          },
+          {
+            "candidate": true,
+            "number": 523,
+            "text": "    int32_t result = StartAbility(*want, *abilityStartSetting, callerToken, userId, requestCode);"
+          },
+          {
+            "candidate": false,
+            "number": 524,
+            "text": "    reply.WriteInt32(result);"
+          },
+          {
+            "candidate": false,
+            "number": 525,
+            "text": "    delete want;"
+          },
+          {
+            "candidate": false,
+            "number": 526,
+            "text": "    delete abilityStartSetting;"
+          },
+          {
+            "candidate": false,
+            "number": 527,
+            "text": "    return NO_ERROR;"
+          }
+        ],
+        "start_line": 519
+      },
+      "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 523,
+      "message": "AUTH-02 candidate: Sensitive modeled call StartAbility has a structured path without a recognized caller authorization. Entry=AbilityManagerStub::StartAbilityForSettingsInner; possible consequence (not established): an operation intended to require authorization may run without it [unauthorized_effect]; path=((507, 'want == nullptr => False'), (512, 'abilityStartSetting == nullptr => False'), (518, 'data.ReadBool() => True'))",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.auth.missing",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "182fc1f0f1d52a3c543b3dd360871334af41d41a3189782eee37af0e6f9e6d4c",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:e1009a36ec5da2b5",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AbilityManagerStub::StartAbilityForSettingsInner"
+    },
+    {
+      "candidate_cwe": "CWE-862",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": null,
+      "consequence_impact": "unauthorized_effect",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "9d9d65813728e6d6da0716f93813e63228f3a3fd",
+        "end_line": 553,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 545,
+            "text": "        callerToken = data.ReadRemoteObject();"
+          },
+          {
+            "candidate": false,
+            "number": 546,
+            "text": "    }"
+          },
+          {
+            "candidate": false,
+            "number": 547,
+            "text": "    int32_t userId = data.ReadInt32();"
+          },
+          {
+            "candidate": false,
+            "number": 548,
+            "text": "    int requestCode = data.ReadInt32();"
+          },
+          {
+            "candidate": true,
+            "number": 549,
+            "text": "    int32_t result = StartAbility(*want, *startOptions, callerToken, userId, requestCode);"
+          },
+          {
+            "candidate": false,
+            "number": 550,
+            "text": "    reply.WriteInt32(result);"
+          },
+          {
+            "candidate": false,
+            "number": 551,
+            "text": "    delete want;"
+          },
+          {
+            "candidate": false,
+            "number": 552,
+            "text": "    delete startOptions;"
+          },
+          {
+            "candidate": false,
+            "number": 553,
+            "text": "    return NO_ERROR;"
+          }
+        ],
+        "start_line": 545
+      },
+      "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 549,
+      "message": "AUTH-02 candidate: Sensitive modeled call StartAbility has a structured path without a recognized caller authorization. Entry=AbilityManagerStub::StartAbilityForOptionsInner; possible consequence (not established): an operation intended to require authorization may run without it [unauthorized_effect]; path=((533, 'want == nullptr => False'), (538, 'startOptions == nullptr => False'), (544, 'data.ReadBool() => True'))",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.auth.missing",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "182fc1f0f1d52a3c543b3dd360871334af41d41a3189782eee37af0e6f9e6d4c",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:842543ada17d8d91",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AbilityManagerStub::StartAbilityForOptionsInner"
+    },
+    {
+      "candidate_cwe": "CWE-926",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": "CWE-668",
+      "consequence_impact": "capability_exposure",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "9d9d65813728e6d6da0716f93813e63228f3a3fd",
+        "end_line": 587,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 579,
+            "text": "    if (data.ReadBool()) {"
+          },
+          {
+            "candidate": false,
+            "number": 580,
+            "text": "        callerToken = data.ReadRemoteObject();"
+          },
+          {
+            "candidate": false,
+            "number": 581,
+            "text": "    }"
+          },
+          {
+            "candidate": false,
+            "number": 582,
+            "text": "    sptr<IWantSender> wantSender = GetWantSender(*wantSenderInfo, callerToken);"
+          },
+          {
+            "candidate": true,
+            "number": 583,
+            "text": "    if (!reply.WriteRemoteObject(((wantSender == nullptr) ? nullptr : wantSender->AsObject()))) {"
+          },
+          {
+            "candidate": false,
+            "number": 584,
+            "text": "        HILOG_ERROR(\"failed to reply wantSender instance to client, for write parcel error\");"
+          },
+          {
+            "candidate": false,
+            "number": 585,
+            "text": "        return ERR_INVALID_VALUE;"
+          },
+          {
+            "candidate": false,
+            "number": 586,
+            "text": "    }"
+          },
+          {
+            "candidate": false,
+            "number": 587,
+            "text": "    return NO_ERROR;"
+          }
+        ],
+        "start_line": 579
+      },
+      "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 583,
+      "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=AbilityManagerStub::GetWantSenderInner; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((574, 'wantSenderInfo == nullptr => False'), (579, 'data.ReadBool() => True'))",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.capability.export",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "182fc1f0f1d52a3c543b3dd360871334af41d41a3189782eee37af0e6f9e6d4c",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:0c9b8c1943a36270",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AbilityManagerStub::GetWantSenderInner"
+    },
+    {
+      "candidate_cwe": "CWE-862",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": null,
+      "consequence_impact": "unauthorized_effect",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "9d9d65813728e6d6da0716f93813e63228f3a3fd",
+        "end_line": 1012,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 1004,
+            "text": "    sptr<IRemoteObject> callerToken = nullptr;"
+          },
+          {
+            "candidate": false,
+            "number": 1005,
+            "text": "    if (data.ReadBool()) {"
+          },
+          {
+            "candidate": false,
+            "number": 1006,
+            "text": "        callerToken = data.ReadRemoteObject();"
+          },
+          {
+            "candidate": false,
+            "number": 1007,
+            "text": "    }"
+          },
+          {
+            "candidate": true,
+            "number": 1008,
+            "text": "    int32_t result = StartAbilityByCall(*want, callback, callerToken);"
+          },
+          {
+            "candidate": false,
+            "number": 1009,
+            "text": ""
+          },
+          {
+            "candidate": false,
+            "number": 1010,
+            "text": "    HILOG_DEBUG(\"resolve call ability ret = %d\", result);"
+          },
+          {
+            "candidate": false,
+            "number": 1011,
+            "text": ""
+          },
+          {
+            "candidate": false,
+            "number": 1012,
+            "text": "    reply.WriteInt32(result);"
+          }
+        ],
+        "start_line": 1004
+      },
+      "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 1008,
+      "message": "AUTH-02 candidate: Sensitive modeled call StartAbilityByCall has a structured path without a recognized caller authorization. Entry=AbilityManagerStub::StartAbilityByCallInner; possible consequence (not established): an operation intended to require authorization may run without it [unauthorized_effect]; path=((998, 'want == nullptr => False'), (1005, 'data.ReadBool() => True'))",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.auth.missing",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "182fc1f0f1d52a3c543b3dd360871334af41d41a3189782eee37af0e6f9e6d4c",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:fae580af69e487a0",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AbilityManagerStub::StartAbilityByCallInner"
+    },
+    {
+      "candidate_cwe": "CWE-926",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": "CWE-668",
+      "consequence_impact": "capability_exposure",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "9d9d65813728e6d6da0716f93813e63228f3a3fd",
+        "end_line": 1264,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 1256,
+            "text": "int AbilityManagerStub::GetTopAbilityTokenInner(MessageParcel &data, MessageParcel &reply)"
+          },
+          {
+            "candidate": false,
+            "number": 1257,
+            "text": "{"
+          },
+          {
+            "candidate": false,
+            "number": 1258,
+            "text": "    sptr<IRemoteObject> token;"
+          },
+          {
+            "candidate": false,
+            "number": 1259,
+            "text": "    auto result = GetTopAbility(token);"
+          },
+          {
+            "candidate": true,
+            "number": 1260,
+            "text": "    if (!reply.WriteRemoteObject(token)) {"
+          },
+          {
+            "candidate": false,
+            "number": 1261,
+            "text": "        HILOG_ERROR(\"data write failed.\");"
+          },
+          {
+            "candidate": false,
+            "number": 1262,
+            "text": "        return ERR_INVALID_VALUE;"
+          },
+          {
+            "candidate": false,
+            "number": 1263,
+            "text": "    }"
+          },
+          {
+            "candidate": false,
+            "number": 1264,
+            "text": "    reply.WriteInt32(result);"
+          }
+        ],
+        "start_line": 1256
+      },
+      "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 1260,
+      "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=AbilityManagerStub::GetTopAbilityTokenInner; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=()",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.capability.export",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "182fc1f0f1d52a3c543b3dd360871334af41d41a3189782eee37af0e6f9e6d4c",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:dabe79bfd47b027d",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AbilityManagerStub::GetTopAbilityTokenInner"
+    },
+    {
+      "candidate_cwe": "CWE-862",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": null,
+      "consequence_impact": "unauthorized_effect",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "9bf0339c2b17d1d27665daa491f376da448638a4",
+        "end_line": 212,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 204,
+            "text": "    if (mode.empty()) {"
+          },
+          {
+            "candidate": false,
+            "number": 205,
+            "text": "        HILOG_ERROR(\"AbilitySchedulerStub mode is nullptr\");"
+          },
+          {
+            "candidate": false,
+            "number": 206,
+            "text": "        return ERR_INVALID_VALUE;"
+          },
+          {
+            "candidate": false,
+            "number": 207,
+            "text": "    }"
+          },
+          {
+            "candidate": true,
+            "number": 208,
+            "text": "    int fd = OpenFile(*uri, mode);"
+          },
+          {
+            "candidate": false,
+            "number": 209,
+            "text": "    if (fd < 0) {"
+          },
+          {
+            "candidate": false,
+            "number": 210,
+            "text": "        HILOG_ERROR(\"OpenFile fail, fd is %{pubilc}d\", fd);"
+          },
+          {
+            "candidate": false,
+            "number": 211,
+            "text": "        return ERR_INVALID_VALUE;"
+          },
+          {
+            "candidate": false,
+            "number": 212,
+            "text": "    }"
+          }
+        ],
+        "start_line": 204
+      },
+      "file": "services/abilitymgr/src/ability_scheduler_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 208,
+      "message": "AUTH-02 candidate: Sensitive modeled call OpenFile has a structured path without a recognized caller authorization. Entry=AbilitySchedulerStub::OpenFileInner; possible consequence (not established): an operation intended to require authorization may run without it [unauthorized_effect]; path=((199, 'uri == nullptr => False'), (204, 'mode.empty() => False'))",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.auth.missing",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "7d57447bdce60b3252d44b8757b8f72b4557981b5bde972d20c46a5d2909d9a1",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:5f3266dbfddac583",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AbilitySchedulerStub::OpenFileInner"
+    },
+    {
+      "candidate_cwe": "CWE-926",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": "CWE-668",
+      "consequence_impact": "capability_exposure",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "9bf0339c2b17d1d27665daa491f376da448638a4",
+        "end_line": 217,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 209,
+            "text": "    if (fd < 0) {"
+          },
+          {
+            "candidate": false,
+            "number": 210,
+            "text": "        HILOG_ERROR(\"OpenFile fail, fd is %{pubilc}d\", fd);"
+          },
+          {
+            "candidate": false,
+            "number": 211,
+            "text": "        return ERR_INVALID_VALUE;"
+          },
+          {
+            "candidate": false,
+            "number": 212,
+            "text": "    }"
+          },
+          {
+            "candidate": true,
+            "number": 213,
+            "text": "    if (!reply.WriteFileDescriptor(fd)) {"
+          },
+          {
+            "candidate": false,
+            "number": 214,
+            "text": "        HILOG_ERROR(\"fail to WriteFileDescriptor fd\");"
+          },
+          {
+            "candidate": false,
+            "number": 215,
+            "text": "        return ERR_INVALID_VALUE;"
+          },
+          {
+            "candidate": false,
+            "number": 216,
+            "text": "    }"
+          },
+          {
+            "candidate": false,
+            "number": 217,
+            "text": "    return NO_ERROR;"
+          }
+        ],
+        "start_line": 209
+      },
+      "file": "services/abilitymgr/src/ability_scheduler_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 213,
+      "message": "CAP-01 candidate: Capability export WriteFileDescriptor lacks a recognized caller authorization on this path. Entry=AbilitySchedulerStub::OpenFileInner; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((199, 'uri == nullptr => False'), (204, 'mode.empty() => False'), (209, 'fd < 0 => False'))",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.capability.export",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "7d57447bdce60b3252d44b8757b8f72b4557981b5bde972d20c46a5d2909d9a1",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:7a141e795302eb4f",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AbilitySchedulerStub::OpenFileInner"
+    },
+    {
+      "candidate_cwe": "CWE-926",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "confidence": "unassessed",
+      "consequence_cwe": "CWE-668",
+      "consequence_impact": "capability_exposure",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.8.11",
+      "evidence_type": "syntax",
+      "excerpt": {
+        "blob_oid": "9bf0339c2b17d1d27665daa491f376da448638a4",
+        "end_line": 632,
+        "lines": [
+          {
+            "candidate": false,
+            "number": 624,
+            "text": "        HILOG_ERROR(\"CallRequestInner result error\");"
+          },
+          {
+            "candidate": false,
+            "number": 625,
+            "text": "        return ERR_INVALID_VALUE;"
+          },
+          {
+            "candidate": false,
+            "number": 626,
+            "text": "    }"
+          },
+          {
+            "candidate": false,
+            "number": 627,
+            "text": ""
+          },
+          {
+            "candidate": true,
+            "number": 628,
+            "text": "    if (!reply.WriteRemoteObject(call)) {"
+          },
+          {
+            "candidate": false,
+            "number": 629,
+            "text": "        HILOG_ERROR(\"Connect done remote object error.\");"
+          },
+          {
+            "candidate": false,
+            "number": 630,
+            "text": "        return ERR_INVALID_VALUE;"
+          },
+          {
+            "candidate": false,
+            "number": 631,
+            "text": "    }"
+          },
+          {
+            "candidate": false,
+            "number": 632,
+            "text": ""
+          }
+        ],
+        "start_line": 624
+      },
+      "file": "services/abilitymgr/src/ability_scheduler_stub.cpp",
+      "file_analysis_reason": "incomplete_ast:partial",
+      "file_analysis_status": "not_analyzed",
+      "file_parse_status": "partial",
+      "interpretation_id": "ohscanner.interface.ipc",
+      "line": 628,
+      "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=AbilitySchedulerStub::CallRequestInner; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((618, 'call => True'), (623, 'reply.WriteInt32(NO_ERROR) => True'))",
+      "model_version": "oh-ipc-2026.10-v17",
+      "obligations": [
+        {
+          "description": "Verify actual caller reachability and product build/macro conditions.",
+          "kind": "entry_reachability",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+          "kind": "callee_and_policy",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Independently review attacker control, trust boundary and concrete effect.",
+          "kind": "security_impact",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+          "kind": "consequence",
+          "origin": "shared_runner",
+          "source_pass": "all-files",
+          "status": "unknown"
+        }
+      ],
+      "obligations_by_source": {
+        "all-files": [
+          {
+            "description": "Verify actual caller reachability and product build/macro conditions.",
+            "kind": "entry_reachability",
+            "status": "unknown"
+          },
+          {
+            "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+            "kind": "callee_and_policy",
+            "status": "unknown"
+          },
+          {
+            "description": "Independently review attacker control, trust boundary and concrete effect.",
+            "kind": "security_impact",
+            "status": "unknown"
+          },
+          {
+            "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+            "kind": "consequence",
+            "status": "unknown"
+          }
+        ]
+      },
+      "obligations_recorded_by_runner": true,
+      "obligations_source": "shared_runner",
+      "observed_detector_ids": [
+        "ohscanner.interface.ipc"
+      ],
+      "observed_detector_versions": [
+        "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17"
+      ],
+      "passes": [
+        "all-files"
+      ],
+      "repository": "openharmony/aafwk_standard",
+      "rule_id": "ipc.capability.export",
+      "rule_version": "ohscanner.interface.ipc@0.8.11+oh-ipc-2026.10-v17",
+      "severity": "unassessed",
+      "shard_id": 0,
+      "source_binding": "bound",
+      "source_sha256": "7d57447bdce60b3252d44b8757b8f72b4557981b5bde972d20c46a5d2909d9a1",
+      "sources": [
+        {
+          "detector_id": "ohscanner.interface.ipc",
+          "detector_version": "0.8.11",
+          "diagnostic_id": "ohscanner.interface.ipc:0588ed7cdaae7819",
+          "model_version": "oh-ipc-2026.10-v17",
+          "obligations_recorded": true,
+          "pass": "all-files",
+          "shard_id": 0,
+          "source_binding": "bound"
+        }
+      ],
+      "symbol": "AbilitySchedulerStub::CallRequestInner"
+    }
+  ],
+  "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+  "counts": {
+    "candidates": 16,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "candidates_with_runner_obligations": 16,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0,
+    "source_files_audited": 5
+  },
+  "coverage": {
+    "analysis_coverage": {
+      "bucket_closure": {
+        "closed": true,
+        "dropped_by_loader": 0,
+        "files_selected": 5,
+        "files_unaccounted": 0,
+        "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+        "not_run_files": 0,
+        "parse_complete": 0,
+        "parse_failed": 0,
+        "parse_partial": 5,
+        "unclaimed_by_detector": 0
+      },
+      "bytes_selected": 99109,
+      "candidate_files": 5,
+      "candidates": 16,
+      "candidates_by_file_parse_status": {
+        "partial": 16
+      },
+      "candidates_with_driver_synthesized_obligations": 0,
+      "candidates_with_runner_obligations": 16,
+      "files_analyzed": 0,
+      "files_in_scope_without_a_claiming_detector": {},
+      "files_in_scope_without_a_claiming_detector_examples": [],
+      "files_not_analyzed_by_reason": {
+        "incomplete_ast:partial": 5
+      },
+      "files_selected": 5,
+      "notes": [
+        "A blocked run records scope_files and scope_loc as 0 even though it emitted candidates; its per-candidate evidence obligations are recorded as for any other run. Read the applicable/analyzed counts for those shards, not the zero."
+      ],
+      "parse_complete": 0,
+      "parse_partial": 5,
+      "parse_status": {
+        "partial": 5
+      },
+      "plan_vs_load": {
+        "mismatches": []
+      }
+    },
+    "root_cause_intersection": {
+      "reason": "No labelled root-cause set is bound to this component. The curated historical pairs are measured by measure_entry_coverage.py; a component audit reports candidates and coverage only.",
+      "state": "not_measured"
+    },
+    "run_state": {
+      "pass_runs": [
+        {
+          "analyzed_files": 0,
+          "applicable_files": 5,
+          "detector_status": "blocked",
+          "diagnostics": 0,
+          "dropped_by_loader": 0,
+          "elapsed_seconds": 0.255,
+          "error": "",
+          "loaded_bytes": 99109,
+          "loaded_files": 5,
+          "parse_status": {
+            "partial": 5
+          },
+          "pass": "complete-ast",
+          "planned_files": 5,
+          "report_status": "completed_with_limitations",
+          "run_state": "ran",
+          "scope_files": 0,
+          "scope_loc": 0,
+          "shard_id": 0,
+          "unexamined_reasons": {
+            "incomplete_ast:partial": 5
+          }
+        },
+        {
+          "analyzed_files": 0,
+          "applicable_files": 5,
+          "detector_status": "blocked",
+          "diagnostics": 16,
+          "dropped_by_loader": 0,
+          "elapsed_seconds": 0.465,
+          "error": "",
+          "loaded_bytes": 99109,
+          "loaded_files": 5,
+          "parse_status": {
+            "partial": 5
+          },
+          "pass": "all-files",
+          "planned_files": 5,
+          "report_status": "completed_with_limitations",
+          "run_state": "ran",
+          "scope_files": 0,
+          "scope_loc": 0,
+          "shard_id": 0,
+          "unexamined_reasons": {
+            "blocked": 5
+          }
+        }
+      ],
+      "passes": [
+        "complete-ast",
+        "all-files"
+      ],
+      "shards": 1,
+      "shards_with_errors": 0
+    }
+  },
+  "elapsed_seconds": 0.844,
+  "experiment_kind": "component_audit",
+  "git_tree": "c3744c8c230573a4bcdb76bf49493a1ea61c72d1",
+  "limitations": [
+    "Candidates are unverified syntax evidence, not vulnerabilities.",
+    "Zero candidates does NOT mean the component is free of vulnerabilities.",
+    "The declared repository is user input; source is pinned local Git objects, not an OpenHarmony product build.",
+    "Excluded, oversize, non-UTF8, symlink, submodule and unreadable entries are outside the audited scope; their counts are reported, not hidden.",
+    "No compilation flags, macro configuration, symbolic execution or reachability proof. Preprocessor-conditional code is parsed as written.",
+    "Candidates from a partially parsed file carry a partial AST; the finding is kept but its parse depth is reported per row.",
+    "Where the shared runner recorded no obligations for a candidate, the driver attaches its standing questions at status unknown and marks them origin: audit_driver. That is a gap in the recorded evidence, not an absence of obligations, and not runner-produced evidence. Where the record is present the driver adds nothing of its own.",
+    "A candidate seen by both passes is one interpretation applied twice to the same file, not two independent sources of evidence.",
+    "Sharding is deterministic and the candidate set matched on one component under one alternative shard configuration. Invariance under arbitrary sharding is not claimed: a rule with a component-global view would need whole-component evaluation, which no pass here performs.",
+    "`elapsed_seconds` and `peak_rss_kb` describe one run of one process, including the interpreter start and the report write. The RSS figure is a per-process high-water mark, so it is the audit's own cost only when the audit owns its process; a caller auditing several components in one process gets a running maximum. Neither number is a bound, and neither says anything about detection quality."
+  ],
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "peak_rss_kb": 42284,
+  "plan_sha256": "408a909b236ed1d0316535576dd95c101e4d026b1c45d04294173ae9c45a3162",
+  "provenance": "local_git_objects",
+  "repository": "openharmony/aafwk_standard",
+  "schema_version": 2,
+  "scope": {
+    "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+    "counts": {
+      "excluded_pattern": 0,
+      "non_source": 0,
+      "out_of_scope": 2325,
+      "oversize": 0,
+      "selected_bytes": 99109,
+      "selected_files": 5,
+      "shards": 1,
+      "submodules": 0,
+      "symlinks": 0,
+      "tracked_entries": 2330,
+      "unreadable": 0
+    },
+    "excludes": [],
+    "git_tree": "c3744c8c230573a4bcdb76bf49493a1ea61c72d1",
+    "includes": [
+      "frameworks/kits/ability/native/src/continuation/distributed/reverse_continuation_scheduler_primary_stub.cpp",
+      "frameworks/kits/ability/native/src/continuation/remote_register_service/connect_callback_stub.cpp",
+      "interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp",
+      "services/abilitymgr/src/ability_manager_stub.cpp",
+      "services/abilitymgr/src/ability_scheduler_stub.cpp"
+    ],
+    "plan_sha256": "408a909b236ed1d0316535576dd95c101e4d026b1c45d04294173ae9c45a3162",
+    "production_only": false,
+    "repository": "openharmony/aafwk_standard",
+    "shards": [
+      {
+        "bytes": 99109,
+        "files": 5,
+        "first_path": "frameworks/kits/ability/native/src/continuation/distributed/reverse_continuation_scheduler_primary_stub.cpp",
+        "last_path": "services/abilitymgr/src/ability_scheduler_stub.cpp",
+        "paths": [
+          "frameworks/kits/ability/native/src/continuation/distributed/reverse_continuation_scheduler_primary_stub.cpp",
+          "frameworks/kits/ability/native/src/continuation/remote_register_service/connect_callback_stub.cpp",
+          "interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp",
+          "services/abilitymgr/src/ability_manager_stub.cpp",
+          "services/abilitymgr/src/ability_scheduler_stub.cpp"
+        ],
+        "shard_id": 0,
+        "shard_sha256": "bc1bd867eee132e06b1f4fcd7d8c1ea14596ccf2cdf0a7756d578fb4fb84806b"
+      }
+    ],
+    "skipped_examples": []
+  },
+  "shard_errors": [],
+  "snapshot_sha256": "69370701eb08d6c24a9b4176d4e8d9e0b692a5de6d6886fdd4c8da3b351d315e",
+  "validated_vulnerability": 0
+}

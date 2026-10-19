@@ -564,7 +564,7 @@
     "file": "account_role_authorized_fixed.cpp",
     "split": "design",
     "variant": "fixed",
-    "notes": "The three handlers are gated by a caller-UID comparison with ACCESSTOKEN_UID, which this file's own sources bind to the reviewed value 3020, and each call is one of the three operations the reviewed record says that account authorizes. The role is credited for those operations only, so the three candidates are not raised."
+    "notes": "The handlers are gated by a caller-UID comparison with ACCESSTOKEN_UID, which the scanned sources bind to 3020. The role only applies in the reviewed security_access_token repository and only to listed operations; RemovePermissionUsedRecords additionally requires the exact PrivacyManagerStub::RemovePermissionUsedRecordsInner handler. The account does not authorize unrelated calls."
   },
   {
     "sample_id": "account_role_wrong_value_positive",
@@ -632,5 +632,69 @@
     "file": "data05/tlv_fixed_width_safe.cpp",
     "split": "design",
     "variant": "safe"
+  },
+  {
+    "sample_id": "auth06_missing_guard",
+    "data_origin": "synthetic",
+    "family": "AUTH-06",
+    "expected_rule": "ipc.network.auth-session-whitelist",
+    "file": "auth06/missing_guard.c",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "sensitive_reply_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-04",
+    "expected_rule": "ipc.data.sensitive-flow",
+    "file": "data04/reply_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "sensitive_reply_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-04",
+    "expected_rule": null,
+    "file": "data04/reply_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "auth07_denial_transport_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-07",
+    "expected_rule": "ipc.auth.denial-transport-success",
+    "file": "auth07/denial_transport_success_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "auth07_denial_transport_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-07",
+    "expected_rule": null,
+    "file": "auth07/denial_transport_success_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "auth07_unrelated_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-07",
+    "expected_rule": null,
+    "file": "auth07/unrelated_safe.cpp",
+    "split": "design",
+    "variant": "safe"
+  },
+  {
+    "sample_id": "observer_growth_positive",
+    "data_origin": "synthetic",
+    "family": "RESOURCE-01",
+    "expected_rule": "ipc.resource.unbounded-observer-registration",
+    "file": "resource01/observer_growth_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "Source-bound observer insertion candidate. The family-specific test adds capped, unrelated-owner and missing-path controls; product impact obligations remain open."
   }
 ]

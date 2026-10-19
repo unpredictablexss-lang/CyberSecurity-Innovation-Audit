@@ -23,27 +23,31 @@ from ..models import ServiceAccountRole
 FAMILY = "AUTH-02"
 TITLE = "missing server-side authorization"
 CWE = "CWE-862"
-RULES = ("ipc.auth.missing",)
+RULES = ("ipc.auth.missing", "ipc.auth.privileged-app-bypass")
 
-# The access-token service: the three ITokenSyncCallback operations are the ones
-# that interface exists to serve, so the UID comparison inside
-# `TokenSyncCallbackStub` is that interface's admission test -- and those three
-# operations are the only ones that accept the role, which is what keeps one
-# service's account from authorizing everything behind a guard that happens to
-# name it. See `models.ServiceAccountRole` for why this is not a `trusted_uids`
-# entry, and `analysis.Interpreter.account_role` for the three conditions a
-# guard has to meet before the role is credited.
+# The access-token service account is scoped to its owning repository. The three
+# ITokenSyncCallback operations are guarded by its UID comparison. PrivacyManager
+# also has one explicit exception: RemovePermissionUsedRecords skips the permission
+# check only for IsAccessTokenCalling(). The role is credited for that exact
+# operation only; it is not a general exemption for the rest of PrivacyManager.
+# See `models.ServiceAccountRole` and `analysis.Interpreter.account_role` for the
+# source binding and repository boundary required before this fact is credited.
 POLICY = {
     "service_account_roles": (
         ServiceAccountRole(
             constant="ACCESSTOKEN_UID",
             uid="3020",
             role="<caller-account:access-token-service>",
+            repository="openharmony/security_access_token",
             accepted_operations=("GetRemoteHapTokenInfo", "DeleteRemoteHapTokenInfo",
-                                 "UpdateRemoteHapTokenInfo"),
+                                 "UpdateRemoteHapTokenInfo", "RemovePermissionUsedRecords"),
             origin="access-token service account, ACCESSTOKEN_UID = 3020 (reviewed account "
-                   "assignment, 2026-10-16); the value is confirmed against the scanned "
-                   "definitions, the account assignment is the reviewed claim it carries",
+                   "assignment; privacy.cfg assigns privacy_service to uid access_token and "
+                   "grants PERMISSION_USED_STATS; the stub explicitly bypasses that permission "
+                   "only for this operation when IsAccessTokenCalling() is true. The literal "
+                   "is still confirmed against scanned definitions",
+            operation_handlers=(("RemovePermissionUsedRecords",
+                                 "PrivacyManagerStub::RemovePermissionUsedRecordsInner"),),
         ),
     ),
 }
