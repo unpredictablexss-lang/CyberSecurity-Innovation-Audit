@@ -37,6 +37,26 @@
       "scope": "single exact source file; parser coverage does not establish product reachability"
     }
   },
+  "official_ref_snapshot": {
+    "remote": "https://gitcode.com/openharmony/applications_contacts_data",
+    "observed_date": "2026-10-19",
+    "observation": "Parent reviewer ran read-only git ls-remote --heads; T5 did not fetch or checkout remote refs.",
+    "refs": [
+      {"name": "refs/heads/OpenHarmony-6.1-LTS", "commit": "b02aadfc2d801ee30573fcb2d13490298e146fea", "relation": "matches the exact A0 source commit in this review"},
+      {"name": "refs/heads/master", "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9", "relation": "target source file differs from exact A0 blob"},
+      {"name": "refs/heads/weekly_20261019", "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9", "relation": "same observed commit as master; target source file differs from exact A0 blob"}
+    ],
+    "different_master_file_identity": {
+      "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "blob": "c93e950725adc93276916b3c96c5ac7a5bb5b6b7",
+      "bytes": 85339,
+      "sha256": "c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6",
+      "verification_note": "Previously verified exact local Git object identity; it is not the A0 blob 32c6a26a9a6c1f4ec3172f45bc3dbe4d3668abe6. No fixed-source status is inferred from branch-name or tip identity alone."
+    },
+    "fixed_source_conclusion": "These observed refs do not provide a trusted fixed source object for this A0 case. This is limited to the observed branch heads and the compared target-file identities; no claim is made about every historical branch, tag, or commit."
+  },
   "source_chains": [
     {
       "name": "A0 disclosed PortraitFileName path",

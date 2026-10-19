@@ -11,6 +11,9 @@
 - Tree: `ef183625ccbc842f47b076eb75e68b665d7c21c6`
 - Target: `dataBusiness/contacts/src/contacts_data_ability.cpp`, blob `32c6a26a9a6c1f4ec3172f45bc3dbe4d3668abe6`, 80,944 bytes, SHA-256 `70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383`
 - The bytes came from official GitHub fetch at the exact commit and were checked against the local `.repo/project-objects` commit, tree, and blob.
+- On 2026-10-19, the parent reviewer recorded a read-only `git ls-remote --heads` observation for `https://gitcode.com/openharmony/applications_contacts_data`: `OpenHarmony-6.1-LTS` pointed to `b02aadfc2d801ee30573fcb2d13490298e146fea`; `master` and `weekly_20261019` both pointed to `341cc3bf41b48e9a5f278dd088f40a2041d2f1c9`. T5 did not fetch or checkout remote refs.
+- The exact target-file object previously verified at `341cc3bf...` is tree `2054824c04bb403eeea128a9262edfb3001efa4f`, blob `c93e950725adc93276916b3c96c5ac7a5bb5b6b7`, 85,339 bytes, SHA-256 `c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6`. This differs from A0's `32c6a26...` blob, so the observed `master` and `weekly_20261019` heads do not bind the A0 source or provide a fixed comparison for this case.
+- This is only a snapshot of the observed heads and the compared file identities. It does not establish that every historical branch, tag, or commit lacks a fix.
 - Parser command: `python -c "from pathlib import Path; from src.parser.ast import parse_source; p=Path(r'D:/openHarmonyScanner/tmp/contacts-t5-b02aadfc-20261019/contacts_data_ability.cpp'); x=parse_source(p.read_text(encoding='utf-8'),language='cpp'); print(x.parse_status, len(x.issues), len(x.functions), len(x.calls))"`
 - Result: `complete`, 0 issues, 57 functions, 525 calls for this file. This is file-level parse coverage, not proof of application reachability.
 
