@@ -20,6 +20,7 @@ Date: 2026-10-20 (Asia/Shanghai)
 - D16 is now implemented at `4208c3f`: recursive names containing `Delete` no longer qualify alone as a deallocator; the exact cJSON apply_patch candidate remains. T14 is independently accepting this detector change.
 - D17 found no trusted merged/released cJSON fixed source: 67215 remains unpatched in checked master/develop; 67216 has an unmerged develop candidate that is not a fixed release.
 - T13 verified the first five queued IDs and eight source objects. All five remain `not_testable / queued_first_batch`; no original queue IDs or states changed.
+- T14 accepted the synthetic sink-name regression but marked the exact cJSON finding location PARTIAL: line 861 is an early-exit root-replace branch, while general ADD/COPY duplicate-and-attach paths occur later. Follow-up D18 owns that source-to-root association gap.
 
 T12 completion note: the independent wave audit is committed as `1262d0ab9` and reports 3 PASS / 8 PARTIAL / 0 BLOCK / 2 N/A, with all 345 A0 IDs and original states retained. After that audit, D14's historical JSON/Markdown tree-null fields were reconciled to T11/T12's verified commit trees; this metadata cleanup does not change replay outcomes or case disposition.
 
@@ -113,6 +114,28 @@ Inputs: D16 commit 84e9493 (integration commit 4208c3f); exact cJSON source iden
 Steps: replay exact source and all dedicated positive, misleading Delete-name negative, safe, unrelated, and partial controls; inspect the rule's release-sink evidence; verify line, rule version, parse and detector coverage; run focused and full C++ detector suites; run A-line scope and diff checks.
 Done when: JSON/Markdown records PASS/PARTIAL/BLOCK/N/A for the detector change and CVE case separately, source hashes and commands are independently confirmed, and no zero partial run is labeled safe.
 Boundaries: do not edit detector/tests/fixtures; do not treat candidate presence as product vulnerability confirmation; do not upgrade CVE fixed differential without a trusted fix.
+```
+
+### D18 — cJSON apply_patch root-path binding (development)
+
+```text
+Role: A-line C/C++ resource-lifetime detector developer.
+Continuous goal: bind the CVE-2026-67215 candidate to an actual JSON Patch tree-expansion path and avoid attributing the root-replace early-exit branch to the recursive add/copy sink.
+Inputs: integration D16 commit 4208c3f and independent T14 report; exact cJSON_Utils.c source identity and cJSON.c release-sink identity; current resource_lifetime tests/fixtures.
+Steps: trace ADD/REPLACE and COPY paths separately, including cJSON_Duplicate, array/object attach, value ownership transfer, cleanup and recursive cJSON_Delete; reproduce the current line-861 attribution; change candidate location/association only with a bounded control-flow relation that the current parser actually exposes; add positive controls for each supported path, a root-replace early-exit negative, unrelated/safe/renamed and partial controls; bind source hashes and record rule coverage.
+Done when: supported positive paths are reported at source locations tied to duplicate+attach and the line-861 early-exit alone is quiet, or a no-change report identifies the missing parser/control-flow fact; whole-source partial and missing fix remain explicit.
+Boundaries: only resource_lifetime detector and dedicated tests/fixtures/evidence; no generic recursive-delete alert, no shared parser/API/Catalog/docs, no candidate-to-product vulnerability claim.
+```
+
+### T15 — D18 independent cJSON root-path acceptance (testing)
+
+```text
+Role: independent A-line regression auditor.
+Continuous goal: verify that any D18 change binds findings to true JSON Patch expansion paths and keeps the exceptional early-exit and unrelated controls quiet.
+Inputs: frozen D18 commit, T14's D16 acceptance findings, exact upstream commit/tree/blob/hash identities, D18 commands and controls.
+Steps: use an independent checkout; reverify source identities; rerun exact source and dedicated controls; compare finding locations to duplicate/attach operations; confirm parse status and detector coverage; run focused and full C++ detector suites, queue verifier, scope checker and diff check.
+Done when: PASS/PARTIAL/BLOCK/N/A separately describes rule regression and full CVE case, with no claim based on partial zero findings or missing fixes.
+Boundaries: no detector/test/fixture edits; reject a candidate whose location cannot be tied to supported root operation; preserve all unknown source and product questions.
 ```
 
 ## Stage goal
