@@ -4,7 +4,7 @@ Date: 2026-10-19 (Asia/Shanghai)
 
 ## Scope and method
 
-This is T1's independent **before** matrix on scanner base `8ec5f56a12e90bba56953b39eb17faa20e154da9` (PR #30 head). The worktree started clean. The source of the case inventory is the read-only ledger `D:\openHarmonyScanner\CyberSecurity-Innovation-Audit\research\deliveries\cpp\coverage_ledger_20261019.json` (SHA-256 `e991abd2c020e5157278779374ed2f029ac6aacfddef4887adbcd160b58f8812`) plus the A0 Contacts manifest and T1 source review. The matrix has **13 rows**: all 12 ledger case IDs, plus the separate A0 Contacts `PortraitFileName` path traversal candidate.
+This is T1's independent **before** matrix on scanner base `8ec5f56a12e90bba56953b39eb17faa20e154da9` (PR #30 head). The worktree started clean. The source of the case inventory is the read-only ledger `D:\openHarmonyScanner\CyberSecurity-Innovation-Audit\nesearch\deliveries\cpp\coverage_ledger_20261019.json` (SHA-256 `e991abd2c020e5157278779374ed2f029ac6aacfddef4887adbcd160b58f8812`) plus the A0 Contacts manifest and T1 source review. The matrix has **13 rows**: all 12 ledger case IDs, plus the separate A0 Contacts `PortraitFileName` path traversal candidate.
 
 All executed scans used the production pinned-source CLI `python -m src.cli ohscan-run`, profile `light-ast`, and explicit detector selection. The input commit/tree/blob, snapshot digest, per-file source hashes, parse state, selected detector/rule version, finding locations, run status, and elapsed time are retained in `matrix.json` and each raw M2 JSON report. Synthetic source snapshots use their synthetic commit/tree identity in the run report and retain upstream/OH provenance in the ledger; they are not represented as original upstream commits.
 
@@ -63,3 +63,7 @@ The omitted runs were not retried because the minimum source input is unavailabl
 ## Follow-up after development freeze
 
 T1 should rerun these exact cases against the frozen D1/D2 detector commits from a fresh independent checkout, preserve the baseline outputs, then compare same-root findings and parsing coverage. Add explicit safe/unrelated controls only after each control is source-bound. The curl complete-parse zero/zero row requires attention as a baseline miss. Partial parser results remain partial even when the diagnostic count is zero.
+
+## Dated source replay update
+
+research/evidence/cpp/a_static_baseline_20261019/cve2025-26690-replay-update-20261019.md adds an official-fetch/synthetic-package replay for CVE-2025-26690. The original BLOCK in the before matrix is retained; current case status is PARTIAL because vulnerable/fixed source blobs now replay as 5/0 candidates, but upstream tree IDs, exact controls, and complete detector analysis are unavailable.

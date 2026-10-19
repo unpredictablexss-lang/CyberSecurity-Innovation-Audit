@@ -1,0 +1,68 @@
+{
+  "case_id": "openharmony-cve-2025-26690",
+  "date": "2026-10-19",
+  "prior_before_status": "BLOCK",
+  "current_status": "PARTIAL",
+  "status_reason": "Exact upstream file bytes fetched and Git-blob verified; 5 vulnerable candidates vs 0 fixed, but upstream tree ids unavailable and detector analysis partial; no bound safe/unrelated controls.",
+  "upstream_repository": "openharmony/communication_dsoftbus",
+  "provenance": "official GitHub github_fetch_file response; synthetic local Git packaging; upstream commits are not local Git objects",
+  "variants": [
+    {
+      "variant": "vulnerable",
+      "upstream_commit": "258662cd9840b55a31546a72d91027f6368cea84",
+      "upstream_tree": null,
+      "path": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+      "blob_sha1": "a82b71fb5520b02278a4af695bbe918d14c1048e",
+      "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+      "bytes": 8502,
+      "synthetic_commit": "4388f103aba08b6a2fc3f232fc02d7c71b330b05",
+      "synthetic_tree": "eb1090510490b14714786bddaf42095d3e4dc2af",
+      "snapshot_sha256": "25102a7c1fde5d072f082828ed60bbc586309724014d42d6df042845a977b8db",
+      "source_parse": {
+        "complete": 1
+      },
+      "analysis_status": "partial",
+      "run_status": "blocked",
+      "candidate_count": 5,
+      "candidate_lines": [
+        71,
+        82,
+        97,
+        108,
+        123
+      ]
+    },
+    {
+      "variant": "fixed",
+      "upstream_commit": "192f3e11d74beeaa3d879333471deb8a24a7e1c5",
+      "upstream_tree": null,
+      "path": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+      "blob_sha1": "13ddbe93a7f617784dec0f3761e09f66b5c3217c",
+      "source_sha256": "5a093d91efc624147d40bf3f4dbbe3ab7ab6d724b17978298e9d5c30d9e5eb81",
+      "bytes": 9387,
+      "synthetic_commit": "67deaf12a16bb5ddf74919554afaf9603dfe7aa7",
+      "synthetic_tree": "563ed0715afbb5880673d11a0ca1bdf07fda1742",
+      "snapshot_sha256": "c8867f500a082ea923b8aede2735e12d409149f8071900098ee3f96f55e8bf11",
+      "source_parse": {
+        "complete": 1
+      },
+      "analysis_status": "partial",
+      "run_status": "blocked",
+      "candidate_count": 0,
+      "candidate_lines": []
+    }
+  ],
+  "detector": {
+    "id": "ohscanner.cpp.null_dereference",
+    "version": "0.6.0",
+    "rule_id": "ohcpp-null-dereference-candidate-001",
+    "rule_version": "1.4.0"
+  },
+  "before_matrix_preserved": true,
+  "safe_unrelated_controls": "BLOCK: exact controls unavailable",
+  "follow_up": [
+    "bind exact upstream tree IDs/objects",
+    "bind exact safe/unrelated controls",
+    "rerun after detector freeze"
+  ]
+}
