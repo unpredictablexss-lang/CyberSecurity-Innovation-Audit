@@ -1,0 +1,64 @@
+{
+  "review_id": "T55-D55-ADVISORY-MANIFEST-ACCEPTANCE-20261021",
+  "review_date": "2026-10-21",
+  "review_checkout": "D:/openHarmonyScanner/worktrees/t51-pasteboard-independent-20261020",
+  "batch_a": {
+    "commit": "e829231d3f9f06dfda4ca542af23aeaf00e3c22e",
+    "entries": 9,
+    "strict_json": "PASS",
+    "captured_bodies_verified": "9/9",
+    "transport_request_url_and_response_identity": "9/9 PASS"
+  },
+  "batch_b": {
+    "commit": "55ba5fc0220d9f72443010fd0ad38270d2f22539",
+    "entries": 8,
+    "strict_json": "PASS",
+    "captured_bodies_verified": "6/6",
+    "captured_header_hash_status_content_type_verified": "6/6 PASS",
+    "blocked_entries": ["CVE-2026-33636", "CVE-2026-46675"],
+    "blocked_status_integrity": "PASS_NO_BODY_NULL_HASH_NULL_HTTP_STATUS_ZERO_BYTE_HEADERS",
+    "blocked_header_path_field": "MINOR_DEFECT_DESCRIPTIVE_SUFFIX_IS_INCLUDED_IN_PATH_VALUE"
+  },
+  "catalog": {
+    "pinned_blob": "5e71601423a3247b45fb4ce9adf28323b471dcb5",
+    "pinned_sha256": "577731fe7f2b252e895c4e1ec93e6ee494db7d3583fc848bb9173ba47eb660e0",
+    "catalog_unique_ids": 17,
+    "manifest_union_unique_ids": 17,
+    "missing_ids": [],
+    "extra_ids": [],
+    "duplicates": [],
+    "coverage": "PASS"
+  },
+  "body_hashes": {
+    "captured_count": 15,
+    "matched_raw_git_blob_sha_and_size": 15,
+    "mismatches": []
+  },
+  "evidence_status": "PARTIAL_NOT_READY",
+  "scope_limitations": {
+    "captured_scope_inconsistency": ["CVE-2022-45877", "CVE-2025-25212", "CVE-2025-27247"],
+    "vendor_scope_unknown": ["CVE-2025-57052"],
+    "unreviewed_ghsa_no_structured_range_or_vendor_identity": ["CVE-2026-67215", "CVE-2026-67216"],
+    "no_raw_advisory_capture": ["CVE-2026-33636", "CVE-2026-46675"],
+    "unusual_version_event_preserved_without_inference": ["CVE-2026-9079"],
+    "fixed_version_unknown": ["CVE-2026-58313", "CVE-2026-67215", "CVE-2026-67216"],
+    "cross_product_scope_not_transferable": ["CVE-2025-9900"]
+  },
+  "status_decision": {
+    "known_cve_advisory_package": "PARTIAL_NOT_READY_FOR_D55_EXECUTION",
+    "m2": "NOT_MET",
+    "reason": "Two primary GHSA raw captures are blocked; some captured records have unknown or inconsistent version scope and must remain so.",
+    "product_applicability_established": false
+  },
+  "validation": {
+    "strict_duplicate_key_json_parse": "PASS_BOTH_MANIFESTS",
+    "raw_git_blob_sha256_and_byte_length": "PASS_15_CAPTURED_BODIES",
+    "transport_header_identity": "PASS_FOR_CAPTURED_ENTRIES_WITH_LIMITATION_BATCH_B_DOES_NOT_PRESERVE_FINAL_URL_EFFECTIVE_FIELD",
+    "blocked_entries_misclassified_as_captured": false,
+    "git_diff_check_batch_a": "PASS_EXIT_0",
+    "git_diff_check_batch_b": "PASS_EXIT_0",
+    "scanner_tests_run": false,
+    "accuracy_metrics_computed": false
+  },
+  "boundary": "Manifest integrity does not establish a vulnerable source instance, OpenHarmony product applicability, or M2 completion."
+}
