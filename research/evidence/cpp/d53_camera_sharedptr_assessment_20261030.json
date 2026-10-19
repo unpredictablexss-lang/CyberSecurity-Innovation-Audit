@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "task": "D53",
+  "disposition": "PARTIAL/BLOCK",
+  "result": "no_change",
+  "repository": "openharmony/multimedia_camera_framework",
+  "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+  "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+  "detector": "ohscanner.cpp.shared_ptr_race",
+  "detector_version": "0.5.1",
+  "a0_row_count": 345,
+  "selected_ids": [
+    "CR-0261", "CR-0262", "CR-0263", "CR-0264", "CR-0265", "CR-0266", "CR-0267", "CR-0268", "CR-0269", "CR-0270",
+    "CR-0271", "CR-0272", "CR-0273", "CR-0274", "CR-0275", "CR-0276", "CR-0277", "CR-0278", "CR-0279", "CR-0280",
+    "CR-0281", "CR-0282", "CR-0283", "CR-0284", "CR-0285", "CR-0286", "CR-0287", "CR-0288", "CR-0289", "CR-0290"
+  ],
+  "original_status": "not_testable",
+  "original_queue_status": "paused_pending_evidence",
+  "a0_status_mutated": false,
+  "cli_replay": "d53_camera_sharedptr_cli_20261030.json",
+  "replay_summary": {
+    "unique_files": 13,
+    "parse_complete_files": 13,
+    "diagnostic_count": 13,
+    "a0_lines_with_same_line_candidate": 10,
+    "a0_lines_without_same_line_candidate": 20
+  },
+  "review_summary": {
+    "confirmed_generalized_gap": false,
+    "targeted_fix_test_matrix_required": false,
+    "catalog_request_required": false,
+    "notes": [
+      "The ten directly modeled A0 accesses in the auto-ref wrapper, buffer wrapper, audio-capturer wrapper, and rotate parser are emitted at their reported lines.",
+      "The event-listener map accessors are named NoLock but every in-scope caller holds eventListenerMapMutex_ across map lookup/update; this is source-local synchronization context, not a product-wide concurrency proof.",
+      "The other unmatched locations are constructor-only assignment followed by reads, aggregate/shared_ptr container operations, or reads of members whose writes are outside the selected header. They do not establish an unsynchronized same-object post-construction write/read pair in this replay scope.",
+      "The 13 syntactically complete parses and zero or missing findings do not prove safety. Product selection, complete build/macro context, external callers, thread schedule, and security impact remain unverified."
+    ]
+  },
+  "limitations": [
+    "Narrow selected-source replay; no product build, macro expansion, global CFG, alias/escape model, or runtime validation.",
+    "No trusted fixed source or target-product harness bound to these A0 rows.",
+    "A0 source analysis statuses and blocker queue are intentionally unchanged."
+  ]
+}
