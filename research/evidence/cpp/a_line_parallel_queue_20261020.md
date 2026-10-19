@@ -18,6 +18,8 @@ Date: 2026-10-20 (Asia/Shanghai)
 - T11: independently fetched vulnerable/fixed commits and verified tree/blob/file identities. The full-file and fragment outcomes remain blocked/partial; zero findings do not establish a fixed differential.
 - Next acceptance action: run T12 across the current frozen integration commits and reconcile the queue, scope, and all changed evidence packages.
 
+T12 completion note: the independent wave audit is committed as `1262d0ab9` and reports 3 PASS / 8 PARTIAL / 0 BLOCK / 2 N/A, with all 345 A0 IDs and original states retained. After that audit, D14's historical JSON/Markdown tree-null fields were reconciled to T11/T12's verified commit trees; this metadata cleanup does not change replay outcomes or case disposition.
+
 ## Parallel tracks
 
 Development and testing work remain separate. Each development task uses its own checkout and owns only its named detector/evidence surface. Acceptance tasks use a separate checkout and do not edit detector code, tests, or fixtures.
