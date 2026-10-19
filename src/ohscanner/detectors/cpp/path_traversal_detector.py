@@ -19,7 +19,7 @@ from .memory_safety import line_column, mask_comments_and_literals
 
 
 RULE_ID = "ohcpp-path-traversal-source-to-file-sink-candidate-001"
-RULE_VERSION = "0.1.0"
+RULE_VERSION = "0.2.0"
 RULE_LINEAGE_ID = "A-PATH-01:source-to-file-sink"
 MAX_UNIT_BYTES = 1024 * 1024
 MAX_TOTAL_BYTES = 32 * 1024 * 1024
@@ -125,6 +125,32 @@ def _guarded_call(code: str, call: re.Match[str], args: Sequence[str]) -> bool:
     return bool(guarded and any(re.search(r"\b" + re.escape(name) + r"\b", condition) for name in names))
 
 
+def _rejects_path_separators(code: str, names: Set[str]) -> Set[str]:
+    """Recognize a narrow early-exit check rejecting slash-bearing components.
+
+    This is deliberately lexical: only a direct find/find_first_of test in an
+    if condition followed by return/throw is accepted. It does not model
+    encoding, Unicode separators, symlinks, or validation in other functions.
+    """
+    safe: Set[str] = set()
+    for match in re.finditer(r"if\s*\((?P<condition>[^{}]*)\)\s*\{?\s*(?:return\b|throw\b)", code):
+        condition = match.group("condition")
+        if not re.search(r"[\"'][^\"']*(?:/|\\\\)[^\"']*[\"']", condition):
+            continue
+        found_on_left = re.search(
+            r"(?:find_first_of|find)\s*\([^)]*\)\s*!=\s*(?:std\s*::\s*string\s*::\s*)?npos",
+            condition,
+        )
+        found_on_right = re.search(
+            r"(?:std\s*::\s*string\s*::\s*)?npos\s*!=\s*(?:[A-Za-z_]\w*\s*\.\s*)?(?:find_first_of|find)\s*\(",
+            condition,
+        )
+        if not (found_on_left or found_on_right):
+            continue
+        safe.update(name for name in names if re.search(r"\b" + re.escape(name) + r"\s*\.\s*(?:find_first_of|find)", condition))
+    return safe
+
+
 def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], str]:
     if unit.language not in ("c", "cpp"):
         return [], [], "not_analyzed"
@@ -202,6 +228,9 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], st
         # a local string is extracted from a map value with std::get_if.
         if re.search(r"\.\s*Get\s*\(", code) and re.search(r"get_if\s*<\s*std\s*::\s*string\s*>", code):
             tainted.update(re.findall(r"\b([A-Za-z_]\w*)\s*=\s*\*\s*[A-Za-z_]\w*\s*;", code))
+        # An explicit direct component check can remove that value from this
+        # bounded flow only when it rejects both path separator spellings.
+        tainted.difference_update(_rejects_path_separators(body, tainted))
         # Apply exact local interprocedural summaries at calls in this function.
         for call in _CALL_RE.finditer(code):
             callee = re.sub(r"\s*::\s*", "::", call.group("callee"))
@@ -213,6 +242,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], st
                 if index < len(args):
                     actual = re.fullmatch(r"\s*&?\s*([A-Za-z_]\w*)\s*", args[index])
                     if actual: tainted.add(actual.group(1))
+        tainted.difference_update(_rejects_path_separators(body, tainted))
         if not tainted:
             continue
         safe = _safe_transforms(code, tainted)
@@ -246,12 +276,16 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], st
             line, column = line_column(unit.text, absolute)
             findings.append(DetectorFinding(
                 file=unit.path, line=line, column=column, rule_id=RULE_ID,
-                message="Untrusted string-derived path reaches a file operation without a recognized containment guard; review as a path traversal candidate.",
+                message="String field or parameter reaches a file operation through a syntactically linked path expression without a recognized containment guard; bucket presence/non-empty checks do not establish safe path components. Review as a path traversal candidate.",
                 evidence_type="syntax", candidate_cwe="CWE-22", symbol=name,
                 evidence_obligations=_OBLIGATIONS, consequence_impact="file_integrity_or_availability",
                 consequence_cwe="CWE-22", source_sha256=unit.sha256,
                 rule_version=RULE_VERSION, rule_lineage_id=RULE_LINEAGE_ID,
-                symbol_identity=name, identity_quality="partial",
+                symbol_identity=f"{unit.path}::{name}::{callee}::{args[0].strip()}",
+                ast_fingerprint=hashlib.sha256(
+                    (RULE_LINEAGE_ID + "\0" + name + "\0" + callee + "\0" + args[0].strip() + "\0" + str(call.start())).encode("utf-8")
+                ).hexdigest(),
+                identity_quality=("complete" if unit.parse_status == "complete" and names.count(name) == 1 else "partial"),
             ))
     coverage = "complete" if unit.parse_status == "complete" else "partial"
     if coverage == "partial": limitations.append("input parser status is partial; candidate results cannot establish a safe negative")
