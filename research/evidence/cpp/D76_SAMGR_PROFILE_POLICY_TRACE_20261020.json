@@ -1,0 +1,1693 @@
+{
+  "audit": "D76 SAMgr profile and service-token policy source trace",
+  "manifest_snapshot": {
+    "path": "openharmony-manifest-current-20261018.xml",
+    "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+    "entries": [
+      {
+        "line": 306,
+        "text": "<project name=\"systemabilitymgr_samgr\" path=\"foundation/systemabilitymgr/samgr\" revision=\"08e2a552b839ea7727251cb9b749a5c1dd9cfeff\" upstream=\"master\" dest-branch=\"master\" groups=\"default,ohos:mini,ohos:small,ohos:standard,ohos:system,ohos:chipset\"/>"
+      },
+      {
+        "line": 302,
+        "text": "<project name=\"startup_init\" path=\"base/startup/init\" revision=\"e06651300f349e728c76edda806dbf6496fd620d\" upstream=\"master\" dest-branch=\"master\" groups=\"default,ohos:mini,ohos:small,ohos:standard,ohos:system,ohos:chipset\"/>"
+      },
+      {
+        "line": 274,
+        "text": "<project name=\"security_access_token\" path=\"base/security/access_token\" revision=\"c53a55c371d88c46b0785cc4adb444876e6a9628\" upstream=\"master\" dest-branch=\"master\" groups=\"default,ohos:standard,ohos:system,ohos:chipset\"/>"
+      }
+    ],
+    "commit": null,
+    "note": "Provided manifest snapshot; its Git commit is not available in this workspace."
+  },
+  "repositories": {
+    "samgr": {
+      "repo": "openharmony/systemabilitymgr_samgr",
+      "remote": "https://gitcode.com/openharmony/systemabilitymgr_samgr.git",
+      "commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff",
+      "tree": "b7a89e95be788f2f2372258e341f7be842c7826d",
+      "evidence": [
+        {
+          "path": "bundle.json",
+          "blob_oid": "f569b67d722ee6ef5a852f0b1de8176677341d7a",
+          "sha256": "4cffb4b42f553fee0c6abe738287b10dd019e52954f8f231f7fd61e751fe534e",
+          "matched_line_numbers": [
+            7
+          ],
+          "excerpts": [
+            {
+              "start_line": 5,
+              "end_line": 10,
+              "text": "5:     \"version\": \"3.1\",\n6:     \"license\": \"Apache License 2.0\",\n7:     \"repository\": \"https://gitee.com/openharmony/systemabilitymgr_samgr\",\n8:     \"publishAs\": \"code-segment\",\n9:     \"segment\": {\n10:         \"destPath\": \"foundation/systemabilitymgr/samgr\""
+            }
+          ]
+        },
+        {
+          "path": "interfaces/innerkits/common/include/sa_profiles.h",
+          "blob_oid": "d144b4901f856bc8492679cda6fd19825da67099",
+          "sha256": "45f5171d632cd3e62fbba98370e8f7023897e9e35c0eaa0feec75ff329e870f7",
+          "matched_line_numbers": [
+            118,
+            119,
+            120,
+            121,
+            127,
+            141,
+            142,
+            144,
+            153
+          ],
+          "excerpts": [
+            {
+              "start_line": 116,
+              "end_line": 121,
+              "text": "116: };\n117: \n118: struct SaProfile {\n119:     std::u16string process;\n120:     int32_t saId = 0;\n121:     std::string libPath;"
+            },
+            {
+              "start_line": 117,
+              "end_line": 122,
+              "text": "117: \n118: struct SaProfile {\n119:     std::u16string process;\n120:     int32_t saId = 0;\n121:     std::string libPath;\n122:     std::vector<int32_t> dependSa;"
+            },
+            {
+              "start_line": 118,
+              "end_line": 123,
+              "text": "118: struct SaProfile {\n119:     std::u16string process;\n120:     int32_t saId = 0;\n121:     std::string libPath;\n122:     std::vector<int32_t> dependSa;\n123:     int32_t dependTimeout = 0;"
+            },
+            {
+              "start_line": 119,
+              "end_line": 124,
+              "text": "119:     std::u16string process;\n120:     int32_t saId = 0;\n121:     std::string libPath;\n122:     std::vector<int32_t> dependSa;\n123:     int32_t dependTimeout = 0;\n124:     bool runOnCreate = false;"
+            },
+            {
+              "start_line": 125,
+              "end_line": 130,
+              "text": "125:     bool moduleUpdate = false;\n126:     bool autoRestart = false;\n127:     bool distributed = false;\n128:     int32_t dumpLevel = 0;\n129:     // default OTHER_START\n130:     uint32_t bootPhase = 3;"
+            },
+            {
+              "start_line": 139,
+              "end_line": 144,
+              "text": "139: \n140: struct CommonSaProfile {\n141:     std::u16string process;\n142:     int32_t saId = 0;\n143:     bool moduleUpdate = false;\n144:     bool distributed = false;"
+            },
+            {
+              "start_line": 140,
+              "end_line": 145,
+              "text": "140: struct CommonSaProfile {\n141:     std::u16string process;\n142:     int32_t saId = 0;\n143:     bool moduleUpdate = false;\n144:     bool distributed = false;\n145:     bool cacheCommonEvent = false;"
+            },
+            {
+              "start_line": 142,
+              "end_line": 147,
+              "text": "142:     int32_t saId = 0;\n143:     bool moduleUpdate = false;\n144:     bool distributed = false;\n145:     bool cacheCommonEvent = false;\n146:     bool startAllowUpdate = false;\n147:     bool stopAllowUpdate = false;"
+            },
+            {
+              "start_line": 151,
+              "end_line": 156,
+              "text": "151: \n152: struct CollMgrSaProfile {\n153:     int32_t saId = 0;\n154:     std::vector<OnDemandEvent> startOnDemandEvents;\n155:     std::vector<OnDemandEvent> stopOnDemandEvents;\n156:     bool cacheCommonEvent = false;"
+            }
+          ]
+        },
+        {
+          "path": "services/common/src/parse_util.cpp",
+          "blob_oid": "139d7b2cdc7984e331fa783009f502d9e17d1297",
+          "sha256": "0f6a2cde52d74b41176ae007cfb355ed3edb000235c841724d706a6be0eed876",
+          "matched_line_numbers": [
+            12,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            71,
+            214,
+            219,
+            268,
+            277,
+            278,
+            336,
+            346,
+            356,
+            360,
+            369,
+            382,
+            383,
+            384,
+            404,
+            406,
+            415,
+            427,
+            429,
+            430,
+            431,
+            432,
+            433,
+            434,
+            435,
+            436,
+            438,
+            440,
+            442,
+            445,
+            447,
+            449,
+            461,
+            464,
+            467,
+            502,
+            503,
+            504,
+            505,
+            506,
+            517,
+            528,
+            529,
+            530,
+            531,
+            597,
+            599,
+            601,
+            603,
+            605,
+            656,
+            666
+          ],
+          "excerpts": [
+            {
+              "start_line": 10,
+              "end_line": 16,
+              "text": "10:  * distributed under the License is distributed on an \"AS IS\" BASIS,\n11:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n12:  * See the License for the specific language governing permissions and\n13:  * limitations under the License.\n14:  */\n15: \n16: #include \"parse_util.h\""
+            },
+            {
+              "start_line": 39,
+              "end_line": 45,
+              "text": "39: constexpr const char* EVENT_NAME = \"name\";\n40: constexpr const char* EVENT_VALUE = \"value\";\n41: constexpr const char* SA_TAG_SYSTEM_ABILITY = \"systemability\";\n42: constexpr const char* SA_TAG_PROCESS = \"process\";\n43: constexpr const char* SA_TAG_LIB_PATH = \"libpath\";\n44: constexpr const char* SA_TAG_NAME = \"name\";\n45: constexpr const char* SA_TAG_DEPEND = \"depend\";"
+            },
+            {
+              "start_line": 40,
+              "end_line": 46,
+              "text": "40: constexpr const char* EVENT_VALUE = \"value\";\n41: constexpr const char* SA_TAG_SYSTEM_ABILITY = \"systemability\";\n42: constexpr const char* SA_TAG_PROCESS = \"process\";\n43: constexpr const char* SA_TAG_LIB_PATH = \"libpath\";\n44: constexpr const char* SA_TAG_NAME = \"name\";\n45: constexpr const char* SA_TAG_DEPEND = \"depend\";\n46: constexpr const char* SA_TAG_DEPEND_TIMEOUT = \"depend-time-out\";"
+            },
+            {
+              "start_line": 41,
+              "end_line": 47,
+              "text": "41: constexpr const char* SA_TAG_SYSTEM_ABILITY = \"systemability\";\n42: constexpr const char* SA_TAG_PROCESS = \"process\";\n43: constexpr const char* SA_TAG_LIB_PATH = \"libpath\";\n44: constexpr const char* SA_TAG_NAME = \"name\";\n45: constexpr const char* SA_TAG_DEPEND = \"depend\";\n46: constexpr const char* SA_TAG_DEPEND_TIMEOUT = \"depend-time-out\";\n47: constexpr const char* SA_TAG_DEPEND_TIMEOUT_COMPATIBILITY = \"depend_time_out\";"
+            },
+            {
+              "start_line": 42,
+              "end_line": 48,
+              "text": "42: constexpr const char* SA_TAG_PROCESS = \"process\";\n43: constexpr const char* SA_TAG_LIB_PATH = \"libpath\";\n44: constexpr const char* SA_TAG_NAME = \"name\";\n45: constexpr const char* SA_TAG_DEPEND = \"depend\";\n46: constexpr const char* SA_TAG_DEPEND_TIMEOUT = \"depend-time-out\";\n47: constexpr const char* SA_TAG_DEPEND_TIMEOUT_COMPATIBILITY = \"depend_time_out\";\n48: constexpr const char* SA_TAG_RUN_ON_CREATE = \"run-on-create\";"
+            },
+            {
+              "start_line": 43,
+              "end_line": 49,
+              "text": "43: constexpr const char* SA_TAG_LIB_PATH = \"libpath\";\n44: constexpr const char* SA_TAG_NAME = \"name\";\n45: constexpr const char* SA_TAG_DEPEND = \"depend\";\n46: constexpr const char* SA_TAG_DEPEND_TIMEOUT = \"depend-time-out\";\n47: constexpr const char* SA_TAG_DEPEND_TIMEOUT_COMPATIBILITY = \"depend_time_out\";\n48: constexpr const char* SA_TAG_RUN_ON_CREATE = \"run-on-create\";\n49: constexpr const char* SA_TAG_MODULE_UPDATE = \"module-update\";"
+            },
+            {
+              "start_line": 44,
+              "end_line": 50,
+              "text": "44: constexpr const char* SA_TAG_NAME = \"name\";\n45: constexpr const char* SA_TAG_DEPEND = \"depend\";\n46: constexpr const char* SA_TAG_DEPEND_TIMEOUT = \"depend-time-out\";\n47: constexpr const char* SA_TAG_DEPEND_TIMEOUT_COMPATIBILITY = \"depend_time_out\";\n48: constexpr const char* SA_TAG_RUN_ON_CREATE = \"run-on-create\";\n49: constexpr const char* SA_TAG_MODULE_UPDATE = \"module-update\";\n50: constexpr const char* SA_TAG_AUTO_RESTART = \"auto-restart\";"
+            },
+            {
+              "start_line": 45,
+              "end_line": 51,
+              "text": "45: constexpr const char* SA_TAG_DEPEND = \"depend\";\n46: constexpr const char* SA_TAG_DEPEND_TIMEOUT = \"depend-time-out\";\n47: constexpr const char* SA_TAG_DEPEND_TIMEOUT_COMPATIBILITY = \"depend_time_out\";\n48: constexpr const char* SA_TAG_RUN_ON_CREATE = \"run-on-create\";\n49: constexpr const char* SA_TAG_MODULE_UPDATE = \"module-update\";\n50: constexpr const char* SA_TAG_AUTO_RESTART = \"auto-restart\";\n51: constexpr const char* SA_TAG_DISTRIBUTED = \"distributed\";"
+            },
+            {
+              "start_line": 46,
+              "end_line": 52,
+              "text": "46: constexpr const char* SA_TAG_DEPEND_TIMEOUT = \"depend-time-out\";\n47: constexpr const char* SA_TAG_DEPEND_TIMEOUT_COMPATIBILITY = \"depend_time_out\";\n48: constexpr const char* SA_TAG_RUN_ON_CREATE = \"run-on-create\";\n49: constexpr const char* SA_TAG_MODULE_UPDATE = \"module-update\";\n50: constexpr const char* SA_TAG_AUTO_RESTART = \"auto-restart\";\n51: constexpr const char* SA_TAG_DISTRIBUTED = \"distributed\";\n52: constexpr const char* SA_TAG_CACHE_COMMON_EVENT = \"cache-common-event\";"
+            },
+            {
+              "start_line": 47,
+              "end_line": 53,
+              "text": "47: constexpr const char* SA_TAG_DEPEND_TIMEOUT_COMPATIBILITY = \"depend_time_out\";\n48: constexpr const char* SA_TAG_RUN_ON_CREATE = \"run-on-create\";\n49: constexpr const char* SA_TAG_MODULE_UPDATE = \"module-update\";\n50: constexpr const char* SA_TAG_AUTO_RESTART = \"auto-restart\";\n51: constexpr const char* SA_TAG_DISTRIBUTED = \"distributed\";\n52: constexpr const char* SA_TAG_CACHE_COMMON_EVENT = \"cache-common-event\";\n53: constexpr const char* SA_TAG_DUMP_LEVEL = \"dump-level\";"
+            },
+            {
+              "start_line": 48,
+              "end_line": 54,
+              "text": "48: constexpr const char* SA_TAG_RUN_ON_CREATE = \"run-on-create\";\n49: constexpr const char* SA_TAG_MODULE_UPDATE = \"module-update\";\n50: constexpr const char* SA_TAG_AUTO_RESTART = \"auto-restart\";\n51: constexpr const char* SA_TAG_DISTRIBUTED = \"distributed\";\n52: constexpr const char* SA_TAG_CACHE_COMMON_EVENT = \"cache-common-event\";\n53: constexpr const char* SA_TAG_DUMP_LEVEL = \"dump-level\";\n54: constexpr const char* SA_TAG_BOOT_PHASE = \"bootphase\";"
+            },
+            {
+              "start_line": 49,
+              "end_line": 55,
+              "text": "49: constexpr const char* SA_TAG_MODULE_UPDATE = \"module-update\";\n50: constexpr const char* SA_TAG_AUTO_RESTART = \"auto-restart\";\n51: constexpr const char* SA_TAG_DISTRIBUTED = \"distributed\";\n52: constexpr const char* SA_TAG_CACHE_COMMON_EVENT = \"cache-common-event\";\n53: constexpr const char* SA_TAG_DUMP_LEVEL = \"dump-level\";\n54: constexpr const char* SA_TAG_BOOT_PHASE = \"bootphase\";\n55: constexpr const char* SA_TAG_SAID = \"said\";"
+            },
+            {
+              "start_line": 50,
+              "end_line": 56,
+              "text": "50: constexpr const char* SA_TAG_AUTO_RESTART = \"auto-restart\";\n51: constexpr const char* SA_TAG_DISTRIBUTED = \"distributed\";\n52: constexpr const char* SA_TAG_CACHE_COMMON_EVENT = \"cache-common-event\";\n53: constexpr const char* SA_TAG_DUMP_LEVEL = \"dump-level\";\n54: constexpr const char* SA_TAG_BOOT_PHASE = \"bootphase\";\n55: constexpr const char* SA_TAG_SAID = \"said\";\n56: constexpr const char* SA_TAG_START_ON_DEMAND = \"start-on-demand\";"
+            },
+            {
+              "start_line": 51,
+              "end_line": 57,
+              "text": "51: constexpr const char* SA_TAG_DISTRIBUTED = \"distributed\";\n52: constexpr const char* SA_TAG_CACHE_COMMON_EVENT = \"cache-common-event\";\n53: constexpr const char* SA_TAG_DUMP_LEVEL = \"dump-level\";\n54: constexpr const char* SA_TAG_BOOT_PHASE = \"bootphase\";\n55: constexpr const char* SA_TAG_SAID = \"said\";\n56: constexpr const char* SA_TAG_START_ON_DEMAND = \"start-on-demand\";\n57: constexpr const char* SA_TAG_STOP_ON_DEMAND = \"stop-on-demand\";"
+            },
+            {
+              "start_line": 52,
+              "end_line": 58,
+              "text": "52: constexpr const char* SA_TAG_CACHE_COMMON_EVENT = \"cache-common-event\";\n53: constexpr const char* SA_TAG_DUMP_LEVEL = \"dump-level\";\n54: constexpr const char* SA_TAG_BOOT_PHASE = \"bootphase\";\n55: constexpr const char* SA_TAG_SAID = \"said\";\n56: constexpr const char* SA_TAG_START_ON_DEMAND = \"start-on-demand\";\n57: constexpr const char* SA_TAG_STOP_ON_DEMAND = \"stop-on-demand\";\n58: constexpr const char* SA_TAG_ALLOW_UPDATE = \"allow-update\";"
+            },
+            {
+              "start_line": 53,
+              "end_line": 59,
+              "text": "53: constexpr const char* SA_TAG_DUMP_LEVEL = \"dump-level\";\n54: constexpr const char* SA_TAG_BOOT_PHASE = \"bootphase\";\n55: constexpr const char* SA_TAG_SAID = \"said\";\n56: constexpr const char* SA_TAG_START_ON_DEMAND = \"start-on-demand\";\n57: constexpr const char* SA_TAG_STOP_ON_DEMAND = \"stop-on-demand\";\n58: constexpr const char* SA_TAG_ALLOW_UPDATE = \"allow-update\";\n59: constexpr const char* SA_TAG_RECYCLE_DELAYTIME = \"recycle-delaytime\";"
+            },
+            {
+              "start_line": 54,
+              "end_line": 60,
+              "text": "54: constexpr const char* SA_TAG_BOOT_PHASE = \"bootphase\";\n55: constexpr const char* SA_TAG_SAID = \"said\";\n56: constexpr const char* SA_TAG_START_ON_DEMAND = \"start-on-demand\";\n57: constexpr const char* SA_TAG_STOP_ON_DEMAND = \"stop-on-demand\";\n58: constexpr const char* SA_TAG_ALLOW_UPDATE = \"allow-update\";\n59: constexpr const char* SA_TAG_RECYCLE_DELAYTIME = \"recycle-delaytime\";\n60: constexpr const char* SA_TAG_DEVICE_ON_LINE = \"deviceonline\";"
+            },
+            {
+              "start_line": 55,
+              "end_line": 61,
+              "text": "55: constexpr const char* SA_TAG_SAID = \"said\";\n56: constexpr const char* SA_TAG_START_ON_DEMAND = \"start-on-demand\";\n57: constexpr const char* SA_TAG_STOP_ON_DEMAND = \"stop-on-demand\";\n58: constexpr const char* SA_TAG_ALLOW_UPDATE = \"allow-update\";\n59: constexpr const char* SA_TAG_RECYCLE_DELAYTIME = \"recycle-delaytime\";\n60: constexpr const char* SA_TAG_DEVICE_ON_LINE = \"deviceonline\";\n61: constexpr const char* SA_TAG_SETTING_SWITCH = \"settingswitch\";"
+            },
+            {
+              "start_line": 56,
+              "end_line": 62,
+              "text": "56: constexpr const char* SA_TAG_START_ON_DEMAND = \"start-on-demand\";\n57: constexpr const char* SA_TAG_STOP_ON_DEMAND = \"stop-on-demand\";\n58: constexpr const char* SA_TAG_ALLOW_UPDATE = \"allow-update\";\n59: constexpr const char* SA_TAG_RECYCLE_DELAYTIME = \"recycle-delaytime\";\n60: constexpr const char* SA_TAG_DEVICE_ON_LINE = \"deviceonline\";\n61: constexpr const char* SA_TAG_SETTING_SWITCH = \"settingswitch\";\n62: constexpr const char* SA_TAG_COMMON_EVENT = \"commonevent\";"
+            },
+            {
+              "start_line": 57,
+              "end_line": 63,
+              "text": "57: constexpr const char* SA_TAG_STOP_ON_DEMAND = \"stop-on-demand\";\n58: constexpr const char* SA_TAG_ALLOW_UPDATE = \"allow-update\";\n59: constexpr const char* SA_TAG_RECYCLE_DELAYTIME = \"recycle-delaytime\";\n60: constexpr const char* SA_TAG_DEVICE_ON_LINE = \"deviceonline\";\n61: constexpr const char* SA_TAG_SETTING_SWITCH = \"settingswitch\";\n62: constexpr const char* SA_TAG_COMMON_EVENT = \"commonevent\";\n63: constexpr const char* SA_TAG_PARAM = \"param\";"
+            },
+            {
+              "start_line": 58,
+              "end_line": 64,
+              "text": "58: constexpr const char* SA_TAG_ALLOW_UPDATE = \"allow-update\";\n59: constexpr const char* SA_TAG_RECYCLE_DELAYTIME = \"recycle-delaytime\";\n60: constexpr const char* SA_TAG_DEVICE_ON_LINE = \"deviceonline\";\n61: constexpr const char* SA_TAG_SETTING_SWITCH = \"settingswitch\";\n62: constexpr const char* SA_TAG_COMMON_EVENT = \"commonevent\";\n63: constexpr const char* SA_TAG_PARAM = \"param\";\n64: constexpr const char* SA_TAG_TIEMD_EVENT = \"timedevent\";"
+            },
+            {
+              "start_line": 59,
+              "end_line": 65,
+              "text": "59: constexpr const char* SA_TAG_RECYCLE_DELAYTIME = \"recycle-delaytime\";\n60: constexpr const char* SA_TAG_DEVICE_ON_LINE = \"deviceonline\";\n61: constexpr const char* SA_TAG_SETTING_SWITCH = \"settingswitch\";\n62: constexpr const char* SA_TAG_COMMON_EVENT = \"commonevent\";\n63: constexpr const char* SA_TAG_PARAM = \"param\";\n64: constexpr const char* SA_TAG_TIEMD_EVENT = \"timedevent\";\n65: constexpr const char* SA_TAG_RECYCLE_STRATEGY = \"recycle-strategy\";"
+            },
+            {
+              "start_line": 60,
+              "end_line": 66,
+              "text": "60: constexpr const char* SA_TAG_DEVICE_ON_LINE = \"deviceonline\";\n61: constexpr const char* SA_TAG_SETTING_SWITCH = \"settingswitch\";\n62: constexpr const char* SA_TAG_COMMON_EVENT = \"commonevent\";\n63: constexpr const char* SA_TAG_PARAM = \"param\";\n64: constexpr const char* SA_TAG_TIEMD_EVENT = \"timedevent\";\n65: constexpr const char* SA_TAG_RECYCLE_STRATEGY = \"recycle-strategy\";\n66: constexpr const char* SA_TAG_EXTENSION = \"extension\";"
+            },
+            {
+              "start_line": 61,
+              "end_line": 67,
+              "text": "61: constexpr const char* SA_TAG_SETTING_SWITCH = \"settingswitch\";\n62: constexpr const char* SA_TAG_COMMON_EVENT = \"commonevent\";\n63: constexpr const char* SA_TAG_PARAM = \"param\";\n64: constexpr const char* SA_TAG_TIEMD_EVENT = \"timedevent\";\n65: constexpr const char* SA_TAG_RECYCLE_STRATEGY = \"recycle-strategy\";\n66: constexpr const char* SA_TAG_EXTENSION = \"extension\";\n67: constexpr const char* SA_TAG_UNREF_UNLOAD = \"unreferenced-unload\";"
+            },
+            {
+              "start_line": 62,
+              "end_line": 68,
+              "text": "62: constexpr const char* SA_TAG_COMMON_EVENT = \"commonevent\";\n63: constexpr const char* SA_TAG_PARAM = \"param\";\n64: constexpr const char* SA_TAG_TIEMD_EVENT = \"timedevent\";\n65: constexpr const char* SA_TAG_RECYCLE_STRATEGY = \"recycle-strategy\";\n66: constexpr const char* SA_TAG_EXTENSION = \"extension\";\n67: constexpr const char* SA_TAG_UNREF_UNLOAD = \"unreferenced-unload\";\n68: constexpr const char* SA_TAG_LONGTIMEUNUSED_UNLOAD = \"longtimeunused-unload\";"
+            },
+            {
+              "start_line": 63,
+              "end_line": 69,
+              "text": "63: constexpr const char* SA_TAG_PARAM = \"param\";\n64: constexpr const char* SA_TAG_TIEMD_EVENT = \"timedevent\";\n65: constexpr const char* SA_TAG_RECYCLE_STRATEGY = \"recycle-strategy\";\n66: constexpr const char* SA_TAG_EXTENSION = \"extension\";\n67: constexpr const char* SA_TAG_UNREF_UNLOAD = \"unreferenced-unload\";\n68: constexpr const char* SA_TAG_LONGTIMEUNUSED_UNLOAD = \"longtimeunused-unload\";\n69: constexpr const char* SA_TAG_INDEPENDENT_UNLOAD = \"independent-unload\";"
+            },
+            {
+              "start_line": 64,
+              "end_line": 70,
+              "text": "64: constexpr const char* SA_TAG_TIEMD_EVENT = \"timedevent\";\n65: constexpr const char* SA_TAG_RECYCLE_STRATEGY = \"recycle-strategy\";\n66: constexpr const char* SA_TAG_EXTENSION = \"extension\";\n67: constexpr const char* SA_TAG_UNREF_UNLOAD = \"unreferenced-unload\";\n68: constexpr const char* SA_TAG_LONGTIMEUNUSED_UNLOAD = \"longtimeunused-unload\";\n69: constexpr const char* SA_TAG_INDEPENDENT_UNLOAD = \"independent-unload\";\n70: #ifdef SUPPORT_MULTI_INSTANCE"
+            },
+            {
+              "start_line": 65,
+              "end_line": 71,
+              "text": "65: constexpr const char* SA_TAG_RECYCLE_STRATEGY = \"recycle-strategy\";\n66: constexpr const char* SA_TAG_EXTENSION = \"extension\";\n67: constexpr const char* SA_TAG_UNREF_UNLOAD = \"unreferenced-unload\";\n68: constexpr const char* SA_TAG_LONGTIMEUNUSED_UNLOAD = \"longtimeunused-unload\";\n69: constexpr const char* SA_TAG_INDEPENDENT_UNLOAD = \"independent-unload\";\n70: #ifdef SUPPORT_MULTI_INSTANCE\n71: constexpr const char* SA_TAG_MULTI_INSTANCE = \"multi-instance\";"
+            },
+            {
+              "start_line": 66,
+              "end_line": 72,
+              "text": "66: constexpr const char* SA_TAG_EXTENSION = \"extension\";\n67: constexpr const char* SA_TAG_UNREF_UNLOAD = \"unreferenced-unload\";\n68: constexpr const char* SA_TAG_LONGTIMEUNUSED_UNLOAD = \"longtimeunused-unload\";\n69: constexpr const char* SA_TAG_INDEPENDENT_UNLOAD = \"independent-unload\";\n70: #ifdef SUPPORT_MULTI_INSTANCE\n71: constexpr const char* SA_TAG_MULTI_INSTANCE = \"multi-instance\";\n72: #endif"
+            },
+            {
+              "start_line": 67,
+              "end_line": 73,
+              "text": "67: constexpr const char* SA_TAG_UNREF_UNLOAD = \"unreferenced-unload\";\n68: constexpr const char* SA_TAG_LONGTIMEUNUSED_UNLOAD = \"longtimeunused-unload\";\n69: constexpr const char* SA_TAG_INDEPENDENT_UNLOAD = \"independent-unload\";\n70: #ifdef SUPPORT_MULTI_INSTANCE\n71: constexpr const char* SA_TAG_MULTI_INSTANCE = \"multi-instance\";\n72: #endif\n73: constexpr int32_t MAX_JSON_OBJECT_SIZE = 50 * 1024;"
+            },
+            {
+              "start_line": 69,
+              "end_line": 75,
+              "text": "69: constexpr const char* SA_TAG_INDEPENDENT_UNLOAD = \"independent-unload\";\n70: #ifdef SUPPORT_MULTI_INSTANCE\n71: constexpr const char* SA_TAG_MULTI_INSTANCE = \"multi-instance\";\n72: #endif\n73: constexpr int32_t MAX_JSON_OBJECT_SIZE = 50 * 1024;\n74: constexpr int32_t MAX_JSON_STRING_LENGTH = 128;\n75: constexpr int32_t FIRST_SYS_ABILITY_ID = 0x00000000;"
+            },
+            {
+              "start_line": 212,
+              "end_line": 218,
+              "text": "212:     for (size_t i = 0; i < systemAbilityJson.size(); i++) {\n213:         bool multiInstance = false;\n214:         GetBoolFromJson(systemAbilityJson[i], SA_TAG_MULTI_INSTANCE, multiInstance);\n215:         if (!multiInstance) {\n216:             return;\n217:         }\n218:         int32_t saId = 0;"
+            },
+            {
+              "start_line": 217,
+              "end_line": 223,
+              "text": "217:         }\n218:         int32_t saId = 0;\n219:         GetInt32FromJson(systemAbilityJson[i], SA_TAG_NAME, saId);\n220:         tmpSaIds.insert(saId);\n221:     }\n222:     for (const auto& saId : tmpSaIds) {\n223:         multiInstanceSaIds_.insert(saId);"
+            },
+            {
+              "start_line": 266,
+              "end_line": 272,
+              "text": "266: }\n267: \n268: bool ParseUtil::ParseSaProfiles(const string& profilePath)\n269: {\n270:     HILOGD(\"profilePath:%{private}s\", profilePath.c_str());\n271:     string realPath = GetRealPath(profilePath);\n272:     if (!CheckPathExist(realPath.c_str())) {"
+            },
+            {
+              "start_line": 275,
+              "end_line": 281,
+              "text": "275:     }\n276: \n277:     if (Endswith(realPath, \".json\")) {\n278:         return ParseJsonFile(realPath);\n279:     } else {\n280:         HILOGE(\"Invalid file format, please use json file!\");\n281:         return false;"
+            },
+            {
+              "start_line": 276,
+              "end_line": 282,
+              "text": "276: \n277:     if (Endswith(realPath, \".json\")) {\n278:         return ParseJsonFile(realPath);\n279:     } else {\n280:         HILOGE(\"Invalid file format, please use json file!\");\n281:         return false;\n282:     }"
+            },
+            {
+              "start_line": 334,
+              "end_line": 340,
+              "text": "334: }\n335: \n336: bool ParseUtil::ParseJsonFile(const string& realPath)\n337: {\n338:     nlohmann::json profileJson;\n339:     bool result = ParseJsonObj(profileJson, realPath);\n340:     if (!result) {"
+            },
+            {
+              "start_line": 344,
+              "end_line": 350,
+              "text": "344:     HILOGD(\"profileJson:%{private}s\", profileJson.dump().c_str());\n345:     string process;\n346:     GetStringFromJson(profileJson, SA_TAG_PROCESS, process);\n347:     if (process.empty()) {\n348:         HILOGE(\"profile format error: no process tag\");\n349:         return false;\n350:     }"
+            },
+            {
+              "start_line": 354,
+              "end_line": 360,
+              "text": "354:     }\n355:     procName_ = Str8ToStr16(process);\n356:     if (profileJson.find(SA_TAG_SYSTEM_ABILITY) == profileJson.end()) {\n357:         HILOGE(\"system ability parse error!\");\n358:         return false;\n359:     }\n360:     nlohmann::json& systemAbilityJson = profileJson.at(SA_TAG_SYSTEM_ABILITY);"
+            },
+            {
+              "start_line": 358,
+              "end_line": 364,
+              "text": "358:         return false;\n359:     }\n360:     nlohmann::json& systemAbilityJson = profileJson.at(SA_TAG_SYSTEM_ABILITY);\n361:     HILOGD(\"systemAbilityJson:%{private}s\", systemAbilityJson.dump().c_str());\n362:     if (!systemAbilityJson.is_array()) {\n363:         HILOGE(\"system ability is not array!\");\n364:         return false;"
+            },
+            {
+              "start_line": 367,
+              "end_line": 373,
+              "text": "367:     for (size_t i = 0; i < size; i++) {\n368:         SaProfile saProfile = { procName_ };\n369:         if (!ParseSystemAbility(saProfile, systemAbilityJson[i])) {\n370:             continue;\n371:         }\n372:         saProfiles_.emplace_back(saProfile);\n373:     }"
+            },
+            {
+              "start_line": 380,
+              "end_line": 386,
+              "text": "380: bool ParseUtil::ParseSystemAbilityGetExtension(SaProfile& saProfile, nlohmann::json& systemAbilityJson)\n381: {\n382:     if ((systemAbilityJson.find(SA_TAG_EXTENSION) != systemAbilityJson.end()) &&\n383:         (systemAbilityJson[SA_TAG_EXTENSION].is_array())) {\n384:         for (auto& item : systemAbilityJson[SA_TAG_EXTENSION]) {\n385:             std::string extension = item.get<std::string>();\n386:             if (extension.length() > MAX_JSON_STRING_LENGTH) {"
+            },
+            {
+              "start_line": 381,
+              "end_line": 387,
+              "text": "381: {\n382:     if ((systemAbilityJson.find(SA_TAG_EXTENSION) != systemAbilityJson.end()) &&\n383:         (systemAbilityJson[SA_TAG_EXTENSION].is_array())) {\n384:         for (auto& item : systemAbilityJson[SA_TAG_EXTENSION]) {\n385:             std::string extension = item.get<std::string>();\n386:             if (extension.length() > MAX_JSON_STRING_LENGTH) {\n387:                 HILOGE(\"profile format error: extension() len exceed limit\");"
+            },
+            {
+              "start_line": 382,
+              "end_line": 388,
+              "text": "382:     if ((systemAbilityJson.find(SA_TAG_EXTENSION) != systemAbilityJson.end()) &&\n383:         (systemAbilityJson[SA_TAG_EXTENSION].is_array())) {\n384:         for (auto& item : systemAbilityJson[SA_TAG_EXTENSION]) {\n385:             std::string extension = item.get<std::string>();\n386:             if (extension.length() > MAX_JSON_STRING_LENGTH) {\n387:                 HILOGE(\"profile format error: extension() len exceed limit\");\n388:                 return false;"
+            },
+            {
+              "start_line": 402,
+              "end_line": 408,
+              "text": "402: }\n403: \n404: bool ParseUtil::ParseSystemAbilityGetSaBaseInfo(SaProfile& saProfile, nlohmann::json& systemAbilityJson)\n405: {\n406:     GetInt32FromJson(systemAbilityJson, SA_TAG_NAME, saProfile.saId);\n407:     if (saProfile.saId == 0) {\n408:         HILOGE(\"profile format error: no name tag\");"
+            },
+            {
+              "start_line": 404,
+              "end_line": 410,
+              "text": "404: bool ParseUtil::ParseSystemAbilityGetSaBaseInfo(SaProfile& saProfile, nlohmann::json& systemAbilityJson)\n405: {\n406:     GetInt32FromJson(systemAbilityJson, SA_TAG_NAME, saProfile.saId);\n407:     if (saProfile.saId == 0) {\n408:         HILOGE(\"profile format error: no name tag\");\n409:         return false;\n410:     }"
+            },
+            {
+              "start_line": 413,
+              "end_line": 419,
+              "text": "413:         return false;\n414:     }\n415:     GetStringFromJson(systemAbilityJson, SA_TAG_LIB_PATH, saProfile.libPath);\n416:     if (saProfile.libPath.empty()) {\n417:         HILOGE(\"profile format error: no libPath tag\");\n418:         return false;\n419:     }"
+            },
+            {
+              "start_line": 425,
+              "end_line": 431,
+              "text": "425: }\n426: \n427: bool ParseUtil::ParseSystemAbilityGetSaExtInfo(SaProfile& saProfile, nlohmann::json& systemAbilityJson)\n428: {\n429:     GetBoolFromJson(systemAbilityJson, SA_TAG_RUN_ON_CREATE, saProfile.runOnCreate);\n430:     GetBoolFromJson(systemAbilityJson, SA_TAG_MODULE_UPDATE, saProfile.moduleUpdate);\n431:     GetBoolFromJson(systemAbilityJson, SA_TAG_AUTO_RESTART, saProfile.autoRestart);"
+            },
+            {
+              "start_line": 427,
+              "end_line": 433,
+              "text": "427: bool ParseUtil::ParseSystemAbilityGetSaExtInfo(SaProfile& saProfile, nlohmann::json& systemAbilityJson)\n428: {\n429:     GetBoolFromJson(systemAbilityJson, SA_TAG_RUN_ON_CREATE, saProfile.runOnCreate);\n430:     GetBoolFromJson(systemAbilityJson, SA_TAG_MODULE_UPDATE, saProfile.moduleUpdate);\n431:     GetBoolFromJson(systemAbilityJson, SA_TAG_AUTO_RESTART, saProfile.autoRestart);\n432:     GetBoolFromJson(systemAbilityJson, SA_TAG_DISTRIBUTED, saProfile.distributed);\n433:     GetBoolFromJson(systemAbilityJson, SA_TAG_CACHE_COMMON_EVENT, saProfile.cacheCommonEvent);"
+            },
+            {
+              "start_line": 428,
+              "end_line": 434,
+              "text": "428: {\n429:     GetBoolFromJson(systemAbilityJson, SA_TAG_RUN_ON_CREATE, saProfile.runOnCreate);\n430:     GetBoolFromJson(systemAbilityJson, SA_TAG_MODULE_UPDATE, saProfile.moduleUpdate);\n431:     GetBoolFromJson(systemAbilityJson, SA_TAG_AUTO_RESTART, saProfile.autoRestart);\n432:     GetBoolFromJson(systemAbilityJson, SA_TAG_DISTRIBUTED, saProfile.distributed);\n433:     GetBoolFromJson(systemAbilityJson, SA_TAG_CACHE_COMMON_EVENT, saProfile.cacheCommonEvent);\n434:     GetBoolFromJson(systemAbilityJson, SA_TAG_INDEPENDENT_UNLOAD, saProfile.independentUnload);"
+            },
+            {
+              "start_line": 429,
+              "end_line": 435,
+              "text": "429:     GetBoolFromJson(systemAbilityJson, SA_TAG_RUN_ON_CREATE, saProfile.runOnCreate);\n430:     GetBoolFromJson(systemAbilityJson, SA_TAG_MODULE_UPDATE, saProfile.moduleUpdate);\n431:     GetBoolFromJson(systemAbilityJson, SA_TAG_AUTO_RESTART, saProfile.autoRestart);\n432:     GetBoolFromJson(systemAbilityJson, SA_TAG_DISTRIBUTED, saProfile.distributed);\n433:     GetBoolFromJson(systemAbilityJson, SA_TAG_CACHE_COMMON_EVENT, saProfile.cacheCommonEvent);\n434:     GetBoolFromJson(systemAbilityJson, SA_TAG_INDEPENDENT_UNLOAD, saProfile.independentUnload);\n435:     GetIntArrayFromJson(systemAbilityJson, SA_TAG_DEPEND, saProfile.dependSa);"
+            },
+            {
+              "start_line": 430,
+              "end_line": 436,
+              "text": "430:     GetBoolFromJson(systemAbilityJson, SA_TAG_MODULE_UPDATE, saProfile.moduleUpdate);\n431:     GetBoolFromJson(systemAbilityJson, SA_TAG_AUTO_RESTART, saProfile.autoRestart);\n432:     GetBoolFromJson(systemAbilityJson, SA_TAG_DISTRIBUTED, saProfile.distributed);\n433:     GetBoolFromJson(systemAbilityJson, SA_TAG_CACHE_COMMON_EVENT, saProfile.cacheCommonEvent);\n434:     GetBoolFromJson(systemAbilityJson, SA_TAG_INDEPENDENT_UNLOAD, saProfile.independentUnload);\n435:     GetIntArrayFromJson(systemAbilityJson, SA_TAG_DEPEND, saProfile.dependSa);\n436:     GetInt32FromJson(systemAbilityJson, SA_TAG_DEPEND_TIMEOUT, saProfile.dependTimeout);"
+            },
+            {
+              "start_line": 431,
+              "end_line": 437,
+              "text": "431:     GetBoolFromJson(systemAbilityJson, SA_TAG_AUTO_RESTART, saProfile.autoRestart);\n432:     GetBoolFromJson(systemAbilityJson, SA_TAG_DISTRIBUTED, saProfile.distributed);\n433:     GetBoolFromJson(systemAbilityJson, SA_TAG_CACHE_COMMON_EVENT, saProfile.cacheCommonEvent);\n434:     GetBoolFromJson(systemAbilityJson, SA_TAG_INDEPENDENT_UNLOAD, saProfile.independentUnload);\n435:     GetIntArrayFromJson(systemAbilityJson, SA_TAG_DEPEND, saProfile.dependSa);\n436:     GetInt32FromJson(systemAbilityJson, SA_TAG_DEPEND_TIMEOUT, saProfile.dependTimeout);\n437:     if (saProfile.dependTimeout == 0) {"
+            },
+            {
+              "start_line": 432,
+              "end_line": 438,
+              "text": "432:     GetBoolFromJson(systemAbilityJson, SA_TAG_DISTRIBUTED, saProfile.distributed);\n433:     GetBoolFromJson(systemAbilityJson, SA_TAG_CACHE_COMMON_EVENT, saProfile.cacheCommonEvent);\n434:     GetBoolFromJson(systemAbilityJson, SA_TAG_INDEPENDENT_UNLOAD, saProfile.independentUnload);\n435:     GetIntArrayFromJson(systemAbilityJson, SA_TAG_DEPEND, saProfile.dependSa);\n436:     GetInt32FromJson(systemAbilityJson, SA_TAG_DEPEND_TIMEOUT, saProfile.dependTimeout);\n437:     if (saProfile.dependTimeout == 0) {\n438:         GetInt32FromJson(systemAbilityJson, SA_TAG_DEPEND_TIMEOUT_COMPATIBILITY, saProfile.dependTimeout);"
+            },
+            {
+              "start_line": 433,
+              "end_line": 439,
+              "text": "433:     GetBoolFromJson(systemAbilityJson, SA_TAG_CACHE_COMMON_EVENT, saProfile.cacheCommonEvent);\n434:     GetBoolFromJson(systemAbilityJson, SA_TAG_INDEPENDENT_UNLOAD, saProfile.independentUnload);\n435:     GetIntArrayFromJson(systemAbilityJson, SA_TAG_DEPEND, saProfile.dependSa);\n436:     GetInt32FromJson(systemAbilityJson, SA_TAG_DEPEND_TIMEOUT, saProfile.dependTimeout);\n437:     if (saProfile.dependTimeout == 0) {\n438:         GetInt32FromJson(systemAbilityJson, SA_TAG_DEPEND_TIMEOUT_COMPATIBILITY, saProfile.dependTimeout);\n439:     }"
+            },
+            {
+              "start_line": 434,
+              "end_line": 440,
+              "text": "434:     GetBoolFromJson(systemAbilityJson, SA_TAG_INDEPENDENT_UNLOAD, saProfile.independentUnload);\n435:     GetIntArrayFromJson(systemAbilityJson, SA_TAG_DEPEND, saProfile.dependSa);\n436:     GetInt32FromJson(systemAbilityJson, SA_TAG_DEPEND_TIMEOUT, saProfile.dependTimeout);\n437:     if (saProfile.dependTimeout == 0) {\n438:         GetInt32FromJson(systemAbilityJson, SA_TAG_DEPEND_TIMEOUT_COMPATIBILITY, saProfile.dependTimeout);\n439:     }\n440:     GetInt32FromJson(systemAbilityJson, SA_TAG_DUMP_LEVEL, saProfile.dumpLevel);"
+            },
+            {
+              "start_line": 436,
+              "end_line": 442,
+              "text": "436:     GetInt32FromJson(systemAbilityJson, SA_TAG_DEPEND_TIMEOUT, saProfile.dependTimeout);\n437:     if (saProfile.dependTimeout == 0) {\n438:         GetInt32FromJson(systemAbilityJson, SA_TAG_DEPEND_TIMEOUT_COMPATIBILITY, saProfile.dependTimeout);\n439:     }\n440:     GetInt32FromJson(systemAbilityJson, SA_TAG_DUMP_LEVEL, saProfile.dumpLevel);\n441:     string bootPhase;\n442:     GetStringFromJson(systemAbilityJson, SA_TAG_BOOT_PHASE, bootPhase);"
+            },
+            {
+              "start_line": 438,
+              "end_line": 444,
+              "text": "438:         GetInt32FromJson(systemAbilityJson, SA_TAG_DEPEND_TIMEOUT_COMPATIBILITY, saProfile.dependTimeout);\n439:     }\n440:     GetInt32FromJson(systemAbilityJson, SA_TAG_DUMP_LEVEL, saProfile.dumpLevel);\n441:     string bootPhase;\n442:     GetStringFromJson(systemAbilityJson, SA_TAG_BOOT_PHASE, bootPhase);\n443:     saProfile.bootPhase = GetBootPriorityPara(bootPhase);\n444:     // parse start-on-demand tag"
+            },
+            {
+              "start_line": 440,
+              "end_line": 446,
+              "text": "440:     GetInt32FromJson(systemAbilityJson, SA_TAG_DUMP_LEVEL, saProfile.dumpLevel);\n441:     string bootPhase;\n442:     GetStringFromJson(systemAbilityJson, SA_TAG_BOOT_PHASE, bootPhase);\n443:     saProfile.bootPhase = GetBootPriorityPara(bootPhase);\n444:     // parse start-on-demand tag\n445:     ParseStartOndemandTag(systemAbilityJson, SA_TAG_START_ON_DEMAND, saProfile.startOnDemand);\n446:     // parse stop-on-demand tag"
+            },
+            {
+              "start_line": 443,
+              "end_line": 449,
+              "text": "443:     saProfile.bootPhase = GetBootPriorityPara(bootPhase);\n444:     // parse start-on-demand tag\n445:     ParseStartOndemandTag(systemAbilityJson, SA_TAG_START_ON_DEMAND, saProfile.startOnDemand);\n446:     // parse stop-on-demand tag\n447:     ParseStopOndemandTag(systemAbilityJson, SA_TAG_STOP_ON_DEMAND, saProfile.stopOnDemand);\n448:     string recycleStrategy;\n449:     GetStringFromJson(systemAbilityJson, SA_TAG_RECYCLE_STRATEGY, recycleStrategy);"
+            },
+            {
+              "start_line": 445,
+              "end_line": 451,
+              "text": "445:     ParseStartOndemandTag(systemAbilityJson, SA_TAG_START_ON_DEMAND, saProfile.startOnDemand);\n446:     // parse stop-on-demand tag\n447:     ParseStopOndemandTag(systemAbilityJson, SA_TAG_STOP_ON_DEMAND, saProfile.stopOnDemand);\n448:     string recycleStrategy;\n449:     GetStringFromJson(systemAbilityJson, SA_TAG_RECYCLE_STRATEGY, recycleStrategy);\n450:     if (!CheckRecycleStrategy(recycleStrategy, saProfile.recycleStrategy)) {\n451:         HILOGE(\"profile format error: recycleStrategy: %{public}s is not immediately or low-memory\","
+            },
+            {
+              "start_line": 447,
+              "end_line": 453,
+              "text": "447:     ParseStopOndemandTag(systemAbilityJson, SA_TAG_STOP_ON_DEMAND, saProfile.stopOnDemand);\n448:     string recycleStrategy;\n449:     GetStringFromJson(systemAbilityJson, SA_TAG_RECYCLE_STRATEGY, recycleStrategy);\n450:     if (!CheckRecycleStrategy(recycleStrategy, saProfile.recycleStrategy)) {\n451:         HILOGE(\"profile format error: recycleStrategy: %{public}s is not immediately or low-memory\",\n452:             recycleStrategy.c_str());\n453:         return false;"
+            },
+            {
+              "start_line": 459,
+              "end_line": 465,
+              "text": "459: }\n460: \n461: bool ParseUtil::ParseSystemAbility(SaProfile& saProfile, nlohmann::json& systemAbilityJson)\n462: {\n463:     HILOGD(\"ParseSystemAbility begin\");\n464:     if (!ParseSystemAbilityGetSaBaseInfo(saProfile, systemAbilityJson)) {\n465:         return false;"
+            },
+            {
+              "start_line": 462,
+              "end_line": 468,
+              "text": "462: {\n463:     HILOGD(\"ParseSystemAbility begin\");\n464:     if (!ParseSystemAbilityGetSaBaseInfo(saProfile, systemAbilityJson)) {\n465:         return false;\n466:     }\n467:     if (!ParseSystemAbilityGetSaExtInfo(saProfile, systemAbilityJson)) {\n468:         return false;"
+            },
+            {
+              "start_line": 465,
+              "end_line": 471,
+              "text": "465:         return false;\n466:     }\n467:     if (!ParseSystemAbilityGetSaExtInfo(saProfile, systemAbilityJson)) {\n468:         return false;\n469:     }\n470:     HILOGD(\"ParseSystemAbility end\");\n471:     return true;"
+            },
+            {
+              "start_line": 500,
+              "end_line": 506,
+              "text": "500: void ParseUtil::ParseOndemandTag(const nlohmann::json& onDemandJson, std::vector<OnDemandEvent>& onDemandEvents)\n501: {\n502:     GetOnDemandArrayFromJson(DEVICE_ONLINE, onDemandJson, SA_TAG_DEVICE_ON_LINE, onDemandEvents);\n503:     GetOnDemandArrayFromJson(SETTING_SWITCH, onDemandJson, SA_TAG_SETTING_SWITCH, onDemandEvents);\n504:     GetOnDemandArrayFromJson(COMMON_EVENT, onDemandJson, SA_TAG_COMMON_EVENT, onDemandEvents);\n505:     GetOnDemandArrayFromJson(PARAM, onDemandJson, SA_TAG_PARAM, onDemandEvents);\n506:     GetOnDemandArrayFromJson(TIMED_EVENT, onDemandJson, SA_TAG_TIEMD_EVENT, onDemandEvents);"
+            },
+            {
+              "start_line": 501,
+              "end_line": 507,
+              "text": "501: {\n502:     GetOnDemandArrayFromJson(DEVICE_ONLINE, onDemandJson, SA_TAG_DEVICE_ON_LINE, onDemandEvents);\n503:     GetOnDemandArrayFromJson(SETTING_SWITCH, onDemandJson, SA_TAG_SETTING_SWITCH, onDemandEvents);\n504:     GetOnDemandArrayFromJson(COMMON_EVENT, onDemandJson, SA_TAG_COMMON_EVENT, onDemandEvents);\n505:     GetOnDemandArrayFromJson(PARAM, onDemandJson, SA_TAG_PARAM, onDemandEvents);\n506:     GetOnDemandArrayFromJson(TIMED_EVENT, onDemandJson, SA_TAG_TIEMD_EVENT, onDemandEvents);\n507: }"
+            },
+            {
+              "start_line": 502,
+              "end_line": 508,
+              "text": "502:     GetOnDemandArrayFromJson(DEVICE_ONLINE, onDemandJson, SA_TAG_DEVICE_ON_LINE, onDemandEvents);\n503:     GetOnDemandArrayFromJson(SETTING_SWITCH, onDemandJson, SA_TAG_SETTING_SWITCH, onDemandEvents);\n504:     GetOnDemandArrayFromJson(COMMON_EVENT, onDemandJson, SA_TAG_COMMON_EVENT, onDemandEvents);\n505:     GetOnDemandArrayFromJson(PARAM, onDemandJson, SA_TAG_PARAM, onDemandEvents);\n506:     GetOnDemandArrayFromJson(TIMED_EVENT, onDemandJson, SA_TAG_TIEMD_EVENT, onDemandEvents);\n507: }\n508: "
+            },
+            {
+              "start_line": 503,
+              "end_line": 509,
+              "text": "503:     GetOnDemandArrayFromJson(SETTING_SWITCH, onDemandJson, SA_TAG_SETTING_SWITCH, onDemandEvents);\n504:     GetOnDemandArrayFromJson(COMMON_EVENT, onDemandJson, SA_TAG_COMMON_EVENT, onDemandEvents);\n505:     GetOnDemandArrayFromJson(PARAM, onDemandJson, SA_TAG_PARAM, onDemandEvents);\n506:     GetOnDemandArrayFromJson(TIMED_EVENT, onDemandJson, SA_TAG_TIEMD_EVENT, onDemandEvents);\n507: }\n508: \n509: void ParseUtil::ParseStartOndemandTag(const nlohmann::json& systemAbilityJson,"
+            },
+            {
+              "start_line": 504,
+              "end_line": 510,
+              "text": "504:     GetOnDemandArrayFromJson(COMMON_EVENT, onDemandJson, SA_TAG_COMMON_EVENT, onDemandEvents);\n505:     GetOnDemandArrayFromJson(PARAM, onDemandJson, SA_TAG_PARAM, onDemandEvents);\n506:     GetOnDemandArrayFromJson(TIMED_EVENT, onDemandJson, SA_TAG_TIEMD_EVENT, onDemandEvents);\n507: }\n508: \n509: void ParseUtil::ParseStartOndemandTag(const nlohmann::json& systemAbilityJson,\n510:     const std::string& jsonTag, StartOnDemand& startOnDemand)"
+            },
+            {
+              "start_line": 515,
+              "end_line": 521,
+              "text": "515:     }\n516:     ParseOndemandTag(onDemandJson, startOnDemand.onDemandEvents);\n517:     GetBoolFromJson(onDemandJson, SA_TAG_ALLOW_UPDATE, startOnDemand.allowUpdate);\n518: }\n519: \n520: void ParseUtil::ParseStopOndemandTag(const nlohmann::json& systemAbilityJson,\n521:     const std::string& jsonTag, StopOnDemand& stopOnDemand)"
+            },
+            {
+              "start_line": 526,
+              "end_line": 532,
+              "text": "526:     }\n527:     ParseOndemandTag(onDemandJson, stopOnDemand.onDemandEvents);\n528:     GetBoolFromJson(onDemandJson, SA_TAG_ALLOW_UPDATE, stopOnDemand.allowUpdate);\n529:     GetBoolFromJson(onDemandJson, SA_TAG_UNREF_UNLOAD, stopOnDemand.unrefUnload);\n530:     GetInt32FromJson(onDemandJson, SA_TAG_RECYCLE_DELAYTIME, stopOnDemand.delayTime);\n531:     GetInt32FromJson(onDemandJson, SA_TAG_LONGTIMEUNUSED_UNLOAD, stopOnDemand.unusedTimeout);\n532: }"
+            },
+            {
+              "start_line": 527,
+              "end_line": 533,
+              "text": "527:     ParseOndemandTag(onDemandJson, stopOnDemand.onDemandEvents);\n528:     GetBoolFromJson(onDemandJson, SA_TAG_ALLOW_UPDATE, stopOnDemand.allowUpdate);\n529:     GetBoolFromJson(onDemandJson, SA_TAG_UNREF_UNLOAD, stopOnDemand.unrefUnload);\n530:     GetInt32FromJson(onDemandJson, SA_TAG_RECYCLE_DELAYTIME, stopOnDemand.delayTime);\n531:     GetInt32FromJson(onDemandJson, SA_TAG_LONGTIMEUNUSED_UNLOAD, stopOnDemand.unusedTimeout);\n532: }\n533: "
+            },
+            {
+              "start_line": 528,
+              "end_line": 534,
+              "text": "528:     GetBoolFromJson(onDemandJson, SA_TAG_ALLOW_UPDATE, stopOnDemand.allowUpdate);\n529:     GetBoolFromJson(onDemandJson, SA_TAG_UNREF_UNLOAD, stopOnDemand.unrefUnload);\n530:     GetInt32FromJson(onDemandJson, SA_TAG_RECYCLE_DELAYTIME, stopOnDemand.delayTime);\n531:     GetInt32FromJson(onDemandJson, SA_TAG_LONGTIMEUNUSED_UNLOAD, stopOnDemand.unusedTimeout);\n532: }\n533: \n534: void ParseUtil::GetOnDemandArrayFromJson(int32_t eventId, const nlohmann::json& obj,"
+            },
+            {
+              "start_line": 529,
+              "end_line": 535,
+              "text": "529:     GetBoolFromJson(onDemandJson, SA_TAG_UNREF_UNLOAD, stopOnDemand.unrefUnload);\n530:     GetInt32FromJson(onDemandJson, SA_TAG_RECYCLE_DELAYTIME, stopOnDemand.delayTime);\n531:     GetInt32FromJson(onDemandJson, SA_TAG_LONGTIMEUNUSED_UNLOAD, stopOnDemand.unusedTimeout);\n532: }\n533: \n534: void ParseUtil::GetOnDemandArrayFromJson(int32_t eventId, const nlohmann::json& obj,\n535:     const std::string& key, std::vector<OnDemandEvent>& out)"
+            },
+            {
+              "start_line": 595,
+              "end_line": 601,
+              "text": "595:         GetStringFromJson(condition, \"value\", value);\n596:         int32_t eventId = 0;\n597:         if (type == SA_TAG_DEVICE_ON_LINE) {\n598:             eventId = DEVICE_ONLINE;\n599:         } else if (type == SA_TAG_SETTING_SWITCH) {\n600:             eventId = SETTING_SWITCH;\n601:         } else if (type == SA_TAG_COMMON_EVENT) {"
+            },
+            {
+              "start_line": 597,
+              "end_line": 603,
+              "text": "597:         if (type == SA_TAG_DEVICE_ON_LINE) {\n598:             eventId = DEVICE_ONLINE;\n599:         } else if (type == SA_TAG_SETTING_SWITCH) {\n600:             eventId = SETTING_SWITCH;\n601:         } else if (type == SA_TAG_COMMON_EVENT) {\n602:             eventId = COMMON_EVENT;\n603:         } else if (type == SA_TAG_PARAM) {"
+            },
+            {
+              "start_line": 599,
+              "end_line": 605,
+              "text": "599:         } else if (type == SA_TAG_SETTING_SWITCH) {\n600:             eventId = SETTING_SWITCH;\n601:         } else if (type == SA_TAG_COMMON_EVENT) {\n602:             eventId = COMMON_EVENT;\n603:         } else if (type == SA_TAG_PARAM) {\n604:             eventId = PARAM;\n605:         } else if (type == SA_TAG_TIEMD_EVENT) {"
+            },
+            {
+              "start_line": 601,
+              "end_line": 607,
+              "text": "601:         } else if (type == SA_TAG_COMMON_EVENT) {\n602:             eventId = COMMON_EVENT;\n603:         } else if (type == SA_TAG_PARAM) {\n604:             eventId = PARAM;\n605:         } else if (type == SA_TAG_TIEMD_EVENT) {\n606:             eventId = TIMED_EVENT;\n607:         } else {"
+            },
+            {
+              "start_line": 603,
+              "end_line": 609,
+              "text": "603:         } else if (type == SA_TAG_PARAM) {\n604:             eventId = PARAM;\n605:         } else if (type == SA_TAG_TIEMD_EVENT) {\n606:             eventId = TIMED_EVENT;\n607:         } else {\n608:             HILOGW(\"invalid condition eventId: %{public}s\", type.c_str());\n609:             continue;"
+            },
+            {
+              "start_line": 654,
+              "end_line": 660,
+              "text": "654:     }\n655:     string process;\n656:     GetStringFromJson(trustSaIdJson, SA_TAG_PROCESS, process);\n657:     if (process.empty()) {\n658:         HILOGE(\"trust profile format error: no process tag\");\n659:         return false;\n660:     }"
+            },
+            {
+              "start_line": 664,
+              "end_line": 670,
+              "text": "664:     }\n665:     auto& saIds = values[Str8ToStr16(process)];\n666:     GetIntArrayFromJson(trustSaIdJson, SA_TAG_SAID, saIds);\n667:     HILOGI(\"ParseTrustConfig realPath:%{public}s, saIds size = %{public}zu\", realPath.c_str(), saIds.size());\n668:     return true;\n669: }\n670: "
+            }
+          ]
+        },
+        {
+          "path": "services/samgr/native/BUILD.gn",
+          "blob_oid": "634ccf9fa9db2303540f70e054eb53322975f4d2",
+          "sha256": "db62ae68ece3a940bbc1d4fab18914841ba5c7b68e52212fbb0be9a6ca1f4416",
+          "matched_line_numbers": [
+            115,
+            117
+          ],
+          "excerpts": [
+            {
+              "start_line": 113,
+              "end_line": 118,
+              "text": "113:     ]\n114: \n115:     if (build_selinux) {\n116:       external_deps += [ \"selinux_adapter:libservice_checker\" ]\n117:       defines += [ \"WITH_SELINUX\" ]\n118:     }"
+            },
+            {
+              "start_line": 115,
+              "end_line": 120,
+              "text": "115:     if (build_selinux) {\n116:       external_deps += [ \"selinux_adapter:libservice_checker\" ]\n117:       defines += [ \"WITH_SELINUX\" ]\n118:     }\n119: \n120:     if (hicollie_able) {"
+            }
+          ]
+        },
+        {
+          "path": "services/samgr/native/source/system_ability_manager_stub.cpp",
+          "blob_oid": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
+          "sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433",
+          "matched_line_numbers": [
+            47,
+            52,
+            53,
+            319,
+            424,
+            475,
+            533,
+            593,
+            638,
+            646,
+            658,
+            659,
+            665,
+            670,
+            676,
+            684,
+            696,
+            697,
+            703,
+            708,
+            716,
+            748,
+            773,
+            788,
+            808,
+            1019,
+            1055,
+            1100,
+            1143,
+            1169,
+            1216,
+            1242,
+            1268,
+            1299,
+            1329,
+            1359,
+            1410,
+            1412,
+            1421,
+            1423,
+            1424,
+            1430,
+            1460,
+            1496,
+            1535,
+            1573,
+            1677,
+            1720,
+            1763,
+            1797,
+            1842,
+            1884,
+            1997,
+            2027
+          ],
+          "excerpts": [
+            {
+              "start_line": 45,
+              "end_line": 51,
+              "text": "45: #endif\n46: \n47:     bool CheckGetSAPermission(const int32_t said)\n48:     {\n49: #ifdef WITH_SELINUX\n50:         int64_t begin = OHOS::GetTickCount();\n51:         auto callingSid = OHOS::IPCSkeleton::GetCallingSid();"
+            },
+            {
+              "start_line": 50,
+              "end_line": 56,
+              "text": "50:         int64_t begin = OHOS::GetTickCount();\n51:         auto callingSid = OHOS::IPCSkeleton::GetCallingSid();\n52:         auto ret = selinuxChecker_->GetServiceCheck(callingSid, std::to_string(said)) == 0;\n53:         HILOG_SE_DEBUG(LOG_CORE, \"GetServiceCheck callingSid:%{public}s,SA:%{public}d,ret:%{public}s,spend:%{public}\"\n54:             PRId64 \"ms\", callingSid.c_str(), said, ret == true ? \"suc\" : \"fail\", OHOS::GetTickCount() - begin);\n55:         return  ret;\n56: #else"
+            },
+            {
+              "start_line": 51,
+              "end_line": 57,
+              "text": "51:         auto callingSid = OHOS::IPCSkeleton::GetCallingSid();\n52:         auto ret = selinuxChecker_->GetServiceCheck(callingSid, std::to_string(said)) == 0;\n53:         HILOG_SE_DEBUG(LOG_CORE, \"GetServiceCheck callingSid:%{public}s,SA:%{public}d,ret:%{public}s,spend:%{public}\"\n54:             PRId64 \"ms\", callingSid.c_str(), said, ret == true ? \"suc\" : \"fail\", OHOS::GetTickCount() - begin);\n55:         return  ret;\n56: #else\n57:         return true; // if not support selinux, not check selinux permission"
+            },
+            {
+              "start_line": 317,
+              "end_line": 323,
+              "text": "317: int32_t SystemAbilityManagerStub::ListSystemAbilityInner(MessageParcel& data, MessageParcel& reply)\n318: {\n319:     if (!CanRequest()) {\n320:         HILOGE(\"ListSystemAbilityInner PERMISSION DENIED!\");\n321:         return ERR_PERMISSION_DENIED;\n322:     }\n323: "
+            },
+            {
+              "start_line": 422,
+              "end_line": 428,
+              "text": "422: int32_t SystemAbilityManagerStub::CheckRemtSystemAbilityInner(MessageParcel& data, MessageParcel& reply)\n423: {\n424:     if (!CanRequest()) {\n425:         HILOGE(\"CheckRemoteSystemAbilityInner PERMISSION DENIED!\");\n426:         return ERR_PERMISSION_DENIED;\n427:     }\n428:     int32_t systemAbilityId = -1;"
+            },
+            {
+              "start_line": 473,
+              "end_line": 479,
+              "text": "473: int32_t SystemAbilityManagerStub::AddOndemandSystemAbilityInner(MessageParcel& data, MessageParcel& reply)\n474: {\n475:     if (!CanRequest()) {\n476:         HILOGE(\"AddOndemandSystemAbilityInner PERMISSION DENIED!\");\n477:         return ERR_PERMISSION_DENIED;\n478:     }\n479:     int32_t systemAbilityId = -1;"
+            },
+            {
+              "start_line": 531,
+              "end_line": 537,
+              "text": "531: #endif\n532: \n533:     if (!CheckGetSAPermission(systemAbilityId)) {\n534:         HILOGD(\"CheckSystemAbilityImmeInner selinux permission denied! SA:%{public}d,callSid:%{public}s\",\n535:             systemAbilityId, OHOS::IPCSkeleton::GetCallingSid().c_str());\n536:         return ERR_PERMISSION_DENIED;\n537:     }"
+            },
+            {
+              "start_line": 591,
+              "end_line": 597,
+              "text": "591: int32_t SystemAbilityManagerStub::AddSystemAbilityInner(MessageParcel& data, MessageParcel& reply)\n592: {\n593:     if (!CanRequest()) {\n594:         KHILOGE(\"AddSystemAbilityInner PERMISSION DENIED!\");\n595:         return ERR_PERMISSION_DENIED;\n596:     }\n597:     int32_t systemAbilityId = -1;"
+            },
+            {
+              "start_line": 636,
+              "end_line": 642,
+              "text": "636: }\n637: \n638: int32_t SystemAbilityManagerStub::GetSystemAbilityInner(MessageParcel& data, MessageParcel& reply)\n639: {\n640:     int32_t systemAbilityId = -1;\n641:     bool ret = data.ReadInt32(systemAbilityId);\n642:     if (!ret) {"
+            },
+            {
+              "start_line": 644,
+              "end_line": 650,
+              "text": "644:     }\n645:     if (!CheckInputSysAbilityId(systemAbilityId)) {\n646:         HILOGW(\"GetSystemAbilityInner read SAId failed!\");\n647:         return ERR_NULL_OBJECT;\n648:     }\n649: \n650: #ifdef SUPPORT_PENGLAI_MODE"
+            },
+            {
+              "start_line": 656,
+              "end_line": 662,
+              "text": "656: #endif\n657: \n658:     if (!CheckGetSAPermission(systemAbilityId)) {\n659:         HILOGE(\"GetSystemAbilityInner selinux permission denied! SA:%{public}d,callSid:%{public}s\",\n660:             systemAbilityId, OHOS::IPCSkeleton::GetCallingSid().c_str());\n661:         return ERR_PERMISSION_DENIED;\n662:     }"
+            },
+            {
+              "start_line": 657,
+              "end_line": 663,
+              "text": "657: \n658:     if (!CheckGetSAPermission(systemAbilityId)) {\n659:         HILOGE(\"GetSystemAbilityInner selinux permission denied! SA:%{public}d,callSid:%{public}s\",\n660:             systemAbilityId, OHOS::IPCSkeleton::GetCallingSid().c_str());\n661:         return ERR_PERMISSION_DENIED;\n662:     }\n663:     sptr<IRemoteObject> remoteObject = GetSystemAbility(systemAbilityId);"
+            },
+            {
+              "start_line": 663,
+              "end_line": 669,
+              "text": "663:     sptr<IRemoteObject> remoteObject = GetSystemAbility(systemAbilityId);\n664:     if (remoteObject == nullptr) {\n665:         HILOGD(\"GetSystemAbilityInner SA:%{public}d GetSystemAbility failed.\", systemAbilityId);\n666:         return ERR_NULL_OBJECT;\n667:     }\n668:     ret = reply.WriteRemoteObject(remoteObject);\n669:     if (!ret) {"
+            },
+            {
+              "start_line": 668,
+              "end_line": 674,
+              "text": "668:     ret = reply.WriteRemoteObject(remoteObject);\n669:     if (!ret) {\n670:         HILOGE(\"GetSystemAbilityInner SA:%{public}d write reply failed.\", systemAbilityId);\n671:         return ERR_FLATTEN_OBJECT;\n672:     }\n673:     return ERR_NONE;\n674: }"
+            },
+            {
+              "start_line": 674,
+              "end_line": 680,
+              "text": "674: }\n675: \n676: int32_t SystemAbilityManagerStub::CheckSystemAbilityInner(MessageParcel& data, MessageParcel& reply)\n677: {\n678:     int32_t systemAbilityId = -1;\n679:     bool ret = data.ReadInt32(systemAbilityId);\n680:     if (!ret) {"
+            },
+            {
+              "start_line": 682,
+              "end_line": 688,
+              "text": "682:     }\n683:     if (!CheckInputSysAbilityId(systemAbilityId)) {\n684:         HILOGW(\"CheckSystemAbilityInner read SAId failed!\");\n685:         return ERR_NULL_OBJECT;\n686:     }\n687: \n688: #ifdef SUPPORT_PENGLAI_MODE"
+            },
+            {
+              "start_line": 694,
+              "end_line": 700,
+              "text": "694: #endif\n695: \n696:     if (!CheckGetSAPermission(systemAbilityId)) {\n697:         HILOGD(\"CheckSystemAbilityInner selinux permission denied! SA:%{public}d,callSid:%{public}s\",\n698:             systemAbilityId, OHOS::IPCSkeleton::GetCallingSid().c_str());\n699:         return ERR_PERMISSION_DENIED;\n700:     }"
+            },
+            {
+              "start_line": 695,
+              "end_line": 701,
+              "text": "695: \n696:     if (!CheckGetSAPermission(systemAbilityId)) {\n697:         HILOGD(\"CheckSystemAbilityInner selinux permission denied! SA:%{public}d,callSid:%{public}s\",\n698:             systemAbilityId, OHOS::IPCSkeleton::GetCallingSid().c_str());\n699:         return ERR_PERMISSION_DENIED;\n700:     }\n701:     sptr<IRemoteObject> remoteObject = CheckSystemAbility(systemAbilityId);"
+            },
+            {
+              "start_line": 701,
+              "end_line": 707,
+              "text": "701:     sptr<IRemoteObject> remoteObject = CheckSystemAbility(systemAbilityId);\n702:     if (remoteObject == nullptr) {\n703:         HILOGD(\"CheckSystemAbilityInner SA:%{public}d CheckSystemAbility failed.\", systemAbilityId);\n704:         return ERR_NULL_OBJECT;\n705:     }\n706:     ret = reply.WriteRemoteObject(remoteObject);\n707:     if (!ret) {"
+            },
+            {
+              "start_line": 706,
+              "end_line": 712,
+              "text": "706:     ret = reply.WriteRemoteObject(remoteObject);\n707:     if (!ret) {\n708:         HILOGE(\"CheckSystemAbilityInner SA:%{public}d write reply failed.\", systemAbilityId);\n709:         return ERR_FLATTEN_OBJECT;\n710:     }\n711:     return ERR_NONE;\n712: }"
+            },
+            {
+              "start_line": 714,
+              "end_line": 720,
+              "text": "714: int32_t SystemAbilityManagerStub::RemoveSystemAbilityInner(MessageParcel& data, MessageParcel& reply)\n715: {\n716:     if (!CanRequest()) {\n717:         HILOGE(\"RemoveSystemAbilityInner PERMISSION DENIED!\");\n718:         return ERR_PERMISSION_DENIED;\n719:     }\n720:     int32_t systemAbilityId = -1;"
+            },
+            {
+              "start_line": 746,
+              "end_line": 752,
+              "text": "746: int32_t SystemAbilityManagerStub::AddSystemProcessInner(MessageParcel& data, MessageParcel& reply)\n747: {\n748:     if (!CanRequest()) {\n749:         HILOGE(\"AddSystemProcessInner PERMISSION DENIED!\");\n750:         return ERR_PERMISSION_DENIED;\n751:     }\n752:     std::u16string procName = data.ReadString16();"
+            },
+            {
+              "start_line": 771,
+              "end_line": 777,
+              "text": "771: }\n772: \n773: int32_t SystemAbilityManagerStub::LoadSACheck(int32_t systemAbilityId)\n774: {\n775:     if (!CheckInputSysAbilityId(systemAbilityId)) {\n776:         HILOGW(\"LoadSystemAbilityInner check SAId failed!\");\n777:         return ERR_INVALID_VALUE;"
+            },
+            {
+              "start_line": 786,
+              "end_line": 792,
+              "text": "786: #endif\n787: \n788:     if (!CheckGetSAPermission(systemAbilityId)) {\n789:         HILOGE(\"LoadSystemAbilityInner selinux permission denied!SA:%{public}d,callSid:%{public}s\",\n790:             systemAbilityId, OHOS::IPCSkeleton::GetCallingSid().c_str());\n791:         return ERR_PERMISSION_DENIED;\n792:     }"
+            },
+            {
+              "start_line": 806,
+              "end_line": 812,
+              "text": "806:             return ERR_INVALID_VALUE;\n807:         }\n808:         int32_t checkRet = LoadSACheck(systemAbilityId);\n809:         if (checkRet != ERR_OK) {\n810:             return checkRet;\n811:         }\n812:         sptr<IRemoteObject> remoteObject = data.ReadRemoteObject();"
+            },
+            {
+              "start_line": 1017,
+              "end_line": 1023,
+              "text": "1017: int32_t SystemAbilityManagerStub::OnStartSystemAbilityFailInner(MessageParcel& data, MessageParcel& reply)\n1018: {\n1019:     if (!CanRequest()) {\n1020:         HILOGE(\"OnStartSystemAbilityFailInner PERMISSION DENIED!\");\n1021:         return ERR_PERMISSION_DENIED;\n1022:     }\n1023:     int32_t systemAbilityId = -1;"
+            },
+            {
+              "start_line": 1053,
+              "end_line": 1059,
+              "text": "1053: {\n1054:     HILOGI(\"GetSystemProcessInfoInner called\");\n1055:     if (!CanRequest()) {\n1056:         HILOGE(\"GetSystemProcessInfoInner PERMISSION DENIED!\");\n1057:         return ERR_PERMISSION_DENIED;\n1058:     }\n1059:     int32_t systemAbilityId = -1;"
+            },
+            {
+              "start_line": 1098,
+              "end_line": 1104,
+              "text": "1098: {\n1099:     HILOGI(\"GetRunningSystemProcessInner called\");\n1100:     if (!CanRequest()) {\n1101:         HILOGE(\"GetRunningSystemProcessInner PERMISSION DENIED!\");\n1102:         return ERR_PERMISSION_DENIED;\n1103:     }\n1104:     std::list<SystemProcessInfo> systemProcessInfos;"
+            },
+            {
+              "start_line": 1141,
+              "end_line": 1147,
+              "text": "1141: int32_t SystemAbilityManagerStub::SubscribeSystemProcessInner(MessageParcel& data, MessageParcel& reply)\n1142: {\n1143:     if (!CanRequest()) {\n1144:         HILOGE(\"SubscribeSystemProcessInner PERMISSION DENIED!\");\n1145:         return ERR_PERMISSION_DENIED;\n1146:     }\n1147:     sptr<IRemoteObject> remoteObject = data.ReadRemoteObject();"
+            },
+            {
+              "start_line": 1167,
+              "end_line": 1173,
+              "text": "1167: int32_t SystemAbilityManagerStub::UnSubscribeSystemProcessInner(MessageParcel& data, MessageParcel& reply)\n1168: {\n1169:     if (!CanRequest()) {\n1170:         HILOGE(\"UnSubscribeSystemProcessInner PERMISSION DENIED!\");\n1171:         return ERR_PERMISSION_DENIED;\n1172:     }\n1173:     sptr<IRemoteObject> remoteObject = data.ReadRemoteObject();"
+            },
+            {
+              "start_line": 1214,
+              "end_line": 1220,
+              "text": "1214: int32_t SystemAbilityManagerStub::SubscribeLowMemSystemProcessInner(MessageParcel& data, MessageParcel& reply)\n1215: {\n1216:     if (!CanRequest()) {\n1217:         HILOGE(\"SubscribeLowMemSystemProcessInner PERMISSION DENIED!\");\n1218:         return ERR_PERMISSION_DENIED;\n1219:     }\n1220:     sptr<IRemoteObject> remoteObject = data.ReadRemoteObject();"
+            },
+            {
+              "start_line": 1240,
+              "end_line": 1246,
+              "text": "1240: int32_t SystemAbilityManagerStub::UnSubscribeLowMemSystemProcessInner(MessageParcel& data, MessageParcel& reply)\n1241: {\n1242:     if (!CanRequest()) {\n1243:         HILOGE(\"UnSubscribeLowMemSystemProcessInner PERMISSION DENIED!\");\n1244:         return ERR_PERMISSION_DENIED;\n1245:     }\n1246:     sptr<IRemoteObject> remoteObject = data.ReadRemoteObject();"
+            },
+            {
+              "start_line": 1266,
+              "end_line": 1272,
+              "text": "1266: int32_t SystemAbilityManagerStub::GetOnDemandReasonExtraDataInner(MessageParcel& data, MessageParcel& reply)\n1267: {\n1268:     if (!CanRequest()) {\n1269:         HILOGE(\"GetOnDemandReasonExtraData PERMISSION DENIED!\");\n1270:         return ERR_PERMISSION_DENIED;\n1271:     }\n1272:     int64_t extraDataId = -1;"
+            },
+            {
+              "start_line": 1297,
+              "end_line": 1303,
+              "text": "1297: int32_t SystemAbilityManagerStub::GetOnDemandPolicyInner(MessageParcel& data, MessageParcel& reply)\n1298: {\n1299:     if (!CanRequest()) {\n1300:         HILOGE(\"GetOnDemandPolicyInner PERMISSION DENIED!\");\n1301:         return ERR_PERMISSION_DENIED;\n1302:     }\n1303:     int32_t systemAbilityId = -1;"
+            },
+            {
+              "start_line": 1327,
+              "end_line": 1333,
+              "text": "1327: int32_t SystemAbilityManagerStub::UpdateOnDemandPolicyInner(MessageParcel& data, MessageParcel& reply)\n1328: {\n1329:     if (!CanRequest()) {\n1330:         HILOGE(\"UpdateOnDemandPolicyInner PERMISSION DENIED!\");\n1331:         return ERR_PERMISSION_DENIED;\n1332:     }\n1333:     int32_t systemAbilityId = -1;"
+            },
+            {
+              "start_line": 1357,
+              "end_line": 1363,
+              "text": "1357: int32_t SystemAbilityManagerStub::SendStrategyInner(MessageParcel& data, MessageParcel& reply)\n1358: {\n1359:     if (!CanRequest()) {\n1360:         HILOGE(\"SendStrategy PERMISSION DENIED!\");\n1361:         return ERR_PERMISSION_DENIED;\n1362:     }\n1363:     int32_t type = 0;"
+            },
+            {
+              "start_line": 1408,
+              "end_line": 1414,
+              "text": "1408: }\n1409: \n1410: bool SystemAbilityManagerStub::CanRequest()\n1411: {\n1412:     auto tid = IPCSkeleton::GetCallingTokenID();\n1413:     AccessToken::ATokenTypeEnum tokenType = AccessToken::AccessTokenKit::GetTokenTypeFlag(tid);\n1414:     if (tokenType != AccessToken::ATokenTypeEnum::TOKEN_NATIVE) {"
+            },
+            {
+              "start_line": 1410,
+              "end_line": 1416,
+              "text": "1410: bool SystemAbilityManagerStub::CanRequest()\n1411: {\n1412:     auto tid = IPCSkeleton::GetCallingTokenID();\n1413:     AccessToken::ATokenTypeEnum tokenType = AccessToken::AccessTokenKit::GetTokenTypeFlag(tid);\n1414:     if (tokenType != AccessToken::ATokenTypeEnum::TOKEN_NATIVE) {\n1415:         KHILOGE(\"CanRequest callingTkid:%{public}u, tokenType:%{public}d\", tid, tokenType);\n1416:         return false;"
+            },
+            {
+              "start_line": 1419,
+              "end_line": 1425,
+              "text": "1419: }\n1420: \n1421: bool SystemAbilityManagerStub::CheckPermission(const std::string& permission)\n1422: {\n1423:     uint32_t accessToken = IPCSkeleton::GetCallingTokenID();\n1424:     int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(accessToken, permission);\n1425:     return (ret == Security::AccessToken::PermissionState::PERMISSION_GRANTED);"
+            },
+            {
+              "start_line": 1421,
+              "end_line": 1427,
+              "text": "1421: bool SystemAbilityManagerStub::CheckPermission(const std::string& permission)\n1422: {\n1423:     uint32_t accessToken = IPCSkeleton::GetCallingTokenID();\n1424:     int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(accessToken, permission);\n1425:     return (ret == Security::AccessToken::PermissionState::PERMISSION_GRANTED);\n1426: }\n1427: "
+            },
+            {
+              "start_line": 1422,
+              "end_line": 1428,
+              "text": "1422: {\n1423:     uint32_t accessToken = IPCSkeleton::GetCallingTokenID();\n1424:     int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(accessToken, permission);\n1425:     return (ret == Security::AccessToken::PermissionState::PERMISSION_GRANTED);\n1426: }\n1427: \n1428: int32_t SystemAbilityManagerStub::GetExtensionSaIdsInner(MessageParcel& data, MessageParcel& reply)"
+            },
+            {
+              "start_line": 1428,
+              "end_line": 1434,
+              "text": "1428: int32_t SystemAbilityManagerStub::GetExtensionSaIdsInner(MessageParcel& data, MessageParcel& reply)\n1429: {\n1430:     if (!CanRequest()) {\n1431:         HILOGE(\"%{public}s  PERMISSION DENIED!\", __func__);\n1432:         return ERR_PERMISSION_DENIED;\n1433:     }\n1434:     std::string extension;"
+            },
+            {
+              "start_line": 1458,
+              "end_line": 1464,
+              "text": "1458: int32_t SystemAbilityManagerStub::GetExtensionRunningSaListInner(MessageParcel& data, MessageParcel& reply)\n1459: {\n1460:     if (!CanRequest()) {\n1461:         HILOGE(\"%{public}s PERMISSION DENIED!\", __func__);\n1462:         return ERR_PERMISSION_DENIED;\n1463:     }\n1464:     std::string extension;"
+            },
+            {
+              "start_line": 1494,
+              "end_line": 1500,
+              "text": "1494: int32_t SystemAbilityManagerStub::GetRunningSaExtensionInfoListInner(MessageParcel& data, MessageParcel& reply)\n1495: {\n1496:     if (!CheckPermission(EXT_TRANSACTION_PERMISSION)) {\n1497:         HILOGE(\"get SaExtInfoList CheckPermission fail!\");\n1498:         return ERR_PERMISSION_DENIED;\n1499:     }\n1500:     std::string extension;"
+            },
+            {
+              "start_line": 1533,
+              "end_line": 1539,
+              "text": "1533: int32_t SystemAbilityManagerStub::GetCommonEventExtraDataIdlistInner(MessageParcel& data, MessageParcel& reply)\n1534: {\n1535:     if (!CanRequest()) {\n1536:         HILOGE(\"getExtraIdList PERMISSION DENIED!\");\n1537:         return ERR_PERMISSION_DENIED;\n1538:     }\n1539:     int32_t saId = -1;"
+            },
+            {
+              "start_line": 1571,
+              "end_line": 1577,
+              "text": "1571: int32_t SystemAbilityManagerStub::GetLocalAbilityManagerProxyInner(MessageParcel& data, MessageParcel& reply)\n1572: {\n1573:     if (!CheckPermission(PERMISSION_SVC)) {\n1574:         HILOGE(\"GetLocalSystemAbilityProxyInner permission denied! CallSid:%{public}s\",\n1575:             OHOS::IPCSkeleton::GetCallingSid().c_str());\n1576:         return ERR_PERMISSION_DENIED;\n1577:     }"
+            },
+            {
+              "start_line": 1675,
+              "end_line": 1681,
+              "text": "1675: #endif\n1676: \n1677:     if (!CheckGetSAPermission(systemAbilityId)) {\n1678:         HILOGE(\"GetSystemAbilityWithUserIdInner selinux permission denied! \"\n1679:             \"SA:%{public}d,callSid:%{public}s\", systemAbilityId,\n1680:             OHOS::IPCSkeleton::GetCallingSid().c_str());\n1681:         return ERR_PERMISSION_DENIED;"
+            },
+            {
+              "start_line": 1718,
+              "end_line": 1724,
+              "text": "1718: #endif\n1719: \n1720:     if (!CheckGetSAPermission(systemAbilityId)) {\n1721:         HILOGD(\"CheckSystemAbilityWithUserIdInner selinux permission denied! \"\n1722:             \"SA:%{public}d,callSid:%{public}s\", systemAbilityId,\n1723:             OHOS::IPCSkeleton::GetCallingSid().c_str());\n1724:         return ERR_PERMISSION_DENIED;"
+            },
+            {
+              "start_line": 1761,
+              "end_line": 1767,
+              "text": "1761: #endif\n1762: \n1763:     if (!CheckGetSAPermission(systemAbilityId)) {\n1764:         HILOGD(\"CheckSystemAbilityByUserIdInner selinux permission denied! \"\n1765:             \"SA:%{public}d,callSid:%{public}s\", systemAbilityId,\n1766:             OHOS::IPCSkeleton::GetCallingSid().c_str());\n1767:         return ERR_PERMISSION_DENIED;"
+            },
+            {
+              "start_line": 1795,
+              "end_line": 1801,
+              "text": "1795: int32_t SystemAbilityManagerStub::GetSystemProcessInfoWithUserIdInner(MessageParcel& data, MessageParcel& reply)\n1796: {\n1797:     if (!CanRequest()) {\n1798:         HILOGE(\"GetSystemProcessInfoWithUserIdInner PERMISSION DENIED!\");\n1799:         return ERR_PERMISSION_DENIED;\n1800:     }\n1801:     int32_t systemAbilityId = -1;"
+            },
+            {
+              "start_line": 1840,
+              "end_line": 1846,
+              "text": "1840: int32_t SystemAbilityManagerStub::GetLocalAbilityManagerProxyWithUserIdInner(MessageParcel& data, MessageParcel& reply)\n1841: {\n1842:     if (!CheckPermission(PERMISSION_SVC)) {\n1843:         HILOGE(\"GetLocalAbilityManagerProxyWithUserIdInner permission denied! CallSid:%{public}s\",\n1844:             OHOS::IPCSkeleton::GetCallingSid().c_str());\n1845:         return ERR_PERMISSION_DENIED;\n1846:     }"
+            },
+            {
+              "start_line": 1882,
+              "end_line": 1888,
+              "text": "1882:             return ERR_INVALID_VALUE;\n1883:         }\n1884:         int32_t checkRet = LoadSACheck(systemAbilityId);\n1885:         if (checkRet != ERR_OK) {\n1886:             return checkRet;\n1887:         }\n1888:         sptr<IRemoteObject> remoteObject = data.ReadRemoteObject();"
+            },
+            {
+              "start_line": 1995,
+              "end_line": 2001,
+              "text": "1995: int32_t SystemAbilityManagerStub::SubscribeSystemProcessWithUserIdInner(MessageParcel& data, MessageParcel& reply)\n1996: {\n1997:     if (!CanRequest()) {\n1998:         HILOGE(\"SubscribeSystemProcessWithUserIdInner PERMISSION DENIED!\");\n1999:         return ERR_PERMISSION_DENIED;\n2000:     }\n2001:     sptr<IRemoteObject> remoteObject = data.ReadRemoteObject();"
+            },
+            {
+              "start_line": 2025,
+              "end_line": 2031,
+              "text": "2025: int32_t SystemAbilityManagerStub::UnSubscribeSystemProcessWithUserIdInner(MessageParcel& data, MessageParcel& reply)\n2026: {\n2027:     if (!CanRequest()) {\n2028:         HILOGE(\"UnSubscribeSystemProcessWithUserIdInner PERMISSION DENIED!\");\n2029:         return ERR_PERMISSION_DENIED;\n2030:     }\n2031:     sptr<IRemoteObject> remoteObject = data.ReadRemoteObject();"
+            }
+          ]
+        },
+        {
+          "path": "etc/samgr_standard.cfg",
+          "blob_oid": "3f635e2db266836a7d75d061cc986679f2ad4ac6",
+          "sha256": "51d370c8329c337a9aeda43456088c5b4641f3bbd8737a371f27e326bdee7856",
+          "matched_line_numbers": [
+            10,
+            19,
+            43,
+            47
+          ],
+          "excerpts": [
+            {
+              "start_line": 9,
+              "end_line": 13,
+              "text": "9:     \"services\" : [{\n10:             \"name\" : \"samgr\",\n11:             \"path\" : [\"/system/bin/samgr\"],\n12:             \"critical\" : [1, 1, 60],\n13:             \"importance\" : -20,"
+            },
+            {
+              "start_line": 18,
+              "end_line": 22,
+              "text": "18:             \"bootevents\":\"bootevent.samgr.ready\",\n19:             \"permission\": [\n20:                 \"ohos.permission.DISTRIBUTED_DATASYNC\",\n21:                 \"ohos.permission.ACCESS_SERVICE_DM\",\n22:                 \"ohos.permission.RECEIVER_STARTUP_COMPLETED\","
+            },
+            {
+              "start_line": 42,
+              "end_line": 46,
+              "text": "42:             ],\n43:             \"permission_acls\" : [\n44:                 \"ohos.permission.MONITOR_DEVICE_NETWORK_STATE\",\n45:                 \"ohos.permission.MANAGE_SYSTEM_ABILITY\"\n46:             ],"
+            },
+            {
+              "start_line": 46,
+              "end_line": 50,
+              "text": "46:             ],\n47:             \"secon\" : \"u:r:samgr:s0\",\n48:             \"start-mode\" : \"boot\"\n49:         }\n50:     ]"
+            }
+          ]
+        },
+        {
+          "path": "etc/BUILD.gn",
+          "blob_oid": "2c6609a205c7256db230819c479b5b6083e78ffd",
+          "sha256": "6e56cb343f843f059a0c91aa4744bc52faf683eae6ae9b390181aac5752aae88",
+          "matched_line_numbers": [
+            43
+          ],
+          "excerpts": [
+            {
+              "start_line": 41,
+              "end_line": 46,
+              "text": "41: \n42: ohos_prebuilt_etc(\"samgr_init\") {\n43:   source = \"samgr_standard.cfg\"\n44:   relative_install_dir = \"init\"\n45:   part_name = \"samgr\"\n46:   subsystem_name = \"systemabilitymgr\""
+            }
+          ]
+        },
+        {
+          "path": "test/resource/profile/profile.json",
+          "blob_oid": "49be95deb33eacfed1a2954f8e66551433ad3478",
+          "sha256": "f5158126e27326e22a17661239d0708bd9adc0ab862192d25425e30cd3463003",
+          "matched_line_numbers": [
+            2,
+            3,
+            5,
+            6
+          ],
+          "excerpts": [
+            {
+              "start_line": 1,
+              "end_line": 5,
+              "text": "1: {\n2:     \"process\": \"sa_test\",\n3:     \"systemability\": [\n4:         {\n5:             \"name\": 9999,"
+            },
+            {
+              "start_line": 2,
+              "end_line": 6,
+              "text": "2:     \"process\": \"sa_test\",\n3:     \"systemability\": [\n4:         {\n5:             \"name\": 9999,\n6:             \"libpath\": \"liboos_ability.z.so\","
+            },
+            {
+              "start_line": 4,
+              "end_line": 8,
+              "text": "4:         {\n5:             \"name\": 9999,\n6:             \"libpath\": \"liboos_ability.z.so\",\n7:             \"run-on-create\": true,\n8:             \"distributed\": false,"
+            },
+            {
+              "start_line": 5,
+              "end_line": 9,
+              "text": "5:             \"name\": 9999,\n6:             \"libpath\": \"liboos_ability.z.so\",\n7:             \"run-on-create\": true,\n8:             \"distributed\": false,\n9:             \"dump-level\": 1"
+            }
+          ]
+        },
+        {
+          "path": "services/common/test/unittest/parse_util_test.cpp",
+          "blob_oid": "d69e76cec95c082c10fbd39970a272cb11401b8d",
+          "sha256": "d73f49534f3a29c180c7e0abe9913bd39e6ed2bd1dd0bb34a41896b88bfcecb6",
+          "matched_line_numbers": [
+            131
+          ],
+          "excerpts": [
+            {
+              "start_line": 129,
+              "end_line": 135,
+              "text": "129:      * @tc.expected: step1. return correct profile object when load correct config file\n130:      */\n131:     bool ret = parser_->ParseSaProfiles(TEST_RESOURCE_PATH + \"profile.json\");\n132:     ASSERT_TRUE(ret);\n133:     SaProfile saRunOnCreateTrue;\n134:     saRunOnCreateTrue.runOnCreate = true;\n135:     SaProfile saRunOnCreateFalse;"
+            }
+          ]
+        }
+      ],
+      "declared_repository": "https://gitee.com/openharmony/systemabilitymgr_samgr"
+    },
+    "startup_init": {
+      "repo": "openharmony/startup_init",
+      "remote": "https://gitcode.com/openharmony/startup_init.git",
+      "commit": "e06651300f349e728c76edda806dbf6496fd620d",
+      "tree": "b77ef22dfc6fa75db5f3707970db9d908a1b6302",
+      "evidence": [
+        {
+          "path": "services/init/init_service_manager.c",
+          "blob_oid": "fdf20695ac22974f11658c782a36bfbcf1b0d138",
+          "sha256": "93c6488489b4a2d957046a5da76f4f2f80b667ffce4da369e9cabada1160cb47",
+          "matched_line_numbers": [
+            111,
+            234,
+            254,
+            973,
+            978,
+            1064,
+            1599
+          ],
+          "excerpts": [
+            {
+              "start_line": 109,
+              "end_line": 115,
+              "text": "109:         node->data.service = NULL;\n110:     }\n111:     Service *service = (Service *)calloc(1, sizeof(Service));\n112:     INIT_ERROR_CHECK(service != NULL, return NULL, \"Failed to malloc for service\");\n113:     node->data.service = service;\n114:     service->name = node->name;\n115:     service->status = SERVICE_IDLE;"
+            },
+            {
+              "start_line": 232,
+              "end_line": 238,
+              "text": "232: }\n233: \n234: static int GetServiceArgs(const cJSON *argJson, const char *name, int maxCount, ServiceArgs *args)\n235: {\n236:     INIT_ERROR_CHECK(argJson != NULL, return SERVICE_FAILURE, \"Invalid argJson\");\n237:     cJSON *obj = cJSON_GetObjectItem(argJson, name);\n238:     INIT_CHECK(obj != NULL, return SERVICE_FAILURE);"
+            },
+            {
+              "start_line": 252,
+              "end_line": 258,
+              "text": "252:     }\n253:     // ServiceArgs have a variety of uses, some requiring a NULL ending, some not\n254:     if (strcmp(name, D_CAPS_STR_IN_CFG) != 0 && strcmp(name, \"permission_acls\") != 0 &&\n255:         strcmp(name, \"permission\") != 0) {\n256:         args->count = count + 1;\n257:     } else {\n258:         args->count = count;"
+            },
+            {
+              "start_line": 971,
+              "end_line": 977,
+              "text": "971: }\n972: \n973: static void ParseOneServiceArgs(const cJSON *curItem, Service *service)\n974: {\n975:     GetServiceArgs(curItem, \"writepid\", MAX_WRITEPID_FILES, &service->writePidArgs);\n976:     GetServiceArgs(curItem, D_CAPS_STR_IN_CFG, MAX_WRITEPID_FILES, &service->capsArgs);\n977:     GetServiceArgs(curItem, \"permission\", MAX_WRITEPID_FILES, &service->permArgs);"
+            },
+            {
+              "start_line": 976,
+              "end_line": 982,
+              "text": "976:     GetServiceArgs(curItem, D_CAPS_STR_IN_CFG, MAX_WRITEPID_FILES, &service->capsArgs);\n977:     GetServiceArgs(curItem, \"permission\", MAX_WRITEPID_FILES, &service->permArgs);\n978:     GetServiceArgs(curItem, \"permission_acls\", MAX_WRITEPID_FILES, &service->permAclsArgs);\n979:     GetKernelPerm(curItem, service);\n980:     size_t strLen = 0;\n981:     char *fieldStr = GetStringValue(curItem, APL_STR_IN_CFG, &strLen);\n982:     if (fieldStr != NULL) {"
+            },
+            {
+              "start_line": 1062,
+              "end_line": 1068,
+              "text": "1062:     int ret = SERVICE_FAILURE;\n1063: \n1064:     ParseOneServiceArgs(curItem, service);\n1065:     ret = GetServiceEnv(service, curItem);\n1066:     INIT_ERROR_CHECK(ret == 0, return SERVICE_FAILURE, \"Failed to get env for service %s\", service->name);\n1067:     ret = GetServicePeriod(curItem, service, PERIOD_STR_IN_CFG, SERVICE_ATTR_PERIOD);\n1068:     INIT_ERROR_CHECK(ret == 0, return SERVICE_FAILURE, \"Failed to get period for service %s\", service->name);"
+            },
+            {
+              "start_line": 1597,
+              "end_line": 1603,
+              "text": "1597: void LoadAccessTokenId(void)\n1598: {\n1599:     GetAccessToken();\n1600: }\n1601: \n1602: int GetKillServiceSig(const char *name)\n1603: {"
+            }
+          ]
+        },
+        {
+          "path": "services/init/include/init_service.h",
+          "blob_oid": "c23e90ce0acc1bafc3867a749624cc5184303a9c",
+          "sha256": "f8c2926bfe0c377b688be5560fceb717e5f39db60f355ddbc963ebe8614a5227",
+          "matched_line_numbers": [
+            185,
+            192,
+            193
+          ],
+          "excerpts": [
+            {
+              "start_line": 183,
+              "end_line": 188,
+              "text": "183:     int endMode : 4; // preFork/ fork / exec / ready\n184:     int status : 4; // ServiceStatus\n185:     uint64_t tokenId;\n186:     char *apl;\n187:     uint64_t period;\n188:     ServiceEnv *env;"
+            },
+            {
+              "start_line": 190,
+              "end_line": 195,
+              "text": "190:     bool isCgroupEnabled;\n191:     ServiceArgs capsArgs;\n192:     ServiceArgs permArgs;\n193:     ServiceArgs permAclsArgs;\n194:     char *kernelPerms;\n195:     Perms servPerm;"
+            },
+            {
+              "start_line": 191,
+              "end_line": 196,
+              "text": "191:     ServiceArgs capsArgs;\n192:     ServiceArgs permArgs;\n193:     ServiceArgs permAclsArgs;\n194:     char *kernelPerms;\n195:     Perms servPerm;\n196:     ServiceArgs pathArgs;"
+            }
+          ]
+        },
+        {
+          "path": "services/init/standard/init_service.c",
+          "blob_oid": "d952ee5d62ffac7e6cbe4bf720b8f653b975d270",
+          "sha256": "b4a6c862e3e0b20b4d1d3626d11d5bf96359121bddd52d76bd60f169e68f0538",
+          "matched_line_numbers": [
+            278,
+            282,
+            303,
+            305,
+            306,
+            308,
+            309,
+            314
+          ],
+          "excerpts": [
+            {
+              "start_line": 276,
+              "end_line": 282,
+              "text": "276: }\n277: \n278: int SetAccessToken(const Service *service)\n279: {\n280: #ifdef INIT_SUPPORT_ACCESS_TOKEN\n281:     INIT_ERROR_CHECK(service != NULL, return SERVICE_FAILURE, \"service is null\");\n282:     return SetSelfTokenID(service->tokenId);"
+            },
+            {
+              "start_line": 280,
+              "end_line": 286,
+              "text": "280: #ifdef INIT_SUPPORT_ACCESS_TOKEN\n281:     INIT_ERROR_CHECK(service != NULL, return SERVICE_FAILURE, \"service is null\");\n282:     return SetSelfTokenID(service->tokenId);\n283: #else\n284:     INIT_LOGE(\"SetAccessToken is not supported\");\n285:     return SERVICE_FAILURE;\n286: #endif"
+            },
+            {
+              "start_line": 301,
+              "end_line": 307,
+              "text": "301:                 apl = service->apl;\n302:             }\n303:             NativeTokenInfoParams nativeTokenInfoParams = {\n304:                 service->capsArgs.count,\n305:                 service->permArgs.count,\n306:                 service->permAclsArgs.count,\n307:                 (const char **)service->capsArgs.argv,"
+            },
+            {
+              "start_line": 303,
+              "end_line": 309,
+              "text": "303:             NativeTokenInfoParams nativeTokenInfoParams = {\n304:                 service->capsArgs.count,\n305:                 service->permArgs.count,\n306:                 service->permAclsArgs.count,\n307:                 (const char **)service->capsArgs.argv,\n308:                 (const char **)service->permArgs.argv,\n309:                 (const char **)service->permAclsArgs.argv,"
+            },
+            {
+              "start_line": 304,
+              "end_line": 310,
+              "text": "304:                 service->capsArgs.count,\n305:                 service->permArgs.count,\n306:                 service->permAclsArgs.count,\n307:                 (const char **)service->capsArgs.argv,\n308:                 (const char **)service->permArgs.argv,\n309:                 (const char **)service->permAclsArgs.argv,\n310:                 service->name,"
+            },
+            {
+              "start_line": 306,
+              "end_line": 312,
+              "text": "306:                 service->permAclsArgs.count,\n307:                 (const char **)service->capsArgs.argv,\n308:                 (const char **)service->permArgs.argv,\n309:                 (const char **)service->permAclsArgs.argv,\n310:                 service->name,\n311:                 apl,\n312:                 (int32_t)service->servPerm.uID,"
+            },
+            {
+              "start_line": 307,
+              "end_line": 313,
+              "text": "307:                 (const char **)service->capsArgs.argv,\n308:                 (const char **)service->permArgs.argv,\n309:                 (const char **)service->permAclsArgs.argv,\n310:                 service->name,\n311:                 apl,\n312:                 (int32_t)service->servPerm.uID,\n313:             };"
+            },
+            {
+              "start_line": 312,
+              "end_line": 318,
+              "text": "312:                 (int32_t)service->servPerm.uID,\n313:             };\n314:             uint64_t tokenId = GetAccessTokenId(&nativeTokenInfoParams);\n315:             INIT_CHECK_ONLY_ELOG(tokenId  != 0,\n316:                 \"gettotkenid failed, service \\' %s \\'\", service->name);\n317:             service->tokenId = tokenId;\n318: #else"
+            }
+          ]
+        },
+        {
+          "path": "services/init/init_common_service.c",
+          "blob_oid": "25125bcfbf471262659ecd16b8f11b4f4271df51",
+          "sha256": "fa25c59e36d276af1e68dd6b263c295431010164eaca3d9efccd55a11eefe280",
+          "matched_line_numbers": [
+            277,
+            447,
+            465,
+            475,
+            557,
+            559,
+            577
+          ],
+          "excerpts": [
+            {
+              "start_line": 275,
+              "end_line": 281,
+              "text": "275:     return 0;\n276: }\n277: static int SetPerms(const Service *service)\n278: {\n279: #if defined(ENABLE_HOOK_MGR)\n280:     /*\n281:      * service before setting Perms hooks"
+            },
+            {
+              "start_line": 445,
+              "end_line": 451,
+              "text": "445: \n446: #ifdef SUPPORT_SA_MULTI_USER\n447: static int SetServiceContentWithMcs(const Service *service)\n448: {\n449: #ifdef WITH_SELINUX\n450:     if (service->mcs == NULL || service->mcs[0] == '\\0') {\n451:         PluginExecCmdByName(\"setServiceContent\", service->name);"
+            },
+            {
+              "start_line": 463,
+              "end_line": 469,
+              "text": "463: #endif\n464: \n465: static int SetServiceContent(Service *service)\n466: {\n467: #ifdef INIT_FEATURE_SUPPORT_SASPAWN\n468:     bool isSaspawn = ((service->attribute & SERVICE_ATTR_SASPAWN) == SERVICE_ATTR_SASPAWN);\n469:     if (isSaspawn) {"
+            },
+            {
+              "start_line": 473,
+              "end_line": 479,
+              "text": "473: #endif\n474: #ifdef SUPPORT_SA_MULTI_USER\n475:     return SetServiceContentWithMcs(service);\n476: #else\n477:     PluginExecCmdByName(\"setServiceContent\", service->name);\n478:     return 0;\n479: #endif"
+            },
+            {
+              "start_line": 555,
+              "end_line": 561,
+              "text": "555:     int ret = SetPerms(service);\n556:     INIT_ERROR_CHECK(ret == SERVICE_SUCCESS, service->lastErrno = ret;\n557:         return ret, \"Service error %d %s, failed to set permissions.\", ret, service->name);\n558: \n559:     ret = SetServiceContent(service);\n560:     INIT_ERROR_CHECK(ret == 0, service->lastErrno = INIT_EEXEC_CONTENT;\n561:         return INIT_EEXEC_CONTENT, \"Service error %d %s, failed to set security context.\", ret, service->name);"
+            },
+            {
+              "start_line": 557,
+              "end_line": 563,
+              "text": "557:         return ret, \"Service error %d %s, failed to set permissions.\", ret, service->name);\n558: \n559:     ret = SetServiceContent(service);\n560:     INIT_ERROR_CHECK(ret == 0, service->lastErrno = INIT_EEXEC_CONTENT;\n561:         return INIT_EEXEC_CONTENT, \"Service error %d %s, failed to set security context.\", ret, service->name);\n562:     return 0;\n563: }"
+            },
+            {
+              "start_line": 575,
+              "end_line": 581,
+              "text": "575:         service->lastErrno = INIT_ESANDBOX;\n576:     }\n577:     ret = SetAccessToken(service);\n578:     if (ret != 0) {\n579:         INIT_LOGW(\"Service warning %d %s, failed to set access token.\", ret, service->name);\n580:         service->lastErrno = INIT_EACCESSTOKEN;\n581:     }"
+            }
+          ]
+        }
+      ]
+    },
+    "access_token": {
+      "repo": "openharmony/security_access_token",
+      "remote": "https://gitcode.com/openharmony/security_access_token.git",
+      "commit": "c53a55c371d88c46b0785cc4adb444876e6a9628",
+      "tree": "4942df10e6ed926dab1106e5752cf294305240d6",
+      "evidence": [
+        {
+          "path": "interfaces/innerkits/nativetoken/include/nativetoken_kit.h",
+          "blob_oid": "836b7ae7763c4cc0f176185c4182cd25f18ca288",
+          "sha256": "bda25cf9806b54cae4e57216a6a5f44ac4ecbaa5048b6a286fad1e117b5ab2e8",
+          "matched_line_numbers": [
+            30,
+            31,
+            33,
+            34,
+            38,
+            40
+          ],
+          "excerpts": [
+            {
+              "start_line": 28,
+              "end_line": 33,
+              "text": "28: typedef struct TokenInfoParams {\n29:     int32_t dcapsNum;\n30:     int32_t permsNum;\n31:     int32_t aclsNum;\n32:     const char **dcaps;\n33:     const char **perms;"
+            },
+            {
+              "start_line": 29,
+              "end_line": 34,
+              "text": "29:     int32_t dcapsNum;\n30:     int32_t permsNum;\n31:     int32_t aclsNum;\n32:     const char **dcaps;\n33:     const char **perms;\n34:     const char **acls;"
+            },
+            {
+              "start_line": 31,
+              "end_line": 36,
+              "text": "31:     int32_t aclsNum;\n32:     const char **dcaps;\n33:     const char **perms;\n34:     const char **acls;\n35:     const char *processName;\n36:     const char *aplStr;"
+            },
+            {
+              "start_line": 32,
+              "end_line": 37,
+              "text": "32:     const char **dcaps;\n33:     const char **perms;\n34:     const char **acls;\n35:     const char *processName;\n36:     const char *aplStr;\n37:     int32_t uid;"
+            },
+            {
+              "start_line": 36,
+              "end_line": 41,
+              "text": "36:     const char *aplStr;\n37:     int32_t uid;\n38: } NativeTokenInfoParams;\n39: \n40: extern uint64_t GetAccessTokenId(NativeTokenInfoParams *tokenInfo);\n41: "
+            },
+            {
+              "start_line": 38,
+              "end_line": 43,
+              "text": "38: } NativeTokenInfoParams;\n39: \n40: extern uint64_t GetAccessTokenId(NativeTokenInfoParams *tokenInfo);\n41: \n42: #ifdef __cplusplus\n43: }"
+            }
+          ]
+        },
+        {
+          "path": "interfaces/innerkits/nativetoken/src/nativetoken.c",
+          "blob_oid": "d7cdaf99b2fdb76f92dc643866b213ca0cbb88d2",
+          "sha256": "ae5e51b65f7b9741e2c9db36d024faa4b899b4922137bead0d38d15c23d2c8d8",
+          "matched_line_numbers": [
+            1050,
+            1131,
+            1141,
+            1154,
+            1161
+          ],
+          "excerpts": [
+            {
+              "start_line": 1048,
+              "end_line": 1054,
+              "text": "1048: }\n1049: \n1050: static uint32_t PrepareAccessTokenId(NativeTokenInfoParams *tokenInfo, NativeAtId *tokenId, int32_t *apl,\n1051:     int32_t *sceneCode)\n1052: {\n1053:     int32_t fd = -1;\n1054:     uint32_t ret = ATRET_SUCCESS;"
+            },
+            {
+              "start_line": 1129,
+              "end_line": 1135,
+              "text": "1129: }\n1130: \n1131: static void SyncNativeTokenToKernel(const NativeTokenInfoParams *tokenInfo, NativeAtId tokenId, int32_t apl)\n1132: {\n1133:     SpmData spmData;\n1134:     uint32_t perms[SPM_PERM_ARRAY_SIZE];\n1135: "
+            },
+            {
+              "start_line": 1139,
+              "end_line": 1145,
+              "text": "1139: }\n1140: \n1141: uint64_t GetAccessTokenId(NativeTokenInfoParams *tokenInfo)\n1142: {\n1143:     if (tokenInfo == NULL) {\n1144:         LOGC(\"Native token info is null.\");\n1145:         return 0;"
+            },
+            {
+              "start_line": 1152,
+              "end_line": 1158,
+              "text": "1152: \n1153:     ClearThreadErrorMsg();\n1154:     uint32_t ret = PrepareAccessTokenId(tokenInfo, &tokenId, &apl, &sceneCode);\n1155:     if (ret != ATRET_SUCCESS) {\n1156:         ReportNativeTokenExceptionEvent(sceneCode, (int32_t)ret, GetThreadErrorMsg());\n1157:         return INVALID_TOKEN_ID;\n1158:     }"
+            },
+            {
+              "start_line": 1159,
+              "end_line": 1163,
+              "text": "1159:     atPoint->tokenId = tokenId;\n1160:     atPoint->tokenAttr = 0;\n1161:     SyncNativeTokenToKernel(tokenInfo, tokenId, apl);\n1162:     return result;\n1163: }"
+            }
+          ]
+        },
+        {
+          "path": "services/accesstokenmanager/main/cpp/src/permission/accesstoken_info_manager.cpp",
+          "blob_oid": "bba989b0b43c13ebbc7c0ca378c436caeebebf47",
+          "sha256": "df6f8a4f897e940d6a63cf63c2781962dda5e91bb35437671f59f935b37a4c3d",
+          "matched_line_numbers": [
+            1488,
+            1499,
+            1500,
+            1504,
+            1524,
+            2419
+          ],
+          "excerpts": [
+            {
+              "start_line": 1486,
+              "end_line": 1492,
+              "text": "1486: }\n1487: \n1488: void AccessTokenInfoManager::GetNativePermissionList(const NativeTokenInfoBase& native,\n1489:     std::vector<uint32_t>& opCodeList, std::vector<bool>& statusList)\n1490: {\n1491:     // need to process aclList\n1492:     for (const auto& state : native.permStateList) {"
+            },
+            {
+              "start_line": 1497,
+              "end_line": 1503,
+              "text": "1497:             continue;\n1498:         }\n1499:         if ((native.apl < briefDef.availableLevel) &&\n1500:             std::find(native.nativeAcls.begin(), native.nativeAcls.end(), permission) == native.nativeAcls.end()) {\n1501:             continue;\n1502:         }\n1503:         opCodeList.emplace_back(code);"
+            },
+            {
+              "start_line": 1498,
+              "end_line": 1504,
+              "text": "1498:         }\n1499:         if ((native.apl < briefDef.availableLevel) &&\n1500:             std::find(native.nativeAcls.begin(), native.nativeAcls.end(), permission) == native.nativeAcls.end()) {\n1501:             continue;\n1502:         }\n1503:         opCodeList.emplace_back(code);\n1504:         statusList.emplace_back(state.grantStatus == PERMISSION_GRANTED);"
+            },
+            {
+              "start_line": 1502,
+              "end_line": 1508,
+              "text": "1502:         }\n1503:         opCodeList.emplace_back(code);\n1504:         statusList.emplace_back(state.grantStatus == PERMISSION_GRANTED);\n1505:     }\n1506: }\n1507: \n1508: void AccessTokenInfoManager::InitNativeTokenInfos(const std::vector<NativeTokenInfoBase>& tokenInfos)"
+            },
+            {
+              "start_line": 1522,
+              "end_line": 1528,
+              "text": "1522:         std::vector<uint32_t> opCodeList;\n1523:         std::vector<bool> statusList;\n1524:         GetNativePermissionList(info, opCodeList, statusList);\n1525:         // add native token info to cache\n1526:         std::unique_lock<std::shared_mutex> infoGuard(this->nativeTokenInfoLock_);\n1527:         NativeTokenInfoCache cache;\n1528:         cache.processName = process;"
+            },
+            {
+              "start_line": 2417,
+              "end_line": 2423,
+              "text": "2417: }\n2418: \n2419: int32_t AccessTokenInfoManager::VerifyAccessToken(AccessTokenID tokenID, const std::string& permissionName)\n2420: {\n2421:     if (tokenID == INVALID_TOKENID) {\n2422:         ReportPermissionCheckEvent(VERIFY_TOKEN_ID_ERROR, \"TokenID is invalid, permission: \" + permissionName);\n2423:         LOGE(ATM_DOMAIN, ATM_TAG, \"TokenID is invalid\");"
+            }
+          ]
+        },
+        {
+          "path": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+          "blob_oid": "80443bc587368025fa1a9d7eb0d5d7ea568bbbf6",
+          "sha256": "b11220a1a4982cae4af4f1506a8c6001c7a47216f504f3c95851dc1b50593437",
+          "matched_line_numbers": [
+            470,
+            474,
+            477,
+            479,
+            499,
+            508,
+            511,
+            515,
+            517,
+            549,
+            558,
+            562,
+            572,
+            935,
+            950,
+            1161,
+            1163,
+            1197
+          ],
+          "excerpts": [
+            {
+              "start_line": 468,
+              "end_line": 474,
+              "text": "468:     }\n469:     uint32_t code;\n470:     if (!TransferPermissionToOpcode(permissionName, code)) {\n471:         return PERMISSION_DENIED;\n472:     }\n473:     if (crossIpc || IsNeedCrossIpc(tokenID)) {\n474:         return AccessTokenManagerClient::GetInstance().VerifyAccessToken(tokenID, permissionName);"
+            },
+            {
+              "start_line": 472,
+              "end_line": 478,
+              "text": "472:     }\n473:     if (crossIpc || IsNeedCrossIpc(tokenID)) {\n474:         return AccessTokenManagerClient::GetInstance().VerifyAccessToken(tokenID, permissionName);\n475:     }\n476:     bool isGranted = false;\n477:     int32_t ret = GetPermissionFromKernel(tokenID, code, isGranted);\n478:     if (ret != 0) {"
+            },
+            {
+              "start_line": 475,
+              "end_line": 481,
+              "text": "475:     }\n476:     bool isGranted = false;\n477:     int32_t ret = GetPermissionFromKernel(tokenID, code, isGranted);\n478:     if (ret != 0) {\n479:         return AccessTokenManagerClient::GetInstance().VerifyAccessToken(tokenID, permissionName);\n480:     }\n481:     return isGranted ? PERMISSION_GRANTED : PERMISSION_DENIED;"
+            },
+            {
+              "start_line": 477,
+              "end_line": 483,
+              "text": "477:     int32_t ret = GetPermissionFromKernel(tokenID, code, isGranted);\n478:     if (ret != 0) {\n479:         return AccessTokenManagerClient::GetInstance().VerifyAccessToken(tokenID, permissionName);\n480:     }\n481:     return isGranted ? PERMISSION_GRANTED : PERMISSION_DENIED;\n482: }\n483: "
+            },
+            {
+              "start_line": 497,
+              "end_line": 503,
+              "text": "497: }\n498: \n499: int AccessTokenKit::VerifyAccessToken(AccessTokenID tokenID, const std::string& permissionName)\n500: {\n501:     LOGD(ATM_DOMAIN, ATM_TAG, \"TokenID=%{public}d, permissionName=%{public}s.\",\n502:         tokenID, permissionName.c_str());\n503:     if (IsRenderToken(tokenID)) {"
+            },
+            {
+              "start_line": 506,
+              "end_line": 512,
+              "text": "506:     }\n507:     if (IsNeedCrossIpc(tokenID)) {\n508:         return AccessTokenManagerClient::GetInstance().VerifyAccessToken(tokenID, permissionName);\n509:     }\n510:     uint32_t code;\n511:     if (!TransferPermissionToOpcode(permissionName, code)) {\n512:         return PERMISSION_DENIED;"
+            },
+            {
+              "start_line": 509,
+              "end_line": 515,
+              "text": "509:     }\n510:     uint32_t code;\n511:     if (!TransferPermissionToOpcode(permissionName, code)) {\n512:         return PERMISSION_DENIED;\n513:     }\n514:     bool isGranted = false;\n515:     int32_t ret = GetPermissionFromKernel(tokenID, code, isGranted);"
+            },
+            {
+              "start_line": 513,
+              "end_line": 519,
+              "text": "513:     }\n514:     bool isGranted = false;\n515:     int32_t ret = GetPermissionFromKernel(tokenID, code, isGranted);\n516:     if (ret != 0) {\n517:         return AccessTokenManagerClient::GetInstance().VerifyAccessToken(tokenID, permissionName);\n518:     }\n519:     return isGranted ? PERMISSION_GRANTED : PERMISSION_DENIED;"
+            },
+            {
+              "start_line": 515,
+              "end_line": 521,
+              "text": "515:     int32_t ret = GetPermissionFromKernel(tokenID, code, isGranted);\n516:     if (ret != 0) {\n517:         return AccessTokenManagerClient::GetInstance().VerifyAccessToken(tokenID, permissionName);\n518:     }\n519:     return isGranted ? PERMISSION_GRANTED : PERMISSION_DENIED;\n520: }\n521: "
+            },
+            {
+              "start_line": 547,
+              "end_line": 553,
+              "text": "547:     }\n548:     if (crossIpc || IsNeedCrossIpc(tokenID)) {\n549:         return AccessTokenManagerClient::GetInstance().VerifyAccessToken(tokenID, permissionList, permStateList);\n550:     }\n551: \n552:     permStateList.resize(permissionList.size(), PERMISSION_DENIED);\n553:     std::vector<std::string> permListCrossIpc;"
+            },
+            {
+              "start_line": 556,
+              "end_line": 562,
+              "text": "556:         bool isGranted = false;\n557:         uint32_t code;\n558:         if (!TransferPermissionToOpcode(permissionList[i], code)) {\n559:             permStateList[i] = PERMISSION_DENIED;\n560:             continue;\n561:         }\n562:         int32_t ret = GetPermissionFromKernel(tokenID, code, isGranted);"
+            },
+            {
+              "start_line": 560,
+              "end_line": 566,
+              "text": "560:             continue;\n561:         }\n562:         int32_t ret = GetPermissionFromKernel(tokenID, code, isGranted);\n563:         if (ret != 0) {\n564:             permToState[permListCrossIpc.size()] = i;\n565:             permListCrossIpc.emplace_back(permissionList[i]);\n566:             continue;"
+            },
+            {
+              "start_line": 570,
+              "end_line": 576,
+              "text": "570:     if (!permListCrossIpc.empty()) {\n571:         std::vector<int32_t> permStateCrossIpc;\n572:         int ret = AccessTokenManagerClient::GetInstance().VerifyAccessToken(tokenID,\n573:             permListCrossIpc, permStateCrossIpc);\n574:         if (ret != ERR_OK) {\n575:             return ret;\n576:         }"
+            },
+            {
+              "start_line": 933,
+              "end_line": 939,
+              "text": "933:     }\n934:     uint32_t permCode = 0;\n935:     if (!TransferPermissionToOpcode(permission, permCode)) {\n936:         return AccessTokenError::ERR_PARAM_INVALID;\n937:     }\n938:     return AccessTokenManagerClient::GetInstance().UpdatePolicyWhiteList(tokenId, permCode, type);\n939: #else"
+            },
+            {
+              "start_line": 948,
+              "end_line": 954,
+              "text": "948:     tokenIdList.clear();\n949:     uint32_t permCode = 0;\n950:     if (!TransferPermissionToOpcode(permission, permCode)) {\n951:         return AccessTokenError::ERR_PARAM_INVALID;\n952:     }\n953:     return AccessTokenManagerClient::GetInstance().GetPolicyWhiteList(permCode, tokenIdList);\n954: #else"
+            },
+            {
+              "start_line": 1159,
+              "end_line": 1165,
+              "text": "1159:  \t \n1160: \n1161: bool AccessTokenKit::TransferPermissionToOpcode(const std::string& permissionName, uint32_t& permCode)\n1162: {\n1163:     if (!AccessToken::TransferPermissionToOpcode(permissionName, permCode)) {\n1164:         return false;\n1165:     }"
+            },
+            {
+              "start_line": 1161,
+              "end_line": 1167,
+              "text": "1161: bool AccessTokenKit::TransferPermissionToOpcode(const std::string& permissionName, uint32_t& permCode)\n1162: {\n1163:     if (!AccessToken::TransferPermissionToOpcode(permissionName, permCode)) {\n1164:         return false;\n1165:     }\n1166:     return IsSupportPermission(permissionName);\n1167: }"
+            },
+            {
+              "start_line": 1195,
+              "end_line": 1201,
+              "text": "1195:         // Validate permission exists and convert to permCode\n1196:         uint32_t permCode = 0;\n1197:         if (!AccessToken::TransferPermissionToOpcode(permissionName, permCode)) {\n1198:             return AccessTokenError::ERR_PERMISSION_NOT_EXIST;\n1199:         }\n1200:         permCodeList.emplace_back(permCode);\n1201:     }"
+            }
+          ]
+        },
+        {
+          "path": "interfaces/innerkits/token_setproc/src/token_setproc.c",
+          "blob_oid": "1236c844d6320e9de834abb1d5ee0c4ef63c6b76",
+          "sha256": "ac57758c803d1e824a3b5e7591c0bf8f092dcbbeff32b99dd6cc7d107ff30ccd",
+          "matched_line_numbers": [
+            27,
+            52,
+            77,
+            92,
+            94,
+            99,
+            112,
+            129
+          ],
+          "excerpts": [
+            {
+              "start_line": 25,
+              "end_line": 30,
+              "text": "25: #define    ACCESS_TOKENID_GET_TOKENID \\\n26:     _IOR(ACCESS_TOKEN_ID_IOCTL_BASE, GET_TOKEN_ID, uint64_t)\n27: #define    ACCESS_TOKENID_SET_TOKENID \\\n28:     _IOW(ACCESS_TOKEN_ID_IOCTL_BASE, SET_TOKEN_ID, uint64_t)\n29: #define    ACCESS_TOKENID_GET_FTOKENID \\\n30:     _IOR(ACCESS_TOKEN_ID_IOCTL_BASE, GET_FTOKEN_ID, uint64_t)"
+            },
+            {
+              "start_line": 50,
+              "end_line": 55,
+              "text": "50:     }\n51: \n52:     int fd = open(TOKENID_DEVNODE, O_RDWR);\n53:     if (fd < 0) {\n54:         return ACCESS_TOKEN_OPEN_ERROR;\n55:     }"
+            },
+            {
+              "start_line": 75,
+              "end_line": 80,
+              "text": "75: {\n76:     uint64_t token = INVAL_TOKEN_ID;\n77:     int fd = open(TOKENID_DEVNODE, O_RDWR);\n78:     if (fd < 0) {\n79:         return INVAL_TOKEN_ID;\n80:     }"
+            },
+            {
+              "start_line": 90,
+              "end_line": 95,
+              "text": "90: }\n91: \n92: int SetSelfTokenID(uint64_t tokenID)\n93: {\n94:     int fd = open(TOKENID_DEVNODE, O_RDWR);\n95:     if (fd < 0) {"
+            },
+            {
+              "start_line": 92,
+              "end_line": 97,
+              "text": "92: int SetSelfTokenID(uint64_t tokenID)\n93: {\n94:     int fd = open(TOKENID_DEVNODE, O_RDWR);\n95:     if (fd < 0) {\n96:         return ACCESS_TOKEN_OPEN_ERROR;\n97:     }"
+            },
+            {
+              "start_line": 97,
+              "end_line": 102,
+              "text": "97:     }\n98:     fdsan_exchange_owner_tag(fd, 0, SET_PROC_FD_TAG);\n99:     int ret = ioctl(fd, ACCESS_TOKENID_SET_TOKENID, &tokenID);\n100:     if (ret) {\n101:         (void)fdsan_close_with_tag(fd, SET_PROC_FD_TAG);\n102:         return ret;"
+            },
+            {
+              "start_line": 110,
+              "end_line": 115,
+              "text": "110: {\n111:     uint64_t token = INVAL_TOKEN_ID;\n112:     int fd = open(TOKENID_DEVNODE, O_RDWR);\n113:     if (fd < 0) {\n114:         return INVAL_TOKEN_ID;\n115:     }"
+            },
+            {
+              "start_line": 127,
+              "end_line": 132,
+              "text": "127: int SetFirstCallerTokenID(uint64_t tokenID)\n128: {\n129:     int fd = open(TOKENID_DEVNODE, O_RDWR);\n130:     if (fd < 0) {\n131:         return ACCESS_TOKEN_OPEN_ERROR;\n132:     }"
+            }
+          ]
+        }
+      ]
+    },
+    "D52_historical_pasteboard": {
+      "repo": "openharmony/miscservices_pasteboard",
+      "remote": "https://gitcode.com/openharmony/miscservices_pasteboard.git",
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "evidence": [
+        {
+          "path": "profile/BUILD.gn",
+          "blob_oid": "827e9a79890056f1743e95afb0c117e2d67a8320",
+          "sha256": "0ec6d782e96d2596279d0d56fc9618e49e1412c096ab8817a47c018e2304ee1c",
+          "matched_line_numbers": [
+            16,
+            17
+          ],
+          "excerpts": [
+            {
+              "start_line": 14,
+              "end_line": 19,
+              "text": "14: import(\"//build/ohos/sa_profile/sa_profile.gni\")\n15: \n16: ohos_sa_profile(\"distributeddatamgr_pasteboard_sa_profiles\") {\n17:   sources = [ \"3701.xml\" ]\n18:   part_name = \"pasteboard\"\n19: }"
+            },
+            {
+              "start_line": 15,
+              "end_line": 19,
+              "text": "15: \n16: ohos_sa_profile(\"distributeddatamgr_pasteboard_sa_profiles\") {\n17:   sources = [ \"3701.xml\" ]\n18:   part_name = \"pasteboard\"\n19: }"
+            }
+          ]
+        },
+        {
+          "path": "profile/3701.xml",
+          "blob_oid": "0078b08118d73e01ffdfd13fe84760a43ee4ce47",
+          "sha256": "532df48215df846c96efe07c9fde6614557f8d61cb39551474a91170f70aead8",
+          "matched_line_numbers": [
+            16,
+            18,
+            19,
+            21
+          ],
+          "excerpts": [
+            {
+              "start_line": 15,
+              "end_line": 19,
+              "text": "15: <info>\n16:     <process>pasteboard_service</process>\n17:     <systemability>\n18:         <name>3701</name>\n19:         <libpath>libpasteboard_service.z.so</libpath>"
+            },
+            {
+              "start_line": 17,
+              "end_line": 21,
+              "text": "17:     <systemability>\n18:         <name>3701</name>\n19:         <libpath>libpasteboard_service.z.so</libpath>\n20:         <run-on-create>true</run-on-create>\n21:         <distributed>false</distributed>"
+            },
+            {
+              "start_line": 18,
+              "end_line": 22,
+              "text": "18:         <name>3701</name>\n19:         <libpath>libpasteboard_service.z.so</libpath>\n20:         <run-on-create>true</run-on-create>\n21:         <distributed>false</distributed>\n22:         <dump-level>1</dump-level>"
+            },
+            {
+              "start_line": 20,
+              "end_line": 24,
+              "text": "20:         <run-on-create>true</run-on-create>\n21:         <distributed>false</distributed>\n22:         <dump-level>1</dump-level>\n23:     </systemability>\n24: </info>"
+            }
+          ]
+        },
+        {
+          "path": "etc/init/pasteboardservice.cfg",
+          "blob_oid": "a44bf3066c8631ecc34db1684019c97439e9e28d",
+          "sha256": "6c7a7da14cd1b8b02da941cd5527d8d97dc37bdd34fed24a03962daa32df6f97",
+          "matched_line_numbers": [
+            11,
+            15
+          ],
+          "excerpts": [
+            {
+              "start_line": 10,
+              "end_line": 14,
+              "text": "10:             \"name\" : \"pasteboard_service\",\n11:             \"path\" : [\"/system/bin/sa_main\", \"/system/profile/pasteboard_service.xml\"],\n12:             \"uid\" : \"pasteboard\",\n13:             \"gid\" : [\"pasteboard\", \"shell\"],\n14:             \"caps\" : [],"
+            },
+            {
+              "start_line": 14,
+              "end_line": 18,
+              "text": "14:             \"caps\" : [],\n15:             \"secon\" : \"u:r:pasteboard_service:s0\"\n16:         }\n17:     ]\n18: }"
+            }
+          ]
+        },
+        {
+          "path": "services/core/src/pasteboard_service.cpp",
+          "blob_oid": "c380ac266a85edd818caa811f11b99722d351788",
+          "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+          "matched_line_numbers": [
+            155
+          ],
+          "excerpts": [
+            {
+              "start_line": 153,
+              "end_line": 160,
+              "text": "153: }\n154: \n155: bool PasteboardService::GetPasteData(PasteData& data)\n156: {\n157:     PasteboardTrace tracer(\"PasteboardService, GetPasteData\");\n158:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"start.\");\n159:     auto userId = GetUserId();\n160: "
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "controls": [
+    {
+      "id": "sa-profile-positive-schema",
+      "source": "samgr test/resource/profile/profile.json",
+      "expectation": "Parser fixture path is used by ParseSaProfiles unit test; SA JSON profile has no permission fields; parser reads only known SaProfile keys.",
+      "execution": "source-bound code-path control; C++ unit test binary not run"
+    },
+    {
+      "id": "init-cfg-positive-perms-and-acls",
+      "source": "samgr etc/samgr_standard.cfg",
+      "expectation": "Init cfg contains nonempty permission and permission_acls arrays, consumed as service native-token inputs.",
+      "execution": "source-bound config and parser/consumer trace; init runtime not run"
+    },
+    {
+      "id": "D52-pasteboard-init-cfg-negative-fields",
+      "source": "D52 historical etc/init/pasteboardservice.cfg",
+      "expectation": "Pinned component cfg contains neither permission nor permission_acls; installed-profile mapping remains unknown.",
+      "execution": "source-bound config inspection; not proof of product merged config"
+    }
+  ],
+  "interpretation": {
+    "samgr_sa_profile_fields": "SaProfile and ParseSystemAbilityGetSaExtInfo do not define/read permission or permission_acls; this SAMgr parser accepts JSON SA profile schema and rejects non-JSON profile paths.",
+    "init_service_cfg_fields": "Distinct init service cfg fields are parsed into permission/perms and permission_acls/acls arrays, then passed as inputs to native service AccessToken creation and SetSelfTokenID.",
+    "acl_limit": "AccessToken code uses native ACL entries to include permissions despite an APL available-level threshold. This is token construction policy, not a per-caller service ACL. Runtime product effects depend on AccessToken implementation/policy and build.",
+    "samgr_query_gate": "SAMgr Get/Check/Load SA operations conditionally call SELinux ServiceChecker with IPC caller SID and SA id; WITH_SELINUX absent returns true. This gates acquiring/returning an SA proxy, not each subsequent binder method call to the SA.",
+    "D52_boundary": "D52 profile/3701.xml is XML and its component init cfg path names pasteboard_service.xml. The current SAMgr JSON parser cannot parse that XML. No D52 product manifest/build rule evidence resolves the XML install filename mapping or binds this pinned SAMgr/init/AccessToken revisions to D52 product."
+  }
+}
