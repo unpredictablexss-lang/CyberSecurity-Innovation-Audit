@@ -1,0 +1,231 @@
+{
+  "schema_version": 1,
+  "experiment": "D20_hash_bound_libpng_33416_function_slice_replay",
+  "baseline": "b276ca10fcae03e7e9b5ab7e7ceabcd883d42b4e",
+  "detector": "ohscanner.cpp.resource_lifetime",
+  "detector_version": "0.4.2",
+  "source_identities": {
+    "repository": "pnggroup/libpng",
+    "vulnerable_commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+    "vulnerable_tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
+    "fixed_commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+    "fixed_tree": "a28bb962645843af84063c77f574f6d88da79f76"
+  },
+  "runs": [
+    {
+      "case": "CVE-2026-33416",
+      "variant": "vulnerable",
+      "source_root": "D:\\openHarmonyScanner\\tmp\\libpng-runtime-cve-2026-33416-20261019\\vulnerable",
+      "files": [
+        {
+          "path": "pngset.c",
+          "source_sha256": "9bd59a79669db37b2ecc481439481eb5f49bf77bee0de4b1aba649915609b3d0",
+          "whole_translation_unit_parse_status": "partial",
+          "whole_translation_unit_issue_count": 62,
+          "fragment_sha256": "bc3f1ce6378e02769c091a34274c5c4ed5d04d3172f42dd0719c9440659e81ee",
+          "fragment_parse_status": "partial",
+          "fragment_issue_count": 3,
+          "fragment_parse_issues": [
+            "{\"end_line\": 740, \"kind\": \"error\", \"start_line\": 740}",
+            "{\"end_line\": 770, \"kind\": \"error\", \"start_line\": 770}",
+            "{\"end_line\": 772, \"kind\": \"error\", \"start_line\": 772}"
+          ],
+          "function": "png_set_PLTE",
+          "start_line": 740,
+          "end_line": 802,
+          "missing_functions": [],
+          "detector": "ohscanner.cpp.resource_lifetime",
+          "detector_version": "0.4.2",
+          "run_status": "blocked",
+          "finding_count": 0,
+          "findings": [],
+          "elapsed_seconds": 0.03011060000062571,
+          "interpretation": "fragment-only syntax experiment; not a whole-file coverage result or semantic proof"
+        },
+        {
+          "path": "pngset.c",
+          "source_sha256": "9bd59a79669db37b2ecc481439481eb5f49bf77bee0de4b1aba649915609b3d0",
+          "whole_translation_unit_parse_status": "partial",
+          "whole_translation_unit_issue_count": 62,
+          "fragment_sha256": "800ba6a5a0ac9db7e8e736564b33e6268d83de19ea59fcc384ac3462af0e2035",
+          "fragment_parse_status": "partial",
+          "fragment_issue_count": 1,
+          "fragment_parse_issues": [
+            "{\"end_line\": 1145, \"kind\": \"error\", \"start_line\": 1145}"
+          ],
+          "function": "png_set_tRNS",
+          "start_line": 1145,
+          "end_line": 1212,
+          "missing_functions": [],
+          "detector": "ohscanner.cpp.resource_lifetime",
+          "detector_version": "0.4.2",
+          "run_status": "blocked",
+          "finding_count": 0,
+          "findings": [],
+          "elapsed_seconds": 0.029961100000036822,
+          "interpretation": "fragment-only syntax experiment; not a whole-file coverage result or semantic proof"
+        },
+        {
+          "path": "png.c",
+          "source_sha256": "0d8e45e9039cf04088764a09dcda7b24695f199288a44e11dba54ebfaca1c730",
+          "whole_translation_unit_parse_status": "partial",
+          "whole_translation_unit_issue_count": 76,
+          "fragment_sha256": "a7fef2181cd6e81678c8784a995f87f816db6d624314bd28105cf9cd62b46b57",
+          "fragment_parse_status": "partial",
+          "fragment_issue_count": 1,
+          "fragment_parse_issues": [
+            "{\"end_line\": 482, \"kind\": \"error\", \"start_line\": 482}"
+          ],
+          "function": "png_free_data",
+          "start_line": 482,
+          "end_line": 683,
+          "missing_functions": [],
+          "detector": "ohscanner.cpp.resource_lifetime",
+          "detector_version": "0.4.2",
+          "run_status": "blocked",
+          "finding_count": 0,
+          "findings": [],
+          "elapsed_seconds": 0.1608222000004389,
+          "interpretation": "fragment-only syntax experiment; not a whole-file coverage result or semantic proof"
+        },
+        {
+          "path": "pngrtran.c",
+          "source_sha256": "4df05c2e5db00911817d7f125c862524205895f34a65106e016d351f7e6edb53",
+          "whole_translation_unit_parse_status": "partial",
+          "whole_translation_unit_issue_count": 58,
+          "fragment_sha256": "d7d38e9b5330e19e0b762e5456f6eb22e419b7f33391e57b00a71a66e85be851",
+          "fragment_parse_status": "partial",
+          "fragment_issue_count": 2,
+          "fragment_parse_issues": [
+            "{\"end_line\": 4447, \"kind\": \"missing\", \"start_line\": 4447}",
+            "{\"end_line\": 4477, \"kind\": \"missing\", \"start_line\": 4477}"
+          ],
+          "function": "png_do_expand_palette",
+          "start_line": 4328,
+          "end_line": 4497,
+          "missing_functions": [],
+          "detector": "ohscanner.cpp.resource_lifetime",
+          "detector_version": "0.4.2",
+          "run_status": "blocked",
+          "finding_count": 0,
+          "findings": [],
+          "elapsed_seconds": 0.26761139999962325,
+          "interpretation": "fragment-only syntax experiment; not a whole-file coverage result or semantic proof"
+        }
+      ]
+    },
+    {
+      "case": "CVE-2026-33416",
+      "variant": "fixed",
+      "source_root": "D:\\openHarmonyScanner\\tmp\\libpng-runtime-cve-2026-33416-20261019\\fixed",
+      "files": [
+        {
+          "path": "pngset.c",
+          "source_sha256": "d3a203e40b6a6000a7cb78a61e0fd9664b0c39a65d82260efedb0f0184a8bc19",
+          "whole_translation_unit_parse_status": "partial",
+          "whole_translation_unit_issue_count": 63,
+          "fragment_sha256": "01fd4d8f7a15a786c565e2497549f968d4dd364112c5583c7befa6fc6eb90c9f",
+          "fragment_parse_status": "partial",
+          "fragment_issue_count": 3,
+          "fragment_parse_issues": [
+            "{\"end_line\": 741, \"kind\": \"error\", \"start_line\": 741}",
+            "{\"end_line\": 771, \"kind\": \"error\", \"start_line\": 771}",
+            "{\"end_line\": 773, \"kind\": \"error\", \"start_line\": 773}"
+          ],
+          "function": "png_set_PLTE",
+          "start_line": 741,
+          "end_line": 813,
+          "missing_functions": [],
+          "detector": "ohscanner.cpp.resource_lifetime",
+          "detector_version": "0.4.2",
+          "run_status": "blocked",
+          "finding_count": 0,
+          "findings": [],
+          "elapsed_seconds": 0.03144659999998112,
+          "interpretation": "fragment-only syntax experiment; not a whole-file coverage result or semantic proof"
+        },
+        {
+          "path": "pngset.c",
+          "source_sha256": "d3a203e40b6a6000a7cb78a61e0fd9664b0c39a65d82260efedb0f0184a8bc19",
+          "whole_translation_unit_parse_status": "partial",
+          "whole_translation_unit_issue_count": 63,
+          "fragment_sha256": "67ea0f850feb4faa08ad63dc13c678265aea344eb26872b2fff1066675f2d162",
+          "fragment_parse_status": "partial",
+          "fragment_issue_count": 1,
+          "fragment_parse_issues": [
+            "{\"end_line\": 1156, \"kind\": \"error\", \"start_line\": 1156}"
+          ],
+          "function": "png_set_tRNS",
+          "start_line": 1156,
+          "end_line": 1235,
+          "missing_functions": [],
+          "detector": "ohscanner.cpp.resource_lifetime",
+          "detector_version": "0.4.2",
+          "run_status": "blocked",
+          "finding_count": 0,
+          "findings": [],
+          "elapsed_seconds": 0.030892499999936263,
+          "interpretation": "fragment-only syntax experiment; not a whole-file coverage result or semantic proof"
+        },
+        {
+          "path": "png.c",
+          "source_sha256": "29a37cedb5be5597aafa3cab62a223c0accbd6016edfff97386471a6e118100c",
+          "whole_translation_unit_parse_status": "partial",
+          "whole_translation_unit_issue_count": 76,
+          "fragment_sha256": "a7fef2181cd6e81678c8784a995f87f816db6d624314bd28105cf9cd62b46b57",
+          "fragment_parse_status": "partial",
+          "fragment_issue_count": 1,
+          "fragment_parse_issues": [
+            "{\"end_line\": 482, \"kind\": \"error\", \"start_line\": 482}"
+          ],
+          "function": "png_free_data",
+          "start_line": 482,
+          "end_line": 683,
+          "missing_functions": [],
+          "detector": "ohscanner.cpp.resource_lifetime",
+          "detector_version": "0.4.2",
+          "run_status": "blocked",
+          "finding_count": 0,
+          "findings": [],
+          "elapsed_seconds": 0.15657850000025064,
+          "interpretation": "fragment-only syntax experiment; not a whole-file coverage result or semantic proof"
+        },
+        {
+          "path": "pngrtran.c",
+          "source_sha256": "6b724ff0047cced71884176296aac10a6fc1d2592477034bbd622222ded3373f",
+          "whole_translation_unit_parse_status": "partial",
+          "whole_translation_unit_issue_count": 58,
+          "fragment_sha256": "6bd588ad4b56a541b74a74d5530a0369ed8cdd47e0e7a7f390e55fe4aae66946",
+          "fragment_parse_status": "partial",
+          "fragment_issue_count": 2,
+          "fragment_parse_issues": [
+            "{\"end_line\": 4471, \"kind\": \"missing\", \"start_line\": 4471}",
+            "{\"end_line\": 4501, \"kind\": \"missing\", \"start_line\": 4501}"
+          ],
+          "function": "png_do_expand_palette",
+          "start_line": 4352,
+          "end_line": 4521,
+          "missing_functions": [],
+          "detector": "ohscanner.cpp.resource_lifetime",
+          "detector_version": "0.4.2",
+          "run_status": "blocked",
+          "finding_count": 0,
+          "findings": [],
+          "elapsed_seconds": 0.2689680999992561,
+          "interpretation": "fragment-only syntax experiment; not a whole-file coverage result or semantic proof"
+        }
+      ]
+    }
+  ],
+  "assessment": {
+    "rule_change": "none",
+    "case_status": "PARTIAL/BLOCK",
+    "reason": "All target function slices and parent translation units are partial; no source-visible cross-file alias/release/use root is exposed to the current local lexical model.",
+    "limitations": [
+      "Fragment slices retain original file positions but omit surrounding declarations, preprocessor context, and type identity.",
+      "Adding hand-selected declarations would create a synthetic parse context and cannot establish full source coverage or field alias semantics.",
+      "Current detector does not join png_info/png_struct field aliases or release state across functions/files.",
+      "Zero findings on either partial variant is inconclusive; the fixed result is not a fixed PASS."
+    ]
+  }
+}
