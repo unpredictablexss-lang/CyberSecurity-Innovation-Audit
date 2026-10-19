@@ -66,6 +66,17 @@
         "research/evaluation/ark_runtime_holdout_20261019/holdout_pipeline.py",
         "research/evaluation/ark_runtime_holdout_20261019/selftest/fail-closed-review-20261020/**"
       ]
+    },
+    "c_d3": {
+      "allowed": [
+        "src/ohscanner/detectors/ark_runtime/runtime_ir.py",
+        "src/ohscanner/detectors/ark_runtime/analysis.py"
+      ]
+    },
+    "c_t3": {
+      "allowed": [
+        "tests/detectors/ark_runtime/test_c12_loop_backedge_observation.py"
+      ]
     }
   },
   "shared_owner_only": [
