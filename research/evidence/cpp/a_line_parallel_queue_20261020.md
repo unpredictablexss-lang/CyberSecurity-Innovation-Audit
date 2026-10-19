@@ -341,8 +341,10 @@ T43 independently replayed the exact Taihe source objects: both files parsed com
 
 D43 rebound all 17 IDs to `openharmony/arkcompiler_taihe_ffi_gen` commit `d91f43e80d892bca694c6b0fce8ea27cd644919f` / tree `8c5eecdad09e2fe960ce5f3728959a4726f0a91d`, then ran current `ohscanner.cpp.shared_ptr_race` 0.5.1 on the two exact A0 files. Both parse complete (2/2; 316 LOC); 16 diagnostics exactly match CR-0197–CR-0212, while CR-0213's `GetIncrementalPixelMap()` accessor line has no current exact-line finding. The matched code is in author files explicitly commented as test files. The exact repo root `BUILD.gn` contains no reference to these files, and the object tree has no `BUILD.gn` under either author directory; the related async helper can call the getter, and an `imageSourceCrossThreadMutex_` declaration is unused in the inspected source. This still does not prove or exclude external build integration, product reachability, or same-object concurrent overlap. No detector change is justified. Keep all 17 A0 rows `not_testable / paused_pending_evidence`, PARTIAL. See [D43 report](d43_taihe_ffi_gen_report_20261025.md), [per-ID replay](d43_taihe_ffi_gen_replay_20261025.json), [raw CLI JSON](d43_taihe_ffi_gen_cli_20261025.json), and [verifier](verify_d43_taihe_ffi_gen_20261025.py).
 
-### T44A — libtiff CVE-2025-9900 independent current-CLI acceptance
-
+### T44A — libtiff CVE-2025-9900 independent current-CLI acceptance
+
+
+
 T44 independently replayed D current evidence from a clean checkout. Whole-file vulnerable/fixed runs both remain `completed_with_limitations`, parser partial, detector blocked, and 0 findings; that result is not a safe/fixed conclusion. The bounded exact function plus `_TIFFRGBAImage` is complete: the vulnerable slice reports the existing pointer-offset candidate at `tif_getimage.c:621`, while the fixed slice is quiet. Exact commit/tree/blob/SHA identities and all 345 A0 rows/statuses reconcile. Preserve PARTIAL/BLOCK; no detector change. See [D current replay](d_libtiff9900_current_cli_20261026.md) and [T44 independent acceptance](t_libtiff9900_independent_acceptance_20261027.md).
 
 ### T44B — Samgr callback IPC CR-0214–CR-0218 independent audit
@@ -380,3 +382,8 @@ T51 bound CR-0313 to the exact `TestTimerCallbackStub::OnRemoteRequest` test sou
 ## D49 — Enterprise Device Manager IPC CR-0306–CR-0312
 
 D49 rebound all seven rows to the exact EDM source object and replayed the current IPC CLI on three production translation units: all parse complete and five candidates map to CR-0307/0308/0310–0312. CR-0306 is a post-dispatch parameterless admin-state query; CR-0309 is before the IDL dispatch path's system/native principal guard. These are no exact-line findings and no specific detector gap was established. The five findings also remain unconfirmed static candidates. Preserve all seven original states as `not_testable / paused_pending_evidence`, PARTIAL/BLOCK; CR-0313's test-only candidate is audited separately in T51. See [D49 assessment](d49_edm_ipc_no_change_20261028.md), [CLI result](d49_edm_ipc_cli_20261028.md), and [verifier](d49_edm_ipc_no_change_20261028.py).
+
+
+## T52 — security_certificate_manager CR-0315–CR-0316
+
+T52 rebound both candidates to commit `5fcc0b6379567a70176307c281360be2ba281d6b` / tree `f3e078b356ac0724d8ab267d73ab85e69b9b44ad`. The exact `shared_ptr_race` 0.5.1 replay for CR-0315 parsed completely and emitted zero findings; this does not establish safety or target behavior. The exact IPC 0.12.12 replay for CR-0316 emitted one descriptor-boundary candidate at line 127, while target-file parser coverage is partial. Source review shows that callback stub reads an `int32` result and invokes a client callback; effective caller authorization, product dispatch/build conditions, and impact remain unresolved. No trusted fixed source is bound. Keep both original A0 rows `not_testable / paused_pending_evidence`, PARTIAL/BLOCK. T52 verifier reconciles all 345 A0 IDs and statuses; no detector, test, fixture, or A0 state change. See [T52 audit](t52_certmgr_audit_20261028.md), [source identities](t52_certmgr_context_identity_20261028.json), [shared_ptr replay](t52_certmgr_cr0315_shared_ptr_cli_20261028.md), [IPC replay](t52_certmgr_cr0316_ipc_cli_20261028.md), and [verifier](verify_t52_certmgr_audit_20261028.py).
