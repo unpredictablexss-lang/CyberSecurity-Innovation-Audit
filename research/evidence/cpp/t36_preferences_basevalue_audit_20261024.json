@@ -1,0 +1,676 @@
+{
+  "schema_version": "t36-preferences-basevalue-audit-v1",
+  "task": "T36",
+  "source": {
+    "repository": "openharmony/distributeddatamgr_preferences",
+    "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+    "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+    "file": {
+      "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+      "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+      "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651"
+    }
+  },
+  "build": {
+    "file": {
+      "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/BUILD.gn",
+      "blob": "73d07d85f4e438fcc125f2661b645d11cfc6a2d1",
+      "sha256": "82db6683a383051fd7c6c61e2be5db028254162d3e140d678545227e448a3435"
+    },
+    "target": "ohos_fuzztest(DBPreferencesBaseValueFuzzTest)",
+    "group": "group(fuzztest) [testonly = true]",
+    "entry": "LLVMFuzzerTestOneInput"
+  },
+  "cli": {
+    "tool": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "parse": {
+      "complete": 1
+    },
+    "scope_files": 1,
+    "scope_loc": 197,
+    "findings": 25,
+    "command": "python -m src.cli.main ohscan-run --repo-dir <pinned-checkout> --repository openharmony/distributeddatamgr_preferences --commit bff9efd79afc0d7d1ed22a63ff355f1600404596 --include test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp --detector ohscanner.cpp.shared_ptr_race"
+  },
+  "a0": {
+    "total_rows": 345,
+    "audited_ids": [
+      "CR-0041",
+      "CR-0042",
+      "CR-0043",
+      "CR-0044",
+      "CR-0045",
+      "CR-0046",
+      "CR-0047",
+      "CR-0048",
+      "CR-0049",
+      "CR-0050",
+      "CR-0051",
+      "CR-0052",
+      "CR-0053",
+      "CR-0054",
+      "CR-0055",
+      "CR-0056",
+      "CR-0057",
+      "CR-0058",
+      "CR-0059",
+      "CR-0060",
+      "CR-0061",
+      "CR-0062",
+      "CR-0063",
+      "CR-0064",
+      "CR-0065"
+    ],
+    "source_statuses_unchanged": true
+  },
+  "items": [
+    {
+      "queue_id": "CR-0041",
+      "line": 43,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0042",
+      "line": 48,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0043",
+      "line": 50,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0044",
+      "line": 65,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0045",
+      "line": 66,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0046",
+      "line": 74,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0047",
+      "line": 75,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0048",
+      "line": 83,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0049",
+      "line": 91,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0050",
+      "line": 92,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0051",
+      "line": 100,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0052",
+      "line": 108,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0053",
+      "line": 109,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0054",
+      "line": 117,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0055",
+      "line": 125,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0056",
+      "line": 126,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0057",
+      "line": 134,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0058",
+      "line": 142,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0059",
+      "line": 143,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0060",
+      "line": 151,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0061",
+      "line": 159,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0062",
+      "line": 160,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0063",
+      "line": 168,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0064",
+      "line": 176,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0065",
+      "line": 177,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "preferences_",
+        "parse": "complete",
+        "coverage": "syntax_candidate"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    }
+  ],
+  "overall": "PARTIAL",
+  "queue_states_changed": false,
+  "limitations": [
+    "GN places this target under ohos_fuzztest and a testonly fuzztest group; this establishes harness classification, not production inclusion/exclusion in a specific product image.",
+    "The fuzz entry invokes Preferences APIs but does not establish production call paths, attacker reachability, or an actual unordered concurrent access to the same shared_ptr.",
+    "No product manifest/build target, thread interleaving, lock/atomic protocol, or CIA impact evidence is bound."
+  ]
+}
