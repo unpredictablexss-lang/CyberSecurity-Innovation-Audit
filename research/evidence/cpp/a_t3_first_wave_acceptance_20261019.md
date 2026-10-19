@@ -139,3 +139,39 @@ python -m src.cli ohscan-run --repo-dir D:\openHarmonyScanner\tmp\a-line-cve-202
 Both independent outputs matched the recorded synthetic commit/tree, snapshot SHA, raw source hash, parse status, and diagnostic count/lines. The detector coverage object explicitly reports `status=partial`, no `analyzed_files`, and an `unexamined` row whose `parse_status=complete` and `reason=detector_model_incomplete`; each run is `blocked`. Thus syntax parsing is complete while the detector's semantic model is not. The fixed 0 finding is not a safety result.
 
 **Replay disposition: PASS for reproducibility of the static candidate differential; case disposition remains PARTIAL.** Five candidates align with the target entry points, and the fixed source yields zero same-rule findings, but upstream tree IDs are missing, no exact safe/unrelated controls are bound, and the detector itself reports incomplete semantic coverage. Do not promote to PASS for vulnerability detection or safe fixed behavior. Minimal next steps remain: bind the upstream tree objects/IDs, source-bound safe/unrelated controls, and improve/independently assess null-dereference detector coverage on this file.
+
+## D3 second-wave independent acceptance
+
+T3 cherry-picked D3 frozen commit `940409d3670dafd036b0e8afcbdbe479d815230c` into the independent validation branch without conflict; the local validation HEAD is `1b2766830b0437d4cb03e0a33188574bbfc9aa29`. The D3 source commit and the T3 local cherry-pick are preserved separately. No detector, fixture, or D3 evidence files were changed during this audit.
+
+### cJSON rule identity, controls, and exact-source replay
+
+`python -m unittest tests.detectors.test_cpp_resource_lifetime_detector -v` passed all 8 tests. The cJSON shapes use distinct rule IDs: `ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005` for recursive comparison cost and `ohcpp-resource-exhaustion-tree-amplification-candidate-004` for JSON Patch tree amplification followed by recursive cleanup. The tests include compare-cost positive and quiet safe-shaped control, tree-amplification positives for recursive release and patch flows, and a quiet unrelated recursive tree cleanup. These are synthetic regression controls; they do not bind fixed cJSON source.
+
+T3 independently checked all 15 entries in `tests/detectors/fixtures/cpp_resource_lifetime/manifest.json`; every fixture's recorded byte length and SHA-256 matched the local bytes. This includes the compare-cost positive (`c2713c9eae8f450fb9f9885b1381fef585f0e45babd39f015d8666114f911011`) and safe-shaped control (`7f7c503d12a204caffa6e76a5d44745e2cdfcb94b917d632f4d59250d7fbdfcf`), tree amplification positives (`963e43af30e6c363788f69ec2ff16339568a6daa0cc3946c8e42f9f806404d51`, `0f303e3378ca7d311fc27af0f84cba6e211f8823a5896a6578c0749a421e4039`), and unrelated control (`0af7cbf64412eed50eda11a03aa2bac9f74deaf53f3d99be4d2258489f3efe6b`). The manifest labels the compare-cost quiet control `unrelated`; the tree rule has no explicit fixed or guarded safe fixture.
+
+The production CLI was independently run on the exact cJSON source commit `105eaddbf0d0110b07d16bdefc81ffc796e1444a`, tree `3c07134d5a05aa546b15739e32503a2ca192d258`, with scope `third_party/cjson/cJSON.c` and `third_party/cjson/cJSON_Utils.c`. It reproduced both distinct candidates: `cJSON.c:3161` for compare cost (source SHA-256 `427c72055ae68467b451599d36da074351a5ca53f6e103cd30064e32cf0fffbb`) and `cJSON_Utils.c:861` for tree amplification (source SHA-256 `bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9`). The snapshot SHA-256 was `c0482c314ead7b9131426e7aa74f1073f734341c2ac56fb9a2578efecb51b3e7`; detector version was `0.3.0`.
+
+The CLI result was `completed_with_limitations`, the detector run was `blocked`, and detector coverage was `partial` with 0 completely analyzed files and both files only partially inspected. Source parsing was 1 complete / 1 partial; even the syntactically complete `cJSON_Utils.c` remained detector-model partial. Both emitted candidates retain partial identity/unknown obligations. No trusted fixed cJSON source is bound. **Disposition: PASS for rule-specific synthetic focused regression and exact-source candidate reproduction only; PARTIAL/BLOCK for CVE-2026-67215 and CVE-2026-67216 detection acceptance and all fixed/safety claims.** The minimal remaining evidence is a trusted fixed source for each root cause, complete detector analysis of the targeted code, and independently bound safe controls where applicable.
+
+### curl same-version vulnerable/fixed replay
+
+The D3 evidence's fixed curl run used detector version `0.2.0`, whereas its vulnerable run used `0.3.0`. T3 independently reran both exact pinned source objects with the production CLI and the same `ohscanner.cpp.resource_lifetime` version `0.3.0`, profile `light-ast`, and one-file scope `lib/mime.c`:
+
+| Variant | Commit / tree | File SHA-256 | Parse and detector coverage | Result |
+|---|---|---|---|---|
+| Vulnerable | `01346829096c61b372692f6dc43ffa778c6caccd` / `6ae23d9333713707a02588b44ed238a50e8b3bde` | `1f3388f52881524fda0bc11c453aca75adda7d7e77d65393ec558d396dc3483d` | complete / complete | 1 recursive-cleanup candidate at `lib/mime.c:1118` |
+| Fixed | `d7546809d5bd548b69ec49fca26565c8f6f0d344` / `52a8416729366487cdd3b6012071f5f8370e769f` | `ea7f9adccf81b578d97e8b6e115535e043b7f8c589177a2597963a4f12462b81` | complete / complete | 0 same-rule candidates |
+
+Both independent CLI reports identify detector version `0.3.0`; the vulnerable snapshot SHA-256 is `c0ca047682dce16d7aec8a1607b06f7a0420602a6a0ae13b8195f6629a1ac730`, and the fixed snapshot SHA-256 is `cbc4bf484c7dacefd8869f7917b00983569e8d012470e88f278fc6104744c2f6`. The D3 version mismatch is therefore resolved for this static source differential. **Disposition: PASS for same-version static curl focused regression; no product build, product call path, runtime impact, or security confirmation is implied.**
+
+### Consolidated D3 dispositions and follow-up
+
+| Item | T3 disposition | Evidence boundary / minimum remaining work |
+|---|---|---|
+| D3 distinct cJSON rule IDs and synthetic positive/safe-shaped/unrelated controls | PASS (focused regression only) | All 8 focused tests passed; all 15 manifest hashes verified. The tree rule lacks explicit fixed/safe guarded fixture. |
+| cJSON CVE-2026-67215 tree-amplification source replay | PARTIAL/BLOCK | Exact source emits candidate, but detector analysis is partial; no trusted fixed source or product validation. Add fixed source and complete independent target analysis. |
+| cJSON CVE-2026-67216 compare-cost source replay | PARTIAL/BLOCK | Exact source emits candidate, but `cJSON.c` parse and detector analysis are partial; no trusted fixed source. Add fixed source and complete target analysis. |
+| curl recursive cleanup vulnerable/fixed differential | PASS (static focused regression only) | Same detector `0.3.0`, both complete, 1/0 candidate differential; product impact remains unvalidated. |
+
+The first-wave T1 matrix and D1/D2 dispositions are unchanged by this addendum. Outstanding T3 task: keep the D3 cases in the partial/block queue until fixed cJSON source identities and complete detector coverage are independently available; preserve product-validation limitations for curl and cJSON.
