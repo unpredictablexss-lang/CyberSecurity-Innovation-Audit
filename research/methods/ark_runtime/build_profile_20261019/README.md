@@ -28,6 +28,21 @@ $root = "E:\网安\CyberSecurity-Innovation-Audit-c12-product-admission-20261019
 
 当前验证结果为 `verified_blocked_manifest`，manifest/recomputed payload SHA-256 为 `a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214`。
 
+## 逐文件来源证据（不等于 PC-1 完成）
+
+`source_identity_evidence.v1.json` 为清单中 6 个已登记完整案例的 26 个 parent/fixed 文件保存逐文件证据：固定 commit/path 的 raw URL、预期与实测 Git blob SHA-1、SHA-256、实测字节数和逐项匹配状态。12 个文件原始登记长度缺失，记录明确标为 `not_recorded`，长度不作对比。它由 `source_identity_evidence.py` 从 pinned commit 的 GitHub raw 文件重放生成；不保存上游源文件正文。
+
+```powershell
+python research/methods/ark_runtime/build_profile_20261019/source_identity_evidence.py --fetch
+python research/methods/ark_runtime/build_profile_20261019/source_identity_evidence.py --verify-only
+```
+
+也可在网络隔离环境把源字节放在 `<evidence-dir>/<commit>/<path>` 后，以 `--evidence-dir <evidence-dir>` 离线重算。`--verify-only` 仅检查记录结构、文件集、预期身份、实测哈希字段、逐项检查状态和记录摘要；要独立重放原始字节，应重新运行 `--fetch` 或提供离线字节。
+
+这 26 个文件字节匹配不能证明 Git commit/tree 对象、parent/fix ancestry 或依赖闭包；记录中的 12 个 parent/fix tree SHA 明确为 `NOT_VERIFIED`。它也不是产品 source identity 到 shipped binary 的关联。16 个 G12-PC-1 案例的 build/preprocess profile 仍为 0/16 完整，PC-1 状态维持 `IN_PROGRESS_BLOCKED`，不得由此结论关闭。
+
+仍需产品 owner/数据保管人提供：只读 official Ark Git object store；精确产品 manifest、版本/分支和 GN target；对应 parent/fix 的 `args.gn`、compile database/实际 compile action、编译器/链接器/sysroot 与生成输入；精确 TU 的完整 include closure、预处理输出及宏日志；以及目标源码到 shipped binary/version/branch 的可审计映射。缺任一项继续标为 blocked。
+
 ## 解除阻塞的最小补救
 
 1. 由数据保管人提供只读 official Ark Git object store，并核对每个 parent/fix commit、tree、blob、source SHA。
