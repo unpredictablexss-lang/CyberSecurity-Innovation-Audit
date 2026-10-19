@@ -6,7 +6,7 @@ Additional components should supply reviewed exact-name models via IpcPolicy.
 from dataclasses import dataclass, field
 from typing import FrozenSet, Tuple
 
-MODEL_VERSION = "oh-ipc-2026.10-v12"
+MODEL_VERSION = "oh-ipc-2026.10-v32"
 
 # ---------------------------------------------------------------------------
 # Reviewed consequence catalogue (v1), kept separate from the mechanism rules.
@@ -29,7 +29,7 @@ DISCLOSURE_CALLS = frozenset({
     "GetPasteData", "GetAllCallList", "GetCallState", "GetTokenInfo",
     "GetRemoteHapTokenInfo", "GetReqPermissions", "GetPermissionUsedRecordsAsync",
     "IsAllowedUsingPermission", "Dump", "ReadFile", "GetDisplaySnapshot",
-    "Capture", "GetImsConfig", "GetImsFeatureValue",
+    "Capture", "GetImsConfig", "GetImsFeatureValue", "GetAppRunningStateByBundleName",
     "GetUserData", "ReadUserData", "OpenUserFile",
 })
 
@@ -43,11 +43,15 @@ IMPACT_BY_RULE = {
     "ipc.auth.request-identity": "identity_confusion",
     "ipc.auth.service-identity": "identity_confusion",
     "ipc.auth.object-owner": "cross_principal_effect",
+    "ipc.network.auth-session-whitelist": "unauthorized_effect",
+    # A transport/reply mismatch is only an observation until its pinned client
+    # consumption path is shown to weaken the denial.
+    "ipc.auth.denial-transport-success": "unknown",
     "ipc.parcel.copy-range": "out_of_bounds_read",
     "ipc.parcel.position-underflow": "out_of_bounds_read",
     "ipc.parcel.bounds": "out_of_bounds_read",
     "ipc.parcel.write-bounds": "out_of_bounds_write",
-    "ipc.parcel.fd-backing-size": "out_of_bounds_read",
+    "ipc.tlv.fixed-width-length": "out_of_bounds_read",
     "ipc.parcel.lifecycle": "use_after_release",
     "ipc.auth.flow": "identity_confusion",
     "ipc.data.sensitive-flow": "information_disclosure",
@@ -145,6 +149,7 @@ class ServiceAccountRole:
     role: str                            # the fact derived, e.g. "<caller-account:...>"
     accepted_operations: Tuple[str, ...]  # operations this role authorizes, and no others
     origin: str                          # the reviewed source of the account assignment
+    repository: str = ""                 # optional exact repository scope; empty means caller-supplied policy
 
 
 @dataclass(frozen=True)
@@ -162,6 +167,12 @@ class IpcPolicy:
         "GetReqPermissions", "StartUsingPermissionCallback", "RemovePermissionUsedRecords",
         "GetPermissionUsedRecordsAsync", "IsAllowedUsingPermission", "SetMutePolicy",
         "StartRtt", "StopRtt", "GetImsConfig", "SetImsConfig", "GetImsFeatureValue", "SetImsFeatureValue", "SetCameraZoom",
+        "RegisterVoipCallManagerCallback", "UnRegisterVoipCallManagerCallback",
+        "ReportOttCallDetailsInfo", "ReportOttCallEventInfo",
+        # Exposes whether a named app is running; model the IPC API as a
+        # sensitive read so its implementation is not invisible behind the
+        # AppMgrService -> AppMgrServiceInner delegation.
+        "GetAppRunningStateByBundleName",
     })
     capability_calls: FrozenSet[str] = frozenset({"WriteRemoteObject", "WriteFileDescriptor"})
     boolean_permissions: FrozenSet[str] = frozenset({"CheckPermission", "VerifyPermission", "CheckCallerPermission"})
@@ -210,6 +221,7 @@ class IpcPolicy:
     caller_role_guards: Tuple[Tuple[str, str, str], ...] = (
         ("IsSystemCalling", "caller_class", "<system-caller>"),
         ("IsSACalling", "caller_class", "<sa-caller>"),
+        ("IsSACall", "caller_class", "<sa-caller>"),
         ("IsShellCall", "caller_class", "<shell-caller>"),
         ("IsSystemAppCalling", "caller_class", "system_app"),
         ("CheckCallerIsSystemApp", "caller_class", "system_app"),
@@ -224,14 +236,46 @@ class IpcPolicy:
     # Explicit caller-supplied reviewed account models only. The default remains
     # empty: a named constant/value alone is not an approved account assignment.
     service_account_roles: Tuple[ServiceAccountRole, ...] = ()
+    # Product account models are always repository-scoped. The repository name
+    # is caller-declared (not origin authentication); these records are narrow
+    # reviewed facts for operations with source-bound external identity evidence.
+    repository_service_account_roles: Tuple[ServiceAccountRole, ...] = ()
     service_entries: FrozenSet[str] = frozenset({"HCameraService::CreateCameraDevice", "BgContinuousTaskMgr::RequestBackgroundRunningForInner",
         "CallManagerService::StartRtt", "CallManagerService::StopRtt",
         "CallManagerService::GetImsConfig", "CallManagerService::SetImsConfig",
         "CallManagerService::GetImsFeatureValue", "CallManagerService::SetImsFeatureValue",
-        "CallManagerService::SetCameraZoom"})
+        "CallManagerService::SetCameraZoom",
+        "CallManagerService::RegisterVoipCallManagerCallback",
+        "CallManagerService::UnRegisterVoipCallManagerCallback",
+        "CallManagerService::ReportOttCallDetailsInfo",
+        "CallManagerService::ReportOttCallEventInfo"})
     transport_entries: FrozenSet[str] = frozenset({"TraceServerReceieve"})
     max_call_depth: int = 2
     max_paths: int = 96
+    # Repository-bound API contracts from the upstream telephony permission
+    # correction 911c6c9 -> 6018446d (CVE-2025-26691 regression input).
+    # Repository + fully-qualified method prevents a same-named C++ class in an
+    # unrelated project from inheriting this product-specific expectation.
+    repository_expected_permissions: Tuple[Tuple[str, str, str], ...] = (
+        ("openharmony/telephony_call_manager", "CallManagerService::RegisterVoipCallManagerCallback", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::UnRegisterVoipCallManagerCallback", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::SetCameraZoom", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::GetImsConfig", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::SetImsConfig", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::GetImsFeatureValue", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::SetImsFeatureValue", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::ReportOttCallDetailsInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::ReportOttCallEventInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+    )
+    # Exact repository/method caller-class contracts. Effect names are operations
+    # that must not precede the required caller-role gate.
+    repository_caller_class_contracts: Tuple[Tuple[str, str, str, Tuple[str, ...]], ...] = ()
+    # Reviewed APIs whose reference parameters carry caller-visible data. This is
+    # deliberately not a general out-parameter taint model.
+    disclosure_output_calls: Tuple[Tuple[str, Tuple[int, ...]], ...] = ()
+    # Generic, locally supplied policy overrides used by test harnesses or a
+    # future reviewed profile. Empty by default; disclosed API facts above use
+    # repository_expected_permissions instead.
     expected_permissions: Tuple[Tuple[str, str], ...] = ()
     object_sensitive_calls: FrozenSet[str] = frozenset({"OpenUserFile", "GetUserData", "DeleteUserData", "ReadUserData"})
     # Bounded macro expansion (cpp_macros). It is a coverage/accuracy switch, not a

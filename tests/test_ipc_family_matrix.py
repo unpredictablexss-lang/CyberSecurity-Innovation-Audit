@@ -34,10 +34,13 @@ REVIEWED_CWE = {
     'AUTH-03': 'CWE-863',
     'AUTH-04': 'CWE-863',
     'AUTH-05': 'CWE-863',
+    'AUTH-06': 'CWE-862',
+    'AUTH-07': 'CWE-863',
     'DATA-01': 'CWE-20',
     'DATA-02': 'CWE-20',
     'DATA-03': 'CWE-416',
     'DATA-04': 'CWE-200',
+    'DATA-05': 'CWE-125',
     'CAP-01': 'CWE-926',
 }
 
@@ -162,6 +165,10 @@ class PolicyCompositionTests(unittest.TestCase):
         self.assertEqual(IpcPolicy().service_account_roles, ())
         merged = families.default_policy()
         self.assertEqual(merged.service_account_roles, ())
+        self.assertEqual(len(merged.repository_service_account_roles), 1)
+        role, = merged.repository_service_account_roles
+        self.assertEqual(role.repository, 'openharmony/security_access_token')
+        self.assertEqual(role.accepted_operations, ('RemovePermissionUsedRecords',))
         self.assertEqual(merged.trusted_uids, IpcPolicy().trusted_uids)
         self.assertEqual(families.family_of_rule('ipc.auth.missing').family_id, 'AUTH-02')
 
@@ -178,6 +185,8 @@ class PolicyCompositionTests(unittest.TestCase):
         ctx = context((BASE / 'auth_positive.cpp').read_text())
         mine = IpcInterfaceDetector(IpcPolicy(max_paths=8)).policy
         self.assertEqual(mine.service_account_roles, families.default_policy().service_account_roles)
+        self.assertEqual(mine.repository_service_account_roles,
+                         families.default_policy().repository_service_account_roles)
         self.assertEqual(mine.max_paths, 8)
         for policy in (IpcPolicy(), IpcPolicy(max_paths=8)):
             with self.subTest(policy=policy.max_paths):
@@ -185,6 +194,8 @@ class PolicyCompositionTests(unittest.TestCase):
                 index = EntryIndex(ctx.units, policy)
                 self.assertEqual(walk.policy.service_account_roles,
                                  families.default_policy().service_account_roles)
+                self.assertEqual(walk.policy.repository_service_account_roles,
+                                 families.default_policy().repository_service_account_roles)
                 self.assertEqual(index.policy.service_account_roles, ())
 
 
@@ -203,15 +214,23 @@ class FamilyFixtureMatrixTests(unittest.TestCase):
                 run = IpcInterfaceDetector().detect(ctx, ctx.units)
                 self.assertEqual(run.status, 'completed')
                 rules = {f.rule_id for f in run.findings}
+                family_rules = next(f.rules for f in families.registry()
+                                    if f.family_id == item['family'])
+                controls = set(item.get('control_rules', ()))
+                self.assertLessEqual(controls, set(family_rules),
+                                     'control_rules must be owned by the declared family')
                 if item['expected_rule']:
                     self.assertIn(item['expected_rule'], rules)
                 else:
                     self.assertEqual(rules, set())
+                if item.get('variant') in ('fixed', 'safe'):
+                    self.assertFalse(rules & controls,
+                                     'fixed/safe fixture still emits a rule it declares controlling')
 
     def test_the_shared_manifest_names_registered_families(self):
-        """Every shipped fixture belongs to a family, and all six are represented."""
+        """Shared IPC-entry fixtures belong to registered families; reusable parser-helper families have dedicated tests."""
         items = json.loads((BASE / 'manifest.json').read_text())
-        self.assertEqual({item['family'] for item in items}, set(REVIEWED_CWE))
+        self.assertLessEqual({item['family'] for item in items}, set(REVIEWED_CWE))
         self.matrix(BASE / 'manifest.json')
 
     def test_a_family_directory_holds_that_family_only(self):
