@@ -1,0 +1,81 @@
+{
+  "task": "D73",
+  "review_type": "independent_second_layer_review",
+  "reviewed": {
+    "D72_commit": "dd76d776357a79021431ed92899960dbdb3cde10",
+    "T72_commit": "2f34e5bc5af7cb9a9c39555a42d4fab403312bff",
+    "D67_audit": "D67_PASTEBOARD_PARSE_AUDIT_20261023",
+    "D71_review": "D71_PASTEBOARD_FINAL_SECOND_LAYER_REVIEW_20261023"
+  },
+  "decision": {
+    "downstream_root_cause_review": "go_narrow_source_only",
+    "D52_candidate_disposition": "narrow",
+    "confidence_source_route_and_anchor": "high",
+    "confidence_product_applicability": null,
+    "confidence_CVE_causality": null,
+    "reason": "Pinned source route and stable candidate anchor are adequate for a bounded downstream source review; authorization and product context are unknown."
+  },
+  "candidate": {
+    "label": "CVE-2025-27247",
+    "repository": "openharmony/miscservices_pasteboard",
+    "source_commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "source_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "stub_file": "services/zidl/src/pasteboard_service_stub.cpp",
+    "anchor_line": 41,
+    "stub_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "core_getter_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+    "route": ["GET_PASTE_DATA dispatch", "OnGetPasteData", "core getter", "response serialization"],
+    "anchor_scope": "method entry; not a proven vulnerable operation",
+    "permission_guard": "unknown",
+    "permission_guard_observation_status": "unknown",
+    "caller_provenance": "unknown",
+    "product_applicability": "unknown",
+    "CVE_causality": "unknown"
+  },
+  "D72_T72_review": {
+    "T72_reviewed_exact_D72_commit": true,
+    "D71_offset_zero_case_fixed": true,
+    "all_matches_affect_aggregate_state": true,
+    "candidate_suppression": false,
+    "authorization_inference": false,
+    "obligations_remain_unknown": true,
+    "tested_unbraced_body_start": ["if", "loop", "switch", "comment-prefixed body", "nested if", "ninth direct match"],
+    "condition_call_state": "observed_unresolved",
+    "condition_call_obligation": "unknown",
+    "remaining_actionable_observation_boundary_found": false
+  },
+  "observation_bounds": {
+    "max_records": 8,
+    "max_tokens_per_record": 16,
+    "max_token_characters": 48,
+    "max_snippet_characters": 120,
+    "max_description_characters": 4096,
+    "omission_counts_present": true,
+    "truncation_markers_present": true,
+    "balanced_nested_call_spans": true,
+    "semantics": "lexical observation only; no authorization or dominance proof"
+  },
+  "identity": {
+    "stable_record_unchanged": true,
+    "legacy_diagnostic_id_unchanged": true,
+    "occurrence_id_version_drift_expected": true,
+    "occurrence_drift_basis_fields": ["detector_version", "rule_version"]
+  },
+  "D67_coverage_context": {
+    "declared_paths": 68,
+    "cpp_units": 67,
+    "parse_complete": 59,
+    "parse_partial": 8,
+    "typescript_not_run": 1,
+    "detector_status": "blocked",
+    "historical_D50_python_runtime_recreated": false,
+    "coverage_gain_claimed": false,
+    "interpretation": "Coverage and environment limitations only."
+  },
+  "concrete_missing_prerequisite_for_product_or_CVE_claim": [
+    "Product fingerprint/version tied to the reviewed source.",
+    "Framework permission-enforcement behavior for this IPC route.",
+    "Caller identity and provenance evidence."
+  ],
+  "scope": "D73 report only; no scanner, test, fixture, or earlier report modifications."
+}
