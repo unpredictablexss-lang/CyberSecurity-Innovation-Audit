@@ -1,0 +1,770 @@
+{
+  "experiment_kind": "C2_fixed_scope_rule_behavior_not_accuracy",
+  "detector": "ohscanner.ark.runtime.type_safety",
+  "rule": "ark.runtime.typedarray-store-type-origin",
+  "version": "0.1.0",
+  "candidate_cwe": "CWE-843",
+  "model_sha256": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3",
+  "implementation_sha256": {
+    "src/ohscanner/detectors/ark_runtime/__init__.py": "3b3d8588d98a48ad44a9ef10cf66be74c927ed9b44c4b387b5ed3d9840db2636",
+    "src/ohscanner/detectors/ark_runtime/analysis.py": "56b622d3c9ab54a5e0b3636f3e810644d46493fe54ab7b9dcbbd3d999f785d40",
+    "src/ohscanner/detectors/ark_runtime/detector.py": "09fb9e68b227750ac237210b73ad9cd6d79075923f2b91c5dcee717acd8ac20b",
+    "src/ohscanner/detectors/ark_runtime/model.py": "a0bb794b7dca58cfb9128597ea727f0bdfda8e19a0b5a57abfdcd8682064b11a",
+    "src/ohscanner/detectors/ark_runtime/runtime_ir.py": "34852fcedb0b300928c0f93e997679d7e8801c91d6cf3f29a2d10e1c9cb333af",
+    "src/ohscanner/detectors/ark_runtime/syntax.py": "2b781276a7d66416252317a4452870b306f028c0ef608ab60130fe80fc0e6702",
+    "src/ohscanner/detectors/ark_runtime/type_origin.py": "08c81c92c209b2689a742b0d73f0c7f2c7307ac740545fe082b3de02bfa27708"
+  },
+  "case_count": 12,
+  "passed": 12,
+  "failed": 0,
+  "cases": [
+    {
+      "case": "C01",
+      "name": "真实修复前",
+      "expected": "candidate",
+      "outcome": "PASS",
+      "source": {
+        "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+        "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+        "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+        "bytes": 150433,
+        "local_git_object_verified": true
+      },
+      "analysis": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 1498,
+            "column": 21,
+            "reason": "different_origin_with_species_creation",
+            "target_identity": "new:58949",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:53911:thisValue",
+            "token_line": 1388,
+            "creation_line": 1478,
+            "path": [
+              1375,
+              1376,
+              1377,
+              1378,
+              1379,
+              1380,
+              1381,
+              1382,
+              1383,
+              1384,
+              1385,
+              1386,
+              1387,
+              1388,
+              1389,
+              1390,
+              1391,
+              1392,
+              1393,
+              1394,
+              1395,
+              1396,
+              1397,
+              1398,
+              1399,
+              1400,
+              1401,
+              1402,
+              1403,
+              1405,
+              1406,
+              1407,
+              1408,
+              1409,
+              1411,
+              1412,
+              1414,
+              1415,
+              1416,
+              1417,
+              1418,
+              1419,
+              1420,
+              1421,
+              1422,
+              1423,
+              1424,
+              1425,
+              1427,
+              1428,
+              1429,
+              1430,
+              1431,
+              1432,
+              1473,
+              1474,
+              1475,
+              1476,
+              1477,
+              1478,
+              1479,
+              1485,
+              1486,
+              1487,
+              1488,
+              1489,
+              1490,
+              1491,
+              1492,
+              1494,
+              1495,
+              1497,
+              1498
+            ],
+            "constraints": [
+              [
+                1384,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                1386,
+                "IsEcmaObject(thisValue)",
+                true
+              ],
+              [
+                1389,
+                "IsFastTypeArray(arrayType)",
+                true
+              ],
+              [
+                1392,
+                "IsDetachedBuffer(buffer)",
+                false
+              ],
+              [
+                1394,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                1397,
+                "IsEcmaObject(prototype)",
+                true
+              ],
+              [
+                1400,
+                "TaggedIsProtoChangeMarker(marker)",
+                true
+              ],
+              [
+                1402,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                1408,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                1411,
+                "IsCallable(callbackFnHandle)",
+                true
+              ],
+              [
+                1432,
+                "Int32LessThan(*i, thisLen)",
+                false
+              ],
+              [
+                1479,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1494,
+                "Int32LessThan(*i, *newArrayLen)",
+                true
+              ]
+            ]
+          }
+        ],
+        "limitations": [
+          "parse_dependency_contamination_unknown",
+          "production_runner_not_admitted",
+          "research_only_partial_function_scope"
+        ],
+        "steps": 263,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      }
+    },
+    {
+      "case": "C02",
+      "name": "真实修复后",
+      "expected": "no_rule_candidate",
+      "outcome": "PASS",
+      "source": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+        "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+        "bytes": 150509,
+        "local_git_object_verified": true
+      },
+      "analysis": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 1499,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:58949",
+            "token_origin": "new:58949",
+            "token_line": 1479,
+            "creation_line": 1478,
+            "path": [
+              1375,
+              1376,
+              1377,
+              1378,
+              1379,
+              1380,
+              1381,
+              1382,
+              1383,
+              1384,
+              1385,
+              1386,
+              1387,
+              1388,
+              1389,
+              1390,
+              1391,
+              1392,
+              1393,
+              1394,
+              1395,
+              1396,
+              1397,
+              1398,
+              1399,
+              1400,
+              1401,
+              1402,
+              1403,
+              1405,
+              1406,
+              1407,
+              1408,
+              1409,
+              1411,
+              1412,
+              1414,
+              1415,
+              1416,
+              1417,
+              1418,
+              1419,
+              1420,
+              1421,
+              1422,
+              1423,
+              1424,
+              1425,
+              1427,
+              1428,
+              1429,
+              1430,
+              1431,
+              1432,
+              1473,
+              1474,
+              1475,
+              1476,
+              1477,
+              1478,
+              1479,
+              1480,
+              1486,
+              1487,
+              1488,
+              1489,
+              1490,
+              1491,
+              1492,
+              1493,
+              1495,
+              1496,
+              1498,
+              1499
+            ],
+            "constraints": [
+              [
+                1384,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                1386,
+                "IsEcmaObject(thisValue)",
+                true
+              ],
+              [
+                1389,
+                "IsFastTypeArray(arrayType)",
+                true
+              ],
+              [
+                1392,
+                "IsDetachedBuffer(buffer)",
+                false
+              ],
+              [
+                1394,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                1397,
+                "IsEcmaObject(prototype)",
+                true
+              ],
+              [
+                1400,
+                "TaggedIsProtoChangeMarker(marker)",
+                true
+              ],
+              [
+                1402,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                1408,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                1411,
+                "IsCallable(callbackFnHandle)",
+                true
+              ],
+              [
+                1432,
+                "Int32LessThan(*i, thisLen)",
+                false
+              ],
+              [
+                1480,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1495,
+                "Int32LessThan(*i, *newArrayLen)",
+                true
+              ]
+            ]
+          }
+        ],
+        "limitations": [
+          "parse_dependency_contamination_unknown",
+          "production_runner_not_admitted",
+          "research_only_partial_function_scope"
+        ],
+        "steps": 266,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      }
+    },
+    {
+      "case": "C03",
+      "name": "变量改名仍保留错误来源",
+      "expected": "candidate",
+      "outcome": "PASS",
+      "source": {
+        "provenance": "self_authored_synthetic_fixture",
+        "file": "fixtures/C03.cpp",
+        "source_sha256": "0c1a01e350671aff2f1485e523cabdd134ea305c04557190cb01d66b01b88faf",
+        "snapshot_sha256": "c91f448fc6e1e3ac7a070c34faee737b95560e092684ff3cda7e9c6b16fb9436"
+      },
+      "analysis": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 7,
+            "column": 1,
+            "reason": "different_origin_with_species_creation",
+            "target_identity": "new:385",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:187:input",
+            "token_line": 4,
+            "creation_line": 6,
+            "path": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 4,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      }
+    },
+    {
+      "case": "C04",
+      "name": "从目标取得类型",
+      "expected": "no_rule_candidate",
+      "outcome": "PASS",
+      "source": {
+        "provenance": "self_authored_synthetic_fixture",
+        "file": "fixtures/C04.cpp",
+        "source_sha256": "625353ab6abd84aa45bba5cc3e48c58ed62b0be06046e56c0c89e60b98abe842",
+        "snapshot_sha256": "2d707158c7495699000e04d79a0e985361adc82397f43d54d34638a55df20f5e"
+      },
+      "analysis": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:373",
+            "token_origin": "new:373",
+            "token_line": 7,
+            "creation_line": 6,
+            "path": [
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 5,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      }
+    },
+    {
+      "case": "C05",
+      "name": "目标的简单局部别名",
+      "expected": "no_rule_candidate",
+      "outcome": "PASS",
+      "source": {
+        "provenance": "self_authored_synthetic_fixture",
+        "file": "fixtures/C05.cpp",
+        "source_sha256": "1d29bf9d0f76874327e1296b19db035d92586a4c26b5531ccc15f57ddc747507",
+        "snapshot_sha256": "47179460f1615bb22f82e97a3bd55970f5b339f83e8b8c7ce16cec1523578abb"
+      },
+      "analysis": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 9,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:373",
+            "token_origin": "new:373",
+            "token_line": 8,
+            "creation_line": 6,
+            "path": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 6,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      }
+    },
+    {
+      "case": "C06",
+      "name": "类型 token 的简单复制",
+      "expected": "no_rule_candidate",
+      "outcome": "PASS",
+      "source": {
+        "provenance": "self_authored_synthetic_fixture",
+        "file": "fixtures/C06.cpp",
+        "source_sha256": "036121ab4d589f9c216d5c9fda87b670cb1e709000e83fedff0fae71ff8e87bb",
+        "snapshot_sha256": "9bf90eeb4641595ac178c701116d81af4a9fd34a965ad71bc02f624af21625a7"
+      },
+      "analysis": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 9,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:373",
+            "token_origin": "new:373",
+            "token_line": 7,
+            "creation_line": 6,
+            "path": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 6,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      }
+    },
+    {
+      "case": "C07",
+      "name": "取类型后目标被未知调用重赋值",
+      "expected": "unknown",
+      "outcome": "PASS",
+      "source": {
+        "provenance": "self_authored_synthetic_fixture",
+        "file": "fixtures/C07.cpp",
+        "source_sha256": "1e3b5d7b9da34ed665ca50776bb8ba41d3e3416131656383e32de7b405184251",
+        "snapshot_sha256": "902483a9e3fdf2fad07a5432e7983b7c5cbfc3b4490d2d5bfc1b785c038d139f"
+      },
+      "analysis": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "unknown",
+            "line": 9,
+            "column": 1,
+            "reason": "unresolved_target_or_type_origin",
+            "target_identity": "expr:490",
+            "token_origin": "new:373",
+            "token_line": 7,
+            "creation_line": 0,
+            "path": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [
+          "unresolved_local_observations"
+        ],
+        "steps": 6,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      }
+    },
+    {
+      "case": "C08",
+      "name": "其他类的同名 API",
+      "expected": "not_applicable_to_rule",
+      "outcome": "PASS",
+      "source": {
+        "provenance": "self_authored_synthetic_fixture",
+        "file": "fixtures/C08.cpp",
+        "source_sha256": "15e5455cb14fa9f8de0ba83575cbdecc44e27d47e7a4d2f24678a6c42d2df4e8",
+        "snapshot_sha256": "e9b38bdbe6f90644fb339d87fd9a44ebe45f12e5e12ee9de1bde9b982dd72822"
+      },
+      "analysis": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [],
+        "limitations": [
+          "not_applicable_to_rule"
+        ],
+        "steps": 0,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      }
+    },
+    {
+      "case": "C09",
+      "name": "不同来源在 C++ 分支汇合",
+      "expected": "unknown",
+      "outcome": "PASS",
+      "source": {
+        "provenance": "self_authored_synthetic_fixture",
+        "file": "fixtures/C09.cpp",
+        "source_sha256": "df17e33f0a37b69bd1e99fd09cdde47cb849bff89142f3b19380d17c5ed1a845",
+        "snapshot_sha256": "d5d6f23e49d39ae45d54a33f718b9b5f7e9249f141c74e02baff6ef4af81631f"
+      },
+      "analysis": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "unknown",
+            "line": 8,
+            "column": 1,
+            "reason": "unsupported_host_control_or_macro",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": []
+          },
+          {
+            "kind": "unknown",
+            "line": 10,
+            "column": 1,
+            "reason": "generated_predecessor_unavailable",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [],
+            "constraints": []
+          }
+        ],
+        "limitations": [
+          "unresolved_local_observations",
+          "unsupported_host_control_or_macro:8"
+        ],
+        "steps": 5,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      }
+    },
+    {
+      "case": "C10",
+      "name": "未建模的 IR 分支操作",
+      "expected": "unknown",
+      "outcome": "PASS",
+      "source": {
+        "provenance": "self_authored_synthetic_fixture",
+        "file": "fixtures/C10.cpp",
+        "source_sha256": "1c205200d8ca57750b716102099190637e5d612a9e841cee500633caa9027c7b",
+        "snapshot_sha256": "fa067b26e3e1ea2a1ba47000d5d3ea4f28e809986b0b5d5ae4950980eb0cf7b9"
+      },
+      "analysis": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "unknown",
+            "line": 8,
+            "column": 1,
+            "reason": "unmodeled_control:BRANCH_WITH_DEOPT",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": []
+          },
+          {
+            "kind": "unknown",
+            "line": 10,
+            "column": 1,
+            "reason": "generated_predecessor_unavailable",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [],
+            "constraints": []
+          }
+        ],
+        "limitations": [
+          "unmodeled_control:BRANCH_WITH_DEOPT:8",
+          "unresolved_local_observations"
+        ],
+        "steps": 5,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      }
+    },
+    {
+      "case": "C11",
+      "name": "目标函数自身解析损坏",
+      "expected": "unknown",
+      "outcome": "PASS",
+      "source": {
+        "provenance": "self_authored_synthetic_fixture",
+        "file": "fixtures/C11.cpp",
+        "source_sha256": "14d25c869a492d256439313e966d6e6cb554eafd93de5ad9a7a948e4880efe36",
+        "snapshot_sha256": "2e2fa1ed0968993a3dc21fd4e0fe4d0ec60122e2fc7cc227b32503a7fc6dc541"
+      },
+      "analysis": {
+        "status": "limited",
+        "file_outcome": "not_analyzed",
+        "observations": [],
+        "limitations": [
+          "target_not_resolved_in_partial_ast"
+        ],
+        "steps": 0,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      }
+    },
+    {
+      "case": "C12",
+      "name": "生成图中的不可达写入",
+      "expected": "no_rule_candidate_if_unreachability_proved_otherwise_unknown",
+      "outcome": "PASS",
+      "source": {
+        "provenance": "self_authored_synthetic_fixture",
+        "file": "fixtures/C12.cpp",
+        "source_sha256": "a5dfb7c56a08edbeddc01a9e4a90d6b9d408822e6617364694d81047e2d709b4",
+        "snapshot_sha256": "45eb1829b7bf66b57fe5fea27a796c9f5574c5ccfab858caf1197887159c8553"
+      },
+      "analysis": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "unreachable",
+            "line": 10,
+            "column": 1,
+            "reason": "no_generated_predecessor_path",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 5,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      }
+    }
+  ],
+  "precision": null,
+  "recall": null,
+  "confirmed_vulnerabilities": 0
+}

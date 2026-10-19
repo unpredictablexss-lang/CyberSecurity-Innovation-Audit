@@ -1,0 +1,892 @@
+[
+  {
+    "id": "C01",
+    "outcome": "PASS",
+    "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "candidate",
+          "line": 1498,
+          "column": 21,
+          "reason": "different_origin_with_species_creation",
+          "target_identity": "new:58949",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:53911:thisValue",
+          "token_line": 1388,
+          "creation_line": 1478,
+          "path": [
+            1375,
+            1376,
+            1377,
+            1378,
+            1379,
+            1380,
+            1381,
+            1382,
+            1383,
+            1384,
+            1385,
+            1386,
+            1387,
+            1388,
+            1389,
+            1390,
+            1391,
+            1392,
+            1393,
+            1394,
+            1395,
+            1396,
+            1397,
+            1398,
+            1399,
+            1400,
+            1401,
+            1402,
+            1403,
+            1405,
+            1406,
+            1407,
+            1408,
+            1409,
+            1411,
+            1412,
+            1414,
+            1415,
+            1416,
+            1417,
+            1418,
+            1419,
+            1420,
+            1421,
+            1422,
+            1423,
+            1424,
+            1425,
+            1427,
+            1428,
+            1429,
+            1430,
+            1431,
+            1432,
+            1473,
+            1474,
+            1475,
+            1476,
+            1477,
+            1478,
+            1479,
+            1485,
+            1486,
+            1487,
+            1488,
+            1489,
+            1490,
+            1491,
+            1492,
+            1494,
+            1495,
+            1497,
+            1498
+          ],
+          "constraints": [
+            [
+              1384,
+              "TaggedIsUndefinedOrNull(thisValue)",
+              false
+            ],
+            [
+              1386,
+              "IsEcmaObject(thisValue)",
+              true
+            ],
+            [
+              1389,
+              "IsFastTypeArray(arrayType)",
+              true
+            ],
+            [
+              1392,
+              "IsDetachedBuffer(buffer)",
+              false
+            ],
+            [
+              1394,
+              "HasConstructor(thisValue)",
+              false
+            ],
+            [
+              1397,
+              "IsEcmaObject(prototype)",
+              true
+            ],
+            [
+              1400,
+              "TaggedIsProtoChangeMarker(marker)",
+              true
+            ],
+            [
+              1402,
+              "GetAccessorHasChanged(marker)",
+              false
+            ],
+            [
+              1408,
+              "TaggedIsHeapObject(callbackFnHandle)",
+              true
+            ],
+            [
+              1411,
+              "IsCallable(callbackFnHandle)",
+              true
+            ],
+            [
+              1432,
+              "Int32LessThan(*i, thisLen)",
+              false
+            ],
+            [
+              1479,
+              "HasPendingException(glue)",
+              false
+            ],
+            [
+              1494,
+              "Int32LessThan(*i, *newArrayLen)",
+              true
+            ]
+          ],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 53854,
+          "region_end_byte": 60182,
+          "effect_sites": [
+            [
+              1384,
+              "TaggedIsUndefinedOrNull"
+            ],
+            [
+              1386,
+              "IsEcmaObject"
+            ],
+            [
+              1389,
+              "IsFastTypeArray"
+            ],
+            [
+              1391,
+              "GetViewedArrayBuffer"
+            ],
+            [
+              1392,
+              "IsDetachedBuffer"
+            ],
+            [
+              1394,
+              "HasConstructor"
+            ],
+            [
+              1396,
+              "GetPrototypeFromHClass"
+            ],
+            [
+              1397,
+              "IsEcmaObject"
+            ],
+            [
+              1399,
+              "GetProtoChangeMarkerFromHClass"
+            ],
+            [
+              1400,
+              "TaggedIsProtoChangeMarker"
+            ],
+            [
+              1402,
+              "GetAccessorHasChanged"
+            ],
+            [
+              1407,
+              "GetCallArg0"
+            ],
+            [
+              1408,
+              "TaggedIsHeapObject"
+            ],
+            [
+              1411,
+              "IsCallable"
+            ],
+            [
+              1414,
+              "GetCallArg1"
+            ],
+            [
+              1415,
+              "GetArrayLength"
+            ],
+            [
+              1417,
+              "arrayStubBuilder.NewArray"
+            ],
+            [
+              1478,
+              "newBuilder.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "parse_dependency_contamination_unknown",
+        "production_runner_not_admitted",
+        "research_only_partial_function_scope"
+      ],
+      "steps": 263,
+      "model_digest": "a0d105e8030d151adda6d2214029e8f16c61f5dae4ad109d8f62a047b64e4853"
+    },
+    "model_scope": "Filter only; same C2 semantic caller"
+  },
+  {
+    "id": "C02",
+    "outcome": "PASS",
+    "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "matched",
+          "line": 1499,
+          "column": 21,
+          "reason": "target_origin_or_proved_type_equality",
+          "target_identity": "new:58949",
+          "token_origin": "new:58949",
+          "token_line": 1479,
+          "creation_line": 1478,
+          "path": [
+            1375,
+            1376,
+            1377,
+            1378,
+            1379,
+            1380,
+            1381,
+            1382,
+            1383,
+            1384,
+            1385,
+            1386,
+            1387,
+            1388,
+            1389,
+            1390,
+            1391,
+            1392,
+            1393,
+            1394,
+            1395,
+            1396,
+            1397,
+            1398,
+            1399,
+            1400,
+            1401,
+            1402,
+            1403,
+            1405,
+            1406,
+            1407,
+            1408,
+            1409,
+            1411,
+            1412,
+            1414,
+            1415,
+            1416,
+            1417,
+            1418,
+            1419,
+            1420,
+            1421,
+            1422,
+            1423,
+            1424,
+            1425,
+            1427,
+            1428,
+            1429,
+            1430,
+            1431,
+            1432,
+            1473,
+            1474,
+            1475,
+            1476,
+            1477,
+            1478,
+            1479,
+            1480,
+            1486,
+            1487,
+            1488,
+            1489,
+            1490,
+            1491,
+            1492,
+            1493,
+            1495,
+            1496,
+            1498,
+            1499
+          ],
+          "constraints": [
+            [
+              1384,
+              "TaggedIsUndefinedOrNull(thisValue)",
+              false
+            ],
+            [
+              1386,
+              "IsEcmaObject(thisValue)",
+              true
+            ],
+            [
+              1389,
+              "IsFastTypeArray(arrayType)",
+              true
+            ],
+            [
+              1392,
+              "IsDetachedBuffer(buffer)",
+              false
+            ],
+            [
+              1394,
+              "HasConstructor(thisValue)",
+              false
+            ],
+            [
+              1397,
+              "IsEcmaObject(prototype)",
+              true
+            ],
+            [
+              1400,
+              "TaggedIsProtoChangeMarker(marker)",
+              true
+            ],
+            [
+              1402,
+              "GetAccessorHasChanged(marker)",
+              false
+            ],
+            [
+              1408,
+              "TaggedIsHeapObject(callbackFnHandle)",
+              true
+            ],
+            [
+              1411,
+              "IsCallable(callbackFnHandle)",
+              true
+            ],
+            [
+              1432,
+              "Int32LessThan(*i, thisLen)",
+              false
+            ],
+            [
+              1480,
+              "HasPendingException(glue)",
+              false
+            ],
+            [
+              1495,
+              "Int32LessThan(*i, *newArrayLen)",
+              true
+            ]
+          ],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 53854,
+          "region_end_byte": 60258,
+          "effect_sites": [
+            [
+              1384,
+              "TaggedIsUndefinedOrNull"
+            ],
+            [
+              1386,
+              "IsEcmaObject"
+            ],
+            [
+              1389,
+              "IsFastTypeArray"
+            ],
+            [
+              1391,
+              "GetViewedArrayBuffer"
+            ],
+            [
+              1392,
+              "IsDetachedBuffer"
+            ],
+            [
+              1394,
+              "HasConstructor"
+            ],
+            [
+              1396,
+              "GetPrototypeFromHClass"
+            ],
+            [
+              1397,
+              "IsEcmaObject"
+            ],
+            [
+              1399,
+              "GetProtoChangeMarkerFromHClass"
+            ],
+            [
+              1400,
+              "TaggedIsProtoChangeMarker"
+            ],
+            [
+              1402,
+              "GetAccessorHasChanged"
+            ],
+            [
+              1407,
+              "GetCallArg0"
+            ],
+            [
+              1408,
+              "TaggedIsHeapObject"
+            ],
+            [
+              1411,
+              "IsCallable"
+            ],
+            [
+              1414,
+              "GetCallArg1"
+            ],
+            [
+              1415,
+              "GetArrayLength"
+            ],
+            [
+              1417,
+              "arrayStubBuilder.NewArray"
+            ],
+            [
+              1478,
+              "newBuilder.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "parse_dependency_contamination_unknown",
+        "production_runner_not_admitted",
+        "research_only_partial_function_scope"
+      ],
+      "steps": 266,
+      "model_digest": "a0d105e8030d151adda6d2214029e8f16c61f5dae4ad109d8f62a047b64e4853"
+    },
+    "model_scope": "Filter only; same C2 semantic caller"
+  },
+  {
+    "id": "C03",
+    "outcome": "PASS",
+    "source_sha256": "0c1a01e350671aff2f1485e523cabdd134ea305c04557190cb01d66b01b88faf",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "candidate",
+          "line": 7,
+          "column": 1,
+          "reason": "different_origin_with_species_creation",
+          "target_identity": "new:385",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:187:input",
+          "token_line": 4,
+          "creation_line": 6,
+          "path": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 130,
+          "region_end_byte": 515,
+          "effect_sites": [
+            [
+              6,
+              "factoryLocal.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 4,
+      "model_digest": "a0d105e8030d151adda6d2214029e8f16c61f5dae4ad109d8f62a047b64e4853"
+    },
+    "model_scope": "Filter only; same C2 semantic caller"
+  },
+  {
+    "id": "C04",
+    "outcome": "PASS",
+    "source_sha256": "625353ab6abd84aa45bba5cc3e48c58ed62b0be06046e56c0c89e60b98abe842",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "matched",
+          "line": 8,
+          "column": 1,
+          "reason": "target_origin_or_proved_type_equality",
+          "target_identity": "new:373",
+          "token_origin": "new:373",
+          "token_line": 7,
+          "creation_line": 6,
+          "path": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 130,
+          "region_end_byte": 545,
+          "effect_sites": [
+            [
+              6,
+              "builder.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 5,
+      "model_digest": "a0d105e8030d151adda6d2214029e8f16c61f5dae4ad109d8f62a047b64e4853"
+    },
+    "model_scope": "Filter only; same C2 semantic caller"
+  },
+  {
+    "id": "C05",
+    "outcome": "PASS",
+    "source_sha256": "1d29bf9d0f76874327e1296b19db035d92586a4c26b5531ccc15f57ddc747507",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "matched",
+          "line": 9,
+          "column": 1,
+          "reason": "target_origin_or_proved_type_equality",
+          "target_identity": "new:373",
+          "token_origin": "new:373",
+          "token_line": 8,
+          "creation_line": 6,
+          "path": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 130,
+          "region_end_byte": 568,
+          "effect_sites": [
+            [
+              6,
+              "builder.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 6,
+      "model_digest": "a0d105e8030d151adda6d2214029e8f16c61f5dae4ad109d8f62a047b64e4853"
+    },
+    "model_scope": "Filter only; same C2 semantic caller"
+  },
+  {
+    "id": "C06",
+    "outcome": "PASS",
+    "source_sha256": "036121ab4d589f9c216d5c9fda87b670cb1e709000e83fedff0fae71ff8e87bb",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "matched",
+          "line": 9,
+          "column": 1,
+          "reason": "target_origin_or_proved_type_equality",
+          "target_identity": "new:373",
+          "token_origin": "new:373",
+          "token_line": 7,
+          "creation_line": 6,
+          "path": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 130,
+          "region_end_byte": 570,
+          "effect_sites": [
+            [
+              6,
+              "builder.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 6,
+      "model_digest": "a0d105e8030d151adda6d2214029e8f16c61f5dae4ad109d8f62a047b64e4853"
+    },
+    "model_scope": "Filter only; same C2 semantic caller"
+  },
+  {
+    "id": "C07",
+    "outcome": "PASS",
+    "source_sha256": "1e3b5d7b9da34ed665ca50776bb8ba41d3e3416131656383e32de7b405184251",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 9,
+          "column": 1,
+          "reason": "unresolved_target_or_type_origin",
+          "target_identity": "expr:490",
+          "token_origin": "new:373",
+          "token_line": 7,
+          "creation_line": 0,
+          "path": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 130,
+          "region_end_byte": 575,
+          "effect_sites": [
+            [
+              6,
+              "builder.NewTypedArray"
+            ],
+            [
+              8,
+              "UnknownHelper"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 6,
+      "model_digest": "a0d105e8030d151adda6d2214029e8f16c61f5dae4ad109d8f62a047b64e4853"
+    },
+    "model_scope": "Filter only; same C2 semantic caller"
+  },
+  {
+    "id": "C08",
+    "outcome": "PASS",
+    "source_sha256": "15e5455cb14fa9f8de0ba83575cbdecc44e27d47e7a4d2f24678a6c42d2df4e8",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [],
+      "limitations": [
+        "not_applicable_to_rule"
+      ],
+      "steps": 0,
+      "model_digest": "a0d105e8030d151adda6d2214029e8f16c61f5dae4ad109d8f62a047b64e4853"
+    },
+    "model_scope": "Filter only; same C2 semantic caller"
+  },
+  {
+    "id": "C09",
+    "outcome": "PASS",
+    "source_sha256": "df17e33f0a37b69bd1e99fd09cdde47cb849bff89142f3b19380d17c5ed1a845",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 8,
+          "column": 1,
+          "reason": "unsupported_host_control_or_macro",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 130,
+          "region_end_byte": 590,
+          "effect_sites": []
+        },
+        {
+          "kind": "unknown",
+          "line": 10,
+          "column": 1,
+          "reason": "generated_predecessor_unavailable",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 130,
+          "region_end_byte": 590,
+          "effect_sites": []
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations",
+        "unsupported_host_control_or_macro:8"
+      ],
+      "steps": 5,
+      "model_digest": "a0d105e8030d151adda6d2214029e8f16c61f5dae4ad109d8f62a047b64e4853"
+    },
+    "model_scope": "Filter only; same C2 semantic caller"
+  },
+  {
+    "id": "C10",
+    "outcome": "PASS",
+    "source_sha256": "1c205200d8ca57750b716102099190637e5d612a9e841cee500633caa9027c7b",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 8,
+          "column": 1,
+          "reason": "unmodeled_control:BRANCH_WITH_DEOPT",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 130,
+          "region_end_byte": 589,
+          "effect_sites": []
+        },
+        {
+          "kind": "unknown",
+          "line": 10,
+          "column": 1,
+          "reason": "generated_predecessor_unavailable",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 130,
+          "region_end_byte": 589,
+          "effect_sites": []
+        }
+      ],
+      "limitations": [
+        "unmodeled_control:BRANCH_WITH_DEOPT:8",
+        "unresolved_local_observations"
+      ],
+      "steps": 5,
+      "model_digest": "a0d105e8030d151adda6d2214029e8f16c61f5dae4ad109d8f62a047b64e4853"
+    },
+    "model_scope": "Filter only; same C2 semantic caller"
+  },
+  {
+    "id": "C11",
+    "outcome": "PASS",
+    "source_sha256": "14d25c869a492d256439313e966d6e6cb554eafd93de5ad9a7a948e4880efe36",
+    "result": {
+      "status": "limited",
+      "file_outcome": "not_analyzed",
+      "observations": [],
+      "limitations": [
+        "target_not_resolved_in_partial_ast"
+      ],
+      "steps": 0,
+      "model_digest": "a0d105e8030d151adda6d2214029e8f16c61f5dae4ad109d8f62a047b64e4853"
+    },
+    "model_scope": "Filter only; same C2 semantic caller"
+  },
+  {
+    "id": "C12",
+    "outcome": "PASS",
+    "source_sha256": "a5dfb7c56a08edbeddc01a9e4a90d6b9d408822e6617364694d81047e2d709b4",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "unreachable",
+          "line": 10,
+          "column": 1,
+          "reason": "no_generated_predecessor_path",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 130,
+          "region_end_byte": 556,
+          "effect_sites": []
+        }
+      ],
+      "limitations": [],
+      "steps": 5,
+      "model_digest": "a0d105e8030d151adda6d2214029e8f16c61f5dae4ad109d8f62a047b64e4853"
+    },
+    "model_scope": "Filter only; same C2 semantic caller"
+  }
+]

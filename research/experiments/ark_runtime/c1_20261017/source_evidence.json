@@ -1,0 +1,87 @@
+{
+  "artifact_kind": "C1_source_and_environment_evidence_not_detector_output",
+  "date": "2026-10-17",
+  "project": {
+    "repository": "unpredictablexss-lang/CyberSecurity-Innovation-Audit",
+    "local_head": "de4d42a025404d87bdef59013c8999ff22a6d3a0",
+    "remote_main_observed": "e510c99c67f31ec6c73365f9ab749c79ca6ff0a1",
+    "worktree_dirty_before_research": true
+  },
+  "target": {
+    "repository": "openharmony/arkcompiler_ets_runtime",
+    "remote": "https://github.com/openharmony/arkcompiler_ets_runtime",
+    "before_commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "before_tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "fixed_commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "fixed_tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "direct_parent_relation": "checked_via_GitHub_commit_metadata",
+    "fix_url": "https://github.com/openharmony/arkcompiler_ets_runtime/commit/a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "gitcode_cross_check": "blocked_not_verified",
+    "local_git_object_verification": "not_run",
+    "cve_mapping": "unknown; no evidence equating this patch with CVE-2025-27536"
+  },
+  "actual_checks": {
+    "package_install_attempt": {
+      "exit_code": 1,
+      "environment": "PIP_NO_INDEX=1",
+      "outcome": "no matching distribution under offline index; no package installed"
+    },
+    "dependency_reuse": ".tmp/pydeps already contained tree-sitter 0.26.0, tree-sitter-c 0.24.2, tree-sitter-cpp 0.23.4",
+    "contract_tests_final": {
+      "modules": [
+        "tests.test_ohscanner_contract",
+        "tests.test_contract_v2_source_binding"
+      ],
+      "run": 45,
+      "passed": 44,
+      "failures": 0,
+      "errors": 1,
+      "environment_error": "test_fixture_symlink_is_rejected: Windows WinError 1314; no symbolic-link privilege",
+      "command": "$env:PYTHONPATH = (Resolve-Path -LiteralPath '.tmp/pydeps').Path\npython -m unittest tests.test_ohscanner_contract tests.test_contract_v2_source_binding -q",
+      "exit_code": 1
+    },
+    "rule_cases": {
+      "count": 12,
+      "status": "planned_not_executed"
+    },
+    "dynamic_replay": "not_run",
+    "performance_benchmark": "not_run",
+    "precision": null,
+    "recall": null
+  },
+  "sources": [
+    {
+      "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob_oid": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "bytes": 150433,
+      "retrieval": "GitHub connector fetch_file at exact commit",
+      "blob_bytes_verified": true,
+      "local_git_object_verified": false,
+      "cache_file": "before_builtins_typedarray_stub_builder.cpp"
+    },
+    {
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob_oid": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "bytes": 150509,
+      "retrieval": "GitHub connector fetch_file at exact commit",
+      "blob_bytes_verified": true,
+      "local_git_object_verified": false,
+      "cache_file": "fixed_builtins_typedarray_stub_builder.cpp"
+    },
+    {
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "blob_oid": "757b8d050d306d349822600deacb295c7a54245e",
+      "source_sha256": "3fd7e99e957fb5b7793cb7c36c01b370208c05645aa93551da6abeecaf2e7198",
+      "bytes": 126036,
+      "retrieval": "GitHub connector fetch_file at exact commit",
+      "blob_bytes_verified": true,
+      "local_git_object_verified": false,
+      "cache_file": "fixed_new_object_stub_builder.cpp"
+    }
+  ]
+}
