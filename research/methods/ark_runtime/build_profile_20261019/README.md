@@ -77,3 +77,14 @@ focused self-tests（含合成 bare store，不把其作为产品或上游证据
 3. 对目标 TU 保存完整 include closure、预处理输出、宏展开日志和哈希。
 4. 将 profile 与 Detector/rule version、scope、config hash、parser binary identity 绑定。
 5. 只有产品构建、入口/权限、触发、CIA 影响、PoC 和修复产品重验全部闭环后，才重新评估准入。
+
+## 剩余 source-anchored case 补充核验（2026-10-20）
+
+`supplemental_source_identity_evidence.py` 不改写带历史摘要的 profile manifest。它固定检查 manifest payload SHA-256 `a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214`，对 7 个仍有 commit 锚点、但不在前述六案对象证据中的 case，从同一配置的本地 bare Gitee object store 重算 commit→tree、指定路径的 blob OID/raw SHA-256/字节数以及 parent→fixed ancestry。路径只取 case `scan_scope` 或已有 parent/fixed 文件路径的并集。没有登记 expected raw SHA/length 时保留 `NOT_RECORDED`，不得把重算值解释为独立期望值。
+
+```powershell
+python research/methods/ark_runtime/build_profile_20261019/supplemental_source_identity_evidence.py --git-dir "D:\openHarmonyScanner\tmp\cve-2025-arkruntime-official.git" --write
+python research/methods/ark_runtime/build_profile_20261019/supplemental_source_identity_evidence.py --git-dir "D:\openHarmonyScanner\tmp\cve-2025-arkruntime-official.git" --verify-only
+```
+
+结果保存在 `supplemental_source_identity_evidence.v1.json`。三案仍为 `UNKNOWN`：`ARK-ARRAY-CALLBACK-ABRUPT-COMPLETION-HISTORY-VARIANT` 没有 parent/fixed commit 和 scope（虽然描述提到两个历史 commit，但没有绑定关系）；`ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D` 与 `ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA` 没有 commit/tree/path。不得根据类似描述补猜身份。local object identity、commit ancestry 和 raw SHA 都不证明获取/保管链、服务器真实性或目标产品构建纳入。全部 16 个产品 profile 仍 `BLOCKED`，PC-1 仍 `IN_PROGRESS_BLOCKED`。

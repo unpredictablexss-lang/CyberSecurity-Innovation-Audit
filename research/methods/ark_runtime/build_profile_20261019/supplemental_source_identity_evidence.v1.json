@@ -1,0 +1,534 @@
+{
+  "schema": "ohscanner.ark-supplemental-source-identity-evidence/v1",
+  "profile_manifest": {
+    "path": "ark_parent_fix_build_profile_manifest.v1.json",
+    "payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214"
+  },
+  "configured_store": {
+    "git_dir": "D:\\openHarmonyScanner\\tmp\\cve-2025-arkruntime-official.git",
+    "bare": true,
+    "shallow": false,
+    "origin_fetch_urls": [
+      "https://gitee.com/openharmony/arkcompiler_ets_runtime.git"
+    ],
+    "origin_push_urls": [
+      "https://gitee.com/openharmony/arkcompiler_ets_runtime.git"
+    ],
+    "custody": "NOT_INDEPENDENTLY_VERIFIED"
+  },
+  "scope": "7 remaining cases with manifest-bound commit anchors; paths use explicit scan_scope or the manifest's listed parent/fixed file-path union",
+  "cases": [
+    {
+      "case_id": "ARK-RUNTIME-CALLINFO-CONSTRUCTION-PENDING-EXCEPTION-I7K7L6",
+      "paths_basis": "case.scan_scope",
+      "paths": [
+        "ecmascript/ecma_macros.h",
+        "ecmascript/js_iterator.cpp"
+      ],
+      "parent": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "11c5ad59240da5603504821d674c499e3cbff75a",
+        "tree": "2614d90ed3924631ed455a302093a0a5d5a668da",
+        "recorded_tree": "2614d90ed3924631ed455a302093a0a5d5a668da",
+        "tree_check": "MATCH",
+        "files": [
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "6d4ac758d955085d7192ec11bc26a1529936a44a",
+            "source_sha256": "0c842369e3259807df2148a9138ccdc5d2a6712e1a0af86ca41fe4e77d26f761",
+            "bytes": 38236,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          },
+          {
+            "path": "ecmascript/js_iterator.cpp",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "7ff9cd673b260b41417d749d6066095740f0c3cb",
+            "source_sha256": "4dbd5bc460ed68820bff3e639355a183ea26b7089c0022288a0a796f707859ee",
+            "bytes": 14782,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          }
+        ]
+      },
+      "fixed": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "f596e410db3ab90a4706a248cf935b135a62490a",
+        "tree": "9bcf5a2aaaa2fcdf35719d4641ed7e3bfde8400c",
+        "recorded_tree": "9bcf5a2aaaa2fcdf35719d4641ed7e3bfde8400c",
+        "tree_check": "MATCH",
+        "files": [
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "6d4ac758d955085d7192ec11bc26a1529936a44a",
+            "source_sha256": "0c842369e3259807df2148a9138ccdc5d2a6712e1a0af86ca41fe4e77d26f761",
+            "bytes": 38236,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          },
+          {
+            "path": "ecmascript/js_iterator.cpp",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "bbeb6300a42110837af7065accb53f04cc0ddbdb",
+            "source_sha256": "dcd1e8a3593bc07dc83aa8a7c3a989b20e41cf301174c8d300545229429e7144",
+            "bytes": 14898,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          }
+        ]
+      },
+      "parent_is_ancestor_of_fixed": "PASS"
+    },
+    {
+      "case_id": "ARK-RUNTIME-INSTANCEOF-EXCEPTION-RETURN-VALUE-I7SDBG",
+      "paths_basis": "case.scan_scope",
+      "paths": [
+        "ecmascript/ecma_macros.h",
+        "ecmascript/stubs/runtime_stubs-inl.h"
+      ],
+      "parent": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "905f840797ff27839d9d984aee36c0f8a773adb2",
+        "tree": "d0c68ae8fc7a5e0cbc9c4c60800d4d550eb35b37",
+        "recorded_tree": null,
+        "tree_check": "NOT_RECORDED",
+        "files": [
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "a44172fb7b886ee788020b4b4a8472def56e3703",
+            "source_sha256": "8ba3030f1a6f92bc176c69a42974e60e83876d49cacc2077e9392a7bec341f0e",
+            "bytes": 38511,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          },
+          {
+            "path": "ecmascript/stubs/runtime_stubs-inl.h",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "91f1c6c2d2c6184554de2c9f7db8144e4a078ee9",
+            "source_sha256": "d37464b716c3bfe4cb4baa3753c7613603fa93308959f9cb71ca9ae4ed81acfe",
+            "bytes": 125331,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          }
+        ]
+      },
+      "fixed": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "c73261dd8452524fa707c0b3c768e899786d22f2",
+        "tree": "77e27c24686ff4d8b3bee0913af8a4f29386ddb5",
+        "recorded_tree": null,
+        "tree_check": "NOT_RECORDED",
+        "files": [
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "a44172fb7b886ee788020b4b4a8472def56e3703",
+            "source_sha256": "8ba3030f1a6f92bc176c69a42974e60e83876d49cacc2077e9392a7bec341f0e",
+            "bytes": 38511,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          },
+          {
+            "path": "ecmascript/stubs/runtime_stubs-inl.h",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "2b582ba6e7510a5e5cea56026e8ba9f4f46310b9",
+            "source_sha256": "5eeeb9a98119f9bd0fd9dacae3261b46d1ead36545cf34e3adfce1956f30a439",
+            "bytes": 125283,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          }
+        ]
+      },
+      "parent_is_ancestor_of_fixed": "PASS"
+    },
+    {
+      "case_id": "ARK-RUNTIME-NEWCALLINFO-EXCEPTION-GUARD-IB40SU",
+      "paths_basis": "case.scan_scope",
+      "paths": [
+        "ecmascript/builtins/builtins_async_from_sync_iterator.cpp",
+        "ecmascript/ecma_macros.h"
+      ],
+      "parent": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "811daec3dc48a2ba4426b9c6eea7bcc1ee7ab315",
+        "tree": "b20077ce95fed3c0ecc7ca3e147a17bd7ef9bbc4",
+        "recorded_tree": null,
+        "tree_check": "NOT_RECORDED",
+        "files": [
+          {
+            "path": "ecmascript/builtins/builtins_async_from_sync_iterator.cpp",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "3fb6a992fdc69690a2604452caeb00c3f5959593",
+            "source_sha256": "5ca4084a53c2b86baeae9e4549838d250637eeb16f2622cc1f04cf46479f609c",
+            "bytes": 11186,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          },
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "2f93576f54544ee95c5b57ee8d7bb6b0b8a2b3bb",
+            "source_sha256": "9ad43ea1a799f3ef7b7010bf96124fa1063947b199a84bd3804fa45bdf9a3665",
+            "bytes": 50070,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          }
+        ]
+      },
+      "fixed": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "3bf1a3cee91252507d02ebcd0ef332d61bbad342",
+        "tree": "a4d25adf9122ca9857319372bcae84af580d7055",
+        "recorded_tree": null,
+        "tree_check": "NOT_RECORDED",
+        "files": [
+          {
+            "path": "ecmascript/builtins/builtins_async_from_sync_iterator.cpp",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "633fba4ae9964a97850b6b4f4ab5bf3646d707ba",
+            "source_sha256": "a82f3665c6a62cd9c42d6e48748ff133fcab5c3e34042be3d8058421d8316986",
+            "bytes": 11269,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          },
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "2f93576f54544ee95c5b57ee8d7bb6b0b8a2b3bb",
+            "source_sha256": "9ad43ea1a799f3ef7b7010bf96124fa1063947b199a84bd3804fa45bdf9a3665",
+            "bytes": 50070,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          }
+        ]
+      },
+      "parent_is_ancestor_of_fixed": "PASS"
+    },
+    {
+      "case_id": "ARK-SHAREDARRAY-FINDINDEX-EXCEPTION-PROPAGATION-PARTIAL-2A9BCFB",
+      "paths_basis": "case.scan_scope",
+      "paths": [
+        "ecmascript/builtins/builtins_shared_array.cpp",
+        "ecmascript/ecma_macros.h"
+      ],
+      "parent": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "4972b782328d8d3587dded347b0a7f3158120b1d",
+        "tree": "774da68efa3097fb89f6846d53fbd31fa92eeec7",
+        "recorded_tree": null,
+        "tree_check": "NOT_RECORDED",
+        "files": [
+          {
+            "path": "ecmascript/builtins/builtins_shared_array.cpp",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "1e841711a8b974802892d7a9968a51393cb8c9d1",
+            "source_sha256": "828c8119ddafdd0794113c5ee6135b5c56e76db24852a05e789e028d0c1616ed",
+            "bytes": 114213,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          },
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "4c27b6788d5218f9d04e509bd895231d28b7804b",
+            "source_sha256": "e73f8c2fe7baa0e49d78f2a9a07f3d9d951f8453f408ba6aee96ed8ee9616052",
+            "bytes": 49940,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          }
+        ]
+      },
+      "fixed": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "2a9bcfb6082a25ebd0b35ab4a31202ce062aae6d",
+        "tree": "4edac3274a498fa0b0352960cff2c77cc8000d21",
+        "recorded_tree": null,
+        "tree_check": "NOT_RECORDED",
+        "files": [
+          {
+            "path": "ecmascript/builtins/builtins_shared_array.cpp",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "fe50ae41382d496ca2508bfba31a30518403b501",
+            "source_sha256": "ce6c79210f411ca962ce37bd1dec7fc1135100d0f444fc289a773b9cbe1eaf59",
+            "bytes": 114238,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          },
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "4c27b6788d5218f9d04e509bd895231d28b7804b",
+            "source_sha256": "e73f8c2fe7baa0e49d78f2a9a07f3d9d951f8453f408ba6aee96ed8ee9616052",
+            "bytes": 49940,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          }
+        ]
+      },
+      "parent_is_ancestor_of_fixed": "PASS"
+    },
+    {
+      "case_id": "ARK-TYPEDARRAY-FILTER-RECEIVER-TYPE-GUARD-IAO7E8",
+      "paths_basis": "parent/fixed.files.path union",
+      "paths": [
+        "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "test/moduletest/typedarrayfilter/typedarrayfilter.js"
+      ],
+      "parent": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "c4c52fb57b6e204128e1520340c8e66c8e708981",
+        "tree": "7e1498c2be74908365e2a984e0c5edd5f639fc2f",
+        "recorded_tree": "7e1498c2be74908365e2a984e0c5edd5f639fc2f",
+        "tree_check": "MATCH",
+        "files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "e1e4f6411df4733b8f1ba5b679189e29d904a63f",
+            "source_sha256": "f1cdd8d0707cab2ac9bb9e024383151435bfc279c6815c5eceb98925974ff1a4",
+            "bytes": 125744,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "MATCH",
+              "recorded_source_sha256": "MATCH",
+              "recorded_bytes": "MATCH"
+            }
+          },
+          {
+            "path": "test/moduletest/typedarrayfilter/typedarrayfilter.js",
+            "status": "NOT_PRESENT_IN_THIS_SIDE",
+            "recorded_git_blob_oid": null,
+            "recorded_source_sha256": null
+          }
+        ]
+      },
+      "fixed": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "2a70904be0e21a37a666eb00cab49d02068260ea",
+        "tree": "8e5503ee7eebbb8e72bc6d5ca0cb88d5775301ef",
+        "recorded_tree": "8e5503ee7eebbb8e72bc6d5ca0cb88d5775301ef",
+        "tree_check": "MATCH",
+        "files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "df765b9c212dc2e55c38dc385f85f183ce6606da",
+            "source_sha256": "b51826a74a89d6ee105c4087b4260363a7abfd632bb2c68d43c0ee9b17c883c5",
+            "bytes": 125744,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "MATCH",
+              "recorded_source_sha256": "MATCH",
+              "recorded_bytes": "MATCH"
+            }
+          },
+          {
+            "path": "test/moduletest/typedarrayfilter/typedarrayfilter.js",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "c0e05428adb80360d355e17bb87c8db16d46f04b",
+            "source_sha256": "f14585618ac3e97237817a5ed26df8b560dde0aa96a0718250ba533dfaf6ed24",
+            "bytes": 839,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "MATCH",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          }
+        ]
+      },
+      "parent_is_ancestor_of_fixed": "PASS"
+    },
+    {
+      "case_id": "ARK-TYPEDARRAY-MAP-NEWARRAY-PENDING-EXCEPTION-IC7B8Q",
+      "paths_basis": "parent/fixed.files.path union",
+      "paths": [
+        "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "test/moduletest/typedarraymapoverflow/typedarraymapoverflow.js"
+      ],
+      "parent": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+        "tree": "27ec52bd443ccd4e45b472731114e8547df71ea2",
+        "recorded_tree": "27ec52bd443ccd4e45b472731114e8547df71ea2",
+        "tree_check": "MATCH",
+        "files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "34f6aa2c6ccaad144a2038c8aab208ea290b5a86",
+            "source_sha256": "2c45da670fcb4170176bb9bd93da7d21dbc286925a0ca1126d250318412417ff",
+            "bytes": 152029,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          },
+          {
+            "path": "test/moduletest/typedarraymapoverflow/typedarraymapoverflow.js",
+            "status": "NOT_PRESENT_IN_THIS_SIDE",
+            "recorded_git_blob_oid": null,
+            "recorded_source_sha256": null
+          }
+        ]
+      },
+      "fixed": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+        "tree": "bad9c4b3b9e868fcf07a36ab864978fd8ad598f2",
+        "recorded_tree": "identity manifest",
+        "tree_check": "NOT_RECORDED",
+        "files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "893a63a79b6ab85a1473a4f3b33315db0f848a37",
+            "source_sha256": "0abdb870aff6560c671895c0e3360bb3e82fb052cb6a7cf28a90a8c6443044a5",
+            "bytes": 152737,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          },
+          {
+            "path": "test/moduletest/typedarraymapoverflow/typedarraymapoverflow.js",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "9f40e6ce18950c3164b01de9b1e455c9dc4f8eb4",
+            "source_sha256": "f3b377735b1a47e9e3adc2cee69790104655a01ebff6dea37dbab38082972e19",
+            "bytes": 1037,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "NOT_RECORDED",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          }
+        ]
+      },
+      "parent_is_ancestor_of_fixed": "PASS"
+    },
+    {
+      "case_id": "ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304",
+      "paths_basis": "parent/fixed.files.path union",
+      "paths": [
+        "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+      ],
+      "parent": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+        "tree": "454e898b43b55950b104053cf42d32645474ef8f",
+        "recorded_tree": "454e898b43b55950b104053cf42d32645474ef8f",
+        "tree_check": "MATCH",
+        "files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "2aae41b75a5ffd1441309439ff3834d959f71b79",
+            "source_sha256": "6133af44de48ec3ff00fdc7b06597fbef1c9a270cc04ba48d09b4475976c2381",
+            "bytes": 150108,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "MATCH",
+              "recorded_source_sha256": "MATCH",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          }
+        ]
+      },
+      "fixed": {
+        "status": "OBJECTS_RECOMPUTED",
+        "commit": "6627179cbf6f8d40d1adfcf5c3c686b902f42419",
+        "tree": "fa482a14984ee8cd8f424131cb5179ba7a6a9422",
+        "recorded_tree": "fa482a14984ee8cd8f424131cb5179ba7a6a9422",
+        "tree_check": "MATCH",
+        "files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "status": "OBJECT_BYTES_RECOMPUTED",
+            "blob_oid": "1818dd72f5ac68aa7f8ee7a38a59b923f4ab5476",
+            "source_sha256": "32e98e94d7dca38607b4a028c567ce2c5d9182742df41acf98cc012dead5b1d1",
+            "bytes": 150189,
+            "checks_against_manifest": {
+              "recorded_git_blob_oid": "MATCH",
+              "recorded_source_sha256": "NOT_RECORDED",
+              "recorded_bytes": "NOT_RECORDED"
+            }
+          }
+        ]
+      },
+      "parent_is_ancestor_of_fixed": "PASS"
+    }
+  ],
+  "unresolved_cases": [
+    {
+      "case_id": "ARK-ARRAY-CALLBACK-ABRUPT-COMPLETION-HISTORY-VARIANT",
+      "status": "UNKNOWN",
+      "reason": "parent/fixed commit and scope are null; the manifest text mentions two history commits but does not bind either to this pair"
+    },
+    {
+      "case_id": "ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA",
+      "status": "UNKNOWN",
+      "reason": "parent/fixed commit, tree, and file paths are null"
+    },
+    {
+      "case_id": "ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D",
+      "status": "UNKNOWN",
+      "reason": "parent/fixed commit, tree, and file paths are null"
+    }
+  ],
+  "limitations": [
+    "A local object database matching its declared official Gitee remote does not independently prove acquisition, custody, or server authenticity.",
+    "Source object identity does not establish product inclusion, build configuration, preprocessing, runtime reachability, or vulnerability impact.",
+    "The three unresolved cases have no sufficient manifest-bound commit/path pair; no commits or paths were inferred.",
+    "Any absent recorded raw SHA/length is reported as not recorded; a recomputed value is not an independent expected value."
+  ],
+  "portfolio_status": "PC-1 IN_PROGRESS_BLOCKED; product build/preprocess profiles remain BLOCKED and 0/16 complete"
+}
