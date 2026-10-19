@@ -1,0 +1,198 @@
+{
+  "matrix_version": "admission-20261019-1",
+  "status": "proposal_only_no_public_change",
+  "source_bound_schema": 2,
+  "legacy_schema": 1,
+  "fixed_checkout": {
+    "head": "556cb145fec9f52afd1c49d10290e01036200f00",
+    "commit_tree": "7ccd0895622669ac33595c1058e5f0ede0b8e5a5"
+  },
+  "global_invariants": [
+    "legacy_v1_is_read_only",
+    "historical_report_bytes_ids_reviews_and_evidence_obligations_are_not_rewritten",
+    "missing_identity_fields_are_explicit_unknown_and_never_inferred",
+    "unknown_partial_failed_unexecuted_and_over_budget_are_never_safe_or_miss",
+    "valid_region_admission_does_not_establish_vulnerability_reachability_or_cia_impact",
+    "public_protocol_and_algorithm_fixes_are_separate_commits",
+    "default_catalog_does_not_enable_partial_admission"
+  ],
+  "controls": {
+    "positive": "same exact identity and admitted fact set remain accepted and reproducible",
+    "fixed": "a changed fixed source/blob/region identity is rejected or assigned a new identity",
+    "safe": "safe-like fixtures remain candidate/unassessed and cannot be inferred from absence or partial coverage",
+    "unrelated": "unrelated findings and files retain their independent identity and are not merged into the target region",
+    "unknown": "missing or conflicting repository/tree/blob/build/dependency/parse/budget facts remain unknown and fail closed"
+  },
+  "entries": [
+    {
+      "id": "legacy-v1-tool-result",
+      "surface": "ToolDiagnostic/ToolRunResult v1 historical output",
+      "current": "read-only historical external-result representation",
+      "proposal": "no mutation and no admission upgrade",
+      "compatibility_class": "read_only_exact",
+      "required_controls": ["positive", "fixed", "unrelated", "unknown"],
+      "risks": ["field inference from message or line", "historical report hash change"],
+      "verification": "byte-for-byte fixture remains unchanged and v1 reader tests still pass"
+    },
+    {
+      "id": "source-bound-v2-report",
+      "surface": "first-party normalized report",
+      "current": "schema_version 2 with source_sha256 and layered finding identity",
+      "proposal": "append admission_record_id and exact identity references without changing old identifiers",
+      "compatibility_class": "additive_v2",
+      "required_controls": ["positive", "fixed", "unrelated", "unknown"],
+      "risks": ["identity field omission", "old ID recomputation"],
+      "verification": "v2 golden report remains parseable; new sidecar references resolve; absent sidecar keeps old semantics"
+    },
+    {
+      "id": "scan-request-identity",
+      "surface": "ScanRequest",
+      "current": "repository name, full commit for git_object, snapshot SHA-256, profile_id, provenance",
+      "proposal": "new exact identity sidecar carries tree/blob/build/dependency identity; request itself remains compatible",
+      "compatibility_class": "external_record_not_overload",
+      "required_controls": ["positive", "fixed", "safe", "unrelated", "unknown"],
+      "risks": ["treating profile_id as full build identity", "repository name as ownership proof"],
+      "verification": "constructors accept current requests; admission rejects incomplete sidecars"
+    },
+    {
+      "id": "source-unit-source-hash",
+      "surface": "SourceUnit",
+      "current": "path/language/text/SHA-256/parse status and issues",
+      "proposal": "verify blob bytes, byte length, parser identity and source identity hash in admission",
+      "compatibility_class": "strict_validation_additive",
+      "required_controls": ["positive", "fixed", "unknown"],
+      "risks": ["text encoding mismatch", "blob/source hash mismatch"],
+      "verification": "same bytes pass; tampered text/blob/parser identity fails closed"
+    },
+    {
+      "id": "snapshot-digest",
+      "surface": "ScanRequest.snapshot_sha256 and snapshot_digest(units)",
+      "current": "ordered source-unit manifest digest is checked by Runner",
+      "proposal": "retain current digest and add exact snapshot manifest with tree/blob/source identities",
+      "compatibility_class": "additive_parallel_digest",
+      "required_controls": ["positive", "fixed", "unrelated", "unknown"],
+      "risks": ["replacing existing digest", "unordered manifest instability"],
+      "verification": "current digest unchanged; exact manifest rejects path/blob/tree/commit changes"
+    },
+    {
+      "id": "build-profile-identity",
+      "surface": "profile_id and shared_facts",
+      "current": "single profile label; git_object requires light-ast",
+      "proposal": "canonical BuildProfileIdentity covering toolchain/target/flags/defines/includes/generated sources and hash",
+      "compatibility_class": "new_required_for_partial_admission_only",
+      "required_controls": ["positive", "fixed", "safe", "unknown"],
+      "risks": ["profile ID collision", "unverified product build assumption"],
+      "verification": "identical profile hash passes; one changed flag/define/include creates a different identity and unknown admission"
+    },
+    {
+      "id": "dependency-closure",
+      "surface": "ScanContext.shared_facts",
+      "current": "open mapping of shared facts and optional blob OIDs",
+      "proposal": "structured dependency identities and closure hash; open mapping remains available to existing detectors",
+      "compatibility_class": "additive_sidecar",
+      "required_controls": ["positive", "fixed", "unrelated", "unknown"],
+      "risks": ["omitted macro/include/overload/cross-TU dependency", "same-name model substitution"],
+      "verification": "complete closure passes; missing or mismatched dependency prevents valid region admission"
+    },
+    {
+      "id": "finding-source-binding",
+      "surface": "DetectorFinding and ToolDiagnostic projection",
+      "current": "source SHA, file/line, rule/model identity inputs and evidence obligations",
+      "proposal": "add region identity and admission record references; security state remains candidate/unassessed",
+      "compatibility_class": "additive_identity_mapping",
+      "required_controls": ["positive", "fixed", "safe", "unrelated", "unknown"],
+      "risks": ["candidate outside admitted region", "security state upgrade"],
+      "verification": "valid local candidate is retained; out-of-region/tampered candidate is rejected; safe fixture never upgrades"
+    },
+    {
+      "id": "detector-run-status",
+      "surface": "DetectorRun.status",
+      "current": "completed, failed, blocked",
+      "proposal": "do not change enum; model coverage aggregate separately",
+      "compatibility_class": "exact_existing_semantics",
+      "required_controls": ["positive", "safe", "unknown"],
+      "risks": ["conflating execution completion with coverage completeness"],
+      "verification": "existing completed/failed/blocked tests remain unchanged"
+    },
+    {
+      "id": "per-file-outcomes",
+      "surface": "DetectorRun.file_outcomes",
+      "current": "complete, partial, not_analyzed, failed with complete parse required for complete analysis",
+      "proposal": "retain file outcomes and add region-level valid/unknown/not_analyzed records",
+      "compatibility_class": "additive_granularity",
+      "required_controls": ["positive", "fixed", "safe", "unrelated", "unknown"],
+      "risks": ["partial file promoted to complete", "region count used as file completeness"],
+      "verification": "partial file remains partial while a valid local region is separately retained"
+    },
+    {
+      "id": "runner-public-entrypoints",
+      "surface": "run_all and run_all_with_coverage",
+      "current": "run_all preserves list return; coverage returns reports and sidecar; failures are detector-scoped",
+      "proposal": "new admission capability is opt-in and additive; default behavior remains identical",
+      "compatibility_class": "backward_compatible_opt_in",
+      "required_controls": ["positive", "fixed", "safe", "unrelated", "unknown"],
+      "risks": ["global partial bypass", "one detector failure aborting another"],
+      "verification": "golden return shapes unchanged; disabled admission matches current output; selector/admission errors fail only that detector closed"
+    },
+    {
+      "id": "mixed-scope",
+      "surface": "coverage sidecar",
+      "current": "complete and partial inspection can coexist and valid complete-file candidates are retained",
+      "proposal": "explicit mixed aggregate and per-region counts",
+      "compatibility_class": "additive_aggregate",
+      "required_controls": ["positive", "safe", "unrelated", "unknown"],
+      "risks": ["dropping valid candidates on aggregate blocked", "upgrading aggregate to complete"],
+      "verification": "complete-file candidate survives mixed run; aggregate is mixed and no safety inference is allowed"
+    },
+    {
+      "id": "over-budget",
+      "surface": "execution and coverage",
+      "current": "limitations distinguish incomplete work but no explicit over-budget admission state",
+      "proposal": "budget manifest, closed/over_budget region state, retained prior complete regions and non-exhaustive flag",
+      "compatibility_class": "new_admission_semantics",
+      "required_controls": ["positive", "fixed", "safe", "unknown"],
+      "risks": ["publishing truncated candidate set", "treating unfinished scope as safe or miss"],
+      "verification": "completed region remains; unfinished region is unknown/not_analyzed; aggregate is partial/mixed with over_budget reason"
+    },
+    {
+      "id": "evidence-obligations",
+      "surface": "EvidenceObligation",
+      "current": "kind, description and unknown/missing/satisfied/not_applicable status",
+      "proposal": "preserve object identity/content and append references only in new records",
+      "compatibility_class": "read_only_history_additive_reference",
+      "required_controls": ["positive", "fixed", "unrelated", "unknown"],
+      "risks": ["rewriting old status", "conflating admission with obligation satisfaction"],
+      "verification": "historical obligation fixtures remain byte-identical; new admission creates new references"
+    },
+    {
+      "id": "catalog-registration",
+      "surface": "src/ohscanner/detectors/catalog.py",
+      "current": "explicit factories; Ark runtime detector is research_candidate, default disabled and exact-bound",
+      "proposal": "no default change; capability gating is explicit and not encoded as a detector-ID special case",
+      "compatibility_class": "explicit_opt_in_only",
+      "required_controls": ["positive", "fixed", "safe", "unrelated", "unknown"],
+      "risks": ["registration implicitly grants partial permission", "unknown detector bypass"],
+      "verification": "default IDs unchanged; explicit selection without admission capability still cannot admit partial AST"
+    },
+    {
+      "id": "candidate-review-history",
+      "surface": "candidate/diagnostic IDs and reviews",
+      "current": "historical identity and review state must not be rewritten",
+      "proposal": "new region/admission IDs and stable append-only mappings only",
+      "compatibility_class": "append_only",
+      "required_controls": ["positive", "fixed", "unrelated", "unknown"],
+      "risks": ["ID collision after identity enrichment", "review rebinding to different source"],
+      "verification": "old IDs/reviews remain unchanged; changed source/rule/region produces a new ID"
+    },
+    {
+      "id": "detector-algorithm-fixes",
+      "surface": "Detector/model/rule implementation",
+      "current": "must use positive/fixed/safe/unrelated controls and meaningful regressions",
+      "proposal": "out of scope for this RFC slice and implemented in separate commits",
+      "compatibility_class": "separate_change_stream",
+      "required_controls": ["positive", "fixed", "safe", "unrelated", "unknown"],
+      "risks": ["mixed public protocol and algorithm diff", "unreviewed behavior change hidden by schema work"],
+      "verification": "commit boundaries and test ownership show protocol tests are independent from algorithm regressions"
+    }
+  ]
+}
