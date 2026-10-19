@@ -1,0 +1,118 @@
+{
+  "schema_version": "a-t19-samgr-test-path-review-v1",
+  "audit": "T19 independent source-bound review of A0 Samgr CR-0227 through CR-0230",
+  "review_date": "2026-10-20",
+  "basis_commit": "848fa850857ae40b10f66e33916330aaaf0fd255",
+  "source": {
+    "repository": "openharmony/systemabilitymgr_samgr",
+    "commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff",
+    "tree": "b7a89e95be788f2f2372258e341f7be842c7826d",
+    "path": "services/samgr/native/test/unittest/src/system_ability_mgr_proxy_test.cpp",
+    "blob": "9c1aff9cf7f08ce7201e81e0e03999df13006c68",
+    "bytes": 86697,
+    "sha256": "d53ef4ec001a999b97983fde6cb4947d4ff7b3dcbf72caa1efa1383c69257b17",
+    "test_double": "MultiUserProxyRemoteStub::OnRemoteRequest",
+    "test_double_lines": "61-94",
+    "feature_guard": "SUPPORT_MULTI_INSTANCE",
+    "exercise_test": "SystemAbilityMgrProxyTest.MultiUserProxy004",
+    "exercise_test_lines": "1998-2044",
+    "test_double_role": "A local mock IRemoteObject that records transaction codes and synthesizes reply parcels; its WriteRemoteObject/WriteBool calls are not production service reply code."
+  },
+  "production_sources": {
+    "transaction_enum": {
+      "path": "interfaces/innerkits/samgr_proxy/include/samgr_ipc_interface_code.h",
+      "blob": "be6c85443785a1cd76b36449f0c9cc2a99e50efd",
+      "bytes": 3371,
+      "sha256": "aa60eb4c1bf20cceb20d40d3d4fefa6e3bc1d80eebbecc0330164c8c43dcedcc",
+      "feature_guard": "SUPPORT_MULTI_INSTANCE",
+      "transaction_codes": "62-66"
+    },
+    "proxy": {
+      "path": "frameworks/native/source/system_ability_manager_proxy.cpp",
+      "blob": "153f9b69672a18da65dbb3b72fd199bf507608e6",
+      "bytes": 81355,
+      "sha256": "0276eb672bd21aec0ff0510645d126b3dfbb9175498a44c4d96cd444ab6179f9",
+      "api_methods": {
+        "GetSystemAbility(id,userId)": "1914-1944; sends transaction 45",
+        "CheckSystemAbility(id,userId)": "1947-1977; sends transaction 46",
+        "CheckSystemAbilityByUserId(id,isExist,userId)": "1980-2024; sends transaction 47 and reads remote object plus bool",
+        "GetLocalAbilityManagerProxy(id,userId)": "2069-2099; sends transaction 49"
+      }
+    },
+    "receiver_stub": {
+      "path": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "blob": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
+      "bytes": 78212,
+      "sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433",
+      "api_handlers": {
+        "transaction 45 GetSystemAbilityWithUserIdInner": "1656-1695",
+        "transaction 46 CheckSystemAbilityWithUserIdInner": "1699-1738",
+        "transaction 47 CheckSystemAbilityByUserIdInner": "1742-1793",
+        "transaction 49 GetLocalAbilityManagerProxyWithUserIdInner": "1840-1869"
+      }
+    }
+  },
+  "cases": [
+    {
+      "queue_id": "CR-0227",
+      "candidate_id": "ohscanner.interface.ipc:50fb008ac115f39e",
+      "reported_line": 74,
+      "rule": "ipc.capability.export",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "test_path": "MultiUserProxyRemoteStub::OnRemoteRequest, switch cases 45, 46, and 49 write a fixture-owned TestTransactionService remote object to the mock reply.",
+      "tested_production_apis": ["GetSystemAbility(id,userId)", "CheckSystemAbility(id,userId)", "GetLocalAbilityManagerProxy(id,userId)"],
+      "test_only_disposition": "The reported sink is test-only. MultiUserProxy004 invokes the real client proxy methods, but the receiving object is this test double, not SystemAbilityManagerStub or the running product service.",
+      "product_flaw_conclusion": "not established",
+      "missing_evidence": ["Product build and SUPPORT_MULTI_INSTANCE configuration", "Effective SELinux/service policy and caller identity/reachability", "Target-derived transaction run through the product receiver", "A concrete unauthorized operation or data exposure through the returned capability"],
+      "disposition": "PARTIAL; preserve queue state and do not infer a product capability-export flaw from the mock reply."
+    },
+    {
+      "queue_id": "CR-0228",
+      "candidate_id": "ohscanner.interface.ipc:fdb22927fdab7ff9",
+      "reported_line": 74,
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "test_path": "Same line and mock reply cases as CR-0227; no file descriptor is read, written, relayed, or bounded on this path.",
+      "tested_production_apis": ["GetSystemAbility(id,userId)", "CheckSystemAbility(id,userId)", "GetLocalAbilityManagerProxy(id,userId)"],
+      "test_only_disposition": "The reported sink is test-only and is not a descriptor operation. The test does not exercise the product receiver's descriptor boundary.",
+      "product_flaw_conclusion": "not established",
+      "missing_evidence": ["A product-side descriptor-bearing API and its source-to-sink path", "Product build and effective caller/policy context", "Target-derived IPC evidence of attacker-controlled descriptor relay and impact"],
+      "disposition": "PARTIAL; preserve queue state; this source line alone does not substantiate a descriptor-boundary flaw."
+    },
+    {
+      "queue_id": "CR-0229",
+      "candidate_id": "ohscanner.interface.ipc:b8c3d84ba9882d10",
+      "reported_line": 76,
+      "rule": "ipc.capability.export",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "test_path": "MultiUserProxyRemoteStub::OnRemoteRequest case 47 writes its fixture-owned remote object followed by a synthetic true bool.",
+      "tested_production_apis": ["CheckSystemAbilityByUserId(id,isExist,userId)"],
+      "test_only_disposition": "The reply object and boolean are synthesized by the unit-test mock; they are not the product receiver's output. The production proxy client decodes a remote object and bool, while the product stub handler is a separate implementation at lines 1742-1793.",
+      "product_flaw_conclusion": "not established",
+      "missing_evidence": ["Product build and SUPPORT_MULTI_INSTANCE configuration", "Effective SELinux/service policy and caller identity/reachability", "Target-derived transaction 47 run through the product receiver", "A concrete unauthorized operation or data exposure through the returned capability"],
+      "disposition": "PARTIAL; preserve queue state and do not infer a product capability-export flaw from the mock reply."
+    },
+    {
+      "queue_id": "CR-0230",
+      "candidate_id": "ohscanner.interface.ipc:8822234174213557",
+      "reported_line": 76,
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "test_path": "Same line as CR-0229: mock parcel writes a remote object plus bool; no FD operation appears.",
+      "tested_production_apis": ["CheckSystemAbilityByUserId(id,isExist,userId)"],
+      "test_only_disposition": "The reported sink is test-only and does not carry a file descriptor. It does not demonstrate the product transaction's descriptor behavior.",
+      "product_flaw_conclusion": "not established",
+      "missing_evidence": ["A product-side descriptor-bearing API and its source-to-sink path", "Product build and effective caller/policy context", "Target-derived IPC evidence of attacker-controlled descriptor relay and impact"],
+      "disposition": "PARTIAL; preserve queue state; this source line alone does not substantiate a descriptor-boundary flaw."
+    }
+  ],
+  "family_scope": {
+    "source_level_overlap": "all four rows map to two test-double reply statements in one unit-test source file; they are not four independent product paths",
+    "queue_state": "all rows preserve original_status=not_testable and queue_status=paused_pending_evidence",
+    "independent_product_validation": "not performed; build flags, effective policy, target reachability and product-derived IPC harness are missing"
+  }
+}
