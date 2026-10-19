@@ -59,12 +59,16 @@ GetPasteData(); reply.WriteParcelable(data);
 
 All three runs completed with only the separate D51 `CVE-2025-25212` finding; D52 `CVE-2025-27247` was suppressed. The generic permission-name matcher does not bind the permission or resource to Pasteboard read access. This is an actionable candidate-retention precision failure for D60/D61, not evidence about runtime helper semantics.
 
+The same three probes were independently repeated in a clean worktree at D60 review commit `a9105a4f65cddb0b856242dbdbcb4f76a3741ccf`. D60 is a second-layer evidence commit; its detector blob is unchanged from D59 0.19.5. All three unrelated-permission guards still suppress D52, confirming the finding against the D60 frozen state.
+
 ## Acceptance dimensions
 
 - **fix-correctness:** **PARTIAL**. The specified matrix and conditional-outer-branch adversary pass on D59 0.19.5, but unrelated Bluetooth/Network permission guards still suppress D52. Immediate `return`/`throw` are syntactic exits only; exception/catch behavior is not modeled.
 - **candidate-retention:** **PASS on the exact pinned source** and 67-unit replay, but **FAIL** on the three unrelated-permission controls above. The historical D52 and separate D51 candidate remain on the pinned source.
 - **coverage:** **PARTIAL**. The exact source-unit and full 67-unit replay remain blocked; the D50 parser packet has 57 complete and 10 partial units. Product/framework coverage is not established.
 - **scope:** **PASS for final commit `da019561`**. The final patch changes the D52 matcher, focused controls/corpus, and the two corresponding fixture bindings. T59's evidence files are separate; T59 made no detector or fixture edits. Assign permission identity binding/conservative ambiguity behavior to D60/D61.
+
+The exact third-layer follow-up inputs and results are preserved in `unrelated_permission_false_suppressions` in the companion JSON. D60 did not fix the detector mismatch; use a D61 implementation/frozen build for the next acceptance round.
 
 These are syntactic candidate expectations. They do not prove permission helper semantics, control-flow dominance in general, framework authorization, CVE causality, product inclusion, or runtime vulnerability. D52 remains a pinned-source candidate with full framework/product/CVE conclusions unknown.
 

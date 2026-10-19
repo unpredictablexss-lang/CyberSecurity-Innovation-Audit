@@ -1,13 +1,19 @@
 {
   "task": "T59",
   "date": "2026-10-23",
-  "phase": "D59-independent-review-with-new-unrelated-permission-precision-failure",
+  "phase": "D60-independent-mismatch-confirmed",
   "patch": {
     "commit": "da0195610f2203ce97af1f43385f0091f040504e",
     "parent_baseline": "c8f83b82291e82b3272c73b943623336a3c836c3",
     "initial_commit": "7182aaf7c2334a3cf91dcf9a1016116b4709fccd",
     "detector_version": "0.19.5",
     "independent_worktree": "D:/openHarmonyScanner/worktrees/t59-d59-followup-review-20261023"
+  },
+  "D60_review": {
+    "commit": "a9105a4f65cddb0b856242dbdbcb4f76a3741ccf",
+    "classification": "second-layer review/evidence commit; no detector change from D59 0.19.5",
+    "detector_blob_matches_D59": true,
+    "independent_worktree": "D:/openHarmonyScanner/worktrees/t59-d60-mismatch-review-20261023"
   },
   "baseline": {
     "scanner_commit": "c8f83b82291e82b3272c73b943623336a3c836c3",
@@ -183,7 +189,8 @@
       "run_status": "completed",
       "findings": ["CVE-2025-25212"],
       "pasteboard_candidate": "suppressed",
-      "expected": "retain CVE-2025-27247 candidate; guard names unrelated Bluetooth permission"
+      "expected": "retain CVE-2025-27247 candidate; guard names unrelated Bluetooth permission",
+      "replayed_on_D60": true
     },
     {
       "detector_version": "0.19.5",
@@ -192,7 +199,8 @@
       "run_status": "completed",
       "findings": ["CVE-2025-25212"],
       "pasteboard_candidate": "suppressed",
-      "expected": "retain CVE-2025-27247 candidate; generic permission helper is passed unrelated network permission"
+      "expected": "retain CVE-2025-27247 candidate; generic permission helper is passed unrelated network permission",
+      "replayed_on_D60": true
     },
     {
       "detector_version": "0.19.5",
@@ -201,9 +209,9 @@
       "run_status": "completed",
       "findings": ["CVE-2025-25212"],
       "pasteboard_candidate": "suppressed",
-      "expected": "retain CVE-2025-27247 candidate; VerifyCallingPermission is given an unrelated network permission"
+      "expected": "retain CVE-2025-27247 candidate; VerifyCallingPermission is given an unrelated network permission",
+      "replayed_on_D60": true
     }
   ],
   "followup_recommendation": "Actionable candidate-retention precision issue; D60/D61 should bind permission token/resource to Pasteboard read access or conservatively retain candidate when permission identity is unrelated or ambiguous."
-  }
 }
