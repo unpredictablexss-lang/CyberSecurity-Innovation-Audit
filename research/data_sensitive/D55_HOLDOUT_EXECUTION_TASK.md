@@ -31,6 +31,7 @@ You are the D55 independent holdout data steward and evaluation coordinator for 
 
 1. Verify the active checkout, full base SHA, remote, clean/dirty state, and local `AGENTS.md` rules. Record them in the run log.
 2. Search all D records and scanner history through the proposed cutoff for repo/commit/tree, archive/member, source path, candidate family, and tuning exposure. Produce an exclusion/overlap ledger with exact evidence paths.
+   - Apply the explicit source identity rules in the protocol: pin submodule gitlinks recursively; record but do not follow unsafe/out-of-tree symlinks; exclude any raw blob shared with D development; group same blobs across cohort repos under one precomputed canonical owner/inclusion probability; identify exact and modified vendor derivatives. Unresolved identity means stop the affected stratum before scan.
 3. Build a sampling frame from the separately identified source inventory. Record its origin and timestamp. Include selected and non-selected eligible snapshots, their pre-scan strata, immutable identities, prior-use result, and inclusion probabilities. For the known-CVE track, also freeze the exact 17-ID catalog, its Git blob/SHA, each primary advisory's saved bytes hash, source/version scope, and a disjoint new source-instance plan.
 4. Use the preregistered random, stratified, reproducible selection procedure. Freeze and hash the frame, protocol, seed commitment, cohort, and selection code **before the scan**. Run and freeze a design-based precision-planning simulation against the fixed interval-width/lower-bound targets. The 20 repository / 1,000 file / 4 family floors are workload minimums, not a power calculation; the simulation and final effective cluster count govern sufficiency. If a suitable frame or independence evidence is unavailable, stop at `not ready`; do not substitute old D samples.
 
@@ -75,6 +76,12 @@ Do not commit private source excerpts, restricted data, secrets, or labeler iden
 ### Definition of done
 
 D55 is ready for an accuracy readout only if the protocol's source independence, cohort, scanner freeze, blind double review, adjudication, coverage, denominator, reproducibility, and minimum cohort conditions are met. Otherwise deliver the completed evidence of the stop condition and mark the appropriate metric `not estimable`. M2 remains open until every M2 exit criterion in the preregistration is met and reviewed; this work alone cannot close M3.
+
+Before committing or scoring, validate the JSON companion with duplicate keys rejected (not just a permissive parse):
+
+```powershell
+python -c "import json,pathlib; p=pathlib.Path('research/data_sensitive/D55_HOLDOUT_PROTOCOL_20261021.json'); json.loads(p.read_text(encoding='utf-8'), object_pairs_hook=lambda xs: dict(xs) if len(dict(xs)) == len(xs) else (_ for _ in ()).throw(ValueError('duplicate JSON key')))"
+```
 
 ### Final handoff format
 

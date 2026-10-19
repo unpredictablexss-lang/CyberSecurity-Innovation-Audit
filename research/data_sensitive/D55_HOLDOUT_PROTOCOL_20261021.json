@@ -91,6 +91,15 @@
     "final_sufficiency_depends_on": "observed cluster-aware intervals, effective sample size, and pre-registered thresholds",
     "if_frame_or_independence_unavailable": "stop_not_ready; do not substitute D41, D48, D49-D53, prior D development, or synthetic cases"
   },
+  "source_identity_and_deduplication": {
+    "submodules": "include only exact pinned gitlink commit/tree with frozen recursive manifest; unavailable gitlink is explicit unavailable scope and may fail coverage gate",
+    "symlinks": "record mode 120000, link blob, literal target; do not follow absolute/broken/cyclic/out-of-tree targets; in-tree aliases map to one canonical target file",
+    "development_overlap": "identical raw blob SHA-256 across any repo/path/commit excludes that source unit from D55",
+    "within_holdout_cross_repo_same_blob": "one canonical source-content unit; deterministic owner is lexicographically smallest repo/commit/path in complete pre-scan frame; only owner row is eligible for selection and aliases are not independent sample units",
+    "vendor_copies": "exact copies use blob grouping; modified vendor copies require provenance/content comparison; confirmed derivatives share overlap group; unresolved derivative status blocks source before scan",
+    "canonical_content_key": "raw file bytes SHA-256 plus language/path-policy class, with repo/tree/path retained as context",
+    "unresolved_identity_action": "pending and stop affected stratum; do not score"
+  },
   "freeze_requirements": [
     "protocol hash",
     "independent source-frame hash and timestamp",
@@ -112,10 +121,6 @@
     "product_applicability_is_independent_of_source_label": true,
     "source_only_product_applicability": "unknown",
     "product_unknown_does_not_change_source_level_metrics": true,
-    "product_applicability_field": "product_applicability",
-    "product_applicability_values": ["supported", "refuted", "unknown"],
-    "product_applicability_is_independent_of_source_label": true,
-    "source_only_product_applicability": "unknown",
     "product_unknown_does_not_change_source_level_precision_or_recall": true,
     "prediction_blind_full_scope_review_required_for_recall": true,
     "unknown_is_retained_and_not_coerced": true,
@@ -213,6 +218,11 @@
     "precision": "not_estimable",
     "recall": "not_estimable",
     "accuracy": "not_computed"
+  },
+  "protocol_json_validation": {
+    "duplicate_object_keys_allowed": false,
+    "strict_object_pairs_hook_validation_required": true,
+    "normal_parser_that_silently_keeps_last_duplicate_is_sufficient": false
   },
   "scope_limit": "Source-level holdout evidence cannot establish product applicability or satisfy M3 by itself."
 }
