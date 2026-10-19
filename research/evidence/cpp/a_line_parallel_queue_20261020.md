@@ -376,3 +376,7 @@ T50 reran exact A0 target files with current `shared_ptr_race` 0.5.1 and IPC 0.1
 ## T51 — EDM test-only IPC candidate CR-0313
 
 T51 bound CR-0313 to the exact `TestTimerCallbackStub::OnRemoteRequest` test source. The current IPC CLI emits zero findings, but the translation unit parser and detector coverage are partial, so this is not a safety result. GN places the candidate in `EdmServicesUnitTest`; the production `edmservice` target is separate and does not include the test Stub. Preserve the original A0 state as PARTIAL/BLOCK and `not_testable / paused_pending_evidence`. See [T51 audit](t51_edm_cr0313_audit_20261028.md), [CLI result](t51_edm_cr0313_cli_20261028.md), and [verifier](verify_t51_edm_cr0313_audit_20261028.py).
+
+## D49 — Enterprise Device Manager IPC CR-0306–CR-0312
+
+D49 rebound all seven rows to the exact EDM source object and replayed the current IPC CLI on three production translation units: all parse complete and five candidates map to CR-0307/0308/0310–0312. CR-0306 is a post-dispatch parameterless admin-state query; CR-0309 is before the IDL dispatch path's system/native principal guard. These are no exact-line findings and no specific detector gap was established. The five findings also remain unconfirmed static candidates. Preserve all seven original states as `not_testable / paused_pending_evidence`, PARTIAL/BLOCK; CR-0313's test-only candidate is audited separately in T51. See [D49 assessment](d49_edm_ipc_no_change_20261028.md), [CLI result](d49_edm_ipc_cli_20261028.md), and [verifier](d49_edm_ipc_no_change_20261028.py).
