@@ -1,0 +1,49 @@
+{
+  "schema": "contacts-t5-d6-independent-replay-v1",
+  "review_date": "2026-10-19",
+  "frozen_d6_commit": "24b114094886b8d3e606afbbcd7b64af1dfa69ac",
+  "t5_cherry_pick_head": "e945781",
+  "prior_t5_head": "e352ade28dbbab8b9c13324f6e77cca0a099fe62",
+  "detector_sha256": "9ef8642cb2a107028cc7db7dce6ade168f19f7864b79e656afae6d8b625b9639",
+  "rule_id": "ohcpp-path-traversal-source-to-file-sink-candidate-001",
+  "rule_version": "0.3.0",
+  "focused_test_command": "python -m unittest tests.detectors.test_cpp_path_traversal_detector -v",
+  "focused_tests": {"passed": 12, "failed": 0},
+  "guard_probe_command": "python research/evidence/cpp/a_static_baseline_20261019/contacts-t5-guard-order-probe-20261019.py",
+  "guard_probes": [
+    {"id": "reject_found_before_both_sinks", "expected_findings": 0, "actual_findings": 0, "result": "PASS"},
+    {"id": "reject_found_after_open_before_unlink", "expected_findings": 1, "actual_findings": 1, "result": "PASS; prior unguarded open retained"},
+    {"id": "reject_found_after_both_sinks", "expected_findings": 2, "actual_findings": 2, "result": "PASS; both prior unguarded sinks retained"},
+    {"id": "reversed_equal_npos_guard", "expected_findings": 2, "actual_findings": 2, "result": "PASS; reversed condition does not sanitize"},
+    {"id": "guard_checks_other_tainted_parameter", "expected_findings": 2, "actual_findings": 2, "result": "PASS; path remains tainted"},
+    {"id": "unrelated_receiver_boolean_condition", "expected_findings": 2, "actual_findings": 2, "result": "PASS; unrelated receiver does not sanitize path"}
+  ],
+  "exact_source": {
+    "repository": "openharmony/applications_contacts_data",
+    "commit": "b02aadfc2d801ee30573fcb2d13490298e146fea",
+    "tree": "ef183625ccbc842f47b076eb75e68b665d7c21c6",
+    "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+    "blob": "32c6a26a9a6c1f4ec3172f45bc3dbe4d3668abe6",
+    "bytes": 80944,
+    "sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383"
+  },
+  "exact_replay": {
+    "command": "independent direct-detector harness; same command as contacts-t5-d5-replay-20261019.md",
+    "parse_status": "complete",
+    "parse_issues": 0,
+    "functions": 57,
+    "calls": 525,
+    "run_status": "completed",
+    "file_outcome": "complete",
+    "findings": [
+      {"line": 789, "column": 19, "symbol": "HandleContactPortrait", "identity_quality": "complete", "rule_version": "0.3.0", "finding_key": "7a1e14e6656d15a3ae1532122fff7bd51b27652d458d3066cd404d6bb8e8e9cf"},
+      {"line": 790, "column": 19, "symbol": "HandleContactPortrait", "identity_quality": "complete", "rule_version": "0.3.0", "finding_key": "5d739813e4f40cfa2a91ea629ea842aa05ca0eb03d292df1406ea4972545701a"},
+      {"line": 794, "column": 15, "symbol": "HandleContactPortrait", "identity_quality": "complete", "rule_version": "0.3.0", "finding_key": "1b9259406adc8cfea406caaa071734268f8404d5f386cea8fd763debf8523999"}
+    ]
+  },
+  "catalog_production_cli": "BLOCK: D5/D6 is not registered in owner-controlled Catalog in this T5 checkout; direct detector replay only.",
+  "rule_regression_disposition": "PASS",
+  "case_disposition": "PARTIAL/BLOCK",
+  "case_limits": ["No exact trusted fixed source is available in this review.", "Catalog production CLI integration has not been performed.", "Product build, permission assignment and filesystem reachability remain unverified.", "Three static findings remain candidates, not confirmed product vulnerabilities."]
+}
+
