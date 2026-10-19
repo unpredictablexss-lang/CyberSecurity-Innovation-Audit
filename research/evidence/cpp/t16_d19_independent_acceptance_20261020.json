@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "experiment": "D19 cJSON recursive compare root precision",
+  "classification": "no_change",
+  "fixed_control": false,
+  "experimental_patch_commit": "bd307ec3b5f1c0555976c4b0118621e485367aa2",
+  "cases": [
+    {
+      "input": "third_party/cjson/cJSON.c",
+      "commit_label": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+      "parse_status": "partial",
+      "run_status": "blocked",
+      "rule_version": "0.4.2",
+      "source_bytes": 80529,
+      "source_sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb",
+      "elapsed_seconds": 0.11530920000041078,
+      "findings": [
+        {
+          "line": 3161,
+          "column": 22,
+          "rule_id": "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005",
+          "symbol": "cJSON_Compare",
+          "source_sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb"
+        }
+      ],
+      "scope_note": "direct detector replay only; parser and CLI coverage are not evaluated"
+    },
+    {
+      "input": "renamed/cJSON.c",
+      "commit_label": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+      "parse_status": "partial",
+      "run_status": "blocked",
+      "rule_version": "0.4.2",
+      "source_bytes": 80549,
+      "source_sha256": "deefeb5bd926d3f8ecd809f32e70e3e44592ae2d0afdde051f64a6251b01f9f2",
+      "elapsed_seconds": 0.09909030000017083,
+      "findings": [
+        {
+          "line": 3161,
+          "column": 22,
+          "rule_id": "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005",
+          "symbol": "compare_json_nodes",
+          "source_sha256": "deefeb5bd926d3f8ecd809f32e70e3e44592ae2d0afdde051f64a6251b01f9f2"
+        }
+      ],
+      "scope_note": "direct detector replay only; parser and CLI coverage are not evaluated"
+    },
+    {
+      "input": "experimental/d17-develop-bd307ec/cJSON.c",
+      "commit_label": "bd307ec3b5f1c0555976c4b0118621e485367aa2",
+      "parse_status": "partial",
+      "run_status": "blocked",
+      "rule_version": "0.4.2",
+      "source_bytes": 73339,
+      "source_sha256": "2d13226af13a4f065862caf6f0c34f3ef7b43f83798ce37d28747d05612f097a",
+      "elapsed_seconds": 0.0835358999993332,
+      "findings": [],
+      "scope_note": "direct detector replay only; parser and CLI coverage are not evaluated"
+    },
+    {
+      "input": "tests/detectors/fixtures/cpp_resource_lifetime/safe_recursive_compare_indexed_lookup.c",
+      "commit_label": "2222222222222222222222222222222222222222",
+      "parse_status": "complete",
+      "run_status": "completed",
+      "rule_version": "0.4.2",
+      "source_bytes": 807,
+      "source_sha256": "5382bb30650a01567187a54d407b7a7c70d1e231c8c616fbe621126658ab17a0",
+      "elapsed_seconds": 0.0018433000004733913,
+      "findings": [],
+      "scope_note": "direct detector replay only; parser and CLI coverage are not evaluated"
+    },
+    {
+      "input": "tests/detectors/fixtures/cpp_resource_lifetime/safe_recursive_compare_cost.c",
+      "commit_label": "2222222222222222222222222222222222222222",
+      "parse_status": "complete",
+      "run_status": "completed",
+      "rule_version": "0.4.2",
+      "source_bytes": 550,
+      "source_sha256": "7f7c503d12a204caffa6e76a5d44745e2cdfcb94b917d632f4d59250d7fbdfcf",
+      "elapsed_seconds": 0.0009196000000883942,
+      "findings": [],
+      "scope_note": "direct detector replay only; parser and CLI coverage are not evaluated"
+    }
+  ],
+  "independent_validation": {
+    "checkout_head": "2457c6658b2bf1b4887f91bb406537b150afd259",
+    "development_commit": "83b5bc1a5427a4a74c403547c4a2362f6060cfb1",
+    "d19_parent": "252e842e7627dda3e261b2bac17cc855ef1d4ddb",
+    "candidate_rule_regression": {
+      "status": "PASS_DIRECT_DETECTOR_ONLY",
+      "observed": "Pinned source and renamed source hit candidate-005; develop experiment and indexed-lookup plus unrelated positional recursive control are quiet.",
+      "parser_cli": "Not covered by this direct replay."
+    },
+    "cve_case_disposition": {
+      "status": "PARTIAL",
+      "fixed_source": "BLOCK",
+      "reason": "Whole-source cJSON.c parsing is partial; no trusted merged/released fixed source is bound. develop patch is an unmerged experiment, not fixed.",
+      "vulnerable_component_identity": {
+        "repository": "openharmony/third_party_cJSON",
+        "upstream_commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748",
+        "upstream_tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856",
+        "path": "cJSON.c",
+        "blob": "152b2caa479c9f448001652913c980a6dafb82e0",
+        "raw_bytes": 80529,
+        "sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb",
+        "independent_git_object_chain_verified": true
+      },
+      "replay_transport_identity": {
+        "commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+        "tree": "3c07134d5a05aa546b15739e32503a2ca192d258",
+        "meaning": "Synthetic two-file replay snapshot; not upstream component commit/tree."
+      },
+      "whole_source_cli": {
+        "parse_status": "partial",
+        "run_status": "blocked",
+        "source": "D16/T14 exact-source replay with cJSON.c partial and cJSON_Utils.c complete."
+      }
+    },
+    "develop_experiment_identity": {
+      "commit": "bd307ec3b5f1c0555976c4b0118621e485367aa2",
+      "parent": "4e9154458dce824216820fd49bfe8bd97bc1e287",
+      "tree": "fa51cefb4d6f1f097d5cbfa842702a3c4e09bf3f",
+      "path": "cJSON.c",
+      "blob": "d8ea4d33a1546a3da052c3387319632b56818341",
+      "raw_bytes": 73339,
+      "sha256": "2d13226af13a4f065862caf6f0c34f3ef7b43f83798ce37d28747d05612f097a",
+      "ancestor_of_develop": true,
+      "ancestor_of_master": false,
+      "accepted_as_fixed": false
+    },
+    "verification": {
+      "cpp_detector_tests": "160 passed",
+      "queue_verifier": "overall_ok=true; 345 IDs retained",
+      "scope_base": "8ec5f56a12e90bba56953b39eb17faa20e154da9",
+      "scope_lane": "cpp",
+      "scope_violations": 0,
+      "diff_check": "passed"
+    }
+  }
+}
