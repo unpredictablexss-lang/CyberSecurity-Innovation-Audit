@@ -32,15 +32,15 @@ This independent integration review starts from T3 commit `50b2806a7df38cd1ad07f
 ### Development lane
 
 1. **Contacts admission and semantic review:** validate the `DeleteFile(filePath)` bucket inputs; locate a trusted fixed source; request owner review and Catalog admission; then replay through the production CLI. Keep the finding candidate-level until those gates are met.
-2. **Bounds:** recover complete libtiff source analysis or improve only a reproducible parser/model limitation; bind the full vulnerable and fixed functions. Recover the exact vulnerable web_webview object before any differential claim.
+2. **Bounds:** recover complete libtiff source analysis or improve only a reproducible parser/model limitation; bind the full vulnerable and fixed functions. For web_webview, review the six remaining ordinary-loop candidates and parser coverage using the verified exact source objects; preserve fragment/full-TU distinctions.
 3. **Resource exhaustion:** find trusted fixed cJSON sources and complete analysis for both distinct roots; retain the D8 conservative sibling-iteration gate and add source-bound safe controls where available.
 4. **Coverage blockers:** obtain full parser coverage and source-to-product provenance for libpng cases; retrieve the dsoftbus upstream tree identity and source-bound safe/unrelated controls.
 
 ### Independent test lane
 
 1. **T7 regression audit:** in a clean checkout, replay D7/D8 frozen commits and verify positive, fixed-if-available, safe, unrelated, renamed, and partial controls; compare rule IDs, source hashes, locations, parse state, and detector coverage.
-2. **T7 source-ledger reconciliation:** resolve the web_webview T1 matrix versus T3 wording discrepancy, retaining BLOCK until its exact vulnerable/fixed input records reconcile.
-3. **T7 queue continuation:** preserve the 345 original IDs/statuses; process the first five queued `not_testable` entries only as evidence arrives, and write the next evidence action without upgrading unknown candidates.
+2. **T7 source-ledger reconciliation:** completed. Preserve the T7/T8 correction that web_webview exact objects are verified while its full-TU scan remains partial; retain the frozen T1 matrix unchanged.
+3. **T7 queue continuation:** preserve the 345 original IDs/statuses; start CR-0219–CR-0223 per-ID review only after exact commit/tree/blob identity verification. T10 has verified source identities and code context; next obtain product build flags, caller policy and service reachability before changing any row disposition.
 4. Re-run `scripts.check_change_scope` and the queue verifier on the frozen integration commit. Record each item as PASS/PARTIAL/BLOCK/N/A with evidence boundaries.
 
 ## Structured Vibe Coding prompts for the next parallel wave
@@ -52,7 +52,7 @@ Role: A-line C/C++ bounds-detector developer.
 Continuous goal: improve disclosed bounds-root-cause candidates only where exact source and a reproducible detector gap support a narrow rule change.
 Inputs: current T3 integration commit; D7 bounds evidence; T1/T3 libtiff and web_webview artifacts; exact upstream vulnerable/fixed Git objects if available.
 Steps: verify repo/commit/tree/blob/source hashes; replay current CLI with identical scope and rule version; identify whether each miss is parser coverage, detector-model coverage, or absent input; change only the responsible detector pattern; add vulnerable, guarded/fixed, safe, unrelated, renamed and partial controls as applicable; record runtime and commands.
-Done when: bounded positive and negative controls pass; source-level claims preserve parser/model coverage; missing web_webview vulnerable object remains BLOCK; libtiff full-source result is not promoted while parsing is partial; scope and diff checks pass.
+Done when: bounded positive and negative controls pass; source-level claims preserve parser/model coverage; verified web_webview objects are used for complete function fragments while the full-TU result remains PARTIAL; libtiff full-source result is not promoted while parsing is partial; scope and diff checks pass.
 Boundaries: C++ detector/tests/evidence only; do not change Catalog, API, shared parser, shared docs, or source acquisition policy; never infer safety from zero partial findings.
 ```
 
@@ -73,7 +73,7 @@ Boundaries: no generic recursion/complexity alerts, no fabricated fixed version,
 Role: independent A-line static-regression and provenance auditor; do not participate in detector implementation.
 Continuous goal: independently verify each frozen development commit and preserve the 345-candidate evidence queue until every row has a sourced disposition.
 Inputs: separate clean checkout of the submitted D9/D10 commits; T1/T2/T3/T6 matrices; exact source refs, hashes, scopes, detector outputs, and A0 original IDs/states.
-Steps: rerun focused tests and exact-source CLI; independently verify repository/commit/tree/blob/source hashes, finding rule/location, parser and detector coverage; compare positive/fixed/safe/unrelated/renamed/partial controls; reconcile web_webview matrix/report discrepancy; preserve original queue IDs and states while adding only sourced evidence actions.
+Steps: rerun focused tests and exact-source CLI; independently verify repository/commit/tree/blob/source hashes, finding rule/location, parser and detector coverage; compare positive/fixed/safe/unrelated/renamed/partial controls; retain the web_webview matrix/report correction and verify source-bound Samgr queue evidence; preserve original queue IDs/states while adding only sourced evidence actions.
 Done when: every changed case has PASS/PARTIAL/BLOCK/N/A with a specific evidence boundary; queue verifier, source-hash checks, branch-scope check and diff check pass; unknown inputs remain blocked and no unsupported precision/recall claim is made.
 Boundaries: no detector/test/fixture edits; no developer result accepted without independent replay; partial zero-finding is never safe; missing fix is not a fixed pass.
 ```
