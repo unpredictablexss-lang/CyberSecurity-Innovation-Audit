@@ -1,0 +1,161 @@
+{
+  "schema_version": "1.0",
+  "task_id": "T65",
+  "date": "2026-10-20",
+  "phase": "independent-acceptance-complete",
+  "frozen_patch": {
+    "commit": "dd7881d81e49d333ac2bd52062706ed06c5694c5",
+    "parent": "594abe600d731c72e760e730526dadb8931a9985",
+    "detector": "ohscanner.known_disclosed_cves@0.19.9",
+    "detector_blob": "818836c66390f30bb8dd778d019315b0085734dd",
+    "independent_worktree": "D:/openHarmonyScanner/worktrees/t65-d65-guard-evidence-acceptance-20261020"
+  },
+  "pinned_source": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+    "stub": {
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+      "bytes": 6288,
+      "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+      "parse": "partial"
+    },
+    "observer_core": {
+      "path": "services/core/src/pasteboard_service.cpp",
+      "blob": "c380ac266a85edd818caa811f11b99722d351788",
+      "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+      "parse": "partial"
+    }
+  },
+  "observation_state_matrix": [
+    {
+      "shape": "No permission-like call/token in OnGetPasteData body",
+      "state": "absent",
+      "guard_obligation": "unknown",
+      "observation_obligation": "unknown",
+      "description": "state=absent; scope=OnGetPasteData body; no permission-like call or token was observed"
+    },
+    {
+      "shape": "Top-level VerifyPermission(PERMISSION_READ_PASTEBOARD) denial-return before read",
+      "state": "observed_unresolved",
+      "guard_obligation": "unknown",
+      "observation_obligation": "unknown",
+      "description": "state=observed_unresolved; observations=span=handler_body[4:48]; token=PERMISSION_READ_PASTEBOARD|VERIFYPERMISSION; snippet=VerifyPermission(PERMISSION_READ_PASTEBOARD)"
+    },
+    {
+      "shape": "Top-level CheckPermission(PERMISSION_NETWORK) denial-return before read",
+      "state": "observed_unresolved",
+      "guard_obligation": "unknown",
+      "observation_obligation": "unknown",
+      "description": "state=observed_unresolved; observations=span=handler_body[4:39]; token=CHECKPERMISSION|PERMISSION_NETWORK; snippet=CheckPermission(PERMISSION_NETWORK)"
+    },
+    {
+      "shape": "Same-unit CheckPastePermission helper called before read",
+      "state": "observed_unresolved",
+      "guard_obligation": "unknown",
+      "observation_obligation": "unknown",
+      "description": "state=observed_unresolved; observations=span=handler_body[4:26]; token=CHECKPASTEPERMISSION; snippet=CheckPastePermission()",
+      "limitation": "Observation covers call site in handler, not helper body permission token."
+    },
+    {
+      "shape": "Guard nested under literal if(false)",
+      "state": "unresolved_control_flow",
+      "guard_obligation": "unknown",
+      "observation_obligation": "unknown",
+      "description": "state=unresolved_control_flow; observations=span=handler_body[14:58]; token=PERMISSION_READ_PASTEBOARD|VERIFYPERMISSION; snippet=VerifyPermission(PERMISSION_READ_PASTEBOARD)"
+    },
+    {
+      "shape": "Guard nested under outer if(is_privileged)",
+      "state": "unresolved_control_flow",
+      "guard_obligation": "unknown",
+      "observation_obligation": "unknown",
+      "description": "state=unresolved_control_flow; observations=span=handler_body[22:66]; token=PERMISSION_READ_PASTEBOARD|VERIFYPERMISSION; snippet=VerifyPermission(PERMISSION_READ_PASTEBOARD)"
+    },
+    {
+      "shape": "Guard after GetPasteData",
+      "state": "observed_unresolved",
+      "guard_obligation": "unknown",
+      "observation_obligation": "unknown",
+      "description": "state=observed_unresolved; observations=span=handler_body[20:64]; token=PERMISSION_READ_PASTEBOARD|VERIFYPERMISSION; snippet=VerifyPermission(PERMISSION_READ_PASTEBOARD)"
+    }
+  ],
+  "matrix_replay": {
+    "cases": 22,
+    "all_cases_retained_D51_and_D52": true,
+    "all_D52_permission_guard_unknown": true,
+    "observation_state_counts": {
+      "absent": 1,
+      "observed_unresolved": 19,
+      "unresolved_control_flow": 2
+    },
+    "includes": [
+      "D62 untrustedState and bluetoothResult arbitrary-state shapes",
+      "Bluetooth API given READ_PASTEBOARD token and same-name/delegating helpers",
+      "unrelated Bluetooth/network/generic permission cases",
+      "D59/D61 ignored result, post-read, post-serialization, dead, outer-branch and mixed-condition controls",
+      "immediate throw control"
+    ],
+    "interpretation": "Observed means lexical permission-like syntax was found; it does not mean authorization was verified, the check is effective, or denial dominates the read."
+  },
+  "finding_identity": {
+    "D52": {
+      "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+      "symbol": "CVE-2025-27247",
+      "file": "services/zidl/src/pasteboard_service_stub.cpp",
+      "line": 41,
+      "column": 1,
+      "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+    },
+    "D51": {
+      "symbol": "CVE-2025-25212",
+      "file": "services/core/src/pasteboard_service.cpp",
+      "line": 241,
+      "column": 5,
+      "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+    },
+    "comparison_to_D64": "Rule/CVE/file/line/column/source hashes unchanged; D52 adds permission_guard_observation metadata."
+  },
+  "exact_67_unit_replay": {
+    "units": 67,
+    "parser_states": {
+      "complete": 57,
+      "partial": 10,
+      "failed": 0,
+      "not_run": 0
+    },
+    "status": "blocked",
+    "analyzed_units": 67,
+    "findings": [
+      "D51 CVE-2025-25212 at services/core/src/pasteboard_service.cpp:241:5 with same hash",
+      "D52 CVE-2025-27247 at services/zidl/src/pasteboard_service_stub.cpp:41:1 with same hash; permission_guard=unknown; actual pinned handler observation=absent"
+    ],
+    "comparison": "Both route candidate identities are unchanged from D64/D63/D61."
+  },
+  "validation": {
+    "focused_command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "focused": "PASS 32/32",
+    "strict_D65_json_duplicate_key_check": "PASS",
+    "git_diff_check": "PASS",
+    "diff_base": "594abe600d731c72e760e730526dadb8931a9985",
+    "changed_paths": 5,
+    "insertions": 148,
+    "deletions": 2,
+    "unrelated_detector_implementation": false
+  },
+  "verdict": {
+    "observation_state_distinction": "PASS for tested absence, visible guard-like syntax, and lexically nested control-flow cases; spans, normalized tokens, and snippets are emitted for observations.",
+    "candidate_retention": "PASS; all 22 cases keep D51/D52 route findings and permission_guard remains unknown.",
+    "authorization_non_inference": "PASS; observed_unresolved retains unknown status and does not claim authorization or dominance.",
+    "evidence_completeness": "PARTIAL; spans are handler-body-relative text in a description string, and helper call observations do not include helper-body permission tokens or cross-file provenance.",
+    "coverage": "PARTIAL; full replay blocked with 10 partial units.",
+    "scope": "PASS; only known-CVE detector behavior, focused tests/corpus bindings, and D65 evidence changed."
+  },
+  "limitations": [
+    "absent is scoped only to the OnGetPasteData body and says nothing about dispatch framework, inherited ACL, or cross-file permission policy.",
+    "unresolved_control_flow is a lexical nested-block cue, not complete CFG/dominance proof.",
+    "The observation descriptions are serialized text, with offsets relative to handler body, not absolute file spans.",
+    "No framework/product inclusion, runtime authorization, CVE causality, or vulnerability status is established; D52 remains a pinned-source candidate."
+  ]
+}
