@@ -1,0 +1,99 @@
+{
+  "schema": "a-line-source-audit-v1",
+  "audit_id": "T25-DATASHARE-RACE-20261020",
+  "independent_lane": "test/evidence",
+  "base_commit": "c0d59bf2911a358643e7f38a0d93ed2c5cb6e5d8",
+  "queue_input": "research/deliveries/cpp/a0_triage_20261019/queue.csv",
+  "queue_rows_total": 345,
+  "source": {
+    "repository": "openharmony/distributeddatamgr_data_share",
+    "repo_project_path": "foundation/distributeddatamgr/data_share",
+    "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+    "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+    "object_database": "D:/openHarmonyScanner/openharmony/.repo/project-objects/distributeddatamgr_data_share.git",
+    "object_retrieval": "offline git cat-file from local project-object database"
+  },
+  "summary": {
+    "queue_rows_audited": 3,
+    "unique_source_files": 1,
+    "source_identity": "PASS",
+    "cli_baseline": "PARTIAL",
+    "same_object_unordered_cross_thread_access_evidenced": false,
+    "product_build_or_runtime_verified": false,
+    "case_disposition": "PARTIAL/BLOCK",
+    "original_status_preserved": "not_testable",
+    "queue_status_preserved": "paused_pending_evidence"
+  },
+  "queue_source_sha256": "a174c0a74986e8410c53f173b84bb446c59000c3867add612a14e8aab4396d27",
+  "post_freeze_cross_check": {
+    "development_commit": "930cd889219cf769d6386ae26176332e37472002",
+    "scope": "source binding and raw CLI provenance only; development finding labels were not used for T25 dispositions",
+    "queue_source_objects_match": true,
+    "source_binding_matches_t25": true,
+    "cli_selected_source_set_matches_t25": true,
+    "independent_development_verifier": "PASS",
+    "development_verifier_command": "python d25_datashare_cr0013_15_replay_20261020.py --source-git-dir D:/openHarmonyScanner/openharmony/.repo/project-objects/distributeddatamgr_data_share.git --queue-json research/deliveries/cpp/a0_triage_20261019/queue.json"
+  },
+  "source_files": [
+    {"path":"frameworks/native/provider/include/datashare_stub_impl.h","blob":"b3cc65d4a39b596cad57477e30e06bc7a673b37c","source_sha256":"81df12f7bf672ed146509837fc73c7ad857237d08f47cb4af54341311ebc284c","bytes":4016},
+    {"path":"frameworks/native/provider/src/datashare_stub_impl.cpp","blob":"4ef431998b11042ce96e449eacf4dbd14549d764","source_sha256":"77f46f95b78da2bd329dd202f8006368efa1f555854f157e273c3b257d9048eb","bytes":32292},
+    {"path":"frameworks/native/provider/include/datashare_uv_queue.h","blob":"d10ef5bfce76280182053b7f64ef7fc903b0bb30","source_sha256":"e80606dc89f948be432b95140848c5eb9d84e574d30eae069714e2b8f79ce2b1","bytes":1725},
+    {"path":"frameworks/native/provider/src/datashare_uv_queue.cpp","blob":"1338265507cb31cd3233a67dc9c3f3c078ed7008","source_sha256":"577f0c93ed8354cd3f9dd3e6b740c7989d76644c7199fe5ed4c1bf4ef1df67fc","bytes":5102}
+  ],
+  "cli_baseline": {
+    "prepare_command": "git clone --shared --no-checkout D:/openHarmonyScanner/openharmony/.repo/project-objects/distributeddatamgr_data_share.git research/evidence/cpp/.t25_datashare_source_repo",
+    "command": "python -m src.cli.main ohscan-run --repo-dir research/evidence/cpp/.t25_datashare_source_repo --repository openharmony/distributeddatamgr_data_share --commit 560c5cdadf08b4beeb691e93d70ff32cc2dca8bd --include frameworks/native/provider/include/datashare_stub_impl.h --include frameworks/native/provider/src/datashare_stub_impl.cpp --include frameworks/native/provider/include/datashare_uv_queue.h --include frameworks/native/provider/src/datashare_uv_queue.cpp --detector ohscanner.cpp.shared_ptr_race --json-out research/evidence/cpp/a_t25_datashare_cr0013_0015_cli_20261020.json --md-out research/evidence/cpp/a_t25_datashare_cr0013_0015_cli_20261020.md",
+    "report": "a_t25_datashare_cr0013_0015_cli_20261020.json",
+    "git_tree": "f731230c116c94d7619f5514c828b33ffac69924",
+    "snapshot_sha256": "3f8a51aa696519807599fd78b83220ab31bd26fa5dd4466c4c5d96b70b7146db",
+    "profile_id": "light-ast",
+    "detector_id": "ohscanner.cpp.shared_ptr_race",
+    "detector_version": "0.5.1",
+    "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+    "selected_files": 4,
+    "selected_bytes": 43135,
+    "parse_status": {"complete": 3, "partial": 1},
+    "detector_coverage": "partial",
+    "diagnostics": [
+      {"file": "frameworks/native/provider/include/datashare_stub_impl.h", "line": 35, "symbol": "uvQueue_", "candidate_id": "ohscanner.cpp.shared_ptr_race:553c64315625c263"},
+      {"file": "frameworks/native/provider/include/datashare_stub_impl.h", "line": 42, "symbol": "uvQueue_", "candidate_id": "ohscanner.cpp.shared_ptr_race:ccb0f7b5e647d46e"}
+    ],
+    "partial_file": "frameworks/native/provider/src/datashare_uv_queue.cpp",
+    "partial_reason": "incomplete_ast:partial; detector did not analyze this translation unit"
+  },
+  "rows": [
+    {
+      "id": "CR-0013", "candidate_id": "ohscanner.cpp.shared_ptr_race:f4be318df1dbd8b2", "line": 35,
+      "member": "DataShareStubImpl::uvQueue_", "operation": "assignment from std::make_shared in the JsDataShareExtAbility constructor",
+      "cli_result": "syntax candidate at the constructor assignment; no candidate establishes a post-construction write",
+      "access_and_sync": "All observed uvQueue_ request calls in datashare_stub_impl.cpp occur under std::lock_guard<std::mutex> lock(mutex_). The constructor initializes the member before the object can be returned by normal C++ construction. Destructor/lifetime overlap and unusual publication are not proven.",
+      "same_object_unordered_access": "not evidenced; the two constructor write sites are alternative constructors and do not both run on one normally constructed object",
+      "product_context": "provider source is included by a BUILD.gn shared-library target per source declarations, but shipped product profile/reachability/impact and runtime scheduling are not verified",
+      "disposition": "PARTIAL/BLOCK"
+    },
+    {
+      "id": "CR-0014", "candidate_id": "ohscanner.cpp.shared_ptr_race:937350481dcae131", "line": 40,
+      "member": "DataShareStubImpl::extension_", "operation": "constructor member initialization from the StsDataShareExtAbility argument",
+      "cli_result": "no diagnostic at line 40; this is initialization syntax only",
+      "access_and_sync": "The same member is read by GetOwner; no post-construction assignment to extension_ was found in the selected source. A returned shared_ptr copy does not establish a race on the member. Concurrent destruction/object lifetime and caller reachability remain unbound.",
+      "same_object_unordered_access": "not evidenced",
+      "product_context": "provider source is included by a BUILD.gn shared-library target per source declarations, but shipped product profile/reachability/impact and runtime scheduling are not verified",
+      "disposition": "PARTIAL/BLOCK"
+    },
+    {
+      "id": "CR-0015", "candidate_id": "ohscanner.cpp.shared_ptr_race:7c417b3d7d895f09", "line": 42,
+      "member": "DataShareStubImpl::uvQueue_", "operation": "assignment from std::make_shared in the StsDataShareExtAbility constructor",
+      "cli_result": "syntax candidate at the constructor assignment; no candidate establishes a post-construction write",
+      "access_and_sync": "All observed uvQueue_ request calls in datashare_stub_impl.cpp occur under std::lock_guard<std::mutex> lock(mutex_). The constructor initializes the member before the object can be returned by normal C++ construction. Destructor/lifetime overlap and unusual publication are not proven.",
+      "same_object_unordered_access": "not evidenced; the two constructor write sites are alternative constructors and do not both run on one normally constructed object",
+      "product_context": "provider source is included by a BUILD.gn shared-library target per source declarations, but shipped product profile/reachability/impact and runtime scheduling are not verified",
+      "disposition": "PARTIAL/BLOCK"
+    }
+  ],
+  "limitations": [
+    "The source audit and CLI replay do not prove a data race or a safe verdict.",
+    "The CLI selected four files; datashare_uv_queue.cpp parsed partial and was not analyzed by the shared_ptr detector. Header and stub implementation parsing does not remove that coverage limit.",
+    "No exact shipped product profile, runtime version, thread entrypoint contract, object destruction quiescence, TSan binary, or runtime execution is bound.",
+    "No fixed-source comparison applies to these queue candidates; all three original records remain not_testable / paused_pending_evidence."
+  ]
+}
