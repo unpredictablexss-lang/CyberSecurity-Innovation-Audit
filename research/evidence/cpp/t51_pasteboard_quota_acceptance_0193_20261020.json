@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "task": "T51 final independent acceptance of D51 0.19.3",
+  "date": "2026-10-20",
+  "role": "independent_test_only",
+  "supersedes": "t51_pasteboard_quota_acceptance_20261020.json",
+  "scanner_base": "842948084660207fd64399cfd598ed93e5593dcc",
+  "developer_commit": "c8f83b82291e82b3272c73b943623336a3c836c3",
+  "rule_version": "0.19.3",
+  "acceptance_checkout_modified_detector_tests_fixtures_expected_outputs_or_policy": false,
+  "acceptance": {
+    "rule_regression": "PASS_EXACT_REVIEWED_GUARD_SHAPES_ONLY",
+    "static_source_case": "PARTIAL",
+    "component_root_cause": "CANDIDATE_SUPPORTED_UNASSESSED",
+    "product_cve_status": "UNKNOWN",
+    "validated_vulnerability": 0,
+    "summary": "The final rule retained every reviewed negative control and suppressed only the reviewed direct and helper quota exit controls. Exact component replay is blocked with partial semantic analysis; product build, reachability, lifecycle and impact remain unverified."
+  },
+  "vulnerable_source": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+    "path": "services/core/src/pasteboard_service.cpp",
+    "blob": "c380ac266a85edd818caa811f11b99722d351788",
+    "bytes": 17335,
+    "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+    "candidate": {
+      "symbol": "CVE-2025-25212",
+      "line": 241,
+      "column": 5,
+      "statement": "observers->insert(observer)",
+      "rule_id": "ohknowncve-pasteboard-cve-2025-25212"
+    }
+  },
+  "replay": {
+    "command": "python -m src.cli.main ohscan-run --repo-dir D:/OpenHarmony807/repos/miscservices_pasteboard --repository openharmony/miscservices_pasteboard --commit dd22c7cb5e5f207a6c38c50f45b7369ee8575840 --detector ohscanner.known_disclosed_cves",
+    "repetitions": 2,
+    "exit_codes": [0, 0],
+    "stable_evidence_projection_equal": true,
+    "task_status": "completed_with_limitations",
+    "detector_version": "0.19.3",
+    "detector_run_status": "blocked",
+    "scope_files": 67,
+    "scope_loc": 7104,
+    "parse_counts": {"complete": 59, "partial": 8, "not_run": 1},
+    "target_parser_status": "complete",
+    "target_analysis_status": "partial",
+    "target_analysis_reason": "detector_model_incomplete",
+    "validated_vulnerability": 0,
+    "diagnostics": [
+      {
+        "symbol": "CVE-2025-25212",
+        "file": "services/core/src/pasteboard_service.cpp",
+        "line": 241,
+        "column": 5,
+        "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+      },
+      {
+        "symbol": "CVE-2025-27247",
+        "file": "services/zidl/src/pasteboard_service_stub.cpp",
+        "line": 41,
+        "column": 1,
+        "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+        "interpretation": "separate candidate; method-opening location"
+      }
+    ]
+  },
+  "probes": [
+    {"name": "direct single bound at-cap return guard before insert", "expected": "candidate suppressed", "observed": "no candidate", "result": "pass"},
+    {"name": "exact two-return helper bound to same receiver and consumed by exiting caller guard", "expected": "candidate suppressed", "observed": "no candidate", "result": "pass"},
+    {"name": "log-only guard", "expected": "candidate retained", "observed": "candidate retained", "result": "pass"},
+    {"name": "helper result ignored", "expected": "candidate retained", "observed": "candidate retained", "result": "pass"},
+    {"name": "insert before guard", "expected": "candidate retained", "observed": "candidate retained", "result": "pass"},
+    {"name": "compound at-cap predicate", "expected": "candidate retained", "observed": "candidate retained", "result": "pass"},
+    {"name": "unrelated receiver guard", "expected": "candidate retained", "observed": "candidate retained", "result": "pass"},
+    {"name": "goto to insertion label", "expected": "candidate retained", "observed": "candidate retained", "result": "pass"},
+    {"name": "unrelated historyMap growth", "expected": "no observer quota candidate", "observed": "no candidate", "result": "pass"}
+  ],
+  "test_results": {
+    "command": "python -m pytest tests/detectors/test_known_disclosed_cves.py tests/detectors/test_known_case_corpus.py -q",
+    "passed": 31,
+    "failed": 0,
+    "frozen_commit_diff_check": "pass",
+    "frozen_commit_evidence_json_parse": "pass"
+  },
+  "scope_audit": {
+    "check_change_scope": "N/A (baseline ownership has no D lane)",
+    "manual_review": "D51 detector, focused tests and known-case fixtures/manifest, and D51 evidence only; no shared runner/parser/API/Catalog/ownership policy/scope checker or unrelated detector changes",
+    "D_queue_changed": false
+  },
+  "product_task_tree": {
+    "root": "G12-PC-PRODUCT-ADMISSION-CLOSURE",
+    "status": "ACTIVE_NOT_ADMITTED",
+    "states": {
+      "G12-PC-1": "IN_PROGRESS_BLOCKED",
+      "G12-PC-2": "PIPELINE_IMPLEMENTED_NOT_EXECUTED",
+      "G12-PC-3": "BLOCKED",
+      "G12-PC-4": "NOT_RUN",
+      "G12-PC-5": "NOT_RUN",
+      "G12-PC-6": "NOT_ADMITTED"
+    }
+  },
+  "remaining_unknowns": [
+    "product build identity and component inclusion",
+    "service ability ACL and caller reachability",
+    "automatic observer callback cleanup on caller death",
+    "runtime availability impact and controlled reproduction",
+    "fixed-product rebuild and revalidation",
+    "control-flow and quota shapes beyond the exact reviewed direct/helper patterns"
+  ]
+}
