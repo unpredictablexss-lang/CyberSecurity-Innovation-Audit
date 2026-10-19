@@ -25,7 +25,7 @@ INTAKE_SCHEMA = "ohscanner.ark-holdout-intake/v1"
 TRUTH_SCHEMA = "ohscanner.ark-holdout-truth/v1"
 REVIEW_SCHEMA = "ohscanner.ark-holdout-review/v1"
 LOCK_SCHEMA = "ohscanner.ark-holdout-review-lock/v1"
-ADJUDICATION_SCHEMA = "ohscanner.ark-holdout-adjudication/v1"
+ADJUDICATION_SCHEMA = "ohscanner.ark-holdout-adjudication/v2"
 FINAL_SCHEMA = "ohscanner.ark-holdout-final-labels/v1"
 PREREGISTRATION_SCHEMA = "ohscanner.ark-holdout-preregistration/v1"
 LEAKAGE_LEDGER_SCHEMA = "ohscanner.ark-holdout-leakage-ledger/v1"
@@ -59,6 +59,19 @@ def seal_artifact(schema: str, payload: dict[str, Any]) -> dict[str, Any]:
 
 def has_sha256(value: Any) -> bool:
     return isinstance(value, str) and SHA256_RE.fullmatch(value) is not None
+
+
+def normalized_identity(value: Any) -> str | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    return " ".join(value.casefold().split())
+
+
+def normalized_family(value: Any) -> str | None:
+    """Normalize only presentation differences; semantic family mapping is external."""
+    if not isinstance(value, str) or not value.strip():
+        return None
+    return value.strip().casefold()
 
 
 def validate_sealed_artifact(value: Any, schema: str, name: str) -> list[str]:
@@ -216,7 +229,7 @@ def validate_reviewer_pair(a: Any, b: Any) -> list[str]:
         errors.append("review_freeze_mismatch")
     if a.get("truth_commitment_sha256") != b.get("truth_commitment_sha256"):
         errors.append("review_truth_commitment_mismatch")
-    if a.get("reviewer_identity") == b.get("reviewer_identity"):
+    if normalized_identity(a.get("reviewer_identity")) == normalized_identity(b.get("reviewer_identity")):
         errors.append("reviewer_identity_not_independent")
     if {a.get("reviewer_role"), b.get("reviewer_role")} != {"reviewer_a", "reviewer_b"}:
         errors.append("reviewer_role_separation")
@@ -260,6 +273,25 @@ def validate_adjudication_packet(packet: Any) -> list[str]:
         errors.append("adjudication_packet_expected_case_set")
     elif len(set(expected_ids)) != len(expected_ids) or set(expected_ids) != set(valid_agree_ids) | set(valid_disagree_ids):
         errors.append("adjudication_packet_full_case_set_mismatch")
+    for row in agreements:
+        if isinstance(row, dict) and (set(row) != {"case_pseudonym", "label", "route"}
+                                      or row.get("label") not in ALLOWED_LABELS or row.get("route") != "agreement"):
+            errors.append("adjudication_packet_agreement_schema")
+    for row in disagreements:
+        if not isinstance(row, dict):
+            continue
+        if set(row) != {"case_pseudonym", "opinions"}:
+            errors.append("adjudication_packet_disagreement_schema")
+            continue
+        opinions = row.get("opinions")
+        if (not isinstance(opinions, list) or len(opinions) != 2
+                or any(not isinstance(opinion, dict) or set(opinion) != {"label", "rationale"}
+                       or opinion.get("label") not in ALLOWED_LABELS
+                       or not isinstance(opinion.get("rationale"), str) or not opinion["rationale"].strip()
+                       for opinion in opinions)):
+            errors.append("adjudication_packet_opinions_invalid")
+        elif opinions != sorted(opinions, key=canonical_json_bytes):
+            errors.append("adjudication_packet_opinion_order_not_anonymous")
     expected_status = "THIRD_REVIEW_REQUIRED" if disagreements else "AGREEMENT_COMPLETE"
     if packet.get("status") != expected_status:
         errors.append("adjudication_packet_status")
@@ -426,23 +458,43 @@ def validate_intake(intake: dict[str, Any], truth: dict[str, Any], source_root: 
     if not isinstance(prereg, dict):
         prereg = {}
         errors.append("preregistration_protocol_invalid")
-    for field in ("target_population", "analysis_unit", "family_rule", "sample_size", "inclusion", "exclusion", "unknown_rule", "disagreement_rule", "estimate", "freeze_procedure"):
-        if not prereg.get(field):
+    text_protocol_fields = ("target_population", "analysis_unit", "family_rule", "inclusion", "exclusion", "unknown_rule", "disagreement_rule", "estimate", "freeze_procedure")
+    for field in text_protocol_fields:
+        if not isinstance(prereg.get(field), str) or not prereg[field].strip():
             errors.append(f"preregistration_missing_{field}")
+    if "sample_size" not in prereg:
+        errors.append("preregistration_missing_sample_size")
+    elif isinstance(prereg.get("sample_size"), bool) or not isinstance(prereg.get("sample_size"), int) or prereg.get("sample_size", 0) <= 0:
+        errors.append("preregistration_sample_size_invalid")
     ledger_payload = ledger_obj.get("ledger", {})
     if not isinstance(ledger_payload, dict):
         ledger_payload = {}
         errors.append("development_leakage_ledger_payload_invalid")
+    required_ledger_fields = (
+        "development_source_sha256", "history_review_source_sha256",
+        "development_family_keys", "history_review_family_keys", "cases",
+    )
+    for field in required_ledger_fields:
+        if field not in ledger_payload:
+            errors.append(f"leakage_ledger_missing_{field}")
     def string_set(value: Any, error_code: str) -> set[str]:
         if not isinstance(value, list) or any(not isinstance(item, str) or not item for item in value):
             errors.append(error_code)
             return set()
         return set(value)
 
-    forbidden_hashes = string_set(ledger_payload.get("development_source_sha256", []), "leakage_development_hashes_invalid") | string_set(ledger_payload.get("history_review_source_sha256", []), "leakage_history_hashes_invalid")
+    forbidden_hashes = string_set(ledger_payload.get("development_source_sha256"), "leakage_development_hashes_invalid") | string_set(ledger_payload.get("history_review_source_sha256"), "leakage_history_hashes_invalid")
     if any(not has_sha256(item) for item in forbidden_hashes):
         errors.append("leakage_source_hash_invalid")
-    forbidden_families = string_set(ledger_payload.get("development_family_keys", []), "leakage_development_families_invalid") | string_set(ledger_payload.get("history_review_family_keys", []), "leakage_history_families_invalid")
+    dev_hashes = ledger_payload.get("development_source_sha256")
+    history_hashes = ledger_payload.get("history_review_source_sha256")
+    if (isinstance(dev_hashes, list) and isinstance(history_hashes, list)
+            and len(forbidden_hashes) != len(dev_hashes) + len(history_hashes)):
+        errors.append("leakage_source_hash_duplicate")
+    forbidden_families_raw = string_set(ledger_payload.get("development_family_keys"), "leakage_development_families_invalid") | string_set(ledger_payload.get("history_review_family_keys"), "leakage_history_families_invalid")
+    forbidden_families = {normalized_family(item) for item in forbidden_families_raw}
+    if None in forbidden_families or any(not item.strip() for item in forbidden_families_raw):
+        errors.append("leakage_family_key_invalid")
     cases = intake.get("cases", [])
     if not isinstance(cases, list) or any(not isinstance(case, dict) for case in cases):
         return errors + ["intake_cases_invalid"]
@@ -499,17 +551,24 @@ def validate_intake(intake: dict[str, Any], truth: dict[str, Any], source_root: 
         family = case.get("root_cause_family")
         if not isinstance(family, str) or not family:
             errors.append(f"missing_root_cause_family:{case_id}")
-        elif family in forbidden_families:
+        elif normalized_family(family) in forbidden_families:
             errors.append(f"development_or_history_family_overlap:{case_id}")
         if digest in forbidden_hashes:
             errors.append(f"development_or_history_source_overlap:{case_id}")
         if not synthetic:
             ledger_cases = ledger_payload.get("cases", {})
             ledger_row = ledger_cases.get(case_id, {}) if isinstance(ledger_cases, dict) else {}
-            if not isinstance(ledger_row, dict) or ledger_row.get("status") != "no_overlap" or not ledger_row.get("evidence_ref"):
+            if not isinstance(ledger_row, dict) or ledger_row.get("status") != "no_overlap":
                 errors.append(f"leakage_case_not_cleared:{case_id}")
-            elif ledger_row.get("source_sha256") != digest or ledger_row.get("root_cause_family") != family:
+            elif (not isinstance(ledger_row.get("evidence_ref"), str) or not ledger_row["evidence_ref"].strip()
+                  or not has_sha256(ledger_row.get("evidence_sha256"))):
+                errors.append(f"leakage_case_evidence_invalid:{case_id}")
+            elif (ledger_row.get("source_sha256") != digest
+                  or normalized_family(ledger_row.get("root_cause_family")) != normalized_family(family)):
                 errors.append(f"leakage_case_identity_mismatch:{case_id}")
+            elif (normalized_family(family) in forbidden_families
+                  or digest in forbidden_hashes):
+                errors.append(f"development_or_history_case_overlap:{case_id}")
         entry = labels.get(case_id, {})
         if not isinstance(entry, dict):
             errors.append(f"truth_label_row_invalid:{case_id}")
@@ -719,13 +778,12 @@ def adjudicate(args: argparse.Namespace) -> int:
         if left["label"] == right["label"]:
             agreements.append({"case_pseudonym": pseudo, "label": left["label"], "route": "agreement"})
         else:
-            disagreements.append({
-                "case_pseudonym": pseudo,
-                "label_1": left["label"],
-                "label_2": right["label"],
-                "rationale_1": left["rationale"],
-                "rationale_2": right["rationale"],
-            })
+            opinions = [
+                {"label": left["label"], "rationale": left["rationale"]},
+                {"label": right["label"], "rationale": right["rationale"]},
+            ]
+            opinions.sort(key=canonical_json_bytes)
+            disagreements.append({"case_pseudonym": pseudo, "opinions": opinions})
     out = {
         "schema": ADJUDICATION_SCHEMA,
         "freeze_payload_sha256": a["freeze_payload_sha256"],
@@ -859,7 +917,9 @@ def validate_scoring_chain(freeze_manifest: Any, packet: Any, submission: Any, r
         return {row["case_pseudonym"]: row for row in lock["labels"]}
 
     a_rows, b_rows = rows_by_id(review_a), rows_by_id(review_b)
-    if isinstance(adjudicator, str) and adjudicator in {review_a.get("reviewer_identity"), review_b.get("reviewer_identity")}:
+    if isinstance(adjudicator, str) and normalized_identity(adjudicator) in {
+        normalized_identity(review_a.get("reviewer_identity")), normalized_identity(review_b.get("reviewer_identity"))
+    }:
         errors.append("chain_adjudicator_not_independent")
     if set(a_rows) != expected_cases or set(b_rows) != expected_cases:
         errors.append("chain_review_case_set_mismatch")
@@ -871,11 +931,12 @@ def validate_scoring_chain(freeze_manifest: Any, packet: Any, submission: Any, r
         if left["label"] == right["label"]:
             expected_agreements.append({"case_pseudonym": pseudo, "label": left["label"], "route": "agreement"})
         else:
-            expected_disagreements.append({
-                "case_pseudonym": pseudo,
-                "label_1": left["label"], "label_2": right["label"],
-                "rationale_1": left["rationale"], "rationale_2": right["rationale"],
-            })
+            opinions = [
+                {"label": left["label"], "rationale": left["rationale"]},
+                {"label": right["label"], "rationale": right["rationale"]},
+            ]
+            opinions.sort(key=canonical_json_bytes)
+            expected_disagreements.append({"case_pseudonym": pseudo, "opinions": opinions})
     if packet.get("agreements") != expected_agreements or packet.get("disagreements") != expected_disagreements:
         errors.append("chain_adjudication_not_derived_from_reviews")
 

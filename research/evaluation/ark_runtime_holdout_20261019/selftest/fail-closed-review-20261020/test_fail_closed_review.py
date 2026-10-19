@@ -85,6 +85,7 @@ def make_intake(root: Path) -> tuple[dict, dict, Path]:
         "cases": {case_id: {
             "status": "no_overlap",
             "evidence_ref": "synthetic-test-only",
+            "evidence_sha256": hp.sha256_bytes(b"synthetic leakage evidence"),
             "source_sha256": digest,
             "root_cause_family": case["root_cause_family"],
         }},
@@ -230,6 +231,34 @@ class FailClosedReviewTests(unittest.TestCase):
             errors = hp.validate_intake(intake, truth, source_root)
             self.assertIn("development_or_history_family_overlap:SYNTHETIC-CASE-1", errors)
 
+    def test_normalized_family_alias_and_missing_leakage_evidence_fail_closed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            intake, truth, source_root = make_intake(Path(temp))
+            ledger = intake["development_leakage_ledger"]
+            ledger["ledger"]["history_review_family_keys"] = ["  SYNTHETIC-FAMILY-1  "]
+            ledger["payload_sha256"] = hp.object_hash_without(ledger, "payload_sha256")
+            intake["development_leakage_ledger_sha256"] = ledger["payload_sha256"]
+            errors = hp.validate_intake(intake, truth, source_root)
+            self.assertIn("development_or_history_family_overlap:SYNTHETIC-CASE-1", errors)
+
+            ledger["ledger"]["history_review_family_keys"] = []
+            del ledger["ledger"]["cases"]["SYNTHETIC-CASE-1"]["evidence_sha256"]
+            ledger["payload_sha256"] = hp.object_hash_without(ledger, "payload_sha256")
+            intake["development_leakage_ledger_sha256"] = ledger["payload_sha256"]
+            errors = hp.validate_intake(intake, truth, source_root)
+            self.assertIn("leakage_case_evidence_invalid:SYNTHETIC-CASE-1", errors)
+
+    def test_leakage_ledger_requires_explicit_inventory_fields(self):
+        with tempfile.TemporaryDirectory() as temp:
+            intake, truth, source_root = make_intake(Path(temp))
+            ledger = intake["development_leakage_ledger"]
+            del ledger["ledger"]["history_review_source_sha256"]
+            ledger["payload_sha256"] = hp.object_hash_without(ledger, "payload_sha256")
+            intake["development_leakage_ledger_sha256"] = ledger["payload_sha256"]
+            errors = hp.validate_intake(intake, truth, source_root)
+            self.assertIn("leakage_ledger_missing_history_review_source_sha256", errors)
+            self.assertIn("leakage_history_hashes_invalid", errors)
+
     def test_development_overlap_self_report_is_not_accepted(self):
         with tempfile.TemporaryDirectory() as temp:
             intake, truth, source_root = make_intake(Path(temp))
@@ -282,6 +311,7 @@ class FailClosedReviewTests(unittest.TestCase):
         right = lock("reviewer-2", "reviewer_b")
         self.assertEqual([], hp.validate_reviewer_pair(left, right))
         self.assertIn("reviewer_identity_not_independent", hp.validate_reviewer_pair(left, lock("reviewer-1", "reviewer_b")))
+        self.assertIn("reviewer_identity_not_independent", hp.validate_reviewer_pair(left, lock(" REVIEWER-1 ", "reviewer_b")))
         self.assertIn("reviewer_role_separation", hp.validate_reviewer_pair(left, lock("reviewer-2", "reviewer_a")))
         self.assertIn("review_pair_case_set_mismatch", hp.validate_reviewer_pair(left, lock("reviewer-2", "reviewer_b", "p2")))
 
@@ -300,10 +330,15 @@ class FailClosedReviewTests(unittest.TestCase):
             "schema": hp.ADJUDICATION_SCHEMA, "freeze_payload_sha256": "a" * 64,
             "truth_commitment_sha256": "b" * 64, "status": "THIRD_REVIEW_REQUIRED",
             "case_pseudonyms": ["p1", "p2"], "agreements": [{"case_pseudonym": "p1", "label": "unknown", "route": "agreement"}],
-            "disagreements": [{"case_pseudonym": "p2", "label_1": "unknown", "label_2": "unknown", "rationale_1": "x", "rationale_2": "y"}],
+            "disagreements": [{"case_pseudonym": "p2", "opinions": [{"label": "not_vulnerable_shape", "rationale": "y"}, {"label": "unknown", "rationale": "x"}]}],
         }
         packet["payload_sha256"] = hp.payload_hash(packet)
         self.assertEqual([], hp.validate_adjudication_packet(packet))
+        self.assertNotIn("reviewer_a", str(packet["disagreements"]))
+        unordered = copy.deepcopy(packet)
+        unordered["disagreements"][0]["opinions"].reverse()
+        unordered["payload_sha256"] = hp.object_hash_without(unordered, "payload_sha256")
+        self.assertIn("adjudication_packet_opinion_order_not_anonymous", hp.validate_adjudication_packet(unordered))
         bad_set = copy.deepcopy(packet)
         bad_set["case_pseudonyms"] = ["p1"]
         bad_set["payload_sha256"] = hp.object_hash_without(bad_set, "payload_sha256")
@@ -314,7 +349,7 @@ class FailClosedReviewTests(unittest.TestCase):
             "schema": hp.ADJUDICATION_SCHEMA, "freeze_payload_sha256": "a" * 64,
             "truth_commitment_sha256": "b" * 64, "status": "THIRD_REVIEW_REQUIRED",
             "case_pseudonyms": ["p1"], "agreements": [],
-            "disagreements": [{"case_pseudonym": "p1", "label_1": "unknown", "label_2": "vulnerable_shape", "rationale_1": "x", "rationale_2": "y"}],
+            "disagreements": [{"case_pseudonym": "p1", "opinions": [{"label": "vulnerable_shape", "rationale": "y"}, {"label": "unknown", "rationale": "x"}]}],
         }
         packet["payload_sha256"] = hp.payload_hash(packet)
         bad_freeze = make_adjudication_submission(packet, [{"case_pseudonym": "p1", "decision": "unknown", "rationale": "test"}])
