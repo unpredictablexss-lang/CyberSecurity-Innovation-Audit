@@ -5,14 +5,16 @@ from src.ohscanner.contracts import DetectorRun, DetectorFinding, EvidenceObliga
 from .analysis import analyze_unit
 from .exception_guard import analyze_exception_guard
 from .receiver_guard import analyze_receiver_guard
-from .runtime_exception import analyze_native_inline_exception_propagation
+from .cross_file_facts import build_cross_file_facts
+from .runtime_exception import (analyze_native_inline_exception_propagation,
+                                analyze_runtime_exception_propagation)
 from .size_overflow import (analyze_size_overflow_unit, index_bounds_result,
                             length_narrowing_result)
 from .model import (AnalysisBudget, RuntimeTypeModel, DETECTOR_ID, RULE_ID,
                     EXCEPTION_GUARD_RULE_ID, RECEIVER_TYPE_GUARD_RULE_ID,
                     SIZE_OVERFLOW_RULE_ID, LENGTH_NARROWING_RULE_ID,
                     INDEX_BOUNDS_RULE_ID, NATIVE_EXCEPTION_RULE_ID,
-                    RULE_VERSIONS, VERSION)
+                    RUNTIME_EXCEPTION_RULE_ID, RULE_VERSIONS, VERSION)
 
 
 class ArkRuntimeTypeSafetyDetector:
@@ -32,7 +34,7 @@ class ArkRuntimeTypeSafetyDetector:
             self.model.target_bindings + self.model.exception_guard_bindings
             + self.model.receiver_guard_bindings + self.model.size_overflow_bindings
             + self.model.length_narrowing_bindings + self.model.index_bounds_bindings
-            + self.model.native_exception_bindings)}
+            + self.model.runtime_exception_bindings + self.model.native_exception_bindings)}
         return tuple(unit for unit in units if unit.path in paths)
 
     def __init__(self, model=None, budget=None):
@@ -63,6 +65,8 @@ class ArkRuntimeTypeSafetyDetector:
         bound = {u.path: u.sha256 for u in context.units}
         ast = context.shared_facts.get('ast', {})
         blob_oids = context.shared_facts.get('source_blob_oid', {})
+        cross_file_facts = build_cross_file_facts(context.units, budget=self.budget)
+        limitations.extend(cross_file_facts.limitations)
         for unit in sorted(units, key=lambda u: u.path):
             if bound.get(unit.path) != unit.sha256:
                 raise ValueError('detector_input_outside_bound_context')
@@ -79,6 +83,8 @@ class ArkRuntimeTypeSafetyDetector:
                                    if row[0] == context.request.commit and row[1] == unit.path), None)
             index_binding = next((row for row in self.model.index_bounds_bindings
                                   if row[0] == context.request.commit and row[1] == unit.path), None)
+            runtime_binding = next((row for row in self.model.runtime_exception_bindings
+                                    if row[0] == context.request.commit and row[1] == unit.path), None)
             native_binding = next((row for row in self.model.native_exception_bindings
                                    if row[0] == context.request.commit and row[1] == unit.path), None)
             if type_binding is not None:
@@ -93,6 +99,8 @@ class ArkRuntimeTypeSafetyDetector:
                 rule_bindings.append((LENGTH_NARROWING_RULE_ID, length_binding))
             if index_binding is not None:
                 rule_bindings.append((INDEX_BOUNDS_RULE_ID, index_binding))
+            if runtime_binding is not None:
+                rule_bindings.append((RUNTIME_EXCEPTION_RULE_ID, runtime_binding))
             if native_binding is not None:
                 rule_bindings.append((NATIVE_EXCEPTION_RULE_ID, native_binding))
             if not rule_bindings:
@@ -136,6 +144,13 @@ class ArkRuntimeTypeSafetyDetector:
                     result = length_narrowing_result(unit, self.model.digest)
                 elif rule_id == INDEX_BOUNDS_RULE_ID:
                     result = index_bounds_result(unit, self.model.digest)
+                elif rule_id == RUNTIME_EXCEPTION_RULE_ID:
+                    result = analyze_runtime_exception_propagation(
+                        unit, source_units=cross_file_facts.source_units_for(unit.path),
+                        effect_calls=self.model.runtime_effect_calls,
+                        sensitive_methods=self.model.runtime_sensitive_result_methods,
+                        guards=self.model.runtime_exception_guards,
+                        max_instructions=self.budget.max_instructions)
                 elif rule_id == NATIVE_EXCEPTION_RULE_ID:
                     result = analyze_native_inline_exception_propagation(unit)
                 elif rule_id == EXCEPTION_GUARD_RULE_ID:
@@ -172,7 +187,15 @@ class ArkRuntimeTypeSafetyDetector:
                                         'unreviewed_effect_sites': item.effect_sites}, sort_keys=True)
                     rule_version = RULE_VERSIONS.get(rule_id, 'unversioned-rule')
                     trace += ';rule_version=' + rule_version
-                    if rule_id == NATIVE_EXCEPTION_RULE_ID:
+                    if rule_id == RUNTIME_EXCEPTION_RULE_ID:
+                        obligations = (
+                            ('exception_propagation_semantics', 'Verify the callback completion value and pending-exception early-exit semantics.'),
+                            ('cross_file_macro_closure', 'Bind every included guard macro and helper body to the scanned source scope.'),
+                            ('runtime_path_feasibility', 'Establish a reachable callback result conversion without a dominating exception exit.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
+                        )
+                    elif rule_id == NATIVE_EXCEPTION_RULE_ID:
                         obligations = (
                             ('exception_propagation_semantics', 'Verify the exact pending-exception condition and generated branch return semantics.'),
                             ('runtime_path_feasibility', 'Establish that Reflect.apply inlining can reach the unguarded helper under a realistic call.'),
@@ -227,6 +250,8 @@ class ArkRuntimeTypeSafetyDetector:
                     findings.append(DetectorFinding(
                         file=unit.path, line=item.line, column=item.column, rule_id=rule_id,
                         message=(
+                            'Candidate only: callback result conversion may precede a pending-exception exit. trace=' + trace
+                            if rule_id == RUNTIME_EXCEPTION_RULE_ID else
                             'Candidate only: Reflect.apply native-inline result uses exception-sentinel comparison without a proven pending-exception exit. trace=' + trace
                             if rule_id == NATIVE_EXCEPTION_RULE_ID else
                             'Candidate only: signed 32-bit ToIndex result narrows a TypedArray allocation length. trace=' + trace
@@ -242,7 +267,9 @@ class ArkRuntimeTypeSafetyDetector:
                             'Candidate only: TypedArray destination and type-token origin differ under '
                             'the bounded type-changing creation model; generated graph path is symbolic. trace=' + trace
                         ),
-                        evidence_type='syntax', candidate_cwe='CWE-843' if rule_id == RULE_ID else None,
+                        evidence_type='syntax',
+                        candidate_cwe=('CWE-755' if rule_id == RUNTIME_EXCEPTION_RULE_ID else
+                                       'CWE-843' if rule_id == RULE_ID else None),
                         symbol=item.symbol, source_sha256=unit.sha256,
                         evidence_obligations=tuple(EvidenceObligation(kind, description) for kind, description in obligations),
                     ))
