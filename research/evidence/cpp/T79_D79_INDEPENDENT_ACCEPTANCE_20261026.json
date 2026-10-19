@@ -1,0 +1,36 @@
+{
+  "task": "T79",
+  "status": "accepted",
+  "accepted_D79_commit": "ab6bf538e81a06ef85a9353a8b8aa4ab9704d65a",
+  "accepted_D79_tree": "24981ee9f31d2be1e244c422ebaacbffb8a74a9b",
+  "initial_D79_commit": "755c367cfe0c0bfab07d6c3d9cd90f6fd6c3fb5c",
+  "source": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee"
+  },
+  "evidence_commits": {
+    "D50": "0f4560c4712dbf914d762948e2220942f16324ad",
+    "D67": "ef215e737daee00c9fa659d14cd273974cf4fc2f",
+    "D68": "3da049887999bd3cacb3d48da9ffa7baefa18ac5",
+    "D74": "a29275f7a795da17171fd3df2c712ef3a8576cb7"
+  },
+  "checks": {
+    "exact_replay": "pass",
+    "four_local_and_git_evidence_bindings": "pass",
+    "six_raw_source_blob_oid_and_sha256_bindings": "pass",
+    "D50_D68_status_and_issue_crosswalk": "pass",
+    "mutated_D50_whitespace_negative_control": "rejected_by_local_SHA256_binding",
+    "duplicate_JSON_key_negative_control": "rejected",
+    "git_diff_check": "pass",
+    "worktree_clean_at_report_start": true
+  },
+  "historical_parse_boundaries": [
+    "i_pasteboard_service.h D50/D68 partial ERROR line 43 is the interface descriptor macro; non-overlap with route declaration does not prove whole-file AST completeness.",
+    "pasteboard_service_stub.h D50/D68 partial MISSING line 35 is inside the pointer-to-member handler type declaration.",
+    "pasteboard_service_stub.cpp D50 partial ERROR line 58 intersects the actual member-pointer dispatch expression; D50 parser-derived dispatch-to-handler edge is incomplete.",
+    "D68 complete result is a later runtime/normalizer replay and cannot be projected backward onto D50."
+  ],
+  "scope_boundary": "source/parser coverage only; no product vulnerability, reachability, external authorization, or CVE causality conclusion",
+  "revision_feedback": "T79's initial D79 counterexample appended whitespace to D50 input and still passed. D79 revision added input SHA-256 and Git snapshot/blob verification; the same mutation now fails deterministically."
+}
