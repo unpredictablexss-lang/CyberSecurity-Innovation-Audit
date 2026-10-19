@@ -1,0 +1,81 @@
+{
+  "task": "D71",
+  "review_type": "independent_final_second_layer_review",
+  "reviewed": {
+    "D70_commit": "f628c90901d71510e60869c027e4c7903d2d4de6",
+    "T70_commit": "aa0559c25dd47bec83a9a22b30adf7c805eaa83e",
+    "D67_status": "blocked_manifest",
+    "D69_report": "D69_PASTEBOARD_SECOND_LAYER_REVIEW_20261023"
+  },
+  "candidate": {
+    "cve_label": "CVE-2025-27247",
+    "file": "services/zidl/src/pasteboard_service_stub.cpp",
+    "line": 41,
+    "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "core_getter_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+    "source_candidate_disposition": "narrow",
+    "downstream_root_cause_review_eligible": true,
+    "eligibility_constraints": [
+      "Source-only route hypothesis.",
+      "All authorization and caller-provenance obligations remain unknown.",
+      "No product applicability or CVE-causality conclusion."
+    ]
+  },
+  "D70_T70_review": {
+    "all_matches_affect_aggregate_state": true,
+    "serialized_observation_cap": 8,
+    "omission_count_and_truncation_fields": "present",
+    "obligation_status": "unknown",
+    "candidate_suppression": false,
+    "balanced_call_spans": true,
+    "reported_caps": {
+      "tokens_per_record": 16,
+      "token_characters": 48,
+      "snippet_characters": 120,
+      "description_characters": 4096
+    },
+    "T70_frozen_commit_matches_D70_target": true,
+    "stable_identity_and_legacy_ids_unchanged": true,
+    "occurrence_id_version_drift_expected": true
+  },
+  "new_D71_probe": {
+    "shape": "8 top-level permission calls followed by if (condition) CheckPermission(READ_PASTEBOARD);",
+    "matches": 9,
+    "records": 8,
+    "omitted": 1,
+    "truncation_marked": true,
+    "expected_aggregate_state": "unresolved_control_flow",
+    "observed_aggregate_state": "observed_unresolved",
+    "obligation_status": "unknown",
+    "mechanism": "_inside_unbraced_control skips a control when body_start equals the permission call position.",
+    "classification": "concrete unbraced-body start-boundary false negative"
+  },
+  "D69_cap_gap": "closed_by_D70_all_match_state_scan",
+  "D67_parse_context": {
+    "declared_paths": 68,
+    "cpp_units": 67,
+    "typescript_not_run": 1,
+    "D70_parse_status": {
+      "complete": 59,
+      "partial": 8
+    },
+    "detector_status": "blocked",
+    "validated_vulnerabilities": 0,
+    "historical_D50_python_runtime_recreated": false,
+    "interpretation": "Coverage limitation only; parse-status drift is not evidence of historical coverage improvement or vulnerability status."
+  },
+  "product_applicability": "unknown",
+  "CVE_causality": "unknown",
+  "next_task_tree_item": {
+    "id": "D72",
+    "goal": "Correct and independently accept the unbraced-control body-start boundary classification.",
+    "required_controls": [
+      "Ninth recognized match as the direct body of one unbraced if.",
+      "Ninth recognized match in nested unbraced if body.",
+      "Permission call in if condition.",
+      "Equivalent brace-nested body.",
+      "Preserve output caps, candidate retention, unknown obligations, source identity, and exact replay boundaries."
+    ]
+  },
+  "scope": "D71 adds review evidence only; no detector, tests, fixtures, or prior reports modified."
+}
