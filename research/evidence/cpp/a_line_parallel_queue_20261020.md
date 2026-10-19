@@ -254,3 +254,5 @@ See [T26 independent audit addendum](a_line_parallel_queue_20261020_T26_addendum
 
 
 T27 independently audited Preferences CR-0020–CR-0024. The two shared header accesses are detected on complete source; three fuzz-file candidates are test-only harness code. All five retain the original A0 states. See [T27 addendum](a_line_parallel_queue_20261020_T27_addendum.md), [per-ID report](t27_preferences_source_audit_20261020.md), and [source verifier](verify_t27_preferences_source_audit.py).
+
+D28 replayed the exact DataShare source for CR-0016–CR-0018. The current IPC CLI reports the three source candidates at lines 204, 221 and 243; the target file remains parser-partial, and no production authorization or reachability gap was established. T28 independently reproduced the candidates and source identity. All three remain `not_testable / queued_first_batch` and PARTIAL/BLOCK. See [D28 replay](d28_cr0016_18_replay_20261020.md), [T28 audit addendum](a_line_parallel_queue_20261020_T28_addendum.md), and their verifiers.
