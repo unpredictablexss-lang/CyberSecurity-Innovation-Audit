@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ohscanner.source-audit-entry/v2",
+  "title": "Source-bound audit entry schema v2",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "entry_id",
+    "source_identity",
+    "observation",
+    "mapping",
+    "controls",
+    "evidence_gate",
+    "artifacts",
+    "claim_boundary"
+  ],
+  "properties": {
+    "schema_version": {"const": "ohscanner.source-audit-entry/v2"},
+    "entry_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]{3,128}$"},
+    "source_identity": {
+      "type": "object",
+      "required": ["repository", "path", "commit", "tree", "blob", "sha256", "identity_status"],
+      "properties": {
+        "repository": {"type": "string", "minLength": 1},
+        "path": {"type": "string", "minLength": 1},
+        "commit": {"type": "string", "minLength": 1},
+        "tree": {"type": "string", "minLength": 1},
+        "blob": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "minLength": 1},
+        "identity_status": {"enum": ["verified_local", "recorded_external", "unknown", "missing_input"]},
+        "snapshot_id": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    },
+    "observation": {
+      "type": "object",
+      "required": ["summary", "scope", "fact_status", "limitations"],
+      "properties": {
+        "summary": {"type": "string", "minLength": 1},
+        "scope": {"type": "string", "minLength": 1},
+        "fact_status": {"enum": ["provisional_substitute_evidence", "source_fact", "unknown"]},
+        "limitations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": true
+    },
+    "mapping": {
+      "type": "object",
+      "required": ["detector_ids", "rule_ids", "control_ids"],
+      "properties": {
+        "detector_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "rule_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "control_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": true
+    },
+    "controls": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["control_id", "kind", "expected"],
+        "properties": {
+          "control_id": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["positive", "fixed", "safe", "unrelated", "unknown"]},
+          "expected": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": true
+      }
+    },
+    "evidence_gate": {
+      "type": "object",
+      "required": ["entry_or_permission_boundary", "reachable_sensitive_operation", "trigger_condition", "cia_impact", "audit_evidence", "validated_vulnerability"],
+      "properties": {
+        "entry_or_permission_boundary": {"type": "string", "minLength": 1},
+        "reachable_sensitive_operation": {"type": "string", "minLength": 1},
+        "trigger_condition": {"type": "string", "minLength": 1},
+        "cia_impact": {"type": "string", "minLength": 1},
+        "audit_evidence": {"type": "string", "minLength": 1},
+        "validated_vulnerability": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["role", "path", "sha256", "git_blob"],
+        "properties": {
+          "role": {"type": "string", "minLength": 1},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "minLength": 1},
+          "git_blob": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": true
+      }
+    },
+    "claim_boundary": {
+      "type": "object",
+      "required": ["classification", "assessment_status", "product_vulnerability", "cia", "cve", "metrics"],
+      "properties": {
+        "classification": {"enum": ["candidate", "unknown", "confirmed", "reportable"]},
+        "assessment_status": {"enum": ["unassessed", "assessed"]},
+        "product_vulnerability": {"type": "boolean"},
+        "cia": {"type": "boolean"},
+        "cve": {"type": "boolean"},
+        "metrics": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,938 @@
+{
+  "schema_version": "c8.source-audit.known-source-findings/v1",
+  "generated_for": "C8-AUDIT-RECONCILIATION",
+  "evidence_policy": {
+    "source_audit_input": "missing",
+    "extracted_vulnerability_entries": 0,
+    "provisional_substitute_evidence": true,
+    "product_vulnerability_claim": "not_asserted",
+    "cia_claim": "not_asserted",
+    "cve_claim": "not_asserted",
+    "precision_recall_claim": "not_asserted",
+    "fp_fn_claim": "not_asserted",
+    "scanner_execution": false
+  },
+  "mapping_catalog": {
+    "detectors": [
+      {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "version": "0.7.0",
+        "catalog_status": "not_enabled_public_catalog",
+        "rules": [
+          "ark.runtime.typedarray-store-type-origin",
+          "ark.runtime.typedarray-allocation-exception-guard"
+        ]
+      }
+    ],
+    "controls": [
+      {
+        "control_id": "C8-TO-POS-001",
+        "kind": "positive",
+        "expected": "candidate/unassessed for a modeled unguarded store"
+      },
+      {
+        "control_id": "C8-TO-FIX-001",
+        "kind": "fixed",
+        "expected": "no confirmed/reportable escalation when origin and store are corrected"
+      },
+      {
+        "control_id": "C8-TO-SAFE-001",
+        "kind": "safe",
+        "expected": "no confirmed/reportable escalation for a marked negative fixture; not product safety proof"
+      },
+      {
+        "control_id": "C8-TO-UNR-001",
+        "kind": "unrelated",
+        "expected": "no matching type-origin rule"
+      },
+      {
+        "control_id": "C8-TO-UNKNOWN-001",
+        "kind": "unknown",
+        "expected": "unknown after tag++ invalidation"
+      },
+      {
+        "control_id": "C8-TO-UNKNOWN-002",
+        "kind": "unknown",
+        "expected": "unknown after ++tag invalidation"
+      },
+      {
+        "control_id": "C8-TO-UNKNOWN-003",
+        "kind": "unknown",
+        "expected": "unknown after assignment hidden in expression"
+      },
+      {
+        "control_id": "C8-TO-UNKNOWN-004",
+        "kind": "unknown",
+        "expected": "unknown after output assignment hidden in expression"
+      },
+      {
+        "control_id": "C8-TO-UNKNOWN-005",
+        "kind": "unknown",
+        "expected": "unknown after unknown mutation/effect"
+      },
+      {
+        "control_id": "C8-TO-UNKNOWN-006",
+        "kind": "unknown",
+        "expected": "unknown after branch-dependent assignment"
+      },
+      {
+        "control_id": "C8-EG-POS-001",
+        "kind": "positive",
+        "expected": "candidate/unassessed for use before pending-exception guard"
+      },
+      {
+        "control_id": "C8-EG-FIX-001",
+        "kind": "fixed",
+        "expected": "no candidate when pending-exception guard precedes use"
+      },
+      {
+        "control_id": "C8-EG-SAFE-001",
+        "kind": "safe",
+        "expected": "no confirmed/reportable escalation for a marked negative fixture; not product safety proof"
+      },
+      {
+        "control_id": "C8-EG-UNR-001",
+        "kind": "unrelated",
+        "expected": "no matching exception-guard rule"
+      },
+      {
+        "control_id": "C8-EG-UNKNOWN-001",
+        "kind": "unknown",
+        "expected": "unknown when pending-state effects/order are unverified"
+      },
+      {
+        "control_id": "C8-OWNER-UNKNOWN-001",
+        "kind": "unknown",
+        "expected": "fail-closed unknown for partial/ambiguous owner"
+      },
+      {
+        "control_id": "C8-HISTORY-MISSING-001",
+        "kind": "unknown",
+        "expected": "blocked/unknown when parent/fix/current object is absent"
+      },
+      {
+        "control_id": "C8-DEPENDENCY-UNKNOWN-001",
+        "kind": "unknown",
+        "expected": "unknown when dependency/replay evidence is absent"
+      }
+    ]
+  },
+  "findings": [
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-001",
+      "source_identity": {
+        "repository": "local research counterexample",
+        "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json#cases[0]",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "aa6d148fa52a063a2d796b2c1b80ae8dc0aac49b3ccffe1a460d006e861388c5",
+        "identity_status": "verified_local"
+      },
+      "observation": {
+        "summary": "C3 review counterexample: tag++; expected type-origin relation remains unknown.",
+        "scope": "synthetic C3 counterexample for invalidation regression only",
+        "fact_status": "provisional_substitute_evidence",
+        "limitations": [
+          "Not a product source finding.",
+          "No ownership, dominance, attacker control or CIA impact is established."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.ark.runtime.type_safety"
+        ],
+        "rule_ids": [
+          "ark.runtime.typedarray-store-type-origin"
+        ],
+        "control_ids": [
+          "C8-TO-UNKNOWN-001"
+        ]
+      },
+      "controls": [
+        {
+          "control_id": "C8-TO-UNKNOWN-001",
+          "kind": "unknown",
+          "expected": "unknown"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "trigger_condition": "unknown",
+        "cia_impact": "unknown",
+        "audit_evidence": "substitute C3 local artifact",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "c3_counterexamples",
+          "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json",
+          "sha256": "a5bde265da85fd7cb5e2198e0cf2b759dee3113ba6a70a53b32e575bdf982527",
+          "git_blob": "2d5a8408b3f73853d4bc65ca77a59ae59b7353b4"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "unknown",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cve": false,
+        "metrics": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-002",
+      "source_identity": {
+        "repository": "local research counterexample",
+        "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json#cases[1]",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "4d2cba069e2a5191ad2a8db896f7823bfe0157d35b5abadb17e9fdd14ee1858e",
+        "identity_status": "verified_local"
+      },
+      "observation": {
+        "summary": "C3 review counterexample: ++tag; expected type-origin relation remains unknown.",
+        "scope": "synthetic C3 counterexample for invalidation regression only",
+        "fact_status": "provisional_substitute_evidence",
+        "limitations": [
+          "Not a product source finding.",
+          "No ownership, dominance, attacker control or CIA impact is established."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.ark.runtime.type_safety"
+        ],
+        "rule_ids": [
+          "ark.runtime.typedarray-store-type-origin"
+        ],
+        "control_ids": [
+          "C8-TO-UNKNOWN-002"
+        ]
+      },
+      "controls": [
+        {
+          "control_id": "C8-TO-UNKNOWN-002",
+          "kind": "unknown",
+          "expected": "unknown"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "trigger_condition": "unknown",
+        "cia_impact": "unknown",
+        "audit_evidence": "substitute C3 local artifact",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "c3_counterexamples",
+          "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json",
+          "sha256": "a5bde265da85fd7cb5e2198e0cf2b759dee3113ba6a70a53b32e575bdf982527",
+          "git_blob": "2d5a8408b3f73853d4bc65ca77a59ae59b7353b4"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "unknown",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cve": false,
+        "metrics": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-003",
+      "source_identity": {
+        "repository": "local research counterexample",
+        "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json#cases[2]",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "b245134c133cde19b9c4964cc7201dc559015f60c3c02aef48625a64ab69af5e",
+        "identity_status": "verified_local"
+      },
+      "observation": {
+        "summary": "C3 review counterexample: Int32Add((tag = inputTag), Int32(0)); expected type-origin relation remains unknown.",
+        "scope": "synthetic C3 counterexample for invalidation regression only",
+        "fact_status": "provisional_substitute_evidence",
+        "limitations": [
+          "Not a product source finding.",
+          "No ownership, dominance, attacker control or CIA impact is established."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.ark.runtime.type_safety"
+        ],
+        "rule_ids": [
+          "ark.runtime.typedarray-store-type-origin"
+        ],
+        "control_ids": [
+          "C8-TO-UNKNOWN-003"
+        ]
+      },
+      "controls": [
+        {
+          "control_id": "C8-TO-UNKNOWN-003",
+          "kind": "unknown",
+          "expected": "unknown"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "trigger_condition": "unknown",
+        "cia_impact": "unknown",
+        "audit_evidence": "substitute C3 local artifact",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "c3_counterexamples",
+          "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json",
+          "sha256": "a5bde265da85fd7cb5e2198e0cf2b759dee3113ba6a70a53b32e575bdf982527",
+          "git_blob": "2d5a8408b3f73853d4bc65ca77a59ae59b7353b4"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "unknown",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cve": false,
+        "metrics": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-004",
+      "source_identity": {
+        "repository": "local research counterexample",
+        "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json#cases[3]",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "f540fa1c0724fa1aa3216c78170ccb97a3dc9fe90a35cdc29f0560786b362125",
+        "identity_status": "verified_local"
+      },
+      "observation": {
+        "summary": "C3 review counterexample: Int32Add((output = input), Int32(0)); expected type-origin relation remains unknown.",
+        "scope": "synthetic C3 counterexample for invalidation regression only",
+        "fact_status": "provisional_substitute_evidence",
+        "limitations": [
+          "Not a product source finding.",
+          "No ownership, dominance, attacker control or CIA impact is established."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.ark.runtime.type_safety"
+        ],
+        "rule_ids": [
+          "ark.runtime.typedarray-store-type-origin"
+        ],
+        "control_ids": [
+          "C8-TO-UNKNOWN-004"
+        ]
+      },
+      "controls": [
+        {
+          "control_id": "C8-TO-UNKNOWN-004",
+          "kind": "unknown",
+          "expected": "unknown"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "trigger_condition": "unknown",
+        "cia_impact": "unknown",
+        "audit_evidence": "substitute C3 local artifact",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "c3_counterexamples",
+          "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json",
+          "sha256": "a5bde265da85fd7cb5e2198e0cf2b759dee3113ba6a70a53b32e575bdf982527",
+          "git_blob": "2d5a8408b3f73853d4bc65ca77a59ae59b7353b4"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "unknown",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cve": false,
+        "metrics": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-005",
+      "source_identity": {
+        "repository": "local research counterexample",
+        "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json#cases[4]",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "51bdfef745c7b3681cad272c1498fee9ca5655110dd5837a697692e5b667f84c",
+        "identity_status": "verified_local"
+      },
+      "observation": {
+        "summary": "C3 review counterexample: unknown mutation/effect after GetObjectType/LoadHClass; expected type-origin relation remains unknown.",
+        "scope": "synthetic C3 counterexample for invalidation regression only",
+        "fact_status": "provisional_substitute_evidence",
+        "limitations": [
+          "Not a product source finding.",
+          "No ownership, dominance, attacker control or CIA impact is established."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.ark.runtime.type_safety"
+        ],
+        "rule_ids": [
+          "ark.runtime.typedarray-store-type-origin"
+        ],
+        "control_ids": [
+          "C8-TO-UNKNOWN-005"
+        ]
+      },
+      "controls": [
+        {
+          "control_id": "C8-TO-UNKNOWN-005",
+          "kind": "unknown",
+          "expected": "unknown"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "trigger_condition": "unknown",
+        "cia_impact": "unknown",
+        "audit_evidence": "substitute C3 local artifact",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "c3_counterexamples",
+          "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json",
+          "sha256": "a5bde265da85fd7cb5e2198e0cf2b759dee3113ba6a70a53b32e575bdf982527",
+          "git_blob": "2d5a8408b3f73853d4bc65ca77a59ae59b7353b4"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "unknown",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cve": false,
+        "metrics": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-006",
+      "source_identity": {
+        "repository": "local research counterexample",
+        "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json#cases[5]",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "83e5ad4d3fcfada50f693aa80ec271ef4f5459f90bb15bd83c481531235005cb",
+        "identity_status": "verified_local"
+      },
+      "observation": {
+        "summary": "C3 review counterexample: branch-dependent assignment in Label/BRANCH/Bind sequence; expected type-origin relation remains unknown.",
+        "scope": "synthetic C3 counterexample for invalidation regression only",
+        "fact_status": "provisional_substitute_evidence",
+        "limitations": [
+          "Not a product source finding.",
+          "No ownership, dominance, attacker control or CIA impact is established."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.ark.runtime.type_safety"
+        ],
+        "rule_ids": [
+          "ark.runtime.typedarray-store-type-origin"
+        ],
+        "control_ids": [
+          "C8-TO-UNKNOWN-006"
+        ]
+      },
+      "controls": [
+        {
+          "control_id": "C8-TO-UNKNOWN-006",
+          "kind": "unknown",
+          "expected": "unknown"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "trigger_condition": "unknown",
+        "cia_impact": "unknown",
+        "audit_evidence": "substitute C3 local artifact",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "c3_counterexamples",
+          "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json",
+          "sha256": "a5bde265da85fd7cb5e2198e0cf2b759dee3113ba6a70a53b32e575bdf982527",
+          "git_blob": "2d5a8408b3f73853d4bc65ca77a59ae59b7353b4"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "unknown",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cve": false,
+        "metrics": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    },
+    {
+      "entry_id": "C4-EXG-FILTER-UNKNOWN",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+        "tree": "unknown",
+        "blob": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+        "sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+        "identity_status": "recorded_external"
+      },
+      "observation": {
+        "summary": "C4 Filter parent path has a local source-order candidate: LoadHClass after NewTypedArray before the pending-exception guard; fixed order has the guard first. Product classification remains unknown.",
+        "scope": "exact reviewed Filter source-order pair; partial translation-unit and runtime behavior remain open",
+        "fact_status": "provisional_substitute_evidence",
+        "limitations": [
+          "Analyzer replay remains blocked/partial.",
+          "No attacker-controlled trigger, reachable sensitive operation, CIA impact or product build is established.",
+          "Candidate is not a product vulnerability."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.ark.runtime.type_safety"
+        ],
+        "rule_ids": [
+          "ark.runtime.typedarray-allocation-exception-guard"
+        ],
+        "control_ids": [
+          "C8-EG-POS-001",
+          "C8-EG-FIX-001"
+        ]
+      },
+      "controls": [
+        {
+          "control_id": "C8-EG-POS-001",
+          "kind": "positive",
+          "expected": "candidate/unassessed"
+        },
+        {
+          "control_id": "C8-EG-FIX-001",
+          "kind": "fixed",
+          "expected": "no confirmed/reportable escalation"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "trigger_condition": "unknown",
+        "cia_impact": "unknown",
+        "audit_evidence": "substitute C4 local artifact",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "c4_exception_guard",
+          "path": "research/experiments/ark_runtime/c4_20261018/C4_EXCEPTION_GUARD.md",
+          "sha256": "61d22f6c153fb80f7b8a47cc3071adacfcbd79709f70b276a174e4674c5364fa",
+          "git_blob": "78cc9f8495e3a50cd29a1db4eb1c2f9ad44bfdcd"
+        },
+        {
+          "role": "c4_source_bindings",
+          "path": "research/experiments/ark_runtime/c4_20261018/C4_SOURCE_BINDINGS.json",
+          "sha256": "6a007da818c29ae8f1fde0b7beff4842a4d850b412a54c70971f224194df4b6a",
+          "git_blob": "fd16a5032ed533cb6c123176a7457d925bd49ecf"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "unknown",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cve": false,
+        "metrics": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    },
+    {
+      "entry_id": "C4-EXG-MAP-UNKNOWN",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+        "tree": "unknown",
+        "blob": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+        "sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+        "identity_status": "recorded_external"
+      },
+      "observation": {
+        "summary": "C4 Map parent path has a local source-order candidate: result use before the pending-exception guard; fixed order has the guard first. Product classification remains unknown.",
+        "scope": "exact reviewed Map source-order pair; partial translation-unit and runtime behavior remain open",
+        "fact_status": "provisional_substitute_evidence",
+        "limitations": [
+          "Analyzer replay remains blocked/partial.",
+          "No attacker-controlled trigger, reachable sensitive operation, CIA impact or product build is established.",
+          "Candidate is not a product vulnerability."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.ark.runtime.type_safety"
+        ],
+        "rule_ids": [
+          "ark.runtime.typedarray-allocation-exception-guard"
+        ],
+        "control_ids": [
+          "C8-EG-POS-001",
+          "C8-EG-FIX-001"
+        ]
+      },
+      "controls": [
+        {
+          "control_id": "C8-EG-POS-001",
+          "kind": "positive",
+          "expected": "candidate/unassessed"
+        },
+        {
+          "control_id": "C8-EG-FIX-001",
+          "kind": "fixed",
+          "expected": "no confirmed/reportable escalation"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "trigger_condition": "unknown",
+        "cia_impact": "unknown",
+        "audit_evidence": "substitute C4 local artifact",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "c4_exception_guard",
+          "path": "research/experiments/ark_runtime/c4_20261018/C4_EXCEPTION_GUARD.md",
+          "sha256": "61d22f6c153fb80f7b8a47cc3071adacfcbd79709f70b276a174e4674c5364fa",
+          "git_blob": "78cc9f8495e3a50cd29a1db4eb1c2f9ad44bfdcd"
+        },
+        {
+          "role": "c4_source_bindings",
+          "path": "research/experiments/ark_runtime/c4_20261018/C4_SOURCE_BINDINGS.json",
+          "sha256": "6a007da818c29ae8f1fde0b7beff4842a4d850b412a54c70971f224194df4b6a",
+          "git_blob": "fd16a5032ed533cb6c123176a7457d925bd49ecf"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "unknown",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cve": false,
+        "metrics": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    },
+    {
+      "entry_id": "C4-EXG-TOREVERSED-UNKNOWN",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+        "tree": "unknown",
+        "blob": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+        "sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+        "identity_status": "recorded_external"
+      },
+      "observation": {
+        "summary": "C4 ToReversed remains unknown: pending-state effects of the input read, empty-loop result handling and caller treatment are unverified.",
+        "scope": "ToReversed NewTypedArraySameType path excluded from the current exception rule",
+        "fact_status": "provisional_substitute_evidence",
+        "limitations": [
+          "The empty result is not a safety result.",
+          "The exact effect summary and callers are unreviewed.",
+          "No product vulnerability or safe verdict is established."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.ark.runtime.type_safety"
+        ],
+        "rule_ids": [
+          "ark.runtime.typedarray-allocation-exception-guard"
+        ],
+        "control_ids": [
+          "C8-EG-UNKNOWN-001"
+        ]
+      },
+      "controls": [
+        {
+          "control_id": "C8-EG-UNKNOWN-001",
+          "kind": "unknown",
+          "expected": "unknown"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "trigger_condition": "unknown",
+        "cia_impact": "unknown",
+        "audit_evidence": "substitute C4 local artifact",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "c4_exception_guard",
+          "path": "research/experiments/ark_runtime/c4_20261018/C4_EXCEPTION_GUARD.md",
+          "sha256": "61d22f6c153fb80f7b8a47cc3071adacfcbd79709f70b276a174e4674c5364fa",
+          "git_blob": "78cc9f8495e3a50cd29a1db4eb1c2f9ad44bfdcd"
+        },
+        {
+          "role": "c4_unknown_cases",
+          "path": "research/experiments/ark_runtime/c4_20261018/C4_UNKNOWN_CASES.md",
+          "sha256": "4c98a2fd60d5cecb46ee69752432ae11245caaa1dda6eda79e80aaf76a511440",
+          "git_blob": "98149576fdcc325bb88d3f94fd9070bb4a21a8f3"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "unknown",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cve": false,
+        "metrics": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    },
+    {
+      "entry_id": "C4-EXG-ORDER-UNKNOWN",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "unknown",
+        "identity_status": "unknown"
+      },
+      "observation": {
+        "summary": "Exception-order semantics beyond the reviewed Filter/Map/ToReversed rows remain unknown; the manual census is not a detector verdict.",
+        "scope": "C4 source-order review boundary",
+        "fact_status": "provisional_substitute_evidence",
+        "limitations": [
+          "Unmodeled allocation sites and effects remain outside coverage.",
+          "No general exception-order or product conclusion is available."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.ark.runtime.type_safety"
+        ],
+        "rule_ids": [
+          "ark.runtime.typedarray-allocation-exception-guard"
+        ],
+        "control_ids": [
+          "C8-EG-UNKNOWN-001"
+        ]
+      },
+      "controls": [
+        {
+          "control_id": "C8-EG-UNKNOWN-001",
+          "kind": "unknown",
+          "expected": "unknown"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "trigger_condition": "unknown",
+        "cia_impact": "unknown",
+        "audit_evidence": "substitute C4 local artifact",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "c4_exception_guard",
+          "path": "research/experiments/ark_runtime/c4_20261018/C4_EXCEPTION_GUARD.md",
+          "sha256": "61d22f6c153fb80f7b8a47cc3071adacfcbd79709f70b276a174e4674c5364fa",
+          "git_blob": "78cc9f8495e3a50cd29a1db4eb1c2f9ad44bfdcd"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "unknown",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cve": false,
+        "metrics": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    },
+    {
+      "entry_id": "C7-DEPENDENCY-LIMIT-UNKNOWN",
+      "source_identity": {
+        "repository": "CyberSecurity-Innovation-Audit",
+        "path": "docs/项目现状与下一步.md",
+        "commit": "556cb145fec9f52afd1c49d10290e01036200f00",
+        "tree": "7ccd0895622669ac33595c1058e5f0ede0b8e5a5",
+        "blob": "52f5b06be8c9ef28512516291faddeda2c24cab9",
+        "sha256": "901f01cce59539d71fb334480a5b7911b2e1d7296cd1b76db3074a1261a74997",
+        "identity_status": "verified_local"
+      },
+      "observation": {
+        "summary": "C7 dependency status is a limitation only: referenced C7 dependency-drift evidence is not present in this checkout, so dependency/replay claims cannot be rebound.",
+        "scope": "local status record and current checkout object/path search",
+        "fact_status": "provisional_substitute_evidence",
+        "limitations": [
+          "C7 artifact directories are absent from the current checkout and local pinned paths.",
+          "Dependency identity and replay provenance therefore remain unknown."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.ark.runtime.type_safety"
+        ],
+        "rule_ids": [
+          "ark.runtime.typedarray-store-type-origin",
+          "ark.runtime.typedarray-allocation-exception-guard"
+        ],
+        "control_ids": [
+          "C8-DEPENDENCY-UNKNOWN-001"
+        ]
+      },
+      "controls": [
+        {
+          "control_id": "C8-DEPENDENCY-UNKNOWN-001",
+          "kind": "unknown",
+          "expected": "unknown"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "trigger_condition": "unknown",
+        "cia_impact": "unknown",
+        "audit_evidence": "substitute current status record",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "status_record",
+          "path": "docs/项目现状与下一步.md",
+          "sha256": "901f01cce59539d71fb334480a5b7911b2e1d7296cd1b76db3074a1261a74997",
+          "git_blob": "52f5b06be8c9ef28512516291faddeda2c24cab9"
+        },
+        {
+          "role": "c7_missing_dependency_evidence",
+          "path": "research/experiments/ark_runtime/c7_dependency_drift_20261019/",
+          "sha256": "unknown",
+          "git_blob": "unknown"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "unknown",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cve": false,
+        "metrics": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    },
+    {
+      "entry_id": "C7-REPLAY-LIMIT-UNKNOWN",
+      "source_identity": {
+        "repository": "CyberSecurity-Innovation-Audit",
+        "path": "docs/项目现状与下一步.md",
+        "commit": "556cb145fec9f52afd1c49d10290e01036200f00",
+        "tree": "7ccd0895622669ac33595c1058e5f0ede0b8e5a5",
+        "blob": "52f5b06be8c9ef28512516291faddeda2c24cab9",
+        "sha256": "901f01cce59539d71fb334480a5b7911b2e1d7296cd1b76db3074a1261a74997",
+        "identity_status": "verified_local"
+      },
+      "observation": {
+        "summary": "C7 replay is blocked by missing historical parent/fix/current components; the current status record says 8 historical tests were skipped and must not count as passed.",
+        "scope": "historical replay limitation only",
+        "fact_status": "provisional_substitute_evidence",
+        "limitations": [
+          "Pinned Ark Git store/historical objects are absent.",
+          "Missing objects are not safe or miss results.",
+          "The referenced C7 replay directory is not present in this checkout."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.ark.runtime.type_safety"
+        ],
+        "rule_ids": [
+          "ark.runtime.typedarray-store-type-origin",
+          "ark.runtime.typedarray-allocation-exception-guard"
+        ],
+        "control_ids": [
+          "C8-HISTORY-MISSING-001"
+        ]
+      },
+      "controls": [
+        {
+          "control_id": "C8-HISTORY-MISSING-001",
+          "kind": "unknown",
+          "expected": "blocked/unknown"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "trigger_condition": "unknown",
+        "cia_impact": "unknown",
+        "audit_evidence": "substitute current status record",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "status_record",
+          "path": "docs/项目现状与下一步.md",
+          "sha256": "901f01cce59539d71fb334480a5b7911b2e1d7296cd1b76db3074a1261a74997",
+          "git_blob": "52f5b06be8c9ef28512516291faddeda2c24cab9"
+        },
+        {
+          "role": "c7_missing_replay_evidence",
+          "path": "research/experiments/ark_runtime/c7_historical_replay_20261019/",
+          "sha256": "unknown",
+          "git_blob": "unknown"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "unknown",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cve": false,
+        "metrics": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    }
+  ]
+}

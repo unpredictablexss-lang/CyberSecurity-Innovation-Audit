@@ -1,0 +1,34 @@
+{
+  "schema_version": "c8.source-audit.input-manifest/v1",
+  "input_path": "源码漏洞审查记录_20261018.md",
+  "resolved_path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\源码漏洞审查记录_20261018.md",
+  "status": "missing",
+  "execution_status": "blocked_missing_input",
+  "sha256": "unknown",
+  "git_identity": {
+    "commit": "unknown",
+    "tree": "unknown",
+    "blob": "unknown",
+    "status": "not_available"
+  },
+  "search_evidence": {
+    "checkout": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019",
+    "head": "556cb145fec9f52afd1c49d10290e01036200f00",
+    "head_tree": "7ccd0895622669ac33595c1058e5f0ede0b8e5a5",
+    "branch": "codex/c-line-scanner-optimization-20261019",
+    "remote": "origin https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "worktree_basename_count": 0,
+    "tracked_path_count": 0,
+    "history_path_count": 0,
+    "pinned_object_path_count": 0,
+    "search_method": "local worktree + git ls-files + git log --all --name-only + git rev-list --objects --all; no fetch/checkout/push/merge/network",
+    "searched_at": "2026-10-19"
+  },
+  "input_assertions": {
+    "file_read": false,
+    "entries_extracted": 0,
+    "fabricated_entries": false,
+    "missing_input_is_not_safe_or_miss": true
+  },
+  "next_obligation": "Provide or restore the exact source-audit Markdown file, then rerun reconcile.py and rebind its SHA-256 and Git identity."
+}

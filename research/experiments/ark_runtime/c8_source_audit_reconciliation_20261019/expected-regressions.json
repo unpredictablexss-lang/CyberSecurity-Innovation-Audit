@@ -1,0 +1,77 @@
+{
+  "schema_version": "c8.source-audit.expected-regressions/v1",
+  "purpose": "Fail-closed regression acceptance scaffold; metadata and control coverage only.",
+  "scanner_execution": false,
+  "metrics_allowed": false,
+  "required_coverage": [
+    "type_origin_six_counterexamples",
+    "guard_before",
+    "guard_after",
+    "guard_unknown",
+    "partial_owner_fail_closed",
+    "historical_object_missing"
+  ],
+  "control_matrix": {
+    "positive": ["C8-TO-POS-001", "C8-EG-POS-001"],
+    "fixed": ["C8-TO-FIX-001", "C8-EG-FIX-001"],
+    "safe": ["C8-TO-SAFE-001", "C8-EG-SAFE-001"],
+    "unrelated": ["C8-TO-UNR-001", "C8-EG-UNR-001"],
+    "unknown": [
+      "C8-TO-UNKNOWN-001",
+      "C8-TO-UNKNOWN-002",
+      "C8-TO-UNKNOWN-003",
+      "C8-TO-UNKNOWN-004",
+      "C8-TO-UNKNOWN-005",
+      "C8-TO-UNKNOWN-006",
+      "C8-EG-UNKNOWN-001",
+      "C8-OWNER-UNKNOWN-001",
+      "C8-HISTORY-MISSING-001",
+      "C8-DEPENDENCY-UNKNOWN-001"
+    ]
+  },
+  "families": [
+    {
+      "family_id": "type_origin_six_counterexamples",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "cases": [
+        {"case_id": "TO-UNKNOWN-001", "source_sha256": "aa6d148fa52a063a2d796b2c1b80ae8dc0aac49b3ccffe1a460d006e861388c5", "expression": "tag++;", "expected": "unknown", "control_id": "C8-TO-UNKNOWN-001", "known_finding_id": "C3-TO-COUNTEREXAMPLE-001"},
+        {"case_id": "TO-UNKNOWN-002", "source_sha256": "4d2cba069e2a5191ad2a8db896f7823bfe0157d35b5abadb17e9fdd14ee1858e", "expression": "++tag;", "expected": "unknown", "control_id": "C8-TO-UNKNOWN-002", "known_finding_id": "C3-TO-COUNTEREXAMPLE-002"},
+        {"case_id": "TO-UNKNOWN-003", "source_sha256": "b245134c133cde19b9c4964cc7201dc559015f60c3c02aef48625a64ab69af5e", "expression": "GateRef scratch = Int32Add((tag = inputTag), Int32(0));", "expected": "unknown", "control_id": "C8-TO-UNKNOWN-003", "known_finding_id": "C3-TO-COUNTEREXAMPLE-003"},
+        {"case_id": "TO-UNKNOWN-004", "source_sha256": "f540fa1c0724fa1aa3216c78170ccb97a3dc9fe90a35cdc29f0560786b362125", "expression": "GateRef scratch = Int32Add((output = input), Int32(0));", "expected": "unknown", "control_id": "C8-TO-UNKNOWN-004", "known_finding_id": "C3-TO-COUNTEREXAMPLE-004"},
+        {"case_id": "TO-UNKNOWN-005", "source_sha256": "51bdfef745c7b3681cad272c1498fee9ca5655110dd5837a697692e5b667f84c", "expression": "GateRef other = GetObjectType(LoadHClass(output)), changed = (tag = inputTag);", "expected": "unknown", "control_id": "C8-TO-UNKNOWN-005", "known_finding_id": "C3-TO-COUNTEREXAMPLE-005"},
+        {"case_id": "TO-UNKNOWN-006", "source_sha256": "83e5ad4d3fcfada50f693aa80ec271ef4f5459f90bb15bd83c481531235005cb", "expression": "Label write(GetEnvironment()); BRANCH((tag = inputTag), &write, exit); Bind(&write);", "expected": "unknown", "control_id": "C8-TO-UNKNOWN-006", "known_finding_id": "C3-TO-COUNTEREXAMPLE-006"}
+      ]
+    },
+    {
+      "family_id": "exception_guard_order",
+      "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+      "cases": [
+        {"case_id": "EG-BEFORE-001", "label": "guard_before_use", "expected": "fixed", "control_id": "C8-EG-FIX-001", "assertion": "pending-exception guard precedes result use"},
+        {"case_id": "EG-AFTER-001", "label": "use_before_guard", "expected": "positive_candidate", "control_id": "C8-EG-POS-001", "assertion": "result use precedes pending-exception guard; retain candidate/unassessed"},
+        {"case_id": "EG-UNKNOWN-001", "label": "guard_effect_order_unknown", "expected": "unknown", "control_id": "C8-EG-UNKNOWN-001", "assertion": "unknown effect/order, including ToReversed input-read and empty-loop paths"}
+      ]
+    },
+    {
+      "family_id": "partial_owner_fail_closed",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "cases": [
+        {"case_id": "OWNER-PARTIAL-001", "label": "partial_owner", "expected": "unknown", "control_id": "C8-OWNER-UNKNOWN-001", "assertion": "partial, macro, conditional-compilation, cross-TU or ambiguous owner stays unknown"},
+        {"case_id": "OWNER-PARTIAL-002", "label": "owner_unresolved", "expected": "blocked_unknown", "control_id": "C8-OWNER-UNKNOWN-001", "assertion": "missing exact owner binding blocks candidate/suppression"}
+      ]
+    },
+    {
+      "family_id": "historical_object_missing",
+      "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+      "cases": [
+        {"case_id": "HISTORY-MISSING-001", "label": "parent_fix_current_object_missing", "expected": "blocked_unknown", "control_id": "C8-HISTORY-MISSING-001", "assertion": "missing parent/fix/current Git object is not counted as passed or safe"},
+        {"case_id": "DEPENDENCY-MISSING-001", "label": "dependency_replay_evidence_missing", "expected": "unknown", "control_id": "C8-DEPENDENCY-UNKNOWN-001", "assertion": "missing dependency/replay evidence remains an explicit unknown obligation"}
+      ]
+    }
+  ],
+  "acceptance": {
+    "all_cases_must_have_source_or_fixture_identity": true,
+    "all_findings_must_map_to_detector_rule_control": true,
+    "missing_or_unknown_is_fail_closed": true,
+    "scanner_or_metric_assertions_are_rejected": true
+  }
+}

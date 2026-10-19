@@ -1,0 +1,30 @@
+{
+  "schema_version": "c8.source-audit.run-manifest/v1",
+  "run_id": "c8-source-audit-reconciliation-20261019",
+  "started_at": "2026-10-19T04:16:08+00:00",
+  "checkout": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019",
+  "head": "556cb145fec9f52afd1c49d10290e01036200f00",
+  "input_status": "missing",
+  "execution_status": "blocked_missing_input",
+  "scanner_execution": false,
+  "metrics_computed": false,
+  "input_path": "源码漏洞审查记录_20261018.md",
+  "extracted_vulnerability_entries": 0,
+  "known_substitute_findings": 12,
+  "validation": {
+    "entry_schema": "pass",
+    "source_identity": "pass",
+    "mapping": "pass",
+    "controls": "pass",
+    "regression_scaffolding": "pass"
+  },
+  "failures": [],
+  "unknown_ledger": [
+    "source-audit input missing: no vulnerability entries imported"
+  ],
+  "next_slice": [
+    "Restore or provide 源码漏洞审查记录_20261018.md and rerun with --write-run-manifest.",
+    "For each imported entry, bind repo/commit/tree/blob/source hash and keep partial/failed/unknown explicit.",
+    "After missing historical objects are restored, run the authorized local replay and keep failures in the ledger."
+  ]
+}
