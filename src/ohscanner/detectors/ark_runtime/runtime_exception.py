@@ -9,6 +9,7 @@ import re
 
 from .analysis import Observation
 from .cross_helper import build_identity_helpers, unwrap_identity_expression
+from .model import AnalysisBudget
 from .syntax import name_node, parse_functions, walk
 
 
@@ -1127,70 +1128,310 @@ def has_runtime_exception_source(unit, effect_calls=(("JSFunction::Call", 1, "JS
 
 
 
-def analyze_native_inline_exception_propagation(unit):
-    """Detect Reflect.apply inlining that compares a sentinel instead of pending state."""
-    if unit.parse_status not in ("complete", "partial"):
+def analyze_native_inline_exception_propagation(unit, budget=None):
+    """Model only the pinned local Reflect.apply caller/helper GateRef relation.
+
+    This intentionally does not infer C++ return-value or whole-program flows.
+    Every emitted candidate needs one exact caller-to-helper value flow and a
+    correlated sentinel/branch/replacement chain. Unresolved syntax is unknown.
+    """
+    if unit.language != "cpp" or unit.parse_status not in ("complete", "partial"):
         return RuntimeExceptionResult("limited", "not_analyzed",
                                       limitations=("source_parse_unavailable",))
-    text = unit.text
-    masked = _mask_cpp_noncode(text) if "_mask_cpp_noncode" in globals() else text
-    function_pattern = re.compile(
-        r"\b(?P<name>(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*)\s*\([^;{}]*\)\s*(?:const\s*)?\{")
-    regions = {}
-    cursor = 0
-    while True:
-        match = function_pattern.search(masked, cursor)
-        if match is None:
-            break
-        cursor = match.end()
-        opening = masked.find("{", match.start(), match.end())
-        depth = 0
-        closing = None
-        for index in range(opening, len(masked)):
-            if masked[index] == "{":
-                depth += 1
-            elif masked[index] == "}":
-                depth -= 1
-                if depth == 0:
-                    closing = index
-                    break
-        if closing is None:
-            continue
-        regions[match.group("name")] = (text[opening + 1:closing],
-                                        text.count("\n", 0, opening + 1) + 1,
-                                        len(text[:opening + 1].encode("utf-8")))
-    def method(name):
-        return name == name.rsplit("::", 1)[-1] or name.endswith("NativeInlineLowering::" + name.rsplit("::", 1)[-1])
-    caller_name = next((name for name in regions
-                        if name.rsplit("::", 1)[-1] == "TryInlineReflectApply"), None)
-    helper_name = next((name for name in regions
-                        if name.rsplit("::", 1)[-1] == "ReplaceGateWithPendingException"), None)
-    if caller_name is None:
+    budget = budget or AnalysisBudget()
+    raw = unit.text.encode("utf-8")
+    if len(raw) > budget.max_source_bytes:
+        return RuntimeExceptionResult("limited", "not_analyzed",
+                                      limitations=("source_byte_budget_exhausted",))
+    try:
+        _, functions = parse_functions(raw)
+    except (ValueError, RuntimeError, UnicodeError):
+        return RuntimeExceptionResult("limited", "partial",
+                                      limitations=("native_inline_parser_failed",))
+    owner = "panda::ecmascript::kungfu::NativeInlineLowering::"
+    caller_name = owner + "TryInlineReflectApply"
+    helper_name = owner + "ReplaceGateWithPendingException"
+    callers = [fn for fn in functions if fn.qualified_name == caller_name]
+    helpers = [fn for fn in functions if fn.qualified_name == helper_name]
+    if not callers and not helpers:
         return RuntimeExceptionResult("limited", "not_analyzed",
                                       limitations=("reflect_apply_inline_site_not_applicable",))
-    if helper_name is None:
+    if len(callers) != 1 or tuple(callers[0].parameter_types) != (
+            "GateRef", "size_t", "BuiltinsStubCSigns::ID", "bool"):
+        return RuntimeExceptionResult("limited", "partial", limitations=(
+            "reflect_apply_caller_identity_or_signature_unresolved",))
+    if len(helpers) != 1 or tuple(helpers[0].parameter_types) != ("GateRef", "GateRef"):
+        return RuntimeExceptionResult("limited", "partial", limitations=(
+            "pending_exception_helper_identity_or_signature_unresolved",))
+
+    caller, helper = callers[0], helpers[0]
+    if (sum(1 for _ in walk(caller.body)) + sum(1 for _ in walk(helper.body))
+            > budget.max_instructions):
         return RuntimeExceptionResult("limited", "partial",
-                                      limitations=("pending_exception_helper_summary_missing:" + caller_name,))
-    body, body_line, body_byte = regions[helper_name]
-    if re.search(r"\bHasPendingException\s*\(", body):
+                                      limitations=("native_inline_instruction_budget_exhausted",))
+    if caller.node.has_error or helper.node.has_error:
+        return RuntimeExceptionResult("limited", "partial", limitations=(
+            "native_inline_method_parse_incomplete",))
+
+    def call_expression(fn, node):
+        return re.sub(r"\s+", "", fn.call_name(node))
+
+    def calls(fn, name):
+        return [node for node in walk(fn.body)
+                if node.type == "call_expression" and call_expression(fn, node) == name]
+
+    def args(fn, node):
+        return fn.arguments(node)
+
+    def direct_statement(fn, node):
+        current = node
+        while current is not None and current.parent != fn.body:
+            current = current.parent
+        return current if current is not None else None
+
+    def flat_statement(fn, node):
+        statement = direct_statement(fn, node)
+        return statement is not None and statement.type in ("declaration", "expression_statement")
+
+    def identifier(fn, node):
+        if node is None:
+            return None
+        name = fn.text(node)
+        if re.fullmatch(r"[A-Za-z_]\w*", name) is None:
+            return None
+        return fn.resolve(name, node)
+
+    def assigned_calls(fn, name):
+        result = []
+        for node in walk(fn.body):
+            if node.type != "init_declarator":
+                continue
+            dec, value = node.child_by_field_name("declarator"), node.child_by_field_name("value")
+            if dec is None or dec.type != "identifier" or value is None or value.type != "call_expression":
+                continue
+            if call_expression(fn, value) == name:
+                binding = fn.resolve(fn.text(dec), value)
+                declaration_binding = fn.resolve(fn.text(dec), dec)
+                if (binding is not None and declaration_binding is not None
+                        and binding.identity == declaration_binding.identity):
+                    result.append((binding, value))
+        return result
+
+    def has_reassignment(fn, binding, start, end):
+        for node in walk(fn.body):
+            if not (start < node.start_byte < end):
+                continue
+            if node.type == "assignment_expression":
+                left = node.child_by_field_name("left")
+                if identifier(fn, left) is not None and identifier(fn, left).identity == binding.identity:
+                    return True
+            if node.type == "update_expression":
+                operand = node.named_children[-1] if node.named_children else None
+                if identifier(fn, operand) is not None and identifier(fn, operand).identity == binding.identity:
+                    return True
+        return False
+
+    reflect_results = []
+    for binding, op_call in assigned_calls(caller, "builder_.BuildControlDependOp"):
+        call_args = args(caller, op_call)
+        if len(call_args) != 2:
+            continue
+        operations = [node for node in walk(call_args[0])
+                      if node.type == "call_expression"
+                      and call_expression(caller, node) == "circuit_->ReflectApply"]
+        if len(operations) == 1:
+            reflect_results.append((binding, op_call))
+    helper_calls = []
+    for call in calls(caller, "ReplaceGateWithPendingException"):
+        call_args = args(caller, call)
+        if len(call_args) != 2:
+            continue
+        passed = identifier(caller, call_args[1])
+        if passed is not None:
+            helper_calls.append((passed, call))
+    paired = [(ret, op, passed, call) for ret, op in reflect_results
+              for passed, call in helper_calls if ret.identity == passed.identity]
+    if len(paired) != 1 or has_reassignment(caller, paired[0][0],
+                                             paired[0][1].start_byte,
+                                             paired[0][3].start_byte) or not all(
+                flat_statement(caller, node) for node in (paired[0][1], paired[0][3])):
+        return RuntimeExceptionResult("limited", "partial", limitations=(
+            "reflect_apply_result_to_helper_value_flow_unresolved",))
+
+    value_binding = next((binding for binding in helper.bindings
+                          if binding.parameter and binding.name == "value" and binding.type_name == "GateRef"), None)
+    if value_binding is None:
+        return RuntimeExceptionResult("limited", "partial", limitations=(
+            "pending_exception_value_parameter_unresolved",))
+
+    # Resolve the exact guard input, branch condition and replacement successors.
+    sentinel_pairs = []
+    pending_pairs = []
+    for binding, equal_call in assigned_calls(helper, "builder_.Equal"):
+        equal_args = args(helper, equal_call)
+        if len(equal_args) != 2:
+            continue
+        value_positions = [arg for arg in equal_args
+                           if identifier(helper, arg) is not None
+                           and identifier(helper, arg).identity == value_binding.identity]
+        sentinel_bindings = []
+        for arg in equal_args:
+            arg_binding = identifier(helper, arg)
+            if arg_binding is None:
+                continue
+            sentinel_bindings.extend(const_binding for const_binding, const_call
+                                     in assigned_calls(helper, "builder_.ExceptionConstant")
+                                     if const_binding.identity == arg_binding.identity
+                                     and const_call.start_byte < equal_call.start_byte)
+        if len(value_positions) == 1 and len(sentinel_bindings) == 1:
+            sentinel_pairs.append((binding, equal_call, sentinel_bindings[0]))
+
+    for binding, check_call in assigned_calls(helper, "builder_.HasPendingException"):
+        check_args = args(helper, check_call)
+        if len(check_args) == 1 and helper.text(check_args[0]).strip() == "glue_":
+            pending_pairs.append((binding, check_call))
+
+    replacement_calls = calls(helper, "acc_.ReplaceHirWithIfBranch")
+    branch_calls = assigned_calls(helper, "builder_.Branch")
+    if (len(replacement_calls) != 1 or len(branch_calls) != 1
+            or not all(flat_statement(helper, node) for node in
+                       [replacement_calls[0]] + [call for _, call in branch_calls])):
+        return RuntimeExceptionResult("limited", "partial", limitations=(
+            "native_inline_branch_replacement_relation_unresolved",))
+    branch_binding, branch_call = branch_calls[0]
+    branch_args = args(helper, branch_call)
+    replace_args = args(helper, replacement_calls[0])
+    if len(branch_args) < 2 or len(replace_args) != 4:
+        return RuntimeExceptionResult("limited", "partial", limitations=(
+            "native_inline_branch_replacement_relation_unresolved",))
+
+    def successor(kind):
+        return [(binding, call) for binding, call in assigned_calls(helper, "builder_." + kind)
+                if len(args(helper, call)) == 1
+                and identifier(helper, args(helper, call)[0]) is not None
+                and identifier(helper, args(helper, call)[0]).identity == branch_binding.identity]
+
+    true_rows, false_rows = successor("IfTrue"), successor("IfFalse")
+    if len(true_rows) != 1 or len(false_rows) != 1:
+        return RuntimeExceptionResult("limited", "partial", limitations=(
+            "native_inline_branch_successor_relation_unresolved",))
+
+    def state_depend_rows():
+        rows = {}
+        for node in walk(helper.body):
+            if node.type != "declaration":
+                continue
+            if re.sub(r"\s+", "", helper.text(node.child_by_field_name("type"))) != "StateDepend":
+                continue
+            dec = node.child_by_field_name("declarator")
+            if dec is None:
+                continue
+            if dec.type == "function_declarator":
+                name_node_value = dec.child_by_field_name("declarator")
+                params = dec.child_by_field_name("parameters")
+                first = params.named_children[0] if params and params.named_children else None
+            elif dec.type == "init_declarator":
+                name_node_value = dec.child_by_field_name("declarator")
+                value = dec.child_by_field_name("value")
+                params = next((child for child in dec.named_children
+                               if child.type == "argument_list"), None)
+                first = params.named_children[0] if params and params.named_children else None
+                # Some constructor declarations keep the argument list under
+                # init_declarator rather than in a function_declarator node.
+                if value is not None and value.type == "call_expression":
+                    call_args = args(helper, value)
+                    first = call_args[0] if call_args else None
+            else:
+                continue
+            if name_node_value is None or name_node_value.type != "identifier":
+                continue
+            name = helper.text(name_node_value)
+            first_binding = identifier(helper, first) if first is not None else None
+            rows[name] = first_binding.identity if first_binding is not None else None
+        return rows
+
+    state_rows = state_depend_rows()
+    replace_ids = [identifier(helper, arg) for arg in replace_args]
+    hir_gate_binding = next((binding for binding in helper.bindings
+                             if binding.parameter and binding.name == "hirGate"
+                             and binding.type_name == "GateRef"), None)
+    state_bindings = [binding for binding, _ in assigned_calls(helper, "builder_.GetState")]
+    branch_state = identifier(helper, branch_args[0])
+    branch_state_call = (branch_args[0].type == "call_expression"
+                         and call_expression(helper, branch_args[0]) == "builder_.GetState"
+                         and len(args(helper, branch_args[0])) == 0)
+    replacement_uses_successors = (
+        replace_ids[0] is not None and hir_gate_binding is not None
+        and replace_ids[0].identity == hir_gate_binding.identity
+        and replace_ids[1] is not None and replace_ids[2] is not None
+        and state_rows.get(replace_ids[1].name) == false_rows[0][0].identity
+        and state_rows.get(replace_ids[2].name) == true_rows[0][0].identity
+        and ((len(state_bindings) == 1 and branch_state is not None
+              and branch_state.identity == state_bindings[0].identity)
+             or (not state_bindings and branch_state_call)))
+    replacement_value_is_param = (replace_ids[3] is not None
+                                  and replace_ids[3].identity == value_binding.identity)
+    state_input_reassigned = (branch_state is not None and has_reassignment(
+        helper, branch_state, helper.body.start_byte, branch_call.start_byte))
+    successor_reassigned = any(has_reassignment(helper, binding, call.start_byte,
+                                                 replacement_calls[0].start_byte)
+                               for binding, call in (true_rows[0], false_rows[0]))
+    replacement_state_reassigned = any(
+        replace_ids[index] is not None and has_reassignment(
+            helper, replace_ids[index], helper.body.start_byte, replacement_calls[0].start_byte)
+        for index in (1, 2))
+    if (not replacement_uses_successors or not replacement_value_is_param
+            or state_input_reassigned or successor_reassigned or replacement_state_reassigned):
+        return RuntimeExceptionResult("limited", "partial", limitations=(
+            "native_inline_branch_replacement_relation_unresolved",))
+
+    fixed_guard = False
+    for check_binding, _ in pending_pairs:
+        if identifier(helper, branch_args[1]) is None or identifier(helper, branch_args[1]).identity != check_binding.identity:
+            continue
+        check_call = next(call for binding, call in pending_pairs
+                          if binding.identity == check_binding.identity)
+        if (has_reassignment(helper, check_binding, check_call.start_byte,
+                             branch_call.start_byte)
+                or not flat_statement(helper, check_call)):
+            continue
+        fixed_guard = True
+    if fixed_guard:
         return RuntimeExceptionResult("completed", "complete", (),
                                       ("fixed_pending_exception_check_control_not_security_verdict",), 1)
-    sentinel = re.search(r"\b(?:ExceptionConstant|Exception)\s*\(\s*\)", body)
-    equality = re.search(r"\b(?:Equal|Int32Equal|Int64Equal)\s*\([^;]*exception[^;]*\)", body, re.I)
-    branch = re.search(r"\bBranch\s*\([^;]*(?:equal|condition)[^;]*\)", body, re.I)
-    if sentinel and equality and branch:
-        offset = equality.start()
-        prefix = body[:offset]
-        line = body_line + prefix.count("\n")
-        column = len(prefix[prefix.rfind("\n", 0, offset) + 1:offset].encode("utf-8")) + 1
-        start_byte = body_byte + len(prefix.encode("utf-8"))
-        observation = Observation(
-            "candidate", line, column,
-            "reflect_apply_result_sentinel_comparison_may_drop_pending_exception",
-            helper_name, "ExceptionConstant", line, line, (line,),
-            ((line, "checks_pending_thread_exception", False),),
-            helper_name, start_byte, start_byte + len(equality.group(0).encode("utf-8")))
-        return RuntimeExceptionResult("limited", "partial", (observation,),
-                                      ("local_sentinel_comparison_does_not_prove_exception_propagation",), 1)
-    return RuntimeExceptionResult("limited", "partial", (),
-                                  ("native_inline_exception_semantics_unmodeled:" + helper_name,), 1)
+
+    matching_sentinel = [(eq_binding, eq_call, sentinel_binding)
+                         for eq_binding, eq_call, sentinel_binding in sentinel_pairs
+                         if identifier(helper, branch_args[1]) is not None
+                         and identifier(helper, branch_args[1]).identity == eq_binding.identity]
+    if len(matching_sentinel) != 1:
+        return RuntimeExceptionResult("limited", "partial", (),
+                                      ("native_inline_guard_branch_relation_unknown",), 1)
+    equal_binding, equality, sentinel_binding = matching_sentinel[0]
+    sentinel_call = next(call for binding, call in assigned_calls(helper, "builder_.ExceptionConstant")
+                         if binding.identity == sentinel_binding.identity)
+    if (has_reassignment(helper, value_binding, helper.body.start_byte, replacement_calls[0].start_byte)
+            or has_reassignment(helper, sentinel_binding, sentinel_call.start_byte, equality.start_byte)
+            or has_reassignment(helper, equal_binding, equality.start_byte, branch_call.start_byte)
+            or has_reassignment(helper, branch_binding, branch_call.start_byte,
+                                replacement_calls[0].start_byte)
+            or not flat_statement(helper, equality)):
+        return RuntimeExceptionResult("limited", "partial", (),
+                                      ("pending_exception_value_reassigned_before_replacement",), 1)
+
+    offset = equality.start_byte
+    line = unit.text.count("\n", 0, offset) + 1
+    line_start = unit.text.rfind("\n", 0, offset) + 1
+    column = len(unit.text[line_start:offset].encode("utf-8")) + 1
+    observation = Observation(
+        "candidate", line, column,
+        "reflect_apply_result_sentinel_comparison_may_drop_pending_exception",
+        helper_name, "ExceptionConstant", line, line, (line,),
+        ((line, "checks_pending_thread_exception", False),),
+        helper_name, offset, equality.end_byte)
+    status = "limited" if unit.parse_status == "partial" else "completed"
+    outcome = "partial"
+    limitations = ["local_sentinel_comparison_does_not_prove_exception_propagation"]
+    if unit.parse_status == "partial":
+        limitations.append("translation_unit_parse_partial")
+    return RuntimeExceptionResult(status, outcome, (observation,), tuple(limitations), 1)

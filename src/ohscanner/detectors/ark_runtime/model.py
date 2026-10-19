@@ -20,7 +20,7 @@ NATIVE_EXCEPTION_RULE_ID = 'ark.runtime.native-inline-pending-exception-propagat
 GAP_RULE_VERSIONS = {
     LENGTH_NARROWING_RULE_ID: '1.1.0',
     INDEX_BOUNDS_RULE_ID: '1.1.0',
-    NATIVE_EXCEPTION_RULE_ID: '1.1.0',
+    NATIVE_EXCEPTION_RULE_ID: '1.2.0',
 }
 RULE_VERSIONS = {
     RULE_ID: '1.1.0',
