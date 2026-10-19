@@ -1,0 +1,82 @@
+{
+  "task": "T72",
+  "reviewed_commit": "dd76d776357a79021431ed92899960dbdb3cde10",
+  "base_commit": "f628c90901d71510e60869c027e4c7903d2d4de6",
+  "verdicts": {
+    "D71_offset_boundary": "pass",
+    "ninth_match_aggregation": "pass",
+    "control_shape_matrix": "pass",
+    "caps_and_omission_counts": "pass",
+    "candidate_retention_and_replay": "pass",
+    "scope": "pass"
+  },
+  "state_matrix": {
+    "handler_offset_zero_unbraced_body": {"D70":"observed_unresolved","D72":"unresolved_control_flow","status":"unknown"},
+    "nonzero_handler_offset_unbraced_body": {"D70":"observed_unresolved","D72":"unresolved_control_flow","status":"unknown"},
+    "nested_unbraced_body": {"D70":"unresolved_control_flow","D72":"unresolved_control_flow","status":"unknown"},
+    "braced_control_body": {"D70":"unresolved_control_flow","D72":"unresolved_control_flow","status":"unknown"},
+    "permission_call_in_top_level_if_condition": {"D70":"observed_unresolved","D72":"observed_unresolved","status":"unknown"},
+    "top_level_permission_calls": {"D70":"observed_unresolved","D72":"observed_unresolved","status":"unknown"},
+    "eight_top_level_plus_ninth_direct_if_body": {"state":"unresolved_control_flow","total_matches":9,"records":8,"omitted":1,"status":"unknown"},
+    "eight_top_level_plus_ninth_nested_if_body": {"state":"unresolved_control_flow","total_matches":9,"records":8,"omitted":1,"status":"unknown"}
+  },
+  "caps": {
+    "max_observations": 8,
+    "max_tokens_per_observation": 16,
+    "max_token_characters": 48,
+    "max_snippet_characters": 120,
+    "max_description_characters": 4096,
+    "twelve_calls": {"matches":12,"records":8,"omitted":4},
+    "three_thousand_identifiers": {"tokens":16,"tokens_omitted":2986,"tokens_truncated":true},
+    "long_payload": {"serialized_characters":4094,"payload_truncated":true,"over_limit_characters":4382}
+  },
+  "source_replay": {
+    "source_commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "source_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "source_entries_verified": 68,
+    "sha256_or_blob_id_mismatches": 0,
+    "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+    "direct_detector_replay": {"status":"blocked","findings":2,"version":"0.19.12"},
+    "parse_status": {"complete":59,"partial":8,"not_run":1},
+    "detector_applicable_cpp": 67,
+    "detector_partial_cpp": 67,
+    "validated_vulnerabilities": 0,
+    "raw_report_sha256": "f36d5cf6032a2415af0e1296d51c12677fc576e566abf60ef8065a14ebd00cf8"
+  },
+  "candidate_identity": {
+    "CVE-2025-27247": {
+      "file": "services/zidl/src/pasteboard_service_stub.cpp",
+      "line": 41,
+      "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+      "legacy_diagnostic_id_unchanged": true,
+      "stable_identity_record_unchanged": true,
+      "permission_guard": "unknown",
+      "permission_guard_observation": "unknown"
+    },
+    "occurrence_id_drift": {
+      "CVE-2025-25212": {
+        "D70": "ohocc:v1:7296605006992137633e0ce1e55f7644bb6559f6d8c017c139959e5b4d3242ba",
+        "D72": "ohocc:v1:9b4849ff19b6b0fe14bc63f77a70c74a23efe9a8869ee8a9d1658171bc1b2965"
+      },
+      "CVE-2025-27247": {
+        "D70": "ohocc:v1:f38eb6d610850a4262b0abf76d166da40a449660309eee1dbde3da5ed8711c2c",
+        "D72": "ohocc:v1:8a9c65f41f8d8ac235aea18a2af0745aba1a013f5a59d7223697c3d5b3d67c31"
+      },
+      "basis_fields_changed": ["detector_version","rule_version"],
+      "expected_version_bound_drift": true
+    }
+  },
+  "validation": {
+    "focused_tests_passed": 33,
+    "focused_tests_failed": 0,
+    "strict_json": "passed",
+    "raw_digest_matches_summary": true,
+    "diff_check": "passed"
+  },
+  "interpretation": "A call in a top-level if condition remains observed_unresolved as a lexical observation; it does not prove authorization, denial, or dominance.",
+  "limitations": [
+    "permission_guard semantics remain unknown; no candidate suppression occurs",
+    "parser coverage remains partial and TypeScript was not run",
+    "product applicability, CVE causality, reachability, exploitability, and safety are unknown"
+  ]
+}
