@@ -1,8 +1,8 @@
 # D54 — libpng lifetime detector replay
 
-Date: 2026-10-30 (Asia/Shanghai)  
-Baseline: `dac497e85b55baf9279368469047fc142b325ea6`  
-Detector: `ohscanner.cpp.resource_lifetime` `0.4.2`  
+Date: 2026-10-30 (Asia/Shanghai)
+Baseline: `dac497e85b55baf9279368469047fc142b325ea6`
+Detector: `ohscanner.cpp.resource_lifetime` `0.4.2`
 Disposition: **no rule change; both cases remain PARTIAL/BLOCK**.
 
 ## Replay results
