@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ohscanner://ark-runtime/ibs5yg-d5-intake/v1",
+  "title": "IBS5YG D5 structural target evidence intake",
+  "description": "Structural evidence-byte binding only; it does not authenticate issuers, establish evidence meaning, custody, product truth, or a product build.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "case_id", "fields"],
+  "properties": {
+    "schema": {"const": "ohscanner.ark-runtime.ibs5yg-d5-intake/v1"},
+    "case_id": {"const": "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG"},
+    "fields": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["openharmony_release", "product_build_id_or_image_version", "source_branch_or_release_tag", "locked_manifest_uri_plus_sha256_or_immutable_commit", "product_name", "board_or_device_target"],
+      "properties": {
+        "openharmony_release": {"$ref": "#/$defs/fieldEvidence"},
+        "product_build_id_or_image_version": {"$ref": "#/$defs/fieldEvidence"},
+        "source_branch_or_release_tag": {"$ref": "#/$defs/fieldEvidence"},
+        "locked_manifest_uri_plus_sha256_or_immutable_commit": {"$ref": "#/$defs/fieldEvidence"},
+        "product_name": {"$ref": "#/$defs/fieldEvidence"},
+        "board_or_device_target": {"$ref": "#/$defs/fieldEvidence"}
+      }
+    }
+  },
+  "$defs": {
+    "fieldEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "evidence"],
+      "properties": {
+        "value": {"type": "string", "minLength": 1},
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256", "issuer", "build_identity"],
+          "properties": {
+            "path": {"type": "string", "minLength": 1},
+            "sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+            "issuer": {"type": "string", "minLength": 1},
+            "build_identity": {"$ref": "#/$defs/buildIdentity"}
+          }
+        }
+      }
+    },
+    "buildIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["openharmony_release", "product_build_id_or_image_version", "source_branch_or_release_tag", "locked_manifest_uri_plus_sha256_or_immutable_commit", "product_name", "board_or_device_target"],
+      "properties": {
+        "openharmony_release": {"type": "string", "minLength": 1},
+        "product_build_id_or_image_version": {"type": "string", "minLength": 1},
+        "source_branch_or_release_tag": {"type": "string", "minLength": 1},
+        "locked_manifest_uri_plus_sha256_or_immutable_commit": {"type": "string", "minLength": 1},
+        "product_name": {"type": "string", "minLength": 1},
+        "board_or_device_target": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
