@@ -1,0 +1,31 @@
+{
+  "source_delivery": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit\\research\\deliveries\\a-line-sample30\\20261018",
+  "a0_hash_manifest_entry_count": 97,
+  "a0_hash_manifest_total_bytes": 4364747,
+  "direct_inputs": [
+    {
+      "path": "evidence/hashes.json",
+      "exists": true,
+      "size_bytes": 20306,
+      "sha256": "06ae700e4754e5255761f4fa5577e2a311e7f3fbedc2e78f6bab6a77ff5a9f63"
+    },
+    {
+      "path": "evidence/candidate_reviews.json",
+      "exists": true,
+      "size_bytes": 1297012,
+      "sha256": "46d35eeb05e6e30e94883b4e6464683ab22f421affcb6591d0d2ff94cac890da"
+    },
+    {
+      "path": "evidence/sample_manifest.json",
+      "exists": true,
+      "size_bytes": 495342,
+      "sha256": "22e6f54a758684e48bc52e3acbc0e1e6ac88a74c523da42630d6fab868d38372"
+    },
+    {
+      "path": "evidence/reconciliation.json",
+      "exists": true,
+      "size_bytes": 7251,
+      "sha256": "2dec8af684f38a4b3c9e0c469464a13d209f8e8489dbc4aa3a65a1f69abc9cd1"
+    }
+  ]
+}
