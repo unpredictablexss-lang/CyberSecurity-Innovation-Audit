@@ -1,0 +1,447 @@
+{
+  "schema_version": "d41-faultloggerd-tail-source-replay-v1",
+  "task": "D41",
+  "base_head": "1ebe2d809719cc7b445fe6e723c452e0634c8dd3",
+  "structured_vibe_prompt": {
+    "role": "A线 C/C++ shared_ptr_race 开发负责人",
+    "sustained_goal": "只在来源证明存在生产级同一 shared_ptr wrapper 未同步并发访问时改 detector；区分成员语法候选、对象数据流、锁/线程事实和产品安全结论。",
+    "inputs": {
+      "a0_ids": "CR-0161–CR-0173",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "detector": "ohscanner.cpp.shared_ptr_race 0.5.1"
+    },
+    "steps": [
+      "先以队列固定的 commit/tree/blob/SHA 为准重放当前 CLI；核验 D40 只处理 CR-0119–CR-0160，避免误把其额外 finding 当已审 tail ID。",
+      "逐个追踪 getter/setter、成员对象所有权、全部调用点、目标 GN target，以及锁/原子/线程/任务生命周期。",
+      "区分 parser 注入 map 的 shared_mutex 与独立对象字段同步；验证是否有同一对象跨线程读写。",
+      "只有根因漏检来源证实后才改规则，并补正例、修复/安全/无关/partial 对照，交独立测试线复验。",
+      "缺产品配置、线程调度或固定修复的项目保留 PARTIAL/BLOCK，列清所需最小证据。"
+    ],
+    "completion_gate": "精确源码身份/当前 CLI 和逐 ID 独立 verifier 通过；具备生产级同一 wrapper 未同步并发 root 证据的适用项有可复验候选，安全/修复对照按可用性复验，范围检查无违规。",
+    "boundaries": [
+      "不把 syntax finding 当 data race。",
+      "不改 A0 状态、Catalog、API、公共 schema。",
+      "不假设完整语法解析代表线程/调用上下文语义完整。"
+    ]
+  },
+  "source": {
+    "repository": "openharmony/hiviewdfx_faultloggerd",
+    "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+    "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+    "identity_verified_from_local_git_objects": true,
+    "queue_bound_files": [
+      {
+        "path": "tools/process_dump/dfx_process.h",
+        "blob": "4ebafe6a77e464e099864f32e845ad512cd492cf",
+        "sha256": "8806f468a40a0f837ce0046161abec7a7f681f7742b9ac68132228c28b80131c",
+        "bytes": 4375
+      },
+      {
+        "path": "tools/process_dump/dfx_thread.h",
+        "blob": "2a1d9cb775a014cd64ccd522cc4728fc39a9332b",
+        "sha256": "b770b4c897ed50e8867fe1c3a466fe1bf50aea624a2dfe5f3f775145ef5244c2",
+        "bytes": 3186
+      },
+      {
+        "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+        "blob": "72ce94a929b23f3ea69d58befe1e7109fb733278",
+        "sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+        "bytes": 4005
+      },
+      {
+        "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+        "blob": "9e8e8d41cca9ef6d9aa42a50ab482ff7c3cd67a1",
+        "sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+        "bytes": 16219
+      }
+    ]
+  },
+  "cli": {
+    "command": "python -m src.cli.main ohscan-run --repo-dir D:\\openHarmonyScanner\\tmp\\a-d40-faultloggerd-source-20261024 --repository openharmony/hiviewdfx_faultloggerd --commit 50c7dffc057a32987d5eeb7626c20e1b3717c77b --detector ohscanner.cpp.shared_ptr_race --include tools/process_dump/dfx_process.h --include tools/process_dump/dfx_thread.h --include tools/process_dump/minidump_parser/include/minidump_parser.h --include tools/process_dump/minidump_parser/include/minidump_stream.h --json-out research/evidence/cpp/d41_faultloggerd_tail_cli_20261025.json --md-out research/evidence/cpp/d41_faultloggerd_tail_cli_20261025.md",
+    "tool": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "finding_count": 7,
+    "selected_file_count": 4,
+    "selected_loc": 874,
+    "parse_status": {
+      "complete": 4
+    },
+    "finding_rows": [
+      {
+        "path": "tools/process_dump/dfx_process.h",
+        "line": 55,
+        "symbol": "keyThread_",
+        "evidence_type": "syntax"
+      },
+      {
+        "path": "tools/process_dump/dfx_process.h",
+        "line": 60,
+        "symbol": "keyThread_",
+        "evidence_type": "syntax"
+      },
+      {
+        "path": "tools/process_dump/dfx_process.h",
+        "line": 69,
+        "symbol": "regs_",
+        "evidence_type": "syntax"
+      },
+      {
+        "path": "tools/process_dump/dfx_process.h",
+        "line": 74,
+        "symbol": "regs_",
+        "evidence_type": "syntax"
+      },
+      {
+        "path": "tools/process_dump/dfx_thread.h",
+        "line": 64,
+        "symbol": "stackBuf_",
+        "evidence_type": "syntax"
+      },
+      {
+        "path": "tools/process_dump/dfx_thread.h",
+        "line": 69,
+        "symbol": "stackBuf_",
+        "evidence_type": "syntax"
+      },
+      {
+        "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+        "line": 76,
+        "symbol": "arm64Context_",
+        "evidence_type": "syntax"
+      }
+    ],
+    "raw_report": "d41_faultloggerd_tail_cli_20261025.json",
+    "raw_markdown": "d41_faultloggerd_tail_cli_20261025.md"
+  },
+  "context_files": [
+    {
+      "path": "tools/process_dump/BUILD.gn",
+      "blob": "ec9e0a401a83461d64374a5e62fd07aa1f393d4e",
+      "sha256": "ad33cc7e9c576b80a1fa2f5233d1a606e0a61a3848760b08b542f719ed010142",
+      "bytes": 10525
+    },
+    {
+      "path": "tools/process_dump/minidump_parser/BUILD.gn",
+      "blob": "13955a046973b33fb586607590dfbf62637d6074",
+      "sha256": "3d0eb8914e9e9070c725c982cea7709ec73aecc23f51fba62064fdb9164fb30c",
+      "bytes": 1930
+    },
+    {
+      "path": "tools/process_dump/registers.cpp",
+      "blob": "baa0fdd0e8f106d01c0ae3d198cd59e7193af664",
+      "sha256": "89fd3b9d48db867fe872f92286bbc4f07248c58c5a5738ac59ef5facedc98440",
+      "bytes": 1887
+    },
+    {
+      "path": "tools/process_dump/minidump_dumper.cpp",
+      "blob": "bee681a0e209d1fdab16ebf48d6c8f0bbf8b7560",
+      "sha256": "9bd73fa7a4d26ab4c4d5a08b01dd747bbb9aae4e61cc54c0f028433360d892d1",
+      "bytes": 25196
+    },
+    {
+      "path": "tools/process_dump/minidump_parser/minidump_context.cpp",
+      "blob": "dc7dbcc95e663c4510d9f3b9e0b2f654a773fb25",
+      "sha256": "6c426197603edccc08a36b5aec2cf18a219c68fbe94e3368394b111e71363999",
+      "bytes": 4434
+    },
+    {
+      "path": "tools/process_dump/minidump_parser/minidump_thread.cpp",
+      "blob": "d39d6e30edd253df79d577edd5b66d309863557c",
+      "sha256": "e505ee20bdb5fceb2a29491b09f33c327b066dbedb90bd177624b69c5a357b1e",
+      "bytes": 9253
+    },
+    {
+      "path": "tools/process_dump/minidump_parser/minidump_exception.cpp",
+      "blob": "c7c57bf09af6eb774ffd7586681306eb4462201e",
+      "sha256": "081a9dc28f09ac05a1aac25150bcfb20df07bf6c429c517b7b615cb1e08e9e33",
+      "bytes": 4943
+    },
+    {
+      "path": "tools/process_dump/minidump_parser/minidump_parser.cpp",
+      "blob": "a5e87053497a2ea8d9000c7f347b09c00dc85253",
+      "sha256": "d021d3431db4998543f1225f97b469ac430eed9431a55450b4847dc56400f828",
+      "bytes": 17797
+    },
+    {
+      "path": "tools/process_dump/minidump_parser/minidump_stream_pipeline.cpp",
+      "blob": "e3aaa11bbfee395373b1a1850e123fd01b398478",
+      "sha256": "8757e95d2eb75ad956f6dfd6e1a7501b5a9acfb8d5dcadaceff506e659478aea",
+      "bytes": 3754
+    }
+  ],
+  "items": [
+    {
+      "queue_id": "CR-0161",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:b11b741aa67036e8",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "path": "tools/process_dump/dfx_process.h",
+      "line": 74,
+      "blob": "4ebafe6a77e464e099864f32e845ad512cd492cf",
+      "source_sha256": "8806f468a40a0f837ce0046161abec7a7f681f7742b9ac68132228c28b80131c",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "replay": {
+        "result": "matched_exact_line",
+        "finding_symbol": "regs_",
+        "finding_evidence_type": "syntax"
+      }
+    },
+    {
+      "queue_id": "CR-0162",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:d2a646c59c6bb1da",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "path": "tools/process_dump/dfx_thread.h",
+      "line": 64,
+      "blob": "2a1d9cb775a014cd64ccd522cc4728fc39a9332b",
+      "source_sha256": "b770b4c897ed50e8867fe1c3a466fe1bf50aea624a2dfe5f3f775145ef5244c2",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "replay": {
+        "result": "matched_exact_line",
+        "finding_symbol": "stackBuf_",
+        "finding_evidence_type": "syntax"
+      }
+    },
+    {
+      "queue_id": "CR-0163",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:58f319493c195843",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "path": "tools/process_dump/dfx_thread.h",
+      "line": 69,
+      "blob": "2a1d9cb775a014cd64ccd522cc4728fc39a9332b",
+      "source_sha256": "b770b4c897ed50e8867fe1c3a466fe1bf50aea624a2dfe5f3f775145ef5244c2",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "replay": {
+        "result": "matched_exact_line",
+        "finding_symbol": "stackBuf_",
+        "finding_evidence_type": "syntax"
+      }
+    },
+    {
+      "queue_id": "CR-0164",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:312237fa1743b146",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "path": "tools/process_dump/dfx_thread.h",
+      "line": 87,
+      "blob": "2a1d9cb775a014cd64ccd522cc4728fc39a9332b",
+      "source_sha256": "b770b4c897ed50e8867fe1c3a466fe1bf50aea624a2dfe5f3f775145ef5244c2",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "replay": {
+        "result": "no_current_finding_at_a0_line",
+        "finding_symbol": null,
+        "finding_evidence_type": null
+      }
+    },
+    {
+      "queue_id": "CR-0165",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:3539aa4913a62737",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+      "line": 50,
+      "blob": "72ce94a929b23f3ea69d58befe1e7109fb733278",
+      "source_sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "replay": {
+        "result": "no_current_finding_at_a0_line",
+        "finding_symbol": null,
+        "finding_evidence_type": null
+      }
+    },
+    {
+      "queue_id": "CR-0166",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:8c81f90bf4b4f1f3",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+      "line": 86,
+      "blob": "72ce94a929b23f3ea69d58befe1e7109fb733278",
+      "source_sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "replay": {
+        "result": "no_current_finding_at_a0_line",
+        "finding_symbol": null,
+        "finding_evidence_type": null
+      }
+    },
+    {
+      "queue_id": "CR-0167",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:2f7f9246c936742d",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+      "line": 88,
+      "blob": "72ce94a929b23f3ea69d58befe1e7109fb733278",
+      "source_sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "replay": {
+        "result": "no_current_finding_at_a0_line",
+        "finding_symbol": null,
+        "finding_evidence_type": null
+      }
+    },
+    {
+      "queue_id": "CR-0168",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:ccadf60188fdbf59",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+      "line": 90,
+      "blob": "72ce94a929b23f3ea69d58befe1e7109fb733278",
+      "source_sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "replay": {
+        "result": "no_current_finding_at_a0_line",
+        "finding_symbol": null,
+        "finding_evidence_type": null
+      }
+    },
+    {
+      "queue_id": "CR-0169",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:36bad8fc19ad0554",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "line": 76,
+      "blob": "9e8e8d41cca9ef6d9aa42a50ab482ff7c3cd67a1",
+      "source_sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "replay": {
+        "result": "matched_exact_line",
+        "finding_symbol": "arm64Context_",
+        "finding_evidence_type": "syntax"
+      }
+    },
+    {
+      "queue_id": "CR-0170",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:c5ccfb938d6e811e",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "line": 162,
+      "blob": "9e8e8d41cca9ef6d9aa42a50ab482ff7c3cd67a1",
+      "source_sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "replay": {
+        "result": "no_current_finding_at_a0_line",
+        "finding_symbol": null,
+        "finding_evidence_type": null
+      }
+    },
+    {
+      "queue_id": "CR-0171",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:c331274255457314",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "line": 259,
+      "blob": "9e8e8d41cca9ef6d9aa42a50ab482ff7c3cd67a1",
+      "source_sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "replay": {
+        "result": "no_current_finding_at_a0_line",
+        "finding_symbol": null,
+        "finding_evidence_type": null
+      }
+    },
+    {
+      "queue_id": "CR-0172",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:c9b720606eb1735b",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "line": 353,
+      "blob": "9e8e8d41cca9ef6d9aa42a50ab482ff7c3cd67a1",
+      "source_sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "replay": {
+        "result": "no_current_finding_at_a0_line",
+        "finding_symbol": null,
+        "finding_evidence_type": null
+      }
+    },
+    {
+      "queue_id": "CR-0173",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:2ecb435c1d596ef0",
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "commit": "50c7dffc057a32987d5eeb7626c20e1b3717c77b",
+      "tree": "8b54f17921ba15ff306bcbef280078003a7b1055",
+      "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "line": 403,
+      "blob": "9e8e8d41cca9ef6d9aa42a50ab482ff7c3cd67a1",
+      "source_sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "replay": {
+        "result": "no_current_finding_at_a0_line",
+        "finding_symbol": null,
+        "finding_evidence_type": null
+      }
+    }
+  ],
+  "source_review": {
+    "DfxProcess": "CR-0161 is const-reference getter for regs_; setter is in registers.cpp and minidump_dumper/lite_process_dumper call paths. Header has no lock. Those appear to be per-dump object setup/read/report phases, but repository evidence does not prove concurrent invocation exclusion or publication semantics. GetKeyThread has setter/getter as another extra syntax candidate; no A0 tail finding there.",
+    "DfxThread": "CR-0162/0163 are stackBuf_ setter/getter. Current CLI matches both exact locations. minidump_dumper writes buffers while assembling dump and reads later while serializing; no member lock. A0 CR-0164 is GetProcessInfo returning processInfo_ pointer and is not matched; shared pointee does not imply wrapper race. Same-object cross-thread overlap not established.",
+    "MinidumpParser": "CR-0165..0168 are GetSubject, private construction, subject member and nested stream_ member declaration locations; none is an exact current finding. InjectStream uses unique_lock(streamMapMutex_) for streamMap_ entry assignment. That lock does not establish synchronization of all unrelated stream object members or parser callers.",
+    "MinidumpContext": "CR-0169 is SetContextARM64 assigning arm64Context_, and current CLI matches that line. Read resets then assigns during Read; accessors later copy the pointer. No per-field lock. Parser/context lifecycle is read/parse style, but concurrent access/reentrancy exclusions are not proven in bound products.",
+    "MinidumpStream": "CR-0170..0173 are other stream header API/member locations with no exact finding in this CLI scope. No additional race claim is supported by a declaration-only syntax match.",
+    "build_and_thread_scope": "processdump is an install-enabled executable in process_dump/BUILD.gn; minidump_parser is a source_set guarded by !ohos_lite. These establish build targets only. The pinned component tree contains no product manifest/config binding or schedule proof for these objects."
+  },
+  "queue": {
+    "audited_ids": [
+      "CR-0161",
+      "CR-0162",
+      "CR-0163",
+      "CR-0164",
+      "CR-0165",
+      "CR-0166",
+      "CR-0167",
+      "CR-0168",
+      "CR-0169",
+      "CR-0170",
+      "CR-0171",
+      "CR-0172",
+      "CR-0173"
+    ],
+    "states_changed": false,
+    "count": 13,
+    "status_counts": {
+      "not_testable": 13,
+      "paused_pending_evidence": 13
+    }
+  },
+  "limitations": [
+    "CLI scope consists only of the four queue-bound header files; full syntax parse does not prove project-wide call graph, thread scheduling, lock dominance, product configuration, attacker reachability, or impact.",
+    "No trusted fixed source or product-level concurrent harness is bound for these queue rows.",
+    "Syntax diagnostics are candidates only; no race is confirmed or excluded."
+  ]
+}
