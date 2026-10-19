@@ -1,0 +1,212 @@
+{
+  "schema_version": "t23-supervisor-race-acceptance-v1",
+  "task": "T23",
+  "integration_base": "50903ebe20458fedba5212d62b1ef7c8dcd0e0eb",
+  "acceptance": {
+    "mechanism_regression": "PASS",
+    "case_status": "PARTIAL"
+  },
+  "source": {
+    "repository": "openharmony/resourceschedule_resource_schedule_service",
+    "commit": "6d60b51a0bc8528c901e42bd80459f9a2030cf9b",
+    "tree": "1c9fde3c8ae5a01325af83a74be06a40f112b4f6",
+    "path": "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/include/supervisor.h",
+    "blob": "270b4cf2916b9df24d3396401c87fb5e9271c5d3",
+    "sha256": "8fa6f2fa21dc48e65c2d89b61b8e3de7d4da8c5945a915b9567e6fe0c55947cb"
+  },
+  "queue_rows": {
+    "CR-0001": {
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:96112eb15e426e15",
+      "line": 90,
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "identity_check": true
+    },
+    "CR-0002": {
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:8e9aa0aa292ae104",
+      "line": 91,
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "identity_check": true
+    },
+    "CR-0003": {
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:98bc2912246f6b5b",
+      "line": 195,
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "identity_check": true
+    },
+    "CR-0004": {
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:e8d7ee4495f26860",
+      "line": 236,
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "identity_check": true
+    }
+  },
+  "replays": {
+    "header_only": {
+      "t23": {
+        "status": "completed",
+        "commit": "6d60b51a0bc8528c901e42bd80459f9a2030cf9b",
+        "tree": "1c9fde3c8ae5a01325af83a74be06a40f112b4f6",
+        "selected_files": 1,
+        "selected_bytes": 7794,
+        "parse_status": {
+          "complete": 1
+        },
+        "tool": "ohscanner.cpp.shared_ptr_race",
+        "rule_version": "0.5.1",
+        "run_status": "completed",
+        "scope_files_analyzed": 1,
+        "scope_loc_analyzed": 249,
+        "diagnostic_count": 0,
+        "diagnostics": [],
+        "source_sha256": {
+          "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/include/supervisor.h": "8fa6f2fa21dc48e65c2d89b61b8e3de7d4da8c5945a915b9567e6fe0c55947cb"
+        }
+      },
+      "d23": {
+        "status": "completed",
+        "commit": "6d60b51a0bc8528c901e42bd80459f9a2030cf9b",
+        "tree": "1c9fde3c8ae5a01325af83a74be06a40f112b4f6",
+        "selected_files": 1,
+        "selected_bytes": 7794,
+        "parse_status": {
+          "complete": 1
+        },
+        "tool": "ohscanner.cpp.shared_ptr_race",
+        "rule_version": "0.5.1",
+        "run_status": "completed",
+        "scope_files_analyzed": 1,
+        "scope_loc_analyzed": 249,
+        "diagnostic_count": 0,
+        "diagnostics": [],
+        "source_sha256": {
+          "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/include/supervisor.h": "8fa6f2fa21dc48e65c2d89b61b8e3de7d4da8c5945a915b9567e6fe0c55947cb"
+        }
+      }
+    },
+    "three_file_fragment": {
+      "t23": {
+        "status": "completed_with_limitations",
+        "commit": "6d60b51a0bc8528c901e42bd80459f9a2030cf9b",
+        "tree": "1c9fde3c8ae5a01325af83a74be06a40f112b4f6",
+        "selected_files": 3,
+        "selected_bytes": 79535,
+        "parse_status": {
+          "complete": 2,
+          "partial": 1
+        },
+        "tool": "ohscanner.cpp.shared_ptr_race",
+        "rule_version": "0.5.1",
+        "run_status": "completed",
+        "scope_files_analyzed": 2,
+        "scope_loc_analyzed": 627,
+        "diagnostic_count": 0,
+        "diagnostics": [],
+        "source_sha256": {
+          "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/cgroup_event_handler.cpp": "113572a0366d35ae1b12c3276d2692f2f3836699c1bc5395a91f0a40bf9bd1d2",
+          "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/include/supervisor.h": "8fa6f2fa21dc48e65c2d89b61b8e3de7d4da8c5945a915b9567e6fe0c55947cb",
+          "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/supervisor.cpp": "1d2c1a27f03522c60786fae981428cd46738e14d12bad53ae0e44b25298b808d"
+        }
+      },
+      "d23": {
+        "status": "completed_with_limitations",
+        "commit": "6d60b51a0bc8528c901e42bd80459f9a2030cf9b",
+        "tree": "1c9fde3c8ae5a01325af83a74be06a40f112b4f6",
+        "selected_files": 3,
+        "selected_bytes": 79535,
+        "parse_status": {
+          "complete": 2,
+          "partial": 1
+        },
+        "tool": "ohscanner.cpp.shared_ptr_race",
+        "rule_version": "0.5.1",
+        "run_status": "completed",
+        "scope_files_analyzed": 2,
+        "scope_loc_analyzed": 627,
+        "diagnostic_count": 0,
+        "diagnostics": [],
+        "source_sha256": {
+          "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/cgroup_event_handler.cpp": "113572a0366d35ae1b12c3276d2692f2f3836699c1bc5395a91f0a40bf9bd1d2",
+          "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/include/supervisor.h": "8fa6f2fa21dc48e65c2d89b61b8e3de7d4da8c5945a915b9567e6fe0c55947cb",
+          "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/supervisor.cpp": "1d2c1a27f03522c60786fae981428cd46738e14d12bad53ae0e44b25298b808d"
+        }
+      }
+    }
+  },
+  "tests": {
+    "command": "python -m unittest tests.detectors.test_cpp_shared_ptr_race_detector -v",
+    "passed": 39,
+    "failed": 0
+  },
+  "a0_verifier": {
+    "task": "T23",
+    "command": "python verify_triage.py (temporary copy of research/deliveries/cpp/a0_triage_20261019/verify_triage.py)",
+    "overall_ok": true,
+    "source_hash_manifest_entries": 97,
+    "missing_source_materials": [],
+    "hash_mismatches": [],
+    "source_candidates": 345,
+    "queue_rows": 345,
+    "csv_rows": 345,
+    "unique_queue_ids": 345,
+    "duplicate_ids": 0,
+    "original_status_counts": {
+      "not_reproduced": 9,
+      "not_testable": 336
+    },
+    "queue_status_counts": {
+      "paused_pending_evidence": 331,
+      "queued_first_batch": 5,
+      "queued_not_reproduced": 9
+    },
+    "source_key_mismatches": [],
+    "checks": {
+      "source_hash_manifest_files_present_and_matching": true,
+      "source_keys_match_A0": true,
+      "all_A0_candidate_ids_retained": true,
+      "csv_and_json_ids_match": true,
+      "no_duplicate_queue_ids": true,
+      "source_candidate_count_is_345": true,
+      "queue_count_is_345": true,
+      "original_status_counts_preserved": true,
+      "not_reproduced_rows_remain_queued": true,
+      "first_batch_is_actionable_not_testable": true,
+      "remaining_not_testable_rows_remain_queued": true,
+      "unknown_family_leakage_is_explicit": true,
+      "all_rows_have_action_and_ranking_fields": true,
+      "A0_reconciliation_candidate_count_is_345": true
+    }
+  },
+  "case_boundaries": {
+    "zero_findings_are_not_a_safety_result": true,
+    "no_cross_thread_same_object_access_proven": true,
+    "partial_file": "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/cgroup_event_handler.cpp",
+    "partial_parser_issues": [
+      72,
+      612,
+      639
+    ],
+    "product_build_bound": false,
+    "target_derived_harness": false,
+    "tsan_run": false,
+    "race_confirmed": false,
+    "cia_impact_established": false
+  },
+  "checks": {
+    "commit_tree_matches": true,
+    "tree_path_resolves_to_expected_blob": true,
+    "pinned_blob_sha256_matches": true,
+    "both_cli_replays_bind_source_sha256_to_pinned_blob": true,
+    "candidate_source_lines_exist": true,
+    "four_A0_queue_rows_bind_source_and_preserve_status": true,
+    "header_only_run_matches_D23": true,
+    "fragment_run_matches_D23": true,
+    "header_scope_complete_zero_findings": true,
+    "fragment_partial_not_misread_as_safe": true,
+    "A0_345_verifier_passed": true
+  },
+  "overall_ok": true
+}
