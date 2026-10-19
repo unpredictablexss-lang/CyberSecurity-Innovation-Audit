@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "artifact": "D79 D52 GET_PASTE_DATA parse-coverage crosswalk",
+  "scope": "Narrow source-only parse coverage map for the D52 historical candidate; not a vulnerability assessment.",
+  "source": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648"
+  },
+  "evidence_bindings": {
+    "D50_component_replay": {
+      "git_commit": "0f4560c4712dbf914d762948e2220942f16324ad",
+      "path": "research/data_sensitive/D50_COMPONENT_CVE_REPLAY/pasteboard.json",
+      "sha256": "b4279e00373c889f0c5142e2582412fc04c489dd4271167aa7b0223936edf9f4"
+    },
+    "D67_parse_audit": {
+      "git_commit": "ef215e737daee00c9fa659d14cd273974cf4fc2f",
+      "path": "research/evidence/cpp/D67_PASTEBOARD_PARSE_AUDIT_20261023.json",
+      "sha256": "620579cbd7308e05b2e030ac341c3073c2eae015d7304e39609ccc1729e1fbd9"
+    },
+    "D68_raw67_replay": {
+      "git_commit": "3da049887999bd3cacb3d48da9ffa7baefa18ac5",
+      "path": "research/evidence/cpp/D68_PASTEBOARD_RAW67_REPLAY_20261023.json",
+      "sha256": "491c63b8a5cf68497722c0c3f8c444857678c28848c07d0a9133538faaf5e13d"
+    },
+    "D74_source_trace": {
+      "git_commit": "a29275f7a795da17171fd3df2c712ef3a8576cb7",
+      "path": "research/evidence/cpp/D74_PASTEBOARD_SOURCE_TRACE_20261020.json",
+      "sha256": "bf3b9fc8ae382b99c96d4318e91596eef9d30d70e9e85ca5b7ce08c79d330e4d"
+    },
+    "D67_commit_tree": "bb8432940be00e5c170d3b2fed8a5df5f0accd69",
+    "D68_commit_tree": "00547fc77bce9d23e65b38c3fd675eace3747494"
+  },
+  "interpretation_boundary": {
+    "D50_ast_limitation": "D50 partial status at services/zidl/src/pasteboard_service_stub.cpp:58 intersects the actual member-pointer dispatch expression. D50 does not provide a complete parser-derived dispatch-to-handler AST edge. Source-bound text evidence remains directly inspectable and line/hash pinned; partial parse is neither proof of coverage nor grounds to discard source text.",
+    "D68_scope": "D68 is a later current-runtime replay of the same pinned source tree under Python 3.13.9 and frozen normalizer. It cannot retroactively make D50 historical parser coverage complete.",
+    "candidate_verdict": "source-only; no validated vulnerability, product reachability, product applicability, or CVE causality established."
+  },
+  "route_rows": [
+    {
+      "role": "interface enum and abstract method",
+      "path": "services/core/include/i_pasteboard_service.h",
+      "source_anchor": "GET_PASTE_DATA = 0 at 28; GetPasteData declaration at 37",
+      "source_sha256": "ffef3626d4dcd2d0757381e64e652a8a023d352dd59bc9afa20deafb2fd8e3fc",
+      "blob_oid": "1a5b83f314d6188f0b3465a13ac1668cb9933839",
+      "D50_historical": {
+        "status": "partial",
+        "issues": [
+          {
+            "end_line": 43,
+            "kind": "error",
+            "start_line": 43
+          }
+        ]
+      },
+      "D68_current_runtime": {
+        "status": "partial",
+        "issues": [
+          {
+            "end_line": 43,
+            "kind": "error",
+            "start_line": 43
+          }
+        ]
+      },
+      "coverage_note": "Issue at line 43 is the UTF-prefixed interface descriptor string inside DECLARE_INTERFACE_DESCRIPTOR; it does not overlap enum line 28 or GetPasteData declaration line 37. File status remains partial, so no complete AST guarantee for declarations elsewhere in this header. Text and line anchors are source evidence, not parser-completeness evidence."
+    },
+    {
+      "role": "framework client forwarding",
+      "path": "framework/innerkits/src/pasteboard_client.cpp",
+      "source_anchor": "GetPasteData forwarding at 113-126",
+      "source_sha256": "ace24f733b0f0590c8a3d2b723dc41fda8ea80dfd9cfdf99bcb7d9699c20598a",
+      "blob_oid": "c204c426cff25c7ee637068143ecaaccc98614ec",
+      "D50_historical": {
+        "status": "complete",
+        "issues": []
+      },
+      "D68_current_runtime": {
+        "status": "complete",
+        "issues": []
+      },
+      "coverage_note": "D50 and D68 parse complete; supports parser coverage of this forwarding unit only."
+    },
+    {
+      "role": "Binder proxy transaction",
+      "path": "services/zidl/src/pasteboard_service_proxy.cpp",
+      "source_anchor": "GetPasteData and SendRequest(GET_PASTE_DATA) at 147-156",
+      "source_sha256": "61f66fbbe53a1190ec31a8ff34b41a0d6b3ea28cdea72df8f0d3bc921d21f600",
+      "blob_oid": "679117492f1207fc9aa424899daa143d4df07249",
+      "D50_historical": {
+        "status": "complete",
+        "issues": []
+      },
+      "D68_current_runtime": {
+        "status": "complete",
+        "issues": []
+      },
+      "coverage_note": "D50 and D68 parse complete; supports parser coverage of this proxy unit only."
+    },
+    {
+      "role": "stub dispatch declaration",
+      "path": "services/zidl/include/pasteboard_service_stub.h",
+      "source_anchor": "pointer-to-member handler map declaration; D50/D68 issue at 35",
+      "source_sha256": "d949deeb769a8b96b88d0548b665039c6c3ec9c30d9dc6ff43eefec7ebc256ec",
+      "blob_oid": null,
+      "D50_historical": {
+        "status": "partial",
+        "issues": [
+          {
+            "end_line": 35,
+            "kind": "missing",
+            "start_line": 35
+          }
+        ]
+      },
+      "D68_current_runtime": {
+        "status": "partial",
+        "issues": [
+          {
+            "end_line": 35,
+            "kind": "missing",
+            "start_line": 35
+          }
+        ]
+      },
+      "coverage_note": "D50 and D68 MISSING line 35 is within the pointer-to-member handler-map declaration. This leaves historical/current declaration AST coverage partial around the dispatch member type; it does not erase the literal source declaration or establish that the map is unreachable."
+    },
+    {
+      "role": "stub mapping, request dispatch and handler",
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "source_anchor": "map GET_PASTE_DATA to OnGetPasteData at 27; OnRemoteRequest at 39-57; handler at 73-78; D52 candidate anchor at 41",
+      "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+      "blob_oid": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+      "D50_historical": {
+        "status": "partial",
+        "issues": [
+          {
+            "end_line": 58,
+            "kind": "error",
+            "start_line": 58
+          }
+        ]
+      },
+      "D68_current_runtime": {
+        "status": "complete",
+        "issues": []
+      },
+      "coverage_note": "D50 ERROR line 58 is the `(this->*memberFunc)(data, reply)` dispatch expression. Therefore D50 parser-derived AST coverage of the dispatch/handler control-flow path is incomplete at the exact dispatch site; do not claim D50 AST fully proves the call edge. The pinned source text and D74 line trace still independently show the mapping, dispatch expression, and handler body. D68 current runtime reports complete after the frozen normalizer, but this is not historical D50 coverage."
+    },
+    {
+      "role": "core user mapping and paste read",
+      "path": "services/core/src/pasteboard_service.cpp",
+      "source_anchor": "GetPasteData entry at 155 onward; user id at 159; user/data lookup and copying in this method (D74 source trace)",
+      "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+      "blob_oid": "c380ac266a85edd818caa811f11b99722d351788",
+      "D50_historical": {
+        "status": "complete",
+        "issues": []
+      },
+      "D68_current_runtime": {
+        "status": "complete",
+        "issues": []
+      },
+      "coverage_note": "D50 and D68 parse complete for this file. This supports parser coverage of the core method under those runs; it does not prove semantic completeness, external authorization behavior, product inclusion, or vulnerability."
+    }
+  ]
+}
