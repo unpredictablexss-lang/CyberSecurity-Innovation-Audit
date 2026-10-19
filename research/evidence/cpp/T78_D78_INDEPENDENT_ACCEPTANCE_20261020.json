@@ -1,0 +1,55 @@
+{
+  "audit": "T78 independent acceptance of D78 PengLai SAMgr source trace",
+  "reviewed_commit": "5cc9c4c9c05ac42da280ca9d08d13cc18742028f",
+  "base_D78_commit": "1cea2041e0b58ababd784554e41d78c8d5b61465",
+  "verdict": "accepted_with_limitations",
+  "categories": {
+    "fix_correctness": {"verdict": "pass", "basis": "Pinned source claims and line/blob evidence replay; static initializer/constructor parameter snapshot caveat is accurate."},
+    "candidate_retention": {"verdict": "pass", "basis": "D52 route findings remain version-isolated and are not replaced by generic later SAMgr gates."},
+    "coverage": {"verdict": "pass_with_limitations", "basis": "Build macro, runtime mode, checker allow/deny/missing pointer, three SAMgr handlers, controls, and returned-object boundary are covered; runtime builds/tests were not executed."},
+    "scope": {"verdict": "pass", "basis": "D52 product binding and product security conclusions remain unknown."}
+  },
+  "verification": {
+    "replay_script": "research/evidence/cpp/D76_samgr_profile_policy_trace.py",
+    "replay": "passed",
+    "replay_json_exact_match": true,
+    "strict_json_duplicate_key_check": "passed",
+    "git_diff_check": "passed",
+    "runtime_tests_or_builds_run": false,
+    "manifest_sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+    "source_counts": {"samgr": 15, "startup_init": 4, "access_token": 5, "D52_historical_pasteboard": 4}
+  },
+  "source_trees": {
+    "samgr": {"commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff", "tree": "b7a89e95be788f2f2372258e341f7be842c7826d"},
+    "startup_init": {"commit": "e06651300f349e728c76edda806dbf6496fd620d", "tree": "b77ef22dfc6fa75db5f3707970db9d908a1b6302"},
+    "access_token": {"commit": "c53a55c371d88c46b0785cc4adb444876e6a9628", "tree": "4942df10e6ed926dab1106e5752cf294305240d6"},
+    "D52_pasteboard": {"commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840", "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee"}
+  },
+  "confirmed_source_behavior": [
+    "SUPPORT_PENGLAI_MODE is added only under the support_penglai_mode GN condition.",
+    "The stub constructor snapshots CheckPengLai() into isPengLai_; CheckPengLai compares ohos.boot.minisys.mode with exact value penglai and uses empty default.",
+    "penglaiFunc_ is statically dynamically initialized through InitPenglaiFunc(), which independently samples the same parameter before attempting dlopen/dlsym.",
+    "The source does not establish ordering/immutability of the two parameter reads; a null function pointer causes CheckPengLaiPermission to return true even if isPengLai_ is true.",
+    "A resolved checker false result causes denial before SA acquisition/loading in GetSystemAbilityInner, CheckSystemAbilityInner, and LoadSACheck.",
+    "These SAMgr request gates do not mediate later Binder method calls on an already returned SA object."
+  ],
+  "controls": [
+    "build macro off",
+    "macro on and constructor mode snapshot false",
+    "macro on, snapshots stable/aligned, checker resolved and allow",
+    "macro on, snapshots stable/aligned, checker resolved and deny",
+    "library or symbol unresolved: null pointer fail-open",
+    "separate static pointer and constructor parameter snapshots",
+    "pinned handler unit-test source includes injected checker allow/deny expectations; test binaries not run",
+    "returned-object method boundary"
+  ],
+  "historical_boundary": {
+    "D52_profile_3701_has_permission_fields": false,
+    "D52_init_cfg_has_permission_arrays": false,
+    "xml_to_pasteboard_service_xml_install_mapping": "unknown",
+    "D52_product_support_penglai_mode": "unknown",
+    "D52_product_runtime_parameter_library_policy": "unknown",
+    "D52_product_caller_method_authorization": "unknown"
+  },
+  "actionable_mismatch": null
+}
