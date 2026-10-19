@@ -14,6 +14,7 @@ from typing import Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
 MAX_UNIT_BYTES = 1024 * 1024
 MAX_TOTAL_BYTES = 32 * 1024 * 1024
+_RAW_STRING_START_RE = re.compile(r'(?:u8|u|U|L)?R"([^ ()\\\t\v\f\r\n]{0,16})\(')
 
 _TYPE_WORDS = (
     "unsigned", "signed", "const", "volatile", "static", "constexpr",
@@ -124,6 +125,18 @@ class Interval:
         )
 
 
+def raw_string_literal_span(text: str, start: int) -> Optional[Tuple[int, bool]]:
+    """Return the end offset and closure status of a C++ raw string token."""
+    if start and (text[start - 1].isalnum() or text[start - 1] == "_"):
+        return None
+    match = _RAW_STRING_START_RE.match(text, start)
+    if match is None:
+        return None
+    closing = ")" + match.group(1) + '"'
+    close_start = text.find(closing, match.end())
+    return (len(text), False) if close_start < 0 else (close_start + len(closing), True)
+
+
 def mask_comments_and_literals(text: str) -> str:
     chars = list(text)
     index = 0
@@ -133,6 +146,15 @@ def mask_comments_and_literals(text: str) -> str:
         pair = text[index:index + 2]
         char = text[index]
         if state == "code":
+            if char in "RuUL":
+                raw_span = raw_string_literal_span(text, index)
+                if raw_span is not None:
+                    raw_end, _closed = raw_span
+                    for position in range(index, raw_end):
+                        if text[position] != "\n":
+                            chars[position] = " "
+                    index = raw_end
+                    continue
             if pair == "//":
                 chars[index:index + 2] = [" ", " "]
                 index += 2
@@ -467,7 +489,8 @@ def split_call_arguments(text: str) -> Tuple[str, ...]:
     args: List[str] = []
     start = 0
     depth = 0
-    for index, char in enumerate(text):
+    masked = mask_comments_and_literals(text)
+    for index, char in enumerate(masked):
         if char in "([{":
             depth += 1
         elif char in ")]}":

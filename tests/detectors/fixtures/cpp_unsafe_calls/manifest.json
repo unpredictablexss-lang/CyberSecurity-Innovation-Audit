@@ -37,6 +37,62 @@
       "fixture": "unknown_partial.cpp",
       "sha256": "1ed8a63f715b2a7d6178555a164ea3b9202df9a7668728dea2dd7e3809b75b8c",
       "byte_length": 67
+    },
+    {
+      "expected_min": 5,
+      "expected_max": 5,
+      "category": "format_api_signature",
+      "fixture": "format_api_argument_positions.cpp",
+      "sha256": "e4bd08d1f81574a8e77d08a30f369410b50a5561bf732d93b04f532eae584360",
+      "byte_length": 418
+    },
+    {
+      "expected_min": 0,
+      "expected_max": 0,
+      "category": "format_signature_unknown",
+      "fixture": "format_api_shadow_unknown.cpp",
+      "sha256": "4a95494040ba6f8262c362eac41d17997bffa5170cd88b5961f5b588d2dbd959",
+      "byte_length": 216
+    },
+    {
+      "expected_min": 1,
+      "expected_max": 1,
+      "category": "format_literal_conditional",
+      "fixture": "format_literal_conditional.cpp",
+      "sha256": "a9422b584d3e6aa61c66e8db324b48c908dc96d784d77cefad7b86cba00fb689",
+      "byte_length": 311
+    },
+    {
+      "expected_min": 0,
+      "expected_max": 0,
+      "category": "format_long_concatenated_literals",
+      "fixture": "format_long_concatenated_literals.cpp",
+      "sha256": "1a206900cda80533389023d1362ccefd6c511c92d33595aeb668c1fec02a3f6e",
+      "byte_length": 627
+    },
+    {
+      "expected_min": 1,
+      "expected_max": 1,
+      "category": "format_arguments_with_delimiters",
+      "fixture": "format_arguments_with_delimiters.cpp",
+      "sha256": "2e143a97b3878ee1e3266cf12c6d93d54e7d61fadbf89c6338e2308c58a3a78d",
+      "byte_length": 160
+    },
+    {
+      "expected_min": 1,
+      "expected_max": 1,
+      "category": "format_literal_prefix_macro",
+      "fixture": "format_literal_prefix_macro.cpp",
+      "sha256": "546ad6942664869aee910b2b97d1d79e7576bb69a9144f5938d6129f43853fe5",
+      "byte_length": 131
+    },
+    {
+      "expected_min": 1,
+      "expected_max": 1,
+      "category": "format_raw_string_controls",
+      "fixture": "format_raw_string_controls.cpp",
+      "sha256": "e164b8d3ca50a4f976c4cd8ba3a0091406024a22094c8b61315e78a4e4289f2b",
+      "byte_length": 191
     }
   ]
 }

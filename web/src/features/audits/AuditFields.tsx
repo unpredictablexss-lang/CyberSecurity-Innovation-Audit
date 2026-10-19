@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, AutoComplete, Button, Col, Collapse, Form, Input, InputNumber, Row, Select, Space, Typography } from "antd";
+import { Alert, AutoComplete, Button, Checkbox, Col, Collapse, Form, Input, InputNumber, Row, Select, Space, Typography } from "antd";
 import { api } from "../../api";
 import { go } from "../../components";
 import { approvedDetectorIds, requestGate } from "./model";
@@ -87,9 +87,21 @@ export function ScopeBudget() {
 }
 export function RuleNotice({ detectors }: { detectors: any[] }) {
   let count = 0; try { count = approvedDetectorIds(detectors).length; } catch { /* visible blocking state below */ }
-  return <Alert className="section-gap" showIcon type={count ? "info" : "warning"}
-    message={count ? "使用平台当前已批准的研究规则，无需手动选择" : "没有可用的已批准规则"}
-    description={count ? "实际规则版本、解析覆盖和未分析范围会保存在任务与报告中。输出仍是待复核候选。" : "请刷新系统能力配置后再创建审计。"} />;
+  const fullRulesResearch = Form.useWatch("full_rules_research");
+  const researchOnly = detectors.filter((d) => d.kind === "research_candidate" && d.default_enabled === false);
+  const nullRule = researchOnly.find((d) => d.id === "ohscanner.cpp.null_dereference");
+  const reason = nullRule?.admission_reason || "该规则仅在明确选择研究模式时启用。";
+  return <div className="section-gap">
+    <Form.Item name="full_rules_research" valuePropName="checked" initialValue={false}>
+      <Checkbox>显式启用全规则研究模式（包含默认关闭的弱候选规则）</Checkbox>
+    </Form.Item>
+    {fullRulesResearch ? <Alert showIcon type="warning"
+      message="全规则研究模式：输出为弱候选/待复核"
+      description={`本次启用原因：你已显式选择研究模式。${reason} 当前范围的候选量无法在扫描前精确估算。量级参考：一轮历史全规则试运行报告 546,559 条候选，但原始 run 身份未绑定；本地可核验的另一轮 final run 有 403,360 条 NULL 原始观察（403,359 个唯一 diagnostic ID，run 1696df82…）。两者不是同一轮结果，该数字只作预警，不是本次预测。实际数量会随源码范围和规则版本变化。`}
+    /> : <Alert showIcon type={count ? "info" : "warning"}
+      message={count ? "使用平台当前已批准的普通扫描规则" : "没有可用的已批准规则"}
+      description={count ? "实际规则版本、解析覆盖和未分析范围会保存在任务与报告中。输出仍是待复核候选。全规则研究可在上方显式开启。" : "请刷新系统能力配置后再创建审计。"} />}
+  </div>;
 }
 export function ScopeAvailability() {
   return <div className="scope-note"><Space wrap><Text strong>审计范围</Text><Text>单个已登记仓库</Text>
@@ -97,4 +109,4 @@ export function ScopeAvailability() {
     <p>官方仓库目录、归档选择与多仓编排尚未接入；当前只读已登记的本地 Git 对象。</p>
     <Button type="link" onClick={() => go("/settings/sources")}>登记仓库或显式同步源码 →</Button></div>;
 }
-export const auditDefaults = { include_text: ".", timeout_seconds: 600, memory_mb: 2048 };
+export const auditDefaults = { include_text: ".", timeout_seconds: 600, memory_mb: 2048, full_rules_research: false };
