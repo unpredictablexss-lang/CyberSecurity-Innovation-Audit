@@ -61,7 +61,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
 
     def test_identity_and_positive_controls(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.resource_lifetime")
-        self.assertEqual(self.detector.version, "0.1.0")
+        self.assertEqual(self.detector.version, "0.2.0")
         double_free, _ = self.run_case("positive_double_free.cpp")
         alias_uaf, _ = self.run_case("positive_alias_uaf.cpp")
         self.assertEqual({item.rule_id for item in double_free.findings}, {"ohcpp-resource-lifetime-double-free-candidate-001"})
@@ -69,17 +69,30 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
         for run in (double_free, alias_uaf):
             for finding in run.findings:
                 self.assertEqual(finding.candidate_cwe, finding.consequence_cwe)
-                self.assertEqual(finding.rule_version, "0.1.0")
+                self.assertEqual(finding.rule_version, "0.2.0")
                 self.assertEqual(finding.rule_lineage_id, "A-RES-01:ohcpp-resource-lifetime-candidate")
 
     def test_fixed_unrelated_and_unknown_controls(self) -> None:
-        for name in ("fixed_null_after_free.cpp", "fixed_reallocate.cpp", "unrelated_release.cpp"):
+        for name in (
+            "fixed_null_after_free.cpp",
+            "fixed_reallocate.cpp",
+            "unrelated_release.cpp",
+            "fixed_detached_callback_cleanup.c",
+            "unrelated_recursive_cleanup.c",
+        ):
             run, _ = self.run_case(name)
             self.assertEqual(run.status, "completed")
             self.assertEqual(run.findings, ())
         unknown, _ = self.run_case("unknown_partial.cpp", "partial")
         self.assertEqual(unknown.status, "blocked")
         self.assertEqual(unknown.findings, ())
+
+    def test_recursive_cleanup_callback_cycle_candidate(self) -> None:
+        run, _ = self.run_case("positive_recursive_callback_cleanup.c")
+        recursive = [finding for finding in run.findings if finding.rule_id == "ohcpp-resource-lifetime-recursive-cleanup-candidate-003"]
+        self.assertEqual(len(recursive), 1)
+        self.assertEqual(recursive[0].candidate_cwe, "CWE-674")
+        self.assertEqual(recursive[0].consequence_cwe, "CWE-674")
 
     def test_deterministic_output_and_budget(self) -> None:
         first, unit = self.run_case("positive_alias_uaf.cpp")

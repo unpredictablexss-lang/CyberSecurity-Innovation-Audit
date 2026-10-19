@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "change_request_id": "A-RES-01",
-  "source": "self-authored synthetic controls",
+  "source": "self-authored synthetic controls; recursive-cleanup callback-cycle cases are D3 generic controls",
   "cases": [
     {
       "fixture": "positive_double_free.cpp",
@@ -46,6 +46,28 @@
       "expected_status": "blocked",
       "sha256": "21b68f96e2df4bc69abca2bb146c248674ad0bd3de67cad19c6035fc6048e8c8",
       "byte_length": 90
+    },
+    {
+      "fixture": "positive_recursive_callback_cleanup.c",
+      "category": "positive",
+      "expected_rule": "recursive_cleanup",
+      "expected_min": 1,
+      "sha256": "101385726749a2644ca7ba13d59574050a3bbad367f7dcf4e6572aff3a7dd82a",
+      "byte_length": 641
+    },
+    {
+      "fixture": "fixed_detached_callback_cleanup.c",
+      "category": "fixed",
+      "expected_max": 0,
+      "sha256": "bcc1ca7429e867873485447748dc631beb2104d30c7f740b71ca2c22bd3bd9bc",
+      "byte_length": 672
+    },
+    {
+      "fixture": "unrelated_recursive_cleanup.c",
+      "category": "unrelated",
+      "expected_max": 0,
+      "sha256": "9762a7c66ca9a5ec8c89814d8924a885e10fa9f63becbcef4212e406a63dade6",
+      "byte_length": 267
     }
   ]
 }
