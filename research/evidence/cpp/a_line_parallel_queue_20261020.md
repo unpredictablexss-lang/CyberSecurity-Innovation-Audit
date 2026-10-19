@@ -217,3 +217,5 @@ Boundaries: no detector/tests/fixtures edits; no status promotion; no bypass cla
 ## Stage goal
 
 Keep one active continuous objective across both tracks: improve root-cause candidate coverage for source-bound A-line cases on the development side; independently verify source identity, regression behavior, and the 345-row evidence queue on the test side. Complete only when applicable cases pass independent full-scope acceptance, all remaining cases carry a precise PARTIAL/BLOCK/N/A reason, and the change-scope check passes. Do not close the goal while any required evidence remains outstanding.
+
+T18 completed in 78d252c; CR-0224/0225/0226 retain PARTIAL and original queue states after exact source verification. See _t18_samgr_0224_0226_20261020.md. The next test-line step is to continue A0 evidence triage from remaining queued IDs, without promoting statuses absent new evidence.
