@@ -328,3 +328,15 @@ D2 的验收说明 `research/methods/ark_runtime/build_profile_20261019/CASE_VS_
 **结构化 Vibe Coding 提示词（设计阶段，不运行）：**
 
 > 角色：T6 独立运行时验证设计员。基于 frozen parent/fixed、第二层候选审查与对应 case profile，先把“callback 内安装 species”与“Filter 调用前原型已改变”的两种触发顺序分开；设计可证明实际 Filter stub/路径的观测手段。矩阵至少覆盖 parent/fixed、Int32→Uint8 exact-n、Int32→同宽/同类型安全对照、ContentType 不匹配、species 长度不足、n=1 边界与跨元素类型固定回归输入。为每项规定可观察结果、ASan/guard allocator 断言、stub/path 证据、重复策略、环境与 artifact hashes。当前只交测试设计和静态路径证据需求，不编译、不运行 PoC、不声称动态或产品结果。将来执行前必须核验该案例 PC-1 profile、PC-3 入口/攻击面/CIA 和 PC-4 授权；执行后把 parent/fixed 差异交回 L2 复核。
+
+### 本轮并行执行结果：D3 / T2 / T6
+
+三条只读/设计线已并行交付，反馈关系为：D3 将源码入口、权限/攻击面未知项和 CIA 证据定位交给 PC-3 与 T2；T6 将精确 callback/species 候选转成 parent/fixed 的可证伪矩阵，执行后必须把路径/边界证据送回 T2；T2 独立复核静态机制、反例及官方测试路径差异，结果用于收紧 D3/T6 的表述。当前仅完成审查与设计，没有 runtime/test 结果。
+
+| 线 | 交付物 | 结论/验收 | 下一步反馈 |
+|---|---|---|---|
+| D3 源码侧 PC-3 映射 | `research/deliveries/product_closure_20261019/D3_IBS5YG_SOURCE_ENTRY_CIA_REVIEW_20261020.md`，SHA-256 `a2ebb71d32c2e4e5b9f380a9091b492f9ff87440234d99166ff235201313f6a2` | 源码候选的 callback→species→跨类型输出→源类型写回链有证据；产品入口、权限边界、攻击者来源与 CIA 未证，保持 UNKNOWN/BLOCKED。 | 目标产品指定后用真实调用链补 PC-3；T2 复核权限/影响证据，逐项反馈 D3。 |
+| T2 第二层静态审查 | `research/evaluation/ark_runtime_holdout_20261019/IBS5YG_SECOND_LAYER_STATIC_AUDIT_20261020.md`，SHA-256 `a09fd0e4ca52904e72afe1d2620c75856947690eb4c2fed103490d37d8f06e6` | 只支持窄 source-level candidate；更长 species 结果、实际 dispatch/分配不同、写入边界保护或产品已含 fix 都是重要反例/收窄条件。无动态或产品结论。 | 收到 T6 trace 后按精确 parent/fixed build identity 重审；任一反证回传 D3/T6 并更新候选状态。 |
+| T6 测试设计 | `research/deliveries/product_closure_20261019/T6_IBS5YG_RUNTIME_TEST_MATRIX_DESIGN_20261020.md`，SHA-256 `c2120301439a1347eb392d1be603241e0b6022ff22c3bb49b1351f915b2607c1` | 分开 callback 内 species 与调用前改原型；覆盖精确长度、类型/长度反例、n=1、路径与 guard/ASan 证据、哈希绑定和 PC-1/3/4/5 执行门。仅设计。 | 先满足对应 case 的产品 profile/PC-3/授权门，再执行；任何实际结果交 T2 复核，不以 sanitizer silence 代替边界证据。 |
+
+本轮第二层报告只读时未构建、未运行 PoC 或测试。静态候选继续作为供复核的少量高置信候选；runtime reachability、目标产品适用性和漏洞影响不确定，不宣称产品漏洞。PC-1 仍为 `IN_PROGRESS_BLOCKED`（产品画像 0/16），PC-3 `BLOCKED`，PC-4/5 `NOT_RUN`，PC-6 `NOT_ADMITTED`。
