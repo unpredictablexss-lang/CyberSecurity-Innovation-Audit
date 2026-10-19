@@ -1,0 +1,635 @@
+{
+  "task": "D77 adversarial review",
+  "inputs": {
+    "D74_commit": "a29275f7a795da17171fd3df2c712ef3a8576cb7",
+    "T74_commit": "fb45fcc4d61d1ce3a56eff8386b83f9f3a652ec7",
+    "D75_commit": "f3171a784c0e256c5d879ace3aeb78d6acfaf121",
+    "D76_commit": "88b357fa0f7d4906e3baff9392c6b27126c88d40",
+    "T76_commit": "968ea9852bab858a8eab35ccdd6c4fcc45281cca",
+    "D52_repository": "openharmony/miscservices_pasteboard",
+    "D52": {
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "expected_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "tree_matches": true,
+      "evidence": [
+        {
+          "path": "services/core/include/i_pasteboard_service.h",
+          "blob_oid": "1a5b83f314d6188f0b3465a13ac1668cb9933839",
+          "sha256": "ffef3626d4dcd2d0757381e64e652a8a023d352dd59bc9afa20deafb2fd8e3fc",
+          "bytes": 1694
+        },
+        {
+          "path": "services/zidl/src/pasteboard_service_stub.cpp",
+          "blob_oid": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+          "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+          "bytes": 6288
+        },
+        {
+          "path": "services/zidl/src/pasteboard_service_proxy.cpp",
+          "blob_oid": "679117492f1207fc9aa424899daa143d4df07249",
+          "sha256": "61f66fbbe53a1190ec31a8ff34b41a0d6b3ea28cdea72df8f0d3bc921d21f600",
+          "bytes": 6318
+        },
+        {
+          "path": "framework/innerkits/src/pasteboard_client.cpp",
+          "blob_oid": "c204c426cff25c7ee637068143ecaaccc98614ec",
+          "sha256": "ace24f733b0f0590c8a3d2b723dc41fda8ea80dfd9cfdf99bcb7d9699c20598a",
+          "bytes": 9322
+        },
+        {
+          "path": "interfaces/kits/napi/src/napi_pasteboard.cpp",
+          "blob_oid": "527f7664d092f1bbbcbee8749919b31b1bffd536",
+          "sha256": "279d80bea2171bb9daa10ed96a6f918c5aaec40fb9f85b587dc1ced22218a55c",
+          "bytes": 35240
+        },
+        {
+          "path": "services/core/src/pasteboard_service.cpp",
+          "blob_oid": "c380ac266a85edd818caa811f11b99722d351788",
+          "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+          "bytes": 17335
+        },
+        {
+          "path": "utils/native/src/pasteboard_permission.cpp",
+          "blob_oid": "5e7bf43287374eb21a8200400cbe350e8d234368",
+          "sha256": "b1241967b47b12ffbcc980c4f9514e32406d04b0652ff66fa7f88e4bd29f5761",
+          "bytes": 2920
+        },
+        {
+          "path": "utils/mock/src/mock_permission.cpp",
+          "blob_oid": "d4528b45a88c695c0381ed30d65fa551529c2f92",
+          "sha256": "e21db508f8b5c0646f7b1fe5665dd9befe0584096386cce7ea5c6bda1206ec3e",
+          "bytes": 876
+        },
+        {
+          "path": "profile/3701.xml",
+          "blob_oid": "0078b08118d73e01ffdfd13fe84760a43ee4ce47",
+          "sha256": "532df48215df846c96efe07c9fde6614557f8d61cb39551474a91170f70aead8",
+          "bytes": 958
+        },
+        {
+          "path": "profile/BUILD.gn",
+          "blob_oid": "827e9a79890056f1743e95afb0c117e2d67a8320",
+          "sha256": "0ec6d782e96d2596279d0d56fc9618e49e1412c096ab8817a47c018e2304ee1c",
+          "bytes": 759
+        },
+        {
+          "path": "etc/init/pasteboardservice.cfg",
+          "blob_oid": "a44bf3066c8631ecc34db1684019c97439e9e28d",
+          "sha256": "6c7a7da14cd1b8b02da941cd5527d8d97dc37bdd34fed24a03962daa32df6f97",
+          "bytes": 467
+        },
+        {
+          "path": "services/BUILD.gn",
+          "blob_oid": "b4e1f8e77afd53336e33d581361deda00fd4eeb7",
+          "sha256": "681432da09f11f88eb7a8fa7d433916d7dbdbaf6d3d27713b401dbe0e3973d87",
+          "bytes": 3738
+        }
+      ]
+    },
+    "SAMgr_repository": "openharmony/systemabilitymgr_samgr",
+    "SAMgr": {
+      "commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff",
+      "tree": "b7a89e95be788f2f2372258e341f7be842c7826d",
+      "expected_tree": "b7a89e95be788f2f2372258e341f7be842c7826d",
+      "tree_matches": true,
+      "evidence": [
+        {
+          "path": "services/samgr/native/source/system_ability_manager_stub.cpp",
+          "blob_oid": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
+          "sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433",
+          "bytes": 78212
+        },
+        {
+          "path": "services/samgr/native/BUILD.gn",
+          "blob_oid": "634ccf9fa9db2303540f70e054eb53322975f4d2",
+          "sha256": "db62ae68ece3a940bbc1d4fab18914841ba5c7b68e52212fbb0be9a6ca1f4416",
+          "bytes": 7660
+        }
+      ]
+    },
+    "D76_supporting_refs": {
+      "startup_init": {
+        "commit": "e06651300f349e728c76edda806dbf6496fd620d",
+        "tree": "b77ef22dfc6fa75db5f3707970db9d908a1b6302"
+      },
+      "security_access_token": {
+        "commit": "c53a55c371d88c46b0785cc4adb444876e6a9628",
+        "tree": "4942df10e6ed926dab1106e5752cf294305240d6"
+      }
+    }
+  },
+  "probes": {
+    "D52_route": {
+      "stub": {
+        "line_count": 159,
+        "probes": [
+          {
+            "pattern": "memberFuncMap_.*GET_PASTE_DATA",
+            "lines": [
+              27
+            ],
+            "excerpts": [
+              {
+                "start_line": 24,
+                "text": "24: namespace MiscServices {\n25: PasteboardServiceStub::PasteboardServiceStub()\n26: {\n27:     memberFuncMap_[static_cast<uint32_t>(GET_PASTE_DATA)] = &PasteboardServiceStub::OnGetPasteData;\n28:     memberFuncMap_[static_cast<uint32_t>(HAS_PASTE_DATA)] = &PasteboardServiceStub::OnHasPasteData;\n29:     memberFuncMap_[static_cast<uint32_t>(SET_PASTE_DATA)] = &PasteboardServiceStub::OnSetPasteData;\n30:     memberFuncMap_[static_cast<uint32_t>(CLEAR_ALL)] = &PasteboardServiceStub::OnClear;"
+              }
+            ]
+          },
+          {
+            "pattern": "OnRemoteRequest\\(",
+            "lines": [
+              39,
+              47,
+              61
+            ],
+            "excerpts": [
+              {
+                "start_line": 36,
+                "text": "36:         &PasteboardServiceStub::OnRemoveAllChangedObserver;\n37: }\n38: \n39: int32_t PasteboardServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,\n40:     MessageOption &option)\n41: {\n42:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \"start##code = %{public}u\", code);"
+              },
+              {
+                "start_line": 44,
+                "text": "44:     std::u16string remoteDescripter = data.ReadInterfaceToken();\n45:     if (myDescripter != remoteDescripter) {\n46:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"end##descriptor checked fail\");\n47:         return IPCObjectStub::OnRemoteRequest(code, data, reply, option);\n48:     }\n49:     pid_t p = IPCSkeleton::GetCallingPid();\n50:     pid_t p1 = IPCSkeleton::GetCallingUid();"
+              },
+              {
+                "start_line": 58,
+                "text": "58:             return (this->*memberFunc)(data, reply);\n59:         }\n60:     }\n61:     int ret = IPCObjectStub::OnRemoteRequest(code, data, reply, option);\n62:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \"end##ret = %{public}d\", ret);\n63:     return ret;\n64: }"
+              }
+            ]
+          },
+          {
+            "pattern": "ReadInterfaceToken",
+            "lines": [
+              44
+            ],
+            "excerpts": [
+              {
+                "start_line": 41,
+                "text": "41: {\n42:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \"start##code = %{public}u\", code);\n43:     std::u16string myDescripter = PasteboardServiceStub::GetDescriptor();\n44:     std::u16string remoteDescripter = data.ReadInterfaceToken();\n45:     if (myDescripter != remoteDescripter) {\n46:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"end##descriptor checked fail\");\n47:         return IPCObjectStub::OnRemoteRequest(code, data, reply, option);"
+              }
+            ]
+          },
+          {
+            "pattern": "GetCallingPid",
+            "lines": [
+              49
+            ],
+            "excerpts": [
+              {
+                "start_line": 46,
+                "text": "46:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"end##descriptor checked fail\");\n47:         return IPCObjectStub::OnRemoteRequest(code, data, reply, option);\n48:     }\n49:     pid_t p = IPCSkeleton::GetCallingPid();\n50:     pid_t p1 = IPCSkeleton::GetCallingUid();\n51:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE,\n52:         \"CallingPid = %{public}d, CallingUid = %{public}d, code = %{public}u\","
+              }
+            ]
+          },
+          {
+            "pattern": "GetCallingUid",
+            "lines": [
+              50
+            ],
+            "excerpts": [
+              {
+                "start_line": 47,
+                "text": "47:         return IPCObjectStub::OnRemoteRequest(code, data, reply, option);\n48:     }\n49:     pid_t p = IPCSkeleton::GetCallingPid();\n50:     pid_t p1 = IPCSkeleton::GetCallingUid();\n51:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE,\n52:         \"CallingPid = %{public}d, CallingUid = %{public}d, code = %{public}u\",\n53:         p, p1, code);"
+              }
+            ]
+          },
+          {
+            "pattern": "OnGetPasteData\\(",
+            "lines": [
+              73
+            ],
+            "excerpts": [
+              {
+                "start_line": 70,
+                "text": "70:     return ERR_OK;\n71: }\n72: \n73: int32_t PasteboardServiceStub::OnGetPasteData(MessageParcel &data, MessageParcel &reply)\n74: {\n75:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \" start.\");\n76:     PasteData pasteData {};"
+              }
+            ]
+          },
+          {
+            "pattern": "GetPasteData\\(pasteData\\)",
+            "lines": [
+              77
+            ],
+            "excerpts": [
+              {
+                "start_line": 74,
+                "text": "74: {\n75:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \" start.\");\n76:     PasteData pasteData {};\n77:     auto hasPasteData = GetPasteData(pasteData);\n78:     if (!hasPasteData) {\n79:         PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \" end.\");\n80:         return ERR_INVALID_VALUE;"
+              }
+            ]
+          }
+        ]
+      },
+      "core": {
+        "line_count": 491,
+        "probes": [
+          {
+            "pattern": "PasteboardService::GetPasteData\\(",
+            "lines": [
+              155
+            ],
+            "excerpts": [
+              {
+                "start_line": 152,
+                "text": "152:     }\n153: }\n154: \n155: bool PasteboardService::GetPasteData(PasteData& data)\n156: {\n157:     PasteboardTrace tracer(\"PasteboardService, GetPasteData\");\n158:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"start.\");"
+              }
+            ]
+          },
+          {
+            "pattern": "auto userId = GetUserId",
+            "lines": [
+              59,
+              143,
+              159,
+              182,
+              194,
+              229,
+              253,
+              277
+            ],
+            "excerpts": [
+              {
+                "start_line": 56,
+                "text": "56: {\n57:     if (!Publish(DelayedSingleton<PasteboardService>::GetInstance().get())) {\n58:         PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \"OnStart register to system ability manager failed.\");\n59:         auto userId = GetUserId();\n60:         Reporter::GetInstance().InitializationFault().Report({ userId, \"ERR_INVALID_OPTION\" });\n61:         return ERR_INVALID_OPTION;\n62:     }"
+              },
+              {
+                "start_line": 140,
+                "text": "140: void PasteboardService::Clear()\n141: {\n142:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"start.\");\n143:     auto userId = GetUserId();\n144:     if (userId == ERROR_USERID) {\n145:         return;\n146:     }"
+              },
+              {
+                "start_line": 156,
+                "text": "156: {\n157:     PasteboardTrace tracer(\"PasteboardService, GetPasteData\");\n158:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"start.\");\n159:     auto userId = GetUserId();\n160: \n161:     GetPasteDataDot();\n162: "
+              },
+              {
+                "start_line": 179,
+                "text": "179: bool PasteboardService::HasPasteData()\n180: {\n181:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"start.\");\n182:     auto userId = GetUserId();\n183:     if (userId == ERROR_USERID) {\n184:         return false;\n185:     }"
+              },
+              {
+                "start_line": 191,
+                "text": "191: {\n192:     PasteboardTrace tracer(\"PasteboardService, SetPasteData\");\n193:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"start.\");\n194:     auto userId = GetUserId();\n195: \n196:     SetPasteDataDot(pasteData);\n197: "
+              },
+              {
+                "start_line": 226,
+                "text": "226:         return;\n227:     }\n228:     std::lock_guard<std::mutex> lock(observerMutex_);\n229:     auto userId = GetUserId();\n230:     if (userId == ERROR_USERID) {\n231:         return;\n232:     }"
+              },
+              {
+                "start_line": 250,
+                "text": "250:     if (observer == nullptr) {\n251:         return;\n252:     }\n253:     auto userId = GetUserId();\n254:     if (userId == ERROR_USERID) {\n255:         return;\n256:     }"
+              },
+              {
+                "start_line": 274,
+                "text": "274: void PasteboardService::RemoveAllChangedObserver()\n275: {\n276:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"start.\");\n277:     auto userId = GetUserId();\n278:     if (userId == ERROR_USERID) {\n279:         return;\n280:     }"
+              }
+            ]
+          },
+          {
+            "pattern": "auto it = clips_\\.find\\(userId\\)",
+            "lines": [
+              148,
+              168,
+              202
+            ],
+            "excerpts": [
+              {
+                "start_line": 145,
+                "text": "145:         return;\n146:     }\n147:     std::lock_guard<std::mutex> lock(clipMutex_);\n148:     auto it = clips_.find(userId);\n149:     if (it != clips_.end()) {\n150:         clips_.erase(it);\n151:         NotifyObservers();"
+              },
+              {
+                "start_line": 165,
+                "text": "165:     }\n166:     std::lock_guard<std::mutex> lock(clipMutex_);\n167:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"Clips length %{public}d.\", static_cast<uint32_t>(clips_.size()));\n168:     auto it = clips_.find(userId);\n169:     if (it != clips_.end()) {\n170:         PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"find end.\");\n171:         data = *(it->second);"
+              },
+              {
+                "start_line": 199,
+                "text": "199:         return;\n200:     }\n201:     std::lock_guard<std::mutex> lock(clipMutex_);\n202:     auto it = clips_.find(userId);\n203:     if (it != clips_.end()) {\n204:         clips_.erase(it);\n205:     }"
+              }
+            ]
+          },
+          {
+            "pattern": "data = \\*\\(it->second\\)",
+            "lines": [
+              171
+            ],
+            "excerpts": [
+              {
+                "start_line": 168,
+                "text": "168:     auto it = clips_.find(userId);\n169:     if (it != clips_.end()) {\n170:         PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"find end.\");\n171:         data = *(it->second);\n172:         return true;\n173:     } else {\n174:         PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"not found end.\");"
+              }
+            ]
+          },
+          {
+            "pattern": "OsAccountManager::GetOsAccountLocalIdFromUid",
+            "lines": [
+              215
+            ],
+            "excerpts": [
+              {
+                "start_line": 212,
+                "text": "212: {\n213:     int32_t userId = ERROR_USERID;\n214:     int32_t uid = IPCSkeleton::GetCallingUid();\n215:     auto result = AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(uid, userId);\n216:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE,\n217:         \"Get UserId, uid = %{public}d, userId = %{public}d, result = %{public}d.\", uid, userId, result);\n218:     return userId;"
+              }
+            ]
+          }
+        ]
+      },
+      "interpretation": "D52 has descriptor/token-shape validation and per-OS-user selection. The latter is caller-identity partitioning and invalid-user failure, not a caller read-permission predicate. PID/UID lines in the stub are logging only."
+    },
+    "D52_permission_helpers": {
+      "repository_hits": [
+        "dd22c7cb5e5f207a6c38c50f45b7369ee8575840:utils/native/include/pasteboard_permission.h:33:    bool CheckSelfPermission(const std::string permName);",
+        "dd22c7cb5e5f207a6c38c50f45b7369ee8575840:utils/native/include/pasteboard_permission.h:34:    bool CheckCallingPermission(const int32_t uid, const std::string permName);",
+        "dd22c7cb5e5f207a6c38c50f45b7369ee8575840:utils/native/src/pasteboard_permission.cpp:47:bool PasteboardPermission::CheckSelfPermission(std::string permName)",
+        "dd22c7cb5e5f207a6c38c50f45b7369ee8575840:utils/native/src/pasteboard_permission.cpp:52:bool PasteboardPermission::CheckCallingPermission(int32_t uid, std::string permName)",
+        "dd22c7cb5e5f207a6c38c50f45b7369ee8575840:utils/native/src/pasteboard_permission.cpp:72:    return MockPermission::VerifyPermission(bundleName, permName, userId);"
+      ],
+      "CheckSelfPermission": {
+        "line_count": 89,
+        "probes": [
+          {
+            "pattern": "PasteboardPermission::CheckSelfPermission",
+            "lines": [
+              47
+            ],
+            "excerpts": [
+              {
+                "start_line": 44,
+                "text": "44:     return instance_;\n45: }\n46: \n47: bool PasteboardPermission::CheckSelfPermission(std::string permName)\n48: {\n49:     return true;\n50: }"
+              }
+            ]
+          },
+          {
+            "pattern": "return true",
+            "lines": [
+              49
+            ],
+            "excerpts": [
+              {
+                "start_line": 46,
+                "text": "46: \n47: bool PasteboardPermission::CheckSelfPermission(std::string permName)\n48: {\n49:     return true;\n50: }\n51: \n52: bool PasteboardPermission::CheckCallingPermission(int32_t uid, std::string permName)"
+              }
+            ]
+          }
+        ]
+      },
+      "CheckCallingPermission": {
+        "line_count": 89,
+        "probes": [
+          {
+            "pattern": "PasteboardPermission::CheckCallingPermission",
+            "lines": [
+              52
+            ],
+            "excerpts": [
+              {
+                "start_line": 49,
+                "text": "49:     return true;\n50: }\n51: \n52: bool PasteboardPermission::CheckCallingPermission(int32_t uid, std::string permName)\n53: {\n54:     if (bundleMgrProxy_ == nullptr) {\n55:         bundleMgrProxy_ = GetBundleManager();"
+              }
+            ]
+          },
+          {
+            "pattern": "MockPermission::VerifyPermission",
+            "lines": [
+              72
+            ],
+            "excerpts": [
+              {
+                "start_line": 69,
+                "text": "69:     auto userId = uid / USER_ID_CHANGE_VALUE;\n70:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_COMMON, \"VerifyPermission bundleName %{public}s, permission %{public}s\",\n71: \t\t\t\t\t\t\t\tbundleName.c_str(), permName.c_str());\n72:     return MockPermission::VerifyPermission(bundleName, permName, userId);\n73: }\n74: \n75: sptr<AppExecFwk::IBundleMgr> PasteboardPermission::GetBundleManager()"
+              }
+            ]
+          }
+        ]
+      },
+      "MockPermission": {
+        "line_count": 27,
+        "probes": [
+          {
+            "pattern": "MockPermission::VerifyPermission",
+            "lines": [],
+            "excerpts": []
+          },
+          {
+            "pattern": "return true",
+            "lines": [
+              23
+            ],
+            "excerpts": [
+              {
+                "start_line": 20,
+                "text": "20: namespace MockPermission {\n21: bool VerifyPermission(const std::string &bundleName, const std::string &permissionName, int userId)\n22: {\n23:     return true;\n24: }\n25: } // OHOS\n26: } // MiscServices"
+              }
+            ]
+          }
+        ]
+      },
+      "interpretation": "Whole-tree hits are definitions/declarations, not a call site on GET_PASTE_DATA. The helper and mock return true, but no reachable route is established."
+    },
+    "SAMgr_acquisition_controls": {
+      "CheckGetSAPermission_refs": [
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:47:    bool CheckGetSAPermission(const int32_t said)",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:533:    if (!CheckGetSAPermission(systemAbilityId)) {",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:658:    if (!CheckGetSAPermission(systemAbilityId)) {",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:696:    if (!CheckGetSAPermission(systemAbilityId)) {",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:788:    if (!CheckGetSAPermission(systemAbilityId)) {",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:1677:    if (!CheckGetSAPermission(systemAbilityId)) {",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:1720:    if (!CheckGetSAPermission(systemAbilityId)) {",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:1763:    if (!CheckGetSAPermission(systemAbilityId)) {"
+      ],
+      "Penglai_mode_probe_hits": 29,
+      "Penglai_key_get_check_load_routes": [
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:650:#ifdef SUPPORT_PENGLAI_MODE",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:651:    if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:652:        HILOGW(\"GetSA CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:688:#ifdef SUPPORT_PENGLAI_MODE",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:689:    if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:690:        HILOGW(\"CheckSA CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:780:#ifdef SUPPORT_PENGLAI_MODE",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:781:    if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:782:        HILOGW(\"LoadSA CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\","
+      ],
+      "SAMgr_CheckPermission_refs": [
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:1421:bool SystemAbilityManagerStub::CheckPermission(const std::string& permission)",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:1496:    if (!CheckPermission(EXT_TRANSACTION_PERMISSION)) {",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:1573:    if (!CheckPermission(PERMISSION_SVC)) {",
+        "08e2a552b839ea7727251cb9b749a5c1dd9cfeff:services/samgr/native/source/system_ability_manager_stub.cpp:1842:    if (!CheckPermission(PERMISSION_SVC)) {"
+      ],
+      "CheckGetSAPermission": {
+        "line_count": 2055,
+        "probes": [
+          {
+            "pattern": "bool CheckGetSAPermission",
+            "lines": [
+              47
+            ],
+            "excerpts": [
+              {
+                "start_line": 44,
+                "text": "44:     std::unique_ptr<ServiceChecker> selinuxChecker_ = std::make_unique<ServiceChecker>(false);\n45: #endif\n46: \n47:     bool CheckGetSAPermission(const int32_t said)\n48:     {\n49: #ifdef WITH_SELINUX\n50:         int64_t begin = OHOS::GetTickCount();"
+              }
+            ]
+          },
+          {
+            "pattern": "WITH_SELINUX",
+            "lines": [
+              37,
+              43,
+              49,
+              63,
+              77,
+              92,
+              107
+            ],
+            "excerpts": [
+              {
+                "start_line": 34,
+                "text": "34: #include \"samgr_xcollie.h\"\n35: #include \"qos.h\"\n36: \n37: #ifdef WITH_SELINUX\n38: #include \"service_checker.h\"\n39: #define HILOG_SE_DEBUG(type, fmt, ...) HILOG_IMPL((type), LOG_DEBUG, LOG_DOMAIN, \"SA_SELINUX\", fmt, __VA_ARGS__)\n40: #endif"
+              },
+              {
+                "start_line": 40,
+                "text": "40: #endif\n41: \n42: namespace {\n43: #ifdef WITH_SELINUX\n44:     std::unique_ptr<ServiceChecker> selinuxChecker_ = std::make_unique<ServiceChecker>(false);\n45: #endif\n46: "
+              },
+              {
+                "start_line": 46,
+                "text": "46: \n47:     bool CheckGetSAPermission(const int32_t said)\n48:     {\n49: #ifdef WITH_SELINUX\n50:         int64_t begin = OHOS::GetTickCount();\n51:         auto callingSid = OHOS::IPCSkeleton::GetCallingSid();\n52:         auto ret = selinuxChecker_->GetServiceCheck(callingSid, std::to_string(said)) == 0;"
+              },
+              {
+                "start_line": 60,
+                "text": "60: \n61:     bool CheckAddOrRemovePermission(const int32_t said)\n62:     {\n63: #ifdef WITH_SELINUX\n64:         int64_t begin = OHOS::GetTickCount();\n65:         auto callingSid = OHOS::IPCSkeleton::GetCallingSid();\n66:         auto ret = selinuxChecker_->AddServiceCheck(callingSid, std::to_string(said)) == 0;"
+              },
+              {
+                "start_line": 74,
+                "text": "74: \n75:     bool CheckGetRemoteSAPermission(const int32_t said)\n76:     {\n77: #ifdef WITH_SELINUX\n78:         int64_t begin = OHOS::GetTickCount();\n79:         auto callingSid = OHOS::IPCSkeleton::GetCallingSid();\n80:         auto ret = selinuxChecker_->GetRemoteServiceCheck(callingSid, std::to_string(said)) == 0;"
+              },
+              {
+                "start_line": 89,
+                "text": "89: \n90:     bool CheckAddRemoteSAPermission(const int32_t said)\n91:     {\n92: #ifdef WITH_SELINUX\n93:         int64_t begin = OHOS::GetTickCount();\n94:         auto callingSid = OHOS::IPCSkeleton::GetCallingSid();\n95:         auto ret = selinuxChecker_->AddRemoteServiceCheck(callingSid, std::to_string(said)) == 0;"
+              },
+              {
+                "start_line": 104,
+                "text": "104: \n105:     bool CheckListSAPermission()\n106:     {\n107: #ifdef WITH_SELINUX\n108:         int64_t begin = OHOS::GetTickCount();\n109:         auto callingSid = OHOS::IPCSkeleton::GetCallingSid();\n110:         auto ret = selinuxChecker_->ListServiceCheck(callingSid) == 0;"
+              }
+            ]
+          },
+          {
+            "pattern": "return true;.*not check selinux permission",
+            "lines": [
+              57,
+              71,
+              86,
+              101,
+              115
+            ],
+            "excerpts": [
+              {
+                "start_line": 54,
+                "text": "54:             PRId64 \"ms\", callingSid.c_str(), said, ret == true ? \"suc\" : \"fail\", OHOS::GetTickCount() - begin);\n55:         return  ret;\n56: #else\n57:         return true; // if not support selinux, not check selinux permission\n58: #endif\n59:     }\n60: "
+              },
+              {
+                "start_line": 68,
+                "text": "68:             PRId64 \"ms\", callingSid.c_str(), said, ret == true ? \"suc\" : \"fail\", OHOS::GetTickCount() - begin);\n69:         return ret;\n70: #else\n71:         return true; // if not support selinux, not check selinux permission\n72: #endif\n73:     }\n74: "
+              },
+              {
+                "start_line": 83,
+                "text": "83:             ret == true ? \"suc\" : \"fail\", OHOS::GetTickCount() - begin);\n84:         return ret;\n85: #else\n86:         return true; // if not support selinux, not check selinux permission\n87: #endif\n88:     }\n89: "
+              },
+              {
+                "start_line": 98,
+                "text": "98:             ret == true ? \"suc\" : \"fail\", OHOS::GetTickCount() - begin);\n99:         return ret;\n100: #else\n101:         return true; // if not support selinux, not check selinux permission\n102: #endif\n103:     }\n104: "
+              },
+              {
+                "start_line": 112,
+                "text": "112:             PRId64 \"ms\", callingSid.c_str(), ret == true ? \"suc\" : \"fail\", OHOS::GetTickCount() - begin);\n113:         return ret;\n114: #else\n115:         return true; // if not support selinux, not check selinux permission\n116: #endif\n117:     }\n118: }"
+              }
+            ]
+          }
+        ]
+      },
+      "GetSystemAbilityInner_and_CheckSystemAbilityInner": {
+        "line_count": 2055,
+        "probes": [
+          {
+            "pattern": "int32_t SystemAbilityManagerStub::GetSystemAbilityInner",
+            "lines": [
+              638
+            ],
+            "excerpts": [
+              {
+                "start_line": 635,
+                "text": "635:     return result;\n636: }\n637: \n638: int32_t SystemAbilityManagerStub::GetSystemAbilityInner(MessageParcel& data, MessageParcel& reply)\n639: {\n640:     int32_t systemAbilityId = -1;\n641:     bool ret = data.ReadInt32(systemAbilityId);"
+              }
+            ]
+          },
+          {
+            "pattern": "int32_t SystemAbilityManagerStub::CheckSystemAbilityInner",
+            "lines": [
+              676
+            ],
+            "excerpts": [
+              {
+                "start_line": 673,
+                "text": "673:     return ERR_NONE;\n674: }\n675: \n676: int32_t SystemAbilityManagerStub::CheckSystemAbilityInner(MessageParcel& data, MessageParcel& reply)\n677: {\n678:     int32_t systemAbilityId = -1;\n679:     bool ret = data.ReadInt32(systemAbilityId);"
+              }
+            ]
+          },
+          {
+            "pattern": "if \\(!CheckGetSAPermission",
+            "lines": [
+              533,
+              658,
+              696,
+              788,
+              1677,
+              1720,
+              1763
+            ],
+            "excerpts": [
+              {
+                "start_line": 530,
+                "text": "530:     }\n531: #endif\n532: \n533:     if (!CheckGetSAPermission(systemAbilityId)) {\n534:         HILOGD(\"CheckSystemAbilityImmeInner selinux permission denied! SA:%{public}d,callSid:%{public}s\",\n535:             systemAbilityId, OHOS::IPCSkeleton::GetCallingSid().c_str());\n536:         return ERR_PERMISSION_DENIED;"
+              },
+              {
+                "start_line": 655,
+                "text": "655:     }\n656: #endif\n657: \n658:     if (!CheckGetSAPermission(systemAbilityId)) {\n659:         HILOGE(\"GetSystemAbilityInner selinux permission denied! SA:%{public}d,callSid:%{public}s\",\n660:             systemAbilityId, OHOS::IPCSkeleton::GetCallingSid().c_str());\n661:         return ERR_PERMISSION_DENIED;"
+              },
+              {
+                "start_line": 693,
+                "text": "693:     }\n694: #endif\n695: \n696:     if (!CheckGetSAPermission(systemAbilityId)) {\n697:         HILOGD(\"CheckSystemAbilityInner selinux permission denied! SA:%{public}d,callSid:%{public}s\",\n698:             systemAbilityId, OHOS::IPCSkeleton::GetCallingSid().c_str());\n699:         return ERR_PERMISSION_DENIED;"
+              },
+              {
+                "start_line": 785,
+                "text": "785:     }\n786: #endif\n787: \n788:     if (!CheckGetSAPermission(systemAbilityId)) {\n789:         HILOGE(\"LoadSystemAbilityInner selinux permission denied!SA:%{public}d,callSid:%{public}s\",\n790:             systemAbilityId, OHOS::IPCSkeleton::GetCallingSid().c_str());\n791:         return ERR_PERMISSION_DENIED;"
+              },
+              {
+                "start_line": 1674,
+                "text": "1674:     }\n1675: #endif\n1676: \n1677:     if (!CheckGetSAPermission(systemAbilityId)) {\n1678:         HILOGE(\"GetSystemAbilityWithUserIdInner selinux permission denied! \"\n1679:             \"SA:%{public}d,callSid:%{public}s\", systemAbilityId,\n1680:             OHOS::IPCSkeleton::GetCallingSid().c_str());"
+              },
+              {
+                "start_line": 1717,
+                "text": "1717:     }\n1718: #endif\n1719: \n1720:     if (!CheckGetSAPermission(systemAbilityId)) {\n1721:         HILOGD(\"CheckSystemAbilityWithUserIdInner selinux permission denied! \"\n1722:             \"SA:%{public}d,callSid:%{public}s\", systemAbilityId,\n1723:             OHOS::IPCSkeleton::GetCallingSid().c_str());"
+              },
+              {
+                "start_line": 1760,
+                "text": "1760:     }\n1761: #endif\n1762: \n1763:     if (!CheckGetSAPermission(systemAbilityId)) {\n1764:         HILOGD(\"CheckSystemAbilityByUserIdInner selinux permission denied! \"\n1765:             \"SA:%{public}d,callSid:%{public}s\", systemAbilityId,\n1766:             OHOS::IPCSkeleton::GetCallingSid().c_str());"
+              }
+            ]
+          }
+        ]
+      },
+      "interpretation": "The SAMgr source has conditional SELinux and SUPPORT_PENGLAI_MODE acquisition checks. Other CheckPermission call sites are operation-specific. A successful SA lookup returns a remote object; this source does not show a generic SAMgr policy re-check on each subsequent Pasteboard Binder method."
+    }
+  },
+  "judgment": {
+    "D52_candidate": "retain_narrow_source_only",
+    "confirmed": "At the exact D52 component commit, GET_PASTE_DATA reaches the core user-scoped clip lookup/copy without a visible in-component caller read-permission predicate.",
+    "counterexample_or_boundary": "The core maps IPC caller UID to an OS account and selects that account's clip; this is isolation and can fail for invalid identity, not permission authorization. SAMgr also has a SUPPORT_PENGLAI_MODE acquisition branch omitted from D76's SELinux-focused explanation; whether it exists in a D52 product is unknown.",
+    "external_authorization": "unknown",
+    "product_applicability": "unknown",
+    "attacker_reachability": "unknown",
+    "CVE_causality": "unknown",
+    "no_claim": "No product bypass, system-wide absence of authorization, CVE cause, or product safety conclusion."
+  },
+  "minimum_additional_evidence": [
+    "Exact product fingerprint/build manifest binding D52 component and matching SAMgr/init/AccessToken versions.",
+    "Final installed profile and build/install mapping from source profile/3701.xml to the init-referenced /system/profile/pasteboard_service.xml.",
+    "Product build flags for WITH_SELINUX and SUPPORT_PENGLAI_MODE, effective SELinux/Penglai SA policy, and product SAMgr checks.",
+    "Service-side or framework-level Binder policy/generated hook evidence for each GET_PASTE_DATA call, plus an exact-image authorized/unauthorized caller test."
+  ]
+}
