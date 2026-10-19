@@ -1,0 +1,536 @@
+{
+  "schema_version": 1,
+  "batch": "D55 known-CVE primary advisory manifest A (catalog entries 1-9)",
+  "catalog_source": {
+    "path": "research/data_sensitive/D_KNOWN_CVE_SCAN_20261019.md",
+    "git_blob": "5e71601423a3247b45fb4ce9adf28323b471dcb5",
+    "sha256": "577731fe7f2b252e895c4e1ec93e6ee494db7d3583fc848bb9173ba47eb660e0"
+  },
+  "retrieval_method": {
+    "tool": "Python 3 urllib.request, one GET per CVE Services record",
+    "request_method": "GET",
+    "accept": "application/json",
+    "user_agent": "OHScanner-D55-Advisory-Archive/1.0",
+    "endpoint_template": "https://cveawg.mitre.org/api/cve/{CVE-ID}",
+    "body_capture": "HTTP entity body read as bytes from response.read(), saved byte-for-byte without JSON parsing/reserialization, newline conversion, or text decoding; SHA-256 computed over the saved .response.bin bytes.",
+    "headers_capture": "Response status and urllib response headers saved in adjacent .transport.json; request URL, request headers and UTC retrieval timestamp included.",
+    "limitations": "This captures the API response entity body, not TLS packets or HTTP framing. CVE Services response bytes may change on later retrieval; the committed file and hash freeze this capture."
+  },
+  "entries": [
+    {
+      "cve": "CVE-2022-45877",
+      "status": "captured_primary_cna_record",
+      "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+      "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2022-45877",
+      "snapshot_source_url": "https://cveawg.mitre.org/api/cve/CVE-2022-45877",
+      "retrieved_at_utc": "2026-10-19T18:01:22Z",
+      "source_version_scope": "CVE CNA structured affected entry says OpenHarmony 3.1.0; CNA description says OpenHarmony v3.1.4 and prior. These conflict; preserve both and require source-level/version adjudication.",
+      "scope_status": "captured_scope_inconsistency",
+      "cna_description": "OpenHarmony-v3.1.4 and prior versions had an vulnerability. PIN code is transmitted to the peer device in plain text during cross-device authentication, which reduces the difficulty of man-in-the-middle attacks.",
+      "snapshot": {
+        "body_file": "snapshots/cve-2022-45877.response.bin",
+        "transport_metadata_file": "snapshots/cve-2022-45877.transport.json",
+        "http_status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "content_encoding": "identity (header absent)",
+        "body_bytes": 3334,
+        "body_sha256": "8cc6368e16aaa77e566a22cfc11b217b06b6123b4456ce6499c5d65a170fc7d0"
+      },
+      "primary_advisory_pointer": [
+        {
+          "url": "https://gitee.com/openharmony/security/blob/master/en/security-disclosure/2022/2022-12.md",
+          "name": "https://gitee.com/openharmony/security/blob/master/en/security-disclosure/2022/2022-12.md"
+        }
+      ],
+      "limitations": [
+        "CNA description and structured affected version do not agree; no range inference made."
+      ]
+    },
+    {
+      "cve": "CVE-2025-9900",
+      "status": "captured_primary_cna_record",
+      "publisher": "CVE CNA record; assignerShortName=redhat",
+      "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2025-9900",
+      "snapshot_source_url": "https://cveawg.mitre.org/api/cve/CVE-2025-9900",
+      "retrieved_at_utc": "2026-10-19T18:01:23Z",
+      "source_version_scope": "Red Hat CNA record includes upstream libtiff semver versions below 4.7.1 and separate Red Hat product/package entries with package-specific unaffected EVR thresholds; exact full matrix is in the immutable source bytes. This does not establish OpenHarmony applicability.",
+      "scope_status": "publisher_scope_recorded",
+      "cna_description": "A flaw was found in Libtiff. This vulnerability is a \"write-what-where\" condition, triggered when the library processes a specially crafted TIFF image file.\n\nBy providing an abnormally large image height value in the file's metadata, an attacker can trick the library into writing attacker-controlled color data to an arbitrary memory location. This memory corruption can be exploited to cause a denial of service (application crash) or to achieve arbitrary code execution with the permissions of the user.",
+      "snapshot": {
+        "body_file": "snapshots/cve-2025-9900.response.bin",
+        "transport_metadata_file": "snapshots/cve-2025-9900.transport.json",
+        "http_status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "content_encoding": "identity (header absent)",
+        "body_bytes": 25639,
+        "body_sha256": "625a41fc0b0bcb6f23eea01e0273e6e85ad43cb4b60babff6b7396a6947d306f"
+      },
+      "primary_advisory_pointer": [
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:17651",
+          "name": "RHSA-2025:17651",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:17675",
+          "name": "RHSA-2025:17675",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:17710",
+          "name": "RHSA-2025:17710",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:17738",
+          "name": "RHSA-2025:17738",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:17739",
+          "name": "RHSA-2025:17739",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:17740",
+          "name": "RHSA-2025:17740",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:19113",
+          "name": "RHSA-2025:19113",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:19156",
+          "name": "RHSA-2025:19156",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:19276",
+          "name": "RHSA-2025:19276",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:19906",
+          "name": "RHSA-2025:19906",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:19947",
+          "name": "RHSA-2025:19947",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:20956",
+          "name": "RHSA-2025:20956",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:20998",
+          "name": "RHSA-2025:20998",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:21060",
+          "name": "RHSA-2025:21060",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:21061",
+          "name": "RHSA-2025:21061",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:21062",
+          "name": "RHSA-2025:21062",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:21407",
+          "name": "RHSA-2025:21407",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:21506",
+          "name": "RHSA-2025:21506",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:21507",
+          "name": "RHSA-2025:21507",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:21508",
+          "name": "RHSA-2025:21508",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:21994",
+          "name": "RHSA-2025:21994",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:23078",
+          "name": "RHSA-2025:23078",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:23079",
+          "name": "RHSA-2025:23079",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2025:23080",
+          "name": "RHSA-2025:23080",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:0001",
+          "name": "RHSA-2026:0001",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:0076",
+          "name": "RHSA-2026:0076",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:0077",
+          "name": "RHSA-2026:0077",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:0078",
+          "name": "RHSA-2026:0078",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:3461",
+          "name": "RHSA-2026:3461",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:3462",
+          "name": "RHSA-2026:3462",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:7504",
+          "name": "RHSA-2026:7504",
+          "tags": [
+            "vendor-advisory",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2025-9900",
+          "tags": [
+            "vdb-entry",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2392784",
+          "name": "RHBZ#2392784",
+          "tags": [
+            "issue-tracking",
+            "x_refsource_REDHAT"
+          ]
+        },
+        {
+          "url": "https://github.com/SexyShoelessGodofWar/LibTiff-4.7.0-Write-What-Where?tab=readme-ov-file"
+        },
+        {
+          "url": "https://gitlab.com/libtiff/libtiff/-/issues/704"
+        },
+        {
+          "url": "https://gitlab.com/libtiff/libtiff/-/merge_requests/732"
+        },
+        {
+          "url": "https://libtiff.gitlab.io/libtiff/releases/v4.7.1.html"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "cve": "CVE-2025-25212",
+      "status": "captured_primary_cna_record",
+      "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+      "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2025-25212",
+      "snapshot_source_url": "https://cveawg.mitre.org/api/cve/CVE-2025-25212",
+      "retrieved_at_utc": "2026-10-19T18:01:25Z",
+      "source_version_scope": "OpenHarmony CNA structured affected range: product OpenHarmony, version v5.0.3 through v5.0.3.x (inclusive per lessThanOrEqual); defaultStatus unaffected. Description says OpenHarmony v5.0.3 and prior.",
+      "scope_status": "captured_scope_inconsistency",
+      "cna_description": "in OpenHarmony v5.0.3 and prior versions allow a local attacker case DOS through  improper input.",
+      "snapshot": {
+        "body_file": "snapshots/cve-2025-25212.response.bin",
+        "transport_metadata_file": "snapshots/cve-2025-25212.transport.json",
+        "http_status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "content_encoding": "identity (header absent)",
+        "body_bytes": 2187,
+        "body_sha256": "f969f3768cea8c7304043ac26b6418f2389b005383f9a541e89bf283cd0fb93a"
+      },
+      "primary_advisory_pointer": [
+        {
+          "url": "https://gitee.com/openharmony/security/blob/master/zh/security-disclosure/2025/2025-07.md"
+        }
+      ],
+      "limitations": [
+        "CNA description says v5.0.3 and prior, while structured affected range starts at v5.0.3 and ends at the listed v5.0.3.x/v5.0.3 bound; no broader prior-version range inferred."
+      ]
+    },
+    {
+      "cve": "CVE-2025-27247",
+      "status": "captured_primary_cna_record",
+      "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+      "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2025-27247",
+      "snapshot_source_url": "https://cveawg.mitre.org/api/cve/CVE-2025-27247",
+      "retrieved_at_utc": "2026-10-19T18:01:27Z",
+      "source_version_scope": "OpenHarmony CNA structured affected range: product OpenHarmony, starting v5.0.1 through v5.0.3 (inclusive per lessThanOrEqual); defaultStatus unaffected. Description says OpenHarmony v5.0.3 and prior.",
+      "scope_status": "captured_scope_inconsistency",
+      "cna_description": "in OpenHarmony v5.0.3 and prior versions allow a local attacker cause information leak through get permission.",
+      "snapshot": {
+        "body_file": "snapshots/cve-2025-27247.response.bin",
+        "transport_metadata_file": "snapshots/cve-2025-27247.transport.json",
+        "http_status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "content_encoding": "identity (header absent)",
+        "body_bytes": 2250,
+        "body_sha256": "3f5177eae797c28a9c746d5e7823a8eda828d690ba713876addacbb2de540bb4"
+      },
+      "primary_advisory_pointer": [
+        {
+          "url": "https://gitee.com/openharmony/security/blob/master/zh/security-disclosure/2025/2025-06.md"
+        }
+      ],
+      "limitations": [
+        "CNA description says v5.0.3 and prior, while structured affected range starts at v5.0.3 and ends at the listed v5.0.3.x/v5.0.3 bound; no broader prior-version range inferred."
+      ]
+    },
+    {
+      "cve": "CVE-2025-57052",
+      "status": "official_cve_record_captured_vendor_advisory_unknown",
+      "publisher": "CVE CNA record; assignerShortName=mitre",
+      "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2025-57052",
+      "snapshot_source_url": "https://cveawg.mitre.org/api/cve/CVE-2025-57052",
+      "retrieved_at_utc": "2026-10-19T18:01:28Z",
+      "source_version_scope": "MITRE-assigned CVE record describes cJSON 1.5.0 through 1.7.18, but its structured affected entry is vendor/product/version n/a and its only reference is a researcher blog. No vendor/CNA advisory establishing this version range was present in the captured record; do not treat the description as verified vendor scope.",
+      "scope_status": "unknown_no_vendor_scope",
+      "cna_description": "cJSON 1.5.0 through 1.7.18 allows out-of-bounds access via the decode_array_index_from_pointer function in cJSON_Utils.c, allowing remote attackers to bypass array bounds checking and access restricted data via malformed JSON pointer strings containing alphanumeric characters.",
+      "snapshot": {
+        "body_file": "snapshots/cve-2025-57052.response.bin",
+        "transport_metadata_file": "snapshots/cve-2025-57052.transport.json",
+        "http_status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "content_encoding": "identity (header absent)",
+        "body_bytes": 2315,
+        "body_sha256": "3795f9d5d0f050da69450c939f2a3e80d227eae213b8f96253a2957acf394ee9"
+      },
+      "primary_advisory_pointer": [
+        {
+          "url": "https://x-0r.com/posts/cJSON-Array-Index-Parsing-Vulnerability"
+        }
+      ],
+      "limitations": [
+        "No vendor/CNA advisory or authoritative product version scope established by this capture; source/version scope remains unknown."
+      ]
+    },
+    {
+      "cve": "CVE-2026-25850",
+      "status": "captured_primary_cna_record",
+      "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+      "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2026-25850",
+      "snapshot_source_url": "https://cveawg.mitre.org/api/cve/CVE-2026-25850",
+      "retrieved_at_utc": "2026-10-19T18:01:30Z",
+      "source_version_scope": "OpenHarmony / OpenHarmony; structured affected range starts v5.0.3 and is inclusive through v6.0 (as stated by lessThanOrEqual), defaultStatus=unaffected. Description: in OpenHarmony v6.0 and prior versions allow a local attacker cause information leak",
+      "scope_status": "publisher_scope_recorded",
+      "cna_description": "in OpenHarmony v6.0 and prior versions allow a local attacker cause information leak",
+      "snapshot": {
+        "body_file": "snapshots/cve-2026-25850.response.bin",
+        "transport_metadata_file": "snapshots/cve-2026-25850.transport.json",
+        "http_status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "content_encoding": "identity (header absent)",
+        "body_bytes": 2218,
+        "body_sha256": "17c834ae4584dc74c6aa9757f0a99d17c8a092af56a7a5b5e338682f48f8065a"
+      },
+      "primary_advisory_pointer": [
+        {
+          "url": "https://gitcode.com/openharmony/security/tree/master/zh/security-disclosure/2026/2026-05.md"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "cve": "CVE-2026-28733",
+      "status": "captured_primary_cna_record",
+      "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+      "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2026-28733",
+      "snapshot_source_url": "https://cveawg.mitre.org/api/cve/CVE-2026-28733",
+      "retrieved_at_utc": "2026-10-19T18:01:32Z",
+      "source_version_scope": "OpenHarmony / OpenHarmony; structured affected range starts v5.0.3 and is inclusive through v6.0 (as stated by lessThanOrEqual), defaultStatus=unaffected. Description: in OpenHarmony v6.0 and prior versions allow a local attacker arbitrary code execution.",
+      "scope_status": "publisher_scope_recorded",
+      "cna_description": "in OpenHarmony v6.0 and prior versions allow a local attacker arbitrary code execution.",
+      "snapshot": {
+        "body_file": "snapshots/cve-2026-28733.response.bin",
+        "transport_metadata_file": "snapshots/cve-2026-28733.transport.json",
+        "http_status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "content_encoding": "identity (header absent)",
+        "body_bytes": 2178,
+        "body_sha256": "319d7fb3d963f004c037cab6a4c7e34e0c6324abf5a3ecf31de8ef9e525dc7de"
+      },
+      "primary_advisory_pointer": [
+        {
+          "url": "https://gitcode.com/openharmony/security/tree/master/zh/security-disclosure/2026/2026-05.md"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "cve": "CVE-2026-28751",
+      "status": "captured_primary_cna_record",
+      "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+      "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2026-28751",
+      "snapshot_source_url": "https://cveawg.mitre.org/api/cve/CVE-2026-28751",
+      "retrieved_at_utc": "2026-10-19T18:01:33Z",
+      "source_version_scope": "OpenHarmony / OpenHarmony; structured affected range starts v5.0.3 and is inclusive through v6.0 (as stated by lessThanOrEqual), defaultStatus=unaffected. Description: in OpenHarmony v6.0 and prior versions allow a local attacker cause DOS.",
+      "scope_status": "publisher_scope_recorded",
+      "cna_description": "in OpenHarmony v6.0 and prior versions allow a local attacker cause DOS.",
+      "snapshot": {
+        "body_file": "snapshots/cve-2026-28751.response.bin",
+        "transport_metadata_file": "snapshots/cve-2026-28751.transport.json",
+        "http_status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "content_encoding": "identity (header absent)",
+        "body_bytes": 2166,
+        "body_sha256": "5e2f99eccb8618f641370027275ee883fe826a668ca12d0602360d84fcfb276b"
+      },
+      "primary_advisory_pointer": [
+        {
+          "url": "https://gitcode.com/openharmony/security/tree/master/zh/security-disclosure/2026/2026-04.md"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "cve": "CVE-2026-27648",
+      "status": "captured_primary_cna_record",
+      "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+      "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2026-27648",
+      "snapshot_source_url": "https://cveawg.mitre.org/api/cve/CVE-2026-27648",
+      "retrieved_at_utc": "2026-10-19T18:01:35Z",
+      "source_version_scope": "OpenHarmony / OpenHarmony; structured affected range starts v5.0.3 and is inclusive through v6.0 (as stated by lessThanOrEqual), defaultStatus=unaffected. Description: in OpenHarmony v6.0 and prior versions allow a remote attacker arbitrary code execution in pre-installed apps.",
+      "scope_status": "publisher_scope_recorded",
+      "cna_description": "in OpenHarmony v6.0 and prior versions allow a remote attacker arbitrary code execution in pre-installed apps.",
+      "snapshot": {
+        "body_file": "snapshots/cve-2026-27648.response.bin",
+        "transport_metadata_file": "snapshots/cve-2026-27648.transport.json",
+        "http_status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "content_encoding": "identity (header absent)",
+        "body_bytes": 2215,
+        "body_sha256": "3e34f6359d50f4b378aaa83af92376e7a5bd355e11c54a4cea6e8ebefa37c74e"
+      },
+      "primary_advisory_pointer": [
+        {
+          "url": "https://gitcode.com/openharmony/security/tree/master/zh/security-disclosure/2026/2026-04.md"
+        }
+      ],
+      "limitations": []
+    }
+  ]
+}
