@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "task_id": "D59",
+  "date": "2026-10-23",
+  "detector_id": "ohscanner.known_disclosed_cves",
+  "baseline": {
+    "commit": "c8f83b82291e82b3272c73b943623336a3c836c3",
+    "version": "0.19.3"
+  },
+  "independent_trigger_evidence": {
+    "D58_commit": "8eb43e33a10e88cc02341df3e9bb91f93d1dc862",
+    "T58_commit": "1a4252b6925369b04f7efe9462d9670848aff327",
+    "triggered_shapes": [
+      "ignored_permission_result_before_read",
+      "permission_check_after_read",
+      "permission_check_after_serialization",
+      "valid_denial_guard_nested_under_literal_false"
+    ]
+  },
+  "scope": "CVE-2025-27247 permission suppression matcher and necessary focused tests/corpus controls only",
+  "matcher": {
+    "version": "0.19.4",
+    "accepted_condition_shapes": [
+      "!PermissionCheck(...)",
+      "PermissionCheck(...) != PERMISSION_GRANTED",
+      "PermissionCheck(...) == PERMISSION_DENIED"
+    ],
+    "required_exit": "The if body must begin with return or throw.",
+    "ordering": "The full if statement must end before the OnGetPasteData GetPasteData call or the OnRemoteRequest it->second dispatch route.",
+    "dead_branch_filter": "Ignore a denial guard when it is nested inside an enclosing if whose entire condition is the literal false, case-insensitive.",
+    "not_cfg_or_permission_proof": true
+  },
+  "candidate_identity": {
+    "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+    "symbol": "CVE-2025-27247",
+    "anchor": "OnRemoteRequest function opening brace (unchanged)",
+    "positive_output": "Candidate retained with same rule ID, symbol, and anchor."
+  },
+  "control_results": {
+    "no_permission_check": "candidate_retained",
+    "ignored_permission_result_before_read": "candidate_retained",
+    "mixed_permission_and_other_predicate": "candidate_retained",
+    "pre_read_denial_immediate_return": "suppressed_syntactic_control",
+    "pre_read_denial_immediate_throw": "syntax_recognized_by_rule",
+    "pre_read_permission_status_not_granted_with_return": "suppressed_syntactic_control",
+    "post_read_denial_check": "candidate_retained",
+    "post_serialization_denial_check": "candidate_retained",
+    "valid_denial_guard_nested_in_literal_false": "candidate_retained"
+  },
+  "changed_files": [
+    "src/ohscanner/detectors/known_cves.py",
+    "tests/detectors/test_known_disclosed_cves.py",
+    "tests/detectors/test_known_case_corpus.py",
+    "tests/fixtures/known_cases/local-pasteboard-historical-read/fixed.cpp",
+    "tests/fixtures/known_cases/local-pasteboard-historical-read/safe.cpp",
+    "tests/fixtures/known_cases/known_case_manifest.json"
+  ],
+  "tests": {
+    "focused_command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "focused_result": "PASS",
+    "focused_tests": 32,
+    "full_suite_command": "python -m unittest discover -s tests",
+    "full_suite_tests_run": 1110,
+    "full_suite_skipped": 63,
+    "full_suite_failures": 3,
+    "full_suite_errors": 17,
+    "full_suite_status": "FAIL; unrelated environment/baseline issues include missing fastapi/fcntl, Windows symlink privilege, clang executable format, snapshot path/hash mismatch, and missing D2 replay output"
+  },
+  "assessment": {
+    "candidate_disposition": "source-only candidate",
+    "CVE_causality": "unknown",
+    "product_applicability": "unknown",
+    "product_vulnerability": "unknown",
+    "runtime_authorization": "unknown",
+    "suppression_semantics": "local syntax shape only; not CFG, dominance, alias, caller, framework, or permission-contract proof"
+  }
+}

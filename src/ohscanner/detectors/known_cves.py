@@ -6,7 +6,7 @@ from .adapters.artifacts import classify_artifact, limitation_message
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.19.3"
+VERSION = "0.19.4"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -28,6 +28,92 @@ def _body(text: str, name: str):
                 depth -= 1
                 if depth == 0: return opening, text[opening + 1:i]
     return None
+
+def _matching_delimiter(text: str, opening: int, left: str, right: str):
+    depth = 0
+    for index in range(opening, len(text)):
+        if text[index] == left:
+            depth += 1
+        elif text[index] == right:
+            depth -= 1
+            if depth == 0:
+                return index
+    return None
+
+def _if_statements(text: str):
+    """Yield syntactically bounded if statements; this is not a CFG parser."""
+    for match in re.finditer(r"\bif\s*\(", text):
+        opening = text.find("(", match.start())
+        closing = _matching_delimiter(text, opening, "(", ")")
+        if closing is None:
+            continue
+        statement_start = closing + 1
+        while statement_start < len(text) and text[statement_start].isspace():
+            statement_start += 1
+        if statement_start >= len(text):
+            continue
+        if text[statement_start] == "{":
+            statement_end = _matching_delimiter(text, statement_start, "{", "}")
+            if statement_end is None:
+                continue
+            statement_end += 1
+        else:
+            semicolon = text.find(";", statement_start)
+            if semicolon < 0:
+                continue
+            statement_end = semicolon + 1
+        yield match.start(), text[opening + 1:closing], statement_start, statement_end
+
+def _is_permission_denial_condition(condition: str) -> bool:
+    permissions = r"(?:Check\w*Permission|Verify\w*Permission|Enforce\w*Permission|PermissionManager|CheckPermission)"
+    condition = condition.strip()
+    while condition.startswith("("):
+        closing = _matching_delimiter(condition, 0, "(", ")")
+        if closing != len(condition) - 1:
+            break
+        condition = condition[1:-1].strip()
+    negated = condition.startswith("!")
+    if negated:
+        condition = condition[1:].strip()
+        while condition.startswith("("):
+            closing = _matching_delimiter(condition, 0, "(", ")")
+            if closing != len(condition) - 1:
+                break
+            condition = condition[1:-1].strip()
+    call = re.match(rf"{permissions}\s*\(", condition, re.I)
+    if not call:
+        return False
+    opening = condition.find("(", call.start())
+    closing = _matching_delimiter(condition, opening, "(", ")")
+    if closing is None:
+        return False
+    suffix = re.sub(r"\s+", "", condition[closing + 1:]).upper()
+    return (negated and not suffix) or (not negated and suffix in ("!=PERMISSION_GRANTED", "==PERMISSION_DENIED"))
+
+def _pasteboard_permission_denial_before(text: str, read_position: int) -> bool:
+    """Recognize only a local denial condition with an immediate exit before the read.
+
+    This intentionally narrow syntax check does not prove reachability, dominance,
+    permission semantics, or interprocedural authorization.
+    """
+    statements = tuple(_if_statements(text))
+    dead_ranges = tuple(
+        (start, end) for start, condition, _, end in statements
+        if re.fullmatch(r"\s*false\s*", condition, re.I)
+    )
+    for start, condition, statement_start, statement_end in statements:
+        if statement_end > read_position or not _is_permission_denial_condition(condition):
+            continue
+        if any(dead_start < start < dead_end for dead_start, dead_end in dead_ranges):
+            continue
+        branch = text[statement_start:statement_end].lstrip()
+        if branch.startswith("{"):
+            branch = branch[1:].lstrip()
+        # Require the failure arm itself to exit immediately. Logging or an
+        # ignored permission result is not a control that suppresses a finding.
+        if re.match(r"(?:return\b|throw\b)", branch):
+            return True
+    return False
 
 def _observer_quota_comparison(text: str):
     """Find observer count-at-cap comparisons; callers must prove refusal flow."""
@@ -701,7 +787,10 @@ def _scan(unit: SourceUnit, curl_version=None):
         mapped = "memberFuncMap_" in mb and "OnGetPasteData" in mb and "GET_PASTE_DATA" in mb
         routed = "memberFuncMap_" in db and "memberFuncMap_.find" in db
         reads_and_returns = "GetPasteData" in hb and "WriteParcelable" in hb
-        guarded = bool(re.search(r"(?:Check\w*Permission|Verify\w*Permission|Enforce\w*Permission|PermissionManager|CheckPermission)", db + hb, re.I))
+        route_pos = db.find("it->second")
+        read_pos = hb.find("GetPasteData")
+        guarded = ((route_pos >= 0 and _pasteboard_permission_denial_before(db, route_pos))
+                   or (read_pos >= 0 and _pasteboard_permission_denial_before(hb, read_pos)))
         if mapped and routed and reads_and_returns and not guarded:
             out.append(_finding(unit, pos, "ohknowncve-pasteboard-cve-2025-27247", "CVE-2025-27247", "Binder GET_PASTE_DATA dispatch returns paste data without a visible permission check in the dispatch or handler.", "CWE-862"))
     # CVE-2026-27648: Flowbuffer decoding must bound both the byte range in

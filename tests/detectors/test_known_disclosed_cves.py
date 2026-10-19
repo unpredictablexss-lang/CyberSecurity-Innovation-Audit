@@ -467,7 +467,7 @@ class KnownDisclosedCveTests(unittest.TestCase):
         }
         PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
         int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; }
-        int OnGetPasteData(){ CheckPermission(); GetPasteData(); reply.WriteParcelable(data); return 0; }"""
+        int OnGetPasteData(){ if (!CheckPermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"""
         vulnerable_run = self.run_source(vulnerable, "pasteboard_service.cpp")
         findings = {f.symbol for f in vulnerable_run.findings}
         self.assertIn("CVE-2025-25212", findings)
@@ -476,6 +476,30 @@ class KnownDisclosedCveTests(unittest.TestCase):
         expected_line = vulnerable[:vulnerable.index("observers->insert(observer)")].count("\n") + 1
         self.assertEqual(expected_line, observer_finding.line)
         self.assertEqual((), self.run_source(fixed, "pasteboard_service.cpp").findings)
+
+    def test_pasteboard_permission_suppression_requires_pre_read_denial_exit(self):
+        prefix = """PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
+        int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; }
+        """
+        handler = "int OnGetPasteData(){ GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid = "int OnGetPasteData(){ if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_status = "int OnGetPasteData(){ if (CheckPermission(PERMISSION_READ_PASTEBOARD) != PERMISSION_GRANTED) { return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_throw = "int OnGetPasteData(){ if (VerifyPermission(PERMISSION_READ_PASTEBOARD) == PERMISSION_DENIED) throw NoPermission(); GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        ignored = "int OnGetPasteData(){ VerifyPermission(PERMISSION_READ_PASTEBOARD); GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        mixed_condition = "int OnGetPasteData(){ if (!VerifyPermission(PERMISSION_READ_PASTEBOARD) && caller_is_special) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        after_read = "int OnGetPasteData(){ GetPasteData(); if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; reply.WriteParcelable(data); return 0; }"
+        after_serialization = "int OnGetPasteData(){ GetPasteData(); reply.WriteParcelable(data); if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; return 0; }"
+        dead_nested = "int OnGetPasteData(){ if (false) { if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data); return 0; }"
+
+        def has_candidate(body):
+            findings = self.run_source(prefix + body, "pasteboard_service_stub.cpp").findings
+            return "CVE-2025-27247" in {item.symbol for item in findings}
+
+        for guarded in (valid, valid_status, valid_throw):
+            self.assertFalse(has_candidate(guarded), "a pre-read denial with an immediate exit is a syntactic suppression control")
+        for ineffective in (handler, ignored, mixed_condition, after_read, after_serialization, dead_nested):
+            with self.subTest(handler=ineffective):
+                self.assertTrue(has_candidate(ineffective), "ineffective or unreachable token must retain the candidate")
 
     def test_pasteboard_quota_helper_and_unrelated_growth_controls(self):
         helper_quota = """bool IsObserverQuotaExceeded(ObserverSet *observers) {
