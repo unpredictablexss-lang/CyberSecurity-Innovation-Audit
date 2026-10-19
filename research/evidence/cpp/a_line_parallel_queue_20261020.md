@@ -301,6 +301,10 @@ D40 replayed 11 source files with complete parsing and 11 current candidates, ma
 - T40 独立纠正 D40 的 `SetMaps` 调用方结论：`lite_process_dumper.cpp:362` 与 `minidump_dumper.cpp:514` 被 production-capable、安装型 `processdump` GN target 收录；refactor `LocalUnwinder` 也包含 `Collect/Release` 路径。具体产品配置与跨线程/重入 overlap 仍未知，保持 PARTIAL 和无 detector change。调用点及 GN 源身份已 hash-bound，见 [T40 校正](a_line_parallel_queue_20261020_D40_addendum.md) 和 [D40 follow-up JSON](d40_faultloggerd_sharedptr_replay_20261024.json)。
 
 
-## T41 — faultloggerd `shared_ptr_race` CR-0161–CR-0173
+## D41 — faultloggerd shared_ptr_race CR-0161–CR-0173
 
-T41 在独立测试线补审 A0 队列中 T40 未覆盖的 13 个尾部行。四个目标头文件均绑定 faultloggerd commit `50c7dffc057a32987d5eeb7626c20e1b3717c77b` / tree `8b54f17921ba15ff306bcbef280078003a7b1055`，当前 `shared_ptr_race` 0.5.1 CLI 完整解析 4/4 并报告 7 条候选，4/13 队列行精确匹配。CR-0161 的 `dfx_process.h:74` 是 T40 记录的额外 finding，本轮将其与新增 A0 尾部对应；其余 9 行无精确 finding，不代表安全。BUILD 显示 `processdump` 是 production-capable 安装目标且依赖 `minidump_parser`，但没有具体产品 manifest、同对象跨线程重叠或可信修复源码。T40 `SetMaps` 证据仅适用于 CR-0143 的 `LocalThreadContextMix::maps_` singleton；不外推到本组 DfxProcess/DfxThread/minidump 对象。本组均保留 `PARTIAL` 与原 A0 `not_testable / paused_pending_evidence` 状态。见 [T41 报告](t41_faultloggerd_tail_audit_20261024.md)、[逐行记录](t41_faultloggerd_tail_audit_20261024.json)、[原始 CLI](t41_faultloggerd_tail_cli_20261024.json) 和 [验证器](verify_t41_faultloggerd_tail_audit_20261024.py)。
+D41 independently replayed the 13 A0 tail rows against four source files: parse complete 4/4, seven diagnostics, four exact A0 line matches, and nine rows without an exact finding. D40 covered only CR-0119–0160; CR-0161 binds the previously extra `dfx_process.h:74` finding to its own A0 source row. No same-object race is confirmed; preserve all rows as PARTIAL / `not_testable / paused_pending_evidence`. See [D41 report](d41_faultloggerd_tail_report_20261025.md) and [verifier](verify_d41_faultloggerd_tail_20261025.py).
+
+## T41 — independent faultloggerd tail audit CR-0161–CR-0173
+
+T41 independently confirmed the exact source set and current CLI outcome: four files parse completely, seven findings, four exact line matches, nine unhit A0 positions. The production-capable `processdump` target does not prove product manifest selection or concurrent overlap for these objects; T40's `SetMaps` evidence remains scoped to CR-0143. Keep all 13 rows PARTIAL / `not_testable / paused_pending_evidence`. See [T41 report](t41_faultloggerd_tail_audit_20261024.md) and [verifier](verify_t41_faultloggerd_tail_audit_20261024.py).
