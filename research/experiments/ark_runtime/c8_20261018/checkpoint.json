@@ -1,0 +1,549 @@
+{
+  "schema_version": 1,
+  "updated": "2026-10-19",
+  "root_cause": "TypedArray Map allocates a species-sensitive result and performs indexed stores using a type token from the source array; the release fix derives the token from the result object before indexed access.",
+  "baseline": {
+    "scanner_commit": "629e30cb8da581e55439a797852b221997154775",
+    "detector_version": "0.7.0",
+    "exact_parent": "d6d18548750373cd4e93e9af24eda3e84f6f1b8e",
+    "parent_diagnostics": 0,
+    "exact_fix": "30571a40879bb2092dcb9ae994d6970c1dfd5fc1",
+    "fix_diagnostics": 0,
+    "same_scope_and_profile": true,
+    "reason": "The v0.7 semantic selector did not apply to runtime builtins callback completion."
+  },
+  "current": {
+    "root_cause": "TypedArray Filter reads backing buffer before proving that the receiver is a runtime TypedArray; a same-receiver type guard must dominate the accessor.",
+    "source_pair": "PR !9063 first parent c4c52fb57b6e204128e1520340c8e66c8e708981 -> merge/fix 2a70904be0e21a37a666eb00cab49d02068260ea. See typeguard_ia7e8_source_identity_20261019.json.",
+    "production_result": "Production ohscan-run v0.8.10 parent/fix receiver-root diagnostics 1->0 at Filter line 1413; aggregate 4->3 with three unchanged TypeOrigin candidates. Both reports completed_with_limitations, detector blocked, file partial.",
+    "controls": "5 receiver tests passed. LastIndexOf IsTypedArray guard matched on both exact source revisions; safe sibling control, not blind holdout.",
+    "tests": "41 passed, 2 skipped across receiver guard, TypeOrigin, and unseen detector suites.",
+    "dynamic_product": "not run; no exact build, upstream regression execution, product binding, or impact confirmation.",
+    "production_admission": "CLI-integrated candidate response, not fully admitted: no exact compile/macro/dependency closure, unresolved flows remain, and no independent blind vulnerable holdout."
+  },
+  "prior_work_audit": {
+    "typed_array_type_origin": "Existing first-party detector implementation is selectable through production ohscan-run but remains Catalog research_candidate/disabled by default. This turn verified exact !11196 direct parent/fix replay (1\u21920); both source parses/analysis remain partial/blocked, so no production admission or family pass is claimed.",
+    "pending_exception_probe": "Prior compiler-stub pending-exception probe is a separate mechanism from this Filter type-origin root. It did not detect Filter. Related exception guard/runtime exception logic has first-party detector code and focused unit coverage, but its real-source/runtime evidence is separately tracked; do not transfer its status to TypeOrigin.",
+    "exact_source_replay": "Corrected and replayed !11196 direct parent 2ea501258ab4155826b64f01b499b43d1911e0e2 to fix 919e4fbb011f610427e788889083fa8e28d2f951 via production ohscan-run with pinned local Git objects. The previous 857ff17 replay is retained as non-paired observation. Single-file light-AST parsing is partial.",
+    "dynamic_gate": "Upstream regression source is present in !11196, but no exact-source product args.gn/GN compile action, preprocessed TU, target build or runtime execution has been verified. Component dynamic reproduction and product vulnerability confirmation remain not run/not established.",
+    "size_overflow_I7KZJ7": "v0.8.10 production ohscan-run now distinguishes exact !4425 parent (one root-specific candidate) from exact fixed merge (zero same-root candidates); both full-file analyses remain partial/blocked. !4688 is a real unrelated control 0->0. Independent vulnerable same-mechanism and safe same-mechanism controls are still absent; no product or dynamic validation."
+  },
+  "failed_attempts": [
+    {
+      "attempt": "First baseline invocation from wrong working directory",
+      "result": "ModuleNotFoundError: No module named src",
+      "resolution": "reran from scanner checkout; preserved as an execution failure, not evidence"
+    },
+    {
+      "attempt": "Initial post-rule implementation",
+      "result": "AttributeError: RuntimeExceptionResult missing model_digest; overbroad AST work also exceeded practical run budget",
+      "resolution": "fixed result model and scoped analysis to relevant functions; reran matched scans"
+    },
+    {
+      "attempt": "Full Ark Runtime suite with OHSCANNER_ARK_REPO pointing at bare object database",
+      "result": "118 passed, 1 failed, 1 skipped; parser owner test requires a checkout path",
+      "resolution": "created isolated exact source checkout from pinned objects and reran; 119 passed, 1 skipped"
+    },
+    {
+      "attempt": "v0.8.1 file-level Array historical replay",
+      "result": "b487 parent produced 3 candidates including unverified FindIndex; fixed b487 0 but blocked by instruction budget/incomplete file coverage; f536 parent/fix 0 but both blocked",
+      "resolution": "record all outcomes as partial/inconclusive; do not call zero a fix pass; source history is development data and FindIndex requires CFG/root-cause review"
+    },
+    {
+      "attempt": "v0.8.2 Array history replay after 4x instruction-budget increase",
+      "result": "Instruction exhaustion removed; full file still partial/blocked because callback paths in Every and FindIndex cross unsupported compound boundaries. Some transition is observed on exact f536 parent/fix (1->0), but file-level zero is not a pass.",
+      "resolution": "retain reports; next implement bounded CFG for branches/loops/returns before using Array results as a complete validation"
+    },
+    {
+      "attempt": "v0.8.2 unrelated builtins_number control",
+      "result": "M2 returned zero diagnostics but detector status not_applicable with zero applicable files",
+      "resolution": "record as untested for this mechanism; do not count as safe/unrelated control"
+    },
+    {
+      "attempt": "v0.8.3 post-freeze wrapper variant replay, commit 7fb7ec3",
+      "result": "Exact parent and fix both produce 5 diagnostics in other direct-call functions; neither reports BuiltinsArray::Every wrapper path; JSStableArray helper coverage partial.",
+      "resolution": "record as inconclusive/missed, do not count zero as safe; requires interprocedural exception-effect summary and family leakage adjudication"
+    },
+    {
+      "attempt": "v0.8.4 Array regression invoked with an incorrect guessed f536 commit identifier",
+      "result": "M2 rev-parse failed before scanning; no evidence produced",
+      "resolution": "Read the pinned source_identity_manifest and reran the verified exact pair ab9e5b031a34500432d16b31c5d2cff50efcf9a7 -> f536dc733883b40d9bce1639356bd9253c1c2b27; preserved blocked 2->1 result."
+    },
+    {
+      "attempt": "Initial property-store controls used the source token in both unsafe and safe fixture, and expected a specific escaped-path message without checking emitted observations.",
+      "result": "Two focused tests failed.",
+      "resolution": "Corrected safe fixture to use destination-derived outputType; escaped control now asserts conservative absence of a candidate rather than assuming a diagnostic shape."
+    },
+    {
+      "attempt": "v0.8.8 fresh-local typed-array identity exempted from invalidation across unknown calls to detect Map parent/fix.",
+      "result": "Initially yielded vulnerable Map candidate line 2665 and fixed Map no candidate, but 3 existing full-suite safety controls regressed from unknown to candidate because source facts may be stale after callbacks.",
+      "resolution": "Reverted exemption; final production CLI Map result is 0\u21920 and is recorded as a miss."
+    },
+    {
+      "attempt": "The first v0.8.8 fresh-local identity exemption did not inspect escape through call arguments or JSCallArgs.",
+      "result": "It produced parent Map candidate/fix 0 but regressed 3 safety controls.",
+      "resolution": "Added escape tracking for direct/nested call argument objects and the modeled JSCallArgs initializer; source snapshot invalidation remains. Focused/full tests pass and exact production CLI now distinguishes the pinned pair."
+    },
+    {
+      "attempt": "Exact !4425 parent production replay initially exited with Windows access violations; faulthandler first pointed at repeated runtime_exception.py parse_functions, then subsequent traces showed heap corruption after the nested Tree-sitter copy-loop walk.",
+      "result": "The original AST-node size sink walk corrupted the process on the vulnerable parent. Candidate logic was preserved but sink matching was moved to a lexically bounded function-body scan after complete AST parsing; primitive offsets/lines are materialized before report construction.",
+      "resolution": "Debug allocator isolated the failure to the nested Tree-sitter loop traversal. Unit controls, a post-analysis environment fingerprint, and matched parent/fixed production CLI runs now complete. Preserve initial crash log; no failed scan was counted as a safety or detection result."
+    },
+    {
+      "attempt": "Full Ark Runtime regression after the C8 size rule and sendable allocator variant changes.",
+      "result": "133 passed, 1 failed, 10 skipped in 69.37s. Sole failure: test_dependency_manifest.py::ExactSnapshotDependencyManifestTests::test_recomputation_is_stable_and_incomplete_profile_blocks expected unresolved_dependency:ACTUAL_INCLUDE_CLOSURE; actual errors are C1_PRODUCT_BUILD_PROFILE, C2_CASE_MATRIX, PARSER_BINARY_IDENTITY.",
+      "resolution": "Recorded as outside C8 ownership; did not edit the dependency manifest/test. Focused C8 regression was 38 passed, 2 skipped."
+    },
+    {
+      "attempt": "Official !4245 was considered as a second positive/fixed pair for the size-overflow rule after its verified Gitee PR ref was fetched.",
+      "result": "Production CLI reports the same CreateFromTypedArray size-overflow candidate at line 230 on both !4245 parent and fix; source diff is in CreateFromArrayBuffer, so the detector observation is from an untouched function and does not validate !4245.",
+      "resolution": "Recorded as excluded control-audit evidence; no claim that the !4245 root was detected or fixed. Saved both exact-source reports and source review."
+    },
+    {
+      "attempt": "Current v0.8.10 TypeOrigin replay first looked for !11130 fixed commit 6627179... in c-line-callback-holdout-history-20261019.git.",
+      "result": "Exact object is absent in that database; no scan was executed for the missing commit. !11130 parent and !11684 objects were present there.",
+      "resolution": "Verified the exact fixed commit and tree in the separate local cve-2025-arkruntime-official.git database, then reran the matched production CLI scan from that database. Report records pin commit/tree/snapshot and local Git provenance."
+    },
+    {
+      "attempt": "Semantic observation replay script first launch outside repository import path",
+      "result": "ModuleNotFoundError: No module named src; no source scan completed.",
+      "resolution": "Added repository-root discovery from script location and reran the pinned six-commit semantic observation replay successfully; failure is harness setup only."
+    }
+  ],
+  "next_operation": "Bind exact product compile actions and transitive include/macro closure for both !9063 commits; preprocess both target TUs and verify the IsFastTypeArray/GetViewedArrayBuffer expansion. Then find and replay a distinct official TypedArray history pair outside Filter through current production ohscan-run without changing the rule.",
+  "completion_condition": "Root-specific production parent/fix signal and same-file safe sibling controls are present. Dynamic component regression and product evidence remain unverified; do not promote candidate or claim full production admission until build/profile and independent holdout evidence exist.",
+  "prior_history_audit": {
+    "d293_replay": "0 diagnostics on both parent/fix, both blocked due missing selected dependency/partial methods; not validation evidence.",
+    "d0dc_replay": "0 diagnostics on both parent/fix with typed_array_helper included; both blocked and unrelated paths partial; not validation evidence.",
+    "c333_exact_replay": "Parent-only FindIndex candidate 1->0 on exact one-line guard. Overall M2 remains blocked; issue I7ZZHM relation is unknown."
+  },
+  "history": [
+    {
+      "attempt": "Exact-source replay of official TypedArray Filter fix !11196.",
+      "result": "Discovered earlier purported parent 857ff17 was not direct parent; verified direct parent 2ea501258ab4155826b64f01b499b43d1911e0e2 from fix commit ancestry. Production ohscan-run v0.8.10 direct pair yielded 1\u21920 candidate; both blocked/partial.",
+      "resolution": "Saved corrected direct-parent/fix reports and full source identities. Prior 857ff17 report retained as a separate non-paired observation; no dynamic or product validation claimed."
+    },
+    {
+      "attempt": "Review and model C1/a65 glue-aware Ark API overloads, then replay the exact !11196 pair and current source.",
+      "result": "Bound five API declaration/header identities at a65. Added handling for LoadHClass(glue, object), two-argument NewObjectStubBuilder/BuiltinsArrayStubBuilder constructors, and GetCurrentGlobalEnv plus real-origin positive/safe unit controls. Focused regression: 65 passed, 3 skipped. Production replay remains parent 1 candidate \u2192 fix 0; a65 and official master 0 diagnostics but partial/blocked with unresolved target/type-origin observations. unsupported_host_expression_effects is removed on a65.",
+      "resolution": "API arities/effects are source-grounded; this did not resolve local identity through branch/loop dataflow and does not make zero-finding real-source reports a safety pass. Reports and hashes are in coverage ledger."
+    },
+    {
+      "attempt": "Correct stale partial-scope limitation label and validate source applicability on latest Ark Runtime.",
+      "result": "Changed limitation from exact_binding_adapter to semantic_selector (actual Catalog factory is ArkRuntimeUnseenTypeSafetyDetector). Added a regression proving the label and reran source pair/a65/current master through production CLI plus 72 focused tests/4 skipped. Findings remain 1\u21920; a65/master remain 0 with partial blocked analysis and unresolved TypeOrigin observations.",
+      "resolution": "Corrected previous interpretation: zero findings on a65/master are not due exact-binding rejection and cannot mean safe; the semantic analyzer is applicable but local target/type-origin facts remain unresolved."
+    }
+  ],
+  "current_build_profile_audit": "Current C1 hihope/rk3568 profile and two preprocessed target ARM actions bind Ark Runtime a65a2853ccae13da167d9aa4720ab8b11ec16656 (target SHA-256 76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c), not !11196 parent/fix. Ninja isolated target 1 stopped before object compilation when a Musl notice action attempted a source-tree write. This profile cannot be applied to the exact historical pair.",
+  "current_model_change": {
+    "updated": "2026-10-19",
+    "change": "Source-verified graph read semantics now cover the a65 glue-aware queries and type predicates. Added exact seven-argument CallStubBuilder construction after confirming its a65 constructor only initializes builder fields. Type facts are retained across unknown effects only when they derive from a fresh local TypedArray result that has not escaped; source-object facts still invalidate, and an escaped result remains unknown. Exact API/header identities are in RuntimeTypeModel.api_overload_evidence.",
+    "production_replay": {
+      "typeorigin-v0810-type-origin-preservation-i11196-parent": {
+        "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+        "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+        "target_snapshot_sha256": "884bb958b98b5b977ba9b539ce27432870b9269156bbfcfad97f4bb58dcd9d3c",
+        "diagnostics": [
+          {
+            "line": 1498,
+            "rule": "ark.runtime.typedarray-store-type-origin"
+          }
+        ],
+        "diagnostic_count": 1,
+        "run_status": "blocked",
+        "scan_status": "completed_with_limitations",
+        "parse_status": {
+          "partial": 1
+        },
+        "elapsed_seconds": 0.257722600006673,
+        "limitations": [
+          "exception_path_not_fully_modeled",
+          "experimental_partial_function_scope",
+          "load_hclass_signature_or_binding_mismatch",
+          "parse_dependency_contamination_unknown",
+          "partial_scope_routed_through_semantic_selector"
+        ]
+      },
+      "typeorigin-v0810-type-origin-preservation-i11196-fix": {
+        "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "target_snapshot_sha256": "45951ebe149386befe03a7dcfe28f1ce3fc1b91c8a9947745a692a4186e148dc",
+        "diagnostics": [],
+        "diagnostic_count": 0,
+        "run_status": "blocked",
+        "scan_status": "completed_with_limitations",
+        "parse_status": {
+          "partial": 1
+        },
+        "elapsed_seconds": 0.2551579999999376,
+        "limitations": [
+          "exception_path_not_fully_modeled",
+          "experimental_partial_function_scope",
+          "load_hclass_signature_or_binding_mismatch",
+          "parse_dependency_contamination_unknown",
+          "partial_scope_routed_through_semantic_selector"
+        ]
+      },
+      "typeorigin-v0810-type-origin-preservation-a65": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "target_snapshot_sha256": "7f1c19c5ba21a311fba7f018df8fff077c6c9a60ee81c3ce348bb5b0a9f017d2",
+        "diagnostics": [],
+        "diagnostic_count": 0,
+        "run_status": "blocked",
+        "scan_status": "completed_with_limitations",
+        "parse_status": {
+          "partial": 1
+        },
+        "elapsed_seconds": 0.25778279999940423,
+        "limitations": [
+          "experimental_partial_function_scope",
+          "parse_dependency_contamination_unknown",
+          "partial_scope_routed_through_semantic_selector"
+        ]
+      },
+      "typeorigin-v0810-type-origin-preservation-master": {
+        "commit": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+        "tree": "2cd854aa7d9f987de89d31a6a512e735779e75b6",
+        "target_snapshot_sha256": "d8e0efa6c9058c8bdc6baae407b5db8b96df7914e3a62b8d4d450aad1e080ee6",
+        "diagnostics": [],
+        "diagnostic_count": 0,
+        "run_status": "blocked",
+        "scan_status": "completed_with_limitations",
+        "parse_status": {
+          "partial": 1
+        },
+        "elapsed_seconds": 0.26327560000208905,
+        "limitations": [
+          "experimental_partial_function_scope",
+          "parse_dependency_contamination_unknown",
+          "partial_scope_routed_through_semantic_selector"
+        ]
+      },
+      "typeorigin-v0810-type-origin-preservation-i11684-parent": {
+        "commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+        "tree": "27ec52bd443ccd4e45b472731114e8547df71ea2",
+        "target_snapshot_sha256": "71b374cec95f7909d1375741668b2b5ee285aab9029cc674c4990c3ccc1518d4",
+        "diagnostics": [
+          {
+            "line": 1487,
+            "rule": "ark.runtime.typedarray-allocation-exception-guard"
+          },
+          {
+            "line": 2656,
+            "rule": "ark.runtime.typedarray-allocation-exception-guard"
+          }
+        ],
+        "diagnostic_count": 2,
+        "run_status": "blocked",
+        "scan_status": "completed_with_limitations",
+        "parse_status": {
+          "partial": 1
+        },
+        "elapsed_seconds": 0.25535410000156844,
+        "limitations": [
+          "experimental_partial_function_scope",
+          "parse_dependency_contamination_unknown",
+          "partial_scope_routed_through_semantic_selector"
+        ]
+      },
+      "typeorigin-v0810-type-origin-preservation-i11684-fix": {
+        "commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+        "tree": "bad9c4b3b9e868fcf07a36ab864978fd8ad598f2",
+        "target_snapshot_sha256": "eac2b611fb881f41563d252805597e164a380d461ab5b5079557b824f7ab7650",
+        "diagnostics": [],
+        "diagnostic_count": 0,
+        "run_status": "blocked",
+        "scan_status": "completed_with_limitations",
+        "parse_status": {
+          "partial": 1
+        },
+        "elapsed_seconds": 0.25925090000237105,
+        "limitations": [
+          "experimental_partial_function_scope",
+          "parse_dependency_contamination_unknown",
+          "partial_scope_routed_through_semantic_selector"
+        ]
+      }
+    },
+    "direct_semantic_observations": {
+      "path": "research/experiments/ark_runtime/c8_20261018/typeorigin_v0810_semantic_observations_20261019.json",
+      "runs": {
+        "i11196_direct_parent": {
+          "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+          "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+          "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+          "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+          "file_outcome": "partial",
+          "steps": 1621,
+          "limitations": [
+            "experimental_partial_function_scope",
+            "parse_dependency_contamination_unknown",
+            "partial_scope_routed_through_semantic_selector"
+          ],
+          "observations": [
+            {
+              "function": "CopyWithin",
+              "kind": "matched",
+              "line": 964,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Filter",
+              "kind": "candidate",
+              "line": 1498,
+              "reason": "distinct_origin_with_type_changing_creation"
+            },
+            {
+              "function": "Map",
+              "kind": "matched",
+              "line": 2673,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Set",
+              "kind": "matched",
+              "line": 2234,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "With",
+              "kind": "matched",
+              "line": 1762,
+              "reason": "target_origin_or_proved_type_equality"
+            }
+          ]
+        },
+        "i11196_direct_fix": {
+          "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+          "tree": "82af11ced4297818410ccf61906b703d25b69165",
+          "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+          "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+          "file_outcome": "partial",
+          "steps": 1624,
+          "limitations": [
+            "experimental_partial_function_scope",
+            "parse_dependency_contamination_unknown",
+            "partial_scope_routed_through_semantic_selector"
+          ],
+          "observations": [
+            {
+              "function": "CopyWithin",
+              "kind": "matched",
+              "line": 964,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Filter",
+              "kind": "matched",
+              "line": 1499,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Map",
+              "kind": "matched",
+              "line": 2674,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Set",
+              "kind": "matched",
+              "line": 2235,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "With",
+              "kind": "matched",
+              "line": 1763,
+              "reason": "target_origin_or_proved_type_equality"
+            }
+          ]
+        },
+        "i11684_safe_parent": {
+          "commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+          "tree": "27ec52bd443ccd4e45b472731114e8547df71ea2",
+          "blob": "34f6aa2c6ccaad144a2038c8aab208ea290b5a86",
+          "source_sha256": "2c45da670fcb4170176bb9bd93da7d21dbc286925a0ca1126d250318412417ff",
+          "file_outcome": "partial",
+          "steps": 1624,
+          "limitations": [
+            "experimental_partial_function_scope",
+            "parse_dependency_contamination_unknown",
+            "partial_scope_routed_through_semantic_selector"
+          ],
+          "observations": [
+            {
+              "function": "CopyWithin",
+              "kind": "matched",
+              "line": 977,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Filter",
+              "kind": "matched",
+              "line": 1507,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Map",
+              "kind": "matched",
+              "line": 2682,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Set",
+              "kind": "matched",
+              "line": 2243,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "With",
+              "kind": "matched",
+              "line": 1771,
+              "reason": "target_origin_or_proved_type_equality"
+            }
+          ]
+        },
+        "i11684_safe_fix": {
+          "commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+          "tree": "bad9c4b3b9e868fcf07a36ab864978fd8ad598f2",
+          "blob": "893a63a79b6ab85a1473a4f3b33315db0f848a37",
+          "source_sha256": "0abdb870aff6560c671895c0e3360bb3e82fb052cb6a7cf28a90a8c6443044a5",
+          "file_outcome": "partial",
+          "steps": 1631,
+          "limitations": [
+            "experimental_partial_function_scope",
+            "parse_dependency_contamination_unknown",
+            "partial_scope_routed_through_semantic_selector"
+          ],
+          "observations": [
+            {
+              "function": "CopyWithin",
+              "kind": "matched",
+              "line": 977,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Filter",
+              "kind": "matched",
+              "line": 1507,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Map",
+              "kind": "matched",
+              "line": 2691,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Set",
+              "kind": "matched",
+              "line": 2243,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "With",
+              "kind": "matched",
+              "line": 1771,
+              "reason": "target_origin_or_proved_type_equality"
+            }
+          ]
+        },
+        "a65_product_snapshot": {
+          "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+          "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+          "blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+          "source_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+          "file_outcome": "partial",
+          "steps": 1639,
+          "limitations": [
+            "experimental_partial_function_scope",
+            "parse_dependency_contamination_unknown",
+            "partial_scope_routed_through_semantic_selector"
+          ],
+          "observations": [
+            {
+              "function": "CopyWithin",
+              "kind": "matched",
+              "line": 1035,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Filter",
+              "kind": "matched",
+              "line": 1563,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Map",
+              "kind": "matched",
+              "line": 2747,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Set",
+              "kind": "matched",
+              "line": 2299,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "With",
+              "kind": "matched",
+              "line": 1827,
+              "reason": "target_origin_or_proved_type_equality"
+            }
+          ]
+        },
+        "official_master": {
+          "commit": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+          "tree": "2cd854aa7d9f987de89d31a6a512e735779e75b6",
+          "blob": "0990d87313c022e734c32269cb4ce08dbe78acdd",
+          "source_sha256": "f6e332778e1f515b0b7fa2f75513e3a69359fd3fba23cab8a5e80397e5abcedc",
+          "file_outcome": "partial",
+          "steps": 1631,
+          "limitations": [
+            "experimental_partial_function_scope",
+            "parse_dependency_contamination_unknown",
+            "partial_scope_routed_through_semantic_selector"
+          ],
+          "observations": [
+            {
+              "function": "CopyWithin",
+              "kind": "matched",
+              "line": 977,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Filter",
+              "kind": "matched",
+              "line": 1507,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Map",
+              "kind": "matched",
+              "line": 2691,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "Set",
+              "kind": "matched",
+              "line": 2243,
+              "reason": "target_origin_or_proved_type_equality"
+            },
+            {
+              "function": "With",
+              "kind": "matched",
+              "line": 1771,
+              "reason": "target_origin_or_proved_type_equality"
+            }
+          ]
+        }
+      },
+      "interpretation": "Filter is candidate on !11196 parent and matched on its direct fix, a65 and master. Map, With, CopyWithin, Set are matched on these selected snapshots after source-grounded modeling. The i11684 safe pair has zero TypeOrigin observations (all modeled flows matched); its parent CLI emits two separate exception-guard candidates which disappear on the exception fix."
+    },
+    "focused_tests": "77 passed, 4 skipped in 0.26s across TypeOrigin, exception guard, runtime exception, unseen detector and parser-owner suites. Includes unescaped-result preservation, escaped-result unknown, wrong overload arity, and source-origin controls.",
+    "scope_boundary": "Production scans are completed_with_limitations and blocked because the target translation unit is partial; direct analyzer results remain limited/partial with parse dependency contamination. i11684 parent diagnostics are exception-guard only, not TypeOrigin. The safe pair is a historical control, not an untouched blind holdout. No exact product build, dynamic component repro, or product vulnerability confirmation."
+  },
+  "current_applicability_audit": "Catalog selects ArkRuntimeUnseenTypeSafetyDetector, whose semantic owner/method/signature selector applies to latest source. Prior limitation text falsely said exact-binding adapter; corrected to partial_scope_routed_through_semantic_selector. Official master is inspected partially but still has unresolved TypeOrigin observations, so 0 diagnostics is not a clean result."
+}

@@ -133,6 +133,9 @@ class ParserOwnerTests(unittest.TestCase):
         self.assertEqual(result.file_outcome, "partial")
         self.assertFalse(result.observations)
         self.assertIn("parse_dependency_contamination_unknown", result.limitations)
+        self.assertIn("partial_scope_routed_through_semantic_selector", result.limitations)
+        self.assertNotIn("experimental_partial_scope_routed_through_exact_binding_adapter",
+                         result.limitations)
 
     def test_nested_namespaces_and_same_named_methods_keep_distinct_owners(self):
         source = (

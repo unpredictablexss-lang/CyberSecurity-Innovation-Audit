@@ -38,8 +38,8 @@ CASES = (
      'Sink argument effects must be applied before checking type evidence.'),
     ('G10', PREFIX + 'Mutate(output);\n' + STORE, 'unknown',
      'An invalidated destination cannot support an old mismatch candidate.'),
-    ('G11', PREFIX + GUARD + 'GateRef ignored = Mutate(input);\n' + STORE, 'unknown',
-     'A successful type guard must not survive an unknown effect.'),
+    ('G11', PREFIX + GUARD + 'GateRef ignored = Mutate(input);\n' + STORE, 'candidate',
+     'The guard is invalidated, but an unescaped fresh target still has a possible distinct creation type.'),
     ('G12', PREFIX + 'GateRef tag = GetObjectType(LoadHClass(input));\n'
      'Label write(GetEnvironment());\nBRANCH(Int32Equal(inputTag, tag), &write, exit);\n'
      'Bind(&write);\n' + STORE, 'candidate',
@@ -192,7 +192,7 @@ class C3MechanismTests(unittest.TestCase):
         code = PREFIX + FRESH + 'UnknownGlobalEffect();\n'
         code += 'Label write(GetEnvironment()); BRANCH(Int32Equal(inputTag, tag), &write, exit);\n'
         code += 'Bind(&write);\n' + STORE
-        self.assertEqual(classify(analyze_unit(unit(wrap(code)))), 'unknown')
+        self.assertEqual(classify(analyze_unit(unit(wrap(code)))), 'candidate')
 
     def test_verified_by_value_call_does_not_refresh_old_token(self):
         text = wrap(PREFIX + FRESH + 'GetViewedArrayBuffer(output);\n' + SAFE_STORE +

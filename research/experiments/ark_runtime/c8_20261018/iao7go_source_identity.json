@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "issue_id": "IAO7GO",
+  "official_issue_url": "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IAO7GO",
+  "verification_date": "2026-10-19",
+  "pair_basis": "!9061 merge first-parent (3fc1d0b...) to merge commit (18d8532...); source diff adds pending-exception check and regression case. Branch patch f253b45... is second parent.",
+  "commits": {
+    "vulnerable_parent": {
+      "commit": "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724",
+      "tree": "0c8d65e759bf96b4632573561748a180a93cf413",
+      "files": {
+        "ecmascript/compiler/native_inline_lowering.cpp": {
+          "blob": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+          "sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463",
+          "bytes": 75711
+        },
+        "test/aottest/throw/throw.ts": {
+          "blob": "e24dde7714ef9feb358bdabfdf5c499ca62cca2f",
+          "sha256": "041ae58810814c3dc2f8a37a92dc5c82070e316b1149df565165ea0a60872040",
+          "bytes": 1888
+        },
+        "test/aottest/throw/expect_output.txt": {
+          "blob": "a5fc413779465c4db0f1874d6484aa7d0f208fe7",
+          "sha256": "91f9d7a5a941574b8c98396240335c6c5a3f5f073b4882d660df7c0257edad59",
+          "bytes": 705
+        },
+        "test/aottest/throw/BUILD.gn": {
+          "blob": "158dec1f66e0be94d3fb962156bcbaddb493a510",
+          "sha256": "b53a112cf0eebed06206cb5f357a85f69c2e8143dc4686a85c3a3610f54cded8",
+          "bytes": 694
+        }
+      }
+    },
+    "fixed_merge": {
+      "commit": "18d8532a200d0c9aa64a6dfe2b146dc841b52bf8",
+      "tree": "372e6906218c245e59643a7437f2d92e435401d6",
+      "files": {
+        "ecmascript/compiler/native_inline_lowering.cpp": {
+          "blob": "df03fdce8a37cf2245577aec23c4c26deeebf02f",
+          "sha256": "6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce",
+          "bytes": 75627
+        },
+        "test/aottest/throw/throw.ts": {
+          "blob": "045d38ddad39aed526e88fbbc93d2fdc0cc8a8a8",
+          "sha256": "04ee31f0161a6471251ef34e61ca79d8138debf985c40b9b8aeabf00ab79a977",
+          "bytes": 2254
+        },
+        "test/aottest/throw/expect_output.txt": {
+          "blob": "92dbcfba292ae842e768457f19e75f4a2996b90b",
+          "sha256": "2fcb0c462775902c4c931d3e6669fef37f73aceb58808b2ce723e31ba90a33e8",
+          "bytes": 727
+        },
+        "test/aottest/throw/BUILD.gn": {
+          "blob": "158dec1f66e0be94d3fb962156bcbaddb493a510",
+          "sha256": "b53a112cf0eebed06206cb5f357a85f69c2e8143dc4686a85c3a3610f54cded8",
+          "bytes": 694
+        }
+      }
+    }
+  }
+}

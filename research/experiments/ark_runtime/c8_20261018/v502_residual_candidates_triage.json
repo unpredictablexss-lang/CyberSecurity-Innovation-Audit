@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "case_id": "ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304",
+  "verified_on": "2026-10-19",
+  "source_commit": "2654cd98e39479b343ee11abf3a65b74e8e9d957",
+  "source_tree": "1fadda2037b3c6dab56d749beb8fdca49ac5b446",
+  "source_file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+  "helper_file": "ecmascript/compiler/new_object_stub_builder.cpp",
+  "shared_operation": "NewTypedArray branches to CallRuntime(TypedArraySpeciesCreate) at ecmascript/compiler/new_object_stub_builder.cpp:2323 when constructor/protector/prototype/accessor/size/object-size fast-path checks fail. Caller-provided srcType remains a separate value from the returned object’s actual HClass. Candidate rule conservatively tracks this origin mismatch; runtime exploitability is unverified.",
+  "candidates": [
+    {
+      "method": "Filter",
+      "diagnostic_line": 1537,
+      "creation_line": 1517,
+      "type_token": "arrayType captured from source at method entry",
+      "sink": "StoreTypedArrayElement",
+      "analysis": "Filter allocates after a callback loop. Callback dispatch can alter constructor/prototype/species state; NewTypedArray may take the species slow path while the store still receives the earlier source-derived arrayType. Same modeled root family remains on fixed Map commit. No matching repair or runtime witness verified."
+    },
+    {
+      "method": "With",
+      "diagnostic_line": 1801,
+      "creation_line": 1758,
+      "type_token": "jsType captured from source HClass",
+      "sink": "StoreTypedArrayElement",
+      "analysis": "No HasConstructor guard in this caller; NewTypedArray can use TypedArraySpeciesCreate fallback. CopyTypedArrayBuffer precedes indexed store; no proof yet that the output is unobservable or species type equals jsType. Same modeled root family remains. Runtime witness not run."
+    },
+    {
+      "method": "ToReversed",
+      "diagnostic_line": 2756,
+      "creation_line": 2730,
+      "type_token": "arrayType captured from source HClass",
+      "sink": "FastSetPropertyByIndex",
+      "analysis": "Caller checks HasConstructor false, but NewTypedArray has additional species-protector/prototype/accessor/size conditions that can take TypedArraySpeciesCreate fallback. The caller has no callback between allocation and store. Whether HasConstructor false plus runtime protector state excludes a different result type is not proven from caller AST. Retain as candidate; do not call confirmed bug or false positive."
+    }
+  ],
+  "fix_gate": "Map method-specific finding disappears at 2654cd98, but three same-family candidates remain elsewhere in the fixed source. Therefore the generalized root-family fixed-version gate is not met until each is source-proven safe, repaired upstream, or precisely bounded by a proven invariant and tested.",
+  "control": "Independent !11684 Map pair remains TypeOrigin 0→0 and is retained as safe variant control; it is not a vulnerable positive holdout.",
+  "not_run": [
+    "Build exact 5.0.2 release/fix translation unit",
+    "Run TypedArray species scenarios in the exact Ark runtime",
+    "Product image/runtime reachability and security-impact validation"
+  ],
+  "profile_audit": {
+    "available_profile": "research/experiments/ark_runtime/c1_20261017/product_profile_20261019.v1.json",
+    "profile_source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+    "target_file_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+    "target_pair_commits": [
+      "8b615647dc4af6f4b572fca50bfbd4d1b91ecad4",
+      "2654cd98e39479b343ee11abf3a65b74e8e9d957"
+    ],
+    "assessment": "Not exact-source profile: Ark source commit and target file digest differ from both target commits. Do not use as exact compile/preprocessing proof."
+  },
+  "cross_branch_backport_replay": {
+    "branch": "OpenHarmony-5.0.3-Release",
+    "pull_request": "!11279",
+    "parent": "1eea202527c76b4ee171efe7597ebccecb1ee027",
+    "fixed": "acb7197ca9ce52248f3842012cb8c483158655a8",
+    "result": "Production CLI detects Map on parent line 2698 and not on fixed; 4→3 total TypeOrigin candidates. Filter/With/ToReversed remain. Target blobs are identical to the 5.0.2 parent/fix blobs, so not an independent holdout.",
+    "reports": [
+      "reports/typeorigin-v0810-v503-pr11279-parent.json",
+      "reports/typeorigin-v0810-v503-pr11279-fixed.json"
+    ]
+  }
+}

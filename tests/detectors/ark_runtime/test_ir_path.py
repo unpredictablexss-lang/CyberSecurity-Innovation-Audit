@@ -52,7 +52,7 @@ class GeneratedPathTests(unittest.TestCase):
                     'Label write(GetEnvironment());\nBRANCH(Int32Equal(inputTag, t), &write, exit);\n'
                     'Bind(&write);\nMutate(input);\n'
                     'StoreTypedArrayElement(glue, output, count, input, inputTag);\nJump(exit);')
-        self.assertEqual([o.kind for o in analyze_unit(unit(code)).observations], ['unknown'])
+        self.assertEqual([o.kind for o in analyze_unit(unit(code)).observations], ['candidate'])
 
     def test_state_budget_does_not_publish_partial_candidates(self):
         result = analyze_unit(case('C03'), budget=AnalysisBudget(max_states=1))

@@ -4,8 +4,9 @@ from hashlib import sha1
 from src.ohscanner.contracts import DetectorRun, DetectorFinding, EvidenceObligation
 from .analysis import analyze_unit
 from .exception_guard import analyze_exception_guard
+from .receiver_guard import analyze_receiver_guard
 from .model import (AnalysisBudget, RuntimeTypeModel, DETECTOR_ID, RULE_ID,
-                    EXCEPTION_GUARD_RULE_ID, VERSION)
+                    EXCEPTION_GUARD_RULE_ID, RECEIVER_TYPE_GUARD_RULE_ID, VERSION)
 
 
 class ArkRuntimeTypeSafetyDetector:
@@ -21,7 +22,8 @@ class ArkRuntimeTypeSafetyDetector:
     def select_applicable_units(self, context, units):
         if context.request.repository != self.model.source_repository:
             return ()
-        paths = {row[1] for row in (self.model.target_bindings + self.model.exception_guard_bindings)}
+        paths = {row[1] for row in (self.model.target_bindings + self.model.exception_guard_bindings
+                                     + self.model.receiver_guard_bindings)}
         return tuple(unit for unit in units if unit.path in paths)
 
     def __init__(self, model=None, budget=None):
@@ -42,10 +44,14 @@ class ArkRuntimeTypeSafetyDetector:
                                  if row[0] == context.request.commit and row[1] == unit.path), None)
             exception_binding = next((row for row in self.model.exception_guard_bindings
                                       if row[0] == context.request.commit and row[1] == unit.path), None)
+            receiver_binding = next((row for row in self.model.receiver_guard_bindings
+                                     if row[0] == context.request.commit and row[1] == unit.path), None)
             if type_binding is not None:
                 rule_bindings.append((RULE_ID, type_binding))
             if exception_binding is not None:
                 rule_bindings.append((EXCEPTION_GUARD_RULE_ID, exception_binding))
+            if receiver_binding is not None:
+                rule_bindings.append((RECEIVER_TYPE_GUARD_RULE_ID, receiver_binding))
             if not rule_bindings:
                 outcomes.append((unit.path, 'not_analyzed'))
                 limitations.append(unit.path + ': exact upstream repository/commit/path is not in the reviewed model')
@@ -75,7 +81,7 @@ class ArkRuntimeTypeSafetyDetector:
                 if rule_id == RULE_ID:
                     result = analyze_unit(unit, model=self.model, budget=self.budget,
                                           research_partial=unit.parse_status == 'partial')
-                else:
+                elif rule_id == EXCEPTION_GUARD_RULE_ID:
                     result = analyze_exception_guard(
                         unit, creator_name=self.model.exception_guard_creator[0],
                         creator_arity=self.model.exception_guard_creator[1],
@@ -85,6 +91,8 @@ class ArkRuntimeTypeSafetyDetector:
                         sink_object_arg=self.model.exception_guard_sink[3],
                         caller_names=self.model.exception_guard_callers,
                         caller_types=self.model.exception_guard_caller_types, budget=self.budget)
+                else:
+                    result = analyze_receiver_guard(unit, budget=self.budget)
                 results.append((rule_id, result))
             file_outcome = ('complete' if all(result.file_outcome == 'complete' for _, result in results)
                             else 'partial' if any(result.file_outcome in ('complete', 'partial') for _, result in results)
@@ -112,10 +120,17 @@ class ArkRuntimeTypeSafetyDetector:
                             ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
                             ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
                         )
+                    elif rule_id == RECEIVER_TYPE_GUARD_RULE_ID:
+                        obligations = (
+                            ('guard_semantics', 'Verify that the runtime type predicate accepts only objects valid for the backing-buffer accessor.'),
+                            ('runtime_path_feasibility', 'Establish that attacker-reachable input can reach the unguarded sensitive operation.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('runtime_impact', 'Establish concrete crash, corruption or security impact under an isolated runtime test.'),
+                        )
                     else:
                         obligations = (
                             ('model_applicability', 'Verify exact symbols, signatures, macros and model semantics in the product build.'),
-                            ('runtime_path_feasibility', 'Prove generated path conditions and species return type in the real runtime.'),
+                            ('runtime_path_feasibility', 'Prove the destination runtime type on the generated path and its relation to the supplied type token.'),
                             ('security_impact', 'Establish realistic entry, attacker control and concrete CIA impact.'),
                             ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
                         )
@@ -127,8 +142,10 @@ class ArkRuntimeTypeSafetyDetector:
                         message=(
                             'Candidate only: allocation result header is read on a path where the allocation may leave a pending exception. trace=' + trace
                             if rule_id == EXCEPTION_GUARD_RULE_ID else
+                            'Candidate only: TypedArray backing-buffer access is reachable without a dominating same-receiver runtime type guard. trace=' + trace
+                            if rule_id == RECEIVER_TYPE_GUARD_RULE_ID else
                             'Candidate only: TypedArray destination and type-token origin differ under '
-                            'the bounded species model; generated graph path is symbolic. trace=' + trace
+                            'the bounded type-changing creation model; generated graph path is symbolic. trace=' + trace
                         ),
                         evidence_type='syntax', candidate_cwe='CWE-843' if rule_id == RULE_ID else None,
                         symbol=item.symbol, source_sha256=unit.sha256,

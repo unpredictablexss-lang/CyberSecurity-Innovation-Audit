@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "case_id": "ARK-TYPEDARRAY-FILTER-RECEIVER-TYPE-GUARD-IAO7E8",
+  "upstream_repo": "openharmony/arkcompiler_ets_runtime",
+  "pr": "!9063",
+  "issue_key_from_test": "IAO7E8",
+  "verification_date": "2026-10-19",
+  "official_web_verification": "Gitee PR and issue URLs could not be retrieved in browser; local pinned upstream Git objects verified commit metadata, diff, and regression source. No CVE claim.",
+  "pair": {
+    "vulnerable": {
+      "commit": "c4c52fb57b6e204128e1520340c8e66c8e708981",
+      "tree": "7e1498c2be74908365e2a984e0c5edd5f639fc2f",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "e1e4f6411df4733b8f1ba5b679189e29d904a63f",
+      "sha256": "f1cdd8d0707cab2ac9bb9e024383151435bfc279c6815c5eceb98925974ff1a4",
+      "bytes": 125744
+    },
+    "fixed": {
+      "commit": "2a70904be0e21a37a666eb00cab49d02068260ea",
+      "parents": [
+        "c4c52fb57b6e204128e1520340c8e66c8e708981",
+        "7bdd4d06de02e0046013422a23c9f84c0b4c9228"
+      ],
+      "tree": "8e5503ee7eebbb8e72bc6d5ca0cb88d5775301ef",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "df765b9c212dc2e55c38dc385f85f183ce6606da",
+      "sha256": "b51826a74a89d6ee105c4087b4260363a7abfd632bb2c68d43c0ee9b17c883c5",
+      "bytes": 125744
+    },
+    "regression_test": {
+      "path": "test/moduletest/typedarrayfilter/typedarrayfilter.js",
+      "blob": "c0e05428adb80360d355e17bb87c8db16d46f04b",
+      "scenario": "ordinary object with Uint16Array.prototype calls filter and catches TypeError"
+    }
+  },
+  "scanner": {
+    "version": "0.8.10",
+    "detector_id": "ohscanner.ark.runtime.type_safety",
+    "rule_id": "ark.runtime.typedarray-receiver-type-guard",
+    "profile": "light-ast",
+    "scope": [
+      "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+    ],
+    "production_command_template": "python -m src.cli.main ohscan-run --repo-dir <pinned local Ark Git DB> --repository openharmony/arkcompiler_ets_runtime --commit <full commit> --include ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp --detector ohscanner.ark.runtime.type_safety",
+    "results": {
+      "parent": {
+        "root_diagnostic": 1,
+        "line": 1413,
+        "total_diagnostics": 4,
+        "status": "completed_with_limitations",
+        "detector_status": "blocked",
+        "file_outcome": "partial"
+      },
+      "fixed": {
+        "root_diagnostic": 0,
+        "total_diagnostics": 3,
+        "status": "completed_with_limitations",
+        "detector_status": "blocked",
+        "file_outcome": "partial"
+      },
+      "same_root_delta": "1->0"
+    },
+    "controls": {
+      "unit": "5 passed",
+      "focused": "41 passed, 2 skipped",
+      "unseen_sibling": "LastIndexOf IsTypedArray guard matched parent and fixed source; safe sibling, not blind holdout"
+    },
+    "dynamic": "not run",
+    "product_confirmation": "not established",
+    "limitations": [
+      "No exact compile actions, macro expansion, or dependency closure",
+      "No build/runtime test",
+      "Unknown paths remain, and whole-file analysis is partial",
+      "No CVE or product version mapping"
+    ]
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "case_id": "ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304",
+  "verified_on": "2026-10-19",
+  "manifest": {
+    "repository": "openharmony/manifest",
+    "tag": "OpenHarmony-v5.0.2-Release",
+    "commit": "ed169a3b5410b3f1377480be497ecf6d3064e8f0",
+    "tag_manifest_file": "tag/manifest_tag_20250121_165604.xml",
+    "runtime_path": "arkcompiler/ets_runtime",
+    "pinned_revision": "8b615647dc4af6f4b572fca50bfbd4d1b91ecad4"
+  },
+  "source_repo": "openharmony/arkcompiler_ets_runtime",
+  "source_file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+  "release_pin": {
+    "commit": "8b615647dc4af6f4b572fca50bfbd4d1b91ecad4",
+    "tree": "942a12cdca946c71145b7fe984119db4aceaf663",
+    "blob": "8e46ee42c2b40b645e66a7cba9c585edc9044a39",
+    "snapshot_sha256": "5c703ca19b593c6de6a58cd865eb51d392eeb76f2c78e859d3d6f12f4ef6131e",
+    "production_report": "reports/typeorigin-v0810-v502-release-pin.json"
+  },
+  "fix_parent": {
+    "commit": "5817985af4207505309793a5c95468053b876f80",
+    "tree": "a80f21b39e37912e529bdb6011524dde5efef73e",
+    "blob": "6b3d51822baa28292e07b51e77a65b7a30e2436d"
+  },
+  "fix": {
+    "commit": "2654cd98e39479b343ee11abf3a65b74e8e9d957",
+    "tree": "1fadda2037b3c6dab56d749beb8fdca49ac5b446",
+    "blob": "a436ec1076bf46ffe8b8fa947c9fdcfb928678a0",
+    "snapshot_sha256": "3a3befafa1b966020d11f95b8fd2324a0532033b4fe45552c3726e4a001e4b6a",
+    "issue": "IBP5J6",
+    "summary": "fix write outbound of TypedArray:map",
+    "test": "test/moduletest/typedarraymap/typedarraymap.js",
+    "production_report": "reports/typeorigin-v0810-v502-map-fix.json"
+  },
+  "ancestry": {
+    "release_pin_is_ancestor_of_fix": true,
+    "fixed_commit_on_release_branch": true,
+    "evidence": "local explicit official Gitee refs and manifest tag objects"
+  },
+  "patch_mechanism": "Parent supplies source jsType to FastGetPropertyByIndex/FastSetPropertyByIndex for newly allocated Map result; fix derives newArrayType from LoadHClass(newArray). The upstream regression changes prototype and checks Uint8Array result.",
+  "scan": {
+    "entry": "python -m src.cli.main ohscan-run",
+    "selector": "ohscanner.ark.runtime.type_safety",
+    "rule": "ark.runtime.typedarray-store-type-origin",
+    "scope": [
+      "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+    ],
+    "result": "Map-specific 1→0; total TypeOrigin findings 4→3, fixed side remaining candidates Filter/With/ToReversed",
+    "build_profile": "none",
+    "dynamic_test": "not run"
+  },
+  "cross_branch_backport": {
+    "pull_request": "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11279",
+    "pr_scope": "Merged to OpenHarmony-5.0.3-Release; description lists two vulnerability fixes and names !10809 and !11130. The Map source change is the !11130 fix.",
+    "parent": {
+      "commit": "1eea202527c76b4ee171efe7597ebccecb1ee027",
+      "tree": "bc32ff368b44ed95d44be2ae0c52c4ae39bc50af",
+      "blob": "6b3d51822baa28292e07b51e77a65b7a30e2436d",
+      "source_sha256": "34277ca2e348977d3d2eae762159e83c6ce943bf9c1769a2fe6e1f2b6b696cc9",
+      "report": "reports/typeorigin-v0810-v503-pr11279-parent.json"
+    },
+    "fixed": {
+      "commit": "acb7197ca9ce52248f3842012cb8c483158655a8",
+      "tree": "808fa19c831c1b61d9b75b96b642bd90c31d55be",
+      "parent": "1eea202527c76b4ee171efe7597ebccecb1ee027",
+      "blob": "a436ec1076bf46ffe8b8fa947c9fdcfb928678a0",
+      "source_sha256": "57b9e733c7e9f0cf7adf39569158ce87aac981fb0867f139f798f0d76501784e",
+      "report": "reports/typeorigin-v0810-v503-pr11279-fixed.json"
+    },
+    "production_replay": "Map 1→0; total TypeOrigin candidates 4→3. Parent M2 status completed; fixed M2 status completed_with_limitations/blocked for detector semantic coverage.",
+    "independence": "Target source blobs match the 5.0.2 source pair (parent 6b3d51822baa28292e07b51e77a65b7a30e2436d, fixed a436ec1076bf46ffe8b8fa947c9fdcfb928678a0). This is a cross-branch integration check, not an independent source variant or holdout.",
+    "cve_linkage": "The security PR references !11130 but provides no CVE identifier. Combined with the bulletin’s Ark Runtime out-of-bounds-write entry and affected 5.0.2 line, this supports a likely CVE-2025-24304 ↔ Map !11130 association as an inference; no direct one-to-one source establishes it."
+  }
+}

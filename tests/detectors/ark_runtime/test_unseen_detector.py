@@ -45,7 +45,7 @@ class UnseenSourceContractTests(unittest.TestCase):
         context = self.make_git_context((source,), "f" * 40)
         reports, coverage = run_all_with_coverage(context, build_registry((DETECTOR_ID,)))
         report = reports[0]
-        self.assertEqual(report.tool_version, "0.7.0")
+        self.assertEqual(report.tool_version, "0.8.10")
         self.assertEqual(report.diagnostic_count, 1)
         self.assertEqual(report.diagnostics[0].file, source.path)
         self.assertEqual(report.diagnostics[0].source_sha256, source.sha256)
@@ -74,6 +74,79 @@ class UnseenSourceContractTests(unittest.TestCase):
         self.assertEqual(reports[0].status, "blocked")
         self.assertGreater(entry["coverage_counts"]["partial"], 0)
 
+    def test_property_store_tracks_new_array_type_token_across_callback(self):
+        template = '''namespace panda::ecmascript::kungfu {
+void BuiltinsTypedArrayStubBuilder::Map(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
+  GateRef sourceType = GetObjectType(LoadHClass(input));
+  NewObjectStubBuilder allocator(this);
+  GateRef outputArray = allocator.NewTypedArray(glue, input, sourceType, count);
+  callback->Call();
+  TYPE_TOKEN
+  FastSetPropertyByIndex(glue, index, outputArray, value, SINK_TOKEN);
+}
+}'''
+        outcomes = {}
+        for label, token, sink_token in (("unsafe", "", "sourceType"),
+                                          ("safe", "GateRef outputType = GetObjectType(LoadHClass(outputArray));", "outputType")):
+            with self.subTest(label=label):
+                source = unit(template.replace("TYPE_TOKEN", token).replace("SINK_TOKEN", sink_token),
+                              "renamed/typedarray_flow.cpp")
+                scan_context = self.make_git_context((source,), "a" * 40)
+                reports, coverage = run_all_with_coverage(
+                    scan_context, build_registry((DETECTOR_ID,)))
+                outcomes[label] = [d for d in reports[0].diagnostics
+                                   if d.rule_id == "ark.runtime.typedarray-store-type-origin"]
+                self.assertEqual(coverage["detectors"][DETECTOR_ID]["applicable_files"], 1)
+        # The callback invalidates the source snapshot. The candidate rests on
+        # the unescaped result's potentially different creation type, not on a
+        # claim that the source snapshot remains current.
+        self.assertTrue(any(d.symbol.endswith("::Map") and "Candidate only" in d.message
+                            for d in outcomes["unsafe"]))
+        self.assertFalse(any(d.symbol.endswith("::Map") for d in outcomes["safe"]))
+
+    def test_property_store_does_not_preserve_escaped_fresh_target(self):
+        source = unit('''namespace panda::ecmascript::kungfu {
+void BuiltinsTypedArrayStubBuilder::Map(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
+  GateRef sourceType = GetObjectType(LoadHClass(input));
+  NewObjectStubBuilder allocator(this);
+  GateRef outputArray = allocator.NewTypedArray(glue, input, sourceType, count);
+  unknownCall(outputArray);
+  FastSetPropertyByIndex(glue, index, outputArray, value, sourceType);
+}
+}''', "renamed/escaped_typedarray_flow.cpp")
+        scan_context = self.make_git_context((source,), "9" * 40)
+        reports, coverage = run_all_with_coverage(
+            scan_context, build_registry((DETECTOR_ID,)))
+        self.assertEqual(coverage["detectors"][DETECTOR_ID]["applicable_files"], 1)
+        # The escaped allocation remains unresolved; do not upgrade this path
+        # to a type-mismatch candidate.
+        self.assertFalse(any(d.rule_id == "ark.runtime.typedarray-store-type-origin"
+                             and d.symbol.endswith("::Map")
+                             and "Candidate only" in d.message
+                             for d in reports[0].diagnostics))
+
+    def test_property_store_target_escaped_through_callback_arguments_stays_unknown(self):
+        source = unit('''namespace panda::ecmascript::kungfu {
+void BuiltinsTypedArrayStubBuilder::Map(GateRef glue, GateRef input, GateRef count, Variable *result, Label *exit, Label *slowPath) {
+  GateRef sourceType = GetObjectType(LoadHClass(input));
+  NewObjectStubBuilder allocator(this);
+  GateRef outputArray = allocator.NewTypedArray(glue, input, sourceType, count);
+  JSCallArgs args(JSCallMode::CALL_THIS_ARG3_WITH_RETURN);
+  args.callThisArg3WithReturnArgs = { callback, outputArray, input };
+  CallStubBuilder builder(this, glue, callback, Int32(1), 0, nullptr, Circuit::NullGate(), args);
+  builder.JSCallDispatch();
+  FastSetPropertyByIndex(glue, index, outputArray, value, sourceType);
+}
+}''', "renamed/escaped_callback_arguments.cpp")
+        scan_context = self.make_git_context((source,), "8" * 40)
+        reports, coverage = run_all_with_coverage(
+            scan_context, build_registry((DETECTOR_ID,)))
+        self.assertEqual(coverage["detectors"][DETECTOR_ID]["applicable_files"], 1)
+        self.assertFalse(any(d.rule_id == "ark.runtime.typedarray-store-type-origin"
+                             and d.symbol.endswith("::Map")
+                             and "Candidate only" in d.message
+                             for d in reports[0].diagnostics))
+
     def test_unrelated_same_language_code_is_not_selected(self):
         unrelated = case("C08")
         scan_context = self.make_git_context((unrelated,), "b" * 40)
@@ -93,7 +166,7 @@ class UnseenSourceContractTests(unittest.TestCase):
             scan_context, build_registry((DETECTOR_ID,)))
         entry = coverage["detectors"][DETECTOR_ID]
         self.assertEqual(entry["applicable_files"], 1)
-        self.assertEqual(reports[0].tool_version, "0.7.0")
+        self.assertEqual(reports[0].tool_version, "0.8.10")
         self.assertFalse(any(d.rule_id == "ark.runtime.typedarray-store-type-origin"
                              for d in reports[0].diagnostics))
 
@@ -132,7 +205,7 @@ class UnseenSourceContractTests(unittest.TestCase):
         self.assertEqual(model.source_dependencies, ())
         self.assertEqual(model.exception_guard_dependencies, ())
         self.assertEqual(model.effect_summary_sources, ())
-        self.assertEqual(model.version, "0.7.0")
+        self.assertEqual(model.version, "0.8.10")
 
 
 if __name__ == "__main__":

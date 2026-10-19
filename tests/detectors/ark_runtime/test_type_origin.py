@@ -5,6 +5,65 @@ from .support import case, unit, wrap, PREFIX
 
 
 class TypeOriginTests(unittest.TestCase):
+    def test_glue_aware_hclass_read_and_env_builder_overload_keep_origin(self):
+        code = wrap(
+            'GateRef sourceKind = GetObjectType(LoadHClass(glue, input));\n'
+            'NewObjectStubBuilder builder(this);\n'
+            'NewObjectStubBuilder allocator(this, GetCurrentGlobalEnv());\n'
+            'BuiltinsArrayStubBuilder arrays(this, GetCurrentGlobalEnv());\n'
+            'GateRef output = allocator.NewTypedArray(glue, input, sourceKind, count);\n'
+            'GateRef outputKind = GetObjectType(LoadHClass(glue, output));\n'
+            'StoreTypedArrayElement(glue, output, count, input, outputKind);')
+        result = analyze_unit(unit(code))
+        self.assertEqual([item.kind for item in result.observations], ['matched'])
+        self.assertNotIn('unsupported_host_expression_effects', result.limitations)
+
+    def test_glue_aware_hclass_read_preserves_real_type_origin_mismatch(self):
+        code = wrap(
+            'GateRef sourceKind = GetObjectType(LoadHClass(glue, input));\n'
+            'NewObjectStubBuilder allocator(this, GetCurrentGlobalEnv());\n'
+            'GateRef output = allocator.NewTypedArray(glue, input, sourceKind, count);\n'
+            'StoreTypedArrayElement(glue, output, count, input, sourceKind);')
+        result = analyze_unit(unit(code))
+        self.assertEqual([item.kind for item in result.observations], ['candidate'])
+        self.assertNotIn('unsupported_host_expression_effects', result.limitations)
+
+    def test_reviewed_glue_aware_graph_queries_keep_source_binding(self):
+        code = wrap(
+            'GateRef sourceKind = GetObjectType(LoadHClass(glue, input));\n'
+            'NewObjectStubBuilder builder(this);\n'
+            'IsEcmaObject(glue, input);\n'
+            'IsTypedArray(glue, input);\n'
+            'IsJsCOWArray(glue, input);\n'
+            'IsFastTypedArray(sourceKind);\n'
+            'IsCallable(glue, input);\n'
+            'GateRef output = builder.NewTypedArray(glue, input, sourceKind, count);\n'
+            'StoreTypedArrayElement(glue, output, count, input, sourceKind);')
+        result = analyze_unit(unit(code))
+        self.assertEqual([item.kind for item in result.observations], ['candidate'])
+        self.assertNotIn('unresolved_local_observations', result.limitations)
+
+    def test_wrong_glue_query_arity_does_not_preserve_source_binding(self):
+        code = wrap(
+            'GateRef sourceKind = GetObjectType(LoadHClass(glue, input));\n'
+            'NewObjectStubBuilder allocator(this);\n'
+            'IsEcmaObject(glue, input, count);\n'
+            'GateRef output = allocator.NewTypedArray(glue, input, sourceKind, count);\n'
+            'StoreTypedArrayElement(glue, output, count, input, sourceKind);')
+        result = analyze_unit(unit(code))
+        self.assertEqual([item.kind for item in result.observations], ['unknown'])
+
+    def test_reviewed_call_builder_constructor_arity_is_supported(self):
+        code = wrap(
+            'GateRef sourceKind = GetObjectType(LoadHClass(glue, input));\n'
+            'NewObjectStubBuilder allocator(this);\n'
+            'CallStubBuilder callback(this, glue, input, count, 0, nullptr, JSCallArgs());\n'
+            'GateRef output = allocator.NewTypedArray(glue, input, sourceKind, count);\n'
+            'StoreTypedArrayElement(glue, output, count, input, sourceKind);')
+        result = analyze_unit(unit(code))
+        self.assertEqual([item.kind for item in result.observations], ['candidate'])
+        self.assertNotIn('unsupported_host_expression_effects', result.limitations)
+
     def test_C03_renamed_variables_still_form_candidate(self):
         result = analyze_unit(case('C03'))
         self.assertEqual([o.kind for o in result.observations], ['candidate'])
@@ -85,6 +144,28 @@ class TypeOriginTests(unittest.TestCase):
         code = wrap(PREFIX + 'GateRef t = GetObjectType(LoadHClass(output));\nMutate(output);\n'
                     'StoreTypedArrayElement(glue, output, count, input, t);')
         self.assertEqual([o.kind for o in analyze_unit(unit(code)).observations], ['unknown'])
+
+    def test_result_type_sample_survives_unrelated_callback_while_result_is_local(self):
+        code = wrap(
+            'GateRef inputTag = GetObjectType(LoadHClass(glue, input));\n'
+            'NewObjectStubBuilder builder(this);\n'
+            'GateRef output = builder.NewTypedArray(glue, input, inputTag, count);\n'
+            'GateRef outputTag = GetObjectType(LoadHClass(glue, output));\n'
+            'InvokeUserCallback(callback, input);\n'
+            'StoreTypedArrayElement(glue, output, count, input, outputTag);')
+        result = analyze_unit(unit(code))
+        self.assertEqual([item.kind for item in result.observations], ['matched'])
+
+    def test_result_type_sample_is_invalidated_when_result_escapes_to_callback(self):
+        code = wrap(
+            'GateRef inputTag = GetObjectType(LoadHClass(glue, input));\n'
+            'NewObjectStubBuilder builder(this);\n'
+            'GateRef output = builder.NewTypedArray(glue, input, inputTag, count);\n'
+            'GateRef outputTag = GetObjectType(LoadHClass(glue, output));\n'
+            'InvokeUserCallback(callback, output);\n'
+            'StoreTypedArrayElement(glue, output, count, input, outputTag);')
+        result = analyze_unit(unit(code))
+        self.assertEqual([item.kind for item in result.observations], ['unknown'])
 
     def test_local_shadow_is_not_the_outer_object(self):
         # C3: isolate lexical shadowing from an old token's species-call lifetime.

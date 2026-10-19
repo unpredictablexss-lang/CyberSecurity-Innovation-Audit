@@ -20,19 +20,22 @@ UNKNOWN = Value()
 
 
 class OriginState:
-    def __init__(self, values=None, equivalent=(), invalidated=(), predicates=(), effects=()):
+    def __init__(self, values=None, equivalent=(), invalidated=(), predicates=(), effects=(), escaped=()):
         self.values = dict(values or {})
         self.equivalent = frozenset(equivalent)
         self.invalidated = frozenset(invalidated)
         self.predicates = frozenset(predicates)
         self.effects = frozenset(effects)
+        self.escaped = frozenset(escaped)
 
     def copy(self):
-        return OriginState(self.values, self.equivalent, self.invalidated, self.predicates, self.effects)
+        return OriginState(self.values, self.equivalent, self.invalidated, self.predicates,
+                           self.effects, self.escaped)
 
     def key(self):
         return (tuple(sorted(self.values.items())), tuple(sorted(self.equivalent)),
-                tuple(sorted(self.invalidated)), tuple(sorted(self.predicates)), tuple(sorted(self.effects)))
+                tuple(sorted(self.invalidated)), tuple(sorted(self.predicates)), tuple(sorted(self.effects)),
+                tuple(sorted(self.escaped)))
 
 
 class OriginEvaluator:
@@ -166,17 +169,52 @@ class OriginEvaluator:
                             for b in self.fn.bindings if b.parameter and b.type_name == 'GateRef'})
 
     def invalidate(self, state, call, may_rebind=True):
-        """Forget old observations, not object aliases; fresh reads are distinct facts.
+        """Forget sampled facts; preserve only local fresh results proven unescaped.
 
-        An unmodelled call may reach aliases or globals. Invalidating only its
-        syntactically explicit arguments is unsound without an effect summary.
+        An unmodelled call invalidates source-object observations and aliases.
+        A fresh result cannot be mutated by a call until it escapes; direct and
+        nested call arguments plus the modeled JSCallArgs initializer record
+        those escapes. Other unsupported host writes block function analysis.
         This finite abstraction converges in loops and never revalidates a copy
         of an old token when a later read observes the same object.
         """
         from dataclasses import replace
-        state.invalidated |= frozenset(v.identity for v in state.values.values() if v.kind == 'object')
-        state.values = {key: replace(value, valid=False) if value.kind in ('type', 'hclass') else value
-                        for key, value in state.values.items()}
+        invalidated = set(state.invalidated)
+        passed_objects = set()
+        if may_rebind:
+            # A target can escape through a nested expression as well as a
+            # direct identifier argument. Resolve every identifier in each
+            # argument using the current local provenance state.
+            for argument in self.fn.arguments(call):
+                for node in walk(argument):
+                    if node.type == 'identifier':
+                        value = self.value(node, state)
+                        if value.kind == 'object':
+                            passed_objects.add(value.identity)
+        for value in state.values.values():
+            if value.kind != 'object':
+                continue
+            if (value.detail == 'fresh_local_typed_array'
+                    and value.identity not in passed_objects
+                    and value.identity not in state.escaped):
+                continue
+            invalidated.add(value.identity)
+        state.invalidated = frozenset(invalidated)
+        # A sampled HClass/type for a fresh local allocation remains tied to
+        # that object while the object has not escaped. A callback cannot
+        # mutate an object it cannot reach; source-object samples still die.
+        stable_fresh = {
+            value.identity for value in state.values.values()
+            if value.kind == 'object' and value.detail == 'fresh_local_typed_array'
+            and value.identity not in passed_objects and value.identity not in state.escaped
+        }
+        state.values = {
+            key: (replace(value, valid=False)
+                  if value.kind in ('type', 'hclass')
+                  and (not value.valid or value.origin not in stable_fresh)
+                  else value)
+            for key, value in state.values.items()
+        }
         state.equivalent = frozenset()
         state.predicates = frozenset()
         state.effects |= frozenset(((call.start_point[0] + 1, self.fn.call_name(call)),))
@@ -210,6 +248,9 @@ class OriginEvaluator:
             return True
         if fn.resolve(base, node):
             return False
+        if (base in dict(self.model.reviewed_graph_read_overloads)
+                and len(args) == dict(self.model.reviewed_graph_read_overloads)[base]):
+            return True
         if base in dict(self.model.type_stable_operations) and len(args) == dict(self.model.type_stable_operations)[base]:
             return True
         same_owner, same_name, same_arity, _, _ = self.model.same_type_creator
@@ -227,13 +268,22 @@ class OriginEvaluator:
                 and base in dict(self.model.readonly_operations)
                 and len(args) == dict(self.model.readonly_operations)[base]):
             return True
-        if base in ('GetObjectType', 'LoadHClass') and len(args) == 1:
+        if base == 'GetObjectType' and len(args) == 1:
+            return True
+        # Newer StubBuilder sources carry the runtime glue explicitly when
+        # reading an object's HClass. In that reviewed overload the object is
+        # the second argument; the operation still only emits a graph read.
+        if base == 'LoadHClass' and len(args) in (1, 2):
             return True
         if name == 'DEFVARIABLE' and len(args) == 3:
             return True
-        if name in (self.model.store_name, 'this->' + self.model.store_name,
-                    OWNER + '::' + self.model.store_name) and len(args) == len(self.model.store_types):
+        property_name, property_arity, _, _ = self.model.property_store
+        if (name in (self.model.store_name, 'this->' + self.model.store_name,
+                     OWNER + '::' + self.model.store_name)
+                and len(args) == len(self.model.store_types)):
             return not fn.resolve(self.model.store_name, node)
+        if name in (property_name, 'this->' + property_name, OWNER + '::' + property_name):
+            return len(args) == property_arity and not fn.resolve(property_name, node)
         callee = node.child_by_field_name('function')
         if callee and callee.type == 'field_expression':
             field = fn.text(callee.child_by_field_name('field'))
@@ -256,6 +306,9 @@ class OriginEvaluator:
         arity = dict(self.model.by_value_operations).get(name)
         if arity is not None and len(self.fn.arguments(node)) == arity:
             return True
+        reviewed_arity = dict(self.model.reviewed_graph_read_overloads).get(name)
+        if reviewed_arity is not None and len(self.fn.arguments(node)) == reviewed_arity:
+            return True
         callee = node.child_by_field_name('function')
         if callee and callee.type == 'field_expression':
             builder = self.value(callee.child_by_field_name('argument'), state)
@@ -273,6 +326,17 @@ class OriginEvaluator:
         if instruction.kind not in ('BRANCH', 'declaration', 'expression'):
             return
         node = instruction.arguments[0] if instruction.kind == 'BRANCH' else instruction.node
+        if node.type == 'assignment_expression':
+            left, right = node.child_by_field_name('left'), node.child_by_field_name('right')
+            if (left and left.type == 'field_expression'
+                    and self.fn.text(left.child_by_field_name('field')) == 'callThisArg3WithReturnArgs'
+                    and right and right.type == 'initializer_list'):
+                escaped = set(state.escaped)
+                for item in right.named_children:
+                    value = self.value(item, state)
+                    if value.kind == 'object' and value.detail == 'fresh_local_typed_array':
+                        escaped.add(value.identity)
+                state.escaped = frozenset(escaped)
         for call in walk(node):
             if call.type == 'call_expression':
                 if self.creation_call(call, state):
@@ -308,8 +372,8 @@ class OriginEvaluator:
                 return Value('type', identity=f'token:{node.start_byte}', origin=hclass.origin,
                              origin_line=node.start_point[0] + 1, valid=hclass.valid,
                              detail='cyclic_sample' if cyclic else '')
-        if name in ('LoadHClass', 'this->LoadHClass') and len(args) == 1:
-            obj = self.value(args[0], state)
+        if name in ('LoadHClass', 'this->LoadHClass') and len(args) in (1, 2):
+            obj = self.value(args[-1], state)
             if obj.kind == 'object':
                 return Value('hclass', origin=obj.identity, origin_line=node.start_point[0] + 1)
         receiver = node.child_by_field_name('function')
@@ -323,7 +387,8 @@ class OriginEvaluator:
                 if source.kind == 'object':
                     return Value('object', f'new:{node.start_byte}', origin=source.identity,
                                  origin_line=source.origin_line, creation_line=node.start_point[0] + 1,
-                                 may_differ=self.model.species_may_change_type)
+                                 may_differ=self.model.creation_may_change_runtime_type,
+                                 detail='fresh_local_typed_array')
             owner, name, arity, source_index, type_index = self.model.same_type_creator
             if field == name and builder.kind == 'builder' and builder.detail == owner and len(args) == arity:
                 source = self.value(args[source_index], state)
@@ -374,18 +439,28 @@ class OriginEvaluator:
         if node.type != 'call_expression':
             return None
         name = fn.call_name(node)
-        if name not in (model.store_name, 'this->' + model.store_name, OWNER + '::' + model.store_name):
+        property_name, property_arity, property_target_index, property_token_index = model.property_store
+        is_element_store = name in (model.store_name, 'this->' + model.store_name,
+                                    OWNER + '::' + model.store_name)
+        is_property_store = name in (property_name, 'this->' + property_name,
+                                     OWNER + '::' + property_name)
+        if not is_element_store and not is_property_store:
             callee = node.child_by_field_name('function')
-            if callee and callee.type == 'field_expression' and fn.text(callee.child_by_field_name('field')) == model.store_name:
+            if (callee and callee.type == 'field_expression'
+                    and fn.text(callee.child_by_field_name('field')) in (model.store_name, property_name)):
                 return ('unknown', UNKNOWN, UNKNOWN, 'unresolved_sink_receiver')
             return None
-        if fn.resolve(model.store_name, node):
+        sink_name = property_name if is_property_store else model.store_name
+        if fn.resolve(sink_name, node):
             return ('unknown', UNKNOWN, UNKNOWN, 'shadowed_sink')
         args = fn.arguments(node)
-        if len(args) != len(model.store_types):
+        expected_arity = property_arity if is_property_store else len(model.store_types)
+        if len(args) != expected_arity:
             return ('unknown', UNKNOWN, UNKNOWN, 'sink_signature_mismatch')
-        target = self.value(args[model.target_argument], state)
-        token = self.value(args[model.token_argument], state)
+        target_index = property_target_index if is_property_store else model.target_argument
+        token_index = property_token_index if is_property_store else model.token_argument
+        target = self.value(args[target_index], state)
+        token = self.value(args[token_index], state)
         if target.kind != 'object' or token.kind != 'type':
             return ('unknown', target, token, 'unresolved_target_or_type_origin')
         guarantee = (self.token_key(token), target.identity)
@@ -399,7 +474,7 @@ class OriginEvaluator:
             # The captured SSA token's origin remains known even if it no
             # longer describes its source object's current type. This is only
             # a distinct-origin candidate, not a proved numeric type mismatch.
-            return ('candidate', target, token, 'different_origin_with_species_creation')
+            return ('candidate', target, token, 'distinct_origin_with_type_changing_creation')
         if not token.valid:
             return ('unknown', target, token, 'type_fact_invalidated_by_call')
         return ('unknown', target, token, 'unproved_object_relationship')

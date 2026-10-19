@@ -1,0 +1,93 @@
+{
+  "source_repository": "https://gitee.com/openharmony/arkcompiler_ets_runtime.git",
+  "verified_on": "2026-10-19",
+  "issue_reference": "I7K7L6 (commit-message reference only; issue page and security disclosure not independently verified)",
+  "commit_message": "The caller of NewRuntimeCallInfo fails to promptly return an exception\n\nIssue: https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I7K7L6\n\nSigned-off-by: quiet-thought <chenjingxiang1@huawei.com>\nChange-Id: I69a5e2f415a51d7caf5aab5fdf7c2fe1de5da5c4",
+  "vulnerable_parent": {
+    "commit": "11c5ad59240da5603504821d674c499e3cbff75a",
+    "tree": "2614d90ed3924631ed455a302093a0a5d5a668da",
+    "parents": [
+      "2fb1c1014796ff7b439df21dd9054dcd824c59fc",
+      "3076952e680ddf90de7eddbf8556d4a14b9dd6ba"
+    ],
+    "author_date": "2023-07-12T09:13:50Z",
+    "subject": "!4304 Remove redundant basic blocks Merge pull request !4304 from Gargoyle.h/wzfmaster-dev"
+  },
+  "fixed_commit": {
+    "commit": "f596e410db3ab90a4706a248cf935b135a62490a",
+    "tree": "9bcf5a2aaaa2fcdf35719d4641ed7e3bfde8400c",
+    "parents": [
+      "11c5ad59240da5603504821d674c499e3cbff75a"
+    ],
+    "author_date": "2023-07-13T11:23:30+08:00",
+    "subject": "The caller of NewRuntimeCallInfo fails to promptly return an exception"
+  },
+  "files": {
+    "vulnerable_parent": [
+      {
+        "path": "ecmascript/js_iterator.cpp",
+        "blob": "7ff9cd673b260b41417d749d6066095740f0c3cb",
+        "bytes": 14782,
+        "sha256": "4dbd5bc460ed68820bff3e639355a183ea26b7089c0022288a0a796f707859ee"
+      },
+      {
+        "path": "ecmascript/builtins/builtins_string.cpp",
+        "blob": "571b875bf7fa5a64220809980eb24505a9973c5a",
+        "bytes": 93116,
+        "sha256": "4759e0cf424c706e043457b87460008cadb95b981039b1e9456e2b6c2615a70e"
+      },
+      {
+        "path": "ecmascript/ecma_macros.h",
+        "blob": "6d4ac758d955085d7192ec11bc26a1529936a44a",
+        "bytes": 38236,
+        "sha256": "0c842369e3259807df2148a9138ccdc5d2a6712e1a0af86ca41fe4e77d26f761"
+      },
+      {
+        "path": "ecmascript/interpreter/interpreter.cpp",
+        "blob": "97a4198f49e54266320e40da96eba7d18078c4c0",
+        "bytes": 4613,
+        "sha256": "2bdd10ac61e2fefa2712ad44bfdd7994317450fa104c0f8c434a1959b06a68fa"
+      },
+      {
+        "path": "ecmascript/js_thread.cpp",
+        "blob": "dcde52b61a0dbacbeafd66f7214f241e9368fc9c",
+        "bytes": 24973,
+        "sha256": "de8cb91af6b1be14b28605add60b3b2e1253c0d771d3c64d50a2140e756e5b32"
+      }
+    ],
+    "fixed_commit": [
+      {
+        "path": "ecmascript/js_iterator.cpp",
+        "blob": "bbeb6300a42110837af7065accb53f04cc0ddbdb",
+        "bytes": 14898,
+        "sha256": "dcd1e8a3593bc07dc83aa8a7c3a989b20e41cf301174c8d300545229429e7144"
+      },
+      {
+        "path": "ecmascript/builtins/builtins_string.cpp",
+        "blob": "7fc0aa88bd25cfe477d5e3c4fed3a08ee73ce704",
+        "bytes": 93234,
+        "sha256": "e0001df69e5dee2f7107f4361991a3e45fc6a2f5de38523d2a8a235b0d86dd3b"
+      },
+      {
+        "path": "ecmascript/ecma_macros.h",
+        "blob": "6d4ac758d955085d7192ec11bc26a1529936a44a",
+        "bytes": 38236,
+        "sha256": "0c842369e3259807df2148a9138ccdc5d2a6712e1a0af86ca41fe4e77d26f761"
+      },
+      {
+        "path": "ecmascript/interpreter/interpreter.cpp",
+        "blob": "97a4198f49e54266320e40da96eba7d18078c4c0",
+        "bytes": 4613,
+        "sha256": "2bdd10ac61e2fefa2712ad44bfdd7994317450fa104c0f8c434a1959b06a68fa"
+      },
+      {
+        "path": "ecmascript/js_thread.cpp",
+        "blob": "dcde52b61a0dbacbeafd66f7214f241e9368fc9c",
+        "bytes": 24973,
+        "sha256": "de8cb91af6b1be14b28605add60b3b2e1253c0d771d3c64d50a2140e756e5b32"
+      }
+    ]
+  },
+  "diff_stat": "ecmascript/builtins/builtins_string.cpp | 2 ++\n ecmascript/js_iterator.cpp              | 2 ++\n 2 files changed, 4 insertions(+)",
+  "classification": "official source root cause and patch relation; public disclosure status unknown"
+}

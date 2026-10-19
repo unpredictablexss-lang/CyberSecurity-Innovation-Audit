@@ -1,0 +1,220 @@
+{
+  "verified_on": "2026-10-19",
+  "detector": "ohscanner.ark.runtime.type_safety",
+  "detector_version": "0.8.10",
+  "profile": "light-ast; exact pinned Git commit; one source file; no macro expansion; no build profile; no scan-time fetch",
+  "scope": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+  "results": {
+    "vulnerable_parent": {
+      "commit": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+      "tree": "454e898b43b55950b104053cf42d32645474ef8f",
+      "snapshot_sha256": "391a92a703d2c73d84db4bba09d6de5407a5b685c1a0762379a19b3937d6f3b5",
+      "source_parsing": {
+        "parsing_status": {
+          "partial": 1
+        },
+        "languages": {
+          "cpp": 1
+        }
+      },
+      "status": "blocked",
+      "diagnostic_count": 2,
+      "rule_counts": {
+        "ark.runtime.typedarray-store-type-origin": 2
+      },
+      "diagnostics": [
+        {
+          "rule_id": "ark.runtime.typedarray-store-type-origin",
+          "line": 1491,
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "source_sha256": "6133af44de48ec3ff00fdc7b06597fbef1c9a270cc04ba48d09b4475976c2381"
+        },
+        {
+          "rule_id": "ark.runtime.typedarray-store-type-origin",
+          "line": 2665,
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+          "source_sha256": "6133af44de48ec3ff00fdc7b06597fbef1c9a270cc04ba48d09b4475976c2381"
+        }
+      ],
+      "elapsed_seconds": 0.24810820000129752,
+      "source_db": "D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git"
+    },
+    "fixed_merge": {
+      "commit": "6627179cbf6f8d40d1adfcf5c3c686b902f42419",
+      "tree": "fa482a14984ee8cd8f424131cb5179ba7a6a9422",
+      "snapshot_sha256": "610104a1985542653ccb34efde2bd1d860ca4cc874f9a7d377eb0a64a1d6af8e",
+      "source_parsing": {
+        "parsing_status": {
+          "partial": 1
+        },
+        "languages": {
+          "cpp": 1
+        }
+      },
+      "status": "blocked",
+      "diagnostic_count": 1,
+      "rule_counts": {
+        "ark.runtime.typedarray-store-type-origin": 1
+      },
+      "diagnostics": [
+        {
+          "rule_id": "ark.runtime.typedarray-store-type-origin",
+          "line": 1491,
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "source_sha256": "32e98e94d7dca38607b4a028c567ce2c5d9182742df41acf98cc012dead5b1d1"
+        }
+      ],
+      "elapsed_seconds": 0.24488969999947585,
+      "source_db": "D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git"
+    },
+    "independent_safe_parent": {
+      "commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+      "tree": "27ec52bd443ccd4e45b472731114e8547df71ea2",
+      "snapshot_sha256": "71b374cec95f7909d1375741668b2b5ee285aab9029cc674c4990c3ccc1518d4",
+      "source_parsing": {
+        "parsing_status": {
+          "partial": 1
+        },
+        "languages": {
+          "cpp": 1
+        }
+      },
+      "status": "blocked",
+      "diagnostic_count": 2,
+      "rule_counts": {
+        "ark.runtime.typedarray-allocation-exception-guard": 2
+      },
+      "diagnostics": [
+        {
+          "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+          "line": 1487,
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "source_sha256": "2c45da670fcb4170176bb9bd93da7d21dbc286925a0ca1126d250318412417ff"
+        },
+        {
+          "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+          "line": 2656,
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+          "source_sha256": "2c45da670fcb4170176bb9bd93da7d21dbc286925a0ca1126d250318412417ff"
+        }
+      ],
+      "elapsed_seconds": 0.27793560000282014,
+      "source_db": "D:/openHarmonyScanner/tmp/c-line-callback-holdout-history-20261019.git"
+    },
+    "independent_safe_fixed": {
+      "commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+      "tree": "bad9c4b3b9e868fcf07a36ab864978fd8ad598f2",
+      "snapshot_sha256": "eac2b611fb881f41563d252805597e164a380d461ab5b5079557b824f7ab7650",
+      "source_parsing": {
+        "parsing_status": {
+          "partial": 1
+        },
+        "languages": {
+          "cpp": 1
+        }
+      },
+      "status": "blocked",
+      "diagnostic_count": 0,
+      "rule_counts": {},
+      "diagnostics": [],
+      "elapsed_seconds": 0.27706169999873964,
+      "source_db": "D:/openHarmonyScanner/tmp/c-line-callback-holdout-history-20261019.git"
+    }
+  },
+  "interpretation": "!11130 Map type-origin root is 1 candidate on the vulnerable parent and 0 on the fixed merge. The unrelated Filter type-origin candidate remains on both sides (total 2→1). The independent !11684 pair has zero TypeOrigin findings on both sides, although the exception-guard rule produces two parent candidates and zero on the fix. All runs parse the selected file partially and are blocked; findings remain candidates, and zero is not a safety pass.",
+  "parser_partial_causes": [
+    {
+      "line": 3354,
+      "kind": "missing",
+      "source": "BRANCH(HasPendingException(glue), &hasException, &notHasException)",
+      "interpretation": "An unexpanded BRANCH macro invocation without a source semicolon. The exact source include tree defines BRANCH as a braced statement macro in ecmascript/compiler/circuit_builder.h; this explains the light-AST missing node but does not substitute for profile-matched preprocessing.",
+      "macro_definition": {
+        "commit": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+        "path": "ecmascript/compiler/circuit_builder.h",
+        "blob": "c383659832103a7e2c47ba77755ad15e2e4035be",
+        "bytes": 61381,
+        "sha256": "47b7b03cb5f68cfa9bb4cc5bc5a9cb7bc01fdab05190543bbcb29b56a5557cb2"
+      }
+    },
+    {
+      "line": 3667,
+      "kind": "missing",
+      "source": "BUILTIN_COMPILER_TYPED_ARRAY_TYPES(BUILTIN_COMPILER_TYPED_ARRAY_LABEL)",
+      "interpretation": "An unexpanded type-list macro invocation that generates switch labels and case bodies. The exact source defines it in builtins_typedarray_stub_builder.h; the light parser cannot see the expanded translation unit.",
+      "macro_definition": {
+        "commit": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h",
+        "blob": "dec0677003a9209cb61e2a692a0995201aca7428",
+        "bytes": 7645,
+        "sha256": "972251b5e2ce005a2b143720faa1abeddbc7dce7dcc434af6b1ad041f078cf89"
+      }
+    }
+  ],
+  "focused_regression": {
+    "command": "D:\\anaconda3\\python.exe -m pytest tests/detectors/ark_runtime/test_type_origin.py tests/detectors/ark_runtime/test_unseen_detector.py tests/detectors/ark_runtime/test_exception_guard.py -q",
+    "result": "40 passed, 3 skipped in 0.20s"
+  },
+  "replay_command_template": "python -m src.cli.main ohscan-run --repo-dir <local pinned Git object database> --repository openharmony/arkcompiler_ets_runtime --commit <full commit> --include ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp --detector ohscanner.ark.runtime.type_safety",
+  "parse_issue_locations_by_snapshot": {
+    "vulnerable_parent": {
+      "commit": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+      "issues": [
+        {
+          "line": 3354,
+          "macro": "BRANCH",
+          "path": "ecmascript/compiler/circuit_builder.h"
+        },
+        {
+          "line": 3667,
+          "macro": "BUILTIN_COMPILER_TYPED_ARRAY_TYPES",
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h"
+        }
+      ]
+    },
+    "fixed_merge": {
+      "commit": "6627179cbf6f8d40d1adfcf5c3c686b902f42419",
+      "issues": [
+        {
+          "line": 3355,
+          "macro": "BRANCH",
+          "path": "ecmascript/compiler/circuit_builder.h"
+        },
+        {
+          "line": 3668,
+          "macro": "BUILTIN_COMPILER_TYPED_ARRAY_TYPES",
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h"
+        }
+      ]
+    },
+    "independent_safe_parent": {
+      "commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+      "issues": [
+        {
+          "line": 3373,
+          "macro": "BRANCH",
+          "path": "ecmascript/compiler/circuit_builder.h"
+        },
+        {
+          "line": 3685,
+          "macro": "BUILTIN_COMPILER_TYPED_ARRAY_TYPES",
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h"
+        }
+      ]
+    },
+    "independent_safe_fixed": {
+      "commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+      "issues": [
+        {
+          "line": 3391,
+          "macro": "BRANCH",
+          "path": "ecmascript/compiler/circuit_builder.h"
+        },
+        {
+          "line": 3703,
+          "macro": "BUILTIN_COMPILER_TYPED_ARRAY_TYPES",
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h"
+        }
+      ]
+    }
+  }
+}

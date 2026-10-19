@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-10-19",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "source_database": "D:\\openHarmonyScanner\\tmp\\c-line-callback-holdout-history-20261019.git",
+  "scope": "Pinned local Git objects; no scan-time fetch",
+  "mainline_pair": {
+    "vulnerable": {
+      "commit": "087449d3d657d081611cf1bf4c731ff048748812",
+      "tree": "cc51f309bf6446ae401597235fe5ebd3477ec63e",
+      "files": {
+        "ecmascript/base/typed_array_helper.cpp": {
+          "blob": "caa5467917bbd9079a4d72cdfb419266e315a624",
+          "sha256": "170660d6f15ad88ddee04db4ded3e76932832631d0613e78318edf2b0ad6fc85",
+          "bytes": 34880
+        },
+        "test/moduletest/typearray/typearray.js": {
+          "blob": "b7aed513bc1bf2c8c1b526ecab1f9576a8585a51",
+          "sha256": "fe5a1effdead906e0bd95b7fa7fbd3e70393432f1729051ddbf4f4ea326e599d",
+          "bytes": 4655
+        },
+        "test/moduletest/typearray/expect_output.txt": {
+          "blob": "8f52daa2db975be16e871d5cf2d4d30cfa16fce1",
+          "sha256": "401a8522d136647fc7a5ec5a4a7bd3fcc03efa67fd6123311bd23883411c6b49",
+          "bytes": 976
+        }
+      }
+    },
+    "fixed": {
+      "commit": "1b0ac0aa076b91d92b5d5aba91e92bc6c2a06c50",
+      "tree": "48ac0d65b920c7401055fcfae68d538e03a25e6c",
+      "files": {
+        "ecmascript/base/typed_array_helper.cpp": {
+          "blob": "319347a5ea62df52e8427ad6822f65e70c997a11",
+          "sha256": "f698f40394524b5b95a1bbef4fe8b1ccef05e52226d9d1f30ef54decca711a62",
+          "bytes": 35080
+        },
+        "test/moduletest/typearray/typearray.js": {
+          "blob": "7bc46256532b894dfced2a116ea7422d02c5e326",
+          "sha256": "47f104899e2a401a2cad45ddfc0758c377d2b57b2f2cd8670454b78f673d2ba9",
+          "bytes": 4839
+        },
+        "test/moduletest/typearray/expect_output.txt": {
+          "blob": "4acaf51a3a604896c66ab5021aa97ea57c54b800",
+          "sha256": "c0542443c803dbfb5e2144519e63b73e4baa5cfe389034c2486219429ceeff4e",
+          "bytes": 996
+        }
+      }
+    }
+  },
+  "patch": {
+    "commit": "9f586b533be0275f3e3327e05c64f3aed28b7de3",
+    "parent": "13303b3a5204ddef042266b9260b1e06eb3fcb5b",
+    "subject": "CreateFromTypedArray byteLength data overflow; issue reference I7KZJ7",
+    "security_disclosure": "Not independently verified; no CVE claimed"
+  },
+  "scope_notes": [
+    "Production scan profile light-ast, one source file ecmascript/base/typed_array_helper.cpp.",
+    "Upstream regression test source and expected output identities are recorded, but the test was not built or run.",
+    "No product build or runtime input/output evidence."
+  ]
+}

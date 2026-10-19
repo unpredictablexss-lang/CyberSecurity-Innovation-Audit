@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-10-19",
+  "working_tree": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit-c4",
+  "scanner_head": "73231e6a8d4ea239033dd322aae8936770438b20",
+  "branch": "codex/c-line-ark-runtime-20261018",
+  "source_sync": {
+    "operation": "git --git-dir=\"D:\\openHarmonyScanner\\tmp\\c-line-callback-holdout-history-20261019.git\" fetch --no-tags https://gitee.com/openharmony/arkcompiler_ets_runtime.git +refs/heads/master:refs/codex/research/full-master-20261019",
+    "result": "fetched new local ref; returned OID matched existing shallow master",
+    "tip": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+    "tip_date": "2025-09-12T08:22:21Z",
+    "is_shallow": true,
+    "scope_limit": "Upstream master ref as returned on 2026-10-19; repository remains shallow, with listed shallow boundaries. No claim about unreachable/unfetched history."
+  },
+  "queries": [
+    {
+      "command": "git log refs/codex/research/full-master-20261019 --format=%H %P %s -G newArrayType -- *.cpp *.h",
+      "hits": [
+        "3386b9bc5ed142952011daa84281c13b2653cee7 [bufix]: fix typedArray map (backport of same Map fix)",
+        "919e4fbb011f610427e788889083fa8e28d2f951 fix: typed array filter cause outbound",
+        "3a4897952a236715eb61678a027ee84eadb02df8 fix write outbound of TypedArray:map",
+        "6f712c623a3a7ec6b5db45f0f75aee6e1cda0821 Add ReadBarrier for Concurrent GC (mechanical refactor; no distinct type-origin fix)"
+      ],
+      "assessment": "No independent vulnerable indexed-storage type-origin fix found in searched reachable history. !11130 Map and prior Filter fix are the only substantive newArrayType safety fixes observed; !10809 was separately audited and excluded."
+    },
+    {
+      "command": "git log -G FastSetPropertyByIndex across Ark C++ headers/sources",
+      "assessment": "Only !11130 and !11196 contain candidate-origin fixes in relevant TypedArray store sites; other hits are additions/refactors/optimized unrelated code."
+    },
+    {
+      "command": "git log messages and inspect exact diffs for TypedArray IR, Sendable store, constructor length, CreateFromTypedArray overflow",
+      "candidates": [
+        "!8198 disables TypedArrayMap AOT IR for a derived-constructor test; not an indexed storage type-token patch.",
+        "!8252 SendableTypedArray JIT store patch adds buffer-kind detached checking; distinct from destination type-token mismatch.",
+        "!4688 I7W51 changes signed int32 length narrowing to uint32 and adds large-length RangeError test; separate length representation issue.",
+        "!4425 I7KZJ7 widens byteLength multiplication to uint64; distinct buffer allocation size overflow candidate tracked as a separate case."
+      ]
+    }
+  ],
+  "decision": "No independent type-origin vulnerable positive in the reachable scanned history. Preserve this as a search-bounded result; do not relabel unrelated integer overflow or AOT semantic fixes as type-origin positives. The most actionable next root family is the separately recorded I7KZJ7 allocation-size multiplication overflow.",
+  "next_operation": "Implement and test a generic integer-width/dataflow rule for multiplication flowing to buffer allocation and loop write bounds, then replay exact I7KZJ7 first-parent/merge pair through ohscan-run.",
+  "pr4245_official_ref_audit": {
+    "ref": "refs/pull/4245/head",
+    "commit": "3be786861f4f90092ce88741882ce8549de4dd43",
+    "parent": "2d03b1c8fc3e0906be7fa4006bb5977fc2d0a554",
+    "finding": "CreateFromArrayBuffer underflow/signed-width change, distinct root. ohscan-run reports the unchanged CreateFromTypedArray size-overflow candidate at line 230 on both revisions; excluded as a second positive/fix pair. Evidence: pr4245_control_audit_identity.json."
+  },
+  "pr7532_unseen_safe_variant": {
+    "commit": "210a7955a24f32abbba3c1774269c01d26406e3d",
+    "parent": "e5df3b8179ad84e960f1be7981ace6567fee9316",
+    "finding": "CreateSharedFromTypedArray refactor retains widened product and allocation/copy flow; production CLI 0->0, AST complete, detector partial/blocked. Not used for rule changes; retained as safe structural holdout. Evidence: i7kzj7_refactor_safe_variant_identity.json."
+  }
+}

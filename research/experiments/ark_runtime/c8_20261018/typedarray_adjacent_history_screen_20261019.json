@@ -1,0 +1,296 @@
+{
+  "verified_on": "2026-10-19",
+  "history_database": "D:\\openHarmonyScanner\\tmp\\c-line-callback-holdout-history-20261019.git",
+  "screened_cases": [
+    {
+      "case_id": "ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D",
+      "CVE_or_advisory": "No CVE or security advisory verified; upstream source references issue I7W51D and PR !4688.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I7W51D",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/4688"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime TypedArrayHelper::TypedArrayConstructor / AllocateTypedArray",
+      "root_cause": "ToIndex yields a non-negative numeric length, but the parent narrows it to int32_t before passing it into allocation; the fix uses uint32_t. Added test requests Uint8Array(2^32-1) and expects RangeError. This is a real length-conversion bugfix, but present evidence does not establish memory corruption or product security impact; it is not the byte-product overflow mechanism.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Exact parent/fix source pair only; release/product mapping unknown.",
+      "vulnerable": {
+        "commit": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+        "tree": "f86de4aedd95c719b6215273cf10ab15e26d99e4",
+        "files": [
+          {
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "blob": "c5153346369f0182e73098b8d008eca6d750b36d",
+            "bytes": 35770,
+            "sha256": "4be243a68180be845defbcc01b259070db68b18da8500d245eea4929e7b9eca5"
+          },
+          {
+            "path": "ecmascript/base/typed_array_helper.h",
+            "blob": "8541d4a548bb118748443e822f1b603c36789389",
+            "bytes": 4579,
+            "sha256": "3bef83523fcd1f21d61b283cef88c76cd50044316fd6d76f507a3e24368463fa"
+          },
+          {
+            "path": "test/moduletest/typearray/typearray.js",
+            "blob": "78480fc1207e2193df72e69a951d2e2cf3a4d9ba",
+            "bytes": 5707,
+            "sha256": "27f86b91b4a6b224757ac5f079189164ec679e134916b0705900e95798285c2e"
+          },
+          {
+            "path": "test/moduletest/typearray/expect_output.txt",
+            "blob": "7ab1a90e65c389e127b52cb0f6692fb6f149d6f6",
+            "bytes": 1250,
+            "sha256": "0642d5f0e5659ea96cc4f58d34f6f9cfd749396532506d19c81ce8391d12c11d"
+          }
+        ]
+      },
+      "fixed": {
+        "commit": "82c21d656880923800c94b53b035c76d219313b5",
+        "tree": "cfad2654abd1554b35b0817f43ca8585dd937106",
+        "files": [
+          {
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "blob": "89ffed8b3ff112a271c8a074967b7b5e8ebe2f6f",
+            "bytes": 35773,
+            "sha256": "373f5babdd5dd2f93d01512901d02e6b39d6b57c636e72b07b8d80d27eb509ab"
+          },
+          {
+            "path": "ecmascript/base/typed_array_helper.h",
+            "blob": "b61397cbb48ef14e6bf784ab37a172eaf76ca6df",
+            "bytes": 4580,
+            "sha256": "fc3cd9260b98b50984370115591b6100db29d09688094912f474f01bbed7dfdd"
+          },
+          {
+            "path": "test/moduletest/typearray/typearray.js",
+            "blob": "d101f70d7c944e555ba5a78e28a576fcd361b89f",
+            "bytes": 5790,
+            "sha256": "60407a9e323cc894e5a19525ffbda4501e37a017c4d867a25d149569dec7cde6"
+          },
+          {
+            "path": "test/moduletest/typearray/expect_output.txt",
+            "blob": "e11ba0cec65559d1bdf4f0e1760ccb4a3ab345a6",
+            "bytes": 1261,
+            "sha256": "52b6d60f276bcdfea6449e8398f01f30686c73174b7160974a1038d5b5126f28"
+          }
+        ]
+      },
+      "product_build_association": "unknown; no product manifest or shipped binary associated.",
+      "existing_detector_rule": "ohscanner.ark.runtime.type_safety v0.8.10; scoped to the TypedArray helper source for the existing multiplication-overflow rule.",
+      "baseline_scan_result": {
+        "parent": {
+          "commit": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+          "tree": "f86de4aedd95c719b6215273cf10ab15e26d99e4",
+          "profile": "light-ast",
+          "scope": [
+            "ecmascript/base/typed_array_helper.cpp"
+          ],
+          "parse": {
+            "parsing_status": {
+              "complete": 1
+            },
+            "languages": {
+              "cpp": 1
+            }
+          },
+          "diagnostics": 0,
+          "status": "blocked",
+          "elapsed_seconds": 0.0003651000006357208
+        },
+        "fixed": {
+          "commit": "82c21d656880923800c94b53b035c76d219313b5",
+          "tree": "cfad2654abd1554b35b0817f43ca8585dd937106",
+          "profile": "light-ast",
+          "scope": [
+            "ecmascript/base/typed_array_helper.cpp"
+          ],
+          "parse": {
+            "parsing_status": {
+              "complete": 1
+            },
+            "languages": {
+              "cpp": 1
+            }
+          },
+          "diagnostics": 0,
+          "status": "blocked",
+          "elapsed_seconds": 0.000352399998519104
+        },
+        "interpretation": "0 diagnostics both sides under a distinct multiplication rule; source parsing complete but detector status blocked/partial. Not a safety result and not a miss for a narrowing rule that does not exist."
+      },
+      "miss_reason": "No detector models nonnegative numeric length narrowing into the typed-array length allocation path. Security relevance is unverified; no new rule implemented.",
+      "implementation_status": "screened; source root identified, not admitted as a security detector case pending memory-safety/reachability evidence.",
+      "controls": {
+        "positive_and_fix": "Exact historical parent/fix pair; upstream regression added an oversized constructor length RangeError check.",
+        "safe_control": "not independently assessed",
+        "unrelated_control": "not applicable",
+        "variant_control": "not assessed"
+      },
+      "real_source_rescan_result": "Production ohscan-run v0.8.10 0→0 for the multiplication rule; both reports blocked/partial.",
+      "evidence_paths": [
+        "i4688_unrelated_control_identity.json",
+        "reports/i4688-unrelated-parent-v0.8.10.json",
+        "reports/i4688-unrelated-fixed-v0.8.10.json",
+        "reports/i4688-baseline-parent-v0.8.10.json",
+        "reports/i4688-baseline-fixed-v0.8.10.json"
+      ],
+      "remaining_blockers": [
+        "No official security classification or product mapping.",
+        "No evidence this conversion causes memory corruption; regression covers RangeError behavior only.",
+        "No build or dynamic test."
+      ],
+      "next_step": "Keep as adjacent length-conversion history; do not add a security rule unless source/contract analysis demonstrates a memory-safety or security-boundary impact."
+    },
+    {
+      "case_id": "ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA",
+      "CVE_or_advisory": "No CVE or security advisory verified; upstream source references issue IB8BCA and PR !10468.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IB8BCA",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/10468"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime DataView GetViewValue/SetViewValue and AtomicHelper::ValidateAtomicAccess",
+      "root_cause": "Parent converts requested indexes through int32-width values and uses 32-bit bounds/address arithmetic; the patch changes the index path to ToIndex/uint64_t and uses wider bounds calculations. Regression adds a large-index DataView set that expects RangeError. Source delta is verified, but current evidence does not demonstrate an out-of-bounds access or security impact.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Exact parent/fix source pair only; release/product mapping unknown.",
+      "vulnerable": {
+        "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+        "tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+        "files": [
+          {
+            "path": "ecmascript/base/atomic_helper.cpp",
+            "blob": "7fd67717571c6d8fe7b10bf294998e952dc61e36",
+            "bytes": 7176,
+            "sha256": "f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541"
+          },
+          {
+            "path": "ecmascript/builtins/builtins_dataview.cpp",
+            "blob": "e6bac984354292405ae62f7728170d7be5e3760e",
+            "bytes": 21732,
+            "sha256": "bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c"
+          },
+          {
+            "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+            "blob": "aedb6d26681535371d1e9ed90b697b923b8100e6",
+            "bytes": 11399,
+            "sha256": "bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548"
+          },
+          {
+            "path": "test/moduletest/dataview/dataview.js",
+            "blob": "6ee13490c7d9bf21913e49358ff4b73260ee4975",
+            "bytes": 2796,
+            "sha256": "e7c79938c81a14e72a0fc3bea6a9fbce735ce7dcd6e0224919578dd7dc885a87"
+          },
+          {
+            "path": "test/moduletest/dataview/expect_output.txt",
+            "blob": "74195556e20fea6c4ee7c68ce59910bb363ce223",
+            "bytes": 1116,
+            "sha256": "bf16c3fb375b7b78938fd71228eebcd9f3220cf41309148cb14290ea5fcca7a7"
+          }
+        ]
+      },
+      "fixed": {
+        "commit": "48fcec3686e45175f95b4600b579026a65149966",
+        "tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+        "files": [
+          {
+            "path": "ecmascript/base/atomic_helper.cpp",
+            "blob": "80d7ad14e70825ef2daf7b3f2fc956a891bf8b2c",
+            "bytes": 6995,
+            "sha256": "39521f4c6fa6b4b65d8b3daacd80f6e051b5a01c5aa814c9ac2ffc432529b36b"
+          },
+          {
+            "path": "ecmascript/builtins/builtins_dataview.cpp",
+            "blob": "a2376e822e995333b2400520ca5b882de9578b5e",
+            "bytes": 21718,
+            "sha256": "39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b"
+          },
+          {
+            "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+            "blob": "dce9388e8b7e33c87aec33ac4d067fe40370561b",
+            "bytes": 11561,
+            "sha256": "89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386"
+          },
+          {
+            "path": "test/moduletest/dataview/dataview.js",
+            "blob": "decb8eafb42ced6aed4d1b7394e4d273e98dee3c",
+            "bytes": 2915,
+            "sha256": "d4b66af1edd5f8ea5c67d7903d95bbaefd7e1983ec9341aa37640530ccc217be"
+          },
+          {
+            "path": "test/moduletest/dataview/expect_output.txt",
+            "blob": "5d395d0ba691ce9df5c6a381f30e8ced7352b5f6",
+            "bytes": 1161,
+            "sha256": "43d2a9ed8ed99361a259a6d11e285cac33c13c4ab936ee011575c63b28560aa4"
+          }
+        ]
+      },
+      "product_build_association": "unknown; no product manifest or shipped binary associated.",
+      "existing_detector_rule": "ohscanner.ark.runtime.type_safety v0.8.10; no DataView/Atomics bounds-width model.",
+      "baseline_scan_result": {
+        "parent": {
+          "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+          "tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+          "profile": "light-ast",
+          "scope": [
+            "ecmascript/builtins/builtins_dataview.cpp",
+            "ecmascript/base/atomic_helper.cpp",
+            "ecmascript/builtins/builtins_dataview_stub_builder.cpp"
+          ],
+          "parse": {
+            "parsing_status": {
+              "complete": 2
+            },
+            "languages": {
+              "cpp": 2
+            }
+          },
+          "diagnostics": 0,
+          "status": "blocked",
+          "elapsed_seconds": 5.900001269765198e-06
+        },
+        "fixed": {
+          "commit": "48fcec3686e45175f95b4600b579026a65149966",
+          "tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+          "profile": "light-ast",
+          "scope": [
+            "ecmascript/builtins/builtins_dataview.cpp",
+            "ecmascript/base/atomic_helper.cpp",
+            "ecmascript/builtins/builtins_dataview_stub_builder.cpp"
+          ],
+          "parse": {
+            "parsing_status": {
+              "complete": 2
+            },
+            "languages": {
+              "cpp": 2
+            }
+          },
+          "diagnostics": 0,
+          "status": "blocked",
+          "elapsed_seconds": 6.300004315562546e-06
+        },
+        "interpretation": "0 diagnostics both sides; selected source files parse complete, detector reports blocked/partial and has no applicable bounds-width rule. Not a safety result."
+      },
+      "miss_reason": "Missing DataView/Atomics range and index-width model. Security impact remains unproven.",
+      "implementation_status": "screened; adjacent historical bounds/index fix, no detector implemented pending a demonstrated security invariant violation.",
+      "controls": {
+        "positive_and_fix": "Exact historical parent/fix source pair; regression exercises a large index and expects RangeError.",
+        "safe_control": "not assessed",
+        "unrelated_control": "not applicable",
+        "variant_control": "not assessed"
+      },
+      "real_source_rescan_result": "Production ohscan-run v0.8.10 0→0 on exact scoped files; report completed_with_limitations and detector status blocked.",
+      "evidence_paths": [
+        "reports/i10468-baseline-parent-v0.8.10.json",
+        "reports/i10468-baseline-fixed-v0.8.10.json"
+      ],
+      "remaining_blockers": [
+        "No security advisory or product mapping.",
+        "No concrete out-of-bounds witness established from patch and test alone.",
+        "Build and dynamic reproduction not run."
+      ],
+      "next_step": "Retain as a separate index-width candidate; inspect exact source arithmetic and backing-buffer limits before deciding whether to implement a bounds rule."
+    }
+  ],
+  "conclusion": "Neither screened PR supplies a second proven security positive for I7KZJ7; both are distinct length/index correctness changes with no demonstrated product security impact."
+}

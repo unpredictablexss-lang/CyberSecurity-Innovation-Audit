@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "case_id": "ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "source_sync": "Official Gitee refs were explicitly fetched into isolated local bare object database before scan; no scan-time fetch.",
+  "pair": {
+    "vulnerable": {
+      "commit": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+      "tree": "454e898b43b55950b104053cf42d32645474ef8f",
+      "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "2aae41b75a5ffd1441309439ff3834d959f71b79",
+      "source_sha256": "6133af44de48ec3ff00fdc7b06597fbef1c9a270cc04ba48d09b4475976c2381",
+      "bytes": 150108
+    },
+    "fixed": {
+      "commit": "6627179cbf6f8d40d1adfcf5c3c686b902f42419",
+      "tree": "fa482a14984ee8cd8f424131cb5179ba7a6a9422",
+      "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "1818dd72f5ac68aa7f8ee7a38a59b923f4ab5476",
+      "source_sha256": "32e98e94d7dca38607b4a028c567ce2c5d9182742df41acf98cc012dead5b1d1",
+      "bytes": 150189
+    }
+  },
+  "fix_commit": "3a4897952a236715eb61678a027ee84eadb02df8",
+  "fix_merge": "6627179cbf6f8d40d1adfcf5c3c686b902f42419",
+  "fix_parent": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+  "patch_summary": "Map now derives type token from newArray HClass and uses it for indexed read/store. Regression added under test/moduletest/typedarraymap/typedarraymap.js.",
+  "cve_mapping": "The official security bulletin maps CVE-2025-24304 to maintenance branch aggregate PRs. Exact one-to-one mapping to mainline !11130 is unverified.",
+  "scanner_implementation": {
+    "src/ohscanner/detectors/ark_runtime/analysis.py": "479992f425542473aa3c3297c6e8a545ea6375ac22b2c109ef27419d6d6dec76",
+    "src/ohscanner/detectors/ark_runtime/model.py": "47dbed0be8a39b045fd5d076287d43ef5cbf7a73ab9ddf592cdf4d09d918f2ea",
+    "src/ohscanner/detectors/ark_runtime/type_origin.py": "dc6d364a72ac21496aa36457732589b2fc47f1ef0a0c186af8eea19ec473a771",
+    "src/ohscanner/detectors/ark_runtime/unseen_detector.py": "e5fae7f26e36b7610c0af6062cef5345598a748fc5906ac11213b06a7f6d11a3",
+    "src/ohscanner/detectors/ark_runtime/unseen_model.py": "8b0cb044c3778c0eac74db5ace149f040b6d5205110919c5acfa21091bc1a8c0",
+    "tests/detectors/ark_runtime/test_unseen_detector.py": "00622bffa55928cf5746785e3e9b0bc57431012fea87a8fe70c1cc42883ad847"
+  },
+  "fix_issue": "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IBP5J6",
+  "security_backport_context": "Official PR !11279 describes !11130 and !10809 as two vulnerability fixes picked to 5.0.3. It does not assign CVE-2025-24304 to one individual patch."
+}

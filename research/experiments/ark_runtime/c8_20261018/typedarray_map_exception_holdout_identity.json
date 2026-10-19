@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "case_id": "ARK-TYPEDARRAY-MAP-NEWARRAY-PENDING-EXCEPTION-IC7B8Q",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "pair": {
+    "vulnerable": {
+      "commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+      "tree": "27ec52bd443ccd4e45b472731114e8547df71ea2",
+      "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "34f6aa2c6ccaad144a2038c8aab208ea290b5a86",
+      "source_sha256": "2c45da670fcb4170176bb9bd93da7d21dbc286925a0ca1126d250318412417ff",
+      "bytes": 152029
+    },
+    "fixed": {
+      "commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+      "tree": "bad9c4b3b9e868fcf07a36ab864978fd8ad598f2",
+      "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "893a63a79b6ab85a1473a4f3b33315db0f848a37",
+      "source_sha256": "0abdb870aff6560c671895c0e3360bb3e82fb052cb6a7cf28a90a8c6443044a5",
+      "bytes": 152737,
+      "regression_test": {
+        "file": "test/moduletest/typedarraymapoverflow/typedarraymapoverflow.js",
+        "blob": "9f40e6ce18950c3164b01de9b1e455c9dc4f8eb4",
+        "sha256": "f3b377735b1a47e9e3adc2cee69790104655a01ebff6dea37dbab38082972e19",
+        "bytes": 1037
+      }
+    }
+  },
+  "merge_parent": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+  "patch_commit": "3386b9bc5ed142952011daa84281c13b2653cee7",
+  "patch_issue": "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IC7B8Q",
+  "pull_request": "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11684",
+  "patch_summary": "Map checks HasPendingException after NewTypedArray before reading result HClass; adds recursive stack-exhaustion regression. No CVE/security classification verified.",
+  "scanner_version": "0.8.8",
+  "profile": "light-ast",
+  "scan_scope": [
+    "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+  ],
+  "scanner_sources": {
+    "src/ohscanner/detectors/ark_runtime/analysis.py": "479992f425542473aa3c3297c6e8a545ea6375ac22b2c109ef27419d6d6dec76",
+    "src/ohscanner/detectors/ark_runtime/model.py": "a57dd177711bf4005713a8c2f8b2de6c2020c94cd96d27f51e214a552a559bc3",
+    "src/ohscanner/detectors/ark_runtime/type_origin.py": "adbea84400d5bfa4dc4cb043411ba13f9af3c9c4f6a2df52269b153b6be37cb4",
+    "src/ohscanner/detectors/ark_runtime/unseen_detector.py": "32b8376c337e8c62abd3be3446a01b663963531110e71ba3779600ecfbe8f3c0",
+    "src/ohscanner/detectors/ark_runtime/unseen_model.py": "50532e05552f87badd92848a1679240af32a8430cc565b12da58abbffcbcb921",
+    "tests/detectors/ark_runtime/test_unseen_detector.py": "bba7d0f933d404ab7d0adc5ef25b47be302517f2c4f9f36328e01d28f54aca66",
+    "tests/detectors/ark_runtime/test_c3_mechanisms.py": "feee77c53f5d360536767790a229c2e8c81383e9049c10cbb6bbb7a2c98559d8",
+    "tests/detectors/ark_runtime/test_ir_path.py": "4fea5589bffec1011d520fb068fbb0a613c1f692a4624dd9c0925391bd1d95fd"
+  },
+  "vulnerable_commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95"
+}

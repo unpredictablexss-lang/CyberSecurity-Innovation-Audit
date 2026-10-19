@@ -1,0 +1,284 @@
+{
+  "schema_version": 1,
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "source_sync": "Explicit source-only fetch/object recovery completed before scans; all scans read pinned bare Git objects with local source loader; scan command performs no fetch.",
+  "object_database": "D:\\openHarmonyScanner\\tmp\\c-line-ark-history-full-snapshots-20261018.git",
+  "commits": {
+    "vulnerable_parent": {
+      "commit": "d6d18548750373cd4e93e9af24eda3e84f6f1b8e",
+      "tree": "0eb7add76ad0766233c53bea41e2db334e441406",
+      "parents": [],
+      "files": [
+        {
+          "path": "ecmascript/builtins/builtins_typedarray.cpp",
+          "blob": "f8e21e95919b5607fc167962d390995f4a031f14",
+          "bytes": 79222,
+          "sha256": "057f0d43d1f2ed7b2a915025f8030259d711793846bd0273fb007e94e1546a5b"
+        },
+        {
+          "path": "ecmascript/ecma_macros.h",
+          "blob": "2a8554b7221e645ecaa8c3f2e9a73f872d0af08a",
+          "bytes": 37459,
+          "sha256": "6f945253749f671ee94637065186ad6c68c0eff917926076d30bdd8b83352a3f"
+        }
+      ]
+    },
+    "fix_merge": {
+      "commit": "30571a40879bb2092dcb9ae994d6970c1dfd5fc1",
+      "tree": "4bd116e73eb8acf94d6471427d86f837964bb998",
+      "parents": [],
+      "files": [
+        {
+          "path": "ecmascript/builtins/builtins_typedarray.cpp",
+          "blob": "6d90d4ad72893f5868922b77ecae4ab3f6a52366",
+          "bytes": 79277,
+          "sha256": "74ef900791fd859c45909dc840ab02f898df90584b3a400daed0640625c0579c"
+        },
+        {
+          "path": "ecmascript/ecma_macros.h",
+          "blob": "2a8554b7221e645ecaa8c3f2e9a73f872d0af08a",
+          "bytes": 37459,
+          "sha256": "6f945253749f671ee94637065186ad6c68c0eff917926076d30bdd8b83352a3f"
+        }
+      ]
+    },
+    "current_snapshot": {
+      "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+      "parents": [],
+      "files": [
+        {
+          "path": "ecmascript/builtins/builtins_typedarray.cpp",
+          "blob": "0fc27c213e1ea80d93e1e3807eec11baf2634832",
+          "bytes": 100209,
+          "sha256": "14507ac872dc34a6c20b6f448678466f119de94a4ed1de6d91e269640936c81c"
+        },
+        {
+          "path": "ecmascript/ecma_macros.h",
+          "blob": "84b0ded32d632640c0915f6fdbe12c7bd0240a5f",
+          "bytes": 68296,
+          "sha256": "8b7086b5b90cb62e467147711a4a25fc73b46b3167a7fe5735db1b0bf043bcfa"
+        }
+      ]
+    },
+    "independent_variant": {
+      "commit": "30571a40879bb2092dcb9ae994d6970c1dfd5fc1",
+      "tree": "4bd116e73eb8acf94d6471427d86f837964bb998",
+      "files": [
+        {
+          "path": "ecmascript/builtins/builtins_array.cpp",
+          "blob": "1a7558e7c76b55dad889c31746e4642fda2160a5",
+          "bytes": 130811,
+          "sha256": "c5559a14eaa524b03f68e582721e9c73bf2fdf6f797482e36c3f0b4d9f7eccf9"
+        },
+        {
+          "path": "ecmascript/ecma_macros.h",
+          "blob": "2a8554b7221e645ecaa8c3f2e9a73f872d0af08a",
+          "bytes": 37459,
+          "sha256": "6f945253749f671ee94637065186ad6c68c0eff917926076d30bdd8b83352a3f"
+        }
+      ],
+      "role": "unlabelled excluded holdout/variant; not used for rule tuning"
+    }
+  },
+  "scanner_implementation": {
+    "src/ohscanner/detectors/ark_runtime/model.py": "47dbed0be8a39b045fd5d076287d43ef5cbf7a73ab9ddf592cdf4d09d918f2ea",
+    "src/ohscanner/detectors/ark_runtime/unseen_model.py": "8b0cb044c3778c0eac74db5ace149f040b6d5205110919c5acfa21091bc1a8c0",
+    "src/ohscanner/detectors/ark_runtime/runtime_exception.py": "fb6e09dc33aa4b76da368455f5b6c74192d355d8759ff957cdf6627590cec727",
+    "src/ohscanner/detectors/ark_runtime/unseen_detector.py": "e5fae7f26e36b7610c0af6062cef5345598a748fc5906ac11213b06a7f6d11a3",
+    "tests/detectors/ark_runtime/test_runtime_exception.py": "1abf80584aa48dce8df5d543b85aab55f0f5ffc894e917b3a745a63f8841a103",
+    "tests/detectors/ark_runtime/test_unseen_detector.py": "00622bffa55928cf5746785e3e9b0bc57431012fea87a8fe70c1cc42883ad847"
+  },
+  "updated": "2026-10-19",
+  "array_history_development_pairs": [
+    {
+      "commit": "d852d048923189438cbcf69ffb43b8274931a624",
+      "tree": "d5e86c1c09bff241a63e1806376d912e008780b3",
+      "parent": "3280366f6501d60a75e8444f011433e284331fd9",
+      "path": "ecmascript/builtins/builtins_array.cpp",
+      "blob": "ceb366ce848559a0d8cf4cf925a7450869f04a69",
+      "sha256": "a49a41032c4b387f252cf24c39e2dbd4ca21133acbaf9e9587da8afc70f57e27"
+    },
+    {
+      "commit": "b48718a73a2b99f14e1c170f2e1d48d35ed1bdf0",
+      "tree": "6fa2c652f7c7776a5d6af9f55b2274c15062e1ee",
+      "parent": "d852d048923189438cbcf69ffb43b8274931a624",
+      "path": "ecmascript/builtins/builtins_array.cpp",
+      "blob": "ab2a21973eb98832d6285f9bbecb39d08384a806",
+      "sha256": "ce021f93676e697428103d42abf4e8e75cc01dce3b74aa1db14912f18d7816fd"
+    },
+    {
+      "commit": "ab9e5b031a34500432d16b31c5d2cff50efcf9a7",
+      "tree": "cc7ff4fd36534d89b8164657fd0dfc35797a5864",
+      "parent": "19d900a0e0515a3407a5e3529ab8b49e73ba09b6",
+      "path": "ecmascript/builtins/builtins_array.cpp",
+      "blob": "810a5adc67f1af88c2aa64946eb8795526a8d1f3",
+      "sha256": "6d14bdfe41981b279080909b47394a07a815699084bb324cdfc869a045fdd93d"
+    },
+    {
+      "commit": "f536dc733883b40d9bce1639356bd9253c1c2b27",
+      "tree": "1b125e9ef4462ae78e48adb655f093a8c6a7badc",
+      "parent": "ab9e5b031a34500432d16b31c5d2cff50efcf9a7",
+      "path": "ecmascript/builtins/builtins_array.cpp",
+      "blob": "3b166655575126c275f40246594fb6751097e366",
+      "sha256": "2645e5c829491a32f2b0bb8296f2508996e89ddf399e0cf7684ac1452b0b69b7"
+    },
+    {
+      "commit": "d0dc435478bfaa45263a5420a3dad5cf5d87f1ab",
+      "tree": "df5a1a952501a2e381202b933c86cdff630cfdf2",
+      "parent": "5a8303acb65c1cd9c48e0e655890c73d73ef8daa",
+      "path": "ecmascript/builtins/builtins_array.cpp",
+      "blob": "5fed050bd79d4296fa3dc6aa04e0f9ec597dde3b",
+      "sha256": "0162bfb411abde34bb4ce3386fa55890a5d5fc12b9af402081606c02ee002128"
+    }
+  ],
+  "array_history_role": "Development and blocker investigation only; b487/f536/d0dc were inspected during v0.8.1 tuning and are not independent holdout results.",
+  "detector_version": "0.8.9",
+  "analysis_budget": {
+    "max_instructions": 16384,
+    "previous": 4096,
+    "reason": "Array exact-history replay exhausted 4096; 16384 removes instruction exhaustion but cross-compound control flow remains partial."
+  },
+  "official_history_syncs": [
+    {
+      "remote": "https://gitee.com/openharmony/arkcompiler_ets_runtime.git",
+      "ref": "refs/heads/master",
+      "tip_at_sync": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+      "depth": 300,
+      "database": "D:\\openHarmonyScanner\\tmp\\c-line-callback-holdout-history-20261019.git",
+      "purpose": "commit discovery and explicit local source replay; scan ran only after fetch completed"
+    }
+  ],
+  "wrapper_case": {
+    "parent": "493a73ba63c4a74ce1c67122e55e2a4f1e0d383b",
+    "fixed": "7fb7ec3107e5117c8c00c66fca64d02eea087d38",
+    "fixed_tree": "dd3a4d1d12c46266d4644ae7d91d54dc1d1cf075",
+    "scope": [
+      "ecmascript/builtins/builtins_array.cpp",
+      "ecmascript/js_stable_array.cpp",
+      "ecmascript/js_stable_array.h",
+      "ecmascript/ecma_macros.h"
+    ],
+    "role": "post-freeze wrapper candidate; inconclusive/partial; leakage audit required",
+    "parent_tree": "94feee5b5439029a9194cecc53fe953e9eb452a2",
+    "parent_snapshot_sha256": "4ec2d70364956c6ba3817d848deb807b8ff2538b2737f932164a34f7235853d4",
+    "fixed_snapshot_sha256": "1e4b3e71b47d8d07795cc44c5695ab990e27bf102e56c03a510f739343ca2fc9",
+    "file_identities": {
+      "parent": {
+        "builtins_array.cpp": {
+          "blob": "a4c56e3895bb225c3d8f1b57558e46e7db95ff8e",
+          "sha256": "a8fabb941c60a10557ae3ae665d1f24db2dcb6b585d80015492dc1e6523018bb"
+        },
+        "js_stable_array.cpp": {
+          "blob": "de93eb8533c32dc12e39e56c0fd4e6ac09f5d14c",
+          "sha256": "dad8b9438f0bd5dfb5a0893f845b2450c62dc4afafa6c3a5395e79721e7a3326"
+        }
+      },
+      "fixed": {
+        "builtins_array.cpp": {
+          "blob": "43427fd60bab017dbca3312e8c2a1e2794edf251",
+          "sha256": "b8a45acbbfa7c198d06c5f324be826956334a7beffb615b7c7056dd9949ae210"
+        },
+        "js_stable_array.cpp": {
+          "blob": "9b6b0e392cbb05d455657b1210426a4b25515962",
+          "sha256": "4b1e6b6675fdfa1e409345d9410bb95752700f00514e0e756f576ec09e56f7d6"
+        }
+      }
+    }
+  },
+  "implementation_note": "v0.8.7 extends call-info guard dominance across a straight-line ancestor compound into a nested loop/branch use; general CFG and non-call-info exception effects remain out of scope.",
+  "findindex_c333_case": {
+    "parent": "9824afc4c09441f4e504b679c70d9876ba90607c",
+    "parent_tree": "6b4323d58cfa7128ee10a7e7257b9480caad5604",
+    "fixed": "c333bfc148f0ecc2e0db8c84c821a7560f904906",
+    "fixed_tree": "a2f5ca235eb7da24897bd4e477f4361e4b4da0d5",
+    "scope": [
+      "ecmascript/builtins/builtins_array.cpp",
+      "ecmascript/js_stable_array.cpp",
+      "ecmascript/js_stable_array.h",
+      "ecmascript/ecma_macros.h"
+    ],
+    "file_identities": {
+      "parent": [
+        {
+          "path": "ecmascript/builtins/builtins_array.cpp",
+          "blob": "8749c9de8ad6cfc0a967efbd0d9275b8894d74f9",
+          "sha256": "7f11e788354f81cee4b4eabbc8302954881ba2fffc44e99281f4f16c2b1faf4a",
+          "bytes": 151301
+        },
+        {
+          "path": "ecmascript/js_stable_array.cpp",
+          "blob": "e8fbb74b0f112762c7ea4af8b16d9260103791fd",
+          "sha256": "3d6fab882b08749e49ce2c641bdc32c3b298a6d5f262c89519e8c847261dbd52",
+          "bytes": 45153
+        },
+        {
+          "path": "ecmascript/js_stable_array.h",
+          "blob": "adf8464ab36eafafdda193d51196c7322bcef6e5",
+          "sha256": "f93b5ecde741a118f10742081f3dac23c9a0d84a2e54d6ee8f83b4760b1a0814",
+          "bytes": 6508
+        },
+        {
+          "path": "ecmascript/ecma_macros.h",
+          "blob": "53e552027e86f7d72802170f66acec3e7aa4c4ba",
+          "sha256": "30677741255a50c47eae10c147734203293e0e972b816c0fd27032f2f77bd14c",
+          "bytes": 38487
+        }
+      ],
+      "fixed": [
+        {
+          "path": "ecmascript/builtins/builtins_array.cpp",
+          "blob": "e9e3c9aaeee63bcbf8e060232b4a044550d55120",
+          "sha256": "9c21cb837b8b6844e50de334dd446a547952c776b44710070655ee3ec5766c0a",
+          "bytes": 151356
+        },
+        {
+          "path": "ecmascript/js_stable_array.cpp",
+          "blob": "e8fbb74b0f112762c7ea4af8b16d9260103791fd",
+          "sha256": "3d6fab882b08749e49ce2c641bdc32c3b298a6d5f262c89519e8c847261dbd52",
+          "bytes": 45153
+        },
+        {
+          "path": "ecmascript/js_stable_array.h",
+          "blob": "adf8464ab36eafafdda193d51196c7322bcef6e5",
+          "sha256": "f93b5ecde741a118f10742081f3dac23c9a0d84a2e54d6ee8f83b4760b1a0814",
+          "bytes": 6508
+        },
+        {
+          "path": "ecmascript/ecma_macros.h",
+          "blob": "53e552027e86f7d72802170f66acec3e7aa4c4ba",
+          "sha256": "30677741255a50c47eae10c147734203293e0e972b816c0fd27032f2f77bd14c",
+          "bytes": 38487
+        }
+      ]
+    },
+    "diff": "ecmascript/builtins/builtins_array.cpp: add RETURN_EXCEPTION_IF_ABRUPT_COMPLETION(thread) directly after HandleFindIndexOfStable call and before callResult.ToBoolean().",
+    "commit_message": "bugfix of jsproxy; issue I7ZZHM; FindIndex hunk linkage not verified.",
+    "classification": "real-source regression, non-independent development-family variant; public disclosure association unknown; M2 parent-only finding but whole-file runs partial.",
+    "reports": [
+      "reports/v084-findindex-c333-parent.json",
+      "reports/v084-findindex-c333-fixed.json"
+    ]
+  },
+  "callinfo_construction_exception_case": {
+    "parent": "11c5ad59240da5603504821d674c499e3cbff75a",
+    "fixed": "f596e410db3ab90a4706a248cf935b135a62490a",
+    "parent_tree": "2614d90ed3924631ed455a302093a0a5d5a668da",
+    "fixed_tree": "9bcf5a2aaaa2fcdf35719d4641ed7e3bfde8400c",
+    "scope": [
+      "ecmascript/js_iterator.cpp",
+      "ecmascript/ecma_macros.h"
+    ],
+    "file_identity_manifest": "callinfo_source_identity.json",
+    "development_pair_reports": [
+      "reports/v085-callinfo-jsiterator-parent.json",
+      "reports/v085-callinfo-jsiterator-fixed.json"
+    ],
+    "untrained_correlated_variant_reports": [
+      "reports/v085-callinfo-string-variant-parent.json",
+      "reports/v085-callinfo-string-variant-fixed.json"
+    ],
+    "role": "development exact pair; string variant source-disjoint but same remediation batch, not independent disclosure holdout"
+  },
+  "callinfo_macro_contract_case": "exception_history_source_identity.json#IB40SU_NewRuntimeCallInfo_guard"
+}

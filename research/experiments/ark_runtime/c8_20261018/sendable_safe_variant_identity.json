@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-10-19",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "commit": "8451e52e2394f13b677fe3afef3d6cc224c11182",
+  "tree": "a5c49f315d30903fd4a90354ca76d94ce1794786",
+  "file": {
+    "path": "ecmascript/base/typed_array_helper.cpp",
+    "blob": "5b17950e44afd3c505efee903bb18e2885393381",
+    "sha256": "e402d88d07479a3ff9863f9ae21381129ba2e513bc706413034f55438d832e04",
+    "bytes": 61134
+  },
+  "mechanism_variants": [
+    {
+      "function": "TypedArrayHelper::CreateFromTypedArray",
+      "product_line": 423,
+      "allocation_line": 441,
+      "copy_loop_line": 462,
+      "widened_before_multiply": true
+    },
+    {
+      "function": "TypedArrayHelper::CreateSharedFromTypedArray",
+      "product_line": 537,
+      "allocation_line": 553,
+      "copy_loop_line": 581,
+      "widened_before_multiply": true
+    }
+  ],
+  "production_scan": "v0.8.10 ohscan-run; exact pinned single-file light-ast scope; zero diagnostics; full detector coverage partial/blocked. Text-flow helper confirms both products as may_overflow=false.",
+  "classification": "Real same-mechanism safe development control, but used to extend allocator support after inspection; not an independent holdout. No build or runtime test."
+}

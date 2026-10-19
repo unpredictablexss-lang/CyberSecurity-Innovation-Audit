@@ -1,0 +1,4875 @@
+{
+  "schema_version": 1,
+  "replay_kind": "research_direct_analyzer_observations",
+  "fetch_performed": false,
+  "cases": [
+    {
+      "case": "i11196_direct_parent",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "scope": "one exact translation unit; light AST; no preprocessor or build profile",
+      "direct_analyzer_result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 964,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:31760:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:31760:thisValue",
+            "token_line": 856,
+            "creation_line": 0,
+            "path": [
+              850,
+              851,
+              852,
+              853,
+              854,
+              855,
+              856,
+              857,
+              858,
+              859,
+              860,
+              862,
+              863,
+              864,
+              865,
+              866,
+              867,
+              868,
+              869,
+              870,
+              871,
+              872,
+              874,
+              875,
+              876,
+              877,
+              878,
+              879,
+              881,
+              888,
+              889,
+              891,
+              898,
+              900,
+              901,
+              902,
+              903,
+              904,
+              905,
+              906,
+              907,
+              908,
+              909,
+              910,
+              911,
+              912,
+              913,
+              915,
+              917,
+              918,
+              925,
+              927,
+              928,
+              929,
+              930,
+              931,
+              941,
+              943,
+              944,
+              945,
+              946,
+              947,
+              948,
+              949,
+              951,
+              952,
+              953,
+              954,
+              955,
+              956,
+              962,
+              964
+            ],
+            "constraints": [
+              [
+                854,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                857,
+                "IsFastTypeArray(jsType)",
+                true
+              ],
+              [
+                859,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                874,
+                "Int64GreaterThanOrEqual(IntPtr(0), numArgs)",
+                false
+              ],
+              [
+                877,
+                "TaggedIsInt(targetTag)",
+                true
+              ],
+              [
+                881,
+                "Int64GreaterThanOrEqual(IntPtr(1), numArgs)",
+                true
+              ],
+              [
+                891,
+                "Int64GreaterThanOrEqual(IntPtr(2), numArgs)",
+                true
+              ],
+              [
+                913,
+                "Int64LessThan(Int64Sub(*copyEnd, *copyFrom), Int64Sub(thisLen, *copyTo))",
+                true
+              ],
+              [
+                931,
+                "LogicAndBuilder(env).And(Int64LessThan(copyFromVal, copyToVal))\r\n            .And(Int64LessThan(copyToVal, Int64Add(copyFromVal, countVal))).Done()",
+                false
+              ],
+              [
+                953,
+                "Int64GreaterThan(*count, Int64(0))",
+                true
+              ],
+              [
+                956,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin",
+            "region_start_byte": 31699,
+            "region_end_byte": 37106,
+            "effect_sites": []
+          },
+          {
+            "kind": "candidate",
+            "line": 1498,
+            "column": 21,
+            "reason": "distinct_origin_with_type_changing_creation",
+            "target_identity": "new:58949",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:53911:thisValue",
+            "token_line": 1388,
+            "creation_line": 1478,
+            "path": [
+              1375,
+              1376,
+              1377,
+              1378,
+              1379,
+              1380,
+              1381,
+              1382,
+              1383,
+              1384,
+              1385,
+              1386,
+              1387,
+              1388,
+              1389,
+              1390,
+              1391,
+              1392,
+              1393,
+              1394,
+              1395,
+              1396,
+              1397,
+              1398,
+              1399,
+              1400,
+              1401,
+              1402,
+              1403,
+              1405,
+              1406,
+              1407,
+              1408,
+              1409,
+              1411,
+              1412,
+              1414,
+              1415,
+              1416,
+              1417,
+              1418,
+              1419,
+              1420,
+              1421,
+              1422,
+              1423,
+              1424,
+              1425,
+              1427,
+              1428,
+              1429,
+              1430,
+              1431,
+              1432,
+              1473,
+              1474,
+              1475,
+              1476,
+              1477,
+              1478,
+              1479,
+              1485,
+              1486,
+              1487,
+              1488,
+              1489,
+              1490,
+              1491,
+              1492,
+              1494,
+              1495,
+              1497,
+              1498
+            ],
+            "constraints": [
+              [
+                1384,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                1386,
+                "IsEcmaObject(thisValue)",
+                true
+              ],
+              [
+                1389,
+                "IsFastTypeArray(arrayType)",
+                true
+              ],
+              [
+                1392,
+                "IsDetachedBuffer(buffer)",
+                false
+              ],
+              [
+                1394,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                1397,
+                "IsEcmaObject(prototype)",
+                true
+              ],
+              [
+                1400,
+                "TaggedIsProtoChangeMarker(marker)",
+                true
+              ],
+              [
+                1402,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                1408,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                1411,
+                "IsCallable(callbackFnHandle)",
+                true
+              ],
+              [
+                1432,
+                "Int32LessThan(*i, thisLen)",
+                false
+              ],
+              [
+                1479,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1494,
+                "Int32LessThan(*i, *newArrayLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 53854,
+            "region_end_byte": 60182,
+            "effect_sites": [
+              [
+                1384,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                1386,
+                "IsEcmaObject"
+              ],
+              [
+                1391,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                1392,
+                "IsDetachedBuffer"
+              ],
+              [
+                1396,
+                "GetPrototypeFromHClass"
+              ],
+              [
+                1397,
+                "IsEcmaObject"
+              ],
+              [
+                1399,
+                "GetProtoChangeMarkerFromHClass"
+              ],
+              [
+                1400,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                1402,
+                "GetAccessorHasChanged"
+              ],
+              [
+                1411,
+                "IsCallable"
+              ],
+              [
+                1417,
+                "arrayStubBuilder.NewArray"
+              ],
+              [
+                1478,
+                "newBuilder.NewTypedArray"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 2673,
+            "column": 17,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:107201",
+            "token_origin": "new:107201",
+            "token_line": 2647,
+            "creation_line": 2646,
+            "path": [
+              2600,
+              2601,
+              2602,
+              2603,
+              2604,
+              2605,
+              2606,
+              2607,
+              2608,
+              2609,
+              2610,
+              2611,
+              2612,
+              2613,
+              2614,
+              2615,
+              2616,
+              2617,
+              2618,
+              2619,
+              2620,
+              2621,
+              2622,
+              2623,
+              2624,
+              2625,
+              2626,
+              2627,
+              2628,
+              2629,
+              2630,
+              2631,
+              2632,
+              2633,
+              2634,
+              2635,
+              2636,
+              2637,
+              2638,
+              2639,
+              2640,
+              2642,
+              2643,
+              2644,
+              2645,
+              2646,
+              2647,
+              2648,
+              2649,
+              2650,
+              2651,
+              2652,
+              2653,
+              2655,
+              2656,
+              2657,
+              2658,
+              2659,
+              2660,
+              2661,
+              2662,
+              2663,
+              2665,
+              2666,
+              2671,
+              2673
+            ],
+            "constraints": [
+              [
+                2609,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2611,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                2613,
+                "IsFastTypeArray(GetObjectType(LoadHClass(thisValue)))",
+                true
+              ],
+              [
+                2615,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                2618,
+                "IsDetachedBuffer(buffer)",
+                false
+              ],
+              [
+                2621,
+                "IsEcmaObject(prototype)",
+                true
+              ],
+              [
+                2624,
+                "TaggedIsProtoChangeMarker(marker)",
+                true
+              ],
+              [
+                2626,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                2634,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                2636,
+                "IsCallable(callbackFnHandle)",
+                true
+              ],
+              [
+                2657,
+                "Int64LessThan(*i, thisLen)",
+                true
+              ],
+              [
+                2666,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+            "region_start_byte": 104952,
+            "region_end_byte": 108859,
+            "effect_sites": [
+              [
+                2609,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2617,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                2618,
+                "IsDetachedBuffer"
+              ],
+              [
+                2620,
+                "GetPrototypeFromHClass"
+              ],
+              [
+                2621,
+                "IsEcmaObject"
+              ],
+              [
+                2623,
+                "GetProtoChangeMarkerFromHClass"
+              ],
+              [
+                2624,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                2626,
+                "GetAccessorHasChanged"
+              ],
+              [
+                2636,
+                "IsCallable"
+              ],
+              [
+                2646,
+                "newBuilder.NewTypedArray"
+              ],
+              [
+                2660,
+                "Int64ToTaggedInt"
+              ],
+              [
+                2664,
+                "Circuit::NullGate"
+              ],
+              [
+                2665,
+                "callBuilder.JSCallDispatch"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 2234,
+            "column": 25,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:86584:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:86584:thisValue",
+            "token_line": 2235,
+            "creation_line": 0,
+            "path": [
+              2147,
+              2148,
+              2149,
+              2150,
+              2152,
+              2153,
+              2154,
+              2155,
+              2156,
+              2157,
+              2158,
+              2159,
+              2160,
+              2161,
+              2162,
+              2163,
+              2164,
+              2165,
+              2166,
+              2167,
+              2168,
+              2169,
+              2184,
+              2186,
+              2187,
+              2188,
+              2189,
+              2190,
+              2191,
+              2192,
+              2193,
+              2195,
+              2196,
+              2197,
+              2198,
+              2199,
+              2200,
+              2201,
+              2202,
+              2203,
+              2204,
+              2205,
+              2206,
+              2207,
+              2209,
+              2210,
+              2211,
+              2220,
+              2222,
+              2223,
+              2224,
+              2225,
+              2226,
+              2227,
+              2229,
+              2230,
+              2232,
+              2234
+            ],
+            "constraints": [
+              [
+                2152,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2154,
+                "IsEcmaObject(thisValue)",
+                true
+              ],
+              [
+                2156,
+                "IsFastTypeArray(GetObjectType(LoadHClass(thisValue)))",
+                true
+              ],
+              [
+                2161,
+                "Int64Equal(len, Int64(0))",
+                false
+              ],
+              [
+                2169,
+                "TaggedIsUndefinedOrNull(fromOffset)",
+                true
+              ],
+              [
+                2190,
+                "IsEcmaObject(srcArray)",
+                true
+              ],
+              [
+                2192,
+                "IsTypedArray(srcArray)",
+                true
+              ],
+              [
+                2197,
+                "IsFastTypeArray(srcType)",
+                true
+              ],
+              [
+                2202,
+                "SameValue(glue, targetBuffer, srcBuffer)",
+                false
+              ],
+              [
+                2206,
+                "Int64GreaterThan(Int64Add(*realOffset, srcLen), len)",
+                false
+              ],
+              [
+                2211,
+                "Equal(srcType, arrayType)",
+                false
+              ],
+              [
+                2229,
+                "Int64LessThan(*startIndex, srcLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set",
+            "region_start_byte": 86530,
+            "region_end_byte": 91082,
+            "effect_sites": [
+              [
+                2152,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2154,
+                "IsEcmaObject"
+              ],
+              [
+                2169,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2190,
+                "IsEcmaObject"
+              ],
+              [
+                2200,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                2201,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                2202,
+                "SameValue"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 1762,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "same-type:68250",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With:66954:thisValue",
+            "token_line": 1716,
+            "creation_line": 1719,
+            "path": [
+              1691,
+              1692,
+              1693,
+              1694,
+              1695,
+              1696,
+              1697,
+              1698,
+              1699,
+              1700,
+              1701,
+              1702,
+              1703,
+              1704,
+              1705,
+              1706,
+              1707,
+              1708,
+              1709,
+              1710,
+              1711,
+              1712,
+              1713,
+              1714,
+              1715,
+              1716,
+              1717,
+              1718,
+              1719,
+              1720,
+              1721,
+              1722,
+              1728,
+              1729,
+              1731,
+              1732,
+              1734,
+              1735,
+              1742,
+              1744,
+              1746,
+              1748,
+              1749,
+              1750,
+              1751,
+              1752,
+              1753,
+              1754,
+              1755,
+              1757,
+              1758,
+              1759,
+              1760,
+              1762
+            ],
+            "constraints": [
+              [
+                1697,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                1699,
+                "IsTypedArray(thisValue)",
+                true
+              ],
+              [
+                1701,
+                "IsJsCOWArray(thisValue)",
+                false
+              ],
+              [
+                1706,
+                "TaggedIsInt(index)",
+                true
+              ],
+              [
+                1722,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1731,
+                "Int64GreaterThanOrEqual(*relativeIndex, Int64(0))",
+                true
+              ],
+              [
+                1744,
+                "BitOr(Int64GreaterThanOrEqual(*actualIndex, thisLen), Int64LessThan(*actualIndex, Int64(0)))",
+                false
+              ],
+              [
+                1757,
+                "Int64LessThan(*k, thisLen)",
+                true
+              ],
+              [
+                1759,
+                "Int64Equal(*k, *actualIndex)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With",
+            "region_start_byte": 66899,
+            "region_end_byte": 70266,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [
+          "experimental_partial_function_scope",
+          "parse_dependency_contamination_unknown",
+          "partial_scope_routed_through_semantic_selector"
+        ],
+        "steps": 1621,
+        "model_digest": "5adcd91b9a10fdfbefc19b6ff634490933f5519351601b4bfd3909810699c73a"
+      }
+    },
+    {
+      "case": "i11196_direct_fix",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+      "tree": "82af11ced4297818410ccf61906b703d25b69165",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "scope": "one exact translation unit; light AST; no preprocessor or build profile",
+      "direct_analyzer_result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 964,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:31760:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:31760:thisValue",
+            "token_line": 856,
+            "creation_line": 0,
+            "path": [
+              850,
+              851,
+              852,
+              853,
+              854,
+              855,
+              856,
+              857,
+              858,
+              859,
+              860,
+              862,
+              863,
+              864,
+              865,
+              866,
+              867,
+              868,
+              869,
+              870,
+              871,
+              872,
+              874,
+              875,
+              876,
+              877,
+              878,
+              879,
+              881,
+              888,
+              889,
+              891,
+              898,
+              900,
+              901,
+              902,
+              903,
+              904,
+              905,
+              906,
+              907,
+              908,
+              909,
+              910,
+              911,
+              912,
+              913,
+              915,
+              917,
+              918,
+              925,
+              927,
+              928,
+              929,
+              930,
+              931,
+              941,
+              943,
+              944,
+              945,
+              946,
+              947,
+              948,
+              949,
+              951,
+              952,
+              953,
+              954,
+              955,
+              956,
+              962,
+              964
+            ],
+            "constraints": [
+              [
+                854,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                857,
+                "IsFastTypeArray(jsType)",
+                true
+              ],
+              [
+                859,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                874,
+                "Int64GreaterThanOrEqual(IntPtr(0), numArgs)",
+                false
+              ],
+              [
+                877,
+                "TaggedIsInt(targetTag)",
+                true
+              ],
+              [
+                881,
+                "Int64GreaterThanOrEqual(IntPtr(1), numArgs)",
+                true
+              ],
+              [
+                891,
+                "Int64GreaterThanOrEqual(IntPtr(2), numArgs)",
+                true
+              ],
+              [
+                913,
+                "Int64LessThan(Int64Sub(*copyEnd, *copyFrom), Int64Sub(thisLen, *copyTo))",
+                true
+              ],
+              [
+                931,
+                "LogicAndBuilder(env).And(Int64LessThan(copyFromVal, copyToVal))\r\n            .And(Int64LessThan(copyToVal, Int64Add(copyFromVal, countVal))).Done()",
+                false
+              ],
+              [
+                953,
+                "Int64GreaterThan(*count, Int64(0))",
+                true
+              ],
+              [
+                956,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin",
+            "region_start_byte": 31699,
+            "region_end_byte": 37106,
+            "effect_sites": []
+          },
+          {
+            "kind": "matched",
+            "line": 1499,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:58949",
+            "token_origin": "new:58949",
+            "token_line": 1479,
+            "creation_line": 1478,
+            "path": [
+              1375,
+              1376,
+              1377,
+              1378,
+              1379,
+              1380,
+              1381,
+              1382,
+              1383,
+              1384,
+              1385,
+              1386,
+              1387,
+              1388,
+              1389,
+              1390,
+              1391,
+              1392,
+              1393,
+              1394,
+              1395,
+              1396,
+              1397,
+              1398,
+              1399,
+              1400,
+              1401,
+              1402,
+              1403,
+              1405,
+              1406,
+              1407,
+              1408,
+              1409,
+              1411,
+              1412,
+              1414,
+              1415,
+              1416,
+              1417,
+              1418,
+              1419,
+              1420,
+              1421,
+              1422,
+              1423,
+              1424,
+              1425,
+              1427,
+              1428,
+              1429,
+              1430,
+              1431,
+              1432,
+              1473,
+              1474,
+              1475,
+              1476,
+              1477,
+              1478,
+              1479,
+              1480,
+              1486,
+              1487,
+              1488,
+              1489,
+              1490,
+              1491,
+              1492,
+              1493,
+              1495,
+              1496,
+              1498,
+              1499
+            ],
+            "constraints": [
+              [
+                1384,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                1386,
+                "IsEcmaObject(thisValue)",
+                true
+              ],
+              [
+                1389,
+                "IsFastTypeArray(arrayType)",
+                true
+              ],
+              [
+                1392,
+                "IsDetachedBuffer(buffer)",
+                false
+              ],
+              [
+                1394,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                1397,
+                "IsEcmaObject(prototype)",
+                true
+              ],
+              [
+                1400,
+                "TaggedIsProtoChangeMarker(marker)",
+                true
+              ],
+              [
+                1402,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                1408,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                1411,
+                "IsCallable(callbackFnHandle)",
+                true
+              ],
+              [
+                1432,
+                "Int32LessThan(*i, thisLen)",
+                false
+              ],
+              [
+                1480,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1495,
+                "Int32LessThan(*i, *newArrayLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 53854,
+            "region_end_byte": 60258,
+            "effect_sites": [
+              [
+                1384,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                1386,
+                "IsEcmaObject"
+              ],
+              [
+                1391,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                1392,
+                "IsDetachedBuffer"
+              ],
+              [
+                1396,
+                "GetPrototypeFromHClass"
+              ],
+              [
+                1397,
+                "IsEcmaObject"
+              ],
+              [
+                1399,
+                "GetProtoChangeMarkerFromHClass"
+              ],
+              [
+                1400,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                1402,
+                "GetAccessorHasChanged"
+              ],
+              [
+                1411,
+                "IsCallable"
+              ],
+              [
+                1417,
+                "arrayStubBuilder.NewArray"
+              ],
+              [
+                1478,
+                "newBuilder.NewTypedArray"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 2674,
+            "column": 17,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:107277",
+            "token_origin": "new:107277",
+            "token_line": 2648,
+            "creation_line": 2647,
+            "path": [
+              2601,
+              2602,
+              2603,
+              2604,
+              2605,
+              2606,
+              2607,
+              2608,
+              2609,
+              2610,
+              2611,
+              2612,
+              2613,
+              2614,
+              2615,
+              2616,
+              2617,
+              2618,
+              2619,
+              2620,
+              2621,
+              2622,
+              2623,
+              2624,
+              2625,
+              2626,
+              2627,
+              2628,
+              2629,
+              2630,
+              2631,
+              2632,
+              2633,
+              2634,
+              2635,
+              2636,
+              2637,
+              2638,
+              2639,
+              2640,
+              2641,
+              2643,
+              2644,
+              2645,
+              2646,
+              2647,
+              2648,
+              2649,
+              2650,
+              2651,
+              2652,
+              2653,
+              2654,
+              2656,
+              2657,
+              2658,
+              2659,
+              2660,
+              2661,
+              2662,
+              2663,
+              2664,
+              2666,
+              2667,
+              2672,
+              2674
+            ],
+            "constraints": [
+              [
+                2610,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2612,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                2614,
+                "IsFastTypeArray(GetObjectType(LoadHClass(thisValue)))",
+                true
+              ],
+              [
+                2616,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                2619,
+                "IsDetachedBuffer(buffer)",
+                false
+              ],
+              [
+                2622,
+                "IsEcmaObject(prototype)",
+                true
+              ],
+              [
+                2625,
+                "TaggedIsProtoChangeMarker(marker)",
+                true
+              ],
+              [
+                2627,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                2635,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                2637,
+                "IsCallable(callbackFnHandle)",
+                true
+              ],
+              [
+                2658,
+                "Int64LessThan(*i, thisLen)",
+                true
+              ],
+              [
+                2667,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+            "region_start_byte": 105028,
+            "region_end_byte": 108935,
+            "effect_sites": [
+              [
+                2610,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2618,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                2619,
+                "IsDetachedBuffer"
+              ],
+              [
+                2621,
+                "GetPrototypeFromHClass"
+              ],
+              [
+                2622,
+                "IsEcmaObject"
+              ],
+              [
+                2624,
+                "GetProtoChangeMarkerFromHClass"
+              ],
+              [
+                2625,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                2627,
+                "GetAccessorHasChanged"
+              ],
+              [
+                2637,
+                "IsCallable"
+              ],
+              [
+                2647,
+                "newBuilder.NewTypedArray"
+              ],
+              [
+                2661,
+                "Int64ToTaggedInt"
+              ],
+              [
+                2665,
+                "Circuit::NullGate"
+              ],
+              [
+                2666,
+                "callBuilder.JSCallDispatch"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 2235,
+            "column": 25,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:86660:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:86660:thisValue",
+            "token_line": 2236,
+            "creation_line": 0,
+            "path": [
+              2148,
+              2149,
+              2150,
+              2151,
+              2153,
+              2154,
+              2155,
+              2156,
+              2157,
+              2158,
+              2159,
+              2160,
+              2161,
+              2162,
+              2163,
+              2164,
+              2165,
+              2166,
+              2167,
+              2168,
+              2169,
+              2170,
+              2185,
+              2187,
+              2188,
+              2189,
+              2190,
+              2191,
+              2192,
+              2193,
+              2194,
+              2196,
+              2197,
+              2198,
+              2199,
+              2200,
+              2201,
+              2202,
+              2203,
+              2204,
+              2205,
+              2206,
+              2207,
+              2208,
+              2210,
+              2211,
+              2212,
+              2221,
+              2223,
+              2224,
+              2225,
+              2226,
+              2227,
+              2228,
+              2230,
+              2231,
+              2233,
+              2235
+            ],
+            "constraints": [
+              [
+                2153,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2155,
+                "IsEcmaObject(thisValue)",
+                true
+              ],
+              [
+                2157,
+                "IsFastTypeArray(GetObjectType(LoadHClass(thisValue)))",
+                true
+              ],
+              [
+                2162,
+                "Int64Equal(len, Int64(0))",
+                false
+              ],
+              [
+                2170,
+                "TaggedIsUndefinedOrNull(fromOffset)",
+                true
+              ],
+              [
+                2191,
+                "IsEcmaObject(srcArray)",
+                true
+              ],
+              [
+                2193,
+                "IsTypedArray(srcArray)",
+                true
+              ],
+              [
+                2198,
+                "IsFastTypeArray(srcType)",
+                true
+              ],
+              [
+                2203,
+                "SameValue(glue, targetBuffer, srcBuffer)",
+                false
+              ],
+              [
+                2207,
+                "Int64GreaterThan(Int64Add(*realOffset, srcLen), len)",
+                false
+              ],
+              [
+                2212,
+                "Equal(srcType, arrayType)",
+                false
+              ],
+              [
+                2230,
+                "Int64LessThan(*startIndex, srcLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set",
+            "region_start_byte": 86606,
+            "region_end_byte": 91158,
+            "effect_sites": [
+              [
+                2153,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2155,
+                "IsEcmaObject"
+              ],
+              [
+                2170,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2191,
+                "IsEcmaObject"
+              ],
+              [
+                2201,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                2202,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                2203,
+                "SameValue"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 1763,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "same-type:68326",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With:67030:thisValue",
+            "token_line": 1717,
+            "creation_line": 1720,
+            "path": [
+              1692,
+              1693,
+              1694,
+              1695,
+              1696,
+              1697,
+              1698,
+              1699,
+              1700,
+              1701,
+              1702,
+              1703,
+              1704,
+              1705,
+              1706,
+              1707,
+              1708,
+              1709,
+              1710,
+              1711,
+              1712,
+              1713,
+              1714,
+              1715,
+              1716,
+              1717,
+              1718,
+              1719,
+              1720,
+              1721,
+              1722,
+              1723,
+              1729,
+              1730,
+              1732,
+              1733,
+              1735,
+              1736,
+              1743,
+              1745,
+              1747,
+              1749,
+              1750,
+              1751,
+              1752,
+              1753,
+              1754,
+              1755,
+              1756,
+              1758,
+              1759,
+              1760,
+              1761,
+              1763
+            ],
+            "constraints": [
+              [
+                1698,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                1700,
+                "IsTypedArray(thisValue)",
+                true
+              ],
+              [
+                1702,
+                "IsJsCOWArray(thisValue)",
+                false
+              ],
+              [
+                1707,
+                "TaggedIsInt(index)",
+                true
+              ],
+              [
+                1723,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1732,
+                "Int64GreaterThanOrEqual(*relativeIndex, Int64(0))",
+                true
+              ],
+              [
+                1745,
+                "BitOr(Int64GreaterThanOrEqual(*actualIndex, thisLen), Int64LessThan(*actualIndex, Int64(0)))",
+                false
+              ],
+              [
+                1758,
+                "Int64LessThan(*k, thisLen)",
+                true
+              ],
+              [
+                1760,
+                "Int64Equal(*k, *actualIndex)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With",
+            "region_start_byte": 66975,
+            "region_end_byte": 70342,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [
+          "experimental_partial_function_scope",
+          "parse_dependency_contamination_unknown",
+          "partial_scope_routed_through_semantic_selector"
+        ],
+        "steps": 1624,
+        "model_digest": "5adcd91b9a10fdfbefc19b6ff634490933f5519351601b4bfd3909810699c73a"
+      }
+    },
+    {
+      "case": "i11684_safe_parent",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+      "tree": "27ec52bd443ccd4e45b472731114e8547df71ea2",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "34f6aa2c6ccaad144a2038c8aab208ea290b5a86",
+      "source_sha256": "2c45da670fcb4170176bb9bd93da7d21dbc286925a0ca1126d250318412417ff",
+      "scope": "one exact translation unit; light AST; no preprocessor or build profile",
+      "direct_analyzer_result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 977,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:32716:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:32716:thisValue",
+            "token_line": 869,
+            "creation_line": 0,
+            "path": [
+              863,
+              864,
+              865,
+              866,
+              867,
+              868,
+              869,
+              870,
+              871,
+              872,
+              873,
+              875,
+              876,
+              877,
+              878,
+              879,
+              880,
+              881,
+              882,
+              883,
+              884,
+              885,
+              887,
+              888,
+              889,
+              890,
+              891,
+              892,
+              894,
+              901,
+              902,
+              904,
+              911,
+              913,
+              914,
+              915,
+              916,
+              917,
+              918,
+              919,
+              920,
+              921,
+              922,
+              923,
+              924,
+              925,
+              926,
+              928,
+              930,
+              931,
+              938,
+              940,
+              941,
+              942,
+              943,
+              944,
+              954,
+              956,
+              957,
+              958,
+              959,
+              960,
+              961,
+              962,
+              964,
+              965,
+              966,
+              967,
+              968,
+              969,
+              975,
+              977
+            ],
+            "constraints": [
+              [
+                867,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                870,
+                "IsFastTypeArray(jsType)",
+                true
+              ],
+              [
+                872,
+                "HasConstructor(glue, thisValue)",
+                false
+              ],
+              [
+                887,
+                "Int64GreaterThanOrEqual(IntPtr(0), numArgs)",
+                false
+              ],
+              [
+                890,
+                "TaggedIsInt(targetTag)",
+                true
+              ],
+              [
+                894,
+                "Int64GreaterThanOrEqual(IntPtr(1), numArgs)",
+                true
+              ],
+              [
+                904,
+                "Int64GreaterThanOrEqual(IntPtr(2), numArgs)",
+                true
+              ],
+              [
+                926,
+                "Int64LessThan(Int64Sub(*copyEnd, *copyFrom), Int64Sub(thisLen, *copyTo))",
+                true
+              ],
+              [
+                944,
+                "LogicAndBuilder(env).And(Int64LessThan(copyFromVal, copyToVal))\r\n            .And(Int64LessThan(copyToVal, Int64Add(copyFromVal, countVal))).Done()",
+                false
+              ],
+              [
+                966,
+                "Int64GreaterThan(*count, Int64(0))",
+                true
+              ],
+              [
+                969,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin",
+            "region_start_byte": 32655,
+            "region_end_byte": 38074,
+            "effect_sites": []
+          },
+          {
+            "kind": "matched",
+            "line": 1507,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:59874",
+            "token_origin": "new:59874",
+            "token_line": 1487,
+            "creation_line": 1486,
+            "path": [
+              1383,
+              1384,
+              1385,
+              1386,
+              1387,
+              1388,
+              1389,
+              1390,
+              1391,
+              1392,
+              1393,
+              1394,
+              1395,
+              1396,
+              1397,
+              1398,
+              1399,
+              1400,
+              1401,
+              1402,
+              1403,
+              1404,
+              1405,
+              1406,
+              1407,
+              1408,
+              1409,
+              1410,
+              1411,
+              1413,
+              1414,
+              1415,
+              1416,
+              1417,
+              1419,
+              1420,
+              1422,
+              1423,
+              1424,
+              1425,
+              1426,
+              1427,
+              1428,
+              1429,
+              1430,
+              1431,
+              1432,
+              1433,
+              1435,
+              1436,
+              1437,
+              1438,
+              1439,
+              1440,
+              1481,
+              1482,
+              1483,
+              1484,
+              1485,
+              1486,
+              1487,
+              1488,
+              1494,
+              1495,
+              1496,
+              1497,
+              1498,
+              1499,
+              1500,
+              1501,
+              1503,
+              1504,
+              1506,
+              1507
+            ],
+            "constraints": [
+              [
+                1392,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                1394,
+                "IsEcmaObject(glue, thisValue)",
+                true
+              ],
+              [
+                1397,
+                "IsFastTypeArray(arrayType)",
+                true
+              ],
+              [
+                1400,
+                "IsDetachedBuffer(glue, buffer)",
+                false
+              ],
+              [
+                1402,
+                "HasConstructor(glue, thisValue)",
+                false
+              ],
+              [
+                1405,
+                "IsEcmaObject(glue, prototype)",
+                true
+              ],
+              [
+                1408,
+                "TaggedIsProtoChangeMarker(glue, marker)",
+                true
+              ],
+              [
+                1410,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                1416,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                1419,
+                "IsCallable(glue, callbackFnHandle)",
+                true
+              ],
+              [
+                1440,
+                "Int32LessThan(*i, thisLen)",
+                false
+              ],
+              [
+                1488,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1503,
+                "Int32LessThan(*i, *newArrayLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 54701,
+            "region_end_byte": 61189,
+            "effect_sites": [
+              [
+                1392,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                1408,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                1410,
+                "GetAccessorHasChanged"
+              ],
+              [
+                1425,
+                "arrayStubBuilder.NewArray"
+              ],
+              [
+                1486,
+                "newBuilder.NewTypedArray"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 2682,
+            "column": 17,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:108609",
+            "token_origin": "new:108609",
+            "token_line": 2656,
+            "creation_line": 2655,
+            "path": [
+              2609,
+              2610,
+              2611,
+              2612,
+              2613,
+              2614,
+              2615,
+              2616,
+              2617,
+              2618,
+              2619,
+              2620,
+              2621,
+              2622,
+              2623,
+              2624,
+              2625,
+              2626,
+              2627,
+              2628,
+              2629,
+              2630,
+              2631,
+              2632,
+              2633,
+              2634,
+              2635,
+              2636,
+              2637,
+              2638,
+              2639,
+              2640,
+              2641,
+              2642,
+              2643,
+              2644,
+              2645,
+              2646,
+              2647,
+              2648,
+              2649,
+              2651,
+              2652,
+              2653,
+              2654,
+              2655,
+              2656,
+              2657,
+              2658,
+              2659,
+              2660,
+              2661,
+              2662,
+              2664,
+              2665,
+              2666,
+              2667,
+              2668,
+              2669,
+              2670,
+              2671,
+              2672,
+              2674,
+              2675,
+              2680,
+              2682
+            ],
+            "constraints": [
+              [
+                2618,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2620,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                2622,
+                "IsFastTypeArray(GetObjectType(LoadHClass(glue, thisValue)))",
+                true
+              ],
+              [
+                2624,
+                "HasConstructor(glue, thisValue)",
+                false
+              ],
+              [
+                2627,
+                "IsDetachedBuffer(glue, buffer)",
+                false
+              ],
+              [
+                2630,
+                "IsEcmaObject(glue, prototype)",
+                true
+              ],
+              [
+                2633,
+                "TaggedIsProtoChangeMarker(glue, marker)",
+                true
+              ],
+              [
+                2635,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                2643,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                2645,
+                "IsCallable(glue, callbackFnHandle)",
+                true
+              ],
+              [
+                2666,
+                "Int64LessThan(*i, thisLen)",
+                true
+              ],
+              [
+                2675,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+            "region_start_byte": 106288,
+            "region_end_byte": 110273,
+            "effect_sites": [
+              [
+                2618,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2633,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                2635,
+                "GetAccessorHasChanged"
+              ],
+              [
+                2655,
+                "newBuilder.NewTypedArray"
+              ],
+              [
+                2669,
+                "Int64ToTaggedInt"
+              ],
+              [
+                2673,
+                "Circuit::NullGate"
+              ],
+              [
+                2674,
+                "callBuilder.JSCallDispatch"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 2243,
+            "column": 25,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:87722:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:87722:thisValue",
+            "token_line": 2244,
+            "creation_line": 0,
+            "path": [
+              2156,
+              2157,
+              2158,
+              2159,
+              2161,
+              2162,
+              2163,
+              2164,
+              2165,
+              2166,
+              2167,
+              2168,
+              2169,
+              2170,
+              2171,
+              2172,
+              2173,
+              2174,
+              2175,
+              2176,
+              2177,
+              2178,
+              2193,
+              2195,
+              2196,
+              2197,
+              2198,
+              2199,
+              2200,
+              2201,
+              2202,
+              2204,
+              2205,
+              2206,
+              2207,
+              2208,
+              2209,
+              2210,
+              2211,
+              2212,
+              2213,
+              2214,
+              2215,
+              2216,
+              2218,
+              2219,
+              2220,
+              2229,
+              2231,
+              2232,
+              2233,
+              2234,
+              2235,
+              2236,
+              2238,
+              2239,
+              2241,
+              2243
+            ],
+            "constraints": [
+              [
+                2161,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2163,
+                "IsEcmaObject(glue, thisValue)",
+                true
+              ],
+              [
+                2165,
+                "IsFastTypeArray(GetObjectType(LoadHClass(glue, thisValue)))",
+                true
+              ],
+              [
+                2170,
+                "Int64Equal(len, Int64(0))",
+                false
+              ],
+              [
+                2178,
+                "TaggedIsUndefinedOrNull(fromOffset)",
+                true
+              ],
+              [
+                2199,
+                "IsEcmaObject(glue, srcArray)",
+                true
+              ],
+              [
+                2201,
+                "IsTypedArray(glue, srcArray)",
+                true
+              ],
+              [
+                2206,
+                "IsFastTypeArray(srcType)",
+                true
+              ],
+              [
+                2211,
+                "SameValue(glue, targetBuffer, srcBuffer)",
+                false
+              ],
+              [
+                2215,
+                "Int64GreaterThan(Int64Add(*realOffset, srcLen), len)",
+                false
+              ],
+              [
+                2220,
+                "Equal(srcType, arrayType)",
+                false
+              ],
+              [
+                2238,
+                "Int64LessThan(*startIndex, srcLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set",
+            "region_start_byte": 87668,
+            "region_end_byte": 92280,
+            "effect_sites": [
+              [
+                2161,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2178,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2211,
+                "SameValue"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 1771,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "same-type:69344",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With:68030:thisValue",
+            "token_line": 1725,
+            "creation_line": 1728,
+            "path": [
+              1700,
+              1701,
+              1702,
+              1703,
+              1704,
+              1705,
+              1706,
+              1707,
+              1708,
+              1709,
+              1710,
+              1711,
+              1712,
+              1713,
+              1714,
+              1715,
+              1716,
+              1717,
+              1718,
+              1719,
+              1720,
+              1721,
+              1722,
+              1723,
+              1724,
+              1725,
+              1726,
+              1727,
+              1728,
+              1729,
+              1730,
+              1731,
+              1737,
+              1738,
+              1740,
+              1741,
+              1743,
+              1744,
+              1751,
+              1753,
+              1755,
+              1757,
+              1758,
+              1759,
+              1760,
+              1761,
+              1762,
+              1763,
+              1764,
+              1766,
+              1767,
+              1768,
+              1769,
+              1771
+            ],
+            "constraints": [
+              [
+                1706,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                1708,
+                "IsTypedArray(glue, thisValue)",
+                true
+              ],
+              [
+                1710,
+                "IsJsCOWArray(glue, thisValue)",
+                false
+              ],
+              [
+                1715,
+                "TaggedIsInt(index)",
+                true
+              ],
+              [
+                1731,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1740,
+                "Int64GreaterThanOrEqual(*relativeIndex, Int64(0))",
+                true
+              ],
+              [
+                1753,
+                "BitOr(Int64GreaterThanOrEqual(*actualIndex, thisLen), Int64LessThan(*actualIndex, Int64(0)))",
+                false
+              ],
+              [
+                1766,
+                "Int64LessThan(*k, thisLen)",
+                true
+              ],
+              [
+                1768,
+                "Int64Equal(*k, *actualIndex)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With",
+            "region_start_byte": 67975,
+            "region_end_byte": 71360,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [
+          "experimental_partial_function_scope",
+          "parse_dependency_contamination_unknown",
+          "partial_scope_routed_through_semantic_selector"
+        ],
+        "steps": 1624,
+        "model_digest": "5adcd91b9a10fdfbefc19b6ff634490933f5519351601b4bfd3909810699c73a"
+      }
+    },
+    {
+      "case": "i11684_safe_fix",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+      "tree": "bad9c4b3b9e868fcf07a36ab864978fd8ad598f2",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "893a63a79b6ab85a1473a4f3b33315db0f848a37",
+      "source_sha256": "0abdb870aff6560c671895c0e3360bb3e82fb052cb6a7cf28a90a8c6443044a5",
+      "scope": "one exact translation unit; light AST; no preprocessor or build profile",
+      "direct_analyzer_result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 977,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:32716:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:32716:thisValue",
+            "token_line": 869,
+            "creation_line": 0,
+            "path": [
+              863,
+              864,
+              865,
+              866,
+              867,
+              868,
+              869,
+              870,
+              871,
+              872,
+              873,
+              875,
+              876,
+              877,
+              878,
+              879,
+              880,
+              881,
+              882,
+              883,
+              884,
+              885,
+              887,
+              888,
+              889,
+              890,
+              891,
+              892,
+              894,
+              901,
+              902,
+              904,
+              911,
+              913,
+              914,
+              915,
+              916,
+              917,
+              918,
+              919,
+              920,
+              921,
+              922,
+              923,
+              924,
+              925,
+              926,
+              928,
+              930,
+              931,
+              938,
+              940,
+              941,
+              942,
+              943,
+              944,
+              954,
+              956,
+              957,
+              958,
+              959,
+              960,
+              961,
+              962,
+              964,
+              965,
+              966,
+              967,
+              968,
+              969,
+              975,
+              977
+            ],
+            "constraints": [
+              [
+                867,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                870,
+                "IsFastTypeArray(jsType)",
+                true
+              ],
+              [
+                872,
+                "HasConstructor(glue, thisValue)",
+                false
+              ],
+              [
+                887,
+                "Int64GreaterThanOrEqual(IntPtr(0), numArgs)",
+                false
+              ],
+              [
+                890,
+                "TaggedIsInt(targetTag)",
+                true
+              ],
+              [
+                894,
+                "Int64GreaterThanOrEqual(IntPtr(1), numArgs)",
+                true
+              ],
+              [
+                904,
+                "Int64GreaterThanOrEqual(IntPtr(2), numArgs)",
+                true
+              ],
+              [
+                926,
+                "Int64LessThan(Int64Sub(*copyEnd, *copyFrom), Int64Sub(thisLen, *copyTo))",
+                true
+              ],
+              [
+                944,
+                "LogicAndBuilder(env).And(Int64LessThan(copyFromVal, copyToVal))\r\n            .And(Int64LessThan(copyToVal, Int64Add(copyFromVal, countVal))).Done()",
+                false
+              ],
+              [
+                966,
+                "Int64GreaterThan(*count, Int64(0))",
+                true
+              ],
+              [
+                969,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin",
+            "region_start_byte": 32655,
+            "region_end_byte": 38074,
+            "effect_sites": []
+          },
+          {
+            "kind": "matched",
+            "line": 1507,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:59874",
+            "token_origin": "new:59874",
+            "token_line": 1494,
+            "creation_line": 1486,
+            "path": [
+              1383,
+              1384,
+              1385,
+              1386,
+              1387,
+              1388,
+              1389,
+              1390,
+              1391,
+              1392,
+              1393,
+              1394,
+              1395,
+              1396,
+              1397,
+              1398,
+              1399,
+              1400,
+              1401,
+              1402,
+              1403,
+              1404,
+              1405,
+              1406,
+              1407,
+              1408,
+              1409,
+              1410,
+              1411,
+              1413,
+              1414,
+              1415,
+              1416,
+              1417,
+              1419,
+              1420,
+              1422,
+              1423,
+              1424,
+              1425,
+              1426,
+              1427,
+              1428,
+              1429,
+              1430,
+              1431,
+              1432,
+              1433,
+              1435,
+              1436,
+              1437,
+              1438,
+              1439,
+              1440,
+              1481,
+              1482,
+              1483,
+              1484,
+              1485,
+              1486,
+              1487,
+              1493,
+              1494,
+              1495,
+              1496,
+              1497,
+              1498,
+              1499,
+              1500,
+              1501,
+              1503,
+              1504,
+              1506,
+              1507
+            ],
+            "constraints": [
+              [
+                1392,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                1394,
+                "IsEcmaObject(glue, thisValue)",
+                true
+              ],
+              [
+                1397,
+                "IsFastTypeArray(arrayType)",
+                true
+              ],
+              [
+                1400,
+                "IsDetachedBuffer(glue, buffer)",
+                false
+              ],
+              [
+                1402,
+                "HasConstructor(glue, thisValue)",
+                false
+              ],
+              [
+                1405,
+                "IsEcmaObject(glue, prototype)",
+                true
+              ],
+              [
+                1408,
+                "TaggedIsProtoChangeMarker(glue, marker)",
+                true
+              ],
+              [
+                1410,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                1416,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                1419,
+                "IsCallable(glue, callbackFnHandle)",
+                true
+              ],
+              [
+                1440,
+                "Int32LessThan(*i, thisLen)",
+                false
+              ],
+              [
+                1487,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1503,
+                "Int32LessThan(*i, *newArrayLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 54701,
+            "region_end_byte": 61189,
+            "effect_sites": [
+              [
+                1392,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                1408,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                1410,
+                "GetAccessorHasChanged"
+              ],
+              [
+                1425,
+                "arrayStubBuilder.NewArray"
+              ],
+              [
+                1486,
+                "newBuilder.NewTypedArray"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 2691,
+            "column": 17,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:108691",
+            "token_origin": "new:108691",
+            "token_line": 2665,
+            "creation_line": 2657,
+            "path": [
+              2609,
+              2610,
+              2611,
+              2612,
+              2613,
+              2614,
+              2615,
+              2616,
+              2617,
+              2618,
+              2619,
+              2620,
+              2621,
+              2622,
+              2623,
+              2624,
+              2625,
+              2626,
+              2627,
+              2628,
+              2629,
+              2630,
+              2631,
+              2632,
+              2633,
+              2634,
+              2635,
+              2636,
+              2637,
+              2638,
+              2639,
+              2640,
+              2641,
+              2642,
+              2643,
+              2644,
+              2645,
+              2646,
+              2647,
+              2648,
+              2649,
+              2650,
+              2651,
+              2653,
+              2654,
+              2655,
+              2656,
+              2657,
+              2658,
+              2664,
+              2665,
+              2666,
+              2667,
+              2668,
+              2669,
+              2670,
+              2671,
+              2673,
+              2674,
+              2675,
+              2676,
+              2677,
+              2678,
+              2679,
+              2680,
+              2681,
+              2683,
+              2684,
+              2689,
+              2691
+            ],
+            "constraints": [
+              [
+                2618,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2620,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                2622,
+                "IsFastTypeArray(GetObjectType(LoadHClass(glue, thisValue)))",
+                true
+              ],
+              [
+                2624,
+                "HasConstructor(glue, thisValue)",
+                false
+              ],
+              [
+                2627,
+                "IsDetachedBuffer(glue, buffer)",
+                false
+              ],
+              [
+                2630,
+                "IsEcmaObject(glue, prototype)",
+                true
+              ],
+              [
+                2633,
+                "TaggedIsProtoChangeMarker(glue, marker)",
+                true
+              ],
+              [
+                2635,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                2645,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                2647,
+                "IsCallable(glue, callbackFnHandle)",
+                true
+              ],
+              [
+                2658,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                2675,
+                "Int64LessThan(*i, thisLen)",
+                true
+              ],
+              [
+                2684,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+            "region_start_byte": 106288,
+            "region_end_byte": 110629,
+            "effect_sites": [
+              [
+                2618,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2633,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                2635,
+                "GetAccessorHasChanged"
+              ],
+              [
+                2657,
+                "newBuilder.NewTypedArray"
+              ],
+              [
+                2678,
+                "Int64ToTaggedInt"
+              ],
+              [
+                2682,
+                "Circuit::NullGate"
+              ],
+              [
+                2683,
+                "callBuilder.JSCallDispatch"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 2243,
+            "column": 25,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:87722:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:87722:thisValue",
+            "token_line": 2244,
+            "creation_line": 0,
+            "path": [
+              2156,
+              2157,
+              2158,
+              2159,
+              2161,
+              2162,
+              2163,
+              2164,
+              2165,
+              2166,
+              2167,
+              2168,
+              2169,
+              2170,
+              2171,
+              2172,
+              2173,
+              2174,
+              2175,
+              2176,
+              2177,
+              2178,
+              2193,
+              2195,
+              2196,
+              2197,
+              2198,
+              2199,
+              2200,
+              2201,
+              2202,
+              2204,
+              2205,
+              2206,
+              2207,
+              2208,
+              2209,
+              2210,
+              2211,
+              2212,
+              2213,
+              2214,
+              2215,
+              2216,
+              2218,
+              2219,
+              2220,
+              2229,
+              2231,
+              2232,
+              2233,
+              2234,
+              2235,
+              2236,
+              2238,
+              2239,
+              2241,
+              2243
+            ],
+            "constraints": [
+              [
+                2161,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2163,
+                "IsEcmaObject(glue, thisValue)",
+                true
+              ],
+              [
+                2165,
+                "IsFastTypeArray(GetObjectType(LoadHClass(glue, thisValue)))",
+                true
+              ],
+              [
+                2170,
+                "Int64Equal(len, Int64(0))",
+                false
+              ],
+              [
+                2178,
+                "TaggedIsUndefinedOrNull(fromOffset)",
+                true
+              ],
+              [
+                2199,
+                "IsEcmaObject(glue, srcArray)",
+                true
+              ],
+              [
+                2201,
+                "IsTypedArray(glue, srcArray)",
+                true
+              ],
+              [
+                2206,
+                "IsFastTypeArray(srcType)",
+                true
+              ],
+              [
+                2211,
+                "SameValue(glue, targetBuffer, srcBuffer)",
+                false
+              ],
+              [
+                2215,
+                "Int64GreaterThan(Int64Add(*realOffset, srcLen), len)",
+                false
+              ],
+              [
+                2220,
+                "Equal(srcType, arrayType)",
+                false
+              ],
+              [
+                2238,
+                "Int64LessThan(*startIndex, srcLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set",
+            "region_start_byte": 87668,
+            "region_end_byte": 92280,
+            "effect_sites": [
+              [
+                2161,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2178,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2211,
+                "SameValue"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 1771,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "same-type:69344",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With:68030:thisValue",
+            "token_line": 1725,
+            "creation_line": 1728,
+            "path": [
+              1700,
+              1701,
+              1702,
+              1703,
+              1704,
+              1705,
+              1706,
+              1707,
+              1708,
+              1709,
+              1710,
+              1711,
+              1712,
+              1713,
+              1714,
+              1715,
+              1716,
+              1717,
+              1718,
+              1719,
+              1720,
+              1721,
+              1722,
+              1723,
+              1724,
+              1725,
+              1726,
+              1727,
+              1728,
+              1729,
+              1730,
+              1731,
+              1737,
+              1738,
+              1740,
+              1741,
+              1743,
+              1744,
+              1751,
+              1753,
+              1755,
+              1757,
+              1758,
+              1759,
+              1760,
+              1761,
+              1762,
+              1763,
+              1764,
+              1766,
+              1767,
+              1768,
+              1769,
+              1771
+            ],
+            "constraints": [
+              [
+                1706,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                1708,
+                "IsTypedArray(glue, thisValue)",
+                true
+              ],
+              [
+                1710,
+                "IsJsCOWArray(glue, thisValue)",
+                false
+              ],
+              [
+                1715,
+                "TaggedIsInt(index)",
+                true
+              ],
+              [
+                1731,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1740,
+                "Int64GreaterThanOrEqual(*relativeIndex, Int64(0))",
+                true
+              ],
+              [
+                1753,
+                "BitOr(Int64GreaterThanOrEqual(*actualIndex, thisLen), Int64LessThan(*actualIndex, Int64(0)))",
+                false
+              ],
+              [
+                1766,
+                "Int64LessThan(*k, thisLen)",
+                true
+              ],
+              [
+                1768,
+                "Int64Equal(*k, *actualIndex)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With",
+            "region_start_byte": 67975,
+            "region_end_byte": 71360,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [
+          "experimental_partial_function_scope",
+          "parse_dependency_contamination_unknown",
+          "partial_scope_routed_through_semantic_selector"
+        ],
+        "steps": 1631,
+        "model_digest": "5adcd91b9a10fdfbefc19b6ff634490933f5519351601b4bfd3909810699c73a"
+      }
+    },
+    {
+      "case": "a65_product_snapshot",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+      "source_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+      "scope": "one exact translation unit; light AST; no preprocessor or build profile",
+      "direct_analyzer_result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 1035,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:35557:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:35557:thisValue",
+            "token_line": 927,
+            "creation_line": 0,
+            "path": [
+              921,
+              922,
+              923,
+              924,
+              925,
+              926,
+              927,
+              928,
+              929,
+              930,
+              931,
+              933,
+              934,
+              935,
+              936,
+              937,
+              938,
+              939,
+              940,
+              941,
+              942,
+              943,
+              945,
+              946,
+              947,
+              948,
+              949,
+              950,
+              952,
+              959,
+              960,
+              962,
+              969,
+              971,
+              972,
+              973,
+              974,
+              975,
+              976,
+              977,
+              978,
+              979,
+              980,
+              981,
+              982,
+              983,
+              984,
+              986,
+              988,
+              989,
+              996,
+              998,
+              999,
+              1000,
+              1001,
+              1002,
+              1012,
+              1014,
+              1015,
+              1016,
+              1017,
+              1018,
+              1019,
+              1020,
+              1022,
+              1023,
+              1024,
+              1025,
+              1026,
+              1027,
+              1033,
+              1035
+            ],
+            "constraints": [
+              [
+                925,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                928,
+                "IsFastTypedArray(jsType)",
+                true
+              ],
+              [
+                930,
+                "HasConstructor(glue, thisValue)",
+                false
+              ],
+              [
+                945,
+                "Int64GreaterThanOrEqual(IntPtr(0), numArgs)",
+                false
+              ],
+              [
+                948,
+                "TaggedIsInt(targetTag)",
+                true
+              ],
+              [
+                952,
+                "Int64GreaterThanOrEqual(IntPtr(1), numArgs)",
+                true
+              ],
+              [
+                962,
+                "Int64GreaterThanOrEqual(IntPtr(2), numArgs)",
+                true
+              ],
+              [
+                984,
+                "Int64LessThan(Int64Sub(*copyEnd, *copyFrom), Int64Sub(thisLen, *copyTo))",
+                true
+              ],
+              [
+                1002,
+                "LogicAndBuilder(env).And(Int64LessThan(copyFromVal, copyToVal))\r\n            .And(Int64LessThan(copyToVal, Int64Add(copyFromVal, countVal))).Done()",
+                false
+              ],
+              [
+                1024,
+                "Int64GreaterThan(*count, Int64(0))",
+                true
+              ],
+              [
+                1027,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin",
+            "region_start_byte": 35496,
+            "region_end_byte": 40916,
+            "effect_sites": []
+          },
+          {
+            "kind": "matched",
+            "line": 1563,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:62680",
+            "token_origin": "new:62680",
+            "token_line": 1550,
+            "creation_line": 1542,
+            "path": [
+              1439,
+              1440,
+              1441,
+              1442,
+              1443,
+              1444,
+              1445,
+              1446,
+              1447,
+              1448,
+              1449,
+              1450,
+              1451,
+              1452,
+              1453,
+              1454,
+              1455,
+              1456,
+              1457,
+              1458,
+              1459,
+              1460,
+              1461,
+              1462,
+              1463,
+              1464,
+              1465,
+              1466,
+              1467,
+              1469,
+              1470,
+              1471,
+              1472,
+              1473,
+              1475,
+              1476,
+              1478,
+              1479,
+              1480,
+              1481,
+              1482,
+              1483,
+              1484,
+              1485,
+              1486,
+              1487,
+              1488,
+              1489,
+              1491,
+              1492,
+              1493,
+              1494,
+              1495,
+              1496,
+              1537,
+              1538,
+              1539,
+              1540,
+              1541,
+              1542,
+              1543,
+              1549,
+              1550,
+              1551,
+              1552,
+              1553,
+              1554,
+              1555,
+              1556,
+              1557,
+              1559,
+              1560,
+              1562,
+              1563
+            ],
+            "constraints": [
+              [
+                1448,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                1450,
+                "IsEcmaObject(glue, thisValue)",
+                true
+              ],
+              [
+                1453,
+                "IsFastTypedArray(arrayType)",
+                true
+              ],
+              [
+                1456,
+                "IsDetachedBuffer(glue, buffer)",
+                false
+              ],
+              [
+                1458,
+                "HasConstructor(glue, thisValue)",
+                false
+              ],
+              [
+                1461,
+                "IsEcmaObject(glue, prototype)",
+                true
+              ],
+              [
+                1464,
+                "TaggedIsProtoChangeMarker(glue, marker)",
+                true
+              ],
+              [
+                1466,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                1472,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                1475,
+                "IsCallable(glue, callbackFnHandle)",
+                true
+              ],
+              [
+                1496,
+                "Int32LessThan(*i, thisLen)",
+                false
+              ],
+              [
+                1543,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1559,
+                "Int32LessThan(*i, *newArrayLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 57457,
+            "region_end_byte": 63995,
+            "effect_sites": [
+              [
+                1448,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                1464,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                1466,
+                "GetAccessorHasChanged"
+              ],
+              [
+                1481,
+                "arrayStubBuilder.NewArray"
+              ],
+              [
+                1542,
+                "newBuilder.NewTypedArray"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 2747,
+            "column": 17,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:111634",
+            "token_origin": "new:111634",
+            "token_line": 2721,
+            "creation_line": 2713,
+            "path": [
+              2665,
+              2666,
+              2667,
+              2668,
+              2669,
+              2670,
+              2671,
+              2672,
+              2673,
+              2674,
+              2675,
+              2676,
+              2677,
+              2678,
+              2679,
+              2680,
+              2681,
+              2682,
+              2683,
+              2684,
+              2685,
+              2686,
+              2687,
+              2688,
+              2689,
+              2690,
+              2691,
+              2692,
+              2693,
+              2694,
+              2695,
+              2696,
+              2697,
+              2698,
+              2699,
+              2700,
+              2701,
+              2702,
+              2703,
+              2704,
+              2705,
+              2706,
+              2707,
+              2709,
+              2710,
+              2711,
+              2712,
+              2713,
+              2714,
+              2720,
+              2721,
+              2722,
+              2723,
+              2724,
+              2725,
+              2726,
+              2727,
+              2729,
+              2730,
+              2731,
+              2732,
+              2733,
+              2734,
+              2735,
+              2736,
+              2737,
+              2739,
+              2740,
+              2745,
+              2747
+            ],
+            "constraints": [
+              [
+                2674,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2676,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                2678,
+                "IsFastTypedArray(GetObjectType(LoadHClass(glue, thisValue)))",
+                true
+              ],
+              [
+                2680,
+                "HasConstructor(glue, thisValue)",
+                false
+              ],
+              [
+                2683,
+                "IsDetachedBuffer(glue, buffer)",
+                false
+              ],
+              [
+                2686,
+                "IsEcmaObject(glue, prototype)",
+                true
+              ],
+              [
+                2689,
+                "TaggedIsProtoChangeMarker(glue, marker)",
+                true
+              ],
+              [
+                2691,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                2701,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                2703,
+                "IsCallable(glue, callbackFnHandle)",
+                true
+              ],
+              [
+                2714,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                2731,
+                "Int64LessThan(*i, thisLen)",
+                true
+              ],
+              [
+                2740,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+            "region_start_byte": 109207,
+            "region_end_byte": 113830,
+            "effect_sites": [
+              [
+                2674,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2689,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                2691,
+                "GetAccessorHasChanged"
+              ],
+              [
+                2713,
+                "newBuilder.NewTypedArray"
+              ],
+              [
+                2734,
+                "Int64ToTaggedInt"
+              ],
+              [
+                2739,
+                "callBuilder.JSCallDispatch"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 2299,
+            "column": 25,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:90605:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:90605:thisValue",
+            "token_line": 2300,
+            "creation_line": 0,
+            "path": [
+              2212,
+              2213,
+              2214,
+              2215,
+              2217,
+              2218,
+              2219,
+              2220,
+              2221,
+              2222,
+              2223,
+              2224,
+              2225,
+              2226,
+              2227,
+              2228,
+              2229,
+              2230,
+              2231,
+              2232,
+              2233,
+              2234,
+              2249,
+              2251,
+              2252,
+              2253,
+              2254,
+              2255,
+              2256,
+              2257,
+              2258,
+              2260,
+              2261,
+              2262,
+              2263,
+              2264,
+              2265,
+              2266,
+              2267,
+              2268,
+              2269,
+              2270,
+              2271,
+              2272,
+              2274,
+              2275,
+              2276,
+              2285,
+              2287,
+              2288,
+              2289,
+              2290,
+              2291,
+              2292,
+              2294,
+              2295,
+              2297,
+              2299
+            ],
+            "constraints": [
+              [
+                2217,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2219,
+                "IsEcmaObject(glue, thisValue)",
+                true
+              ],
+              [
+                2221,
+                "IsFastTypedArray(GetObjectType(LoadHClass(glue, thisValue)))",
+                true
+              ],
+              [
+                2226,
+                "Int64Equal(len, Int64(0))",
+                false
+              ],
+              [
+                2234,
+                "TaggedIsUndefinedOrNull(fromOffset)",
+                true
+              ],
+              [
+                2255,
+                "IsEcmaObject(glue, srcArray)",
+                true
+              ],
+              [
+                2257,
+                "IsTypedArray(glue, srcArray)",
+                true
+              ],
+              [
+                2262,
+                "IsFastTypedArray(srcType)",
+                true
+              ],
+              [
+                2267,
+                "SameValue(glue, targetBuffer, srcBuffer)",
+                false
+              ],
+              [
+                2271,
+                "Int64GreaterThan(Int64Add(*realOffset, srcLen), len)",
+                false
+              ],
+              [
+                2276,
+                "Equal(srcType, arrayType)",
+                false
+              ],
+              [
+                2294,
+                "Int64LessThan(*startIndex, srcLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set",
+            "region_start_byte": 90551,
+            "region_end_byte": 95168,
+            "effect_sites": [
+              [
+                2217,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2234,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2267,
+                "SameValue"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 1827,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "same-type:72220",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With:70883:thisValue",
+            "token_line": 1781,
+            "creation_line": 1784,
+            "path": [
+              1756,
+              1757,
+              1758,
+              1759,
+              1760,
+              1761,
+              1762,
+              1763,
+              1764,
+              1765,
+              1766,
+              1767,
+              1768,
+              1769,
+              1770,
+              1771,
+              1772,
+              1773,
+              1774,
+              1775,
+              1776,
+              1777,
+              1778,
+              1779,
+              1780,
+              1781,
+              1782,
+              1783,
+              1784,
+              1785,
+              1786,
+              1787,
+              1793,
+              1794,
+              1796,
+              1797,
+              1799,
+              1800,
+              1807,
+              1809,
+              1811,
+              1813,
+              1814,
+              1815,
+              1816,
+              1817,
+              1818,
+              1819,
+              1820,
+              1822,
+              1823,
+              1824,
+              1825,
+              1827
+            ],
+            "constraints": [
+              [
+                1762,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                1764,
+                "IsTypedArray(glue, thisValue)",
+                true
+              ],
+              [
+                1766,
+                "IsJsCOWArray(glue, thisValue)",
+                false
+              ],
+              [
+                1771,
+                "TaggedIsInt(index)",
+                true
+              ],
+              [
+                1787,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1796,
+                "Int64GreaterThanOrEqual(*relativeIndex, Int64(0))",
+                true
+              ],
+              [
+                1809,
+                "BitOr(Int64GreaterThanOrEqual(*actualIndex, thisLen), Int64LessThan(*actualIndex, Int64(0)))",
+                false
+              ],
+              [
+                1822,
+                "Int64LessThan(*k, thisLen)",
+                true
+              ],
+              [
+                1824,
+                "Int64Equal(*k, *actualIndex)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With",
+            "region_start_byte": 70828,
+            "region_end_byte": 74236,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [
+          "experimental_partial_function_scope",
+          "parse_dependency_contamination_unknown",
+          "partial_scope_routed_through_semantic_selector"
+        ],
+        "steps": 1639,
+        "model_digest": "5adcd91b9a10fdfbefc19b6ff634490933f5519351601b4bfd3909810699c73a"
+      }
+    },
+    {
+      "case": "official_master",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+      "tree": "2cd854aa7d9f987de89d31a6a512e735779e75b6",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "0990d87313c022e734c32269cb4ce08dbe78acdd",
+      "source_sha256": "f6e332778e1f515b0b7fa2f75513e3a69359fd3fba23cab8a5e80397e5abcedc",
+      "scope": "one exact translation unit; light AST; no preprocessor or build profile",
+      "direct_analyzer_result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 977,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:32866:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:32866:thisValue",
+            "token_line": 869,
+            "creation_line": 0,
+            "path": [
+              863,
+              864,
+              865,
+              866,
+              867,
+              868,
+              869,
+              870,
+              871,
+              872,
+              873,
+              875,
+              876,
+              877,
+              878,
+              879,
+              880,
+              881,
+              882,
+              883,
+              884,
+              885,
+              887,
+              888,
+              889,
+              890,
+              891,
+              892,
+              894,
+              901,
+              902,
+              904,
+              911,
+              913,
+              914,
+              915,
+              916,
+              917,
+              918,
+              919,
+              920,
+              921,
+              922,
+              923,
+              924,
+              925,
+              926,
+              928,
+              930,
+              931,
+              938,
+              940,
+              941,
+              942,
+              943,
+              944,
+              954,
+              956,
+              957,
+              958,
+              959,
+              960,
+              961,
+              962,
+              964,
+              965,
+              966,
+              967,
+              968,
+              969,
+              975,
+              977
+            ],
+            "constraints": [
+              [
+                867,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                870,
+                "IsFastTypeArray(jsType)",
+                true
+              ],
+              [
+                872,
+                "HasConstructor(glue, thisValue)",
+                false
+              ],
+              [
+                887,
+                "Int64GreaterThanOrEqual(IntPtr(0), numArgs)",
+                false
+              ],
+              [
+                890,
+                "TaggedIsInt(targetTag)",
+                true
+              ],
+              [
+                894,
+                "Int64GreaterThanOrEqual(IntPtr(1), numArgs)",
+                true
+              ],
+              [
+                904,
+                "Int64GreaterThanOrEqual(IntPtr(2), numArgs)",
+                true
+              ],
+              [
+                926,
+                "Int64LessThan(Int64Sub(*copyEnd, *copyFrom), Int64Sub(thisLen, *copyTo))",
+                true
+              ],
+              [
+                944,
+                "LogicAndBuilder(env).And(Int64LessThan(copyFromVal, copyToVal))\r\n            .And(Int64LessThan(copyToVal, Int64Add(copyFromVal, countVal))).Done()",
+                false
+              ],
+              [
+                966,
+                "Int64GreaterThan(*count, Int64(0))",
+                true
+              ],
+              [
+                969,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin",
+            "region_start_byte": 32805,
+            "region_end_byte": 38224,
+            "effect_sites": []
+          },
+          {
+            "kind": "matched",
+            "line": 1507,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:60070",
+            "token_origin": "new:60070",
+            "token_line": 1494,
+            "creation_line": 1486,
+            "path": [
+              1383,
+              1384,
+              1385,
+              1386,
+              1387,
+              1388,
+              1389,
+              1390,
+              1391,
+              1392,
+              1393,
+              1394,
+              1395,
+              1396,
+              1397,
+              1398,
+              1399,
+              1400,
+              1401,
+              1402,
+              1403,
+              1404,
+              1405,
+              1406,
+              1407,
+              1408,
+              1409,
+              1410,
+              1411,
+              1413,
+              1414,
+              1415,
+              1416,
+              1417,
+              1419,
+              1420,
+              1422,
+              1423,
+              1424,
+              1425,
+              1426,
+              1427,
+              1428,
+              1429,
+              1430,
+              1431,
+              1432,
+              1433,
+              1435,
+              1436,
+              1437,
+              1438,
+              1439,
+              1440,
+              1481,
+              1482,
+              1483,
+              1484,
+              1485,
+              1486,
+              1487,
+              1493,
+              1494,
+              1495,
+              1496,
+              1497,
+              1498,
+              1499,
+              1500,
+              1501,
+              1503,
+              1504,
+              1506,
+              1507
+            ],
+            "constraints": [
+              [
+                1392,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                1394,
+                "IsEcmaObject(glue, thisValue)",
+                true
+              ],
+              [
+                1397,
+                "IsFastTypeArray(arrayType)",
+                true
+              ],
+              [
+                1400,
+                "IsDetachedBuffer(glue, buffer)",
+                false
+              ],
+              [
+                1402,
+                "HasConstructor(glue, thisValue)",
+                false
+              ],
+              [
+                1405,
+                "IsEcmaObject(glue, prototype)",
+                true
+              ],
+              [
+                1408,
+                "TaggedIsProtoChangeMarker(glue, marker)",
+                true
+              ],
+              [
+                1410,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                1416,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                1419,
+                "IsCallable(glue, callbackFnHandle)",
+                true
+              ],
+              [
+                1440,
+                "Int32LessThan(*i, thisLen)",
+                false
+              ],
+              [
+                1487,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1503,
+                "Int32LessThan(*i, *newArrayLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 54851,
+            "region_end_byte": 61385,
+            "effect_sites": [
+              [
+                1392,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                1408,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                1410,
+                "GetAccessorHasChanged"
+              ],
+              [
+                1425,
+                "arrayStubBuilder.NewArray"
+              ],
+              [
+                1486,
+                "newBuilder.NewTypedArray"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 2691,
+            "column": 17,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:109008",
+            "token_origin": "new:109008",
+            "token_line": 2665,
+            "creation_line": 2657,
+            "path": [
+              2609,
+              2610,
+              2611,
+              2612,
+              2613,
+              2614,
+              2615,
+              2616,
+              2617,
+              2618,
+              2619,
+              2620,
+              2621,
+              2622,
+              2623,
+              2624,
+              2625,
+              2626,
+              2627,
+              2628,
+              2629,
+              2630,
+              2631,
+              2632,
+              2633,
+              2634,
+              2635,
+              2636,
+              2637,
+              2638,
+              2639,
+              2640,
+              2641,
+              2642,
+              2643,
+              2644,
+              2645,
+              2646,
+              2647,
+              2648,
+              2649,
+              2650,
+              2651,
+              2653,
+              2654,
+              2655,
+              2656,
+              2657,
+              2658,
+              2664,
+              2665,
+              2666,
+              2667,
+              2668,
+              2669,
+              2670,
+              2671,
+              2673,
+              2674,
+              2675,
+              2676,
+              2677,
+              2678,
+              2679,
+              2680,
+              2681,
+              2683,
+              2684,
+              2689,
+              2691
+            ],
+            "constraints": [
+              [
+                2618,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2620,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                2622,
+                "IsFastTypeArray(GetObjectType(LoadHClass(glue, thisValue)))",
+                true
+              ],
+              [
+                2624,
+                "HasConstructor(glue, thisValue)",
+                false
+              ],
+              [
+                2627,
+                "IsDetachedBuffer(glue, buffer)",
+                false
+              ],
+              [
+                2630,
+                "IsEcmaObject(glue, prototype)",
+                true
+              ],
+              [
+                2633,
+                "TaggedIsProtoChangeMarker(glue, marker)",
+                true
+              ],
+              [
+                2635,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                2645,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                2647,
+                "IsCallable(glue, callbackFnHandle)",
+                true
+              ],
+              [
+                2658,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                2675,
+                "Int64LessThan(*i, thisLen)",
+                true
+              ],
+              [
+                2684,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+            "region_start_byte": 106582,
+            "region_end_byte": 110946,
+            "effect_sites": [
+              [
+                2618,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2633,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                2635,
+                "GetAccessorHasChanged"
+              ],
+              [
+                2657,
+                "newBuilder.NewTypedArray"
+              ],
+              [
+                2678,
+                "Int64ToTaggedInt"
+              ],
+              [
+                2682,
+                "Circuit::NullGate"
+              ],
+              [
+                2683,
+                "callBuilder.JSCallDispatch"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 2243,
+            "column": 25,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:87993:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:87993:thisValue",
+            "token_line": 2244,
+            "creation_line": 0,
+            "path": [
+              2156,
+              2157,
+              2158,
+              2159,
+              2161,
+              2162,
+              2163,
+              2164,
+              2165,
+              2166,
+              2167,
+              2168,
+              2169,
+              2170,
+              2171,
+              2172,
+              2173,
+              2174,
+              2175,
+              2176,
+              2177,
+              2178,
+              2193,
+              2195,
+              2196,
+              2197,
+              2198,
+              2199,
+              2200,
+              2201,
+              2202,
+              2204,
+              2205,
+              2206,
+              2207,
+              2208,
+              2209,
+              2210,
+              2211,
+              2212,
+              2213,
+              2214,
+              2215,
+              2216,
+              2218,
+              2219,
+              2220,
+              2229,
+              2231,
+              2232,
+              2233,
+              2234,
+              2235,
+              2236,
+              2238,
+              2239,
+              2241,
+              2243
+            ],
+            "constraints": [
+              [
+                2161,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2163,
+                "IsEcmaObject(glue, thisValue)",
+                true
+              ],
+              [
+                2165,
+                "IsFastTypeArray(GetObjectType(LoadHClass(glue, thisValue)))",
+                true
+              ],
+              [
+                2170,
+                "Int64Equal(len, Int64(0))",
+                false
+              ],
+              [
+                2178,
+                "TaggedIsUndefinedOrNull(fromOffset)",
+                true
+              ],
+              [
+                2199,
+                "IsEcmaObject(glue, srcArray)",
+                true
+              ],
+              [
+                2201,
+                "IsTypedArray(glue, srcArray)",
+                true
+              ],
+              [
+                2206,
+                "IsFastTypeArray(srcType)",
+                true
+              ],
+              [
+                2211,
+                "SameValue(glue, targetBuffer, srcBuffer)",
+                false
+              ],
+              [
+                2215,
+                "Int64GreaterThan(Int64Add(*realOffset, srcLen), len)",
+                false
+              ],
+              [
+                2220,
+                "Equal(srcType, arrayType)",
+                false
+              ],
+              [
+                2238,
+                "Int64LessThan(*startIndex, srcLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set",
+            "region_start_byte": 87939,
+            "region_end_byte": 92551,
+            "effect_sites": [
+              [
+                2161,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2178,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2211,
+                "SameValue"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 1771,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "same-type:69609",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With:68272:thisValue",
+            "token_line": 1725,
+            "creation_line": 1728,
+            "path": [
+              1700,
+              1701,
+              1702,
+              1703,
+              1704,
+              1705,
+              1706,
+              1707,
+              1708,
+              1709,
+              1710,
+              1711,
+              1712,
+              1713,
+              1714,
+              1715,
+              1716,
+              1717,
+              1718,
+              1719,
+              1720,
+              1721,
+              1722,
+              1723,
+              1724,
+              1725,
+              1726,
+              1727,
+              1728,
+              1729,
+              1730,
+              1731,
+              1737,
+              1738,
+              1740,
+              1741,
+              1743,
+              1744,
+              1751,
+              1753,
+              1755,
+              1757,
+              1758,
+              1759,
+              1760,
+              1761,
+              1762,
+              1763,
+              1764,
+              1766,
+              1767,
+              1768,
+              1769,
+              1771
+            ],
+            "constraints": [
+              [
+                1706,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                1708,
+                "IsTypedArray(glue, thisValue)",
+                true
+              ],
+              [
+                1710,
+                "IsJsCOWArray(glue, thisValue)",
+                false
+              ],
+              [
+                1715,
+                "TaggedIsInt(index)",
+                true
+              ],
+              [
+                1731,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1740,
+                "Int64GreaterThanOrEqual(*relativeIndex, Int64(0))",
+                true
+              ],
+              [
+                1753,
+                "BitOr(Int64GreaterThanOrEqual(*actualIndex, thisLen), Int64LessThan(*actualIndex, Int64(0)))",
+                false
+              ],
+              [
+                1766,
+                "Int64LessThan(*k, thisLen)",
+                true
+              ],
+              [
+                1768,
+                "Int64Equal(*k, *actualIndex)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With",
+            "region_start_byte": 68217,
+            "region_end_byte": 71625,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [
+          "experimental_partial_function_scope",
+          "parse_dependency_contamination_unknown",
+          "partial_scope_routed_through_semantic_selector"
+        ],
+        "steps": 1631,
+        "model_digest": "5adcd91b9a10fdfbefc19b6ff634490933f5519351601b4bfd3909810699c73a"
+      }
+    }
+  ]
+}

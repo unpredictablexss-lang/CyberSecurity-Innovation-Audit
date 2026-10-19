@@ -1,0 +1,2509 @@
+{
+  "schema_version": 1,
+  "updated": "2026-10-19",
+  "cases": [
+    {
+      "case_id": "OH-I7E0FM-TYPEDARRAY-FILTER-ABRUPT-COMPLETION",
+      "CVE_or_advisory": "OpenHarmony arkcompiler_ets_runtime issue I7E0FM; no CVE association verified",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I7E0FM",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/4255"
+      ],
+      "verified_on": "2026-10-18",
+      "component": "Ark Runtime BuiltinsTypedArray::Filter",
+      "root_cause": "The result of a user callback invocation can encode abrupt completion. The vulnerable path converts that result to boolean before checking the thread pending-exception state and returning the exception sentinel.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "The upstream merged fix and its first parent establish a vulnerable/fixed source pair. No release-tag, product-manifest, or product-build mapping was established; affected product versions remain unknown.",
+      "vulnerable_commit": "d6d18548750373cd4e93e9af24eda3e84f6f1b8e",
+      "vulnerable_tree": "0eb7add76ad0766233c53bea41e2db334e441406",
+      "vulnerable_files": [
+        {
+          "path": "ecmascript/builtins/builtins_typedarray.cpp",
+          "blob": "f8e21e95919b5607fc167962d390995f4a031f14",
+          "sha256": "057f0d43d1f2ed7b2a915025f8030259d711793846bd0273fb007e94e1546a5b",
+          "bytes": 79222
+        },
+        {
+          "path": "ecmascript/ecma_macros.h",
+          "blob": "2a8554b7221e645ecaa8c3f2e9a73f872d0af08a",
+          "sha256": "6f945253749f671ee94637065186ad6c68c0eff917926076d30bdd8b83352a3f"
+        }
+      ],
+      "fixed_commit": "30571a40879bb2092dcb9ae994d6970c1dfd5fc1",
+      "fixed_tree": "4bd116e73eb8acf94d6471427d86f837964bb998",
+      "fixed_files": [
+        {
+          "path": "ecmascript/builtins/builtins_typedarray.cpp",
+          "blob": "6d90d4ad72893f5868922b77ecae4ab3f6a52366",
+          "sha256": "74ef900791fd859c45909dc840ab02f898df90584b3a400daed0640625c0579c",
+          "bytes": 79277
+        },
+        {
+          "path": "ecmascript/ecma_macros.h",
+          "blob": "2a8554b7221e645ecaa8c3f2e9a73f872d0af08a",
+          "sha256": "6f945253749f671ee94637065186ad6c68c0eff917926076d30bdd8b83352a3f"
+        }
+      ],
+      "product_build_association": "unknown; selected hihope/rk3568 source/config context has no successful exact args.gn, GN target generation, compile database, or product build binding",
+      "existing_detector_and_rule": "ohscanner.ark.runtime.type_safety; ark.runtime.callback-exception-before-result-conversion, v0.8.4; production M2 explicit selection; Catalog still research_candidate/disabled by default.",
+      "baseline_scan": {
+        "entry": "M2 CLI ohscan-run",
+        "profile": "light-ast",
+        "scope": [
+          "ecmascript/builtins/builtins_typedarray.cpp",
+          "ecmascript/ecma_macros.h"
+        ],
+        "vulnerable_parent": "0 diagnostics; detector not applicable under v0.7 semantics",
+        "fixed_commit": "0 diagnostics; detector not applicable under v0.7 semantics",
+        "candidate_version": "0.8.2",
+        "exact_parent_and_fixed": "Same scope/profile; one candidate on exact vulnerable parent and zero on fixed merge."
+      },
+      "baseline_miss_reason": "v0.7 selector did not model runtime builtins callback completion. v0.8.0 covered declaration-initialized callback results but missed predeclared result variables assigned from callback; v0.8.1 models direct assignments. File-level analysis remains bounded and can return partial/blocked on complex builtins_array.cpp.",
+      "implementation_status": "v0.8.4 adds source-derived interprocedural may-propagate-exception summaries for selected parsed JSTaggedValue helpers, including caller call-result flow. Missing helper bodies stay partial. This extends the direct-call v0.8.3 model; not general CFG or whole-program analysis.",
+      "controls": {
+        "positive_real_source": "Exact upstream parent d6d185...: v0.8.2 M2 reports one candidate in BuiltinsTypedArray::Filter at line 613; complete detector run.",
+        "fixed_real_source": "Exact upstream merge 30571...: v0.8.2 M2 reports zero; complete detector run.",
+        "safe_control": "Exact fixed TypedArray pair: complete 1->0. I5XZRO fixed Every finding absent but overall coverage blocked; not a complete safe control. No independent real safe control established.",
+        "independent_variant": "Development variants f536 Some and b487 Filter/Find/FindIndex are same-mechanism real source pairs; they were examined during tuning and are not independent holdout. Post-freeze wrapper candidate 7fb7ec... is recorded separately below; its pair is partial/missed and requires leakage adjudication.",
+        "unrelated_real_source": "v0.8.2 M2 on builtins_number.cpp returned zero but detector status was blocked/not_applicable with 0 applicable files; this is not counted as an analyzed safe/unrelated control."
+      },
+      "real_source_rescans": {
+        "v0.7.0_baseline_parent": "completed_with_limitations, 0 diagnostics; detector not applicable",
+        "v0.7.0_baseline_fixed": "completed_with_limitations, 0 diagnostics; detector not applicable",
+        "v0.8.1_exact_parent": "completed, 1 candidate at Filter line 613",
+        "v0.8.1_exact_fixed": "completed, 0 diagnostics",
+        "v0.8.1_current_a65": "completed, 0 diagnostics; source-state observation only",
+        "v0.8.1_unrelated_number_control": "0 diagnostics; prior v0.8.0 report only, not rescanned this version",
+        "v0.8.1_array_b487_parent": "3 candidates (Array::Filter, Find, FindIndex); detector run blocked by incomplete file coverage/instruction budget",
+        "v0.8.1_array_b487_fixed": "0 diagnostics; detector run blocked by incomplete file coverage/instruction budget; zero is inconclusive",
+        "v0.8.1_array_f536_parent_and_fixed": "0 diagnostics on both; both detector runs blocked/incomplete; inconclusive",
+        "v0.8.1_array_d0dc_safe_observation": "0 diagnostics; detector run blocked/incomplete (Some/Every compounds), not a safety pass",
+        "v0.8.2_exact_parent": "completed; 1 Filter candidate at line 613",
+        "v0.8.2_exact_fixed": "completed; 0 diagnostics",
+        "v0.8.2_array_b487_parent": "4 candidates: Array::Filter 928, Find 993, FindIndex 1063, Some 2200; detector blocked only for unsupported cross-compound paths in Every/FindIndex",
+        "v0.8.2_array_b487_fixed": "1 candidate at Some 2202; Filter and Find absent; detector still blocked due unsupported cross-compound paths",
+        "v0.8.2_array_f536_parent": "1 candidate at Some 2203; detector still blocked due unsupported cross-compound paths elsewhere in file",
+        "v0.8.2_array_f536_fixed": "0 diagnostics; detector still blocked due unsupported cross-compound paths elsewhere in file; inconclusive for file-level safety",
+        "v0.8.2_array_current_a65": "0 diagnostics; detector still blocked/partial for unrelated callbacks crossing compound boundaries",
+        "v0.8.2_unrelated_number": "0 diagnostics; detector blocked/not_applicable, 0 applicable files; not a pass",
+        "v0.8.2_current_a65": "completed, 0 diagnostics; exact TypedArray scope/profile",
+        "v0.8.3_typedarray_parent": "completed, 1 candidate at BuiltinsTypedArray::Filter line 613",
+        "v0.8.3_typedarray_fixed": "completed, 0 diagnostics",
+        "v0.8.3_current_a65_typedarray": "completed, 0 diagnostics",
+        "v0.8.3_array_b487_parent": "completed coverage, 4 candidates: Filter, Find, FindIndex, Some",
+        "v0.8.3_array_b487_fixed": "completed coverage, 1 Some candidate remains; Filter, Find and FindIndex removed by b487 changes",
+        "v0.8.3_array_f536_parent_fixed": "completed coverage, Some 1 candidate -> 0",
+        "v0.8.3_current_a65_array": "completed coverage, 0 diagnostics",
+        "v0.8.3_wrapper_holdout_7fb7_parent_fixed": "both M2 runs report 5 candidates in other direct-call functions and remain partial due JSStableArray::HandleEveryOfStable cross-compound path; no Every finding in either version. Wrapper pair is inconclusive/missed.",
+        "v0.8.4_typedarray_parent": "Production M2, pinned exact scope/profile: 1 Filter candidate at line 613; status completed.",
+        "v0.8.4_typedarray_fixed": "Production M2, same scope/profile: 0 diagnostics; status completed.",
+        "v0.8.4_wrapper_7fb7_parent": "Production M2, same four-file scope/profile: 6 diagnostics including Every at line 719; status blocked because other direct paths remain incomplete.",
+        "v0.8.4_wrapper_7fb7_fixed": "Production M2, same scope/profile: 5 diagnostics elsewhere; Every finding removed; status blocked, so not a full-file fix pass.",
+        "v0.8.4_array_f536_parent": "Production M2: 2 findings (FindIndex and Some); status blocked.",
+        "v0.8.4_array_f536_fixed": "Production M2: one residual FindIndex candidate (stable helper result converted before exception guard), status blocked. Source inspection shows same path in parent and fix, so this is outside the Some-specific change; not a fixed-pair safety pass.",
+        "v0.8.4_array_f536_residual_adjudication": "The remaining candidate is BuiltinsArray::FindIndex calling JSStableArray::HandleFindIndexOfStable, then ToBoolean without a preceding exception check in both ab9e5b... and f536dc...; exact source shows this path is unchanged across the Some-focused fix. Plausible same-mechanism candidate, not adjudicated as disclosed/fixed.",
+        "v0.8.4_execution_cost": "M2 detector elapsed: TypedArray parent 0.462s/fix 0.396s (v0.8.3 0.168s/0.177s); wrapper parent 1.443s/fix 1.523s (v0.8.3 0.401s/0.391s); f536 parent 1.559s/fix 1.298s. Peak memory not reported in M2 JSON. The helper summary adds repeated source parsing; cost is higher but still under 1.6s per scanned commit for this four-file scope."
+      },
+      "evidence_paths": [
+        "research/experiments/ark_runtime/c8_20261018/README.md",
+        "research/experiments/ark_runtime/c8_20261018/checkpoint.json",
+        "research/experiments/ark_runtime/c8_20261018/source_identity_manifest.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/",
+        "research/experiments/ark_runtime/c8_20261018/reports/v084-typedarray-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v084-typedarray-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v084-wrapper-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v084-wrapper-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v084-array-f536-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v084-array-f536-fixed.json"
+      ],
+      "remaining_blockers": [
+        "Cross-compound paths and branch-sensitive flow still yield blocked/partial results in builtins_array.cpp.",
+        "The I5XZRO wrapper pair shares the Array::Every surface with earlier development sources and is not an independent holdout.",
+        "No complete-coverage real safe/unrelated source control or untouched source-disjoint holdout.",
+        "Macro header is partial; no preprocessing, complete dependency/build-profile binding, runtime reproduction, or product confirmation.",
+        "v0.8.4 exposes an unresolved FindIndex stable-wrapper candidate in both f536 source states; its upstream disclosure/fix relation must be verified before using this pair as a regression pass."
+      ],
+      "next_step": "Trace the pinned upstream history for BuiltinsArray::FindIndex / JSStableArray::HandleFindIndexOfStable and tests after f536; establish an exact fix pair if one exists, replay v0.8.4 before tuning, and decide whether the residual is a true uncovered variant or a flow-model mismatch.",
+      "evidence_layers": {
+        "public_disclosure_fact": "verified upstream issue and merged PR",
+        "source_root_cause_match": "verified by exact parent/fix source diff and fix check",
+        "static_detection": "v0.8.4 production M2: TypedArray exact pair 1->0 with complete coverage; I5XZRO Every wrapper 1->0 at line 719 with parent/fixed overall runs blocked due other paths; f536 direct Array pair 2->1 with residual FindIndex and both blocked.",
+        "component_dynamic_reproduction": "not run",
+        "product_vulnerability_confirmation": "unknown"
+      }
+    },
+    {
+      "case_id": "ARK-ARRAY-CALLBACK-ABRUPT-COMPLETION-HISTORY-VARIANT",
+      "CVE_or_advisory": "No CVE/advisory association verified; upstream code-history commits f536dc733883b40d9bce1639356bd9253c1c2b27 and b48718a73a2b99f14e1c170f2e1d48d35ed1bdf0 relate to exception handling changes.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime BuiltinsArray::Filter / Find / Some / FindIndex",
+      "root_cause": "Potential abrupt callback completion converted or consumed before pending-exception handling. Source history shows concrete reorderings for Filter/Find/Some; FindIndex alert is not verified and may be false positive.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Only source-history commit diffs inspected; no release/product version mapping.",
+      "vulnerable_fixed_commit_pairs": [
+        {
+          "parent": "d852d048923189438cbcf69ffb43b8274931a624",
+          "fix": "b48718a73a2b99f14e1c170f2e1d48d35ed1bdf0",
+          "parent_tree": "d5e86c1c09bff241a63e1806376d912e008780b3",
+          "fix_tree": "6fa2c652f7c7776a5d6af9f55b2274c15062e1ee",
+          "path": "ecmascript/builtins/builtins_array.cpp",
+          "parent_blob": "ceb366ce848559a0d8cf4cf925a7450869f04a69",
+          "fix_blob": "ab2a21973eb98832d6285f9bbecb39d08384a806",
+          "parent_sha256": "a49a41032c4b387f252cf24c39e2dbd4ca21133acbaf9e9587da8afc70f57e27",
+          "fix_sha256": "ce021f93676e697428103d42abf4e8e75cc01dce3b74aa1db14912f18d7816fd"
+        },
+        {
+          "parent": "ab9e5b031a34500432d16b31c5d2cff50efcf9a7",
+          "fix": "f536dc733883b40d9bce1639356bd9253c1c2b27",
+          "path": "ecmascript/builtins/builtins_array.cpp",
+          "parent_blob": "810a5adc67f1af88c2aa64946eb8795526a8d1f3",
+          "fix_blob": "3b166655575126c275f40246594fb6751097e366",
+          "parent_sha256": "6d14bdfe41981b279080909b47394a07a815699084bb324cdfc869a045fdd93d",
+          "fix_sha256": "2645e5c829491a32f2b0bb8296f2508996e89ddf399e0cf7684ac1452b0b69b7"
+        }
+      ],
+      "product_build_association": "unknown",
+      "existing_detector_and_rule": "ohscanner.ark.runtime.type_safety v0.8.1, rule ark.runtime.callback-exception-before-result-conversion",
+      "baseline_scan": "v0.8.0 identified development candidates in builtins_array.cpp; v0.8.1 assignment-flow replay was blocked by instruction budget; v0.8.2 raises budget and shows Filter/Find/Some transitions but whole-file runs remain partial due cross-compound control flow.",
+      "miss_reason": "The direct assignment source was not modeled in v0.8.0. v0.8.1 recognizes assignment provenance, but larger file-level coverage budget and conservative compound-flow restrictions leave blocked results.",
+      "implementation_status": "v0.8.3 development variant results are complete: b487 parent has 4 candidates and fixed b487 leaves only Some; f536 parent/fix yields Some 1->0. This proves source-level variant response but not independent validation.",
+      "positive_fixed_scan": "b487 parent: Filter/Find/FindIndex/Some candidates; b487 fixed: Some remains and the other three disappear. Whole detector coverage complete under v0.8.3.",
+      "fixed_scan": "f536 parent: Some candidate; f536 fixed: zero; both M2 runs complete.",
+      "safe_control": "d0dc run remains blocked under v0.8.1. Current a65 returns no Array candidates but is blocked under v0.8.2; neither is a safety pass.",
+      "evidence_paths": [
+        "research/experiments/ark_runtime/c8_20261018/reports/v081-array-b487-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v081-array-b487-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v081-array-f536-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v081-array-f536-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v081-array-d0dc-safe.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v082-array-b487-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v082-array-b487-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v082-array-f536-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v082-array-f536-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v082-current-a65-array.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v082-unrelated-number-control.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v082-current-a65-typedarray.json"
+      ],
+      "remaining_blockers": [
+        "Used during detector tuning; not independent holdout.",
+        "No CVE/advisory or product version mapping established.",
+        "No component runtime reproduction or product confirmation."
+      ],
+      "next_step": "Freeze an untouched, verified upstream callback-exception pair after detector v0.8.1 is frozen; use only complete-coverage M2 results for pass/fail."
+    },
+    {
+      "case_id": "ARK-ARRAY-EVERY-WRAPPED-CALLBACK-EXCEPTION-I5XZRO",
+      "CVE_or_advisory": "No CVE verified. Upstream commit message identifies issue I5XZRO and says “Fix crash caused by uncaught exception”; public issue page could not be independently read in this turn.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I5XZRO",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime BuiltinsArray::Every and JSStableArray::HandleEveryOfStable",
+      "root_cause": "A helper returns a callback-derived JSTaggedValue to BuiltinsArray::Every; caller performs ToBoolean without first propagating pending exception. Fix inserts RETURN_EXCEPTION_IF_ABRUPT_COMPLETION(thread) after helper call. The helper body is included in the scope and has callback call/guard behavior.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Exact upstream commit parent/fix source pair only; no release/product version binding.",
+      "vulnerable_commit": "493a73ba63c4a74ce1c67122e55e2a4f1e0d383b",
+      "fixed_commit": "7fb7ec3107e5117c8c00c66fca64d02eea087d38",
+      "fixed_tree": "dd3a4d1d12c46266d4644ae7d91d54dc1d1cf075",
+      "vulnerable_files": [
+        {
+          "path": "ecmascript/builtins/builtins_array.cpp",
+          "blob": "a4c56e3895bb225c3d8f1b57558e46e7db95ff8e",
+          "sha256": "a8fabb941c60a10557ae3ae665d1f24db2dcb6b585d80015492dc1e6523018bb"
+        },
+        {
+          "path": "ecmascript/js_stable_array.cpp",
+          "blob": "de93eb8533c32dc12e39e56c0fd4e6ac09f5d14c",
+          "sha256": "dad8b9438f0bd5dfb5a0893f845b2450c62dc4afafa6c3a5395e79721e7a3326"
+        },
+        {
+          "path": "ecmascript/js_stable_array.h",
+          "blob": "e36fff930c34aa8d30eddc34361d9821373c79ce",
+          "sha256": "ddccb14a23e9186bf45a77aafa465444a251db5e44cb0e5c172ae5bc66d83e9a"
+        },
+        {
+          "path": "ecmascript/ecma_macros.h",
+          "blob": "fbfbd2b8b986f4c9cdc6626d0d62209497a78740",
+          "sha256": "f9685fef22df50d266e54a53e114488bab6d9c5962b66be9e761ca26093b18aa"
+        }
+      ],
+      "fixed_files": [
+        {
+          "path": "ecmascript/builtins/builtins_array.cpp",
+          "blob": "43427fd60bab017dbca3312e8c2a1e2794edf251",
+          "sha256": "b8a45acbbfa7c198d06c5f324be826956334a7beffb615b7c7056dd9949ae210"
+        },
+        {
+          "path": "ecmascript/js_stable_array.cpp",
+          "blob": "9b6b0e392cbb05d455657b1210426a4b25515962",
+          "sha256": "4b1e6b6675fdfa1e409345d9410bb95752700f00514e0e756f576ec09e56f7d6"
+        },
+        {
+          "path": "ecmascript/js_stable_array.h",
+          "blob": "e36fff930c34aa8d30eddc34361d9821373c79ce",
+          "sha256": "ddccb14a23e9186bf45a77aafa465444a251db5e44cb0e5c172ae5bc66d83e9a"
+        },
+        {
+          "path": "ecmascript/ecma_macros.h",
+          "blob": "fbfbd2b8b986f4c9cdc6626d0d62209497a78740",
+          "sha256": "f9685fef22df50d266e54a53e114488bab6d9c5962b66be9e761ca26093b18aa"
+        }
+      ],
+      "product_build_association": "unknown",
+      "existing_detector_and_rule": "ohscanner.ark.runtime.type_safety v0.8.4; ark.runtime.callback-exception-before-result-conversion.",
+      "baseline_scan": "v0.8.3 parent/fix: 5 other candidates each, no Every, both partial/blocked. v0.8.4 same exact scope/profile: parent 6 candidates including Every line 719; fix 5 elsewhere and no Every. Both overall runs remain blocked due FindIndex cross-compound paths and helper local coverage.",
+      "miss_reason": "v0.8.3 had no source-derived helper effect summary. v0.8.4 derives the helper effect from the selected implementation body and recognizes the caller result-to-ToBoolean flow; it detects the parent-only Every path. Remaining translation-unit paths keep both runs blocked.",
+      "implementation_status": "v0.8.4 exact source replay demonstrates a parent-only Every candidate after parsed helper-body effect summary. This is a post-freeze probe and not an independent holdout because Array::Every is shared with the development family.",
+      "positive_control": "Source diff adds exception check immediately after helper return and before callResult.ToBoolean; commit message references uncaught-exception crash issue I5XZRO.",
+      "fixed_control": "Same five unrelated direct callback candidates in fixed revision; no Every finding; file-level detector remains partial, not a pass.",
+      "real_source_rescans": {
+        "v0.8.3_parent": "5 other diagnostics; no Every; blocked/partial",
+        "v0.8.3_fixed": "5 other diagnostics; no Every; blocked/partial",
+        "v0.8.4_parent": "6 candidates including Every line 719; blocked/partial",
+        "v0.8.4_fixed": "5 candidates elsewhere; Every absent; blocked/partial",
+        "execution_cost": "M2 detector elapsed: v0.8.3 parent/fix 0.401s/0.391s; v0.8.4 parent/fix 1.443s/1.523s. Peak memory absent from report; scope is four files."
+      },
+      "evidence_paths": [
+        "research/experiments/ark_runtime/c8_20261018/reports/v083-wrapper-holdout-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v083-wrapper-holdout-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v084-wrapper-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v084-wrapper-fixed.json"
+      ],
+      "remaining_blockers": [
+        "Overall parent/fixed runs are blocked by other callback flows crossing unsupported compounds; no whole-file pass.",
+        "Not an independent holdout due shared BuiltinsArray::Every surface with development data.",
+        "Macro/preprocessor/build conditions and runtime callback reproduction are not established.",
+        "Public issue contents were inaccessible in this turn; commit message and exact source diff are the verified evidence."
+      ],
+      "next_step": "After v0.8.4 is frozen, inspect a source-disjoint official upstream exception-propagation fix and its test; record it before any tuning, then run same production M2 scope and adjudicate complete coverage.",
+      "vulnerable_tree": "94feee5b5439029a9194cecc53fe953e9eb452a2",
+      "source_snapshot_hashes": {
+        "vulnerable": "4ec2d70364956c6ba3817d848deb807b8ff2538b2737f932164a34f7235853d4",
+        "fixed": "1e4b3e71b47d8d07795cc44c5695ab990e27bf102e56c03a510f739343ca2fc9"
+      },
+      "evidence_layers": {
+        "public_disclosure_fact": "Upstream commit message references issue I5XZRO and describes an uncaught-exception crash; issue page details and any CVE association were not independently verified.",
+        "source_root_cause_match": "Exact parent/fix source diff inserts a pending-exception guard after the helper result and before ToBoolean; helper implementation is included and pinned.",
+        "static_detection": "v0.8.4 production M2 emits Every only on parent (line 719) and removes it on fix; overall files remain blocked, so family validation is partial.",
+        "component_dynamic_reproduction": "not run",
+        "product_vulnerability_confirmation": "unknown"
+      }
+    },
+    {
+      "case_id": "ARK-ARRAY-FINDINDEX-STABLE-ABRUPT-RETURN-C333",
+      "CVE_or_advisory": "No CVE or security advisory verified. Commit c333bfc148f0ecc2e0db8c84c821a7560f904906 is titled “bugfix of jsproxy” and references issue I7ZZHM; the issue-to-FindIndex-hunk association is unverified and the Gitee issue page was inaccessible.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I7ZZHM",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime BuiltinsArray::FindIndex / JSStableArray::HandleFindIndexOfStable",
+      "root_cause": "The stable-array helper can return a callback-derived exception completion. BuiltinsArray::FindIndex converts the returned JSTaggedValue with ToBoolean before checking the thread pending-exception state. The exact one-line correction inserts RETURN_EXCEPTION_IF_ABRUPT_COMPLETION(thread) between the helper call and ToBoolean.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Only the exact upstream commit-parent/source pair is established. No release tag, product manifest, build profile, or shipped product association is established.",
+      "vulnerable_commit": "9824afc4c09441f4e504b679c70d9876ba90607c",
+      "vulnerable_tree": "6b4323d58cfa7128ee10a7e7257b9480caad5604",
+      "vulnerable_files": [
+        {
+          "path": "ecmascript/builtins/builtins_array.cpp",
+          "blob": "8749c9de8ad6cfc0a967efbd0d9275b8894d74f9",
+          "sha256": "7f11e788354f81cee4b4eabbc8302954881ba2fffc44e99281f4f16c2b1faf4a",
+          "bytes": 151301
+        },
+        {
+          "path": "ecmascript/js_stable_array.cpp",
+          "blob": "e8fbb74b0f112762c7ea4af8b16d9260103791fd",
+          "sha256": "3d6fab882b08749e49ce2c641bdc32c3b298a6d5f262c89519e8c847261dbd52",
+          "bytes": 45153
+        },
+        {
+          "path": "ecmascript/js_stable_array.h",
+          "blob": "adf8464ab36eafafdda193d51196c7322bcef6e5",
+          "sha256": "f93b5ecde741a118f10742081f3dac23c9a0d84a2e54d6ee8f83b4760b1a0814",
+          "bytes": 6508
+        },
+        {
+          "path": "ecmascript/ecma_macros.h",
+          "blob": "53e552027e86f7d72802170f66acec3e7aa4c4ba",
+          "sha256": "30677741255a50c47eae10c147734203293e0e972b816c0fd27032f2f77bd14c",
+          "bytes": 38487
+        }
+      ],
+      "fixed_commit": "c333bfc148f0ecc2e0db8c84c821a7560f904906",
+      "fixed_tree": "a2f5ca235eb7da24897bd4e477f4361e4b4da0d5",
+      "fixed_files": [
+        {
+          "path": "ecmascript/builtins/builtins_array.cpp",
+          "blob": "e9e3c9aaeee63bcbf8e060232b4a044550d55120",
+          "sha256": "9c21cb837b8b6844e50de334dd446a547952c776b44710070655ee3ec5766c0a",
+          "bytes": 151356
+        },
+        {
+          "path": "ecmascript/js_stable_array.cpp",
+          "blob": "e8fbb74b0f112762c7ea4af8b16d9260103791fd",
+          "sha256": "3d6fab882b08749e49ce2c641bdc32c3b298a6d5f262c89519e8c847261dbd52",
+          "bytes": 45153
+        },
+        {
+          "path": "ecmascript/js_stable_array.h",
+          "blob": "adf8464ab36eafafdda193d51196c7322bcef6e5",
+          "sha256": "f93b5ecde741a118f10742081f3dac23c9a0d84a2e54d6ee8f83b4760b1a0814",
+          "bytes": 6508
+        },
+        {
+          "path": "ecmascript/ecma_macros.h",
+          "blob": "53e552027e86f7d72802170f66acec3e7aa4c4ba",
+          "sha256": "30677741255a50c47eae10c147734203293e0e972b816c0fd27032f2f77bd14c",
+          "bytes": 38487
+        }
+      ],
+      "product_build_association": "unknown; exact product args.gn, target build, binary, and source-to-product binding are absent",
+      "existing_detector_and_rule": "ohscanner.ark.runtime.type_safety v0.8.4; ark.runtime.callback-exception-before-result-conversion; explicitly selected production M2, Catalog remains research_candidate/disabled by default",
+      "baseline_scan": {
+        "entry": "production M2 ohscan-run",
+        "profile": "light-ast",
+        "declared_scope": [
+          "ecmascript/builtins/builtins_array.cpp",
+          "ecmascript/js_stable_array.cpp",
+          "ecmascript/js_stable_array.h",
+          "ecmascript/ecma_macros.h"
+        ],
+        "vulnerable_parent": "2 diagnostics; FindIndex candidate at line 1030 plus FindLastIndex; run blocked, both applicable C++ files partial",
+        "fixed_commit": "1 diagnostic; FindIndex candidate absent, residual FindLastIndex at line 3314; run blocked, both applicable C++ files partial",
+        "same_scope_and_profile": true
+      },
+      "baseline_miss_reason": "Earlier v0.8.3 direct-call logic did not connect JSStableArray::HandleFindIndexOfStable callback completion with caller-side ToBoolean. v0.8.4 source-derived helper summary models the connection. The current replay remains file-partial due additional cross-compound paths.",
+      "implementation_status": "v0.8.4 production detector emits a parent-only candidate at the exact unsafe conversion and removes that candidate on c333; whole-file coverage remains blocked, so not production-admitted.",
+      "controls": {
+        "positive_real_source": "Exact parent 9824afc...: FindIndex candidate at builtins_array.cpp:1030 in production M2 output.",
+        "fixed_real_source": "Exact c333 fix: the same FindIndex finding is absent after the one-line exception guard; one unrelated FindLastIndex finding remains and run is partial.",
+        "safe_control": "Fixed parent/fix pair only; no source-disjoint complete-coverage safe control established.",
+        "independent_variant": "Not an independent holdout: FindIndex was part of earlier Array development coverage (b487/f536). This is post-freeze regression/source-history evidence only.",
+        "unrelated_control": "No unrelated control in this replay.",
+        "same_mechanism_variants": "I5XZRO Every wrapper and TypedArray Filter exact pair are tracked separately; the FindIndex source path is another helper-result completion flow but shares repository and detector tuning history."
+      },
+      "real_source_rescans": {
+        "v0.8.4_parent": "M2 candidate at BuiltinsArray::FindIndex line 1030; 2 total diagnostics; blocked, 2 files partial; detector elapsed 1.206s.",
+        "v0.8.4_fixed": "M2 FindIndex finding removed; residual BuiltinsArray::FindLastIndex candidate at line 3314; 1 total diagnostic; blocked, 2 files partial; detector elapsed 1.232s.",
+        "scope_limitation": "M2 declared four paths; source parser reports the two C++ translation units as applicable. Header macro semantics remain not expanded; profile has no preprocessing."
+      },
+      "evidence_paths": [
+        "research/experiments/ark_runtime/c8_20261018/reports/v084-findindex-c333-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v084-findindex-c333-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/source_identity_manifest.json"
+      ],
+      "remaining_blockers": [
+        "Public issue page and relationship between I7ZZHM and the FindIndex hunk are unverified; commit title concerns jsproxy.",
+        "M2 parent/fix runs are blocked due other cross-compound callbacks; no complete-coverage family result.",
+        "No independent safe control or untouched source-disjoint holdout; this method was used as development data in earlier Array scans.",
+        "No preprocessor/macro expansion, complete dependency/build profile, runtime reproduction, or product binding."
+      ],
+      "next_step": "Freeze v0.8.4 with this result as a non-independent real-source regression. Select a different Ark Runtime callback API/source family not used in prior tuning, verify its official issue/PR and tests, pin exact commits and complete helper dependencies, then replay before any detector change.",
+      "evidence_layers": {
+        "research_mechanism_observation": "Exact FindIndex source diff and helper implementation show exception-return followed by a caller conversion; the c333 patch inserts the pending-exception guard.",
+        "public_disclosure_fact": "Unknown for this specific FindIndex path. c333 commit message references I7ZZHM but labels the change jsproxy; online issue could not be read.",
+        "source_root_cause_match": "Strong source evidence: vulnerable parent and fixed commit differ by one relevant guard immediately before ToBoolean; helper body can return exception completion.",
+        "static_detection": "Production M2 v0.8.4 parent has FindIndex candidate at line 1030; fixed pair removes it. Both file-level runs blocked due separate partial paths.",
+        "component_dynamic_reproduction": "not run",
+        "product_vulnerability_confirmation": "unknown"
+      }
+    },
+    {
+      "case_id": "ARK-RUNTIME-CALLINFO-CONSTRUCTION-PENDING-EXCEPTION-I7K7L6",
+      "CVE_or_advisory": "No CVE or security advisory verified. Fix commit references issue I7K7L6; public issue contents and security classification were not independently verified.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I7K7L6"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime JSIterator::IteratorNext / EcmaInterpreter::NewRuntimeCallInfo",
+      "root_cause": "NewRuntimeCallInfo calls DoStackOverflowCheck, which can set a pending RangeError and return nullptr. Two IteratorNext overloads then dereference the call-info pointer via SetCallArg before propagating the pending exception. The fix adds RETURN_VALUE_IF_ABRUPT_COMPLETION(thread, undefined) before both dereferences.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Exact upstream parent/fix commit pair only. No release tag or OpenHarmony product manifest/build mapping established.",
+      "vulnerable_commit": "11c5ad59240da5603504821d674c499e3cbff75a",
+      "fixed_commit": "f596e410db3ab90a4706a248cf935b135a62490a",
+      "commit_parent_relation": "fixed commit first parent is the vulnerable source revision",
+      "vulnerable_tree": "2614d90ed3924631ed455a302093a0a5d5a668da",
+      "fixed_tree": "9bcf5a2aaaa2fcdf35719d4641ed7e3bfde8400c",
+      "file_identity_manifest": "research/experiments/ark_runtime/c8_20261018/callinfo_source_identity.json",
+      "product_build_association": "unknown",
+      "existing_detector_and_rule": "ohscanner.ark.runtime.type_safety v0.8.6; ark.runtime.call-info-construction-exception-guard; production M2 explicit selection; research_candidate/disabled by default.",
+      "baseline_scan": {
+        "entry": "python -m src.cli.main ohscan-run (M2)",
+        "profile": "light-ast",
+        "same_scope_and_profile": true,
+        "scope": [
+          "ecmascript/js_iterator.cpp",
+          "ecmascript/ecma_macros.h"
+        ],
+        "vulnerable_parent": "v0.8.4: 0 diagnostics, completed, complete applicable C++ file coverage",
+        "fixed": "v0.8.4: 0 diagnostics, completed, complete applicable C++ file coverage",
+        "miss_reason": "v0.8.4 did not model NewRuntimeCallInfo pointer construction followed by sensitive SetCallArg dereference."
+      },
+      "implementation_status": "v0.8.6 retains the bounded direct call-info pointer-flow rule and validates RETURN_REJECT_PROMISE_IF_ABRUPT source semantics from the macro body; candidate remains source-bound and non-confirmatory.",
+      "controls": {
+        "positive_real_source": "Exact parent M2 reports two call-info candidates at js_iterator.cpp lines 142 and 163.",
+        "fixed_real_source": "Exact fixed commit M2 reports 0 call-info diagnostics; complete applicable C++ coverage.",
+        "untrained_source_disjoint_variant": "builtins_string.cpp ReplaceAll parent has 2 candidates (lines 985, 1026); fixed has 0. This function/file was not used to tune the rule, but shares the same commit and remediation batch, so it is a correlated variant, not an independent historical disclosure.",
+        "safe_unrelated_control": "none established for this new rule; synthetic unit controls cover configured guard and direct early-return behavior only.",
+        "other_family_regression": "TypedArray Filter remained 1->0 and complete. Every pair has limitations and total diagnostics 6->7, so it is not a pass or clean regression."
+      },
+      "real_source_rescans": {
+        "v0.8.5_iterator_parent": "2 candidates; completed; one applicable C++ file completely analyzed; macro header parsing partial.",
+        "v0.8.5_iterator_fixed": "0; completed; same scope; macro header parsing partial.",
+        "v0.8.5_string_variant_parent": "2 candidates in ReplaceAll; completed; one applicable C++ file complete; macro header partial.",
+        "v0.8.5_string_variant_fixed": "0; completed; same scope.",
+        "v0.8.4_iterator_baseline_parent_fixed": "0->0; both completed and complete C++ coverage; semantic rule absent.",
+        "v0.8.5_typedarray_regression": "1->0; both completed, complete relevant coverage.",
+        "v0.8.5_every_regression": "total 6->7 diagnostics; both completed_with_limitations; unrelated diagnostics and partial coverage prevent pass.",
+        "v0.8.6_exact_parent": "2 candidates at js_iterator.cpp:142,163; completed with complete applicable C++ file; elapsed 0.0657s.",
+        "v0.8.6_exact_fixed": "0 candidates; completed with complete applicable C++ file; elapsed 0.0657s."
+      },
+      "evidence_paths": [
+        "research/experiments/ark_runtime/c8_20261018/reports/v085-callinfo-jsiterator-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v085-callinfo-jsiterator-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v085-callinfo-string-variant-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v085-callinfo-string-variant-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v084-callinfo-jsiterator-baseline-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v084-callinfo-jsiterator-baseline-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v085-typedarray-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v085-typedarray-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v085-every-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v085-every-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/callinfo_source_identity.json",
+        "research/experiments/ark_runtime/c8_20261018/README.md",
+        "research/experiments/ark_runtime/c8_20261018/reports/v086-callinfo-jsiterator-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v086-callinfo-jsiterator-fixed.json"
+      ],
+      "evidence_layers": {
+        "research_mechanism_observation": "Source bodies show stack-overflow check sets pending exception and returns true; call-info construction returns null; fixed patch propagates before pointer dereference.",
+        "public_disclosure_fact": "Unknown beyond fix commit reference to I7K7L6; no CVE/security advisory verified.",
+        "source_root_cause_match": "Strong exact source/patch relationship from parent and fixed commit.",
+        "static_detection": "Production M2 candidate on exact parent at both unsafe dereferences, absent on fixed commit; same-scope complete applicable C++ file scans.",
+        "component_dynamic_reproduction": "not run",
+        "product_vulnerability_confirmation": "unknown"
+      },
+      "limitations": [
+        "No preprocessing or full macro expansion; ecma_macros.h reports partial parse while target C++ TU is complete.",
+        "Only direct initializer-to-SetCallArg flows in same parsed function are modeled; arbitrary reassignment, aliasing, indirect sinks and general CFG are out of scope.",
+        "No full dependency/build profile, runtime reproduction, product build association, product reachability or impact proof.",
+        "No independent historical disclosure/sample or complete real safe/unrelated control for the new rule."
+      ],
+      "remaining_blockers": [
+        "Verify whether I7K7L6 publicly discloses this exact root cause and whether it has a security classification.",
+        "Add a separate-commit historical sample and a real safe control without tuning against the sample.",
+        "Build profile and macro expansion evidence remain absent; dynamic component and product evidence absent.",
+        "IB40SU sample is development, not independent holdout; no fresh complete real safe control or untouched complete holdout yet."
+      ],
+      "next_step": "IB40SU separate-commit pair was discovered and used to refine macro guard recognition; it is now development data. Select a new untouched source-disjoint exception-propagation pair and run M2 without further detector tuning; require complete applicable coverage."
+    },
+    {
+      "case_id": "ARK-RUNTIME-NEWCALLINFO-EXCEPTION-GUARD-IB40SU",
+      "CVE_or_advisory": "No CVE/security advisory verified. Upstream change commit references Gitee issue IB40SU; issue body/security classification were not independently accessible.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IB40SU"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime BuiltinsAsyncFromSyncIterator::Throw/Return and JSAsyncGeneratorObject::AsyncGeneratorResolve",
+      "root_cause": "In four default-stack-check NewRuntimeCallInfo paths, stack overflow can set pending exception and return nullptr; the vulnerable code then dereferences the pointer with SetCallArg. Fix adds an exception-return/reject guard before each dereference. Two other existing paths already use RETURN_REJECT_PROMISE_IF_ABRUPT and were not unsafe; v0.8.6 now validates that the macro returns from its same-thread pending-exception branch.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Exact upstream commit parent/fix pair only; no release/product mapping. The issue link is a commit reference, not independently verified disclosure.",
+      "vulnerable_commit": "811daec3dc48a2ba4426b9c6eea7bcc1ee7ab315",
+      "fixed_commit": "3bf1a3cee91252507d02ebcd0ef332d61bbad342",
+      "fixed_commit_parent": "811daec3dc48a2ba4426b9c6eea7bcc1ee7ab315",
+      "source_identity_manifest": "research/experiments/ark_runtime/c8_20261018/exception_history_source_identity.json",
+      "product_build_association": "unknown",
+      "existing_detector_and_rule": "ohscanner.ark.runtime.type_safety v0.8.6; ark.runtime.call-info-construction-exception-guard; production M2, explicit selection only.",
+      "baseline_scan": {
+        "entry": "M2 ohscan-run",
+        "profile": "light-ast",
+        "scope": [
+          "ecmascript/builtins/builtins_async_from_sync_iterator.cpp",
+          "ecmascript/ecma_macros.h"
+        ],
+        "same_scope_and_profile": true,
+        "pre_macro_contract_iteration": "6 total diagnostics on parent and 2 on fix; residual call-info findings were at sites already guarded by RETURN_REJECT_PROMISE_IF_ABRUPT; this exposed a missed guard contract. This was an intermediate iteration and not a frozen-version result.",
+        "v0.8.6_parent": "4 call-info candidates at lines 93, 122, 170, 200; completed; applicable C++ file complete.",
+        "v0.8.6_fixed": "0 call-info candidates; completed; same scope; applicable C++ file complete.",
+        "per_site_diff": "All four parent candidate sites receive exception checks in the exact fix. Two additional parent/fix sites are protected by the source-validated RETURN_REJECT_PROMISE_IF_ABRUPT macro and produce no v0.8.6 call-info candidates."
+      },
+      "implementation_status": "Used to refine the macro guard semantic contract; therefore this exact commit pair is development data, not an independent holdout. v0.8.6 recognizes the added macro only when source body has same-thread HasPendingException branch and return expression inside that branch. A negative synthetic macro with an unrelated return remains partial.",
+      "controls": {
+        "positive_real_source": "Exact parent has four unguarded direct call-info pointer sinks in complete production M2 coverage.",
+        "fixed_real_source": "Exact fix has 0 same-rule candidates with complete relevant C++ coverage.",
+        "safe_macro_control": "Two existing lines in same parent/fix pair are guarded by RETURN_REJECT_PROMISE_IF_ABRUPT; both produce no call-info candidate after v0.8.6 macro body validation. This is an in-source control, not an independent labeled safe release.",
+        "synthetic_controls": "Correct pending-branch return recognized; unrelated return outside pending branch remains partial/unknown; direct if early-return, configured return macro, and compound condition tests retained.",
+        "independent_holdout": "none from this case; it was used to tune the guard contract."
+      },
+      "real_source_rescans": {
+        "v0.8.6_parent": "4 candidates -> complete; elapsed 0.0564 sec.",
+        "v0.8.6_fixed": "0 call-info candidates -> complete; elapsed 0.0560 sec.",
+        "same_commit_async_generator_variant": "JSAsyncGeneratorObject::AsyncGeneratorResolve has NewRuntimeCallInfo(..., StackCheck::NO) plus inserted guard; M2 0->0 and complete. Since StackCheck::NO skips the constructor stack check, this is not a positive call-info construction case; possible pre-existing pending exception source remains unmodeled.",
+        "regression_typedarray": "1->0, complete; same scope/profile."
+      },
+      "evidence_paths": [
+        "research/experiments/ark_runtime/c8_20261018/reports/v086-ib40su-asyncfromsync-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v086-ib40su-asyncfromsync-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v086-callinfo-jsiterator-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v086-callinfo-jsiterator-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/exception_history_source_identity.json"
+      ],
+      "evidence_layers": {
+        "research_mechanism_observation": "Source parent/fix diff and NewRuntimeCallInfoBase body show default StackCheck::YES can set exception and return null; four guards are inserted directly before SetCallArg.",
+        "public_disclosure_fact": "Fix commit cites IB40SU; issue body and CVE/security status unknown.",
+        "source_root_cause_match": "Strong source-level patch relation; guard inserted before each pointer dereference.",
+        "static_detection": "Production M2 exact pair v0.8.6 yields 4->0 with complete applicable-file coverage.",
+        "component_dynamic_reproduction": "not run",
+        "product_vulnerability_confirmation": "unknown"
+      },
+      "remaining_blockers": [
+        "Sample was used to tune the guard macro contract and is development data.",
+        "No independently reviewed safe/unrelated real control.",
+        "No full build profile, runtime trigger reproduction, shipped product association, or impact evidence.",
+        "CVE and issue disclosure status not verified."
+      ],
+      "next_step": "Freeze v0.8.6, then replay an untouched, source-disjoint exception-propagation history case without modifying the detector. Candidate I7SDBG RuntimeInstanceofByHandler is not an acceptable pass yet: whole header coverage is partial due unrelated RuntimeOptSuperCall paths; investigate the exact partial cause and preserve that run as unknown. Completion requires a fresh, separate-commit case with complete relevant coverage and clean fixed result."
+    },
+    {
+      "case_id": "ARK-RUNTIME-INSTANCEOF-EXCEPTION-RETURN-VALUE-I7SDBG",
+      "CVE_or_advisory": "No CVE/security advisory verified. Fix commit references issue I7SDBG; issue content unavailable.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I7SDBG"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime RuntimeStubs::RuntimeInstanceofByHandler",
+      "root_cause": "Exact patch changes pending-exception exits from returning JSTaggedValue(false) to propagating JSTaggedValue::Exception; it is an exception-sentinel semantic bug, distinct from null call-info pointer construction.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Exact source parent/fix only; no product release association.",
+      "vulnerable_commit": "905f840797ff27839d9d984aee36c0f8a773adb2",
+      "fixed_commit": "c73261dd8452524fa707c0b3c768e899786d22f2",
+      "source_identity_manifest": "research/experiments/ark_runtime/c8_20261018/exception_history_source_identity.json",
+      "product_build_association": "unknown",
+      "existing_detector_and_rule": "ohscanner.ark.runtime.type_safety v0.8.7; ark.runtime.call-info-construction-exception-guard. It does not currently analyze normal-value vs exception-sentinel return semantics.",
+      "baseline_scan": {
+        "entry": "production M2 ohscan-run",
+        "profile": "light-ast",
+        "scope": [
+          "ecmascript/stubs/runtime_stubs-inl.h",
+          "ecmascript/ecma_macros.h"
+        ],
+        "parent": "0 diagnostics; completed_with_limitations; applicable header partial due unrelated RuntimeOptSuperCall cross-compound pointer flow.",
+        "fixed": "0 diagnostics; same partial status; no safe/miss conclusion.",
+        "v0.8.7_parent": "0 diagnostics; completed; applicable runtime_stubs-inl.h fully analyzed for current call-info rule.",
+        "v0.8.7_fixed": "0 diagnostics; completed; same exact scope/profile and full applicable coverage."
+      },
+      "implementation_status": "The bounded call-info pointer rule now proves the parent-compound RETURN_EXCEPTION guard dominates nested RuntimeOptSuperCall loop dereferences. The issue-specific false-return to Exception-sentinel semantic difference remains unmodeled; the complete 0->0 is valid only for pointer-dereference findings, not for the separate sentinel bug.",
+      "controls": {
+        "positive_real_source": "Patch has three return-sentinel changes; target method source context is present.",
+        "fixed_real_source": "No finding on either revision; M2 whole-file coverage incomplete, so not a pass.",
+        "safe_unrelated_control": "not established",
+        "independent_variant": "separate commit and source file, but scan is partial and cannot validate detector behavior.",
+        "safe_control": "Parent and fix contain verified exception checks before their call-info pointer use; M2 reports no pointer-use candidate on either with complete relevant header coverage. This is a control for CWE-476 call-info construction, not a negative label for sentinel semantics."
+      },
+      "real_source_rescans": {
+        "parent": "0 diagnostics, completed_with_limitations, detector coverage partial (1 applicable header, 0 complete).",
+        "fixed": "0 diagnostics, completed_with_limitations, same partial scope.",
+        "v0.8.7_parent": "0 diagnostics, completed, complete applicable header coverage; unrelated RuntimeOptSuperCall no longer leaves the file partial.",
+        "v0.8.7_fixed": "0 diagnostics, completed, complete applicable header coverage."
+      },
+      "evidence_paths": [
+        "research/experiments/ark_runtime/c8_20261018/reports/v086-i7sdbg-runtime-instanceof-parent-partial.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v086-i7sdbg-runtime-instanceof-fixed-partial.json",
+        "research/experiments/ark_runtime/c8_20261018/exception_history_source_identity.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v087-i7sdbg-runtime-instanceof-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v087-i7sdbg-runtime-instanceof-fixed.json"
+      ],
+      "remaining_blockers": [
+        "The separate semantic defect is a pending-exception branch that returns JSTaggedValue(false) rather than JSTaggedValue::Exception; no rule currently models exception-sentinel compatibility.",
+        "No CVE/advisory body, product build association, dynamic reproduction or product impact proof."
+      ],
+      "next_step": "Freeze v0.8.7 and select a separate-commit, source-disjoint exception-sentinel or call-info parent/fix pair with linked test; run production M2 before tuning. Keep I7SDBG as development data; its 0->0 covers pointer dereference only, while false-to-Exception sentinel semantics remain unmodeled."
+    },
+    {
+      "case_id": "ARK-SHAREDARRAY-FINDINDEX-EXCEPTION-PROPAGATION-PARTIAL-2A9BCFB",
+      "CVE_or_advisory": "No CVE/security advisory verified; commit appears to be a SendableArray API integration change.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime BuiltinsSharedArray::FindIndex",
+      "root_cause": "Unclassified source variant: commit adds guarded NewRuntimeCallInfo/callback flow; issue/vulnerability classification not established.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Exact first-parent/fix commits only; product version mapping unknown.",
+      "vulnerable_commit": "4972b782328d8d3587dded347b0a7f3158120b1d",
+      "fixed_commit": "2a9bcfb6082a25ebd0b35ab4a31202ce062aae6d",
+      "source_identity_manifest": "research/experiments/ark_runtime/c8_20261018/exception_history_source_identity.json",
+      "product_build_association": "unknown",
+      "existing_detector_and_rule": "v0.8.6 callback exception and call-info candidate rules.",
+      "baseline_scan": {
+        "entry": "production M2 ohscan-run",
+        "profile": "light-ast",
+        "scope": [
+          "ecmascript/builtins/builtins_shared_array.cpp",
+          "ecmascript/ecma_macros.h"
+        ],
+        "parent": "0 diagnostics, completed_with_limitations; C++ translation unit partial.",
+        "fixed": "0 diagnostics, completed_with_limitations; same partial status."
+      },
+      "implementation_status": "No result counted; investigation probe only.",
+      "controls": {
+        "positive_real_source": "none due source parser partial.",
+        "fixed_real_source": "none due source parser partial.",
+        "safe_control": "none; zero partial finding is unknown.",
+        "variant": "separate commit/method, but parser coverage partial."
+      },
+      "real_source_rescans": {
+        "parent": "0 diagnostics; applicable file partial, not analyzed completely.",
+        "fixed": "0 diagnostics; applicable file partial, not analyzed completely."
+      },
+      "evidence_paths": [
+        "research/experiments/ark_runtime/c8_20261018/reports/v086-sharedarray-findindex-parent-partial.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/v086-sharedarray-findindex-fixed-partial.json",
+        "research/experiments/ark_runtime/c8_20261018/exception_history_source_identity.json"
+      ],
+      "remaining_blockers": [
+        "Translation unit parse is partial in both revisions; no root-cause finding or safety conclusion.",
+        "No CVE/advisory, release mapping, dynamic build or product association."
+      ],
+      "next_step": "Keep this pair excluded from pass/fail; revisit only after production parser has complete relevant coverage or a justified precise scope mechanism."
+    },
+    {
+      "case_id": "ARK-COMPILER-REFLECT-APPLY-PENDING-EXCEPTION-IAO7GO",
+      "CVE_or_advisory": "Official upstream issue IAO7GO [Bug]; no CVE or security advisory classification verified.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IAO7GO",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/9061"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime compiler, NativeInlineLowering exception lowering for Reflect.apply",
+      "root_cause": "The inline lowering branches on the returned value equaling ExceptionConstant. In the issue reproducer, the call can leave pending exception state while its result is not that sentinel; the generated control flow then fails to propagate the exception before the next bytecode.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Issue selects master. Exact upstream merge first-parent/fix pair is recorded; no release tag or product source/build mapping was established.",
+      "vulnerable_commit": "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724",
+      "vulnerable_tree": "0c8d65e759bf96b4632573561748a180a93cf413",
+      "vulnerable_files": [
+        {
+          "path": "ecmascript/compiler/native_inline_lowering.cpp",
+          "blob": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+          "sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463"
+        }
+      ],
+      "fixed_commit": "18d8532a200d0c9aa64a6dfe2b146dc841b52bf8",
+      "fixed_tree": "372e6906218c245e59643a7437f2d92e435401d6",
+      "fixed_files": [
+        {
+          "path": "ecmascript/compiler/native_inline_lowering.cpp",
+          "blob": "df03fdce8a37cf2245577aec23c4c26deeebf02f",
+          "sha256": "6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce"
+        }
+      ],
+      "product_build_association": "unknown; issue describes an AOT/inlining reproducer and required build/run flags, but no local matching product artifacts or build profile were available.",
+      "existing_detector_and_rule": "ohscanner.ark.runtime.type_safety v0.8.7; existing runtime exception and call-info rules do not model compiler IR exception lowering.",
+      "baseline_scan_result": {
+        "entry": "production CLI ohscan-run M2",
+        "scope": "ecmascript/compiler/native_inline_lowering.cpp only",
+        "profile": "light-ast",
+        "parent": {
+          "diagnostics": 0,
+          "detector_status": "blocked",
+          "reason": "not_applicable: no source with supported semantic target; applicable_files=0"
+        },
+        "fixed": {
+          "diagnostics": 0,
+          "detector_status": "blocked",
+          "reason": "not_applicable: no source with supported semantic target; applicable_files=0"
+        },
+        "parser": "C++ translation unit parse complete in both revisions",
+        "interpretation": "0->0 is unscored; selector/applicability gap, not a clean fix result."
+      },
+      "miss_reason": "Current semantic selector only accepts reviewed runtime callback/call-info owner contracts and configured runtime exception sources; compiler NativeInlineLowering flow is outside the model. Current scanner did not analyze this root cause.",
+      "implementation_status": "Research case verified and production-entry baseline miss recorded; no compiler exception-lowering detector implemented.",
+      "controls": {
+        "positive": "Official issue reproducer and newly added AOT throw regression are recorded in fixed source; runtime test not executed.",
+        "fixed": "Exact upstream merge contains the source fix; static rule result remains blocked, not a pass.",
+        "safe": "not executed; no independent safe compiler lowering control.",
+        "irrelevant": "not executed.",
+        "variant": "not executed; preserve an independent compiler history case for future holdout."
+      },
+      "real_source_replay_result": "Parent/fixed production M2 both yielded 0 diagnostics, but detector applicability is 0 and per-run status blocked; do not claim detection, false-positive control, or fixed-version pass.",
+      "evidence_paths": [
+        "reports/v087-iao7go-reflect-apply-mainline-parent.json",
+        "reports/v087-iao7go-reflect-apply-mainline-fixed.json",
+        "iao7go_source_identity.json"
+      ],
+      "remaining_blockers": [
+        "No compiler IR exception-state data/control-flow model.",
+        "No independent safe/variant sample.",
+        "AOT build and runtime reproduction not run.",
+        "No security advisory/CVE or product build association; upstream issue is labeled Bug."
+      ],
+      "next_step": "Review AST nodes for ReplaceGateWithPendingException and its call-site result flows in the fixed parent/fix pair; define a generic semantic contract for exception-state checks, then search and pin a source-disjoint compiler lowering regression as a reserved holdout before implementing or tuning the detector.",
+      "evidence_dimensions": {
+        "public_disclosure": "official upstream issue IAO7GO verified; reports AOT Reflect.apply exception failure; security classification unknown, no CVE verified",
+        "source_root_cause": "source diff replaces return-value sentinel comparison with pending-exception-state check; exact issue regression added",
+        "static_detection": "missed/not analyzed because detector applicability is zero",
+        "component_dynamic_reproduction": "not run",
+        "product_vulnerability_confirmation": "unknown/not established"
+      }
+    },
+    {
+      "case_id": "ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304",
+      "CVE_or_advisory": "CVE-2025-24304; official April bulletin identifies Ark Runtime out-of-bounds write, CVSS 3.3, affected OpenHarmony 4.1 and 5.0.2. Official PR !11279 calls !11130 one of two vulnerability fixes cherry-picked into 5.0.3; the likely mapping to CVE-2025-24304 is inferred from mechanism/category, not directly stated by source.",
+      "source_and_verification_date": [
+        "https://lists.openatom.io/hyperkitty/list/security%40openharmony.io/thread/NNZJMCXIDMX6EYMY62BLKL2DLYXAL3WR/",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IBP5J6",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11130",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11279",
+        "https://gitee.com/openharmony/manifest/tree/OpenHarmony-v5.0.2-Release",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11279",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11279",
+        "https://lists.openatom.io/hyperkitty/list/security%40openharmony.io/thread/NNZJMCXIDMX6EYMY62BLKL2DLYXAL3WR/"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime compiler TypedArray Map stub",
+      "root_cause": "Map allocates a typed-array result and later performs indexed stores; vulnerable source supplies the source array jsType to FastSetPropertyByIndex even though the result array can have a different runtime type. The fix derives newArrayType from LoadHClass(newArray) and supplies that token to the property access/store.",
+      "lane": "C",
+      "affected_versions_evidence": "Official v5.0.2 manifest tag pins 8b615647dc4af6f4b572fca50bfbd4d1b91ecad4, an ancestor of branch fix 2654cd98e39479b343ee11abf3a65b74e8e9d957. Official bulletin identifies v4.1 and v5.0.2 as affected. PR !11279 confirms !11130 was treated as a vulnerability fix and cherry-picked into 5.0.3. This is strong circumstantial support for the CVE/root relationship, still not an explicit one-to-one mapping.",
+      "vulnerable_commit": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+      "vulnerable_tree": "454e898b43b55950b104053cf42d32645474ef8f",
+      "vulnerable_files": [
+        {
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+          "blob": "2aae41b75a5ffd1441309439ff3834d959f71b79",
+          "sha256": "6133af44de48ec3ff00fdc7b06597fbef1c9a270cc04ba48d09b4475976c2381"
+        }
+      ],
+      "fixed_commit": "6627179cbf6f8d40d1adfcf5c3c686b902f42419",
+      "fixed_tree": "fa482a14984ee8cd8f424131cb5179ba7a6a9422",
+      "fixed_files": [
+        {
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+          "blob": "1818dd72f5ac68aa7f8ee7a38a59b923f4ab5476"
+        }
+      ],
+      "product_build_association": "unknown; no exact product source manifest/build association found.",
+      "existing_detector_and_rule": "Production CLI selected ohscanner.ark.runtime.type_safety, rule ark.runtime.typedarray-store-type-origin. v0.8.7 did not select the Map flow; its Filter finding was a separate method under the same generic rule, not established as unrelated or safe.",
+      "baseline_scan_result": {
+        "v0.8.7": "Parent and fixed each had one Filter candidate and no Map diagnostic; selector missed the Map flow. Filter is a separate method under the same generic TypeOrigin rule and is not a clean unrelated control. Both full-file runs blocked/partial.",
+        "v0.8.8_final": "Same production CLI scope/profile: parent has Map candidate at line 2665 plus Filter line 1491; fixed has Filter line 1491. Map-specific delta is 1→0. Filter candidate is unresolved same-family behavior, not proven unrelated. Both detector runs blocked because the full TU parses partial outside Map. Runtime 0.599s parent / 0.585s fixed.",
+        "v0.8.8_failed_intermediate": "An earlier model preserved fresh output identity across all unknown calls without checking escapes; it yielded parent Map candidate/fix 0 but caused three existing safety-control regressions. It was withdrawn and preserved separately in reports/v088-conservative-premodel-* and checkpoint history.",
+        "v0.8.9_final": "Same production CLI scope/profile. Vulnerable parent: Map candidate line 2665 plus Filter line 1491; fixed merge: no Map candidate, Filter line 1491 remains. Map-specific delta is 1→0, total diagnostics 2→1. Filter remains an unresolved same-family candidate. Four scans including independent !11684 safe pair all blocked/partial. Parent/fix runtime 0.578/0.575s.",
+        "v0.8.10": "Same-family Filter candidate persists on the !11130 fixed merge; it must not be treated as an unrelated clean control. See current v502 residual triage for species-sensitive creation analysis."
+      },
+      "miss_reason": "v0.8.7 semantic selector admitted only configured profiles and StoreTypedArrayElement sinks. v0.8.8 adds generic creation-to-FastSetPropertyByIndex selection and type-origin modeling. Source snapshot validity is still invalidated across callback; a mismatch candidate is retained only for a fresh, unescaped result whose creation may produce a different runtime type. Direct/nested call arguments and the recognized JSCallArgs call-this initializer cause escape invalidation.",
+      "implementation_status": "Production CLI v0.8.10 detects Map at official 5.0.2 pin and removes Map finding at its release-branch fix. However, the fixed source retains three candidates in Filter, With and ToReversed that share the source-token/new-result type-origin pattern. The Map-specific patch delta is 1→0; generalized root-family fixed-version gate is not met pending source/runtime triage. Candidate-only, not production-admitted.",
+      "controls": {
+        "positive": "Pinned vulnerable parent: Map candidate at line 2665.",
+        "fixed": "Pinned Map fix has no Map method candidate. Filter candidate remains under same generic rule and has unresolved species behavior; not a clean fixed-family result.",
+        "safe": "Synthetic renamed flow using result-derived type token; no Map candidate.",
+        "unrelated": "No independent unrelated TypeOrigin control from the Filter finding; a distinct unrelated control is not established for this pair.",
+        "escape": "Synthetic direct call escape and JSCallArgs.callThisArg3WithReturnArgs escape do not produce Map mismatch candidates.",
+        "mutation": "Unknown calls invalidate source tokens and guard facts. Fresh destination identity is preserved only while its result remains unescaped; direct/nested call arguments and modeled JSCallArgs argument lists mark it escaped. Focused controls pass. Full Ark Runtime suite: 127 passed, 1 unrelated C4 manifest assertion failed, 10 skipped.",
+        "independent_holdout": "Safe variant holdout: !11684 parent/fix preserves newArrayType derived from result object and produces no type-origin Map diagnostic. It was not used for type-rule tuning. No independent vulnerable positive type-origin case found yet.",
+        "independent_historical_safe_variant": "!11684 Map pair remains zero TypeOrigin in both revisions; passes only as a safe variant control, both blocked/partial. It is not an independent vulnerable positive.",
+        "official_release_pair": "Official 5.0.2 manifest-pinned real source and release-branch fix provide a second exact vulnerable/fixed source pair for the same Map mechanism. No independent vulnerable mechanism/variant has yet been reserved as an untouched positive holdout; !11684 remains a safe TypeOrigin control.",
+        "fixed_side_residual_triage": "v502_residual_candidates_triage.json records code locations, token/sink flow and unresolved runtime proof for Filter, With and ToReversed. Do not suppress by method name."
+      },
+      "real_source_rescans": {
+        "before": "v0.8.7 parent/fix had no Map finding and one Filter candidate each; selector missed Map. Filter is another same-rule method candidate, not proven unrelated.",
+        "after": "v0.8.10 Map candidate 1→0 on exact Map pair and official 5.0.2 branch pair; same-family Filter/With/ToReversed candidates remain on fixed branch pair. !11684 independent safe Map variant remains TypeOrigin 0→0. Whole-file status partial/blocked where reported.",
+        "profile": "light-ast; one selected C++ file; no macro expansion; build_profile none; product_manifest_locked false. Local exact Git objects, no scan-time fetch.",
+        "cost_seconds": {
+          "parent": 0.5991475999981049,
+          "fixed": 0.584703399998105
+        },
+        "v0.8.9": {
+          "profile": "light-ast; single file ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp; local pinned Git objects; CLI ohscan-run; no fetch",
+          "vulnerable_parent": {
+            "commit": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+            "status": "blocked",
+            "diagnostics": 2,
+            "typedarray_store_type_origin": 1,
+            "line": 2665,
+            "elapsed_seconds": 0.5783
+          },
+          "fixed_merge": {
+            "commit": "6627179cbf6f8d40d1adfcf5c3c686b902f42419",
+            "status": "blocked",
+            "diagnostics": 1,
+            "typedarray_store_type_origin": 0,
+            "unrelated_filter_candidate": 1,
+            "elapsed_seconds": 0.5745
+          },
+          "independent_safe_parent": {
+            "commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+            "status": "blocked",
+            "diagnostics": 2,
+            "typedarray_store_type_origin": 0,
+            "exception_rule_findings": 2,
+            "elapsed_seconds": 0.5806
+          },
+          "independent_safe_fix": {
+            "commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+            "status": "blocked",
+            "diagnostics": 0,
+            "typedarray_store_type_origin": 0,
+            "elapsed_seconds": 0.5913
+          },
+          "parse_status": "partial in all four; each CLI detector run status blocked. Fixed Map root delta is 1->0, total diagnostics 2->1; unrelated Filter finding remains.",
+          "source_scope": "1 selected source file, 3685/3686/3703/3721 LOC; no product build or runtime",
+          "reports": [
+            "reports/v089-cve-map-parent.json",
+            "reports/v089-cve-map-fixed.json",
+            "reports/v089-holdout-safe-parent.json",
+            "reports/v089-holdout-safe-fixed.json"
+          ]
+        },
+        "v0.8.10": {
+          "profile": "light-ast; single source file ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp; local pinned Git objects; production ohscan-run; no scan-time fetch; vulnerable/fix pair from cve-2025-arkruntime-official.git and independent pair from c-line-callback-holdout-history-20261019.git",
+          "vulnerable_parent": {
+            "commit": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+            "tree": "454e898b43b55950b104053cf42d32645474ef8f",
+            "snapshot_sha256": "391a92a703d2c73d84db4bba09d6de5407a5b685c1a0762379a19b3937d6f3b5",
+            "source_parsing": {
+              "parsing_status": {
+                "partial": 1
+              },
+              "languages": {
+                "cpp": 1
+              }
+            },
+            "status": "blocked",
+            "diagnostic_count": 2,
+            "rule_counts": {
+              "ark.runtime.typedarray-store-type-origin": 2
+            },
+            "diagnostics": [
+              {
+                "rule_id": "ark.runtime.typedarray-store-type-origin",
+                "line": 1491,
+                "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+                "source_sha256": "6133af44de48ec3ff00fdc7b06597fbef1c9a270cc04ba48d09b4475976c2381"
+              },
+              {
+                "rule_id": "ark.runtime.typedarray-store-type-origin",
+                "line": 2665,
+                "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+                "source_sha256": "6133af44de48ec3ff00fdc7b06597fbef1c9a270cc04ba48d09b4475976c2381"
+              }
+            ],
+            "elapsed_seconds": 0.24810820000129752,
+            "source_db": "D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git"
+          },
+          "fixed_merge": {
+            "commit": "6627179cbf6f8d40d1adfcf5c3c686b902f42419",
+            "tree": "fa482a14984ee8cd8f424131cb5179ba7a6a9422",
+            "snapshot_sha256": "610104a1985542653ccb34efde2bd1d860ca4cc874f9a7d377eb0a64a1d6af8e",
+            "source_parsing": {
+              "parsing_status": {
+                "partial": 1
+              },
+              "languages": {
+                "cpp": 1
+              }
+            },
+            "status": "blocked",
+            "diagnostic_count": 1,
+            "rule_counts": {
+              "ark.runtime.typedarray-store-type-origin": 1
+            },
+            "diagnostics": [
+              {
+                "rule_id": "ark.runtime.typedarray-store-type-origin",
+                "line": 1491,
+                "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+                "source_sha256": "32e98e94d7dca38607b4a028c567ce2c5d9182742df41acf98cc012dead5b1d1"
+              }
+            ],
+            "elapsed_seconds": 0.24488969999947585,
+            "source_db": "D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git"
+          },
+          "independent_safe_parent": {
+            "commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+            "tree": "27ec52bd443ccd4e45b472731114e8547df71ea2",
+            "snapshot_sha256": "71b374cec95f7909d1375741668b2b5ee285aab9029cc674c4990c3ccc1518d4",
+            "source_parsing": {
+              "parsing_status": {
+                "partial": 1
+              },
+              "languages": {
+                "cpp": 1
+              }
+            },
+            "status": "blocked",
+            "diagnostic_count": 2,
+            "rule_counts": {
+              "ark.runtime.typedarray-allocation-exception-guard": 2
+            },
+            "diagnostics": [
+              {
+                "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+                "line": 1487,
+                "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+                "source_sha256": "2c45da670fcb4170176bb9bd93da7d21dbc286925a0ca1126d250318412417ff"
+              },
+              {
+                "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+                "line": 2656,
+                "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+                "source_sha256": "2c45da670fcb4170176bb9bd93da7d21dbc286925a0ca1126d250318412417ff"
+              }
+            ],
+            "elapsed_seconds": 0.27793560000282014,
+            "source_db": "D:/openHarmonyScanner/tmp/c-line-callback-holdout-history-20261019.git"
+          },
+          "independent_safe_fix": {
+            "commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+            "tree": "bad9c4b3b9e868fcf07a36ab864978fd8ad598f2",
+            "snapshot_sha256": "eac2b611fb881f41563d252805597e164a380d461ab5b5079557b824f7ab7650",
+            "source_parsing": {
+              "parsing_status": {
+                "partial": 1
+              },
+              "languages": {
+                "cpp": 1
+              }
+            },
+            "status": "blocked",
+            "diagnostic_count": 0,
+            "rule_counts": {},
+            "diagnostics": [],
+            "elapsed_seconds": 0.27706169999873964,
+            "source_db": "D:/openHarmonyScanner/tmp/c-line-callback-holdout-history-20261019.git"
+          },
+          "interpretation": "!11130 Map type-origin root is 1 candidate on the vulnerable parent and 0 on the fixed merge. The unrelated Filter type-origin candidate remains on both sides (total 2→1). The independent !11684 pair has zero TypeOrigin findings on both sides, although the exception-guard rule produces two parent candidates and zero on the fix. All runs parse the selected file partially and are blocked; findings remain candidates, and zero is not a safety pass.",
+          "parse_diagnostics": {
+            "vulnerable_parent": [
+              {
+                "line": 3354,
+                "kind": "missing",
+                "cause": "unexpanded BRANCH macro"
+              },
+              {
+                "line": 3667,
+                "kind": "missing",
+                "cause": "unexpanded BUILTIN_COMPILER_TYPED_ARRAY_TYPES macro"
+              }
+            ],
+            "fixed_merge": [
+              {
+                "line": 3355,
+                "kind": "missing",
+                "cause": "unexpanded BRANCH macro"
+              },
+              {
+                "line": 3668,
+                "kind": "missing",
+                "cause": "unexpanded BUILTIN_COMPILER_TYPED_ARRAY_TYPES macro"
+              }
+            ],
+            "independent_safe_parent": [
+              {
+                "line": 3373,
+                "kind": "missing",
+                "cause": "unexpanded BRANCH macro"
+              },
+              {
+                "line": 3685,
+                "kind": "missing",
+                "cause": "unexpanded BUILTIN_COMPILER_TYPED_ARRAY_TYPES macro"
+              }
+            ],
+            "independent_safe_fixed": [
+              {
+                "line": 3391,
+                "kind": "missing",
+                "cause": "unexpanded BRANCH macro"
+              },
+              {
+                "line": 3703,
+                "kind": "missing",
+                "cause": "unexpanded BUILTIN_COMPILER_TYPED_ARRAY_TYPES macro"
+              }
+            ],
+            "limits": "Each site is outside Map/Filter; macro definitions are source-bound, but no macro-expanded exact product TU, full dependency closure, or product build profile was captured. All four results remain partial/blocked."
+          }
+        },
+        "v0.8.10_v502_release_line": {
+          "profile": "same production ohscan-run selector, one source file, light-ast, local pinned official Git objects; no scan-time fetch; no product compile profile",
+          "release_pin": {
+            "commit": "8b615647dc4af6f4b572fca50bfbd4d1b91ecad4",
+            "tree": "942a12cdca946c71145b7fe984119db4aceaf663",
+            "diagnostics": 4,
+            "map_type_origin": 1,
+            "other_type_origin": [
+              "Filter",
+              "With",
+              "ToReversed"
+            ],
+            "status": "complete",
+            "report": "reports/typeorigin-v0810-v502-release-pin.json"
+          },
+          "release_fix": {
+            "commit": "2654cd98e39479b343ee11abf3a65b74e8e9d957",
+            "tree": "1fadda2037b3c6dab56d749beb8fdca49ac5b446",
+            "diagnostics": 3,
+            "map_type_origin": 0,
+            "other_type_origin": [
+              "Filter",
+              "With",
+              "ToReversed"
+            ],
+            "status": "blocked/partial",
+            "report": "reports/typeorigin-v0810-v502-map-fix.json"
+          },
+          "interpretation": "The Map-specific finding is 1→0, but three findings in the same generic type-origin family remain at Filter/With/ToReversed. These are unresolved candidates, not unrelated findings or established false positives. The family-level fixed-version gate fails until they are resolved."
+        },
+        "v0.8.10_v503_backport": {
+          "profile": "same production ohscan-run selector/file scope; official locally pinned Gitee parent/fix objects, no scan-time fetch",
+          "parent": {
+            "commit": "1eea202527c76b4ee171efe7597ebccecb1ee027",
+            "tree": "bc32ff368b44ed95d44be2ae0c52c4ae39bc50af",
+            "blob": "6b3d51822baa28292e07b51e77a65b7a30e2436d",
+            "source_sha256": "34277ca2e348977d3d2eae762159e83c6ce943bf9c1769a2fe6e1f2b6b696cc9",
+            "status": "completed",
+            "diagnostics": 4,
+            "map_type_origin": 1,
+            "report": "reports/typeorigin-v0810-v503-pr11279-parent.json"
+          },
+          "fixed": {
+            "commit": "acb7197ca9ce52248f3842012cb8c483158655a8",
+            "tree": "808fa19c831c1b61d9b75b96b642bd90c31d55be",
+            "blob": "a436ec1076bf46ffe8b8fa947c9fdcfb928678a0",
+            "source_sha256": "57b9e733c7e9f0cf7adf39569158ce87aac981fb0867f139f798f0d76501784e",
+            "status": "completed_with_limitations; detector blocked/partial",
+            "diagnostics": 3,
+            "map_type_origin": 0,
+            "residual_same_family": [
+              "Filter",
+              "With",
+              "ToReversed"
+            ],
+            "report": "reports/typeorigin-v0810-v503-pr11279-fixed.json"
+          },
+          "interpretation": "Cross-branch security backport replay reproduces Map 1→0; target source blobs exactly match the 5.0.2 pair and therefore do not count as an independent holdout."
+        }
+      },
+      "evidence_paths": [
+        "reports/v087-cve-2025-24304-map-parent.json",
+        "reports/v087-cve-2025-24304-map-fixed.json",
+        "reports/v088-cve-2025-24304-map-parent.json",
+        "reports/v088-cve-2025-24304-map-fixed.json",
+        "reports/v088-conservative-premodel-map-parent.json",
+        "reports/v088-conservative-premodel-map-fixed.json",
+        "cve_2025_24304_map_source_identity.json",
+        "checkpoint.json",
+        "README.md",
+        "D:/openHarmonyScanner/tmp/c8-cve-2025-24304-replay-v088-20261019/map-parent.json",
+        "D:/openHarmonyScanner/tmp/c8-cve-2025-24304-replay-v088-20261019/map-fixed.json",
+        "https://lists.openatom.io/hyperkitty/list/security%40openharmony.io/message/NNZJMCXIDMX6EYMY62BLKL2DLYXAL3WR/attachment/2/attachment.html",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IBP5J6",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11130",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11279",
+        "reports/v088-ic7b8q-map-parent.json",
+        "reports/v088-ic7b8q-map-fixed.json",
+        "typedarray_map_exception_holdout_identity.json",
+        "reports/typeorigin-v0810-cve-parent-alt.json",
+        "reports/typeorigin-v0810-cve-parent-alt.md",
+        "reports/typeorigin-v0810-cve-fixed-alt.json",
+        "reports/typeorigin-v0810-cve-fixed-alt.md",
+        "reports/typeorigin-v0810-safe-parent.json",
+        "reports/typeorigin-v0810-safe-parent.md",
+        "reports/typeorigin-v0810-safe-fixed.json",
+        "reports/typeorigin-v0810-safe-fixed.md",
+        "typeorigin_v0810_replay_20261019.json",
+        "v502_map_source_identity.json",
+        "v502_residual_candidates_triage.json",
+        "reports/typeorigin-v0810-v502-release-pin.json",
+        "reports/typeorigin-v0810-v502-map-fix.json",
+        "reports/typeorigin-v0810-v503-pr11279-parent.json",
+        "reports/typeorigin-v0810-v503-pr11279-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/typeorigin_v0810_semantic_observations_20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-call-builder-i11196-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-call-builder-i11196-fix.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-call-builder-a65.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-call-builder-master.json",
+        "research/experiments/ark_runtime/c8_20261018/replay_type_origin_semantic_observations.py",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-type-origin-preservation-i11196-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-type-origin-preservation-i11196-fix.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-type-origin-preservation-a65.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-type-origin-preservation-master.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-type-origin-preservation-i11684-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-type-origin-preservation-i11684-fix.json"
+      ],
+      "remaining_blockers": [
+        "Exact CVE-to-Map issue/patch attribution not explicit in the bulletin.",
+        "Exact-source compile profile, macro-expanded AST and full transitive dependencies absent for the pair; C1 profile targets a65a2853 with a different target source hash.",
+        "Three same-family candidates remain in fixed Filter/With/ToReversed; source/runtime conditions need proof and must not be suppressed by function name.",
+        "No independent vulnerable positive holdout; !11684 is a safe TypeOrigin control.",
+        "No exact component dynamic run, product build association or attacker/reachability/impact evidence."
+      ],
+      "next_step": "Select a new official Ark Runtime history case outside the reviewed !11196/!11130/!11684 set with a distinct vulnerable→fixed TypeOrigin flow; inspect its official PR diff and regression first, then pin parent/fix tree/blob and run current production ohscan-run plus direct observation replay without changing the model. If no qualifying case exists in the locally pinned history, extend the official PR search and record the exact search boundary before choosing another root family. Completion: either a new, source-verified positive/fix pair and untouched safe variant are replayed, or the bounded absence is documented and the next available root family is selected.",
+      "evidence_dimensions": {
+        "public_disclosure_fact": "confirmed: official bulletin lists CVE-2025-24304 as Ark Runtime out-of-bounds write, local attacker DoS, affected releases.",
+        "source_root_cause_match": "confirmed for issue IBP5J6 and !11130 by exact source/test diff; CVE-to-this-individual-mainline-fix mapping is not proven. !11279 calls !11130 among two vulnerability fixes.",
+        "static_detection": "candidate distinction achieved: vulnerable parent Map line 2665, fixed Map none, through production CLI. Whole run remains blocked/partial.",
+        "component_dynamic_reproduction": "not_run.",
+        "product_vulnerability_confirmation": "unknown/not_confirmed."
+      },
+      "source_root_cause": "Map creates the result via NewTypedArray using an input-derived type token, then uses that old token for FastSetPropertyByIndex. Upstream implementation shows NewTypedArray may invoke TypedArraySpeciesCreate on its slow path and writes a type-derived HClass on its fast path; FastSetPropertyByIndex consumes the JSType token when selecting typed-array write behavior. The callback runs after allocation and receives the source object as this, while the fresh result is not passed in the inspected call argument list. The fix samples type from the result array itself.",
+      "regression_results": {
+        "v0.8.10_focused": "D:\\anaconda3\\python.exe -m pytest tests/detectors/ark_runtime/test_type_origin.py tests/detectors/ark_runtime/test_unseen_detector.py tests/detectors/ark_runtime/test_exception_guard.py -q: 40 passed, 3 skipped in 0.20s."
+      },
+      "focused_regression": {
+        "2026-10-19": "77 passed, 4 skipped in 0.26s; exact TypeOrigin + exception + unseen/parser suites."
+      },
+      "reviewed_glue_overload_replay": {
+        "updated": "2026-10-19",
+        "change": "Added source-bound two-argument glue-aware graph-read overload semantics for IsEcmaObject, GetViewedArrayBuffer, IsDetachedBuffer, HasConstructor, GetPrototypeFromHClass, GetProtoChangeMarkerFromHClass, and IsCallable. a65 declaration and implementation identities are pinned in RuntimeTypeModel.api_overload_evidence. These operations preserve C++ GateRef argument binding only; they do not certify runtime object/type stability across callbacks.",
+        "production_replay": {
+          "typeorigin-v0810-reviewed-glue-i11196-parent": {
+            "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+            "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+            "target_sha256": "884bb958b98b5b977ba9b539ce27432870b9269156bbfcfad97f4bb58dcd9d3c",
+            "diagnostics": 1,
+            "run_status": "blocked",
+            "parse": {
+              "partial": 1
+            },
+            "limitations": [
+              "exception_path_not_fully_modeled",
+              "experimental_partial_function_scope",
+              "load_hclass_signature_or_binding_mismatch",
+              "parse_dependency_contamination_unknown",
+              "partial_scope_routed_through_semantic_selector",
+              "unresolved_local_observations"
+            ],
+            "finding": {
+              "line": 1498,
+              "rule": "ark.runtime.typedarray-store-type-origin",
+              "severity": "unassessed"
+            }
+          },
+          "typeorigin-v0810-reviewed-glue-i11196-fix": {
+            "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+            "tree": "82af11ced4297818410ccf61906b703d25b69165",
+            "target_sha256": "45951ebe149386befe03a7dcfe28f1ce3fc1b91c8a9947745a692a4186e148dc",
+            "diagnostics": 0,
+            "run_status": "blocked",
+            "parse": {
+              "partial": 1
+            },
+            "limitations": [
+              "exception_path_not_fully_modeled",
+              "experimental_partial_function_scope",
+              "load_hclass_signature_or_binding_mismatch",
+              "parse_dependency_contamination_unknown",
+              "partial_scope_routed_through_semantic_selector",
+              "unresolved_local_observations"
+            ]
+          },
+          "typeorigin-v0810-reviewed-glue-a65": {
+            "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+            "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+            "target_sha256": "7f1c19c5ba21a311fba7f018df8fff077c6c9a60ee81c3ce348bb5b0a9f017d2",
+            "diagnostics": 0,
+            "run_status": "blocked",
+            "parse": {
+              "partial": 1
+            },
+            "limitations": [
+              "experimental_partial_function_scope",
+              "parse_dependency_contamination_unknown",
+              "partial_scope_routed_through_semantic_selector",
+              "unresolved_local_observations",
+              "unsupported_host_expression_effects"
+            ]
+          },
+          "typeorigin-v0810-reviewed-glue-master": {
+            "commit": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+            "tree": "2cd854aa7d9f987de89d31a6a512e735779e75b6",
+            "target_sha256": "d8e0efa6c9058c8bdc6baae407b5db8b96df7914e3a62b8d4d450aad1e080ee6",
+            "diagnostics": 0,
+            "run_status": "blocked",
+            "parse": {
+              "partial": 1
+            },
+            "limitations": [
+              "experimental_partial_function_scope",
+              "parse_dependency_contamination_unknown",
+              "partial_scope_routed_through_semantic_selector",
+              "unresolved_local_observations"
+            ]
+          }
+        },
+        "focused_tests": "74 passed, 4 skipped in 0.26s. Wrong arity remains unknown; reviewed overloads preserve source binding.",
+        "scope_boundary": "!11196 direct pair is still 1→0 candidate with partial/blocked scope. a65 and official master remain 0 diagnostics with partial/blocked outcomes and unresolved_local_observations; a65 additionally reports unsupported_host_expression_effects. Zero diagnostics are not safety results. No preprocessor/macro profile, product dynamic run, or product vulnerability confirmation."
+      },
+      "call_builder_overload_replay": {
+        "updated": "2026-10-19",
+        "change": "Source-verified graph read semantics now cover the a65 glue-aware queries and type predicates. Added exact seven-argument CallStubBuilder construction after confirming its a65 constructor only initializes builder fields. Type facts are retained across unknown effects only when they derive from a fresh local TypedArray result that has not escaped; source-object facts still invalidate, and an escaped result remains unknown. Exact API/header identities are in RuntimeTypeModel.api_overload_evidence.",
+        "production_replay": {
+          "typeorigin-v0810-type-origin-preservation-i11196-parent": {
+            "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+            "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+            "target_snapshot_sha256": "884bb958b98b5b977ba9b539ce27432870b9269156bbfcfad97f4bb58dcd9d3c",
+            "diagnostics": [
+              {
+                "line": 1498,
+                "rule": "ark.runtime.typedarray-store-type-origin"
+              }
+            ],
+            "diagnostic_count": 1,
+            "run_status": "blocked",
+            "scan_status": "completed_with_limitations",
+            "parse_status": {
+              "partial": 1
+            },
+            "elapsed_seconds": 0.257722600006673,
+            "limitations": [
+              "exception_path_not_fully_modeled",
+              "experimental_partial_function_scope",
+              "load_hclass_signature_or_binding_mismatch",
+              "parse_dependency_contamination_unknown",
+              "partial_scope_routed_through_semantic_selector"
+            ]
+          },
+          "typeorigin-v0810-type-origin-preservation-i11196-fix": {
+            "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+            "tree": "82af11ced4297818410ccf61906b703d25b69165",
+            "target_snapshot_sha256": "45951ebe149386befe03a7dcfe28f1ce3fc1b91c8a9947745a692a4186e148dc",
+            "diagnostics": [],
+            "diagnostic_count": 0,
+            "run_status": "blocked",
+            "scan_status": "completed_with_limitations",
+            "parse_status": {
+              "partial": 1
+            },
+            "elapsed_seconds": 0.2551579999999376,
+            "limitations": [
+              "exception_path_not_fully_modeled",
+              "experimental_partial_function_scope",
+              "load_hclass_signature_or_binding_mismatch",
+              "parse_dependency_contamination_unknown",
+              "partial_scope_routed_through_semantic_selector"
+            ]
+          },
+          "typeorigin-v0810-type-origin-preservation-a65": {
+            "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+            "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+            "target_snapshot_sha256": "7f1c19c5ba21a311fba7f018df8fff077c6c9a60ee81c3ce348bb5b0a9f017d2",
+            "diagnostics": [],
+            "diagnostic_count": 0,
+            "run_status": "blocked",
+            "scan_status": "completed_with_limitations",
+            "parse_status": {
+              "partial": 1
+            },
+            "elapsed_seconds": 0.25778279999940423,
+            "limitations": [
+              "experimental_partial_function_scope",
+              "parse_dependency_contamination_unknown",
+              "partial_scope_routed_through_semantic_selector"
+            ]
+          },
+          "typeorigin-v0810-type-origin-preservation-master": {
+            "commit": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+            "tree": "2cd854aa7d9f987de89d31a6a512e735779e75b6",
+            "target_snapshot_sha256": "d8e0efa6c9058c8bdc6baae407b5db8b96df7914e3a62b8d4d450aad1e080ee6",
+            "diagnostics": [],
+            "diagnostic_count": 0,
+            "run_status": "blocked",
+            "scan_status": "completed_with_limitations",
+            "parse_status": {
+              "partial": 1
+            },
+            "elapsed_seconds": 0.26327560000208905,
+            "limitations": [
+              "experimental_partial_function_scope",
+              "parse_dependency_contamination_unknown",
+              "partial_scope_routed_through_semantic_selector"
+            ]
+          },
+          "typeorigin-v0810-type-origin-preservation-i11684-parent": {
+            "commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+            "tree": "27ec52bd443ccd4e45b472731114e8547df71ea2",
+            "target_snapshot_sha256": "71b374cec95f7909d1375741668b2b5ee285aab9029cc674c4990c3ccc1518d4",
+            "diagnostics": [
+              {
+                "line": 1487,
+                "rule": "ark.runtime.typedarray-allocation-exception-guard"
+              },
+              {
+                "line": 2656,
+                "rule": "ark.runtime.typedarray-allocation-exception-guard"
+              }
+            ],
+            "diagnostic_count": 2,
+            "run_status": "blocked",
+            "scan_status": "completed_with_limitations",
+            "parse_status": {
+              "partial": 1
+            },
+            "elapsed_seconds": 0.25535410000156844,
+            "limitations": [
+              "experimental_partial_function_scope",
+              "parse_dependency_contamination_unknown",
+              "partial_scope_routed_through_semantic_selector"
+            ]
+          },
+          "typeorigin-v0810-type-origin-preservation-i11684-fix": {
+            "commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+            "tree": "bad9c4b3b9e868fcf07a36ab864978fd8ad598f2",
+            "target_snapshot_sha256": "eac2b611fb881f41563d252805597e164a380d461ab5b5079557b824f7ab7650",
+            "diagnostics": [],
+            "diagnostic_count": 0,
+            "run_status": "blocked",
+            "scan_status": "completed_with_limitations",
+            "parse_status": {
+              "partial": 1
+            },
+            "elapsed_seconds": 0.25925090000237105,
+            "limitations": [
+              "experimental_partial_function_scope",
+              "parse_dependency_contamination_unknown",
+              "partial_scope_routed_through_semantic_selector"
+            ]
+          }
+        },
+        "direct_semantic_observations": {
+          "path": "research/experiments/ark_runtime/c8_20261018/typeorigin_v0810_semantic_observations_20261019.json",
+          "runs": {
+            "i11196_direct_parent": {
+              "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+              "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+              "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+              "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+              "file_outcome": "partial",
+              "steps": 1621,
+              "limitations": [
+                "experimental_partial_function_scope",
+                "parse_dependency_contamination_unknown",
+                "partial_scope_routed_through_semantic_selector"
+              ],
+              "observations": [
+                {
+                  "function": "CopyWithin",
+                  "kind": "matched",
+                  "line": 964,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Filter",
+                  "kind": "candidate",
+                  "line": 1498,
+                  "reason": "distinct_origin_with_type_changing_creation"
+                },
+                {
+                  "function": "Map",
+                  "kind": "matched",
+                  "line": 2673,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Set",
+                  "kind": "matched",
+                  "line": 2234,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "With",
+                  "kind": "matched",
+                  "line": 1762,
+                  "reason": "target_origin_or_proved_type_equality"
+                }
+              ]
+            },
+            "i11196_direct_fix": {
+              "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+              "tree": "82af11ced4297818410ccf61906b703d25b69165",
+              "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+              "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+              "file_outcome": "partial",
+              "steps": 1624,
+              "limitations": [
+                "experimental_partial_function_scope",
+                "parse_dependency_contamination_unknown",
+                "partial_scope_routed_through_semantic_selector"
+              ],
+              "observations": [
+                {
+                  "function": "CopyWithin",
+                  "kind": "matched",
+                  "line": 964,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Filter",
+                  "kind": "matched",
+                  "line": 1499,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Map",
+                  "kind": "matched",
+                  "line": 2674,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Set",
+                  "kind": "matched",
+                  "line": 2235,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "With",
+                  "kind": "matched",
+                  "line": 1763,
+                  "reason": "target_origin_or_proved_type_equality"
+                }
+              ]
+            },
+            "i11684_safe_parent": {
+              "commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+              "tree": "27ec52bd443ccd4e45b472731114e8547df71ea2",
+              "blob": "34f6aa2c6ccaad144a2038c8aab208ea290b5a86",
+              "source_sha256": "2c45da670fcb4170176bb9bd93da7d21dbc286925a0ca1126d250318412417ff",
+              "file_outcome": "partial",
+              "steps": 1624,
+              "limitations": [
+                "experimental_partial_function_scope",
+                "parse_dependency_contamination_unknown",
+                "partial_scope_routed_through_semantic_selector"
+              ],
+              "observations": [
+                {
+                  "function": "CopyWithin",
+                  "kind": "matched",
+                  "line": 977,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Filter",
+                  "kind": "matched",
+                  "line": 1507,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Map",
+                  "kind": "matched",
+                  "line": 2682,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Set",
+                  "kind": "matched",
+                  "line": 2243,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "With",
+                  "kind": "matched",
+                  "line": 1771,
+                  "reason": "target_origin_or_proved_type_equality"
+                }
+              ]
+            },
+            "i11684_safe_fix": {
+              "commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+              "tree": "bad9c4b3b9e868fcf07a36ab864978fd8ad598f2",
+              "blob": "893a63a79b6ab85a1473a4f3b33315db0f848a37",
+              "source_sha256": "0abdb870aff6560c671895c0e3360bb3e82fb052cb6a7cf28a90a8c6443044a5",
+              "file_outcome": "partial",
+              "steps": 1631,
+              "limitations": [
+                "experimental_partial_function_scope",
+                "parse_dependency_contamination_unknown",
+                "partial_scope_routed_through_semantic_selector"
+              ],
+              "observations": [
+                {
+                  "function": "CopyWithin",
+                  "kind": "matched",
+                  "line": 977,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Filter",
+                  "kind": "matched",
+                  "line": 1507,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Map",
+                  "kind": "matched",
+                  "line": 2691,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Set",
+                  "kind": "matched",
+                  "line": 2243,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "With",
+                  "kind": "matched",
+                  "line": 1771,
+                  "reason": "target_origin_or_proved_type_equality"
+                }
+              ]
+            },
+            "a65_product_snapshot": {
+              "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+              "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+              "blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+              "source_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+              "file_outcome": "partial",
+              "steps": 1639,
+              "limitations": [
+                "experimental_partial_function_scope",
+                "parse_dependency_contamination_unknown",
+                "partial_scope_routed_through_semantic_selector"
+              ],
+              "observations": [
+                {
+                  "function": "CopyWithin",
+                  "kind": "matched",
+                  "line": 1035,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Filter",
+                  "kind": "matched",
+                  "line": 1563,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Map",
+                  "kind": "matched",
+                  "line": 2747,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Set",
+                  "kind": "matched",
+                  "line": 2299,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "With",
+                  "kind": "matched",
+                  "line": 1827,
+                  "reason": "target_origin_or_proved_type_equality"
+                }
+              ]
+            },
+            "official_master": {
+              "commit": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+              "tree": "2cd854aa7d9f987de89d31a6a512e735779e75b6",
+              "blob": "0990d87313c022e734c32269cb4ce08dbe78acdd",
+              "source_sha256": "f6e332778e1f515b0b7fa2f75513e3a69359fd3fba23cab8a5e80397e5abcedc",
+              "file_outcome": "partial",
+              "steps": 1631,
+              "limitations": [
+                "experimental_partial_function_scope",
+                "parse_dependency_contamination_unknown",
+                "partial_scope_routed_through_semantic_selector"
+              ],
+              "observations": [
+                {
+                  "function": "CopyWithin",
+                  "kind": "matched",
+                  "line": 977,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Filter",
+                  "kind": "matched",
+                  "line": 1507,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Map",
+                  "kind": "matched",
+                  "line": 2691,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "Set",
+                  "kind": "matched",
+                  "line": 2243,
+                  "reason": "target_origin_or_proved_type_equality"
+                },
+                {
+                  "function": "With",
+                  "kind": "matched",
+                  "line": 1771,
+                  "reason": "target_origin_or_proved_type_equality"
+                }
+              ]
+            }
+          },
+          "interpretation": "Filter is candidate on !11196 parent and matched on its direct fix, a65 and master. Map, With, CopyWithin, Set are matched on these selected snapshots after source-grounded modeling. The i11684 safe pair has zero TypeOrigin observations (all modeled flows matched); its parent CLI emits two separate exception-guard candidates which disappear on the exception fix."
+        },
+        "focused_tests": "77 passed, 4 skipped in 0.26s across TypeOrigin, exception guard, runtime exception, unseen detector and parser-owner suites. Includes unescaped-result preservation, escaped-result unknown, wrong overload arity, and source-origin controls.",
+        "scope_boundary": "Production scans are completed_with_limitations and blocked because the target translation unit is partial; direct analyzer results remain limited/partial with parse dependency contamination. i11684 parent diagnostics are exception-guard only, not TypeOrigin. The safe pair is a historical control, not an untouched blind holdout. No exact product build, dynamic component repro, or product vulnerability confirmation."
+      }
+    },
+    {
+      "case_id": "ARK-TYPEDARRAY-MAP-NEWARRAY-PENDING-EXCEPTION-IC7B8Q",
+      "CVE_or_advisory": "No CVE or security advisory verified. Upstream Ark Runtime bug issue IC7B8Q and merged PR !11684; test stresses recursive stack exhaustion and catches the thrown failure. Treat as a runtime exception-propagation bug, not a confirmed security vulnerability.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IC7B8Q",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11684"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime compiler TypedArray Map / NewTypedArray result handling",
+      "root_cause": "NewTypedArray may complete with pending exception. Map reads the returned object HClass to derive newArrayType before checking pending exception; fix checks HasPendingException and exits with Exception first. Regression invokes TypedArray map near recursive stack exhaustion and catches the failure.",
+      "lane": "C",
+      "affected_versions_evidence": "Mainline issue/PR history; release exposure not verified.",
+      "vulnerable_commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+      "vulnerable_tree": "27ec52bd443ccd4e45b472731114e8547df71ea2",
+      "vulnerable_files": [
+        "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+      ],
+      "fixed_commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+      "fixed_tree": "identity manifest",
+      "fixed_files": [
+        "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "test/moduletest/typedarraymapoverflow/typedarraymapoverflow.js"
+      ],
+      "source_identity_manifest": "typedarray_map_exception_holdout_identity.json",
+      "product_build_association": "unknown; no product manifest/build association.",
+      "existing_detector_and_rule": "ohscanner.ark.runtime.type_safety; ark.runtime.typedarray-allocation-exception-guard. Existing model selects Map.",
+      "baseline_scan_result": "v0.8.8 production CLI on exact parent/fix, same one-file light-ast scope: parent 2 candidates (Filter line 1487 and Map line 2656), fixed 0. Both blocked due partial TU parse outside target functions.",
+      "miss_reason": "No miss on the modeled source path; full translation unit status remains partial, so no complete coverage claim.",
+      "implementation_status": "Independent historical development/validation sample for the allocation-exception guard. Not a CVE/security confirmation; holdout result does not validate the separate Map type-origin family.",
+      "controls": {
+        "positive": "Exact parent has Map allocation-exception candidate at line 2656; Filter also has a separate candidate at 1487.",
+        "fixed": "Exact fixed merge has 0 candidates for the guard rule.",
+        "regression_test": "Upstream recursive stack-exhaustion test added in typedarraymapoverflow; not built/run in this environment.",
+        "independent_status": "Source-disjoint historical case relative to I7K7L6 and IB40SU exception guard development samples; preserved as a candidate holdout for exception-rule acceptance only.",
+        "type_origin_relation": "not a type-origin holdout."
+      },
+      "real_source_rescans": {
+        "parent": "2 diagnostics: Map allocation exception candidate at line 2656 and Filter candidate at 1487; status blocked/partial.",
+        "fixed": "0 diagnostics; status blocked/partial.",
+        "profile": "light-ast, one C++ source file, no macro expansion, build_profile none, product_manifest_locked false; local exact Git objects, no scan-time fetch."
+      },
+      "evidence_paths": [
+        "reports/v088-ic7b8q-map-parent.json",
+        "reports/v088-ic7b8q-map-fixed.json",
+        "typedarray_map_exception_holdout_identity.json"
+      ],
+      "remaining_blockers": [
+        "Full source TU parsing is partial; CLI status blocked.",
+        "No build/run of upstream recursive test.",
+        "No CVE/security advisory classification or product release mapping.",
+        "No product build/impact evidence."
+      ],
+      "next_step": "Use the exact upstream recursive stack-exhaustion test with the fixed source/build recipe in an isolated runtime if build inputs become available; otherwise preserve dynamic evidence as not run. Keep this case isolated from the TypeArray Map type-origin holdout.",
+      "evidence_dimensions": {
+        "public_disclosure_fact": "upstream bug issue and merged PR verified; no public CVE/advisory found.",
+        "source_root_cause_match": "verified by direct parent/fix diff and added regression source.",
+        "static_detection": "candidate distinction 2→0 through production CLI, but both runs blocked/partial.",
+        "component_dynamic_reproduction": "not_run.",
+        "product_vulnerability_confirmation": "unknown/not_confirmed."
+      }
+    },
+    {
+      "case_id": "ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7",
+      "CVE_or_advisory": "No CVE/security advisory verified. Upstream patch commit message references issue I7KZJ7 (“CreateFromTypedArray byteLength data overflow”); direct issue page was inaccessible in this verification pass.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I7KZJ7",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/commit/9f586b533be0275f3e3327e05c64f3aed28b7de3"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime TypedArrayHelper::CreateFromTypedArray",
+      "root_cause": "elementSize and elementLength are uint32_t; their product was assigned to uint32_t byteLength, which can wrap below the bytes required by elementLength. The result flows to AllocateArrayBuffer while the conversion loop still iterates elementLength and advances targetByteIndex by elementSize. The patch widens the multiplication/result to uint64_t. This supports an under-allocation/OOB-write concern; no dynamic impact was reproduced.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Exact first-parent/merge source pair establishes pre-fix/fixed code. Release/product mapping and security classification are not established.",
+      "vulnerable_commit": "087449d3d657d081611cf1bf4c731ff048748812",
+      "vulnerable_tree": "cc51f309bf6446ae401597235fe5ebd3477ec63e",
+      "vulnerable_files": [
+        {
+          "path": "ecmascript/base/typed_array_helper.cpp",
+          "blob": "caa5467917bbd9079a4d72cdfb419266e315a624",
+          "bytes": 34880,
+          "sha256": "170660d6f15ad88ddee04db4ded3e76932832631d0613e78318edf2b0ad6fc85"
+        }
+      ],
+      "fixed_commit": "1b0ac0aa076b91d92b5d5aba91e92bc6c2a06c50",
+      "fixed_tree": "48ac0d65b920c7401055fcfae68d538e03a25e6c",
+      "fixed_files": [
+        {
+          "path": "ecmascript/base/typed_array_helper.cpp",
+          "blob": "319347a5ea62df52e8427ad6822f65e70c997a11",
+          "bytes": 35080,
+          "sha256": "f698f40394524b5b95a1bbef4fe8b1ccef05e52226d9d1f30ef54decca711a62"
+        }
+      ],
+      "product_build_association": "unknown; no product manifest, build configuration, or shipped binary tied to either source revision.",
+      "existing_detector_and_rule": "ohscanner.ark.runtime.type_safety v0.8.9 was invoked via production ohscan-run on typed_array_helper.cpp. No byte-length multiplication overflow rule exists; the file analysis is blocked as detector_model_incomplete.",
+      "baseline_scan_result": {
+        "profile": "light-ast; exact local Git object source; one file ecmascript/base/typed_array_helper.cpp; no scan-time fetch",
+        "parent": {
+          "commit": "087449d3d657d081611cf1bf4c731ff048748812",
+          "diagnostics": 0,
+          "run_status": "blocked",
+          "source_parse": "complete",
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete",
+          "elapsed_seconds": 0.122
+        },
+        "fixed": {
+          "commit": "1b0ac0aa076b91d92b5d5aba91e92bc6c2a06c50",
+          "diagnostics": 0,
+          "run_status": "blocked",
+          "source_parse": "complete",
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete",
+          "elapsed_seconds": 0.1252
+        },
+        "interpretation": "No root finding either side is not a safety result; the current detector has no applicable size-overflow model for this source/function.",
+        "post_rule": {
+          "parent": {
+            "commit": "087449d3d657d081611cf1bf4c731ff048748812",
+            "diagnostics": 1,
+            "rule": "ark.runtime.typedarray-buffer-size-multiplication-overflow",
+            "line": 237,
+            "allocator_line": 255,
+            "copy_loop_line": 275,
+            "run_status": "blocked",
+            "source_parse": "complete",
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete",
+            "elapsed_seconds": 0.0003319999959785491
+          },
+          "fixed": {
+            "commit": "1b0ac0aa076b91d92b5d5aba91e92bc6c2a06c50",
+            "diagnostics": 0,
+            "run_status": "blocked",
+            "source_parse": "complete",
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete",
+            "elapsed_seconds": 0.0003532999980961904
+          },
+          "profile": "v0.8.10 production ohscan-run, light-ast, one exact pinned Git blob ecmascript/base/typed_array_helper.cpp, no scan-time fetch",
+          "interpretation": "Root-specific parent/fix signal observed. Neither side has complete detector analysis; fixed zero is not a coverage or safety pass.",
+          "unrelated_parent": {
+            "commit": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+            "diagnostics": 0,
+            "run_status": "blocked",
+            "source_parse": "complete",
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete",
+            "elapsed_seconds": 0.0003555999937816523
+          },
+          "unrelated_fixed": {
+            "commit": "82c21d656880923800c94b53b035c76d219313b5",
+            "diagnostics": 0,
+            "run_status": "blocked",
+            "source_parse": "complete",
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete",
+            "elapsed_seconds": 0.000301799998851493
+          },
+          "sendable_safe_variant": {
+            "commit": "8451e52e2394f13b677fe3afef3d6cc224c11182",
+            "diagnostics": 0,
+            "run_status": "blocked",
+            "source_parse": "complete",
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete",
+            "elapsed_seconds": 0.0005587000050581992
+          }
+        }
+      },
+      "miss_reason": "Semantic rule coverage/modeling gap: complete C++ parse but no analysis model for integer-width overflow flowing into allocation size and loop writes. Not a parse failure or version mapping claim.",
+      "implementation_status": "v0.8.10 candidate rule is integrated in ohscanner.ark.runtime.type_safety and executes through production ohscan-run. It now recognizes AllocateArrayBuffer and AllocateSendableArrayBuffer; the file-level result remains partial.",
+      "controls": {
+        "positive": "Exact vulnerable first-parent source: uint32_t elementSize * elementLength reaches AllocateArrayBuffer byteLength and SetValueInBuffer loop controlled by elementLength; production CLI candidate at source line 237.",
+        "fixed": "Exact !4425 fixed merge widens before multiplication: uint64_t byteLength = elementSize * static_cast<uint64_t>(elementLength); production CLI has no same-root candidate.",
+        "safe": "Real !8451 CreateSharedFromTypedArray safe variant: uint64_t multiplication with static_cast<uint64_t>(elementLength), sendable allocator, and elementLength-bounded copy loop; production CLI 0 diagnostics, direct flow model records may_overflow=false. Inspected to extend allocator support, so classify as a development control, not an independent holdout. A synthetic pre-multiply-widening unit control also passes.",
+        "unrelated": "Real !4688 TypedArrayConstructor int32_t→uint32_t length-conversion pair 3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c → 82c21d656880923800c94b53b035c76d219313b5: production CLI 0→0 for this product/allocation/copy rule. It is an unrelated integer-conversion control, not evidence that the !4688 component is safe.",
+        "variant": "!8451 CreateSharedFromTypedArray is a related safe mechanism variant and development sample; !4688 remains an unrelated integer-conversion control. No independent vulnerable same-mechanism variant validated.",
+        "independent_holdout": "none; requirement remains open"
+      },
+      "real_source_rescans": {
+        "pre_rule": "v0.8.9 production CLI: 0 diagnostics on both; both blocked/detector_model_incomplete although AST parse is complete.",
+        "post_rule": "Matched production ohscan-run v0.8.10: exact vulnerable parent one rule candidate at line 237 (allocation 255, loop 275), exact fixed merge zero same-root candidates. Both AST parses complete; both detector runs blocked and file analyses partial/detector_model_incomplete. Real !4688 parent/fix unrelated control 0→0 on same scope/profile. Parent CLI initially encountered a Windows access violation in the old nested Tree-sitter Node walk; replacing the sink path with a bounded function-body text scan removed the crash. The rule remains partial."
+      },
+      "evidence_paths": [
+        "c8_20261018/coverage_ledger.json",
+        "c8_20261018/checkpoint.json",
+        "c8_20261018/history_search_20261019.json",
+        "c8_20261018/reports/history-typedarray-byte-length-parent.json",
+        "c8_20261018/reports/history-typedarray-byte-length-fixed.json",
+        "reports/i7kzj7-production-fixed-v0.8.10.json",
+        "reports/i7kzj7-production-fixed-v0.8.10.md",
+        "reports/i7kzj7-production-parent-v0.8.10.json",
+        "reports/i7kzj7-production-parent-v0.8.10.md",
+        "reports/i7kzj7-parent-parser-crash-initial.log",
+        "reports/i7kzj7-parent-final-cli.log",
+        "reports/i4688-unrelated-parent-v0.8.10.json",
+        "reports/i4688-unrelated-parent-v0.8.10.md",
+        "reports/i4688-unrelated-fixed-v0.8.10.json",
+        "reports/i4688-unrelated-fixed-v0.8.10.md",
+        "i7kzj7_source_identity.json",
+        "i4688_unrelated_control_identity.json",
+        "sendable_safe_variant_identity.json",
+        "reports/sendable-safe-variant-v0.8.10.json",
+        "reports/sendable-safe-variant-v0.8.10.md",
+        "i7kzj7_refactor_safe_variant_identity.json",
+        "pr4245_control_audit_identity.json",
+        "reports/i7kzj7-refactor-parent-v0.8.10.json",
+        "reports/i7kzj7-refactor-refactor-v0.8.10.json",
+        "reports/pr4245-parent-source-replay-v0.8.10.json",
+        "reports/pr4245-fixed-source-replay-v0.8.10.json"
+      ],
+      "remaining_blockers": [
+        "Official issue page I7KZJ7 could not be read with the available browser; patch commit and its source/test diff are locally pinned.",
+        "No CVE/security bulletin or affected release mapping verified.",
+        "Regression requires large memory and has not been built/run; no dynamic reproduction.",
+        "No product build, attacker reachability, or impact evidence.",
+        "Full TU detector analysis stays partial/blocked on both sides; exact AST parse completeness is not full semantic coverage.",
+        "Rule remains a structural candidate model without general C++ integer range, macro, or control-flow proof.",
+        "Rule scans lexically bounded function regions after the production AST completeness gate; it does not prove C++ integer conversion semantics, macros, CFG dominance, aliases, or all allocator/copy wrappers. File outcome remains partial.",
+        "Official issue I7KZJ7 page and security disclosure/CVE linkage remain unverified; no release/product mapping, build, dynamic reproduction, attacker path, or product impact evidence.",
+        "Potential !4245 CreateFromArrayBuffer commit 222ac7b5f0dece9c25ab82bb1ffb1a644ec9d70 is unavailable from the shallow object database; explicit fetch of that exact OID was rejected as not a remote ref.",
+        "No independent vulnerable same-mechanism positive holdout. !7532 supplies an unseen safe refactor variant only; its file analyses are partial/blocked.",
+        "The official !4245 CreateFromArrayBuffer patch scan retains the I7KZJ7 candidate in untouched CreateFromTypedArray on both sides, so it cannot serve as a second positive/fix pair."
+      ],
+      "next_step": "Search exact pinned Ark history for a distinct vulnerable integer-product→buffer-allocation→copy fix outside CreateFromTypedArray; inspect source before scanning, then run its exact parent/fix and a newly unseen safe control with the production ohscan-run before any rule change.",
+      "evidence_dimensions": {
+        "public_disclosure_fact": "unverified as a security disclosure; upstream patch message references issue I7KZJ7, whose page was inaccessible. No CVE claimed.",
+        "source_root_cause_match": "source patch and test diff confirm a uint32_t elementSize×elementLength overflow concern and widening to uint64_t.",
+        "static_detection": "Observed exact-source parent-only root-specific candidate through production ohscan-run v0.8.10. Fixed side has no same-root candidate. Both full-file detector analyses are partial/blocked; not admitted as complete detection.",
+        "component_dynamic_reproduction": "not_run.",
+        "product_vulnerability_confirmation": "unknown/not_confirmed."
+      },
+      "source_root_cause": {
+        "patch_commit": "9f586b533be0275f3e3327e05c64f3aed28b7de3",
+        "patch_parent": "13303b3a5204ddef042266b9260b1e06eb3fcb5b",
+        "mainline_pair": [
+          "087449d3d657d081611cf1bf4c731ff048748812",
+          "1b0ac0aa076b91d92b5d5aba91e92bc6c2a06c50"
+        ],
+        "identity": "vulnerable_parent=087449d3d657d081611cf1bf4c731ff048748812; vulnerable_tree=cc51f309bf6446ae401597235fe5ebd3477ec63e; file_blob=caa5467917bbd9079a4d72cdfb419266e315a624; file_sha256=170660d6f15ad88ddee04db4ded3e76932832631d0613e78318edf2b0ad6fc85; fixed_merge=1b0ac0aa076b91d92b5d5aba91e92bc6c2a06c50; fixed_tree=48ac0d65b920c7401055fcfae68d538e03a25e6c; fixed_blob=319347a5ea62df52e8427ad6822f65e70c997a11; fixed_sha256=f698f40394524b5b95a1bbef4fe8b1ccef05e52226d9d1f30ef54decca711a62",
+        "test_identities": "Pinned in i7kzj7_source_identity.json: test/moduletest/typearray/typearray.js and expect_output.txt blob/source SHA-256 on exact vulnerable and fixed revisions; tests were not built/run."
+      },
+      "regression_results": {
+        "focused": "tests/detectors/ark_runtime/test_size_overflow.py + test_runtime_exception.py + test_unseen_detector.py: 38 passed, 2 skipped in 0.19s after the sendable allocator variant was added.",
+        "full_ark_runtime": "tests/detectors/ark_runtime: 133 passed, 1 failed, 10 skipped in 69.37s. Sole failure is test_dependency_manifest.py::ExactSnapshotDependencyManifestTests::test_recomputation_is_stable_and_incomplete_profile_blocks; it expected ACTUAL_INCLUDE_CLOSURE but observed unresolved C1_PRODUCT_BUILD_PROFILE, C2_CASE_MATRIX, PARSER_BINARY_IDENTITY. This is outside C8 ownership and was not modified.",
+        "production_replay": "v0.8.10 matched !4425 pair parent 1 root candidate → fixed 0 root candidates; real !4688 control 0→0; !8451 sendable safe dev variant 0. All scans AST complete and file analysis partial/blocked."
+      },
+      "post_rule_controls": {
+        "independent_safe_refactor_variant": {
+          "case": "!7532 CreateSharedFromTypedArray helper refactor",
+          "commits": [
+            "e5df3b8179ad84e960f1be7981ace6567fee9316",
+            "210a7955a24f32abbba3c1774269c01d26406e3d"
+          ],
+          "diagnostics": "0 -> 0",
+          "analysis": "AST complete, detector blocked/partial both sides",
+          "role": "unseen safe same-mechanism structural variant; not used to tune rule"
+        }
+      }
+    },
+    {
+      "case_id": "ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D",
+      "CVE_or_advisory": "No CVE or security advisory verified; upstream source references issue I7W51D and PR !4688.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I7W51D",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/4688"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime TypedArrayHelper::TypedArrayConstructor / AllocateTypedArray",
+      "root_cause": "ToIndex yields a non-negative numeric length, but the parent narrows it to int32_t before passing it into allocation; the fix uses uint32_t. Added test requests Uint8Array(2^32-1) and expects RangeError. This is a real length-conversion bugfix, but present evidence does not establish memory corruption or product security impact; it is not the byte-product overflow mechanism.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Exact parent/fix source pair only; release/product mapping unknown.",
+      "vulnerable": {
+        "commit": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+        "tree": "f86de4aedd95c719b6215273cf10ab15e26d99e4",
+        "files": [
+          {
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "blob": "c5153346369f0182e73098b8d008eca6d750b36d",
+            "bytes": 35770,
+            "sha256": "4be243a68180be845defbcc01b259070db68b18da8500d245eea4929e7b9eca5"
+          },
+          {
+            "path": "ecmascript/base/typed_array_helper.h",
+            "blob": "8541d4a548bb118748443e822f1b603c36789389",
+            "bytes": 4579,
+            "sha256": "3bef83523fcd1f21d61b283cef88c76cd50044316fd6d76f507a3e24368463fa"
+          },
+          {
+            "path": "test/moduletest/typearray/typearray.js",
+            "blob": "78480fc1207e2193df72e69a951d2e2cf3a4d9ba",
+            "bytes": 5707,
+            "sha256": "27f86b91b4a6b224757ac5f079189164ec679e134916b0705900e95798285c2e"
+          },
+          {
+            "path": "test/moduletest/typearray/expect_output.txt",
+            "blob": "7ab1a90e65c389e127b52cb0f6692fb6f149d6f6",
+            "bytes": 1250,
+            "sha256": "0642d5f0e5659ea96cc4f58d34f6f9cfd749396532506d19c81ce8391d12c11d"
+          }
+        ]
+      },
+      "fixed": {
+        "commit": "82c21d656880923800c94b53b035c76d219313b5",
+        "tree": "cfad2654abd1554b35b0817f43ca8585dd937106",
+        "files": [
+          {
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "blob": "89ffed8b3ff112a271c8a074967b7b5e8ebe2f6f",
+            "bytes": 35773,
+            "sha256": "373f5babdd5dd2f93d01512901d02e6b39d6b57c636e72b07b8d80d27eb509ab"
+          },
+          {
+            "path": "ecmascript/base/typed_array_helper.h",
+            "blob": "b61397cbb48ef14e6bf784ab37a172eaf76ca6df",
+            "bytes": 4580,
+            "sha256": "fc3cd9260b98b50984370115591b6100db29d09688094912f474f01bbed7dfdd"
+          },
+          {
+            "path": "test/moduletest/typearray/typearray.js",
+            "blob": "d101f70d7c944e555ba5a78e28a576fcd361b89f",
+            "bytes": 5790,
+            "sha256": "60407a9e323cc894e5a19525ffbda4501e37a017c4d867a25d149569dec7cde6"
+          },
+          {
+            "path": "test/moduletest/typearray/expect_output.txt",
+            "blob": "e11ba0cec65559d1bdf4f0e1760ccb4a3ab345a6",
+            "bytes": 1261,
+            "sha256": "52b6d60f276bcdfea6449e8398f01f30686c73174b7160974a1038d5b5126f28"
+          }
+        ]
+      },
+      "product_build_association": "unknown; no product manifest or shipped binary associated.",
+      "existing_detector_rule": "ohscanner.ark.runtime.type_safety v0.8.10; scoped to the TypedArray helper source for the existing multiplication-overflow rule.",
+      "baseline_scan_result": {
+        "parent": {
+          "commit": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+          "tree": "f86de4aedd95c719b6215273cf10ab15e26d99e4",
+          "profile": "light-ast",
+          "scope": [
+            "ecmascript/base/typed_array_helper.cpp"
+          ],
+          "parse": {
+            "parsing_status": {
+              "complete": 1
+            },
+            "languages": {
+              "cpp": 1
+            }
+          },
+          "diagnostics": 0,
+          "status": "blocked",
+          "elapsed_seconds": 0.0003651000006357208
+        },
+        "fixed": {
+          "commit": "82c21d656880923800c94b53b035c76d219313b5",
+          "tree": "cfad2654abd1554b35b0817f43ca8585dd937106",
+          "profile": "light-ast",
+          "scope": [
+            "ecmascript/base/typed_array_helper.cpp"
+          ],
+          "parse": {
+            "parsing_status": {
+              "complete": 1
+            },
+            "languages": {
+              "cpp": 1
+            }
+          },
+          "diagnostics": 0,
+          "status": "blocked",
+          "elapsed_seconds": 0.000352399998519104
+        },
+        "interpretation": "0 diagnostics both sides under a distinct multiplication rule; source parsing complete but detector status blocked/partial. Not a safety result and not a miss for a narrowing rule that does not exist."
+      },
+      "miss_reason": "No detector models nonnegative numeric length narrowing into the typed-array length allocation path. Security relevance is unverified; no new rule implemented.",
+      "implementation_status": "screened; source root identified, not admitted as a security detector case pending memory-safety/reachability evidence.",
+      "controls": {
+        "positive_and_fix": "Exact historical parent/fix pair; upstream regression added an oversized constructor length RangeError check.",
+        "safe_control": "not independently assessed",
+        "unrelated_control": "not applicable",
+        "variant_control": "not assessed"
+      },
+      "real_source_rescan_result": "Production ohscan-run v0.8.10 0→0 for the multiplication rule; both reports blocked/partial.",
+      "evidence_paths": [
+        "i4688_unrelated_control_identity.json",
+        "reports/i4688-unrelated-parent-v0.8.10.json",
+        "reports/i4688-unrelated-fixed-v0.8.10.json",
+        "reports/i4688-baseline-parent-v0.8.10.json",
+        "reports/i4688-baseline-fixed-v0.8.10.json"
+      ],
+      "remaining_blockers": [
+        "No official security classification or product mapping.",
+        "No evidence this conversion causes memory corruption; regression covers RangeError behavior only.",
+        "No build or dynamic test."
+      ],
+      "next_step": "Keep as adjacent length-conversion history; do not add a security rule unless source/contract analysis demonstrates a memory-safety or security-boundary impact."
+    },
+    {
+      "case_id": "ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA",
+      "CVE_or_advisory": "No CVE or security advisory verified; upstream source references issue IB8BCA and PR !10468.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IB8BCA",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/10468"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime DataView GetViewValue/SetViewValue and AtomicHelper::ValidateAtomicAccess",
+      "root_cause": "Parent converts requested indexes through int32-width values and uses 32-bit bounds/address arithmetic; the patch changes the index path to ToIndex/uint64_t and uses wider bounds calculations. Regression adds a large-index DataView set that expects RangeError. Source delta is verified, but current evidence does not demonstrate an out-of-bounds access or security impact.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Exact parent/fix source pair only; release/product mapping unknown.",
+      "vulnerable": {
+        "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+        "tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+        "files": [
+          {
+            "path": "ecmascript/base/atomic_helper.cpp",
+            "blob": "7fd67717571c6d8fe7b10bf294998e952dc61e36",
+            "bytes": 7176,
+            "sha256": "f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541"
+          },
+          {
+            "path": "ecmascript/builtins/builtins_dataview.cpp",
+            "blob": "e6bac984354292405ae62f7728170d7be5e3760e",
+            "bytes": 21732,
+            "sha256": "bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c"
+          },
+          {
+            "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+            "blob": "aedb6d26681535371d1e9ed90b697b923b8100e6",
+            "bytes": 11399,
+            "sha256": "bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548"
+          },
+          {
+            "path": "test/moduletest/dataview/dataview.js",
+            "blob": "6ee13490c7d9bf21913e49358ff4b73260ee4975",
+            "bytes": 2796,
+            "sha256": "e7c79938c81a14e72a0fc3bea6a9fbce735ce7dcd6e0224919578dd7dc885a87"
+          },
+          {
+            "path": "test/moduletest/dataview/expect_output.txt",
+            "blob": "74195556e20fea6c4ee7c68ce59910bb363ce223",
+            "bytes": 1116,
+            "sha256": "bf16c3fb375b7b78938fd71228eebcd9f3220cf41309148cb14290ea5fcca7a7"
+          }
+        ]
+      },
+      "fixed": {
+        "commit": "48fcec3686e45175f95b4600b579026a65149966",
+        "tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+        "files": [
+          {
+            "path": "ecmascript/base/atomic_helper.cpp",
+            "blob": "80d7ad14e70825ef2daf7b3f2fc956a891bf8b2c",
+            "bytes": 6995,
+            "sha256": "39521f4c6fa6b4b65d8b3daacd80f6e051b5a01c5aa814c9ac2ffc432529b36b"
+          },
+          {
+            "path": "ecmascript/builtins/builtins_dataview.cpp",
+            "blob": "a2376e822e995333b2400520ca5b882de9578b5e",
+            "bytes": 21718,
+            "sha256": "39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b"
+          },
+          {
+            "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+            "blob": "dce9388e8b7e33c87aec33ac4d067fe40370561b",
+            "bytes": 11561,
+            "sha256": "89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386"
+          },
+          {
+            "path": "test/moduletest/dataview/dataview.js",
+            "blob": "decb8eafb42ced6aed4d1b7394e4d273e98dee3c",
+            "bytes": 2915,
+            "sha256": "d4b66af1edd5f8ea5c67d7903d95bbaefd7e1983ec9341aa37640530ccc217be"
+          },
+          {
+            "path": "test/moduletest/dataview/expect_output.txt",
+            "blob": "5d395d0ba691ce9df5c6a381f30e8ced7352b5f6",
+            "bytes": 1161,
+            "sha256": "43d2a9ed8ed99361a259a6d11e285cac33c13c4ab936ee011575c63b28560aa4"
+          }
+        ]
+      },
+      "product_build_association": "unknown; no product manifest or shipped binary associated.",
+      "existing_detector_rule": "ohscanner.ark.runtime.type_safety v0.8.10; no DataView/Atomics bounds-width model.",
+      "baseline_scan_result": {
+        "parent": {
+          "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+          "tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+          "profile": "light-ast",
+          "scope": [
+            "ecmascript/builtins/builtins_dataview.cpp",
+            "ecmascript/base/atomic_helper.cpp",
+            "ecmascript/builtins/builtins_dataview_stub_builder.cpp"
+          ],
+          "parse": {
+            "parsing_status": {
+              "complete": 2
+            },
+            "languages": {
+              "cpp": 2
+            }
+          },
+          "diagnostics": 0,
+          "status": "blocked",
+          "elapsed_seconds": 5.900001269765198e-06
+        },
+        "fixed": {
+          "commit": "48fcec3686e45175f95b4600b579026a65149966",
+          "tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+          "profile": "light-ast",
+          "scope": [
+            "ecmascript/builtins/builtins_dataview.cpp",
+            "ecmascript/base/atomic_helper.cpp",
+            "ecmascript/builtins/builtins_dataview_stub_builder.cpp"
+          ],
+          "parse": {
+            "parsing_status": {
+              "complete": 2
+            },
+            "languages": {
+              "cpp": 2
+            }
+          },
+          "diagnostics": 0,
+          "status": "blocked",
+          "elapsed_seconds": 6.300004315562546e-06
+        },
+        "interpretation": "0 diagnostics both sides; selected source files parse complete, detector reports blocked/partial and has no applicable bounds-width rule. Not a safety result."
+      },
+      "miss_reason": "Missing DataView/Atomics range and index-width model. Security impact remains unproven.",
+      "implementation_status": "screened; adjacent historical bounds/index fix, no detector implemented pending a demonstrated security invariant violation.",
+      "controls": {
+        "positive_and_fix": "Exact historical parent/fix source pair; regression exercises a large index and expects RangeError.",
+        "safe_control": "not assessed",
+        "unrelated_control": "not applicable",
+        "variant_control": "not assessed"
+      },
+      "real_source_rescan_result": "Production ohscan-run v0.8.10 0→0 on exact scoped files; report completed_with_limitations and detector status blocked.",
+      "evidence_paths": [
+        "reports/i10468-baseline-parent-v0.8.10.json",
+        "reports/i10468-baseline-fixed-v0.8.10.json"
+      ],
+      "remaining_blockers": [
+        "No security advisory or product mapping.",
+        "No concrete out-of-bounds witness established from patch and test alone.",
+        "Build and dynamic reproduction not run."
+      ],
+      "next_step": "Retain as a separate index-width candidate; inspect exact source arithmetic and backing-buffer limits before deciding whether to implement a bounds rule."
+    },
+    {
+      "case_id": "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG",
+      "CVE_or_advisory": "No CVE or security advisory verified. Upstream issue IBS5YG and PR !11196 describe TypedArray Filter out-of-bounds behavior.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11196",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IBS5YG"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime BuiltinsTypedArrayStubBuilder::Filter",
+      "root_cause": "Filter creates a species-sensitive result, then writes indexed elements using the source array type token. The fix derives the token from the newly allocated result HClass before the indexed store.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Direct PR parent/fix pair proves this source transition only; release/product version mapping is unknown.",
+      "vulnerable_commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "vulnerable_tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+      "vulnerable_files": [
+        {
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+          "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+          "sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+          "bytes": 150433
+        }
+      ],
+      "fixed_commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+      "fixed_tree": "82af11ced4297818410ccf61906b703d25b69165",
+      "fixed_files": [
+        {
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+          "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+          "sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+          "bytes": 150509
+        }
+      ],
+      "product_build_association": "No product build association for the exact vulnerable/fixed commits. C1 has a partial hihope/rk3568 profile for Ark Runtime a65a2853ccae13da167d9aa4720ab8b11ec16656; its target source SHA-256 is 76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c, different from both !11196 pair blobs. Two ARM actions were preprocessed for that other source, and isolated Ninja target 1 failed at a Musl notice write before compiling the object; it cannot establish !11196 macros/build behavior.",
+      "existing_detector_and_rule": "ohscanner.ark.runtime.type_safety v0.8.10; ark.runtime.typedarray-store-type-origin; existing first-party Unseen TypeSafety Detector via explicit production ohscan-run (Catalog research_candidate/disabled by default). This round extended shared origin semantics for reviewed LoadHClass(glue, object), two-argument NewObjectStubBuilder/BuiltinsArrayStubBuilder construction, and GetCurrentGlobalEnv.",
+      "baseline_scan_result": {
+        "before_model_extension": {
+          "direct_parent": {
+            "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+            "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+            "snapshot_sha256": "884bb958b98b5b977ba9b539ce27432870b9269156bbfcfad97f4bb58dcd9d3c",
+            "diagnostics": 1,
+            "findings": [
+              {
+                "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                "line": 1498,
+                "rule_id": "ark.runtime.typedarray-store-type-origin"
+              }
+            ],
+            "run_status": "blocked",
+            "coverage": "partial",
+            "limitations": [
+              "Semantic applicability is bounded to declared Ark Runtime owner/method/signature profiles; no preprocessor, whole-program, product-build, or exploitability proof.",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: exception_path_not_fully_modeled",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_function_scope",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_scope_routed_through_exact_binding_adapter",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: load_hclass_signature_or_binding_mismatch",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: parse_dependency_contamination_unknown",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: unresolved_local_observations",
+              "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+              "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+              "Diagnostic does not establish vulnerability, reachability or security impact.",
+              "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+              "Coverage incomplete or unsupported; do not infer safety."
+            ],
+            "report_json": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-i11196-direct-parent.json",
+            "report_md": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-i11196-direct-parent.md"
+          },
+          "direct_fix": {
+            "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+            "tree": "82af11ced4297818410ccf61906b703d25b69165",
+            "snapshot_sha256": "45951ebe149386befe03a7dcfe28f1ce3fc1b91c8a9947745a692a4186e148dc",
+            "diagnostics": 0,
+            "findings": [],
+            "run_status": "blocked",
+            "coverage": "partial",
+            "limitations": [
+              "Semantic applicability is bounded to declared Ark Runtime owner/method/signature profiles; no preprocessor, whole-program, product-build, or exploitability proof.",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: exception_path_not_fully_modeled",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_function_scope",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_scope_routed_through_exact_binding_adapter",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: load_hclass_signature_or_binding_mismatch",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: parse_dependency_contamination_unknown",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: unresolved_local_observations",
+              "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+              "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+              "Diagnostic does not establish vulnerability, reachability or security impact.",
+              "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+              "Coverage incomplete or unsupported; do not infer safety."
+            ],
+            "report_json": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-i11196-direct-fix.json",
+            "report_md": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-i11196-direct-fix.md"
+          },
+          "a65_profile_source": {
+            "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+            "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+            "snapshot_sha256": "7f1c19c5ba21a311fba7f018df8fff077c6c9a60ee81c3ce348bb5b0a9f017d2",
+            "diagnostics": 0,
+            "findings": [],
+            "run_status": "blocked",
+            "coverage": "partial",
+            "limitations": [
+              "Semantic applicability is bounded to declared Ark Runtime owner/method/signature profiles; no preprocessor, whole-program, product-build, or exploitability proof.",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_function_scope",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_scope_routed_through_exact_binding_adapter",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: parse_dependency_contamination_unknown",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: unresolved_local_observations",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: unsupported_host_expression_effects",
+              "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+              "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+              "Diagnostic does not establish vulnerability, reachability or security impact.",
+              "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+              "Coverage incomplete or unsupported; do not infer safety."
+            ],
+            "report_json": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-a65-current-product-control.json",
+            "report_md": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-a65-current-product-control.md"
+          }
+        },
+        "after_model_extension": {
+          "direct_parent": {
+            "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+            "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+            "snapshot_sha256": "884bb958b98b5b977ba9b539ce27432870b9269156bbfcfad97f4bb58dcd9d3c",
+            "diagnostics": 1,
+            "findings": [
+              {
+                "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                "line": 1498,
+                "rule_id": "ark.runtime.typedarray-store-type-origin"
+              }
+            ],
+            "run_status": "blocked",
+            "coverage": "partial",
+            "limitations": [
+              "Semantic applicability is bounded to declared Ark Runtime owner/method/signature profiles; no preprocessor, whole-program, product-build, or exploitability proof.",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: exception_path_not_fully_modeled",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_function_scope",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_scope_routed_through_exact_binding_adapter",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: load_hclass_signature_or_binding_mismatch",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: parse_dependency_contamination_unknown",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: unresolved_local_observations",
+              "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+              "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+              "Diagnostic does not establish vulnerability, reachability or security impact.",
+              "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+              "Coverage incomplete or unsupported; do not infer safety."
+            ],
+            "report_json": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-model-overload-i11196-direct-parent.json",
+            "report_md": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-model-overload-i11196-direct-parent.md"
+          },
+          "direct_fix": {
+            "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+            "tree": "82af11ced4297818410ccf61906b703d25b69165",
+            "snapshot_sha256": "45951ebe149386befe03a7dcfe28f1ce3fc1b91c8a9947745a692a4186e148dc",
+            "diagnostics": 0,
+            "findings": [],
+            "run_status": "blocked",
+            "coverage": "partial",
+            "limitations": [
+              "Semantic applicability is bounded to declared Ark Runtime owner/method/signature profiles; no preprocessor, whole-program, product-build, or exploitability proof.",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: exception_path_not_fully_modeled",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_function_scope",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_scope_routed_through_exact_binding_adapter",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: load_hclass_signature_or_binding_mismatch",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: parse_dependency_contamination_unknown",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: unresolved_local_observations",
+              "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+              "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+              "Diagnostic does not establish vulnerability, reachability or security impact.",
+              "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+              "Coverage incomplete or unsupported; do not infer safety."
+            ],
+            "report_json": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-model-overload-i11196-direct-fix.json",
+            "report_md": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-model-overload-i11196-direct-fix.md"
+          },
+          "a65_profile_source": {
+            "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+            "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+            "snapshot_sha256": "7f1c19c5ba21a311fba7f018df8fff077c6c9a60ee81c3ce348bb5b0a9f017d2",
+            "diagnostics": 0,
+            "findings": [],
+            "run_status": "blocked",
+            "coverage": "partial",
+            "limitations": [
+              "Semantic applicability is bounded to declared Ark Runtime owner/method/signature profiles; no preprocessor, whole-program, product-build, or exploitability proof.",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_function_scope",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_scope_routed_through_exact_binding_adapter",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: parse_dependency_contamination_unknown",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: unresolved_local_observations",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: unsupported_host_expression_effects",
+              "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+              "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+              "Diagnostic does not establish vulnerability, reachability or security impact.",
+              "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+              "Coverage incomplete or unsupported; do not infer safety."
+            ],
+            "report_json": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-model-overload-a65-current-product-control.json",
+            "report_md": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-model-overload-a65-current-product-control.md"
+          },
+          "official_master": {
+            "commit": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+            "tree": "2cd854aa7d9f987de89d31a6a512e735779e75b6",
+            "snapshot_sha256": "d8e0efa6c9058c8bdc6baae407b5db8b96df7914e3a62b8d4d450aad1e080ee6",
+            "diagnostics": 0,
+            "findings": [],
+            "run_status": "blocked",
+            "coverage": "partial",
+            "limitations": [
+              "Semantic applicability is bounded to declared Ark Runtime owner/method/signature profiles; no preprocessor, whole-program, product-build, or exploitability proof.",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_function_scope",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_scope_routed_through_exact_binding_adapter",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: parse_dependency_contamination_unknown",
+              "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: unresolved_local_observations",
+              "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+              "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+              "Diagnostic does not establish vulnerability, reachability or security impact.",
+              "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+              "Coverage incomplete or unsupported; do not infer safety."
+            ],
+            "report_json": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-model-overload-official-master-current.json",
+            "report_md": "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-model-overload-official-master-current.md"
+          }
+        }
+      },
+      "miss_reason": "No miss on the exact !11196 direct parent/fix pair (1→0 before and after model extension). Current a65/master semantic selector enters the analyzer; 0 diagnostics are accompanied by partial/blocked file analysis and unresolved target/type-origin observations (a65 Filter line 1563, master Filter line 1507). No exact-binding rejection caused those zero results. The stale limitation string was corrected and covered by a regression test.",
+      "implementation_status": "Extended shared production TypeOrigin semantics for the reviewed glue-aware LoadHClass overload and two-argument builder constructors; bound five supporting header identities in RuntimeTypeModel.api_overload_evidence; added mismatch and correct-result-origin regressions. Production parent/fix result unchanged and remains candidate-only; full real-file analysis remains partial.",
+      "test_controls": {
+        "positive": "2ea501258ab4155826b64f01b499b43d1911e0e2: exact parent candidate remains at Filter store after model change; report reports/typeorigin-v0810-model-overload-i11196-direct-parent.json",
+        "fixed": "919e4fbb011f610427e788889083fa8e28d2f951: same-root candidate absent after model change; report reports/typeorigin-v0810-model-overload-i11196-direct-fix.json",
+        "safe_control": "C1 hihope/rk3568 a65 product-profile source has result-derived Filter token and zero TypeOrigin diagnostics before/after extension. Still blocked/partial; development control, not safety pass or blind holdout.",
+        "unrelated_control": "!11684 unrelated exception case previously had zero TypeOrigin findings but partial file analysis; no complete unrelated pass established.",
+        "variant_control": "Two-argument builder and glue-aware HClass forms now covered by authored positive/safe synthetic regressions; these are not an independent real-source holdout. No untouched historical same-mechanism positive.",
+        "upstream_regression": "Upstream PR Filter regression source identified; build and execution not run.",
+        "unit_regression": "python -m pytest tests/detectors/ark_runtime/test_type_origin.py tests/detectors/ark_runtime/test_exception_guard.py tests/detectors/ark_runtime/test_runtime_exception.py tests/detectors/ark_runtime/test_unseen_detector.py tests/detectors/ark_runtime/test_parser_owner.py -q: 72 passed, 4 skipped."
+      },
+      "real_source_rescan_result": "Production ohscan-run same one-file light-ast scope: exact !11196 direct parent/fix remains 1→0 after API-model and limitation-label changes; C1 a65 and official master both yield 0 candidate diagnostics but blocked/partial semantic analysis. The zero results are unresolved/unknown, not safety passes.",
+      "evidence_paths": [
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-i11196-direct-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-i11196-direct-fix.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-i11196-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-i11196-fixed.json",
+        "research/experiments/ark_runtime/c1_20261017/product_profile_20261019.v1.json",
+        "research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/preprocessor_observation.json",
+        "research/experiments/ark_runtime/c1_20261017/ninja_isolated_build_20261019/",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-model-overload-i11196-direct-parent.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-model-overload-i11196-direct-fix.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-model-overload-a65-current-product-control.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-model-overload-official-master-current.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-a65-current-product-control.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-official-master-current.json"
+      ],
+      "evidence_dimensions": {
+        "public_disclosure_fact": "Upstream issue/PR labels Filter behavior as outbound; no CVE independently verified.",
+        "source_root_cause_match": "Supported by direct diff at allocation/type-token/store sequence.",
+        "static_detection": "Candidate 1→0 on direct parent/fix with partial file coverage.",
+        "component_dynamic_reproduction": "Not run; regression source exists upstream.",
+        "product_vulnerability_confirmation": "Not established."
+      },
+      "remaining_blockers": [
+        "C1 a65 product profile is a different source identity than the !11196 pair; exact product build association remains absent.",
+        "Real-source CFG/dataflow returns unresolved target/type-origin observations in Filter/Map/With; file outcome remains partial.",
+        "Exact pair AST/dependency/macro/build profile remains incomplete.",
+        "No complete safe/unrelated control or untouched same-mechanism historical positive.",
+        "Upstream regression not built or run; product/release association and impact are unknown."
+      ],
+      "next_step": "Instrument the existing TypeOrigin graph analysis at a65 Filter lines 1542–1563 and master Filter lines 1498–1507 to identify where fresh-result identity is lost across the exception branch and loop entry/backedge. Add only source-grounded CFG/dataflow support with positive, fixed, safe, early-exit and rename/wrapper controls; rerun exact !11196 pair, a65, and master.",
+      "api_semantic_evidence": [
+        {
+          "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+          "path": "ecmascript/compiler/circuit_builder.h",
+          "blob": "df296de399f31a97417ed124f4ed8f8e4fd608b7",
+          "sha256": "41ce63da35d4f9abf5e32bcd417384fadcb018718d002b798e339da11a1a7d70",
+          "verified_local_git_object": true
+        },
+        {
+          "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+          "path": "ecmascript/compiler/stub_builder.h",
+          "blob": "9e2fbd3ede1da91133dcd936018285e597944515",
+          "sha256": "a11ca83c0a8bbe16ea4ce9dabb2ab3aca2ee9c680a95433371e79494e2a92cb0",
+          "verified_local_git_object": true
+        },
+        {
+          "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+          "path": "ecmascript/compiler/new_object_stub_builder.h",
+          "blob": "ecdf871b20e884e013ce0f26877ef404e4950cb0",
+          "sha256": "d84a72bb1a252fb9ea2b8ff01e702c3a0c952681e211d8f1a850f1880217778b",
+          "verified_local_git_object": true
+        },
+        {
+          "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+          "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+          "blob": "c9b5a66c12c657533047286ec79406a639fb8232",
+          "sha256": "1804426bca64803a2a7b70c63004eb5236718daa075c67d74c68fd5f21ef151c",
+          "verified_local_git_object": true
+        },
+        {
+          "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h",
+          "blob": "017286724e4cd6df1a369589293efe920660c4c6",
+          "sha256": "f5b25eed46bfe6e951c6ad8b79ff76bfee8d402868839d21e6d41cd84ef3f8e3",
+          "verified_local_git_object": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "case_id": "ARK-TYPEDARRAY-CREATEFROMARRAYBUFFER-!4245-CONTROL-AUDIT",
+  "official_ref": "refs/pull/4245/head",
+  "patch_commit": "3be786861f4f90092ce88741882ce8549de4dd43",
+  "patch_parent": "2d03b1c8fc3e0906be7fa4006bb5977fc2d0a554",
+  "issue_reference": "I7DGM6",
+  "patch_root_review": "CreateFromArrayBuffer changes newByteLength from int32_t to uint32_t, checks bufferByteLength < offset before subtraction, multiplies newLength by elementSize as uint32_t under an INT32_MAX ASSERT, and narrows on property writes. This is distinct from CreateFromTypedArray uint32 product overflow fixed by !4425.",
+  "production_replay": {
+    "profile": "light-ast; exact local Git objects; one file ecmascript/base/typed_array_helper.cpp; production ohscan-run v0.8.10; no scan-time fetch",
+    "parent": {
+      "commit": "2d03b1c8fc3e0906be7fa4006bb5977fc2d0a554",
+      "tree": "702ba2ace130143f3b753a2bfc007a237e8df872",
+      "diagnostics": 1,
+      "rule": "ark.runtime.typedarray-buffer-size-multiplication-overflow",
+      "line": 230,
+      "symbol": "panda::ecmascript::base::TypedArrayHelper::CreateFromTypedArray",
+      "status": "blocked",
+      "parse": "complete"
+    },
+    "fix": {
+      "commit": "3be786861f4f90092ce88741882ce8549de4dd43",
+      "tree": "76ddf3393990c8f9220ce1afdd3d346ecd464776",
+      "diagnostics": 1,
+      "rule": "ark.runtime.typedarray-buffer-size-multiplication-overflow",
+      "line": 230,
+      "symbol": "panda::ecmascript::base::TypedArrayHelper::CreateFromTypedArray",
+      "status": "blocked",
+      "parse": "complete"
+    },
+    "interpretation": "Candidate persists in an untouched function on both sides; this PR is not a second vulnerable/fixed validation pair for the detector."
+  },
+  "official_sync": "Fetched only refs/pull/4245/head into the local research object database after ls-remote confirmed the ref. Earlier failed direct OID fetch was not repeated.",
+  "evidence_paths": [
+    "reports/pr4245-parent-source-replay-v0.8.10.json",
+    "reports/pr4245-fixed-source-replay-v0.8.10.json"
+  ],
+  "blocked_reason": "No full-file semantic analysis; PR issue linkage/security status not independently verified."
+}

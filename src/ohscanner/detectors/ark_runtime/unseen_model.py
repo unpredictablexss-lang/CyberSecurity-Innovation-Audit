@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from .model import RuntimeTypeModel
 
 
-UNSEEN_VERSION = "0.7.0"
+UNSEEN_VERSION = "0.8.10"
 
 
 @dataclass(frozen=True)
@@ -19,10 +19,11 @@ class UnseenRuntimeTypeModel(RuntimeTypeModel):
 
     version: str = UNSEEN_VERSION
     source_repository: str = "openharmony/arkcompiler_ets_runtime"
-    effect_summary_revision: str = "semantic-contract-v1"
+    effect_summary_revision: str = "semantic-contract-v11"
     target_bindings: tuple = ()
     source_dependencies: tuple = ()
     exception_guard_bindings: tuple = ()
     exception_guard_dependencies: tuple = ()
+    receiver_guard_bindings: tuple = ()
     effect_summary_sources: tuple = ()
 

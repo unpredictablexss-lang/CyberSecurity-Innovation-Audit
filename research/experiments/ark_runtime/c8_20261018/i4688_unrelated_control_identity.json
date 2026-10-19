@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-10-19",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "purpose": "Real unrelated control for the byte-length product-to-allocation-copy rule; not a safety claim about this other fix.",
+  "root_cause": "!4688 changes TypedArrayConstructor elementLength conversion from signed int32_t to uint32_t. This is integer conversion/length handling, not the !4425 typed product → allocation → copy loop root.",
+  "pair": {
+    "vulnerable_parent": {
+      "commit": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+      "tree": "f86de4aedd95c719b6215273cf10ab15e26d99e4",
+      "file": "ecmascript/base/typed_array_helper.cpp",
+      "blob": "c5153346369f0182e73098b8d008eca6d750b36d",
+      "sha256": "4be243a68180be845defbcc01b259070db68b18da8500d245eea4929e7b9eca5",
+      "bytes": 35770
+    },
+    "fixed_merge": {
+      "commit": "82c21d656880923800c94b53b035c76d219313b5",
+      "tree": "cfad2654abd1554b35b0817f43ca8585dd937106",
+      "file": "ecmascript/base/typed_array_helper.cpp",
+      "blob": "89ffed8b3ff112a271c8a074967b7b5e8ebe2f6f",
+      "sha256": "373f5babdd5dd2f93d01512901d02e6b39d6b57c636e72b07b8d80d27eb509ab",
+      "bytes": 35773
+    }
+  },
+  "production_cli": "ohscan-run v0.8.10, same light-ast profile and one-file scope; 0 root-rule diagnostics on both sides; full file analysis remains partial/blocked.",
+  "build_runtime": "not built or run"
+}

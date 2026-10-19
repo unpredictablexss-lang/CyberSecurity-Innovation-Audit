@@ -46,6 +46,31 @@ class AnalysisResult:
         return asdict(self)
 
 
+def has_type_origin_flow(function, model):
+    """Select an owner function by a typed-array construction and element-store flow.
+
+    Names here identify semantic operations for bounded analysis; the diagnostic
+    still depends on resolving the destination object and type-token origins.
+    """
+    if not function.qualified_name.startswith(OWNER + '::'):
+        return False
+    property_name, property_arity, _, _ = model.property_store
+    creates_typed_array = False
+    stores_typed_array_element = False
+    for node in walk(function.body):
+        if node.type != 'call_expression':
+            continue
+        name = function.call_name(node).rsplit('.', 1)[-1].removeprefix('this->')
+        args = function.arguments(node)
+        if name == model.creator_name and len(args) == model.creator_arguments:
+            callee = node.child_by_field_name('function')
+            if callee and callee.type == 'field_expression':
+                creates_typed_array = True
+        elif name == property_name and len(args) == property_arity:
+            stores_typed_array_element = True
+    return creates_typed_array and stores_typed_array_element
+
+
 def _unique_observations(items):
     unique = {}
     for item in items:
@@ -78,7 +103,8 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
     actual_partial = tree.root_node.has_error
     if actual_partial and not research_partial:
         return AnalysisResult('limited', 'not_analyzed', limitations=('actual_parse_is_partial',))
-    targets = [f for f in functions if f.qualified_name in model.callers]
+    targets = [f for f in functions if f.qualified_name in model.callers
+               or has_type_origin_flow(f, model)]
     if not targets:
         return AnalysisResult('limited' if actual_partial else 'completed',
                               'not_analyzed' if actual_partial else 'complete',
@@ -90,9 +116,11 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
                    'Int32Equal', 'Equal', 'GetEnvironment', 'Int32', 'Int64'}
     model_names.update(name.split('::')[-1] for name, _ in model.scalar_operations)
     model_names.update(name for name, _ in model.by_value_operations + model.readonly_operations + model.type_stable_operations)
+    model_names.update(name for name, _ in model.reviewed_graph_read_overloads)
     model_names.update(('BuiltinsArrayStubBuilder', 'SetParameters', 'GetTaggedValueWithElementsKind',
                         'NewTypedArraySameType', 'CallNGCRuntime', 'RTSTUB_ID', 'LogicAndBuilder', 'And', 'Done',
                         'CopyTypedArrayBuffer'))
+    model_names.add(model.property_store[0])
     model_names.update(name for name, _ in model.host_constructors)
     for node in walk(tree.root_node):
         if node.type in ('preproc_def', 'preproc_function_def'):
@@ -107,6 +135,7 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
                                       model_digest=model.digest)
     summarized = {'GetObjectType', 'LoadHClass', 'SetParameters', 'GetTaggedValueWithElementsKind'}
     summarized.update(name for name, _ in model.scalar_operations + model.by_value_operations + model.readonly_operations)
+    summarized.update(name for name, _ in model.reviewed_graph_read_overloads)
     for function in functions:
         operation = function.qualified_name.split('::')[-1]
         if operation in summarized:
@@ -116,11 +145,18 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
                 # The local definition corroborates only parameter passing;
                 # effects remain unknown and still invalidate old type facts.
                 continue
+            reviewed_arity = dict(model.reviewed_graph_read_overloads).get(operation)
+            if (reviewed_arity is not None and function.qualified_name.endswith('::' + operation)
+                    and tuple(function.parameter_types) == ('GateRef',) * reviewed_arity):
+                # A matching visible overload is still bounded to this exact
+                # graph operation and signature; unsupported overloads remain unknown.
+                continue
             return AnalysisResult('limited', 'not_analyzed', limitations=('visible_origin_operation_unverified',),
                                   model_digest=model.digest)
     if actual_partial or unit.parse_status != 'complete':
         limitations.extend(('experimental_partial_function_scope',
-                            'parse_dependency_contamination_unknown', 'experimental_partial_scope_routed_through_exact_binding_adapter'))
+                            'parse_dependency_contamination_unknown',
+                            'partial_scope_routed_through_semantic_selector'))
     signatures = [f for f in functions if f.qualified_name == OWNER + '::' + model.store_name]
     if signatures and any(tuple(f.parameter_types) != model.store_types for f in signatures):
         return AnalysisResult('limited', 'partial', limitations=('sink_definition_signature_mismatch',), model_digest=model.digest)
@@ -132,6 +168,14 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
             return AnalysisResult('limited', 'partial',
                                   limitations=('type_stability_helper_signature_mismatch:' + name,),
                                   model_digest=model.digest)
+    property_name, property_arity, _, _ = model.property_store
+    property_definitions = [f for f in functions
+                            if f.qualified_name == OWNER + '::' + property_name]
+    if property_definitions and any(len(f.parameter_types) != property_arity
+                                    for f in property_definitions):
+        return AnalysisResult('limited', 'partial',
+                              limitations=('type_origin_property_sink_signature_mismatch:' + property_name,),
+                              model_digest=model.digest)
     for fn in targets:
         first_observation = len(observations)
         if any(n.type in ('class_specifier', 'struct_specifier')

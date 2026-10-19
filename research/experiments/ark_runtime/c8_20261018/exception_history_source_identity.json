@@ -1,0 +1,205 @@
+{
+  "schema_version": 1,
+  "source_repository": "https://gitee.com/openharmony/arkcompiler_ets_runtime.git",
+  "verification_date": "2026-10-19",
+  "source_sync": "All scans used previously fetched local pinned Git object databases; no fetch occurred during scan.",
+  "cases": {
+    "IB40SU_NewRuntimeCallInfo_guard": {
+      "vulnerable_parent": {
+        "commit": "811daec3dc48a2ba4426b9c6eea7bcc1ee7ab315",
+        "tree": "b20077ce95fed3c0ecc7ca3e147a17bd7ef9bbc4",
+        "parents": [
+          "01de85f868763d02e4504fc2621df363e53607f1",
+          "9d38691077d3d25ad0c324ab2e79b49065afc2f4"
+        ],
+        "author_date": "2024-11-12T12:03:39Z",
+        "subject": "!10208 fix the miss node of rawheap translator Merge pull request !10208 from yangxiaoshuai2022/master",
+        "body": ""
+      },
+      "fixed_commit": {
+        "commit": "3bf1a3cee91252507d02ebcd0ef332d61bbad342",
+        "tree": "a4d25adf9122ca9857319372bcae84af580d7055",
+        "parents": [
+          "811daec3dc48a2ba4426b9c6eea7bcc1ee7ab315"
+        ],
+        "author_date": "2024-11-14T19:44:53+08:00",
+        "subject": "Check the results of NewRuntimeCallInfo",
+        "body": "Issue:https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IB40SU\n\nSigned-off-by: shaoxiangdong <shaoxiangdong@huawei.com>\nChange-Id: Ifdc5efb6ba5e9a520a2034770ca5fccc46f36b62"
+      },
+      "files": {
+        "vulnerable_parent": [
+          {
+            "path": "ecmascript/builtins/builtins_async_from_sync_iterator.cpp",
+            "blob": "3fb6a992fdc69690a2604452caeb00c3f5959593",
+            "bytes": 11186,
+            "sha256": "5ca4084a53c2b86baeae9e4549838d250637eeb16f2622cc1f04cf46479f609c"
+          },
+          {
+            "path": "ecmascript/js_async_generator_object.cpp",
+            "blob": "f13972ad912a456f03bdf1a9a51bb66c8ca47faf",
+            "bytes": 20278,
+            "sha256": "0da8c9b999726cfd4d615e17315ba4a8d6ce33932f1b04e3245cffcec8feab94"
+          },
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "blob": "2f93576f54544ee95c5b57ee8d7bb6b0b8a2b3bb",
+            "bytes": 50070,
+            "sha256": "9ad43ea1a799f3ef7b7010bf96124fa1063947b199a84bd3804fa45bdf9a3665"
+          },
+          {
+            "path": "ecmascript/interpreter/interpreter.cpp",
+            "blob": "879eeef66db3a79834b81e68730634664daa1f74",
+            "bytes": 5258,
+            "sha256": "3bc1e5896702572e1092650b77157d1cac5757e8b470c3966a11a3d81d52233e"
+          },
+          {
+            "path": "ecmascript/js_thread.cpp",
+            "blob": "59c2b0a0c2f9e84bf20cef83c0e1f3470a870c1d",
+            "bytes": 49315,
+            "sha256": "065c63846202acb7ee164850dcfc122cf9548fe5af6f877ccde52d59a8d73bcf"
+          }
+        ],
+        "fixed_commit": [
+          {
+            "path": "ecmascript/builtins/builtins_async_from_sync_iterator.cpp",
+            "blob": "633fba4ae9964a97850b6b4f4ab5bf3646d707ba",
+            "bytes": 11269,
+            "sha256": "a82f3665c6a62cd9c42d6e48748ff133fcab5c3e34042be3d8058421d8316986"
+          },
+          {
+            "path": "ecmascript/js_async_generator_object.cpp",
+            "blob": "34b71e4095f401ff94832ee8d0b24e2589c3fb86",
+            "bytes": 20329,
+            "sha256": "270a6e47ae5d9db68d35d8da3714f4bec477be10c9ae092b9b2e9e9bd2889fe5"
+          },
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "blob": "2f93576f54544ee95c5b57ee8d7bb6b0b8a2b3bb",
+            "bytes": 50070,
+            "sha256": "9ad43ea1a799f3ef7b7010bf96124fa1063947b199a84bd3804fa45bdf9a3665"
+          },
+          {
+            "path": "ecmascript/interpreter/interpreter.cpp",
+            "blob": "879eeef66db3a79834b81e68730634664daa1f74",
+            "bytes": 5258,
+            "sha256": "3bc1e5896702572e1092650b77157d1cac5757e8b470c3966a11a3d81d52233e"
+          },
+          {
+            "path": "ecmascript/js_thread.cpp",
+            "blob": "59c2b0a0c2f9e84bf20cef83c0e1f3470a870c1d",
+            "bytes": 49315,
+            "sha256": "065c63846202acb7ee164850dcfc122cf9548fe5af6f877ccde52d59a8d73bcf"
+          }
+        ]
+      },
+      "changed_paths": "M\tecmascript/builtins/builtins_array.cpp\nM\tecmascript/builtins/builtins_async_from_sync_iterator.cpp\nM\tecmascript/ecma_context.cpp\nM\tecmascript/ic/ic_runtime.cpp\nM\tecmascript/js_async_generator_object.cpp\nM\tecmascript/js_typed_array.cpp\nM\tecmascript/stubs/runtime_stubs-inl.h\nM\tecmascript/tagged_tree.cpp"
+    },
+    "I7SDBG_Instanceof_exception_sentinel": {
+      "vulnerable_parent": {
+        "commit": "905f840797ff27839d9d984aee36c0f8a773adb2",
+        "tree": "d0c68ae8fc7a5e0cbc9c4c60800d4d550eb35b37",
+        "parents": [
+          "644dffd1d83327e42185040115fcdc86342de716",
+          "d1580a71a21e2c3cfe62dab3c1a16ec0a3b8a50b"
+        ],
+        "author_date": "2023-08-10T07:59:18Z",
+        "subject": "!4601 fix ut llvm error Merge pull request !4601 from ChunyangWang/ut_llvm_error",
+        "body": ""
+      },
+      "fixed_commit": {
+        "commit": "c73261dd8452524fa707c0b3c768e899786d22f2",
+        "tree": "77e27c24686ff4d8b3bee0913af8a4f29386ddb5",
+        "parents": [
+          "905f840797ff27839d9d984aee36c0f8a773adb2"
+        ],
+        "author_date": "2023-08-11T10:25:04+08:00",
+        "subject": "Bugfix on RuntimeStubs::RuntimeInstanceofByHandler return exception",
+        "body": "Issue: https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I7SDBG\n\nSigned-off-by: quiet-thought <chenjingxiang1@huawei.com>\nChange-Id: Iaa5add56365d45b9249c775b6233110804ad902b"
+      },
+      "files": {
+        "vulnerable_parent": [
+          {
+            "path": "ecmascript/stubs/runtime_stubs-inl.h",
+            "blob": "91f1c6c2d2c6184554de2c9f7db8144e4a078ee9",
+            "bytes": 125331,
+            "sha256": "d37464b716c3bfe4cb4baa3753c7613603fa93308959f9cb71ca9ae4ed81acfe"
+          },
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "blob": "a44172fb7b886ee788020b4b4a8472def56e3703",
+            "bytes": 38511,
+            "sha256": "8ba3030f1a6f92bc176c69a42974e60e83876d49cacc2077e9392a7bec341f0e"
+          }
+        ],
+        "fixed_commit": [
+          {
+            "path": "ecmascript/stubs/runtime_stubs-inl.h",
+            "blob": "2b582ba6e7510a5e5cea56026e8ba9f4f46310b9",
+            "bytes": 125283,
+            "sha256": "5eeeb9a98119f9bd0fd9dacae3261b46d1ead36545cf34e3adfce1956f30a439"
+          },
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "blob": "a44172fb7b886ee788020b4b4a8472def56e3703",
+            "bytes": 38511,
+            "sha256": "8ba3030f1a6f92bc176c69a42974e60e83876d49cacc2077e9392a7bec341f0e"
+          }
+        ]
+      },
+      "changed_paths": "M\tecmascript/stubs/runtime_stubs-inl.h\nM\tecmascript/tagged_dictionary.cpp\nM\ttest/moduletest/instanceofic/expect_output.txt\nM\ttest/moduletest/instanceofic/instanceofic.js"
+    },
+    "SharedArray_FindIndex_partial_probe": {
+      "vulnerable_parent": {
+        "commit": "4972b782328d8d3587dded347b0a7f3158120b1d",
+        "tree": "774da68efa3097fb89f6846d53fbd31fa92eeec7",
+        "parents": [
+          "d469c5d3e43cee5619eaaf88225deeae7ee4fe6a"
+        ],
+        "author_date": "2024-11-03T16:18:12+08:00",
+        "subject": "Optimized sendable array fill api",
+        "body": "Optimized sendable array fill api\n\nIssue: https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IB1OTV?from=project-issue\n\nSigned-off-by: lhc <liuhongchen5@huawei.com>\nChange-Id: I90a45bc0ecd7b7941d58e5b48c5fe97c08df2b8a\nSigned-off-by: lhc <liuhongchen5@huawei.com>"
+      },
+      "fixed_commit": {
+        "commit": "2a9bcfb6082a25ebd0b35ab4a31202ce062aae6d",
+        "tree": "4edac3274a498fa0b0352960cff2c77cc8000d21",
+        "parents": [
+          "4972b782328d8d3587dded347b0a7f3158120b1d"
+        ],
+        "author_date": "2024-11-05T16:28:26+08:00",
+        "subject": "SendableArray API findIndex process based on StableArray",
+        "body": "SendableArray API findIndex process based on StableArray\n\nIssue: https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IB28OK?from=project-issue\n\nSigned-off-by: lhc <liuhongchen5@huawei.com>\nChange-Id: I713387bcc93380642c0f12bfa70ad4a0d7468191"
+      },
+      "files": {
+        "vulnerable_parent": [
+          {
+            "path": "ecmascript/builtins/builtins_shared_array.cpp",
+            "blob": "1e841711a8b974802892d7a9968a51393cb8c9d1",
+            "bytes": 114213,
+            "sha256": "828c8119ddafdd0794113c5ee6135b5c56e76db24852a05e789e028d0c1616ed"
+          },
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "blob": "4c27b6788d5218f9d04e509bd895231d28b7804b",
+            "bytes": 49940,
+            "sha256": "e73f8c2fe7baa0e49d78f2a9a07f3d9d951f8453f408ba6aee96ed8ee9616052"
+          }
+        ],
+        "fixed_commit": [
+          {
+            "path": "ecmascript/builtins/builtins_shared_array.cpp",
+            "blob": "fe50ae41382d496ca2508bfba31a30518403b501",
+            "bytes": 114238,
+            "sha256": "ce6c79210f411ca962ce37bd1dec7fc1135100d0f444fc289a773b9cbe1eaf59"
+          },
+          {
+            "path": "ecmascript/ecma_macros.h",
+            "blob": "4c27b6788d5218f9d04e509bd895231d28b7804b",
+            "bytes": 49940,
+            "sha256": "e73f8c2fe7baa0e49d78f2a9a07f3d9d951f8453f408ba6aee96ed8ee9616052"
+          }
+        ]
+      },
+      "changed_paths": "M\tecmascript/builtins/builtins_shared_array.cpp\nM\tecmascript/builtins/builtins_shared_array.h"
+    }
+  }
+}

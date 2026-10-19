@@ -1,0 +1,58 @@
+{
+  "case_id": "ARK-TYPEDARRAY-SHARED-CREATEFROMTYPEDARRAY-WIDENED-PRODUCT-REFactor-!7532",
+  "classification": "independent safe same-mechanism development holdout; not used to tune size_overflow.py",
+  "source": {
+    "repository": "openharmony/arkcompiler_ets_runtime",
+    "official_ref": "refs/pull/7532/head",
+    "patch_commit": "210a7955a24f32abbba3c1774269c01d26406e3d",
+    "parent_commit": "e5df3b8179ad84e960f1be7981ace6567fee9316",
+    "subject": "TypedArrayHelper1::CreateSharedFromTypedArray()超大函数整改",
+    "parent": {
+      "commit": "e5df3b8179ad84e960f1be7981ace6567fee9316",
+      "tree": "9ede031a6475e36a63ccfb68e18d0fcbad7a169d",
+      "path": "ecmascript/base/typed_array_helper.cpp",
+      "blob": "d2069a0b03157d9c79a11fb30d5c9292c00a5737",
+      "bytes": 62910,
+      "sha256": "dd39a151bb43443a989be8f28238373d5d7dc960f141d80d9d53469b242d3d71"
+    },
+    "post_refactor": {
+      "commit": "210a7955a24f32abbba3c1774269c01d26406e3d",
+      "tree": "e3fc99f6313cdae66eb49786f7eb468350cba83a",
+      "path": "ecmascript/base/typed_array_helper.cpp",
+      "blob": "d1956732e0c2e1c67e2b56e7859f232b7b1feedd",
+      "bytes": 64563,
+      "sha256": "d373f9a778fc6a642750901411076c078ebe56a34304c3100fea5eba4efa5da2"
+    }
+  },
+  "source_root_review": "Both snapshots contain a product widened before multiplication and flowing toward ArrayBuffer allocation and an elementLength-bounded SetValueInBuffer copy loop in CreateSharedFromTypedArray. The refactor extracts buffer/type and allocation/property updates into helpers; no uint32 product narrowing was observed in the reviewed flow.",
+  "production_replay": {
+    "profile": "light-ast; exact local Git objects; scope ecmascript/base/typed_array_helper.cpp; ohscan-run; detector ohscanner.ark.runtime.type_safety v0.8.10; no scan-time fetch",
+    "parent": {
+      "commit": "e5df3b8179ad84e960f1be7981ace6567fee9316",
+      "diagnostics": 0,
+      "status": "blocked",
+      "parse": "complete",
+      "analysis": "partial"
+    },
+    "refactor": {
+      "commit": "210a7955a24f32abbba3c1774269c01d26406e3d",
+      "diagnostics": 0,
+      "status": "blocked",
+      "parse": "complete",
+      "analysis": "partial"
+    },
+    "interpretation": "No size-overflow candidate on either safe snapshot; not a whole-file safety pass because detector status is blocked/partial."
+  },
+  "regression_role": "A previously unseen safe structural variant useful for validation after rule freeze; single source family and one translation unit only.",
+  "dynamic_product": "not run; no runtime build/product association or product impact claim.",
+  "evidence_paths": [
+    "reports/i7kzj7-refactor-parent-v0.8.10.json",
+    "reports/i7kzj7-refactor-refactor-v0.8.10.json"
+  ],
+  "remaining_limitations": [
+    "partial detector analysis",
+    "no independent vulnerable same-mechanism positive holdout",
+    "no build or dynamic reproduction",
+    "security advisory and release mapping unverified"
+  ]
+}
