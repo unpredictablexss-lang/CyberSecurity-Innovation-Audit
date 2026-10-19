@@ -1,0 +1,9 @@
+Production CLI initial-failure JSON/MD: d2-libtiff-vulnerable-initial-failure.{json,md}
+Initial feature code returned a blocked run with a source-bound candidate but analyzed_files=().
+Runner._normalized requires every finding.file to belong to run.analyzed_files. This isolated replay reproduces that exact invariant failure using the current finding and the initial run shape.
+
+Traceback (most recent call last):
+  File "<stdin>", line 18, in <module>
+  File "D:\openHarmonyScanner\worktrees\a-memory-d2-20261019\src\ohscanner\runner.py", line 83, in _normalized
+    raise ValueError("finding outside analyzed scope")
+ValueError: finding outside analyzed scope
