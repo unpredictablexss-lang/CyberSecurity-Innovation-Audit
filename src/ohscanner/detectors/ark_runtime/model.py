@@ -31,7 +31,7 @@ RULE_VERSIONS = {
     CALL_INFO_EXCEPTION_RULE_ID: '1.1.0',
     **GAP_RULE_VERSIONS,
 }
-VERSION = '0.6.2'
+VERSION = '0.6.3'
 NAMESPACE = 'panda::ecmascript::kungfu'
 OWNER = NAMESPACE + '::BuiltinsTypedArrayStubBuilder'
 CALLER = OWNER + '::Filter'
@@ -40,9 +40,9 @@ CALLER = OWNER + '::Filter'
 @dataclass(frozen=True)
 class RuntimeTypeModel:
     """Explicitly versioned assumptions; no historical labels are consumed."""
-    version: str = '0.8.10'
+    version: str = '0.8.14'
     source_repository: str = 'openharmony/arkcompiler_ets_runtime'
-    effect_summary_revision: str = 'semantic-contract-v11'
+    effect_summary_revision: str = 'c13-cross-file-contract-v1'
     target_bindings: tuple = (
         ('830e85b40240677039719fcbf14f721ad3b19050', 'ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp', '054451b1be4f39254d56a1683cc9d1c1b5e55018', '847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422'),
         ('a0e30483ab3e4aead67ecfb5c708489915e447f9', 'ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp', '95f54f2875f401afe3167c62f8c1e7799782be8c', '8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e'),
@@ -160,6 +160,7 @@ class RuntimeTypeModel:
          'dce9388e8b7e33c87aec33ac4d067fe40370561b',
          '89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386'),
     )
+    runtime_exception_bindings: tuple = ()
     native_exception_bindings: tuple = (
         ('3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724',
          'ecmascript/compiler/native_inline_lowering.cpp',
@@ -287,6 +288,7 @@ class RuntimeTypeModel:
         + tuple((revision, path, blob) for revision, path, blob, _ in self.size_overflow_bindings)
         + tuple((revision, path, blob) for revision, path, blob, _ in self.length_narrowing_bindings)
         + tuple((revision, path, blob) for revision, path, blob, _ in self.index_bounds_bindings)
+        + tuple((revision, path, blob) for revision, path, blob, _ in self.runtime_exception_bindings)
         + tuple((revision, path, blob) for revision, path, blob, _ in self.native_exception_bindings)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.api_overload_evidence)
                 + tuple((self.effect_summary_revision, path, blob) for path, blob in self.source_dependencies)
@@ -300,14 +302,15 @@ def c_line_static_model():
     base = RuntimeTypeModel()
     return replace(
         base,
-        version='0.8.13',
-        effect_summary_revision='c-line-static-contract-v14',
+        version='0.8.14',
+        effect_summary_revision='c13-cross-file-contract-v1',
         target_bindings=(base.target_bindings[-1],),
         exception_guard_bindings=(base.exception_guard_bindings[-1],),
         receiver_guard_bindings=(),
         size_overflow_bindings=base.size_overflow_bindings,
         length_narrowing_bindings=base.length_narrowing_bindings,
         index_bounds_bindings=base.index_bounds_bindings,
+        runtime_exception_bindings=base.runtime_exception_bindings,
         native_exception_bindings=base.native_exception_bindings,
         source_dependencies=(
             ('ecmascript/compiler/new_object_stub_builder.cpp',
