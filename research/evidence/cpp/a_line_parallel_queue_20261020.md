@@ -321,6 +321,12 @@ The scoped finding row for Recorder permission callsites corresponds to `CheckPe
 
 Owner follow-up: [D42 B-owner detector review request](d42_b_owner_ipc_review_request_20261025.md). No owner code was changed.
 
+<<<<<<< HEAD
 ## T43 — Taihe FFI independent audit CR-0197–CR-0213
 
 T43 independently replayed the exact Taihe source objects: both files parsed completely, 16 current `shared_ptr_race` findings mapped to 16/17 A0 rows, with CR-0213 unmapped (not a safety result). The root `BUILD.gn` is for Taihe tooling and does not reference the audited author files; product target/build inclusion and same-object cross-thread overlap remain unknown. Preserve all 17 rows as PARTIAL/BLOCK and `not_testable / paused_pending_evidence`. See [T43 addendum](a_line_parallel_queue_20261020_T43_addendum.md), [audit](t43_taihe_ffi_audit_20261026.md), and [verifier](verify_t43_taihe_ffi_audit_20261026.py).
+=======
+## D43 — Taihe FFI generator shared_ptr family CR-0197–CR-0213
+
+D43 rebound all 17 IDs to `openharmony/arkcompiler_taihe_ffi_gen` commit `d91f43e80d892bca694c6b0fce8ea27cd644919f` / tree `8c5eecdad09e2fe960ce5f3728959a4726f0a91d`, then ran current `ohscanner.cpp.shared_ptr_race` 0.5.1 on the two exact A0 files. Both parse complete (2/2; 316 LOC); 16 diagnostics exactly match CR-0197–CR-0212, while CR-0213's `GetIncrementalPixelMap()` accessor line has no current exact-line finding. The matched code is in author files explicitly commented as test files. The exact repo root `BUILD.gn` contains no reference to these files, and the object tree has no `BUILD.gn` under either author directory; the related async helper can call the getter, and an `imageSourceCrossThreadMutex_` declaration is unused in the inspected source. This still does not prove or exclude external build integration, product reachability, or same-object concurrent overlap. No detector change is justified. Keep all 17 A0 rows `not_testable / paused_pending_evidence`, PARTIAL. See [D43 report](d43_taihe_ffi_gen_report_20261025.md), [per-ID replay](d43_taihe_ffi_gen_replay_20261025.json), [raw CLI JSON](d43_taihe_ffi_gen_cli_20261025.json), and [verifier](verify_d43_taihe_ffi_gen_20261025.py).
+>>>>>>> 775aa4ebb (Record D43 Taihe FFI shared pointer replay)
