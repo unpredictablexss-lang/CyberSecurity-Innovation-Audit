@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "case_id": "CVE-2025-26690",
+  "date": "2026-10-20",
+  "repository": "openharmony/communication_dsoftbus",
+  "source_path": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+  "source_fetch": {
+    "remote": "https://gitcode.com/openharmony/communication_dsoftbus.git",
+    "method": "fetch exact commits into isolated bare Git object store, then load pinned local Git objects"
+  },
+  "variants": {
+    "vulnerable": {
+      "commit": "258662cd9840b55a31546a72d91027f6368cea84",
+      "tree": "366a4ced9400653c9628c0b677e4ae657c0e7bd8",
+      "blob": "a82b71fb5520b02278a4af695bbe918d14c1048e",
+      "byte_length": 8502,
+      "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+      "scanner_report": "d22-cve-2025-26690-vulnerable.json",
+      "parse_status": "complete",
+      "detector_status": "blocked",
+      "detector_coverage": "partial",
+      "finding_count": 5,
+      "candidate_lines": [71, 82, 97, 108, 123]
+    },
+    "fixed": {
+      "commit": "192f3e11d74beeaa3d879333471deb8a24a7e1c5",
+      "tree": "1d58ba0ef706a6f69dd372bd496c8058810882aa",
+      "blob": "13ddbe93a7f617784dec0f3761e09f66b5c3217c",
+      "byte_length": 9387,
+      "source_sha256": "5a093d91efc624147d40bf3f4dbbe3ab7ab6d724b17978298e9d5c30d9e5eb81",
+      "scanner_report": "d22-cve-2025-26690-fixed.json",
+      "parse_status": "complete",
+      "detector_status": "blocked",
+      "detector_coverage": "partial",
+      "finding_count": 0
+    }
+  },
+  "detector": {
+    "id": "ohscanner.cpp.null_dereference",
+    "version": "0.6.0",
+    "rule_id": "ohcpp-null-dereference-candidate-001",
+    "rule_version": "1.4.0",
+    "profile": "light-ast",
+    "scope_file_count": 1
+  },
+  "controls": {
+    "focused_test_command": "python -m unittest tests.detectors.test_cpp_null_dereference_detector tests.detectors.test_cpp_null_dereference_signal_controls -q",
+    "focused_tests_passed": 21,
+    "fixture_categories": ["positive", "fixed", "safe", "unrelated"],
+    "coverage_states_exercised": ["complete", "partial", "failed", "not_analyzed"],
+    "source_specific_safe_unrelated_controls": "not available"
+  },
+  "disposition": "PARTIAL/BLOCK",
+  "detector_change": false,
+  "limitations": [
+    "Semantic detector coverage is partial despite complete syntax parsing.",
+    "Product build context, runtime allocation failure, real caller/reachability, trigger, and impact evidence are unavailable.",
+    "Zero findings on the fixed source are not a component safety conclusion.",
+    "Historical raw reports were not recovered or reconstructed."
+  ]
+}
