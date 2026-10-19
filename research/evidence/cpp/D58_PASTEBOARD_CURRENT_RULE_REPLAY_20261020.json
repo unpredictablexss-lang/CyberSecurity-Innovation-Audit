@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "task_id": "D58",
+  "date": "2026-10-20",
+  "role": "read_only_frozen_rule_replay",
+  "writes": [
+    "research/evidence/cpp/D58_PASTEBOARD_CURRENT_RULE_REPLAY_20261020.md",
+    "research/evidence/cpp/D58_PASTEBOARD_CURRENT_RULE_REPLAY_20261020.json"
+  ],
+  "modified_scanner_code": false,
+  "modified_rules": false,
+  "modified_tests_or_fixtures": false,
+  "modified_prior_reports": false,
+  "component": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "tracked_entries": 94,
+    "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+    "profile": "light-ast",
+    "source_units": 67,
+    "parser_states": {
+      "complete": 57,
+      "partial": 10,
+      "failed": 0,
+      "not_run": 0
+    },
+    "reported_component_detector_coverage": "partial",
+    "reported_full_run_status": "blocked"
+  },
+  "rule_versions": [
+    {
+      "version": "0.18.0",
+      "checkout_commit": "842948084660207fd64399cfd598ed93e5593dcc",
+      "detector_source_blob": "1a0a01624f7e6cf8abd1755c511ab26f149b6214"
+    },
+    {
+      "version": "0.19.3",
+      "checkout_commit": "c8f83b82291e82b3272c73b943623336a3c836c3",
+      "detector_source_blob": "94113fdd45b2273e6ea9dd02c7eeac886b853329"
+    }
+  ],
+  "source_files": {
+    "observer_core": {
+      "path": "services/core/src/pasteboard_service.cpp",
+      "git_blob": "c380ac266a85edd818caa811f11b99722d351788",
+      "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+    },
+    "permission_stub": {
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "git_blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+      "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+    }
+  },
+  "full_component_replay": [
+    {
+      "rule_version": "0.18.0",
+      "status": "blocked",
+      "units": 67,
+      "analyzed": 67,
+      "findings": [
+        {
+          "rule_id": "ohknowncve-pasteboard-cve-2025-25212",
+          "symbol": "CVE-2025-25212",
+          "file": "services/core/src/pasteboard_service.cpp",
+          "line": 222,
+          "column": 1,
+          "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+        },
+        {
+          "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+          "symbol": "CVE-2025-27247",
+          "file": "services/zidl/src/pasteboard_service_stub.cpp",
+          "line": 41,
+          "column": 1,
+          "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+        }
+      ]
+    },
+    {
+      "rule_version": "0.19.3",
+      "status": "blocked",
+      "units": 67,
+      "analyzed": 67,
+      "findings": [
+        {
+          "rule_id": "ohknowncve-pasteboard-cve-2025-25212",
+          "symbol": "CVE-2025-25212",
+          "file": "services/core/src/pasteboard_service.cpp",
+          "line": 241,
+          "column": 5,
+          "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+        },
+        {
+          "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+          "symbol": "CVE-2025-27247",
+          "file": "services/zidl/src/pasteboard_service_stub.cpp",
+          "line": 41,
+          "column": 1,
+          "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+        }
+      ]
+    }
+  ],
+  "focused_replay": {
+    "target": "D52 exact services/zidl/src/pasteboard_service_stub.cpp unit",
+    "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "parse_status_input": "partial",
+    "versions": [
+      {
+        "rule_version": "0.18.0",
+        "status": "blocked",
+        "findings": [
+          {
+            "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+            "symbol": "CVE-2025-27247",
+            "line": 41,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "rule_version": "0.19.3",
+        "status": "blocked",
+        "findings": [
+          {
+            "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+            "symbol": "CVE-2025-27247",
+            "line": 41,
+            "column": 1
+          }
+        ]
+      }
+    ],
+    "stable_finding_id": null,
+    "identity_unknown_reason": "partial identity quality and missing AST fingerprint",
+    "baseline_occurrence_id": "ohocc:v1:7f174eb7bd5d4c7a0ccc07cd4e14601c972bdbb24e74499b253b18b2d3307336",
+    "d19_occurrence_id_regeneration_claimed": false
+  },
+  "d52_rule_delta": {
+    "affected_by_d51_quota_rule_change": false,
+    "rule_id_and_symbol_retained": true,
+    "candidate_anchor_retained": true,
+    "candidate_anchor": "OnRemoteRequest method opening brace",
+    "candidate_location": "services/zidl/src/pasteboard_service_stub.cpp:41:1",
+    "reason": "Paired detector source inspection and exact replay show the CVE-2025-27247 matcher is unchanged in this rule version change."
+  },
+  "boundary_assessment": {
+    "exact_old_stub_path": "GET_PASTE_DATA mapping routes through OnRemoteRequest to OnGetPasteData, which calls GetPasteData and writes a successful parcelable",
+    "exact_old_core_getter_path": "PasteboardService::GetPasteData selects caller user data and copies it; no visible permission decision in that getter body",
+    "detector_guard_region": [
+      "OnRemoteRequest",
+      "OnGetPasteData"
+    ],
+    "not_modeled": [
+      "core PasteboardService::GetPasteData body",
+      "helpers outside these stub methods",
+      "inherited IPC/SystemAbility enforcement",
+      "service ACL or product policy"
+    ],
+    "line_41_scope": "method entry anchor, not the missing permission decision or data-copy statement",
+    "classification": "narrow pinned-source candidate reproduced by current rule; matcher under-guarded because an after-read permission token suppresses; complete authorization result unknown"
+  },
+  "controls": [
+    {
+      "id": "positive_local_unguarded_route",
+      "description": "Mapped/routed GET_PASTE_DATA calls GetPasteData and serializes without permission-like token in the two checked methods.",
+      "0.18.0": "candidate CVE-2025-27247",
+      "0.19.3": "candidate CVE-2025-27247"
+    },
+    {
+      "id": "negative_bound_denying_guard_before_read",
+      "description": "Same route with if (!VerifyCallingPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; before GetPasteData.",
+      "0.18.0": "no D52 candidate",
+      "0.19.3": "no D52 candidate",
+      "interpretation": "Syntactic denial-branch/early-exit shape only; helper implementation and real permission enforcement are not established."
+    },
+    {
+      "id": "precision_risk_ignored_permission_result_before_read",
+      "description": "Bare VerifyCallingPermission(PERMISSION_READ_PASTEBOARD); before GetPasteData, with its return ignored.",
+      "0.18.0": "no D52 candidate",
+      "0.19.3": "no D52 candidate",
+      "interpretation": "Precision risk: token suppresses without a denial branch or checked result."
+    },
+    {
+      "id": "boundary_gap_core_getter_guard_only",
+      "description": "Same unguarded stub route plus CheckPastePermission() only in core GetPasteData.",
+      "0.18.0": "candidate remains",
+      "0.19.3": "candidate remains",
+      "interpretation": "Demonstrates matcher boundary only; not vulnerability evidence."
+    },
+    {
+      "id": "precision_risk_unreachable_permission_branch",
+      "description": "VerifyCallingPermission(PERMISSION_READ_PASTEBOARD) inside if (false) within OnGetPasteData.",
+      "0.18.0": "no D52 candidate",
+      "0.19.3": "no D52 candidate",
+      "interpretation": "Precision risk: dead branch token suppresses; branch reachability is not checked."
+    },
+    {
+      "id": "ordering_risk_permission_after_read",
+      "description": "Permission-like call after data read; both post-read and post-serialization positions were evaluated.",
+      "0.18.0": "no D52 candidate",
+      "0.19.3": "no D52 candidate",
+      "interpretation": "Both suppress. Precision risk: no order/dominance check; a call after the read is not an effective guard."
+    },
+    {
+      "id": "boundary_gap_permission_helper_outside_checked_methods",
+      "description": "Permission-like call only in a separate helper; stub route and handler remain locally unguarded.",
+      "0.18.0": "candidate remains",
+      "0.19.3": "candidate remains",
+      "interpretation": "The checker does not follow this helper; full authorization boundary stays unknown."
+    },
+    {
+      "id": "negative_unrelated_no_route",
+      "description": "Unrelated GetPasteData/WriteParcelable body without mapping/routing.",
+      "0.18.0": "no D52 candidate",
+      "0.19.3": "no D52 candidate"
+    }
+  ],
+  "product_status": "UNKNOWN",
+  "cve_causality": "UNKNOWN",
+  "fixed_or_vulnerable_status": "NOT_ASSESSED",
+  "commands": [
+    "git --git-dir=D:/openHarmonyScanner/tmp/d51-source-objects cat-file -p dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "git --git-dir=D:/openHarmonyScanner/tmp/d51-source-objects ls-tree dd22c7cb5e5f207a6c38c50f45b7369ee8575840 services/core/src/pasteboard_service.cpp services/zidl/src/pasteboard_service_stub.cpp",
+    "Get-FileHash D:/openHarmonyScanner/tmp/d51-pasteboard-service.cpp,D:/openHarmonyScanner/tmp/d51-service-stub.cpp -Algorithm SHA256",
+    "python in-memory ScanContext replay using SourceUnit blobs from the pinned Git tree and saved D50 parser states, invoked against detector source at 842948084660207fd64399cfd598ed93e5593dcc and c8f83b82291e82b3272c73b943623336a3c836c3",
+    "python in-memory unit/control replay using exact D52 stub unit and four local authorization boundary shapes"
+  ],
+  "limitations": [
+    "No product build fingerprint or component-inclusion manifest was provided.",
+    "No product vulnerability, safety, fixed-source, runtime access-control, or advisory-root-cause conclusion is made.",
+    "The full-component replay uses the saved D50 parser states; it is not a newly measured parser execution.",
+    "Unit and synthetic controls only establish the enumerated matcher shapes.",
+    "D52's local lexical permission matcher omits framework and service authorization boundaries; unknown remains unknown."
+  ],
+  "precision_risk": {
+    "demonstrated": true,
+    "cases": [
+      "Ignored VerifyCallingPermission(...) result before GetPasteData suppresses in both versions.",
+      "Permission-like call after GetPasteData or after WriteParcelable suppresses in both versions.",
+      "Permission-like call inside if(false) suppresses in both versions."
+    ],
+    "effective_guard_control": "Only if (!VerifyCallingPermission(...)) return ERR_NO_PERMISSION; before GetPasteData was used as a syntactic branch/exit shape control; helper semantics and actual permission enforcement remain unverified.",
+    "effect": "Rule does not bind the call result, enforce order/dominance, or check branch reachability. D52 exact-source candidate remains reproduced, but the matcher is under-guarded."
+  }
+}
