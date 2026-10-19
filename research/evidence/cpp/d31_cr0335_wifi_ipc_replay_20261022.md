@@ -1,6 +1,6 @@
 # D31 — CR-0335 exact production IPC replay
 
-Date: 2026-10-22 (Asia/Shanghai)  
+Date: 2026-10-22 (Asia/Shanghai)
 Baseline: `0eef782dd1e9d511321041ea75e49b55e1f64ebd`
 
 ## Result

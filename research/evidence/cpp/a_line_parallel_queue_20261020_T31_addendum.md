@@ -1,6 +1,6 @@
 # T31 — CR-0335 Wi-Fi copy-range 独立复核
 
-日期：2026-10-21（Asia/Shanghai）  
+日期：2026-10-21（Asia/Shanghai）
 Scanner baseline：`0eef782dd1e9d511321041ea75e49b55e1f64ebd`
 
 ## 结论
