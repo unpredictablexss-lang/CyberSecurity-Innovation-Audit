@@ -1,0 +1,80 @@
+{
+  "review_id": "T54-D55-REVIEW-20261021",
+  "review_date": "2026-10-21",
+  "reviewer_checkout": "D:/openHarmonyScanner/worktrees/t51-pasteboard-independent-20261020",
+  "reviewed_checkout": "D:/openHarmonyScanner/worktrees/d55-holdout-protocol-20261021",
+  "reviewed_commit": "9d932746e361e9d7746a1fcf451284e32f3b8c5a",
+  "reviewed_files": [
+    "research/data_sensitive/D55_INDEPENDENT_HOLDOUT_PREREGISTRATION.md",
+    "research/data_sensitive/D55_HOLDOUT_EXECUTION_TASK.md",
+    "research/data_sensitive/D55_HOLDOUT_PROTOCOL_20261021.json"
+  ],
+  "t54_matrix_commit": "0e84a622ef96098658963925b4031616569653eb",
+  "decision": "NOT_READY_FOR_HOLDOUT_EXECUTION",
+  "m2_status": "NOT_MET",
+  "actions_performed": {
+    "d55_modified": false,
+    "samples_generated": false,
+    "labels_or_expected_outcomes_accessed": false,
+    "scanner_modified": false
+  },
+  "gates": [
+    {"id":"freeze_identity","status":"PARTIAL_EXECUTION_BLOCKED","note":"Freeze fields specified; actual scanner/model/parser target hashes are listed as missing execution inputs."},
+    {"id":"data_separation","status":"PASS_DESIGN_EVIDENCE_PENDING","note":"Prior D evidence and content/path overlap screening are explicitly excluded/required; actual ledger is pending."},
+    {"id":"sampling_frame","status":"PARTIAL","note":"Seeded stratified random design specified, but target frame absent and no sample-size/power or interval-width rationale; workload floors are not inferential guarantees."},
+    {"id":"inclusion_exclusion","status":"PARTIAL","note":"Eligibility is broad and auditable; submodule, symlink, duplicate blob, vendoring, and ambiguous identity rules need explicit freezing."},
+    {"id":"label_unit_rubric","status":"PARTIAL","note":"Rubric is strong; clarify source-level label independence from unknown product applicability."},
+    {"id":"blind_independence","status":"PASS_DESIGN_EVIDENCE_PENDING","note":"Prediction blindness, two independent reviewers, logs, and label freeze are specified; actual people/custody are pending."},
+    {"id":"label_disagreement","status":"PASS_DESIGN_EVIDENCE_PENDING","note":"Original labels retained and independent adjudication/unknown behavior specified."},
+    {"id":"candidate_nohit","status":"PASS_DESIGN_EXECUTION_PENDING","note":"Full-scope prediction-blind miss review supports recall if performed and verified."},
+    {"id":"coverage_accounting","status":"PARTIAL","note":"Statuses and file/byte coverage are retained, but aggregate coverage/unknown thresholds and claim-to-coverage not-estimable mapping are absent."},
+    {"id":"estimands_denominators","status":"PARTIAL","note":"Precision/recall formulas exist; exact one-to-one matching, duplicate and multi-finding mapping need preregistration."},
+    {"id":"uncertainty","status":"NOT_READY","note":"95% cluster/design-aware interval requested but estimator, variance method, few-cluster handling, and target width are unspecified."},
+    {"id":"stopping_claims","status":"NOT_READY","note":"Workload floors and stop conditions exist; M2 performance decision thresholds and sample-size rationale do not."},
+    {"id":"audit_reproduction","status":"PASS_DESIGN_EXECUTION_PENDING","note":"Required artifacts and hashes specified; actual storage and verification are pending execution inputs."}
+  ],
+  "blocking_protocol_gaps": [
+    "No explicit M2 precision/recall/interval decision thresholds or rationale for sufficiency",
+    "No sample-size rationale tied to estimand, clustering, strata, and desired uncertainty; 20 repositories/1000 files/four families are workload floors only",
+    "No selected interval/variance method or sparse/few-cluster handling",
+    "Known-CVE target advisory/catalog universe and hash are not identified in the package",
+    "No explicit aggregate coverage/unknown stopping rule or metric estimability mapping",
+    "Finding-to-reference matching and duplicate/multi-finding resolution need deterministic rules",
+    "Source identity edge cases (submodules, symlinks, identical blobs, vendoring) need explicit rules",
+    "Source-level M2 label should remain separable from product_applicability unknown"
+  ],
+  "execution_blockers_currently_listed_by_d55": [
+    "Independent source inventory/frame and overlap ledger",
+    "Selected cohort and pre-scan selection record/seed/probabilities",
+    "Frozen scanner/model/profile/parser/config hashes",
+    "Reviewer and adjudicator assignments/conflict declarations",
+    "Approved sealed prediction and separated-label storage"
+  ],
+  "positive_protocol_features": [
+    "Excludes D41/D48 and prior D development sources from scoring",
+    "Separate sensitive-exposure and known-CVE tracks",
+    "Seeded stratified random source selection with no post-scan replacement",
+    "Prediction-blind independent double labels and adjudication",
+    "Prediction-blind full-scope review required for recall",
+    "Unknown, partial, blocked, and not-run evidence retained",
+    "Metrics, coverage, performance, and audit trail are specified",
+    "Explicitly states no labels/metrics yet and does not infer M3 from source evidence"
+  ],
+  "required_before_ready_to_run": [
+    "Freeze exact target population and known-CVE catalog/advisory universe",
+    "Predeclare M2 decision thresholds or evidence sufficiency rationale",
+    "Add sample-size/uncertainty rationale and selected design-based estimator",
+    "Define aggregate coverage/unknown and estimability stop rules",
+    "Freeze source-identity and finding-matching edge-case policies",
+    "Separate source-level label from product-applicability status"
+  ],
+  "metrics": {
+    "tp": "not_computed",
+    "fp": "not_computed",
+    "fn": "not_computed",
+    "precision": "not_estimable",
+    "recall": "not_estimable",
+    "accuracy": "not_computed"
+  },
+  "scope_limit": "Protocol acceptance does not establish M3 product applicability or a product vulnerability."
+}
