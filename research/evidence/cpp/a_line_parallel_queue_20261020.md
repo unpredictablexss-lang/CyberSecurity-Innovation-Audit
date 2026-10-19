@@ -22,6 +22,7 @@ Date: 2026-10-20 (Asia/Shanghai)
 - T13 verified the first five queued IDs and eight source objects. All five remain `not_testable / queued_first_batch`; no original queue IDs or states changed.
 - T14 accepted the synthetic sink-name regression but marked the exact cJSON finding location PARTIAL: line 861 is an early-exit root-replace branch, while general ADD/COPY duplicate-and-attach paths occur later. Follow-up D18 owns that source-to-root association gap.
 - D18 is implemented at `38dc3be`: the candidate is tied to COPY line 932 and ADD/REPLACE line 950; the early-exit root-replace line 861 is quiet. Exact-source coverage remains PARTIAL/BLOCK because `cJSON.c` parsing is incomplete and no trusted fixed source exists. T15 is independently accepting this change.
+- T15 independently confirmed D18's exact source positions and controls: rule regression PASS, cJSON case PARTIAL, fixed-source comparison BLOCK; 345-row queue and 160-test C++ suite pass.
 
 T12 completion note: the independent wave audit is committed as `1262d0ab9` and reports 3 PASS / 8 PARTIAL / 0 BLOCK / 2 N/A, with all 345 A0 IDs and original states retained. After that audit, D14's historical JSON/Markdown tree-null fields were reconciled to T11/T12's verified commit trees; this metadata cleanup does not change replay outcomes or case disposition.
 
@@ -137,6 +138,28 @@ Inputs: frozen D18 commit, T14's D16 acceptance findings, exact upstream commit/
 Steps: use an independent checkout; reverify source identities; rerun exact source and dedicated controls; compare finding locations to duplicate/attach operations; confirm parse status and detector coverage; run focused and full C++ detector suites, queue verifier, scope checker and diff check.
 Done when: PASS/PARTIAL/BLOCK/N/A separately describes rule regression and full CVE case, with no claim based on partial zero findings or missing fixes.
 Boundaries: no detector/test/fixture edits; reject a candidate whose location cannot be tied to supported root operation; preserve all unknown source and product questions.
+```
+
+### D19 — cJSON compare-cost root precision (development)
+
+```text
+Role: A-line C/C++ resource-exhaustion detector developer.
+Continuous goal: bind CVE-2026-67216 candidates to the actual recursive member-comparison cost root and prevent unrelated recursive comparisons from being reported.
+Inputs: integration D18/T15 commits; D17 upstream provenance; exact cJSON.c source identity; D8 comparison rule and safe indexed-lookup controls.
+Steps: replay exact source and isolate the source function around line 3161 using current parser coverage; verify the visible same-TU sibling iteration and recursive compare arguments; compare the unmerged official develop candidate bd307ec only as an unmerged patch experiment, never as a fixed release; change the rule only for a reproduced root/model defect; add positive, indexed-lookup safe, unrelated, renamed, partial and experimental-patch controls with clear labels.
+Done when: root-specific rule behavior has independent controls and exact source identities, or a no-change report identifies parser/model limitations; any develop-branch delta is labeled experimental and not fixed PASS.
+Boundaries: resource_lifetime detector and dedicated controls/evidence only; no shared parser/API/Catalog; never label unmerged develop source as fixed; preserve parse partial and missing release/source status.
+```
+
+### T16 — cJSON compare-cost independent acceptance (testing)
+
+```text
+Role: independent A-line regression and provenance auditor.
+Continuous goal: verify D19's root precision and distinguish experimental branch deltas from trusted fixed-source evidence.
+Inputs: frozen D19 commit; exact cJSON vulnerable source and D17 upstream branch/commit identities; D19 commands and controls.
+Steps: independently bind source repo/commit/tree/blob/SHA; rerun exact source, fragment, safe, unrelated, renamed, partial and any explicitly experimental branch comparison; inspect parse status, rule version, location, and source arguments; run focused and full C++ tests, queue verifier, scope and diff checks.
+Done when: separate rule regression and CVE status are recorded as PASS/PARTIAL/BLOCK/N/A; no unmerged branch is described as fixed and queue IDs/states remain unchanged.
+Boundaries: no detector/test/fixture edits; no unsupported precision/recall; partial zero findings are inconclusive.
 ```
 
 ## Stage goal
