@@ -10,7 +10,7 @@ import tree_sitter_c
 import tree_sitter_cpp
 from tree_sitter import Language, Parser
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation
-from .models import DEFAULT_SOURCE, SINKS, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel
+from .models import DEFAULT_SOURCE, SINKS, STATUS_RETURN_CALLS, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel
 
 @dataclass(frozen=True)
 class Flow:
@@ -126,7 +126,7 @@ def formats(value, default_privacy='private'):
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.17.0'
+    version = '0.18.0'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -300,6 +300,10 @@ class LocalFlow:
             if n.id in self.call_results:
                 return self.call_results[n.id]
             fn=self.text(n.child_by_field_name('function'))
+            if (fn in STATUS_RETURN_CALLS and fn not in self.shadows
+                    and fn not in self.function_definitions):
+                self.gaps.add('modeled status-return API; argument escape remains a candidate: '+fn)
+                return ()
             if self.heuristic_sources and looks_sensitive_name(fn):
                 self.gaps.add('unreviewed sensitive-API-name heuristic source; return semantics unknown')
                 return (self.source('heuristic suspected sensitive-return API '+fn,n),)
@@ -476,7 +480,17 @@ class LocalFlow:
         if fn in self.shadows:
             self.gaps.add('call target is shadowed by a local value: '+fn)
             return
+        callee=fn
         locally_defined=fn in self.function_definitions
+        if not locally_defined and '::' in fnname and '::' not in fn:
+            caller_owner=fnname.rsplit('::',1)[0]
+            same_owner=[name for name in self.function_nodes
+                        if name.endswith('::'+fn) and name.rsplit('::',1)[0]==caller_owner]
+            if len(same_owner)==1:
+                callee=same_owner[0]
+                locally_defined=True
+            elif same_owner:
+                self.gaps.add('same-owner unqualified method call is ambiguous: '+fn)
         if fn in ('strlen','strnlen','strnlen_s','wcslen') and not locally_defined:
             return
         if locally_defined and (fn in self.output_calls or fn in self.copy_calls):
@@ -505,14 +519,14 @@ class LocalFlow:
                                                 'same-file formatting callee may write sensitive input to an unresolved destination')
             return
         if locally_defined and fn in self.sinks:
-            bodies=self.function_bodies.get(fn, [])
+            bodies=self.function_bodies.get(callee, [])
             if len(bodies)==1 and bodies[0] is not None and not any(
                     child.type not in ('comment','empty_statement') for child in bodies[0].named_children):
                 self.gaps.add('same-file modeled sink resolves to a visible empty body: '+fn)
                 return
             self.gaps.add('same-file modeled sink has unresolved implementation identity: '+fn)
         if locally_defined and self.expand_tainted_call(
-                fn,args,env,types,n.start_point[0]+1,n,fnname):
+                callee,args,env,types,n.start_point[0]+1,n,fnname):
             return
         if fn in self.output_calls:
             index, arity = self.output_calls[fn]
@@ -597,7 +611,11 @@ class LocalFlow:
         if len(args)<=sink.format_index:
             self.gaps.add('missing log format');return
         try:
-            slots,count=formats(self.literal(args[sink.format_index]), 'private' if sink.default_private else 'public')
+            format_text = self.literal(args[sink.format_index])
+            if (not sink.supports_privacy_markers
+                    and re.search(r'%(?:\{public\}|\{private\})', format_text)):
+                raise ValueError('privacy annotations are not supported by this preformatted sink')
+            slots,count=formats(format_text, 'private' if sink.default_private else 'public')
             operands=args[sink.format_index+1:]
             if count!=len(operands):raise ValueError('format/argument mismatch')
         except (ValueError,SyntaxError):
