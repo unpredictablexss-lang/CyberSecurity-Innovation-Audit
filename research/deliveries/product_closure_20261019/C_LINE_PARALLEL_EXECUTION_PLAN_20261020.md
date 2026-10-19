@@ -53,7 +53,7 @@ flowchart TD
 | D2 | 开发/证据 | P0 | `fe436c5` 已拆分存档完整性与环境复现；5/5 自测通过，PC-1 仍 blocked | 先把只读 26/26 raw-source blob/SHA 核验逐文件落成可复算证据记录；取得 official Ark Git object store 独立核 tree/commit ancestry 与未列依赖，再逐案补产品 build/preprocess profile | 六案文件级核验不是 PC-1 完成；12 个 tree 仍待核，剩余 10 案仍待来源核验；16 个 required product profile 均完整且 verifier 通过才关闭 PC-1；缺资料继续 blocked |
 | T2 | 测试/治理 | P1 | `9b71825` 已完成 19/19 synthetic tests；真实 PC-2 未执行，reviewer/custody/PKI 未闭合 | 负向变异 profile 缺字段/哈希；为 PC-2 pipeline 增加预注册/泄漏 ledger 内容校验、source identity、角色/签名独立性、custody 权限、匿名裁决、freeze hash/完整 case set 与 final-label provenance 校验；用合成负例验收 | 缺字段/漂移/身份冲突 fail closed；self-test 与真实 holdout、模型输出与真值严格区分；T2 通过不关闭 PC-2 |
 | H2 / PC-2 | 独立评估/人工审查 | P1 | `PIPELINE_IMPLEMENTED_NOT_EXECUTED` | owner 指定与开发者分离的数据保管人；T2 治理自测通过且 D1 规则冻结后，冻结无泄漏抽样框与预注册协议；需要独立样本、两名评审和一名裁决人 | 完成真实双盲 review、分歧裁决与 final label hash；缺人员/数据时保持 `NOT_RUN`，不把 T2 自测计作 holdout；不得未经授权联系外部评审者 |
-| L2 | 第二层模型审查 | P1 | 待 T1 候选冻结及源码身份核验 | 对每条冻结的 source-bound candidate 逐案审查；不要求 PC-1 产品 profile 或 PC-2 真值先完成，缺产品语境的字段直接标 unknown | 每个结论都有源码位置；unknown 保留；LLM 不自证、不替代独立标签或产品门 |
+| L2 | 第二层模型审查 | P1 | 已对 C12 Native Inline 一例完成 source-level JSON 审查；待 T1 raw-blob detector replay 后补运行结果 | 对每条冻结的 source-bound candidate 逐案审查；不要求 PC-1 产品 profile 或 PC-2 真值先完成，缺产品语境的字段直接标 unknown | 每个结论都有源码位置；unknown 保留；LLM 不自证、不替代独立标签或产品门 |
 | PC-3 | 产品适用性 | P2 | `BLOCKED` | 依赖 PC-1 对目标 case 的 profile；逐候选补真实产品 manifest/version/binary、入口、权限、攻击者输入、触发、可达 sink 与 CIA 证据 | 每项直接证据绑定精确产品/source identity；缺项继续 unknown |
 | PC-4 | 授权隔离 PoC | P2 | `NOT_RUN` | 仅当 PC-1 profile 和 PC-3 applicability 证据齐全且有明确授权后执行 | vulnerable product build 可重复触发，隔离/资源/网络/恢复条件和原始产物哈希完整 |
 | PC-5 | 修复后产品重验 | P2 | `NOT_RUN` | PC-4 有效复现后绑定精确 patch/fixed product build，在同 profile 重放 PoC 与控制 | fixed build 不复现同根因且回归控制通过；保留 patch/build/test 哈希 |
@@ -252,7 +252,7 @@ manifest 字段齐全的 6 案仅表示 source identity 字段被填写。只读
 
 ### D1/T1 第二轮：绑定真实上游源码，测试先行
 
-独立复核认为 D1 候选/固定控制/unknown 的分层总体清楚，detector binding 仍校验 repository、commit、path、blob、SHA、profile 与 parse 状态；但 `test_c12_native_inline_exact_rule.py` 的新增控制主要由归一化合成片段生成，未直接以绑定的 upstream parent/fix 原始 blob 回放。因此 37/37 是局部规则回归，不是来源精度或产品适用性证据。T1 现正补真实 parent/fix blob 重放与身份/触发位置断言，并针对语义核实后的否定比较、分支反转、StateDepend 交换等形态增添负例；D1 等待 T1 给出可复现反例后再决定最小修复，保持互相反馈。任何 API 语义未经 pinned source/API 确认前不得规定 expected classification。
+独立复核认为 D1 候选/固定控制/unknown 的分层总体清楚，detector binding 仍校验 repository、commit、path、blob、SHA、profile 与 parse 状态；但 `test_c12_native_inline_exact_rule.py` 的新增控制主要由归一化合成片段生成，未直接以绑定的 upstream parent/fix 原始 blob 回放。因此 37/37 是局部规则回归，不是来源精度或产品适用性证据。负责人已独立核验本地官方 Gitee 对象库中的 parent/fix commit/tree/blob/raw SHA 与 ancestry；结构化二层结论记录于 `C12_NATIVE_INLINE_L2_REVIEW_20261020.json`：源码局部根因支持 candidate，同根因 source fix 有证据，产品漏洞与产品安全性均 unknown。T1 现正补真实 parent/fix blob 重放与身份/触发位置断言，并针对语义核实后的否定比较、分支反转、StateDepend 交换等形态增添负例；D1 等待 T1 给出可复现反例后再决定最小修复，保持互相反馈。任何 API 语义未经 pinned source/API 确认前不得规定 expected classification。
 
 ### D2/T2 第二轮：拆分记录完整性与环境复现
 
