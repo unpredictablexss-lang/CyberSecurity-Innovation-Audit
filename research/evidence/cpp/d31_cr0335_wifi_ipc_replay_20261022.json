@@ -1,0 +1,59 @@
+{
+  "record_id": "CR-0335",
+  "candidate_id": "ohscanner.interface.ipc:301c45d0f546f9f3",
+  "original_status": "not_reproduced",
+  "queue_status": "queued_not_reproduced",
+  "replay_status": "CANDIDATE_REPRODUCED",
+  "assessment": "PARTIAL",
+  "repository": "openharmony/communication_wifi",
+  "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+  "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+  "candidate_source": {
+    "path": "wifi/frameworks/native/src/wifi_p2p_callback_stub.cpp",
+    "blob": "1cc8c5c0c0e60a17f49332a7bf7ea1d7d1115b91",
+    "sha256": "d43aa28a22134dd47c85d17a5e0b017f9fb1d6b2611327c7f92140fbe347fc03",
+    "candidate_line": 385,
+    "candidate_line_text": "    if (memcpy_s(cfgData, cfgLen, dataBuffer, cfgLen) != EOK) {"
+  },
+  "replay": {
+    "base": "0eef782dd1e9d511321041ea75e49b55e1f64ebd",
+    "detector": "ohscanner.interface.ipc",
+    "detector_version": "0.12.12",
+    "model_version": "oh-ipc-2026.10-v32",
+    "rule_id": "ipc.parcel.copy-range",
+    "diagnostic_id": "ohscanner.interface.ipc:975eebe9b420d417",
+    "finding_line": 385,
+    "parse_status": "complete",
+    "applicable_files": 1,
+    "analyzed_files": 1,
+    "snapshot_sha256": "3a5fb85b9daf2291524c249ac2ef8f2fa6ce3d7f5081b27e1a4a71d09815b6a6",
+    "artifacts": {
+      "json": "research/evidence/cpp/d31_cr0335_wifi_ipc_cli_20261022.json",
+      "markdown": "research/evidence/cpp/d31_cr0335_wifi_ipc_cli_20261022.md"
+    }
+  },
+  "source_facts": {
+    "entry": "WifiP2pCallbackStub::OnRemoteRequest",
+    "transaction": "P2PInterfaceCode::WIFI_CBK_CMD_CFG_CHANGE (0x3208)",
+    "dispatch": "handleFuncMap maps CFG_CHANGE to RemoteOnConfigChanged; OnRemoteRequest invokes the mapped member handler",
+    "length_guards": [
+      "cfgLen <= 0 returns before ReadBuffer, allocation and copy",
+      "cfgLen > MAX_LEN returns before ReadBuffer, allocation and copy; MAX_LEN is 1024"
+    ],
+    "buffer_relation": "ReadBuffer(cfgLen) must return non-null; destination allocates char[cfgLen]; memcpy_s destination capacity and source count are both cfgLen",
+    "helper": "OnConfigChanged(cfgType, cfgData, cfgLen) is called after copy; IPC adapter reports its multi-outcome return unresolved",
+    "interpretation": "The finding is reproduced as a syntax candidate, but source facts show matched positive/max guards and equal copy/allocation sizes. This exact excerpt does not establish an out-of-bounds read; Parcel semantics/product reachability/authorization/runtime remain unverified."
+  },
+  "identity_conflict": {
+    "mislabelled_message_commit": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+    "message_blob": "6106eb782ab6ffb605ec6ebff9e47ed5df923375",
+    "message_sha256": "b23dc2a3573232cf9b2c4c682f20062b3a17d29335ec2b69799a8df01fd71793",
+    "resolution": "edd28... is the A0 queue commit's root tree, not a commit. A0 binds e336... commit -> edd28... tree -> 1cc8... path blob -> d43a... SHA. 6106... is a different blob and hashes to the message-provided b23d... SHA. Queue provenance is retained unchanged."
+  },
+  "limitations": [
+    "Single exact-source file scope; complete syntax parse does not imply complete semantic or product analysis.",
+    "No fixed source or trustworthy vulnerable/fixed differential was supplied for this queue item.",
+    "No product build profile, Parcel implementation semantics, effective caller/permission boundary, or runtime result was established.",
+    "This is a reproduced static candidate, not a confirmed CWE-125 vulnerability or proof the scanner's claim is correct."
+  ]
+}
