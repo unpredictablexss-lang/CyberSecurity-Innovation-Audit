@@ -1,0 +1,547 @@
+{
+  "accuracy_metrics": "not_estimable_no_labels_or_valid_cohort",
+  "blocker_matrix": [
+    {
+      "evidence": [
+        "D55 protocol pre_registered_decision_thresholds.status",
+        "T54 execution_inputs_missing"
+      ],
+      "gate": "approved_thresholds",
+      "repo_self_service": "can preserve proposed defaults and verify missing approval",
+      "required_external_actor": "D owner must approve/replace thresholds before frame selection and label access",
+      "state": "blocked"
+    },
+    {
+      "evidence": [
+        "D55 current_missing_inputs: independent source inventory and frozen sampling frame",
+        "D55 protocol sampling.frame requirements"
+      ],
+      "gate": "independent_sampling_frame_and_cohort",
+      "repo_self_service": "can enumerate local Git objects and produce hashes/exclusion candidates; cannot designate an independent inventory or probability frame from scanner-team authored corpus",
+      "required_external_actor": "independent source inventory/custodian plus source-family provenance and eligibility approver",
+      "state": "blocked"
+    },
+    {
+      "evidence": [
+        "D55 protocol source_identity_and_deduplication",
+        "D41 manifest/results",
+        "D48 protocol/results"
+      ],
+      "gate": "prior_use_overlap_and_exclusions",
+      "repo_self_service": "can hash and compare repo/path/blob identities against specified D records and full D history once inventory is supplied",
+      "required_external_actor": "source steward resolves modified vendor derivation and signs unresolved cases before scan",
+      "state": "partial_inventory_only"
+    },
+    {
+      "evidence": [
+        "D55 current_missing_inputs: pre-scan selection record, inclusion probabilities, and seed record"
+      ],
+      "gate": "reproducible_selection_and_seed",
+      "repo_self_service": "can implement seeded stratified selector after frame and strata are frozen",
+      "required_external_actor": "independent frame owner supplies frame; seed commitment must be frozen before scan and labels",
+      "state": "blocked"
+    },
+    {
+      "evidence": [
+        "D55 current_missing_inputs: pre-label precision planning simulation",
+        "D55 protocol sampling.planning_formula_inputs"
+      ],
+      "gate": "planning_simulation",
+      "repo_self_service": "can run simulation after approved thresholds, independent frame/cluster distribution, plausible external prevalence/DEFF and label completion inputs are supplied",
+      "required_external_actor": "owner/reviewer approves assumptions; source steward supplies frame inputs",
+      "state": "blocked"
+    },
+    {
+      "evidence": [
+        "D55 current_missing_inputs: frozen scanner bundle and scope hashes",
+        "T54 execution_inputs_missing"
+      ],
+      "gate": "scanner_and_scope_freeze",
+      "repo_self_service": "can compute clean-checkout and component hashes once target evaluation version is designated",
+      "required_external_actor": "D scanner owner freezes exact version; independent verifier signs manifest",
+      "state": "blocked"
+    },
+    {
+      "evidence": [
+        "T55 evidence_status/status_decision",
+        "T55 revision acceptance",
+        "A/B manifests"
+      ],
+      "gate": "known_cve_advisory_package",
+      "repo_self_service": "can verify all captured bytes, manifest IDs, and append hashes for already captured snapshots",
+      "required_external_actor": "authorized network/source access to capture blocked primary GHSA responses; adjudicator resolves version-scope ambiguities before scoring",
+      "state": "partial_not_ready"
+    },
+    {
+      "evidence": [
+        "D55 current_missing_inputs: versioned frozen candidate-to-reference matcher; frozen coverage/unknown aggregation implementation"
+      ],
+      "gate": "finding_matcher_and_coverage_aggregation",
+      "repo_self_service": "can implement and hash versioned matcher/aggregation after source reference and frozen scanner outputs are available",
+      "required_external_actor": "D owner approves claim-level matching rules before labels/unblinding",
+      "state": "blocked"
+    },
+    {
+      "evidence": [
+        "D55 labels_created=false",
+        "T54 execution_inputs_missing",
+        "D41 labels=0",
+        "D48 no labels"
+      ],
+      "gate": "independent_labels_and_adjudication",
+      "repo_self_service": "can create blinded packets after frozen scan; cannot create human labels",
+      "required_external_actor": "two qualified independent reviewers and independent adjudicator provide frozen, source-bound labels/conflict declarations",
+      "state": "blocked"
+    },
+    {
+      "evidence": [
+        "D55 current_missing_inputs: approved immutable storage for sealed predictions and separated labels"
+      ],
+      "gate": "sealed_prediction_custody",
+      "repo_self_service": "can hash output package and prepare manifest",
+      "required_external_actor": "independent custodian provides approved immutable access-controlled storage and access log",
+      "state": "blocked"
+    }
+  ],
+  "d41": {
+    "candidate_observations": 201,
+    "coverage_counts": {
+      "complete": 0,
+      "failed": 0,
+      "not_analyzed": 1033,
+      "partial": 2787
+    },
+    "eligible_files": 3820,
+    "independent_label_counts": {
+      "protected_safe": 0,
+      "status": "pending_external_independent_review",
+      "supported_risk": 0,
+      "unknown": 0,
+      "unrelated": 0
+    },
+    "manifest_study_status": "preregistered_not_run",
+    "packet_is_population_sample": false,
+    "packet_used_for_D55": false,
+    "post_scan_packet_cases": 99,
+    "repositories": [
+      "openharmony/security_huks",
+      "openharmony/security_certificate_manager",
+      "openharmony/inputmethod_imf",
+      "openharmony/window_window_manager",
+      "openharmony/telephony_call_manager",
+      "openharmony/multimedia_camera_framework"
+    ],
+    "repository_count": 6,
+    "results_state": [
+      "# D41 cross-component sensitive-data holdout replay",
+      "",
+      "Date: 2026-10-19. State: **replayed; independent labels pending**.",
+      ""
+    ],
+    "state_reconciliation": "manifest retains preregistered_not_run; later aggregate results and report record an actual two-round replay. Use the results/report for execution occurrence, while the manifest state remains a stale preregistration field."
+  },
+  "d48": {
+    "all_files_partial_from_readme": true,
+    "all_scans_blocked_from_readme": true,
+    "candidate_count": 0,
+    "commit": "373e2b5241c0e5dcb923642059ae83e4e9a1a64e",
+    "coverage_counts": {},
+    "detector_status": "blocked",
+    "eligible_files": null,
+    "eligible_files_from_readme": 97,
+    "independent_label_evidence": "none recorded in inspected D48 protocol/readme/report artifacts",
+    "pinned_source_commit_from_readme": "373e2b5241c0e5dcb923642059ae83e4e9a1a64e",
+    "repository": "openharmony/distributed_screen",
+    "task_status": "completed_with_limitations",
+    "tree": "431a2a0be0c140846b6ff1cefb0e7adfa19d2088"
+  },
+  "d55_known_cve_advisories": {
+    "batch_a": {
+      "entries": [
+        {
+          "body_bytes": 3334,
+          "body_file": "snapshots/cve-2022-45877.response.bin",
+          "body_hash_verified": true,
+          "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2022-45877",
+          "cve": "CVE-2022-45877",
+          "declared_body_sha256": "8cc6368e16aaa77e566a22cfc11b217b06b6123b4456ce6499c5d65a170fc7d0",
+          "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+          "scope_status": "captured_scope_inconsistency",
+          "source_version_scope_present": true,
+          "status": "captured_primary_cna_record"
+        },
+        {
+          "body_bytes": 25639,
+          "body_file": "snapshots/cve-2025-9900.response.bin",
+          "body_hash_verified": true,
+          "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2025-9900",
+          "cve": "CVE-2025-9900",
+          "declared_body_sha256": "625a41fc0b0bcb6f23eea01e0273e6e85ad43cb4b60babff6b7396a6947d306f",
+          "publisher": "CVE CNA record; assignerShortName=redhat",
+          "scope_status": "publisher_scope_recorded",
+          "source_version_scope_present": true,
+          "status": "captured_primary_cna_record"
+        },
+        {
+          "body_bytes": 2187,
+          "body_file": "snapshots/cve-2025-25212.response.bin",
+          "body_hash_verified": true,
+          "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2025-25212",
+          "cve": "CVE-2025-25212",
+          "declared_body_sha256": "f969f3768cea8c7304043ac26b6418f2389b005383f9a541e89bf283cd0fb93a",
+          "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+          "scope_status": "captured_scope_inconsistency",
+          "source_version_scope_present": true,
+          "status": "captured_primary_cna_record"
+        },
+        {
+          "body_bytes": 2250,
+          "body_file": "snapshots/cve-2025-27247.response.bin",
+          "body_hash_verified": true,
+          "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2025-27247",
+          "cve": "CVE-2025-27247",
+          "declared_body_sha256": "3f5177eae797c28a9c746d5e7823a8eda828d690ba713876addacbb2de540bb4",
+          "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+          "scope_status": "captured_scope_inconsistency",
+          "source_version_scope_present": true,
+          "status": "captured_primary_cna_record"
+        },
+        {
+          "body_bytes": 2315,
+          "body_file": "snapshots/cve-2025-57052.response.bin",
+          "body_hash_verified": true,
+          "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2025-57052",
+          "cve": "CVE-2025-57052",
+          "declared_body_sha256": "3795f9d5d0f050da69450c939f2a3e80d227eae213b8f96253a2957acf394ee9",
+          "publisher": "CVE CNA record; assignerShortName=mitre",
+          "scope_status": "unknown_no_vendor_scope",
+          "source_version_scope_present": true,
+          "status": "official_cve_record_captured_vendor_advisory_unknown"
+        },
+        {
+          "body_bytes": 2218,
+          "body_file": "snapshots/cve-2026-25850.response.bin",
+          "body_hash_verified": true,
+          "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2026-25850",
+          "cve": "CVE-2026-25850",
+          "declared_body_sha256": "17c834ae4584dc74c6aa9757f0a99d17c8a092af56a7a5b5e338682f48f8065a",
+          "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+          "scope_status": "publisher_scope_recorded",
+          "source_version_scope_present": true,
+          "status": "captured_primary_cna_record"
+        },
+        {
+          "body_bytes": 2178,
+          "body_file": "snapshots/cve-2026-28733.response.bin",
+          "body_hash_verified": true,
+          "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2026-28733",
+          "cve": "CVE-2026-28733",
+          "declared_body_sha256": "319d7fb3d963f004c037cab6a4c7e34e0c6324abf5a3ecf31de8ef9e525dc7de",
+          "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+          "scope_status": "publisher_scope_recorded",
+          "source_version_scope_present": true,
+          "status": "captured_primary_cna_record"
+        },
+        {
+          "body_bytes": 2166,
+          "body_file": "snapshots/cve-2026-28751.response.bin",
+          "body_hash_verified": true,
+          "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2026-28751",
+          "cve": "CVE-2026-28751",
+          "declared_body_sha256": "5e2f99eccb8618f641370027275ee883fe826a668ca12d0602360d84fcfb276b",
+          "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+          "scope_status": "publisher_scope_recorded",
+          "source_version_scope_present": true,
+          "status": "captured_primary_cna_record"
+        },
+        {
+          "body_bytes": 2215,
+          "body_file": "snapshots/cve-2026-27648.response.bin",
+          "body_hash_verified": true,
+          "canonical_url": "https://www.cve.org/CVERecord?id=CVE-2026-27648",
+          "cve": "CVE-2026-27648",
+          "declared_body_sha256": "3e34f6359d50f4b378aaa83af92376e7a5bd355e11c54a4cea6e8ebefa37c74e",
+          "publisher": "CVE CNA record; assignerShortName=OpenHarmony",
+          "scope_status": "publisher_scope_recorded",
+          "source_version_scope_present": true,
+          "status": "captured_primary_cna_record"
+        }
+      ],
+      "entry_count": 9,
+      "manifest": "D:\\openHarmonyScanner\\worktrees\\d55-cve-advisories-a-20261021\\research\\data_sensitive\\d55_cve_advisories_a\\D55_CVE_ADVISORIES_A_20261019.json",
+      "manifest_sha256": "abf46a786bda02c7d3837dc008c5fc8610eb60752bfabd34f1dc0ff4b54af282"
+    },
+    "batch_a_count": 9,
+    "batch_b": {
+      "entries": [
+        {
+          "body_bytes": null,
+          "body_file": null,
+          "body_hash_verified": null,
+          "canonical_url": "https://github.com/pnggroup/libpng/security/advisories/GHSA-wjr5-c57x-95m2",
+          "cve": "CVE-2026-33636",
+          "declared_body_sha256": null,
+          "publisher": "pnggroup/libpng maintainer advisory published through GitHub Security Advisories (GHSA-wjr5-c57x-95m2)",
+          "scope_status": null,
+          "source_version_scope_present": true,
+          "status": "blocked"
+        },
+        {
+          "body_bytes": null,
+          "body_file": null,
+          "body_hash_verified": null,
+          "canonical_url": "https://github.com/pnggroup/libpng/security/advisories/GHSA-qvg3-h654-xq3j",
+          "cve": "CVE-2026-46675",
+          "declared_body_sha256": null,
+          "publisher": "pnggroup/libpng maintainer advisory published through GitHub Security Advisories (GHSA-qvg3-h654-xq3j)",
+          "scope_status": null,
+          "source_version_scope_present": true,
+          "status": "blocked"
+        },
+        {
+          "body_bytes": 2319,
+          "body_file": "CVE-2026-67215.body",
+          "body_hash_verified": true,
+          "canonical_url": "https://github.com/advisories/GHSA-5q3m-r3x7-8phg",
+          "cve": "CVE-2026-67215",
+          "declared_body_sha256": "aa785168dec0e37803f92ddf084e777a29c2e60d97a0f56e139524ce8e89cda2",
+          "publisher": "GitHub Advisory Database (official GHSA record; unreviewed; original CNA/vendor publisher is not identified by this record)",
+          "scope_status": null,
+          "source_version_scope_present": true,
+          "status": "captured"
+        },
+        {
+          "body_bytes": 2220,
+          "body_file": "CVE-2026-67216.body",
+          "body_hash_verified": true,
+          "canonical_url": "https://github.com/advisories/GHSA-ff2v-f99f-wm3f",
+          "cve": "CVE-2026-67216",
+          "declared_body_sha256": "9ef9cb1d01583e01fdd3bb250ec8a46c9ea83aec7084d6075a849a223ea75ce7",
+          "publisher": "GitHub Advisory Database (official GHSA record; unreviewed; original CNA/vendor publisher is not identified by this record)",
+          "scope_status": null,
+          "source_version_scope_present": true,
+          "status": "captured"
+        },
+        {
+          "body_bytes": 2739,
+          "body_file": "CVE-2026-92391.body",
+          "body_hash_verified": true,
+          "canonical_url": "https://curl.se/docs/CVE-2026-92391.html",
+          "cve": "CVE-2026-92391",
+          "declared_body_sha256": "ce88cdf4cce411a2d77df8eaa9f2957e028b4b2aa6b4b263b889a5c068ab30dc",
+          "publisher": "curl project (vendor/maintainer security advisory; official curl.se domain)",
+          "scope_status": null,
+          "source_version_scope_present": true,
+          "status": "captured"
+        },
+        {
+          "body_bytes": 2158,
+          "body_file": "CVE-2026-9079.body",
+          "body_hash_verified": true,
+          "canonical_url": "https://curl.se/docs/CVE-2026-9079.html",
+          "cve": "CVE-2026-9079",
+          "declared_body_sha256": "ebe4fde1e2bf5fd39c2fff79c5530fe400b3d8c6535893966b503f95bd887424",
+          "publisher": "curl project (vendor/maintainer security advisory; official curl.se domain)",
+          "scope_status": null,
+          "source_version_scope_present": true,
+          "status": "captured"
+        },
+        {
+          "body_bytes": 1933,
+          "body_file": "CVE-2026-92392.body",
+          "body_hash_verified": true,
+          "canonical_url": "https://curl.se/docs/CVE-2026-92392.html",
+          "cve": "CVE-2026-92392",
+          "declared_body_sha256": "c5fdab909e95d7e2b5608a67ccd1a06035d4018b0391c773efc217d7bcd8f6e3",
+          "publisher": "curl project (vendor/maintainer security advisory; official curl.se domain)",
+          "scope_status": null,
+          "source_version_scope_present": true,
+          "status": "captured"
+        },
+        {
+          "body_bytes": 22309,
+          "body_file": "CVE-2026-58313.body",
+          "body_hash_verified": true,
+          "canonical_url": "https://lists.openatom.io/hyperkitty/list/security@openharmony.io/thread/IJ5WNUSUCN7CDCFQLO4FWYGJONVN2WYL/",
+          "cve": "CVE-2026-58313",
+          "declared_body_sha256": "782d7b605509ccae7034e008241d855a8ef246861835b3453d393a65b9d376e3",
+          "publisher": "OpenHarmony security bulletin, posted by Wang Chen to the official security@openharmony.io mailing list and archived by OpenAtom",
+          "scope_status": null,
+          "source_version_scope_present": true,
+          "status": "captured"
+        }
+      ],
+      "entry_count": 8,
+      "manifest": "D:\\openHarmonyScanner\\worktrees\\d55-cve-advisory-b-20261021\\research\\data_sensitive\\D55_KNOWN_CVE_ADVISORY_BATCH_B_20261019\\D55_KNOWN_CVE_ADVISORY_BATCH_B_20261019.json",
+      "manifest_sha256": "e5e015592188474d6f22bd4f31c2c93cb6cc556ed590416a86f56b342230cc27"
+    },
+    "batch_b_count": 8,
+    "captured_primary_bytes_hashes_verified": 15,
+    "extra_ids": [],
+    "missing_ids": [],
+    "primary_entries_not_verified_as_captured": [
+      "CVE-2026-33636",
+      "CVE-2026-46675"
+    ],
+    "t55_acceptance_commit": "233da2384",
+    "t55_acceptance_sha256": "12ddf42115d693de8369398ce03f7b18cb6d9aacc5189a54d53b2dd873b945dd",
+    "t55_m2": "NOT_MET",
+    "t55_revision_commit": "6d65b5220",
+    "t55_revision_decision": {
+      "artifact_integrity": "PASS_FOR_VERIFIED_CAPTURED_OBJECTS",
+      "batch_b_evidence": "PARTIAL",
+      "known_cve_package": "NOT_READY",
+      "m2": "NOT_MET"
+    },
+    "t55_revision_remaining_scope": [
+      "CVE-2026-67215 and CVE-2026-67216 remain unreviewed GHSA records without structured ranges or identified original vendor/CNA",
+      "CVE-2026-9079 has unusual introduced/fixed 8.21.0 event preserved without interpretation",
+      "CVE-2026-58313 has no exact fixed version/revision"
+    ],
+    "t55_revision_sha256": "cd2e940d6617d65d6915e7b06b0b8c739d18e67f7ff311142143194e30fd474c",
+    "t55_status": "PARTIAL_NOT_READY",
+    "target_catalog_count": 17,
+    "unique_id_count": 17
+  },
+  "d55_protocol_state": {
+    "accuracy_evaluation_started": false,
+    "approvals_and_freezes": {
+      "independent_adjudicator_assignment": "absent: required by protocol, not assigned in inspected records",
+      "prediction_key_custodian_and_approved_immutable_storage": "absent: required custody/storage is listed as missing; no D55 sealed key/custody record",
+      "scanner_freeze_manifest": "absent: required full scanner/model/profile/parser/config/scope freeze is missing; no campaign freeze manifest",
+      "source_cohort_owner_or_eligibility_approvals": "absent: no frozen frame/cohort or row-level eligibility approver records in inspected D55 materials",
+      "threshold_owner_approval": "absent: protocol and T54 acceptance both say proposed thresholds pending D-owner approval",
+      "two_independent_reviewer_assignments_and_conflict_declarations": "absent: required by protocol, not assigned in inspected records"
+    },
+    "campaign_evidence_files_present": [],
+    "current_missing_inputs": [
+      "independent source inventory and frozen sampling frame",
+      "prior-use overlap ledger and eligible cohort with verified identities",
+      "pre-scan selection record, inclusion probabilities, and seed record",
+      "frozen scanner and model/profile/parser/configuration hashes for the target evaluation version",
+      "pre-label precision planning simulation and frozen sufficiency decision",
+      "primary advisory source snapshots and SHA-256 for every known-CVE catalog identifier",
+      "versioned frozen candidate-to-reference finding matcher",
+      "frozen coverage/unknown aggregation implementation and stop report",
+      "two qualified independent reviewers and conflict declarations",
+      "independent adjudicator availability",
+      "approved immutable storage for sealed predictions and separated labels"
+    ],
+    "labels_created": false,
+    "metrics_computed": false,
+    "status": "preregistered_protocol_only"
+  },
+  "decision": "Do not start holdout scan or label work from repository-local development corpus. First obtain owner-approved thresholds, independent source inventory/custodian and cohort provenance, independent reviewer/adjudicator and custody assignments, exact scanner evaluation bundle, and resolve the still-missing primary advisory captures/scope. Local repo work can prepare auditable mechanics, but cannot convert existing D41/D48/development examples into a valid D55 holdout.",
+  "exclusion_ledger": [
+    {
+      "candidate_observations": 201,
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1033,
+        "partial": 2787
+      },
+      "decision": "exclude from D55 scoring",
+      "eligible_files": 3820,
+      "independent_labels": 0,
+      "reason": "scanned post selection; detector 0.17.0; no independent labels; post-scan stratified 99-case packet; protocol explicitly excludes D41",
+      "repositories": [
+        "openharmony/security_huks",
+        "openharmony/security_certificate_manager",
+        "openharmony/inputmethod_imf",
+        "openharmony/window_window_manager",
+        "openharmony/telephony_call_manager",
+        "openharmony/multimedia_camera_framework"
+      ],
+      "source_group": "D41 six-repository replay and 99-case packet"
+    },
+    {
+      "commit": "373e2b5241c0e5dcb923642059ae83e4e9a1a64e",
+      "decision": "exclude from D55 scoring",
+      "eligible_files": 97,
+      "independent_labels": 0,
+      "reason": "convenience sample; D48 prior inspected/replayed; blocked scan; all 97 files partial; zero labels; protocol explicitly excludes D48",
+      "repository": "openharmony/distributed_screen",
+      "source_group": "D48 distributed_screen snapshot"
+    },
+    {
+      "decision": "exclude from D55 scoring",
+      "reason": "protocol classifies as already reviewed component/CVE replay and rule-development examples; targeted, partial/blocked, not independent probability sample",
+      "source_group": "D49-D50 component/CVE replay records"
+    },
+    {
+      "decision": "exclude from D55 scoring",
+      "reason": "protocol explicitly classifies as targeted candidate/config investigations and development material, not prevalence sample",
+      "source_group": "D51-D53 Pasteboard records and T51-T53 acceptance"
+    },
+    {
+      "decision": "exclude overlapping source units from D55 scoring",
+      "reason": "protocol says any D-visible or tuned item is development data; exact raw blob/content overlap excludes regardless of path/commit; unresolved modified vendor derivative blocks stratum",
+      "source_group": "D35-D50 development/regression/fixtures/PoCs/rule-tuning material"
+    },
+    {
+      "decision": "exclude from D55 scoring",
+      "reason": "explicit positive-control smoke artifact; scanner-development control rather than independent source sample",
+      "source_group": "D48_PANEL_SMOKE/d48-d43-positive-control"
+    }
+  ],
+  "inputs": {
+    "research/data_sensitive/D41_BLIND_REVIEW_PACKET.json": "b3821ab3b716a457645463b4a0d5f6063f8e6b7383b1e8f47a0e462c17b4c5cd",
+    "research/data_sensitive/D41_HOLDOUT_MANIFEST.json": "419b564f9717b04043c631d25362a8d394d26c29d2deed496fbec3d8a6e8417e",
+    "research/data_sensitive/D41_HOLDOUT_RESULTS.json": "256338e5913b34506ee15460bb3267e5cf20523c3fb3ca2220c5a49b9e0743b2",
+    "research/data_sensitive/D41_HOLDOUT_RESULTS.md": "99434710849c681782f02aa0d54d0c9fa6d8c32dc3ec557e2c9c4f15ef430945",
+    "research/data_sensitive/D48_HOLDOUT/distributed_screen/README.md": "d5396f2cb0b0c01dd1bea045a23680583d4f72d1a65cdf1a5edbd30d342a616d",
+    "research/data_sensitive/D48_HOLDOUT/distributed_screen/first.json": "e8dcf6023443aee180c9d7008d519b7b13db712a66658983f1d6aae22c7e620e",
+    "research/data_sensitive/D48_HOLDOUT/distributed_screen/replay.json": "04940aab24ba54385a417d3339eddfbecf1e6e0bf3684ba5f82516346cb1a4e2",
+    "research/data_sensitive/D48_HOLDOUT/distributed_screen/summary.json": "ad1c01b98c00b23aeebe5788b967dd40fb3440d69431e1e5f7bb2b95c52befb1",
+    "research/data_sensitive/D48_HOLDOUT_PREREGISTRATION.md": "5db58225ca7b78437154901a960f9ba8fc9e6ddcbd097d5aef1d55f0278c8fa0",
+    "research/data_sensitive/D55_HOLDOUT_EXECUTION_TASK.md": "f9c66e5726619db137fadd0639c13d8c652625796e1f62f9f20d9a12dd477171",
+    "research/data_sensitive/D55_HOLDOUT_PROTOCOL_20261021.json": "db8d3c7a393eac5efa42a8b6bfa96fa37571b52af240cbe72056d78bd1091d57",
+    "research/data_sensitive/D55_INDEPENDENT_HOLDOUT_PREREGISTRATION.md": "888d52814ed58b6215f52940434f650ad27a079e2eb0bd38969f65774fa2d353"
+  },
+  "m2_status": "NOT_MET",
+  "m3_status": "not_assessed_by_this_inventory",
+  "record_id": "D82-D55-LOCAL-M2-BLOCKER-MATRIX-20261020",
+  "schema_version": 1,
+  "scope": {
+    "base_commit": "92ccbd488c0dc4b5b98285659f2b9dd35ceb130e",
+    "checkout": "D:\\openHarmonyScanner\\worktrees\\d82-local-m2-readiness-20261020",
+    "inspection_limit": "Only D55 final preregistration/execution task, T54 final acceptance, D41/D48 sample records, and D55 advisory A/B packages were inventoried; no labels, metrics, or holdout cohort were created.",
+    "script_sha256": "566a19fed4809774f3721164f09448eae62fafb5cf006e46ad8e91b0e7163772"
+  },
+  "self_service_boundary": {
+    "cannot_self_authorize_or_fabricate": [
+      "independent source inventory/cohort provenance",
+      "owner approval of thresholds and sampling design",
+      "qualified independent reviewer/adjudicator identities and conflict declarations",
+      "blind labels or human adjudication",
+      "custody/access control for sealed predictions and separated labels",
+      "unavailable primary advisory bytes or external source scope resolution",
+      "product build evidence for M3"
+    ],
+    "mechanical_actions_agent_can_do": [
+      "hash local Git source objects and inventories",
+      "run strict duplicate-key parsing and byte-hash verification",
+      "record known D41/D48 overlap and explicit exclusion rows",
+      "implement deterministic selector/matcher/coverage/score tools after the protocol inputs are frozen",
+      "compute scanner/source manifest hashes after an exact target scanner version is designated"
+    ]
+  },
+  "status": "STOP_BEFORE_FRAME_SELECTION_AND_SCAN",
+  "t54_final_acceptance": {
+    "commit": "b4537212b",
+    "execution_inputs_missing": [
+      "D-owner approval or replacement of proposed thresholds",
+      "independent source inventory, frozen frame/cohort, and overlap ledger",
+      "pre-label design-based planning simulation",
+      "frozen scanner bundle and scope hashes",
+      "independent reviewer/adjudicator assignments and sealed custody",
+      "per-CVE primary advisory snapshots, byte hashes, and version scopes"
+    ],
+    "execution_status": "NOT_READY",
+    "m2_status": "NOT_MET",
+    "protocol_design_status": "READY_FOR_EXECUTION_PREREQUISITES",
+    "reviewed_commit": "c86e0b0321eb38b0ff403e98b8597622c7cd556c",
+    "sha256": "2ff7bedbf7310ee5be85534549acc8ab3c0add86215723d3e39f014c34ceac71"
+  }
+}
