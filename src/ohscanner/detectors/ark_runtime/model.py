@@ -31,7 +31,7 @@ RULE_VERSIONS = {
     CALL_INFO_EXCEPTION_RULE_ID: '1.1.0',
     **GAP_RULE_VERSIONS,
 }
-VERSION = '0.6.3'
+VERSION = '0.6.2'
 NAMESPACE = 'panda::ecmascript::kungfu'
 OWNER = NAMESPACE + '::BuiltinsTypedArrayStubBuilder'
 CALLER = OWNER + '::Filter'
