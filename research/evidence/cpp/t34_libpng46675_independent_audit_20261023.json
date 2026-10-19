@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "task": "T34 independent acceptance of libpng CVE-2026-46675 detector coverage",
+  "date": "2026-10-23",
+  "baseline": "1cb2178c88715b6c8f908ac7826cb684a35730f7",
+  "status": "PARTIAL/BLOCK",
+  "source_repository": "pnggroup/libpng",
+  "source_identities": {
+    "vulnerable": {
+      "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+      "tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
+      "path": "pngrutil.c",
+      "blob": "a4eda54c8cb3d36cf1651dba159067b65030e3aa",
+      "sha256": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e",
+      "bytes": 153112
+    },
+    "fixed": {
+      "commit": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+      "tree": "4c64b5f18cef7d129adee3b403fc4be93f82e30d",
+      "parent": "4eeb825ab26605ed34cd74495d4cce920939fe9f",
+      "path": "pngrutil.c",
+      "blob": "482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a",
+      "sha256": "a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e",
+      "bytes": 152477
+    }
+  },
+  "full_file_cli": {
+    "method": "ohscan-run against pinned Git commit and one-file scope",
+    "detector": "ohscanner.cpp.resource_lifetime",
+    "detector_version": "0.4.2",
+    "profile": "light-ast",
+    "vulnerable": {
+      "report": "t34_libpng46675_vulnerable_cli_20261023.json",
+      "parse_status": "partial",
+      "parse_issue_count": 72,
+      "run_status": "blocked",
+      "findings": []
+    },
+    "fixed": {
+      "report": "t34_libpng46675_fixed_cli_20261023.json",
+      "parse_status": "partial",
+      "parse_issue_count": 72,
+      "run_status": "blocked",
+      "findings": []
+    },
+    "interpretation": "No root-cause candidate was emitted on either side. Because both target translation units are parser-partial and detector runs are blocked, this is inconclusive and is not a validated fixed differential or safety result."
+  },
+  "function_fragment_replay": {
+    "method": "independent rerun of D12 exact-source seven-function fragment experiment",
+    "report": "t34_libpng46675_d12_fragment_replay_20261023.json",
+    "detector": "ohscanner.cpp.resource_lifetime",
+    "detector_version": "0.4.2",
+    "per_variant": {
+      "functions": 7,
+      "complete_fragments": 6,
+      "partial_fragments": 1,
+      "partial_function": "png_handle_iCCP",
+      "findings": 0,
+      "whole_translation_unit_status": "partial"
+    },
+    "limitation": "Complete isolated fragments are syntax experiments only. They do not establish cross-function zstream ownership, call order, trigger, or product reachability; the iCCP fragment itself remains partial."
+  },
+  "candidate_positions": [],
+  "controls_and_mechanisms": {
+    "direct_mechanism_evidence": "The upstream advisory/fix rationale and exact source diff describe stale zstream state across inflate/decompression/read functions. The CLI and isolated fragments did not produce a static candidate for it.",
+    "fixed_control": "The exact source fix commit/file identity is verified and was run through the same CLI; its zero findings is inconclusive because parser status is partial.",
+    "safe_unrelated_controls": "No additional broad safe/unrelated repository controls were run in this T34 task; absence of a finding on a fixed partial file is not treated as such a control."
+  },
+  "limitations": [
+    "No full translation unit parsed completely on either vulnerable or fixed source.",
+    "No detector finding was emitted, so no vulnerable/fixed root-cause differential exists.",
+    "The lifecycle root requires cross-function ownership/call-order modeling that current evidence does not establish.",
+    "Static source evidence does not establish product build inclusion, caller reachability, runtime trigger, or impact."
+  ],
+  "a0_queue": {
+    "changed": false,
+    "preserved_rows": 345,
+    "case_status": "PARTIAL/BLOCK"
+  },
+  "commands": [
+    "git clone --bare D:/openHarmonyScanner/tmp/libpng-gitlab-mirror-pins-20261019.git D:/openHarmonyScanner/tmp/t34-libpng46675-source-20261023.git",
+    "git --git-dir=D:/openHarmonyScanner/tmp/t34-libpng46675-source-20261023.git fetch --no-tags https://github.com/pnggroup/libpng.git aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+    "python -m src.cli.main ohscan-run --repo-dir D:/openHarmonyScanner/tmp/t34-libpng46675-source-20261023.git --repository pnggroup/libpng --commit c3e304954a9cfd154bc0dfbfea2b01cd61d6546d --include pngrutil.c --detector ohscanner.cpp.resource_lifetime --json-out research/evidence/cpp/t34_libpng46675_vulnerable_cli_20261023.json --md-out research/evidence/cpp/t34_libpng46675_vulnerable_cli_20261023.md",
+    "python -m src.cli.main ohscan-run --repo-dir D:/openHarmonyScanner/tmp/t34-libpng46675-source-20261023.git --repository pnggroup/libpng --commit aa77ef38c17ab2fc1b41bec09fb973c6a386641d --include pngrutil.c --detector ohscanner.cpp.resource_lifetime --json-out research/evidence/cpp/t34_libpng46675_fixed_cli_20261023.json --md-out research/evidence/cpp/t34_libpng46675_fixed_cli_20261023.md",
+    "python research/evidence/cpp/d12_libpng_function_fragments_20261020.py --33416-vulnerable D:/openHarmonyScanner/tmp/libpng-runtime-cve-2026-33416-20261019/vulnerable --33416-fixed D:/openHarmonyScanner/tmp/libpng-runtime-cve-2026-33416-20261019/fixed --46675-vulnerable D:/openHarmonyScanner/tmp/libpng-ghsa-qvg3-source-20261019/vulnerable-1.6.55 --46675-fixed D:/openHarmonyScanner/tmp/libpng-d13-fixed-source-20261020 --output research/evidence/cpp/t34_libpng46675_d12_fragment_replay_20261023.json",
+    "python research/evidence/cpp/verify_t34_libpng46675_audit.py --git-dir D:/openHarmonyScanner/tmp/t34-libpng46675-source-20261023.git"
+  ]
+}
