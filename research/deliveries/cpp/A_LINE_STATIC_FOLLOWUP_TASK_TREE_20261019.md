@@ -7,9 +7,9 @@
 ```text
 A 线披露漏洞静态覆盖
 ├── 已提交 PR：整数边界、资源生命周期、证据回放与 CVE 覆盖矩阵
-├── D1：路径 source-to-file-sink 候选（代码/回归已做，Catalog 准入待审）
-├── D3：libpng 46675 typedef/header-aware 静态解析（进行中）
-└── D4：cJSON 67216/67215 精确源码复杂度回放（进行中）
+├── D1：路径检测器（代码/回归已做；CLI 未注册不可达；参数模型审查阻止准入）
+├── D3：libpng 46675 typedef/header-aware 静态解析（blocked：vulnerable/fixed 候选 8/7，未区分；上游 pin replay 受网络阻断）
+└── D4：cJSON 67216/67215 精确源码回放（blocked：两个受影响版本均 partial，缺权威 fixed 源）
 ```
 
 ## 并行线 D3：libpng 跨函数共享状态
