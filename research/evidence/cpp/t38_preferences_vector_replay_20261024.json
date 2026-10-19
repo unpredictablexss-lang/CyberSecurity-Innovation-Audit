@@ -1,0 +1,230 @@
+{
+  "schema_version": "t38-preferences-vector-independent-audit-v1",
+  "task": "T38",
+  "integration_base": "5d6e6897aa9dd0b366f6efc057204e06e9494638",
+  "source": {
+    "repository": "openharmony/distributeddatamgr_preferences",
+    "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+    "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+    "file": {
+      "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+      "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+      "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+      "bytes": 2888
+    }
+  },
+  "build_target": {
+    "file": {
+      "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/BUILD.gn",
+      "blob": "56471b31f18f3184a79badfacf35a6fa8ab03552",
+      "sha256": "54a176a31ab5e5d768d1f4408ec86e1b85c6a47880088936c23a528ba5d59770",
+      "bytes": 2086
+    },
+    "target": "ohos_fuzztest(DBPreferencesVectorFuzzTest)",
+    "group": "group(\"fuzztest\") { testonly = true }",
+    "production_build_or_reachability_proven": false
+  },
+  "cli": {
+    "raw": "t38_preferences_vector_cli_20261024.json",
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "scope_files": 1,
+    "scope_loc": 93,
+    "parse": {
+      "complete": 1
+    },
+    "finding_count": 6,
+    "command": "python -m src.cli.main ohscan-run --repo-dir <pinned-source-checkout> --repository openharmony/distributeddatamgr_preferences --commit bff9efd79afc0d7d1ed22a63ff355f1600404596 --include test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp --detector ohscanner.cpp.shared_ptr_race"
+  },
+  "a0": {
+    "rows": 345,
+    "audited_ids": [
+      "CR-0091",
+      "CR-0092",
+      "CR-0093",
+      "CR-0094",
+      "CR-0095",
+      "CR-0096"
+    ],
+    "queue_state_unchanged": true
+  },
+  "items": [
+    {
+      "queue_id": "CR-0091",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:06ade1d2ed885ecd",
+      "source_line": 45,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+        "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+        "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+        "bytes": 2888,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:07d9e0bcac5b3c28",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "finding_line": 45,
+        "symbol": "preferences_"
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0092",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:6b18bd91f7df751d",
+      "source_line": 50,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+        "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+        "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+        "bytes": 2888,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:99b4bea93cf5d266",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "finding_line": 50,
+        "symbol": "preferences_"
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0093",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:6ab2772ccedc921b",
+      "source_line": 52,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+        "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+        "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+        "bytes": 2888,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:9ff4745d9094a32e",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "finding_line": 52,
+        "symbol": "preferences_"
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0094",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:c02b95d8680dbd4c",
+      "source_line": 68,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+        "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+        "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+        "bytes": 2888,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ae7a984b69ab110b",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "finding_line": 68,
+        "symbol": "preferences_"
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0095",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:ba9f218745cfe55e",
+      "source_line": 77,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+        "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+        "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+        "bytes": 2888,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:653de71495ef3908",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "finding_line": 77,
+        "symbol": "preferences_"
+      },
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0096",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:4bb20c1c3fcb67e8",
+      "source_line": 78,
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+        "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+        "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+        "bytes": 2888,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:eb9d0be0d85827d7",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "finding_line": 78,
+        "symbol": "preferences_"
+      },
+      "disposition": "PARTIAL"
+    }
+  ],
+  "limitations": [
+    "The exact GN target is a fuzz test and only its fuzztest aggregation group is testonly; whether the target is part of a product build is not established.",
+    "LLVMFuzzerTestOneInput sequentially calls setup, Put/Get helpers, and teardown; this translation unit has no demonstrated concurrent execution.",
+    "Product caller reachability, same-object overlap, synchronization protocol, attacker control, and security impact remain unproven."
+  ],
+  "overall_disposition": "PARTIAL",
+  "queue_states_changed": false,
+  "detector_or_test_changes": false
+}
