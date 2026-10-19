@@ -1,0 +1,26 @@
+{
+  "task": "T58",
+  "repository": "openharmony/distributedhardware_mechbody_controller",
+  "commit": "6e875a2dc5a7748bfdcbec1ccf9f1153574fa03e",
+  "git_tree": "d34e2a24b6e121f5a06a0b91d377c3558f803ca3",
+  "detector": "ohscanner.interface.ipc",
+  "detector_version": "0.12.12",
+  "profile": "light-ast",
+  "selected_source_files": 3,
+  "parse_status": "complete",
+  "diagnostic_count": 3,
+  "validated_vulnerabilities": 0,
+  "overall_disposition": "PARTIAL/BLOCK",
+  "a0_rows": [
+    {"id":"CR-0116","path":"interface/ets/mech_manager/src/ani_mech_manager_stub.cpp","line":50,"blob":"07ac99fc1a472821ed023e441f451b3a4565354f","sha256":"159aa4000f4aa4424278f5ecb5463d90aa0d022208a3e8a6d337f8e155098001","candidate_id":"ohscanner.interface.ipc:fdc6f4998f7956be","original_status":"not_testable","queue_status":"paused_pending_evidence"},
+    {"id":"CR-0117","path":"interface/napi/mech_manager/js_mech_manager_stub.cpp","line":43,"blob":"b216ec521401e853b7abd85ccec53c88ccec6f26","sha256":"bf3ebd48fd1457d0b2f50d1c0bf9483f6f17def869d92e7b4c664b59b3cddff6","candidate_id":"ohscanner.interface.ipc:2c65707d31461dbc","original_status":"not_testable","queue_status":"paused_pending_evidence"},
+    {"id":"CR-0118","path":"services/src/mechbody_controller_stub.cpp","line":123,"blob":"90538a2258427f76aea83600053a7c4168717ce6","sha256":"484ecfa436aecb26ce1240a350ce28eb177770c88975e436d29004ecbd7ece8f","candidate_id":"ohscanner.interface.ipc:01ac86b01f2a7bb9","original_status":"not_testable","queue_status":"paused_pending_evidence"}
+  ],
+  "findings": [
+    "Each dispatcher performs a custom interface-token comparison before member-function dispatch.",
+    "The custom token differs from the declared interface descriptor in the source declarations.",
+    "Product-shaped GN targets exist; exact product inclusion and caller reachability remain unknown.",
+    "No separate caller authorization or demonstrated unauthorized effect is established by the bound source evidence."
+  ],
+  "limitations": ["Source-level candidate audit only", "No product build or runtime reachability validation", "No validated vulnerability or safety conclusion"]
+}
