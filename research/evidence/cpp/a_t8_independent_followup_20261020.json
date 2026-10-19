@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "audit": "T8 independent A-line source and follow-up evidence review",
+  "date": "2026-10-20",
+  "checkout": "D:/openHarmonyScanner/worktrees/a-t8-followup-20261020",
+  "branch": "codex/a-t8-followup-20261020",
+  "base_commit": "983afb846ceaa34daf690c39e4918703c4ac99a7",
+  "role": "independent_test_only",
+  "modified_detector_tests_fixtures_or_development_code": false,
+  "cases": [
+    {
+      "case_id": "libtiff-CVE-2025-9900-D9",
+      "status": "PARTIAL",
+      "source_identity": {
+        "vulnerable": {"commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e", "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a", "path": "libtiff/tif_getimage.c", "blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e", "sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3"},
+        "fixed": {"commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99", "tree": "77361ef7262189e16a2010b5c333f6b275d17f09", "path": "libtiff/tif_getimage.c", "blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db", "sha256": "de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8"},
+        "verification": "commit/tree/blob and both file SHA-256 values independently matched local git objects"
+      },
+      "replay": {"detector": "ohscanner.cpp.bounds", "version": "0.2.0", "scope": ["libtiff/tif_getimage.c", "libtiff/tiffio.h"], "vulnerable": {"parse": "partial:2", "findings": 0, "coverage": "blocked"}, "fixed": {"parse": "partial:2", "findings": 0, "coverage": "blocked"}},
+      "boundary": "D7 synthetic/source-shape controls do not prove full-source detection. Partial zero findings are inconclusive.",
+      "developer_next": "Obtain parser-visible affected function context under the relevant source/build profile; change the detector only if a reproducible real-source miss remains.",
+      "test_next": "Independently replay both exact commits after a frozen development change and verify function coverage and same-root differential."
+    },
+    {
+      "case_id": "web_webview-CVE-2026-27648-D7",
+      "status": "PARTIAL",
+      "source_identity": {
+        "vulnerable": {"commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8", "tree": "4ed3b46721fbfe04059af4ddb18bcd5272ce4762", "path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc", "blob": "78e83fea67a2db3297cc59f07566a0c0b6153e7a", "sha256": "aa401c305ed30b70007917d97b726986a26aff2d00fb49649466533f4a48a920"},
+        "fixed": {"commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e", "tree": "a7769bf612be457e6e368f14ee355f3ea8ed2935", "path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc", "blob": "27e93e338ced03aeed6e7d892e29d4d0740f3653", "sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483"},
+        "verification": "both commit/tree/blob identities and source SHA-256 values independently matched the local audit mirror"
+      },
+      "status_reconciliation": "T7 correction supersedes D9's BLOCK reason that the vulnerable object was unavailable. D9's object-unavailable statement is accurate only for its narrower replay repository. T1 frozen baseline remains unchanged.",
+      "replay": {"full_translation_unit": "partial/blocked/0 findings on both sides", "source_derived_fragment": "historical v0.3.6 complete-parse evidence: 6 root findings vulnerable / 0 at patched root loops fixed; 6 unrelated ordinary-loop findings remain each side; 5.1 holdout consumed"},
+      "boundary": "Fragment evidence is not a full-file or current-version whole-source pass. Overall case remains PARTIAL.",
+      "developer_next": "Use verified upstream objects to investigate parser coverage and the six residual ordinary-loop candidates; keep root findings and residuals distinct.",
+      "test_next": "Re-run frozen full-file and exact function-scope evidence on the submitted change, retaining parse and detector coverage per scope."
+    },
+    {
+      "case_id": "cJSON-CVE-2026-67216-D8-compare-cost",
+      "status": "PARTIAL",
+      "fixed_comparison": "BLOCK",
+      "source": {"commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a", "tree": "3c07134d5a05aa546b15739e32503a2ca192d258", "path": "third_party/cjson/cJSON.c", "blob": "152b2caa479c9f448001652913c980a6dafb82e0", "sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb", "identity_verified": true},
+      "candidate": {"rule": "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005", "line": 3161, "parse": "partial", "run_coverage": "partial"},
+      "developer_next": "Find a trusted root-matched fixed revision and improve/justify whole-target parser coverage before claiming a differential.",
+      "test_next": "Verify exact fixed source provenance, candidate location, and safe/indexed/unrelated controls after the next frozen change."
+    },
+    {
+      "case_id": "cJSON-CVE-2026-67215-D8-tree-amplification",
+      "status": "PARTIAL",
+      "fixed_comparison": "BLOCK",
+      "source": {"commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a", "tree": "3c07134d5a05aa546b15739e32503a2ca192d258", "path": "third_party/cjson/cJSON_Utils.c", "blob": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74", "sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9", "identity_verified": true},
+      "candidate": {"rule": "ohcpp-resource-exhaustion-tree-amplification-candidate-004", "line": 861, "file_parse": "complete", "paired_run_coverage": "partial"},
+      "developer_next": "Find a trusted root-matched fixed revision; retain tree-amplification as distinct from compare-cost.",
+      "test_next": "Verify fixed-source root correspondence and re-run separate positive, safe, unrelated, and partial controls."
+    },
+    {
+      "case_id": "libpng-CVE-2026-46675-D10",
+      "status": "PARTIAL",
+      "source_identity": {
+        "vulnerable": {"commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d", "tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910", "path": "pngrutil.c", "blob": "a4eda54c8cb3d36cf1651dba159067b65030e3aa", "sha256": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e", "object_verified": true},
+        "fixed": {"commit_claim": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d", "blob_claim": "482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a", "sha256": "a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e", "byte_sha_and_blob_oid_verified_from_snapshot": true, "commit_tree_link_verified_in_local_object_store": false},
+        "synthetic_scan_tree": "c78da20c3ffe37b09653eaa3b49c5213745ac4bd"
+      },
+      "replay": {"detector": "ohscanner.cpp.resource_lifetime", "version": "0.4.0", "vulnerable": {"parse": "partial", "findings": 0, "coverage": "blocked"}, "fixed": {"parse": "partial", "findings": 0, "coverage": "blocked"}},
+      "boundary": "Zero findings on partial/blocked inputs are inconclusive; fixed bytes match the claimed blob, but local commit-to-tree provenance was not independently available.",
+      "developer_next": "Obtain complete parser-visible cross-function zstream ownership/caller context and the fixed commit object chain; do not alter rules without isolating a model gap.",
+      "test_next": "Re-verify upstream commit/tree/blob links and re-run complete source scope on a frozen detector version."
+    },
+    {
+      "case_id": "libpng-CVE-2026-33416",
+      "status": "PARTIAL",
+      "source_identity": {"vulnerable": {"commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d", "tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910"}, "fixed": {"commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33", "tree": "a28bb962645843af84063c77f574f6d88da79f76"}, "binding_reviewed_from": "T4/T6 evidence; not a new full object replay in T8"},
+      "replay": {"frozen_baseline": "2/0 at pngrtran.c:1187,1228 under older 0.1.9 run", "later_run": "0/0 with four files partial", "same_version_differential": false},
+      "boundary": "Version-mixed historic results are not a current pass; all four files were partial in the later run.",
+      "developer_next": "Expose cross-file ownership/type context, then replay vulnerable/fixed with one frozen detector version and source-bound controls.",
+      "test_next": "Check same-version root locations and exact source identities; keep historical versioned results separate."
+    },
+    {
+      "case_id": "A0-CR-0219-0223-source-availability",
+      "status": "PARTIAL",
+      "ids": ["CR-0219", "CR-0220", "CR-0221", "CR-0222", "CR-0223"],
+      "original_status": "not_reproduced",
+      "queue_status": "queued_not_reproduced",
+      "source_key": {"repository": "openharmony/systemabilitymgr_samgr", "commit_claim": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff", "tree_claim": "b7a89e95be788f2f2372258e341f7be842c7826d", "blob": "ae84d998c4d90c8c08d692b9020404593b58a0cc", "sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433"},
+      "available_file": {"path": "D:/openHarmonyScanner/openharmony/foundation/systemabilitymgr/samgr/services/samgr/native/source/system_ability_manager_stub.cpp", "bytes": 78212, "sha256_matches": true, "git_blob_oid_matches": true, "commit_tree_link_verified": false, "reported_lines": [464, 551, 668, 706, 1485]},
+      "artifact_hashes": {"report_result_run_meta": "all 15 files present and SHA-256 matched queue records"},
+      "triage_verdict_changed": false,
+      "developer_next": "Obtain or reconstruct a Git object chain that verifies the claimed commit/tree containing this exact blob, then assess each IPC boundary and permission path.",
+      "test_next": "Retain all five IDs and original states; after exact commit/tree provenance is resolved, independently check each line and same-file shared-context claims."
+    }
+  ],
+  "queue_audit": {"verifier": "research/deliveries/cpp/a0_triage_20261019/verify_triage.py", "overall_ok": true, "candidate_count": 345, "unique_ids": 345, "original_status_counts": {"not_reproduced": 9, "not_testable": 336}, "queue_status_counts": {"queued_not_reproduced": 9, "queued_first_batch": 5, "paused_pending_evidence": 331}, "five_ids_preserved": true},
+  "tests": {"command": "python -m unittest tests.detectors.test_cpp_memory_safety_detectors tests.detectors.test_cpp_resource_lifetime_detector -v", "passed": 27, "failed": 0},
+  "scope": {"base_commit": "983afb846ceaa34daf690c39e4918703c4ac99a7", "lane": "cpp", "detector_tests_fixtures_development_code_changed": false}
+}
