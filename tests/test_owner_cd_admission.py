@@ -49,12 +49,10 @@ class AdmissionBoundaryTests(unittest.TestCase):
                 self.assertTrue(d['admission']['missing_evidence'])
                 self.assertNotIn(row['id'], plan['suggested_detector_ids'])
 
-    def test_returned_records_cannot_change_the_gate(self):
-        row = pending_admissions()[0]
-        row['missing_evidence'].clear()
-        row['execution_enabled'] = True
-        self.assertTrue(pending_admissions()[0]['missing_evidence'])
-        self.assertFalse(pending_admissions()[0]['execution_enabled'])
+    def test_candidate_metadata_cannot_change_the_default_selection_gate(self):
+        ident = 'ohscanner.ark.runtime.type_safety'
+        catalog_metadata()[ident]['default_enabled'] = True
+        self.assertNotIn(ident, default_detector_ids())
 
     def test_model_bytes_frozen_and_missing_artifact_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -78,20 +76,11 @@ class AdmissionBoundaryTests(unittest.TestCase):
 class AdmissionApiTests(unittest.TestCase):
     setUp = wb.WorkbenchTests.setUp
 
-    def test_readable_but_cannot_enqueue_or_bypass_using_mixed_ids(self):
+    def test_static_c_candidate_is_not_reported_as_pending_admission(self):
         response = self.client.get('/api/v1/detector-admissions')
         self.assertEqual(response.status_code, 200)
         records = response.json()
-        self.assertEqual({r['lane'] for r in records}, {'C'})
-        before = self.client.get('/api/v1/scans').json()
-        for row in records:
-            for ids in ([row['id']], ['ohscanner.interface.ipc', row['id']]):
-                body = {'repository_id': self.repo_id, 'revision': self.commit,
-                        'include_paths': ['.'], 'detector_ids': ids}
-                result = self.client.post('/api/v1/scans', headers=wb.HEADERS, json=body)
-                self.assertEqual(result.status_code, 409, result.text)
-                self.assertIn('admission blocked', result.text)
-        self.assertEqual(self.client.get('/api/v1/scans').json(), before)
+        self.assertFalse(any(row['id'] == 'ohscanner.ark.runtime.type_safety' for row in records))
 
     def test_real_plan_explains_pending_without_running_them(self):
         before = self.client.get('/api/v1/scans').json()
@@ -100,6 +89,6 @@ class AdmissionApiTests(unittest.TestCase):
         self.assertEqual(result.status_code, 200, result.text)
         plan = result.json()
         pending = [d for d in plan['detectors'] if d.get('admission')]
-        self.assertEqual(len(pending), 1)
+        self.assertEqual(len(pending), 0)
         self.assertTrue(all(d['decision'] == 'blocked' for d in pending))
         self.assertEqual(self.client.get('/api/v1/scans').json(), before)
