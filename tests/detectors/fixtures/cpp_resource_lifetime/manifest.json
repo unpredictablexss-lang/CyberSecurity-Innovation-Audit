@@ -114,6 +114,13 @@
       "expected_max": 0,
       "sha256": "0af7cbf64412eed50eda11a03aa2bac9f74deaf53f3d99be4d2258489f3efe6b",
       "byte_length": 404
+    },
+    {
+      "fixture": "safe_recursive_compare_indexed_lookup.c",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "5382bb30650a01567187a54d407b7a7c70d1e231c8c616fbe621126658ab17a0",
+      "byte_length": 807
     }
   ]
 }

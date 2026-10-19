@@ -29,7 +29,7 @@ RULE_USE_AFTER_FREE = "ohcpp-resource-lifetime-use-after-free-candidate-002"
 RULE_RECURSIVE_CLEANUP = "ohcpp-resource-lifetime-recursive-cleanup-candidate-003"
 RULE_RECURSIVE_TREE_AMPLIFICATION = "ohcpp-resource-exhaustion-tree-amplification-candidate-004"
 RULE_RECURSIVE_COMPARE_COST = "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005"
-RULE_VERSION = "0.3.0"
+RULE_VERSION = "0.4.0"
 RULE_LINEAGE_ID = "A-RES-01:ohcpp-resource-lifetime-candidate"
 
 _ALLOC_RE = re.compile(
@@ -263,6 +263,22 @@ def _loop_regions(body: str, offset: int) -> List[Tuple[str, str, int, int]]:
 
 def _recursive_compare_candidates(unit: SourceUnit, masked: str) -> List[DetectorFinding]:
     findings: List[DetectorFinding] = []
+    functions = _named_function_shapes(masked)
+    function_bodies = {
+        function.name: masked[function.body_start:function.body_end]
+        for function in functions
+    }
+
+    def is_visible_linear_sibling_lookup(name: str) -> bool:
+        """Require a same-unit lookup implementation that visibly walks siblings."""
+        lookup_body = function_bodies.get(name)
+        if lookup_body is None:
+            return False
+        return bool(
+            re.search(r"\b(?:while|for)\s*\(", lookup_body)
+            and re.search(r"(?:->|\.)\s*next\b", lookup_body)
+        ) or bool(re.search(r"\b[A-Za-z_]\w*ForEach\s*\(", lookup_body))
+
     for function in _named_function_shapes(masked):
         body = masked[function.body_start:function.body_end]
         loop_matches = _loop_regions(body, function.body_start)
@@ -276,7 +292,9 @@ def _recursive_compare_candidates(unit: SourceUnit, masked: str) -> List[Detecto
             for assignment in assignment_re.finditer(loop_body):
                 args = assignment.group("args")
                 if re.search(rf"\b{re.escape(iterator)}\s*(?:->|\.)\s*[A-Za-z_]\w*", args):
-                    assignments.setdefault(assignment.group("result"), set()).add(assignment.group("lookup"))
+                    lookup = assignment.group("lookup")
+                    if is_visible_linear_sibling_lookup(lookup):
+                        assignments.setdefault(assignment.group("result"), set()).add(lookup)
             for call in re.finditer(rf"\b{re.escape(function.name)}\s*\((?P<args>[^;]*)\)", loop_body):
                 args = call.group("args")
                 for result, helpers in assignments.items():
