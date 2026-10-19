@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "case_id": "IBS5YG",
+  "manifest": {
+    "schema_version": 1,
+    "source_audit": {
+      "commit": "4c56210",
+      "path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
+      "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+      "bytes": 29553,
+      "status": "verified"
+    },
+    "cases": [
+      {
+        "case_id": "IBS5YG",
+        "rule_id": "ark.runtime.typedarray-store-type-origin",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "scope": [
+          "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+        ],
+        "profile": "light-ast",
+        "parent": {
+          "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+          "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+          "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+          "sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+          "bytes": 150433,
+          "status": "verified"
+        },
+        "fixed": {
+          "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+          "tree": "82af11ced4297818410ccf61906b703d25b69165",
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+          "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+          "sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+          "bytes": 150509,
+          "status": "verified"
+        }
+      }
+    ],
+    "unresolved_cases": [
+      {
+        "case_id": "CVE-2025-24304",
+        "status": "source_object_or_profile_obligation_open"
+      },
+      {
+        "case_id": "I7KZJ7",
+        "status": "source_object_or_profile_obligation_open"
+      },
+      {
+        "case_id": "IC7B8Q",
+        "status": "source_object_or_profile_obligation_open"
+      },
+      {
+        "case_id": "I7E0FM",
+        "status": "source_object_or_profile_obligation_open"
+      },
+      {
+        "case_id": "IAO7GO",
+        "status": "source_object_or_profile_obligation_open"
+      },
+      {
+        "case_id": "I7W51D",
+        "status": "source_object_or_profile_obligation_open"
+      },
+      {
+        "case_id": "IB8BCA",
+        "status": "source_object_or_profile_obligation_open"
+      },
+      {
+        "case_id": "IAO7E8",
+        "status": "source_object_or_profile_obligation_open"
+      }
+    ],
+    "fail_closed": true
+  },
+  "production_cli": {
+    "parent": {
+      "label": "parent",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "src.cli",
+        "ohscan-run",
+        "--repo-dir",
+        "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime",
+        "--repository",
+        "openharmony/arkcompiler_ets_runtime",
+        "--commit",
+        "2ea501258ab4155826b64f01b499b43d1911e0e2",
+        "--include",
+        "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "--detector",
+        "ohscanner.ark.runtime.type_safety",
+        "--json-out",
+        "research\\experiments\\ark_runtime\\c13_ark_real_replay_20261019\\reports\\ibs5yg-parent.json",
+        "--md-out",
+        "research\\experiments\\ark_runtime\\c13_ark_real_replay_20261019\\reports\\ibs5yg-parent.md"
+      ],
+      "returncode": 0,
+      "report": "research\\experiments\\ark_runtime\\c13_ark_real_replay_20261019\\reports\\ibs5yg-parent.json",
+      "same_root_diagnostics": [],
+      "diagnostic_count": 0,
+      "run_status": "blocked",
+      "task_status": "completed_with_limitations"
+    },
+    "fixed": {
+      "label": "fixed",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "src.cli",
+        "ohscan-run",
+        "--repo-dir",
+        "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime",
+        "--repository",
+        "openharmony/arkcompiler_ets_runtime",
+        "--commit",
+        "919e4fbb011f610427e788889083fa8e28d2f951",
+        "--include",
+        "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "--detector",
+        "ohscanner.ark.runtime.type_safety",
+        "--json-out",
+        "research\\experiments\\ark_runtime\\c13_ark_real_replay_20261019\\reports\\ibs5yg-fixed.json",
+        "--md-out",
+        "research\\experiments\\ark_runtime\\c13_ark_real_replay_20261019\\reports\\ibs5yg-fixed.md"
+      ],
+      "returncode": 0,
+      "report": "research\\experiments\\ark_runtime\\c13_ark_real_replay_20261019\\reports\\ibs5yg-fixed.json",
+      "same_root_diagnostics": [],
+      "diagnostic_count": 0,
+      "run_status": "blocked",
+      "task_status": "completed_with_limitations"
+    }
+  },
+  "expected_shape": {
+    "parent": "candidate",
+    "fixed": "no_same_root_candidate"
+  },
+  "observed_shape": {
+    "parent_same_root_count": 0,
+    "fixed_same_root_count": 0
+  },
+  "status": "blocked_partial_unknown",
+  "interpretation": "The pair is source-bound and the production CLI reports are retained. If either side is blocked/partial, a zero count is not a safe result."
+}
