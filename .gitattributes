@@ -6,5 +6,6 @@
 rules/cpp/vendor/** text eol=lf
 
 # Hash-bound holdout contracts must be byte-stable across Windows and WSL.
-research/evaluation/ark_runtime_holdout_20261019/*.json text eol=lf
-research/evaluation/ark_runtime_holdout_20261019/*.sha256 text eol=lf
+research/evaluation/ark_runtime_holdout_20261019/*.json -text
+research/evaluation/ark_runtime_holdout_20261019/*.sha256 -text
+
