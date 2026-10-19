@@ -12,42 +12,42 @@
   "parser": "src.parser.ast.parse_source",
   "parse_issue_count": 0,
   "detector_id": "ohscanner.cpp.path_traversal",
-  "detector_version": "0.1.0",
+  "detector_version": "0.2.0",
   "run_status": "completed",
   "file_outcomes": {
     "dataBusiness/contacts/src/contacts_data_ability.cpp": "complete"
   },
-  "elapsed_seconds": 0.1789615000016056,
+  "elapsed_seconds": 0.16874609999649692,
   "findings": [
     {
       "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
       "line": 789,
       "column": 19,
       "rule_id": "ohcpp-path-traversal-source-to-file-sink-candidate-001",
-      "rule_version": "0.1.0",
+      "rule_version": "0.2.0",
       "symbol": "HandleContactPortrait",
       "source_sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383",
-      "identity_quality": "partial"
+      "identity_quality": "complete"
     },
     {
       "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
       "line": 790,
       "column": 19,
       "rule_id": "ohcpp-path-traversal-source-to-file-sink-candidate-001",
-      "rule_version": "0.1.0",
+      "rule_version": "0.2.0",
       "symbol": "HandleContactPortrait",
       "source_sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383",
-      "identity_quality": "partial"
+      "identity_quality": "complete"
     },
     {
       "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
       "line": 794,
       "column": 15,
       "rule_id": "ohcpp-path-traversal-source-to-file-sink-candidate-001",
-      "rule_version": "0.1.0",
+      "rule_version": "0.2.0",
       "symbol": "HandleContactPortrait",
       "source_sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383",
-      "identity_quality": "partial"
+      "identity_quality": "complete"
     }
   ],
   "limitations": []
