@@ -567,6 +567,44 @@ class KnownDisclosedCveTests(unittest.TestCase):
         self.assertTrue(many_payload["observations_truncated"])
         self.assertEqual(4, many_payload["observations_omitted_count"])
 
+        # The record cap must not hide a later unresolved control-flow shape
+        # from the aggregate state.
+        first_eight = " ".join(
+            "VerifyPermission(PERMISSION_READ_PASTEBOARD);" for _ in range(8)
+        )
+        ninth_nested = (
+            "if (is_privileged) if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) "
+            "return denied;"
+        )
+        aggregate_body = first_eight + " " + ninth_nested + " GetPasteData();"
+        aggregate = _pasteboard_guard_observation(aggregate_body)
+        aggregate_payload = json.loads(aggregate.description)
+        self.assertLessEqual(len(aggregate_payload["observations"]), 8)
+        self.assertEqual(9, aggregate_payload["total_matches"])
+        self.assertEqual(1, aggregate_payload["observations_omitted_count"])
+        self.assertTrue(aggregate_payload["observations_truncated"])
+        self.assertEqual("unresolved_control_flow", aggregate_payload["state"])
+
+        routed_findings = self.run_source(
+            "PasteboardServiceStub::PasteboardServiceStub(){ "
+            "memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; } "
+            "int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); "
+            "if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; } "
+            "int OnGetPasteData(){ " + aggregate_body +
+            " reply.WriteParcelable(data); return 0; }",
+            "pasteboard_service_stub.cpp",
+        ).findings
+        candidate = next(item for item in routed_findings if item.symbol == "CVE-2025-27247")
+        self.assertEqual("unknown", next(
+            item.status for item in candidate.evidence_obligations if item.kind == "permission_guard"
+        ))
+        observation = json.loads(next(
+            item.description for item in candidate.evidence_obligations
+            if item.kind == "permission_guard_observation"
+        ))
+        self.assertEqual("unresolved_control_flow", observation["state"])
+        self.assertEqual(1, observation["observations_omitted_count"])
+
         long_tokens = [f"ARG{i}" + "X" * 44 for i in range(16)]
         long_call = "CheckPermission(" + ",".join(long_tokens) + ")"
         oversized_description = _pasteboard_guard_observation(" ".join(long_call + ";" for _ in range(8))).description

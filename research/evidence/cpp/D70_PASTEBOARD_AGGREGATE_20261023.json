@@ -1,0 +1,69 @@
+{
+  "task": "D70",
+  "base_commit": "3da049887999bd3cacb3d48da9ffa7baefa18ac5",
+  "detector": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.19.11",
+  "change": "Aggregate observation_state over every match; serialize at most eight observation records.",
+  "semantics": {
+    "permission_guard": "unknown",
+    "suppression": false,
+    "unresolved_matches_after_record_cap_affect_state": true
+  },
+  "ninth_match_probe": {
+    "top_level_permission_calls_before_nested": 8,
+    "brace_less_nested_permission_call_index": 9,
+    "total_matches": 9,
+    "serialized_observations_max": 8,
+    "observations_omitted_count": 1,
+    "observations_truncated": true,
+    "aggregate_state": "unresolved_control_flow",
+    "D52_candidate_retained": true,
+    "permission_guard": "unknown",
+    "result": "passed"
+  },
+  "existing_observation_limits_preserved": {
+    "max_observations": 8,
+    "max_tokens_per_observation": 16,
+    "max_snippet_characters": 120,
+    "max_description_characters": 4096,
+    "balanced_nested_call_span": true,
+    "truncation_markers": true
+  },
+  "focused_tests": {
+    "command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "passed": 33,
+    "failed": 0,
+    "diff_check": "passed"
+  },
+  "raw_replay": {
+    "report": "research/evidence/cpp/D70_PASTEBOARD_RAW67_REPLAY_20261023.json",
+    "sha256": "cd6472d26e136b366aec2bb6872ffd870694e60dbbf023ca411fb232ae4db3c6",
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "status": "completed_with_limitations",
+    "parse_status": {
+      "complete": 59,
+      "partial": 8,
+      "not_run": 1
+    },
+    "detector_status": "blocked",
+    "findings": 2,
+    "validated_vulnerability": 0
+  },
+  "retained_candidates": [
+    {
+      "cve": "CVE-2025-25212",
+      "file": "services/core/src/pasteboard_service.cpp",
+      "line": 241,
+      "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+    },
+    {
+      "cve": "CVE-2025-27247",
+      "file": "services/zidl/src/pasteboard_service_stub.cpp",
+      "line": 41,
+      "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+    }
+  ],
+  "claim_boundary": "Candidates remain source-only; CVE causality, permission semantics, product applicability, and vulnerability status are unknown."
+}

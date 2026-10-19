@@ -7,7 +7,7 @@ from .adapters.artifacts import classify_artifact, limitation_message
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.19.10"
+VERSION = "0.19.11"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -287,7 +287,9 @@ def _pasteboard_guard_observation(handler_body: str) -> EvidenceObligation:
             start, end, kind = token.start(), token.end(), "permission_token"
         match_text = handler_body[start:end]
         total_matches += 1
-        if total_matches <= 8 and (not _top_level_at(handler_body, start) or _inside_unbraced_control(handler_body, start)):
+        # Aggregate state must account for every match, even when its record
+        # falls beyond the serialized observation cap.
+        if not _top_level_at(handler_body, start) or _inside_unbraced_control(handler_body, start):
             unresolved_flow = True
         if len(candidates) < 8:
             raw_tokens = sorted({item.upper() for item in re.findall(r"\b[A-Za-z_]\w*\b", match_text)})
