@@ -1,0 +1,427 @@
+{
+  "assessment": "source_config_correlated_product_applicability_unknown",
+  "snapshot_root": "D:/OpenHarmony807",
+  "repos": {
+    "pasteboard": {
+      "path": "D:/OpenHarmony807/repos/distributeddatamgr_pasteboard",
+      "head": "e73747b227104e6743e957ce31040edf58507221",
+      "tree": "4128cdf9ad11d393c30f2839f43419e97a5a466d",
+      "branch": "master",
+      "worktree_clean": true
+    },
+    "productdefine_common": {
+      "path": "D:/OpenHarmony807/repos/productdefine_common",
+      "head": "c9317af4074bf0e445fe3fc3979e53c470687153",
+      "tree": "71f1c83472fbf4b0360bf9fbde23572c529cef21",
+      "branch": "master",
+      "worktree_clean": true
+    },
+    "vendor_hihope": {
+      "path": "D:/OpenHarmony807/repos/vendor_hihope",
+      "head": "b40eabbe69943126c65df1f9ff28057f56e93e46",
+      "tree": "aa95785ef84ddde8d1c3622e2c2d80d6b388caeb",
+      "branch": "master",
+      "worktree_clean": true
+    },
+    "device_hihope": {
+      "path": "D:/OpenHarmony807/repos/device_hihope",
+      "head": "9a1997c6c116f6eebaf537c0a1c69d7d6cfa3e35",
+      "tree": "1129825189f092bbc66157b94133706870b54d99",
+      "branch": "master",
+      "worktree_clean": true
+    }
+  },
+  "files": {
+    "pasteboard/profile/3701.json": {
+      "blob": "1d6310875099c4f7557639564fc849c598bbf790",
+      "sha256": "35671403dc3be890e47a6f75f2d390ba2e6a18c87e695a657ddde4b5f9fa63ac",
+      "bytes": 416
+    },
+    "pasteboard/profile/BUILD.gn": {
+      "blob": "a3f2121c122aabfa77a8caece8efa3e52817891f",
+      "sha256": "d89389aa168f4ef0a530dcbe0014f979319633677ed4a954f366683dae6044c5",
+      "bytes": 760
+    },
+    "pasteboard/etc/init/pasteboardservice.cfg": {
+      "blob": "bad8c665a6aaec041bfd70482ff8a61143493172",
+      "sha256": "94462316b2eb65c47eda973c86df79f1678f34e49340f6675e43dac36a97aa5a",
+      "bytes": 1774
+    },
+    "pasteboard/etc/init/BUILD.gn": {
+      "blob": "a4f6640755eade92eda80a9121d180a8cfc186d4",
+      "sha256": "23ccc2781e8bd1550ebec328aab6a0e30c8687704a8e0f6b522119743fdc5254",
+      "bytes": 881
+    },
+    "pasteboard/etc/init/pasteboardservice.rc": {
+      "blob": "a42e1f47c6735f5ab8dc3ae2575d656dbb2cb0de",
+      "sha256": "0b824b7f1d05a3437b9d3bf83ec8b404c5a26c398347d3c6b87caea5e614675d",
+      "bytes": 808
+    },
+    "pasteboard/services/IPasteboardService.idl": {
+      "blob": "533f99d4a4f4a2c65dad418d7cf66fd4245db5e8",
+      "sha256": "180175611bec3ef4ba42a527a61b53a7e30a7d65d15a7e404fd839447f3d78a7",
+      "bytes": 4648
+    },
+    "pasteboard/services/core/include/pasteboard_service.h": {
+      "blob": "e248b0162bbc3e28ed97d9833181377b79891ee7",
+      "sha256": "d9b3f06ab92833ad893c8093279706338bf0c8f7e1ab6eb1ed3617554240d296",
+      "bytes": 30974
+    },
+    "pasteboard/services/core/src/pasteboard_service.cpp": {
+      "blob": "fa6a08cdbaa18f34dcb6632babc70f22a700c860",
+      "sha256": "2f18a183e6eaa75f996d221fac735703a534d00cf294d122cbc6637bb28fa78a",
+      "bytes": 245309
+    },
+    "productdefine_common/inherit/2in1.json": {
+      "blob": "dc030a39993e919101db77ab56887f3ffa84f052",
+      "sha256": "4ebd6cb43d501fd34fa5d49af603d3e764243b4144c06c34f82447bc6e90793f",
+      "bytes": 26577
+    },
+    "productdefine_common/inherit/phone.json": {
+      "blob": "bbd37f51614611fa1686a546b0819d0cf7f715be",
+      "sha256": "9c0b7c20040f3fcc2b1fe4f5a90c32d0a75ff6d73fe4f8a0fd9954e406ead116",
+      "bytes": 28812
+    },
+    "productdefine_common/inherit/rich.json": {
+      "blob": "2cb27d51ed29cb72c19486732e1395f0b4ba3ab0",
+      "sha256": "f7fb7b340e555347de56af035e3b5883c18a60a6ea4d1e8502ee2a8cef3256c8",
+      "bytes": 35215
+    },
+    "productdefine_common/inherit/tablet.json": {
+      "blob": "11b67e562e2c30a8f9f6520a29ac067c0982f3be",
+      "sha256": "f7b6a77f9603c293515d6f788357dcf9a141359fb880883f0d97a1ff24017c95",
+      "bytes": 28808
+    },
+    "productdefine_common/inherit/wearable.json": {
+      "blob": "d84abafb20aa31b21c37d00758c3b0f19d593284",
+      "sha256": "179971f47e428510b11c450f7be9927121c81cd8286ac0ed8dba36a9925cbece",
+      "bytes": 26623
+    },
+    "productdefine_common/inherit/ipcamera.json": {
+      "blob": "ce0c05846759c5fbc3a6ea5f5740ffef58a0f831",
+      "sha256": "88c759a0a018f2592df0d31f7cfcfc49cbe349c70de13312085b794b1c93fa9b",
+      "bytes": 19230
+    },
+    "productdefine_common/inherit/tv.json": {
+      "blob": "3fd90e9613d40d8ccae51dfee3a46b74deac21a7",
+      "sha256": "085d20a6a9eef4ad9a15480dc87f075bb8bc397496a7681a2af2f8910a518f83",
+      "bytes": 20326
+    },
+    "productdefine_common/base/standard_system.json": {
+      "blob": "a462928364984affda43ca989a84d3c97678f9d1",
+      "sha256": "0e87fb91498128d3a9d9d3785474cfacc152789cb16b02a2ee818157891f130d",
+      "bytes": 3339
+    },
+    "vendor_hihope/2in1_core_system/config.json": {
+      "blob": "65c0832b4263e208f63a27ae8fdcf31cc68c122f",
+      "sha256": "81dbb0afbede97b793169de283b7102e601899c8b680f05fb2e9e0eb7546f128",
+      "bytes": 864
+    },
+    "vendor_hihope/dayu210/config.json": {
+      "blob": "6e2f432646cab1034286ea49df0009fd6aedd409",
+      "sha256": "3d220b939ee7353f7871e7d611bbc7c34989dde1c8309a3984f1a190d827f5be",
+      "bytes": 8426
+    },
+    "vendor_hihope/default_core_system/config.json": {
+      "blob": "a3797dd805b2dbe33b527b1fb9fec81409cc9852",
+      "sha256": "183f20f47c5b2467484293f901a4d9a9e85ab83214c0c69fd3aab652f92ef3c6",
+      "bytes": 789
+    },
+    "vendor_hihope/ipcamera_core_system/config.json": {
+      "blob": "781629b75c9d14c5ad5602b7b0874eab567ea4a5",
+      "sha256": "9dbdbe8d47dd94780d2c947386e222dcd53142ff6bc83f4f7c51bc3d552a0f6e",
+      "bytes": 3620
+    },
+    "vendor_hihope/nearlink_dk_3863/config.json": {
+      "blob": "bdfbd6ea37ed5ddc13c8931344092ab2ba51c673",
+      "sha256": "65e28a4d5a7753b31ec92dedabf048de5718c608e0dfc6727359fc9a232b85ea",
+      "bytes": 2441
+    },
+    "vendor_hihope/nearlink_dk_3863_xts/config.json": {
+      "blob": "6d1a64175da30384d09f8aecda945697b94b2d62",
+      "sha256": "6ad43cff272f0e019a186cedcc4675b515880d628ea5a3e0ae71d028c4914f93",
+      "bytes": 2638
+    },
+    "vendor_hihope/nearlink_dk_3863_xts_minimal/config.json": {
+      "blob": "c8447b1333ada4c153092afd6ca1523460ba3e76",
+      "sha256": "c1e0ca8683ea54cf44d30cc321b7b8c5012619ae268875fb7c7a333ac61d2fdf",
+      "bytes": 3474
+    },
+    "vendor_hihope/neptune_iotlink_demo/config.json": {
+      "blob": "5d85187e6f7f17af4bcc9cb30dcc9d31ffa97e6d",
+      "sha256": "8fc1fe4e9e1c5b6d54a1e6b007139e87237436636a4f5ce4a457e4e98c6e8d7d",
+      "bytes": 2489
+    },
+    "vendor_hihope/rk3568/config.json": {
+      "blob": "fc7fed801d07f19f05a752878e738d8d40f1bc01",
+      "sha256": "361502c686dd84100fc63d65d87885e953a9fb78b3b67aa3418729ab58214448",
+      "bytes": 11026
+    },
+    "vendor_hihope/rk3568_mini_system/config.json": {
+      "blob": "5a99f7b4646babdacbb86137fcf64caf5a054783",
+      "sha256": "ecb4c5c960d8aeae5ad308e11611c39b649cd8c3420d65d05f18aa779448ac8d",
+      "bytes": 1716
+    },
+    "vendor_hihope/tablet_core_system/config.json": {
+      "blob": "289b7e96110df7b5b91f8e539de9252548f6982c",
+      "sha256": "b8209e503920a559829d921b0c116ad06ef3791a79ee70a8baa4d364159ecb6b",
+      "bytes": 2169
+    },
+    "vendor_hihope/tv/config.json": {
+      "blob": "f77ddd7687cdd5eeb99c622e35a665b7923a396d",
+      "sha256": "47bd239d194d294e680b6d06e2e18ceb412cff727733782b3fe0707140593fe0",
+      "bytes": 769
+    },
+    "vendor_hihope/wearable/config.json": {
+      "blob": "56058b3d9794109a50da24636e65b877668e74d8",
+      "sha256": "3e7e63cffe531607970dbd0b29a5ae4a1ef541b9b566e9f3b42f59cbd8d30e70",
+      "bytes": 781
+    }
+  },
+  "hihope_products": [
+    {
+      "name": "2in1_core_system",
+      "config": "2in1_core_system/config.json",
+      "config_blob": "65c0832b4263e208f63a27ae8fdcf31cc68c122f",
+      "product_type": "standard",
+      "board": "rk3568",
+      "inherit": [
+        "productdefine/common/inherit/2in1.json"
+      ],
+      "inherited_profile_evidence": [
+        {
+          "profile": "inherit/2in1.json",
+          "blob": "dc030a39993e919101db77ab56887f3ffa84f052",
+          "direct_pasteboard_component": true
+        }
+      ],
+      "direct_includes_pasteboard": true
+    },
+    {
+      "name": "dayu210",
+      "config": "dayu210/config.json",
+      "config_blob": "6e2f432646cab1034286ea49df0009fd6aedd409",
+      "product_type": "standard",
+      "board": "rk3588",
+      "inherit": [
+        "productdefine/common/inherit/rich.json",
+        "productdefine/common/inherit/chipset_common.json"
+      ],
+      "inherited_profile_evidence": [
+        {
+          "profile": "inherit/rich.json",
+          "blob": "2cb27d51ed29cb72c19486732e1395f0b4ba3ab0",
+          "direct_pasteboard_component": true
+        },
+        {
+          "profile": "inherit/chipset_common.json",
+          "blob": "32760cf1d5aa4102a080ac40d3035ef9146f57c9",
+          "direct_pasteboard_component": false
+        }
+      ],
+      "direct_includes_pasteboard": true
+    },
+    {
+      "name": "default_core_system",
+      "config": "default_core_system/config.json",
+      "config_blob": "a3797dd805b2dbe33b527b1fb9fec81409cc9852",
+      "product_type": "standard",
+      "board": "rk3568",
+      "inherit": [
+        "productdefine/common/inherit/phone.json"
+      ],
+      "inherited_profile_evidence": [
+        {
+          "profile": "inherit/phone.json",
+          "blob": "bbd37f51614611fa1686a546b0819d0cf7f715be",
+          "direct_pasteboard_component": true
+        }
+      ],
+      "direct_includes_pasteboard": true
+    },
+    {
+      "name": "ipcamera_core_system",
+      "config": "ipcamera_core_system/config.json",
+      "config_blob": "781629b75c9d14c5ad5602b7b0874eab567ea4a5",
+      "product_type": "standard",
+      "board": "rk3568",
+      "inherit": [
+        "productdefine/common/inherit/ipcamera.json"
+      ],
+      "inherited_profile_evidence": [
+        {
+          "profile": "inherit/ipcamera.json",
+          "blob": "ce0c05846759c5fbc3a6ea5f5740ffef58a0f831",
+          "direct_pasteboard_component": false
+        }
+      ],
+      "direct_includes_pasteboard": false
+    },
+    {
+      "name": "nearlink_dk_3863",
+      "config": "nearlink_dk_3863/config.json",
+      "config_blob": "bdfbd6ea37ed5ddc13c8931344092ab2ba51c673",
+      "product_type": "mini",
+      "board": "nearlink_dk_3863",
+      "inherit": [],
+      "inherited_profile_evidence": [],
+      "direct_includes_pasteboard": false
+    },
+    {
+      "name": "nearlink_dk_3863_xts",
+      "config": "nearlink_dk_3863_xts/config.json",
+      "config_blob": "6d1a64175da30384d09f8aecda945697b94b2d62",
+      "product_type": "mini",
+      "board": "nearlink_dk_3863",
+      "inherit": [],
+      "inherited_profile_evidence": [],
+      "direct_includes_pasteboard": false
+    },
+    {
+      "name": "nearlink_dk_3863_xts_minimal",
+      "config": "nearlink_dk_3863_xts_minimal/config.json",
+      "config_blob": "c8447b1333ada4c153092afd6ca1523460ba3e76",
+      "product_type": "mini",
+      "board": "nearlink_dk_3863",
+      "inherit": [],
+      "inherited_profile_evidence": [],
+      "direct_includes_pasteboard": false
+    },
+    {
+      "name": "neptune_iotlink_demo",
+      "config": "neptune_iotlink_demo/config.json",
+      "config_blob": "5d85187e6f7f17af4bcc9cb30dcc9d31ffa97e6d",
+      "product_type": "mini",
+      "board": "neptune100",
+      "inherit": [],
+      "inherited_profile_evidence": [],
+      "direct_includes_pasteboard": false
+    },
+    {
+      "name": "rk3568",
+      "config": "rk3568/config.json",
+      "config_blob": "fc7fed801d07f19f05a752878e738d8d40f1bc01",
+      "product_type": "standard",
+      "board": "rk3568",
+      "inherit": [
+        "productdefine/common/inherit/rich.json",
+        "productdefine/common/inherit/chipset_common.json"
+      ],
+      "inherited_profile_evidence": [
+        {
+          "profile": "inherit/rich.json",
+          "blob": "2cb27d51ed29cb72c19486732e1395f0b4ba3ab0",
+          "direct_pasteboard_component": true
+        },
+        {
+          "profile": "inherit/chipset_common.json",
+          "blob": "32760cf1d5aa4102a080ac40d3035ef9146f57c9",
+          "direct_pasteboard_component": false
+        }
+      ],
+      "direct_includes_pasteboard": true
+    },
+    {
+      "name": "rk3568_mini_system",
+      "config": "rk3568_mini_system/config.json",
+      "config_blob": "5a99f7b4646babdacbb86137fcf64caf5a054783",
+      "product_type": "standard",
+      "board": "rk3568",
+      "inherit": [
+        "productdefine/common/base/standard_system.json"
+      ],
+      "inherited_profile_evidence": [
+        {
+          "profile": "base/standard_system.json",
+          "blob": "a462928364984affda43ca989a84d3c97678f9d1",
+          "direct_pasteboard_component": false
+        }
+      ],
+      "direct_includes_pasteboard": false
+    },
+    {
+      "name": "tablet_core_system",
+      "config": "tablet_core_system/config.json",
+      "config_blob": "289b7e96110df7b5b91f8e539de9252548f6982c",
+      "product_type": "standard",
+      "board": "rk3568",
+      "inherit": [
+        "productdefine/common/inherit/tablet.json"
+      ],
+      "inherited_profile_evidence": [
+        {
+          "profile": "inherit/tablet.json",
+          "blob": "11b67e562e2c30a8f9f6520a29ac067c0982f3be",
+          "direct_pasteboard_component": true
+        }
+      ],
+      "direct_includes_pasteboard": true
+    },
+    {
+      "name": "tv",
+      "config": "tv/config.json",
+      "config_blob": "f77ddd7687cdd5eeb99c622e35a665b7923a396d",
+      "product_type": "standard",
+      "board": "rk3568",
+      "inherit": [
+        "productdefine/common/inherit/tv.json"
+      ],
+      "inherited_profile_evidence": [
+        {
+          "profile": "inherit/tv.json",
+          "blob": "3fd90e9613d40d8ccae51dfee3a46b74deac21a7",
+          "direct_pasteboard_component": false
+        }
+      ],
+      "direct_includes_pasteboard": false
+    },
+    {
+      "name": "wearable",
+      "config": "wearable/config.json",
+      "config_blob": "56058b3d9794109a50da24636e65b877668e74d8",
+      "product_type": "standard",
+      "board": "rk3568",
+      "inherit": [
+        "productdefine/common/inherit/wearable.json"
+      ],
+      "inherited_profile_evidence": [
+        {
+          "profile": "inherit/wearable.json",
+          "blob": "d84abafb20aa31b21c37d00758c3b0f19d593284",
+          "direct_pasteboard_component": true
+        }
+      ],
+      "direct_includes_pasteboard": true
+    }
+  ],
+  "caller_permission_path": {
+    "idl_ipccode": 200,
+    "service_class": "PasteboardService : SystemAbility, PasteboardServiceStub",
+    "method_chain": [
+      "PasteboardService::GetPasteData",
+      "PasteboardService::GetPasteDataInner",
+      "PasteboardService::VerifyPermission"
+    ],
+    "source_file": "pasteboard/services/core/src/pasteboard_service.cpp",
+    "lines": {
+      "GetPasteData": "1316-1345",
+      "GetPasteDataInner": "1347-1375",
+      "caller_token": "1353-1358",
+      "VerifyPermission": "1020-1054"
+    },
+    "decision": "GetPasteDataInner reads IPCSkeleton::GetCallingTokenID and rejects with PERMISSION_VERIFICATION_ERROR when VerifyPermission is false, except developer-mode test-server condition. VerifyPermission accepts READ_PASTEBOARD or SECURE_PASTE grants, native/shell tokens, or Ctrl+V action. Otherwise SDK >=12 fails; legacy SDK below 12 falls through true. This is caller-side service enforcement in this source snapshot; actual runtime/product build unknown."
+  },
+  "build_provenance": {
+    "product_build_fingerprint": null,
+    "compiled_output_or_image_manifest": null,
+    "result": "unknown; source snapshot and product configuration only",
+    "scan_report": "D:/OpenHarmony807/scan-results/build/report.md",
+    "scan_report_note": "Research admission says C/D blocked and not production enabled; scan report is not a product build artifact."
+  },
+  "limits": [
+    "No concrete product build fingerprint, device/product image, compiled output manifest, or installed build record was found in D:/OpenHarmony807 root.",
+    "Generated Binder stub implementation is not checked in as ordinary source; IDL declares ipccode 200 and service class implements generated PasteboardServiceStub.",
+    "Source/config linkage does not prove that any specific build included or ran this component.",
+    "Service process permission and permission_acls describe service deployment credentials/grants; they are not the caller authorization check."
+  ]
+}
