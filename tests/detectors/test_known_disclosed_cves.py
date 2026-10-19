@@ -467,7 +467,7 @@ class KnownDisclosedCveTests(unittest.TestCase):
         }
         PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
         int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; }
-        int OnGetPasteData(){ if (!CheckPermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"""
+        int OnGetPasteData(){ if (!CheckPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"""
         vulnerable_run = self.run_source(vulnerable, "pasteboard_service.cpp")
         findings = {f.symbol for f in vulnerable_run.findings}
         self.assertIn("CVE-2025-25212", findings)
@@ -485,20 +485,29 @@ class KnownDisclosedCveTests(unittest.TestCase):
         valid = "int OnGetPasteData(){ if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
         valid_status = "int OnGetPasteData(){ if (CheckPermission(PERMISSION_READ_PASTEBOARD) != PERMISSION_GRANTED) { return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data); return 0; }"
         valid_throw = "int OnGetPasteData(){ if (VerifyPermission(PERMISSION_READ_PASTEBOARD) == PERMISSION_DENIED) throw NoPermission(); GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_paste_helper = "int OnGetPasteData(){ if (!CheckPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_has_paste_helper = "int OnGetPasteData(){ if (!HasPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_secure_permission = "int OnGetPasteData(){ if (VerifyPermission(SECURE_PASTE_PERMISSION) != PERMISSION_GRANTED) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_read_permission = "int OnGetPasteData(){ if (!CheckPermission(READ_PASTEBOARD_PERMISSION)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
         ignored = "int OnGetPasteData(){ VerifyPermission(PERMISSION_READ_PASTEBOARD); GetPasteData(); reply.WriteParcelable(data); return 0; }"
         mixed_condition = "int OnGetPasteData(){ if (!VerifyPermission(PERMISSION_READ_PASTEBOARD) && caller_is_special) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
         conditional_guard = "int OnGetPasteData(){ if (is_privileged) { if (!VerifyCallingPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data); return 0; }"
         after_read = "int OnGetPasteData(){ GetPasteData(); if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; reply.WriteParcelable(data); return 0; }"
         after_serialization = "int OnGetPasteData(){ GetPasteData(); reply.WriteParcelable(data); if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; return 0; }"
         dead_nested = "int OnGetPasteData(){ if (false) { if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        bluetooth_permission = "int OnGetPasteData(){ if (!CheckBluetoothPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        unrelated_permission = "int OnGetPasteData(){ if (!VerifyCallingPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        generic_permission = "int OnGetPasteData(){ if (!CheckPermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
 
         def has_candidate(body):
             findings = self.run_source(prefix + body, "pasteboard_service_stub.cpp").findings
             return "CVE-2025-27247" in {item.symbol for item in findings}
 
-        for guarded in (valid, valid_status, valid_throw):
+        for guarded in (valid, valid_status, valid_throw, valid_paste_helper, valid_has_paste_helper,
+                        valid_secure_permission, valid_read_permission):
             self.assertFalse(has_candidate(guarded), "a pre-read denial with an immediate exit is a syntactic suppression control")
-        for ineffective in (handler, ignored, mixed_condition, conditional_guard, after_read, after_serialization, dead_nested):
+        for ineffective in (handler, ignored, mixed_condition, conditional_guard, after_read, after_serialization, dead_nested,
+                            bluetooth_permission, unrelated_permission, generic_permission):
             with self.subTest(handler=ineffective):
                 self.assertTrue(has_candidate(ineffective), "ineffective or unreachable token must retain the candidate")
 

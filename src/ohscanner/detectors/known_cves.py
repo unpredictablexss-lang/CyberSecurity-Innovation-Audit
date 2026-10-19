@@ -6,7 +6,7 @@ from .adapters.artifacts import classify_artifact, limitation_message
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.19.5"
+VERSION = "0.19.6"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -65,7 +65,7 @@ def _if_statements(text: str):
         yield match.start(), text[opening + 1:closing], statement_start, statement_end
 
 def _is_permission_denial_condition(condition: str) -> bool:
-    permissions = r"(?:Check\w*Permission|Verify\w*Permission|Enforce\w*Permission|PermissionManager|CheckPermission)"
+    permissions = r"(?:Check\w*Permission|Verify\w*Permission|Enforce\w*Permission|PermissionManager|CheckPermission|HasPastePermission)"
     condition = condition.strip()
     while condition.startswith("("):
         closing = _matching_delimiter(condition, 0, "(", ")")
@@ -90,6 +90,14 @@ def _is_permission_denial_condition(condition: str) -> bool:
     suffix = re.sub(r"\s+", "", condition[closing + 1:]).upper()
     return (negated and not suffix) or (not negated and suffix in ("!=PERMISSION_GRANTED", "==PERMISSION_DENIED"))
 
+def _is_pasteboard_read_denial_condition(condition: str) -> bool:
+    if not _is_permission_denial_condition(condition):
+        return False
+    paste_permissions = r"(?<![A-Za-z0-9_])(?:PERMISSION_)?(?:READ_PASTEBOARD|SECURE_PASTE)(?:_PERMISSION)?(?![A-Za-z0-9_])"
+    paste_helpers = r"\b(?:CheckPastePermission|HasPastePermission)\s*\("
+    return bool(re.search(paste_permissions, condition, re.I)
+                or re.search(paste_helpers, condition, re.I))
+
 def _pasteboard_permission_denial_before(text: str, read_position: int) -> bool:
     """Recognize only a local denial condition with an immediate exit before the read.
 
@@ -103,7 +111,7 @@ def _pasteboard_permission_denial_before(text: str, read_position: int) -> bool:
     )
     for start, condition, statement_start, statement_end in statements:
         if (statement_end > read_position or not _top_level_at(text, start)
-                or not _is_permission_denial_condition(condition)):
+                or not _is_pasteboard_read_denial_condition(condition)):
             continue
         if any(dead_start < start < dead_end for dead_start, dead_end in dead_ranges):
             continue

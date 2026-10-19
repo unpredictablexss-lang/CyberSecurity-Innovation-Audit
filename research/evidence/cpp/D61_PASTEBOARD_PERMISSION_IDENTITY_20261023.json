@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "task_id": "D61",
+  "date": "2026-10-23",
+  "detector_id": "ohscanner.known_disclosed_cves",
+  "baseline": {
+    "D51_frozen_commit": "c8f83b82291e82b3272c73b943623336a3c836c3",
+    "D59_final_code_commit": "da0195610f2203ce97af1f43385f0091f040504e",
+    "D59_report_note_commit": "de5f6437b5047fb9b5b22f505713d24d0215b6a3",
+    "D59_version": "0.19.5"
+  },
+  "trigger": {
+    "D60_commit": "a9105a4f65cddb0b856242dbdbcb4f76a3741ccf",
+    "T59_mismatch_commit": "d17f582b0317bddf0c353f77969eaff6c4e80429",
+    "finding": "Top-level early denial for CheckBluetoothPermission(PERMISSION_NETWORK) or VerifyCallingPermission(PERMISSION_NETWORK) suppressed unconditional Pasteboard read candidate."
+  },
+  "matcher": {
+    "version": "0.19.6",
+    "retained_prior_constraints": [
+      "complete permission denial if condition",
+      "immediate return or throw at start of denial branch",
+      "top-level guard in checked function body",
+      "complete if statement ends before GetPasteData or it->second route",
+      "constant literal false wrapper is excluded"
+    ],
+    "recognized_read_permission_identifiers": [
+      "READ_PASTEBOARD",
+      "PERMISSION_READ_PASTEBOARD",
+      "READ_PASTEBOARD_PERMISSION",
+      "SECURE_PASTE",
+      "SECURE_PASTE_PERMISSION"
+    ],
+    "recognized_exact_source_helpers": [
+      "CheckPastePermission",
+      "HasPastePermission"
+    ],
+    "generic_permission_name_alone_suppresses": false,
+    "full_cfg_or_permission_proof": false
+  },
+  "source_basis": {
+    "first_CheckPastePermission_gate_commit": "e13a4ad3b72be7650ccb75de560790c04fa84795",
+    "later_HasPastePermission_commit": "cedbaeb9f55f524fb93c9d76ec06a4dc7b213ba7",
+    "READ_SECURE_VerifyPermission_commit": "721fecac75d9c51b0b145469abc6c9c78c17753e",
+    "lineage_reports": {
+      "D56_commit": "80c66080133f258d251eb3857e42d9231caffb4d",
+      "T56_commit": "f5fdfb8b2f342bb1b41b97a50efa2015a030d2f9"
+    },
+    "semantics_verified_for_all_consuming_targets": false
+  },
+  "controls": {
+    "CheckBluetoothPermission_NETWORK": "candidate_retained",
+    "VerifyCallingPermission_NETWORK": "candidate_retained",
+    "generic_CheckPermission_no_argument": "candidate_retained",
+    "VerifyPermission_READ_PASTEBOARD": "suppressed_syntactically",
+    "VerifyPermission_SECURE_PASTE_PERMISSION": "suppressed_syntactically",
+    "CheckPastePermission_exact_helper": "suppressed_syntactically",
+    "HasPastePermission_exact_helper": "suppressed_syntactically",
+    "earlier_D59_false_suppression_matrix": "candidate_retained as recorded by focused test suite"
+  },
+  "tests": {
+    "command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "result": "PASS",
+    "test_count": 32,
+    "strict_json_duplicate_key_check": "PASS",
+    "git_diff_check": "PASS",
+    "T61_independent_acceptance": "requested; not yet reported"
+  },
+  "candidate": {
+    "disposition": "source-only candidate",
+    "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+    "symbol": "CVE-2025-27247",
+    "D52_anchor": "services/zidl/src/pasteboard_service_stub.cpp:41:1 (OnRemoteRequest opening brace)",
+    "CVE_causality": "unknown",
+    "product_applicability": "unknown",
+    "product_vulnerability": "unknown",
+    "runtime_authorization": "unknown",
+    "fixed_device_status": "unknown"
+  },
+  "limitations": [
+    "Identifier recognition is not permission-token or permission-contract verification.",
+    "Historical CheckPastePermission and HasPastePermission semantics differ from later READ/SECURE grants.",
+    "No interprocedural trace into core getter, inherited framework policy, or product ACL.",
+    "No CFG, dominance, caller reachability, or macro expansion proof.",
+    "Local catch/unwind semantics for throw remain unmodeled."
+  ]
+}
