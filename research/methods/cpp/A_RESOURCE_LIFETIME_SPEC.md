@@ -1,6 +1,6 @@
 # A-RES-01 C/C++ resource lifetime specification
 
-更新：2026-10-17。`ohscanner.cpp.resource_lifetime` 0.1.0 是队友 A 的局部 Alloc/Acquire、Release、Alias、Null/Realloc 状态机研究 Detector。默认 `candidate/unassessed`。
+更新：2026-10-19。`ohscanner.cpp.resource_lifetime` 0.2.0 是队友 A 的局部 Alloc/Acquire、Release、Alias、Null/Realloc 状态机研究 Detector，并增加 0.2.0 的 CWE-674 registered-callback recursive-cleanup 候选规则。默认 `candidate/unassessed`。
 
 ## 触发
 
@@ -8,11 +8,13 @@
 - 释放后直接 `*p`、`p->`、`p[i]` 或 `memcpy/memmove/memset(p, ...)`：CWE-416 use-after-free candidate。
 - `p2=p` 的局部 alias 跟随同一资源状态。
 - `p=nullptr` 或重新分配使旧状态失效。
+- A-RES-01 规则 `ohcpp-resource-lifetime-recursive-cleanup-candidate-003`：同一 translation unit 内，函数指针成员已绑定到本地实现、调用点回到资源释放器，且迭代子对象清理链可再次触发该回调时，提出 CWE-674 候选。能看到回调解绑或简单显式深度上限时抑制候选。
 
 ## 排除和 unknown
 
 - `if/else/loop/goto/label/return/break/continue` 之间的状态不拼接；跨分支/标签路径保持 unknown，避免把互斥释放误报为 double-free。
-- 跨函数 ownership、容器、字段、回调、异常、析构时序、自定义 allocator、move/escape 均未建模。
+- 通用跨函数 ownership、容器/字段别名、异常、析构时序、自定义 allocator、move/escape 均未建模。
+- callback-cycle 只做同文件 may-call 扩展；同名字段可能属于不同结构体，回调实参、字段别名、条件可行性、真正深度上限与调用入口均未解析。候选不证明递归可达或攻击者控制；复杂的边界保护也可能令静态过滤不准确。
 - partial/failed source 和资源预算超限 fail-closed；无 finding 不是 safe。
 
 ## Controls

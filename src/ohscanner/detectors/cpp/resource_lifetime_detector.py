@@ -25,7 +25,8 @@ from .memory_safety import (
 
 RULE_DOUBLE_FREE = "ohcpp-resource-lifetime-double-free-candidate-001"
 RULE_USE_AFTER_FREE = "ohcpp-resource-lifetime-use-after-free-candidate-002"
-RULE_VERSION = "0.1.0"
+RULE_RECURSIVE_CLEANUP = "ohcpp-resource-lifetime-recursive-cleanup-candidate-003"
+RULE_VERSION = "0.2.0"
 RULE_LINEAGE_ID = "A-RES-01:ohcpp-resource-lifetime-candidate"
 
 _ALLOC_RE = re.compile(
@@ -135,6 +136,135 @@ def _finding(
     )
 
 
+def _recursive_cleanup_finding(unit: SourceUnit, position: int, symbol: str) -> DetectorFinding:
+    line, column = line_column(unit.text, position)
+    return DetectorFinding(
+        file=unit.path,
+        line=line,
+        column=column,
+        rule_id=RULE_RECURSIVE_CLEANUP,
+        message=(
+            f"Candidate only: `{symbol}` reaches resource cleanup again through a registered callback cycle; "
+            "attacker-controlled nesting and a safe recursion bound are not proven."
+        ),
+        evidence_type="syntax",
+        candidate_cwe="CWE-674",
+        symbol=symbol,
+        evidence_obligations=(
+            EvidenceObligation("callback_binding", "Bind the invoked callback to its concrete implementation.", "unknown"),
+            EvidenceObligation("recursive_cleanup_path", "Prove the callback cycle is reachable for nested owned resources.", "unknown"),
+            EvidenceObligation("input_depth_control", "Establish attacker control of nesting and absence of an effective bound.", "missing"),
+            EvidenceObligation("entry_or_privilege_boundary", "Establish a realistic reachable entry and privilege boundary.", "missing"),
+            EvidenceObligation("cia_impact", "Establish concrete availability impact in the target component.", "missing"),
+        ),
+        consequence_impact="availability",
+        consequence_cwe="CWE-674",
+        source_sha256=unit.sha256,
+        rule_version=RULE_VERSION,
+        rule_lineage_id=RULE_LINEAGE_ID,
+        identity_quality="partial",
+    )
+
+
+_DIRECT_CALL_RE = re.compile(r"\b([A-Za-z_]\w*)\s*\(")
+_CALLBACK_INVOKE_RE = re.compile(r"(?:->|\.)\s*(?P<field>[A-Za-z_]\w*)\s*\(")
+_CALLBACK_ASSIGN_RE = re.compile(
+    r"(?:->|\.)\s*(?P<field>[A-Za-z_]\w*)\s*=\s*(?P<target>[A-Za-z_]\w*)\b"
+)
+
+
+def _recursive_cleanup_candidates(
+    unit: SourceUnit, masked: str, functions: Sequence[object]
+) -> List[DetectorFinding]:
+    """Find same-translation-unit callback cycles that return to resource cleanup.
+
+    This is a bounded may-call model: it only emits when a callback is assigned to
+    a member function pointer, that callback can call a resource releaser, and a
+    releaser-containing function can reach the callback invocation site. A visible
+    reset or depth guard in the releaser suppresses the candidate.
+    """
+    by_name: Dict[str, object] = {}
+    for function in functions:
+        name = getattr(function, "name")
+        previous = by_name.get(name)
+        # C files commonly have a full implementation and a conditional stub
+        # with the same name. Analyze the largest body conservatively.
+        if previous is None or len(getattr(function, "text")) > len(getattr(previous, "text")):
+            by_name[name] = function
+    direct: Dict[str, Set[str]] = {name: set() for name in by_name}
+    callback_fields: Dict[str, Set[str]] = {name: set() for name in by_name}
+    registered: Dict[str, Set[str]] = {}
+    for name, function in by_name.items():
+        body = masked[function.body_start:function.body_end]
+        direct[name].update(match.group(1) for match in _DIRECT_CALL_RE.finditer(body) if match.group(1) in by_name)
+        callback_fields[name].update(match.group("field") for match in _CALLBACK_INVOKE_RE.finditer(body))
+        for match in _CALLBACK_ASSIGN_RE.finditer(body):
+            if match.group("target") in by_name:
+                registered.setdefault(match.group("field"), set()).add(match.group("target"))
+
+    calls = {name: set(targets) for name, targets in direct.items()}
+    for name, fields in callback_fields.items():
+        for field in fields:
+            calls[name].update(registered.get(field, ()))
+
+    def reachable(start: str) -> Set[str]:
+        reached: Set[str] = set()
+        pending = [start]
+        while pending:
+            current = pending.pop()
+            if current in reached:
+                continue
+            reached.add(current)
+            pending.extend(calls.get(current, ()) - reached)
+        return reached
+
+    findings: List[DetectorFinding] = []
+    for field, callbacks in registered.items():
+        invokers = {name for name, fields in callback_fields.items() if field in fields}
+        if not invokers:
+            continue
+        for callback in callbacks:
+            for releaser, function in by_name.items():
+                body = masked[function.body_start:function.body_end]
+                releases_resource = bool(re.search(r"\b(?:free|[A-Za-z_]\w*(?:free|destroy|release))\s*\(|\bdelete\b", body, re.IGNORECASE))
+                iterates_children = bool(re.search(r"\b(?:while|for)\s*\(", body))
+                if not releases_resource or not iterates_children or callback not in reachable(releaser):
+                    continue
+                releaser_reach = reachable(releaser)
+                relevant_invokers = invokers & releaser_reach
+                if not relevant_invokers:
+                    continue
+                if re.search(r"\b(?:depth|level|recursion|nesting)\b", body, re.IGNORECASE) and re.search(
+                    r"(?:>|>=|==)\s*(?:\d+|[A-Z_]\w*)|(?:\d+|[A-Z_]\w*)\s*(?:<|<=)\s*\w*(?:depth|level|recursion|nesting)",
+                    body,
+                    re.IGNORECASE,
+                ):
+                    continue
+                # Locate the first direct call that reaches the callback invocation.
+                region = masked[function.body_start:function.body_end]
+                call_positions = []
+                for callee in direct[releaser] & relevant_invokers:
+                    call = re.search(rf"\b{re.escape(callee)}\s*\(", region)
+                    if call:
+                        call_positions.append((call.start(), callee))
+                if not call_positions:
+                    # The invoking helper may be one or more direct calls away.
+                    for callee in direct[releaser] & releaser_reach:
+                        call = re.search(rf"\b{re.escape(callee)}\s*\(", region)
+                        if call and (reachable(callee) & relevant_invokers):
+                            call_positions.append((call.start(), callee))
+                if not call_positions:
+                    continue
+                call_position = min(call_positions)[0]
+                # A callback reset before the cleanup call is a meaningful local
+                # guard (including iterative teardown implementations).
+                reset = re.search(rf"(?:->|\.)\s*{re.escape(field)}\s*=\s*(?:NULL|nullptr|0)\b", region)
+                if reset and reset.start() < call_position:
+                    continue
+                findings.append(_recursive_cleanup_finding(unit, function.body_start + call_position, releaser))
+    return _stable_unique(findings)
+
+
 def _contains_use(masked: str, position: int, name: str) -> Optional[Tuple[int, str]]:
     escaped = re.escape(name)
     patterns = (
@@ -201,6 +331,7 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
 
     masked = mask_comments_and_literals(unit.text)
     functions = function_shapes(masked)
+    findings.extend(_recursive_cleanup_candidates(unit, masked, functions))
     for function in functions:
         states: Dict[str, str] = {}
         aliases: Dict[str, str] = {}
