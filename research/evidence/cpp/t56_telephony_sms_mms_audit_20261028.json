@@ -1,0 +1,412 @@
+{
+  "schema_version": "a-line-test-audit-v1",
+  "audit_id": "T56",
+  "created_date": "2026-10-28",
+  "status": "completed_with_limitations",
+  "disposition": "PARTIAL/BLOCK",
+  "source": {
+    "repository": "openharmony/telephony_sms_mms",
+    "commit": "41cef006c6c4b7fdc9ee0bb8d9ae659ee2ebbfd8",
+    "tree": "c7815e6f0b9033ca71cf4edc119a2e5b8393b85a",
+    "provenance": "local monorepo project-object database; independent detached worktree at D:\\openHarmonyScanner\\tmp\\t56-telephony-source-20261028",
+    "original_A0_snapshot_sha256": "a8ae4607362a6bd3d6a4bfa90f0d7b673399069f90eab6952e4bd403b73cac46",
+    "note": "A0 snapshot hash is preserved as provenance; current CLI computes scope-specific snapshot hashes, so they are recorded per replay and are not compared as equivalent whole-repository hashes."
+  },
+  "source_files": [
+    {
+      "path": "services/sms/include/gsm/gsm_sms_cb_handler.h",
+      "blob": "8e207a69196444a873ac6e0dec96c4f2e873ab01",
+      "sha256": "05bf26f1501a56050e79bed0867528c6fb1411a150bb11307f4e77909efadeca",
+      "bytes": 3483
+    },
+    {
+      "path": "services/sms/gsm/gsm_sms_cb_handler.cpp",
+      "blob": "0f98901340d8b8e7b99b9903bbb8702c3c475725",
+      "sha256": "d606285cbfcf4b666d04b3b36bbfc5d77711bce23b2cbd27c90290daa00d6564",
+      "bytes": 15323
+    },
+    {
+      "path": "BUILD.gn",
+      "blob": "89c6e35ea2ded934eb06801e96165e8042cd8442",
+      "sha256": "3fde972be85fae908c24b92f7d1984a61f7191c6b86bc7d5d2e5e8ecf674038e",
+      "bytes": 7194
+    },
+    {
+      "path": "test/unittest/BUILD.gn",
+      "blob": "8535c6ebfef5df465970fadd9b0b287e62c27161",
+      "sha256": "8ecbbdc18587302d9ee1a3906dec07c2b8e50a4ecc4466225833fd6cecfed90a",
+      "bytes": 2290
+    },
+    {
+      "path": "test/BUILD.gn",
+      "blob": "c9c5cd6e9dd0cc2c5c818dc4620d00b6d78a1f56",
+      "sha256": "83402b234acea0d20e30cb4d78946427f60214954c6468375480d50003f5416c",
+      "bytes": 1292
+    },
+    {
+      "path": "test/gtest/BUILD.gn",
+      "blob": "e11274463e3133d9ad14934b71c13897204e3e06",
+      "sha256": "9b74dfcc4b2671c7ea8140bc1fb40064b66d0b2f5106eecdb32a3ed1f94b2e73",
+      "bytes": 3923
+    },
+    {
+      "path": "test/unittest/sms_delivery_callback_test.cpp",
+      "blob": "b1197c4e92af182977277f4198ae4b64695d4244",
+      "sha256": "a4a1962580f3acdcdbb77fba3f53180f1c0cc79e976209cc360ed3dafe487270",
+      "bytes": 1299
+    },
+    {
+      "path": "test/unittest/sms_delivery_callback_test.h",
+      "blob": "cdc08050e971015cf593284d847db28bf0eda537",
+      "sha256": "8bb22dbec8cce58e46fd2b22119d45af27654176c6e66c482b133e43670ef854",
+      "bytes": 1333
+    },
+    {
+      "path": "test/unittest/sms_send_callback_test.cpp",
+      "blob": "8d835581cb80564ffda030a85041320964013996",
+      "sha256": "d2e37e8b2b3b39242ba1f9ac46d74d9e01602ed5e2243d3de5244956b32c104c",
+      "bytes": 1409
+    },
+    {
+      "path": "test/unittest/sms_send_callback_test.h",
+      "blob": "4d0057277124a8ca7487f68778a18920a3b678a7",
+      "sha256": "96df69ea2e9fec171dcba49cf348ca114811306aa1f4497c7d24be92da7f7171",
+      "bytes": 1256
+    },
+    {
+      "path": "interfaces/innerkits/i_delivery_short_message_callback.h",
+      "blob": "cffc501894532467d4c3c144d6aa4f1ded3b229f",
+      "sha256": "67dfc1d9b6332c982bfe26263b9eac80096319dd6d39e87f3e10c04d86239e1f",
+      "bytes": 1346
+    },
+    {
+      "path": "interfaces/innerkits/i_send_short_message_callback.h",
+      "blob": "75a0b44f3d8b4bd7ec127a8f0726d87813cd584d",
+      "sha256": "3db60f14a23df919f9fe69130e641a8bf916a5e10f8bfe5b40d0489ea548aea0",
+      "bytes": 2018
+    },
+    {
+      "path": "frameworks/native/sms/src/delivery_short_message_callback_stub.cpp",
+      "blob": "fe5a2a6f451199595a4ba44a0c04f445e6cca2a1",
+      "sha256": "6aa83ef34ba84dc5eb5c4826d097bec4c6b78b50aa1750ecf033561f12a6d9bb",
+      "bytes": 1684
+    },
+    {
+      "path": "frameworks/native/sms/src/send_short_message_callback_stub.cpp",
+      "blob": "72d5cf2a3159c1de958bb9db5cec20e3d82a3e15",
+      "sha256": "8bd007dd9e581eea3e12f8f89392d162a5e3c719f1eebe6dd643f4679a676ed1",
+      "bytes": 1684
+    }
+  ],
+  "a0_reconciliation": {
+    "queue": "research/deliveries/cpp/a0_triage_20261019/queue.json",
+    "row_count": 345,
+    "unique_ids": 345,
+    "original_status_counts": {
+      "not_reproduced": 9,
+      "not_testable": 336
+    },
+    "selected_rows": [
+      {
+        "queue_id": "CR-0343",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:b23348aa59ff657d",
+        "path": "services/sms/include/gsm/gsm_sms_cb_handler.h",
+        "line": 39,
+        "blob": "8e207a69196444a873ac6e0dec96c4f2e873ab01",
+        "source_sha256": "05bf26f1501a56050e79bed0867528c6fb1411a150bb11307f4e77909efadeca",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL/BLOCK"
+      },
+      {
+        "queue_id": "CR-0344",
+        "candidate_id": "ohscanner.interface.ipc:9ec85d810df26dd0",
+        "path": "test/unittest/sms_delivery_callback_test.cpp",
+        "line": 31,
+        "blob": "b1197c4e92af182977277f4198ae4b64695d4244",
+        "source_sha256": "a4a1962580f3acdcdbb77fba3f53180f1c0cc79e976209cc360ed3dafe487270",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "detector": "ohscanner.interface.ipc",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL/BLOCK"
+      },
+      {
+        "queue_id": "CR-0345",
+        "candidate_id": "ohscanner.interface.ipc:4b84e7ca455a55fa",
+        "path": "test/unittest/sms_send_callback_test.cpp",
+        "line": 33,
+        "blob": "8d835581cb80564ffda030a85041320964013996",
+        "source_sha256": "d2e37e8b2b3b39242ba1f9ac46d74d9e01602ed5e2243d3de5244956b32c104c",
+        "rule_id": "ipc.relay.descriptor-boundary",
+        "detector": "ohscanner.interface.ipc",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL/BLOCK"
+      }
+    ],
+    "mutated": false,
+    "queue_status_counts": {
+      "paused_pending_evidence": 331,
+      "queued_first_batch": 5,
+      "queued_not_reproduced": 9
+    }
+  },
+  "cli_replays": [
+    {
+      "key": "shared_ptr_header",
+      "json": "research/evidence/cpp/t56_telephony_sms_cli_20261028.json",
+      "markdown": "research/evidence/cpp/t56_telephony_sms_cli_20261028.md",
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "version": "0.5.1",
+      "commit": "41cef006c6c4b7fdc9ee0bb8d9ae659ee2ebbfd8",
+      "tree": "c7815e6f0b9033ca71cf4edc119a2e5b8393b85a",
+      "snapshot_sha256": "5f14451c0a04b7add4a406e300d538a34b163fcb7bfa773114ce258de8e6beb9",
+      "scope": [
+        "services/sms/include/gsm/gsm_sms_cb_handler.h"
+      ],
+      "parse_status": {
+        "complete": 1
+      },
+      "file_analysis": [
+        {
+          "file": "services/sms/include/gsm/gsm_sms_cb_handler.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        }
+      ],
+      "analysis_coverage": {
+        "scope_mode": "per_file",
+        "status": "complete",
+        "applicable_files": 1,
+        "analyzed_files": [
+          "services/sms/include/gsm/gsm_sms_cb_handler.h"
+        ],
+        "partially_inspected_files": [],
+        "source_sha256": {
+          "services/sms/include/gsm/gsm_sms_cb_handler.h": "05bf26f1501a56050e79bed0867528c6fb1411a150bb11307f4e77909efadeca"
+        },
+        "unexamined": [],
+        "inspected_files": [
+          "services/sms/include/gsm/gsm_sms_cb_handler.h"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 1,
+          "partial": 0,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": []
+      },
+      "finding_count": 0,
+      "status": "completed",
+      "interpretation": "Historical CR-0343 was v0.2.0-proposed; current v0.5.1 reports no candidate. Full target header parse, not a safety conclusion.",
+      "command": "python -m src.cli.main ohscan-run --repo-dir D:\\openHarmonyScanner\\tmp\\t56-telephony-source-20261028 --repository openharmony/telephony_sms_mms --commit 41cef006c6c4b7fdc9ee0bb8d9ae659ee2ebbfd8 --include services/sms/include/gsm/gsm_sms_cb_handler.h --detector ohscanner.cpp.shared_ptr_race --json-out t56_telephony_sms_cli_20261028.json --md-out t56_telephony_sms_cli_20261028.md"
+    },
+    {
+      "key": "ipc_test_callbacks",
+      "json": "research/evidence/cpp/t56_telephony_sms_ipc_cli_20261028.json",
+      "markdown": "research/evidence/cpp/t56_telephony_sms_ipc_cli_20261028.md",
+      "detector": "ohscanner.interface.ipc",
+      "version": "0.12.12",
+      "commit": "41cef006c6c4b7fdc9ee0bb8d9ae659ee2ebbfd8",
+      "tree": "c7815e6f0b9033ca71cf4edc119a2e5b8393b85a",
+      "snapshot_sha256": "e378151b89f2a447761618f86e7d855d54624aeb294a35b476c4b32cb81d6aa4",
+      "scope": [
+        "test/unittest/sms_delivery_callback_test.cpp",
+        "test/unittest/sms_send_callback_test.cpp"
+      ],
+      "parse_status": {
+        "complete": 2
+      },
+      "file_analysis": [
+        {
+          "file": "test/unittest/sms_delivery_callback_test.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "test/unittest/sms_send_callback_test.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        }
+      ],
+      "analysis_coverage": {
+        "scope_mode": "per_file",
+        "status": "complete",
+        "applicable_files": 2,
+        "analyzed_files": [
+          "test/unittest/sms_delivery_callback_test.cpp",
+          "test/unittest/sms_send_callback_test.cpp"
+        ],
+        "partially_inspected_files": [],
+        "source_sha256": {
+          "test/unittest/sms_delivery_callback_test.cpp": "a4a1962580f3acdcdbb77fba3f53180f1c0cc79e976209cc360ed3dafe487270",
+          "test/unittest/sms_send_callback_test.cpp": "d2e37e8b2b3b39242ba1f9ac46d74d9e01602ed5e2243d3de5244956b32c104c"
+        },
+        "unexamined": [],
+        "inspected_files": [
+          "test/unittest/sms_delivery_callback_test.cpp",
+          "test/unittest/sms_send_callback_test.cpp"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 2,
+          "partial": 0,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": []
+      },
+      "finding_count": 0,
+      "status": "completed",
+      "interpretation": "Both files parse completely. The current IPC detector excludes both test roots from product candidate analysis; zero findings are not a product safety result.",
+      "command": "python -m src.cli.main ohscan-run --repo-dir D:\\openHarmonyScanner\\tmp\\t56-telephony-source-20261028 --repository openharmony/telephony_sms_mms --commit 41cef006c6c4b7fdc9ee0bb8d9ae659ee2ebbfd8 --include test/unittest/sms_delivery_callback_test.cpp --include test/unittest/sms_send_callback_test.cpp --detector ohscanner.interface.ipc --json-out t56_telephony_sms_ipc_cli_20261028.json --md-out t56_telephony_sms_ipc_cli_20261028.md"
+    },
+    {
+      "key": "shared_ptr_with_implementation_context",
+      "json": "research/evidence/cpp/t56_telephony_sms_sharedptr_context_cli_20261028.json",
+      "markdown": "research/evidence/cpp/t56_telephony_sms_sharedptr_context_cli_20261028.md",
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "version": "0.5.1",
+      "commit": "41cef006c6c4b7fdc9ee0bb8d9ae659ee2ebbfd8",
+      "tree": "c7815e6f0b9033ca71cf4edc119a2e5b8393b85a",
+      "snapshot_sha256": "45d9039ce5a91423d83daf8cc98daaf5dab4d777f4e4acca40419f3cfa8c4f93",
+      "scope": [
+        "services/sms/include/gsm/gsm_sms_cb_handler.h",
+        "services/sms/gsm/gsm_sms_cb_handler.cpp"
+      ],
+      "parse_status": {
+        "complete": 2
+      },
+      "file_analysis": [
+        {
+          "file": "services/sms/gsm/gsm_sms_cb_handler.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/sms/include/gsm/gsm_sms_cb_handler.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        }
+      ],
+      "analysis_coverage": {
+        "scope_mode": "per_file",
+        "status": "complete",
+        "applicable_files": 2,
+        "analyzed_files": [
+          "services/sms/gsm/gsm_sms_cb_handler.cpp",
+          "services/sms/include/gsm/gsm_sms_cb_handler.h"
+        ],
+        "partially_inspected_files": [],
+        "source_sha256": {
+          "services/sms/gsm/gsm_sms_cb_handler.cpp": "d606285cbfcf4b666d04b3b36bbfc5d77711bce23b2cbd27c90290daa00d6564",
+          "services/sms/include/gsm/gsm_sms_cb_handler.h": "05bf26f1501a56050e79bed0867528c6fb1411a150bb11307f4e77909efadeca"
+        },
+        "unexamined": [],
+        "inspected_files": [
+          "services/sms/gsm/gsm_sms_cb_handler.cpp",
+          "services/sms/include/gsm/gsm_sms_cb_handler.h"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 2,
+          "partial": 0,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": []
+      },
+      "finding_count": 0,
+      "status": "completed",
+      "interpretation": "Context replay adds production implementation TU; both selected C++ units parse completely, zero diagnostics.",
+      "command": "python -m src.cli.main ohscan-run --repo-dir D:\\openHarmonyScanner\\tmp\\t56-telephony-source-20261028 --repository openharmony/telephony_sms_mms --commit 41cef006c6c4b7fdc9ee0bb8d9ae659ee2ebbfd8 --include services/sms/include/gsm/gsm_sms_cb_handler.h --include services/sms/gsm/gsm_sms_cb_handler.cpp --detector ohscanner.cpp.shared_ptr_race --json-out t56_telephony_sms_sharedptr_context_cli_20261028.json --md-out t56_telephony_sms_sharedptr_context_cli_20261028.md"
+    }
+  ],
+  "build_context": {
+    "production_component": {
+      "target": "ohos_shared_library(\"tel_sms_mms\")",
+      "build_file": "BUILD.gn",
+      "production_source": "services/sms/gsm/gsm_sms_cb_handler.cpp",
+      "included": true,
+      "source_list_file": "BUILD.gn",
+      "product_profile_and_image_membership": "unknown"
+    },
+    "test_candidates": {
+      "target": "ohos_executable(\"tel_sms_mms_test\")",
+      "build_file": "test/unittest/BUILD.gn",
+      "source_files": [
+        "test/unittest/sms_delivery_callback_test.cpp",
+        "test/unittest/sms_send_callback_test.cpp"
+      ],
+      "test_framework_import": "//build/test.gni",
+      "testonly_evidence": "test/BUILD.gn defines group(\"unittest\") with testonly=true; test/gtest/BUILD.gn also defines group(\"unittest\") testonly=true. The separate executable is named and placed as a unit-test target; no product-profile inclusion is evidenced."
+    },
+    "descriptor_comparison": {
+      "test_headers": [
+        "test/unittest/sms_delivery_callback_test.h",
+        "test/unittest/sms_send_callback_test.h"
+      ],
+      "bases": [
+        "IRemoteStub<IDeliveryShortMessageCallback>",
+        "IRemoteStub<ISendShortMessageCallback>"
+      ],
+      "production_stub_files": [
+        "frameworks/native/sms/src/delivery_short_message_callback_stub.cpp",
+        "frameworks/native/sms/src/send_short_message_callback_stub.cpp"
+      ],
+      "production_stub_behavior": "both read data.ReadInterfaceToken() and compare to GetDescriptor() before decoding callback payload",
+      "note": "Comparison evidence does not turn test harness implementations into product entry points."
+    }
+  },
+  "case_assessments": [
+    {
+      "queue_id": "CR-0343",
+      "finding": "Candidate at constructor initializer `header(headPtr)` on SmsCbInfo/CbInfo",
+      "current_cli_result": "not reproduced in two independent scopes: exact candidate header and header+production implementation TU; all selected parse complete, no diagnostics",
+      "source_review": "production tel_sms_mms target includes gsm_sms_cb_handler.cpp. SmsCbInfo::header is initialized in constructor; implementation assigns header on a local info before pushing into cbMsgList_ and reads it from several handler paths. Class has no explicit mutex for cbMsgList_; exact event/callback concurrency and same-object overlap are not established from component-only sources.",
+      "fixed_source": "none bound",
+      "result": "PARTIAL/BLOCK; preserve not_testable / paused_pending_evidence; zero finding does not prove safety."
+    },
+    {
+      "queue_id": "CR-0344",
+      "finding": "Test SmsDeliveryCallbackTest::OnRemoteRequest consumes ReadString16() without an explicit local descriptor check",
+      "current_cli_result": "current IPC CLI v0.12.12 parses source completely and emits no diagnostic; it explicitly excludes the two test entry roots from product candidate analysis",
+      "source_review": "class inherits IRemoteStub<IDeliveryShortMessageCallback>; source sits in the separate tel_sms_mms_test executable declaration under test/unittest. A distinct production DeliveryShortMessageCallbackStub reads interface token and compares GetDescriptor() before decoding. Product entry/impact is not established by the harness candidate.",
+      "fixed_source": "not applicable as a product defect control; no vulnerability-confirmed fixed version identified",
+      "result": "PARTIAL/BLOCK; do not count a test harness candidate as product vulnerability; preserve not_testable / paused_pending_evidence."
+    },
+    {
+      "queue_id": "CR-0345",
+      "finding": "Test SmsSendCallbackTest::OnRemoteRequest consumes ReadInt32() without an explicit local descriptor check",
+      "current_cli_result": "current IPC CLI v0.12.12 parses source completely and emits no diagnostic; it explicitly excludes the two test entry roots from product candidate analysis",
+      "source_review": "class inherits IRemoteStub<ISendShortMessageCallback>; source sits in the separate tel_sms_mms_test executable declaration under test/unittest. A distinct production SendShortMessageCallbackStub reads interface token and compares GetDescriptor() before decoding. Product entry/impact is not established by the harness candidate.",
+      "fixed_source": "not applicable as a product defect control; no vulnerability-confirmed fixed version identified",
+      "result": "PARTIAL/BLOCK; do not count a test harness candidate as product vulnerability; preserve not_testable / paused_pending_evidence."
+    }
+  ],
+  "limitations": [
+    "No trusted fixed source is bound for CR-0343; current zero-finding shared_ptr replay does not prove safe or fixed.",
+    "Product target/profile inclusion and event-handler concurrency model for CR-0343 remain unknown.",
+    "CR-0344/0345 are test harness paths; current IPC product analysis excludes them. The source files are separate from the production component target, but product image selection was not inspected.",
+    "No product runtime, target-specific build, or caller policy/impact proof was performed.",
+    "All three A0 states remain not_testable / paused_pending_evidence; no detector, tests, fixtures, or A0 state was changed."
+  ]
+}
