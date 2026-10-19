@@ -16,7 +16,7 @@ Date: 2026-10-20 (Asia/Shanghai)
 - D14: no detector change. `pngrutil.c` full translation units remain partial with 72 issues; `png_handle_iCCP` remains partial. The stale zstream ownership transition requires cross-function state modeling; current evidence does not isolate a narrow rule gap.
 - D15: no detector change. Three pairs of residual writes use shared `curIndex`; the `argsSize + flowbufSize` to `int` narrowing and cross-loop cursor invariant are not proven. Vulnerable/fixed CLI output keeps root-specific 6/0 while the six residual findings remain on both sides; safe/unrelated controls are quiet and partial controls remain limited.
 - T11: independently fetched vulnerable/fixed commits and verified tree/blob/file identities. The full-file and fragment outcomes remain blocked/partial; zero findings do not establish a fixed differential.
-- Next acceptance action: run T12 across the current frozen integration commits and reconcile the queue, scope, and all changed evidence packages.
+- T12 independent acceptance is complete. The next wave below continues detector work and source-backed triage; acceptance stays in a separate lane and runs after those changes freeze.
 
 T12 completion note: the independent wave audit is committed as `1262d0ab9` and reports 3 PASS / 8 PARTIAL / 0 BLOCK / 2 N/A, with all 345 A0 IDs and original states retained. After that audit, D14's historical JSON/Markdown tree-null fields were reconciled to T11/T12's verified commit trees; this metadata cleanup does not change replay outcomes or case disposition.
 
@@ -57,7 +57,7 @@ Done when: provide independently replayable classification for each residual sit
 Boundaries: bounds detector and dedicated tests/fixtures/evidence only; no broad candidate suppression; no parser, API, Catalog, or shared docs changes; no safety claim from partial translation units.
 ```
 
-### T12 — frozen A-line queue and change-scope audit (testing, next)
+### T12 — frozen A-line queue and change-scope audit (testing, completed)
 
 ```text
 Role: independent A-line acceptance and provenance auditor.
@@ -66,6 +66,39 @@ Inputs: D13 and later frozen development commits; T1/T3/T6/T7/T9/T10 matrices; A
 Steps: in a clean independent checkout, rerun changed case commands and focused tests; verify repo/commit/tree/blob/source hashes, rule identity, locations, parse and detector coverage; check positive/fixed/safe/unrelated/renamed/partial controls; run queue and scope verifiers; record minimal next evidence action for each unresolved case.
 Done when: all changed cases have an evidence-backed PASS/PARTIAL/BLOCK/N/A disposition, original queue IDs/statuses reconcile, and the integration range has zero scope violations; unknown rows remain queued.
 Boundaries: no detector or test edits; no developer result accepted without independent replay; missing fixed source is not a fixed pass; partial zero-finding is never safe.
+```
+
+### D16 — cJSON recursive tree amplification model (development)
+
+```text
+Role: A-line C/C++ resource-exhaustion detector developer.
+Continuous goal: detect the disclosed JSON Patch recursive tree-amplification root at its source operation while keeping ordinary recursive tree operations quiet.
+Inputs: current integration HEAD; cJSON CVE-2026-67215 exact source identity and D3/D8 evidence; existing resource detector and fixture contracts.
+Steps: replay the exact source and current controls; trace add/copy expansion and subsequent recursive delete path; distinguish the source-specific root from generic recursion; implement a narrow rule only if source-bound evidence establishes a detector gap; add vulnerable, fixed-if-trusted, safe, unrelated, renamed and partial controls; record scope, rule version, parse coverage, location, runtime, and commands.
+Done when: root-specific candidate behavior is independently reproducible with bounded controls, or a sourced no-change assessment states the missing parser/model/fix evidence; do not claim fixed differential without trusted fixed source.
+Boundaries: resource_lifetime detector and dedicated tests/fixtures/evidence only; no parser/API/Catalog/shared docs; do not report generic recursion or suppress unresolved candidates.
+```
+
+### D17 — cJSON remediation provenance (source evidence)
+
+```text
+Role: A-line upstream-source provenance investigator, separate from detector implementation.
+Continuous goal: identify whether trusted fixed source objects exist for cJSON CVE-2026-67215 and CVE-2026-67216 and bind any usable fix precisely.
+Inputs: current integration HEAD; official cJSON advisory/issues/releases/PRs; existing cJSON vulnerable source identities in T1/T3 evidence.
+Steps: inspect primary upstream sources and reachable Git object history; record repository, issue/advisory, exact commit/parent/tree/path/blob/size/SHA, patch-root rationale, and retrieval method; distinguish merged fix, candidate PR, unmerged proposal, and no fix; if unresolved, state smallest missing input without guessing.
+Done when: each case has a reproducible trusted fixed identity or an explicit no-fix-found report with source URLs and checked refs; no scanner code or labels are altered.
+Boundaries: evidence-only; do not use secondary claims as fix authority; do not treat an open issue or nearby patch as fixed source.
+```
+
+### T13 — A0 first-batch evidence triage (testing/evidence)
+
+```text
+Role: independent A-line evidence triage owner, not a detector developer.
+Continuous goal: advance the 345-row A0 queue with source-backed next actions while preserving every original ID and status.
+Inputs: latest T12-accepted queue, A0 original package and hash manifest, CR-0219–0223 T10 evidence, and the first five queued not_testable IDs.
+Steps: verify each selected ID against its source bytes and hash; inspect only the evidence needed to answer its queued question; record exact source identity, reproducible commands, confirmed facts, unknowns, and minimum next evidence; preserve original status and add a separate evidence disposition; reconcile queue and source manifest after edits.
+Done when: five rows have auditable per-ID evidence actions and provenance, or are explicitly kept queued with precise missing inputs; all 345 IDs and original states remain identical and verifiers pass.
+Boundaries: no detector/tests/fixtures edits; no inferred vulnerability labels; no status promotion based on missing or partial evidence; keep testing and development ownership separate.
 ```
 
 ## Stage goal
