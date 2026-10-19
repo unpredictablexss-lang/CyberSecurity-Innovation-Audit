@@ -215,6 +215,13 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
             return AnalysisResult('limited', 'partial' if retained else 'not_analyzed', retained,
                                   tuple(sorted(set(limitations + [str(error)]))), total_steps, model.digest)
         limitations.extend(graph.limitations)
+        incomplete_loop_ends = tuple(
+            index for index, instruction in enumerate(graph.instructions)
+            if instruction.kind == 'LoopEnd' and (
+                not instruction.successors
+                or any(target is None or target < 0 for target, _ in instruction.successors)
+            )
+        )
         evaluator = OriginEvaluator(fn, model,
             ((graph.instructions[i].node.start_byte, graph.instructions[i].node.end_byte) for i in graph.cyclic_nodes),
             identity_helpers, helper_contracts)
@@ -274,6 +281,33 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
             hit = evaluator.store_arguments(instruction.node, state)
             if hit:
                 kind, target, token, reason = hit
+                if kind == 'candidate':
+                    target_creation_index = next((
+                        i for i, item in enumerate(graph.instructions)
+                        if item.node.start_point[0] + 1 == target.creation_line
+                    ), None)
+                    complete_same_type_loop = (
+                        target.identity.startswith('same-type:')
+                        and target_creation_index is not None
+                        and any(edge.begin <= index <= edge.end
+                                and edge.begin <= target_creation_index <= edge.end
+                                for edge in graph.loop_backedges)
+                    )
+                    if complete_same_type_loop:
+                        # A same-type helper's stable identity across repeated
+                        # iterations is not modeled. Preserve the local site as
+                        # unknown instead of claiming a type-changing candidate.
+                        kind, reason = 'unknown', 'loop_allocation_identity_unmodeled'
+                    elif any(
+                        loop_begin <= index <= loop_end
+                        for loop_end in incomplete_loop_ends
+                        for loop_begin in [max((i for i, item in enumerate(graph.instructions)
+                                                if i < loop_end and item.kind == 'LoopBegin'),
+                                               default=loop_end)]
+                    ):
+                        # An unresolved LoopEnd invalidates candidate inference
+                        # within its nearest preceding generated loop only.
+                        kind, reason = 'unknown', 'unresolved_generated_edge'
                 observations.append(Observation(kind, line, instruction.node.start_point[1] + 1, reason,
                                                 target.identity, token.origin, token.origin_line,
                                                 target.creation_line, path, constraints,
