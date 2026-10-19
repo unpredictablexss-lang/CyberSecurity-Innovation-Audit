@@ -1,0 +1,50 @@
+{
+  "audit": "T76 independent acceptance of D76 SAMgr/init/AccessToken trace",
+  "reviewed_commit": "88b357fa0f7d4906e3baff9392c6b27126c88d40",
+  "verdict": "accepted_with_limitations",
+  "categories": {
+    "fix_correctness": {"verdict": "pass", "basis": "Pinned source excerpts and replayed blobs support the claims checked."},
+    "candidate_retention": {"verdict": "pass", "basis": "Service native-token configuration is not conflated with caller Binder authorization."},
+    "coverage": {"verdict": "pass_with_limitations", "basis": "Parser schema, init dataflow, token construction, SAMgr gate, omission, positive/negative, and XML/JSON controls are source checked; runtime tests were not run."},
+    "scope": {"verdict": "pass", "basis": "Current framework references remain separate from historical D52 product binding; no product security verdict."}
+  },
+  "manifest": {
+    "file": "openharmony-manifest-current-20261018.xml",
+    "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+    "git_commit": null,
+    "refs_verified": {
+      "security_access_token": {"line": 274, "commit": "c53a55c371d88c46b0785cc4adb444876e6a9628"},
+      "startup_init": {"line": 302, "commit": "e06651300f349e728c76edda806dbf6496fd620d"},
+      "systemabilitymgr_samgr": {"line": 306, "commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff"}
+    }
+  },
+  "source_replay": {
+    "script": "research/evidence/cpp/D76_samgr_profile_policy_trace.py",
+    "result": "success",
+    "replay_json_matches_committed": true,
+    "evidence_entries": {"samgr": 9, "startup_init": 4, "access_token": 5, "D52_historical_pasteboard": 4},
+    "all_entries_have_line_hits_blob_oid_sha256": true,
+    "runtime_tests_executed": false
+  },
+  "verified_claims": [
+    "Pinned SaProfile and the explicit JSON profile readers do not define or populate permission/permission_acls; fixture and parser test provide source-level valid-profile controls.",
+    "startup_init parses optional permission and permission_acls arrays into service fields, passes them to NativeTokenInfoParams, obtains a token ID, and sets the process self token ID.",
+    "AccessToken native permission collection uses native ACL membership as an exception to the APL available-level filter for configured permission states; this concerns native service-token construction, not caller identity ACLs.",
+    "SAMgr CheckGetSAPermission is conditional on WITH_SELINUX and appears on acquisition/loading paths; this does not authorize each subsequent Pasteboard Binder method.",
+    "D52 profile/3701.xml has no permission fields; D52 init cfg has no permission arrays and refers to pasteboard_service.xml; source tree does not establish an install rename from 3701.xml."
+  ],
+  "controls": [
+    "Positive SAMgr JSON profile fixture, with parser test source; test binary not run.",
+    "Positive samgr_standard.cfg permission and permission_acls arrays.",
+    "D52 pasteboardservice.cfg omission of both arrays.",
+    "D52 XML profile versus SAMgr JSON parser format boundary."
+  ],
+  "unresolved": [
+    "Whether D52 product used these later SAMgr/init/AccessToken commits.",
+    "D52 product build_selinux setting, final SELinux policy and SID-to-SA rule.",
+    "D52 profile install mapping and final installed profiles.",
+    "Runtime AccessToken/kernel grant behavior and caller token state.",
+    "D52 Pasteboard per-method caller authorization policy."
+  ],
+  "actionable_mismatch": null
+}
