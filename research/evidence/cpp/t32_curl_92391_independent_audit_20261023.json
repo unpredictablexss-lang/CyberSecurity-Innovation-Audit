@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "audit_id": "T32-curl-CVE-2026-92391-20261023",
+  "acceptance_head": "385e0266301793a45d9df84f7a18a3f1a3b07efc",
+  "repository": "curl/curl",
+  "detector_id": "ohscanner.cpp.resource_lifetime",
+  "detector_version": "0.4.2",
+  "rule_id": "ohcpp-resource-lifetime-recursive-cleanup-candidate-003",
+  "profile": "light-ast",
+  "scope": ["lib/mime.c"],
+  "source_git_dir": "D:/openHarmonyScanner/tmp/curl-upstream-pins-20261019.git",
+  "variants": [
+    {
+      "label": "vulnerable",
+      "commit": "01346829096c61b372692f6dc43ffa778c6caccd",
+      "tree": "6ae23d9333713707a02588b44ed238a50e8b3bde",
+      "blob": "600437576581be08f9026881c39178857a1c5939",
+      "source_sha256": "1f3388f52881524fda0bc11c453aca75adda7d7e77d65393ec558d396dc3483d",
+      "snapshot_sha256": "c0ca047682dce16d7aec8a1607b06f7a0420602a6a0ae13b8195f6629a1ac730",
+      "parse_status": "complete",
+      "coverage_status": "complete",
+      "same_rule_findings": [{"file": "lib/mime.c", "line": 1118, "symbol": "curl_mime_free"}],
+      "cli_report": "t32_curl_vulnerable_cli_20261023.json"
+    },
+    {
+      "label": "fixed",
+      "commit": "d7546809d5bd548b69ec49fca26565c8f6f0d344",
+      "tree": "52a8416729366487cdd3b6012071f5f8370e769f",
+      "blob": "3522679a16e2fa560c581413bf946d38e332bea4",
+      "source_sha256": "ea7f9adccf81b578d97e8b6e115535e043b7f8c589177a2597963a4f12462b81",
+      "snapshot_sha256": "cbc4bf484c7dacefd8869f7917b00983569e8d012470e88f278fc6104744c2f6",
+      "parse_status": "complete",
+      "coverage_status": "complete",
+      "same_rule_findings": [],
+      "cli_report": "t32_curl_fixed_cli_20261023.json"
+    }
+  ],
+  "focused_mechanism_regression": {
+    "command": "python -m unittest tests.detectors.test_cpp_resource_lifetime_detector -v",
+    "result": "PASS",
+    "tests_passed": 8,
+    "fixture_classes": ["positive", "fixed", "safe", "unrelated", "unknown"]
+  },
+  "static_differential": "PASS",
+  "product_or_cve_disposition": "PARTIAL/BLOCK",
+  "limitations": [
+    "Finding identity is partial and callback/semantic proof obligations remain unknown.",
+    "No OpenHarmony product build or product call path was bound.",
+    "Attacker reachability, nested MIME depth feasibility, runtime exhaustion, and concrete impact were not established.",
+    "A zero finding in fixed source is not a broad safety conclusion."
+  ],
+  "a0_ledger_changed": false,
+  "detector_tests_or_fixtures_changed": false
+}
