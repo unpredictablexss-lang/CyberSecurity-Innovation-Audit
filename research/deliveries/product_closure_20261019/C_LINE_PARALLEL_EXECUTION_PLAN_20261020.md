@@ -321,6 +321,22 @@ D2 的验收说明 `research/methods/ark_runtime/build_profile_20261019/CASE_VS_
 
 > 角色：独立 Ark Runtime build-profile 测试审计员，不参与 D5 收集或构造证据。只读审查 D5 指定的 profile manifest 与 artifact ledger。独立重算文件 SHA、commit/tree/blob 与 ancestry；核对 product manifest、component revision、GN action/args、工具链/sysroot、generated/include closure、preprocessed TU 和 binary/image mapping 是否属于同一目标 build。逐字段给出 PASS/FAIL/UNKNOWN、证据和反例；发现错配即列出 D5 可修复的精确缺项并等待重交，不得用兼容版本推定。交付：独立 review JSON、manifest digest、复算命令、字段差异。验收门：G12-PC-1 required fields 全部有同一 profile 的可验证证据，否则维持 BLOCKED。
 
+#### D5/T5 Intake 准入校验器（目标身份到齐前可并行完成）
+
+独立 T5 审计发现 intake JSON 当前可直接手工填入六项字符串；字段本身不证明 evidence bytes、签发来源或同一构建关系。为防止表单误填被当成准入证据，先做一个窄范围的 fail-closed 校验器，不触碰 PC-1 真实 profile：D5 只写 `research/methods/ark_runtime/ibs5yg_profile_gap_20261020/intake/**`，将六项最小字段表示为值加 evidence reference、issuer/owner、证据字节 SHA-256 与身份绑定；安全相对路径必须在显式 evidence root 内解析并重算 hash。不可验证、缺签发来源、字段冲突、缺字段或六项不能唯一指向同一 build 时只返回 `WAITING/BLOCKED`，不得 `READY`。T5 只写 `research/methods/ark_runtime/ibs5yg_profile_gap_20261020/review/intake/**`，独立构造合成有效/无效输入，覆盖路径逃逸、缺文件/错 hash、缺 issuer、重复/冲突 build identity 和部分字段拼接；先给精确 SHA 的反例，D5 修复后再对新 SHA 复测。校验器只证明输入结构与证据字节绑定，不证明 issuer 真实、声明内容充分、真实性/custody 或产品关联；这些仍须由 T5 和责任 owner 独立核验。ownership 已按上述两个互不重叠目录精确授权；未改变产品身份字段，不解除外部输入门。
+
+**D5 结构化 Vibe Coding 提示词：**
+
+> 角色：C 线 D5 intake evidence gate 开发员。基线 SHA 使用负责人给出的不可变工作基线。只写 `research/methods/ark_runtime/ibs5yg_profile_gap_20261020/intake/**`。为 D5 六项产品身份构建 fail-closed 的结构化证据校验输入：每项必须有值、证据引用、SHA-256 和 issuer/owner；对 evidence-root 下相对路径重算字节 hash，拒绝绝对路径、遍历、符号链接/junction 逃逸、缺失文件、hash 不符、缺 issuer、字段互相冲突或无法绑定同一 build 的输入。缺资料维持 WAITING/BLOCKED；不得从其他产品或 build 记录推断，不得接收“字段已填”作为证据，不得声称已验证 issuer 或产品真实性。交付 schema、校验器、合成 self-test、输出示例与 hash/repro 命令；收到 T5 精确反例后修复并请 T5 复测。不改原 intake 值、产品源码或 T5 文件；按 `c_d5` scope 与 diff check。
+
+**T5 结构化 Vibe Coding 提示词：**
+
+> 角色：D5 intake evidence gate 独立测试员。只写 `research/methods/ark_runtime/ibs5yg_profile_gap_20261020/review/intake/**`，不参与 D5 schema/校验器实现。对负责人指定的 D5 commit 做黑盒/独立验证：构造成功控制及字段缺失、hash mismatch、路径 traversal、绝对路径、symlink/junction escape、issuer 缺失、build identity 冲突、跨产品/版本字段拼接和 status 欺骗等合成反例；每个拒绝必须绑定退出码、输出字段和具体输入 SHA。发现反例先交 D5 修复，待其提交后用同一反例对新 SHA 重测；确认 `READY` 仅在结构性条件齐全时出现，且不得被解释为真人身份、证据内容充分、custody 或产品 build 真实性通过。交付独立测试报告、输入/期望输出 hashes 和复现命令；按 `c_t5` scope 与 diff check。
+
+#### D5/T5 intake 门当前基线复核（2026-10-20）
+
+两条只读线对当前材料独立核验后一致：intake SHA-256 `689b374626deae64765e4ef38f89c115e8ad175c4a6be21e8138818321099c6b` 的六项最低输入全为 null；任务树 SHA-256 `1861a62e864949e506ec935db8ecd1313fecefe4130995bcd72c66d2970fbb84`，仍 `ACTIVE_NOT_ADMITTED`。T5 复核 profile-spec SHA-256 `3e65da9ac5119708d5c081d5550f4d1f3753ea834f54cc163fa7e1c7362ddb03` 的 case/portfolio 分离条件完整；D4 matrix SHA-256 与引用一致，但其中产品 manifest、GN args/target、compile DB/include closure、预处理 TU、binary/image 关联仍缺。已知 Sort/C1/build-profile 材料与 IBS5YG 的来源或构建身份不符，且 intake 明确搜索范围并非所有 worktree 的穷尽检索。D5/T5 结构校验器工作只负责阻止“填表即准入”的结构性错误；外部六项输入仍必须由产品 owner 提供，T5 还须验证来源与同一构建关系后才能把材料送入 D5 profile 收集。
+
 ### T6 候选专项运行时测试设计（现在可设计；执行需满足对应 case 的 PC-1/3/4）
 
 测试设计固定为 Int32Array Filter callback 将 `this.constructor[Symbol.species]` 改为返回 `new Uint8Array(3)`；parent 观察 index 2 的四字节写越界，fixed 与同类型/边界反例不越界。用隔离构建与 ASan/guarded allocator 记录目标 ByteArray 实际分配边界，并保留精确 build identity、命令、完整输出和 artifact hashes。产品目标 runtime 执行需满足对应 case 的 PC-1 profile、PC-3 入口/影响证据和 PC-4 明确授权；PC-1 其余 15 案仍可阻止 portfolio 整体关闭，但不应抹除 IBS5YG 单案状态。

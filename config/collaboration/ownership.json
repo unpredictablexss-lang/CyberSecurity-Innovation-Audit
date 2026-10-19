@@ -87,6 +87,16 @@
       "allowed": [
         "research/methods/ark_runtime/ibs5yg_profile_gap_20261020/review/**"
       ]
+    },
+    "c_d5": {
+      "allowed": [
+        "research/methods/ark_runtime/ibs5yg_profile_gap_20261020/intake/**"
+      ]
+    },
+    "c_t5": {
+      "allowed": [
+        "research/methods/ark_runtime/ibs5yg_profile_gap_20261020/review/intake/**"
+      ]
     }
   },
   "shared_owner_only": [
