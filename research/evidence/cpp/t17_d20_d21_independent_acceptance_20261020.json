@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "task": "T17 independent acceptance of D20/D21",
+  "date": "2026-10-20",
+  "checkout_base": "60c758812",
+  "scope": "evidence-only; no detector, test, or fixture edits",
+  "rule_regression": {
+    "D20_libpng_resource_lifetime": {
+      "detector": "ohscanner.cpp.resource_lifetime",
+      "version": "0.4.2",
+      "source_identity": {
+        "repository": "pnggroup/libpng",
+        "vulnerable": {
+          "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+          "tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910"
+        },
+        "fixed": {
+          "commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+          "tree": "a28bb962645843af84063c77f574f6d88da79f76"
+        },
+        "object_verification": "pngset.c, png.c, pngrtran.c blob IDs and SHA-256 values independently read from exact commits; all match D20 hashes"
+      },
+      "replay": {
+        "command": "python research/evidence/cpp/d20_libpng33416_replay_20261020.py",
+        "function_slices_per_variant": 4,
+        "vulnerable": {"all_slices_partial": true, "all_translation_units_partial": true, "findings": 0},
+        "fixed": {"all_slices_partial": true, "all_translation_units_partial": true, "findings": 0},
+        "outcome": "reproduced; zero findings on partial slices is inconclusive"
+      },
+      "independent_source_objects": {
+        "vulnerable": {
+          "pngset.c": {"blob": "3e63c2724ec8737482d1746a790cfe0840c3a83e", "sha256": "9bd59a79669db37b2ecc481439481eb5f49bf77bee0de4b1aba649915609b3d0"},
+          "png.c": {"blob": "a0cad0197e760013abf67eb5c23ce5e4055cdb4d", "sha256": "0d8e45e9039cf04088764a09dcda7b24695f199288a44e11dba54ebfaca1c730"},
+          "pngrtran.c": {"blob": "1fce9af121d1073d465e5d57a4278a67c522db69", "sha256": "4df05c2e5db00911817d7f125c862524205895f34a65106e016d351f7e6edb53"}
+        },
+        "fixed": {
+          "pngset.c": {"blob": "b9ccb7fb156d134265133541209be1ab12034366", "sha256": "d3a203e40b6a6000a7cb78a61e0fd9664b0c39a65d82260efedb0f0184a8bc19"},
+          "png.c": {"blob": "fda0a8e6ae06b42c672d9e5ae476a4259a29e357", "sha256": "29a37cedb5be5597aafa3cab62a223c0accbd6016edfff97386471a6e118100c"},
+          "pngrtran.c": {"blob": "978dac588801a111ebd9917a74179e081ea39290", "sha256": "6b724ff0047cced71884176296aac10a6fc1d2592477034bbd622222ded3373f"}
+        }
+      }
+    },
+    "D21_libtiff_bounds": {
+      "detector": "ohscanner.cpp.bounds",
+      "version": "0.3.0",
+      "rule_id": "ohcpp-memory-bounds-pointer-offset-candidate-004",
+      "rule_version": "0.1.0",
+      "source_identity": {
+        "repository": "libtiff/libtiff",
+        "vulnerable": {
+          "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+          "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a",
+          "tif_getimage.c": {"blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e", "sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3"},
+          "tiffio.h": {"blob": "225f3c1bfeabae2b31a5f35fbfd12d14b570dcd8", "sha256": "70119b9db897a364821a108ff0adc09f26c20ad9b6d9e943eb376ee3edb6166f"}
+        },
+        "fixed": {
+          "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+          "tree": "77361ef7262189e16a2010b5c333f6b275d17f09",
+          "tif_getimage.c": {"blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db", "sha256": "de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8"},
+          "tiffio.h": {"blob": "6a7ab2f5b7f6697020dfbcac57f8c2617c4b1074", "sha256": "7923903a85c15c047a22bfe52ef1901939d6a7e656c75b814fcb86c6179b120c"}
+        }
+      },
+      "replay": {
+        "command": "python research/evidence/cpp/d21_libtiff_9900_20261020/replay.py --repo-dir D:/openHarmonyScanner/tmp/libtiff-cve-2025-9900-upstream --output-dir D:/openHarmonyScanner/tmp/t17-replay-output",
+        "vulnerable_function": {"name": "TIFFReadRGBAImageOriented", "line": 621, "function_and_exact_field_parse": "complete", "candidate": true},
+        "fixed_function": {"name": "TIFFReadRGBAImageOriented", "function_and_exact_field_parse": "complete", "findings": 0},
+        "whole_translation_units": {"vulnerable_parse": "partial", "fixed_parse": "partial", "vulnerable_status": "blocked", "fixed_status": "blocked", "findings_each": 0},
+        "outcome": "bounded function-fragment rule regression reproduced; whole-source result remains inconclusive"
+      },
+      "whole_scope_cli_replay": {
+        "vulnerable_command": "python -m src.cli ohscan-run --repo-dir D:/openHarmonyScanner/tmp/libtiff-cve-2025-9900-upstream --repository libtiff/libtiff --commit 9dff73bebc5661f2dace6f16e14cf9e857172f4e --include libtiff/tif_getimage.c --include libtiff/tiffio.h --detector ohscanner.cpp.bounds",
+        "fixed_command": "same scope at commit 3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+        "vulnerable": {"status": "completed_with_limitations", "files_partial": 2, "detector_status": "blocked", "findings": 0},
+        "fixed": {"status": "completed_with_limitations", "files_partial": 2, "detector_status": "blocked", "findings": 0}
+      }
+    }
+  },
+  "case_status": {
+    "CVE-2026-33416": {"status": "PARTIAL/BLOCK", "reason": "all four vulnerable and fixed function slices and parent translation units parse partial; no candidate; fixed differential cannot pass"},
+    "CVE-2025-9900": {"status": "PARTIAL/BLOCK", "reason": "exact vulnerable local function candidate and quiet fixed function reproduced; both full two-file scopes remain parser partial and detector blocked; no full-source/safety conclusion"},
+    "baseline_comparison": "T1/T3 full-source case status remains unchanged; D20's four fragment results do not promote 33416; D21's function-fragment result only confirms the existing bounded rule regression and does not promote libtiff to PASS"
+  },
+  "validation": {
+    "resource_lifetime_tests": {"command": "python -m unittest tests.detectors.test_cpp_resource_lifetime_detector -v", "passed": 8},
+    "bounds_tests": {"command": "python -m unittest tests.detectors.test_cpp_memory_safety_detectors -v", "passed": 20},
+    "all_cpp_tests": {"command": "python -m unittest discover -s tests/detectors -p 'test_cpp_*.py' -v", "passed": 160},
+    "A0_queue": {"command": "python research/deliveries/cpp/a0_triage_20261019/verify_triage.py", "overall_ok": true, "unique_ids": 345, "hash_manifest_entries": 97, "hash_manifest_bytes": 4364747, "original_statuses": {"not_reproduced": 9, "not_testable": 336}, "queue_statuses": {"queued_not_reproduced": 9, "queued_first_batch": 5, "paused_pending_evidence": 331}},
+    "T13_queue": {"command": "python research/evidence/cpp/t13_first_batch/verify_t13_queue.py", "overall_ok": true, "unique_ids": 345, "source_objects_verified": true},
+    "scope": {"command": "python -m scripts.check_change_scope --base 8ec5f56a12e90bba56953b39eb17faa20e154da9 --lane cpp", "violations": 0},
+    "diff_check": "git diff --check clean"
+  }
+}
