@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "lane": "T9 independent acceptance",
+  "base_commit": "c0a80cc630450f499ea4d04adee20619b5c2c4e9",
+  "case_results": {
+    "D11_web_webview_CVE-2026-27648": {
+      "function_fragment_regression": "PASS",
+      "full_translation_unit_case": "PARTIAL/BLOCK",
+      "detector": "ohscanner.cpp.bounds",
+      "detector_version": "0.3.0",
+      "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+      "rule_version": "0.1.0",
+      "vulnerable": {
+        "snapshot_commit": "769110ddf1c14355c89f34b974ab9e6cf58c0c6c",
+        "root_sites": 6,
+        "ordinary_residual_sites": 6,
+        "renamed_positive": 1,
+        "safe": 0,
+        "unrelated": 0,
+        "partial_control": "partial; no diagnostic; aggregate blocked"
+      },
+      "fixed": {
+        "snapshot_commit": "f550e8e59c57afe4e02b130ec3373b1011843617",
+        "root_sites": 0,
+        "ordinary_residual_sites": 6,
+        "renamed_positive": 1,
+        "safe": 0,
+        "unrelated": 0,
+        "partial_control": "partial; no diagnostic; aggregate blocked"
+      },
+      "full_tu": {
+        "vulnerable_parse": "partial",
+        "fixed_parse": "partial",
+        "vulnerable_detector": "blocked",
+        "fixed_detector": "blocked",
+        "findings_each": 0
+      },
+      "scope_audit": "local same-function vector index guard only; aliases, complete CFG, mutation beyond modeled operations, constructor arithmetic, cross-loop invariants, product reachability and impact unknown"
+    },
+    "D12_libpng_CVE-2026-33416": {
+      "status": "PARTIAL/BLOCK",
+      "replayed": true,
+      "detector": "ohscanner.cpp.resource_lifetime",
+      "detector_version": "0.4.0",
+      "vulnerable_and_fixed_files": 8,
+      "whole_tu_parse": "all partial",
+      "fragment_parse": "all partial",
+      "findings": 0,
+      "reason": "cross-file alias/release/use and incomplete parse prevent a root-cause or safe/fixed inference"
+    },
+    "D12_libpng_CVE-2026-46675": {
+      "status": "PARTIAL/BLOCK",
+      "replayed": true,
+      "detector": "ohscanner.cpp.resource_lifetime",
+      "detector_version": "0.4.0",
+      "vulnerable_and_fixed_fragments_each": 7,
+      "whole_tu_parse": "both partial",
+      "fragment_parse": "six complete, one partial on each version",
+      "findings": 0,
+      "reason": "no candidate demonstrated; interprocedural zstream state and later IDAT use remain unmodeled"
+    }
+  },
+  "validation": {
+    "bounds_tests": "20/20 passed",
+    "all_cpp_detector_tests": "160/160 passed",
+    "change_scope": "12 evidence paths checked, 0 violations",
+    "git_diff_check": "clean",
+    "precision_recall_claims": false
+  }
+}
