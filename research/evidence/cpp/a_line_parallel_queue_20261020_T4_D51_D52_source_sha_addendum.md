@@ -1,7 +1,7 @@
 # A-line independent acceptance addendum — T4 D51/D52
 
-Run date: 2026-10-20 (Asia/Shanghai; current T4 executions only)  
-Integration target: `91747d4cad7503e58c466402e905088153f1deb4`  
+Run date: 2026-10-20 (Asia/Shanghai; current T4 executions only)
+Integration target: `91747d4cad7503e58c466402e905088153f1deb4`
 Disposition: **PARTIAL/BLOCK**. No detector or A0 queue changes.
 
 ## Frozen A0 binding and independent replay
