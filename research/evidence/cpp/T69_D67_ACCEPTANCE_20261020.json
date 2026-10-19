@@ -1,0 +1,61 @@
+{
+  "task": "T69",
+  "reviewed_commit": "ef215e737daee00c9fa659d14cd273974cf4fc2f",
+  "base_commit": "3da049887999bd3cacb3d48da9ffa7baefa18ac5",
+  "verdicts": {
+    "identity_and_scope": "pass",
+    "partial_inventory": "pass_with_D50_artifact_limit",
+    "cpp_blob_identity": "pass",
+    "current_unnormalized_replay": "pass_issue_level_independent_check",
+    "normalizer_attribution": "supported_for_current_runtime_only",
+    "no_fix_or_dependency_change": "pass"
+  },
+  "script_replay": {
+    "command": "python research/evidence/cpp/D67_pasteboard_parse_audit.py --repo-dir <pinned-source-checkout> --d50-report <D50-pasteboard.json> --d68-report <D68-raw67.json> --output <temporary-output>",
+    "fresh_output_equals_committed_json": true,
+    "cpp_units": 67,
+    "hash_mismatches": 0,
+    "unnormalized_status_mismatches": 0
+  },
+  "independent_issue_tuple_check": {
+    "fields": ["status", "kind", "start_line", "end_line"],
+    "rows": 67,
+    "mismatches": 0,
+    "note": "The D67 script itself only adds unnormalized status mismatches; this issue-level comparison was independently performed for T69."
+  },
+  "coverage": {
+    "D50": {"cpp_complete": 57, "cpp_partial": 10, "typescript_not_run": 1},
+    "D68": {"cpp_complete": 59, "cpp_partial": 8, "typescript_not_run": 1},
+    "D50_partial_rows_match": true,
+    "D67_current_partial_rows": 8,
+    "D50_partial_to_current_complete": 2,
+    "D50_per_file_typescript_not_run_row": false,
+    "TypeScript_path_from_exact_tree_and_D68": "interfaces/declaration/api/@ohos.pasteboard.d.ts"
+  },
+  "normalizer": {
+    "D51_commit": "c8f83b82291e82b3272c73b943623336a3c836c3",
+    "normalizer_blob_at_D51_and_D67": "ba8d88ce4695c05fa76e9afafa186e52a3abec63",
+    "interpretation": "Current-runtime no-normalizer replay matches saved D50 issue tuples; this does not rule out historical Python runtime effects."
+  },
+  "environment": {
+    "D50_python": "3.10.12",
+    "local_python_3_10": "3.10.11",
+    "local_python_3_10_has_tree_sitter": false,
+    "D50_tree_sitter": "0.26.0",
+    "D50_tree_sitter_c": "0.24.2",
+    "D50_tree_sitter_cpp": "0.23.4",
+    "exact_D50_runtime_recreated": false
+  },
+  "diff_scope": [
+    "research/evidence/cpp/D67_PASTEBOARD_PARSE_AUDIT_20261023.json",
+    "research/evidence/cpp/D67_PASTEBOARD_PARSE_AUDIT_20261023.md",
+    "research/evidence/cpp/D67_pasteboard_parse_audit.py"
+  ],
+  "script_evidence_gap": "The generator compares unnormalized status only; T69 independently verified kind and start/end line equality for all 67 rows.",
+  "limitations": [
+    "D50 lacks parser node type, column, message, AST, and per-file TypeScript not_run entry.",
+    "Python 3.10.12 historical execution was not recreated.",
+    "Current-runtime normalizer ablation does not prove historical runtime had no effect.",
+    "No product or vulnerability conclusion is established."
+  ]
+}
