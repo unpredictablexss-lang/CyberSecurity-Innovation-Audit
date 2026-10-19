@@ -1,0 +1,42 @@
+{
+  "record_id": "T82-D82-INDEPENDENT-ACCEPTANCE-20261020",
+  "schema_version": 1,
+  "decision": "ACCEPTED_WITH_LIMITATIONS",
+  "reviewed": {
+    "commit": "659f5cd743adb093f948a9654440dabc8bd7e133",
+    "worktree": "D:/openHarmonyScanner/worktrees/d82-local-m2-readiness-20261020",
+    "d82_base_parent_commit": "92ccbd488c0dc4b5b98285659f2b9dd35ceb130e"
+  },
+  "replay": {
+    "script": "research/evidence/cpp/d82_d55_local_m2_readiness.py",
+    "exit_code": 0,
+    "frozen_output_equal_except": ["/scope/base_commit"],
+    "frozen_base_commit": "92ccbd488c0dc4b5b98285659f2b9dd35ceb130e",
+    "replay_base_commit": "659f5cd743adb093f948a9654440dabc8bd7e133",
+    "difference_explanation": "Frozen report captured the parent before the D82 commit; replay reports current HEAD containing D82 artifacts. All other generated fields matched."
+  },
+  "strict_json": {
+    "method": "Python json.loads with object_pairs_hook rejecting any repeated key",
+    "status": "PASS",
+    "covered": ["D82 frozen and replay JSON", "D55 protocol", "D41 manifest/results/packet", "D48 summary", "T54 final acceptance", "T55 acceptance and revision", "advisory A/B manifests"]
+  },
+  "checks": {
+    "D55_protocol_and_T54_final_state": "PASS",
+    "D41_manifest_results_state_reconciliation": "PASS",
+    "D41_six_repositories_3820_files_201_candidates_coverage_and_zero_labels": "PASS",
+    "D41_post_scan_99_case_packet_excluded_from_accuracy_sample": "PASS",
+    "D48_convenience_sample_97_partial_blocked_zero_candidates_no_labels": "PASS",
+    "D55_17_ids_9_plus_8_15_body_hashes_2_primary_GHSA_missing": "PASS_WITH_LIMITATION",
+    "all_11_D55_missing_inputs_covered_by_10_blocker_gates": "PASS",
+    "no_labels_or_cohort_created_no_metrics_computed": "PASS",
+    "git_diff_check_reviewed_D82_commit": "PASS"
+  },
+  "m2_status": "NOT_MET",
+  "known_cve_package": "PARTIAL_NOT_READY",
+  "limitations": [
+    "CVE-2026-33636 and CVE-2026-46675 primary GHSA response bodies remain unavailable for hash verification.",
+    "Per-CVE version-scope review remains partly unresolved as recorded in T55 revision.",
+    "This verifies the bounded D82 inventory and does not establish M2, accuracy, or M3 product applicability.",
+    "The sole replay mismatch is current HEAD in scope.base_commit; it is expected from replaying after D82 was committed."
+  ]
+}
