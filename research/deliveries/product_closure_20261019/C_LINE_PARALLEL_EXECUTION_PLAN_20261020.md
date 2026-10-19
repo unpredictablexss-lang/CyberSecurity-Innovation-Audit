@@ -256,7 +256,7 @@ manifest 字段齐全的 6 案仅表示 source identity 字段被填写。只读
 
 ### D2/T2 第二轮：拆分记录完整性与环境复现
 
-D2 的 profile `--verify-only` 会重建当前 checkout/主机上的整个 payload，包含工作树身份、绝对路径、当前源码、Python/parser 和 Git 工具指纹，再与历史 SHA 比较；因此它是环境复现比较，不是跨环境的稳定记录完整性验证。负责人本轮还从本地 bare upstream object store 对原有 6 个 `recorded_complete` 案例独立复核 12 个 parent/fix commits、trees、26 个文件的 blob OID/SHA-256/登记长度以及 ancestry，均匹配；object store 自报 origin 为官方 Gitee，但获取过程与 custody 尚未独立验证。D2 正将此只读结果固化成 fail-closed evidence script/record，不代表剩余 10 案或产品 profile 完成。D2 已提交 `fe436c5ba8ad4b6dea17b22c41eae68094e6f7ce` 分离两种操作：`--verify-integrity-only` 对存档 payload 做 canonical digest 和 BLOCKED 不变量校验，结果为 valid、记录/重算 digest 均为 `a33c893c…`；`--reproduce-environment` 单独报告当前 checkout/host 指纹漂移，旧 `--verify-only` 为弃用兼容别名。Python 3.10.11 下 5/5 self-tests 通过，26/26 source identity 仍匹配。完整性验证仅证明记录字节内部一致，不证明真实性、官方 Git 对象、产品 profile 或 PC-1 闭合。PC-1 仍需 16/16 产品 build/preprocess profile。
+D2 的 profile `--verify-only` 会重建当前 checkout/主机上的整个 payload，包含工作树身份、绝对路径、当前源码、Python/parser 和 Git 工具指纹，再与历史 SHA 比较；因此它是环境复现比较，不是跨环境的稳定记录完整性验证。负责人本轮还从本地 bare upstream object store 对原有 6 个 `recorded_complete` 案例独立复核 12 个 parent/fix commits、trees、26 个文件的 blob OID/SHA-256/登记长度以及 ancestry，均匹配；object store 自报 origin 为官方 Gitee，但获取过程与 custody 尚未独立验证。D2 已将此只读结果固化成 fail-closed evidence script/record（提交 `25e6cc226b785ad9b042dce65b81b0fb51d34534`），不代表剩余 10 案或产品 profile 完成。D2 已在 `fe436c5ba8ad4b6dea17b22c41eae68094e6f7ce` 分离两种操作：`--verify-integrity-only` 对存档 payload 做 canonical digest 和 BLOCKED 不变量校验，结果为 valid、记录/重算 digest 均为 `a33c893c…`；`--reproduce-environment` 单独报告当前 checkout/host 指纹漂移，旧 `--verify-only` 为弃用兼容别名。Python 3.10.11 下 5/5 integrity self-tests 通过；最终提交 `25e6cc2` 的 object-evidence self-tests 为 10/10，负责人独立重算 record digest 并确认 6 案、12 commits/trees、26 files、6 条 ancestry 均匹配。26/26 是六案内逐文件身份记录数，不代表全 16 案完成。完整性验证仅证明记录字节内部一致，不证明真实性、官方 Git 对象、产品 profile 或 PC-1 闭合。PC-1 仍需 16/16 产品 build/preprocess profile。
 
 ### C12 CFG 元数据消费者缺口
 
@@ -265,3 +265,11 @@ D2 的 profile `--verify-only` 会重建当前 checkout/主机上的整个 paylo
 ### 产品证据优先级
 
 在产品 profile 阶段，优先追踪 IBS5YG TypedArray Filter pair（parent `2ea5012…`，fix `919e4fb…`），因为现有记录提供了明确 parent/fix 语义且 source identity 字段完整。顺序为：只读 official Ark Git object store 的 commit/tree/blob/SHA 验真 → 锁定具体产品版本和 GN/build/toolchain/include/preprocess/TU 产物并映射 shipped binary → 同 profile parent/fix regression 与安全控制 → 入口/权限/攻击者输入/触发/CIA 证据 → 授权隔离 PoC 与 fixed-product 重验。C4/C8/C12 的不同身份回放不能替代这条证据链；任何依赖缺失时保持 unknown/blocked。
+
+### D3/T3 第三轮：C12 回边元数据的行为验证
+
+```text
+D3（开发线）：你负责 C12 loop_backedges 数据流。先核对冻结基线、ownership、runtime_ir 生产点、analysis/detector 消费点及正/修/安/unknown 现有对照。仅当能通过真实 observation 展示最小且可复现的候选/证据变化时，才将配对关联接入分析；否则明确记录 instrumentation-only 决策和具体缺口。不得用 metadata 计数或图节点覆盖冒充检测改进，不扩大规则范围，不改 T3 文件。静态层输出必须少而精，所有缺身份/控制流歧义均为 unknown。与 T3 共享接口、样例和失败反例；本线只改 ownership allowlist，运行 scope check 和针对性自测后提交 SHA。
+
+T3（独立测试线）：独立检查 loop_backedges 的生产与消费语义，不参与 D3 实现。以冻结的正例、修复例、安全/无关例和 unknown 例构造行为级断言，验证完整 LoopEnd→LoopBegin 关联是否改变真实 observation 及证据链；不接受“配对数量正确”作为行为验收。若 D3 选择 instrumentation-only，验收该限制被准确记录且 detector observation 不被错误归因。负例回传 D3 修复后独立复测；只改 T3 allowlist，提交逐例 expected/actual、命令、哈希和 scope check。
+```
