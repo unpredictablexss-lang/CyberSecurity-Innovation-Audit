@@ -20,13 +20,22 @@
 ## 可复算命令
 
 ```powershell
-$python = "C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
+$python = "C:\Program Files\Python310\python.exe"
 $root = "E:\网安\CyberSecurity-Innovation-Audit-c12-product-admission-20261019"
 & $python "$root\research\methods\ark_runtime\build_profile_20261019\build_profile_manifest.py" --repo-root $root
-& $python "$root\research\methods\ark_runtime\build_profile_20261019\build_profile_manifest.py" --repo-root $root --verify-only
+& $python "$root\research\methods\ark_runtime\build_profile_20261019\build_profile_manifest.py" --verify-integrity-only
+& $python "$root\research\methods\ark_runtime\build_profile_20261019\build_profile_manifest.py" --repo-root $root --reproduce-environment
 ```
 
-当前验证结果为 `verified_blocked_manifest`，manifest/recomputed payload SHA-256 为 `a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214`。
+`--verify-integrity-only` 是可移植的只读自摘要检查：它从保存的 manifest 移除 `payload_sha256` 字段，按 canonical JSON 重算并比较摘要，同时要求记录保持 `BLOCKED` / `NOT_ADMITTED`。成功只说明内容与文件内声明的摘要一致；摘要不是签名，不能证明内容来源、来源对象真实存在、事实正确或产品 profile 完整。它不访问 repo/host，也不会覆盖 verification 文件。
+
+`--reproduce-environment` 独立重算当前 checkout/host 的 fingerprint（HEAD/tree、detector/parser/config/source-audit 与 host toolchain），与历史 manifest 记录比较并输出 changed paths。checkout 路径、源码状态、Python/parser 模块与 Git 工具变化都会报告 `environment_drift`；漂移不等于历史记录损坏。`--verify-only` 仅为该模式的弃用别名。重放结果只写入显式指定的 `--verification-output`。两种检查均不能验证产品 build/preprocess。历史 manifest 的记录摘要为 `a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214`；新模式不会重生成或改写该历史文件。
+
+运行本目录的 focused self-tests：
+
+```powershell
+& $python -m unittest discover -s "$root\research\methods\ark_runtime\build_profile_20261019\selftest" -p "test_*.py"
+```
 
 ## 逐文件来源证据（不等于 PC-1 完成）
 

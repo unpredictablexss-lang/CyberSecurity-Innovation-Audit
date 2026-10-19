@@ -303,43 +303,153 @@ def build_manifest(repo: Path) -> dict[str, Any]:
 
 
 def verify_manifest(repo: Path, manifest: dict[str, Any]) -> dict[str, Any]:
-    recomputed = build_manifest(repo)
+    """Backward-compatible alias for environment reproduction, not integrity."""
+    return reproduce_environment(repo, manifest)
+
+
+def verify_manifest_integrity(manifest: dict[str, Any]) -> dict[str, Any]:
+    """Verify only the manifest's self-recorded canonical content digest.
+
+    A valid digest shows internal consistency, not authenticity, provenance,
+    correctness of claims, source object existence, or a product build.
+    """
     errors = []
     if manifest.get("schema") != PROFILE_SCHEMA:
         errors.append("schema_mismatch")
-    if manifest.get("payload_sha256") != recomputed.get("payload_sha256"):
-        errors.append("payload_drift")
-    if not manifest.get("source_audit_identity", {}).get("local_pinned_object_verified"):
-        errors.append("source_audit_object_not_verified")
-    if any(case.get("build_profile", {}).get("status") != "BLOCKED" for case in manifest.get("cases", [])):
-        errors.append("unsafe_unblocked_build_profile_without_evidence")
-    return {
-        "schema": "ohscanner.ark-parent-fix-build-preprocess-verification/v1",
-        "status": "verified_blocked_manifest" if not errors else "verification_failed",
-        "expected_payload_sha256": manifest.get("payload_sha256"),
-        "recomputed_payload_sha256": recomputed.get("payload_sha256"),
-        "case_count": len(manifest.get("cases", [])),
+    recorded = manifest.get("payload_sha256")
+    if not isinstance(recorded, str) or not HEX256.fullmatch(recorded):
+        errors.append("payload_digest_missing_or_malformed")
+    else:
+        payload = dict(manifest)
+        payload.pop("payload_sha256", None)
+        computed = sha256_bytes(canonical_json_bytes(payload))
+        if recorded != computed:
+            errors.append("payload_digest_mismatch")
+
+    unsafe = []
+    if manifest.get("status") != "BLOCKED":
+        unsafe.append("manifest_status_not_blocked")
+    if manifest.get("decision") != "NOT_ADMITTED":
+        unsafe.append("decision_not_not_admitted")
+    for case in manifest.get("cases", []):
+        if case.get("build_profile", {}).get("status") != "BLOCKED":
+            unsafe.append(f"build_profile_not_blocked:{case.get('case_id')}")
+        if case.get("preprocess_profile", {}).get("status") != "BLOCKED":
+            unsafe.append(f"preprocess_profile_not_blocked:{case.get('case_id')}")
+    if manifest.get("metrics", {}).get("product_build_profile_complete_count") != 0:
+        unsafe.append("product_build_profile_complete_count_not_zero")
+    errors.extend(unsafe)
+    result = {
+        "schema": "ohscanner.ark-parent-fix-manifest-integrity/v1",
+        "manifest_integrity": "valid" if not errors else "invalid",
+        "recorded_payload_sha256": recorded,
+        "computed_payload_sha256": computed if isinstance(recorded, str) and HEX256.fullmatch(recorded) else None,
+        "case_count": len(manifest.get("cases", [])) if isinstance(manifest.get("cases"), list) else None,
+        "product_profile_status": "BLOCKED" if not unsafe else "UNSAFE_OR_INCOMPLETE",
         "errors": errors,
+        "scope_note": "Internal content-digest consistency only; no authenticity, source provenance, Git object, product build, or preprocess verification.",
+    }
+    return result
+
+
+ENVIRONMENT_FINGERPRINT_FIELDS = (
+    "generated_from",
+    "source_audit_identity",
+    "detector_identity",
+    "parser_identity",
+    "config_identity",
+    "host_toolchain_probe",
+)
+
+
+def environment_fingerprint(manifest: dict[str, Any]) -> dict[str, Any]:
+    return {key: manifest.get(key) for key in ENVIRONMENT_FINGERPRINT_FIELDS}
+
+
+def changed_paths(expected: Any, actual: Any, prefix: str = "") -> list[str]:
+    if isinstance(expected, dict) and isinstance(actual, dict):
+        paths = []
+        for key in sorted(set(expected) | set(actual)):
+            child = f"{prefix}.{key}" if prefix else key
+            if key not in expected or key not in actual:
+                paths.append(child)
+            else:
+                paths.extend(changed_paths(expected[key], actual[key], child))
+        return paths
+    if isinstance(expected, list) and isinstance(actual, list):
+        paths = []
+        if len(expected) != len(actual):
+            paths.append(f"{prefix}.length")
+        for index, (left, right) in enumerate(zip(expected, actual)):
+            paths.extend(changed_paths(left, right, f"{prefix}[{index}]"))
+        return paths
+    return [] if expected == actual else [prefix]
+
+
+def compare_environment_fingerprints(expected_manifest: dict[str, Any], recomputed_manifest: dict[str, Any]) -> dict[str, Any]:
+    expected = environment_fingerprint(expected_manifest)
+    actual = environment_fingerprint(recomputed_manifest)
+    paths = changed_paths(expected, actual)
+    return {
+        "environment_reproduction": "environment_match" if not paths else "environment_drift",
+        "expected_environment_fingerprint_sha256": sha256_bytes(canonical_json_bytes(expected)),
+        "recomputed_environment_fingerprint_sha256": sha256_bytes(canonical_json_bytes(actual)),
+        "changed_paths": paths,
+    }
+
+
+def reproduce_environment(repo: Path, manifest: dict[str, Any]) -> dict[str, Any]:
+    """Compare the stored environment/source fingerprint with this host now."""
+    recomputed_manifest = build_manifest(repo)
+    comparison = compare_environment_fingerprints(manifest, recomputed_manifest)
+    integrity = verify_manifest_integrity(manifest)
+    return {
+        "schema": "ohscanner.ark-parent-fix-environment-reproduction/v1",
+        **comparison,
+        "manifest_integrity": integrity["manifest_integrity"],
+        "case_count": len(manifest.get("cases", [])),
+        "product_profile_status": integrity["product_profile_status"],
+        "scope_note": "Reproduction is checkout/host sensitive; a match does not verify upstream Git objects or product build/preprocess evidence.",
     }
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--repo-root", type=Path, required=True)
+    parser.add_argument("--repo-root", type=Path)
     parser.add_argument("--output", type=Path, default=Path(__file__).with_name("ark_parent_fix_build_profile_manifest.v1.json"))
-    parser.add_argument("--verification-output", type=Path, default=Path(__file__).with_name("verification.json"))
-    parser.add_argument("--verify-only", action="store_true")
+    parser.add_argument("--verification-output", type=Path)
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--verify-integrity-only", action="store_true", help="Check the stored manifest's canonical self-digest and blocked-state invariants; no repo required")
+    modes.add_argument("--reproduce-environment", action="store_true", help="Recompute current checkout/host fingerprint and compare it to the stored manifest")
+    modes.add_argument("--verify-only", action="store_true", help="Deprecated alias for --reproduce-environment")
     args = parser.parse_args(argv)
-    repo = args.repo_root.resolve()
-    if args.verify_only:
+    if args.verify_integrity_only:
         manifest = json.loads(args.output.read_text(encoding="utf-8"))
-    else:
-        manifest = build_manifest(repo)
-        args.output.write_text(json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
-    verification = verify_manifest(repo, manifest)
-    args.verification_output.write_text(json.dumps(verification, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+        verification = verify_manifest_integrity(manifest)
+        print(json.dumps(verification, ensure_ascii=False, sort_keys=True, indent=2))
+        return 0 if verification["manifest_integrity"] == "valid" else 2
+
+    if args.reproduce_environment or args.verify_only:
+        if args.repo_root is None:
+            parser.error("--repo-root is required for --reproduce-environment")
+        manifest = json.loads(args.output.read_text(encoding="utf-8"))
+        verification = reproduce_environment(args.repo_root.resolve(), manifest)
+        if args.verify_only:
+            print("warning: --verify-only is deprecated; this is host/checkout-dependent reproduction, not integrity verification", file=sys.stderr)
+        if args.verification_output:
+            args.verification_output.write_text(json.dumps(verification, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+        print(json.dumps(verification, ensure_ascii=False, sort_keys=True, indent=2))
+        return 0 if verification["environment_reproduction"] == "environment_match" else 2
+
+    if args.repo_root is None:
+        parser.error("--repo-root is required to generate a manifest")
+    manifest = build_manifest(args.repo_root.resolve())
+    args.output.write_text(json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    verification = verify_manifest_integrity(manifest)
+    if args.verification_output:
+        args.verification_output.write_text(json.dumps(verification, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(verification, ensure_ascii=False, sort_keys=True, indent=2))
-    return 0 if verification["status"] == "verified_blocked_manifest" else 2
+    return 0 if verification["manifest_integrity"] == "valid" else 2
 
 
 if __name__ == "__main__":
