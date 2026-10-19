@@ -7,15 +7,16 @@
     "vulnerable": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
     "fixed": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
     "official_fixed_commit_parent": "4eeb825 (verified through GitHub commit metadata)",
-    "fixed_commit_tree": null,
-    "tree_limitation": "GitHub fetch-file and fetch-commit metadata confirmed commit/file bytes but did not return commit tree; direct git clone failed with github.com:443 connection refusal/time-out."
+    "vulnerable_commit_tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
+    "fixed_commit_tree": "4c64b5f18cef7d129adee3b403fc4be93f82e30d",
+    "tree_verification": "Independently verified by T11 through direct fetch, git show, and git ls-tree."
   },
   "runs": [
     {
       "variant": "vulnerable",
       "source_path_external": "D:\\openHarmonyScanner\\tmp\\libpng-ghsa-qvg3-source-20261019\\vulnerable-1.6.55\\pngrutil.c",
       "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
-      "tree": null,
+      "tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
       "blob": "a4eda54c8cb3d36cf1651dba159067b65030e3aa",
       "sha256": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e",
       "bytes": 153112,
@@ -113,7 +114,7 @@
       "variant": "fixed",
       "source_path_external": "D:\\openHarmonyScanner\\tmp\\libpng-d13-fixed-source-20261020\\pngrutil.c",
       "commit": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
-      "tree": null,
+      "tree": "4c64b5f18cef7d129adee3b403fc4be93f82e30d",
       "blob": "482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a",
       "sha256": "a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e",
       "bytes": 152477,
@@ -209,7 +210,7 @@
     }
   ],
   "limitations": [
-    "The exact official source commit and file blob/SHA are bound, but the official commit tree ID could not be retrieved in this environment.",
+    "The exact official source commits, trees, file blobs, and SHA-256 values are bound by T11 independent verification.",
     "The full-file replay invokes the current first-party detector directly on the exact source bytes because the upstream Git object graph could not be fetched; it is not a run_fixed_commit_scan CLI invocation.",
     "Full translation units parse partial; no findings are inconclusive, not a safe/fixed conclusion.",
     "The paired function-fragment replay preserves original line positions but does not prove cross-function ownership, call order, trigger, or product reachability."

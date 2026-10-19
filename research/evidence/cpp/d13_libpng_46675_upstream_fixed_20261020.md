@@ -13,10 +13,10 @@ GitHub's file API returned the exact `pngrutil.c` bytes for the full fixed commi
 
 | Variant | Commit | Tree | `pngrutil.c` blob | Bytes | SHA-256 |
 |---|---|---|---|---:|---|
-| Vulnerable | `c3e304954a9cfd154bc0dfbfea2b01cd61d6546d` | unavailable in prior ledger | `a4eda54c8cb3d36cf1651dba159067b65030e3aa` | 152477 | `b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e` |
-| Fixed | `aa77ef38c17ab2fc1b41bec09fb973c6a386641d` | unavailable in this environment | `482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a` | 152477 | `a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e` |
+| Vulnerable | `c3e304954a9cfd154bc0dfbfea2b01cd61d6546d` | `e01f5780f93eaa6d74cca003bb39b427c8f1e910` | `a4eda54c8cb3d36cf1651dba159067b65030e3aa` | 153112 | `b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e` |
+| Fixed | `aa77ef38c17ab2fc1b41bec09fb973c6a386641d` | `4c64b5f18cef7d129adee3b403fc4be93f82e30d` | `482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a` | 152477 | `a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e` |
 
-The fixed Git blob and byte hash match both the earlier D12 record and the T4 ledger. The vulnerable source's blob and byte hash match the same records. These checks establish source-file identity; they do not supply a full commit tree for this environment.
+T11 independently fetched both exact commits, verified their commit tree IDs, and checked the `pngrutil.c` entries with `git ls-tree`. This corrects the earlier D13 statement that tree IDs were unavailable. Both source-file blobs and byte hashes match the prior ledger. The vulnerable file is 153112 bytes; the fixed file is 152477 bytes.
 
 ## Replay results
 
@@ -35,7 +35,7 @@ No detector rule was changed: the exact vulnerable bytes still do not produce th
 
 `CVE-2026-46675` remains `PARTIAL/BLOCK`. The source pair is now file-byte bound and the upstream patch rationale is confirmed. The current model does not represent zstream buffer state ownership across chunk decompression and IDAT reads. `png_handle_iCCP` parse remains partial; source-only replay does not establish malformed-chunk trigger feasibility or OpenHarmony product reachability.
 
-Minimum next evidence: obtain the upstream full Git object graph/tree ID; resolve parser-visible declarations for the partial iCCP fragment (or review a bounded local-fragment contract); then model and independently validate the release-to-IDAT read transition with vulnerable, exact fixed, read-rows, malformed-chunk, safe, and unrelated controls. Product build and call-path evidence remain separate requirements.
+Minimum next evidence: resolve parser-visible declarations for the partial iCCP fragment (or review a bounded local-fragment contract); then model and independently validate the release-to-IDAT read transition with vulnerable, exact fixed, read-rows, malformed-chunk, safe, and unrelated controls. Product build and call-path evidence remain separate requirements.
 
 ## Reproduction
 

@@ -8,7 +8,15 @@ Date: 2026-10-20 (Asia/Shanghai)
 - D11 web_webview bounded-index fragment rule is implemented and independently accepted at fragment scope. Full translation units remain partial.
 - D13 libpng CVE-2026-46675 exact vulnerable/fixed file blobs are ledger-bound and replayed. Full files are partial/blocked; seven function fragments yield no candidate; upstream fix tree ID remains unavailable. No detector rule change was justified.
 - T10 Samgr source identity and five source-flow reviews are complete; product build/policy/reachability evidence remains missing and original queue states stay unchanged.
+- T11 independently verified the D13 upstream commit trees and replay. D14 found no safely implementable libpng rule gap under current partial parsing; D15 reviewed all six web_webview residual sites without suppressing unresolved candidates.
 - A0 evidence queue still contains all 345 original IDs. Verification reports 345 unique rows, preserved source hashes and statuses.
+
+## Latest wave results
+
+- D14: no detector change. `pngrutil.c` full translation units remain partial with 72 issues; `png_handle_iCCP` remains partial. The stale zstream ownership transition requires cross-function state modeling; current evidence does not isolate a narrow rule gap.
+- D15: no detector change. Three pairs of residual writes use shared `curIndex`; the `argsSize + flowbufSize` to `int` narrowing and cross-loop cursor invariant are not proven. Vulnerable/fixed CLI output keeps root-specific 6/0 while the six residual findings remain on both sides; safe/unrelated controls are quiet and partial controls remain limited.
+- T11: independently fetched vulnerable/fixed commits and verified tree/blob/file identities. The full-file and fragment outcomes remain blocked/partial; zero findings do not establish a fixed differential.
+- Next acceptance action: run T12 across the current frozen integration commits and reconcile the queue, scope, and all changed evidence packages.
 
 ## Parallel tracks
 
