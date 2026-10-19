@@ -1,0 +1,340 @@
+{
+  "audit_id": "T48",
+  "title": "multimedia_camera_framework callback IPC candidate source audit",
+  "repository": "openharmony/multimedia_camera_framework",
+  "source": {
+    "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+    "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a"
+  },
+  "a0_row_count": 9,
+  "cases": [
+    {
+      "queue_id": "CR-0291",
+      "candidate_id": "ohscanner.interface.ipc:7d1f1f04f9142ae0",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "path": "services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp",
+      "line": 32,
+      "line_text": "            errCode = HandleOnPhotoAvailable(data);",
+      "blob": "51264aac5a03244b6666cb687234fa60182f1663",
+      "source_sha256": "46ed4ab82e888847f7e0d074a5537f78678b34701c669aa2baa3d63b016fa349",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding_id": "ohscanner.interface.ipc:a6224dfedde863eb",
+      "detector_version": "0.12.12",
+      "parse_status": "complete",
+      "finding_message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: HStreamCapturePhotoCallbackStub::HandleOnPhotoAvailable Entry=HStreamCapturePhotoCallbackStub::OnRemoteRequest [entry-source=services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((31, 'switch entry'),)",
+      "source_assessment": "IPC relay candidate is inside callback dispatch. The dispatcher reads the interface token and invokes CHECK_RETURN_RET when token differs from GetDescriptor before switch dispatch; this conflicts with the detector's missing-guard explanation. Proxy source writes GetDescriptor() before sending. Macro expansion, remote caller/exposure, and product reachability remain unproven."
+    },
+    {
+      "queue_id": "CR-0292",
+      "candidate_id": "ohscanner.interface.ipc:c44e2e1bb521c645",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "path": "services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp",
+      "line": 41,
+      "line_text": "            errCode = HandleOnPhotoAvailableWithAuxiliary(data);",
+      "blob": "51264aac5a03244b6666cb687234fa60182f1663",
+      "source_sha256": "46ed4ab82e888847f7e0d074a5537f78678b34701c669aa2baa3d63b016fa349",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding_id": "ohscanner.interface.ipc:adc89621c7d2b967",
+      "detector_version": "0.12.12",
+      "parse_status": "complete",
+      "finding_message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: HStreamCapturePhotoCallbackStub::HandleOnPhotoAvailableWithAuxiliary Entry=HStreamCapturePhotoCallbackStub::OnRemoteRequest [entry-source=services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((39, 'switch entry'),)",
+      "source_assessment": "IPC relay candidate is inside callback dispatch. The dispatcher reads the interface token and invokes CHECK_RETURN_RET when token differs from GetDescriptor before switch dispatch; this conflicts with the detector's missing-guard explanation. Proxy source writes GetDescriptor() before sending. Macro expansion, remote caller/exposure, and product reachability remain unproven."
+    },
+    {
+      "queue_id": "CR-0293",
+      "candidate_id": "ohscanner.interface.ipc:c8f49db8e2c51c62",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "path": "services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp",
+      "line": 65,
+      "line_text": "    return OnPhotoAvailable(surfaceBuffer, timestamp, isRaw);",
+      "blob": "51264aac5a03244b6666cb687234fa60182f1663",
+      "source_sha256": "46ed4ab82e888847f7e0d074a5537f78678b34701c669aa2baa3d63b016fa349",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding_id": "ohscanner.interface.ipc:c272842f6b4e48d2",
+      "detector_version": "0.12.12",
+      "parse_status": "complete",
+      "finding_message": "AUTH-01 candidate: IPC dispatch/callback reaches OnPhotoAvailable without a matched interface-descriptor guard; relay/exposure still requires review. Entry=HStreamCapturePhotoCallbackStub::OnRemoteRequest [entry-source=services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((31, 'switch entry'),)",
+      "source_assessment": "IPC relay candidate is inside callback dispatch. The dispatcher reads the interface token and invokes CHECK_RETURN_RET when token differs from GetDescriptor before switch dispatch; this conflicts with the detector's missing-guard explanation. Proxy source writes GetDescriptor() before sending. Macro expansion, remote caller/exposure, and product reachability remain unproven."
+    },
+    {
+      "queue_id": "CR-0294",
+      "candidate_id": "ohscanner.interface.ipc:72e74d33eef5581f",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "path": "services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp",
+      "line": 103,
+      "line_text": "    return OnPhotoAvailable(mainBuffer, oxygenBuffer, pigmentationBuffer, timestamp, isRaw);",
+      "blob": "51264aac5a03244b6666cb687234fa60182f1663",
+      "source_sha256": "46ed4ab82e888847f7e0d074a5537f78678b34701c669aa2baa3d63b016fa349",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding_id": "ohscanner.interface.ipc:ecabf5147a5b6f66",
+      "detector_version": "0.12.12",
+      "parse_status": "complete",
+      "finding_message": "AUTH-01 candidate: IPC dispatch/callback reaches OnPhotoAvailable without a matched interface-descriptor guard; relay/exposure still requires review. Entry=HStreamCapturePhotoCallbackStub::OnRemoteRequest [entry-source=services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((39, 'switch entry'),)",
+      "source_assessment": "IPC relay candidate is inside callback dispatch. The dispatcher reads the interface token and invokes CHECK_RETURN_RET when token differs from GetDescriptor before switch dispatch; this conflicts with the detector's missing-guard explanation. Proxy source writes GetDescriptor() before sending. Macro expansion, remote caller/exposure, and product reachability remain unproven."
+    },
+    {
+      "queue_id": "CR-0295",
+      "candidate_id": "ohscanner.interface.ipc:ecb391711c38f80b",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "path": "services/camera_service/binder/server/src/hstream_capture_thumbnail_callback_stub.cpp",
+      "line": 30,
+      "line_text": "            errCode = HandleOnThumbnailAvailable(data);",
+      "blob": "c792b7d041a1a659a0de7ffe8a9e1bd3a2a87d74",
+      "source_sha256": "67aa51a34278dd5ee609e8c6c456bf19032ab8efd12aa12fdadb3d6f5eb8fb5b",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding_id": "ohscanner.interface.ipc:ec39662a9a111e6f",
+      "detector_version": "0.12.12",
+      "parse_status": "complete",
+      "finding_message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: HStreamCaptureThumbnailCallbackStub::HandleOnThumbnailAvailable Entry=HStreamCaptureThumbnailCallbackStub::OnRemoteRequest [entry-source=services/camera_service/binder/server/src/hstream_capture_thumbnail_callback_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((28, 'switch entry'),)",
+      "source_assessment": "IPC relay candidate is inside callback dispatch. The dispatcher reads the interface token and invokes CHECK_RETURN_RET when token differs from GetDescriptor before switch dispatch; this conflicts with the detector's missing-guard explanation. Proxy source writes GetDescriptor() before sending. Macro expansion, remote caller/exposure, and product reachability remain unproven."
+    },
+    {
+      "queue_id": "CR-0296",
+      "candidate_id": "ohscanner.interface.ipc:eaea0c74f9d2a63c",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "path": "services/camera_service/binder/server/src/hstream_capture_thumbnail_callback_stub.cpp",
+      "line": 53,
+      "line_text": "    return OnThumbnailAvailable(surfaceBuffer, timestamp);",
+      "blob": "c792b7d041a1a659a0de7ffe8a9e1bd3a2a87d74",
+      "source_sha256": "67aa51a34278dd5ee609e8c6c456bf19032ab8efd12aa12fdadb3d6f5eb8fb5b",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding_id": "ohscanner.interface.ipc:7e6aa4c6da6496eb",
+      "detector_version": "0.12.12",
+      "parse_status": "complete",
+      "finding_message": "AUTH-01 candidate: IPC dispatch/callback reaches OnThumbnailAvailable without a matched interface-descriptor guard; relay/exposure still requires review. Entry=HStreamCaptureThumbnailCallbackStub::OnRemoteRequest [entry-source=services/camera_service/binder/server/src/hstream_capture_thumbnail_callback_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((28, 'switch entry'),)",
+      "source_assessment": "IPC relay candidate is inside callback dispatch. The dispatcher reads the interface token and invokes CHECK_RETURN_RET when token differs from GetDescriptor before switch dispatch; this conflicts with the detector's missing-guard explanation. Proxy source writes GetDescriptor() before sending. Macro expansion, remote caller/exposure, and product reachability remain unproven."
+    },
+    {
+      "queue_id": "CR-0297",
+      "candidate_id": "ohscanner.interface.ipc:1cbaff053bd5fb53",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "path": "services/camera_service/binder/server/src/window_manager_service_callback_stub_impl/hcamera_window_manager_callback_stub.cpp",
+      "line": 30,
+      "line_text": "            errCode = CameraWindowManagerAgentStub::HandleUpdateCameraWindowStatus(data);",
+      "blob": "1b892d9e637c65ad16bccc593f4233a7e08d6428",
+      "source_sha256": "9fe129fc2daa5f64aea9d4a4962f4703668cd4716b4364543e7b85518e69849d",
+      "rule": "ipc.relay.descriptor-boundary",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding_id": "ohscanner.interface.ipc:1630e3c593a933d4",
+      "detector_version": "0.12.12",
+      "parse_status": "complete",
+      "finding_message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: CameraWindowManagerAgentStub::HandleUpdateCameraWindowStatus Entry=CameraWindowManagerAgentStub::OnRemoteRequest [entry-source=services/camera_service/binder/server/src/window_manager_service_callback_stub_impl/hcamera_window_manager_callback_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((29, 'switch entry'),)",
+      "source_assessment": "IPC relay candidate is inside callback dispatch. The dispatcher reads the interface token and invokes CHECK_RETURN_RET when token differs from GetDescriptor before switch dispatch; this conflicts with the detector's missing-guard explanation. Proxy source writes GetDescriptor() before sending. Macro expansion, remote caller/exposure, and product reachability remain unproven."
+    },
+    {
+      "queue_id": "CR-0298",
+      "candidate_id": "ohscanner.interface.ipc:4316c2c594db08e9",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "path": "services/camera_service/src/hcamera_service.cpp",
+      "line": 1099,
+      "line_text": "            deviceForWrapper = new (nothrow) HCameraDevice(cameraHostManager_, cameraId, callerToken);",
+      "blob": "8a15d82d30b78bd95f53522fd3d799b0033854ac",
+      "source_sha256": "b6638834b75be36f3cba852a57efcd903e166c2bc0b9de3273412a5a701bc3d7",
+      "rule": "ipc.auth.guard-coverage",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding_id": "ohscanner.interface.ipc:6d2dbc9f6c4ffe94",
+      "detector_version": "0.12.12",
+      "parse_status": "partial",
+      "finding_message": "AUTH-04 candidate: Authorization checks exist in the analyzed entry set, but this modeled sensitive path has no matched caller guard. Sensitive modeled call CreateCameraDevice has a structured path without a recognized caller authorization. Entry=HCameraService::CreateCameraDevice [entry-source=services/camera_service/src/hcamera_service.cpp]; possible consequence (not established): an operation intended to require authorization may run without it [unauthorized_effect]; path=((1082, 'isPrivilegeApp => False'), (1098, 'deviceForWrapper == nullptr => True'))",
+      "source_assessment": "AUTH candidate at CreateCameraDevice path; source contains explicit OHOS_PERMISSION_CAMERA CheckPermission result guard and foreground guard before device creation, plus a separate CAMERA_SHARED privilege branch. The model candidate does not account for all caller authorization context. Parser is partial and macro expansion, product policy, and reachability are unverified."
+    },
+    {
+      "queue_id": "CR-0299",
+      "candidate_id": "ohscanner.interface.ipc:43c719e603d09051",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+      "tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+      "path": "services/camera_service/src/hcamera_service.cpp",
+      "line": 1099,
+      "line_text": "            deviceForWrapper = new (nothrow) HCameraDevice(cameraHostManager_, cameraId, callerToken);",
+      "blob": "8a15d82d30b78bd95f53522fd3d799b0033854ac",
+      "source_sha256": "b6638834b75be36f3cba852a57efcd903e166c2bc0b9de3273412a5a701bc3d7",
+      "rule": "ipc.auth.missing",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "finding_id": "ohscanner.interface.ipc:f041f31fc72e3d83",
+      "detector_version": "0.12.12",
+      "parse_status": "partial",
+      "finding_message": "AUTH-02 candidate: Sensitive modeled call CreateCameraDevice has a structured path without a recognized caller authorization. Entry=HCameraService::CreateCameraDevice [entry-source=services/camera_service/src/hcamera_service.cpp]; possible consequence (not established): an operation intended to require authorization may run without it [unauthorized_effect]; path=((1082, 'isPrivilegeApp => False'), (1098, 'deviceForWrapper == nullptr => True'))",
+      "source_assessment": "AUTH candidate at CreateCameraDevice path; source contains explicit OHOS_PERMISSION_CAMERA CheckPermission result guard and foreground guard before device creation, plus a separate CAMERA_SHARED privilege branch. The model candidate does not account for all caller authorization context. Parser is partial and macro expansion, product policy, and reachability are unverified."
+    }
+  ],
+  "source_files": [
+    {
+      "path": "services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp",
+      "blob": "51264aac5a03244b6666cb687234fa60182f1663",
+      "sha256": "46ed4ab82e888847f7e0d074a5537f78678b34701c669aa2baa3d63b016fa349",
+      "bytes": 5108,
+      "parse_status": "complete"
+    },
+    {
+      "path": "services/camera_service/binder/server/src/hstream_capture_thumbnail_callback_stub.cpp",
+      "blob": "c792b7d041a1a659a0de7ffe8a9e1bd3a2a87d74",
+      "sha256": "67aa51a34278dd5ee609e8c6c456bf19032ab8efd12aa12fdadb3d6f5eb8fb5b",
+      "bytes": 2480,
+      "parse_status": "complete"
+    },
+    {
+      "path": "services/camera_service/binder/server/src/window_manager_service_callback_stub_impl/hcamera_window_manager_callback_stub.cpp",
+      "blob": "1b892d9e637c65ad16bccc593f4233a7e08d6428",
+      "sha256": "9fe129fc2daa5f64aea9d4a4962f4703668cd4716b4364543e7b85518e69849d",
+      "bytes": 1892,
+      "parse_status": "complete"
+    },
+    {
+      "path": "services/camera_service/src/hcamera_service.cpp",
+      "blob": "8a15d82d30b78bd95f53522fd3d799b0033854ac",
+      "sha256": "b6638834b75be36f3cba852a57efcd903e166c2bc0b9de3273412a5a701bc3d7",
+      "bytes": 194656,
+      "parse_status": "partial"
+    }
+  ],
+  "supporting_files": [
+    {
+      "path": "services/camera_service/binder/client/src/hstream_capture_photo_callback_proxy.cpp",
+      "blob": "8048d38a7ef82bca541ccb9d029cb90e612c68dc",
+      "sha256": "07e24393b8d678bf6fcca7d93e4a21c7ae05e018c6cd06abf006208ccea6df43",
+      "bytes": 5238,
+      "source_observation": "OnPhotoAvailable writes GetDescriptor() before SendRequest."
+    },
+    {
+      "path": "services/camera_service/binder/client/src/hstream_capture_thumbnail_callback_proxy.cpp",
+      "blob": "542c4f68fcb83ef7fc5d425e19a447cb981f5d72",
+      "sha256": "e710f9f7c7710ac543d8544a1ab3ec62dce92c3d3f6522c8dfaf4cb4e42efac6",
+      "bytes": 2312,
+      "source_observation": "OnThumbnailAvailable writes GetDescriptor() before SendRequest."
+    },
+    {
+      "path": "services/camera_service/src/window_manager_utils/camera_window_manager_client.cpp",
+      "blob": "3444fec4de689a372a573410ffad0f5148a0d4d1",
+      "sha256": "7115b955ca6a04cbb267264dbd2ab117c9b483b3e46ceb206ba0a575cab0c48a",
+      "bytes": 7778,
+      "source_observation": "Registers CameraWindowManagerAgent with WINDOW_MANAGER_AGENT_TYPE_CAMERA_WINDOW."
+    },
+    {
+      "path": "services/camera_service/src/window_manager_utils/camera_window_manager_agent.cpp",
+      "blob": "dd52c45d497c9d8fcdab2fa5adf94d0892661566",
+      "sha256": "cb2ce8d63fd9b65018fe4805450960d9a1b7b19f1e24b9d4409fb95d8e1bd595",
+      "bytes": 1237,
+      "source_observation": "CameraWindowManagerAgent::UpdateCameraWindowStatus implementation."
+    },
+    {
+      "path": "services/camera_service/binder/server/include/window_manager_service_callback_stub/hcamera_window_manager_callback_stub.h",
+      "blob": "fbac0ab9e60ee200516a6052b47e1ef06a0ba99b",
+      "sha256": "3a1467f8c620355c6714263f4ea8dba3535b105ed451e3c0b766595fc38315b9",
+      "bytes": 1320,
+      "source_observation": "Callback stub derives from IRemoteStub of its declared callback interface."
+    },
+    {
+      "path": "services/camera_service/binder/server/include/hstream_capture_photo_callback_stub.h",
+      "blob": "cd1fccd2ce1fef70dd707efa254c3a45c6470c4c",
+      "sha256": "6ab9ecfa914617b1efb0422d2897bc97d54a8e6413e5487d7685336f9a8f29b5",
+      "bytes": 1541,
+      "source_observation": "Callback stub derives from IRemoteStub of its declared callback interface."
+    },
+    {
+      "path": "services/camera_service/binder/server/include/hstream_capture_thumbnail_callback_stub.h",
+      "blob": "61d11660348d63f4448120908883abeabb618662",
+      "sha256": "e583c0e9e31e1aa8b439e3c929892f91c0377f3ae0c3962fcf286a124f843b2b",
+      "bytes": 1300,
+      "source_observation": "Callback stub derives from IRemoteStub of its declared callback interface."
+    },
+    {
+      "path": "services/camera_service/BUILD.gn",
+      "blob": "94b2e1c8dd869e5d20ed8d0a6f38fc237a84d350",
+      "sha256": "6ba9223163bc097247457ab8bc6e1fc8ef962d36d4e3ec2ba904ad9d08838c9f",
+      "bytes": 12576,
+      "source_observation": "camera_service is an install-enabled shared library; target lists hcamera_service.cpp and window callback stub."
+    },
+    {
+      "path": "frameworks/native/camera/base/BUILD.gn",
+      "blob": "e3f9e222e89ff255986ef711be2753f91ab42fcf",
+      "sha256": "029f82e08f234a7a3248a2c86bb495ac2066d9e01a7374c7341dc78a4a71e873",
+      "bytes": 11133,
+      "source_observation": "common_sources contains photo/thumbnail callback stubs and feeds camera_framework shared/static targets."
+    }
+  ],
+  "cli": {
+    "command": "python -m src.cli ohscan-run --repo-dir <camera Git object mirror> --repository openharmony/multimedia_camera_framework --commit 35445b57d739a41cb916330935e61f1e83d982ca --include <four scoped source files> --detector ohscanner.interface.ipc --json-out t48_camera_cli_20261027.json",
+    "detector": "ohscanner.interface.ipc",
+    "detector_version": "0.12.12",
+    "finding_count": 9,
+    "exact_a0_position_mappings": 9,
+    "complete_files": 3,
+    "partial_files": 1,
+    "partial_paths": [
+      "services/camera_service/src/hcamera_service.cpp"
+    ],
+    "scope": [
+      "services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp",
+      "services/camera_service/binder/server/src/hstream_capture_thumbnail_callback_stub.cpp",
+      "services/camera_service/binder/server/src/window_manager_service_callback_stub_impl/hcamera_window_manager_callback_stub.cpp",
+      "services/camera_service/src/hcamera_service.cpp"
+    ],
+    "selected_source_bytes": 204136,
+    "profile": "light-ast",
+    "build_profile": "none",
+    "run_status": "completed_with_limitations"
+  },
+  "source_review": {
+    "callback_stub_token_guard": "All three callback dispatchers call CHECK_RETURN_RET(data.ReadInterfaceToken() != GetDescriptor(), errCode) before switch dispatch. Exact macro expansion is not included in the component snapshot.",
+    "proxy_pairing": "Photo and thumbnail proxies write GetDescriptor() to MessageParcel before SendRequest. Window-manager agent is registered through CameraWindowManagerClient with WINDOW_MANAGER_AGENT_TYPE_CAMERA_WINDOW.",
+    "build_context": "GN source lists include photo/thumbnail callback stubs under camera_framework targets, the window-manager callback stub under camera_service, and hcamera_service.cpp in install-enabled camera_service. This is source build configuration, not a verified product build.",
+    "authorization": "CreateCameraDevice contains OHOS_PERMISSION_CAMERA CheckPermission result guard and IsInForeGround guard before device creation; CAMERA_SHARED is a separate privilege predicate. Macro expansion, product policy, caller identity and actual caller reachability are unverified.",
+    "fixed_source": "No trusted fixed source was established."
+  },
+  "disposition": "PARTIAL/BLOCK",
+  "limitations": [
+    "No trusted fixed source was established; no vulnerable/fixed differential is claimed.",
+    "hcamera_service.cpp is parser partial; its candidate paths cannot establish guard dominance or completeness.",
+    "Three callback IPC diagnostics conflict with source-level descriptor-token checks, but macro expansion is unavailable in this component snapshot.",
+    "AUTH candidates do not account for visible CAMERA permission and foreground guards; parser/model context is partial.",
+    "No product build/profile, installed package selection, external caller reachability, sender identity, or effective authorization policy was verified.",
+    "CR-0300 is openharmony/developtools_hapsigner with a shared_ptr_race rule and is excluded from this camera-family audit."
+  ],
+  "queue_preservation": {
+    "all_original_states_unchanged": true,
+    "selected_ids": [
+      "CR-0291",
+      "CR-0292",
+      "CR-0293",
+      "CR-0294",
+      "CR-0295",
+      "CR-0296",
+      "CR-0297",
+      "CR-0298",
+      "CR-0299"
+    ],
+    "cr_0300_in_scope": false
+  }
+}
