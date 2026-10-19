@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "audit": "Independent Samgr callback IPC source/CLI audit CR-0214–CR-0218",
+  "checkout": {
+    "branch": "codex/t44-samgr-callback-audit-20261027",
+    "base_commit": "9ae0e9d40ddf5682282752f00b0dc2e6ed880153"
+  },
+  "source": {
+    "repository": "openharmony/systemabilitymgr_samgr",
+    "commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff",
+    "tree": "b7a89e95be788f2f2372258e341f7be842c7826d",
+    "files": [
+      {
+        "path": "frameworks/native/source/system_ability_load_callback_stub.cpp",
+        "blob": "eeaa841f85dfd85ee42752140ec4358dd2faee9a",
+        "bytes": 6503,
+        "sha256": "0b1e7268fb0205c3ca8389a7e9c8a17aad49a4ad5a8fde90eb0b275ae858f7d1"
+      },
+      {
+        "path": "frameworks/native/source/system_ability_status_change_stub.cpp",
+        "blob": "36bc0da9364b179d8818e38e687933836995688e",
+        "bytes": 3607,
+        "sha256": "9359834c0cd42b8fc6c428126bd96e28ca81cf122b3c5d90f0e7c3b77845c086"
+      },
+      {
+        "path": "frameworks/native/source/system_process_status_change_stub.cpp",
+        "blob": "4896f75e683bd6eb85b973de1afdf82bc966d529",
+        "bytes": 4173,
+        "sha256": "8322e80adf43fafaef89adfc9b09efe589bd4a968ed1bf2d46995b6e9ee371a6"
+      },
+      {
+        "path": "services/samgr/native/source/system_ability_manager_stub.cpp",
+        "blob": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
+        "bytes": 78212,
+        "sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433"
+      }
+    ]
+  },
+  "cli": {
+    "report": "research/evidence/cpp/a_t44_samgr_callback_cli_20261027.json",
+    "markdown": "research/evidence/cpp/a_t44_samgr_callback_cli_20261027.md",
+    "detector": "ohscanner.interface.ipc",
+    "version": "0.12.12",
+    "model": "oh-ipc-2026.10-v32",
+    "scope_files": 4,
+    "scope_bytes": 92495,
+    "findings": 13,
+    "parse_counts": {
+      "complete": 1,
+      "partial": 3
+    },
+    "coverage_counts": {
+      "complete": 1,
+      "partial": 3,
+      "not_analyzed": 0,
+      "failed": 0
+    }
+  },
+  "cases": [
+    {
+      "queue_id": "CR-0214",
+      "candidate_id": "ohscanner.interface.ipc:c05fa2fabf235b31",
+      "path": "frameworks/native/source/system_ability_load_callback_stub.cpp",
+      "line": 36,
+      "blob": "eeaa841f85dfd85ee42752140ec4358dd2faee9a",
+      "source_sha256": "0b1e7268fb0205c3ca8389a7e9c8a17aad49a4ad5a8fde90eb0b275ae858f7d1",
+      "finding_id": "ohscanner.interface.ipc:65ca547870c4581d",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "parse_status": "partial",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence"
+    },
+    {
+      "queue_id": "CR-0215",
+      "candidate_id": "ohscanner.interface.ipc:922d9057588784fe",
+      "path": "frameworks/native/source/system_ability_status_change_stub.cpp",
+      "line": 46,
+      "blob": "36bc0da9364b179d8818e38e687933836995688e",
+      "source_sha256": "9359834c0cd42b8fc6c428126bd96e28ca81cf122b3c5d90f0e7c3b77845c086",
+      "finding_id": "ohscanner.interface.ipc:4d18bc4caa73ac77",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "parse_status": "partial",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence"
+    },
+    {
+      "queue_id": "CR-0216",
+      "candidate_id": "ohscanner.interface.ipc:7f7eccc22d96ec42",
+      "path": "frameworks/native/source/system_process_status_change_stub.cpp",
+      "line": 43,
+      "blob": "4896f75e683bd6eb85b973de1afdf82bc966d529",
+      "source_sha256": "8322e80adf43fafaef89adfc9b09efe589bd4a968ed1bf2d46995b6e9ee371a6",
+      "finding_id": "ohscanner.interface.ipc:c39c845fef977fd6",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "parse_status": "complete",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence"
+    },
+    {
+      "queue_id": "CR-0217",
+      "candidate_id": "ohscanner.interface.ipc:8130638ef8e8ec32",
+      "path": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "line": 298,
+      "blob": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
+      "source_sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433",
+      "finding_id": "ohscanner.interface.ipc:b360d1d29c25e580",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "parse_status": "partial",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence"
+    },
+    {
+      "queue_id": "CR-0218",
+      "candidate_id": "ohscanner.interface.ipc:9b315dca229986c7",
+      "path": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "line": 302,
+      "blob": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
+      "source_sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433",
+      "finding_id": "ohscanner.interface.ipc:6136103fc662c4a6",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "parse_status": "partial",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence"
+    }
+  ],
+  "build_evidence": {
+    "samgr_proxy": "interfaces/innerkits/samgr_proxy/BUILD.gn: ohos_shared_library samgr_proxy lists all three callback stub files",
+    "samgr_service": "services/samgr/native/BUILD.gn: installable ohos_executable samgr includes load callback stub and depends on samgr_proxy",
+    "tests": "services/samgr/native/test/unittest/BUILD.gn includes callback stub sources; tests reviewed but not built/run",
+    "product_profile": "unknown"
+  },
+  "limitations": [
+    "Source tree shows token comparison against each stub GetDescriptor before dispatch; current CLI flags these lines as descriptor-boundary candidates, so finding/source inconsistency remains unresolved.",
+    "Three callback stub files parse partial; manager file parses partial.",
+    "No product-selected build/profile, transport peer identity, authorization/reachability, security impact, or trusted fixed source/control pair.",
+    "No compilation or runtime tests were run."
+  ],
+  "disposition": "PARTIAL/BLOCK",
+  "queue_preservation": {
+    "all_ids": "CR-0214..CR-0218",
+    "states_unchanged": true,
+    "status_changed": false
+  },
+  "detector_tests_fixtures_api_or_queue_modified": false
+}
