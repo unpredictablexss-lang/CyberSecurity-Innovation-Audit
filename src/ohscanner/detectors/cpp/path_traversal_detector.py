@@ -621,4 +621,3 @@ class CppPathTraversalDetector:
             analyzed_files=tuple(analyzed), findings=_stable_findings(findings),
             limitations=tuple(sorted(set(limitations))),
         )
-
