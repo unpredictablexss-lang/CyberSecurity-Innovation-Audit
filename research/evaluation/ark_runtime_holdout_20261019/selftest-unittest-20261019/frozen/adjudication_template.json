@@ -7,7 +7,7 @@
     "truth_not_seen": true
   },
   "decisions": [],
-  "freeze_payload_sha256": "245f914175f4f13001b3f210d692987efad58cca66e560eab770afc3b19b6bb7",
+  "freeze_payload_sha256": "253d850316ed7043198d668d91c3787c8de1731f7b9c8476a3050ed0071ff1af",
   "required_fields": [
     "case_pseudonym",
     "decision",

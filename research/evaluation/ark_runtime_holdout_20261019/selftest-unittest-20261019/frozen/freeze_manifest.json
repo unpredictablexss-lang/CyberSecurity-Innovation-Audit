@@ -5,8 +5,8 @@
     "9913c5093cca2bd9",
     "c1ef9844318f8019"
   ],
-  "development_leakage_ledger_file_sha256": "523a3932df49e29d0d366e118da3a3883dc82efe5f1573f30111bf1a1d978b3f",
-  "development_leakage_ledger_payload_sha256": "bcd1226bc36885d5f52d1b2d13b78eef7e2db91ccdb04fb46f0fa129e0955a90",
+  "development_leakage_ledger_file_sha256": "0b6df86696ae6b7afac8f5e884cd9157a19906c88d2bfbaabd14e801b7e8f176",
+  "development_leakage_ledger_payload_sha256": "17325f287930dd6be22168671d6fe2a0bcc5b373ce0b5ae78c74e5ba875399fb",
   "execution_mode": "pipeline_self_test",
   "metric_gate": {
     "required_conditions": [
@@ -23,15 +23,15 @@
     ]
   },
   "packet_payload_sha256": {
-    "A": "e894b3e490c626db3f275c53ceef6e6b79328f10ac7cb28f45b83796a0f5b284",
-    "B": "6250e8f499aab27bd8f01bd5779e59539b5e8c2bfbda1c389b73f1d77f8da6e1"
+    "A": "2b0e8243253431f5ee3d871e6f116fcb02a8053ce0326fcbcf267f11248b29fb",
+    "B": "e5193cdaeecc8eb2e19169fcff06b89e5873ebfb3bdf7d969bc6484da72d9db2"
   },
-  "payload_sha256": "245f914175f4f13001b3f210d692987efad58cca66e560eab770afc3b19b6bb7",
-  "protocol_file_sha256": "aec442d34e799f800fb1c265b1f4bc960424884be37eecc0774a708ce1fcd6ca",
+  "payload_sha256": "253d850316ed7043198d668d91c3787c8de1731f7b9c8476a3050ed0071ff1af",
+  "protocol_file_sha256": "b237e6c13547c520965c4e6271ae147d0adbc146c759832d84d76eb62b98278f",
   "public_case_rows": [
     {
       "blob": "synthetic-blob-1",
-      "case_commitment_sha256": "5bcd6fd9d25e5bc7f38e50afbb5251f2930deebb02b87b561ecb5bc8f31f2f65",
+      "case_commitment_sha256": "e52054fe3924c848e842f94a51c1bb18a7522815ca9a873d52f07fee3d74b329",
       "case_pseudonym": "1b494e96a3802f02",
       "commit": "synthetic-commit-1",
       "development_leakage_match": false,
@@ -43,13 +43,13 @@
       "sampling_frame_sha256": "cc157c9a2b718e1a80c7e2b88c3beac7f4c0765b457ec90ad0361fde012b29fd",
       "selection_rule_id": "selftest-stratified",
       "snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000001",
-      "source_bytes": 28,
-      "source_sha256": "cd210a3192acf1614b030482fd496ef245f872e26580a85bf7a63adcc25ae6e6",
+      "source_bytes": 27,
+      "source_sha256": "1a0efe604440d96561e3075b2ec8bb90f8847d9709d24add37f9ea016221918c",
       "tree": "synthetic-tree-1"
     },
     {
       "blob": "synthetic-blob-2",
-      "case_commitment_sha256": "60a416d6e95a010a2ea2c73b3d6554328eec0f2ede6ae97e40f8b2e68fc19986",
+      "case_commitment_sha256": "d1bfb6a125c86028fea7cb2ce206efc2f8c0ca399bc42542937ab073cd737950",
       "case_pseudonym": "9913c5093cca2bd9",
       "commit": "synthetic-commit-2",
       "development_leakage_match": false,
@@ -61,13 +61,13 @@
       "sampling_frame_sha256": "cc157c9a2b718e1a80c7e2b88c3beac7f4c0765b457ec90ad0361fde012b29fd",
       "selection_rule_id": "selftest-stratified",
       "snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000002",
-      "source_bytes": 32,
-      "source_sha256": "18db728f3c4a1721d1239562c73cef02ad833ff35e679f5b0ec9913e2dab1320",
+      "source_bytes": 31,
+      "source_sha256": "874d9d17338f4be37d8fde4ef7fed8c2b87c73bbdea338b26cc2a26899dba7aa",
       "tree": "synthetic-tree-2"
     },
     {
       "blob": "synthetic-blob-3",
-      "case_commitment_sha256": "9c75f17f50cccf6b044dd032ec07521ee6c068120e3412464c36c5b40cbe8d46",
+      "case_commitment_sha256": "56577f9f98a453e95a9e5f121f7387074496ee7afec7b7bac2ce8e079d7ddb81",
       "case_pseudonym": "c1ef9844318f8019",
       "commit": "synthetic-commit-3",
       "development_leakage_match": false,
@@ -79,8 +79,8 @@
       "sampling_frame_sha256": "cc157c9a2b718e1a80c7e2b88c3beac7f4c0765b457ec90ad0361fde012b29fd",
       "selection_rule_id": "selftest-stratified",
       "snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000003",
-      "source_bytes": 32,
-      "source_sha256": "dc75c72ade668073a92a6578cbfd3f934b565d74cf1b54595016a8937cd3a37e",
+      "source_bytes": 31,
+      "source_sha256": "31e9769f333f65cab9ce6944847898a1f9e40302b61e00d25bb206103d75e5ab",
       "tree": "synthetic-tree-3"
     }
   ],

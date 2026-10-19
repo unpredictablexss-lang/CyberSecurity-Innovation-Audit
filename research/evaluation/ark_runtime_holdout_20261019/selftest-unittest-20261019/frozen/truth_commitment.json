@@ -1,8 +1,8 @@
 {
   "commitment_sha256": "4644cc9e38f4ee1bb0dc5dd01e1398ca0ce82afcf3bfb22bb557ddab62a87b2f",
-  "development_leakage_ledger_file_sha256": "523a3932df49e29d0d366e118da3a3883dc82efe5f1573f30111bf1a1d978b3f",
-  "development_leakage_ledger_payload_sha256": "bcd1226bc36885d5f52d1b2d13b78eef7e2db91ccdb04fb46f0fa129e0955a90",
-  "protocol_file_sha256": "aec442d34e799f800fb1c265b1f4bc960424884be37eecc0774a708ce1fcd6ca",
+  "development_leakage_ledger_file_sha256": "0b6df86696ae6b7afac8f5e884cd9157a19906c88d2bfbaabd14e801b7e8f176",
+  "development_leakage_ledger_payload_sha256": "17325f287930dd6be22168671d6fe2a0bcc5b373ce0b5ae78c74e5ba875399fb",
+  "protocol_file_sha256": "b237e6c13547c520965c4e6271ae147d0adbc146c759832d84d76eb62b98278f",
   "schema": "ohscanner.ark-holdout-truth-commitment/v2",
   "scheme": "hmac-sha256-custodian-secret-v1",
   "secret_not_published": true,

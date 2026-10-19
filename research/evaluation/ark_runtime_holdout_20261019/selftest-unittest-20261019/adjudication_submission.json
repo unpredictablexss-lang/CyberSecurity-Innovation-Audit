@@ -9,7 +9,7 @@
       "rationale": "self-test independent adjudicator source shape decision"
     }
   ],
-  "freeze_payload_sha256": "245f914175f4f13001b3f210d692987efad58cca66e560eab770afc3b19b6bb7",
+  "freeze_payload_sha256": "253d850316ed7043198d668d91c3787c8de1731f7b9c8476a3050ed0071ff1af",
   "independence_attestations": {
     "independent_adjudication": true,
     "model_outputs_not_seen": true,

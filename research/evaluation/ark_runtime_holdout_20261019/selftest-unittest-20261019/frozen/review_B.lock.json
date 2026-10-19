@@ -1,5 +1,5 @@
 {
-  "freeze_payload_sha256": "245f914175f4f13001b3f210d692987efad58cca66e560eab770afc3b19b6bb7",
+  "freeze_payload_sha256": "253d850316ed7043198d668d91c3787c8de1731f7b9c8476a3050ed0071ff1af",
   "independence_attestations": {
     "independent_review": true,
     "model_outputs_not_seen": true,
@@ -37,9 +37,9 @@
       "rationale": "self-test reviewer B deliberately different classification"
     }
   ],
-  "packet_payload_sha256": "6250e8f499aab27bd8f01bd5779e59539b5e8c2bfbda1c389b73f1d77f8da6e1",
-  "payload_sha256": "14cad0442001b7447d19e69c8081469322a2d474177d66149128495d48b74705",
+  "packet_payload_sha256": "e5193cdaeecc8eb2e19169fcff06b89e5873ebfb3bdf7d969bc6484da72d9db2",
+  "payload_sha256": "5190ad8762f13669b1ae75c0ed8db0c6ebe6438040efb1fe5d998a102583b707",
   "reviewer_id": "B",
   "schema": "ohscanner.ark-holdout-review-lock/v2",
-  "submission_payload_sha256": "f045a2cdf31a020657d270cf0f7b082984ee8067d576d5ac702df34629f91a6b"
+  "submission_payload_sha256": "27e208c92ee62b4848205b26b34fbaa65f99dac524522f20be77bb360deb638f"
 }

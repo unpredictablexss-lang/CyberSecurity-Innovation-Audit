@@ -36,7 +36,7 @@
       "rationale": "self-test reviewer A source shape classification"
     }
   ],
-  "packet_sha256": "e894b3e490c626db3f275c53ceef6e6b79328f10ac7cb28f45b83796a0f5b284",
+  "packet_sha256": "2b0e8243253431f5ee3d871e6f116fcb02a8053ce0326fcbcf267f11248b29fb",
   "reviewer_id": "A",
   "schema": "ohscanner.ark-holdout-review/v2"
 }

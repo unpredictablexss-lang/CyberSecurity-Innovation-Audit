@@ -52,7 +52,7 @@
         "scanner verdict",
         "model output"
       ],
-      "source_text": "int h(int x) { return x - 1; }\r\n",
+      "source_text": "int h(int x) { return x - 1; }\n",
       "submission_requirements": {
         "evidence": "Non-empty bounded source locations or quoted code facts.",
         "fields": [
@@ -82,7 +82,7 @@
         "scanner verdict",
         "model output"
       ],
-      "source_text": "int g(int x) { return x + 1; }\r\n",
+      "source_text": "int g(int x) { return x + 1; }\n",
       "submission_requirements": {
         "evidence": "Non-empty bounded source locations or quoted code facts.",
         "fields": [
@@ -112,7 +112,7 @@
         "scanner verdict",
         "model output"
       ],
-      "source_text": "int f(int x) { return x; }\r\n",
+      "source_text": "int f(int x) { return x; }\n",
       "submission_requirements": {
         "evidence": "Non-empty bounded source locations or quoted code facts.",
         "fields": [

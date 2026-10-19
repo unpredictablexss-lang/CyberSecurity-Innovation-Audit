@@ -1,5 +1,5 @@
 {
-  "freeze_payload_sha256": "245f914175f4f13001b3f210d692987efad58cca66e560eab770afc3b19b6bb7",
+  "freeze_payload_sha256": "253d850316ed7043198d668d91c3787c8de1731f7b9c8476a3050ed0071ff1af",
   "independence_attestations": {
     "independent_review": true,
     "model_outputs_not_seen": true,
@@ -37,9 +37,9 @@
       "rationale": "self-test reviewer A source shape classification"
     }
   ],
-  "packet_payload_sha256": "e894b3e490c626db3f275c53ceef6e6b79328f10ac7cb28f45b83796a0f5b284",
-  "payload_sha256": "d352a6bb4f0dccaf8c24fb864be2f5975b65230dc2c3a192e1b4995d3e68061c",
+  "packet_payload_sha256": "2b0e8243253431f5ee3d871e6f116fcb02a8053ce0326fcbcf267f11248b29fb",
+  "payload_sha256": "eb2a9b1d9e11905bf8a5391e7843ba1aa7acd31e79d1be107512164a93b7617b",
   "reviewer_id": "A",
   "schema": "ohscanner.ark-holdout-review-lock/v2",
-  "submission_payload_sha256": "010f512c4ff27ba317581153f5a55b15c7a29b4e702b0ae613bef73b24a3475a"
+  "submission_payload_sha256": "bde401210b5e6ef2d9892afa3b658b10f8f69fd31263e7a31bd3425cfaa16bfb"
 }

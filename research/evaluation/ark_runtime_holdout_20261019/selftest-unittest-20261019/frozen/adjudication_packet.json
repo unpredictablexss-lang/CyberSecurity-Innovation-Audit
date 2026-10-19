@@ -33,8 +33,8 @@
       "reviewer_2_rationale": "self-test reviewer B deliberately different classification"
     }
   ],
-  "freeze_payload_sha256": "245f914175f4f13001b3f210d692987efad58cca66e560eab770afc3b19b6bb7",
-  "payload_sha256": "ed07768c55211b5944e7e7d234c195becbe5be9a4a31688df7a9a2f1f15bd619",
+  "freeze_payload_sha256": "253d850316ed7043198d668d91c3787c8de1731f7b9c8476a3050ed0071ff1af",
+  "payload_sha256": "f7f43100ba7dd499f5e2ff5af014f61c7625948e4855afffdd55b870dfb4d3a0",
   "schema": "ohscanner.ark-holdout-adjudication/v2",
   "status": "THIRD_REVIEW_REQUIRED"
 }

@@ -14,7 +14,7 @@
       "selection_rule_id": "selftest-stratified",
       "snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000001",
       "source_path": "case_1.cpp",
-      "source_sha256": "cd210a3192acf1614b030482fd496ef245f872e26580a85bf7a63adcc25ae6e6",
+      "source_sha256": "1a0efe604440d96561e3075b2ec8bb90f8847d9709d24add37f9ea016221918c",
       "tree": "synthetic-tree-1"
     },
     {
@@ -31,7 +31,7 @@
       "selection_rule_id": "selftest-stratified",
       "snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000002",
       "source_path": "case_2.cpp",
-      "source_sha256": "18db728f3c4a1721d1239562c73cef02ad833ff35e679f5b0ec9913e2dab1320",
+      "source_sha256": "874d9d17338f4be37d8fde4ef7fed8c2b87c73bbdea338b26cc2a26899dba7aa",
       "tree": "synthetic-tree-2"
     },
     {
@@ -48,16 +48,16 @@
       "selection_rule_id": "selftest-stratified",
       "snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000003",
       "source_path": "case_3.cpp",
-      "source_sha256": "dc75c72ade668073a92a6578cbfd3f934b565d74cf1b54595016a8937cd3a37e",
+      "source_sha256": "31e9769f333f65cab9ce6944847898a1f9e40302b61e00d25bb206103d75e5ab",
       "tree": "synthetic-tree-3"
     }
   ],
-  "development_leakage_ledger_payload_sha256": "bcd1226bc36885d5f52d1b2d13b78eef7e2db91ccdb04fb46f0fa129e0955a90",
-  "development_leakage_ledger_sha256": "523a3932df49e29d0d366e118da3a3883dc82efe5f1573f30111bf1a1d978b3f",
+  "development_leakage_ledger_payload_sha256": "17325f287930dd6be22168671d6fe2a0bcc5b373ce0b5ae78c74e5ba875399fb",
+  "development_leakage_ledger_sha256": "0b6df86696ae6b7afac8f5e884cd9157a19906c88d2bfbaabd14e801b7e8f176",
   "execution_mode": "pipeline_self_test",
   "family_split_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
   "preregistration_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
-  "protocol_file_sha256": "aec442d34e799f800fb1c265b1f4bc960424884be37eecc0774a708ce1fcd6ca",
+  "protocol_file_sha256": "b237e6c13547c520965c4e6271ae147d0adbc146c759832d84d76eb62b98278f",
   "sample_size": 3,
   "schema": "ohscanner.ark-holdout-intake/v2"
 }
