@@ -17,6 +17,9 @@ Date: 2026-10-20 (Asia/Shanghai)
 - D15: no detector change. Three pairs of residual writes use shared `curIndex`; the `argsSize + flowbufSize` to `int` narrowing and cross-loop cursor invariant are not proven. Vulnerable/fixed CLI output keeps root-specific 6/0 while the six residual findings remain on both sides; safe/unrelated controls are quiet and partial controls remain limited.
 - T11: independently fetched vulnerable/fixed commits and verified tree/blob/file identities. The full-file and fragment outcomes remain blocked/partial; zero findings do not establish a fixed differential.
 - T12 independent acceptance is complete. The next wave below continues detector work and source-backed triage; acceptance stays in a separate lane and runs after those changes freeze.
+- D16 is now implemented at `4208c3f`: recursive names containing `Delete` no longer qualify alone as a deallocator; the exact cJSON apply_patch candidate remains. T14 is independently accepting this detector change.
+- D17 found no trusted merged/released cJSON fixed source: 67215 remains unpatched in checked master/develop; 67216 has an unmerged develop candidate that is not a fixed release.
+- T13 verified the first five queued IDs and eight source objects. All five remain `not_testable / queued_first_batch`; no original queue IDs or states changed.
 
 T12 completion note: the independent wave audit is committed as `1262d0ab9` and reports 3 PASS / 8 PARTIAL / 0 BLOCK / 2 N/A, with all 345 A0 IDs and original states retained. After that audit, D14's historical JSON/Markdown tree-null fields were reconciled to T11/T12's verified commit trees; this metadata cleanup does not change replay outcomes or case disposition.
 
@@ -99,6 +102,17 @@ Inputs: latest T12-accepted queue, A0 original package and hash manifest, CR-021
 Steps: verify each selected ID against its source bytes and hash; inspect only the evidence needed to answer its queued question; record exact source identity, reproducible commands, confirmed facts, unknowns, and minimum next evidence; preserve original status and add a separate evidence disposition; reconcile queue and source manifest after edits.
 Done when: five rows have auditable per-ID evidence actions and provenance, or are explicitly kept queued with precise missing inputs; all 345 IDs and original states remain identical and verifiers pass.
 Boundaries: no detector/tests/fixtures edits; no inferred vulnerability labels; no status promotion based on missing or partial evidence; keep testing and development ownership separate.
+```
+
+### T14 — D16 detector change acceptance (testing)
+
+```text
+Role: independent A-line C/C++ detector regression auditor.
+Continuous goal: accept or reject each frozen detector change from independent source-bound behavior, while separating rule regression status from whole-case status.
+Inputs: D16 commit 84e9493 (integration commit 4208c3f); exact cJSON source identities; D16 report/runner; clean independent checkout.
+Steps: replay exact source and all dedicated positive, misleading Delete-name negative, safe, unrelated, and partial controls; inspect the rule's release-sink evidence; verify line, rule version, parse and detector coverage; run focused and full C++ detector suites; run A-line scope and diff checks.
+Done when: JSON/Markdown records PASS/PARTIAL/BLOCK/N/A for the detector change and CVE case separately, source hashes and commands are independently confirmed, and no zero partial run is labeled safe.
+Boundaries: do not edit detector/tests/fixtures; do not treat candidate presence as product vulnerability confirmation; do not upgrade CVE fixed differential without a trusted fix.
 ```
 
 ## Stage goal
