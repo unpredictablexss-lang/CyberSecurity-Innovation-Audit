@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "protocol_id": "D55",
+  "protocol_version": "1.0-draft",
+  "status": "preregistered_protocol_only",
+  "accuracy_evaluation_started": false,
+  "labels_created": false,
+  "metrics_computed": false,
+  "scanner_modified": false,
+  "protocol_document": "D55_INDEPENDENT_HOLDOUT_PREREGISTRATION.md",
+  "execution_task_document": "D55_HOLDOUT_EXECUTION_TASK.md",
+  "governance_basis": [
+    {
+      "path": "D5_MAIN_READINESS.md",
+      "fact": "M2 is not met; an independent labeled holdout and accuracy/performance evidence are still required."
+    },
+    {
+      "path": "D5_HOLDOUT_LABELS.md",
+      "fact": "No independent blinded real-source labels are recorded; precision and recall are not estimable."
+    },
+    {
+      "path": "D41_HOLDOUT_PREREGISTRATION.md",
+      "fact": "D41 froze detector 0.17.0 and is not current-version accuracy evidence."
+    },
+    {
+      "path": "D41_HOLDOUT_RESULTS.md",
+      "fact": "D41's 99-case packet was post-scan stratified and has zero independent labels; it is not a population accuracy sample."
+    },
+    {
+      "path": "D48_HOLDOUT_PREREGISTRATION.md",
+      "fact": "D48 is a convenience source sample; its 97 files were partial, scan was blocked, and no labels are available."
+    },
+    {
+      "path": "D49_KNOWN_CVE_REPLAY/README.md and D50_COMPONENT_CVE_REPLAY/README.md",
+      "fact": "These are component/CVE replay evidence with partial coverage, not independently sampled and labeled holdout data."
+    },
+    {
+      "path": "D52_PASTEBOARD_PERMISSION_20261020.md and D53_PASTEBOARD_PRODUCT_PROFILE_20261021.md",
+      "fact": "Pasteboard records are targeted source/config investigations; D53 source/config correlation does not establish a built product."
+    }
+  ],
+  "evaluation_tracks": [
+    "ohscanner.data.sensitive_exposure",
+    "ohscanner.known_disclosed_cves"
+  ],
+  "track_metrics_must_not_be_pooled": true,
+  "sampling": {
+    "unit": "repository_snapshot",
+    "selection": "preregistered_stratified_random_selection_from_independent_inventory",
+    "minimum_repository_snapshots": 20,
+    "minimum_eligible_source_files": 1000,
+    "minimum_source_families": 4,
+    "minimums_are_precision_guarantees": false,
+    "if_frame_or_independence_unavailable": "stop_not_ready; do not substitute D41, D48, D49-D53, prior D development, or synthetic cases"
+  },
+  "freeze_requirements": [
+    "protocol hash",
+    "independent source-frame hash and timestamp",
+    "cohort and exclusion ledger hashes",
+    "selection procedure and seed commitment",
+    "repository commit/tree and eligible scope hashes",
+    "clean scanner full commit SHA",
+    "detector/model/profile/parser/postprocessor/config hashes",
+    "runtime environment and replay driver hash",
+    "raw scan output bundle hash"
+  ],
+  "labeling": {
+    "independent_blind_reviewers_required": 2,
+    "independent_adjudicator_required_for_disagreements": true,
+    "labels": ["supported_risk", "protected_safe", "unrelated", "unknown"],
+    "prediction_blind_full_scope_review_required_for_recall": true,
+    "unknown_is_retained_and_not_coerced": true,
+    "label_fields": [
+      "case_id",
+      "track",
+      "label",
+      "claim_scope",
+      "support_evidence",
+      "contradicting_evidence",
+      "entry_and_control",
+      "source_to_sink_or_cve_condition",
+      "coverage_confidence",
+      "product_applicability",
+      "review_notes"
+    ]
+  },
+  "metric_denominators": {
+    "precision": "TP / (TP + FP) among adjudicable frozen scanner findings; show unknown candidate count/rate and adjudicable fraction",
+    "recall": "TP / (TP + FN) over all independently identified adjudicated supported_risk units in exhaustively reviewed scope, or a valid preregistered probability sample with design weights",
+    "unknown": "reported separately; never silently assigned to TP, FP, FN, or TN",
+    "empty_or_invalid_denominator": "not_estimable",
+    "interval_design": "95% interval accounting for repository-level clustering and sample design"
+  },
+  "hard_stop_conditions": [
+    "No auditable independent sampling frame or source-independence evidence",
+    "Source commit/tree/scope/blob identity cannot be verified",
+    "Scanner is dirty or detector/model/profile/parser/scope hashes are missing or changed after freeze",
+    "Selection, exclusions, inclusion probabilities, or seed are missing or influenced by scan output",
+    "Fewer than two independent qualified reviewers, prediction disclosure before label freeze, or incomplete review for recall",
+    "Missing original label files, adjudication record, source-bound evidence, or hash-frozen analysis inputs",
+    "Partial or not-run coverage prevents the particular claim from being judged",
+    "Minimum cohort floors not met; stop population claim and report descriptive pilot only",
+    "Source/output mutated or reproducibility cannot be reconstructed"
+  ],
+  "m2_exit_criteria": [
+    "Independent and provenance-bound cohort selected using the preregistered auditable design",
+    "Scanner bundle frozen before scan and labels",
+    "Two independent blind labels per unit plus independent adjudication of disagreements/metric-relevant unknowns",
+    "Exhaustive prediction-blind miss review or valid weighted probability design for recall",
+    "Track-specific TP/FP/FN/unknown, precision/recall denominators and intervals, coverage, runtime, and peak RSS reported",
+    "Reproducible raw artifacts and hash-verifying scoring code",
+    "D owner review of limitations and readiness evidence"
+  ],
+  "current_missing_inputs": [
+    "independent source inventory and frozen sampling frame",
+    "prior-use overlap ledger and eligible cohort with verified identities",
+    "pre-scan selection record, inclusion probabilities, and seed record",
+    "frozen scanner and model/profile/parser/configuration hashes for the target evaluation version",
+    "two qualified independent reviewers and conflict declarations",
+    "independent adjudicator availability",
+    "approved immutable storage for sealed predictions and separated labels"
+  ],
+  "current_stop_decision": "stop_before_source_selection_and_scan_until_missing_inputs_are_provided_and_frozen",
+  "current_metric_status": {
+    "tp": "not_computed",
+    "fp": "not_computed",
+    "fn": "not_computed",
+    "tn": "not_computed",
+    "precision": "not_estimable",
+    "recall": "not_estimable",
+    "accuracy": "not_computed"
+  },
+  "scope_limit": "Source-level holdout evidence cannot establish product applicability or satisfy M3 by itself."
+}
