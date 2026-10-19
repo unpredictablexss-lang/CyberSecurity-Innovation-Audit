@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "experiment": "D19 cJSON recursive compare root precision",
+  "classification": "no_change",
+  "fixed_control": false,
+  "experimental_patch_commit": "bd307ec3b5f1c0555976c4b0118621e485367aa2",
+  "cases": [
+    {
+      "input": "third_party/cjson/cJSON.c",
+      "commit_label": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+      "parse_status": "partial",
+      "run_status": "blocked",
+      "rule_version": "0.4.2",
+      "source_bytes": 80529,
+      "source_sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb",
+      "elapsed_seconds": 0.11050109999996494,
+      "findings": [
+        {
+          "line": 3161,
+          "column": 22,
+          "rule_id": "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005",
+          "symbol": "cJSON_Compare",
+          "source_sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb"
+        }
+      ],
+      "scope_note": "direct detector replay only; parser and CLI coverage are not evaluated"
+    },
+    {
+      "input": "renamed/cJSON.c",
+      "commit_label": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+      "parse_status": "partial",
+      "run_status": "blocked",
+      "rule_version": "0.4.2",
+      "source_bytes": 80549,
+      "source_sha256": "deefeb5bd926d3f8ecd809f32e70e3e44592ae2d0afdde051f64a6251b01f9f2",
+      "elapsed_seconds": 0.10080309999830206,
+      "findings": [
+        {
+          "line": 3161,
+          "column": 22,
+          "rule_id": "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005",
+          "symbol": "compare_json_nodes",
+          "source_sha256": "deefeb5bd926d3f8ecd809f32e70e3e44592ae2d0afdde051f64a6251b01f9f2"
+        }
+      ],
+      "scope_note": "direct detector replay only; parser and CLI coverage are not evaluated"
+    },
+    {
+      "input": "experimental/d17-develop-bd307ec/cJSON.c",
+      "commit_label": "bd307ec3b5f1c0555976c4b0118621e485367aa2",
+      "parse_status": "partial",
+      "run_status": "blocked",
+      "rule_version": "0.4.2",
+      "source_bytes": 73339,
+      "source_sha256": "2d13226af13a4f065862caf6f0c34f3ef7b43f83798ce37d28747d05612f097a",
+      "elapsed_seconds": 0.08576839999659569,
+      "findings": [],
+      "scope_note": "direct detector replay only; parser and CLI coverage are not evaluated"
+    },
+    {
+      "input": "tests/detectors/fixtures/cpp_resource_lifetime/safe_recursive_compare_indexed_lookup.c",
+      "commit_label": "2222222222222222222222222222222222222222",
+      "parse_status": "complete",
+      "run_status": "completed",
+      "rule_version": "0.4.2",
+      "source_bytes": 807,
+      "source_sha256": "5382bb30650a01567187a54d407b7a7c70d1e231c8c616fbe621126658ab17a0",
+      "elapsed_seconds": 0.0018195000011473894,
+      "findings": [],
+      "scope_note": "direct detector replay only; parser and CLI coverage are not evaluated"
+    },
+    {
+      "input": "tests/detectors/fixtures/cpp_resource_lifetime/safe_recursive_compare_cost.c",
+      "commit_label": "2222222222222222222222222222222222222222",
+      "parse_status": "complete",
+      "run_status": "completed",
+      "rule_version": "0.4.2",
+      "source_bytes": 550,
+      "source_sha256": "7f7c503d12a204caffa6e76a5d44745e2cdfcb94b917d632f4d59250d7fbdfcf",
+      "elapsed_seconds": 0.0008879999986675102,
+      "findings": [],
+      "scope_note": "direct detector replay only; parser and CLI coverage are not evaluated"
+    }
+  ]
+}

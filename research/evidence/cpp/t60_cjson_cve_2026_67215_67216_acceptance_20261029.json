@@ -1,0 +1,51 @@
+{
+  "schema": "a-line-t60-cjson-independent-acceptance/v1",
+  "task": "T60",
+  "date": "2026-10-29",
+  "acceptance_baseline": "aadf02b13c5e9c9ed439b04c18d3c993c18ec16a",
+  "source": {
+    "repository": "openharmony/third_party_cJSON",
+    "commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748",
+    "tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856",
+    "scope": ["cJSON.c", "cJSON_Utils.c"],
+    "files": {
+      "cJSON.c": {"blob": "152b2caa479c9f448001652913c980a6dafb82e0", "bytes": 80529, "sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb", "parser": "partial"},
+      "cJSON_Utils.c": {"blob": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74", "bytes": 40736, "sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9", "parser": "complete"}
+    }
+  },
+  "execution": {
+    "mode": "independent-detached-worktree",
+    "checkout": "D:/openHarmonyScanner/worktrees/t60-cjson-cve-acceptance-20261029",
+    "detector": "ohscanner.cpp.resource_lifetime",
+    "version": "0.4.2",
+    "profile": "light-ast",
+    "command": "python -m src.cli ohscan-run --repo-dir D:/openHarmonyScanner/tmp/d33-cjson-0c2c9dff-20261023 --repository openharmony/third_party_cJSON --commit 0c2c9dff82cc85539c8362132d7a5f6bf7d1e748 --include cJSON.c --include cJSON_Utils.c --detector ohscanner.cpp.resource_lifetime --json-out D:/openHarmonyScanner/tmp/t60-cjson-cli.json --md-out D:/openHarmonyScanner/tmp/t60-cjson-cli.md",
+    "run_status": "blocked",
+    "parse": {"complete": 1, "partial": 1},
+    "detector_coverage": "partial",
+    "findings": [
+      {"cve": "CVE-2026-67216", "file": "cJSON.c", "line": 3161, "column": 22, "symbol": "cJSON_Compare", "rule": "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005", "source_sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb"},
+      {"cve": "CVE-2026-67215", "file": "cJSON_Utils.c", "line": 932, "column": 13, "symbol": "apply_patch", "rule": "ohcpp-resource-exhaustion-tree-amplification-candidate-004", "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"},
+      {"cve": "CVE-2026-67215", "file": "cJSON_Utils.c", "line": 950, "column": 9, "symbol": "apply_patch", "rule": "ohcpp-resource-exhaustion-tree-amplification-candidate-004", "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"}
+    ]
+  },
+  "cases": {
+    "CVE-2026-67215": {"candidate_reproduced": true, "fixed_source": "BLOCK: no trusted root-matched merged/released fix; PR #1064 is a different MergePatch root", "safe_unrelated_controls": "existing resource-lifetime unit suite passed; generic JSON Patch positive and unrelated cleanup controls behaved as expected", "disposition": "PARTIAL/BLOCK"},
+    "CVE-2026-67216": {"candidate_reproduced": true, "fixed_source": "BLOCK: no trusted root-matched merged/released fix", "experimental_control": {"commit": "bd307ec3b5f1c0555976c4b0118621e485367aa2", "result": "no candidate in direct-detector replay; unmerged develop experiment, not fixed", "safe_controls": ["safe_recursive_compare_indexed_lookup.c", "safe_recursive_compare_cost.c"], "result_for_safe_controls": "no candidate"}, "disposition": "PARTIAL/BLOCK"}
+  },
+  "d3_review": {
+    "cross_root_confusion": "D3's original 0.3.0 run combined the two mechanisms in one detector family and reported two total diagnostics; it is not a clean CVE-separated acceptance record. D16 tightened tree-amplification release-sink recognition; D18/D19 and the current 0.4.2 CLI now preserve distinct tree-amplification and compare-cost rule IDs/locations.",
+    "remaining_gap": "cJSON.c remains parser-partial, both files have partial detector coverage, and no trusted fixed source exists for either root. Candidate shape does not prove attacker control, reachable impact, or runtime resource exhaustion."
+  },
+  "controls": {
+    "fixed": "none trusted; no fixed PASS",
+    "safe_unrelated": "production CLI input was the disclosed vulnerable pair only; existing focused unit suite passed 8/8 and D19 direct replay returned no candidates on both safe compare controls. These controls are not whole-source production CLI differentials.",
+    "a0_queue": {"rows": 345, "unique_ids": 345, "original_status_counts": {"not_reproduced": 9, "not_testable": 336}, "current_status_pairs_equal_to_frozen_8e79a238": true, "triage_verifier": "overall_ok"}
+  },
+  "verification": {
+    "focused_tests": "python -m unittest tests.detectors.test_cpp_resource_lifetime_detector -v (8 passed)",
+    "source_verifier": "python research/evidence/cpp/verify_t33_cjson_m2_replay.py --source-git-dir D:/openHarmonyScanner/openharmony/.repo/project-objects/third_party_cJSON.git (passed)",
+    "a0_triage": "python research/deliveries/cpp/a0_triage_20261019/verify_triage.py (overall_ok=true)",
+    "change_scope": "python scripts/check_change_scope.py --base aadf02b13c5e9c9ed439b04c18d3c993c18ec16a --lane cpp (0 violations before T60 edits)"
+  }
+}
