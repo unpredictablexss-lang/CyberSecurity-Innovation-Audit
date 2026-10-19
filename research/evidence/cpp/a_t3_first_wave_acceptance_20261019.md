@@ -175,3 +175,34 @@ Both independent CLI reports identify detector version `0.3.0`; the vulnerable s
 | curl recursive cleanup vulnerable/fixed differential | PASS (static focused regression only) | Same detector `0.3.0`, both complete, 1/0 candidate differential; product impact remains unvalidated. |
 
 The first-wave T1 matrix and D1/D2 dispositions are unchanged by this addendum. Outstanding T3 task: keep the D3 cases in the partial/block queue until fixed cJSON source identities and complete detector coverage are independently available; preserve product-validation limitations for curl and cJSON.
+
+## D4 independent acceptance: libpng parser blockers
+
+T3 cherry-picked D4 frozen commit `f880613d44707a91ffbf2104b0a14292b553acbb` into the independent validation branch without conflict (local cherry-pick `c46a379`). D4 declares D3 baseline `940409d3670dafd036b0e8afcbdbe479d815230c` and detector `ohscanner.cpp.resource_lifetime` `0.3.0`, consistent with the preceding T3 audit. D4 added evidence only; no detector changes were included.
+
+### CVE-2026-33416 source identity and replay
+
+The three D4 raw reports bind the upstream vulnerable source to commit `c3e304954a9cfd154bc0dfbfea2b01cd61d6546d`, tree `e01f5780f93eaa6d74cca003bb39b427c8f1e910`, and the fixed source to commit `d5515b5b8be3901aac04e5bd8bd5c89f287bcd33`, tree `a28bb962645843af84063c77f574f6d88da79f76`. Their explicit four-file scope is `pngset.c`, `png.c`, `pngread.c`, and `pngrtran.c`. The vulnerable per-file SHA-256 values in D4 JSON match T1's recorded source hashes. T3 independently checked the same vulnerable byte set against a local M2 source snapshot and matched all four hashes; it also checked all four fixed byte hashes from the corresponding local M2 snapshot. That local mirror provides equivalent byte content but has synthetic commits `afad740f043acd9bee412677d0a5ff1e046aaa24` / `dcd78000a2e39558bd0b9340633d7acff796d37` and trees `5d18312a3b10c4aa1a488b91ac41d010606640ef` / `444dba821b3f8b58326ce85d0daf056f64029ec7`. These synthetic identities are not substituted for the upstream identities in D4.
+
+T3 reran the production CLI on those exact-byte local snapshots with detector version `0.3.0`, `light-ast`, and the same four-file scope. The vulnerable M2 replay had snapshot SHA-256 `f80ae78bc09612fd5b8c5a925f858b41e15711319d0a794cafeb4764f7ec73d9`; fixed had `21cfd3bac010b1ba63611630ac8381487a9455c24591618cb16bb52e0a600eae`. Both results matched D4: parsing partial on all four files, detector run blocked, coverage partial, and 0 findings. D4's OpenHarmony source snapshot also has the same vulnerable bytes and all-partial/zero result.
+
+**Disposition: PARTIAL/BLOCK.** D4 replay is same-version and consistent with the 940409d baseline; it is not a static differential pass because the targeted source remains parser-partial. No safe inference follows from 0 findings. Exact upstream commit/tree IDs are preserved from D4/T1 records; independent T3 execution was byte-equivalent via local synthetic M2 snapshots because those upstream commits were not available in the T3 local source object store. Product linkage and call sequence remain unverified.
+
+### CVE-2026-46675 source identity and replay
+
+D4 binds the vulnerable and fixed `pngrutil.c` variants as separate byte-bound snapshots under synthetic commit `e283ed5d3a74c0112f092ddb1003c97e0e9a4717` and tree `c78da20c3ffe37b09653eaa3b49c5213745ac4bd`. The vulnerable source SHA-256 independently recomputed from bytes is `b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e`; its Git blob SHA-1 is `a4eda54c8cb3d36cf1651dba159067b65030e3aa`, matching T1's upstream v1.6.55 blob. The fixed source SHA-256 is `a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e`; its blob SHA-1 is `482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a`, matching the recorded upstream fix commit `aa77ef38c17ab2fc1b41bec09fb973c6a386641d`. D4 notes that complete upstream trees are unavailable for this case.
+
+The production CLI was independently rerun against both byte-bound files with detector `0.3.0`, scope `vulnerable-1.6.55/pngrutil.c` or `fixed/pngrutil.c`, and the same synthetic commit/tree. Both runs matched D4 snapshot hashes (`192e4c1ac567f539395a92a383b0f55e22baa49467de510efda1198962064098` vulnerable; `0e27e208e7bb29cbb2a95d76ed7e1ee53959fac13eb529fe6ee6bced724179c1` fixed), parser partial, detector blocked, coverage partial, and 0 findings.
+
+There is one transcription error in `d4_libpng_20261019/README.md`: its vulnerable SHA-256 string has an extra `d` and is 65 characters. The D4 raw JSON, T3 recomputation from file bytes, and independent replay agree on the 64-character hash above. The fixed SHA-256 and both Git blob SHA-1 values match. This is documentation-only and does not change D4 run status.
+
+**Disposition: PARTIAL/BLOCK.** Source-byte identities and same-version replay are consistent, but both target files parse partial; zero findings cannot pass detection or establish the fixed source as safe. Minimum follow-up is a parser-visible target context/complete analysis and reproducible source-bound sequence for the stale zstream transition, plus upstream tree binding if full source-tree identity is needed. Product call-path evidence remains outstanding.
+
+### Consolidated D4 decisions
+
+| Case | T3 disposition | Evidence boundary / minimum remaining work |
+|---|---|---|
+| CVE-2026-33416 | PARTIAL/BLOCK | Exact vulnerable/fixed byte hashes and 0.3.0 replays agree; all four scoped files are partial and both runs blocked. Obtain usable parser/type context for cross-file owner/release/use sequence and safe/unrelated controls. |
+| CVE-2026-46675 | PARTIAL/BLOCK | Vulnerable/fixed SHA-256 and recorded Git blob IDs match; both 0.3.0 runs are partial/blocked. Correct the D4 README SHA typo; obtain complete parser-visible zstream state and caller sequence. |
+
+The existing first-wave matrix, D3 acceptance, and 940409d baseline are unchanged. These replays support the D4 conclusion that no detector change is justified by the current partial parse evidence; they do not establish either source as fixed/safe or validate product exposure.
