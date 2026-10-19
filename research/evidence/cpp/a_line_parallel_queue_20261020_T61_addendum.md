@@ -7,4 +7,4 @@
 - The four-file OH/M2 33416 run is an extracted replay scope. Neither it nor generic detector fixtures count as source-bound safe/unrelated controls. No suitable CVE-specific safe/unrelated controls were found. Do not accept either zero/zero result as fixed PASS.
 - The existing T23 A0 verifier record reports 345 unique rows and preserved statuses; T61 did not modify or independently rerun that external A0 verifier.
 
-See [full acceptance report](t61_libpng_independent_acceptance_20261030.md), [machine audit](t61_libpng_independent_acceptance_20261030.json), [fresh parser/fragment replay](t61_libpng_current_replay_20261030.json), and [verifier](verify_t61_libpng_acceptance_20261030.py).
+See [full acceptance report](t61_libpng_independent_acceptance_20261020.md), [machine audit](t61_libpng_independent_acceptance_20261020.json), [fresh parser/fragment replay](t61_libpng_current_replay_20261020.json), and [verifier](verify_t61_libpng_acceptance_20261020.py).

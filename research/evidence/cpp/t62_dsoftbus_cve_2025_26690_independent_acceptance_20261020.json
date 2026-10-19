@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "task": "T62 independent acceptance",
+  "case": "CVE-2025-26690",
+  "source_objects": {
+    "vulnerable": {
+      "commit": "258662cd9840b55a31546a72d91027f6368cea84",
+      "tree": "366a4ced9400653c9628c0b677e4ae657c0e7bd8",
+      "blob": "a82b71fb5520b02278a4af695bbe918d14c1048e",
+      "byte_length": 8502,
+      "sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+      "parse": "complete",
+      "detector_coverage": "partial",
+      "execution": "blocked",
+      "candidate_lines": [
+        71,
+        82,
+        97,
+        108,
+        123
+      ]
+    },
+    "fixed": {
+      "commit": "192f3e11d74beeaa3d879333471deb8a24a7e1c5",
+      "tree": "1d58ba0ef706a6f69dd372bd496c8058810882aa",
+      "blob": "13ddbe93a7f617784dec0f3761e09f66b5c3217c",
+      "byte_length": 9387,
+      "sha256": "5a093d91efc624147d40bf3f4dbbe3ab7ab6d724b17978298e9d5c30d9e5eb81",
+      "parse": "complete",
+      "detector_coverage": "partial",
+      "execution": "blocked",
+      "candidate_lines": []
+    }
+  },
+  "a0": {
+    "row_count": 345,
+    "unique_candidate_ids": 345,
+    "original_status_counts": {
+      "not_testable": 336,
+      "not_reproduced": 9
+    },
+    "queue_status_counts": {
+      "paused_pending_evidence": 331,
+      "queued_first_batch": 5,
+      "queued_not_reproduced": 9
+    },
+    "source_row_present": false,
+    "queue_bytes_unchanged_from_head": true
+  },
+  "prior_case_matrix": {
+    "baseline": "BLOCK",
+    "current": "PARTIAL"
+  },
+  "controls": {
+    "focused_detector_tests": {
+      "command": "python -m unittest tests.detectors.test_cpp_null_dereference_detector tests.detectors.test_cpp_null_dereference_signal_controls -q",
+      "passed": 21
+    },
+    "upstream_fixed_pair": "available; five checks before corresponding dereferences",
+    "dsoftbus_safe_unrelated_source_controls": "missing",
+    "mechanism_fixture_controls": "covered by focused detector tests; not case-specific source controls"
+  },
+  "provenance": {
+    "fetch_head_remote": "https://gitcode.com/openharmony/communication_dsoftbus",
+    "local_commit_tree_blob_graph_verified": true,
+    "signed_publisher_attestation": "not verified",
+    "synthetic_single_file_package_only": false
+  },
+  "disposition": "PARTIAL/BLOCK",
+  "limitations": [
+    "Detector semantics remain partial/blocked (0/1 complete) on both sources despite complete syntax parsing.",
+    "No product build, compile flags/macros, target-derived allocation-failure test, caller reachability, or CIA impact evidence.",
+    "No independently bound dSoftBus-specific safe/unrelated source controls.",
+    "Fixed zero-result is not a safety conclusion."
+  ]
+}
