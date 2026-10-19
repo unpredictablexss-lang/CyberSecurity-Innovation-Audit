@@ -1,0 +1,43 @@
+{
+  "verification_date": "2026-10-19",
+  "source_root": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit\\research\\deliveries\\a-line-sample30\\20261018",
+  "source_hash_manifest_entries": 97,
+  "source_hash_manifest_bytes": 4364747,
+  "missing_source_materials": [],
+  "hash_mismatches": [],
+  "source_candidates": 345,
+  "queue_rows": 345,
+  "csv_rows": 345,
+  "unique_queue_ids": 345,
+  "duplicate_queue_ids": 0,
+  "duplicate_csv_ids": 0,
+  "source_key_mismatches": [],
+  "original_status_counts": {
+    "not_reproduced": 9,
+    "not_testable": 336
+  },
+  "queue_status_counts": {
+    "paused_pending_evidence": 331,
+    "queued_first_batch": 5,
+    "queued_not_reproduced": 9
+  },
+  "unknown_family_leakage_rows": 345,
+  "rows_missing_action_or_ranking_fields": [],
+  "checks": {
+    "source_hash_manifest_files_present_and_matching": true,
+    "source_keys_match_A0": true,
+    "all_A0_candidate_ids_retained": true,
+    "csv_and_json_ids_match": true,
+    "no_duplicate_queue_ids": true,
+    "source_candidate_count_is_345": true,
+    "queue_count_is_345": true,
+    "original_status_counts_preserved": true,
+    "not_reproduced_rows_remain_queued": true,
+    "first_batch_is_actionable_not_testable": true,
+    "remaining_not_testable_rows_remain_queued": true,
+    "unknown_family_leakage_is_explicit": true,
+    "all_rows_have_action_and_ranking_fields": true,
+    "A0_reconciliation_candidate_count_is_345": true
+  },
+  "overall_ok": true
+}
