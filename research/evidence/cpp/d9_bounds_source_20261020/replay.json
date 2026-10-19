@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "task": "D9 bounds source replay and unblock record",
+  "date": "2026-10-20",
+  "base_commit": "7e8083314f854780a0f606ecc6382208e8a02e8a",
+  "worktree": "D:\\openHarmonyScanner\\worktrees\\a-d9-bounds-source-20261020",
+  "branch": "codex/a-d9-bounds-source-20261020",
+  "decision": "no_detector_edit_justified",
+  "cases": [
+    {
+      "id": "libtiff-cve-2025-9900",
+      "status": "PARTIAL",
+      "classification": "parser_coverage_block_before_detector_analysis",
+      "detector": "ohscanner.cpp.bounds",
+      "detector_version": "0.2.0",
+      "rule_under_test": "ohcpp-memory-bounds-pointer-offset-candidate-004",
+      "rule_version": "0.1.0",
+      "versions": [
+        {"role": "vulnerable", "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e", "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a", "blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e", "path": "libtiff/tif_getimage.c", "sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3", "parse_status": "partial", "selected_files": 2, "finding_count": 0, "detector_status": "blocked", "wall_seconds": 0.83},
+        {"role": "fixed", "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99", "tree": "77361ef7262189e16a2010b5c333f6b275d17f09", "blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db", "path": "libtiff/tif_getimage.c", "sha256": "de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8", "parse_status": "partial", "selected_files": 2, "finding_count": 0, "detector_status": "blocked", "wall_seconds": 0.51}
+      ],
+      "controls": {"positive": "pass", "guarded_fixed_shape": "pass", "safe_signed_subtraction": "pass", "unrelated_unsigned_subtraction": "pass", "partial_fail_closed": "pass", "test_count": 19},
+      "minimum_next_input": "Parser coverage sufficient to analyze the affected function in both exact source revisions."
+    },
+    {
+      "id": "web_webview-cve-2026-27648",
+      "status": "BLOCK",
+      "classification": "vulnerable_git_objects_missing_and_available_fixed_source_partial",
+      "detector": "ohscanner.cpp.bounds",
+      "detector_version": "0.2.0",
+      "vulnerable_commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a",
+      "vulnerable_commit_available": false,
+      "vulnerable_blob": "78e83fea67a2db3297cc59f07566a0c0b6153e7a",
+      "vulnerable_blob_available": false,
+      "available_fixed": {"commit": "7038439a38336e0f74de9e8cdd72bf7b7ce8371f", "tree": "9873e4146e4a521b80f05a61c24d9c6047f696a7", "blob": "27e93e338ced03aeed6e7d892e29d4d0740f3653", "path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc", "sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483", "parse_status": "partial", "finding_count": 0, "detector_status": "blocked", "wall_seconds": 0.48},
+      "minimum_next_input": "Git object database or archive resolving the exact vulnerable commit/blob and parser coverage for the target function in both revisions."
+    }
+  ],
+  "validation": {
+    "command": "python -m unittest tests.detectors.test_cpp_memory_safety_detectors -v",
+    "result": "19/19 passed",
+    "scope_command": "python -m scripts.check_change_scope --base 7e8083314f854780a0f606ecc6382208e8a02e8a --lane cpp",
+    "scope_violations": [],
+    "git_diff_check": "clean",
+    "changed_paths": [
+      "research/evidence/cpp/d9_bounds_source_20261020/replay.md",
+      "research/evidence/cpp/d9_bounds_source_20261020/replay.json"
+    ]
+  }
+}
