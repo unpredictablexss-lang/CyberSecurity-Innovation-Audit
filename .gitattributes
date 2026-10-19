@@ -9,5 +9,3 @@ rules/cpp/vendor/** text eol=lf
 research/evaluation/ark_runtime_holdout_20261019/real_holdout_input_protocol.v1.json -text
 research/evaluation/ark_runtime_holdout_20261019/development_leakage_ledger.local-development-20261019.json -text
 research/evaluation/ark_runtime_holdout_20261019/real_holdout_input_protocol.v1.sha256 -text
-
-
