@@ -74,7 +74,9 @@
     {
       "condition": "HasPendingException(glue_) controls the same helper branch in the fixed source.",
       "result": "effective_for_this_local_source_pattern",
-      "evidence_refs": ["fixed:NativeInlineLowering::ReplaceGateWithPendingException:1045-1060"]
+      "evidence_refs": [
+        "fixed:NativeInlineLowering::ReplaceGateWithPendingException:1045-1060"
+      ]
     }
   ],
   "fixed_comparison": {
@@ -100,8 +102,8 @@
     "Same-product-profile fixed build and revalidation"
   ],
   "recommended_next_check": [
-    "Replay the verified parent/fixed raw blobs through D1 with actual identity facts; expect parent candidate and fixed no same-rule candidate without labeling fixed safe.",
-    "Add wrong blob/revision and adjacent safe-helper controls, then independently rerun the tests.",
+    "D1 should add the semantically equivalent NotEqual plus inverted-edge form while keeping unsupported negation/macro/nested control structures unknown.",
+    "T1 should rerun the exact 40-case source replay and independent C12/C10/known-case/C11 regression on the updated D1 commit.",
     "Keep product vulnerability and product safety unknown until product build, reachability, and impact evidence close."
   ],
   "confidence": "medium",
@@ -110,5 +112,20 @@
     "No product build, runtime test, or PoC was run.",
     "The helper is shared by other callers; this review does not classify every caller.",
     "The detector's structural relationship checks are not general CFG dominance or product applicability proofs."
-  ]
+  ],
+  "detector_replay": {
+    "t1_commit": "23824fd0eaa8d228fed7c71cb7b7b1eba10236a1",
+    "status": "counterexample_open",
+    "raw_parent": "candidate emitted at pinned source line 1053",
+    "raw_fixed": "no same-rule candidate; fixed-control limitation retained; not a safety verdict",
+    "wrong_blob_or_revision": "rejected without candidate",
+    "combined_d1_overlay_suite": {
+      "total": 40,
+      "passed": 39,
+      "failed": 1,
+      "failure": "NotEqual(value, ExceptionConstant) with inverted success/exception IfTrue/IfFalse routes is semantically equivalent to the parent pattern but is missed by current D1 matcher"
+    },
+    "semantic_basis": "T1 verified ICmp EQ/NE mapping, Branch/IfTrue/IfFalse construction, and ReplaceHirWithIfBranch success/exception wiring in pinned compiler source.",
+    "scope_check": "c_t1 against baseline 8358d0d27a134cc3737cc4cd218560bde36b4443 passed with zero violations"
+  }
 }
