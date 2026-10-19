@@ -487,6 +487,7 @@ class KnownDisclosedCveTests(unittest.TestCase):
         valid_throw = "int OnGetPasteData(){ if (VerifyPermission(PERMISSION_READ_PASTEBOARD) == PERMISSION_DENIED) throw NoPermission(); GetPasteData(); reply.WriteParcelable(data); return 0; }"
         ignored = "int OnGetPasteData(){ VerifyPermission(PERMISSION_READ_PASTEBOARD); GetPasteData(); reply.WriteParcelable(data); return 0; }"
         mixed_condition = "int OnGetPasteData(){ if (!VerifyPermission(PERMISSION_READ_PASTEBOARD) && caller_is_special) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        conditional_guard = "int OnGetPasteData(){ if (is_privileged) { if (!VerifyCallingPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data); return 0; }"
         after_read = "int OnGetPasteData(){ GetPasteData(); if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; reply.WriteParcelable(data); return 0; }"
         after_serialization = "int OnGetPasteData(){ GetPasteData(); reply.WriteParcelable(data); if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; return 0; }"
         dead_nested = "int OnGetPasteData(){ if (false) { if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data); return 0; }"
@@ -497,7 +498,7 @@ class KnownDisclosedCveTests(unittest.TestCase):
 
         for guarded in (valid, valid_status, valid_throw):
             self.assertFalse(has_candidate(guarded), "a pre-read denial with an immediate exit is a syntactic suppression control")
-        for ineffective in (handler, ignored, mixed_condition, after_read, after_serialization, dead_nested):
+        for ineffective in (handler, ignored, mixed_condition, conditional_guard, after_read, after_serialization, dead_nested):
             with self.subTest(handler=ineffective):
                 self.assertTrue(has_candidate(ineffective), "ineffective or unreachable token must retain the candidate")
 

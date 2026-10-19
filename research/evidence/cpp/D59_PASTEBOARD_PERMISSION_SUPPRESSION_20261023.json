@@ -19,13 +19,14 @@
   },
   "scope": "CVE-2025-27247 permission suppression matcher and necessary focused tests/corpus controls only",
   "matcher": {
-    "version": "0.19.4",
+    "version": "0.19.5",
     "accepted_condition_shapes": [
       "!PermissionCheck(...)",
       "PermissionCheck(...) != PERMISSION_GRANTED",
       "PermissionCheck(...) == PERMISSION_DENIED"
     ],
     "required_exit": "The if body must begin with return or throw.",
+    "required_scope": "The denial if statement must be top-level in the checked method body; nested guards do not suppress.",
     "ordering": "The full if statement must end before the OnGetPasteData GetPasteData call or the OnRemoteRequest it->second dispatch route.",
     "dead_branch_filter": "Ignore a denial guard when it is nested inside an enclosing if whose entire condition is the literal false, case-insensitive.",
     "not_cfg_or_permission_proof": true
@@ -45,7 +46,8 @@
     "pre_read_permission_status_not_granted_with_return": "suppressed_syntactic_control",
     "post_read_denial_check": "candidate_retained",
     "post_serialization_denial_check": "candidate_retained",
-    "valid_denial_guard_nested_in_literal_false": "candidate_retained"
+    "valid_denial_guard_nested_in_literal_false": "candidate_retained",
+    "denial_guard_nested_in_unrelated_conditional": "candidate_retained"
   },
   "changed_files": [
     "src/ohscanner/detectors/known_cves.py",
