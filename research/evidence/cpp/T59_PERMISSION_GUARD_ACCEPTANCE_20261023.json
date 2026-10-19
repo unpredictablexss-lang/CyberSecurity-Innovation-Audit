@@ -1,0 +1,101 @@
+{
+  "task": "T59",
+  "date": "2026-10-23",
+  "phase": "baseline-recorded-awaiting-D59-frozen-commit",
+  "baseline": {
+    "scanner_commit": "c8f83b82291e82b3272c73b943623336a3c836c3",
+    "scanner_tree": "8d1a0d414a6605bc42a69a0dfb2c2a4e74fadc57",
+    "detector_path": "src/ohscanner/detectors/known_cves.py",
+    "detector_blob": "94113fdd45b2273e6ea9dd02c7eeac886b853329",
+    "detector_rule_version": "0.19.3",
+    "source_repository": "openharmony/miscservices_pasteboard",
+    "source_commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "source_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "source_path": "services/zidl/src/pasteboard_service_stub.cpp",
+    "source_git_blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+    "source_bytes": 6288,
+    "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "source_parse_status": "partial",
+    "pinned_source_baseline": {
+      "detector_status": "blocked",
+      "finding": {
+        "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+        "symbol": "CVE-2025-27247",
+        "file": "services/zidl/src/pasteboard_service_stub.cpp",
+        "line": 41,
+        "column": 1,
+        "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+        "identity_quality": "partial"
+      }
+    }
+  },
+  "counterexample_matrix": [
+    {
+      "id": "unguarded-no-permission-token",
+      "shape": "GET_PASTE_DATA route; GetPasteData; parcel write; no permission token",
+      "baseline_observed": "candidate",
+      "expected_after_D59": "candidate",
+      "purpose": "candidate-retention positive"
+    },
+    {
+      "id": "ignored-permission-result-before-read",
+      "shape": "bare VerifyCallingPermission token before GetPasteData; result unused",
+      "baseline_observed": "suppressed",
+      "expected_after_D59": "candidate",
+      "purpose": "false-suppression adversary"
+    },
+    {
+      "id": "denial-branch-after-read",
+      "shape": "GetPasteData; visible if (!VerifyCallingPermission(...)) return denial; then parcel write",
+      "baseline_observed": "suppressed",
+      "expected_after_D59": "candidate",
+      "purpose": "order/dominance adversary"
+    },
+    {
+      "id": "denial-branch-after-parcel-write",
+      "shape": "GetPasteData; parcel write; visible denial branch with early return",
+      "baseline_observed": "suppressed",
+      "expected_after_D59": "candidate",
+      "purpose": "post-disclosure adversary"
+    },
+    {
+      "id": "denial-branch-under-dead-if-false",
+      "shape": "if (false) { if (!VerifyCallingPermission(...)) return denial; } before GetPasteData",
+      "baseline_observed": "suppressed",
+      "expected_after_D59": "candidate",
+      "purpose": "syntactically nested unreachable-branch adversary"
+    },
+    {
+      "id": "visible-denial-branch-before-read",
+      "shape": "if (!VerifyCallingPermission(...)) return denial; GetPasteData; parcel write",
+      "baseline_observed": "suppressed",
+      "expected_after_D59": "suppressed",
+      "purpose": "syntactic guard-shape negative control only"
+    }
+  ],
+  "sibling_candidate_retention": {
+    "rule_id": "ohknowncve-pasteboard-cve-2025-25212",
+    "symbol": "CVE-2025-25212",
+    "baseline_observed_in_all_six_synthetic_cases": true,
+    "expected_after_D59": "no change in D51 rule behavior or unrelated CVE identities"
+  },
+  "acceptance_scope": {
+    "fix_correctness": "pending D59 frozen commit and replay",
+    "candidate_retention": "baseline reproduced; post-patch pending exact pinned source replay",
+    "coverage": "baseline target unit is partial and run blocked; parser/whole-component coverage must not be overstated",
+    "scope": "pending D59 diff audit; detector, fixture, and expected-output edits are disallowed in T59"
+  },
+  "semantic_limit": "All matrix expectations concern source-local syntactic candidate behavior. They do not prove control-flow dominance, helper semantics, real permission enforcement, complete IPC/framework authorization, CVE causality, product inclusion, or runtime exploitability.",
+  "baseline_replay": {
+    "method": "in-memory direct KnownDisclosedCveDetector invocation in the independent T59 worktree; no tests, fixtures, expected outputs, or detector files were changed",
+    "cases_run": 6,
+    "observed": {
+      "unguarded-no-permission-token": "CVE-2025-27247 present",
+      "ignored-permission-result-before-read": "CVE-2025-27247 absent",
+      "denial-branch-after-read": "CVE-2025-27247 absent",
+      "denial-branch-after-parcel-write": "CVE-2025-27247 absent",
+      "denial-branch-under-dead-if-false": "CVE-2025-27247 absent",
+      "visible-denial-branch-before-read": "CVE-2025-27247 absent"
+    }
+  }
+}
