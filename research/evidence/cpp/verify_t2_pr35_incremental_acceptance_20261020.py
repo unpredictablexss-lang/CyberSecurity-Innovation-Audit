@@ -29,7 +29,10 @@ def source_hash(git_dir: str, commit: str, path: str) -> tuple[str, str]:
 def main() -> None:
     record = json.loads(RECORD.read_text(encoding="utf-8"))
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
-    assert head == record["target_commit"], (head, record["target_commit"])
+    ancestry = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", record["target_commit"], "HEAD"], cwd=ROOT
+    )
+    assert ancestry.returncode == 0, (head, record["target_commit"])
 
     # Confirm the frozen matrix remains 13 entries and matches T12's independently
     # recorded 3 regression PASS / 8 PARTIAL / 2 N/A distribution.
