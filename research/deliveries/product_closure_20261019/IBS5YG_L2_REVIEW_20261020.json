@@ -31,11 +31,45 @@
       "declared_remote": "https://gitee.com/openharmony/arkcompiler_ets_runtime.git",
       "commit_tree_blob_byte_length_sha256_and_parent_ancestry": "matched",
       "acquisition_and_custody": "not_independently_verified"
-    }
+    },
+    "shared_dependency": {
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "blob": "757b8d050d306d349822600deacb295c7a54245e",
+      "source_sha256": "3fd7e99e957fb5b7793cb7c36c01b370208c05645aa93551da6abeecaf2e7198",
+      "bytes": 126036,
+      "same_blob_in_parent_and_fixed": true,
+      "object_verification": "verified"
+    },
+    "shared_runtime_dependencies": [
+      {
+        "path": "ecmascript/stubs/runtime_stubs.cpp",
+        "blob": "c7ce18a76e25289ee7274354fd85950fa9b17af8",
+        "source_sha256": "0a11c3832d2d4a0b1adf0879a01e1cbde40a62885f2702dff316985838c135a3",
+        "bytes": 199944,
+        "same_blob_in_parent_and_fixed": true,
+        "object_verification": "verified"
+      },
+      {
+        "path": "ecmascript/js_typed_array.cpp",
+        "blob": "892e376de57c08c768831936503a8e4dac4b39bb",
+        "source_sha256": "e0fa7cb24aae9e3da6ac0bf6ea06972c9419dda83a6647cf3e62d9595997342f",
+        "bytes": 43951,
+        "same_blob_in_parent_and_fixed": true,
+        "object_verification": "verified"
+      },
+      {
+        "path": "ecmascript/builtins/builtins_arraybuffer.cpp",
+        "blob": "44ca29e3d4b3ba83e8b458bf64dc285303dd7da0",
+        "source_sha256": "ccf5281e92af41022b25be409f7e69c5bb269a1ad2e32b4d01f9c73c57d42f08",
+        "bytes": 43892,
+        "same_blob_in_parent_and_fixed": true,
+        "object_verification": "verified"
+      }
+    ]
   },
   "static_root_cause": "supported",
   "decision": "candidate_supported",
-  "root_cause": "In parent BuiltinsTypedArrayStubBuilder::Filter, the final copy loop writes to the newly allocated newArray but supplies arrayType derived from thisValue to StoreTypedArrayElement. The fixed source reads newArrayType from the allocated destination and supplies that type to the store. StoreTypedArrayElement forwards jsType to SetTypeArrayPropertyByIndex, so this is a concrete source-level mismatch between the destination object and the type used for its write. The fixed patch supports the same local root cause. The exact runtime conditions and security impact are not established by these source snippets alone.",
+  "root_cause": "In parent BuiltinsTypedArrayStubBuilder::Filter, the final copy loop writes to newArray but supplies arrayType derived from thisValue to StoreTypedArrayElement. The fixed source reads newArrayType from the allocated destination and supplies that type. StoreTypedArrayElement forwards jsType to SetTypeArrayPropertyByIndex; the runtime converts it to JSType and FastSetPropertyByIndex uses it for element size/type while checking index against the destination array length. The shared buffer write path then writes at that computed byte offset; the inspected helper path has no destination byte-length argument/check. If callback/species semantics produce a destination with a narrower element width than the source arrayType, the final indices could therefore compute writes beyond the destination buffer. This is a plausible source-level out-of-bounds write candidate, not a confirmed runtime result: the exact guarded-path species conditions, destination length and allocation relationship, buffer bounds behavior elsewhere, and security impact remain unverified.",
   "evidence": [
     {
       "claim": "Filter allocates newArray after the callback/filter loop, checks allocation exception state, then copies kept values into that destination.",
@@ -76,6 +110,66 @@
       "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
       "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
       "kind": "direct"
+    },
+    {
+      "claim": "Filter dispatches the callback before allocating the output TypedArray. The callback path can execute user JavaScript before the subsequent NewTypedArray call observes constructor/prototype state.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "symbol": "BuiltinsTypedArrayStubBuilder::Filter",
+      "line_or_range": "1444-1458,1476-1479",
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "kind": "inference"
+    },
+    {
+      "claim": "NewTypedArray can take a TypedArraySpeciesCreate slow path when constructor, species marker, or object marker checks fail; its implementation is unchanged between parent and fixed commits.",
+      "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "symbol": "NewObjectStubBuilder::NewTypedArray",
+      "line_or_range": "2272-2343",
+      "blob": "757b8d050d306d349822600deacb295c7a54245e",
+      "source_sha256": "3fd7e99e957fb5b7793cb7c36c01b370208c05645aa93551da6abeecaf2e7198",
+      "kind": "direct"
+    },
+    {
+      "claim": "Runtime stub converts passed jsType and dispatches it to JSTypedArray::FastSetPropertyByIndex.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/stubs/runtime_stubs.cpp",
+      "symbol": "SetTypeArrayPropertyByIndex",
+      "line_or_range": "2809-2817",
+      "blob": "c7ce18a76e25289ee7274354fd85950fa9b17af8",
+      "source_sha256": "0a11c3832d2d4a0b1adf0879a01e1cbde40a62885f2702dff316985838c135a3",
+      "kind": "direct"
+    },
+    {
+      "claim": "FastSetPropertyByIndex checks index against the destination array length but computes byte offset and element type from passed jsType.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/js_typed_array.cpp",
+      "symbol": "JSTypedArray::FastSetPropertyByIndex",
+      "line_or_range": "713-748",
+      "blob": "892e376de57c08c768831936503a8e4dac4b39bb",
+      "source_sha256": "e0fa7cb24aae9e3da6ac0bf6ea06972c9419dda83a6647cf3e62d9595997342f",
+      "kind": "direct"
+    },
+    {
+      "claim": "FastSetValueInBuffer checks detached state then obtains the data pointer and delegates to SetValueInBuffer; the inspected SetValueInBuffer switch writes by type at byteIndex and does not take a buffer length. This local call path alone does not prove there are no checks elsewhere.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/builtins/builtins_arraybuffer.cpp",
+      "symbol": "BuiltinsArrayBuffer::FastSetValueInBuffer / SetValueInBuffer",
+      "line_or_range": "711-769",
+      "blob": "44ca29e3d4b3ba83e8b458bf64dc285303dd7da0",
+      "source_sha256": "ccf5281e92af41022b25be409f7e69c5bb269a1ad2e32b4d01f9c73c57d42f08",
+      "kind": "direct"
+    },
+    {
+      "claim": "If destination element width is less than passed source jsType width, the computed byte offset for later indices may extend past destination backing storage; an out-of-bounds write is therefore a candidate requiring dynamic validation.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "symbol": "BuiltinsTypedArrayStubBuilder::Filter",
+      "line_or_range": "1476-1499",
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "kind": "inference"
     }
   ],
   "protections": [
@@ -106,25 +200,27 @@
   "entry_attacker_trigger_impact": {
     "entry": "unknown",
     "attacker_control": "unknown",
-    "trigger": "unknown",
-    "cia_impact": "unknown"
+    "trigger": "Static candidate: callback/species flow yields a destination whose element width is narrower than source arrayType; a later result-copy index may then use an oversized jsType byte offset/width. Exact reachable conditions are unknown.",
+    "cia_impact": "unknown; source path supports a plausible out-of-bounds write candidate only, with no runtime reproduction or product impact evidence."
   },
   "missing_evidence": [
     "Independent acquisition/custody or server-authenticity evidence for the local object store",
     "A concrete shipped product revision and a source-to-product component binding for IBS5YG",
     "Exact GN target/action/args, compiler/linker/sysroot, include/generated-input closure, and preprocessed translation unit",
-    "Runtime proof of when the allocated destination's element type can differ from the captured source arrayType under the guarded Filter path",
     "A product-reachable entry, attacker-controlled trigger, and security-relevant impact",
-    "Same-profile fixed-product build and regression revalidation"
+    "Same-profile fixed-product build and regression revalidation",
+    "Runtime reproduction proving callback-mediated type divergence under the exact guarded product path",
+    "Dynamic proof or disproof that narrower species destination types cause writes beyond backing storage, including full buffer bounds and allocation-size checks"
   ],
   "recommended_next_check": [
     "Obtain the target product release/branch/manifest and prove its exact Ark Runtime component revision before product-profile work.",
     "On that source revision, trace NewTypedArray result type and SetTypeArrayPropertyByIndex behavior for the guarded Filter path.",
+    "Build a focused runtime test that varies source and species result element widths and verifies write bounds under the exact fast Filter guards; inspect sanitizer or allocator evidence without claiming product reachability.",
     "Keep product vulnerability, exploitability, and safety unknown until build, runtime, and impact evidence is independently verified."
   ],
-  "confidence": "medium",
+  "confidence": "medium-low",
   "limitations": [
-    "This is a source-level inference based on direct parent/fixed differences and a shared store helper.",
+    "The out-of-bounds write mechanism is an inference from the source/fixed diff and local helper chain; no dynamic bounds or memory-safety reproduction was obtained.",
     "The local object database is content-consistent with its declared remote but acquisition and custody were not independently attested.",
     "No product build, preprocessed TU, runtime test, product PoC, exploitability analysis, or fixed-product replay was performed.",
     "The review does not map the candidate to a CVE or assert vulnerability severity."
