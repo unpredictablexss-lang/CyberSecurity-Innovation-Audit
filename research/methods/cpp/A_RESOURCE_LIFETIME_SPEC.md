@@ -31,3 +31,7 @@
 ## EvidenceObligations
 
 候选保留 allocation/release/alias state、control-flow dominance、cross-function/container transfer、entry/privilege boundary、attacker control、trigger 和 CIA impact 义务；未闭合前不得升级 confirmed/reportable。
+
+## D34 interprocedural lifecycle assessment (2026-10-24)
+
+Current `resource_lifetime` 0.4.2 was replayed on the exact libpng CVE-2026-46675 vulnerable/fixed source pair. Both production CLI runs are blocked/partial with zero findings; each seven-function replay has six complete fragments, the partial `png_handle_iCCP` fragment, and zero findings. This is inconclusive, not a fixed/safe pass. Pinned-source review sees the shared `png_struct` zstream fields, chunk release, conditional IDAT refill and `png_read_end` drain sequence, but the current parser does not provide resolved parameter/type identity, call-site enclosing function, field SSA/alias state, or cross-function path/order facts. Do not add a name-based special case or claim this relation as statically proven. Keep the case PARTIAL/BLOCK and require a bounded, reviewed interprocedural resource-state model with parse/context unknowns and independent positive/fixed/safe/unrelated/renamed/partial controls before extending this mechanism. Full source identities, commands, parser assessment and replay verifier: [D34 assessment](../../evidence/cpp/d34_libpng46675_model_assessment_20261024.md).

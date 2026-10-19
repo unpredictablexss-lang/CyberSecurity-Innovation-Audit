@@ -1,0 +1,387 @@
+{
+  "schema_version": 1,
+  "experiment": "D34_generic_resource_lifetime_model_assessment",
+  "baseline": "1cb2178c88715b6c8f908ac7826cb684a35730f7",
+  "detector": "ohscanner.cpp.resource_lifetime",
+  "detector_version": "0.4.2",
+  "source_repository": "pnggroup/libpng",
+  "source_identities": {
+    "vulnerable": {
+      "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+      "tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
+      "files": {
+        "pngrutil.c": {
+          "path": "pngrutil.c",
+          "blob": "a4eda54c8cb3d36cf1651dba159067b65030e3aa",
+          "sha256": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e",
+          "bytes": 153112
+        },
+        "pngread.c": {
+          "path": "pngread.c",
+          "blob": "af2f44c9ca8eaa40177b2ae5612c0eccc0f625a5",
+          "sha256": "feee8bdd4c553cc4f01bb288a868d4b83e1ce0f75014a96163a49eb32119cba6",
+          "bytes": 143336
+        },
+        "pngstruct.h": {
+          "path": "pngstruct.h",
+          "blob": "fe5fa0415548d8dea33c7417b66a6dd07e3f6857",
+          "sha256": "3f3ee0f323c4ff02a82db945aafe31b738b31f81c8a4d765df6ed75ae8e205eb",
+          "bytes": 19189
+        },
+        "pngpriv.h": {
+          "path": "pngpriv.h",
+          "blob": "f91666c700093f4d5db04eb4e4888671b39f28b8",
+          "sha256": "def8dd30f3ea2c59f811460a535ba6c8d51ca71bfb70e7f9ccf75b9c791eef2f",
+          "bytes": 94055
+        }
+      }
+    },
+    "fixed": {
+      "commit": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+      "tree": "4c64b5f18cef7d129adee3b403fc4be93f82e30d",
+      "files": {
+        "pngrutil.c": {
+          "path": "pngrutil.c",
+          "blob": "482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a",
+          "sha256": "a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e",
+          "bytes": 152477
+        }
+      }
+    }
+  },
+  "production_cli": {
+    "vulnerable": {
+      "command": "python -m src.cli.main ohscan-run --repo-dir <pinned-libpng-git> --repository pnggroup/libpng --commit <commit> --include pngrutil.c --detector ohscanner.cpp.resource_lifetime",
+      "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+      "tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
+      "snapshot_sha256": "26cba27aa9b6619c776d99932a94336d6127934a63297f8ace50830772c86dbb",
+      "scope_files": 1,
+      "scope_bytes": 153112,
+      "source_sha256": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e",
+      "parse_status": {
+        "partial": 1
+      },
+      "detector_version": "0.4.2",
+      "detector_status": "blocked",
+      "finding_count": 0,
+      "coverage_status": "partial",
+      "coverage_counts": {
+        "complete": 0,
+        "partial": 1,
+        "not_analyzed": 0,
+        "failed": 0
+      },
+      "limitations": [
+        {
+          "file": "pngrutil.c",
+          "parse_status": "partial",
+          "reason": "detector_model_incomplete",
+          "analysis_status": "partial"
+        }
+      ]
+    },
+    "fixed": {
+      "command": "python -m src.cli.main ohscan-run --repo-dir <pinned-libpng-git> --repository pnggroup/libpng --commit <commit> --include pngrutil.c --detector ohscanner.cpp.resource_lifetime",
+      "commit": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+      "tree": "4c64b5f18cef7d129adee3b403fc4be93f82e30d",
+      "snapshot_sha256": "2bd9047ff76fbdfdb5c82f68eb81e16e6752df1ad3176d380b882185c4a4764e",
+      "scope_files": 1,
+      "scope_bytes": 152477,
+      "source_sha256": "a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e",
+      "parse_status": {
+        "partial": 1
+      },
+      "detector_version": "0.4.2",
+      "detector_status": "blocked",
+      "finding_count": 0,
+      "coverage_status": "partial",
+      "coverage_counts": {
+        "complete": 0,
+        "partial": 1,
+        "not_analyzed": 0,
+        "failed": 0
+      },
+      "limitations": [
+        {
+          "file": "pngrutil.c",
+          "parse_status": "partial",
+          "reason": "detector_model_incomplete",
+          "analysis_status": "partial"
+        }
+      ]
+    }
+  },
+  "parser_summary": {
+    "pngread.c": {
+      "parse_status": "partial",
+      "parse_issue_count": 73,
+      "function_count": 42,
+      "call_site_count": 449,
+      "variable_declaration_count": 177,
+      "call_site_has_enclosing_function": false,
+      "call_site_has_resolved_callee_or_parameter_type": false
+    },
+    "pngstruct.h": {
+      "parse_status": "partial",
+      "parse_issue_count": 1,
+      "function_count": 0,
+      "call_site_count": 0,
+      "variable_declaration_count": 0,
+      "call_site_has_enclosing_function": false,
+      "call_site_has_resolved_callee_or_parameter_type": false
+    },
+    "pngpriv.h": {
+      "parse_status": "partial",
+      "parse_issue_count": 520,
+      "function_count": 0,
+      "call_site_count": 191,
+      "variable_declaration_count": 0,
+      "call_site_has_enclosing_function": false,
+      "call_site_has_resolved_callee_or_parameter_type": false
+    },
+    "vulnerable/pngrutil.c": {
+      "parse_status": "partial",
+      "parse_issue_count": 72,
+      "function_count": 58,
+      "call_site_count": 496,
+      "variable_declaration_count": 133,
+      "call_site_has_enclosing_function": false,
+      "call_site_has_resolved_callee_or_parameter_type": false
+    },
+    "fixed/pngrutil.c": {
+      "parse_status": "partial",
+      "parse_issue_count": 72,
+      "function_count": 59,
+      "call_site_count": 501,
+      "variable_declaration_count": 134,
+      "call_site_has_enclosing_function": false,
+      "call_site_has_resolved_callee_or_parameter_type": false
+    }
+  },
+  "fragments": {
+    "vulnerable": [
+      {
+        "function": "png_inflate_claim",
+        "line_start": 413,
+        "line_end": 515,
+        "fragment_sha256": "0270d4ffd8552cc1d3349707e23186cbddf4449cdd0d1e2f739b7f6a54354114",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "complete",
+        "fragment_parse_issue_count": 0,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "completed",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      },
+      {
+        "function": "png_inflate",
+        "line_start": 555,
+        "line_end": 671,
+        "fragment_sha256": "736d9e9bd38a55173b6b4b7b857f5cdc84443032ede6c04edd4bdc9146ba0da8",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "complete",
+        "fragment_parse_issue_count": 0,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "completed",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      },
+      {
+        "function": "png_decompress_chunk",
+        "line_start": 680,
+        "line_end": 827,
+        "fragment_sha256": "a0c8bc14f7736dc0f2da85cc6bc7b57185dfe4ada476a3d0d32efd3f35b118de",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "complete",
+        "fragment_parse_issue_count": 0,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "completed",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      },
+      {
+        "function": "png_inflate_read",
+        "line_start": 835,
+        "line_end": 895,
+        "fragment_sha256": "43846e317a5ef50f25894ff36e82f49889c29238976cfd3524f7dfea3fb7fe85",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "complete",
+        "fragment_parse_issue_count": 0,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "completed",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      },
+      {
+        "function": "png_handle_iCCP",
+        "line_start": 1339,
+        "line_end": 1557,
+        "fragment_sha256": "8f2d1b9902715e9006b026154c5c26137c4b40e5df7874fe6a5f98dcdc8bda21",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "partial",
+        "fragment_parse_issue_count": 1,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "blocked",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      },
+      {
+        "function": "png_handle_zTXt",
+        "line_start": 2458,
+        "line_end": 2567,
+        "fragment_sha256": "15cd318d75cee44fe2054183b672e8ee83f94f9ff2e057e1b77051d05d0a1ff5",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "complete",
+        "fragment_parse_issue_count": 0,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "completed",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      },
+      {
+        "function": "png_read_IDAT_data",
+        "line_start": 4183,
+        "line_end": 4318,
+        "fragment_sha256": "f7ea3806377d7b3dbe633fec4f8a2e77ba1e11c4374725153434f033008f0e00",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "complete",
+        "fragment_parse_issue_count": 0,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "completed",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      }
+    ],
+    "fixed": [
+      {
+        "function": "png_inflate_claim",
+        "line_start": 425,
+        "line_end": 521,
+        "fragment_sha256": "6902959749cc919d09c6493708a27837e68c0714fbb49daaf80fe5f97eb4d41f",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "complete",
+        "fragment_parse_issue_count": 0,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "completed",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      },
+      {
+        "function": "png_inflate",
+        "line_start": 561,
+        "line_end": 677,
+        "fragment_sha256": "560f76b14c3e9280405135d77ba55e057635960bc7ebb92227b9b0c43a3b99ee",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "complete",
+        "fragment_parse_issue_count": 0,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "completed",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      },
+      {
+        "function": "png_decompress_chunk",
+        "line_start": 686,
+        "line_end": 834,
+        "fragment_sha256": "5a0104ad50c42ee0227ae15849b535841a0fbf7ee9a1b507ba5952db2fd31b6c",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "complete",
+        "fragment_parse_issue_count": 0,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "completed",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      },
+      {
+        "function": "png_inflate_read",
+        "line_start": 842,
+        "line_end": 902,
+        "fragment_sha256": "2619509aa211b16105eb0a5722bfd973ea42629461957b6245c630a712f794c9",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "complete",
+        "fragment_parse_issue_count": 0,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "completed",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      },
+      {
+        "function": "png_handle_iCCP",
+        "line_start": 1333,
+        "line_end": 1553,
+        "fragment_sha256": "e2ec91d4a3c1d66bc4604c0eeb844cce8d5c4d41c23e7bfcfde67b2fecfa8770",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "partial",
+        "fragment_parse_issue_count": 1,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "blocked",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      },
+      {
+        "function": "png_handle_zTXt",
+        "line_start": 2455,
+        "line_end": 2564,
+        "fragment_sha256": "7bf844e27b566d886b678a94a4c98b0bcdf6d28c5a04b529669a79b40d12618c",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "complete",
+        "fragment_parse_issue_count": 0,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "completed",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      },
+      {
+        "function": "png_read_IDAT_data",
+        "line_start": 4180,
+        "line_end": 4315,
+        "fragment_sha256": "e0ad2afa3bda047cbe3d761358b6ac402c34365b3a367fa693351cf54cc22388",
+        "parent_parse_status": "partial",
+        "fragment_parse_status": "complete",
+        "fragment_parse_issue_count": 0,
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.4.2",
+        "run_status": "completed",
+        "finding_count": 0,
+        "finding_rule_ids": []
+      }
+    ]
+  },
+  "source_model_assessment": {
+    "source_level_same_object_evidence": [
+      "Pinned pngstruct.h declares zowner and z_stream zstream as members of png_struct.",
+      "png_inflate_claim, png_decompress_chunk and png_read_IDAT_data accept the library's png_structrp png_ptr parameter and access png_ptr->zstream fields.",
+      "png_decompress_chunk transfers/frees its old read_buffer-derived buffer, then vulnerable source clears zowner without clearing zstream.next_in/avail_in; png_read_IDAT_data refills only when avail_in == 0 and otherwise reaches inflate with retained stream fields.",
+      "png_read_info dispatches chunks through png_handle_chunk; png_read_end calls png_read_finish_IDAT; png_read_finish_IDAT calls png_read_IDAT_data. These source edges make the reported order plausible but do not prove an application-specific path or trigger.",
+      "The exact fixed pngrutil.c adds png_inflate_detach_buffers and invokes it at ownership/release transitions, including the relevant chunk and IDAT paths."
+    ],
+    "current_parser_proves_interprocedural_same_object_field_reuse": false,
+    "reasons": [
+      "The production scope contains only pngrutil.c; required caller/callee edges in pngread.c and zstream field declarations in pngstruct.h/pngpriv.h are outside the scanned scope.",
+      "The full target translation unit and the relevant headers/caller file parse partial.",
+      "AstIndex CallSite records callee spelling, argument text and location but not enclosing function, resolved function/type identity, field SSA/alias state, path feasibility, or call order across translation units.",
+      "The standalone iCCP fragment is partial; six complete fragments omit declarations and do not constitute whole-program or interprocedural proof.",
+      "A rule based only on repeated identifier spelling, known function names, CVE, repository or source hash would violate the generic evidence requirement and is not justified."
+    ],
+    "decision": "NO_RULE_CHANGE_PARTIAL_BLOCK",
+    "next_generic_capability": "A reviewed interprocedural resource-state model that binds parameter types and object identity, associates calls with enclosing functions, propagates field writes/clears and ownership transitions over bounded direct-call paths, and records parse/context unknowns. Validate it on multiple independently sourced lifecycle cases before enabling findings; keep this D34 exact pair as holdout after rule design."
+  },
+  "limitations": [
+    "Source-level structure is manually corroborated against pinned source objects, not a compiler-resolved call graph.",
+    "No detector change means no positive/fixed differential is established; both zero-finding CLI outcomes are blocked/partial, not safe or fixed passes.",
+    "Product build/configuration, malformed-chunk trigger feasibility, product reachability, runtime behavior and impact were not tested."
+  ]
+}
