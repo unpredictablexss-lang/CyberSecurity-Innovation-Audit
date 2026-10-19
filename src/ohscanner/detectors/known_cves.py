@@ -6,7 +6,7 @@ from .adapters.artifacts import classify_artifact, limitation_message
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.19.8"
+VERSION = "0.19.9"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -193,6 +193,39 @@ def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: 
         consequence_impact=impact, consequence_cwe=cwe,
         source_sha256=unit.sha256, rule_version=VERSION, rule_lineage_id=LINEAGE,
         symbol_identity=cve, identity_quality="partial")
+
+def _pasteboard_guard_observation(handler_body: str) -> EvidenceObligation:
+    """Record visible guard-like syntax without inferring permission semantics."""
+    guard_like = re.compile(
+        r"\b(?:Check\w*Permission|Verify\w*Permission|Enforce\w*Permission|HasPastePermission)"
+        r"\s*\([^;{}]*?\)|\b(?:PERMISSION_[A-Z0-9_]+|READ_PASTEBOARD(?:_PERMISSION)?|"
+        r"SECURE_PASTE(?:_PERMISSION)?)\b",
+        re.I,
+    )
+    matches = list(guard_like.finditer(handler_body))
+    if not matches:
+        return EvidenceObligation(
+            "permission_guard_observation",
+            "state=absent; scope=OnGetPasteData body; no permission-like call or token was observed",
+            "unknown",
+        )
+
+    unresolved_flow = any(not _top_level_at(handler_body, match.start()) for match in matches)
+    state = "unresolved_control_flow" if unresolved_flow else "observed_unresolved"
+    records = []
+    for match in matches[:8]:
+        snippet = re.sub(r"\s+", " ", match.group(0)).strip()[:120]
+        tokens = sorted({token.upper() for token in re.findall(r"\b[A-Za-z_]\w*\b", match.group(0))})
+        records.append(
+            f"span=handler_body[{match.start()}:{match.end()}]; token={'|'.join(tokens) or 'none'}; snippet={snippet}"
+        )
+    if len(matches) > 8:
+        records.append(f"additional_matches={len(matches) - 8}")
+    return EvidenceObligation(
+        "permission_guard_observation",
+        f"state={state}; observations=" + " || ".join(records),
+        "unknown",
+    )
 
 def _curl_version(units):
     """Return one source-declared libcurl version; disagreement stays unknown."""
@@ -718,6 +751,7 @@ def _scan(unit: SourceUnit, curl_version=None):
             finding = _finding(unit, pos, "ohknowncve-pasteboard-cve-2025-27247", "CVE-2025-27247", "Binder GET_PASTE_DATA dispatch reaches a handler that reads and returns paste data; permission-guard provenance is unknown to this source-only matcher.", "CWE-862")
             finding = DetectorFinding(**{**finding.__dict__, "evidence_obligations": finding.evidence_obligations + (
                 EvidenceObligation("permission_guard", "Resolve the actual authorization state and prove that its denial dominates the Pasteboard read.", "unknown"),
+                _pasteboard_guard_observation(hb),
             )})
             out.append(finding)
     # CVE-2026-27648: Flowbuffer decoding must bound both the byte range in

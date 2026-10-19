@@ -1,0 +1,71 @@
+{
+  "task": "D65",
+  "detector": "ohscanner.known_disclosed_cves",
+  "version": "0.19.9",
+  "base_commit": "594abe600d731c72e760e730526dadb8931a9985",
+  "review_context": {
+    "review": "T64",
+    "D64_status": "PARTIAL on evidence completeness; conservative suppression invariant confirmed",
+    "D65_acceptance": "not claimed; independent re-review pending"
+  },
+  "candidate": {
+    "symbol": "CVE-2025-27247",
+    "route": "Binder GET_PASTE_DATA mapping plus OnRemoteRequest dispatch plus OnGetPasteData read-and-return shape",
+    "permission_guard": "unknown",
+    "permission_guard_observation": "separate bounded source observation; does not change guard semantics"
+  },
+  "observation_states": {
+    "absent": "No permission-like call or token appears in the OnGetPasteData body.",
+    "observed_unresolved": "Permission-like syntax appears at the handler body's top syntactic level.",
+    "unresolved_control_flow": "Permission-like syntax appears inside a nested brace scope in the handler body."
+  },
+  "observation_record": {
+    "scope": "OnGetPasteData body only",
+    "span_format": "handler_body[start:end], character offsets",
+    "token_normalization": "uppercase identifier tokens from each matched call or token",
+    "snippet_limit_chars": 120,
+    "match_limit": 8,
+    "authorization_inference": false
+  },
+  "probes": [
+    {
+      "shape": "handler with no permission-like call or token",
+      "expected": "absent; guard remains unknown",
+      "result": "passed"
+    },
+    {
+      "shape": "top-level permission-like call carrying PERMISSION_READ_PASTEBOARD",
+      "expected": "observed_unresolved with span and normalized token; candidate retained",
+      "result": "passed"
+    },
+    {
+      "shape": "nested permission-like guard",
+      "expected": "unresolved_control_flow with span and normalized token; candidate retained",
+      "result": "passed"
+    },
+    {
+      "shape": "untrustedState, bluetoothResult, D63 helpers, and prior ordering controls",
+      "expected": "candidate retained and guard semantics unknown",
+      "result": "passed"
+    },
+    {
+      "shape": "sibling CVE detector identities",
+      "expected": "unchanged",
+      "result": "passed"
+    }
+  ],
+  "validation": {
+    "command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "tests": 32,
+    "passed": 32,
+    "failed": 0,
+    "strict_json": "passed",
+    "diff_check": "passed"
+  },
+  "limitations": [
+    "Observation scans only the extracted OnGetPasteData body; offsets are relative to that body.",
+    "Tokens and function names are not permission API contracts or provenance proofs.",
+    "No helper resolution, variable provenance, aliases, macros, CFG/dominance, exception, or cross-file proof is performed.",
+    "permission_guard remains unknown; CVE causality and product/runtime status remain unknown."
+  ]
+}

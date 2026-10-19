@@ -524,6 +524,24 @@ class KnownDisclosedCveTests(unittest.TestCase):
                 candidate = next(item for item in findings if item.symbol == "CVE-2025-27247")
                 obligation = next(item for item in candidate.evidence_obligations if item.kind == "permission_guard")
                 self.assertEqual("unknown", obligation.status, "unresolved guard semantics must remain explicit")
+                self.assertEqual("unknown", next(item.status for item in candidate.evidence_obligations
+                                                   if item.kind == "permission_guard_observation"))
+
+        def observation_for(body):
+            findings = self.run_source(prefix + body, "pasteboard_service_stub.cpp").findings
+            candidate = next(item for item in findings if item.symbol == "CVE-2025-27247")
+            return next(item.description for item in candidate.evidence_obligations
+                        if item.kind == "permission_guard_observation")
+
+        absent_observation = observation_for(handler)
+        self.assertIn("state=absent", absent_observation)
+        visible_observation = observation_for(bluetooth_with_read_identity)
+        self.assertIn("state=observed_unresolved", visible_observation)
+        self.assertIn("PERMISSION_READ_PASTEBOARD", visible_observation)
+        self.assertIn("span=handler_body[", visible_observation)
+        nested_observation = observation_for(conditional_guard)
+        self.assertIn("state=unresolved_control_flow", nested_observation)
+        self.assertIn("PERMISSION_READ_PASTEBOARD", nested_observation)
 
     def test_pasteboard_quota_helper_and_unrelated_growth_controls(self):
         helper_quota = """bool IsObserverQuotaExceeded(ObserverSet *observers) {
