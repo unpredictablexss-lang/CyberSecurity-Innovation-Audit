@@ -115,7 +115,8 @@ def main() -> None:
             artifact_hashes[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
     print(json.dumps({
         "overall_ok": True,
-        "target_commit": head,
+        "audit_head": head,
+        "target_commit": record["target_commit"],
         "baseline_matrix_cases": len(matrix["cases"]),
         "t12_disposition_counts": counts,
         "a0_rows": len(current),
