@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "task": "T11 independent acceptance of D13 libpng CVE-2026-46675 replay",
+  "date": "2026-10-20",
+  "baseline": "771d0b9b6fd44cb9a813cef6f3161fcc64ab2d48",
+  "status": "PARTIAL/BLOCK",
+  "source_repository": "https://github.com/pnggroup/libpng",
+  "source_identity": {
+    "vulnerable": {
+      "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+      "tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
+      "path": "pngrutil.c",
+      "blob": "a4eda54c8cb3d36cf1651dba159067b65030e3aa",
+      "sha256": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e",
+      "bytes": 153112
+    },
+    "fixed": {
+      "commit": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+      "tree": "4c64b5f18cef7d129adee3b403fc4be93f82e30d",
+      "path": "pngrutil.c",
+      "blob": "482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a",
+      "sha256": "a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e",
+      "bytes": 152477
+    },
+    "verification": "direct git fetch of both commit objects; git show -s verified commit/tree; git ls-tree verified path/blob"
+  },
+  "detector": "ohscanner.cpp.resource_lifetime",
+  "detector_version": "0.4.0",
+  "replay": {
+    "method": "exact source-byte direct detector replay; not pinned-Git ohscan-run CLI",
+    "vulnerable": {"parse_status": "partial", "parse_issue_count": 72, "result_status": "blocked", "findings": 0},
+    "fixed": {"parse_status": "partial", "parse_issue_count": 72, "result_status": "blocked", "findings": 0},
+    "fragment_control": {"functions_per_variant": 7, "vulnerable_complete": 6, "fixed_complete": 6, "iCCP_partial_each": 1, "findings_each": 0, "whole_translation_unit_partial_each": true}
+  },
+  "interpretation": "No vulnerable-root candidate was produced, so the zero-finding fixed result is not a validated fixed differential. Partial whole-file parsing and one partial iCCP fragment block a PASS or safe conclusion.",
+  "remaining": [
+    "Cross-function stale zstream ownership transition is not modeled by the detector.",
+    "Resolve iCCP fragment parse coverage and establish broader translation-unit coverage.",
+    "Validate trigger/call sequence and product reachability separately."
+  ],
+  "commands": [
+    "git fetch --no-tags https://github.com/pnggroup/libpng.git c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+    "git fetch --no-tags https://github.com/pnggroup/libpng.git aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+    "python research/evidence/cpp/d13_libpng46675_fullfile_replay_20261020.py",
+    "python research/evidence/cpp/d12_libpng_function_fragments_20261020.py --33416-vulnerable D:/openHarmonyScanner/tmp/libpng-runtime-cve-2026-33416-20261019/vulnerable --33416-fixed D:/openHarmonyScanner/tmp/libpng-runtime-cve-2026-33416-20261019/fixed --46675-vulnerable D:/openHarmonyScanner/tmp/libpng-ghsa-qvg3-source-20261019/vulnerable-1.6.55 --46675-fixed D:/openHarmonyScanner/tmp/libpng-d13-fixed-source-20261020 --output research/evidence/cpp/t11_libpng_46675_fragment_replay_20261020.json"
+  ]
+}
