@@ -9,7 +9,7 @@ await build({
   splitting: true,
   minify: true,
   sourcemap: false,
-  loader: { ".ttf": "file" },
+  loader: { ".ttf": "file", ".woff2": "file" },
   entryNames: "app",
   chunkNames: "chunk-[hash]",
 });

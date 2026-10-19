@@ -1,4 +1,4 @@
-@import url("https://cdn.jsdelivr.net/npm/misans@5.0.0/lib/Normal/MiSansVF.min.css");
+@import url("./assets/misans/MiSansVF.min.css");
 
 * {
   box-sizing: border-box;
@@ -7,7 +7,13 @@ body {
   margin: 0;
   color: #1c283a;
   background: #f4f6f9;
-  font-family: "MiSans VF", "MiSans", "MiSans L3", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
+  font-family: "MiSans VF", "MiSans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
 .app {
   min-height: 100vh;
