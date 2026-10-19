@@ -1,0 +1,56 @@
+{
+  "schema": "ohscanner.g12-pc-product-admission-status/v1",
+  "date": "2026-10-19",
+  "timezone": "Asia/Shanghai",
+  "worktree": "E:\\网安\\CyberSecurity-Innovation-Audit-c12-product-admission-20261019",
+  "baseline_commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+  "baseline_tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+  "decision": "NOT_ADMITTED",
+  "draft_ready": false,
+  "validated_vulnerability": 0,
+  "profile": {
+    "status": "BLOCKED",
+    "case_count": 16,
+    "recorded_complete_source_identity_count": 6,
+    "product_build_profile_complete_count": 0,
+    "manifest_payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
+    "verification_status": "verified_blocked_manifest"
+  },
+  "holdout": {
+    "pipeline_status": "IMPLEMENTED",
+    "real_holdout_status": "NOT_RUN",
+    "selftest_status": "PASS",
+    "metrics_computed": false,
+    "truth_status": "pipeline_self_test_not_reliable"
+  },
+  "product_closure": {
+    "status": "BLOCKED",
+    "case_count": 16,
+    "entry_permission_trigger_cia_closed_count": 0,
+    "authorized_poc_completed_count": 0,
+    "fixed_product_revalidation_completed_count": 0
+  },
+  "admission_items": {
+    "accurate_complete_analysis": "BLOCKED",
+    "cwe_cve_support": "PARTIAL",
+    "reproducible_poc": "BLOCKED",
+    "affected_modules_versions_branches": "PARTIAL",
+    "fix_and_revalidation": "BLOCKED",
+    "performance_and_innovation": "PARTIAL",
+    "complete_report": "PARTIAL"
+  },
+  "metrics": {
+    "precision": null,
+    "recall": null,
+    "reason": "No independent reliable labelled holdout exists."
+  },
+  "blockers": [
+    "official Ark Git object store and local parent/fix source verification are not bound",
+    "product manifest/version/branch/binary mapping is absent",
+    "product args.gn/GN target/compile database/include closure/preprocessed TU/toolchain are absent",
+    "real independent holdout and independent human truth are absent",
+    "real product entry/permission/attacker-control/trigger/CIA evidence is absent",
+    "authorized isolated product PoC is absent",
+    "fixed product build and post-fix product revalidation are absent"
+  ]
+}

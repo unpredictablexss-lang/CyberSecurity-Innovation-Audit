@@ -1,0 +1,27 @@
+{
+  "agreements": [
+    {
+      "case_pseudonym": "a71cb7487685b0c6",
+      "label": "not_vulnerable_shape",
+      "route": "agreement"
+    },
+    {
+      "case_pseudonym": "c8b770fdd617c03b",
+      "label": "not_vulnerable_shape",
+      "route": "agreement"
+    }
+  ],
+  "disagreements": [
+    {
+      "case_pseudonym": "90aa750768218a45",
+      "reviewer_1_label": "vulnerable_shape",
+      "reviewer_1_rationale": "self-test reviewer A",
+      "reviewer_2_label": "unknown",
+      "reviewer_2_rationale": "self-test reviewer B"
+    }
+  ],
+  "freeze_payload_sha256": "9ea45a815ea77d8c9da902ccc9195f05e4dd3f68a9f7c819941b2a4bc4f80f2b",
+  "payload_sha256": "39e9bf878e839d73e3dd4ec7813fa68665e681bba53f555a79399abc72e1e706",
+  "schema": "ohscanner.ark-holdout-adjudication/v1",
+  "status": "THIRD_REVIEW_REQUIRED"
+}

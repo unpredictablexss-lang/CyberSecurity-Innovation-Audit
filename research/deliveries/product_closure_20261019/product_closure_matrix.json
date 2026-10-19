@@ -1,0 +1,543 @@
+{
+  "case_count": 16,
+  "cases": [
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "OH-I7E0FM-TYPEDARRAY-FILTER-ABRUPT-COMPLETION",
+      "component": "Ark Runtime BuiltinsTypedArray::Filter",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown; selected hihope/rk3568 source/config context has no successful exact args.gn, GN target generation, compile database, or product build binding",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_complete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-ARRAY-CALLBACK-ABRUPT-COMPLETION-HISTORY-VARIANT",
+      "component": "Ark Runtime BuiltinsArray::Filter / Find / Some / FindIndex",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-ARRAY-EVERY-WRAPPED-CALLBACK-EXCEPTION-I5XZRO",
+      "component": "Ark Runtime BuiltinsArray::Every and JSStableArray::HandleEveryOfStable",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_complete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-ARRAY-FINDINDEX-STABLE-ABRUPT-RETURN-C333",
+      "component": "Ark Runtime BuiltinsArray::FindIndex / JSStableArray::HandleFindIndexOfStable",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown; exact product args.gn, target build, binary, and source-to-product binding are absent",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_complete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-RUNTIME-CALLINFO-CONSTRUCTION-PENDING-EXCEPTION-I7K7L6",
+      "component": "Ark Runtime JSIterator::IteratorNext / EcmaInterpreter::NewRuntimeCallInfo",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-RUNTIME-NEWCALLINFO-EXCEPTION-GUARD-IB40SU",
+      "component": "Ark Runtime BuiltinsAsyncFromSyncIterator::Throw/Return and JSAsyncGeneratorObject::AsyncGeneratorResolve",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-RUNTIME-INSTANCEOF-EXCEPTION-RETURN-VALUE-I7SDBG",
+      "component": "Ark Runtime RuntimeStubs::RuntimeInstanceofByHandler",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-SHAREDARRAY-FINDINDEX-EXCEPTION-PROPAGATION-PARTIAL-2A9BCFB",
+      "component": "Ark Runtime BuiltinsSharedArray::FindIndex",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-COMPILER-REFLECT-APPLY-PENDING-EXCEPTION-IAO7GO",
+      "component": "Ark Runtime compiler, NativeInlineLowering exception lowering for Reflect.apply",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown; issue describes an AOT/inlining reproducer and required build/run flags, but no local matching product artifacts or build profile were available.",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_complete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304",
+      "component": "Ark Runtime compiler TypedArray Map stub",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown; no exact product source manifest/build association found.",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-TYPEDARRAY-MAP-NEWARRAY-PENDING-EXCEPTION-IC7B8Q",
+      "component": "Ark Runtime compiler TypedArray Map / NewTypedArray result handling",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown; no product manifest/build association.",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7",
+      "component": "Ark Runtime TypedArrayHelper::CreateFromTypedArray",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown; no product manifest, build configuration, or shipped binary tied to either source revision.",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_complete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D",
+      "component": "Ark Runtime TypedArrayHelper::TypedArrayConstructor / AllocateTypedArray",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown; no product manifest or shipped binary associated.",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA",
+      "component": "Ark Runtime DataView GetViewValue/SetViewValue and AtomicHelper::ValidateAtomicAccess",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown; no product manifest or shipped binary associated.",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG",
+      "component": "Ark Runtime BuiltinsTypedArrayStubBuilder::Filter",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "No product build association for the exact vulnerable/fixed commits. C1 has a partial hihope/rk3568 profile for Ark Runtime a65a2853ccae13da167d9aa4720ab8b11ec16656; its target source SHA-256 is 76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c, different from both !11196 pair blobs. Two ARM actions were preprocessed for that other source, and isolated Ninja target 1 failed at a Musl notice write before compiling the object; it cannot establish !11196 macros/build behavior.",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_complete"
+    },
+    {
+      "admission": {
+        "decision": "NOT_ADMITTED",
+        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "validated_vulnerability": false
+      },
+      "build_profile_status": "BLOCKED",
+      "case_id": "ARK-TYPEDARRAY-FILTER-RECEIVER-TYPE-GUARD-IAO7E8",
+      "component": "Ark Runtime BuiltinsTypedArrayStubBuilder::Filter",
+      "evidence_class": "development_case_not_independent_holdout",
+      "minimal_remediation": [
+        "Lock exact product manifest, version, branch and shipped binary/source mapping.",
+        "Capture exact args.gn/GN target, compile commands, include closure and preprocessed TU hashes.",
+        "Prove realistic entry/privilege boundary, attacker-controlled trigger and reachable sensitive operation.",
+        "Run authorized isolated PoC on vulnerable product build and preserve deterministic logs/artifacts.",
+        "Apply the exact fix, rebuild the same product profile, rerun the PoC and regression controls."
+      ],
+      "preprocess_profile_status": "BLOCKED",
+      "product_association": "unknown; no product manifest/build profile bound to either source commit.",
+      "security_obligations": {
+        "attacker_control": "unknown",
+        "authorized_isolated_poc": "not_run",
+        "concrete_cia_impact": "unknown",
+        "fix_patch_identity": "partial_or_unknown",
+        "fixed_product_revalidation": "not_run",
+        "permission_or_trust_boundary": "unknown",
+        "product_build_and_version": "unknown",
+        "reachable_sensitive_operation": "unknown",
+        "real_entry_point": "unknown",
+        "trigger_conditions": "unknown"
+      },
+      "source_identity_status": "recorded_incomplete"
+    }
+  ],
+  "decision": "NOT_ADMITTED",
+  "metrics": {
+    "precision": null,
+    "reason": "no independent reliable labelled holdout",
+    "recall": null
+  },
+  "payload_sha256": "6b286ce0133f1656accf14a3dbc17e884f45b9c7e1960d5614da6077a62145d7",
+  "profile_payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
+  "schema": "ohscanner.ark-product-closure-matrix/v1",
+  "status": "BLOCKED"
+}

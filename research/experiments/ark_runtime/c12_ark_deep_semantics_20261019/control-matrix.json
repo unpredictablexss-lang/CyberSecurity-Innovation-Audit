@@ -1,0 +1,37 @@
+{
+  "mechanism_controls": {
+    "effectful_helper_source_contract": {
+      "positive": "candidate/unknown effect contract",
+      "fixed": "identity/no effect",
+      "safe": "identity/no security verdict",
+      "unrelated": "not applicable",
+      "unknown": "explicit effect contract"
+    },
+    "numeric_cast_sign_width": {
+      "positive": "candidate sign-width loss",
+      "fixed": "no candidate",
+      "safe": "no candidate, local zero",
+      "unrelated": "not applicable",
+      "unknown": "partial limitation"
+    },
+    "minimal_cfg_loop_backedge": {
+      "positive": "one audited LoopEnd->LoopBegin edge",
+      "fixed": "no backedge",
+      "safe": "no backedge, zero-iteration shape",
+      "unrelated": "host loop unsupported",
+      "unknown": "unresolved target limitation"
+    },
+    "cross_function_summary": {
+      "positive": "bounded forwarding identity chain",
+      "fixed": "direct identity retained",
+      "safe": "constant helper not identity",
+      "unrelated": "wrong type not promoted",
+      "unknown": "Opaque forwarding remains unknown"
+    }
+  },
+  "known_case_regression": {
+    "before": "C11 baseline: nine source-bound parent/known-case controls retained candidate or explicit unknown; fixed controls retained matched/zero candidate",
+    "after": "C12: same C11 known-case regression tests pass; no parent/fixed count change",
+    "evidence": "logs-final/known-regression.txt"
+  }
+}

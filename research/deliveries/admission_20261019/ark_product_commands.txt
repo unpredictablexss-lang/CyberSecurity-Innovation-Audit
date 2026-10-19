@@ -1,0 +1,24 @@
+# Reproducible commands for G12-PC product admission closure
+# Worktree: E:\网安\CyberSecurity-Innovation-Audit-c12-product-admission-20261019
+# Python: C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe
+
+# 1. Compile research scripts only.
+python -m py_compile research\methods\ark_runtime\build_profile_20261019\build_profile_manifest.py research\evaluation\ark_runtime_holdout_20261019\holdout_pipeline.py research\deliveries\product_closure_20261019\generate_product_closure.py
+
+# 2. Recompute and verify the Ark build/preprocess manifest.
+python research\methods\ark_runtime\build_profile_20261019\build_profile_manifest.py --repo-root E:\网安\CyberSecurity-Innovation-Audit-c12-product-admission-20261019
+python research\methods\ark_runtime\build_profile_20261019\build_profile_manifest.py --repo-root E:\网安\CyberSecurity-Innovation-Audit-c12-product-admission-20261019 --verify-only
+
+# 3. Exercise the holdout freeze/review/adjudication pipeline on synthetic data only.
+python research\evaluation\ark_runtime_holdout_20261019\holdout_pipeline.py self-test --work-dir research\evaluation\ark_runtime_holdout_20261019\selftest
+
+# 4. Confirm that synthetic truth cannot produce metrics.
+python research\evaluation\ark_runtime_holdout_20261019\holdout_pipeline.py score --truth research\evaluation\ark_runtime_holdout_20261019\selftest\truth.json --final-labels research\evaluation\ark_runtime_holdout_20261019\selftest\frozen\final_labels.json --secret-file research\evaluation\ark_runtime_holdout_20261019\selftest\selftest-secret.txt --output research\evaluation\ark_runtime_holdout_20261019\selftest\score-attempt.json
+# Expected exit code: 3; expected status: NOT_RUN.
+
+# 5. Recompute product closure/task tree.
+python research\deliveries\product_closure_20261019\generate_product_closure.py --profile-manifest research\methods\ark_runtime\build_profile_20261019\ark_parent_fix_build_profile_manifest.v1.json --output-dir research\deliveries\product_closure_20261019
+
+# 6. Repository hygiene.
+git diff --check
+git status --short

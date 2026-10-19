@@ -1,0 +1,137 @@
+{
+  "baseline_commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+  "baseline_tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+  "dirty_worktree": true,
+  "files": [
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/analysis.py",
+      "sha256": "808dbf14832d3747f528d2601d669040faad6d796b4555c978a3ff20994a031f",
+      "bytes": 19035
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/cross_helper.py",
+      "sha256": "d99861674d1a9e2d52b6a44a9f2e1d9deffba8fb43ce86980e31b1673f107bd6",
+      "bytes": 10756
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/runtime_ir.py",
+      "sha256": "c082c30ba8b3501357d00fc76dc6bb5d113501675689de0a72a0489c26ed41a2",
+      "bytes": 8926
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/size_overflow.py",
+      "sha256": "82dc5aa2decfd71813f2b741f7d3731d03ec6abf69ee92759b96bce43b5daf7d",
+      "bytes": 33758
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/type_origin.py",
+      "sha256": "e9a73a6914eca48f79c4b0d344262d0cfe96dd31d80a14c0c8620d848b80b7b5",
+      "bytes": 30657
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/effectful_fixed.cpp",
+      "sha256": "05c90ac990b17c2c49aafc3227e761459b624decea98484effae3600eedf2b1a",
+      "bytes": 56
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/effectful_positive.cpp",
+      "sha256": "d3ecb41cd934c38d3effcd14343c4d2748d48ba8ee688c04f2cb6d0bd1527a80",
+      "bytes": 133
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/effectful_safe.cpp",
+      "sha256": "691d0a22f2b9500933a78d5106bff81643ac1f0af210bddcd38c8d26862bb3b4",
+      "bytes": 53
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/effectful_unknown.cpp",
+      "sha256": "c324bd8391dcca62f8da9e75aa25e7bc265ddb6171948268bc27294f9278486e",
+      "bytes": 122
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/effectful_unrelated.cpp",
+      "sha256": "8d1ffd34533e459dc5a52175509c885c1dea117ef1fde28f5310b03410c14a3f",
+      "bytes": 55
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/loop_fixed.cpp",
+      "sha256": "a2b9306774fafec3f83b34e4f80a7fe32e912941497e4c9053cc00bc40bb15d5",
+      "bytes": 150
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/loop_positive.cpp",
+      "sha256": "aa78c594c577fe0734888320a3fe4a85c1dc27030365ad4b9b0acb4e4678ec15",
+      "bytes": 119
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/loop_safe.cpp",
+      "sha256": "5ea46b3bcbfd7c0029b648123cdfe77489e8a52fe235e25c80c0ce1b5ebd0793",
+      "bytes": 131
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/loop_unknown.cpp",
+      "sha256": "f07fa0e02070c50b811a82535fc0c93b055391ec1a1f089f3a5a5375c9ad499c",
+      "bytes": 121
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/loop_unrelated.cpp",
+      "sha256": "c4987e25af72b8bdf6f7bcd9760eb6409da6c028578dcde7bd096ce9c88f801d",
+      "bytes": 81
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/numeric_fixed.cpp",
+      "sha256": "4b03c406c20cfa8b0fa30aa98a96eacc5405ff11d835d3444596669cb014ca9b",
+      "bytes": 365
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/numeric_positive.cpp",
+      "sha256": "a467f57cea2eae870367353b6f54263e539e33b7f297c2d9ee4f64f4b556a26d",
+      "bytes": 399
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/numeric_safe.cpp",
+      "sha256": "71af434342b7c04666efb5725dc8e2c7e8e3ce7bc39404febbb3ced4da90c206",
+      "bytes": 358
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/numeric_unknown.cpp",
+      "sha256": "7f53ef0463fed00df20b9a5cb999584e70b31c40f7704b45b65e2695a1217df9",
+      "bytes": 391
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/numeric_unrelated.cpp",
+      "sha256": "3eb4b945889d65055a0464a58650bd47aecf324de94b5ca73317ae8ef1d1cf59",
+      "bytes": 100
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/summary_fixed.cpp",
+      "sha256": "88d84facf296b72dc91930a0c236df8eed194349373db2bebaa4b67948192e2c",
+      "bytes": 49
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/summary_positive.cpp",
+      "sha256": "135c95957506e7880da10e2228c4ec056dc675ddee33c3e7c9d94c4e025ec5b6",
+      "bytes": 159
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/summary_safe.cpp",
+      "sha256": "5b17c4bd234d45e87d40fb8b45e1e2fb557df086d2e21cc8783067434650ba89",
+      "bytes": 39
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/summary_unknown.cpp",
+      "sha256": "4c4e4419fea5cd98085499498c49c57df43fb4c110b28bf3fdfe7c9e0c7e914b",
+      "bytes": 56
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c12_deep_semantics/summary_unrelated.cpp",
+      "sha256": "d5e7b859507aa0e83ffcd613e98d91cde64ef97d66c0f89a53c75ccc218f5f0e",
+      "bytes": 48
+    },
+    {
+      "path": "tests/detectors/ark_runtime/test_c12_deep_semantics.py",
+      "sha256": "09456d3a6d75595108affce5127ba15e357b780f07fad85bbbdb351c862d56b6",
+      "bytes": 7019
+    }
+  ]
+}

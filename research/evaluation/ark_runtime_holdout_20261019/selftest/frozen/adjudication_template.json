@@ -1,0 +1,10 @@
+{
+  "decisions": [],
+  "freeze_payload_sha256": "9ea45a815ea77d8c9da902ccc9195f05e4dd3f68a9f7c819941b2a4bc4f80f2b",
+  "required_fields": [
+    "case_pseudonym",
+    "decision",
+    "rationale"
+  ],
+  "schema": "ohscanner.ark-holdout-adjudication/v1"
+}

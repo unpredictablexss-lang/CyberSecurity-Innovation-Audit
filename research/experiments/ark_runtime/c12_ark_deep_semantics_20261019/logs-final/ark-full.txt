@@ -1,0 +1,8 @@
+$ C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe -m unittest discover -s tests/detectors/ark_runtime -t .
+.......................................................................................s........................s.......s........................................................................
+----------------------------------------------------------------------
+Ran 193 tests in 0.334s
+
+OK (skipped=3)
+
+[exit_code] 0

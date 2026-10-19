@@ -1,0 +1,28 @@
+{
+  "cases": [
+    {
+      "case_id": "SELFTEST-1",
+      "development_overlap": false,
+      "sampling_frame_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "selection_rule_id": "selftest-synthetic",
+      "source_path": "case_1.cpp"
+    },
+    {
+      "case_id": "SELFTEST-2",
+      "development_overlap": false,
+      "sampling_frame_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "selection_rule_id": "selftest-synthetic",
+      "source_path": "case_2.cpp"
+    },
+    {
+      "case_id": "SELFTEST-3",
+      "development_overlap": false,
+      "sampling_frame_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "selection_rule_id": "selftest-synthetic",
+      "source_path": "case_3.cpp"
+    }
+  ],
+  "development_leakage_ledger_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "preregistration_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "schema": "ohscanner.ark-holdout-intake/v1"
+}

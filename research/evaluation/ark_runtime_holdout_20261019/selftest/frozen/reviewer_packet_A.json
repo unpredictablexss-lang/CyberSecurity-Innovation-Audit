@@ -1,0 +1,45 @@
+{
+  "cases": [
+    {
+      "case_pseudonym": "90aa750768218a45",
+      "forbidden_context": [
+        "true label",
+        "case id",
+        "source path",
+        "parent/fixed pairing",
+        "scanner verdict"
+      ],
+      "question": "Classify only the source shape. Use vulnerable_shape, not_vulnerable_shape, or unknown. Do not infer product exploitability.",
+      "source_sha256": "07de2edca07f6fb3d4fba8c36da37aa82257c56d31e2bd0725d897ae7e509248",
+      "source_text": "// self-test source 1\r\nint f_1(int x) { return x; }\r\n"
+    },
+    {
+      "case_pseudonym": "a71cb7487685b0c6",
+      "forbidden_context": [
+        "true label",
+        "case id",
+        "source path",
+        "parent/fixed pairing",
+        "scanner verdict"
+      ],
+      "question": "Classify only the source shape. Use vulnerable_shape, not_vulnerable_shape, or unknown. Do not infer product exploitability.",
+      "source_sha256": "d4597ac6fbf397e66600622acfb7e5f6abd7bd1b91d22ba886ee46148fc57890",
+      "source_text": "// self-test source 3\r\nint f_3(int x) { return x; }\r\n"
+    },
+    {
+      "case_pseudonym": "c8b770fdd617c03b",
+      "forbidden_context": [
+        "true label",
+        "case id",
+        "source path",
+        "parent/fixed pairing",
+        "scanner verdict"
+      ],
+      "question": "Classify only the source shape. Use vulnerable_shape, not_vulnerable_shape, or unknown. Do not infer product exploitability.",
+      "source_sha256": "6b0ec7bfdfc642b96a8232287acdfeeda1e91278c8be55915d911bd9dfc84494",
+      "source_text": "// self-test source 2\r\nint f_2(int x) { return x; }\r\n"
+    }
+  ],
+  "reviewer": "A",
+  "schema": "ohscanner.ark-holdout-review/v1"
+}
