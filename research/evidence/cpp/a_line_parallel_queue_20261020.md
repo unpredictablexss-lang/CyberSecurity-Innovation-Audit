@@ -203,6 +203,17 @@ Boundaries: no detector/test/fixture edits; no acceptance from developer stateme
 
 T17 completed after D20/D21 freeze. Both were evidence-only and did not modify detector, test, or fixture code; their commits are `fcbc7c7` and `60c7588`.
 
+### T18 — Samgr remaining transaction evidence (testing/evidence)
+
+```text
+Role: independent A-line IPC provenance and source-flow auditor.
+Continuous goal: complete source-bound review of the remaining Samgr queue IDs without inferring a vulnerability from neighboring transactions.
+Inputs: current T10 verified Samgr commit/tree/blob/SHA; CR-0224, CR-0225, CR-0226 original records; T10 CR-0219–CR-0223 evidence.
+Steps: verify each ID's source key and exact bytes; map its transaction registration to implementation; record parcel inputs, interface token, CanRequest/native token/SELinux checks, remote object/FD/sensitive-operation flow; identify product build, policy and reachability gaps; preserve original ID/status and add only sourced facts/actions.
+Done when: all three IDs have independent per-ID source-flow evidence or a precise missing-input statement, with queue and source hash verification passing.
+Boundaries: no detector/tests/fixtures edits; no status promotion; no bypass claim from source-only permission differences; keep test and development ownership separate.
+```
+
 ## Stage goal
 
 Keep one active continuous objective across both tracks: improve root-cause candidate coverage for source-bound A-line cases on the development side; independently verify source identity, regression behavior, and the 345-row evidence queue on the test side. Complete only when applicable cases pass independent full-scope acceptance, all remaining cases carry a precise PARTIAL/BLOCK/N/A reason, and the change-scope check passes. Do not close the goal while any required evidence remains outstanding.
