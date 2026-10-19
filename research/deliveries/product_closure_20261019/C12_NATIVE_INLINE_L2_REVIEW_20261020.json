@@ -1,0 +1,114 @@
+{
+  "schema": "ohscanner.secondary_static_review/v1",
+  "rule_id": "ark.runtime.native-inline-pending-exception-propagation",
+  "review_scope": "One pinned upstream parent/fixed source pair; source-level only",
+  "identity": {
+    "candidate_source": {
+      "detector_binding": "bound",
+      "object_verification": "verified",
+      "product_profile": "blocked"
+    },
+    "parent": {
+      "commit": "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724",
+      "tree": "0c8d65e759bf96b4632573561748a180a93cf413",
+      "path": "ecmascript/compiler/native_inline_lowering.cpp",
+      "blob": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+      "source_sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463",
+      "object_verification": "verified"
+    },
+    "fixed": {
+      "commit": "18d8532a200d0c9aa64a6dfe2b146dc841b52bf8",
+      "tree": "372e6906218c245e59643a7437f2d92e435401d6",
+      "path": "ecmascript/compiler/native_inline_lowering.cpp",
+      "blob": "df03fdce8a37cf2245577aec23c4c26deeebf02f",
+      "source_sha256": "6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce",
+      "object_verification": "verified"
+    },
+    "object_store": {
+      "path": "D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git",
+      "remote": "https://gitee.com/openharmony/arkcompiler_ets_runtime.git",
+      "checks": [
+        "commit and tree object identity",
+        "commit:path resolves to expected blob",
+        "blob SHA-256 and byte length",
+        "parent is ancestor of fixed"
+      ]
+    }
+  },
+  "static_root_cause": "supported_candidate",
+  "decision": "candidate_supported",
+  "root_cause": "The parent TryInlineReflectApply sends the ReflectApply result GateRef to ReplaceGateWithPendingException. The parent helper classifies the exception path by comparing that value with ExceptionConstant; the fixed helper instead branches on HasPendingException(glue_). This supports a local source-level hypothesis that the return sentinel is not a reliable proxy for thread pending-exception state.",
+  "evidence": [
+    {
+      "claim": "The ReflectApply return value reaches the shared helper unchanged.",
+      "commit": "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724",
+      "path": "ecmascript/compiler/native_inline_lowering.cpp",
+      "symbol": "NativeInlineLowering::TryInlineReflectApply",
+      "line_or_range": "1352-1375",
+      "blob": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+      "source_sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463",
+      "kind": "direct"
+    },
+    {
+      "claim": "Parent helper compares value with ExceptionConstant, branches on the equality, and wires successor state into replacement.",
+      "commit": "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724",
+      "path": "ecmascript/compiler/native_inline_lowering.cpp",
+      "symbol": "NativeInlineLowering::ReplaceGateWithPendingException",
+      "line_or_range": "1045-1062",
+      "blob": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+      "source_sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463",
+      "kind": "direct"
+    },
+    {
+      "claim": "Fixed helper uses HasPendingException(glue_) and keeps the exception/success state replacement wiring.",
+      "commit": "18d8532a200d0c9aa64a6dfe2b146dc841b52bf8",
+      "path": "ecmascript/compiler/native_inline_lowering.cpp",
+      "symbol": "NativeInlineLowering::ReplaceGateWithPendingException",
+      "line_or_range": "1045-1060",
+      "blob": "df03fdce8a37cf2245577aec23c4c26deeebf02f",
+      "source_sha256": "6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce",
+      "kind": "direct"
+    }
+  ],
+  "protections": [
+    {
+      "condition": "HasPendingException(glue_) controls the same helper branch in the fixed source.",
+      "result": "effective_for_this_local_source_pattern",
+      "evidence_refs": ["fixed:NativeInlineLowering::ReplaceGateWithPendingException:1045-1060"]
+    }
+  ],
+  "fixed_comparison": {
+    "status": "same_root_cause_fixed_in_source",
+    "evidence_refs": [
+      "parent:NativeInlineLowering::TryInlineReflectApply:1352-1375",
+      "parent:NativeInlineLowering::ReplaceGateWithPendingException:1045-1062",
+      "fixed:NativeInlineLowering::ReplaceGateWithPendingException:1045-1060"
+    ]
+  },
+  "safe_unrelated_comparison": [],
+  "entry_attacker_trigger_impact": {
+    "entry": "unknown",
+    "attacker_control": "unknown",
+    "trigger": "unknown",
+    "cia_impact": "unknown"
+  },
+  "missing_evidence": [
+    "Binding either upstream revision to a shipped product/version/branch and its exact build profile",
+    "Proof the native-inline path is enabled in that product build",
+    "A product-reachable Reflect.apply entry with attacker-controlled inputs",
+    "Runtime reproduction with security-relevant impact",
+    "Same-product-profile fixed build and revalidation"
+  ],
+  "recommended_next_check": [
+    "Replay the verified parent/fixed raw blobs through D1 with actual identity facts; expect parent candidate and fixed no same-rule candidate without labeling fixed safe.",
+    "Add wrong blob/revision and adjacent safe-helper controls, then independently rerun the tests.",
+    "Keep product vulnerability and product safety unknown until product build, reachability, and impact evidence close."
+  ],
+  "confidence": "medium",
+  "limitations": [
+    "This assessment is a source-level inference from the parent/fixed mechanism and their source diff.",
+    "No product build, runtime test, or PoC was run.",
+    "The helper is shared by other callers; this review does not classify every caller.",
+    "The detector's structural relationship checks are not general CFG dominance or product applicability proofs."
+  ]
+}
