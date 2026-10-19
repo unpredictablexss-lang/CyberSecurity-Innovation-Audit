@@ -46,7 +46,8 @@
     ],
     "output": "research/evidence/cpp/contacts_path_traversal_20261019/contacts_61lts_exact_object_replay_T20_20261020.json",
     "independent_later_script_replay": {
-      "script_source_commit": "6167cf616",
+        "script_source_commit": "63916ab5425b9d1e9c3e15797a07f74a3b5828d5",
+        "script_blob": "972bb7e4a2bbbbff6c0e3ef1a0300db312cb2e06",
       "output": "research/evidence/cpp/contacts_path_traversal_20261019/contacts_61lts_exact_object_replay_T20_owner_review_20261020.json",
       "same_source_identity_parse_status_and_candidate_locations": true
     }
