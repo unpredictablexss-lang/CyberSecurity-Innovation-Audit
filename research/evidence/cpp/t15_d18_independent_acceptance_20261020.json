@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "review": "independent D18 acceptance",
+  "reviewer_checkout_head": "38dc3bedb",
+  "development_commit": "38dc3bedb",
+  "development_base": "a621282b62bf5ccc11d910d214e5a90c15c113e2",
+  "overall": "PARTIAL",
+  "rule_regression": {
+    "status": "PASS",
+    "detector": "ohscanner.cpp.resource_lifetime",
+    "version": "0.4.2",
+    "rule_id": "ohcpp-resource-exhaustion-tree-amplification-candidate-004",
+    "exact_source_findings": [
+      {"path": "third_party/cjson/cJSON_Utils.c", "line": 932, "symbol": "apply_patch", "meaning": "COPY duplicate candidate"},
+      {"path": "third_party/cjson/cJSON_Utils.c", "line": 950, "symbol": "apply_patch", "meaning": "ADD/REPLACE duplicate candidate"}
+    ],
+    "root_path_control": {"path": "third_party/cjson/cJSON_Utils.c", "line": 861, "result": "quiet"},
+    "controls": {
+      "positive": "two exact-source candidates at 932 and 950; JSON Patch synthetic positive remains detected",
+      "renamed": "renaming apply_patch to mutate_item retains two synthetic candidates",
+      "negative": "empty-path root replacement at 861 remains quiet",
+      "unrelated": "unrelated tree cleanup and misleading recursive delete name remain quiet",
+      "partial": "partial recursive-release control remains blocked with zero candidates"
+    },
+    "implementation_assessment": "The bounded lexical guard is supported for this source shape: it inspects the duplicate's innermost balanced block and rejects a direct goto cleanup at that block's direct brace depth before associating a later attach. This distinguishes the root replacement early-exit from the general COPY and ADD/REPLACE paths in the exact source and synthetic controls. It is not CFG/path feasibility proof; nested cleanup exits, branch dominance, ownership transfer and other control-flow patterns remain unknown."
+  },
+  "upstream_source": {
+    "status": "PASS",
+    "repository": "openharmony/third_party_cJSON",
+    "remote": "https://gitcode.com/openharmony/third_party_cJSON",
+    "commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748",
+    "tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856",
+    "sources": [
+      {"path": "third_party/cjson/cJSON.c", "blob": "152b2caa479c9f448001652913c980a6dafb82e0", "bytes": 80529, "sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb", "parse_status": "partial"},
+      {"path": "third_party/cjson/cJSON_Utils.c", "blob": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74", "bytes": 40736, "sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9", "parse_status": "complete"}
+    ],
+    "verification": "Independently resolved commit, tree, path blobs and byte streams from the local OpenHarmony project-object Git repository; all blob IDs, byte counts and SHA-256 digests match the replay's pinned source identities.",
+    "replay_packaging": {"commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a", "tree": "3c07134d5a05aa546b15739e32503a2ca192d258", "snapshot_sha256": "c0482c314ead7b9131426e7aa74f1073f734341c2ac56fb9a2578efecb51b3e7", "role": "two-file transport snapshot; not upstream component identity"}
+  },
+  "case_disposition": {
+    "status": "PARTIAL",
+    "detector_aggregate_status": "blocked",
+    "fixed_source": "No trusted root-matched fixed source is bound; fixed differential is BLOCK.",
+    "coverage": "cJSON_Utils.c is complete; cJSON.c remains parser-partial, so the whole cJSON case cannot be called PASS or safe.",
+    "limitations": [
+      "The exact-source replay also retains the separate cJSON_Compare cost candidate at cJSON.c:3161; that TU is partial.",
+      "Candidates do not establish product reachability, attacker control, exploitability or availability impact.",
+      "No product build/profile validation or trusted fixed-source comparison was performed."
+    ]
+  },
+  "verification": {
+    "exact_source_replay": "PASS for required root-binding behavior; replay aggregate remains blocked",
+    "resource_lifetime_tests": {"command": "python -m unittest discover -s tests/detectors -p 'test_cpp_resource_lifetime_detector.py' -v", "result": "8 passed"},
+    "cpp_detector_suite": {"command": "python -m unittest discover -s tests/detectors -p 'test_cpp_*.py' -v", "result": "160 passed"},
+    "queue_verifier": {"command": "python research/deliveries/cpp/a0_triage_20261019/verify_triage.py", "result": "overall_ok=true; 345 IDs retained"},
+    "change_scope": {"command": "python -m scripts.check_change_scope --base 8ec5f56a12e90bba56953b39eb17faa20e154da9 --lane cpp", "result": "0 violations"},
+    "git_diff_check": "passed",
+    "replay_command": "python research/evidence/cpp/d16_cjson_tree_amplification_20261020/replay.py --source-root D:/openHarmonyScanner/tmp/cjson-cve67215-current-replay-20261019"
+  }
+}
