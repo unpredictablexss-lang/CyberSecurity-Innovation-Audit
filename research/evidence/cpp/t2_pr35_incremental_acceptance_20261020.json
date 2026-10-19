@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "task": "T2 independent PR35 incremental acceptance",
+  "date": "2026-10-20",
+  "checkout": "D:/openHarmonyScanner/worktrees/a-t2-independent-pr35-20261020",
+  "target_commit": "abd7d55fb0f38215d879d427664ad6a4531170be",
+  "development_base": "2db47f7fc0860f036c53dc12bccd63d62bcc23d8",
+  "frozen_a0_queue": "research/deliveries/cpp/a0_triage_20261019/queue.csv",
+  "queue_invariant": {
+    "rows": 345,
+    "unique_ids": 345,
+    "original_status_counts": {"not_reproduced": 9, "not_testable": 336},
+    "queue_status_counts": {"queued_not_reproduced": 9, "queued_first_batch": 5, "paused_pending_evidence": 331},
+    "verified_by": "python research/deliveries/cpp/a0_triage_20261019/verify_triage.py",
+    "result": "PASS"
+  },
+  "case_results": [
+    {
+      "case": "libpng CVE-2026-33416",
+      "disposition": "PARTIAL/BLOCK",
+      "vulnerable_fixed_candidates": "0/0",
+      "parse": "4/4 files partial on both variants; run blocked",
+      "trusted_fixed_source": "exact upstream release source bound; parent unavailable in local mirror, so no accepted fix ancestry control",
+      "independent_checks": ["D54 source/CLI verifier PASS", "T61 source/CLI verifier PASS"],
+      "evidence": ["research/evidence/cpp/d54_libpng_lifetime_assessment_20261030.json", "research/evidence/cpp/t61_libpng_independent_acceptance_20261030.json"]
+    },
+    {
+      "case": "libpng CVE-2026-46675",
+      "disposition": "PARTIAL/BLOCK",
+      "vulnerable_fixed_candidates": "0/0",
+      "parse": "1/1 file partial on both variants; run blocked",
+      "trusted_fixed_source": "fixed source blob bound; fix parent is pre-fix ancestry, not a safe control",
+      "independent_checks": ["D54 source/CLI verifier PASS", "T61 source/CLI verifier PASS"],
+      "evidence": ["research/evidence/cpp/d54_libpng_lifetime_assessment_20261030.json", "research/evidence/cpp/t61_libpng_independent_acceptance_20261030.json"]
+    },
+    {
+      "case": "cJSON CVE-2026-67216 compare-cost",
+      "disposition": "PARTIAL/BLOCK",
+      "finding": "cJSON.c:3161; source-bound compare-cost candidate",
+      "parse": "cJSON.c partial; aggregate blocked",
+      "fixed_control": "BLOCK; upstream develop patch is experimental/unmerged, not a fixed source",
+      "independent_checks": ["T60 exact source/CLI/controls/queue verifier PASS", "evidence date metadata unconfirmed; provenance BLOCK until T3 date correction"],
+      "evidence": ["research/evidence/cpp/t60_cjson_cve_2026_67215_67216_acceptance_20261029.json", "research/evidence/cpp/t60_cjson_cli_20261029.json", "research/evidence/cpp/t60_cjson_compare_controls_20261029.json"]
+    },
+    {
+      "case": "cJSON CVE-2026-67215 tree-amplification",
+      "disposition": "PARTIAL/BLOCK",
+      "findings": ["cJSON_Utils.c:932", "cJSON_Utils.c:950"],
+      "parse": "cJSON_Utils.c complete; cJSON.c partial; aggregate blocked",
+      "fixed_control": "BLOCK; no trusted merged/released fixed source",
+      "independent_checks": ["T60 exact source/CLI/controls/queue verifier PASS", "evidence date metadata unconfirmed; provenance BLOCK until T3 date correction"],
+      "evidence": ["research/evidence/cpp/t60_cjson_cve_2026_67215_67216_acceptance_20261029.json", "research/evidence/cpp/t60_cjson_cli_20261029.json", "research/evidence/cpp/t60_cjson_compare_controls_20261029.json"]
+    },
+    {
+      "case": "OpenHarmony Contacts PortraitFileName path traversal",
+      "disposition": "PARTIAL/BLOCK",
+      "finding": "3 bounded source-to-file-sink candidates at PortraitFileName lines 789, 790, 794",
+      "parse": "aggregate blocked/partial; validated_vulnerability=0",
+      "fixed_control": "BLOCK; no trusted fixed source",
+      "independent_checks": ["T20 exact Git object/source SHA and secondary replay verifier PASS", "Catalog owner PR #34 records WSL integration 11/11", "local detector suite 12/12; Catalog/API/Worker integration unavailable on Windows because fcntl is missing"],
+      "evidence": ["research/evidence/cpp/a_t20_contacts_path_traversal_acceptance_20261020.json", "research/evidence/cpp/contacts_path_traversal_20261019/contacts_61lts_exact_object_replay_T20_20261020.json", "research/deliveries/cpp/CONTACTS_PATH_TRAVERSAL_CATALOG_REQUEST_20261019.md"]
+    },
+    {
+      "case": "OpenHarmony CVE-2025-26690 dSoftBus",
+      "disposition": "PARTIAL/BLOCK",
+      "findings": "5 vulnerable candidates; 0 same-rule candidates in fixed descendant",
+      "parse": "syntax complete; semantic detector coverage partial/blocked (0/1 complete)",
+      "fixed_control": "source pair bound; no dSoftBus-specific safe/unrelated controls and no signed publisher attestation",
+      "independent_checks": ["T62 exact Git object/CLI/A0 verifier PASS"],
+      "evidence": ["research/evidence/cpp/t62_dsoftbus_cve_2025_26690_independent_acceptance_20261030.json"]
+    }
+  ],
+  "additional_a0_retests": [
+    {"task": "D51", "rows": ["CR-0341"], "result": "bare object commit/tree/blob verified; package uses future-dated evidence not included in T3's 13-file corrected set; provenance BLOCK"},
+    {"task": "D52", "rows": ["CR-0255", "CR-0256"], "result": "bare object commit/tree/header blob verified; package uses future-dated evidence not included in T3's 13-file corrected set; provenance BLOCK"},
+    {"task": "D53/T59", "rows": "CR-0261–CR-0290", "result": "verifier rerun PASS; package date unconfirmed and not in T3's corrected set; provenance BLOCK, PARTIAL/BLOCK case"},
+    {"task": "T55", "rows": "CR-0337–CR-0340", "result": "verifier rerun PASS; package date unconfirmed and not in T3's corrected set; provenance BLOCK, PARTIAL/BLOCK case"},
+    {"task": "T56", "rows": "CR-0343–CR-0345", "result": "verifier rerun PASS; package date unconfirmed and not in T3's corrected set; provenance BLOCK, PARTIAL/BLOCK case"},
+    {"task": "T57", "rows": "CR-0247–CR-0251", "result": "verifier rerun PASS; package date unconfirmed and not in T3's corrected set; provenance BLOCK, PARTIAL/BLOCK case"},
+    {"task": "T58", "rows": "CR-0116–CR-0118", "result": "CLI rerun PASS; package date unconfirmed and not in T3's corrected set; provenance BLOCK, PARTIAL/BLOCK case"}
+  ],
+  "metadata_caveat": "T3 confirmed and corrected dates for exactly these 13 D54/T61/T62 artifacts: d54_libpng33416_fixed_cli_20261020.json, d54_libpng33416_vulnerable_cli_20261020.json, d54_libpng46675_fixed_cli_20261020.json, d54_libpng46675_vulnerable_cli_20261020.json, d54_libpng_lifetime_assessment_20261020.json, d54_libpng_lifetime_assessment_20261020.md, t61_libpng_current_replay_20261020.json, t61_libpng_independent_acceptance_20261020.json, t61_libpng_independent_acceptance_20261020.md, t62_dsoftbus_cve_2025_26690_independent_acceptance_20261020.json, t62_dsoftbus_cve_2025_26690_independent_acceptance_20261020.md, verify_d54_libpng_lifetime_20261020.py, verify_t61_libpng_acceptance_20261020.py. Remaining 2026-10-29/30 dated evidence not in this set stays provenance BLOCK. Hash and object checks prove content identity, not when a replay ran.",
+  "overall": "PARTIAL",
+  "queued_scope": ["full independent replay of the remaining original 13-case rows", "D51/D52 source SHA and CLI cross-check against object DB", "source-bound safe/unrelated controls for cJSON and dSoftBus", "trusted fixed sources and full parser coverage for blocked cases"]
+}
