@@ -6,7 +6,7 @@ from .adapters.artifacts import classify_artifact, limitation_message
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.19.1"
+VERSION = "0.19.2"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -31,37 +31,17 @@ def _body(text: str, name: str):
 
 def _observer_quota_comparison(text: str):
     """Find observer count-at-cap comparisons; callers must prove refusal flow."""
-    count = r"(?:\w*(?:observer|listener)\w*(?:count|size|quota|limit|number)|(?:all)?count|(?:observer|listener)\w*quota|size\s*\(\s*\))"
+    count = r"(?:[A-Za-z_]\w*\s*(?:->|\.)\s*(?:size|count)\s*\(\s*\)|[A-Za-z_]\w*(?:observer|listener)\w*(?:count|size|quota|limit|number)|(?:all)?count|(?:observer|listener)\w*quota|size\s*\(\s*\))"
     limit = r"(?:MAX|LIMIT|QUOTA)[A-Z0-9_]*|(?:max|limit|quota)\w*|\d+"
     return re.search(rf"\b{count}(?:\s*\[[^\]]*\])?\s*(>=|>)\s*({limit})\b", text, re.I)
 
-def _if_guard_exits(text: str, condition_pattern: str) -> bool:
-    """Only accept a quota condition whose true branch exits this function."""
-    for m in re.finditer(r"\bif\s*\(", text):
-        opening = m.end() - 1
-        depth, end = 1, opening + 1
-        while end < len(text) and depth:
-            depth += (text[end] == "(") - (text[end] == ")")
-            end += 1
-        if depth or not re.search(condition_pattern, text[opening + 1:end - 1]):
-            continue
-        branch_start = end
-        while branch_start < len(text) and text[branch_start].isspace():
-            branch_start += 1
-        if branch_start < len(text) and text[branch_start] == "{":
-            depth = 1
-            branch_end = branch_start + 1
-            while branch_end < len(text) and depth:
-                depth += (text[branch_end] == "{") - (text[branch_end] == "}")
-                branch_end += 1
-            branch = text[branch_start + 1:branch_end - 1] if depth == 0 else ""
-        else:
-            tail = text[branch_start:]
-            stmt = re.match(r"\s*(return\b[^;]*;|throw\b[^;]*;|goto\b[^;]*;)", tail)
-            branch = stmt.group(1) if stmt else ""
-        if re.fullmatch(r"\s*(?:return\b[^;]*;|throw\b[^;]*;|goto\b[^;]*;)\s*", branch):
-            return True
-    return False
+def _simple_at_cap_condition(condition: str) -> bool:
+    comparison = _observer_quota_comparison(condition)
+    return bool(comparison and re.sub(r"\s+", "", comparison.group(0)) == re.sub(r"\s+", "", condition))
+
+def _top_level_at(text: str, position: int) -> bool:
+    prefix = text[:position]
+    return prefix.count("{") == prefix.count("}")
 
 def _helper_rejects_at_quota(text: str, name: str) -> bool:
     """Prove a small boolean helper rejects at-cap, preserving unknown otherwise."""
@@ -85,7 +65,7 @@ def _quota_boolean_return(body: str, comparison: str):
         while end < len(body) and depth:
             depth += (body[end] == "(") - (body[end] == ")")
             end += 1
-        if depth or comparison not in body[opening + 1:end - 1]:
+        if depth or not _simple_at_cap_condition(body[opening + 1:end - 1]):
             continue
         branch_start = end
         while branch_start < len(body) and body[branch_start].isspace():
@@ -106,13 +86,38 @@ def _quota_boolean_return(body: str, comparison: str):
     return cap_true, cap_false
 
 def _has_observer_quota(text: str) -> bool:
-    comparison = _observer_quota_comparison(text)
-    if not comparison:
-        return False
-    return _if_guard_exits(text, re.escape(comparison.group(0)))
+    """Prove a simple top-level quota guard appears before the insertion."""
+    for m in re.finditer(r"\bif\s*\(", text):
+        if not _top_level_at(text, m.start()):
+            continue
+        opening = m.end() - 1
+        depth, end = 1, opening + 1
+        while end < len(text) and depth:
+            depth += (text[end] == "(") - (text[end] == ")")
+            end += 1
+        if depth or not _simple_at_cap_condition(text[opening + 1:end - 1]):
+            continue
+        guard_tail = text[end:]
+        guard_start = len(text[:end])
+        while guard_start < len(text) and text[guard_start].isspace():
+            guard_start += 1
+        if guard_start < len(text) and text[guard_start] == "{":
+            depth, branch_end = 1, guard_start + 1
+            while branch_end < len(text) and depth:
+                depth += (text[branch_end] == "{") - (text[branch_end] == "}")
+                branch_end += 1
+            branch = text[guard_start + 1:branch_end - 1] if depth == 0 else ""
+        else:
+            stmt = re.match(r"\s*(return\b[^;]*;|throw\b[^;]*;|goto\b[^;]*;)", guard_tail)
+            branch = stmt.group(1) if stmt else ""
+        if re.fullmatch(r"\s*(?:return\b[^;]*;|throw\b[^;]*;|goto\b[^;]*;)\s*", branch):
+            return True
+    return False
 
 def _has_guarded_quota_helper(text: str, before_insert: str) -> bool:
     for m in re.finditer(r"\bif\s*\(", before_insert):
+        if not _top_level_at(before_insert, m.start()):
+            continue
         opening = m.end() - 1
         depth, end = 1, opening + 1
         while end < len(before_insert) and depth:
@@ -629,8 +634,8 @@ def _scan(unit: SourceUnit, curl_version=None):
         row = re.search(r"\b(?:png_read_row|png_read_rows|png_read_image|png_start_read_image)\s*\(", b)
         if info and finish and info.start() < finish.start() and not row:
             out.append(_finding(unit, start+1+finish.start(), "ohknowncve-libpng-cve-2026-46675", "CVE-2026-46675", "png_read_end follows png_read_info without reading image rows.", "CWE-416"))
-    # CVE-2025-25212: retain the repeated observer-set insertion only when no
-    # hard count bound is visible in this registration body. The exact sink
+    # CVE-2025-25212: retain the repeated observer-set insertion unless a
+    # simple quota guard before insertion exits the registration path. The exact sink
     # position is reported; caller reachability and cross-function lifecycle
     # remain separate evidence obligations.
     observer = _body(s, "AddPasteboardChangedObserver")
@@ -642,7 +647,7 @@ def _scan(unit: SourceUnit, curl_version=None):
             b,
         )
         helper_quota = observer_insert and _has_guarded_quota_helper(s, b[:observer_insert.start()])
-        if map_access and observer_insert and not _has_observer_quota(b) and not helper_quota:
+        if map_access and observer_insert and not _has_observer_quota(b[:observer_insert.start()]) and not helper_quota:
             out.append(_finding(
                 unit, pos + 1 + observer_insert.start(),
                 "ohknowncve-pasteboard-cve-2025-25212", "CVE-2025-25212",

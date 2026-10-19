@@ -5,7 +5,7 @@
   "baseline": {
     "workspace_head": "842948084660207fd64399cfd598ed93e5593dcc",
     "baseline_rule_version": "0.18.0",
-    "frozen_rule_version": "0.19.1",
+    "frozen_rule_version": "0.19.2",
     "detector_id": "ohscanner.known_disclosed_cves",
     "rule_id": "ohknowncve-pasteboard-cve-2025-25212"
   },
@@ -87,7 +87,7 @@
       "candidate_line": 222
     },
     "d51_single_source_rule_replay": {
-      "rule_version": "0.19.1",
+      "rule_version": "0.19.2",
       "source_commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
       "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
       "single_file_snapshot_sha256": "36e2b1276436831b2d77a9cd947cc03bd8f2820d3642d185c2c3bce81d8263f3",
@@ -99,7 +99,7 @@
       "parse_status_input": "partial (conservative source-only replay; not a new parser result)"
     },
     "fixed_single_source_rule_replay": {
-      "rule_version": "0.19.1",
+      "rule_version": "0.19.2",
       "source_commit": "836cf6990579451d6521e9177d749660b07ad34e",
       "source_sha256": "e8202191adf1d660a7a6c3149481013747e1a40b6bb166aa5947fb28b67ad3d4",
       "single_file_snapshot_sha256": "eb700cef5acc97e44447ac34829a7b5007da33caef0a15ac20333292c6c78807",
@@ -154,12 +154,17 @@
       "id": "partial-parse",
       "actual": "candidate retained while DetectorRun is blocked",
       "status": "pass"
+    },
+    {
+      "id": "quota-order-and-composition-negatives",
+      "actual": "guard after observers->insert(observer) and compound (size >= MAX && other_condition) guard both retain candidate",
+      "status": "pass"
     }
   ],
   "test_results": {
     "command": "python -m pytest tests/detectors/test_known_disclosed_cves.py tests/detectors/test_known_case_corpus.py -q",
     "result": "31 passed",
-    "git_diff_check": "passed after D51 amendment",
+    "git_diff_check": "passed",
     "change_scope": "N/A: baseline ownership.json has no D lane; manually reviewed changed paths against task-authorized D51 scope; ownership policy was not modified"
   },
   "candidate_packet": {
