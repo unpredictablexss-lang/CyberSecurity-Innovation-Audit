@@ -1,0 +1,419 @@
+{
+  "schema_version": 1,
+  "task": "T7 independent integrated 13-row A-line matrix acceptance",
+  "date": "2026-10-20",
+  "role": "independent_evidence_only",
+  "integrated_base": "790e353846b6c0d7926ee46290dcbc2873c8cad0",
+  "scanner_freeze": "81dd4aea9bb51522ac912b33504ef0d2ddb79089",
+  "scanner_src_unchanged_since_freeze": true,
+  "modified_detector_tests_fixtures_or_a0": false,
+  "classification_method": "Separate bounded_static_regression from case_product_disposition. PASS only describes the static rule/source regression; applicable rows remain PARTIAL/BLOCK at the CVE/product level where product build, reachability, attacker control or impact is unknown. N/A stays an exclusion, not a safety conclusion.",
+  "counts": {
+    "prior_t12_static_labels": {
+      "PASS": 3,
+      "PARTIAL": 8,
+      "N/A": 2
+    },
+    "t7_bounded_static_regression": {
+      "PASS": 2,
+      "PARTIAL": 9,
+      "N/A": 2
+    },
+    "t7_case_product_disposition": {
+      "PASS": 0,
+      "PARTIAL/BLOCK": 11,
+      "N/A": 2
+    }
+  },
+  "a0_invariant": {
+    "queue_path": "research/deliveries/cpp/a0_triage_20261019/queue.csv",
+    "rows": 345,
+    "unique_ids": 345,
+    "csv_sha256": "a174c0a74986e8410c53f173b84bb446c59000c3867add612a14e8aab4396d27",
+    "t5_source_queue_sha256": "687d773986910a600e558833515137160ed50037889a2b6cc31c024433c3b45b",
+    "original_status_counts": {
+      "not_testable": 336,
+      "not_reproduced": 9
+    },
+    "queue_status_counts": {
+      "paused_pending_evidence": 331,
+      "queued_first_batch": 5,
+      "queued_not_reproduced": 9
+    },
+    "full_verifier": "research/deliveries/cpp/a0_triage_20261019/verify_triage.py"
+  },
+  "verifiers": [
+    {
+      "name": "T2 cJSON fresh replay",
+      "path": "research/evidence/cpp/t2_cjson_fresh_replay_20261020/verify.py",
+      "result": "PASS_SOURCE_BOUND_FRESH_REPLAY",
+      "run_context": "scanner HEAD 81dd4aea9bb51522ac912b33504ef0d2ddb79089"
+    },
+    {
+      "name": "T3 integer source controls",
+      "path": "research/evidence/cpp/t3_integer_source_controls_20261020/verify.py",
+      "result": "PASS_SOURCE_IDENTITY_AND_CONTROL_REPLAY_METADATA"
+    },
+    {
+      "name": "D23 integer/bounds pairs",
+      "path": "research/evidence/cpp/d23_integer_bounds_gap_20261030/verify.py",
+      "result": "PASS_D23_SOURCE_BOUND_REPLAY",
+      "timing_note": "Content/identity verifier passes; this package has no signed execution timestamp. The report commit is dated 2026-10-20; the directory suffix is not treated as run-date proof."
+    },
+    {
+      "name": "T4 curl current CLI pair",
+      "path": "research/evidence/cpp/t4_historical_rescan_20261020/verify.py",
+      "result": "PASS",
+      "date": "2026-10-20"
+    },
+    {
+      "name": "T5 D51/D52 A0 replay",
+      "path": "research/evidence/cpp/t5_d51_d52_fresh_replay_20261020/verify.py",
+      "result": "PASS",
+      "date": "2026-10-20",
+      "limitation": "Only the fresh replay date is resolved; older future-dated artifacts remain BLOCK."
+    },
+    {
+      "name": "T6 remaining matrix replay",
+      "path": "research/evidence/cpp/verify_t6_remaining_matrix_replay_20261020.py",
+      "result": "PASS_SOURCE_BOUND_CLI_REPLAY"
+    },
+    {
+      "name": "Historical integer/bounds matrix replay",
+      "path": "research/evidence/cpp/verify_a_matrix_history_20261020.py",
+      "result": "PASS_SOURCE_BOUND_STATIC_DIFFERENTIAL",
+      "run_context": "Executed at scanner freeze; output written to a temporary evidence copy."
+    },
+    {
+      "name": "Webview exact A0 full-file pair",
+      "path": "research/evidence/cpp/verify_webview_exact_a0_20261020.py",
+      "result": "PASS_EXACT_SOURCE_PAIR_IDENTITY",
+      "outcome": "PARTIAL_BLOCK: both full files parse partial, 0 findings"
+    },
+    {
+      "name": "Webview exact A0 fragments",
+      "path": "research/evidence/cpp/verify_webview_exact_a0_fragments_20261020.py",
+      "result": "PASS_EXACT_A0_SOURCE_AND_FRAGMENT_REPLAY",
+      "outcome": "6 vulnerable root findings / 0 fixed root findings; 6 residual candidates each side; aggregate blocked by partial control"
+    },
+    {
+      "name": "T61 libpng",
+      "path": "research/evidence/cpp/verify_t61_libpng_acceptance_20261020.py",
+      "result": "PASS_SOURCE_AND_CLI_PROJECTIONS",
+      "run_context": "Its recorded checkout differs by history; src is byte-identical to scanner freeze 81dd."
+    },
+    {
+      "name": "T62 dSoftBus",
+      "path": "research/evidence/cpp/verify_t62_dsoftbus_controls_20261020.py",
+      "result": "PASS_SOURCE_BOUND_CONTROLS_AND_REPLAY",
+      "outcome": "5/0; syntax complete, semantic coverage partial, execution blocked"
+    },
+    {
+      "name": "T20 Contacts source acceptance",
+      "path": "research/evidence/cpp/verify_a_t20_contacts_path_traversal.py",
+      "result": "PASS_SOURCE_IDENTITY_AND_PRIOR_REPLAY",
+      "outcome": "T20's old Catalog-not-registered note is stale at integrated base 790e353; T7 also ran the current production CLI explicitly and confirmed 3 candidates."
+    },
+    {
+      "name": "A0 queue invariant",
+      "path": "research/deliveries/cpp/a0_triage_20261019/verify_triage.py",
+      "result": "PASS",
+      "rows": 345
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "libtiff-cve-2025-9900",
+      "prior_t12": "PARTIAL",
+      "source_pair": "exact vulnerable/fixed commit-tree-blob-SHA identities verified",
+      "cli": {
+        "detector": "ohscanner.cpp.bounds@0.3.0",
+        "vulnerable_findings": 0,
+        "fixed_findings": 0,
+        "parse": "both selected files partial",
+        "coverage": "blocked"
+      },
+      "fixed_control": "present but not evaluable under partial coverage",
+      "safe_unrelated_control": "no accepted source-bound control",
+      "evidence": [
+        "research/evidence/cpp/t6_remaining_matrix_replay_20261020/README.md",
+        "research/evidence/cpp/verify_t6_remaining_matrix_replay_20261020.py",
+        "research/evidence/cpp/t_matrix_webview_libtiff_20261020/README.md"
+      ],
+      "bounded_static_regression": "PARTIAL",
+      "case_product_disposition": "PARTIAL/BLOCK"
+    },
+    {
+      "case_id": "libpng-ghsa-qvg3-h654-xq3j",
+      "prior_t12": "PARTIAL",
+      "source_pair": "exact upstream vulnerable/fixed identities verified",
+      "cli": {
+        "detector": "ohscanner.cpp.resource_lifetime@0.4.2",
+        "vulnerable_findings": 0,
+        "fixed_findings": 0,
+        "parse": "pngrutil.c partial with 72 issues each",
+        "coverage": "blocked"
+      },
+      "fixed_control": "present but not evaluable under partial coverage",
+      "safe_unrelated_control": "none source-bound; fragments do not repair whole-file coverage",
+      "evidence": [
+        "research/evidence/cpp/t61_libpng_independent_acceptance_20261020.md",
+        "research/evidence/cpp/verify_t61_libpng_acceptance_20261020.py",
+        "research/evidence/cpp/d54_libpng_lifetime_assessment_20261020.md"
+      ],
+      "bounded_static_regression": "PARTIAL",
+      "case_product_disposition": "PARTIAL/BLOCK"
+    },
+    {
+      "case_id": "libpng-ghsa-m4pc-p4q3-4c7j",
+      "prior_t12": "PARTIAL",
+      "source_pair": "exact vulnerable/fixed release identities verified",
+      "cli": {
+        "detector": "ohscanner.cpp.resource_lifetime@0.4.2",
+        "vulnerable_findings": 0,
+        "fixed_findings": 0,
+        "parse": "4/4 files partial on both sides",
+        "coverage": "blocked"
+      },
+      "fixed_control": "present but not evaluable under partial coverage",
+      "safe_unrelated_control": "none source-bound",
+      "evidence": [
+        "research/evidence/cpp/t61_libpng_independent_acceptance_20261020.md",
+        "research/evidence/cpp/verify_t61_libpng_acceptance_20261020.py",
+        "research/evidence/cpp/d20_libpng33416_assessment_20261020.md"
+      ],
+      "bounded_static_regression": "PARTIAL",
+      "case_product_disposition": "PARTIAL/BLOCK"
+    },
+    {
+      "case_id": "curl-cve-2026-92391",
+      "prior_t12": "PASS",
+      "source_pair": "exact vulnerable/fixed commit-tree-blob-SHA identities verified",
+      "cli": {
+        "detector": "ohscanner.cpp.resource_lifetime@0.4.2",
+        "vulnerable_findings": 1,
+        "fixed_findings": 0,
+        "vulnerable_location": "lib/mime.c:1118",
+        "parse": "complete on both sides",
+        "coverage": "complete"
+      },
+      "fixed_control": "trusted exact fix, same rule quiet",
+      "safe_unrelated_control": "mechanism-level fixture controls; no separate source-bound real-world safe control claimed",
+      "evidence": [
+        "research/evidence/cpp/t4_historical_rescan_20261020/README.md",
+        "research/evidence/cpp/t4_historical_rescan_20261020/verify.py"
+      ],
+      "bounded_static_regression": "PASS",
+      "case_product_disposition": "PARTIAL/BLOCK"
+    },
+    {
+      "case_id": "cjson-cve-2026-67216",
+      "prior_t12": "PARTIAL",
+      "source_pair": "exact vulnerable source commit-tree-blob-SHA verified; trusted fixed source missing",
+      "cli": {
+        "detector": "ohscanner.cpp.resource_lifetime@0.4.2",
+        "vulnerable_findings": 1,
+        "locations": [
+          "cJSON.c:3161"
+        ],
+        "parse": "cJSON.c partial",
+        "coverage": "partial; run blocked"
+      },
+      "fixed_control": "BLOCK: no trusted fixed source",
+      "safe_unrelated_control": "same-scope source-bound controls missing",
+      "evidence": [
+        "research/evidence/cpp/t2_cjson_fresh_replay_20261020/README.md",
+        "research/evidence/cpp/t2_cjson_fresh_replay_20261020/verify.py",
+        "research/evidence/cpp/t60_cjson_cve_2026_67215_67216_acceptance_20261029.md"
+      ],
+      "bounded_static_regression": "PARTIAL",
+      "case_product_disposition": "PARTIAL/BLOCK"
+    },
+    {
+      "case_id": "cjson-cve-2026-67215",
+      "prior_t12": "PARTIAL",
+      "source_pair": "exact vulnerable source commit-tree-blob-SHA verified; trusted fixed source missing",
+      "cli": {
+        "detector": "ohscanner.cpp.resource_lifetime@0.4.2",
+        "vulnerable_findings": 2,
+        "locations": [
+          "cJSON_Utils.c:932",
+          "cJSON_Utils.c:950"
+        ],
+        "parse": "target file complete; cJSON.c partial",
+        "coverage": "partial; run blocked"
+      },
+      "fixed_control": "BLOCK: no trusted root-matched fixed source",
+      "safe_unrelated_control": "same-scope source-bound controls missing",
+      "evidence": [
+        "research/evidence/cpp/t2_cjson_fresh_replay_20261020/README.md",
+        "research/evidence/cpp/t2_cjson_fresh_replay_20261020/verify.py",
+        "research/evidence/cpp/t60_cjson_cve_2026_67215_67216_acceptance_20261029.md"
+      ],
+      "bounded_static_regression": "PARTIAL",
+      "case_product_disposition": "PARTIAL/BLOCK"
+    },
+    {
+      "case_id": "openharmony-cve-2026-27648",
+      "prior_t12": "PARTIAL",
+      "source_pair": "exact A0 commits, trees, blobs and full-file hashes verified",
+      "cli": {
+        "detector": "ohscanner.cpp.bounds@0.3.0",
+        "full_file_findings": "0/0",
+        "full_file_parse": "partial/partial",
+        "fragment_root_findings": "6/0",
+        "fragment_total_findings": "12/6",
+        "fragment_controls": "safe/unrelated quiet; renamed positive retained; partial control blocks aggregate"
+      },
+      "fixed_control": "exact fixed source and source-derived fragment; residual non-root candidates remain 6/6",
+      "safe_unrelated_control": "fragment-level controls pass, aggregate remains blocked",
+      "evidence": [
+        "research/evidence/cpp/webview_exact_a0_20261020/README.md",
+        "research/evidence/cpp/webview_exact_a0_fragments_20261020/README.md",
+        "research/evidence/cpp/verify_webview_exact_a0_20261020.py",
+        "research/evidence/cpp/verify_webview_exact_a0_fragments_20261020.py",
+        "research/evidence/cpp/t6_remaining_matrix_replay_20261020/README.md"
+      ],
+      "bounded_static_regression": "PARTIAL",
+      "case_product_disposition": "PARTIAL/BLOCK"
+    },
+    {
+      "case_id": "openharmony-cve-2025-26690",
+      "prior_t12": "PARTIAL",
+      "source_pair": "exact vulnerable/fixed dSoftBus commits, trees, blobs and hashes verified",
+      "cli": {
+        "detector": "ohscanner.cpp.null_dereference@0.6.0",
+        "vulnerable_findings": 5,
+        "fixed_findings": 0,
+        "parse": "complete syntax on both sides",
+        "coverage": "semantic partial 0/1; blocked"
+      },
+      "fixed_control": "exact fix, same rule quiet",
+      "safe_unrelated_control": "four exact-source guard-before-use observations manually reviewed but not scanner-validated under blocked semantic coverage",
+      "evidence": [
+        "research/evidence/cpp/t62_dsoftbus_cve_2025_26690_independent_acceptance_20261020.md",
+        "research/evidence/cpp/verify_t62_dsoftbus_controls_20261020.py",
+        "research/evidence/cpp/t62_dsoftbus_controls_20261020/README.md"
+      ],
+      "bounded_static_regression": "PARTIAL",
+      "case_product_disposition": "PARTIAL/BLOCK"
+    },
+    {
+      "case_id": "openharmony-cve-2025-0587",
+      "prior_t12": "PASS",
+      "source_pair": "exact vulnerable/fixed commit-tree-blob-SHA verified",
+      "cli": {
+        "detector": "ohscanner.cpp.integer_bounds@0.2.0",
+        "vulnerable_findings": 1,
+        "fixed_findings": 0,
+        "vulnerable_location": "atomic_helper.cpp:71",
+        "parse": "complete on both sides",
+        "coverage": "complete"
+      },
+      "fixed_control": "trusted exact fix, same rule quiet",
+      "safe_unrelated_control": "BLOCK: DataView/test-file controls are only adjacent; no negative/overflow/out-of-range control for ValidateAtomicAccess",
+      "evidence": [
+        "research/evidence/cpp/a_matrix_history_20261020/matrix_history_replay_20261020.json",
+        "research/evidence/cpp/d23_integer_bounds_gap_20261030/README.md",
+        "research/evidence/cpp/t3_integer_source_controls_20261020/README.md",
+        "research/evidence/cpp/t3_integer_source_controls_20261020/verify.py"
+      ],
+      "bounded_static_regression": "PARTIAL",
+      "case_product_disposition": "PARTIAL/BLOCK"
+    },
+    {
+      "case_id": "openharmony-cve-2025-23420",
+      "prior_t12": "PASS",
+      "source_pair": "exact vulnerable/fixed commit-tree-blob-SHA verified",
+      "cli": {
+        "detector": "ohscanner.cpp.bounds@0.3.0",
+        "vulnerable_findings": 5,
+        "fixed_findings": 0,
+        "locations": [
+          "js_array.cpp:650",
+          "js_array.cpp:653",
+          "js_array.cpp:665",
+          "js_array.cpp:666",
+          "js_array.cpp:668"
+        ],
+        "parse": "complete on both sides",
+        "coverage": "complete"
+      },
+      "fixed_control": "trusted exact fix, same root absent",
+      "safe_unrelated_control": "PASS: same-source comparator-snapshot control in SortIndexedProperties parses complete and emits zero bounds candidates; T3 source review distinguishes copied backing storage from mutable JSObject path",
+      "evidence": [
+        "research/evidence/cpp/a_matrix_history_20261020/matrix_history_replay_20261020.json",
+        "research/evidence/cpp/d23_integer_bounds_gap_20261030/README.md",
+        "research/evidence/cpp/t3_integer_source_controls_20261020/README.md",
+        "research/evidence/cpp/t3_integer_source_controls_20261020/verify.py"
+      ],
+      "bounded_static_regression": "PASS",
+      "case_product_disposition": "PARTIAL/BLOCK"
+    },
+    {
+      "case_id": "openharmony-cve-2025-20042",
+      "prior_t12": "N/A",
+      "source_pair": "none bound in original matrix",
+      "cli": {
+        "result": "not scanned by design"
+      },
+      "fixed_control": "N/A",
+      "safe_unrelated_control": "N/A",
+      "evidence": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json"
+      ],
+      "bounded_static_regression": "N/A",
+      "case_product_disposition": "N/A"
+    },
+    {
+      "case_id": "openharmony-cve-2025-21098",
+      "prior_t12": "N/A",
+      "source_pair": "none bound in original matrix",
+      "cli": {
+        "result": "not scanned by design"
+      },
+      "fixed_control": "N/A",
+      "safe_unrelated_control": "N/A",
+      "evidence": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json"
+      ],
+      "bounded_static_regression": "N/A",
+      "case_product_disposition": "N/A"
+    },
+    {
+      "case_id": "contacts-portrait-filename-path-traversal",
+      "prior_t12": "PARTIAL",
+      "source_pair": "exact vulnerable OpenHarmony 6.1 LTS commit/tree/blob/SHA verified; no trusted fixed source",
+      "cli": {
+        "detector": "ohscanner.cpp.path_traversal@0.3.0",
+        "vulnerable_findings": 3,
+        "locations": [
+          "contacts_data_ability.cpp:789",
+          "contacts_data_ability.cpp:790",
+          "contacts_data_ability.cpp:794"
+        ],
+        "parse": "complete",
+        "coverage": "complete",
+        "replay": "current production CLI explicitly selected detector at integrated base 790e353; complete run"
+      },
+      "fixed_control": "BLOCK: no trusted fixed source",
+      "safe_unrelated_control": "mechanism fixtures pass; not a trusted Contacts source control",
+      "catalog": "registered at integrated base, default disabled and explicit selection required; earlier T20 not-registered note is stale",
+      "evidence": [
+        "research/evidence/cpp/a_t20_contacts_path_traversal_acceptance_20261020.md",
+        "research/evidence/cpp/a_t20_contacts_path_traversal_acceptance_20261020.json",
+        "research/evidence/cpp/contacts_path_traversal_20261019/CONTACTS_PATH_TRAVERSAL_REPLAY_20261019.md",
+        "src/ohscanner/detectors/catalog.py"
+      ],
+      "bounded_static_regression": "PARTIAL",
+      "case_product_disposition": "PARTIAL/BLOCK"
+    }
+  ],
+  "audit_limitations": [
+    "T7 verifiers establish source/artifact integrity and reported projections; only the contacts exact-source CLI was freshly executed by T7 at integrated base 790e353.",
+    "The historical matrix replay verifier updates its scanner_head field; T7 ran it against an external temporary copy and did not alter the checked-in historical JSON.",
+    "T61/T62 and some older evidence were generated from different scanner commit histories. Their scanner src trees were compared with frozen 81dd before use; syntax/semantic limits remain as recorded.",
+    "Future-dated report labels (including T32's 2026-10-23 date) are not treated as proof of a 2026-10-20 execution. Curl is backed by the separate T4 2026-10-20 exact CLI replay.",
+    "No product build, production reachability, attacker control, impact, or vulnerability confirmation is inferred."
+  ]
+}
