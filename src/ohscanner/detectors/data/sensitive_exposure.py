@@ -443,6 +443,9 @@ class LocalFlow:
         if n.type=='identifier':
             ident=self.text(n)
             known=env.get(ident,())
+            target=self.pointers.get(ident)
+            if target and target.slot:
+                known=tuple(dict.fromkeys(known+tuple(env.get(target.slot,()))))
             if known:return known
             if self.heuristic_sources and looks_sensitive_name(ident):
                 self.gaps.add('unreviewed sensitive-name heuristic source; semantics unknown')
@@ -726,20 +729,21 @@ class LocalFlow:
             actual=actual_target.slot or self.lvalue(args[index],types)
             if not actual:
                 continue
+            raw=callee_flow.raw_pointer(param.child_by_field_name('declarator'))
+            slots=('*'+ident,) if raw else (ident,)
             writes = tuple(dict.fromkeys(
                 flow for state in states
-                for slot in (ident,'*'+ident)
+                for slot in slots
                 for flow in state.values.get(slot, ())))
-            if cross_file:
-                original = set(initial_values.get(ident, ()))
-                writes = tuple(flow for flow in writes if flow not in original)
+            original = set(initial_values.get(ident, ()))
+            writes = tuple(flow for flow in writes if flow not in original)
             if writes:
                 outputs.setdefault(actual,[]).extend(
                     self.addstep(writes,
                                  f'{call_line} {callee_name} may write through argument {index}'))
             # Preserve a single visible member slot through a writable object
             # parameter as well as a scalar pointee. No arbitrary alias walk.
-            for prefix in (ident+'.','*'+ident+'.'):
+            for prefix in (('*'+ident+'.',) if raw else (ident+'.',)):
                 slots={slot for state in states for slot in state.values if slot.startswith(prefix)}
                 for slot in slots:
                     member_writes=tuple(dict.fromkeys(flow for state in states
@@ -876,6 +880,12 @@ class LocalFlow:
             return destination,bool(destination)
         finally:self.pointers=before
 
+    def output_destination(self,node,types):
+        # Call models write through their destination, not to the local pointer
+        # variable itself. Keep this slot distinct from an input pointer value.
+        target=self.pointer_target(node)
+        return target.slot or self.lvalue(node,types)
+
     def emit_log_candidate(self,fn,fnname,node,flows,message,extra_obligation,operand_status='unresolved operand-privacy status'):
         line=node.start_point[0]+1
         traces=sorted(set(' -> '.join(flow.steps+(f'{line} {fn} {operand_status}',))
@@ -931,7 +941,7 @@ class LocalFlow:
         if locally_defined and fn in ('memcpy_s','strcpy_s'):
             self.gaps.add('same-file copy-like definition has unresolved write semantics: '+fn)
             if len(args) >= 2:
-                dst=self.lvalue(args[0],types)
+                dst=self.output_destination(args[0],types)
                 if dst:
                     source=args[2] if len(args)>2 else args[-1]
                     self.store_value(env,dst,self.addstep(self.expr(source,env,types),f'{n.start_point[0]+1} unresolved {fn} may write {dst}'))
@@ -942,7 +952,7 @@ class LocalFlow:
         if locally_defined and fn in ('snprintf','snprintf_s'):
             self.gaps.add('same-file formatting name has unresolved write semantics: '+fn)
             if len(args) >= 2:
-                dst=self.lvalue(args[0],types)
+                dst=self.output_destination(args[0],types)
                 if dst:
                     flows=tuple(flow for arg in args[1:] for flow in self.expr(arg,env,types))
                     self.store_value(env,dst,self.addstep(flows,f'{n.start_point[0]+1} unresolved {fn} may write {dst}'))
@@ -1019,7 +1029,7 @@ class LocalFlow:
             if len(args) != arity:
                 self.gaps.add('source API argument count unresolved');return
             if index<len(args):
-                dst=self.lvalue(args[index],types)
+                dst=self.output_destination(args[index],types)
                 if dst:
                     source=self.source(fn+' output argument '+str(index),n)
                     self.store_value(env,dst,(source,))
@@ -1037,7 +1047,7 @@ class LocalFlow:
         if fn in ('memcpy_s','strcpy_s'):
             if len(args)!=(4 if fn=='memcpy_s' else 3):
                 self.gaps.add('copy API argument count unresolved');return
-            dst=self.lvalue(args[0],types)
+            dst=self.output_destination(args[0],types)
             if dst:
                 flows=self.addstep(self.expr(args[2],env,types),f'{n.start_point[0]+1} {fn} -> {dst}')
                 self.store_value(env,dst,flows)
@@ -1062,7 +1072,7 @@ class LocalFlow:
                 operands=args[fi+1:]
                 if count!=len(operands):raise ValueError('format arity')
                 vals=tuple(v for _,ids,_ in slots for i in ids for v in self.expr(operands[i],env,types))
-                dst=self.lvalue(args[0],types)
+                dst=self.output_destination(args[0],types)
                 if dst:
                     flows=self.addstep(vals,f'{n.start_point[0]+1} {fn} -> {dst}')
                     self.store_value(env,dst,flows)
@@ -1091,7 +1101,7 @@ class LocalFlow:
             if len(args) != arity:
                 self.gaps.add('modeled copy API argument count unresolved: '+fn)
                 return
-            destination = self.lvalue(args[destination_index], types)
+            destination = self.output_destination(args[destination_index], types)
             flows = self.expr(args[source_index], env, types)
             if destination:
                 written=self.addstep(
