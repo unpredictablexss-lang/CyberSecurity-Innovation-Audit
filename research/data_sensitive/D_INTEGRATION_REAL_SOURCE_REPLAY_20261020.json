@@ -8157,5 +8157,8 @@
     "full_repository_suite": "not_completed: WSL distro restarted during unittest discovery after >10 minutes; no suite summary; not counted as pass",
     "product_build_runtime_accuracy_deployment": "not_run_or_unknown",
     "zero_candidate_means_safe": false
-  }
+  },
+  "delivery_commit": "4b0e16576a45a111b4fad7e8f82819a47ed472f5",
+  "main_after_delivery": "4b0e16576a45a111b4fad7e8f82819a47ed472f5",
+  "main_push_result": "accepted fast-forward: 0f53af62283dbd0f249280805e8286a04b2d43b9 -> 4b0e16576a45a111b4fad7e8f82819a47ed472f5"
 }
