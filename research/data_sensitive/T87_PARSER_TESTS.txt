@@ -1,0 +1,27 @@
+test_extracts_call_expressions_and_arguments (tests.test_ast.AstIndexTests.test_extracts_call_expressions_and_arguments) ... ok
+test_extracts_variable_declarations (tests.test_ast.AstIndexTests.test_extracts_variable_declarations) ... ok
+test_member_pointer_dispatch_is_normalized_without_losing_source_spans (tests.test_ast.AstIndexTests.test_member_pointer_dispatch_is_normalized_without_losing_source_spans) ... ok
+test_parses_c_function_definitions (tests.test_ast.AstIndexTests.test_parses_c_function_definitions) ... ok
+test_parses_cpp_namespace_and_calls (tests.test_ast.AstIndexTests.test_parses_cpp_namespace_and_calls) ... ok
+test_rejects_unknown_language (tests.test_ast.AstIndexTests.test_rejects_unknown_language) ... ok
+test_c_language_stays_unmodified_and_partial (tests.test_cpp_empty_linkage.EmptyCppLinkageTests.test_c_language_stays_unmodified_and_partial) ... ok
+test_empty_pair_recovery_preserves_directives_and_call_offsets (tests.test_cpp_empty_linkage.EmptyCppLinkageTests.test_empty_pair_recovery_preserves_directives_and_call_offsets) ... ok
+test_lexical_and_non_global_lookalikes_are_unchanged (tests.test_cpp_empty_linkage.EmptyCppLinkageTests.test_lexical_and_non_global_lookalikes_are_unchanged) ... ok
+test_multiple_exact_pairs_are_idempotent_and_do_not_hide_other_errors (tests.test_cpp_empty_linkage.EmptyCppLinkageTests.test_multiple_exact_pairs_are_idempotent_and_do_not_hide_other_errors) ... ok
+test_no_general_preprocessing_or_declaration_removal (tests.test_cpp_empty_linkage.EmptyCppLinkageTests.test_no_general_preprocessing_or_declaration_removal) ... ok
+test_c_frontend_does_not_receive_cpp_projection (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_c_frontend_does_not_receive_cpp_projection) ... ok
+test_comment_raw_string_and_macro_lookalikes_are_unchanged (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_comment_raw_string_and_macro_lookalikes_are_unchanged) ... ok
+test_different_preprocessor_contexts_are_not_paired (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_different_preprocessor_contexts_are_not_paired) ... ok
+test_exact_empty_pair_and_same_outer_context_recover (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_exact_empty_pair_and_same_outer_context_recover) ... ok
+test_extra_closing_marker_never_becomes_complete (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_extra_closing_marker_never_becomes_complete) ... ok
+test_function_class_and_namespace_embedded_pairs_are_unchanged (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_function_class_and_namespace_embedded_pairs_are_unchanged) ... ok
+test_plain_extern_is_already_complete_and_unchanged (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_plain_extern_is_already_complete_and_unchanged) ... ok
+test_real_declarations_and_alternate_branch_are_not_discarded (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_real_declarations_and_alternate_branch_are_not_discarded) ... ok
+test_shared_and_sensitive_private_ast_agree_on_recovery (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_shared_and_sensitive_private_ast_agree_on_recovery) ... ok
+test_unpaired_wrong_order_and_repeated_openings_remain_partial (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_unpaired_wrong_order_and_repeated_openings_remain_partial) ... ok
+test_utf8_crlf_bytes_lines_and_original_source_are_preserved (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_utf8_crlf_bytes_lines_and_original_source_are_preserved) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.006s
+
+OK
