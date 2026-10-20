@@ -19,12 +19,15 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
   const [busy, setBusy] = useState(false); const [error, setError] = useState("");
   const [includeSensitiveExposure, setIncludeSensitiveExposure] = useState(false);
   const [includeKnownCves, setIncludeKnownCves] = useState(false);
+  const [includeArkRuntime, setIncludeArkRuntime] = useState(false);
   const provider = health?.capabilities?.agent_provider;
   const sensitiveExposureId = "ohscanner.data.sensitive_exposure";
   const knownCvesId = "ohscanner.known_disclosed_cves";
+  const arkRuntimeId = "ohscanner.ark.runtime.type_safety";
   const explicitIds = [
     ...(includeSensitiveExposure ? [sensitiveExposureId] : []),
     ...(includeKnownCves ? [knownCvesId] : []),
+    ...(includeArkRuntime ? [arkRuntimeId] : []),
   ];
   const [plan, setPlan] = useState<any>(null); const [planning, setPlanning] = useState(false);
   const gate = useRef(requestGate());
@@ -135,7 +138,7 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
         <RepositoryField repos={repos} refresh={refresh} onChange={() => { defaultedRepository.current = null; form.setFieldValue("revision", undefined); setError(""); invalidate(); }} />
         <RefField name="revision" label={loading ? "正在加载当前仓库版本…" : "审计版本"} refs={refs} />
         <ScopeBudget />
-        {(detectors.some((d) => d.id === sensitiveExposureId) || detectors.some((d) => d.id === knownCvesId)) && <Form.Item label="实验研究规则">
+        {(detectors.some((d) => d.id === sensitiveExposureId) || detectors.some((d) => d.id === knownCvesId) || detectors.some((d) => d.id === arkRuntimeId)) && <Form.Item label="实验研究规则">
           <Space direction="vertical">
             {detectors.some((d) => d.id === sensitiveExposureId) && <Checkbox checked={includeSensitiveExposure} onChange={(event) => {
               setIncludeSensitiveExposure(event.target.checked); invalidate();
@@ -143,6 +146,9 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
             {detectors.some((d) => d.id === knownCvesId) && <Checkbox checked={includeKnownCves} onChange={(event) => {
               setIncludeKnownCves(event.target.checked); invalidate();
             }}>D 已披露 CVE 组件源码规则（显式研究候选；不代表产品受影响）</Checkbox>}
+            {detectors.some((d) => d.id === arkRuntimeId) && <Checkbox checked={includeArkRuntime} onChange={(event) => {
+              setIncludeArkRuntime(event.target.checked); invalidate();
+            }}>C Ark Runtime TypedArray（绑定源码研究候选；默认关闭）</Checkbox>}
           </Space>
         </Form.Item>}
         {includeSensitiveExposure && <Alert className="section-gap" type="info" showIcon
@@ -151,6 +157,9 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
         {includeKnownCves && <Alert className="section-gap" type="warning" showIcon
           message="已披露 CVE 规则只用于源码候选筛查"
           description="规则不会自动启用。命中表示固定源码包含已知缺陷形态或受影响组件标记；必须另行核对产品构建、可达路径和影响。没有命中、解析不完整或规则未覆盖均不能证明安全。" />}
+        {includeArkRuntime && <Alert className="section-gap" type="info" showIcon
+          message="Ark Runtime 仅进行绑定源码的研究候选扫描"
+          description="只适用于模型登记的仓库、提交和文件 blob；其他版本会保持未分析。partial / blocked 仍表示 unknown，候选不代表产品受影响或漏洞已确认。" />}
         <RuleNotice detectors={detectors} />
         <Button className="section-gap" onClick={() => void preview()} loading={planning} disabled={!ready || busy || !repos.length}>预览审计计划</Button>
         <AuditPlanView plan={plan} auditMode={auditMode} />

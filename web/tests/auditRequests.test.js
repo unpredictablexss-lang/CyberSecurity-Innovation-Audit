@@ -105,6 +105,17 @@ test("D sensitive exposure rule stays off by default and is sent only after expl
   assert.throws(() => approvedDetectorIds([...detectors, d], ["test.example"]), /实验规则/);
 });
 
+test("C Ark Runtime rule stays off by default and is sent only after explicit selection", () => {
+  const id = "ohscanner.ark.runtime.type_safety";
+  const c = { id, version: "0.6.2", kind: "research_candidate", default_enabled: false,
+    supported_languages: ["cpp"], admission_reason: "research_only_explicit_selection" };
+  const catalog = [...detectors, c];
+  assert.deepEqual(approvedDetectorIds(catalog), ["test.cpp"]);
+  assert.deepEqual(approvedDetectorIds(catalog, [id]), [id, "test.cpp"]);
+  assert.deepEqual(snapshotPayload(values, catalog, [id]).detector_ids, [id, "test.cpp"]);
+  assert.deepEqual(planPayload(values, catalog, [id]).detector_ids, [id, "test.cpp"]);
+});
+
 test("D disclosed-CVE source rule is sent to preview and scan only after explicit selection", () => {
   const id = "ohscanner.known_disclosed_cves";
   const d = { id, version: "0.17.0", kind: "research_candidate", default_enabled: false,
