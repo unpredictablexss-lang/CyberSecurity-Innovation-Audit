@@ -15,6 +15,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .models import DEFAULT_SOURCE, SINKS, STATUS_RETURN_CALLS, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel
 from .property_keys import PROPERTY_READ_CALLS, PropertyKeyBindings
 from .log_macro_roles import LogMacroRoles, enclosing_function
+from .comma_values import BuiltinCommaProof
 
 @dataclass(frozen=True)
 class Flow:
@@ -280,7 +281,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.15'
+    version = '0.21.16'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -403,6 +404,7 @@ class LocalFlow:
         self.function_nodes = {}
         self.call_stack = resolver.call_stack if resolver is not None else []
         self.call_results = {}
+        self.comma_values = BuiltinCommaProof(self)
         self.property_keys = PropertyKeyBindings(self)
         self.property_key_roles = set()
         self.log_macro_roles = LogMacroRoles(self, formats)
@@ -462,6 +464,11 @@ class LocalFlow:
             # C++ alignof describes a type's alignment, not the operand's bytes.
             # In particular, a sensitive name inside decltype is not read here.
             return ()
+        if n.type=='comma_expression':
+            if self.comma_values.is_builtin(n):
+                return self.addstep(self.expr(n.child_by_field_name('right'),env,types),
+                    f'{n.start_point[0]+1} builtin comma final operand')
+            self.gaps.add('comma operand type/binding unresolved; dependencies retained as may-flow')
         if n.type=='field_expression':
             obj=n.child_by_field_name('argument'); field=self.text(n.child_by_field_name('field'))
             root=self.text(obj)
