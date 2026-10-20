@@ -476,3 +476,22 @@ T2 completed fresh exact-source CLI replay for the two cJSON rows on frozen scan
 - **Steps:** Identify rows not freshly replayed; verify repo/commit/tree/blob/SHA and CLI scope/rule/parse coverage; run only reconstructible current-CLI cases; retain N/A, missing-fix and parser-partial labels.
 - **Completion gate:** Every attempted row has provenance, command, version, findings/locations, parse state and PASS/PARTIAL/BLOCK; all unrun rows have a minimal missing-input blocker.
 - **Boundaries:** Separate worktree; no detector/tests/fixtures or developer conclusions edited; no owner-only docs changes; no PR push.
+
+
+## Closeout follow-up wave — started 2026-10-20
+
+### D23 — historical integer/bounds detector gap review (development)
+
+- **Role / sustained goal:** C/C++ integer/bounds detector developer; close a demonstrated source-bound root gap with a reusable rule change, or preserve the no-change blocker.
+- **Input:** frozen scanner `81dd4aea9bb51522ac912b33504ef0d2ddb79089`; CVE-2025-0587 `integer_bounds@0.2.0` and CVE-2025-23420 `bounds@0.3.0` exact-source replay packages.
+- **Steps:** Re-run vulnerable/fixed pairs; identify the precise semantic gap; implement only if exact root-positive plus fixed, same-root safe/unrelated, renamed, and partial controls support the change.
+- **Completion gate:** Evidence-bound candidate behavior and focused tests pass without suppressing root-positive findings; otherwise document no-change and minimum blocker.
+- **Boundaries:** Separate worktree; no parser/API/schema/Catalog/A0/owner-doc changes; no CVE-specific hardcoding or PR push.
+
+### T3 — same-root source controls for historical integer/bounds rows (independent test)
+
+- **Role / sustained goal:** Independent static regression tester; find and validate root-matched safe/unrelated source controls for the two partial historical rows.
+- **Input:** exact source objects in the 13-row inventory and frozen scanner `81dd4aea9bb51522ac912b33504ef0d2ddb79089`.
+- **Steps:** Verify commit/tree/blob/SHA and candidate locations; review exact production source for controls matching TypedArray atomic index access or SortElementsByObject boundary semantics; run narrow CLI scopes and record whether the scanner actually analyzed each control.
+- **Completion gate:** Each control has source identity, code-order/semantic rationale, rule/version, finding/parse/coverage result; otherwise state the smallest missing source/context and retain PARTIAL/BLOCK.
+- **Boundaries:** Independent worktree; no detector/tests/fixtures/A0/owner-doc edits; do not relabel adjacent controls as root-specific and do not push PR.
