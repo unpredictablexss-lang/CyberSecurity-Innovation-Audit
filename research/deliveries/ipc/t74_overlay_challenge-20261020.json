@@ -1,0 +1,92 @@
+{
+  "task": "T74 independent integration challenge / T75 post-fix replay",
+  "date": "2026-10-20",
+  "worktree": "D:\\openHarmonyScanner\\worktrees\\b-ipc-integration-20261020",
+  "overlay_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "scope": "Independent actual-detector overlay challenge for CVE-2025-26474. Source-level integration evidence only; no product route, product deployment, or true-positive claim.",
+  "official_source": {
+    "repository": "openharmony/communication_ipc",
+    "remote": "https://gitee.com/openharmony/communication_ipc.git",
+    "commit_urls": [
+      "https://gitee.com/openharmony/communication_ipc/commit/84d681288793785e8f39f71c824f211edaed8f1e",
+      "https://gitee.com/openharmony/communication_ipc/commit/67cd9d3e8e08971ba614a19f99b5f6b7ec4ea039",
+      "https://gitee.com/openharmony/communication_ipc/commit/de3a68cc8b7d6f18017fd261060def0e38dce54a"
+    ],
+    "source_path": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+    "pinned_cases": [
+      {
+        "case_id": "old-cve-parent",
+        "commit": "84d681288793785e8f39f71c824f211edaed8f1e",
+        "tree": "80fb756221eac67a9f6a9a9506eb763e380d9c55",
+        "source_sha256": "1f4d039b974a0021000126e61efea7eb0b8eb5f4baf756373c1b12150d0d5eec",
+        "expected_and_observed_rule_findings": 1
+      },
+      {
+        "case_id": "old-umbrella-issue-revision",
+        "commit": "67cd9d3e8e08971ba614a19f99b5f6b7ec4ea039",
+        "tree": "70e86ff4f755b9b67794a045543636ad2c543477",
+        "source_sha256": "98bd761fe25a16435830a8978473444a318b71a4cf4809689b4b7ffe106effa9",
+        "expected_and_observed_rule_findings": 1
+      },
+      {
+        "case_id": "official-security-fix",
+        "commit": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+        "tree": "611835efd3112027f067b587146a2c2bbd38b47e",
+        "source_sha256": "30ad2a9fa4f45792b83e75cef6c5106818b290ae523d9e17e48c88853854d777",
+        "expected_and_observed_rule_findings": 0
+      }
+    ]
+  },
+  "oracle": {
+    "detector": "IpcInterfaceDetector",
+    "rule_id": "ipc.parcel.array-allocation-width",
+    "symbol": "MessageSequenceImpl::CJ_ReadRemoteObjectArray",
+    "vulnerability_identity": "CVE-2025-26474",
+    "candidate_cwe": "CWE-131",
+    "consequence_cwe": "CWE-787",
+    "rule_version": "0.1.0",
+    "deduplication": "The two vulnerable pinned revisions each yield one finding, collapsed to one distinct (CVE, source path, function) root. They are revision replays, not independent CVEs."
+  },
+  "controls": {
+    "safe_sized_allocations": 0,
+    "nonpositive_only": 0,
+    "unrelated_method_name": 0,
+    "CheckReadLength_only_without_undersized_allocation_and_typed_store": 0,
+    "wrong_repository": 0,
+    "comment_only_current_post_fix": 0
+  },
+  "comment_only_defect": {
+    "pre_fix": {
+      "observed": 1,
+      "evidence": "D74 review reported that the raw function-body regex chain matched comment-only code. This challenge independently replays that prior raw-body behavior through the current IpcInterfaceDetector by replacing only _mask_non_code with identity masking in a test-scoped mock; it yields one finding. No production source was changed.",
+      "limitation": "Behavioral replay of the pre-fix raw-body scanner, not execution from a separately checked-out pre-fix detector commit."
+    },
+    "post_fix": {
+      "observed": 0,
+      "evidence": "Current overlay regression case uses comment-only matching text and actual detector; six-test post-fix run passed, including zero finding assertion."
+    }
+  },
+  "verification": {
+    "command": "python -m pytest -q tests/test_ipc_t74_cj_array_bounds_integration_challenge.py",
+    "result": "6 passed in 0.49s",
+    "runner": "root-run verification on current post-fix overlay, relayed directly by root; this agent did not rerun after the final overlay update",
+    "test_file": "tests/test_ipc_t74_cj_array_bounds_integration_challenge.py",
+    "test_file_sha256": "014278031642c8d60bff2bd0fa21088c2c1b39ac116af706ccbb70be93f3502c",
+    "manifest": "tests/fixtures/ipc/t74_cj_array_bounds/manifest.json",
+    "manifest_sha256": "6fc06f0a349b26fbf2cd1d3ae2bd8c7e50f4d987088d5807c6643843dd013bf7",
+    "current_rule_module_sha256": "fc44c96ac584c28d4ac0106b9a4e7125a7ab71cd0d8b280a7cc3ff75a062a173",
+    "detector_dispatch_module_sha256": "b1540d4a145b93cbc291329a10467c0f6ae47aa40217adb67c8ad12a0d8ce80a"
+  },
+  "changes_by_this_lane": [
+    "Added tests/test_ipc_t74_cj_array_bounds_integration_challenge.py",
+    "Added isolated tests/fixtures/ipc/t74_cj_array_bounds/manifest.json",
+    "Did not edit detector implementation or shared tests/fixtures/ipc/manifest.json"
+  ],
+  "limitations": [
+    "Official source is pinned by commit and raw source SHA-256 from the local clone whose remote is the official Gitee repository.",
+    "Synthetic controls exercise the detector contract and are not product inputs.",
+    "Repository and provenance fields are supplied through ScanRequest; this test does not authenticate an end-to-end scanner ingestion route.",
+    "The result supports a source-level candidate and fixed-control distinction only; it does not establish product reachability, deployment, or formal precision/recall."
+  ],
+  "actions": false
+}

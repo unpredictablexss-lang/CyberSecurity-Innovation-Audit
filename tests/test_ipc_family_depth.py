@@ -52,6 +52,8 @@ BASE = Path(__file__).parent / 'fixtures/ipc'
 # from a preprocessed text rather than the file would satisfy the number and fail
 # the token.
 PINNED_POSITIVES = {
+    ('data06', 'cj_array_allocation_width_positive.cpp'): (
+        ('ipc.parcel.array-allocation-width', 6, 'CJ_ReadRemoteObjectArray'),),
     ('auth07', 'denial_transport_success_positive.cpp'): (
         ('ipc.auth.denial-transport-success', 7, 'return NETMANAGER_SUCCESS'),),
     ('auth06', 'peer_session_positive.cpp'): (
@@ -133,19 +135,23 @@ INVARIANCE_PAIRS = (
 )
 
 
-def context(text, path='sample.cpp'):
+def context(text, path='sample.cpp', repository='fixture/ipc'):
     index = parse_source(text, language='cpp')
     unit = SourceUnit(path, 'cpp', text, hashlib.sha256(text.encode()).hexdigest(),
                       index.parse_status)
-    request = ScanRequest('ipc-test', 'fixture/ipc', 'synthetic-ipc-v1',
-                          snapshot_digest((unit,)), 'current-component:fixture/ipc')
+    request = ScanRequest('ipc-test', repository, 'synthetic-ipc-v1',
+                          snapshot_digest((unit,)), 'current-component:' + repository)
     return ScanContext(request, (unit,), {'ast': {path: index.to_dict()}})
 
 
 def run_of(family_dir, filename):
     """The detector's run for one fixture, limitations included."""
     text = (BASE / family_dir / filename).read_text()
-    ctx = context(text, filename)
+    if family_dir == 'data06':
+        ctx = context(text, 'interfaces/innerkits/cj/src/message_sequence_impl.cpp',
+                      'openharmony/communication_ipc')
+    else:
+        ctx = context(text, filename)
     return IpcInterfaceDetector().detect(ctx, ctx.units)
 
 
@@ -250,7 +256,11 @@ class NegativeControlIsExactTests(unittest.TestCase):
 
     def detect_at(self, path, filename):
         text = (path.parent / filename).read_text()
-        ctx = context(text, filename)
+        if path.parent.name == 'data06':
+            ctx = context(text, 'interfaces/innerkits/cj/src/message_sequence_impl.cpp',
+                          'openharmony/communication_ipc')
+        else:
+            ctx = context(text, filename)
         run = IpcInterfaceDetector().detect(ctx, ctx.units)
         return run.status, sorted({f.rule_id for f in run.findings})
 

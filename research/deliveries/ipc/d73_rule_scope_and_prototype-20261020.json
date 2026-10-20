@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "task": "D73 B-vs-A ownership and narrow IPC array bounds prototype",
+  "date": "2026-10-20",
+  "round": 2,
+  "status": "narrow_prototype_added; source_probe_vulnerable_positive_fixed_negative; focused_oracle_feedback_consumed",
+  "decision": {
+    "owner": "B/IPC for a narrowly scoped IPC Cangjie FFI parcel-array invariant; A remains the owner for general C/C++ allocation-bound analysis across repositories.",
+    "rationale": "The target has an IPC-specific semantic chain: nativeParcel ReadInt32 count -> typed array allocations -> indexed typed stores in CJ_ReadRemoteObjectArray, reached by an exported FFI wrapper resolving a MessageSequenceImpl handle. This is sufficiently specific for a B rule only when constrained to that repository, file, and function. A's generic bounds detectors currently emit no result on the single-file vulnerable source; broad arbitrary C++ scanning or classifying CheckReadLength alone would be unjustified.",
+    "limits": "This is a source-level candidate and narrow prototype, not proof of product build inclusion, attacker reachability through a local Binder route, runtime exploitability, or exact product impact. Do not treat it as a general IPC dispatch vulnerability or claim all issue-summary changes are independent vulnerabilities. Do not count it as a frozen holdout case; manifest remains untouched."
+  },
+  "prototype": {
+    "worktree": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020",
+    "base_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "working_tree_dirty": true,
+    "tracked_diff_sha256": "9d1bc3fe6c5c73e2207ba739101d8480feedf8ccb6d2115319cc47e20e90f3b4",
+    "tracked_diff_bytes": 98123,
+    "new_files": {
+      "src/ohscanner/detectors/interface/ffi_array_bounds.py": "5e1456e8a602cbd5696727382b23819a7222c866264cebaf30140d958fa7379c",
+      "src/ohscanner/detectors/interface/families/data06.py": "a277339ae772c42a9465fc3b2063f8c80326ef770ea939598769c7ae4214074b"
+    },
+    "modified_files_and_sha256": {
+      "src/ohscanner/detectors/interface/detector.py": "b1540d4a145b93cbc291329a10467c0f6ae47aa40217adb67c8ad12a0d8ce80a",
+      "src/ohscanner/detectors/interface/models.py": "bf8dcdf22e00b721951d7f2200ac40569afdd875e11c95edf418144e957b908f"
+    },
+    "rule": {
+      "id": "ipc.parcel.array-allocation-width",
+      "family": "DATA-06",
+      "cwe": "CWE-131",
+      "possible_consequence": "out_of_bounds_write / CWE-787",
+      "version": "0.1.0",
+      "matching_scope": "openharmony/communication_ipc; interfaces/innerkits/cj/src/message_sequence_impl.cpp; MessageSequenceImpl::CJ_ReadRemoteObjectArray",
+      "matching_shape": "parcel-derived ReadInt32 count, non-positive return guard, count-sized int32_t/int64_t allocations, and typed indexed writes; one root finding across type[] and id[]",
+      "check_read_length_policy": "CheckReadLength by itself does not report; the allocation-to-typed-store chain is required."
+    },
+    "preservation": "Only detector.py/models.py and the two new detector files above were changed for this prototype. Existing dirty analysis.py, test files, fixtures, manifests, and other untracked files were preserved. No A detector, holdout manifest, or test file was modified by this lane."
+  },
+  "source_probe": {
+    "repository": "https://gitee.com/openharmony/communication_ipc.git",
+    "vulnerable_commits": [
+      "c10c8a5 (before !1837)",
+      "84d681288793785e8f39f71c824f211edaed8f1e (after !1837, before !2037)"
+    ],
+    "fixed_commit": "de3a68cc8b7d6f18017fd261060def0e38dce54a (merge !2037)",
+    "function": "MessageSequenceImpl::CJ_ReadRemoteObjectArray",
+    "source_path": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+    "results": [
+      {
+        "revision": "c10c8a5",
+        "parse": "complete",
+        "B": "one ipc.parcel.array-allocation-width root",
+        "A_BOF": 0,
+        "A_INT": 0
+      },
+      {
+        "revision": "84d681288793785e8f39f71c824f211edaed8f1e",
+        "parse": "complete",
+        "B": "one ipc.parcel.array-allocation-width root",
+        "A_BOF": 0,
+        "A_INT": 0
+      },
+      {
+        "revision": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+        "parse": "complete",
+        "B": "no finding",
+        "A_BOF": 0,
+        "A_INT": 0
+      }
+    ],
+    "manual_negative_checks": [
+      "CheckReadLength-only shape without typed allocation/indexed stores: no result",
+      "wrong repository identity: no result"
+    ],
+    "run_type": "direct ad-hoc detector probes; no pytest suite run by D73"
+  },
+  "independent_test_feedback": {
+    "report": "D:/openHarmonyScanner/records/parallel-20261020/t73_test_oracle_and_feedback-20261020.json",
+    "test_path": "c-line-static-pr/tests/test_t73_cj_array_bounds_oracle.py",
+    "test_sha256": "2a8275b2d49558d3595e0e5eea8cb6f888265c2a8f642408eb58c86e1685fd35",
+    "result": "5 passed in 0.18 seconds",
+    "evidence": "Official wrapper FfiRpcMessageSequenceImplReadRemoteObjectArray resolves FFIData<MessageSequenceImpl> and calls CJ_ReadRemoteObjectArray. The vulnerable source allocates count bytes for int32_t and int64_t arrays then performs indexed stores; fixed source scales allocation by element size. Oracle covers count/remaining-byte cases, safe/fixed/unrelated controls, and one label root across type[] and id[].",
+    "interpretation": "T73's independent tests establish an oracle and source wrapper binding, not production detector dedupe (the then-current detector had no finding). D73's separate direct probe shows one root on vulnerable revisions and none on fixed source."
+  },
+  "blockers_and_unknowns": [
+    "No product build profile or binary evidence confirms the exact source is included in a target product.",
+    "The reviewed wrapper proves FFI handle-to-helper source flow but not attacker control of the handle/parcel through a deployed route.",
+    "No product runtime or exploitability claim is made; the adjudication is source-level.",
+    "The focused T73 oracle has not yet been replayed against this exact prototype as an integrated test; D73 did not add or run tests per task boundary."
+  ],
+  "closeout_steps": {
+    "round_3_completed": "D73 chose narrow B/IPC ownership and added a repository/file/function constrained prototype; T73 independently supplied a 5-case oracle and official wrapper evidence.",
+    "round_4_only_if_defect": "Replay T73 oracle against the exact integration overlay; require one vulnerable root across type[]/id[] and zero on fixed, safe, short-input, unrelated, and CheckReadLength-only controls. Repair only if a concrete mismatch appears, then update hashes.",
+    "if_round_4_passes": "Close this source-level lane with the prototype identity and keep product reachability and frozen-holdout eligibility explicitly unresolved/out of scope; do not reopen repeated audits absent a defect."
+  },
+  "actions": false
+}
