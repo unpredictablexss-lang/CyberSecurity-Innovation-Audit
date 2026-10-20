@@ -72,3 +72,17 @@ After the developer added the source-bound rule in the shared working tree, I in
 Run artifacts are in `D:\OpenHarmonyScanner\tmp\float32-candidate-run-dev-working.{json,md}`, `float32-candidate-run-missing-helper.{json,md}`, `float32-candidate-run-wrong-repo.{json,md}`, and `float32-candidate-run-wrong-commit.{json,md}`. The exact positive CLI produced one finding only; the helper and identity negative controls produced zero findings without reporting an analyzed safe result.
 
 Still pending at this point: developer commit-SHA-bound replay; fixed-guard source fixture; altered target blob/hash; mutated helper bytes/hash; explicit wrong-blob control; TaggedInt and positive TDouble are source-semantic controls, not Ark Runtime executions. The developer's unit tests cover predicate fixtures for fixed lower bound, tagged-int distinction, and unrelated/incorrect upper-bound blocks, but those unit tests were not run independently in this tester slice yet. No control in this section establishes an OOB vulnerability or product impact.
+
+## Same-commit independent replay
+
+The implementation was committed as OHScanner SHA `929904ab522d855be32c6c58a0704f8d21faed58`. Before replay I verified `git rev-parse HEAD` returned this exact SHA and the worktree was clean. I then reran the same three-file exact a65 positive scope and the key wrong-commit and missing-helper negative cases; commands were the same as above with output paths under `D:\OpenHarmonyScanner\tmp\float32-candidate-run-929904ab-*`.
+
+| Case | Result on implementation SHA `929904ab522d855be32c6c58a0704f8d21faed58` |
+|---|---|
+| Exact a65 source + all three exact source files | 1 candidate at `common_stubs.cpp:228`; detector `blocked`; coverage partial 1, no complete or not-analyzed files; exact C++ file stays partial. |
+| Wrong commit `830e85b40240677039719fcbf14f721ad3b19050` | 0 candidate; detector `blocked`; common stub `not_analyzed` with exact repository/commit/path absent from reviewed model. |
+| Exact a65 source with creator helper omitted | 0 candidate; detector `blocked`; common stub `not_analyzed` with `negative_double_length_missing_source:...new_object_stub_builder.cpp`. |
+
+The output tree for the positive and missing-helper cases is the exact Ark Runtime tree `8781f036a3e7e04d8e0b34970d5f623b42875016`. The wrong-commit control uses local source commit/tree `830e85b40240677039719fcbf14f721ad3b19050` / `579712c1ebbb703d17cea422b1572023bed5d8a4`. The implementation's candidate remains one diagnostic, at the same single location, and its exact bound target retains partial coverage; no runtime or vulnerability conclusion is added.
+
+The post-commit replay did not execute a fixed-byte mutated target, a mutated-helper Git object, or a separate helper-SHA mismatch case. The pre-commit unit tests' fixed-predicate fixture is developer-authored and has not been independently rerun here. Those controls remain pending rather than passed.
