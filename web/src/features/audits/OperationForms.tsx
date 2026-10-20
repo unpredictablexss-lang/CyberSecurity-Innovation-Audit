@@ -10,7 +10,7 @@ const { Text } = Typography;
 export type SourceContext = { job_id?: string; candidate_id?: string; repository_id?: string; case_id?: string };
 export type OperationFormProps = { context?: SourceContext; repos: any[]; detectors: any[]; cases: any[]; busy: boolean; submit: (path: string, payload: any) => Promise<void> };
 export function ComparisonForm({ kind, repos, detectors, cases, busy, submit, context = {} }: OperationFormProps & { kind: "date" | "branches" | "range" | "matrix" }) {
-  const [form] = Form.useForm(); const repository = Form.useWatch("repository_id", form); const auditMode = Form.useWatch("audit_mode", form) || "standard_review";
+  const [form] = Form.useForm(); const repository = Form.useWatch("repository_id", form); const auditMode = Form.useWatch("audit_mode", form) || "standard_review"; const autoTriage = Form.useWatch("auto_triage", form) === true;
   const { refs, error: refError } = useRepositoryRefs(repository);
   const [preview, setPreview] = useState<any>(null); const [previewBusy, setPreviewBusy] = useState(false);
   const [error, setError] = useState(""); const gate = useRef(requestGate());
@@ -121,7 +121,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, submit, co
           </Checkbox>
         </Card>}
       </div>}
-      <Button aria-label={submitLabel} className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length || (kind === "matrix" && !cases.length) || (auditMode === "standard_review" && form.getFieldValue("auto_triage") === true && (!smartApproved || !smartPreview))}>{auditMode === "standard_review" && form.getFieldValue("auto_triage") ? "开始智能审计" : submitLabel}</Button>
+      <Button aria-label={submitLabel} className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length || (kind === "matrix" && !cases.length) || (auditMode === "standard_review" && autoTriage && (!smartApproved || !smartPreview))}>{auditMode === "standard_review" && autoTriage ? "开始智能审计" : submitLabel}</Button>
     </Form>
   </Card>;
 }
