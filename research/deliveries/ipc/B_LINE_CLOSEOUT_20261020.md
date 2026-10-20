@@ -68,6 +68,18 @@ DATA-06 固定源码挑战经 M2 CLI 回放：两个固定 vulnerable 修订各 
 - 对 CVE-2022-42463 fixed 报告做针对性再运行时，Windows Python 3.13 的 CLI 在 `dataclasses.asdict(ToolDiagnostic)` 处报 `TypeError: unhashable type: 'list'`，未生成新的报告。此前固定 28 端点原始产物保留；这项 Python 3.13 运行/身份侧车序列化回归需要定位修复后重跑受影响端点。
 - 隔离平台环境未连接，候选详情页和报告导出接线验收 `not_run`。
 
+## 2026-10-21 DATA-06 组件级 PoC 补充
+
+本轮补充了真实源码路径的隔离语义 PoC，原始文件、脚本、完整源码对象绑定、ASan stdout/stderr、定向测试日志及 SHA-256 清单位于 [`data06_runtime_poc_20261021/`](data06_runtime_poc_20261021/README.md)。固定易受影响对象为官方仓库 `openharmony/communication_ipc` 的 `84d681288793785e8f39f71c824f211edaed8f1e`，tree `80fb756221eac67a9f6a9a9506eb763e380d9c55`，blob `c5f62c288a144478828c720d48c1485fae0e035c`，原始源码 SHA-256 `1f4d039b974a0021000126e61efea7eb0b8eb5f4baf756373c1b12150d0d5eec`。修复对象 `de3a68cc8b7d6f18017fd261060def0e38dce54a` 的源码 blob 为 `9041e30d1926edd09e20126274b8903f0c55df50`，源码 SHA-256 `30ad2a9fa4f45792b83e75cef6c5106818b290ae523d9e17e48c88853854d777`。另一个来源复放 `67cd9d3e8e08971ba614a19f99b5f6b7ec4ea039` 的树/blob/hash 也收录于 JSON。
+
+检测器基线核对：B closeout 远端分支在本轮开始时为 `24f80704d244d2ddf665fd50d9dfffeb448e9a87`，`origin/main` 为 `c380a474718e8ec4497aff55b18a1dd38bafa13f`。`detector.py`、`ffi_array_bounds.py`、`families/data06.py`、`models.py` 在两者间 blob 一致；完整 SHA-256 与 tree/blob 值随 `source_bindings.json` 保存。漏洞方法位于 `message_sequence_impl.cpp:1188-1220`，FFI header `ipc_ffi.h:97`，实现 `ipc_ffi.cpp:1142-1152`，GN 条件及源列表 `BUILD.gn:20-55`。
+
+`CJ_ReadRemoteObjectArray` 将 `nativeParcel_->ReadInt32()` 得到的正 count 用于 parcel 可读长度检查；随后原版本分别 `malloc(count)` 分配 `int32_t* type` 和 `int64_t* id`，循环 count 次写入两个类型化数组。修复将容量改为 `sizeof(int32_t) * count` 和 `sizeof(int64_t) * count`。外部 `FFI_EXPORT FfiRpcMessageSequenceImplReadRemoteObjectArray` 根据 FFI handle 解析 `MessageSequenceImpl` 并调用此方法，GN 组件仅在 `support_jsapi` 条件下构建。该路径没有在方法内检查调用者权限；上游 Cangjie 调用、有效远端对象 Parcel 是否可由未信任来源构造、目标产品是否包含该 build 仍未知。
+
+Clang 21 / WSL2 AddressSanitizer 对复刻 pinned 分配/循环语义的本地 harness 运行 count=4 时报告 `heap-buffer-overflow`：4 字节 `id` 区域遭 8 字节写入。按修复版本分配时 clean return；count=0 clean early return；Parcel 仅剩 2 字节时 `CheckReadLength` 拒绝且无越界。Harness 不是官方组件二进制，不证明 FFI 产品路由或真实 Parcel/进程影响。T74+DATA-06 定向测试 **44 passed**，全 IPC 回归 **377 passed, 47 skipped**；完整原始日志保留。
+
+风险记为 provisional **Medium component-level memory-corruption candidate**，无 CVSS。T74 去重契约将它与 CVE-2025-26474 相关联，但公开记录没有将此分配宽度原语与公告影响细节对应起来；此补充只记录该测试元数据，不声称已复现 CVE 或产品漏洞。产品级可达性、构建、权限和 CIA 影响保持 `unknown/not_run`，`validated_vulnerability=0`。本轮没有改 detector、模型或 holdout，未提升候选状态。
+
 ## 状态
 
 | 层级 | 状态 |
@@ -77,7 +89,7 @@ DATA-06 固定源码挑战经 M2 CLI 回放：两个固定 vulnerable 修订各 
 | 主线代码合入 | 已合入；本轮新增证据包是否合入主线单独跟踪，不宣称已合入 |
 | 分支推送 | `codex/b-ipc-closeout-20261020` 已推送至 origin；证据包尚未合入 main |
 | 部署 | 未验证，unknown |
-| 漏洞验证 | 产品漏洞未验证；validated_vulnerability=0 |
+| 漏洞验证 | 组件语义 harness 观察到来源表达式越界写；产品漏洞未验证；validated_vulnerability=0 |
 | 独立准确率评估 | not_run |
 | 产品验证/平台接线 | not_run；产品证据与隔离平台环境未提供 |
 
