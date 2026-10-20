@@ -1,0 +1,101 @@
+{
+  "schema": "ohscanner.d-line-task-tree/v1",
+  "date": "2026-10-20",
+  "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
+  "status": "ACTIVE",
+  "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
+  "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
+  "local_known_cve_reference": "3da049887999bd3cacb3d48da9ffa7baefa18ac5",
+  "standing_authorization": "config/collaboration/standing_authorization.json",
+  "second_layer_implementation": "OUT_OF_SCOPE",
+  "tasks": [
+    {
+      "id": "D83",
+      "kind": "development",
+      "agent": "/root/d83_known_cve_quality",
+      "title": "整合已测 Pasteboard 规则并修候选质量问题",
+      "scope": [
+        "src/ohscanner/detectors/known_cves.py",
+        "tests/detectors/test_known_disclosed_cves.py",
+        "tests/detectors/test_known_case_corpus.py",
+        "research/data_sensitive/D83_*"
+      ],
+      "tests": [
+        "T83"
+      ],
+      "status": "IN_PROGRESS",
+      "completion": "历史正反控制保持；误抑制反例通过；真实源码重放与证据绑定可用",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\d83-known-cve-quality-20261020",
+      "branch": "codex/d83-known-cve-quality-20261020",
+      "base": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f"
+    },
+    {
+      "id": "D84",
+      "kind": "development",
+      "agent": "/root/d84_sensitive_quality",
+      "title": "敏感流日志/值绑定精度改进",
+      "scope": [
+        "src/ohscanner/detectors/data/**",
+        "tests/detectors/data/test_sensitive_exposure.py",
+        "research/data_sensitive/D84_*"
+      ],
+      "tests": [
+        "T83"
+      ],
+      "status": "IN_PROGRESS",
+      "completion": "一个具体修复前失败关闭；正例保留；安全/无关/未知控制合理；相关回归通过",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
+      "branch": "codex/d84-sensitive-quality-20261020",
+      "base": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f"
+    },
+    {
+      "id": "T83",
+      "kind": "testing",
+      "agent": "/root/t83_static_feedback",
+      "title": "独立反例与固定源码重放反馈",
+      "scope": [
+        "tests/detectors/test_d83_adversarial.py",
+        "tests/detectors/data/test_d84_adversarial.py",
+        "research/data_sensitive/T83_*"
+      ],
+      "feedback_to": [
+        "D83",
+        "D84"
+      ],
+      "status": "IN_PROGRESS",
+      "completion": "对实际开发提交复测；失败反馈并关闭或准确记录；至少一个固定真实源码重放",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
+      "branch": "codex/t83-d-static-feedback-20261020",
+      "base": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f"
+    },
+    {
+      "id": "D85",
+      "kind": "development",
+      "title": "按首轮真实失败选择下一项候选/传播精度修复",
+      "status": "QUEUED",
+      "depends_on": [
+        "D84",
+        "T83"
+      ],
+      "completion": "从具名反例选择一个实际可执行切片，不无依据扩规则或增加告警"
+    },
+    {
+      "id": "T84",
+      "kind": "testing",
+      "title": "跨组件回归与候选差异审查",
+      "status": "QUEUED",
+      "depends_on": [
+        "D83",
+        "D84",
+        "T83"
+      ],
+      "feedback_to": [
+        "D85"
+      ],
+      "completion": "同源同范围比较source/sink/guard与候选身份；解释差异；不报告无标签准确率"
+    }
+  ],
+  "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
+  "completion": "当前轮代码/相关测试/真实重放/报告完成；后续队列保留，不以产品确认或真人配置为前置"
+}
