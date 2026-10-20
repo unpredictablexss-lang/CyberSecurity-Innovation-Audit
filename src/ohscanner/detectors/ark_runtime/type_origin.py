@@ -170,22 +170,38 @@ class OriginEvaluator:
         # A verified by-value call or a no-argument unknown call can invalidate
         # current type observations without rebinding local object identities.
         rebind = arguments if may_rebind else []
+        fresh = {value.identity for value in state.values.values()
+                 if value.kind == 'object' and value.detail == 'fresh_local_typed_array'}
+        passed = set()
+        for argument in self.fn.arguments(call):
+            for node in walk(argument):
+                if node.type == 'identifier':
+                    value = self.value(node, state)
+                    if value.kind == 'object':
+                        passed.add(value.identity)
+        member_call = bool(callee and callee.type == 'field_expression')
+        invalidate_types = member_call or not self.fn.arguments(call) or bool(fresh & passed)
         self._invalidate(state, call.start_point[0] + 1, self.fn.call_name(call), rebind,
-                         invalidate_objects=may_rebind and bool(arguments))
+                         invalidate_objects=may_rebind and bool(arguments),
+                         invalidate_types=invalidate_types,
+                         preserve_fresh=fresh - passed,
+                         stale_reason='unmodeled_call')
 
     def initial(self):
         return OriginState({b.identity: Value('object', b.identity, origin_line=self.fn.node.start_point[0] + 1)
                             for b in self.fn.bindings if b.parameter and b.type_name == 'GateRef'})
 
     def _invalidate(self, state, line, detail, rebind=(), invalidate_objects=True,
-                    invalidate_types=True):
+                    invalidate_types=True, stale_reason=None, preserve_fresh=()):
         """Forget origin facts that an unmodelled effect may have overwritten."""
         from dataclasses import replace
         if invalidate_objects:
-            state.invalidated |= frozenset(v.identity for v in state.values.values() if v.kind == 'object')
+            state.invalidated |= frozenset(v.identity for v in state.values.values()
+                                           if v.kind == 'object' and v.identity not in preserve_fresh)
         if invalidate_types:
-            stale_reason = ('modelled_creation_dispatch'
-                            if detail == 'modelled_creation_dispatch' else 'unmodeled_effect')
+            stale_reason = stale_reason or ('modelled_creation_dispatch'
+                                            if detail == 'modelled_creation_dispatch'
+                                            else 'unmodeled_effect')
             state.values = {
                 key: (replace(value, valid=False,
                               stale_reason=('unmodeled_effect'
@@ -345,7 +361,8 @@ class OriginEvaluator:
                 if source.kind == 'object':
                     return Value('object', f'new:{node.start_byte}', origin=source.identity,
                                  origin_line=source.origin_line, creation_line=node.start_point[0] + 1,
-                                 may_differ=self.model.species_may_change_type)
+                                 may_differ=self.model.species_may_change_type,
+                                 detail='fresh_local_typed_array')
             owner, name, arity, source_index, type_index = self.model.same_type_creator
             if field == name and builder.kind == 'builder' and builder.detail == owner and len(args) == arity:
                 source = self.value(args[source_index], state)
@@ -421,7 +438,7 @@ class OriginEvaluator:
         if target.identity in state.invalidated:
             return ('unknown', target, token, 'creation_relationship_invalidated_by_call')
         if (target.may_differ and target.creation_line and token.origin != target.identity
-                and (token.valid or token.stale_reason == 'modelled_creation_dispatch')):
+                and (token.valid or token.stale_reason in ('modelled_creation_dispatch', 'unmodeled_call'))):
             # The captured SSA token's origin remains known even if it no
             # longer describes its source object's current type. This is only
             # a distinct-origin candidate, not a proved numeric type mismatch.

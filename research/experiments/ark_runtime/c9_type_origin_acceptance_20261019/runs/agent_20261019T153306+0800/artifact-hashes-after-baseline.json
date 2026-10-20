@@ -1,0 +1,47 @@
+[
+  {
+    "path": "baseline-argv.json",
+    "sha256": "f3aabc0571d512d28ffa6e9e96f4deeb99079968c4dc34e3b071f0ed65f4da3a",
+    "bytes": 397
+  },
+  {
+    "path": "baseline-artifact-hashes.json",
+    "sha256": "a641f6cd37c40ea300a8e2203a3e88afbaa9605c7d011df0d5606901e32557ba",
+    "bytes": 610
+  },
+  {
+    "path": "baseline-exitcode.txt",
+    "sha256": "d8ea44074c9f5a3e5bda0efd41962fcde8d4258dad0609269e7e2cf5e6708d91",
+    "bytes": 6
+  },
+  {
+    "path": "baseline-runtime-argv.json",
+    "sha256": "2661b2f61e3bdf0eb8aa1d72ef10475da833568ea98200bb6453c190b5693155",
+    "bytes": 426
+  },
+  {
+    "path": "baseline-runtime-exitcode.txt",
+    "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+    "bytes": 3
+  },
+  {
+    "path": "baseline-runtime-unittest-stderr.txt",
+    "sha256": "d50780e8267d603f742d99902b92b8217488c861f6033dc3acb3ceef0dd87f6f",
+    "bytes": 776
+  },
+  {
+    "path": "baseline-runtime-unittest-stdout.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  {
+    "path": "baseline-unittest-stderr.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  {
+    "path": "baseline-unittest-stdout.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  }
+]

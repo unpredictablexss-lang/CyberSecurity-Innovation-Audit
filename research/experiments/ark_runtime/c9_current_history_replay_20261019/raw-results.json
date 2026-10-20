@@ -1,0 +1,2521 @@
+{
+  "schema_version": "c9.current-history-replay.raw/v1",
+  "generated_at_utc": "2026-10-19T00:00:00Z",
+  "detector": {
+    "detector_id": "ohscanner.ark.runtime.type_safety",
+    "rule_ids": [
+      "ark.runtime.typedarray-store-type-origin",
+      "ark.runtime.typedarray-allocation-exception-guard"
+    ],
+    "version": "0.7.0",
+    "model_version": "0.7.0",
+    "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+    "build_profile": "assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified",
+    "analysis_budget": {
+      "max_source_bytes": 1048576,
+      "max_instructions": 4096,
+      "max_scope_depth": 128,
+      "max_states": 2048,
+      "max_steps": 8192,
+      "max_seconds": 5.0
+    }
+  },
+  "repository": {
+    "declared": "openharmony/arkcompiler_ets_runtime",
+    "local_git_dir": "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime",
+    "remote_urls": [
+      "gitee\thttps://gitee.com/openharmony/arkcompiler_ets_runtime.git (fetch) [blob:none]",
+      "gitee\thttps://gitee.com/openharmony/arkcompiler_ets_runtime.git (push)",
+      "origin\thttps://github.com/openharmony/arkcompiler_ets_runtime.git (fetch) [blob:none]",
+      "origin\thttps://github.com/openharmony/arkcompiler_ets_runtime.git (push)"
+    ]
+  },
+  "profile": {
+    "profile_id": "light-ast",
+    "provenance": "git_object"
+  },
+  "environment": {
+    "python_executable": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "python_version": "3.12.14",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "argv": [
+      "research/experiments/ark_runtime/c9_current_history_replay_20261019/replay.py",
+      "--repo-dir",
+      "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime",
+      "--output-dir",
+      "research/experiments/ark_runtime/c9_current_history_replay_20261019"
+    ],
+    "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\type-origin",
+    "selected_env": {
+      "PYTHONPATH": ".;E:\\网安\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONHASHSEED": "0",
+      "GIT_NO_LAZY_FETCH": "1",
+      "GIT_ALLOW_PROTOCOL": "",
+      "GIT_TERMINAL_PROMPT": "0",
+      "GIT_NO_REPLACE_OBJECTS": "1",
+      "OHSCANNER_ARK_REPO": "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime"
+    }
+  },
+  "dependency_inventory": {
+    "required_execution_dependencies": [
+      {
+        "revision": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+        "expected_blob": "757b8d050d306d349822600deacb295c7a54245e",
+        "expected_sha256": null,
+        "status": "available",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "actual_blob": "757b8d050d306d349822600deacb295c7a54245e",
+        "actual_sha256": "3fd7e99e957fb5b7793cb7c36c01b370208c05645aa93551da6abeecaf2e7198",
+        "bytes": 126036,
+        "git_inventory": {
+          "tracked_entries": 7577,
+          "out_of_scope": 7576,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 1,
+          "selected_source_bytes": 126036,
+          "skipped": [],
+          "git_tree": "82af11ced4297818410ccf61906b703d25b69165",
+          "declared_scope": [
+            "ecmascript/compiler/new_object_stub_builder.cpp"
+          ]
+        }
+      },
+      {
+        "revision": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+        "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+        "expected_blob": "05dda56de74949f07a241942be6465beaf94b52a",
+        "expected_sha256": "c10e934be1804fe9388d599cba54369eed4ee150b078d04924e0da68a2f43b9e",
+        "status": "missing_or_unreadable",
+        "error": "missing_local_git_object: blob unavailable locally 05dda56de74949f07a241942be6465beaf94b52a (ecmascript/compiler/new_object_stub_builder.cpp); offline-only read (no fetch)"
+      },
+      {
+        "revision": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+        "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+        "expected_blob": "05dda56de74949f07a241942be6465beaf94b52a",
+        "expected_sha256": "c10e934be1804fe9388d599cba54369eed4ee150b078d04924e0da68a2f43b9e",
+        "status": "missing_or_unreadable",
+        "error": "missing_local_git_object: blob unavailable locally 05dda56de74949f07a241942be6465beaf94b52a (ecmascript/compiler/new_object_stub_builder.cpp); offline-only read (no fetch)"
+      }
+    ],
+    "model_provenance_sources": [
+      {
+        "oid": "b784eb0812c27f11c1bfd8673cda4bf884a6a9cd",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/compiler/stub_builder.h",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "8658e6ee729c3b171639772ad3a1ada06442abd0",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/compiler/stub_builder-inl.h",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "8aae4bfa151e8b8dbd58d03a5cd881f3315151c2",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/compiler/stub_builder.cpp",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "176dd0a5ee320f814049c2b671119515c746380d",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/compiler/hcr_circuit_builder.h",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "631911dec663addd62533d6a6808ffe699a6f884",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/compiler/mcr_circuit_builder.h",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "af4d27bcd46ea0a4a2980a805dd7de77970ffb56",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/compiler/lcr_circuit_builder.cpp",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "b4bf452cac6bdeb820b78334be98cb3dc11330cb",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/compiler/circuit_builder.cpp",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "f411d72cbca7915e56b9d851beeb57b788e438ac",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/compiler/new_object_stub_builder.h",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "715c5d65164369bc93a82aa4a6cc1d19b7970143",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/compiler/builtins/builtins_stubs.cpp",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "88e131561f756db9bd9e57b3078df22ac3c34c6a",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "f1f44f44679a9a6d648c8dd0182864d4af7c24f7",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/compiler/call_stub_builder.h",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "e68a2db48f222945629adb637cd50be8a0f93651",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/compiler/profiler_operation.h",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "3adadba4324927a18ff715efa99b2aa9cd15bc41",
+        "available": true,
+        "object_type": "blob",
+        "error": null,
+        "path": "ecmascript/base/typed_array_helper-inl.h",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "17f4b8f50ea126eb646ef011e9b7fa7e461394dc",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/base/typed_array_helper.cpp",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "c7ce18a76e25289ee7274354fd85950fa9b17af8",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/stubs/runtime_stubs.cpp",
+        "role": "effect_summary_source"
+      },
+      {
+        "oid": "892e376de57c08c768831936503a8e4dac4b39bb",
+        "available": false,
+        "object_type": null,
+        "error": "fatal: git cat-file: could not get object info\n",
+        "path": "ecmascript/js_typed_array.cpp",
+        "role": "effect_summary_source"
+      }
+    ],
+    "required_gate": "blocked_missing_or_mismatched_dependency",
+    "provenance_gate": "blocked_missing_model_provenance_source"
+  },
+  "results": [
+    {
+      "case_id": "C9-TO-POS-001",
+      "control_id": "C8-TO-POS-001",
+      "kind": "positive",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "expected": "hit",
+      "actual": "unknown",
+      "control_result": "fail",
+      "candidate_count": 0,
+      "unknown_count": 2,
+      "matched_count": 2,
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+        "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob_oid": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+        "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+        "bytes": 150433,
+        "snapshot_sha256": "884bb958b98b5b977ba9b539ce27432870b9269156bbfcfad97f4bb58dcd9d3c",
+        "git_inventory": {
+          "tracked_entries": 7573,
+          "out_of_scope": 7572,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 1,
+          "selected_source_bytes": 150433,
+          "skipped": [],
+          "git_tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+          "declared_scope": [
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+          ]
+        }
+      },
+      "raw_rule_result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 964,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "function:31699:37106:aab0e3f70d01ddaf44861a065545cc8fc97c844b4d72e271e043a19af33dfd02:31760:thisValue",
+            "token_origin": "function:31699:37106:aab0e3f70d01ddaf44861a065545cc8fc97c844b4d72e271e043a19af33dfd02:31760:thisValue",
+            "token_line": 856,
+            "creation_line": 0,
+            "path": [
+              850,
+              851,
+              852,
+              853,
+              854,
+              855,
+              856,
+              857,
+              858,
+              859,
+              860,
+              862,
+              863,
+              864,
+              865,
+              866,
+              867,
+              868,
+              869,
+              870,
+              871,
+              872,
+              874,
+              875,
+              876,
+              877,
+              878,
+              879,
+              881,
+              888,
+              889,
+              891,
+              898,
+              900,
+              901,
+              902,
+              903,
+              904,
+              905,
+              906,
+              907,
+              908,
+              909,
+              910,
+              911,
+              912,
+              913,
+              915,
+              917,
+              918,
+              925,
+              927,
+              928,
+              929,
+              930,
+              931,
+              941,
+              943,
+              944,
+              945,
+              946,
+              947,
+              948,
+              949,
+              951,
+              952,
+              953,
+              954,
+              955,
+              956,
+              962,
+              964
+            ],
+            "constraints": [
+              [
+                854,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                857,
+                "IsFastTypeArray(jsType)",
+                true
+              ],
+              [
+                859,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                874,
+                "Int64GreaterThanOrEqual(IntPtr(0), numArgs)",
+                false
+              ],
+              [
+                877,
+                "TaggedIsInt(targetTag)",
+                true
+              ],
+              [
+                881,
+                "Int64GreaterThanOrEqual(IntPtr(1), numArgs)",
+                true
+              ],
+              [
+                891,
+                "Int64GreaterThanOrEqual(IntPtr(2), numArgs)",
+                true
+              ],
+              [
+                913,
+                "Int64LessThan(Int64Sub(*copyEnd, *copyFrom), Int64Sub(thisLen, *copyTo))",
+                true
+              ],
+              [
+                931,
+                "LogicAndBuilder(env).And(Int64LessThan(copyFromVal, copyToVal))\r\n            .And(Int64LessThan(copyToVal, Int64Add(copyFromVal, countVal))).Done()",
+                false
+              ],
+              [
+                953,
+                "Int64GreaterThan(*count, Int64(0))",
+                true
+              ],
+              [
+                956,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin",
+            "region_start_byte": 31699,
+            "region_end_byte": 37106,
+            "effect_sites": []
+          },
+          {
+            "kind": "unknown",
+            "line": 1498,
+            "column": 21,
+            "reason": "type_fact_invalidated_by_call",
+            "target_identity": "new:58949",
+            "token_origin": "function:53854:60182:b386c630a0e013e51089a372b3e2a943fceca714b0c4d87b653194430a610e1d:53911:thisValue",
+            "token_line": 1388,
+            "creation_line": 1478,
+            "path": [
+              1375,
+              1376,
+              1377,
+              1378,
+              1379,
+              1380,
+              1381,
+              1382,
+              1383,
+              1384,
+              1385,
+              1386,
+              1387,
+              1388,
+              1389,
+              1390,
+              1391,
+              1392,
+              1393,
+              1394,
+              1395,
+              1396,
+              1397,
+              1398,
+              1399,
+              1400,
+              1401,
+              1402,
+              1403,
+              1405,
+              1406,
+              1407,
+              1408,
+              1409,
+              1411,
+              1412,
+              1414,
+              1415,
+              1416,
+              1417,
+              1418,
+              1419,
+              1420,
+              1421,
+              1422,
+              1423,
+              1424,
+              1425,
+              1427,
+              1428,
+              1429,
+              1430,
+              1431,
+              1432,
+              1473,
+              1474,
+              1475,
+              1476,
+              1477,
+              1478,
+              1479,
+              1485,
+              1486,
+              1487,
+              1488,
+              1489,
+              1490,
+              1491,
+              1492,
+              1494,
+              1495,
+              1497,
+              1498
+            ],
+            "constraints": [
+              [
+                1384,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                1386,
+                "IsEcmaObject(thisValue)",
+                true
+              ],
+              [
+                1389,
+                "IsFastTypeArray(arrayType)",
+                true
+              ],
+              [
+                1392,
+                "IsDetachedBuffer(buffer)",
+                false
+              ],
+              [
+                1394,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                1397,
+                "IsEcmaObject(prototype)",
+                true
+              ],
+              [
+                1400,
+                "TaggedIsProtoChangeMarker(marker)",
+                true
+              ],
+              [
+                1402,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                1408,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                1411,
+                "IsCallable(callbackFnHandle)",
+                true
+              ],
+              [
+                1432,
+                "Int32LessThan(*i, thisLen)",
+                false
+              ],
+              [
+                1479,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1494,
+                "Int32LessThan(*i, *newArrayLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 53854,
+            "region_end_byte": 60182,
+            "effect_sites": [
+              [
+                1384,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                1386,
+                "IsEcmaObject"
+              ],
+              [
+                1391,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                1392,
+                "IsDetachedBuffer"
+              ],
+              [
+                1396,
+                "GetPrototypeFromHClass"
+              ],
+              [
+                1397,
+                "IsEcmaObject"
+              ],
+              [
+                1399,
+                "GetProtoChangeMarkerFromHClass"
+              ],
+              [
+                1400,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                1402,
+                "GetAccessorHasChanged"
+              ],
+              [
+                1411,
+                "IsCallable"
+              ],
+              [
+                1417,
+                "arrayStubBuilder.NewArray"
+              ],
+              [
+                1478,
+                "modelled_creation_dispatch"
+              ]
+            ]
+          },
+          {
+            "kind": "unknown",
+            "line": 2234,
+            "column": 25,
+            "reason": "creation_relationship_invalidated_by_call",
+            "target_identity": "function:86530:91082:2d57bbdad5a74b2ecc4279bc715ce146b411d3192631a0d60a864f62727bc543:86584:thisValue",
+            "token_origin": "function:86530:91082:2d57bbdad5a74b2ecc4279bc715ce146b411d3192631a0d60a864f62727bc543:86584:thisValue",
+            "token_line": 2235,
+            "creation_line": 0,
+            "path": [
+              2147,
+              2148,
+              2149,
+              2150,
+              2152,
+              2153,
+              2154,
+              2155,
+              2156,
+              2157,
+              2158,
+              2159,
+              2160,
+              2161,
+              2162,
+              2163,
+              2164,
+              2165,
+              2166,
+              2167,
+              2168,
+              2169,
+              2184,
+              2186,
+              2187,
+              2188,
+              2189,
+              2190,
+              2191,
+              2192,
+              2193,
+              2195,
+              2196,
+              2197,
+              2198,
+              2199,
+              2200,
+              2201,
+              2202,
+              2203,
+              2204,
+              2205,
+              2206,
+              2207,
+              2209,
+              2210,
+              2211,
+              2220,
+              2222,
+              2223,
+              2224,
+              2225,
+              2226,
+              2227,
+              2229,
+              2230,
+              2232,
+              2234
+            ],
+            "constraints": [
+              [
+                2152,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2154,
+                "IsEcmaObject(thisValue)",
+                true
+              ],
+              [
+                2156,
+                "IsFastTypeArray(GetObjectType(LoadHClass(thisValue)))",
+                true
+              ],
+              [
+                2161,
+                "Int64Equal(len, Int64(0))",
+                false
+              ],
+              [
+                2169,
+                "TaggedIsUndefinedOrNull(fromOffset)",
+                true
+              ],
+              [
+                2190,
+                "IsEcmaObject(srcArray)",
+                true
+              ],
+              [
+                2192,
+                "IsTypedArray(srcArray)",
+                true
+              ],
+              [
+                2197,
+                "IsFastTypeArray(srcType)",
+                true
+              ],
+              [
+                2202,
+                "SameValue(glue, targetBuffer, srcBuffer)",
+                false
+              ],
+              [
+                2206,
+                "Int64GreaterThan(Int64Add(*realOffset, srcLen), len)",
+                false
+              ],
+              [
+                2211,
+                "Equal(srcType, arrayType)",
+                false
+              ],
+              [
+                2229,
+                "Int64LessThan(*startIndex, srcLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set",
+            "region_start_byte": 86530,
+            "region_end_byte": 91082,
+            "effect_sites": [
+              [
+                2152,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2154,
+                "IsEcmaObject"
+              ],
+              [
+                2169,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2190,
+                "IsEcmaObject"
+              ],
+              [
+                2200,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                2201,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                2202,
+                "SameValue"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 1762,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "same-type:68250",
+            "token_origin": "function:66899:70266:388875be09e383386078b09b0e7bde90ebb9b221fb314afbf4a57dd20e465844:66954:thisValue",
+            "token_line": 1716,
+            "creation_line": 1719,
+            "path": [
+              1691,
+              1692,
+              1693,
+              1694,
+              1695,
+              1696,
+              1697,
+              1698,
+              1699,
+              1700,
+              1701,
+              1702,
+              1703,
+              1704,
+              1705,
+              1706,
+              1707,
+              1708,
+              1709,
+              1710,
+              1711,
+              1712,
+              1713,
+              1714,
+              1715,
+              1716,
+              1717,
+              1718,
+              1719,
+              1720,
+              1721,
+              1722,
+              1728,
+              1729,
+              1731,
+              1732,
+              1734,
+              1735,
+              1742,
+              1744,
+              1746,
+              1748,
+              1749,
+              1750,
+              1751,
+              1752,
+              1753,
+              1754,
+              1755,
+              1757,
+              1758,
+              1759,
+              1760,
+              1762
+            ],
+            "constraints": [
+              [
+                1697,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                1699,
+                "IsTypedArray(thisValue)",
+                true
+              ],
+              [
+                1701,
+                "IsJsCOWArray(thisValue)",
+                false
+              ],
+              [
+                1706,
+                "TaggedIsInt(index)",
+                true
+              ],
+              [
+                1722,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1731,
+                "Int64GreaterThanOrEqual(*relativeIndex, Int64(0))",
+                true
+              ],
+              [
+                1744,
+                "BitOr(Int64GreaterThanOrEqual(*actualIndex, thisLen), Int64LessThan(*actualIndex, Int64(0)))",
+                false
+              ],
+              [
+                1757,
+                "Int64LessThan(*k, thisLen)",
+                true
+              ],
+              [
+                1759,
+                "Int64Equal(*k, *actualIndex)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With",
+            "region_start_byte": 66899,
+            "region_end_byte": 70266,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [
+          "experimental_partial_function_scope",
+          "experimental_partial_scope_routed_through_exact_binding_adapter",
+          "parse_dependency_contamination_unknown",
+          "unresolved_local_observations"
+        ],
+        "steps": 1354,
+        "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+        "classification": "unknown"
+      },
+      "adapter_result": {
+        "request": {
+          "request_id": "c9-current-history-replay",
+          "repository": "openharmony/arkcompiler_ets_runtime",
+          "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+          "snapshot_sha256": "884bb958b98b5b977ba9b539ce27432870b9269156bbfcfad97f4bb58dcd9d3c",
+          "target_id": "current-component:openharmony/arkcompiler_ets_runtime",
+          "profile_id": "light-ast",
+          "provenance": "git_object"
+        },
+        "run": {
+          "schema_version": 2,
+          "run_id": "c9-current-history-replay:ohscanner.ark.runtime.type_safety",
+          "tool": "ohscanner.ark.runtime.type_safety",
+          "tool_version": "0.7.0",
+          "target_id": "current-component:openharmony/arkcompiler_ets_runtime",
+          "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+          "scope_files": 1,
+          "scope_loc": 3693,
+          "status": "blocked",
+          "elapsed_seconds": 0.19071850000000268,
+          "peak_memory_mb": null,
+          "diagnostics": [],
+          "limitations": [
+            "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_function_scope",
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_scope_routed_through_exact_binding_adapter",
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: parse_dependency_contamination_unknown",
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: unresolved_local_observations",
+            "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+            "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+            "Diagnostic does not establish vulnerability, reachability or security impact.",
+            "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+            "Coverage incomplete or unsupported; do not infer safety."
+          ],
+          "parsing": [
+            {
+              "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+              "status": "partial",
+              "issues": [
+                "{\"end_line\": 3362, \"kind\": \"missing\", \"start_line\": 3362}",
+                "{\"end_line\": 3675, \"kind\": \"missing\", \"start_line\": 3675}"
+              ],
+              "analysis_status": "partial",
+              "analysis_reason": "detector_model_incomplete"
+            }
+          ]
+        },
+        "coverage": {
+          "schema_version": 1,
+          "detectors": {
+            "ohscanner.ark.runtime.type_safety": {
+              "scope_mode": "per_file",
+              "status": "partial",
+              "applicable_files": 1,
+              "analyzed_files": [],
+              "partially_inspected_files": [
+                "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+              ],
+              "source_sha256": {
+                "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422"
+              },
+              "unexamined": [
+                {
+                  "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                  "parse_status": "partial",
+                  "reason": "detector_model_incomplete",
+                  "analysis_status": "partial"
+                }
+              ],
+              "inspected_files": [
+                "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+              ],
+              "not_analyzed_files": [],
+              "coverage_counts": {
+                "complete": 0,
+                "partial": 1,
+                "not_analyzed": 0,
+                "failed": 0
+              },
+              "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+              "evidence_obligations": []
+            }
+          }
+        }
+      },
+      "evidence_status": "candidate/unassessed",
+      "validated_vulnerability": false
+    },
+    {
+      "case_id": "C9-TO-FIX-001",
+      "control_id": "C8-TO-FIX-001",
+      "kind": "fixed",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "expected": "miss",
+      "actual": "unknown",
+      "control_result": "fail",
+      "candidate_count": 0,
+      "unknown_count": 1,
+      "matched_count": 3,
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob_oid": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+        "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+        "bytes": 150509,
+        "snapshot_sha256": "45951ebe149386befe03a7dcfe28f1ce3fc1b91c8a9947745a692a4186e148dc",
+        "git_inventory": {
+          "tracked_entries": 7577,
+          "out_of_scope": 7576,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 1,
+          "selected_source_bytes": 150509,
+          "skipped": [],
+          "git_tree": "82af11ced4297818410ccf61906b703d25b69165",
+          "declared_scope": [
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+          ]
+        }
+      },
+      "raw_rule_result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 964,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "function:31699:37106:aab0e3f70d01ddaf44861a065545cc8fc97c844b4d72e271e043a19af33dfd02:31760:thisValue",
+            "token_origin": "function:31699:37106:aab0e3f70d01ddaf44861a065545cc8fc97c844b4d72e271e043a19af33dfd02:31760:thisValue",
+            "token_line": 856,
+            "creation_line": 0,
+            "path": [
+              850,
+              851,
+              852,
+              853,
+              854,
+              855,
+              856,
+              857,
+              858,
+              859,
+              860,
+              862,
+              863,
+              864,
+              865,
+              866,
+              867,
+              868,
+              869,
+              870,
+              871,
+              872,
+              874,
+              875,
+              876,
+              877,
+              878,
+              879,
+              881,
+              888,
+              889,
+              891,
+              898,
+              900,
+              901,
+              902,
+              903,
+              904,
+              905,
+              906,
+              907,
+              908,
+              909,
+              910,
+              911,
+              912,
+              913,
+              915,
+              917,
+              918,
+              925,
+              927,
+              928,
+              929,
+              930,
+              931,
+              941,
+              943,
+              944,
+              945,
+              946,
+              947,
+              948,
+              949,
+              951,
+              952,
+              953,
+              954,
+              955,
+              956,
+              962,
+              964
+            ],
+            "constraints": [
+              [
+                854,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                857,
+                "IsFastTypeArray(jsType)",
+                true
+              ],
+              [
+                859,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                874,
+                "Int64GreaterThanOrEqual(IntPtr(0), numArgs)",
+                false
+              ],
+              [
+                877,
+                "TaggedIsInt(targetTag)",
+                true
+              ],
+              [
+                881,
+                "Int64GreaterThanOrEqual(IntPtr(1), numArgs)",
+                true
+              ],
+              [
+                891,
+                "Int64GreaterThanOrEqual(IntPtr(2), numArgs)",
+                true
+              ],
+              [
+                913,
+                "Int64LessThan(Int64Sub(*copyEnd, *copyFrom), Int64Sub(thisLen, *copyTo))",
+                true
+              ],
+              [
+                931,
+                "LogicAndBuilder(env).And(Int64LessThan(copyFromVal, copyToVal))\r\n            .And(Int64LessThan(copyToVal, Int64Add(copyFromVal, countVal))).Done()",
+                false
+              ],
+              [
+                953,
+                "Int64GreaterThan(*count, Int64(0))",
+                true
+              ],
+              [
+                956,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin",
+            "region_start_byte": 31699,
+            "region_end_byte": 37106,
+            "effect_sites": []
+          },
+          {
+            "kind": "matched",
+            "line": 1499,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:58949",
+            "token_origin": "new:58949",
+            "token_line": 1479,
+            "creation_line": 1478,
+            "path": [
+              1375,
+              1376,
+              1377,
+              1378,
+              1379,
+              1380,
+              1381,
+              1382,
+              1383,
+              1384,
+              1385,
+              1386,
+              1387,
+              1388,
+              1389,
+              1390,
+              1391,
+              1392,
+              1393,
+              1394,
+              1395,
+              1396,
+              1397,
+              1398,
+              1399,
+              1400,
+              1401,
+              1402,
+              1403,
+              1405,
+              1406,
+              1407,
+              1408,
+              1409,
+              1411,
+              1412,
+              1414,
+              1415,
+              1416,
+              1417,
+              1418,
+              1419,
+              1420,
+              1421,
+              1422,
+              1423,
+              1424,
+              1425,
+              1427,
+              1428,
+              1429,
+              1430,
+              1431,
+              1432,
+              1473,
+              1474,
+              1475,
+              1476,
+              1477,
+              1478,
+              1479,
+              1480,
+              1486,
+              1487,
+              1488,
+              1489,
+              1490,
+              1491,
+              1492,
+              1493,
+              1495,
+              1496,
+              1498,
+              1499
+            ],
+            "constraints": [
+              [
+                1384,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                1386,
+                "IsEcmaObject(thisValue)",
+                true
+              ],
+              [
+                1389,
+                "IsFastTypeArray(arrayType)",
+                true
+              ],
+              [
+                1392,
+                "IsDetachedBuffer(buffer)",
+                false
+              ],
+              [
+                1394,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                1397,
+                "IsEcmaObject(prototype)",
+                true
+              ],
+              [
+                1400,
+                "TaggedIsProtoChangeMarker(marker)",
+                true
+              ],
+              [
+                1402,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                1408,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                1411,
+                "IsCallable(callbackFnHandle)",
+                true
+              ],
+              [
+                1432,
+                "Int32LessThan(*i, thisLen)",
+                false
+              ],
+              [
+                1480,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1495,
+                "Int32LessThan(*i, *newArrayLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 53854,
+            "region_end_byte": 60258,
+            "effect_sites": [
+              [
+                1384,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                1386,
+                "IsEcmaObject"
+              ],
+              [
+                1391,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                1392,
+                "IsDetachedBuffer"
+              ],
+              [
+                1396,
+                "GetPrototypeFromHClass"
+              ],
+              [
+                1397,
+                "IsEcmaObject"
+              ],
+              [
+                1399,
+                "GetProtoChangeMarkerFromHClass"
+              ],
+              [
+                1400,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                1402,
+                "GetAccessorHasChanged"
+              ],
+              [
+                1411,
+                "IsCallable"
+              ],
+              [
+                1417,
+                "arrayStubBuilder.NewArray"
+              ],
+              [
+                1478,
+                "modelled_creation_dispatch"
+              ]
+            ]
+          },
+          {
+            "kind": "unknown",
+            "line": 2235,
+            "column": 25,
+            "reason": "creation_relationship_invalidated_by_call",
+            "target_identity": "function:86606:91158:2d57bbdad5a74b2ecc4279bc715ce146b411d3192631a0d60a864f62727bc543:86660:thisValue",
+            "token_origin": "function:86606:91158:2d57bbdad5a74b2ecc4279bc715ce146b411d3192631a0d60a864f62727bc543:86660:thisValue",
+            "token_line": 2236,
+            "creation_line": 0,
+            "path": [
+              2148,
+              2149,
+              2150,
+              2151,
+              2153,
+              2154,
+              2155,
+              2156,
+              2157,
+              2158,
+              2159,
+              2160,
+              2161,
+              2162,
+              2163,
+              2164,
+              2165,
+              2166,
+              2167,
+              2168,
+              2169,
+              2170,
+              2185,
+              2187,
+              2188,
+              2189,
+              2190,
+              2191,
+              2192,
+              2193,
+              2194,
+              2196,
+              2197,
+              2198,
+              2199,
+              2200,
+              2201,
+              2202,
+              2203,
+              2204,
+              2205,
+              2206,
+              2207,
+              2208,
+              2210,
+              2211,
+              2212,
+              2221,
+              2223,
+              2224,
+              2225,
+              2226,
+              2227,
+              2228,
+              2230,
+              2231,
+              2233,
+              2235
+            ],
+            "constraints": [
+              [
+                2153,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2155,
+                "IsEcmaObject(thisValue)",
+                true
+              ],
+              [
+                2157,
+                "IsFastTypeArray(GetObjectType(LoadHClass(thisValue)))",
+                true
+              ],
+              [
+                2162,
+                "Int64Equal(len, Int64(0))",
+                false
+              ],
+              [
+                2170,
+                "TaggedIsUndefinedOrNull(fromOffset)",
+                true
+              ],
+              [
+                2191,
+                "IsEcmaObject(srcArray)",
+                true
+              ],
+              [
+                2193,
+                "IsTypedArray(srcArray)",
+                true
+              ],
+              [
+                2198,
+                "IsFastTypeArray(srcType)",
+                true
+              ],
+              [
+                2203,
+                "SameValue(glue, targetBuffer, srcBuffer)",
+                false
+              ],
+              [
+                2207,
+                "Int64GreaterThan(Int64Add(*realOffset, srcLen), len)",
+                false
+              ],
+              [
+                2212,
+                "Equal(srcType, arrayType)",
+                false
+              ],
+              [
+                2230,
+                "Int64LessThan(*startIndex, srcLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set",
+            "region_start_byte": 86606,
+            "region_end_byte": 91158,
+            "effect_sites": [
+              [
+                2153,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2155,
+                "IsEcmaObject"
+              ],
+              [
+                2170,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2191,
+                "IsEcmaObject"
+              ],
+              [
+                2201,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                2202,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                2203,
+                "SameValue"
+              ]
+            ]
+          },
+          {
+            "kind": "matched",
+            "line": 1763,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "same-type:68326",
+            "token_origin": "function:66975:70342:388875be09e383386078b09b0e7bde90ebb9b221fb314afbf4a57dd20e465844:67030:thisValue",
+            "token_line": 1717,
+            "creation_line": 1720,
+            "path": [
+              1692,
+              1693,
+              1694,
+              1695,
+              1696,
+              1697,
+              1698,
+              1699,
+              1700,
+              1701,
+              1702,
+              1703,
+              1704,
+              1705,
+              1706,
+              1707,
+              1708,
+              1709,
+              1710,
+              1711,
+              1712,
+              1713,
+              1714,
+              1715,
+              1716,
+              1717,
+              1718,
+              1719,
+              1720,
+              1721,
+              1722,
+              1723,
+              1729,
+              1730,
+              1732,
+              1733,
+              1735,
+              1736,
+              1743,
+              1745,
+              1747,
+              1749,
+              1750,
+              1751,
+              1752,
+              1753,
+              1754,
+              1755,
+              1756,
+              1758,
+              1759,
+              1760,
+              1761,
+              1763
+            ],
+            "constraints": [
+              [
+                1698,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                1700,
+                "IsTypedArray(thisValue)",
+                true
+              ],
+              [
+                1702,
+                "IsJsCOWArray(thisValue)",
+                false
+              ],
+              [
+                1707,
+                "TaggedIsInt(index)",
+                true
+              ],
+              [
+                1723,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1732,
+                "Int64GreaterThanOrEqual(*relativeIndex, Int64(0))",
+                true
+              ],
+              [
+                1745,
+                "BitOr(Int64GreaterThanOrEqual(*actualIndex, thisLen), Int64LessThan(*actualIndex, Int64(0)))",
+                false
+              ],
+              [
+                1758,
+                "Int64LessThan(*k, thisLen)",
+                true
+              ],
+              [
+                1760,
+                "Int64Equal(*k, *actualIndex)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With",
+            "region_start_byte": 66975,
+            "region_end_byte": 70342,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [
+          "experimental_partial_function_scope",
+          "experimental_partial_scope_routed_through_exact_binding_adapter",
+          "parse_dependency_contamination_unknown",
+          "unresolved_local_observations"
+        ],
+        "steps": 1357,
+        "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+        "classification": "unknown"
+      },
+      "adapter_result": {
+        "request": {
+          "request_id": "c9-current-history-replay",
+          "repository": "openharmony/arkcompiler_ets_runtime",
+          "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+          "snapshot_sha256": "45951ebe149386befe03a7dcfe28f1ce3fc1b91c8a9947745a692a4186e148dc",
+          "target_id": "current-component:openharmony/arkcompiler_ets_runtime",
+          "profile_id": "light-ast",
+          "provenance": "git_object"
+        },
+        "run": {
+          "schema_version": 2,
+          "run_id": "c9-current-history-replay:ohscanner.ark.runtime.type_safety",
+          "tool": "ohscanner.ark.runtime.type_safety",
+          "tool_version": "0.7.0",
+          "target_id": "current-component:openharmony/arkcompiler_ets_runtime",
+          "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+          "scope_files": 1,
+          "scope_loc": 3694,
+          "status": "blocked",
+          "elapsed_seconds": 0.1972542000003159,
+          "peak_memory_mb": null,
+          "diagnostics": [],
+          "limitations": [
+            "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_function_scope",
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: experimental_partial_scope_routed_through_exact_binding_adapter",
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: parse_dependency_contamination_unknown",
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp: unresolved_local_observations",
+            "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+            "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+            "Diagnostic does not establish vulnerability, reachability or security impact.",
+            "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+            "Coverage incomplete or unsupported; do not infer safety."
+          ],
+          "parsing": [
+            {
+              "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+              "status": "partial",
+              "issues": [
+                "{\"end_line\": 3363, \"kind\": \"missing\", \"start_line\": 3363}",
+                "{\"end_line\": 3676, \"kind\": \"missing\", \"start_line\": 3676}"
+              ],
+              "analysis_status": "partial",
+              "analysis_reason": "detector_model_incomplete"
+            }
+          ]
+        },
+        "coverage": {
+          "schema_version": 1,
+          "detectors": {
+            "ohscanner.ark.runtime.type_safety": {
+              "scope_mode": "per_file",
+              "status": "partial",
+              "applicable_files": 1,
+              "analyzed_files": [],
+              "partially_inspected_files": [
+                "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+              ],
+              "source_sha256": {
+                "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e"
+              },
+              "unexamined": [
+                {
+                  "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                  "parse_status": "partial",
+                  "reason": "detector_model_incomplete",
+                  "analysis_status": "partial"
+                }
+              ],
+              "inspected_files": [
+                "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+              ],
+              "not_analyzed_files": [],
+              "coverage_counts": {
+                "complete": 0,
+                "partial": 1,
+                "not_analyzed": 0,
+                "failed": 0
+              },
+              "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+              "evidence_obligations": []
+            }
+          }
+        }
+      },
+      "evidence_status": "candidate/unassessed",
+      "validated_vulnerability": false
+    },
+    {
+      "case_id": "C9-EG-POS-001",
+      "control_id": "C8-EG-POS-001",
+      "kind": "positive",
+      "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+      "expected": "hit",
+      "actual": "hit",
+      "control_result": "pass",
+      "candidate_count": 2,
+      "unknown_count": 0,
+      "matched_count": 0,
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+        "tree": "5d7c18a5d5ccbf48617b3c07ae9353f5f427d07a",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob_oid": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+        "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+        "bytes": 152202,
+        "snapshot_sha256": "bbdfdae0b975efbf7e91518f9ff8c029dc7bc5f9b085da8b282598b19d9108d1",
+        "git_inventory": {
+          "tracked_entries": 7829,
+          "out_of_scope": 7828,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 1,
+          "selected_source_bytes": 152202,
+          "skipped": [],
+          "git_tree": "5d7c18a5d5ccbf48617b3c07ae9353f5f427d07a",
+          "declared_scope": [
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+          ]
+        }
+      },
+      "raw_rule_result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 1487,
+            "column": 50,
+            "reason": "allocation_result_hclass_read_on_pending_exception_path",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 1486,
+            "creation_line": 0,
+            "path": [
+              1486,
+              1487
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 54701,
+            "region_end_byte": 61189,
+            "effect_sites": []
+          },
+          {
+            "kind": "candidate",
+            "line": 2656,
+            "column": 46,
+            "reason": "allocation_result_hclass_read_on_pending_exception_path",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 2655,
+            "creation_line": 0,
+            "path": [
+              2655,
+              2656
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+            "region_start_byte": 106288,
+            "region_end_byte": 110273,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [],
+        "steps": 4,
+        "model_digest": "",
+        "classification": "hit"
+      },
+      "adapter_result": {
+        "request": {
+          "request_id": "c9-current-history-replay",
+          "repository": "openharmony/arkcompiler_ets_runtime",
+          "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+          "snapshot_sha256": "bbdfdae0b975efbf7e91518f9ff8c029dc7bc5f9b085da8b282598b19d9108d1",
+          "target_id": "current-component:openharmony/arkcompiler_ets_runtime",
+          "profile_id": "light-ast",
+          "provenance": "git_object"
+        },
+        "run": {
+          "schema_version": 2,
+          "run_id": "c9-current-history-replay:ohscanner.ark.runtime.type_safety",
+          "tool": "ohscanner.ark.runtime.type_safety",
+          "tool_version": "0.7.0",
+          "target_id": "current-component:openharmony/arkcompiler_ets_runtime",
+          "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+          "scope_files": 1,
+          "scope_loc": 3704,
+          "status": "blocked",
+          "elapsed_seconds": 0.09135910000077274,
+          "peak_memory_mb": null,
+          "diagnostics": [
+            {
+              "diagnostic_id": "ohscanner.ark.runtime.type_safety:0959070f51494ad4",
+              "provider": "ohscanner.ark.runtime.type_safety",
+              "evidence_type": "syntax",
+              "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+              "line": 1487,
+              "column": 50,
+              "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+              "severity": "unassessed",
+              "message": "Candidate only: allocation result header is read on a path where the allocation may leave a pending exception. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [54701, 61189], \"generated_path\": [1486, 1487], \"model_sha256\": \"d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00\", \"target\": \"\", \"token_line\": 1486, \"token_origin\": \"\", \"unreviewed_effect_sites\": []}",
+              "candidate_cwe": null,
+              "confidence": "unassessed",
+              "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+              "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+              "consequence_impact": null,
+              "consequence_cwe": null,
+              "finding_identity_id": null,
+              "occurrence_id": null,
+              "finding_identity": {
+                "schema_version": "ohscanner.finding-identity-record.v1",
+                "stable": {
+                  "id": null,
+                  "status": "unknown",
+                  "basis": null,
+                  "unknown_reasons": [
+                    "identity_quality:unknown",
+                    "missing:ast_fingerprint",
+                    "missing:rule_lineage_id",
+                    "missing:symbol_identity"
+                  ]
+                },
+                "occurrence": {
+                  "id": null,
+                  "status": "unknown",
+                  "basis": null,
+                  "unknown_reasons": [
+                    "missing:rule_version"
+                  ]
+                },
+                "observation": {
+                  "legacy_diagnostic_id": "ohscanner.ark.runtime.type_safety:0959070f51494ad4",
+                  "detector_id": "ohscanner.ark.runtime.type_safety",
+                  "detector_version": "0.7.0",
+                  "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+                  "rule_version": null,
+                  "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                  "line": 1487,
+                  "message": "Candidate only: allocation result header is read on a path where the allocation may leave a pending exception. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [54701, 61189], \"generated_path\": [1486, 1487], \"model_sha256\": \"d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00\", \"target\": \"\", \"token_line\": 1486, \"token_origin\": \"\", \"unreviewed_effect_sites\": []}",
+                  "source_blob_oid": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+                  "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+                  "byte_start": 59962,
+                  "byte_end": 60041,
+                  "identity_quality": "unknown",
+                  "rule_lineage_id": null,
+                  "symbol_identity": null,
+                  "ast_fingerprint": null
+                },
+                "source_binding": {
+                  "repository": "openharmony/arkcompiler_ets_runtime",
+                  "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+                  "snapshot_sha256": "bbdfdae0b975efbf7e91518f9ff8c029dc7bc5f9b085da8b282598b19d9108d1",
+                  "profile_id": "light-ast",
+                  "detector_id": "ohscanner.ark.runtime.type_safety",
+                  "detector_version": "0.7.0",
+                  "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+                  "rule_version": null,
+                  "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                  "source_blob_oid": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+                  "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+                  "byte_start": 59962,
+                  "byte_end": 60041,
+                  "status": "unbound",
+                  "verification": "not_performed_by_identity_layer"
+                },
+                "historical_ids": [
+                  "ohscanner.ark.runtime.type_safety:0959070f51494ad4"
+                ],
+                "backfilled": false,
+                "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+              }
+            },
+            {
+              "diagnostic_id": "ohscanner.ark.runtime.type_safety:0a3f88ec80223d45",
+              "provider": "ohscanner.ark.runtime.type_safety",
+              "evidence_type": "syntax",
+              "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+              "line": 2656,
+              "column": 46,
+              "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+              "severity": "unassessed",
+              "message": "Candidate only: allocation result header is read on a path where the allocation may leave a pending exception. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [106288, 110273], \"generated_path\": [2655, 2656], \"model_sha256\": \"d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00\", \"target\": \"\", \"token_line\": 2655, \"token_origin\": \"\", \"unreviewed_effect_sites\": []}",
+              "candidate_cwe": null,
+              "confidence": "unassessed",
+              "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+              "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+              "consequence_impact": null,
+              "consequence_cwe": null,
+              "finding_identity_id": null,
+              "occurrence_id": null,
+              "finding_identity": {
+                "schema_version": "ohscanner.finding-identity-record.v1",
+                "stable": {
+                  "id": null,
+                  "status": "unknown",
+                  "basis": null,
+                  "unknown_reasons": [
+                    "identity_quality:unknown",
+                    "missing:ast_fingerprint",
+                    "missing:rule_lineage_id",
+                    "missing:symbol_identity"
+                  ]
+                },
+                "occurrence": {
+                  "id": null,
+                  "status": "unknown",
+                  "basis": null,
+                  "unknown_reasons": [
+                    "missing:rule_version"
+                  ]
+                },
+                "observation": {
+                  "legacy_diagnostic_id": "ohscanner.ark.runtime.type_safety:0a3f88ec80223d45",
+                  "detector_id": "ohscanner.ark.runtime.type_safety",
+                  "detector_version": "0.7.0",
+                  "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+                  "rule_version": null,
+                  "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                  "line": 2656,
+                  "message": "Candidate only: allocation result header is read on a path where the allocation may leave a pending exception. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [106288, 110273], \"generated_path\": [2655, 2656], \"model_sha256\": \"d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00\", \"target\": \"\", \"token_line\": 2655, \"token_origin\": \"\", \"unreviewed_effect_sites\": []}",
+                  "source_blob_oid": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+                  "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+                  "byte_start": 108689,
+                  "byte_end": 108764,
+                  "identity_quality": "unknown",
+                  "rule_lineage_id": null,
+                  "symbol_identity": null,
+                  "ast_fingerprint": null
+                },
+                "source_binding": {
+                  "repository": "openharmony/arkcompiler_ets_runtime",
+                  "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+                  "snapshot_sha256": "bbdfdae0b975efbf7e91518f9ff8c029dc7bc5f9b085da8b282598b19d9108d1",
+                  "profile_id": "light-ast",
+                  "detector_id": "ohscanner.ark.runtime.type_safety",
+                  "detector_version": "0.7.0",
+                  "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+                  "rule_version": null,
+                  "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                  "source_blob_oid": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+                  "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+                  "byte_start": 108689,
+                  "byte_end": 108764,
+                  "status": "unbound",
+                  "verification": "not_performed_by_identity_layer"
+                },
+                "historical_ids": [
+                  "ohscanner.ark.runtime.type_safety:0a3f88ec80223d45"
+                ],
+                "backfilled": false,
+                "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+              }
+            }
+          ],
+          "limitations": [
+            "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+            "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+            "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+            "Diagnostic does not establish vulnerability, reachability or security impact.",
+            "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+            "Coverage incomplete or unsupported; do not infer safety."
+          ],
+          "parsing": [
+            {
+              "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+              "status": "partial",
+              "issues": [
+                "{\"end_line\": 3373, \"kind\": \"missing\", \"start_line\": 3373}",
+                "{\"end_line\": 3686, \"kind\": \"missing\", \"start_line\": 3686}"
+              ],
+              "analysis_status": "partial",
+              "analysis_reason": "detector_model_incomplete"
+            }
+          ]
+        },
+        "coverage": {
+          "schema_version": 1,
+          "detectors": {
+            "ohscanner.ark.runtime.type_safety": {
+              "scope_mode": "per_file",
+              "status": "partial",
+              "applicable_files": 1,
+              "analyzed_files": [],
+              "partially_inspected_files": [
+                "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+              ],
+              "source_sha256": {
+                "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9"
+              },
+              "unexamined": [
+                {
+                  "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                  "parse_status": "partial",
+                  "reason": "detector_model_incomplete",
+                  "analysis_status": "partial"
+                }
+              ],
+              "inspected_files": [
+                "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+              ],
+              "not_analyzed_files": [],
+              "coverage_counts": {
+                "complete": 0,
+                "partial": 1,
+                "not_analyzed": 0,
+                "failed": 0
+              },
+              "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+              "evidence_obligations": [
+                {
+                  "diagnostic_id": "ohscanner.ark.runtime.type_safety:0959070f51494ad4",
+                  "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                  "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+                  "analysis_status": "partial",
+                  "source_binding": {
+                    "repository": "openharmony/arkcompiler_ets_runtime",
+                    "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+                    "snapshot_sha256": "bbdfdae0b975efbf7e91518f9ff8c029dc7bc5f9b085da8b282598b19d9108d1",
+                    "profile_id": "light-ast",
+                    "detector_id": "ohscanner.ark.runtime.type_safety",
+                    "detector_version": "0.7.0",
+                    "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+                    "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                    "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9"
+                  },
+                  "consequence_impact": null,
+                  "consequence_cwe": null,
+                  "model_version": "0.7.0",
+                  "obligations": [
+                    {
+                      "kind": "exception_path_semantics",
+                      "description": "Verify the builder allocation path can leave a pending exception and the sensitive result use executes before the exception return.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "runtime_impact",
+                      "description": "Establish whether the path causes a product crash, corruption or security impact under a reachable runtime condition.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "product_binding",
+                      "description": "Bind the exact source revision and build configuration to an affected shipped product.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "isolated_validation",
+                      "description": "Reproduce and revalidate the fix only in an authorized isolated environment.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "parse_completeness_impact",
+                      "description": "Partial translation-unit parsing may hide declarations, macros or effects; this finding is local candidate evidence only.",
+                      "status": "unknown"
+                    }
+                  ]
+                },
+                {
+                  "diagnostic_id": "ohscanner.ark.runtime.type_safety:0a3f88ec80223d45",
+                  "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                  "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+                  "analysis_status": "partial",
+                  "source_binding": {
+                    "repository": "openharmony/arkcompiler_ets_runtime",
+                    "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+                    "snapshot_sha256": "bbdfdae0b975efbf7e91518f9ff8c029dc7bc5f9b085da8b282598b19d9108d1",
+                    "profile_id": "light-ast",
+                    "detector_id": "ohscanner.ark.runtime.type_safety",
+                    "detector_version": "0.7.0",
+                    "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+                    "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                    "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9"
+                  },
+                  "consequence_impact": null,
+                  "consequence_cwe": null,
+                  "model_version": "0.7.0",
+                  "obligations": [
+                    {
+                      "kind": "exception_path_semantics",
+                      "description": "Verify the builder allocation path can leave a pending exception and the sensitive result use executes before the exception return.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "runtime_impact",
+                      "description": "Establish whether the path causes a product crash, corruption or security impact under a reachable runtime condition.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "product_binding",
+                      "description": "Bind the exact source revision and build configuration to an affected shipped product.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "isolated_validation",
+                      "description": "Reproduce and revalidate the fix only in an authorized isolated environment.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "parse_completeness_impact",
+                      "description": "Partial translation-unit parsing may hide declarations, macros or effects; this finding is local candidate evidence only.",
+                      "status": "unknown"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "evidence_status": "candidate/unassessed",
+      "validated_vulnerability": false
+    },
+    {
+      "case_id": "C9-EG-FIX-001",
+      "control_id": "C8-EG-FIX-001",
+      "kind": "fixed",
+      "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+      "expected": "miss",
+      "actual": "miss",
+      "control_result": "pass",
+      "candidate_count": 0,
+      "unknown_count": 0,
+      "matched_count": 2,
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+        "tree": "f0ddee8ee7f74b3f22e45b174ce96a269b2e57a5",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob_oid": "3b9de9d915d767d7a67316145451da2446162884",
+        "source_sha256": "4684a1587519e7d141f181b595317db489991a3908e1f1b4ef67513c25d9efd0",
+        "bytes": 152910,
+        "snapshot_sha256": "d7cc3021950f63e6df724a374d7a700317ccc286e0da5d5b24c2151186328fb4",
+        "git_inventory": {
+          "tracked_entries": 7832,
+          "out_of_scope": 7831,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 1,
+          "selected_source_bytes": 152910,
+          "skipped": [],
+          "git_tree": "f0ddee8ee7f74b3f22e45b174ce96a269b2e57a5",
+          "declared_scope": [
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+          ]
+        }
+      },
+      "raw_rule_result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 1494,
+            "column": 50,
+            "reason": "pending_exception_check_guards_allocation_result_use",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 1486,
+            "creation_line": 0,
+            "path": [
+              1486,
+              1487,
+              1493,
+              1494
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 54701,
+            "region_end_byte": 61189,
+            "effect_sites": []
+          },
+          {
+            "kind": "matched",
+            "line": 2665,
+            "column": 46,
+            "reason": "pending_exception_check_guards_allocation_result_use",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 2657,
+            "creation_line": 0,
+            "path": [
+              2657,
+              2658,
+              2664,
+              2665
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+            "region_start_byte": 106288,
+            "region_end_byte": 110629,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [],
+        "steps": 14,
+        "model_digest": "",
+        "classification": "miss"
+      },
+      "adapter_result": {
+        "request": {
+          "request_id": "c9-current-history-replay",
+          "repository": "openharmony/arkcompiler_ets_runtime",
+          "commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+          "snapshot_sha256": "d7cc3021950f63e6df724a374d7a700317ccc286e0da5d5b24c2151186328fb4",
+          "target_id": "current-component:openharmony/arkcompiler_ets_runtime",
+          "profile_id": "light-ast",
+          "provenance": "git_object"
+        },
+        "run": {
+          "schema_version": 2,
+          "run_id": "c9-current-history-replay:ohscanner.ark.runtime.type_safety",
+          "tool": "ohscanner.ark.runtime.type_safety",
+          "tool_version": "0.7.0",
+          "target_id": "current-component:openharmony/arkcompiler_ets_runtime",
+          "commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+          "scope_files": 1,
+          "scope_loc": 3722,
+          "status": "blocked",
+          "elapsed_seconds": 0.09180750000086846,
+          "peak_memory_mb": null,
+          "diagnostics": [],
+          "limitations": [
+            "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+            "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+            "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+            "Diagnostic does not establish vulnerability, reachability or security impact.",
+            "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+            "Coverage incomplete or unsupported; do not infer safety."
+          ],
+          "parsing": [
+            {
+              "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+              "status": "partial",
+              "issues": [
+                "{\"end_line\": 3391, \"kind\": \"missing\", \"start_line\": 3391}",
+                "{\"end_line\": 3704, \"kind\": \"missing\", \"start_line\": 3704}"
+              ],
+              "analysis_status": "partial",
+              "analysis_reason": "detector_model_incomplete"
+            }
+          ]
+        },
+        "coverage": {
+          "schema_version": 1,
+          "detectors": {
+            "ohscanner.ark.runtime.type_safety": {
+              "scope_mode": "per_file",
+              "status": "partial",
+              "applicable_files": 1,
+              "analyzed_files": [],
+              "partially_inspected_files": [
+                "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+              ],
+              "source_sha256": {
+                "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp": "4684a1587519e7d141f181b595317db489991a3908e1f1b4ef67513c25d9efd0"
+              },
+              "unexamined": [
+                {
+                  "file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+                  "parse_status": "partial",
+                  "reason": "detector_model_incomplete",
+                  "analysis_status": "partial"
+                }
+              ],
+              "inspected_files": [
+                "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+              ],
+              "not_analyzed_files": [],
+              "coverage_counts": {
+                "complete": 0,
+                "partial": 1,
+                "not_analyzed": 0,
+                "failed": 0
+              },
+              "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+              "evidence_obligations": []
+            }
+          }
+        }
+      },
+      "evidence_status": "candidate/unassessed",
+      "validated_vulnerability": false
+    }
+  ],
+  "diffs": [
+    {
+      "file": "type-origin-parent-fix.diff",
+      "from": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+        "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob_oid": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+        "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+        "bytes": 150433,
+        "snapshot_sha256": null,
+        "git_inventory": {
+          "tracked_entries": 7573,
+          "out_of_scope": 7572,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 1,
+          "selected_source_bytes": 150433,
+          "skipped": [],
+          "git_tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+          "declared_scope": [
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+          ]
+        }
+      },
+      "to": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob_oid": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+        "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+        "bytes": 150509,
+        "snapshot_sha256": null,
+        "git_inventory": {
+          "tracked_entries": 7577,
+          "out_of_scope": 7576,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 1,
+          "selected_source_bytes": 150509,
+          "skipped": [],
+          "git_tree": "82af11ced4297818410ccf61906b703d25b69165",
+          "declared_scope": [
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+          ]
+        }
+      },
+      "sha256": "450b5addb3307b80c09b95e9814afc0ecdc678c25d7728a7286f3de16cc47c1a"
+    },
+    {
+      "file": "exception-guard-parent-fix.diff",
+      "from": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+        "tree": "5d7c18a5d5ccbf48617b3c07ae9353f5f427d07a",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob_oid": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+        "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+        "bytes": 152202,
+        "snapshot_sha256": null,
+        "git_inventory": {
+          "tracked_entries": 7829,
+          "out_of_scope": 7828,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 1,
+          "selected_source_bytes": 152202,
+          "skipped": [],
+          "git_tree": "5d7c18a5d5ccbf48617b3c07ae9353f5f427d07a",
+          "declared_scope": [
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+          ]
+        }
+      },
+      "to": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+        "tree": "f0ddee8ee7f74b3f22e45b174ce96a269b2e57a5",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob_oid": "3b9de9d915d767d7a67316145451da2446162884",
+        "source_sha256": "4684a1587519e7d141f181b595317db489991a3908e1f1b4ef67513c25d9efd0",
+        "bytes": 152910,
+        "snapshot_sha256": null,
+        "git_inventory": {
+          "tracked_entries": 7832,
+          "out_of_scope": 7831,
+          "non_source": 0,
+          "symlinks": 0,
+          "submodules": 0,
+          "oversize": 0,
+          "binary_or_non_utf8": 0,
+          "selected_source_files": 1,
+          "selected_source_bytes": 152910,
+          "skipped": [],
+          "git_tree": "f0ddee8ee7f74b3f22e45b174ce96a269b2e57a5",
+          "declared_scope": [
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+          ]
+        }
+      },
+      "sha256": "8ae04562d5589e0b8d8a65272c8a6c8e9cb56cc623dbfb601835040dcba59aa7"
+    }
+  ],
+  "control_summary": {
+    "count": 4,
+    "passed": 2,
+    "failed": 2,
+    "hit": 1,
+    "miss": 1,
+    "unknown": 2,
+    "not_analyzed": 0
+  },
+  "claim_boundary": {
+    "default_status": "candidate/unassessed",
+    "validated_vulnerability": 0,
+    "product_vulnerability": false,
+    "precision_recall": null,
+    "zero_fp_fn_claim": false
+  },
+  "elapsed_seconds_internal": 9.780237499999203
+}

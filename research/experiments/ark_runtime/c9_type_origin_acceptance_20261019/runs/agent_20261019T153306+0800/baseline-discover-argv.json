@@ -1,0 +1,17 @@
+{
+  "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\type-origin",
+  "program": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+  "argv": [
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests/detectors/ark_runtime",
+    "-p",
+    "test_type_origin.py",
+    "-v"
+  ],
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  }
+}

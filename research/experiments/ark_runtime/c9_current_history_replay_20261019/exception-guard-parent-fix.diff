@@ -1,0 +1,96 @@
+--- c758818dbfd0b146a908d43d21f6ca1706c33783:ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp
++++ 81ca57487d04ea30cd11c271e86494a4e130f43e:ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp
+@@ -1479,24 +1479,24 @@
+             i = Int32Add(*i, Int32(1));
+             LoopEnd(&loopHead);
+             Bind(&loopExit);
+             Label hasException2(env);
+             Label notHasException2(env);
+             NewObjectStubBuilder newBuilder(this);
+             newBuilder.SetParameters(glue, 0);
+             GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));
+-            GateRef newArrayType = GetObjectType(LoadHClass(glue, newArray));
+             BRANCH(HasPendingException(glue), &hasException2, &notHasException2);
+             Bind(&hasException2);
+             {
+                 result->WriteVariable(Exception());
+                 Jump(exit);
+             }
+             Bind(&notHasException2);
++            GateRef newArrayType = GetObjectType(LoadHClass(glue, newArray));
+             i = Int32(0);
+             Label loopHead2(env);
+             Label loopEnd2(env);
+             Label next2(env);
+             Label loopExit2(env);
+             Jump(&loopHead2);
+             LoopBegin(&loopHead2);
+             {
+@@ -2632,32 +2632,41 @@
+     GateRef marker = GetProtoChangeMarkerFromHClass(glue, LoadHClass(glue, prototype));
+     BRANCH(TaggedIsProtoChangeMarker(glue, marker), &isProtoChangeMarker, slowPath);
+     Bind(&isProtoChangeMarker);
+     BRANCH(GetAccessorHasChanged(marker), slowPath, &accessorNotChanged);
+     Bind(&accessorNotChanged);
+     Label arg0HeapObject(env);
+     Label callable(env);
+     Label next(env);
++    Label newTypedArrayException(env);
++    Label newTypedArrayNoException(env);
+     GateRef thisLen = ZExtInt32ToInt64(GetArrayLength(thisValue));
+     GateRef callbackFnHandle = GetCallArg0(numArgs);
+     GateRef jsType = GetObjectType(LoadHClass(glue, thisValue));
+     BRANCH(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath);
+     Bind(&arg0HeapObject);
+     BRANCH(IsCallable(glue, callbackFnHandle), &callable, slowPath);
+     Bind(&callable);
+     GateRef argHandle = GetCallArg1(numArgs);
+     Jump(&next);
+     Bind(&next);
+     {
+         DEFVARIABLE(kValue, VariableType::JS_ANY(), Hole());
+         DEFVARIABLE(i, VariableType::INT64(), Int64(0));
+         NewObjectStubBuilder newBuilder(this);
+         newBuilder.SetParameters(glue, 0);
+         GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));
++        BRANCH(HasPendingException(glue), &newTypedArrayException, &newTypedArrayNoException);
++        Bind(&newTypedArrayException);
++        {
++            result->WriteVariable(Exception());
++            Jump(exit);
++        }
++        Bind(&newTypedArrayNoException);
+         GateRef newArrayType = GetObjectType(LoadHClass(glue, newArray));
+         Label loopHead(env);
+         Label loopEnd(env);
+         Label loopNext(env);
+         Label loopExit(env);
+         Jump(&loopHead);
+         LoopBegin(&loopHead);
+         {
+@@ -2706,16 +2715,25 @@
+     Bind(&isFastTypedArray);
+     BRANCH(HasConstructor(glue, thisValue), slowPath, &defaultConstr);
+     Bind(&defaultConstr);
+ 
+     DEFVARIABLE(thisArrLen, VariableType::INT64(), ZExtInt32ToInt64(GetArrayLength(thisValue)));
+     NewObjectStubBuilder newBuilder(this);
+     newBuilder.SetParameters(glue, 0);
+     GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, arrayType, TruncInt64ToInt32(*thisArrLen));
++    Label newTypedArrayhasException(env);
++    Label newTypedArraynotHasException0(env);
++    BRANCH(HasPendingException(glue), &newTypedArrayhasException, &newTypedArraynotHasException0);
++    Bind(&newTypedArrayhasException);
++    {
++        result->WriteVariable(Exception());
++        Jump(exit);
++    }
++    Bind(&newTypedArraynotHasException0);
+     DEFVARIABLE(k, VariableType::INT64(), Int64(0));
+ 
+     Label loopHead(env);
+     Label loopEnd(env);
+     Label loopNext(env);
+     Label loopExit(env);
+     Jump(&loopHead);
+     LoopBegin(&loopHead);

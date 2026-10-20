@@ -1,0 +1,35 @@
+test_C03_renamed_variables_still_form_candidate (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_C03_renamed_variables_still_form_candidate) ... ok
+test_C04_target_type_has_same_identity (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_C04_target_type_has_same_identity) ... ok
+test_C05_local_object_alias_preserves_identity (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_C05_local_object_alias_preserves_identity) ... ok
+test_C06_token_copy_preserves_origin (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_C06_token_copy_preserves_origin) ... ok
+test_C07_reassignment_kills_old_object_fact (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_C07_reassignment_kills_old_object_fact) ... ok
+test_C08_other_owner_is_not_a_modelled_call (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_C08_other_owner_is_not_a_modelled_call) ... ok
+test_byte_budget_does_not_produce_empty_safe_result (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_byte_budget_does_not_produce_empty_safe_result) ... ok
+test_conditional_compilation_needs_build_context (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_conditional_compilation_needs_build_context) ... ok
+test_fixed_C3_effect_counterexamples_are_unknown (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_fixed_C3_effect_counterexamples_are_unknown) ... ok
+test_fixed_explicit_assignment_transfer_keeps_proven_origin (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_fixed_explicit_assignment_transfer_keeps_proven_origin) ... ok
+test_fresh_read_does_not_revalidate_an_old_copy (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_fresh_read_does_not_revalidate_an_old_copy) ... ok
+test_host_builder_write_does_not_mutate_runtime_type (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_host_builder_write_does_not_mutate_runtime_type) ... ok
+test_local_shadow_is_not_the_outer_object (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_local_shadow_is_not_the_outer_object) ... ok
+test_mechanism_matrix_G07_unknown_global_effect (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_mechanism_matrix_G07_unknown_global_effect) ... ok
+test_namespace_homonym_is_not_bound (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_namespace_homonym_is_not_bound) ... ok
+test_overload_with_wrong_signature_cannot_replace_modelled_caller (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_overload_with_wrong_signature_cannot_replace_modelled_caller) ... ok
+test_readonly_summary_requires_exact_builder_receiver (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_readonly_summary_requires_exact_builder_receiver) ... ok
+test_reassigned_creator_helper_loses_its_proven_owner (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_reassigned_creator_helper_loses_its_proven_owner) ... ok
+test_reassignment_of_type_token_uses_new_definition (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_reassignment_of_type_token_uses_new_definition) ... ok
+test_relevant_macro_redefinition_is_not_silently_ignored (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_relevant_macro_redefinition_is_not_silently_ignored) ... ok
+test_safe_control_is_not_a_security_verdict (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_safe_control_is_not_a_security_verdict) ... ok
+test_two_stale_snapshots_cannot_prove_current_destination_type (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_two_stale_snapshots_cannot_prove_current_destination_type) ... ok
+test_unknown_compound_transform_discards_old_origin (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_unknown_compound_transform_discards_old_origin) ... ok
+test_unknown_escape_invalidates_same_object_guarantee (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_unknown_escape_invalidates_same_object_guarantee) ... ok
+test_unmodeled_lambda_is_not_expanded_as_current_function (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_unmodeled_lambda_is_not_expanded_as_current_function) ... ok
+test_unqualified_owner_with_exact_signature_is_not_namespace_proof (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_unqualified_owner_with_exact_signature_is_not_namespace_proof) ... ok
+test_unresolved_receiver_is_unknown_not_silently_matched (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_unresolved_receiver_is_unknown_not_silently_matched) ... ok
+test_verified_by_value_call_does_not_refresh_old_token (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_verified_by_value_call_does_not_refresh_old_token) ... ok
+test_wrong_namespace_owner_is_not_bound (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_wrong_namespace_owner_is_not_bound) ... ok
+test_wrong_sink_arity_stays_unknown (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_wrong_sink_arity_stays_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 0.300s
+
+OK

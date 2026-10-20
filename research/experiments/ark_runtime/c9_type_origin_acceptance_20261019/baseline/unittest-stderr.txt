@@ -1,0 +1,25 @@
+test_type_origin (unittest.loader._FailedTest.test_type_origin) ... ERROR
+
+======================================================================
+ERROR: test_type_origin (unittest.loader._FailedTest.test_type_origin)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_type_origin
+Traceback (most recent call last):
+  File "C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c8_parallel_20261019\worktrees\type-origin\tests\detectors\ark_runtime\test_type_origin.py", line 2, in <module>
+    from src.ohscanner.detectors.ark_runtime.analysis import analyze_unit
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c8_parallel_20261019\worktrees\type-origin\src\ohscanner\detectors\ark_runtime\analysis.py", line 13, in <module>
+    from .runtime_ir import build_graph
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c8_parallel_20261019\worktrees\type-origin\src\ohscanner\detectors\ark_runtime\runtime_ir.py", line 3, in <module>
+    from .syntax import walk
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c8_parallel_20261019\worktrees\type-origin\src\ohscanner\detectors\ark_runtime\syntax.py", line 9, in <module>
+    from tree_sitter import Language, Parser
+ModuleNotFoundError: No module named 'tree_sitter'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

@@ -1,0 +1,288 @@
+{
+  "schema": "c9-type-origin-acceptance-manifest/v1",
+  "generated": "2026-10-19 Asia/Shanghai",
+  "worktree": {
+    "root": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\type-origin",
+    "head": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "detached_head": true,
+    "initial_untracked": [
+      "research/experiments/ark_runtime/c8_known_vulnerability_replay_20261019/",
+      "research/experiments/ark_runtime/c9_current_history_replay_20261019/",
+      "tests/detectors/ark_runtime/test_c8_pinned_replay_reconciliation.py"
+    ],
+    "modified_allowed_files": [
+      "src/ohscanner/detectors/ark_runtime/type_origin.py",
+      "tests/detectors/ark_runtime/test_type_origin.py"
+    ],
+    "git_operations": "read-only identity/object/diff checks; no fetch/checkout/reset/push/merge"
+  },
+  "review_source": {
+    "status": "present_not_missing",
+    "ref": "origin/codex/c-line-ark-runtime-20261018",
+    "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+    "path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
+    "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+    "calibration": "IBS5YG is source candidate; product reachability/impact unknown"
+  },
+  "e4e_comparison": {
+    "type_origin_blob": "e2c8712bfb98d7fee7cd02e518e4ce12eb2ab7d5",
+    "unseen_detector_blob": "da8f812513391846dec27635d4db647534cd39ad",
+    "unseen_model_blob": "43cbd0e7cd696c004002a6ff9a6fd434550f6d07",
+    "unseen_files_at_current_head": "absent",
+    "disposition": "read-only comparison only; no unseen_* changes and no second scanner"
+  },
+  "patch": {
+    "e4e_minimal": "e4e-minimal-type-origin.patch",
+    "e4e_fix": "callee initialized before member_call/invalidate_types",
+    "e4e_tests": "existing e4e test_c3_mechanisms.py; no e4e test patch required",
+    "current_worktree": "current-type-origin-tests.patch"
+  },
+  "runs": [
+    {
+      "name": "e4e-six-callee-fixed-final",
+      "path": "e4e-six-callee-fixed-final",
+      "tests": 6,
+      "passed": 6,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "status": "passed",
+      "acceptance_counted": true
+    },
+    {
+      "name": "e4e-full-focused",
+      "path": "e4e-full-focused-callee-fixed-final-shortpath",
+      "tests": 156,
+      "passed": 144,
+      "failed": 0,
+      "errors": 1,
+      "skipped": 11,
+      "status": "not_green_missing_external_input",
+      "acceptance_counted": false,
+      "error": "missing WORKSPACE_ROOT/openharmony/arkcompiler/ets_runtime/ecmascript/compiler/BUILD.gn",
+      "skip": "pinned Ark Git stores or OHSCANNER_ARK_REPO not supplied"
+    },
+    {
+      "name": "current-type-origin-final",
+      "path": "current-type-origin-final",
+      "tests": 30,
+      "passed": 30,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "status": "passed",
+      "acceptance_counted": true
+    },
+    {
+      "name": "current-c3-control-final",
+      "path": "current-c3-control-final",
+      "tests": 29,
+      "passed": 27,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0,
+      "status": "legacy_expectation_divergence_not_acceptance",
+      "acceptance_counted": false
+    },
+    {
+      "name": "baseline",
+      "path": "baseline",
+      "tests": 1,
+      "passed": 0,
+      "failed": 0,
+      "errors": 1,
+      "skipped": 0,
+      "status": "dependency_preflight_error",
+      "acceptance_counted": false,
+      "error": "ModuleNotFoundError: tree_sitter when PYTHONPATH omitted"
+    },
+    {
+      "name": "source-bound-regression",
+      "path": "source-bound-regression.json",
+      "tests": 10,
+      "passed": 10,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "status": "passed",
+      "acceptance_counted": true
+    }
+  ],
+  "e4e_counterexamples": [
+    "test_fresh_read_does_not_revalidate_an_old_copy",
+    "test_host_builder_write_does_not_mutate_runtime_type",
+    "test_mechanism_matrix(G07)",
+    "test_readonly_summary_requires_exact_builder_receiver",
+    "test_two_stale_snapshots_cannot_prove_current_destination_type",
+    "test_verified_by_value_call_does_not_refresh_old_token"
+  ],
+  "validation": {
+    "py_compile": "passed",
+    "git_diff_check": "passed",
+    "json_parse": "passed",
+    "docs_context_budget": "blocked_script_absent_from_pinned_worktree_and_ref"
+  },
+  "claim_boundary": {
+    "product_vulnerability": false,
+    "cve": false,
+    "precision_recall": false,
+    "zero_fp_fn": false,
+    "exploitability": false,
+    "default_status": "candidate/unassessed or unknown"
+  },
+  "next_slice": "Supply exact BUILD.gn and pinned Ark stores, rerun full focused without implicit fetch, apply e4e patch, then update status docs.",
+  "source_files": [
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/type_origin.py",
+      "head_blob": "3ed725dee537234f870e6a99de21337c12279b0d",
+      "worktree_sha256": "d634faab25097a9ba9661c2f6f5c54ed2296cba93a9b70641fd6949f79d65b69",
+      "worktree_git_blob": "898e5a3b9d67dec1877d44513c5a08e52c727b1f"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/test_type_origin.py",
+      "head_blob": "b735f5fa9566cebd9dfdb821a998ac37ab60bab0",
+      "worktree_sha256": "5fb302b50fc2093fcb3e766ef1c53e2f7aa0e8e0bcf85bccd2994839f799aafc",
+      "worktree_git_blob": "9395388351bd1acd707aede8a77ed2a8025cb2bd"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "baseline/unittest-stderr.txt",
+      "sha256": "b1c633bb52fd075d78da18818e7fd2315d785ded7408327680898fecd7fb2e23",
+      "bytes": 1786
+    },
+    {
+      "path": "baseline/unittest-stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "commands.txt",
+      "sha256": "a2e8f3fd534e93bd85675590478ef7964554913f536b2e020cfa0e22ad8b1c42",
+      "bytes": 3395
+    },
+    {
+      "path": "current-c3-control-final/env.txt",
+      "sha256": "5414e3a3fcb54873bf2787a8acefb3d7bbb53d9acb1875db3ccd628049b1cbc2",
+      "bytes": 391
+    },
+    {
+      "path": "current-c3-control-final/unittest-stderr.txt",
+      "sha256": "c19e9119fa437eb6c9517ef69ee5adcadbb9c8075205eb971d75a3d5710dbba5",
+      "bytes": 7982
+    },
+    {
+      "path": "current-c3-control-final/unittest-stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "current-type-origin-final/env.txt",
+      "sha256": "168a92d1a28fef761d7dbeebb42e7ac883d6c1d98421e6c72a4b81dd5137f8e0",
+      "bytes": 389
+    },
+    {
+      "path": "current-type-origin-final/unittest-stderr.txt",
+      "sha256": "bc73d6daa0f710883b06740a2ee2cdc47a4c82bbe6b4e48829d14a3c126db8e2",
+      "bytes": 5244
+    },
+    {
+      "path": "current-type-origin-final/unittest-stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "current-type-origin-tests.patch",
+      "sha256": "51dc8557c1dfa011fe6c6377679263f9ebd09d122815c7a2d0db5ad229512c87",
+      "bytes": 8167
+    },
+    {
+      "path": "e4e-full-focused-callee-fixed-final-shortpath/env.txt",
+      "sha256": "987739e580d0bca5c4df4a23958129a6c166ea9ae4172cf9bc6f384b010337f4",
+      "bytes": 984
+    },
+    {
+      "path": "e4e-full-focused-callee-fixed-final-shortpath/unittest-stderr.txt",
+      "sha256": "c67bf08f9cfe2cd7e20912571b4e0a5efb3ee26fd0ee58837474085a36ada878",
+      "bytes": 32491
+    },
+    {
+      "path": "e4e-full-focused-callee-fixed-final-shortpath/unittest-stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "e4e-minimal-type-origin.patch",
+      "sha256": "aa8d9d15c5034d9acdb1dacc11b1e05c684f49d09811cec1a0ec6f22d39b6d2f",
+      "bytes": 3063
+    },
+    {
+      "path": "e4e-six-callee-fixed-final/env.txt",
+      "sha256": "ef1b61a3df563abad2706548ddfa6764e9f868f7474f3db3b0d547d4901c99a2",
+      "bytes": 1106
+    },
+    {
+      "path": "e4e-six-callee-fixed-final/unittest-stderr.txt",
+      "sha256": "13631f20e90453b8a704e4a8eddbc27ba302cf137684a36d185772c853c9a844",
+      "bytes": 1137
+    },
+    {
+      "path": "e4e-six-callee-fixed-final/unittest-stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "source-bound-regression.json",
+      "sha256": "3843bdeb6ffa43917d914e4cb80d545a9a048a2c162ccb4d1fce6e79638ae95b",
+      "bytes": 7731
+    },
+    {
+      "path": "source/e4e_type_origin.patched.py",
+      "sha256": "2bb352863fe1a9332ab00ef8e36413c3b926354467cbd9d00ca6ca692255249d",
+      "bytes": 29494
+    },
+    {
+      "path": "source/e4e_type_origin.pristine.py",
+      "sha256": "a5ca62d12988de3ee8019b02ca146d3a333b96c56021e2b7239a0e6f587bfd29",
+      "bytes": 29358
+    },
+    {
+      "path": "source/replay_source_bound.py",
+      "sha256": "0142750f29bd43df00cc0bbc607724738081dd4250409675db6a0cc49ffb57d0",
+      "bytes": 2646
+    },
+    {
+      "path": "summary.md",
+      "sha256": "a9aebb40652b6e21e96903fa25dc33de5d7a3fde22042583eec36104a8a23270",
+      "bytes": 4375
+    },
+    {
+      "path": "validation/docs-context-budget.txt",
+      "sha256": "6e3c0b63120e99e120fc34bde7d47d6bdd3d0323dc15bb5419ad12992fe2ce27",
+      "bytes": 321
+    },
+    {
+      "path": "validation/git-diff-check.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "validation/json-parse.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "validation/py-compile.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "validation/summary.txt",
+      "sha256": "4a7d859d359c9b64be8853d9560a62f6bb1382de384dfe6a2a7911e11cc6ef4b",
+      "bytes": 89
+    }
+  ]
+}

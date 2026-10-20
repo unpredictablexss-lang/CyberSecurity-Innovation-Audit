@@ -1,0 +1,656 @@
+{
+  "schema": "ac-replay-02-finding-rule-control-reconciliation/v1",
+  "inputs": {
+    "pinned_replay_commit": "a7962043cda3cbb99f79ada7418508709fc951ca",
+    "c8_tree": "a0b1de2277566e490fabd527e5b5fefd94f5d22e",
+    "known_source_findings": {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/known-source-findings.json",
+      "commit": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+      "git_blob": "55c425936906ac4b7cc83a9cd862fd5e0a608ac4",
+      "recomputed_git_blob": "55c425936906ac4b7cc83a9cd862fd5e0a608ac4",
+      "sha256": "dca1e9fd3809c0e65ce5e368fcb807181971625667d91f8478096324a3893f53",
+      "bytes": 33838
+    },
+    "expected_regressions": {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/expected-regressions.json",
+      "commit": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+      "git_blob": "38693c45915c0feee4a157748268838bb482f2c4",
+      "recomputed_git_blob": "38693c45915c0feee4a157748268838bb482f2c4",
+      "sha256": "48120327e609cd7890ed3a7e2889ee720bf58ec1f2c64449b0d80e717cb334c3",
+      "bytes": 5157
+    },
+    "c3_review_counterexamples": {
+      "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json",
+      "commit": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+      "git_blob": "2d5a8408b3f73853d4bc65ca77a59ae59b7353b4",
+      "recomputed_git_blob": "2d5a8408b3f73853d4bc65ca77a59ae59b7353b4",
+      "sha256": "3bd4a74ff6dca9f6936065e4afef2fc6c79fb039536e6e1671a1d53f51e63d8e",
+      "bytes": 8521
+    }
+  },
+  "mapping_catalog": {
+    "detectors": [
+      {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "version": "0.7.0",
+        "catalog_status": "not_enabled_public_catalog",
+        "rules": [
+          "ark.runtime.typedarray-store-type-origin",
+          "ark.runtime.typedarray-allocation-exception-guard"
+        ]
+      }
+    ],
+    "controls": [
+      {
+        "control_id": "C8-TO-POS-001",
+        "kind": "positive",
+        "expected": "candidate/unassessed for a modeled unguarded store"
+      },
+      {
+        "control_id": "C8-TO-FIX-001",
+        "kind": "fixed",
+        "expected": "no confirmed/reportable escalation when origin and store are corrected"
+      },
+      {
+        "control_id": "C8-TO-SAFE-001",
+        "kind": "safe",
+        "expected": "no confirmed/reportable escalation for a marked negative fixture; not product safety proof"
+      },
+      {
+        "control_id": "C8-TO-UNR-001",
+        "kind": "unrelated",
+        "expected": "no matching type-origin rule"
+      },
+      {
+        "control_id": "C8-TO-UNKNOWN-001",
+        "kind": "unknown",
+        "expected": "unknown after tag++ invalidation"
+      },
+      {
+        "control_id": "C8-TO-UNKNOWN-002",
+        "kind": "unknown",
+        "expected": "unknown after ++tag invalidation"
+      },
+      {
+        "control_id": "C8-TO-UNKNOWN-003",
+        "kind": "unknown",
+        "expected": "unknown after assignment hidden in expression"
+      },
+      {
+        "control_id": "C8-TO-UNKNOWN-004",
+        "kind": "unknown",
+        "expected": "unknown after output assignment hidden in expression"
+      },
+      {
+        "control_id": "C8-TO-UNKNOWN-005",
+        "kind": "unknown",
+        "expected": "unknown after unknown mutation/effect"
+      },
+      {
+        "control_id": "C8-TO-UNKNOWN-006",
+        "kind": "unknown",
+        "expected": "unknown after branch-dependent assignment"
+      },
+      {
+        "control_id": "C8-EG-POS-001",
+        "kind": "positive",
+        "expected": "candidate/unassessed for use before pending-exception guard"
+      },
+      {
+        "control_id": "C8-EG-FIX-001",
+        "kind": "fixed",
+        "expected": "no candidate when pending-exception guard precedes use"
+      },
+      {
+        "control_id": "C8-EG-SAFE-001",
+        "kind": "safe",
+        "expected": "no confirmed/reportable escalation for a marked negative fixture; not product safety proof"
+      },
+      {
+        "control_id": "C8-EG-UNR-001",
+        "kind": "unrelated",
+        "expected": "no matching exception-guard rule"
+      },
+      {
+        "control_id": "C8-EG-UNKNOWN-001",
+        "kind": "unknown",
+        "expected": "unknown when pending-state effects/order are unverified"
+      },
+      {
+        "control_id": "C8-OWNER-UNKNOWN-001",
+        "kind": "unknown",
+        "expected": "fail-closed unknown for partial/ambiguous owner"
+      },
+      {
+        "control_id": "C8-HISTORY-MISSING-001",
+        "kind": "unknown",
+        "expected": "blocked/unknown when parent/fix/current object is absent"
+      },
+      {
+        "control_id": "C8-DEPENDENCY-UNKNOWN-001",
+        "kind": "unknown",
+        "expected": "unknown when dependency/replay evidence is absent"
+      }
+    ]
+  },
+  "entries": [
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-001",
+      "detector_ids": [
+        "ohscanner.ark.runtime.type_safety"
+      ],
+      "rule_ids": [
+        "ark.runtime.typedarray-store-type-origin"
+      ],
+      "control_ids": [
+        "C8-TO-UNKNOWN-001"
+      ],
+      "expected_from_c8": "unknown",
+      "source_identity": {
+        "repository": "local research counterexample",
+        "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json#cases[0]",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "aa6d148fa52a063a2d796b2c1b80ae8dc0aac49b3ccffe1a460d006e861388c5",
+        "identity_status": "verified_local"
+      },
+      "pinned_replay_coverage": "missing_from_pinned_history_replay",
+      "verification_status": "blocked_not_replayed",
+      "counted_as_detector_pass": false,
+      "validated_vulnerability": false,
+      "note": "The pinned replay covers only historical TypedArray parent/fix Set/Map controls; it does not execute these six C3 invalidation counterexamples."
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-002",
+      "detector_ids": [
+        "ohscanner.ark.runtime.type_safety"
+      ],
+      "rule_ids": [
+        "ark.runtime.typedarray-store-type-origin"
+      ],
+      "control_ids": [
+        "C8-TO-UNKNOWN-002"
+      ],
+      "expected_from_c8": "unknown",
+      "source_identity": {
+        "repository": "local research counterexample",
+        "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json#cases[1]",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "4d2cba069e2a5191ad2a8db896f7823bfe0157d35b5abadb17e9fdd14ee1858e",
+        "identity_status": "verified_local"
+      },
+      "pinned_replay_coverage": "missing_from_pinned_history_replay",
+      "verification_status": "blocked_not_replayed",
+      "counted_as_detector_pass": false,
+      "validated_vulnerability": false,
+      "note": "The pinned replay covers only historical TypedArray parent/fix Set/Map controls; it does not execute these six C3 invalidation counterexamples."
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-003",
+      "detector_ids": [
+        "ohscanner.ark.runtime.type_safety"
+      ],
+      "rule_ids": [
+        "ark.runtime.typedarray-store-type-origin"
+      ],
+      "control_ids": [
+        "C8-TO-UNKNOWN-003"
+      ],
+      "expected_from_c8": "unknown",
+      "source_identity": {
+        "repository": "local research counterexample",
+        "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json#cases[2]",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "b245134c133cde19b9c4964cc7201dc559015f60c3c02aef48625a64ab69af5e",
+        "identity_status": "verified_local"
+      },
+      "pinned_replay_coverage": "missing_from_pinned_history_replay",
+      "verification_status": "blocked_not_replayed",
+      "counted_as_detector_pass": false,
+      "validated_vulnerability": false,
+      "note": "The pinned replay covers only historical TypedArray parent/fix Set/Map controls; it does not execute these six C3 invalidation counterexamples."
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-004",
+      "detector_ids": [
+        "ohscanner.ark.runtime.type_safety"
+      ],
+      "rule_ids": [
+        "ark.runtime.typedarray-store-type-origin"
+      ],
+      "control_ids": [
+        "C8-TO-UNKNOWN-004"
+      ],
+      "expected_from_c8": "unknown",
+      "source_identity": {
+        "repository": "local research counterexample",
+        "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json#cases[3]",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "f540fa1c0724fa1aa3216c78170ccb97a3dc9fe90a35cdc29f0560786b362125",
+        "identity_status": "verified_local"
+      },
+      "pinned_replay_coverage": "missing_from_pinned_history_replay",
+      "verification_status": "blocked_not_replayed",
+      "counted_as_detector_pass": false,
+      "validated_vulnerability": false,
+      "note": "The pinned replay covers only historical TypedArray parent/fix Set/Map controls; it does not execute these six C3 invalidation counterexamples."
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-005",
+      "detector_ids": [
+        "ohscanner.ark.runtime.type_safety"
+      ],
+      "rule_ids": [
+        "ark.runtime.typedarray-store-type-origin"
+      ],
+      "control_ids": [
+        "C8-TO-UNKNOWN-005"
+      ],
+      "expected_from_c8": "unknown",
+      "source_identity": {
+        "repository": "local research counterexample",
+        "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json#cases[4]",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "51bdfef745c7b3681cad272c1498fee9ca5655110dd5837a697692e5b667f84c",
+        "identity_status": "verified_local"
+      },
+      "pinned_replay_coverage": "missing_from_pinned_history_replay",
+      "verification_status": "blocked_not_replayed",
+      "counted_as_detector_pass": false,
+      "validated_vulnerability": false,
+      "note": "The pinned replay covers only historical TypedArray parent/fix Set/Map controls; it does not execute these six C3 invalidation counterexamples."
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-006",
+      "detector_ids": [
+        "ohscanner.ark.runtime.type_safety"
+      ],
+      "rule_ids": [
+        "ark.runtime.typedarray-store-type-origin"
+      ],
+      "control_ids": [
+        "C8-TO-UNKNOWN-006"
+      ],
+      "expected_from_c8": "unknown",
+      "source_identity": {
+        "repository": "local research counterexample",
+        "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json#cases[5]",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "83e5ad4d3fcfada50f693aa80ec271ef4f5459f90bb15bd83c481531235005cb",
+        "identity_status": "verified_local"
+      },
+      "pinned_replay_coverage": "missing_from_pinned_history_replay",
+      "verification_status": "blocked_not_replayed",
+      "counted_as_detector_pass": false,
+      "validated_vulnerability": false,
+      "note": "The pinned replay covers only historical TypedArray parent/fix Set/Map controls; it does not execute these six C3 invalidation counterexamples."
+    },
+    {
+      "entry_id": "C4-EXG-FILTER-UNKNOWN",
+      "detector_ids": [
+        "ohscanner.ark.runtime.type_safety"
+      ],
+      "rule_ids": [
+        "ark.runtime.typedarray-allocation-exception-guard"
+      ],
+      "control_ids": [
+        "C8-EG-POS-001",
+        "C8-EG-FIX-001"
+      ],
+      "expected_from_c8": "candidate/unassessed",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+        "tree": "unknown",
+        "blob": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+        "sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+        "identity_status": "recorded_external"
+      },
+      "pinned_replay_coverage": "missing_from_pinned_history_replay",
+      "verification_status": "blocked_not_replayed",
+      "counted_as_detector_pass": false,
+      "validated_vulnerability": false,
+      "note": "The pinned replay is the TypeSafety 0.3.1 type-origin rule and a separate exception-propagation probe; it does not execute the C4 allocation-exception-guard rule or its c758/81ca pair."
+    },
+    {
+      "entry_id": "C4-EXG-MAP-UNKNOWN",
+      "detector_ids": [
+        "ohscanner.ark.runtime.type_safety"
+      ],
+      "rule_ids": [
+        "ark.runtime.typedarray-allocation-exception-guard"
+      ],
+      "control_ids": [
+        "C8-EG-POS-001",
+        "C8-EG-FIX-001"
+      ],
+      "expected_from_c8": "candidate/unassessed",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+        "tree": "unknown",
+        "blob": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+        "sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+        "identity_status": "recorded_external"
+      },
+      "pinned_replay_coverage": "missing_from_pinned_history_replay",
+      "verification_status": "blocked_not_replayed",
+      "counted_as_detector_pass": false,
+      "validated_vulnerability": false,
+      "note": "The pinned replay is the TypeSafety 0.3.1 type-origin rule and a separate exception-propagation probe; it does not execute the C4 allocation-exception-guard rule or its c758/81ca pair."
+    },
+    {
+      "entry_id": "C4-EXG-TOREVERSED-UNKNOWN",
+      "detector_ids": [
+        "ohscanner.ark.runtime.type_safety"
+      ],
+      "rule_ids": [
+        "ark.runtime.typedarray-allocation-exception-guard"
+      ],
+      "control_ids": [
+        "C8-EG-UNKNOWN-001"
+      ],
+      "expected_from_c8": "unknown",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+        "tree": "unknown",
+        "blob": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+        "sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+        "identity_status": "recorded_external"
+      },
+      "pinned_replay_coverage": "missing_from_pinned_history_replay",
+      "verification_status": "blocked_not_replayed",
+      "counted_as_detector_pass": false,
+      "validated_vulnerability": false,
+      "note": "The pinned replay is the TypeSafety 0.3.1 type-origin rule and a separate exception-propagation probe; it does not execute the C4 allocation-exception-guard rule or its c758/81ca pair."
+    },
+    {
+      "entry_id": "C4-EXG-ORDER-UNKNOWN",
+      "detector_ids": [
+        "ohscanner.ark.runtime.type_safety"
+      ],
+      "rule_ids": [
+        "ark.runtime.typedarray-allocation-exception-guard"
+      ],
+      "control_ids": [
+        "C8-EG-UNKNOWN-001"
+      ],
+      "expected_from_c8": "unknown",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "commit": "unknown",
+        "tree": "unknown",
+        "blob": "unknown",
+        "sha256": "unknown",
+        "identity_status": "unknown"
+      },
+      "pinned_replay_coverage": "missing_from_pinned_history_replay",
+      "verification_status": "blocked_not_replayed",
+      "counted_as_detector_pass": false,
+      "validated_vulnerability": false,
+      "note": "The pinned replay is the TypeSafety 0.3.1 type-origin rule and a separate exception-propagation probe; it does not execute the C4 allocation-exception-guard rule or its c758/81ca pair."
+    },
+    {
+      "entry_id": "C7-DEPENDENCY-LIMIT-UNKNOWN",
+      "detector_ids": [
+        "ohscanner.ark.runtime.type_safety"
+      ],
+      "rule_ids": [
+        "ark.runtime.typedarray-store-type-origin",
+        "ark.runtime.typedarray-allocation-exception-guard"
+      ],
+      "control_ids": [
+        "C8-DEPENDENCY-UNKNOWN-001"
+      ],
+      "expected_from_c8": "unknown",
+      "source_identity": {
+        "repository": "CyberSecurity-Innovation-Audit",
+        "path": "docs/项目现状与下一步.md",
+        "commit": "556cb145fec9f52afd1c49d10290e01036200f00",
+        "tree": "7ccd0895622669ac33595c1058e5f0ede0b8e5a5",
+        "blob": "52f5b06be8c9ef28512516291faddeda2c24cab9",
+        "sha256": "901f01cce59539d71fb334480a5b7911b2e1d7296cd1b76db3074a1261a74997",
+        "identity_status": "verified_local"
+      },
+      "pinned_replay_coverage": "partial_limit_evidence_only",
+      "verification_status": "unknown_limit_only",
+      "counted_as_detector_pass": false,
+      "validated_vulnerability": false,
+      "note": "The pinned artifacts preserve dependency/provenance limitations but do not close the referenced C7 dependency evidence."
+    },
+    {
+      "entry_id": "C7-REPLAY-LIMIT-UNKNOWN",
+      "detector_ids": [
+        "ohscanner.ark.runtime.type_safety"
+      ],
+      "rule_ids": [
+        "ark.runtime.typedarray-store-type-origin",
+        "ark.runtime.typedarray-allocation-exception-guard"
+      ],
+      "control_ids": [
+        "C8-HISTORY-MISSING-001"
+      ],
+      "expected_from_c8": "blocked/unknown",
+      "source_identity": {
+        "repository": "CyberSecurity-Innovation-Audit",
+        "path": "docs/项目现状与下一步.md",
+        "commit": "556cb145fec9f52afd1c49d10290e01036200f00",
+        "tree": "7ccd0895622669ac33595c1058e5f0ede0b8e5a5",
+        "blob": "52f5b06be8c9ef28512516291faddeda2c24cab9",
+        "sha256": "901f01cce59539d71fb334480a5b7911b2e1d7296cd1b76db3074a1261a74997",
+        "identity_status": "verified_local"
+      },
+      "pinned_replay_coverage": "partial_fail_closed_substitute",
+      "verification_status": "blocked_unknown",
+      "counted_as_detector_pass": false,
+      "validated_vulnerability": false,
+      "note": "The pinned replay demonstrates missing commit/tree and frozen-code fail-closed behavior for a different historical pair, but the referenced C7 replay directory remains absent."
+    }
+  ],
+  "c3_source_hash_reconciliation": [
+    {
+      "finding_id": "C3-TO-COUNTEREXAMPLE-001",
+      "source_sha256": "aa6d148fa52a063a2d796b2c1b80ae8dc0aac49b3ccffe1a460d006e861388c5",
+      "c8_expected_source_sha256": "aa6d148fa52a063a2d796b2c1b80ae8dc0aac49b3ccffe1a460d006e861388c5",
+      "control_id": "C8-TO-UNKNOWN-001",
+      "expression": "tag++;",
+      "expected": "unknown",
+      "c3_recorded_actual": "matched",
+      "hash_match": true,
+      "pinned_replay_status": "not_replayed",
+      "counted_as_pass": false
+    },
+    {
+      "finding_id": "C3-TO-COUNTEREXAMPLE-002",
+      "source_sha256": "4d2cba069e2a5191ad2a8db896f7823bfe0157d35b5abadb17e9fdd14ee1858e",
+      "c8_expected_source_sha256": "4d2cba069e2a5191ad2a8db896f7823bfe0157d35b5abadb17e9fdd14ee1858e",
+      "control_id": "C8-TO-UNKNOWN-002",
+      "expression": "++tag;",
+      "expected": "unknown",
+      "c3_recorded_actual": "matched",
+      "hash_match": true,
+      "pinned_replay_status": "not_replayed",
+      "counted_as_pass": false
+    },
+    {
+      "finding_id": "C3-TO-COUNTEREXAMPLE-003",
+      "source_sha256": "b245134c133cde19b9c4964cc7201dc559015f60c3c02aef48625a64ab69af5e",
+      "c8_expected_source_sha256": "b245134c133cde19b9c4964cc7201dc559015f60c3c02aef48625a64ab69af5e",
+      "control_id": "C8-TO-UNKNOWN-003",
+      "expression": "GateRef scratch = Int32Add((tag = inputTag), Int32(0));",
+      "expected": "unknown",
+      "c3_recorded_actual": "matched",
+      "hash_match": true,
+      "pinned_replay_status": "not_replayed",
+      "counted_as_pass": false
+    },
+    {
+      "finding_id": "C3-TO-COUNTEREXAMPLE-004",
+      "source_sha256": "f540fa1c0724fa1aa3216c78170ccb97a3dc9fe90a35cdc29f0560786b362125",
+      "c8_expected_source_sha256": "f540fa1c0724fa1aa3216c78170ccb97a3dc9fe90a35cdc29f0560786b362125",
+      "control_id": "C8-TO-UNKNOWN-004",
+      "expression": "GateRef scratch = Int32Add((output = input), Int32(0));",
+      "expected": "unknown",
+      "c3_recorded_actual": "matched",
+      "hash_match": true,
+      "pinned_replay_status": "not_replayed",
+      "counted_as_pass": false
+    },
+    {
+      "finding_id": "C3-TO-COUNTEREXAMPLE-005",
+      "source_sha256": "51bdfef745c7b3681cad272c1498fee9ca5655110dd5837a697692e5b667f84c",
+      "c8_expected_source_sha256": "51bdfef745c7b3681cad272c1498fee9ca5655110dd5837a697692e5b667f84c",
+      "control_id": "C8-TO-UNKNOWN-005",
+      "expression": "GateRef other = GetObjectType(LoadHClass(output)), changed = (tag = inputTag);",
+      "expected": "unknown",
+      "c3_recorded_actual": "matched",
+      "hash_match": true,
+      "pinned_replay_status": "not_replayed",
+      "counted_as_pass": false
+    },
+    {
+      "finding_id": "C3-TO-COUNTEREXAMPLE-006",
+      "source_sha256": "83e5ad4d3fcfada50f693aa80ec271ef4f5459f90bb15bd83c481531235005cb",
+      "c8_expected_source_sha256": "83e5ad4d3fcfada50f693aa80ec271ef4f5459f90bb15bd83c481531235005cb",
+      "control_id": "C8-TO-UNKNOWN-006",
+      "expression": "Label write(GetEnvironment()); BRANCH((tag = inputTag), &write, exit); Bind(&write);",
+      "expected": "unknown",
+      "c3_recorded_actual": "matched",
+      "hash_match": true,
+      "pinned_replay_status": "not_replayed",
+      "counted_as_pass": false
+    }
+  ],
+  "control_matrix": [
+    {
+      "category": "vulnerable_hit",
+      "control_ids": [
+        "C8-TO-POS-001",
+        "C8-EG-POS-001"
+      ],
+      "expected": "candidate/unassessed on positive controls",
+      "pinned_disposition": {
+        "status": "blocked",
+        "reason": "Frozen implementation and exact commit/tree provenance are not restored; no 0.3.1 replay was run."
+      },
+      "satisfied": false,
+      "counted_as_detector_pass": false,
+      "reason": "Pinned parent source bytes are verified, but the frozen 0.3.1 implementation and commit/tree provenance were unavailable, so no detector result was emitted."
+    },
+    {
+      "category": "fixed_miss",
+      "control_ids": [
+        "C8-TO-FIX-001",
+        "C8-EG-FIX-001"
+      ],
+      "expected": "no candidate on a true fixed control; 0 findings is not safe",
+      "pinned_disposition": {
+        "status": "blocked",
+        "reason": "Frozen implementation and exact commit/tree provenance are not restored; no 0.3.1 replay was run."
+      },
+      "satisfied": false,
+      "counted_as_detector_pass": false,
+      "reason": "The pinned TypeSafety fix is expected to remain unknown under frozen 0.3.1 because the new type read precedes pending-exception handling; this is not a fixed-miss replay and the C4 guard-fix pair is absent."
+    },
+    {
+      "category": "safe_control",
+      "control_ids": [
+        "C8-TO-SAFE-001",
+        "C8-EG-SAFE-001"
+      ],
+      "expected": "control behavior preserved without a product safe claim",
+      "pinned_disposition": {
+        "status": "blocked",
+        "reason": "In-scope control in fix blob; not run because frozen implementation cannot be restored."
+      },
+      "satisfied": false,
+      "counted_as_detector_pass": false,
+      "reason": "The in-scope Set control was not run because the frozen implementation could not be restored."
+    },
+    {
+      "category": "unrelated_control",
+      "control_ids": [
+        "C8-TO-UNR-001",
+        "C8-EG-UNR-001"
+      ],
+      "expected": "out of scope remains not_analyzed and is not a safe/miss result",
+      "pinned_disposition": {
+        "status": "not_analyzed",
+        "reason": "Map is outside the frozen caller profiles; no caller override or custom config was used."
+      },
+      "satisfied": true,
+      "counted_as_detector_pass": false,
+      "reason": "Map is outside the frozen TypeSafety caller profiles and remained not_analyzed with no override. This satisfies non-applicability preservation only."
+    },
+    {
+      "category": "unknown",
+      "control_ids": [
+        "C8-TO-UNKNOWN-001",
+        "C8-TO-UNKNOWN-002",
+        "C8-TO-UNKNOWN-003",
+        "C8-TO-UNKNOWN-004",
+        "C8-TO-UNKNOWN-005",
+        "C8-TO-UNKNOWN-006",
+        "C8-EG-UNKNOWN-001",
+        "C8-OWNER-UNKNOWN-001"
+      ],
+      "expected": "unknown is retained and is not converted to safe/miss",
+      "pinned_disposition": {
+        "status_preserved": true,
+        "algorithm_replay": false,
+        "expected_parent_fix_difference": "The parent samples the receiver type token before storing into a species-created result; the fix samples the result array type. Under the frozen 0.3.1 semantics the parent is expected to remain a partial candidate, while the fixed source is unknown because the type read occurs before pending-exception handling. That expected difference is not a replay result or safety label."
+      },
+      "satisfied": true,
+      "counted_as_detector_pass": false,
+      "reason": "Status semantics preserve unknown/blocked, but the six C3 cases and C4 unknown cases were not executed by the pinned replay."
+    },
+    {
+      "category": "missing_object_fail_closed",
+      "control_ids": [
+        "C8-HISTORY-MISSING-001",
+        "C8-DEPENDENCY-UNKNOWN-001"
+      ],
+      "expected": "missing parent/fix/current object or dependency evidence is blocked/unknown and never counted as passed",
+      "pinned_disposition": {
+        "parent_commit_tree": {
+          "commit_object": "unavailable_local_no_fetch",
+          "tree_object": "not_checked",
+          "matches_recorded_tree": false
+        },
+        "fix_commit_tree": {
+          "commit_object": "unavailable_local_no_fetch",
+          "tree_object": "not_checked",
+          "matches_recorded_tree": false
+        },
+        "overall_status": "blocked",
+        "code_restored": false
+      },
+      "satisfied": true,
+      "counted_as_detector_pass": false,
+      "reason": "Commit/tree and frozen implementation gaps were retained as blockers; blob-byte integrity was reported separately and not promoted to a detector pass."
+    }
+  ],
+  "claim_boundary": {
+    "default_status": "candidate/unassessed",
+    "validated_vulnerability": 0,
+    "product_vulnerability": false,
+    "precision_recall": null,
+    "zero_fp_fn_claim": false
+  }
+}

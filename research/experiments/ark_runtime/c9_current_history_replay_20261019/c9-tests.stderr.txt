@@ -1,0 +1,14 @@
+test_exact_source_identities_match_model_bindings (research.experiments.ark_runtime.c9_current_history_replay_20261019.test_current_history_replay.ExactHistoryReplayTests.test_exact_source_identities_match_model_bindings) ... ok
+test_exception_guard_fixed_source_is_miss_with_two_guard_matches (research.experiments.ark_runtime.c9_current_history_replay_20261019.test_current_history_replay.ExactHistoryReplayTests.test_exception_guard_fixed_source_is_miss_with_two_guard_matches) ... ok
+test_exception_guard_known_parent_hits_filter_and_map (research.experiments.ark_runtime.c9_current_history_replay_20261019.test_current_history_replay.ExactHistoryReplayTests.test_exception_guard_known_parent_hits_filter_and_map) ... ok
+test_required_missing_dependency_fails_closed (research.experiments.ark_runtime.c9_current_history_replay_20261019.test_current_history_replay.ExactHistoryReplayTests.test_required_missing_dependency_fails_closed) ... ok
+test_type_origin_fixed_source_is_also_unknown_not_a_clean_miss (research.experiments.ark_runtime.c9_current_history_replay_20261019.test_current_history_replay.ExactHistoryReplayTests.test_type_origin_fixed_source_is_also_unknown_not_a_clean_miss) ... ok
+test_type_origin_known_parent_gap_is_minimized_as_unknown_not_hit (research.experiments.ark_runtime.c9_current_history_replay_20261019.test_current_history_replay.ExactHistoryReplayTests.test_type_origin_known_parent_gap_is_minimized_as_unknown_not_hit) ... ok
+test_exception_guard_positive_fixed_safe_unrelated_unknown (research.experiments.ark_runtime.c9_current_history_replay_20261019.test_current_history_replay.PositiveFixedSafeUnrelatedUnknownControls.test_exception_guard_positive_fixed_safe_unrelated_unknown) ... ok
+test_status_vocabulary_is_explicit (research.experiments.ark_runtime.c9_current_history_replay_20261019.test_current_history_replay.PositiveFixedSafeUnrelatedUnknownControls.test_status_vocabulary_is_explicit) ... ok
+test_type_origin_positive_fixed_safe_unrelated_unknown (research.experiments.ark_runtime.c9_current_history_replay_20261019.test_current_history_replay.PositiveFixedSafeUnrelatedUnknownControls.test_type_origin_positive_fixed_safe_unrelated_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 7.234s
+
+OK

@@ -1,0 +1,11 @@
+test_fresh_read_does_not_revalidate_an_old_copy (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_fresh_read_does_not_revalidate_an_old_copy) ... ok
+test_host_builder_write_does_not_mutate_runtime_type (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_host_builder_write_does_not_mutate_runtime_type) ... ok
+test_mechanism_matrix (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_mechanism_matrix) ... ok
+test_readonly_summary_requires_exact_builder_receiver (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_readonly_summary_requires_exact_builder_receiver) ... ok
+test_two_stale_snapshots_cannot_prove_current_destination_type (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_two_stale_snapshots_cannot_prove_current_destination_type) ... ok
+test_verified_by_value_call_does_not_refresh_old_token (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_verified_by_value_call_does_not_refresh_old_token) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.251s
+
+OK

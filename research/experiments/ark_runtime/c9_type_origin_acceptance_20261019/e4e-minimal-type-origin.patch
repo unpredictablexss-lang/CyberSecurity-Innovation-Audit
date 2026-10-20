@@ -1,0 +1,61 @@
+--- a/src/ohscanner/detectors/ark_runtime/type_origin.py
++++ b/src/ohscanner/detectors/ark_runtime/type_origin.py
+@@ -180,17 +180,14 @@ class OriginEvaluator:
+         """
+         from dataclasses import replace
+         invalidated = set(state.invalidated)
++        callee = call.child_by_field_name('function')
+         passed_objects = set()
+-        if may_rebind:
+-            # A target can escape through a nested expression as well as a
+-            # direct identifier argument. Resolve every identifier in each
+-            # argument using the current local provenance state.
+-            for argument in self.fn.arguments(call):
+-                for node in walk(argument):
+-                    if node.type == 'identifier':
+-                        value = self.value(node, state)
+-                        if value.kind == 'object':
+-                            passed_objects.add(value.identity)
++        for argument in self.fn.arguments(call):
++            for node in walk(argument):
++                if node.type == 'identifier':
++                    value = self.value(node, state)
++                    if value.kind == 'object':
++                        passed_objects.add(value.identity)
+         for value in state.values.values():
+             if value.kind != 'object':
+                 continue
+@@ -199,22 +196,20 @@ class OriginEvaluator:
+                     and value.identity not in state.escaped):
+                 continue
+             invalidated.add(value.identity)
+-        state.invalidated = frozenset(invalidated)
+-        # A sampled HClass/type for a fresh local allocation remains tied to
+-        # that object while the object has not escaped. A callback cannot
+-        # mutate an object it cannot reach; source-object samples still die.
+-        stable_fresh = {
++        fresh = {
+             value.identity for value in state.values.values()
+             if value.kind == 'object' and value.detail == 'fresh_local_typed_array'
+-            and value.identity not in passed_objects and value.identity not in state.escaped
+-        }
+-        state.values = {
+-            key: (replace(value, valid=False)
+-                  if value.kind in ('type', 'hclass')
+-                  and (not value.valid or value.origin not in stable_fresh)
+-                  else value)
+-            for key, value in state.values.items()
+         }
++        member_call = bool(callee and callee.type == 'field_expression')
++        invalidate_types = (member_call or not self.fn.arguments(call)
++                            or bool(fresh & passed_objects))
++        state.invalidated = frozenset(invalidated)
++        if invalidate_types:
++            state.values = {
++                key: (replace(value, valid=False)
++                      if value.kind in ('type', 'hclass') else value)
++                for key, value in state.values.items()
++            }
+         state.equivalent = frozenset()
+         state.predicates = frozenset()
+         state.effects |= frozenset(((call.start_point[0] + 1, self.fn.call_name(call)),))

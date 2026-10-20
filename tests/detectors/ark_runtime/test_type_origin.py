@@ -3,6 +3,10 @@ from src.ohscanner.detectors.ark_runtime.analysis import analyze_unit
 from src.ohscanner.detectors.ark_runtime.model import AnalysisBudget
 from .support import case, unit, wrap, PREFIX
 
+FRESH = 'GateRef tag = GetObjectType(LoadHClass(output));\n'
+SAFE_STORE = 'StoreTypedArrayElement(glue, output, count, input, tag);\n'
+STORE = 'StoreTypedArrayElement(glue, output, count, input, inputTag);\n'
+
 
 class TypeOriginTests(unittest.TestCase):
     def test_C03_renamed_variables_still_form_candidate(self):
@@ -157,6 +161,45 @@ class TypeOriginTests(unittest.TestCase):
         result = analyze_unit(unit(code))
         self.assertFalse(any(o.kind in ('candidate', 'confirmed', 'reportable')
                              for o in result.observations))
+
+
+    def test_fresh_read_does_not_revalidate_an_old_copy(self):
+        text = wrap(PREFIX + FRESH + 'GateRef old = tag;\nUnknownGlobalEffect();\n'
+                    'tag = GetObjectType(LoadHClass(output));\n' + SAFE_STORE +
+                    'StoreTypedArrayElement(glue, output, count, input, old);')
+        result = analyze_unit(unit(text))
+        self.assertEqual([o.kind for o in result.observations], ['matched', 'unknown'])
+
+    def test_host_builder_write_does_not_mutate_runtime_type(self):
+        text = wrap(PREFIX + FRESH + 'builder.SetParameters(glue, count);\n' + SAFE_STORE)
+        self.assertEqual([o.kind for o in analyze_unit(unit(text)).observations], ['matched'])
+        foreign = text.replace('builder.SetParameters', 'foreign.SetParameters')
+        self.assertEqual([o.kind for o in analyze_unit(unit(foreign)).observations], ['unknown'])
+
+    def test_mechanism_matrix_G07_unknown_global_effect(self):
+        code = PREFIX + FRESH + 'UnknownGlobalEffect();\n' + SAFE_STORE
+        self.assertEqual([o.kind for o in analyze_unit(unit(wrap(code))).observations], ['unknown'])
+
+    def test_readonly_summary_requires_exact_builder_receiver(self):
+        text = PREFIX + FRESH + 'BuiltinsArrayStubBuilder helper(this);\n'
+        text += 'helper.GetTaggedValueWithElementsKind(glue, input, count);\n' + SAFE_STORE
+        self.assertEqual([o.kind for o in analyze_unit(unit(wrap(text))).observations], ['matched'])
+        foreign = text.replace('helper.GetTaggedValueWithElementsKind',
+                               'foreign.GetTaggedValueWithElementsKind')
+        self.assertEqual([o.kind for o in analyze_unit(unit(wrap(foreign))).observations], ['unknown'])
+
+    def test_two_stale_snapshots_cannot_prove_current_destination_type(self):
+        code = PREFIX + FRESH + 'UnknownGlobalEffect();\n'
+        code += 'Label write(GetEnvironment()); BRANCH(Int32Equal(inputTag, tag), &write, exit);\n'
+        code += 'Bind(&write);\n' + STORE
+        self.assertEqual([o.kind for o in analyze_unit(unit(wrap(code))).observations], ['candidate'])
+
+    def test_verified_by_value_call_does_not_refresh_old_token(self):
+        text = wrap(PREFIX + FRESH + 'GetViewedArrayBuffer(output);\n' + SAFE_STORE +
+                    'tag = GetObjectType(LoadHClass(output));\n' + SAFE_STORE)
+        result = analyze_unit(unit(text))
+        self.assertEqual([o.kind for o in sorted(result.observations, key=lambda o: o.line)],
+                         ['unknown', 'matched'])
 
 
 if __name__ == '__main__':

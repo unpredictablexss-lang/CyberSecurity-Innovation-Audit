@@ -1,0 +1,209 @@
+{
+  "schema": "c9-type-origin-source-bound-regression/v1",
+  "rule_id": "ark.runtime.typedarray-store-type-origin",
+  "base_head": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+  "base_tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+  "e4e_review_ref": "origin/codex/c-line-ark-runtime-20261018",
+  "e4e_review_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+  "e4e_review_blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+  "scope": "synthetic Ark Runtime type-origin controls; no product binding",
+  "profile": "assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified",
+  "controls": [
+    {
+      "control_id": "C8-TO-POS-001",
+      "expected": "candidate",
+      "actual_kinds": [
+        "candidate"
+      ],
+      "actual_status": "completed",
+      "file_outcome": "complete",
+      "reasons": [
+        "different_origin_with_species_creation"
+      ],
+      "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+      "source": {
+        "path": "research/experiments/ark_runtime/c8_known_vulnerability_replay_20261019/fixtures/type_origin_positive.cpp",
+        "sha256": "27e2f7b068fbac61e20bc76bb55dcd69a28d66b94e372aad6982570c4f8b0f4a",
+        "bytes": 465,
+        "git_blob": "unknown_untracked"
+      },
+      "assertion_passed": true
+    },
+    {
+      "control_id": "C8-TO-FIX-001",
+      "expected": "matched",
+      "actual_kinds": [
+        "matched"
+      ],
+      "actual_status": "completed",
+      "file_outcome": "complete",
+      "reasons": [
+        "target_origin_or_proved_type_equality"
+      ],
+      "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+      "source": {
+        "path": "research/experiments/ark_runtime/c8_known_vulnerability_replay_20261019/fixtures/type_origin_fixed.cpp",
+        "sha256": "051fcf738efcd16106061ffc8b36125a619620cef5af558f5089d0385f82bf89",
+        "bytes": 474,
+        "git_blob": "unknown_untracked"
+      },
+      "assertion_passed": true
+    },
+    {
+      "control_id": "C8-TO-SAFE-001",
+      "expected": "matched",
+      "actual_kinds": [
+        "matched"
+      ],
+      "actual_status": "completed",
+      "file_outcome": "complete",
+      "reasons": [
+        "target_origin_or_proved_type_equality"
+      ],
+      "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+      "source": {
+        "path": "research/experiments/ark_runtime/c8_known_vulnerability_replay_20261019/fixtures/type_origin_safe_control.cpp",
+        "sha256": "07492d9777ddd92244e68d219cc524f40f49b95eb08302413649607ab6617d40",
+        "bytes": 539,
+        "git_blob": "unknown_untracked"
+      },
+      "assertion_passed": true
+    },
+    {
+      "control_id": "C8-TO-UNR-001",
+      "expected": "not_analyzed",
+      "actual_kinds": [],
+      "actual_status": "completed",
+      "file_outcome": "complete",
+      "reasons": [],
+      "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+      "source": {
+        "path": "research/experiments/ark_runtime/c8_known_vulnerability_replay_20261019/fixtures/type_origin_unrelated.cpp",
+        "sha256": "8e777637e11873333b8d535267846eafe7b8144f5bb264a9a9869fb035756846",
+        "bytes": 57,
+        "git_blob": "unknown_untracked"
+      },
+      "assertion_passed": true
+    },
+    {
+      "control_id": "C8-TO-UNKNOWN-001",
+      "expected": "unknown",
+      "actual_kinds": [
+        "unknown"
+      ],
+      "actual_status": "limited",
+      "file_outcome": "partial",
+      "reasons": [
+        "unmodeled_cpp_lifetime_or_update_expression"
+      ],
+      "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+      "source": {
+        "path": "research/experiments/ark_runtime/c8_known_vulnerability_replay_20261019/fixtures/type_origin_unknown_001.cpp",
+        "sha256": "aa6d148fa52a063a2d796b2c1b80ae8dc0aac49b3ccffe1a460d006e861388c5",
+        "bytes": 452,
+        "git_blob": "unknown_untracked"
+      },
+      "assertion_passed": true
+    },
+    {
+      "control_id": "C8-TO-UNKNOWN-002",
+      "expected": "unknown",
+      "actual_kinds": [
+        "unknown"
+      ],
+      "actual_status": "limited",
+      "file_outcome": "partial",
+      "reasons": [
+        "unmodeled_cpp_lifetime_or_update_expression"
+      ],
+      "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+      "source": {
+        "path": "research/experiments/ark_runtime/c8_known_vulnerability_replay_20261019/fixtures/type_origin_unknown_002.cpp",
+        "sha256": "4d2cba069e2a5191ad2a8db896f7823bfe0157d35b5abadb17e9fdd14ee1858e",
+        "bytes": 452,
+        "git_blob": "unknown_untracked"
+      },
+      "assertion_passed": true
+    },
+    {
+      "control_id": "C8-TO-UNKNOWN-003",
+      "expected": "unknown",
+      "actual_kinds": [
+        "unknown"
+      ],
+      "actual_status": "limited",
+      "file_outcome": "partial",
+      "reasons": [
+        "unmodeled_nested_cpp_assignment"
+      ],
+      "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+      "source": {
+        "path": "research/experiments/ark_runtime/c8_known_vulnerability_replay_20261019/fixtures/type_origin_unknown_003.cpp",
+        "sha256": "b245134c133cde19b9c4964cc7201dc559015f60c3c02aef48625a64ab69af5e",
+        "bytes": 501,
+        "git_blob": "unknown_untracked"
+      },
+      "assertion_passed": true
+    },
+    {
+      "control_id": "C8-TO-UNKNOWN-004",
+      "expected": "unknown",
+      "actual_kinds": [
+        "unknown"
+      ],
+      "actual_status": "limited",
+      "file_outcome": "partial",
+      "reasons": [
+        "unmodeled_nested_cpp_assignment"
+      ],
+      "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+      "source": {
+        "path": "research/experiments/ark_runtime/c8_known_vulnerability_replay_20261019/fixtures/type_origin_unknown_004.cpp",
+        "sha256": "f540fa1c0724fa1aa3216c78170ccb97a3dc9fe90a35cdc29f0560786b362125",
+        "bytes": 501,
+        "git_blob": "unknown_untracked"
+      },
+      "assertion_passed": true
+    },
+    {
+      "control_id": "C8-TO-UNKNOWN-005",
+      "expected": "unknown",
+      "actual_kinds": [
+        "unknown"
+      ],
+      "actual_status": "limited",
+      "file_outcome": "partial",
+      "reasons": [
+        "unmodeled_nested_cpp_assignment"
+      ],
+      "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+      "source": {
+        "path": "research/experiments/ark_runtime/c8_known_vulnerability_replay_20261019/fixtures/type_origin_unknown_005.cpp",
+        "sha256": "51bdfef745c7b3681cad272c1498fee9ca5655110dd5837a697692e5b667f84c",
+        "bytes": 524,
+        "git_blob": "unknown_untracked"
+      },
+      "assertion_passed": true
+    },
+    {
+      "control_id": "C8-TO-UNKNOWN-006",
+      "expected": "unknown",
+      "actual_kinds": [
+        "unknown"
+      ],
+      "actual_status": "limited",
+      "file_outcome": "partial",
+      "reasons": [
+        "unmodeled_nested_cpp_assignment"
+      ],
+      "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+      "source": {
+        "path": "research/experiments/ark_runtime/c8_known_vulnerability_replay_20261019/fixtures/type_origin_unknown_006.cpp",
+        "sha256": "83e5ad4d3fcfada50f693aa80ec271ef4f5459f90bb15bd83c481531235005cb",
+        "bytes": 530,
+        "git_blob": "unknown_untracked"
+      },
+      "assertion_passed": true
+    }
+  ]
+}

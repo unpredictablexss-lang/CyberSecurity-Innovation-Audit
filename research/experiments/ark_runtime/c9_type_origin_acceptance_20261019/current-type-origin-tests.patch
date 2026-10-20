@@ -1,0 +1,127 @@
+diff --git a/src/ohscanner/detectors/ark_runtime/type_origin.py b/src/ohscanner/detectors/ark_runtime/type_origin.py
+index 3ed725d..898e5a3 100644
+--- a/src/ohscanner/detectors/ark_runtime/type_origin.py
++++ b/src/ohscanner/detectors/ark_runtime/type_origin.py
+@@ -170,22 +170,38 @@ class OriginEvaluator:
+         # A verified by-value call or a no-argument unknown call can invalidate
+         # current type observations without rebinding local object identities.
+         rebind = arguments if may_rebind else []
++        fresh = {value.identity for value in state.values.values()
++                 if value.kind == 'object' and value.detail == 'fresh_local_typed_array'}
++        passed = set()
++        for argument in self.fn.arguments(call):
++            for node in walk(argument):
++                if node.type == 'identifier':
++                    value = self.value(node, state)
++                    if value.kind == 'object':
++                        passed.add(value.identity)
++        member_call = bool(callee and callee.type == 'field_expression')
++        invalidate_types = member_call or not self.fn.arguments(call) or bool(fresh & passed)
+         self._invalidate(state, call.start_point[0] + 1, self.fn.call_name(call), rebind,
+-                         invalidate_objects=may_rebind and bool(arguments))
++                         invalidate_objects=may_rebind and bool(arguments),
++                         invalidate_types=invalidate_types,
++                         preserve_fresh=fresh - passed,
++                         stale_reason='unmodeled_call')
+ 
+     def initial(self):
+         return OriginState({b.identity: Value('object', b.identity, origin_line=self.fn.node.start_point[0] + 1)
+                             for b in self.fn.bindings if b.parameter and b.type_name == 'GateRef'})
+ 
+     def _invalidate(self, state, line, detail, rebind=(), invalidate_objects=True,
+-                    invalidate_types=True):
++                    invalidate_types=True, stale_reason=None, preserve_fresh=()):
+         """Forget origin facts that an unmodelled effect may have overwritten."""
+         from dataclasses import replace
+         if invalidate_objects:
+-            state.invalidated |= frozenset(v.identity for v in state.values.values() if v.kind == 'object')
++            state.invalidated |= frozenset(v.identity for v in state.values.values()
++                                           if v.kind == 'object' and v.identity not in preserve_fresh)
+         if invalidate_types:
+-            stale_reason = ('modelled_creation_dispatch'
+-                            if detail == 'modelled_creation_dispatch' else 'unmodeled_effect')
++            stale_reason = stale_reason or ('modelled_creation_dispatch'
++                                            if detail == 'modelled_creation_dispatch'
++                                            else 'unmodeled_effect')
+             state.values = {
+                 key: (replace(value, valid=False,
+                               stale_reason=('unmodeled_effect'
+@@ -345,7 +361,8 @@ class OriginEvaluator:
+                 if source.kind == 'object':
+                     return Value('object', f'new:{node.start_byte}', origin=source.identity,
+                                  origin_line=source.origin_line, creation_line=node.start_point[0] + 1,
+-                                 may_differ=self.model.species_may_change_type)
++                                 may_differ=self.model.species_may_change_type,
++                                 detail='fresh_local_typed_array')
+             owner, name, arity, source_index, type_index = self.model.same_type_creator
+             if field == name and builder.kind == 'builder' and builder.detail == owner and len(args) == arity:
+                 source = self.value(args[source_index], state)
+@@ -421,7 +438,7 @@ class OriginEvaluator:
+         if target.identity in state.invalidated:
+             return ('unknown', target, token, 'creation_relationship_invalidated_by_call')
+         if (target.may_differ and target.creation_line and token.origin != target.identity
+-                and (token.valid or token.stale_reason == 'modelled_creation_dispatch')):
++                and (token.valid or token.stale_reason in ('modelled_creation_dispatch', 'unmodeled_call'))):
+             # The captured SSA token's origin remains known even if it no
+             # longer describes its source object's current type. This is only
+             # a distinct-origin candidate, not a proved numeric type mismatch.
+diff --git a/tests/detectors/ark_runtime/test_type_origin.py b/tests/detectors/ark_runtime/test_type_origin.py
+index b735f5f..9395388 100644
+--- a/tests/detectors/ark_runtime/test_type_origin.py
++++ b/tests/detectors/ark_runtime/test_type_origin.py
+@@ -3,6 +3,10 @@ from src.ohscanner.detectors.ark_runtime.analysis import analyze_unit
+ from src.ohscanner.detectors.ark_runtime.model import AnalysisBudget
+ from .support import case, unit, wrap, PREFIX
+ 
++FRESH = 'GateRef tag = GetObjectType(LoadHClass(output));\n'
++SAFE_STORE = 'StoreTypedArrayElement(glue, output, count, input, tag);\n'
++STORE = 'StoreTypedArrayElement(glue, output, count, input, inputTag);\n'
++
+ 
+ class TypeOriginTests(unittest.TestCase):
+     def test_C03_renamed_variables_still_form_candidate(self):
+@@ -159,5 +163,44 @@ class TypeOriginTests(unittest.TestCase):
+                              for o in result.observations))
+ 
+ 
++    def test_fresh_read_does_not_revalidate_an_old_copy(self):
++        text = wrap(PREFIX + FRESH + 'GateRef old = tag;\nUnknownGlobalEffect();\n'
++                    'tag = GetObjectType(LoadHClass(output));\n' + SAFE_STORE +
++                    'StoreTypedArrayElement(glue, output, count, input, old);')
++        result = analyze_unit(unit(text))
++        self.assertEqual([o.kind for o in result.observations], ['matched', 'unknown'])
++
++    def test_host_builder_write_does_not_mutate_runtime_type(self):
++        text = wrap(PREFIX + FRESH + 'builder.SetParameters(glue, count);\n' + SAFE_STORE)
++        self.assertEqual([o.kind for o in analyze_unit(unit(text)).observations], ['matched'])
++        foreign = text.replace('builder.SetParameters', 'foreign.SetParameters')
++        self.assertEqual([o.kind for o in analyze_unit(unit(foreign)).observations], ['unknown'])
++
++    def test_mechanism_matrix_G07_unknown_global_effect(self):
++        code = PREFIX + FRESH + 'UnknownGlobalEffect();\n' + SAFE_STORE
++        self.assertEqual([o.kind for o in analyze_unit(unit(wrap(code))).observations], ['unknown'])
++
++    def test_readonly_summary_requires_exact_builder_receiver(self):
++        text = PREFIX + FRESH + 'BuiltinsArrayStubBuilder helper(this);\n'
++        text += 'helper.GetTaggedValueWithElementsKind(glue, input, count);\n' + SAFE_STORE
++        self.assertEqual([o.kind for o in analyze_unit(unit(wrap(text))).observations], ['matched'])
++        foreign = text.replace('helper.GetTaggedValueWithElementsKind',
++                               'foreign.GetTaggedValueWithElementsKind')
++        self.assertEqual([o.kind for o in analyze_unit(unit(wrap(foreign))).observations], ['unknown'])
++
++    def test_two_stale_snapshots_cannot_prove_current_destination_type(self):
++        code = PREFIX + FRESH + 'UnknownGlobalEffect();\n'
++        code += 'Label write(GetEnvironment()); BRANCH(Int32Equal(inputTag, tag), &write, exit);\n'
++        code += 'Bind(&write);\n' + STORE
++        self.assertEqual([o.kind for o in analyze_unit(unit(wrap(code))).observations], ['candidate'])
++
++    def test_verified_by_value_call_does_not_refresh_old_token(self):
++        text = wrap(PREFIX + FRESH + 'GetViewedArrayBuffer(output);\n' + SAFE_STORE +
++                    'tag = GetObjectType(LoadHClass(output));\n' + SAFE_STORE)
++        result = analyze_unit(unit(text))
++        self.assertEqual([o.kind for o in sorted(result.observations, key=lambda o: o.line)],
++                         ['unknown', 'matched'])
++
++
+ if __name__ == '__main__':
+     unittest.main()

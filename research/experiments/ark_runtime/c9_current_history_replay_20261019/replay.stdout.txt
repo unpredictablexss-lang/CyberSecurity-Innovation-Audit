@@ -1,0 +1,1 @@
+{"replay_gate": "blocked", "controls": {"count": 4, "passed": 2, "failed": 2, "hit": 1, "miss": 1, "unknown": 2, "not_analyzed": 0}, "scanner_observation": "known vulnerable parent not fully hit by current rule"}

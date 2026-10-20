@@ -1,0 +1,57 @@
+test_arrow_allocation_inside_cycle_is_not_a_fresh_identity (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_arrow_allocation_inside_cycle_is_not_a_fresh_identity) ... ok
+test_budget_after_multiple_paths_discards_truncated_candidates (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_budget_after_multiple_paths_discards_truncated_candidates) ... ok
+test_compound_assignment_is_not_token_copy (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_compound_assignment_is_not_token_copy) ... ok
+test_copywithin_reviewed_reads_preserve_same_object_type (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_copywithin_reviewed_reads_preserve_same_object_type) ... ok
+test_deleted_special_member_has_no_body_and_cannot_crash_parser (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_deleted_special_member_has_no_body_and_cannot_crash_parser) ... ok
+test_fresh_read_does_not_revalidate_an_old_copy (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_fresh_read_does_not_revalidate_an_old_copy) ... ok
+test_global_creator_type_homonym_is_not_a_reviewed_builder (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_global_creator_type_homonym_is_not_a_reviewed_builder) ... ok
+test_host_builder_write_does_not_mutate_runtime_type (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_host_builder_write_does_not_mutate_runtime_type) ... ok
+test_host_gate_ref_rebinding_is_not_a_runtime_phi (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_host_gate_ref_rebinding_is_not_a_runtime_phi) ... ok
+test_host_return_cannot_emit_future_label (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_host_return_cannot_emit_future_label) ... ok
+test_later_function_budget_retains_only_completed_function_evidence (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_later_function_budget_retains_only_completed_function_evidence) ... ok
+test_mechanism_matrix (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_mechanism_matrix) ... 
+  test_mechanism_matrix (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_mechanism_matrix) (case='G11', reason='A successful type guard must not survive an unknown effect.') ... FAIL
+test_multiple_supported_functions_keep_independent_states (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_multiple_supported_functions_keep_independent_states) ... ok
+test_other_reviewed_owner_function_uses_actual_symbol (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_other_reviewed_owner_function_uses_actual_symbol) ... ok
+test_readonly_summary_requires_exact_builder_receiver (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_readonly_summary_requires_exact_builder_receiver) ... ok
+test_same_type_creator_and_exact_buffer_copy_preserve_origin (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_same_type_creator_and_exact_buffer_copy_preserve_origin) ... ok
+test_same_type_creator_requires_token_from_its_exact_exemplar (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_same_type_creator_requires_token_from_its_exact_exemplar) ... ok
+test_shadowed_equality_macro_is_not_admitted (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_shadowed_equality_macro_is_not_admitted) ... ok
+test_species_creation_invalidates_current_type_but_not_token_origin (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_species_creation_invalidates_current_type_but_not_token_origin) ... ok
+test_two_stale_snapshots_cannot_prove_current_destination_type (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_two_stale_snapshots_cannot_prove_current_destination_type) ... FAIL
+test_unknown_build_profile_does_not_silently_drop_assertions (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_unknown_build_profile_does_not_silently_drop_assertions) ... ok
+test_unknown_loop_never_upgrades_file_coverage (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_unknown_loop_never_upgrades_file_coverage) ... ok
+test_unknown_reference_parameter_cannot_reuse_pre_call_alias (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_unknown_reference_parameter_cannot_reuse_pre_call_alias) ... ok
+test_unknown_runtime_call_still_invalidates_same_type_relation (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_unknown_runtime_call_still_invalidates_same_type_relation) ... ok
+test_unmodelled_cpp_expression_writes_cannot_leave_type_facts_live (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_unmodelled_cpp_expression_writes_cannot_leave_type_facts_live) ... ok
+test_unmodelled_generated_return_does_not_fall_through (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_unmodelled_generated_return_does_not_fall_through) ... ok
+test_unreviewed_constructor_in_detached_block_still_blocks_host_proof (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_unreviewed_constructor_in_detached_block_still_blocks_host_proof) ... ok
+test_verified_by_value_call_does_not_refresh_old_token (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_verified_by_value_call_does_not_refresh_old_token) ... ok
+test_visible_type_helper_definition_requires_review (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_visible_type_helper_definition_requires_review) ... ok
+
+======================================================================
+FAIL: test_mechanism_matrix (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_mechanism_matrix) (case='G11', reason='A successful type guard must not survive an unknown effect.')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Íø°²\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c8_parallel_20261019\worktrees\type-origin\tests\detectors\ark_runtime\test_c3_mechanisms.py", line 283, in test_mechanism_matrix
+    self.assertEqual(classify(actual), expected, actual.to_dict())
+AssertionError: 'candidate' != 'unknown'
+- candidate
++ unknown
+ : {'status': 'completed', 'file_outcome': 'complete', 'observations': ({'kind': 'candidate', 'line': 11, 'column': 1, 'reason': 'different_origin_with_species_creation', 'target_identity': 'new:281', 'token_origin': 'function:38:574:356508c43cd767c3fe79eae3ac88e8aa49d57cac80460fef02a9052f9fc89f5c:95:input', 'token_line': 3, 'creation_line': 5, 'path': (3, 4, 5, 6, 7, 8, 9, 10, 11), 'constraints': ((8, 'Int32Equal(inputTag, tag)', True),), 'symbol': 'panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter', 'region_start_byte': 38, 'region_end_byte': 574, 'effect_sites': ((5, 'modelled_creation_dispatch'), (10, 'Mutate'))},), 'limitations': (), 'steps': 9, 'model_digest': 'd2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00'}
+
+======================================================================
+FAIL: test_two_stale_snapshots_cannot_prove_current_destination_type (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_two_stale_snapshots_cannot_prove_current_destination_type)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Íø°²\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c8_parallel_20261019\worktrees\type-origin\tests\detectors\ark_runtime\test_c3_mechanisms.py", line 195, in test_two_stale_snapshots_cannot_prove_current_destination_type
+    self.assertEqual(classify(analyze_unit(unit(wrap(code)))), 'unknown')
+AssertionError: 'candidate' != 'unknown'
+- candidate
++ unknown
+
+
+----------------------------------------------------------------------
+Ran 29 tests in 0.310s
+
+FAILED (failures=2)

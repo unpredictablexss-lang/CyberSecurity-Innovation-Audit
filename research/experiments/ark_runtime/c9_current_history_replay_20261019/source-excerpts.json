@@ -1,0 +1,889 @@
+{
+  "type_origin": {
+    "C9-TO-POS-001": [
+      {
+        "needle": "GateRef newArray =",
+        "line": 1478,
+        "start_line": 1474,
+        "end_line": 1482,
+        "text": "            Label hasException2(env);\n            Label notHasException2(env);\n            NewObjectStubBuilder newBuilder(this);\n            newBuilder.SetParameters(glue, 0);\n            GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n            BRANCH(HasPendingException(glue), &hasException2, &notHasException2);\n            Bind(&hasException2);\n            {\n                result->WriteVariable(Exception());"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 1583,
+        "start_line": 1579,
+        "end_line": 1587,
+        "text": "    Bind(&newTypedArray);\n    {\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n        BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n        Bind(&hasException0);\n        {\n            result->WriteVariable(Exception());"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 1719,
+        "start_line": 1715,
+        "end_line": 1723,
+        "text": "    GateRef hclass = LoadHClass(thisValue);\n    GateRef jsType = GetObjectType(hclass);\n    NewObjectStubBuilder newBuilder(this);\n    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n    Label hasException0(env);\n    Label notHasException0(env);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 2468,
+        "start_line": 2464,
+        "end_line": 2472,
+        "text": "    GateRef jsType = GetObjectType(LoadHClass(thisValue));\n    GateRef thisLen = ZExtInt32ToInt64(GetArrayLength(thisValue));\n    NewObjectStubBuilder newBuilder(this);\n    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n    Label hasException0(env);\n    Label notHasException0(env);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 2646,
+        "start_line": 2642,
+        "end_line": 2650,
+        "text": "        DEFVARIABLE(kValue, VariableType::JS_ANY(), Hole());\n        DEFVARIABLE(i, VariableType::INT64(), Int64(0));\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n        GateRef newArrayType = GetObjectType(LoadHClass(newArray));\n        Label loopHead(env);\n        Label loopEnd(env);\n        Label loopNext(env);"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 2704,
+        "start_line": 2700,
+        "end_line": 2708,
+        "text": "\n    DEFVARIABLE(thisArrLen, VariableType::INT64(), ZExtInt32ToInt64(GetArrayLength(thisValue)));\n    NewObjectStubBuilder newBuilder(this);\n    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, arrayType, TruncInt64ToInt32(*thisArrLen));\n    DEFVARIABLE(k, VariableType::INT64(), Int64(0));\n\n    Label loopHead(env);\n    Label loopEnd(env);"
+      },
+      {
+        "needle": "GateRef newArrayType =",
+        "line": 2647,
+        "start_line": 2643,
+        "end_line": 2651,
+        "text": "        DEFVARIABLE(i, VariableType::INT64(), Int64(0));\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n        GateRef newArrayType = GetObjectType(LoadHClass(newArray));\n        Label loopHead(env);\n        Label loopEnd(env);\n        Label loopNext(env);\n        Label loopExit(env);"
+      },
+      {
+        "needle": "StoreTypedArrayElement(",
+        "line": 113,
+        "start_line": 109,
+        "end_line": 117,
+        "text": "    env->SubCfgExit();\n    return ret;\n}\n\nGateRef BuiltinsTypedArrayStubBuilder::StoreTypedArrayElement(GateRef glue, GateRef array, GateRef index, GateRef value,\n                                                              GateRef jsType)\n{\n    auto env = GetEnvironment();\n    Label entryPass(env);"
+      },
+      {
+        "needle": "StoreTypedArrayElement(",
+        "line": 964,
+        "start_line": 960,
+        "end_line": 968,
+        "text": "                    Jump(exit);\n                }\n                Bind(&notHasException0);\n                {\n                    StoreTypedArrayElement(glue, thisValue, *copyTo, *kValue, jsType);\n                    Jump(&loopEnd);\n                }\n            }\n            Bind(&loopEnd);"
+      },
+      {
+        "needle": "StoreTypedArrayElement(",
+        "line": 1498,
+        "start_line": 1494,
+        "end_line": 1502,
+        "text": "                BRANCH(Int32LessThan(*i, *newArrayLen), &next2, &loopExit2);\n                Bind(&next2);\n                {\n                    GateRef kValue = arrayStubBuilder.GetTaggedValueWithElementsKind(glue, kept, *i);\n                    StoreTypedArrayElement(glue, newArray, ZExtInt32ToInt64(*i), kValue, arrayType);\n                    Jump(&loopEnd2);\n                }\n            }\n            Bind(&loopEnd2);"
+      },
+      {
+        "needle": "StoreTypedArrayElement(",
+        "line": 1762,
+        "start_line": 1758,
+        "end_line": 1766,
+        "text": "                Bind(&loopNext);\n                BRANCH(Int64Equal(*k, *actualIndex), &replaceIndex, &loopEnd);\n                Bind(&replaceIndex);\n                {\n                    StoreTypedArrayElement(glue, newArray, *k, *value, jsType);\n                    Jump(&loopEnd);\n                }\n            }\n            Bind(&loopEnd);"
+      },
+      {
+        "needle": "StoreTypedArrayElement(",
+        "line": 2234,
+        "start_line": 2230,
+        "end_line": 2238,
+        "text": "                    Bind(&loopNext);\n                    {\n                        GateRef srcValue = FastGetPropertyByIndex(glue, srcArray, TruncInt64ToInt32(*startIndex),\n                            GetObjectType(LoadHClass(srcArray)));\n                        StoreTypedArrayElement(glue, thisValue, *realOffset, srcValue,\n                            GetObjectType(LoadHClass(thisValue)));\n                        Jump(&loopEnd);\n                    }\n                }"
+      }
+    ],
+    "C9-TO-FIX-001": [
+      {
+        "needle": "GateRef newArray =",
+        "line": 1478,
+        "start_line": 1474,
+        "end_line": 1482,
+        "text": "            Label hasException2(env);\n            Label notHasException2(env);\n            NewObjectStubBuilder newBuilder(this);\n            newBuilder.SetParameters(glue, 0);\n            GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n            GateRef newArrayType = GetObjectType(LoadHClass(newArray));\n            BRANCH(HasPendingException(glue), &hasException2, &notHasException2);\n            Bind(&hasException2);\n            {"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 1584,
+        "start_line": 1580,
+        "end_line": 1588,
+        "text": "    Bind(&newTypedArray);\n    {\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n        BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n        Bind(&hasException0);\n        {\n            result->WriteVariable(Exception());"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 1720,
+        "start_line": 1716,
+        "end_line": 1724,
+        "text": "    GateRef hclass = LoadHClass(thisValue);\n    GateRef jsType = GetObjectType(hclass);\n    NewObjectStubBuilder newBuilder(this);\n    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n    Label hasException0(env);\n    Label notHasException0(env);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 2469,
+        "start_line": 2465,
+        "end_line": 2473,
+        "text": "    GateRef jsType = GetObjectType(LoadHClass(thisValue));\n    GateRef thisLen = ZExtInt32ToInt64(GetArrayLength(thisValue));\n    NewObjectStubBuilder newBuilder(this);\n    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n    Label hasException0(env);\n    Label notHasException0(env);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 2647,
+        "start_line": 2643,
+        "end_line": 2651,
+        "text": "        DEFVARIABLE(kValue, VariableType::JS_ANY(), Hole());\n        DEFVARIABLE(i, VariableType::INT64(), Int64(0));\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n        GateRef newArrayType = GetObjectType(LoadHClass(newArray));\n        Label loopHead(env);\n        Label loopEnd(env);\n        Label loopNext(env);"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 2705,
+        "start_line": 2701,
+        "end_line": 2709,
+        "text": "\n    DEFVARIABLE(thisArrLen, VariableType::INT64(), ZExtInt32ToInt64(GetArrayLength(thisValue)));\n    NewObjectStubBuilder newBuilder(this);\n    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, arrayType, TruncInt64ToInt32(*thisArrLen));\n    DEFVARIABLE(k, VariableType::INT64(), Int64(0));\n\n    Label loopHead(env);\n    Label loopEnd(env);"
+      },
+      {
+        "needle": "GateRef newArrayType =",
+        "line": 1479,
+        "start_line": 1475,
+        "end_line": 1483,
+        "text": "            Label notHasException2(env);\n            NewObjectStubBuilder newBuilder(this);\n            newBuilder.SetParameters(glue, 0);\n            GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n            GateRef newArrayType = GetObjectType(LoadHClass(newArray));\n            BRANCH(HasPendingException(glue), &hasException2, &notHasException2);\n            Bind(&hasException2);\n            {\n                result->WriteVariable(Exception());"
+      },
+      {
+        "needle": "GateRef newArrayType =",
+        "line": 2648,
+        "start_line": 2644,
+        "end_line": 2652,
+        "text": "        DEFVARIABLE(i, VariableType::INT64(), Int64(0));\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n        GateRef newArrayType = GetObjectType(LoadHClass(newArray));\n        Label loopHead(env);\n        Label loopEnd(env);\n        Label loopNext(env);\n        Label loopExit(env);"
+      },
+      {
+        "needle": "StoreTypedArrayElement(",
+        "line": 113,
+        "start_line": 109,
+        "end_line": 117,
+        "text": "    env->SubCfgExit();\n    return ret;\n}\n\nGateRef BuiltinsTypedArrayStubBuilder::StoreTypedArrayElement(GateRef glue, GateRef array, GateRef index, GateRef value,\n                                                              GateRef jsType)\n{\n    auto env = GetEnvironment();\n    Label entryPass(env);"
+      },
+      {
+        "needle": "StoreTypedArrayElement(",
+        "line": 964,
+        "start_line": 960,
+        "end_line": 968,
+        "text": "                    Jump(exit);\n                }\n                Bind(&notHasException0);\n                {\n                    StoreTypedArrayElement(glue, thisValue, *copyTo, *kValue, jsType);\n                    Jump(&loopEnd);\n                }\n            }\n            Bind(&loopEnd);"
+      },
+      {
+        "needle": "StoreTypedArrayElement(",
+        "line": 1499,
+        "start_line": 1495,
+        "end_line": 1503,
+        "text": "                BRANCH(Int32LessThan(*i, *newArrayLen), &next2, &loopExit2);\n                Bind(&next2);\n                {\n                    GateRef kValue = arrayStubBuilder.GetTaggedValueWithElementsKind(glue, kept, *i);\n                    StoreTypedArrayElement(glue, newArray, ZExtInt32ToInt64(*i), kValue, newArrayType);\n                    Jump(&loopEnd2);\n                }\n            }\n            Bind(&loopEnd2);"
+      },
+      {
+        "needle": "StoreTypedArrayElement(",
+        "line": 1763,
+        "start_line": 1759,
+        "end_line": 1767,
+        "text": "                Bind(&loopNext);\n                BRANCH(Int64Equal(*k, *actualIndex), &replaceIndex, &loopEnd);\n                Bind(&replaceIndex);\n                {\n                    StoreTypedArrayElement(glue, newArray, *k, *value, jsType);\n                    Jump(&loopEnd);\n                }\n            }\n            Bind(&loopEnd);"
+      },
+      {
+        "needle": "StoreTypedArrayElement(",
+        "line": 2235,
+        "start_line": 2231,
+        "end_line": 2239,
+        "text": "                    Bind(&loopNext);\n                    {\n                        GateRef srcValue = FastGetPropertyByIndex(glue, srcArray, TruncInt64ToInt32(*startIndex),\n                            GetObjectType(LoadHClass(srcArray)));\n                        StoreTypedArrayElement(glue, thisValue, *realOffset, srcValue,\n                            GetObjectType(LoadHClass(thisValue)));\n                        Jump(&loopEnd);\n                    }\n                }"
+      }
+    ]
+  },
+  "exception_guard": {
+    "C9-EG-POS-001": [
+      {
+        "needle": "GateRef newArray =",
+        "line": 1486,
+        "start_line": 1482,
+        "end_line": 1490,
+        "text": "            Label hasException2(env);\n            Label notHasException2(env);\n            NewObjectStubBuilder newBuilder(this);\n            newBuilder.SetParameters(glue, 0);\n            GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n            GateRef newArrayType = GetObjectType(LoadHClass(glue, newArray));\n            BRANCH(HasPendingException(glue), &hasException2, &notHasException2);\n            Bind(&hasException2);\n            {"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 1592,
+        "start_line": 1588,
+        "end_line": 1596,
+        "text": "    Bind(&newTypedArray);\n    {\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n        BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n        Bind(&hasException0);\n        {\n            result->WriteVariable(Exception());"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 1728,
+        "start_line": 1724,
+        "end_line": 1732,
+        "text": "    GateRef hclass = LoadHClass(glue, thisValue);\n    GateRef jsType = GetObjectType(hclass);\n    NewObjectStubBuilder newBuilder(this);\n    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n    Label hasException0(env);\n    Label notHasException0(env);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 2477,
+        "start_line": 2473,
+        "end_line": 2481,
+        "text": "    GateRef jsType = GetObjectType(LoadHClass(glue, thisValue));\n    GateRef thisLen = ZExtInt32ToInt64(GetArrayLength(thisValue));\n    NewObjectStubBuilder newBuilder(this);\n    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n    Label hasException0(env);\n    Label notHasException0(env);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 2655,
+        "start_line": 2651,
+        "end_line": 2659,
+        "text": "        DEFVARIABLE(kValue, VariableType::JS_ANY(), Hole());\n        DEFVARIABLE(i, VariableType::INT64(), Int64(0));\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n        GateRef newArrayType = GetObjectType(LoadHClass(glue, newArray));\n        Label loopHead(env);\n        Label loopEnd(env);\n        Label loopNext(env);"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 2713,
+        "start_line": 2709,
+        "end_line": 2717,
+        "text": "\n    DEFVARIABLE(thisArrLen, VariableType::INT64(), ZExtInt32ToInt64(GetArrayLength(thisValue)));\n    NewObjectStubBuilder newBuilder(this);\n    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, arrayType, TruncInt64ToInt32(*thisArrLen));\n    DEFVARIABLE(k, VariableType::INT64(), Int64(0));\n\n    Label loopHead(env);\n    Label loopEnd(env);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 665,
+        "start_line": 661,
+        "end_line": 669,
+        "text": "                    GateRef kValue = FastGetPropertyByIndex(glue, thisValue,\n                        TruncInt64ToInt32(*curIndex), GetObjectType(LoadHClass(glue, thisValue)));\n                    Label hasException0(env);\n                    Label notHasException0(env);\n                    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n                    Bind(&hasException0);\n                    {\n                        result->WriteVariable(Exception());\n                        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 728,
+        "start_line": 724,
+        "end_line": 732,
+        "text": "        BRANCH(Int64LessThan(*i, thisArrLen), &next, &loopExit);\n        Bind(&next);\n        GateRef kValue = FastGetPropertyByIndex(glue, thisValue, TruncInt64ToInt32(*i),\n            GetObjectType(LoadHClass(glue, thisValue)));\n        BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n        Bind(&hasException0);\n        {\n            result->WriteVariable(Exception());\n            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 744,
+        "start_line": 740,
+        "end_line": 748,
+        "text": "            callArgs.callThisArg3WithReturnArgs = { argHandle, kValue, key, thisValue };\n            CallStubBuilder callBuilder(this, glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0, nullptr,\n                Circuit::NullGate(), callArgs);\n            GateRef retValue = callBuilder.JSCallDispatch();\n            BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n            Bind(&hasException1);\n            {\n                result->WriteVariable(retValue);\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 969,
+        "start_line": 965,
+        "end_line": 973,
+        "text": "                Label notHasException0(env);\n                BRANCH(Int64GreaterThan(*count, Int64(0)), &next, &loopExit);\n                Bind(&next);\n                kValue = FastGetPropertyByIndex(glue, thisValue, TruncInt64ToInt32(*copyFrom), jsType);\n                BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n                Bind(&hasException0);\n                {\n                    result->WriteVariable(Exception());\n                    Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1075,
+        "start_line": 1071,
+        "end_line": 1079,
+        "text": "                        Circuit::NullGate(), callArgs);\n                    GateRef callResult = callBuilder.JSCallDispatch();\n                    Label hasException1(env);\n                    Label notHasException1(env);\n                    BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n                    Bind(&hasException1);\n                    {\n                        result->WriteVariable(Exception());\n                        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1182,
+        "start_line": 1178,
+        "end_line": 1186,
+        "text": "                        Circuit::NullGate(), callArgs);\n                    GateRef callResult = callBuilder.JSCallDispatch();\n                    Label hasException1(env);\n                    Label notHasException1(env);\n                    BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n                    Bind(&hasException1);\n                    {\n                        result->WriteVariable(Exception());\n                        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1250,
+        "start_line": 1246,
+        "end_line": 1254,
+        "text": "        Label retValueIsFalse(env);\n        BRANCH(Int32LessThan(*i, thisArrlen), &next, &loopExit);\n        Bind(&next);\n        kValue = FastGetPropertyByIndex(glue, thisValue, *i, GetObjectType(LoadHClass(glue, thisValue)));\n        BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n        Bind(&hasException0);\n        {\n            result->WriteVariable(Exception());\n            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1264,
+        "start_line": 1260,
+        "end_line": 1268,
+        "text": "            callArgs.callThisArg3WithReturnArgs = { argHandle, *kValue, key, thisValue };\n            CallStubBuilder callBuilder(this, glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0, nullptr,\n                Circuit::NullGate(), callArgs);\n            GateRef retValue = callBuilder.JSCallDispatch();\n            BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n            Bind(&hasException1);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1335,
+        "start_line": 1331,
+        "end_line": 1339,
+        "text": "            BRANCH(Int64LessThan(*i, *thisArrLen), &next, &loopExit);\n            Bind(&next);\n            kValue = FastGetPropertyByIndex(glue, thisValue, TruncInt64ToInt32(*i),\n                GetObjectType(LoadHClass(glue, thisValue)));\n            BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n            Bind(&hasException0);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1353,
+        "start_line": 1349,
+        "end_line": 1357,
+        "text": "                callArgs.callThisArg3WithReturnArgs = { argHandle, *kValue, key, thisValue };\n                CallStubBuilder callBuilder(this, glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0, nullptr,\n                    Circuit::NullGate(), callArgs);\n                GateRef retValue = callBuilder.JSCallDispatch();\n                BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n                Bind(&hasException1);\n                {\n                    result->WriteVariable(Exception());\n                    Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1444,
+        "start_line": 1440,
+        "end_line": 1448,
+        "text": "                BRANCH(Int32LessThan(*i, thisLen), &next, &loopExit);\n                Bind(&next);\n                {\n                    GateRef kValue = FastGetPropertyByIndex(glue, thisValue, *i, arrayType);\n                    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n                    Bind(&hasException0);\n                    {\n                        result->WriteVariable(Exception());\n                        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1458,
+        "start_line": 1454,
+        "end_line": 1462,
+        "text": "                        callArgs.callThisArg3WithReturnArgs = { argHandle, kValue, key, thisValue };\n                        CallStubBuilder callBuilder(this, glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                            nullptr, Circuit::NullGate(), callArgs);\n                        GateRef retValue = callBuilder.JSCallDispatch();\n                        BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n                        Bind(&hasException1);\n                        {\n                            result->WriteVariable(Exception());\n                            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1488,
+        "start_line": 1484,
+        "end_line": 1492,
+        "text": "            NewObjectStubBuilder newBuilder(this);\n            newBuilder.SetParameters(glue, 0);\n            GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n            GateRef newArrayType = GetObjectType(LoadHClass(glue, newArray));\n            BRANCH(HasPendingException(glue), &hasException2, &notHasException2);\n            Bind(&hasException2);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1593,
+        "start_line": 1589,
+        "end_line": 1597,
+        "text": "    {\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n        BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n        Bind(&hasException0);\n        {\n            result->WriteVariable(Exception());\n            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1731,
+        "start_line": 1727,
+        "end_line": 1735,
+        "text": "    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n    Label hasException0(env);\n    Label notHasException0(env);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);\n    {\n        result->WriteVariable(Exception());\n        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1833,
+        "start_line": 1829,
+        "end_line": 1837,
+        "text": "    Label notHasException0(env);\n\n    GateRef jsType = GetObjectType(LoadHClass(glue, receiver));\n    presentValue = FastGetPropertyByIndex(glue, receiver, Int32(0), jsType);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);\n    {\n        result->WriteVariable(Exception());\n        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1860,
+        "start_line": 1856,
+        "end_line": 1864,
+        "text": "            Label notHasException1(env);\n            DEFVARIABLE(beginIndex, VariableType::INT64(), Int64(0));\n            DEFVARIABLE(endIndex, VariableType::INT64(), *i);\n            presentValue = FastGetPropertyByIndex(glue, receiver, TruncInt64ToInt32(*i), jsType);\n            BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n            Bind(&hasException1);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1883,
+        "start_line": 1879,
+        "end_line": 1887,
+        "text": "                    Label notHasException2(env);\n                    GateRef sum = Int64Add(*beginIndex, *endIndex);\n                    GateRef middleIndex = Int64Div(sum, Int64(2));\n                    middleValue = FastGetPropertyByIndex(glue, receiver, TruncInt64ToInt32(middleIndex), jsType);\n                    BRANCH(HasPendingException(glue), &hasException2, &notHasException2);\n                    Bind(&hasException2);\n                    {\n                        result->WriteVariable(Exception());\n                        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2072,
+        "start_line": 2068,
+        "end_line": 2076,
+        "text": "                        Label hasException3(env);\n                        Label notHasException3(env);\n                        previousValue = FastGetPropertyByIndex(glue, receiver,\n                            TruncInt64ToInt32(Int64Sub(*j, Int64(1))), jsType);\n                        BRANCH(HasPendingException(glue), &hasException3, &notHasException3);\n                        Bind(&hasException3);\n                        {\n                            result->WriteVariable(Exception());\n                            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2300,
+        "start_line": 2296,
+        "end_line": 2304,
+        "text": "        {\n            Label hasException0(env);\n            Label notHasException0(env);\n            GateRef kValue = FastGetPropertyByIndex(glue, thisValue, *j, GetObjectType(LoadHClass(glue, thisValue)));\n            BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n            Bind(&hasException0);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2427,
+        "start_line": 2423,
+        "end_line": 2431,
+        "text": "        callArgs.callThisArg3WithReturnArgs = { argHandle, *kValue, key, thisValue };\n        CallStubBuilder callBuilder(this, glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0, nullptr,\n            Circuit::NullGate(), callArgs);\n        GateRef retValue = callBuilder.JSCallDispatch();\n        BRANCH(HasPendingException(glue), &hasException, &notHasException);\n        Bind(&hasException);\n        {\n            result->WriteVariable(Exception());\n            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2480,
+        "start_line": 2476,
+        "end_line": 2484,
+        "text": "    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n    Label hasException0(env);\n    Label notHasException0(env);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);\n    {\n        result->WriteVariable(Exception());\n        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2552,
+        "start_line": 2548,
+        "end_line": 2556,
+        "text": "        BRANCH(checkValueValid(*kValue), &setValue0, slowPath);\n        Bind(&setValue0);\n        // 0: first element in newArray\n        FastSetPropertyByIndex(glue, *kValue, thisObj, Int32(0), arrayType);\n        BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n        Bind(&hasException0);\n        {\n            result->WriteVariable(Exception());\n            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2571,
+        "start_line": 2567,
+        "end_line": 2575,
+        "text": "            BRANCH(checkValueValid(*kValue), &setValue1, slowPath);\n            Bind(&setValue1);\n            // 1: second element in newArray\n            FastSetPropertyByIndex(glue, *kValue, thisObj, Int32(1), arrayType);\n            BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n            Bind(&hasException1);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2589,
+        "start_line": 2585,
+        "end_line": 2593,
+        "text": "                BRANCH(checkValueValid(*kValue), &setValue2, slowPath);\n                Bind(&setValue2);\n                // 2: third element in newArray\n                FastSetPropertyByIndex(glue, *kValue, thisObj, Int32(2), arrayType);\n                BRANCH(HasPendingException(glue), &hasException2, &writeResult);\n                Bind(&hasException2);\n                {\n                    result->WriteVariable(Exception());\n                    Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2675,
+        "start_line": 2671,
+        "end_line": 2679,
+        "text": "            callArgs.callThisArg3WithReturnArgs = { argHandle, *kValue, key, thisValue };\n            CallStubBuilder callBuilder(this, glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0, nullptr,\n                Circuit::NullGate(), callArgs);\n            GateRef retValue = callBuilder.JSCallDispatch();\n            BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n            Bind(&hasException1);\n            result->WriteVariable(Exception());\n            Jump(exit);\n"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2731,
+        "start_line": 2727,
+        "end_line": 2735,
+        "text": "            Label hasException0(env);\n            Label hasException1(env);\n            Label notHasException0(env);\n            GateRef fromValue = FastGetPropertyByIndex(glue, thisValue, TruncInt64ToInt32(*from), arrayType);\n            BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n            Bind(&hasException0);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2740,
+        "start_line": 2736,
+        "end_line": 2744,
+        "text": "            }\n            Bind(&notHasException0);\n            {\n                FastSetPropertyByIndex(glue, fromValue, newArray, TruncInt64ToInt32(*k), arrayType);\n                BRANCH(HasPendingException(glue), &hasException1, &loopEnd);\n                Bind(&hasException1);\n                {\n                    result->WriteVariable(Exception());\n                    Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3162,
+        "start_line": 3158,
+        "end_line": 3166,
+        "text": "                {\n                    Label notException(env);\n                    GateRef index = ToIndex(glue, arg0);\n                    elementLengthTagged = index;\n                    BRANCH(HasPendingException(glue), &hasException, &notException);\n                    Bind(&notException);\n                    {\n                        elementLength = DoubleToInt(glue, GetDoubleOfTNumber(index));\n                        Jump(&isUndef);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3173,
+        "start_line": 3169,
+        "end_line": 3177,
+        "text": "                Bind(&isUndef);\n                {\n                    res = AllocateTypedArray(glue, constructorName, func, newTarget,\n                        *elementLength, *elementLengthTagged, arrayType);\n                    BRANCH(HasPendingException(glue), &hasException, &exit);\n                }\n            }\n            Bind(&isEcmaObj);\n            {"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3185,
+        "start_line": 3181,
+        "end_line": 3189,
+        "text": "                Bind(&isArrayBuffer);\n                {\n                    Label createFromArrayBuffer(env);\n                    res = AllocateTypedArray(glue, constructorName, func, newTarget, arrayType);\n                    BRANCH(HasPendingException(glue), &hasException, &createFromArrayBuffer);\n                    Bind(&createFromArrayBuffer);\n                    CreateFromArrayBuffer(&res, glue, numArgs, &exit, &slowPath, arrayType);\n                }\n                Bind(&notArrayBuffer);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3196,
+        "start_line": 3192,
+        "end_line": 3200,
+        "text": "                    BRANCH(IsStableArray(LoadHClass(glue, arg0)), &isStableJSArray, &slowPath);\n                    Bind(&isStableJSArray);\n                    Label createFromArray(env);\n                    res = AllocateTypedArray(glue, constructorName, func, newTarget, arrayType);\n                    BRANCH(HasPendingException(glue), &hasException, &createFromArray);\n                    Bind(&createFromArray);\n                    FastCopyElementFromArray(&res, glue, arg0, &exit, &slowPath, arrayType);\n                }\n            }"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3238,
+        "start_line": 3234,
+        "end_line": 3242,
+        "text": "    NewObjectStubBuilder newObjectStubBuilder(this);\n    res = newObjectStubBuilder.NewJSObjectByConstructor(glue, func, newTarget);\n    Label hasException(env);\n    Label notException(env);\n    BRANCH(HasPendingException(glue), &hasException, &notException);\n    Bind(&notException);\n    {\n        SetViewedArrayBufferOrByteArray(glue, *res, Undefined(), MemoryAttribute::NoBarrier());\n        SetTypedArrayName(glue, *res, constructorName);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3244,
+        "start_line": 3240,
+        "end_line": 3248,
+        "text": "    {\n        SetViewedArrayBufferOrByteArray(glue, *res, Undefined(), MemoryAttribute::NoBarrier());\n        SetTypedArrayName(glue, *res, constructorName);\n        AllocateTypedArrayBuffer(glue, *res, length, lengthTagged, arrayType);\n        BRANCH(HasPendingException(glue), &hasException, &exit);\n    }\n    Bind(&hasException);\n    {\n        res = Exception();"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3270,
+        "start_line": 3266,
+        "end_line": 3274,
+        "text": "    NewObjectStubBuilder newObjectStubBuilder(this);\n    res = newObjectStubBuilder.NewJSObjectByConstructor(glue, func, newTarget);\n    Label hasException(env);\n    Label notException(env);\n    BRANCH(HasPendingException(glue), &hasException, &notException);\n    Bind(&notException);\n    {\n        SetViewedArrayBufferOrByteArray(glue, *res, Undefined(), MemoryAttribute::NoBarrier());\n        if (arrayType == DataViewType::BIGINT64 ||"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3325,
+        "start_line": 3321,
+        "end_line": 3329,
+        "text": "        Bind(&newByteArrayExit);\n        {\n            Label hasException(env);\n            Label notException(env);\n            BRANCH(HasPendingException(glue), &hasException, &notException);\n            Bind(&hasException);\n            {\n                result = Exception();\n                Jump(&exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3373,
+        "start_line": 3369,
+        "end_line": 3377,
+        "text": "\n    GateRef elementSize = Int32(base::TypedArrayHelper::GetSizeFromType(arrayType));\n    GateRef byteOffset = GetArgFromArgv(glue, IntPtr(base::BuiltinsBase::ArgsPosition::SECOND), numArgs, true);\n    GateRef index = ToIndex(glue, byteOffset);\n    BRANCH(HasPendingException(glue), &hasException, &notHasException)\n    Bind(&notHasException);\n    GateRef offset = DoubleToInt(glue, GetDoubleOfTNumber(index));\n    BRANCH(Int32Equal(Int32Mod(offset, elementSize), Int32(0)), &next, slowPath);\n    Bind(&next);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3392,
+        "start_line": 3388,
+        "end_line": 3396,
+        "text": "        Bind(&notUndef);\n        {\n            Label notHasException1(env);\n            GateRef indexLength = ToIndex(glue, length);\n            BRANCH(HasPendingException(glue), &hasException, &notHasException1);\n            Bind(&notHasException1);\n            {\n                GateRef newLength = DoubleToInt(glue, GetDoubleOfTNumber(indexLength));\n                newByteLength = Int64Mul(ZExtInt32ToInt64(newLength), ZExtInt32ToInt64(elementSize));"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3444,
+        "start_line": 3440,
+        "end_line": 3448,
+        "text": "    BRANCH_UNLIKELY(Int32UnsignedLessThan(GetLengthOfTaggedArray(elements), len), slowPath, &allocateTypedArray);\n    Bind(&allocateTypedArray);\n    {\n        AllocateTypedArrayBuffer(glue, result->ReadVariable(), len, IntToTaggedInt(len), arrayType);\n        BRANCH(HasPendingException(glue), &hasException, &copyElements);\n    }\n    Bind(&copyElements);\n    {\n        Label check(env);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3451,
+        "start_line": 3447,
+        "end_line": 3455,
+        "text": "    {\n        Label check(env);\n        FastCopyFromArrayToTypedArray(glue, array, result, Int32(0), len, &check, slowPath, arrayType, true);\n        Bind(&check);\n        BRANCH(HasPendingException(glue), &hasException, exit);\n    }\n    Bind(&hasException);\n    {\n        result->WriteVariable(Exception());"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3532,
+        "start_line": 3528,
+        "end_line": 3536,
+        "text": "        {\n            GateRef value = getWithKind ? GetTaggedValueWithElementsKind(glue, array, *i)\n                                        : GetValueFromTaggedArray(glue, elementsArray, *i);\n            GateRef val = ToNumber(glue, value);\n            BRANCH(HasPendingException(glue), &exit, &copyElement);\n            Bind(&copyElement);\n            FastSetValueInBuffer(glue, buffer, *byteIndex, TaggedGetNumber(val), arrayType);\n            i = Int32Add(*i, Int32(1));\n            byteIndex = Int32Add(*byteIndex, elementSize);"
+      },
+      {
+        "needle": "GateRef newArrayType =",
+        "line": 1487,
+        "start_line": 1483,
+        "end_line": 1491,
+        "text": "            Label notHasException2(env);\n            NewObjectStubBuilder newBuilder(this);\n            newBuilder.SetParameters(glue, 0);\n            GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n            GateRef newArrayType = GetObjectType(LoadHClass(glue, newArray));\n            BRANCH(HasPendingException(glue), &hasException2, &notHasException2);\n            Bind(&hasException2);\n            {\n                result->WriteVariable(Exception());"
+      },
+      {
+        "needle": "GateRef newArrayType =",
+        "line": 2656,
+        "start_line": 2652,
+        "end_line": 2660,
+        "text": "        DEFVARIABLE(i, VariableType::INT64(), Int64(0));\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n        GateRef newArrayType = GetObjectType(LoadHClass(glue, newArray));\n        Label loopHead(env);\n        Label loopEnd(env);\n        Label loopNext(env);\n        Label loopExit(env);"
+      }
+    ],
+    "C9-EG-FIX-001": [
+      {
+        "needle": "GateRef newArray =",
+        "line": 1486,
+        "start_line": 1482,
+        "end_line": 1490,
+        "text": "            Label hasException2(env);\n            Label notHasException2(env);\n            NewObjectStubBuilder newBuilder(this);\n            newBuilder.SetParameters(glue, 0);\n            GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n            BRANCH(HasPendingException(glue), &hasException2, &notHasException2);\n            Bind(&hasException2);\n            {\n                result->WriteVariable(Exception());"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 1592,
+        "start_line": 1588,
+        "end_line": 1596,
+        "text": "    Bind(&newTypedArray);\n    {\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n        BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n        Bind(&hasException0);\n        {\n            result->WriteVariable(Exception());"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 1728,
+        "start_line": 1724,
+        "end_line": 1732,
+        "text": "    GateRef hclass = LoadHClass(glue, thisValue);\n    GateRef jsType = GetObjectType(hclass);\n    NewObjectStubBuilder newBuilder(this);\n    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n    Label hasException0(env);\n    Label notHasException0(env);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 2477,
+        "start_line": 2473,
+        "end_line": 2481,
+        "text": "    GateRef jsType = GetObjectType(LoadHClass(glue, thisValue));\n    GateRef thisLen = ZExtInt32ToInt64(GetArrayLength(thisValue));\n    NewObjectStubBuilder newBuilder(this);\n    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n    Label hasException0(env);\n    Label notHasException0(env);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 2657,
+        "start_line": 2653,
+        "end_line": 2661,
+        "text": "        DEFVARIABLE(kValue, VariableType::JS_ANY(), Hole());\n        DEFVARIABLE(i, VariableType::INT64(), Int64(0));\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n        BRANCH(HasPendingException(glue), &newTypedArrayException, &newTypedArrayNoException);\n        Bind(&newTypedArrayException);\n        {\n            result->WriteVariable(Exception());"
+      },
+      {
+        "needle": "GateRef newArray =",
+        "line": 2722,
+        "start_line": 2718,
+        "end_line": 2726,
+        "text": "\n    DEFVARIABLE(thisArrLen, VariableType::INT64(), ZExtInt32ToInt64(GetArrayLength(thisValue)));\n    NewObjectStubBuilder newBuilder(this);\n    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, arrayType, TruncInt64ToInt32(*thisArrLen));\n    Label newTypedArrayhasException(env);\n    Label newTypedArraynotHasException0(env);\n    BRANCH(HasPendingException(glue), &newTypedArrayhasException, &newTypedArraynotHasException0);\n    Bind(&newTypedArrayhasException);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 665,
+        "start_line": 661,
+        "end_line": 669,
+        "text": "                    GateRef kValue = FastGetPropertyByIndex(glue, thisValue,\n                        TruncInt64ToInt32(*curIndex), GetObjectType(LoadHClass(glue, thisValue)));\n                    Label hasException0(env);\n                    Label notHasException0(env);\n                    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n                    Bind(&hasException0);\n                    {\n                        result->WriteVariable(Exception());\n                        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 728,
+        "start_line": 724,
+        "end_line": 732,
+        "text": "        BRANCH(Int64LessThan(*i, thisArrLen), &next, &loopExit);\n        Bind(&next);\n        GateRef kValue = FastGetPropertyByIndex(glue, thisValue, TruncInt64ToInt32(*i),\n            GetObjectType(LoadHClass(glue, thisValue)));\n        BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n        Bind(&hasException0);\n        {\n            result->WriteVariable(Exception());\n            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 744,
+        "start_line": 740,
+        "end_line": 748,
+        "text": "            callArgs.callThisArg3WithReturnArgs = { argHandle, kValue, key, thisValue };\n            CallStubBuilder callBuilder(this, glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0, nullptr,\n                Circuit::NullGate(), callArgs);\n            GateRef retValue = callBuilder.JSCallDispatch();\n            BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n            Bind(&hasException1);\n            {\n                result->WriteVariable(retValue);\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 969,
+        "start_line": 965,
+        "end_line": 973,
+        "text": "                Label notHasException0(env);\n                BRANCH(Int64GreaterThan(*count, Int64(0)), &next, &loopExit);\n                Bind(&next);\n                kValue = FastGetPropertyByIndex(glue, thisValue, TruncInt64ToInt32(*copyFrom), jsType);\n                BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n                Bind(&hasException0);\n                {\n                    result->WriteVariable(Exception());\n                    Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1075,
+        "start_line": 1071,
+        "end_line": 1079,
+        "text": "                        Circuit::NullGate(), callArgs);\n                    GateRef callResult = callBuilder.JSCallDispatch();\n                    Label hasException1(env);\n                    Label notHasException1(env);\n                    BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n                    Bind(&hasException1);\n                    {\n                        result->WriteVariable(Exception());\n                        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1182,
+        "start_line": 1178,
+        "end_line": 1186,
+        "text": "                        Circuit::NullGate(), callArgs);\n                    GateRef callResult = callBuilder.JSCallDispatch();\n                    Label hasException1(env);\n                    Label notHasException1(env);\n                    BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n                    Bind(&hasException1);\n                    {\n                        result->WriteVariable(Exception());\n                        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1250,
+        "start_line": 1246,
+        "end_line": 1254,
+        "text": "        Label retValueIsFalse(env);\n        BRANCH(Int32LessThan(*i, thisArrlen), &next, &loopExit);\n        Bind(&next);\n        kValue = FastGetPropertyByIndex(glue, thisValue, *i, GetObjectType(LoadHClass(glue, thisValue)));\n        BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n        Bind(&hasException0);\n        {\n            result->WriteVariable(Exception());\n            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1264,
+        "start_line": 1260,
+        "end_line": 1268,
+        "text": "            callArgs.callThisArg3WithReturnArgs = { argHandle, *kValue, key, thisValue };\n            CallStubBuilder callBuilder(this, glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0, nullptr,\n                Circuit::NullGate(), callArgs);\n            GateRef retValue = callBuilder.JSCallDispatch();\n            BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n            Bind(&hasException1);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1335,
+        "start_line": 1331,
+        "end_line": 1339,
+        "text": "            BRANCH(Int64LessThan(*i, *thisArrLen), &next, &loopExit);\n            Bind(&next);\n            kValue = FastGetPropertyByIndex(glue, thisValue, TruncInt64ToInt32(*i),\n                GetObjectType(LoadHClass(glue, thisValue)));\n            BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n            Bind(&hasException0);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1353,
+        "start_line": 1349,
+        "end_line": 1357,
+        "text": "                callArgs.callThisArg3WithReturnArgs = { argHandle, *kValue, key, thisValue };\n                CallStubBuilder callBuilder(this, glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0, nullptr,\n                    Circuit::NullGate(), callArgs);\n                GateRef retValue = callBuilder.JSCallDispatch();\n                BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n                Bind(&hasException1);\n                {\n                    result->WriteVariable(Exception());\n                    Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1444,
+        "start_line": 1440,
+        "end_line": 1448,
+        "text": "                BRANCH(Int32LessThan(*i, thisLen), &next, &loopExit);\n                Bind(&next);\n                {\n                    GateRef kValue = FastGetPropertyByIndex(glue, thisValue, *i, arrayType);\n                    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n                    Bind(&hasException0);\n                    {\n                        result->WriteVariable(Exception());\n                        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1458,
+        "start_line": 1454,
+        "end_line": 1462,
+        "text": "                        callArgs.callThisArg3WithReturnArgs = { argHandle, kValue, key, thisValue };\n                        CallStubBuilder callBuilder(this, glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                            nullptr, Circuit::NullGate(), callArgs);\n                        GateRef retValue = callBuilder.JSCallDispatch();\n                        BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n                        Bind(&hasException1);\n                        {\n                            result->WriteVariable(Exception());\n                            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1487,
+        "start_line": 1483,
+        "end_line": 1491,
+        "text": "            Label notHasException2(env);\n            NewObjectStubBuilder newBuilder(this);\n            newBuilder.SetParameters(glue, 0);\n            GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n            BRANCH(HasPendingException(glue), &hasException2, &notHasException2);\n            Bind(&hasException2);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1593,
+        "start_line": 1589,
+        "end_line": 1597,
+        "text": "    {\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, arrayType, TruncInt64ToInt32(*newArrayLen));\n        BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n        Bind(&hasException0);\n        {\n            result->WriteVariable(Exception());\n            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1731,
+        "start_line": 1727,
+        "end_line": 1735,
+        "text": "    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n    Label hasException0(env);\n    Label notHasException0(env);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);\n    {\n        result->WriteVariable(Exception());\n        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1833,
+        "start_line": 1829,
+        "end_line": 1837,
+        "text": "    Label notHasException0(env);\n\n    GateRef jsType = GetObjectType(LoadHClass(glue, receiver));\n    presentValue = FastGetPropertyByIndex(glue, receiver, Int32(0), jsType);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);\n    {\n        result->WriteVariable(Exception());\n        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1860,
+        "start_line": 1856,
+        "end_line": 1864,
+        "text": "            Label notHasException1(env);\n            DEFVARIABLE(beginIndex, VariableType::INT64(), Int64(0));\n            DEFVARIABLE(endIndex, VariableType::INT64(), *i);\n            presentValue = FastGetPropertyByIndex(glue, receiver, TruncInt64ToInt32(*i), jsType);\n            BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n            Bind(&hasException1);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 1883,
+        "start_line": 1879,
+        "end_line": 1887,
+        "text": "                    Label notHasException2(env);\n                    GateRef sum = Int64Add(*beginIndex, *endIndex);\n                    GateRef middleIndex = Int64Div(sum, Int64(2));\n                    middleValue = FastGetPropertyByIndex(glue, receiver, TruncInt64ToInt32(middleIndex), jsType);\n                    BRANCH(HasPendingException(glue), &hasException2, &notHasException2);\n                    Bind(&hasException2);\n                    {\n                        result->WriteVariable(Exception());\n                        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2072,
+        "start_line": 2068,
+        "end_line": 2076,
+        "text": "                        Label hasException3(env);\n                        Label notHasException3(env);\n                        previousValue = FastGetPropertyByIndex(glue, receiver,\n                            TruncInt64ToInt32(Int64Sub(*j, Int64(1))), jsType);\n                        BRANCH(HasPendingException(glue), &hasException3, &notHasException3);\n                        Bind(&hasException3);\n                        {\n                            result->WriteVariable(Exception());\n                            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2300,
+        "start_line": 2296,
+        "end_line": 2304,
+        "text": "        {\n            Label hasException0(env);\n            Label notHasException0(env);\n            GateRef kValue = FastGetPropertyByIndex(glue, thisValue, *j, GetObjectType(LoadHClass(glue, thisValue)));\n            BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n            Bind(&hasException0);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2427,
+        "start_line": 2423,
+        "end_line": 2431,
+        "text": "        callArgs.callThisArg3WithReturnArgs = { argHandle, *kValue, key, thisValue };\n        CallStubBuilder callBuilder(this, glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0, nullptr,\n            Circuit::NullGate(), callArgs);\n        GateRef retValue = callBuilder.JSCallDispatch();\n        BRANCH(HasPendingException(glue), &hasException, &notHasException);\n        Bind(&hasException);\n        {\n            result->WriteVariable(Exception());\n            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2480,
+        "start_line": 2476,
+        "end_line": 2484,
+        "text": "    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n    Label hasException0(env);\n    Label notHasException0(env);\n    BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n    Bind(&hasException0);\n    {\n        result->WriteVariable(Exception());\n        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2552,
+        "start_line": 2548,
+        "end_line": 2556,
+        "text": "        BRANCH(checkValueValid(*kValue), &setValue0, slowPath);\n        Bind(&setValue0);\n        // 0: first element in newArray\n        FastSetPropertyByIndex(glue, *kValue, thisObj, Int32(0), arrayType);\n        BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n        Bind(&hasException0);\n        {\n            result->WriteVariable(Exception());\n            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2571,
+        "start_line": 2567,
+        "end_line": 2575,
+        "text": "            BRANCH(checkValueValid(*kValue), &setValue1, slowPath);\n            Bind(&setValue1);\n            // 1: second element in newArray\n            FastSetPropertyByIndex(glue, *kValue, thisObj, Int32(1), arrayType);\n            BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n            Bind(&hasException1);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2589,
+        "start_line": 2585,
+        "end_line": 2593,
+        "text": "                BRANCH(checkValueValid(*kValue), &setValue2, slowPath);\n                Bind(&setValue2);\n                // 2: third element in newArray\n                FastSetPropertyByIndex(glue, *kValue, thisObj, Int32(2), arrayType);\n                BRANCH(HasPendingException(glue), &hasException2, &writeResult);\n                Bind(&hasException2);\n                {\n                    result->WriteVariable(Exception());\n                    Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2658,
+        "start_line": 2654,
+        "end_line": 2662,
+        "text": "        DEFVARIABLE(i, VariableType::INT64(), Int64(0));\n        NewObjectStubBuilder newBuilder(this);\n        newBuilder.SetParameters(glue, 0);\n        GateRef newArray = newBuilder.NewTypedArray(glue, thisValue, jsType, TruncInt64ToInt32(thisLen));\n        BRANCH(HasPendingException(glue), &newTypedArrayException, &newTypedArrayNoException);\n        Bind(&newTypedArrayException);\n        {\n            result->WriteVariable(Exception());\n            Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2684,
+        "start_line": 2680,
+        "end_line": 2688,
+        "text": "            callArgs.callThisArg3WithReturnArgs = { argHandle, *kValue, key, thisValue };\n            CallStubBuilder callBuilder(this, glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0, nullptr,\n                Circuit::NullGate(), callArgs);\n            GateRef retValue = callBuilder.JSCallDispatch();\n            BRANCH(HasPendingException(glue), &hasException1, &notHasException1);\n            Bind(&hasException1);\n            result->WriteVariable(Exception());\n            Jump(exit);\n"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2725,
+        "start_line": 2721,
+        "end_line": 2729,
+        "text": "    newBuilder.SetParameters(glue, 0);\n    GateRef newArray = newBuilder.NewTypedArraySameType(glue, thisValue, arrayType, TruncInt64ToInt32(*thisArrLen));\n    Label newTypedArrayhasException(env);\n    Label newTypedArraynotHasException0(env);\n    BRANCH(HasPendingException(glue), &newTypedArrayhasException, &newTypedArraynotHasException0);\n    Bind(&newTypedArrayhasException);\n    {\n        result->WriteVariable(Exception());\n        Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2749,
+        "start_line": 2745,
+        "end_line": 2753,
+        "text": "            Label hasException0(env);\n            Label hasException1(env);\n            Label notHasException0(env);\n            GateRef fromValue = FastGetPropertyByIndex(glue, thisValue, TruncInt64ToInt32(*from), arrayType);\n            BRANCH(HasPendingException(glue), &hasException0, &notHasException0);\n            Bind(&hasException0);\n            {\n                result->WriteVariable(Exception());\n                Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 2758,
+        "start_line": 2754,
+        "end_line": 2762,
+        "text": "            }\n            Bind(&notHasException0);\n            {\n                FastSetPropertyByIndex(glue, fromValue, newArray, TruncInt64ToInt32(*k), arrayType);\n                BRANCH(HasPendingException(glue), &hasException1, &loopEnd);\n                Bind(&hasException1);\n                {\n                    result->WriteVariable(Exception());\n                    Jump(exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3180,
+        "start_line": 3176,
+        "end_line": 3184,
+        "text": "                {\n                    Label notException(env);\n                    GateRef index = ToIndex(glue, arg0);\n                    elementLengthTagged = index;\n                    BRANCH(HasPendingException(glue), &hasException, &notException);\n                    Bind(&notException);\n                    {\n                        elementLength = DoubleToInt(glue, GetDoubleOfTNumber(index));\n                        Jump(&isUndef);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3191,
+        "start_line": 3187,
+        "end_line": 3195,
+        "text": "                Bind(&isUndef);\n                {\n                    res = AllocateTypedArray(glue, constructorName, func, newTarget,\n                        *elementLength, *elementLengthTagged, arrayType);\n                    BRANCH(HasPendingException(glue), &hasException, &exit);\n                }\n            }\n            Bind(&isEcmaObj);\n            {"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3203,
+        "start_line": 3199,
+        "end_line": 3207,
+        "text": "                Bind(&isArrayBuffer);\n                {\n                    Label createFromArrayBuffer(env);\n                    res = AllocateTypedArray(glue, constructorName, func, newTarget, arrayType);\n                    BRANCH(HasPendingException(glue), &hasException, &createFromArrayBuffer);\n                    Bind(&createFromArrayBuffer);\n                    CreateFromArrayBuffer(&res, glue, numArgs, &exit, &slowPath, arrayType);\n                }\n                Bind(&notArrayBuffer);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3214,
+        "start_line": 3210,
+        "end_line": 3218,
+        "text": "                    BRANCH(IsStableArray(LoadHClass(glue, arg0)), &isStableJSArray, &slowPath);\n                    Bind(&isStableJSArray);\n                    Label createFromArray(env);\n                    res = AllocateTypedArray(glue, constructorName, func, newTarget, arrayType);\n                    BRANCH(HasPendingException(glue), &hasException, &createFromArray);\n                    Bind(&createFromArray);\n                    FastCopyElementFromArray(&res, glue, arg0, &exit, &slowPath, arrayType);\n                }\n            }"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3256,
+        "start_line": 3252,
+        "end_line": 3260,
+        "text": "    NewObjectStubBuilder newObjectStubBuilder(this);\n    res = newObjectStubBuilder.NewJSObjectByConstructor(glue, func, newTarget);\n    Label hasException(env);\n    Label notException(env);\n    BRANCH(HasPendingException(glue), &hasException, &notException);\n    Bind(&notException);\n    {\n        SetViewedArrayBufferOrByteArray(glue, *res, Undefined(), MemoryAttribute::NoBarrier());\n        SetTypedArrayName(glue, *res, constructorName);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3262,
+        "start_line": 3258,
+        "end_line": 3266,
+        "text": "    {\n        SetViewedArrayBufferOrByteArray(glue, *res, Undefined(), MemoryAttribute::NoBarrier());\n        SetTypedArrayName(glue, *res, constructorName);\n        AllocateTypedArrayBuffer(glue, *res, length, lengthTagged, arrayType);\n        BRANCH(HasPendingException(glue), &hasException, &exit);\n    }\n    Bind(&hasException);\n    {\n        res = Exception();"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3288,
+        "start_line": 3284,
+        "end_line": 3292,
+        "text": "    NewObjectStubBuilder newObjectStubBuilder(this);\n    res = newObjectStubBuilder.NewJSObjectByConstructor(glue, func, newTarget);\n    Label hasException(env);\n    Label notException(env);\n    BRANCH(HasPendingException(glue), &hasException, &notException);\n    Bind(&notException);\n    {\n        SetViewedArrayBufferOrByteArray(glue, *res, Undefined(), MemoryAttribute::NoBarrier());\n        if (arrayType == DataViewType::BIGINT64 ||"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3343,
+        "start_line": 3339,
+        "end_line": 3347,
+        "text": "        Bind(&newByteArrayExit);\n        {\n            Label hasException(env);\n            Label notException(env);\n            BRANCH(HasPendingException(glue), &hasException, &notException);\n            Bind(&hasException);\n            {\n                result = Exception();\n                Jump(&exit);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3391,
+        "start_line": 3387,
+        "end_line": 3395,
+        "text": "\n    GateRef elementSize = Int32(base::TypedArrayHelper::GetSizeFromType(arrayType));\n    GateRef byteOffset = GetArgFromArgv(glue, IntPtr(base::BuiltinsBase::ArgsPosition::SECOND), numArgs, true);\n    GateRef index = ToIndex(glue, byteOffset);\n    BRANCH(HasPendingException(glue), &hasException, &notHasException)\n    Bind(&notHasException);\n    GateRef offset = DoubleToInt(glue, GetDoubleOfTNumber(index));\n    BRANCH(Int32Equal(Int32Mod(offset, elementSize), Int32(0)), &next, slowPath);\n    Bind(&next);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3410,
+        "start_line": 3406,
+        "end_line": 3414,
+        "text": "        Bind(&notUndef);\n        {\n            Label notHasException1(env);\n            GateRef indexLength = ToIndex(glue, length);\n            BRANCH(HasPendingException(glue), &hasException, &notHasException1);\n            Bind(&notHasException1);\n            {\n                GateRef newLength = DoubleToInt(glue, GetDoubleOfTNumber(indexLength));\n                newByteLength = Int64Mul(ZExtInt32ToInt64(newLength), ZExtInt32ToInt64(elementSize));"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3462,
+        "start_line": 3458,
+        "end_line": 3466,
+        "text": "    BRANCH_UNLIKELY(Int32UnsignedLessThan(GetLengthOfTaggedArray(elements), len), slowPath, &allocateTypedArray);\n    Bind(&allocateTypedArray);\n    {\n        AllocateTypedArrayBuffer(glue, result->ReadVariable(), len, IntToTaggedInt(len), arrayType);\n        BRANCH(HasPendingException(glue), &hasException, &copyElements);\n    }\n    Bind(&copyElements);\n    {\n        Label check(env);"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3469,
+        "start_line": 3465,
+        "end_line": 3473,
+        "text": "    {\n        Label check(env);\n        FastCopyFromArrayToTypedArray(glue, array, result, Int32(0), len, &check, slowPath, arrayType, true);\n        Bind(&check);\n        BRANCH(HasPendingException(glue), &hasException, exit);\n    }\n    Bind(&hasException);\n    {\n        result->WriteVariable(Exception());"
+      },
+      {
+        "needle": "HasPendingException(glue)",
+        "line": 3550,
+        "start_line": 3546,
+        "end_line": 3554,
+        "text": "        {\n            GateRef value = getWithKind ? GetTaggedValueWithElementsKind(glue, array, *i)\n                                        : GetValueFromTaggedArray(glue, elementsArray, *i);\n            GateRef val = ToNumber(glue, value);\n            BRANCH(HasPendingException(glue), &exit, &copyElement);\n            Bind(&copyElement);\n            FastSetValueInBuffer(glue, buffer, *byteIndex, TaggedGetNumber(val), arrayType);\n            i = Int32Add(*i, Int32(1));\n            byteIndex = Int32Add(*byteIndex, elementSize);"
+      },
+      {
+        "needle": "GateRef newArrayType =",
+        "line": 1494,
+        "start_line": 1490,
+        "end_line": 1498,
+        "text": "                result->WriteVariable(Exception());\n                Jump(exit);\n            }\n            Bind(&notHasException2);\n            GateRef newArrayType = GetObjectType(LoadHClass(glue, newArray));\n            i = Int32(0);\n            Label loopHead2(env);\n            Label loopEnd2(env);\n            Label next2(env);"
+      },
+      {
+        "needle": "GateRef newArrayType =",
+        "line": 2665,
+        "start_line": 2661,
+        "end_line": 2669,
+        "text": "            result->WriteVariable(Exception());\n            Jump(exit);\n        }\n        Bind(&newTypedArrayNoException);\n        GateRef newArrayType = GetObjectType(LoadHClass(glue, newArray));\n        Label loopHead(env);\n        Label loopEnd(env);\n        Label loopNext(env);\n        Label loopExit(env);"
+      }
+    ]
+  }
+}

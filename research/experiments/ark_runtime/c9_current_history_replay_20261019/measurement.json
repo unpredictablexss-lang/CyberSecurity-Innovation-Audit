@@ -1,0 +1,184 @@
+{
+  "schema_version": "c9.current-history-replay.measurement/v1",
+  "python_executable": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+  "measurement_method": "PROCESS_MEMORY_COUNTERS.PeakWorkingSetSize polled at 5ms",
+  "commands": [
+    {
+      "name": "replay",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "research/experiments/ark_runtime/c9_current_history_replay_20261019/replay.py",
+        "--repo-dir",
+        "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime",
+        "--output-dir",
+        "research/experiments/ark_runtime/c9_current_history_replay_20261019"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\type-origin",
+      "environment": {
+        "SystemRoot": "C:\\WINDOWS",
+        "WINDIR": "C:\\WINDOWS",
+        "COMSPEC": "C:\\WINDOWS\\system32\\cmd.exe",
+        "TEMP": "C:\\Users\\WORK_W~1\\AppData\\Local\\Temp",
+        "TMP": "C:\\Users\\WORK_W~1\\AppData\\Local\\Temp",
+        "PATH": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\.codex\\tmp\\arg0-windows\\codex-arg0GXbXRD;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\libheif\\libheif\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\jxrlib\\jxrlib\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\override;C:\\Program Files (x86)\\VMware\\VMware Workstation\\bin\\;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\WSL\\;E:\\DeepSeek Harness\\resources\\runtime\\cli\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\work_work\\.local\\bin;E:\\KimiData\\daimon-share\\daimon\\npm-global;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\fallback;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\ce4759538b7f2f1a;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\896a0166b774037a",
+        "PATHEXT": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL",
+        "PYTHONPATH": ".;E:\\网安\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPYCACHEPREFIX": "research\\experiments\\ark_runtime\\c9_current_history_replay_20261019\\pycache",
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_ALLOW_PROTOCOL": "",
+        "GIT_TERMINAL_PROMPT": "0",
+        "GIT_NO_REPLACE_OBJECTS": "1",
+        "OHSCANNER_ARK_REPO": "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime"
+      },
+      "expected_exit_codes": [
+        0,
+        2
+      ],
+      "exit_code": 2,
+      "expected_exit_code_observed": true,
+      "wall_seconds": 10.250021800000468,
+      "peak_rss_bytes": 2031616,
+      "stdout_file": "replay.stdout.txt",
+      "stdout_bytes": 214,
+      "stdout_sha256": "ffd4a9c2e2c195b1a29778c315dad110b652fdbf56a65533f8ed8572812b7661",
+      "stderr_file": "replay.stderr.txt",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "c9-tests",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "unittest",
+        "research.experiments.ark_runtime.c9_current_history_replay_20261019.test_current_history_replay",
+        "-v"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\type-origin",
+      "environment": {
+        "SystemRoot": "C:\\WINDOWS",
+        "WINDIR": "C:\\WINDOWS",
+        "COMSPEC": "C:\\WINDOWS\\system32\\cmd.exe",
+        "TEMP": "C:\\Users\\WORK_W~1\\AppData\\Local\\Temp",
+        "TMP": "C:\\Users\\WORK_W~1\\AppData\\Local\\Temp",
+        "PATH": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\.codex\\tmp\\arg0-windows\\codex-arg0GXbXRD;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\libheif\\libheif\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\jxrlib\\jxrlib\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\override;C:\\Program Files (x86)\\VMware\\VMware Workstation\\bin\\;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\WSL\\;E:\\DeepSeek Harness\\resources\\runtime\\cli\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\work_work\\.local\\bin;E:\\KimiData\\daimon-share\\daimon\\npm-global;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\fallback;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\ce4759538b7f2f1a;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\896a0166b774037a",
+        "PATHEXT": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL",
+        "PYTHONPATH": ".;E:\\网安\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPYCACHEPREFIX": "research\\experiments\\ark_runtime\\c9_current_history_replay_20261019\\pycache",
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_ALLOW_PROTOCOL": "",
+        "GIT_TERMINAL_PROMPT": "0",
+        "GIT_NO_REPLACE_OBJECTS": "1",
+        "OHSCANNER_ARK_REPO": "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime"
+      },
+      "expected_exit_codes": [
+        0
+      ],
+      "exit_code": 0,
+      "expected_exit_code_observed": true,
+      "wall_seconds": 7.6384703000003356,
+      "peak_rss_bytes": 1990656,
+      "stdout_file": "c9-tests.stdout.txt",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_file": "c9-tests.stderr.txt",
+      "stderr_bytes": 2313,
+      "stderr_sha256": "67164128b42bd5968b6c30d4ed891f4424785fcab0864a66599773330fe3ecf9"
+    },
+    {
+      "name": "ark-runtime-tests",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/detectors/ark_runtime",
+        "-t",
+        ".",
+        "-v"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\type-origin",
+      "environment": {
+        "SystemRoot": "C:\\WINDOWS",
+        "WINDIR": "C:\\WINDOWS",
+        "COMSPEC": "C:\\WINDOWS\\system32\\cmd.exe",
+        "TEMP": "C:\\Users\\WORK_W~1\\AppData\\Local\\Temp",
+        "TMP": "C:\\Users\\WORK_W~1\\AppData\\Local\\Temp",
+        "PATH": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\.codex\\tmp\\arg0-windows\\codex-arg0GXbXRD;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\libheif\\libheif\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\jxrlib\\jxrlib\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\override;C:\\Program Files (x86)\\VMware\\VMware Workstation\\bin\\;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\WSL\\;E:\\DeepSeek Harness\\resources\\runtime\\cli\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\work_work\\.local\\bin;E:\\KimiData\\daimon-share\\daimon\\npm-global;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\fallback;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\ce4759538b7f2f1a;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\896a0166b774037a",
+        "PATHEXT": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL",
+        "PYTHONPATH": ".;E:\\网安\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPYCACHEPREFIX": "research\\experiments\\ark_runtime\\c9_current_history_replay_20261019\\pycache",
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_ALLOW_PROTOCOL": "",
+        "GIT_TERMINAL_PROMPT": "0",
+        "GIT_NO_REPLACE_OBJECTS": "1",
+        "OHSCANNER_ARK_REPO": "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime"
+      },
+      "expected_exit_codes": [
+        0,
+        1
+      ],
+      "exit_code": 1,
+      "expected_exit_code_observed": true,
+      "wall_seconds": 3.6508110000013403,
+      "peak_rss_bytes": 1990656,
+      "stdout_file": "ark-runtime-tests.stdout.txt",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_file": "ark-runtime-tests.stderr.txt",
+      "stderr_bytes": 27797,
+      "stderr_sha256": "5030859a517159f20ecd415c66fa7f5fdaedda70e46759c5322bf320783287c8"
+    },
+    {
+      "name": "compile-c9",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "research/experiments/ark_runtime/c9_current_history_replay_20261019/compile_check.py"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\type-origin",
+      "environment": {
+        "SystemRoot": "C:\\WINDOWS",
+        "WINDIR": "C:\\WINDOWS",
+        "COMSPEC": "C:\\WINDOWS\\system32\\cmd.exe",
+        "TEMP": "C:\\Users\\WORK_W~1\\AppData\\Local\\Temp",
+        "TMP": "C:\\Users\\WORK_W~1\\AppData\\Local\\Temp",
+        "PATH": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\.codex\\tmp\\arg0-windows\\codex-arg0GXbXRD;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\libheif\\libheif\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\jxrlib\\jxrlib\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\override;C:\\Program Files (x86)\\VMware\\VMware Workstation\\bin\\;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\WSL\\;E:\\DeepSeek Harness\\resources\\runtime\\cli\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\work_work\\.local\\bin;E:\\KimiData\\daimon-share\\daimon\\npm-global;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\fallback;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\ce4759538b7f2f1a;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\896a0166b774037a",
+        "PATHEXT": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL",
+        "PYTHONPATH": ".;E:\\网安\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPYCACHEPREFIX": "research\\experiments\\ark_runtime\\c9_current_history_replay_20261019\\pycache",
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_ALLOW_PROTOCOL": "",
+        "GIT_TERMINAL_PROMPT": "0",
+        "GIT_NO_REPLACE_OBJECTS": "1",
+        "OHSCANNER_ARK_REPO": "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime"
+      },
+      "expected_exit_codes": [
+        0
+      ],
+      "exit_code": 0,
+      "expected_exit_code_observed": true,
+      "wall_seconds": 0.15075400000023365,
+      "peak_rss_bytes": 1990656,
+      "stdout_file": "compile-c9.stdout.txt",
+      "stdout_bytes": 421,
+      "stdout_sha256": "336c4db65650448c0d41dac4a42c1ab75470748de9504b9abe9e88b00f51fe2e",
+      "stderr_file": "compile-c9.stderr.txt",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "all_expected_exit_codes_observed": true,
+  "token_cost": {
+    "status": "unknown",
+    "reason": "no reliable local meter"
+  }
+}

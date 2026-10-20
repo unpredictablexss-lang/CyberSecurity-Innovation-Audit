@@ -1,0 +1,93 @@
+{
+  "schema_version": "c9.current-history-replay.manifest/v1",
+  "run_kind": "source-bound current Ark Runtime 0.7.0 rule replay",
+  "target_repository": "openharmony/arkcompiler_ets_runtime",
+  "target_git_dir": "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime",
+  "worktree": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\type-origin",
+  "head": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+  "head_tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+  "detector_id": "ohscanner.ark.runtime.type_safety",
+  "rule_ids": [
+    "ark.runtime.typedarray-store-type-origin",
+    "ark.runtime.typedarray-allocation-exception-guard"
+  ],
+  "detector_version": "0.7.0",
+  "model_version": "0.7.0",
+  "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+  "profile_id": "light-ast",
+  "provenance": "git_object",
+  "build_profile": "assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified",
+  "exact_argv": [
+    "research/experiments/ark_runtime/c9_current_history_replay_20261019/replay.py",
+    "--repo-dir",
+    "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime",
+    "--output-dir",
+    "research/experiments/ark_runtime/c9_current_history_replay_20261019"
+  ],
+  "exact_env_scope": {
+    "PYTHONPATH": ".;E:\\网安\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONHASHSEED": "0",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_ALLOW_PROTOCOL": "",
+    "GIT_TERMINAL_PROMPT": "0",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "OHSCANNER_ARK_REPO": "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime"
+  },
+  "input_cases": [
+    {
+      "case_id": "C9-TO-POS-001",
+      "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+      "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "snapshot_sha256": "884bb958b98b5b977ba9b539ce27432870b9269156bbfcfad97f4bb58dcd9d3c"
+    },
+    {
+      "case_id": "C9-TO-FIX-001",
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "tree": "82af11ced4297818410ccf61906b703d25b69165",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "snapshot_sha256": "45951ebe149386befe03a7dcfe28f1ce3fc1b91c8a9947745a692a4186e148dc"
+    },
+    {
+      "case_id": "C9-EG-POS-001",
+      "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+      "tree": "5d7c18a5d5ccbf48617b3c07ae9353f5f427d07a",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+      "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+      "snapshot_sha256": "bbdfdae0b975efbf7e91518f9ff8c029dc7bc5f9b085da8b282598b19d9108d1"
+    },
+    {
+      "case_id": "C9-EG-FIX-001",
+      "commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+      "tree": "f0ddee8ee7f74b3f22e45b174ce96a269b2e57a5",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "3b9de9d915d767d7a67316145451da2446162884",
+      "source_sha256": "4684a1587519e7d141f181b595317db489991a3908e1f1b4ef67513c25d9efd0",
+      "snapshot_sha256": "d7cc3021950f63e6df724a374d7a700317ccc286e0da5d5b24c2151186328fb4"
+    }
+  ],
+  "dependency_gate": "blocked_missing_or_mismatched_dependency",
+  "model_provenance_gate": "blocked_missing_model_provenance_source",
+  "control_gate": "fail",
+  "replay_gate": "blocked",
+  "scanner_observation": "known vulnerable parent not fully hit by current rule",
+  "raw_results": "raw-results.json",
+  "source_excerpts": "source-excerpts.json",
+  "diffs": [
+    "type-origin-parent-fix.diff",
+    "exception-guard-parent-fix.diff"
+  ],
+  "claim_boundary": {
+    "default_status": "candidate/unassessed",
+    "validated_vulnerability": 0,
+    "product_vulnerability": false,
+    "precision_recall": null,
+    "zero_fp_fn_claim": false
+  }
+}

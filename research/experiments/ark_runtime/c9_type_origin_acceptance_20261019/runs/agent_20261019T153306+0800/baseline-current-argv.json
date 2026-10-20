@@ -1,0 +1,14 @@
+{
+  "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\type-origin",
+  "program": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+  "argv": [
+    "-m",
+    "unittest",
+    "-v",
+    "tests.detectors.ark_runtime.test_type_origin"
+  ],
+  "env": {
+    "PYTHONPATH": ".;E:\\网安\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  }
+}
