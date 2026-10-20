@@ -86,7 +86,7 @@ class AuthorizedOperationRequest(Strict):
     auto_triage: bool = False
     max_triage_candidates: int = Field(default=3, ge=1, le=5)
     max_r2_candidates: int = Field(default=0, ge=0, le=5)
-    max_cost_usd: str | None = Field(default=None, pattern=r"^\\d{1,6}(?:\\.\\d{1,8})?$")
+    max_cost_usd: str | None = Field(default=None, pattern=r"^\d{1,6}(?:\.\d{1,8})?$")
     triage_approvals: list[EndpointTriageApproval] = Field(default_factory=list, max_length=8)
 
 
