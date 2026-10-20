@@ -57,3 +57,18 @@ Generated reports are retained outside the repo at:
 - `D:\OpenHarmonyScanner\tmp\float32-candidate-index-baseline.md`
 - `D:\OpenHarmonyScanner\tmp\float32-candidate-run-baseline.json`
 - `D:\OpenHarmonyScanner\tmp\float32-candidate-run-baseline.md`
+
+## Developer working-tree replay (pre-commit)
+
+After the developer added the source-bound rule in the shared working tree, I independently reran M2 using the same exact a65 source checkout, repository, three-file scope, and explicit detector as the baseline. This is a **pre-commit working-tree replay**, not yet a result bound to a developer commit SHA:
+
+| Case | CLI outcome | Meaning |
+|---|---|---|
+| Exact a65 commit, all three exact files and helper present | 1 diagnostic at `common_stubs.cpp:228`; run `completed_with_limitations`; detector `blocked`; coverage 1 partial, 0 complete, 0 not analyzed; obligations unknown | One sparse candidate; CommonStub retains partial status. This is not runtime validation. |
+| Exact a65 target + HCR files, creator helper omitted | 0 diagnostics; detector `blocked`; target not analyzed with `negative_double_length_missing_source:...new_object_stub_builder.cpp` | Dependency gate fails closed. |
+| Exact a65 source commit but declared repository `example/wrong-repository` | 0 diagnostics; detector `blocked`; files not analyzed | Repository identity gate fails closed. |
+| Wrong but locally available source commit `830e85b40240677039719fcbf14f721ad3b19050`, same paths | 0 diagnostics; detector `blocked`; CommonStub not analyzed with `exact upstream repository/commit/path is not in the reviewed model` | Exact-commit gate fails closed. This commit was available in the local full-history object store; the clean `D:\OpenHarmony807` checkout itself is shallow/grafted and lacks the a65 parent. |
+
+Run artifacts are in `D:\OpenHarmonyScanner\tmp\float32-candidate-run-dev-working.{json,md}`, `float32-candidate-run-missing-helper.{json,md}`, `float32-candidate-run-wrong-repo.{json,md}`, and `float32-candidate-run-wrong-commit.{json,md}`. The exact positive CLI produced one finding only; the helper and identity negative controls produced zero findings without reporting an analyzed safe result.
+
+Still pending at this point: developer commit-SHA-bound replay; fixed-guard source fixture; altered target blob/hash; mutated helper bytes/hash; explicit wrong-blob control; TaggedInt and positive TDouble are source-semantic controls, not Ark Runtime executions. The developer's unit tests cover predicate fixtures for fixed lower bound, tagged-int distinction, and unrelated/incorrect upper-bound blocks, but those unit tests were not run independently in this tester slice yet. No control in this section establishes an OOB vulnerability or product impact.
