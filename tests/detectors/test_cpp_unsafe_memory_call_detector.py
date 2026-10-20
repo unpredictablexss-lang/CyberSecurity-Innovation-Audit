@@ -8,6 +8,7 @@ from pathlib import Path
 from src.ohscanner.contracts import ScanContext, ScanRequest, SourceUnit
 from src.ohscanner.detectors.cpp.unsafe_memory_call_detector import CppUnsafeMemoryCallDetector
 from src.ohscanner.fixture import snapshot_digest
+from src.ohscanner.runner import DetectorRegistry, run_all_with_coverage
 
 
 ROOT = Path(__file__).parent / "fixtures" / "cpp_unsafe_calls"
@@ -77,6 +78,22 @@ class UnsafeMemoryCallDetectorTests(unittest.TestCase):
         unknown, _ = self.run_case("unknown_partial.cpp", "partial")
         self.assertEqual(unknown.status, "blocked")
         self.assertEqual(unknown.findings, ())
+
+    def test_partial_parse_is_reported_as_unknown_coverage_not_detector_failure(self) -> None:
+        source = unit(ROOT / "unknown_partial.cpp", "partial")
+        context = context_for(source)
+        registry = DetectorRegistry()
+        registry.register(self.detector)
+
+        reports, coverage = run_all_with_coverage(context, registry)
+
+        self.assertEqual(reports[0].status, "blocked")
+        self.assertEqual(reports[0].diagnostic_count, 0)
+        self.assertEqual(reports[0].parsing[0]["analysis_status"], "partial")
+        self.assertEqual(
+            coverage["detectors"][self.detector.detector_id]["coverage_counts"]["partial"],
+            1,
+        )
 
     def test_format_calls_use_the_api_format_parameter_position(self) -> None:
         run, source = self.run_case("format_api_argument_positions.cpp")
