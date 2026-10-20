@@ -1,13 +1,13 @@
 # C-line Float32Array negative-TDouble source-bound static candidate rule
 
 Date: 2026-10-20
-Implementation status: local diff, independent tester replay pending. No commit yet.
+Implementation status: committed and independently replayed on the same implementation commit `46fdb5887c49a552b249fb20805025ba6316d8d0`.
 
 ## Result
 
 The C1 Ark Runtime model now contains a narrow candidate-only rule, `ark.runtime.float32array-negative-double-length` (rule version `1.0.0`). It is applicable only to the exact repository `openharmony/arkcompiler_ets_runtime`, commit `a65a2853ccae13da167d9aa4720ab8b11ec16656`, `light-ast` Git-object profile, and exact source bindings below. It emits at most one candidate, on `common_stubs.cpp:228`, only when the CommonStub and TypedHCR double branches both have the exact round-trip and upper-bound checks without a nonnegative lower bound, their tagged-int branches retain `isGEZero`, and the pinned allocation helper carries the expected size to `NewByteArray`.
 
-The rule does not label runtime behavior or memory safety. Its finding is `unassessed`, its coverage remains partial/blocked when the CommonStub translation unit is partial, and obligations keep compiled dispatch, allocation, metadata and access behavior unknown. The second-layer 32-bit conditional later indexed-read concern is mentioned only as an outstanding review obligation, not as evidence that the detector proves an out-of-bounds read. The empty initialization interval is not treated as a write.
+The rule does not label runtime behavior or memory safety. Its finding is `unassessed`, its coverage remains partial/blocked when the CommonStub translation unit is partial, and obligations keep compiled dispatch, allocation, metadata and access behavior unknown. The second-layer 32-bit conditional later indexed-read concern is mentioned only as an outstanding review obligation, not as evidence that the detector proves an out-of-bounds read. The empty initialization interval is not treated as a write. The implementation hardening commit pins the complete ordered model binding rows to immutable expected commit/blob/SHA values, so a self-consistent but altered model profile fails closed.
 
 ## Exact source bindings
 
@@ -28,6 +28,8 @@ Full-file parsing is complete for TypedHCR and the allocation helper. CommonStub
 - Positive integral TDouble: passes the same source guard; the rule is about the missing lower bound permitting a negative integral representation, not a runtime test of a particular value.
 - Direct fixed-guard branch fixture: an added `DoubleGreaterThanOrEqual(doubleLength, Double(0))` rejects candidate matching.
 - Wrong commit, altered exact source bytes, missing/mutated helper, or missing/mismatched AST facts: the pinned-profile verifier returns no candidate and `not_analyzed`/blocked. This is unknown evidence, not a safe/fixed verdict.
+- Independent same-commit CLI replay on implementation commit `46fdb5887c49a552b249fb20805025ba6316d8d0`: exact a65 positive produced one candidate at `common_stubs.cpp:228` with partial/blocked coverage; wrong commit and missing helper each produced zero candidates and blocked/`not_analyzed` outcomes. Replay report: commit `6d41c4746b41c21af9139d2853acc1d0c9189ffa`.
+- Model-row tampering is covered by a unit test and fails closed. CLI replay of mutated helper bytes/blob, fixed-source commit, and runtime behavior were not run.
 - Unrelated source blocks do not match the exact source profile or both branch structures.
 
 Commands run:
@@ -39,8 +41,11 @@ python -m pytest tests/detectors/ark_runtime/test_negative_double_length.py -q
 python -m pytest tests/detectors/ark_runtime -q
 198 passed, 3 skipped
 
+git diff --check
+passed
+
 python -m src.cli.main ohscan-run --repo-dir D:\OpenHarmony807\repos\arkcompiler_ets_runtime --repository openharmony/arkcompiler_ets_runtime --commit a65a2853ccae13da167d9aa4720ab8b11ec16656 --include ecmascript/compiler/common_stubs.cpp --include ecmascript/compiler/typed_hcr_lowering.cpp --include ecmascript/compiler/new_object_stub_builder.cpp --detector ohscanner.ark.runtime.type_safety --json-out D:\Temp\c-line-float32-static-candidate.json --md-out D:\Temp\c-line-float32-static-candidate.md
 [OK] one unverified diagnostic; run completed_with_limitations; normalized detector run blocked; partial=1
 ```
 
-Independent tester replay and adversarial controls are pending. These local test results do not establish compiled-runtime behavior or product impact.
+The independent tester replay used the same implementation SHA and independently confirmed the positive, wrong-commit, and missing-helper cases. The detector result remains a source-bound candidate only; it does not establish compiled-runtime behavior or product impact. The exact runtime PoC remains not run.
