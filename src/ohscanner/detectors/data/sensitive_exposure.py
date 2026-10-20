@@ -503,6 +503,9 @@ class LocalFlow:
         if n.type=='call_expression':
             if n.id in self.call_results:
                 return self.call_results[n.id]
+            if self.cpp_pointer_cast(n):
+                return tuple(flow for arg in n.child_by_field_name('arguments').named_children
+                             for flow in self.expr(arg,env,types))
             function=n.child_by_field_name('function')
             fn=self.text(function)
             args=n.child_by_field_name('arguments')
@@ -734,6 +737,17 @@ class LocalFlow:
                 outputs.setdefault(actual,[]).extend(
                     self.addstep(writes,
                                  f'{call_line} {callee_name} may write through argument {index}'))
+            # Preserve a single visible member slot through a writable object
+            # parameter as well as a scalar pointee. No arbitrary alias walk.
+            for prefix in (ident+'.','*'+ident+'.'):
+                slots={slot for state in states for slot in state.values if slot.startswith(prefix)}
+                for slot in slots:
+                    member_writes=tuple(dict.fromkeys(flow for state in states
+                        for flow in state.values.get(slot,())))
+                    if member_writes:
+                        destination=actual+'.'+slot[len(prefix):]
+                        outputs.setdefault(destination,[]).extend(self.addstep(member_writes,
+                            f'{call_line} {callee_name} may write member through argument {index}'))
         for actual,flows in outputs.items():
             self.store_value(env,actual,tuple(env.get(actual,()))+tuple(flows))
         call_flows=self.addstep(tuple(dict.fromkeys(returned)),
@@ -780,7 +794,7 @@ class LocalFlow:
                 root=self.text(base)
                 if operator=='->':
                     target=self.pointers.get(root)
-                    if target and target.slot and not target.slot.startswith('*'):
+                    if target and target.slot:
                         return target.slot+'.'+field
                 if (operator=='.' and types and types.get(root) in self.fields
                         and self.fields.get(types[root])!=field
@@ -800,6 +814,24 @@ class LocalFlow:
         nodes=list(walk(declarator))
         return (sum(n.type=='pointer_declarator' for n in nodes)==1
                 and not any(n.type in ('function_declarator','reference_declarator','array_declarator') for n in nodes))
+
+    def cpp_pointer_cast(self,node):
+        if self.u.language!='cpp':return False
+        function=node.child_by_field_name('function')
+        args=node.child_by_field_name('arguments')
+        if (function is None or function.type!='template_function' or args is None
+                or len(args.named_children)!=1 or len(function.named_children)!=2):
+            return False
+        keyword,template=function.named_children
+        if self.text(keyword) not in ('static_cast','reinterpret_cast','const_cast','dynamic_cast'):
+            return False
+        if (template.type!='template_argument_list' or len(template.named_children)!=1
+                or template.named_children[0].type!='type_descriptor'
+                or not any(x.type=='abstract_pointer_declarator' for x in walk(template))):
+            return False
+        units=self.resolver.units if self.resolver is not None else (self.u,)
+        tokens=re.escape(self.text(keyword))+'|nullptr'
+        return not any(re.search(r'^\s*#\s*(?:define|undef)\s+(?:'+tokens+r')\b',u.text,re.M) for u in units)
 
     def pointer_target(self,node,pointers=None,shadows=None):
         """Only direct address syntax and already tracked raw-pointer copies."""
@@ -864,6 +896,10 @@ class LocalFlow:
     def call(self,n,env,types,fnname):
         fn=self.text(n.child_by_field_name('function')); a=n.child_by_field_name('arguments')
         args=list(a.named_children) if a else []
+        # A reserved C++ pointer-cast expression is not a sensitive-return API.
+        # Operand call effects were inspected by effects(); its value may-flow
+        # is retained by expr(). Visible keyword overrides keep normal unknowns.
+        if self.cpp_pointer_cast(n):return
         if fn in self.shadows:
             self.gaps.add('call target is shadowed by a local value: '+fn)
             # A callable parameter/local alias is not the reviewed API with the

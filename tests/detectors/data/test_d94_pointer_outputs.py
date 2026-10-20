@@ -28,6 +28,11 @@ class D94PointerOutputTests(unittest.TestCase):
                 run=self.scan('struct Box{unsigned count;};void Callback(const char *key){Box value={0};'+
                               write+'\nHILOG_INFO(1,"%{public}u",value.count);}')
                 self.assertTrue(any(f.line==2 and f.rule_id=='data.log.sensitive-value' for f in run.findings))
+        source=('struct Box{unsigned count;};void Write(const char *value,Box *out){'
+                'out->count=(unsigned char)value[0];}'
+                'void Callback(const char *key){Box value={0};Write(key,&value);\n'
+                'HILOG_INFO(1,"%{public}u",value.count);}')
+        self.assertTrue(any(f.line==2 and f.rule_id=='data.log.sensitive-value' for f in self.scan(source).findings))
 
     def test_unknown_and_member_pointer_write_has_destination_obligation(self):
         for setup,left in (('unsigned *p=GetDestination();','*p'),
@@ -69,6 +74,14 @@ class D94PointerOutputTests(unittest.TestCase):
         run=self.scan(source,partial='partial')
         self.assertTrue(any('unresolved material write' in f.message for f in run.findings))
         self.assertNotEqual(dict(run.file_outcomes)['service.cpp'],'complete')
+
+    def test_cpp_pointer_cast_type_name_does_not_invent_material(self):
+        from tests.detectors.data.test_d87_property_roles import analyze
+        source='struct PrivateKeyInfo{int unused;};void sample(PrivateKeyInfo **output){*output=static_cast<PrivateKeyInfo *>(nullptr);}'
+        self.assertEqual(len(analyze(source).findings),0)
+        self.assertTrue(self.scan('void Callback(const char *key){const char *out=static_cast<const char*>(key);'
+                                 'HILOG_INFO(1,"%{public}s",out);}').findings)
+        self.assertTrue(analyze('#define static_cast UnknownCast\n'+source).findings)
 
 
 if __name__=='__main__':
