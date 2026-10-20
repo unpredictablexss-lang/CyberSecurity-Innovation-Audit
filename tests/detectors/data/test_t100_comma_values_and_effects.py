@@ -101,13 +101,15 @@ class T100CommaTests(unittest.TestCase):
     def test_overloaded_prototype_declines_proof(self):self.check('overloaded-prototype-unknown')
     def test_left_assignment_effect(self):self.check('left-assignment-effect')
     def test_unique_call_value_and_effect(self):self.check('unique-call-literal')
-    def test_parser_partial_is_explicitly_blocked(self):
+    def test_parser_assignment_comma_recovery_preserves_effect(self):
         s=next(row[1] for row in fixtures() if row[0]=='left-assignment-effect').replace('((out=key),0)','(out=key,0)')
         ctx=self.context(s)
-        self.assertEqual('partial',ctx.units[0].parse_status)
+        self.assertEqual('complete',ctx.units[0].parse_status)
+        self.assertTrue(any('recovered_cpp_assignment_comma' in str(issue) for issue in ctx.units[0].parse_issues))
         result,coverage=t93.T93ScalarPointerTests().analyze(s,runner=True)
-        self.assertEqual('blocked',result['status'])
-        self.assertEqual(1,coverage['detectors']['ohscanner.data.sensitive_exposure']['coverage_counts']['not_analyzed'])
+        self.assertEqual('blocked',result['status'])  # semantic/type coverage stays partial
+        self.assertEqual(0,coverage['detectors']['ohscanner.data.sensitive_exposure']['coverage_counts']['not_analyzed'])
+        self.assertTrue(any('HILOG_INFO' in r['message'] for r in self.rows(s,runner=True)))
     def test_non_comma_and_parenthesized_material(self):
         for expr in ('key','(key)'):
             s=pointer(expr)
