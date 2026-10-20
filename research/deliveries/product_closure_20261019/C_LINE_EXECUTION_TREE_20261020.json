@@ -827,7 +827,7 @@
     {
       "id": "C-DEV-EXACT-BOUND-SCOUT-20261020",
       "kind": "source_candidate_development_scout",
-      "status": "IN_PROGRESS_ONE_CANDIDATE_SHORTLIST",
+      "status": "COMPLETE_ONE_CONDITIONAL_SOURCE_CANDIDATE",
       "base": {
         "branch": "codex/c-line-parallel-plan-20261020",
         "commit": "d546f30cac5da010c6f6f863c2c73733e6dcc61c",
@@ -836,25 +836,34 @@
       "objective": "Identify at most one next high-signal candidate path in exact-bound C-line Ark Runtime sources not already closed by the C-line execution tree. Prefer source-level control-flow/type/bounds defects that map to existing detector models and whose exact helper/declaration AST dependencies parse complete. Do not implement until the independent tester confirms source identity and a concrete gap.",
       "developer_prompt": "ROLE: C-line static-candidate scout. BASE current planning branch HEAD d546f30cac5da010c6f6f863c2c73733e6dcc61c; upstream Ark Runtime source commit a65a2853ccae13da167d9aa4720ab8b11ec16656 and exact local Git object store. Review current task tree and detector models. Exclude already completed Map width, Map callback JSType, TypedArray length, IB8BCA SetTypedValue, DataView API width, receiver guards, and macro parse feasibility slices. Inspect remaining exact-source TypedArray/DataView/ArrayBuffer stub flows with precise candidate semantics. Return zero or one hypothesis only; bind source commit/tree/path/blob/SHA and all helper/declaration pins, reproduce current detector/direct-analysis baseline, state a plausible trigger and source-level sensitive operation, enumerate counterevidence, parser statuses and safe/fixed/unrelated controls. Prefer no candidate over weak volume. Send exact candidate/control matrix to C-TEST-EXACT-BOUND-SCOUT before recommending implementation. No production edits in scout stage; no runtime/product/accuracy claims.",
       "feedback_loop": "Scout shares candidate and predicted controls with independent tester; tester verifies exact identity and challenges baseline; only a reproduced source candidate becomes a separate dev/test implementation task. L2 review follows a candidate, not an empty scan.",
-      "deliverable": "Short report naming zero or one next candidate, exact identities, reproduced output, parser/dependency status, controls and recommended next slice.",
-      "done_when": "Independent source and current-model evidence select one narrow candidate or document why no additional candidate is presently justified."
+      "deliverable": "research/deliveries/c-line/c_exact_bound_scout_20261020.md (commit a5c9d5e135997e2058133f007bf9e7ba1b371f1c); one conditional negative-TDouble Float32Array constructor candidate, exact source identities, source-predicted controls, limits, and adjacent no-go flows.",
+      "done_when": "Independent source and current-model evidence select one narrow candidate or document why no additional candidate is presently justified.",
+      "completion": "One conditional source-level candidate survives: both CommonStub and TypedHCR Float32Array double fast paths lack a negative lower-bound check; negative integral TDouble may reach NewFloat32ArrayWithSize/NewByteArray. No production edit. TaggedInt -1 is rejected; runtime TDouble reachability and allocation consequences remain unknown.",
+      "counterevidence": "Runtime representation reachability, compiled lowering, allocator behavior, and product impact were not executed; source paths remain partial/unknown where noted."
     },
     {
       "id": "C-TEST-EXACT-BOUND-SCOUT-20261020",
       "kind": "independent_candidate_testing",
-      "status": "IN_PROGRESS_INDEPENDENT_SHORTLIST_AUDIT",
+      "status": "COMPLETE_SOURCE_CANDIDATE_CONFIRMED_RUNTIME_UNKNOWN",
       "tester_agent": "c1_adapter_test",
       "feedback_to": "C-DEV-EXACT-BOUND-SCOUT-20261020",
       "objective": "Independently inspect remaining exact-bound source candidates and reproduce/challenge the developer shortlist without editing production code.",
-      "tester_prompt": "ROLE: independent C-line candidate tester. BASE d546f30cac5da010c6f6f863c2c73733e6dcc61c and exact source object store commit a65a2853ccae13da167d9aa4720ab8b11ec16656. Independently inspect detector/task-tree closed slices and remaining TypedArray/DataView/ArrayBuffer source flows. Do not edit production code. Verify exact target/helper identities and parse statuses; reproduce any candidate output and challenge its trigger with safe/fixed/unrelated/missing-evidence controls. Send findings to developer before any implementation. Accept zero candidates if evidence does not support a narrow signal. Preserve partial/unknown/not_run; no safety/product/accuracy claim. Commit a concise independent report with commands and result."
+      "tester_prompt": "ROLE: independent C-line candidate tester. BASE d546f30cac5da010c6f6f863c2c73733e6dcc61c and exact source object store commit a65a2853ccae13da167d9aa4720ab8b11ec16656. Independently inspect detector/task-tree closed slices and remaining TypedArray/DataView/ArrayBuffer source flows. Do not edit production code. Verify exact target/helper identities and parse statuses; reproduce any candidate output and challenge its trigger with safe/fixed/unrelated/missing-evidence controls. Send findings to developer before any implementation. Accept zero candidates if evidence does not support a narrow signal. Preserve partial/unknown/not_run; no safety/product/accuracy claim. Commit a concise independent report with commands and result.",
+      "report": "research/deliveries/c-line/exact_bound_scout_independent_test_20261020.md",
+      "report_commit": "14b1044f18b5acebf8c57b4cd0451e7eb9e1ab22",
+      "completion": "Independent source replay confirms missing lower-bound checks in CommonStub and TypedHCR TDouble branches and no visible downstream negative-value validation. TaggedInt -1 is blocked; fractional and over-limit controls follow slow paths. Runtime TDouble reachability, conversion edge semantics, compilation, allocation result and product impact remain unknown/not_run.",
+      "counterevidence": "The negative-integer TDouble representation is not shown reachable from user input on a product build; no compiler/runtime execution was performed."
     },
     {
       "id": "C-LLM-REVIEW-EXACT-BOUND-SCOUT-20261020",
       "kind": "second_layer_candidate_review",
-      "status": "PENDING_SURVIVING_CANDIDATE",
+      "status": "COMPLETE_CONDITIONAL_SOURCE_CANDIDATE_RUNTIME_NOT_RUN",
       "reviewer": "c1_width_review",
       "objective": "Perform source-semantic second-layer review only if the scout/test loop selects a new candidate; do not reopen already completed source reviews or develop LLM features.",
-      "review_prompt": "ROLE: second-layer source reviewer. After C-DEV-EXACT-BOUND-SCOUT and C-TEST-EXACT-BOUND-SCOUT identify a candidate and exact report, independently assess whether the source trigger can reach the sensitive operation and whether stated guards/counterevidence defeat it. Verify source pins, propose smallest isolated runtime test if warranted, and clearly separate source candidate from runtime/product vulnerability. If no candidate survives, record not_run and do not invent one. No detector or LLM implementation."
+      "review_prompt": "ROLE: second-layer source reviewer. After C-DEV-EXACT-BOUND-SCOUT and C-TEST-EXACT-BOUND-SCOUT identify a candidate and exact report, independently assess whether the source trigger can reach the sensitive operation and whether stated guards/counterevidence defeat it. Verify source pins, propose smallest isolated runtime test if warranted, and clearly separate source candidate from runtime/product vulnerability. If no candidate survives, record not_run and do not invent one. No detector or LLM implementation.",
+      "report": "research/deliveries/c-line/c_float32array_negative_double_second_layer_review_20261020.md",
+      "completion": "Source candidate survives review. Math.ceil(-1.1) is a source-supported route to TDouble(-1.0), which can pass both missing-lower-bound fast paths. NewByteArray pointer-width effects differ by architecture; 32-bit wrap suggests a conditional overwrite concern, while 64-bit requests a very large allocation. Runtime/build/allocator behavior remains not_run; no product or confirmed memory-corruption claim.",
+      "counterevidence": "Exact fast-path selection, supported build architectures, generated lowering, and allocator/OOM behavior are unverified."
     }
   ],
   "feedback_loop": [
@@ -869,7 +878,8 @@
     "Latest upstream C-line base was fetched successfully as d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03. Planning branch closure commit fbb537a39183b719bd587e0dd4a5ba83c6d85925 was subsequently pushed successfully. The current slice is the C1 TypedArray Map line-2733 source/destination JSType width mismatch; developer/tester/reviewer tasks are C-DEV-C1-MAP-EFFECT, C-TEST-C1-MAP-EFFECT, and C-LLM-REVIEW-C1-MAP-EFFECT. The detector currently reports unknown; source review supports a concrete width-mismatch candidate, with runtime/product impact unverified.",
     "C1 Map species-width slice: implementation fa8d165 emits a direct-analyzer source candidate at 2733; independent report 28e94ce37 confirms the pre-callback candidate while preserving later-loop and line-2747 unknowns. The strict detector adapter remains unknown/no finding because pinned runtime_stubs.cpp has partial AST; do not describe this as an integrated adapter finding. Existing ark_runtime tests pass 193, 3 skipped; compileall passes.",
     "Next C1 slice launched from fc8b039: audit function-scoped completeness for the pinned runtime fallback behind the Map source-width candidate; developer and independent tester share exact positive/fail-closed matrix, while second-layer reviewer independently tests source-level candidate plausibility and counterevidence. Preserve strict file partial status and do not relax the adapter on a name/hash alone.",
-    "C1 Map adapter function-scoped audit closed no-go at 874edb4; independent fail-closed replay d546f30 and second-layer conditional source review 2d5b973 preserve strict adapter unknown. New next step is a one-candidate, exact-bound scout with independent tester, excluding completed C-line slices and preferring complete helper/declaration AST evidence; second-layer review is conditional on a candidate surviving."
+    "C1 Map adapter function-scoped audit closed no-go at 874edb4; independent fail-closed replay d546f30 and second-layer conditional source review 2d5b973 preserve strict adapter unknown. New next step is a one-candidate, exact-bound scout with independent tester, excluding completed C-line slices and preferring complete helper/declaration AST evidence; second-layer review is conditional on a candidate surviving.",
+    "Exact-bound scout 20261020: developer report a5c9d5e and independent tester report 14b1044 confirm a conditional Float32Array negative-TDouble candidate in CommonStub and TypedHCR. Second-layer source report finds Math.ceil(-1.1) as a plausible TDouble(-1.0) route and architecture-dependent NewByteArray size effects. This remains source-only; compiled behavior, allocation result, and product impact are unknown/not_run. No production change."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
