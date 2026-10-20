@@ -41,16 +41,17 @@ REVIEWED_CWE = {
     'DATA-03': 'CWE-416',
     'DATA-04': 'CWE-200',
     'DATA-05': 'CWE-125',
+    'DATA-06': 'CWE-131',
     'CAP-01': 'CWE-926',
 }
 
 
-def context(text, path='sample.cpp'):
+def context(text, path='sample.cpp', repository='fixture/ipc'):
     index = parse_source(text, language='cpp')
     unit = SourceUnit(path, 'cpp', text, hashlib.sha256(text.encode()).hexdigest(),
                       index.parse_status)
-    request = ScanRequest('ipc-test', 'fixture/ipc', 'synthetic-ipc-v1',
-                          snapshot_digest((unit,)), 'current-component:fixture/ipc')
+    request = ScanRequest('ipc-test', repository, 'synthetic-ipc-v1',
+                          snapshot_digest((unit,)), 'current-component:' + repository)
     return ScanContext(request, (unit,), {'ast': {path: index.to_dict()}})
 
 
@@ -210,7 +211,12 @@ class FamilyFixtureMatrixTests(unittest.TestCase):
                     self.assertEqual(item['family'], expected_family,
                                      'a fixture under ' + expected_family + "'s directory declares "
                                      + str(item['family']))
-                ctx = context((manifest_path.parent / item['file']).read_text())
+                text = (manifest_path.parent / item['file']).read_text()
+                if item['family'] == 'DATA-06':
+                    ctx = context(text, 'interfaces/innerkits/cj/src/message_sequence_impl.cpp',
+                                  'openharmony/communication_ipc')
+                else:
+                    ctx = context(text)
                 run = IpcInterfaceDetector().detect(ctx, ctx.units)
                 self.assertEqual(run.status, 'completed')
                 rules = {f.rule_id for f in run.findings}

@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "suite": "T74 official source integration challenge",
+  "cases": [
+    {
+      "case_id": "old-cve-parent",
+      "source_kind": "git",
+      "commit": "84d681288793785e8f39f71c824f211edaed8f1e",
+      "file": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+      "source_sha256": "1f4d039b974a0021000126e61efea7eb0b8eb5f4baf756373c1b12150d0d5eec",
+      "repository": "openharmony/communication_ipc",
+      "expected_rule_count": 1,
+      "expected_label": "candidate_source_positive"
+    },
+    {
+      "case_id": "old-umbrella-issue-revision",
+      "source_kind": "git",
+      "commit": "67cd9d3e8e08971ba614a19f99b5f6b7ec4ea039",
+      "file": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+      "source_sha256": "98bd761fe25a16435830a8978473444a318b71a4cf4809689b4b7ffe106effa9",
+      "repository": "openharmony/communication_ipc",
+      "expected_rule_count": 1,
+      "expected_label": "candidate_source_positive"
+    },
+    {
+      "case_id": "official-security-fix",
+      "source_kind": "git",
+      "commit": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+      "file": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+      "source_sha256": "30ad2a9fa4f45792b83e75cef6c5106818b290ae523d9e17e48c88853854d777",
+      "repository": "openharmony/communication_ipc",
+      "expected_rule_count": 0,
+      "expected_label": "fixed_control"
+    }
+  ],
+  "synthetic_controls": [
+    {"case_id": "positive-count-zero-only", "expected_rule_count": 0},
+    {"case_id": "unrelated-function-name", "expected_rule_count": 0},
+    {"case_id": "checkreadlength-with-sized-allocations", "expected_rule_count": 0},
+    {"case_id": "comment-only-regex-negative", "pre_fix_observed_rule_count": 1, "current_expected_rule_count": 0},
+    {"case_id": "wrong-repository", "expected_rule_count": 0}
+  ],
+  "deduplication_contract": {
+    "root_identity": ["CVE-2025-26474", "interfaces/innerkits/cj/src/message_sequence_impl.cpp", "MessageSequenceImpl::CJ_ReadRemoteObjectArray"],
+    "manifest_cases_are_revision_replays_not_independent_CVEs": true,
+    "one_finding_per_source_revision": true,
+    "one_distinct_root_across_both_old_revisions": true
+  },
+  "provenance": {
+    "repository_required_for_rule": "openharmony/communication_ipc",
+    "git_cases_require_exact_commit_and_raw_file_sha256": true,
+    "git_case_provenance": "git_object",
+    "fixture_case_provenance": "fixture"
+  }
+}

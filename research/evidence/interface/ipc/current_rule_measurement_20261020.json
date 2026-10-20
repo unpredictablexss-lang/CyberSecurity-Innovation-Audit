@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "declaration": "current detector rule measurement scope",
+  "detector_id": "ohscanner.interface.ipc",
+  "detector_version": "0.12.13",
+  "model_version": "oh-ipc-2026.10-v33",
+  "family_id": "DATA-06",
+  "rules": [
+    "ipc.parcel.array-allocation-width"
+  ],
+  "rule_versions": {
+    "ipc.parcel.array-allocation-width": "0.1.0"
+  },
+  "measurement_status": "not_run",
+  "holdout_case_ids": [],
+  "scope_note": "This current declaration is separate from the historical 2026-10-18 holdout snapshot. The DATA-06 candidate has synthetic design controls and source-level vulnerable/fixed probes; these are not independent holdout labels. No precision, recall, or positive-count metric is reported.",
+  "reason": "No independent frozen real-positive holdout case has been admitted for DATA-06. Product inclusion and attacker reachability for the source-level candidate remain unverified."
+}

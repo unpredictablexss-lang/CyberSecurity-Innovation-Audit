@@ -3,7 +3,7 @@ from typing import Tuple
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation, ScanContext, SourceUnit
 from .analysis import Interpreter
 from .families import cwes, merge_policy
-from .models import IMPACT_DESCRIPTION, MODEL_VERSION, reviewed_consequence
+from .models import IMPACT_DESCRIPTION, MODEL_VERSION, RULE_VERSION_BY_RULE, reviewed_consequence
 from .tlv_fixed_width import find_fixed_width_tlv_overreads
 from .network_session_allowlist import (
     find_auth_session_allowlist_candidates,
@@ -11,6 +11,7 @@ from .network_session_allowlist import (
     has_dst_bus_name_session_field_provenance,
 )
 from .auth_transport_status import find_permission_denial_transport_success
+from .ffi_array_bounds import find_remote_array_width_candidate
 
 
 # Exact path components are review cues, not proof that a file is excluded from
@@ -33,7 +34,7 @@ def _test_source_path(path):
 # new family cannot be emitted without declaring the CWE it reports.
 _CWE = cwes()
 assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "AUTH-05", "AUTH-06", "AUTH-07",
-                     "DATA-01", "DATA-02", "DATA-03", "DATA-04", "DATA-05", "CAP-01"}, sorted(_CWE)
+                     "DATA-01", "DATA-02", "DATA-03", "DATA-04", "DATA-05", "DATA-06", "CAP-01"}, sorted(_CWE)
 
 _BASE_OBLIGATIONS = (
     EvidenceObligation("entry_reachability","Verify actual caller reachability and product build/macro conditions."),
@@ -93,7 +94,7 @@ class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
     # Incremented when detector logic or its repository-bound policy changes;
     # report identities must distinguish the resulting interpretation.
-    version = "0.12.12"
+    version = "0.12.13"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -126,6 +127,7 @@ class IpcInterfaceDetector:
         observations, extra = analysis.run()
         findings = tuple(DetectorFinding(
             file=o.file,line=o.line,symbol=o.symbol,rule_id=o.rule,
+            rule_version=RULE_VERSION_BY_RULE.get(o.rule),
             message=_finding_message(o),
             evidence_type="syntax",candidate_cwe=_CWE[o.family],
             # Contract v2 §3: mechanism CWE above, consequence here. Both are
@@ -146,6 +148,14 @@ class IpcInterfaceDetector:
                 +((_DESCRIPTOR_OBLIGATIONS[o.descriptor_identity],) if o.descriptor_identity else ())
                 +((_CONSEQUENCE_OBLIGATION,) if o.impact and o.impact!="unknown" else ()),
             ) for o in observations)
+        ffi_array_findings = []
+        for unit in applicable:
+            if unit.parse_status != "complete":
+                continue
+            candidate = find_remote_array_width_candidate(unit, context.request.repository)
+            if candidate is not None:
+                ffi_array_findings.append(candidate)
+        findings = findings + tuple(ffi_array_findings)
         resource_findings = []
         for fn, line, container, path_note in analysis.unbounded_observer_registrations():
             resource_findings.append(DetectorFinding(
@@ -153,6 +163,7 @@ class IpcInterfaceDetector:
                 line=line,
                 symbol=fn.qualified,
                 rule_id="ipc.resource.unbounded-observer-registration",
+                rule_version=RULE_VERSION_BY_RULE.get("ipc.resource.unbounded-observer-registration"),
                 message=("Observer-growth candidate: AddObserver inserts " + container
                          + " without the reviewed aggregate observer-cap shape. "
                          + (("Source-derived path within the scanned scope: " + path_note + " ")
@@ -195,6 +206,7 @@ class IpcInterfaceDetector:
                 line=line,
                 symbol=fn.qualified,
                 rule_id="ipc.auth.privileged-app-bypass",
+                rule_version=RULE_VERSION_BY_RULE.get("ipc.auth.privileged-app-bypass"),
                 message=("Authorization-policy candidate: default-app/IME predicate " + grant_name
                          + " contributes to the VerifyPermission grant. "
                          + (("Source-derived path within the scanned scope: " + path_note + ". "
@@ -281,6 +293,7 @@ class IpcInterfaceDetector:
                     line=line,
                     symbol=symbol,
                     rule_id="ipc.network.auth-session-whitelist",
+                    rule_version=RULE_VERSION_BY_RULE.get("ipc.network.auth-session-whitelist"),
                     message=message,
                     evidence_type="syntax",
                     candidate_cwe="CWE-862",
@@ -310,6 +323,7 @@ class IpcInterfaceDetector:
                     line=line,
                     symbol=symbol,
                     rule_id="ipc.auth.denial-transport-success",
+                    rule_version=RULE_VERSION_BY_RULE.get("ipc.auth.denial-transport-success"),
                     message=("AUTH-07 candidate: a failed " + predicate
                              + " guard writes an error to the reply but returns transport success "
                              + status + ". This status mismatch does not by itself prove authorization "
@@ -341,6 +355,7 @@ class IpcInterfaceDetector:
                     line=line,
                     symbol=symbol,
                     rule_id="ipc.tlv.fixed-width-length",
+                    rule_version=RULE_VERSION_BY_RULE.get("ipc.tlv.fixed-width-length"),
                     message=("DATA-05 candidate: a TLV header length bounds available bytes, "
                              "but a fixed-width memcpy_s still reads sizeof(T) without first "
                              "requiring head.len == sizeof(T). Entry reachability, the exact "
