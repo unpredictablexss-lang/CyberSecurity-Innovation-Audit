@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "D92_T91_COMPLETED_NEXT_QUEUE_READY",
+  "status": "D92_T91_COMPLETED_PUSH_PENDING",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -343,7 +343,7 @@
       "evidence_commit": "e44449b14d3eb0f8e0bc08a721aee983284e896e",
       "integration_commit": "5fc06ba65",
       "final_evidence_integration": "f37240e51",
-      "validation": "0.21.8; exact CERT_PRIVATE_KEY=\"key\" property-name candidate removed; get output3 source adds 8 downstream unknown candidates; strict T85 direct/Runner19→26; shared18 legacy findings unchanged; 638 source call facts/3 partial coverage unchanged; developer8 + owner data213 + compatibility61 pass"
+      "validation": "0.21.8; only exact CERT_PRIVATE_KEY=\"key\" read arg2 candidate removed; get output3 adds 8 downstream unknown paths; strict T85 direct/Runner19→26; common18 findings and638 AST call facts unchanged; coverage3 partial; developer8 + owner data213 + compatibility61 pass"
     },
     {
       "id": "T91",
@@ -358,7 +358,7 @@
       "completion": "Independent fixed-archive replay verified exact key role, retained real private-key output and eight downstream flows; no false suppression found.",
       "commit": "55df3dbaf821a38813d1e40c6efcfd262655e395",
       "integration_commit": "e65d43a72",
-      "validation": "Independent12 methods, baseline8 subtest failures→0; data213; exact T85 direct+Runner19→26, only298 removed plus8 output3 descendants added; common18 identities/messages/evidence and638 call facts unchanged; coverage3 partial"
+      "validation": "Independent12/12, baseline8 direct/Runner subfailures→0; data213; fixed T85 direct/Runner19→26; only298 input removed, eight output descendants added; common18 evidence and638 calls unchanged; coverage3 partial"
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
