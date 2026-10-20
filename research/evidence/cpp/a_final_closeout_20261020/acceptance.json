@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "base_main": "0f53af62283dbd0f249280805e8286a04b2d43b9",
+  "compared_a_branch": "f193636e7b1384f0ca2e360b4ec3b0b0348d9340",
+  "branch": "codex/a-line-final-closeout-20261020",
+  "cases": [
+    {"id":1,"name":"libtiff CVE-2025-9900","static":"PARTIAL","final_snapshot":"not_run","parse":"historical partial/blocked","semantic_coverage":"unknown","candidate":"historical 1/0","runtime_impact":"not_run","product":"PARTIAL-BLOCK"},
+    {"id":2,"name":"libpng CVE-2026-46675","static":"PARTIAL","final_snapshot":"not_run","parse":"historical errors","semantic_coverage":"partial","candidate":"historical 0/0","runtime_impact":"not_run","product":"PARTIAL-BLOCK"},
+    {"id":3,"name":"libpng CVE-2026-33416","static":"PARTIAL","final_snapshot":"not_run","parse":"historical partial","semantic_coverage":"partial","candidate":"historical 0/0","runtime_impact":"not_run","product":"PARTIAL-BLOCK"},
+    {"id":4,"name":"curl CVE-2026-92391","static":"PASS","final_snapshot":"replayed","parse":"complete","semantic_coverage":"complete","candidate":"vulnerable 1; fixed 0","runtime_impact":"not_run","product":"PARTIAL-BLOCK","evidence":"curl-cve2026-92391-vulnerable.json; curl-cve2026-92391-fixed.json"},
+    {"id":5,"name":"cJSON CVE-2026-67216 compare cost","static":"PARTIAL","final_snapshot":"not_run","parse":"historical partial","semantic_coverage":"partial","candidate":"historical candidate","runtime_impact":"not_run","product":"PARTIAL-BLOCK"},
+    {"id":6,"name":"cJSON CVE-2026-67215 tree amplification","static":"PARTIAL","final_snapshot":"not_run","parse":"historical complete target; aggregate partial","semantic_coverage":"partial","candidate":"historical candidates","runtime_impact":"not_run","product":"PARTIAL-BLOCK"},
+    {"id":7,"name":"web_webview CVE-2026-27648","static":"PARTIAL","final_snapshot":"not_run","parse":"historical full source partial","semantic_coverage":"partial","candidate":"historical fragment hits","runtime_impact":"not_run","product":"PARTIAL-BLOCK"},
+    {"id":8,"name":"dSoftBus CVE-2025-26690","static":"PARTIAL","final_snapshot":"not_run","parse":"historical source-bound status unavailable","semantic_coverage":"partial","candidate":"historical summary 5/0","runtime_impact":"not_run","product":"PARTIAL-BLOCK"},
+    {"id":9,"name":"Ark runtime CVE-2025-0587","static":"PARTIAL","final_snapshot":"replayed","parse":"complete","semantic_coverage":"complete","candidate":"vulnerable 1; fixed 0","runtime_impact":"not_run","product":"PARTIAL-BLOCK","evidence":"cve2025-0587-vulnerable.json; cve2025-0587-fixed.json"},
+    {"id":10,"name":"Ark runtime CVE-2025-23420","static":"PASS","final_snapshot":"replayed","parse":"complete","semantic_coverage":"complete","candidate":"vulnerable 5; fixed 0; same-source safe control 0","runtime_impact":"not_run","product":"PARTIAL-BLOCK","evidence":"cve2025-23420-vulnerable.json; cve2025-23420-fixed.json; cve2025-23420-safe-control.json"},
+    {"id":11,"name":"kernel_liteos_a CVE-2025-20042","static":"N/A","final_snapshot":"not_applicable","parse":"not_applicable","semantic_coverage":"not_applicable","candidate":"not_applicable","runtime_impact":"not_applicable","product":"N/A"},
+    {"id":12,"name":"kernel_liteos_a CVE-2025-21098","static":"N/A","final_snapshot":"not_applicable","parse":"not_applicable","semantic_coverage":"not_applicable","candidate":"not_applicable","runtime_impact":"not_applicable","product":"N/A"},
+    {"id":13,"name":"Contacts PortraitFileName path traversal","static":"PARTIAL","final_snapshot":"replayed","parse":"complete","semantic_coverage":"complete at rule level","candidate":"3; no trusted fixed source","runtime_impact":"not_run","product":"PARTIAL-BLOCK","evidence":"contacts-path-traversal-current.json"}
+  ],
+  "counts": {"historical_bounded_static":{"PASS":2,"PARTIAL":9,"N/A":2},"product":{"PASS":0,"PARTIAL-BLOCK":11,"N/A":2},"final_snapshot_source_replayed":4},
+  "a0_preservation":{"manifest_files_verified":97,"manifest_bytes":4364747,"unique_candidate_ids":345,"verification":"passed","source_records":345,"historical_status":{"not_testable":336,"not_reproduced":9},"queue_status":{"paused_pending_evidence":331,"queued_first_batch":5,"queued_not_reproduced":9}}
+}

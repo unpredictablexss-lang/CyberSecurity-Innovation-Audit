@@ -1,6 +1,6 @@
 # A-RES-01 C/C++ resource lifetime specification
 
-更新：2026-10-19。`ohscanner.cpp.resource_lifetime` 0.3.0 是局部 Alloc/Acquire、Release、Alias、Null/Realloc 状态机研究 Detector，并包含三类 CWE-674 resource exhaustion 候选：registered-callback recursive cleanup、patch-driven tree amplification 和 recursive compare cost。默认 `candidate/unassessed`。默认 `candidate/unassessed`。
+更新：2026-10-20。`ohscanner.cpp.resource_lifetime` 0.4.2 是局部 Alloc/Acquire、Release、Alias、Null/Realloc 状态机研究 Detector，并包含三类 CWE-674 resource exhaustion 候选：registered-callback recursive cleanup、patch-driven tree amplification 和 recursive compare cost。Catalog 默认启用；结果仍是 `candidate/unassessed`。
 
 ## 触发
 
