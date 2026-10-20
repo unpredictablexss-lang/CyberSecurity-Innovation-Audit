@@ -468,7 +468,14 @@ class OriginEvaluator:
     def store_arguments(self, node, state):
         fn, model = self.fn, self.model
         if node.type != 'call_expression':
-            return None
+            # The Map source read is assigned to kValue; inspect only the
+            # direct RHS call so unrelated nested calls cannot acquire this
+            # source-specific summary or produce duplicate observations.
+            right = (node.child_by_field_name('right')
+                     if node.type == 'assignment_expression' else None)
+            if right is None or right.type != 'call_expression':
+                return None
+            node = right
         name = fn.call_name(node)
         if (self.species_read_width_bound and fn.qualified_name == OWNER + '::Map'
                 and name in ('FastGetPropertyByIndex', 'this->FastGetPropertyByIndex',
