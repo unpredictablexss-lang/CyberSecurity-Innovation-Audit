@@ -20,9 +20,15 @@ class ArkRuntimeCatalogTests(unittest.TestCase):
         self.assertFalse(metadata["default_enabled"])
         detector = build_registry((DETECTOR_ID,)).detectors()[0]
         self.assertEqual(detector.detector_id, DETECTOR_ID)
-        self.assertEqual(detector.version, "0.6.2")
+        self.assertEqual(detector.version, "0.6.3")
+        self.assertEqual(detector.model.version, "0.8.14")
         self.assertEqual(detector.model.target_bindings[0][0],
                          "a65a2853ccae13da167d9aa4720ab8b11ec16656")
+        self.assertEqual(tuple(row[0] for row in detector.model.exception_guard_bindings), (
+            "c758818dbfd0b146a908d43d21f6ca1706c33783",
+            "81ca57487d04ea30cd11c271e86494a4e130f43e",
+            "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        ))
         self.assertEqual(detector.model.source_dependencies, ((
             "ecmascript/compiler/new_object_stub_builder.cpp",
             "991ac5ac034a1a027e3200787ec25c55b3f15b69"),))

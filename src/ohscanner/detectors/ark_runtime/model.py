@@ -14,7 +14,7 @@ SIZE_OVERFLOW_RULE_ID = 'ark.runtime.typedarray-buffer-size-multiplication-overf
 RUNTIME_EXCEPTION_RULE_ID = 'ark.runtime.callback-exception-before-result-conversion'
 CALL_INFO_EXCEPTION_RULE_ID = 'ark.runtime.call-info-construction-exception-guard'
 RECEIVER_TYPE_GUARD_RULE_ID = 'ark.runtime.typedarray-receiver-type-guard'
-VERSION = '0.6.2'
+VERSION = '0.6.3'
 NAMESPACE = 'panda::ecmascript::kungfu'
 OWNER = NAMESPACE + '::BuiltinsTypedArrayStubBuilder'
 CALLER = OWNER + '::Filter'
@@ -231,16 +231,21 @@ class RuntimeTypeModel:
 
 
 def c_line_static_model():
-    """Return the reviewed C1 source profile for explicit static candidates."""
+    """Return exact C1 plus historical exception-path research bindings."""
     from dataclasses import replace
 
     base = RuntimeTypeModel()
     return replace(
         base,
-        version='0.8.13',
-        effect_summary_revision='c-line-static-contract-v14',
+        version='0.8.14',
+        effect_summary_revision='c-line-static-contract-v15',
         target_bindings=(base.target_bindings[-1],),
-        exception_guard_bindings=(base.exception_guard_bindings[-1],),
+        # The two historical exception-guard samples are exact-bound research
+        # profiles. Keep the current C1 target binding as a separate entry;
+        # no neighboring or unbound revisions are admitted.
+        exception_guard_bindings=(base.exception_guard_bindings[0],
+                                  base.exception_guard_bindings[1],
+                                  base.exception_guard_bindings[-1]),
         receiver_guard_bindings=(),
         source_dependencies=(
             ('ecmascript/compiler/new_object_stub_builder.cpp',
