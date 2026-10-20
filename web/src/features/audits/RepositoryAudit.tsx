@@ -54,15 +54,15 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
   }
   let ready = false; try { ready = approvedDetectorIds(detectors, explicitIds).length > 0; } catch { /* blocked */ }
   return <>
-    <Header title="智能安全审计" description="固定仓库版本，先完成静态证据扫描，再由你决定是否授权模型辅助研判。" />
+    <Header title="智能安全审计" description="选择固定源码后执行静态检测；经明确授权，自动进入证据驱动的 AI 追查工作流。" />
     <Row gutter={24}><Col xs={24} xl={16}><Card title="配置源码审计">
       <ScopeAvailability />
       {auditMode === "standard_review" ? <>
         <Alert className="section-gap" type="info" showIcon
-          message="先完成静态扫描，再按候选分批进行模型辅助研判"
+          message="静态检测 + AI 证据追查（无需理解模型内部阶段）"
           description={autoTriage
-            ? "勾选任务级授权后，扫描最多对 " + maxTriageCandidates + " 条候选进行单轮模型辅助研判。"
-              + (authorizedR2Candidates ? "其中高/严重候选若仍有可由固定源码工具补查的未解决义务，最多再升级 " + authorizedR2Candidates + " 条做补充核查。" : "本次不自动升级补充核查。")
+            ? "确认源码外发与费用预算后，扫描最多自动研判 " + maxTriageCandidates + " 条优先候选。"
+              + (authorizedR2Candidates ? "高危且证据不完整的候选中，最多 " + authorizedR2Candidates + " 条会继续跨文件追查。" : "本次不启动跨文件追查。")
               + "未入选候选仍未研判。关闭授权时，扫描只保存静态报告，之后仍可逐批查看实际外发内容再授权。"
             : "扫描本身不会把源码发送给模型。报告保存后，可选择候选，查看固定源码、模型目的地、实际外发内容和预算，再单独同意创建研判任务；未选、未授权或未配置模型时，静态报告仍可使用。"} />
         {provider && !provider.configured && <Alert className="section-gap" type="warning" showIcon
@@ -70,13 +70,13 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
           description="静态审计可正常执行；完成后可在“设置 → Agent / LLM”配置服务，再发起需单独授权的模型辅助研判。" />}
         {provider?.configured && <Alert className="section-gap" type="success" showIcon
           message={"已配置模型服务：" + provider.endpoint_host + " · " + provider.model}
-          description="配置状态不代表已连通或已授权。默认不外发；可选在本次审计提交时授权受预算限制的自动单轮研判，也可以扫描完成后逐批查看实际披露内容再授权。" />}
+          description="配置状态不代表已连通或已授权。默认不外发；可在提交时授权自动智能追查，也可以扫描完成后逐批查看实际披露内容再授权。" />}
       </> : <Alert className="section-gap" type="info" showIcon
         message="本次仅创建静态扫描任务"
         description="不计划模型研判。扫描结果、覆盖限制和证据义务照常保存。" />}
       {error && <Alert className="section-gap" type="error" showIcon message={error} />}
       {refsError && <Alert className="section-gap" type="warning" message={refsError} />}
-      <Form name="repository-audit" form={form} layout="vertical" initialValues={{ ...auditDefaults, auto_triage: false, max_triage_candidates: 3, auto_r2: false, max_r2_candidates: 2, max_cost_usd: "0.10" }} onValuesChange={invalidate} onFinish={async (values) => {
+      <Form name="repository-audit" form={form} layout="vertical" initialValues={{ ...auditDefaults, auto_triage: false, max_triage_candidates: 5, auto_r2: true, max_r2_candidates: 3, max_cost_usd: "5.00" }} onValuesChange={invalidate} onFinish={async (values) => {
         if (!plan?.plan_sha256) { setError("请先预览扫描计划；预览后若修改仓库、版本或范围，需要重新预览。"); return; }
         setBusy(true); setError("");
         try { const job = await api("/scans", {
@@ -93,10 +93,10 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
       }}>
         {auditMode === "standard_review" && provider?.configured && <>
           <Form.Item name="auto_triage" valuePropName="checked">
-            <Checkbox>本次授权扫描完成后自动进行模型辅助研判</Checkbox>
+            <Checkbox>本次授权扫描完成后自动运行 AI 证据追查工作流</Checkbox>
           </Form.Item>
           {autoTriage && <>
-            <Form.Item name="max_triage_candidates" label="最多自动单轮研判候选数">
+            <Form.Item name="max_triage_candidates" label="最多自动研判候选数">
               <InputNumber min={1} max={5} precision={0} />
             </Form.Item>
             <Form.Item name="max_cost_usd" label="自动研判费用预算上限（USD）"
@@ -108,17 +108,18 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
               <InputNumber stringMode min="0.00000001" max="999999" step="0.01"
                 style={{ width: 240 }} addonBefore="USD" />
             </Form.Item>
-            <Form.Item name="auto_r2" valuePropName="checked">
-              <Checkbox>符合条件时继续做固定源码补充核查</Checkbox>
+            <Form.Item name="auto_r2" valuePropName="checked"
+              extra="允许在同一授权源码范围内按需继续深入调查；模型只能使用已审查的只读工具和预算。">
+              <Checkbox>授权后允许按证据缺口自动继续跨文件追查</Checkbox>
             </Form.Item>
-            {autoR2 && <Form.Item name="max_r2_candidates" label="最多自动补充核查候选数">
+            {autoR2 && <Form.Item name="max_r2_candidates" label="最多深入追查候选数">
               <InputNumber min={0} max={maxTriageCandidates} precision={0} />
             </Form.Item>}
             {plan?.triage_authorization_preview?.eligible && <Alert className="section-gap" type="warning" showIcon
               message={"任务级源码外发授权预览 · " + plan.triage_authorization_preview.provider.endpoint_host + " · " + plan.triage_authorization_preview.provider.model}
               description={<>
                 <div>最多 {plan.triage_authorization_preview.manifest.budgets.max_requests} 次 HTTP 请求（模型请求最多 {plan.triage_authorization_preview.manifest.budgets.r1_max_model_calls + plan.triage_authorization_preview.manifest.budgets.r2_max_model_calls} 次；每次最多重试一次）。</div>
-                <div>单轮研判每条输入预算不超过 {plan.triage_authorization_preview.manifest.per_candidate_budgets.r1.max_total_input_tokens} tokens、输出不超过 {plan.triage_authorization_preview.manifest.per_candidate_budgets.r1.max_total_output_tokens} tokens。{authorizedR2Candidates ? "工具增强调查每条输入预算不超过 " + plan.triage_authorization_preview.manifest.per_candidate_budgets.r2.max_total_input_tokens + " tokens、输出不超过 " + plan.triage_authorization_preview.manifest.per_candidate_budgets.r2.max_total_output_tokens + " tokens。" : ""}</div>
+                <div>初步研判每条输入预算不超过 {plan.triage_authorization_preview.manifest.per_candidate_budgets.r1.max_total_input_tokens} tokens、输出不超过 {plan.triage_authorization_preview.manifest.per_candidate_budgets.r1.max_total_output_tokens} tokens。{authorizedR2Candidates ? "跨文件深入追查每条输入预算不超过 " + plan.triage_authorization_preview.manifest.per_candidate_budgets.r2.max_total_input_tokens + " tokens、输出不超过 " + plan.triage_authorization_preview.manifest.per_candidate_budgets.r2.max_total_output_tokens + " tokens。" : ""}</div>
                 <div>{plan.triage_authorization_preview.manifest.source_disclosure.join(" ")}</div>
                 <div>费用估算：{plan.triage_authorization_preview.estimated_cost?.maximum_usd
                   ? <>USD {plan.triage_authorization_preview.estimated_cost.maximum_usd}{plan.triage_authorization_preview.estimated_cost.maximum_cny ? " / CNY " + plan.triage_authorization_preview.estimated_cost.maximum_cny : ""}；按{plan.triage_authorization_preview.estimated_cost.basis === "realtime_payg_all_input_uncached" ? "实时按量费率、输入全部按缓存未命中" : "峰值费率、输入全部按缓存未命中"}估算；费率快照 {plan.triage_authorization_preview.estimated_cost.rate_card_id} <a href={plan.triage_authorization_preview.estimated_cost.rate_source_url} target="_blank" rel="noreferrer">费率来源</a></>
@@ -165,7 +166,7 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
         <AuditPlanView plan={plan} auditMode={auditMode} />
         <Button aria-label="冻结版本并开始扫描" className="section-gap" type="primary" htmlType="submit" size="large" loading={busy}
           disabled={!ready || !repos.length || !plan?.plan_sha256 || !plan?.workflow_sha256 ||
-            (authorizeAutoTriage && !plan?.triage_authorization_preview?.consent_sha256)}>固定版本并创建审计任务</Button>
+            (authorizeAutoTriage && !plan?.triage_authorization_preview?.consent_sha256)}>开始安全审计</Button>
       </Form>
     </Card></Col><Col xs={24} xl={8}><Card title="本次审计将保存">
       <ol className="audit-checklist"><li>完整 Commit 与 Git Tree</li><li>实际规则与版本</li><li>纳入范围、解析及执行覆盖</li><li>候选、证据义务与报告哈希</li></ol>

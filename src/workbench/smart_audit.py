@@ -15,9 +15,79 @@ def _digest(value):
 
 
 def _severity(candidate):
+    # Use the *same* tentative tier that the risk API displays. The scanner
+    # currently emits severity='unassessed'; otherwise AI routing would ignore
+    # a CWE-based high-risk label shown in the UI.
+    # This changes scheduling priority only, not confidence/verification.
+    value = severity_metadata(candidate)["severity"]
     return {"critical": 5, "high": 4, "medium": 3, "low": 2, "info": 1}.get(
-        str(candidate.get("severity", "")).lower(), 0
+        value, 0
     )
+
+
+SEVERITY_LABELS = {
+    "critical": "严重", "high": "高危", "medium": "中危",
+    "low": "低危", "info": "提示", "unknown": "未分级",
+}
+
+# Conservative *type-based* triage display only. These are NOT CVSS scores,
+# demonstrated exploitability, known vulnerable versions, or product impact.
+# Missing/ambiguous CWE mappings always stay ungraded.
+CWE_TYPE_SEVERITY = {
+    "CWE-22": "high",    # path traversal (potential access boundary)
+    "CWE-78": "high",    # OS command injection
+    "CWE-94": "high",    # code injection
+    "CWE-119": "high",   # memory bounds
+    "CWE-125": "high",   # out-of-bounds read
+    "CWE-415": "high",   # double free
+    "CWE-416": "high",   # use after free
+    "CWE-787": "high",   # out-of-bounds write
+    "CWE-862": "high",   # missing authorization
+    "CWE-863": "high",   # incorrect authorization
+    "CWE-129": "medium", # improper array index
+    "CWE-190": "medium", # integer overflow
+    "CWE-191": "medium", # integer underflow
+    "CWE-200": "medium", # information exposure
+    "CWE-319": "medium", # cleartext transmission
+    "CWE-362": "medium", # race condition
+    "CWE-400": "medium", # resource exhaustion
+    "CWE-476": "medium", # null dereference
+    "CWE-522": "medium", # insufficient credentials protection
+    "CWE-532": "medium", # sensitive information in log
+    "CWE-681": "medium", # numeric conversion
+    "CWE-732": "medium", # incorrect permission assignment
+    "CWE-770": "medium", # unrestricted resource allocation
+}
+
+
+def severity_metadata(candidate):
+    """Return an *unverified* risk-type estimate, not a verified impact score.
+
+    Scanner contract currently sets ToolDiagnostic.severity='unassessed'.
+    A CWE can supply an explicitly labeled heuristic tier for user triage;
+    it must never influence evidence confidence or confirmation gates.
+    """
+    value = str(candidate.get("severity") or "").lower()
+    if value in SEVERITY_LABELS and value != "unknown":
+        return {
+            "severity": value, "severity_label": SEVERITY_LABELS[value],
+            "severity_evidence": "detector_preliminary_unverified",
+            "severity_basis": None,
+        }
+    for field in ("consequence_cwe", "candidate_cwe"):
+        cwe = candidate.get(field)
+        if isinstance(cwe, str) and cwe in CWE_TYPE_SEVERITY:
+            value = CWE_TYPE_SEVERITY[cwe]
+            return {
+                "severity": value, "severity_label": SEVERITY_LABELS[value],
+                "severity_evidence": "cwe_type_heuristic_unverified",
+                "severity_basis": cwe,
+            }
+    return {
+        "severity": "unknown", "severity_label": SEVERITY_LABELS["unknown"],
+        "severity_evidence": "insufficient_evidence",
+        "severity_basis": None,
+    }
 
 
 def coverage_snapshot(job, report):
@@ -244,6 +314,9 @@ def risk_snapshot(settings, store, ops, job, report):
             "source_sha256": original.get("source_sha256"),
             "evidence_level": "candidate", "vulnerability_state": "candidate",
             "risk_tier": tier, "risk_tier_label": tier_labels[tier],
+            # Severity (potential impact) is orthogonal to evidence confidence.
+            # Neither the detector nor a model is permitted to confirm a product flaw.
+            **severity_metadata(original),
             "reasons": reasons, "obligation_count": len(obligations),
             "obligations_open": obligations_open,
             "human_review_status": manual_status,

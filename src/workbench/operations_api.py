@@ -1786,6 +1786,10 @@ def install_routes(app: FastAPI, settings, store):
             for state, count in risk.get("triage_counts", {}).items():
                 triage_counts[state] = triage_counts.get(state, 0) + int(count)
             validated_count += len(confirmed_cases)
+            confirmed_case_links = {}
+            for validated_case in confirmed_cases:
+                for candidate_id in validated_case["candidate_ids"]:
+                    confirmed_case_links.setdefault(candidate_id, []).append(validated_case["case_id"])
             for item in risk.get("items", []):
                 candidate_items.append({
                     "audit_id": job["id"],
@@ -1799,6 +1803,16 @@ def install_routes(app: FastAPI, settings, store):
                     "rule_id": item.get("rule_id"),
                     "risk_tier": item.get("risk_tier"),
                     "risk_tier_label": item.get("risk_tier_label"),
+                    "severity": item.get("severity", "unknown"),
+                    "severity_label": item.get("severity_label", "未分级"),
+                    "severity_evidence": item.get("severity_evidence", "insufficient_evidence"),
+                    "severity_basis": item.get("severity_basis"),
+                    # A validated investigation case can link multiple observations;
+                    # link it for navigation, but do NOT claim each observation was
+                    # individually proven a product vulnerability.
+                    "vulnerability_state": item.get("vulnerability_state", "candidate"),
+                    "validated_case_ids": sorted(confirmed_case_links.get(item["candidate_id"], [])),
+                    "human_review_status": item.get("human_review_status", "unassessed"),
                     "triage_state": item.get("triage", {}).get("state"),
                     "reason": "；".join(item.get("reasons", [])),
                 })

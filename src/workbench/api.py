@@ -425,10 +425,14 @@ def create_app(settings=None):
             raise ValueError("invalid pagination")
         report = service.read_report(settings, store.job(key))
         items = service.findings(report)
+        from .smart_audit import severity_metadata
         latest = {}
         for entry in store.reviews(key):
             latest[entry["candidate_id"]] = entry
         for item in items:
+            # Keep the immutable/raw diagnostic severity intact. Presentation is
+            # a separate derived field shared with /overview/risks.
+            item["risk_presentation"] = severity_metadata(item)
             item["latest_review"] = latest.get(item["id"])
             item["review_status"] = (
                 item["latest_review"]["status"]
@@ -478,6 +482,7 @@ def create_app(settings=None):
         job = store.job(key)
         report = service.read_report(settings, job)
         item = service.finding(report, identity)
+        from .smart_audit import severity_metadata
         try:
             source = service.source(settings, store, job, item["file"])
         except (ValueError, KeyError, OSError, subprocess.SubprocessError, UnicodeError):
@@ -492,6 +497,7 @@ def create_app(settings=None):
             source_limitation = None
         return {
             **item,
+            "risk_presentation": severity_metadata(item),
             "source": source,
             "source_status": source_status,
             "source_limitation": source_limitation,

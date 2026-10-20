@@ -48,7 +48,7 @@ import SourceEvidence from "../SourceEvidence";
 import CandidateActions from "../features/workbench/CandidateActions";
 import { requestGate } from "../features/audits/model";
 import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
-import { analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
+import { candidateConfidenceColor, candidateConfidenceLabel, candidateSeverityColor, candidateSeverityLabel, analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
 const { Text, Title, Paragraph } = Typography;
 export default function JobDetail({ id, initialTab = "findings", candidateId, sourceFile, sourceLine, health }: { id: string; initialTab?: string; candidateId?: string; sourceFile?: string; sourceLine?: number; health?: any }) {
   const [job, setJob] = useState<any>(null);
@@ -460,7 +460,10 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           <Table size="small" rowKey="candidate_id" pagination={false}
             dataSource={(riskSummary?.items || []).slice(0, 20)}
             columns={[
-              { title: "风险层级", dataIndex: "risk_tier_label" },
+              { title: "可信程度", render: (_: unknown, row: any) =>
+                  <Tag color={candidateConfidenceColor(row.risk_tier)}>{candidateConfidenceLabel(row.risk_tier)}</Tag> },
+              { title: "危害等级（初判）", render: (_: unknown, row: any) =>
+                  <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag> },
               { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value).slice(0, 12)}</Text> },
               { title: "规则", dataIndex: "rule_id" },
               { title: "位置", render: (_: unknown, row: any) => row.file + ":" + row.line },
@@ -630,6 +633,14 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                             <Text code>{f.rule_id}</Text>
                             <div className="muted">{f.candidate_cwe}</div>
                           </>
+                        ),
+                      },
+                      {
+                        title: "危害等级（初判）",
+                        render: (_: any, f: any) => (
+                          <Tag color={candidateSeverityColor(f.risk_presentation?.severity)}>
+                            {candidateSeverityLabel(f.risk_presentation?.severity)}
+                          </Tag>
                         ),
                       },
                       {
@@ -946,6 +957,9 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 <Tag color="gold">规则候选 · 尚未确认</Tag>
                 <Text code>{detail.rule_id}</Text>
                 {detail.candidate_cwe && <Tag>{detail.candidate_cwe}</Tag>}
+                <Tag color={candidateSeverityColor(detail.risk_presentation?.severity)}>
+                  {candidateSeverityLabel(detail.risk_presentation?.severity)} · 初判
+                </Tag>
               </Space>}
               description={<div>
                 <Text type="secondary">检测器原始说明：用于定位候选线索，不代表漏洞已确认。</Text>

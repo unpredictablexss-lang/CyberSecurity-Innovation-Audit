@@ -94,3 +94,20 @@ test("task detail shows loading states instead of false waiting or unknown label
   assert.equal(taskTriageStatusLabel(null, { status: "running", report_sha256: null }),
     "等待静态扫描报告");
 });
+
+
+test("candidate presentation keeps impact, confidence and confirmation orthogonal", async () => {
+  const { candidateSeverityLabel, candidateSeverityColor, candidateConfidenceLabel,
+    candidateConfidenceColor, candidateVerificationLabel } = await import("../src/features/workbench/riskLabels.js");
+  assert.equal(candidateSeverityLabel("high"), "高危");
+  assert.equal(candidateSeverityColor("high"), "red");
+  assert.equal(candidateSeverityColor("medium"), "orange");
+  assert.equal(candidateSeverityLabel("unexpected"), "未分级");
+  assert.equal(candidateSeverityColor("unexpected"), "default");
+  assert.equal(candidateConfidenceLabel("high_confidence_candidate"), "高可信候选");
+  assert.equal(candidateConfidenceColor("high_confidence_candidate"), "gold");
+  assert.equal(candidateConfidenceLabel("further_validation"), "待验证候选");
+  assert.equal(candidateVerificationLabel("candidate"), "尚未确认");
+  assert.equal(candidateVerificationLabel("unknown"), "尚未确认");
+  assert.equal(candidateVerificationLabel("confirmed"), "已人工核实（请查看证明材料）");
+});
