@@ -45,3 +45,22 @@ These results establish static integration and test-suite behavior only. No Ark 
 ## Reproduction setup
 
 The Linux-compatible baseline checkout was a temporary detached worktree at the baseline SHA and was removed after the baseline run. The integrated test worktree is clean apart from this report before its report-only commit.
+
+## Catalog marker correction and final replay
+
+The baseline failure was returned to the development line. Its follow-up commit, `764f7698f6babdcccb2cd68eba75ed1b0afefc9e`, is based on the same main baseline and changes the Catalog admission marker, the matching C Catalog assertion, and adds the mainline integration report. I cherry-picked it onto the independent test branch as `4f01d4336`; the resulting code tree is `d424746401212024b3fd3dcc0b25b05d87095bba`. The Catalog remains default-off and explicit-selection-only; the admission reason now includes the baseline marker expected by the original test.
+
+On that final code tree:
+
+```text
+python -m unittest tests.detectors.ark_runtime.test_catalog.ArkRuntimeCatalogTests.test_static_candidate_is_explicit_and_default_off
+Ran 1 test; OK.
+
+python -m unittest discover -s tests/detectors/ark_runtime -t .
+Ran 212 tests; OK; 3 skipped.
+
+python -m unittest tests.test_contract_v2_source_binding tests.test_ohscanner_contract tests.test_audit_plan tests.detectors.test_known_case_corpus tests.detectors.ark_runtime.test_catalog tests.detectors.ark_runtime.test_parser_owner tests.detectors.ark_runtime.test_detector_cases
+Ran 97 tests; OK; 1 skipped.
+```
+
+The last command ran in the isolated Python 3.12.15 WSL venv with the Git environment described above. It confirms the corrected marker clears the baseline failure while Runner applicability, exact source binding, D104 known-case identity, Catalog, and parser ownership remain passing. `git diff --check` passed for the complete integrated code at `4f01d4336`.
