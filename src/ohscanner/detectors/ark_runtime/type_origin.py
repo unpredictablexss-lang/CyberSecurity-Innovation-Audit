@@ -143,7 +143,7 @@ class OriginEvaluator:
                         and not fn.resolve(helper_name, node)
                         and callee is not None and callee.type == 'identifier'
                         and tuple(fn.text(arg).strip() for arg in fn.arguments(node))
-                        == ('glue', 'thisValue', 'index', 'newArrayType')):
+                        == ('glue', 'thisValue', 'TruncInt64ToInt32(*i)', 'newArrayType')):
                     continue
                 return effect_problem
             if node.type in ('new_expression', 'delete_expression', 'update_expression'):
@@ -476,7 +476,7 @@ class OriginEvaluator:
             args = fn.arguments(node)
             if (len(args) != 4 or fn.resolve('FastGetPropertyByIndex', node)
                     or tuple(fn.text(arg).strip() for arg in args)
-                    != ('glue', 'thisValue', 'index', 'newArrayType')):
+                    != ('glue', 'thisValue', 'TruncInt64ToInt32(*i)', 'newArrayType')):
                 return ('unknown', UNKNOWN, UNKNOWN, 'species_source_read_signature_unresolved')
             source = self.value(args[1], state)
             source_type = self.value(args[3], state)
