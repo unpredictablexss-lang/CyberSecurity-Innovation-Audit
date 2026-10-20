@@ -4,7 +4,7 @@
   "baseline": {
     "remote": "origin/codex/c-line-static-20261019",
     "commit": "d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03",
-    "refresh": "2026-10-20 fetched origin successfully; at fetch time local and remote planning topic both equaled 0d06ef0c8083438a962229a03be2c2572c92a917. Local work has since advanced to 3b537b2aedafc1ab14b6751965551c0bbee50bf3; push is pending retry after transient GitHub 443 failure. Source baseline Ark Runtime remains exact commit a65a2853ccae13da167d9aa4720ab8b11ec16656."
+    "refresh": "2026-10-20 latest fetch attempt failed transiently (GitHub HTTPS 443); local branch includes implementation SHA 46fdb5887c49a552b249fb20805025ba6316d8d0, independent same-SHA replay report 6d41c4746b41c21af9139d2853acc1d0c9189ffa, and pending second-layer review. Push retry pending. Ark Runtime source baseline remains exact commit a65a2853ccae13da167d9aa4720ab8b11ec16656."
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
   "status": "ACTIVE",
@@ -918,7 +918,7 @@
     {
       "id": "C-DEV-FLOAT32-STATIC-CANDIDATE-20261020",
       "kind": "source_bound_detector_development",
-      "status": "IN_PROGRESS_IMPLEMENTATION_AND_CONTROL_MATRIX",
+      "status": "COMPLETE_EXACT_BOUND_CANDIDATE_SAME_SHA_TESTED",
       "base": {
         "planning_branch": "codex/c-line-parallel-plan-20261020",
         "planning_commit": "3b537b2aedafc1ab14b6751965551c0bbee50bf3",
@@ -930,25 +930,29 @@
       "developer_prompt": "ROLE=Ark Runtime static detector developer. INPUT=current OHScanner source-binding architecture and exact Ark pins in the C-line scout/review reports. GOAL=emit one high-signal, exact-bound candidate for the Float32Array negative-TDouble constructor gap, with source-level 32-bit indexed-read context retained as supporting evidence. STEPS=inspect model/adapter/analyzer registration; prefer complete bindings and exact blob+SHA checks; implement only if necessary evidence is available; create positive, fixed-lower-bound, integer-tag, positive-double, unrelated, wrong-commit, missing-helper, and mutated-helper controls; keep parser partial/blocked and runtime unknown explicit. OUTPUT=small production change plus focused tests/report and a developer-to-tester expected-result matrix. STOP=one candidate on exact source and zero/unknown on controls, or evidence-based no-go. NEVER=broaden commits/paths, equate zero with safety, claim product impact, modify Ark Runtime source, or develop second-layer LLM.",
       "feedback_to": "C-TEST-FLOAT32-STATIC-CANDIDATE-20261020",
       "report_required": true,
-      "report": "research/deliveries/c-line/float32array_static_candidate_development_20261020.md",
-      "done_when": "The exact bound revision yields no more than one candidate-only finding and all safe/fixed/unrelated/missing-evidence controls preserve no-candidate or unknown behavior, independently replayable on the same code commit."
+      "report": "research/deliveries/c-line/c_float32array_negative_double_static_rule_20261020.md",
+      "done_when": "The exact bound revision yields no more than one candidate-only finding and all safe/fixed/unrelated/missing-evidence controls preserve no-candidate or unknown behavior, independently replayable on the same code commit.",
+      "implementation_commit": "46fdb5887c49a552b249fb20805025ba6316d8d0",
+      "tester_report_commit": "6d41c4746b41c21af9139d2853acc1d0c9189ffa"
     },
     {
       "id": "C-TEST-FLOAT32-STATIC-CANDIDATE-20261020",
       "kind": "independent_source_bound_detector_testing",
-      "status": "IN_PROGRESS_INDEPENDENT_BASELINE_AND_IMPLEMENTATION_REPLAY",
+      "status": "COMPLETE_SAME_SHA_REPLAY_WITH_EXPLICIT_NOT_RUN_CONTROLS",
       "tester_agent": "float32_runtime_test",
       "feedback_to": "C-DEV-FLOAT32-STATIC-CANDIDATE-20261020",
       "objective": "Independently verify source identity, parser/dependency states, and developer candidate controls; replay implementation on the exact commit and ensure findings do not spread to safe, fixed, unrelated, wrong-commit, or incomplete evidence.",
       "tester_prompt": "ROLE=independent Ark Runtime static-detector tester. INPUT=exact source commit a65a2853ccae13da167d9aa4720ab8b11ec16656, current adapter/model and developer expected matrix. GOAL=challenge candidate precision and fail-closed identity behavior. STEPS=record exact blob/SHA/parser baseline before changes; don't edit production detector/model; independently exercise exact parent, source with added negative lower-bound, tagged-int/positive TDouble code controls, unrelated function, wrong commit, missing/mutated helper; after developer SHA arrives, replay all cases through unit tests and registered CLI where available. OUTPUT=independent same-commit report, commands/results, explicit partial/blocked/not_run. STOP=one precise independent determination. NEVER=claim safety from zero findings, alter source binding, or report runtime vulnerability based on static outputs.",
       "report_required": true,
-      "report": "research/deliveries/c-line/float32array_static_candidate_independent_test_20261020.md",
-      "done_when": "Independent same-commit replay confirms exactly the intended narrow candidate and fail-closed controls, or identifies a concrete mismatch returned to developer before closure."
+      "report": "research/deliveries/c-line/float32array_static_candidate_cli_baseline_20261020.md",
+      "done_when": "Independent same-commit replay confirms exactly the intended narrow candidate and fail-closed controls, or identifies a concrete mismatch returned to developer before closure.",
+      "implementation_commit": "46fdb5887c49a552b249fb20805025ba6316d8d0",
+      "report_commit": "6d41c4746b41c21af9139d2853acc1d0c9189ffa"
     },
     {
       "id": "C-LLM-REVIEW-FLOAT32-STATIC-CANDIDATE-20261020",
       "kind": "second_layer_candidate_review",
-      "status": "PENDING_DEVELOPER_TESTER_SAME_COMMIT_RESULT",
+      "status": "IN_PROGRESS_FINAL_SAME_SHA_REVIEW",
       "reviewer": "c1_width_review",
       "objective": "Review the static candidate emitted by the developer/tester loop against the exact source report, focusing on trigger plausibility, the conditional 32-bit load path, and source/runtime/product limits. Do not implement detector or LLM features.",
       "review_prompt": "ROLE=second-layer source candidate reviewer. INPUT=the exact registered static-candidate finding and source/control reports after same-commit test replay. Independently verify source pins, candidate evidence, safe/fixed counterevidence, and whether the finding says only what source evidence supports. Confirm the 32-bit out-of-allocation read remains conditional on runtime/build/allocation/access behavior not_run. OUTPUT=short accept/narrow/reject review with exact evidence and unknowns. NEVER=trust candidate role labels, infer a confirmed product vulnerability, or change the detector/LLM."
