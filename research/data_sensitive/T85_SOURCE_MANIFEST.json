@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "components": [
+    {
+      "key": "wifi",
+      "repository": "openharmony/communication_wifi",
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+      "files": [
+        {
+          "path": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/wifi_asset/wifi_asset_manager.cpp",
+          "blob": "017fcaa45dafdd4cde2a07788de892a7b7691b74",
+          "bytes": 23465,
+          "sha256": "f4dc9b41ff21d71355a8395aeea20a0514e68e86e38603882f3070b64343d113"
+        },
+        {
+          "path": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/log/wifi_logger.h",
+          "blob": "0797ee6a5f4d2d37ea8098519c0c59d332f7f0b9",
+          "bytes": 4095,
+          "sha256": "2b2bbdf1995cab1b5d5d3bdaa9e901ccba41de1278ddbe657b225220607a26c6"
+        }
+      ]
+    },
+    {
+      "key": "cert",
+      "repository": "openharmony/security_certificate_framework",
+      "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+      "tree": "e69153afa89928e1318d8b36cf37c65386465fe7",
+      "files": [
+        {
+          "path": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "blob": "fb0f6cdbf2e151a933ce718a0f95e7ab8e449c28",
+          "bytes": 67298,
+          "sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+        },
+        {
+          "path": "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+          "blob": "59985f31f7a7a2a18e4ce4c40345636321ddefef",
+          "bytes": 11206,
+          "sha256": "32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80"
+        },
+        {
+          "path": "frameworks/common/v1.0/inc/cf_log.h",
+          "blob": "6eaa53317a8494baecc743b80043d400c316edee",
+          "bytes": 3266,
+          "sha256": "489ea3537091147d5bec365471698f3d5d177dbc86473beb25fd7bc906beccb9"
+        }
+      ]
+    }
+  ]
+}
