@@ -1,6 +1,7 @@
 {
   "baseline": "1e3b4c0cf02a1d5b0a817cc86dc746d28751b1e8",
   "current_detector_version": "0.21.3",
+  "current_revision": "c484e722138600198b20f94e05e0cec56ec03f71",
   "current_implementation_sha256": "1a67e769be83884713f76539957dee37cc76716bb95db0ebbc79ac44601e8605",
   "manifest_sha256": "a45d05da7b9c65ac3d651e467d77b139a34d009c60b19d1f4fa2d04fe65a039a",
   "controls": {
