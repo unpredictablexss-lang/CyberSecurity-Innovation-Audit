@@ -270,7 +270,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.0'
+    version = '0.21.1'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -465,7 +465,13 @@ class LocalFlow:
             return tuple(v for field in branches for v in self.expr(n.child_by_field_name(field),env,types))
         if n.type=='lambda_expression':
             self.gaps.add('lambda body/capture value not analyzed');return ()
-        if n.type=='assignment_expression':return self.expr(n.child_by_field_name('right'),env,types)
+        if n.type=='assignment_expression':
+            right=self.expr(n.child_by_field_name('right'),env,types)
+            if self.text(n.child_by_field_name('operator'))=='=':return right
+            # Compound assignment reads the old destination as well as the RHS.
+            # Its value can feed another assignment or a log argument directly.
+            left=self.expr(n.child_by_field_name('left'),env,types)
+            return tuple(dict.fromkeys(left+right))
         if n.type=='binary_expression':
             op=self.text(n.child_by_field_name('operator'))
             if op in ('==','!=','<','>','<=','>=','&&','||'):return ()
@@ -1020,9 +1026,14 @@ class LocalFlow:
             destination=self.lvalue(left,state.types)
             if destination:
                 op=self.text(node.child_by_field_name('operator'))
-                if op!='=':self.gaps.add('compound assignment semantics incomplete')
+                flows=self.value(right,state)
+                step=f'{node.start_point[0]+1} assign {destination}'
+                if op!='=':
+                    self.gaps.add('compound assignment semantics incomplete; destination dependency retained as may-flow')
+                    flows=tuple(dict.fromkeys(self.value(left,state)+flows))
+                    step=f'{node.start_point[0]+1} compound assign {destination} ({op})'
                 self.store_value(state.values,destination,
-                    self.addstep(self.value(right,state),f'{node.start_point[0]+1} assign {destination}'))
+                    self.addstep(flows,step))
             else:self.gaps.add('pointer/member assignment requires alias proof')
             return
         if node.type=='binary_expression' and self.text(node.child_by_field_name('operator')) in ('&&','||'):

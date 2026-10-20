@@ -1,0 +1,383 @@
+{
+  "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
+  "detector_version": "0.21.1",
+  "controls": {
+    "compound_statement": {
+      "before": {
+        "candidate_count": 0,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": []
+      },
+      "after": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.log.sensitive-value",
+            "message": "Candidate local sensitive-material dependency: service.cpp:1 source Callback parameter 0 -> 1 assign value -> 1 compound assign value (^=) -> 1 HILOG_INFO public operand 0",
+            "obligations": [
+              "local_flow",
+              "source_semantics",
+              "type_identity",
+              "runtime_log_visibility",
+              "execution_and_identity",
+              "security_impact"
+            ]
+          }
+        ]
+      }
+    },
+    "compound_expression": {
+      "before": {
+        "candidate_count": 0,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": []
+      },
+      "after": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.log.sensitive-value",
+            "message": "Candidate local sensitive-material dependency: service.cpp:1 source Callback parameter 0 -> 1 assign value -> 1 compound assign value (^=) -> 1 assign out -> 1 HILOG_INFO public operand 0",
+            "obligations": [
+              "local_flow",
+              "source_semantics",
+              "type_identity",
+              "runtime_log_visibility",
+              "execution_and_identity",
+              "security_impact"
+            ]
+          }
+        ]
+      }
+    },
+    "ordinary_overwrite": {
+      "before": {
+        "candidate_count": 0,
+        "status": "completed",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "complete"
+          ]
+        ],
+        "findings": []
+      },
+      "after": {
+        "candidate_count": 0,
+        "status": "completed",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "complete"
+          ]
+        ],
+        "findings": []
+      }
+    },
+    "safe_unrelated": {
+      "before": {
+        "candidate_count": 0,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": []
+      },
+      "after": {
+        "candidate_count": 0,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": []
+      }
+    },
+    "private_conditional": {
+      "before": {
+        "candidate_count": 0,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": []
+      },
+      "after": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.log.sensitive-value",
+            "message": "Candidate local sensitive-material dependency: Sensitive data reaches a modeled logging call through a private/default-private operand; exposure is conditional and not established. path=service.cpp:1 source Callback parameter 0 -> 1 assign value -> 1 compound assign value (^=) -> 1 HILOG_INFO private operand 0",
+            "obligations": [
+              "local_flow",
+              "source_semantics",
+              "type_identity",
+              "sink_privacy",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "upstream": {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "files": [
+      {
+        "path": "core/authentication/src/auth_session_key.c",
+        "sha256": "5dc2f567cd127876aaaf35f7373c4b5a802a5802607eb7d05e34f62d5870701f",
+        "blob": "0569ee21db9bf2a3ccfd10c020b3c0d45c01cc50",
+        "size": 23151
+      },
+      {
+        "path": "core/authentication/src/auth_hichain.c",
+        "sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+        "blob": "1aadc4dafe81bc42f9916b9bd7aa3f9f0a616c2d",
+        "size": 22279
+      },
+      {
+        "path": "core/authentication/src/auth_hichain_adapter.c",
+        "sha256": "0bbbfe21cf79a85343848f59620cedb1b67a42d5f1196d7e36816e9cd562f6de",
+        "blob": "5b4f711bd9de233843fd6efe48267e0b10831206",
+        "size": 14989
+      },
+      {
+        "path": "dfx/log/src/auth_log.c",
+        "sha256": "66efee6c3dc668112c46f1f412290b92e3830472f506f4778523736e4a78c9ca",
+        "blob": "f499877ece96baee3173bd43326607ad0fb91268",
+        "size": 1041
+      }
+    ],
+    "before": {
+      "candidate_count": 5,
+      "status": "blocked",
+      "file_outcomes": [
+        [
+          "core/authentication/src/auth_hichain.c",
+          "partial"
+        ],
+        [
+          "core/authentication/src/auth_hichain_adapter.c",
+          "partial"
+        ],
+        [
+          "core/authentication/src/auth_session_key.c",
+          "partial"
+        ],
+        [
+          "dfx/log/src/auth_log.c",
+          "partial"
+        ]
+      ],
+      "findings": [
+        {
+          "file": "core/authentication/src/auth_hichain.c",
+          "line": 136,
+          "rule": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=core/authentication/src/auth_hichain.c:126 source OnSessionKeyReturned parameter 1 -> 136 unresolved call AuthSessionSaveSessionKey",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "core/authentication/src/auth_session_key.c",
+          "line": 442,
+          "rule": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=core/authentication/src/auth_session_key.c:436 source SessionKey.value with unresolved same-name type identity -> 436 memcpy_s -> cipherKey.key -> 442 unresolved call SoftBusEncryptDataWithSeq",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "core/authentication/src/auth_session_key.c",
+          "line": 446,
+          "rule": "data.log.sensitive-value",
+          "message": "Candidate local sensitive-material dependency: core/authentication/src/auth_session_key.c:436 source SessionKey.value with unresolved same-name type identity -> 436 memcpy_s -> cipherKey.key -> 442 assign ret -> 446 AUTH_LOGE public operand 0",
+          "obligations": [
+            "local_flow",
+            "source_semantics",
+            "type_identity",
+            "runtime_log_visibility",
+            "execution_and_identity",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "core/authentication/src/auth_session_key.c",
+          "line": 475,
+          "rule": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=core/authentication/src/auth_session_key.c:469 source SessionKey.value with unresolved same-name type identity -> 469 memcpy_s -> cipherKey.key -> 475 unresolved call SoftBusDecryptDataWithSeq",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "core/authentication/src/auth_session_key.c",
+          "line": 479,
+          "rule": "data.log.sensitive-value",
+          "message": "Candidate local sensitive-material dependency: core/authentication/src/auth_session_key.c:469 source SessionKey.value with unresolved same-name type identity -> 469 memcpy_s -> cipherKey.key -> 475 assign ret -> 479 AUTH_LOGE public operand 0",
+          "obligations": [
+            "local_flow",
+            "source_semantics",
+            "type_identity",
+            "runtime_log_visibility",
+            "execution_and_identity",
+            "security_impact"
+          ]
+        }
+      ]
+    },
+    "after": {
+      "candidate_count": 5,
+      "status": "blocked",
+      "file_outcomes": [
+        [
+          "core/authentication/src/auth_hichain.c",
+          "partial"
+        ],
+        [
+          "core/authentication/src/auth_hichain_adapter.c",
+          "partial"
+        ],
+        [
+          "core/authentication/src/auth_session_key.c",
+          "partial"
+        ],
+        [
+          "dfx/log/src/auth_log.c",
+          "partial"
+        ]
+      ],
+      "findings": [
+        {
+          "file": "core/authentication/src/auth_hichain.c",
+          "line": 136,
+          "rule": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=core/authentication/src/auth_hichain.c:126 source OnSessionKeyReturned parameter 1 -> 136 unresolved call AuthSessionSaveSessionKey",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "core/authentication/src/auth_session_key.c",
+          "line": 442,
+          "rule": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=core/authentication/src/auth_session_key.c:436 source SessionKey.value with unresolved same-name type identity -> 436 memcpy_s -> cipherKey.key -> 442 unresolved call SoftBusEncryptDataWithSeq",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "core/authentication/src/auth_session_key.c",
+          "line": 446,
+          "rule": "data.log.sensitive-value",
+          "message": "Candidate local sensitive-material dependency: core/authentication/src/auth_session_key.c:436 source SessionKey.value with unresolved same-name type identity -> 436 memcpy_s -> cipherKey.key -> 442 assign ret -> 446 AUTH_LOGE public operand 0",
+          "obligations": [
+            "local_flow",
+            "source_semantics",
+            "type_identity",
+            "runtime_log_visibility",
+            "execution_and_identity",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "core/authentication/src/auth_session_key.c",
+          "line": 475,
+          "rule": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=core/authentication/src/auth_session_key.c:469 source SessionKey.value with unresolved same-name type identity -> 469 memcpy_s -> cipherKey.key -> 475 unresolved call SoftBusDecryptDataWithSeq",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "core/authentication/src/auth_session_key.c",
+          "line": 479,
+          "rule": "data.log.sensitive-value",
+          "message": "Candidate local sensitive-material dependency: core/authentication/src/auth_session_key.c:469 source SessionKey.value with unresolved same-name type identity -> 469 memcpy_s -> cipherKey.key -> 475 assign ret -> 479 AUTH_LOGE public operand 0",
+          "obligations": [
+            "local_flow",
+            "source_semantics",
+            "type_identity",
+            "runtime_log_visibility",
+            "execution_and_identity",
+            "security_impact"
+          ]
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Synthetic controls are not independent labels or precision/recall evidence.",
+    "The selected upstream files are a regression sample, not whole-component coverage.",
+    "Compound assignments retain may-flow; overloaded operators, aliasing and zeroing are not proven.",
+    "All findings remain candidates; product impact and runtime visibility are unknown."
+  ]
+}
