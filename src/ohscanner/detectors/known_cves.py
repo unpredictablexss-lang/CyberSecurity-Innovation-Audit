@@ -1,4 +1,5 @@
 from __future__ import annotations
+import json
 import re
 from typing import List, Tuple
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation, ScanContext, SourceUnit
@@ -6,7 +7,7 @@ from .adapters.artifacts import classify_artifact, limitation_message
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.18.0"
+VERSION = "0.19.11"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -29,6 +30,162 @@ def _body(text: str, name: str):
                 if depth == 0: return opening, text[opening + 1:i]
     return None
 
+def _matching_delimiter(text: str, opening: int, left: str, right: str):
+    depth = 0
+    for index in range(opening, len(text)):
+        if text[index] == left:
+            depth += 1
+        elif text[index] == right:
+            depth -= 1
+            if depth == 0:
+                return index
+    return None
+
+def _observer_quota_comparison(text: str):
+    """Find observer count-at-cap comparisons; callers must prove refusal flow."""
+    count = r"(?:[A-Za-z_]\w*\s*(?:->|\.)\s*(?:size|count)\s*\(\s*\)|[A-Za-z_]\w*(?:observer|listener)\w*(?:count|size|quota|limit|number)|(?:all)?count|(?:observer|listener)\w*quota|size\s*\(\s*\))"
+    limit = r"(?:MAX|LIMIT|QUOTA)[A-Z0-9_]*|(?:max|limit|quota)\w*|\d+"
+    return re.search(rf"\b{count}(?:\s*\[[^\]]*\])?\s*(>=|>)\s*({limit})\b", text, re.I)
+
+def _simple_at_cap_condition(condition: str) -> bool:
+    comparison = _observer_quota_comparison(condition)
+    return bool(comparison and re.sub(r"\s+", "", comparison.group(0)) == re.sub(r"\s+", "", condition))
+
+def _quota_receiver_matches(condition: str, collection: str) -> bool:
+    comparison = _observer_quota_comparison(condition)
+    if not comparison:
+        return False
+    operator_offset = comparison.start(1) - comparison.start(0)
+    lhs = comparison.group(0)[:operator_offset]
+    return re.sub(r"\s+", "", lhs) in {
+        collection + "->size()", collection + ".size()",
+        collection + "->count()", collection + ".count()",
+    }
+
+def _top_level_at(text: str, position: int) -> bool:
+    prefix = text[:position]
+    return prefix.count("{") == prefix.count("}")
+
+def _helper_rejects_at_quota(text: str, name: str, collection: str):
+    """Recognize only a two-return helper bound to the inserted collection."""
+    helper = _body(text, name)
+    if not helper:
+        return None
+    body = helper[1]
+    comparison = _observer_quota_comparison(body)
+    if not comparison:
+        return None
+    signature = re.search(rf"\b{re.escape(name)}\s*\(([^)]*)\)\s*\{{", text[:helper[0] + 1])
+    if not signature:
+        return None
+    params = [re.search(r"([A-Za-z_]\w*)\s*$", part.strip()) for part in signature.group(1).split(",")]
+    params = [item.group(1) for item in params if item]
+    object_name = re.search(r"\b([A-Za-z_]\w*)\s*(?:->|\.)\s*(?:size|count)\s*\(", comparison.group(0))
+    if not params or not object_name or object_name.group(1) != params[-1]:
+        return None
+    # Parse the entire helper: at-cap returns one boolean, every other path
+    # returns the opposite boolean, with no intervening side effects or exits.
+    start = re.match(r"\s*if\s*\(", body)
+    if not start:
+        return None
+    opening = start.end() - 1
+    depth, end = 1, opening + 1
+    while end < len(body) and depth:
+        depth += (body[end] == "(") - (body[end] == ")")
+        end += 1
+    if depth or not _simple_at_cap_condition(body[opening + 1:end - 1]):
+        return None
+    branch_start = end
+    while branch_start < len(body) and body[branch_start].isspace():
+        branch_start += 1
+    if branch_start < len(body) and body[branch_start] == "{":
+        depth, branch_end = 1, branch_start + 1
+        while branch_end < len(body) and depth:
+            depth += (body[branch_end] == "{") - (body[branch_end] == "}")
+            branch_end += 1
+        branch = body[branch_start + 1:branch_end - 1] if depth == 0 else ""
+        suffix = body[branch_end:]
+    else:
+        stmt = re.match(r"\s*return\s+(true|false)\s*;", body[branch_start:], re.I)
+        branch = stmt.group(0) if stmt else ""
+        suffix = body[branch_start + stmt.end():] if stmt else ""
+    branch_result = re.fullmatch(r"\s*return\s+(true|false)\s*;\s*", branch, re.I)
+    other_result = re.fullmatch(r"\s*return\s+(true|false)\s*;\s*", suffix, re.I)
+    if not branch_result or not other_result or branch_result.group(1).lower() == other_result.group(1).lower():
+        return None
+    return branch_result.group(1).lower() == "true"
+
+def _has_observer_quota(text: str, collection: str) -> bool:
+    """Prove a simple top-level quota guard appears before the insertion."""
+    for m in re.finditer(r"\bif\s*\(", text):
+        if not _top_level_at(text, m.start()) or _inside_unbraced_control(text, m.start()):
+            continue
+        opening = m.end() - 1
+        depth, end = 1, opening + 1
+        while end < len(text) and depth:
+            depth += (text[end] == "(") - (text[end] == ")")
+            end += 1
+        condition = text[opening + 1:end - 1]
+        if depth or not _simple_at_cap_condition(condition) or not _quota_receiver_matches(condition, collection):
+            continue
+        guard_tail = text[end:]
+        guard_start = len(text[:end])
+        while guard_start < len(text) and text[guard_start].isspace():
+            guard_start += 1
+        if guard_start < len(text) and text[guard_start] == "{":
+            depth, branch_end = 1, guard_start + 1
+            while branch_end < len(text) and depth:
+                depth += (text[branch_end] == "{") - (text[branch_end] == "}")
+                branch_end += 1
+            branch = text[guard_start + 1:branch_end - 1] if depth == 0 else ""
+        else:
+            stmt = re.match(r"\s*(return\b[^;]*;|throw\b[^;]*;)", guard_tail)
+            branch = stmt.group(1) if stmt else ""
+        if re.fullmatch(r"\s*(?:return\b[^;]*;|throw\b[^;]*;)\s*", branch):
+            return True
+    return False
+
+def _has_guarded_quota_helper(text: str, before_insert: str, collection: str) -> bool:
+    for m in re.finditer(r"\bif\s*\(", before_insert):
+        if not _top_level_at(before_insert, m.start()) or _inside_unbraced_control(before_insert, m.start()):
+            continue
+        opening = m.end() - 1
+        depth, end = 1, opening + 1
+        while end < len(before_insert) and depth:
+            depth += (before_insert[end] == "(") - (before_insert[end] == ")")
+            end += 1
+        if depth:
+            continue
+        condition = before_insert[opening + 1:end - 1].strip()
+        call = re.fullmatch(r"(!)?\s*([A-Za-z_]\w*)\s*\(.*\)", condition, re.S)
+        if not call:
+            continue
+        name, negated = call.group(2), bool(call.group(1))
+        call_args = re.search(r"\((.*)\)", call.group(0), re.S)
+        if not call_args or not re.fullmatch(r"\s*" + re.escape(collection) + r"\s*", call_args.group(1)):
+            continue
+        helper = _body(text, name)
+        cap_returns_true = _helper_rejects_at_quota(text, name, collection)
+        if cap_returns_true is None:
+            continue
+        branch_start = end
+        while branch_start < len(before_insert) and before_insert[branch_start].isspace():
+            branch_start += 1
+        if branch_start < len(before_insert) and before_insert[branch_start] == "{":
+            depth, branch_end = 1, branch_start + 1
+            while branch_end < len(before_insert) and depth:
+                depth += (before_insert[branch_end] == "{") - (before_insert[branch_end] == "}")
+                branch_end += 1
+            branch = before_insert[branch_start + 1:branch_end - 1] if depth == 0 else ""
+        else:
+            stmt = re.match(r"\s*(return\b[^;]*;|throw\b[^;]*;)", before_insert[branch_start:])
+            branch = stmt.group(1) if stmt else ""
+        if not re.fullmatch(r"\s*(?:return\b[^;]*;|throw\b[^;]*;)\s*", branch):
+            continue
+        if (cap_returns_true and not negated) or (not cap_returns_true and negated):
+            return True
+    return False
+
 def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: str, impact: str = "availability_or_memory_safety"):
     line, col = line_column(unit.text, pos)
     return DetectorFinding(file=unit.path, line=line, column=col, rule_id=rule,
@@ -37,6 +194,181 @@ def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: 
         consequence_impact=impact, consequence_cwe=cwe,
         source_sha256=unit.sha256, rule_version=VERSION, rule_lineage_id=LINEAGE,
         symbol_identity=cve, identity_quality="partial")
+
+def _statement_end(text: str, start: int, depth: int = 0):
+    """Conservatively bound a statement for unbraced control-flow observation."""
+    if depth > 32:
+        return None
+    while start < len(text) and text[start].isspace():
+        start += 1
+    control = re.match(r"(?:if|for|while|switch|catch)\s*\(", text[start:])
+    if control:
+        opening = start + control.end() - 1
+        closing = _matching_delimiter(text, opening, "(", ")")
+        if closing is None:
+            return None
+        body_start = closing + 1
+        while body_start < len(text) and text[body_start].isspace():
+            body_start += 1
+        body_end = _statement_end(text, body_start, depth + 1)
+        if body_end is None:
+            return None
+        if text[start: start + control.end()].lstrip().startswith("if"):
+            else_match = re.match(r"\s*else\b", text[body_end:])
+            if else_match:
+                else_start = body_end + else_match.end()
+                alternative_end = _statement_end(text, else_start, depth + 1)
+                return alternative_end
+        return body_end
+    if start >= len(text):
+        return None
+    if text[start] == "{":
+        closing = _matching_delimiter(text, start, "{", "}")
+        return closing + 1 if closing is not None else None
+    paren = bracket = 0
+    for index in range(start, len(text)):
+        char = text[index]
+        if char == "(": paren += 1
+        elif char == ")": paren = max(0, paren - 1)
+        elif char == "[": bracket += 1
+        elif char == "]": bracket = max(0, bracket - 1)
+        elif char == ";" and paren == bracket == 0:
+            return index + 1
+        elif char == "}" and paren == bracket == 0:
+            return index
+    return None
+
+def _inside_unbraced_control(text: str, position: int) -> bool:
+    controls = re.finditer(r"\b(?:if|for|while|switch|catch)\s*\(", text[:position])
+    for control in controls:
+        opening = text.find("(", control.start())
+        closing = _matching_delimiter(text, opening, "(", ")")
+        if closing is None:
+            return True
+        body_start = closing + 1
+        while body_start < len(text) and text[body_start].isspace():
+            body_start += 1
+        # The nested statement's first token is conditional as well. Quota
+        # guards query the `if` start, unlike observations inside its call.
+        if body_start > position:
+            continue
+        end = _statement_end(text, body_start)
+        if end is None:
+            return True
+        if text[body_start] != "{" and position < end:
+            return True
+        # A guard in an unbraced else arm is conditional even when the
+        # preceding then arm used braces or ended before the guard token.
+        if control.group(0).startswith("if"):
+            alternative = re.match(r"\s*else\b", text[end:])
+            if alternative:
+                alternative_start = end + alternative.end()
+                while alternative_start < len(text) and text[alternative_start].isspace():
+                    alternative_start += 1
+                if alternative_start <= position:
+                    alternative_end = _statement_end(text, alternative_start)
+                    if alternative_end is None:
+                        return True
+                    if text[alternative_start] != "{" and position < alternative_end:
+                        return True
+    return False
+
+def _pasteboard_guard_observation(handler_body: str) -> EvidenceObligation:
+    """Emit a bounded lexical observation only; never infer guard semantics."""
+    call_start = re.compile(r"\b(?:Check\w*Permission|Verify\w*Permission|Enforce\w*Permission|HasPastePermission)\s*\(", re.I)
+    token_pattern = re.compile(r"\b(?:PERMISSION_[A-Z0-9_]+|READ_PASTEBOARD(?:_PERMISSION)?|SECURE_PASTE(?:_PERMISSION)?)\b", re.I)
+    candidates = []
+    cursor = 0
+    total_matches = 0
+    unresolved_flow = False
+    while cursor < len(handler_body):
+        call = call_start.search(handler_body, cursor)
+        token = token_pattern.search(handler_body, cursor)
+        if call is None and token is None:
+            break
+        if token is None or (call is not None and call.start() <= token.start()):
+            start = call.start()
+            opening = handler_body.find("(", call.start())
+            closing = _matching_delimiter(handler_body, opening, "(", ")")
+            if closing is None:
+                end = len(handler_body)
+                unresolved_flow = True
+            else:
+                end = closing + 1
+            kind = "permission_call"
+        else:
+            start, end, kind = token.start(), token.end(), "permission_token"
+        match_text = handler_body[start:end]
+        total_matches += 1
+        if total_matches <= 8 and (not _top_level_at(handler_body, start) or _inside_unbraced_control(handler_body, start)):
+            unresolved_flow = True
+        if len(candidates) < 8:
+            raw_tokens = sorted({item.upper() for item in re.findall(r"\b[A-Za-z_]\w*\b", match_text)})
+            token_limit = 16
+            selected = raw_tokens[:token_limit]
+            token_chars_truncated = 0
+            bounded_tokens = []
+            for item in selected:
+                bounded = item[:48]
+                token_chars_truncated += len(item) - len(bounded)
+                bounded_tokens.append(bounded)
+            candidates.append({
+                "start": start,
+                "end": end,
+                "kind": kind,
+                "tokens": bounded_tokens,
+                "tokens_truncated": len(raw_tokens) > len(selected) or token_chars_truncated > 0,
+                "tokens_omitted_count": max(0, len(raw_tokens) - len(selected)),
+                "token_chars_truncated": token_chars_truncated,
+                "snippet": re.sub(r"\s+", " ", match_text).strip()[:120],
+            })
+        cursor = max(end, start + 1)
+
+    state = "absent" if total_matches == 0 else (
+        "unresolved_control_flow" if unresolved_flow else "observed_unresolved"
+    )
+    data = {
+        "state": state,
+        "total_matches": total_matches,
+        "observations_truncated": total_matches > len(candidates),
+        "observations_omitted_count": max(0, total_matches - len(candidates)),
+        "payload_truncated": False,
+        "payload_over_limit_characters": 0,
+        "observations": candidates,
+    }
+    description = json.dumps(data, separators=(",", ":"), ensure_ascii=True)
+    data["payload_over_limit_characters"] = max(0, len(description) - 4096)
+    if data["payload_over_limit_characters"]:
+        data["payload_truncated"] = True
+        description = json.dumps(data, separators=(",", ":"), ensure_ascii=True)
+    # Keep the serialized evidence under a hard cap even for pathological identifiers.
+    while len(description) > 4096 and candidates:
+        largest = max(candidates, key=lambda record: len(record["tokens"]))
+        if largest["tokens"]:
+            largest["tokens"].pop()
+            largest["tokens_truncated"] = True
+            largest["tokens_omitted_count"] += 1
+            data["payload_truncated"] = True
+        elif largest["snippet"]:
+            largest["snippet"] = largest["snippet"][:max(0, len(largest["snippet"]) - 16)]
+            data["payload_truncated"] = True
+        else:
+            candidates.remove(largest)
+            data["observations_omitted_count"] += 1
+            data["observations_truncated"] = True
+            data["payload_truncated"] = True
+        description = json.dumps(data, separators=(",", ":"), ensure_ascii=True)
+    if len(description) > 4096:
+        description = json.dumps({
+            "state": state,
+            "total_matches": total_matches,
+            "observations_truncated": True,
+            "observations_omitted_count": total_matches,
+            "payload_truncated": True,
+            "payload_over_limit_characters": max(1, len(description) - 4096),
+            "observations": [],
+        }, separators=(",", ":"), ensure_ascii=True)
+    return EvidenceObligation("permission_guard_observation", description, "unknown")
 
 def _curl_version(units):
     """Return one source-declared libcurl version; disagreement stays unknown."""
@@ -510,17 +842,26 @@ def _scan(unit: SourceUnit, curl_version=None):
         row = re.search(r"\b(?:png_read_row|png_read_rows|png_read_image|png_start_read_image)\s*\(", b)
         if info and finish and info.start() < finish.start() and not row:
             out.append(_finding(unit, start+1+finish.start(), "ohknowncve-libpng-cve-2026-46675", "CVE-2026-46675", "png_read_end follows png_read_info without reading image rows.", "CWE-416"))
-    # CVE-2025-25212: observer registrations can accumulate without a
-    # per-process quota. Lifecycle and Binder caller reachability remain
-    # outside this local signature, so every match is a candidate.
+    # CVE-2025-25212: retain the repeated observer-set insertion unless a
+    # simple quota guard before insertion exits the registration path. The exact sink
+    # position is reported; caller reachability and cross-function lifecycle
+    # remain separate evidence obligations.
     observer = _body(s, "AddPasteboardChangedObserver")
     if observer:
         pos, b = observer
-        inserts = re.search(r"(?:observers|observerMap_)\s*(?:->|\.)\s*(?:insert|emplace|push_back)", b)
-        process_key = re.search(r"(?:GetCallingPid|GetCallingTokenID|GetCallingUid)", b)
-        quota = re.search(r"(?:size\s*\(\)\s*(?:>=|>)|(?:MAX|LIMIT|QUOTA)[A-Z0-9_]*|\b(?:max|limit|quota)\w*\b)", b, re.I)
-        if inserts and not process_key and not quota:
-            out.append(_finding(unit, pos, "ohknowncve-pasteboard-cve-2025-25212", "CVE-2025-25212", "pasteboard observer registration inserts into a shared collection without a visible per-process quota.", "CWE-770"))
+        map_access = re.search(r"\bobserverMap_\s*(?:->|\.)\s*(?:find|insert|emplace)\s*\(", b)
+        observer_insert = re.search(
+            r"\b([A-Za-z_]\w*)\s*(?:->|\.)\s*(?:insert|emplace_back|push_back)\s*\(\s*observer\b",
+            b,
+        )
+        helper_quota = observer_insert and _has_guarded_quota_helper(s, b[:observer_insert.start()], observer_insert.group(1))
+        if map_access and observer_insert and not _has_observer_quota(b[:observer_insert.start()], observer_insert.group(1)) and not helper_quota:
+            out.append(_finding(
+                unit, pos + 1 + observer_insert.start(),
+                "ohknowncve-pasteboard-cve-2025-25212", "CVE-2025-25212",
+                "pasteboard observer-set insertion has no visible hard count bound in this registration body; cross-function admission and lifecycle remain unverified.",
+                "CWE-770",
+            ))
     # CVE-2026-67215: untrusted JSON Patch can amplify nesting through deep
     # add/copy operations, then hit recursive cJSON_Delete cleanup. A local
     # shape match cannot prove that the file is built or fed untrusted input.
@@ -547,9 +888,15 @@ def _scan(unit: SourceUnit, curl_version=None):
         mapped = "memberFuncMap_" in mb and "OnGetPasteData" in mb and "GET_PASTE_DATA" in mb
         routed = "memberFuncMap_" in db and "memberFuncMap_.find" in db
         reads_and_returns = "GetPasteData" in hb and "WriteParcelable" in hb
-        guarded = bool(re.search(r"(?:Check\w*Permission|Verify\w*Permission|Enforce\w*Permission|PermissionManager|CheckPermission)", db + hb, re.I))
-        if mapped and routed and reads_and_returns and not guarded:
-            out.append(_finding(unit, pos, "ohknowncve-pasteboard-cve-2025-27247", "CVE-2025-27247", "Binder GET_PASTE_DATA dispatch returns paste data without a visible permission check in the dispatch or handler.", "CWE-862"))
+        route_pos = db.find("it->second")
+        read_pos = hb.find("GetPasteData")
+        if mapped and routed and reads_and_returns:
+            finding = _finding(unit, pos, "ohknowncve-pasteboard-cve-2025-27247", "CVE-2025-27247", "Binder GET_PASTE_DATA dispatch reaches a handler that reads and returns paste data; permission-guard provenance is unknown to this source-only matcher.", "CWE-862")
+            finding = DetectorFinding(**{**finding.__dict__, "evidence_obligations": finding.evidence_obligations + (
+                EvidenceObligation("permission_guard", "Resolve the actual authorization state and prove that its denial dominates the Pasteboard read.", "unknown"),
+                _pasteboard_guard_observation(hb),
+            )})
+            out.append(finding)
     # CVE-2026-27648: Flowbuffer decoding must bound both the byte range in
     # shared memory and the destination vector index. A local match remains
     # candidate-only; build/version and remote input reachability are external.

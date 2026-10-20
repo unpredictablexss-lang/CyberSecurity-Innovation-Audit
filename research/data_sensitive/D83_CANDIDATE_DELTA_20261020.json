@@ -1,0 +1,176 @@
+{
+  "versions": {
+    "baseline_0_18_0": "0.18.0",
+    "imported_0_19_10": "0.19.10",
+    "current_0_19_11": "0.19.11"
+  },
+  "fixture_candidate_delta": {
+    "positive": {
+      "baseline_0_18_0": [
+        "CVE-2025-25212",
+        "CVE-2025-27247"
+      ],
+      "imported_0_19_10": [
+        "CVE-2025-25212",
+        "CVE-2025-27247"
+      ],
+      "current_0_19_11": [
+        "CVE-2025-25212",
+        "CVE-2025-27247"
+      ]
+    },
+    "fixed": {
+      "baseline_0_18_0": [],
+      "imported_0_19_10": [
+        "CVE-2025-27247"
+      ],
+      "current_0_19_11": [
+        "CVE-2025-27247"
+      ]
+    },
+    "safe": {
+      "baseline_0_18_0": [],
+      "imported_0_19_10": [
+        "CVE-2025-27247"
+      ],
+      "current_0_19_11": [
+        "CVE-2025-27247"
+      ]
+    },
+    "unrelated": {
+      "baseline_0_18_0": [],
+      "imported_0_19_10": [],
+      "current_0_19_11": []
+    },
+    "unknown": {
+      "baseline_0_18_0": [
+        "CVE-2025-25212",
+        "CVE-2025-27247"
+      ],
+      "imported_0_19_10": [
+        "CVE-2025-25212",
+        "CVE-2025-27247"
+      ],
+      "current_0_19_11": [
+        "CVE-2025-25212",
+        "CVE-2025-27247"
+      ]
+    }
+  },
+  "nested_quota_candidate_delta": {
+    "direct if (is_privileged)": {
+      "baseline_0_18_0": [],
+      "imported_0_19_10": [],
+      "current_0_19_11": [
+        "CVE-2025-25212"
+      ]
+    },
+    "direct while (is_privileged)": {
+      "baseline_0_18_0": [],
+      "imported_0_19_10": [],
+      "current_0_19_11": [
+        "CVE-2025-25212"
+      ]
+    },
+    "direct for (; is_privileged;)": {
+      "baseline_0_18_0": [],
+      "imported_0_19_10": [],
+      "current_0_19_11": [
+        "CVE-2025-25212"
+      ]
+    },
+    "helper if (is_privileged)": {
+      "baseline_0_18_0": [],
+      "imported_0_19_10": [],
+      "current_0_19_11": [
+        "CVE-2025-25212"
+      ]
+    },
+    "helper while (is_privileged)": {
+      "baseline_0_18_0": [],
+      "imported_0_19_10": [],
+      "current_0_19_11": [
+        "CVE-2025-25212"
+      ]
+    },
+    "helper for (; is_privileged;)": {
+      "baseline_0_18_0": [],
+      "imported_0_19_10": [],
+      "current_0_19_11": [
+        "CVE-2025-25212"
+      ]
+    },
+    "direct if (is_privileged) Notify(); else": {
+      "baseline_0_18_0": [],
+      "imported_0_19_10": [],
+      "current_0_19_11": [
+        "CVE-2025-25212"
+      ]
+    },
+    "direct if (is_privileged) {} else": {
+      "baseline_0_18_0": [],
+      "imported_0_19_10": [],
+      "current_0_19_11": [
+        "CVE-2025-25212"
+      ]
+    },
+    "helper if (is_privileged) Notify(); else": {
+      "baseline_0_18_0": [],
+      "imported_0_19_10": [],
+      "current_0_19_11": [
+        "CVE-2025-25212"
+      ]
+    },
+    "helper if (is_privileged) {} else": {
+      "baseline_0_18_0": [],
+      "imported_0_19_10": [],
+      "current_0_19_11": [
+        "CVE-2025-25212"
+      ]
+    }
+  },
+  "real_source_candidate_delta": {
+    "baseline_0_18_0": [
+      {
+        "symbol": "CVE-2025-25212",
+        "file": "services/core/src/pasteboard_service.cpp",
+        "line": 222,
+        "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+      },
+      {
+        "symbol": "CVE-2025-27247",
+        "file": "services/zidl/src/pasteboard_service_stub.cpp",
+        "line": 41,
+        "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+      }
+    ],
+    "imported_0_19_10": [
+      {
+        "symbol": "CVE-2025-25212",
+        "file": "services/core/src/pasteboard_service.cpp",
+        "line": 241,
+        "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+      },
+      {
+        "symbol": "CVE-2025-27247",
+        "file": "services/zidl/src/pasteboard_service_stub.cpp",
+        "line": 41,
+        "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+      }
+    ],
+    "current_0_19_11": [
+      {
+        "symbol": "CVE-2025-25212",
+        "file": "services/core/src/pasteboard_service.cpp",
+        "line": 241,
+        "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+      },
+      {
+        "symbol": "CVE-2025-27247",
+        "file": "services/zidl/src/pasteboard_service_stub.cpp",
+        "line": 41,
+        "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+      }
+    ]
+  }
+}
