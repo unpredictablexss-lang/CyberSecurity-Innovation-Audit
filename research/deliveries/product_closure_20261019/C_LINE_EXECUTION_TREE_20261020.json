@@ -288,7 +288,7 @@
         "fixed": "82c21d656880923800c94b53b035c76d219313b5",
         "path": "ecmascript/base/typed_array_helper.cpp"
       },
-      "status": "READY_FOR_PARALLEL_EXECUTION",
+      "status": "IN_PROGRESS_PARALLEL",
       "feedback_loop": "Developer sends exact test matrix and expected candidate behavior to independent tester; tester replays same developer commit and returns discrepancies; developer responds/fixes only concrete defects; second-layer review follows only if a candidate survives.",
       "blocking_prerequisites": [],
       "id": "C-DEV-U32-LENGTH-20261020",
@@ -310,7 +310,7 @@
         "fixed": "82c21d656880923800c94b53b035c76d219313b5",
         "path": "ecmascript/base/typed_array_helper.cpp"
       },
-      "status": "READY_FOR_PARALLEL_EXECUTION",
+      "status": "IN_PROGRESS_PARALLEL",
       "feedback_loop": "Developer sends exact test matrix and expected candidate behavior to independent tester; tester replays same developer commit and returns discrepancies; developer responds/fixes only concrete defects; second-layer review follows only if a candidate survives.",
       "blocking_prerequisites": [],
       "id": "C-TEST-U32-LENGTH-20261020",
@@ -323,7 +323,14 @@
         "same-commit replay or precise discrepancy",
         "report and commit SHA"
       ],
-      "completion": "Pending developer baseline and independent replay."
+      "completion": "Pending developer baseline and independent replay.",
+      "independent_baseline": {
+        "worktree_base": "clean 24412cc",
+        "source_store": "D:\\openHarmonyScanner\\tmp\\c8-i9k03b-baseline-source-20261019",
+        "verified": "parent/fixed commit, tree, typed_array_helper.cpp blob and SHA-256 match the review bindings",
+        "current": "independent downstream range-check trace and boundary matrix in progress; same-commit replay awaits developer case matrix/commit",
+        "unknown": "out-of-range floating double to integer conversion behavior is not inferred from static source alone"
+      }
     }
   ],
   "feedback_loop": [
