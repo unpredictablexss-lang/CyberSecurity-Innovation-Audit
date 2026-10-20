@@ -64,3 +64,21 @@ Ran 97 tests; OK; 1 skipped.
 ```
 
 The last command ran in the isolated Python 3.12.15 WSL venv with the Git environment described above. It confirms the corrected marker clears the baseline failure while Runner applicability, exact source binding, D104 known-case identity, Catalog, and parser ownership remain passing. `git diff --check` passed for the complete integrated code at `4f01d4336`.
+
+## Independent replay on the current test branch
+
+On 2026-10-20, I reran the suites from test-branch commit `1314902796d4a9f50347a36563281de989eb333a` (tree `1ffe9d57a952a9fc817c3f2ea727465ab01b2c28`). The only difference from code tree `d424746401212024b3fd3dcc0b25b05d87095bba` is report documentation; no production or test source paths changed.
+
+Environment: WSL Python 3.12.15, `/tmp/ohscanner-c-mainline-test-venv`, with `GIT_DIR=/mnt/d/openHarmonyScanner/CyberSecurity-Innovation-Audit/.git/worktrees/c-mainline-test-closeout-20261020` and `GIT_WORK_TREE=/mnt/d/openHarmonyScanner/worktrees/c-mainline-test-closeout-20261020` so source identity tests read the shared Windows-host Git object database.
+
+Results:
+
+```text
+python -B -m unittest discover -s tests/detectors/ark_runtime -t . -q
+Ran 212 tests; OK; 3 skipped.
+
+python -B -m unittest tests.test_contract_v2_source_binding tests.test_ohscanner_contract tests.test_audit_plan tests.detectors.test_known_case_corpus tests.detectors.ark_runtime.test_catalog tests.detectors.ark_runtime.test_parser_owner tests.detectors.ark_runtime.test_detector_cases -q
+Ran 97 tests; OK; 1 skipped.
+```
+
+The three Ark skips are the exact historical exception-guard replay and receiver-guard replay (their pinned Ark Git stores were not supplied), plus parser-owner's bound TypedArray repository case (`OHSCANNER_ARK_REPO` was not configured). Those results remain skipped, not passes. No component runtime execution or accuracy measurement was performed. The applicable synthetic tests cover exact source binding, default-off/explicit Catalog selection, wrong identities, fixed and safe controls, and unknown/partial outcomes.
