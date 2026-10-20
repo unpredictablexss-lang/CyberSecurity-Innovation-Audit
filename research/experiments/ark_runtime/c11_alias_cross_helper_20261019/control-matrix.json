@@ -1,0 +1,802 @@
+{
+  "controls": [
+    {
+      "mechanism": "alias",
+      "control_kind": "positive",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_positive.cpp",
+      "source_sha256": "6f8d184530258ebdaffe7f147ec48db55c31b37b416b54d4bcea38f9c6f446f3",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "candidate",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 1,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 8,
+            "column": 1,
+            "reason": "distinct_origin_with_type_changing_creation",
+            "target_identity": "new:281",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_line": 3,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 445,
+            "effect_sites": [
+              [
+                5,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "alias",
+      "control_kind": "fixed",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_fixed.cpp",
+      "source_sha256": "897d7698185b3369566ea9adf1f5773850a31a1dbd8d645a5acf46d2739da3d1",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "matched_no_same_root_candidate",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 1,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "same-type:281",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_line": 3,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 453,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "alias",
+      "control_kind": "safe",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_safe.cpp",
+      "source_sha256": "91a9acc365142c9666d159450b0ccc7cd20621caffb4a68221abe47a896736da",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "matched_local_control_not_security_verdict",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 1,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 9,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 8,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 504,
+            "effect_sites": [
+              [
+                5,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "alias",
+      "control_kind": "unrelated",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_unrelated.cpp",
+      "source_sha256": "ed1b28d5a7bb3774ad098d67c7345c51e169ca6c284af297a69f02cfff3a0950",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "not_applicable_no_candidate",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [],
+        "limitations": [
+          "not_applicable_to_rule"
+        ],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "alias",
+      "control_kind": "unknown",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/alias_unknown.cpp",
+      "source_sha256": "aafee727648aea3c327acedf0a30f5f8eb4b3635ae1a9e8b057c81ec26a55fa2",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "explicit_unknown_no_candidate",
+      "actual": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 1,
+        "observations": [
+          {
+            "kind": "unknown",
+            "line": 10,
+            "column": 1,
+            "reason": "type_fact_invalidated_by_call",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 8,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 527,
+            "effect_sites": [
+              [
+                5,
+                "builder.NewTypedArray"
+              ],
+              [
+                9,
+                "UnknownGlobalEffect"
+              ]
+            ]
+          }
+        ],
+        "limitations": [
+          "unresolved_local_observations"
+        ],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "cast",
+      "control_kind": "positive",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_positive.cpp",
+      "source_sha256": "88e948feb61bcf74a6614dd5863f541abb4e06bb81d4ac184ad4f5822f3d4049",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "candidate",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 1,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 8,
+            "column": 1,
+            "reason": "distinct_origin_with_type_changing_creation",
+            "target_identity": "new:281",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_line": 3,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 463,
+            "effect_sites": [
+              [
+                5,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "cast",
+      "control_kind": "fixed",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_fixed.cpp",
+      "source_sha256": "b21581a71fe58435eae1f14ead96dd849a17e49343cbd83f429449e7a06f3c72",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "matched_no_same_root_candidate",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 1,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "same-type:281",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_line": 3,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 471,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "cast",
+      "control_kind": "safe",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_safe.cpp",
+      "source_sha256": "7a6997d1194d760860f3df94a4092957ae3996860e73b8f546e5b4d402a96eee",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "matched_local_control_not_security_verdict",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 1,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 9,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 8,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 522,
+            "effect_sites": [
+              [
+                5,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "cast",
+      "control_kind": "unrelated",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_unrelated.cpp",
+      "source_sha256": "8e036558fc708679402d8bbe1ccc1f2cf6dc42188dd5a0752eda00f953452060",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "not_applicable_no_candidate",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [],
+        "limitations": [
+          "not_applicable_to_rule"
+        ],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "cast",
+      "control_kind": "unknown",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/cast_unknown.cpp",
+      "source_sha256": "441d815b329334ce73adbb3422ee319077308c035495a8d06be2125bd7979fb2",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "explicit_unknown_no_candidate",
+      "actual": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 1,
+        "observations": [
+          {
+            "kind": "unknown",
+            "line": 10,
+            "column": 1,
+            "reason": "type_fact_invalidated_by_call",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 8,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 545,
+            "effect_sites": [
+              [
+                5,
+                "builder.NewTypedArray"
+              ],
+              [
+                9,
+                "UnknownGlobalEffect"
+              ]
+            ]
+          }
+        ],
+        "limitations": [
+          "unresolved_local_observations"
+        ],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "helper",
+      "control_kind": "positive",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_positive.cpp",
+      "source_sha256": "d6c8314a1976cb727fd77b8c64e52656713a7f22c0664a92387541648440024f",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "candidate",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 1,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 8,
+            "column": 1,
+            "reason": "distinct_origin_with_type_changing_creation",
+            "target_identity": "new:383",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:197:input",
+            "token_line": 5,
+            "creation_line": 7,
+            "path": [
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 140,
+            "region_end_byte": 521,
+            "effect_sites": [
+              [
+                7,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "helper",
+      "control_kind": "fixed",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_fixed.cpp",
+      "source_sha256": "2ea8865c96b85314a033d6b7231eb2067a3d2dd668d893eb1bc055bf238714ad",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "matched_no_same_root_candidate",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 1,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "same-type:383",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:197:input",
+            "token_line": 5,
+            "creation_line": 7,
+            "path": [
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 140,
+            "region_end_byte": 529,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "helper",
+      "control_kind": "safe",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_safe.cpp",
+      "source_sha256": "2b37faddaa6c88472dc14da41b102e7116cd5e3d729ebd06c94d03dc4f623bdb",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "matched_local_control_not_security_verdict",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 1,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 9,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:383",
+            "token_origin": "new:383",
+            "token_line": 8,
+            "creation_line": 7,
+            "path": [
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 140,
+            "region_end_byte": 567,
+            "effect_sites": [
+              [
+                7,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "helper",
+      "control_kind": "unrelated",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_unrelated.cpp",
+      "source_sha256": "a89ebe958a1895e217e9d7a6ee51c35617cc4b68f730e4b0c0b957a04c8f7d13",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "not_applicable_no_candidate",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [],
+        "limitations": [
+          "not_applicable_to_rule"
+        ],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "helper",
+      "control_kind": "unknown",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/helper_unknown.cpp",
+      "source_sha256": "199f6c62ee9622e91f706e2a1cfd0aa75e1c69e274204d6037228ac301a41f61",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "expected_disposition": "explicit_unknown_no_candidate",
+      "actual": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 1,
+        "observations": [
+          {
+            "kind": "unknown",
+            "line": 10,
+            "column": 1,
+            "reason": "type_fact_invalidated_by_call",
+            "target_identity": "new:383",
+            "token_origin": "new:383",
+            "token_line": 8,
+            "creation_line": 7,
+            "path": [
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 140,
+            "region_end_byte": 590,
+            "effect_sites": [
+              [
+                7,
+                "builder.NewTypedArray"
+              ],
+              [
+                9,
+                "UnknownGlobalEffect"
+              ]
+            ]
+          }
+        ],
+        "limitations": [
+          "unresolved_local_observations"
+        ],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "loop",
+      "control_kind": "positive",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_positive.cpp",
+      "source_sha256": "7acd204e3dee4dd5e714fd67a70bbff70921b502b28c25565222f82d77afdae2",
+      "rule_id": "ark.runtime.typedarray-buffer-size-multiplication-overflow",
+      "rule_version": "1.1.0",
+      "expected_disposition": "candidate",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 1,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "line": 2,
+            "column": 26,
+            "function": "convert",
+            "result_name": "byteCount",
+            "factor_names": [
+              "stride",
+              "count"
+            ],
+            "allocation_line": 3,
+            "loop_line": 6,
+            "start_byte": 73,
+            "end_byte": 87,
+            "may_overflow": true
+          }
+        ],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "loop",
+      "control_kind": "fixed",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_fixed.cpp",
+      "source_sha256": "2dcdddde310392aa5f38095609b4c00ba271545f3ee404c8e7e4dab5ccf67303",
+      "rule_id": "ark.runtime.typedarray-buffer-size-multiplication-overflow",
+      "rule_version": "1.1.0",
+      "expected_disposition": "fixed_control_no_same_root_candidate_not_safety",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "loop",
+      "control_kind": "safe",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_safe.cpp",
+      "source_sha256": "8525082ff615914aba6f9a05976eec6b6f9bff8d65d05bcdff6f660dce452e8b",
+      "rule_id": "ark.runtime.typedarray-buffer-size-multiplication-overflow",
+      "rule_version": "1.1.0",
+      "expected_disposition": "safe_local_control_no_candidate_not_security_verdict",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "loop",
+      "control_kind": "unrelated",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_unrelated.cpp",
+      "source_sha256": "8873f66fc86cfe0530857b399c1da3fd0f17b8d09d56e1127b5d55b17f433c24",
+      "rule_id": "ark.runtime.typedarray-buffer-size-multiplication-overflow",
+      "rule_version": "1.1.0",
+      "expected_disposition": "not_applicable_no_candidate",
+      "actual": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "mechanism": "loop",
+      "control_kind": "unknown",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c11_alias_cross_helper/loop_unknown.cpp",
+      "source_sha256": "568e6a4685cae99a2953291249a580eb19cd40f2476f9ccb5e9ef7357ac0d468",
+      "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+      "rule_version": "1.1.0",
+      "expected_disposition": "explicit_unknown_no_candidate",
+      "actual": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 1,
+        "observations": [],
+        "limitations": [
+          "callback_result_wrapper_semantics_unmodeled:BuiltinsTypedArray::Filter"
+        ],
+        "model_digest": ""
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    }
+  ],
+  "all_assertions_pass": true,
+  "classification_rule": "fixed/safe prove only local boundaries; candidate stays unassessed; unknown is not safe"
+}

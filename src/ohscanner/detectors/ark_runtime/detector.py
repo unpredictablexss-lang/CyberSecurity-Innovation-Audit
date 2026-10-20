@@ -12,7 +12,7 @@ from .model import (AnalysisBudget, RuntimeTypeModel, DETECTOR_ID, RULE_ID,
                     EXCEPTION_GUARD_RULE_ID, RECEIVER_TYPE_GUARD_RULE_ID,
                     SIZE_OVERFLOW_RULE_ID, LENGTH_NARROWING_RULE_ID,
                     INDEX_BOUNDS_RULE_ID, NATIVE_EXCEPTION_RULE_ID,
-                    GAP_RULE_VERSIONS, VERSION)
+                    RULE_VERSIONS, VERSION)
 
 
 class ArkRuntimeTypeSafetyDetector:
@@ -170,7 +170,7 @@ class ArkRuntimeTypeSafetyDetector:
                                         'model_sha256': result.model_digest or self.model.digest,
                                         'function_region': [item.region_start_byte, item.region_end_byte],
                                         'unreviewed_effect_sites': item.effect_sites}, sort_keys=True)
-                    rule_version = GAP_RULE_VERSIONS.get(rule_id, 'existing-rule-v1')
+                    rule_version = RULE_VERSIONS.get(rule_id, 'unversioned-rule')
                     trace += ';rule_version=' + rule_version
                     if rule_id == NATIVE_EXCEPTION_RULE_ID:
                         obligations = (

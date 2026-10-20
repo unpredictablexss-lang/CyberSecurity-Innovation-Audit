@@ -18,9 +18,18 @@ LENGTH_NARROWING_RULE_ID = 'ark.runtime.typedarray-length-signed-to-unsigned-nar
 INDEX_BOUNDS_RULE_ID = 'ark.runtime.dataview-index-width-bounds'
 NATIVE_EXCEPTION_RULE_ID = 'ark.runtime.native-inline-pending-exception-propagation'
 GAP_RULE_VERSIONS = {
-    LENGTH_NARROWING_RULE_ID: '1.0.0',
-    INDEX_BOUNDS_RULE_ID: '1.0.0',
-    NATIVE_EXCEPTION_RULE_ID: '1.0.0',
+    LENGTH_NARROWING_RULE_ID: '1.1.0',
+    INDEX_BOUNDS_RULE_ID: '1.1.0',
+    NATIVE_EXCEPTION_RULE_ID: '1.1.0',
+}
+RULE_VERSIONS = {
+    RULE_ID: '1.1.0',
+    EXCEPTION_GUARD_RULE_ID: '1.1.0',
+    RECEIVER_TYPE_GUARD_RULE_ID: '1.1.0',
+    SIZE_OVERFLOW_RULE_ID: '1.1.0',
+    RUNTIME_EXCEPTION_RULE_ID: '1.1.0',
+    CALL_INFO_EXCEPTION_RULE_ID: '1.1.0',
+    **GAP_RULE_VERSIONS,
 }
 VERSION = '0.6.2'
 NAMESPACE = 'panda::ecmascript::kungfu'

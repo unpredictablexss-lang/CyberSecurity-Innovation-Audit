@@ -70,7 +70,7 @@ class NativeInlineExceptionGapTests(unittest.TestCase):
         self.assertEqual(selected, (source,))
 
     def test_rule_versions_are_stable(self):
-        self.assertEqual(GAP_RULE_VERSIONS[NATIVE_EXCEPTION_RULE_ID], '1.0.0')
+        self.assertEqual(GAP_RULE_VERSIONS[NATIVE_EXCEPTION_RULE_ID], '1.1.0')
 
 
 class TypedArrayLengthGapTests(unittest.TestCase):
@@ -114,7 +114,7 @@ class TypedArrayLengthGapTests(unittest.TestCase):
                             for x in result.limitations))
 
     def test_rule_version_is_stable(self):
-        self.assertEqual(GAP_RULE_VERSIONS[LENGTH_NARROWING_RULE_ID], '1.0.0')
+        self.assertEqual(GAP_RULE_VERSIONS[LENGTH_NARROWING_RULE_ID], '1.1.0')
 
 
 class DataViewIndexBoundsGapTests(unittest.TestCase):
@@ -155,7 +155,7 @@ class DataViewIndexBoundsGapTests(unittest.TestCase):
         self.assertFalse(any(item.kind == 'candidate' for item in result.observations))
 
     def test_rule_version_is_stable(self):
-        self.assertEqual(GAP_RULE_VERSIONS[INDEX_BOUNDS_RULE_ID], '1.0.0')
+        self.assertEqual(GAP_RULE_VERSIONS[INDEX_BOUNDS_RULE_ID], '1.1.0')
 
 
 if __name__ == '__main__':
