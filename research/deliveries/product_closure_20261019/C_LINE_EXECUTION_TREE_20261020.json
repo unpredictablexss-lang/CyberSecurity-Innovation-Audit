@@ -1,0 +1,1049 @@
+{
+  "schema": "ohscanner.c-line-execution-tree/v1",
+  "date": "2026-10-20",
+  "baseline": {
+    "remote": "origin/codex/c-line-parallel-plan-20261020",
+    "commit": "e68548672",
+    "refresh": "2026-10-20 wrap-up audit: exact-bound Float32Array and TypedArray.set candidate loops are implemented, independently same-SHA tested, second-layer source-reviewed, and documented with structured follow-up prompts. ArrayBuffer lifecycle scout returned a scoped no-go. Latest verified local tip before this status refresh was e68548672; origin branch remains e2daccc5b after repeated HTTPS 443 connection timeouts. Final test audit: focused 12 passed; Ark Runtime detector suite 209 passed/3 skipped; working tree clean before this task-tree status refresh. Runtime/ASan/product impact remain unknown/not_run."
+  },
+  "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
+  "status": "ACTIVE",
+  "blocking_prerequisites": [],
+  "workstreams": [
+    {
+      "id": "C-DEV-RG-20261020",
+      "kind": "development",
+      "status": "COMPLETED",
+      "scope": [
+        "src/ohscanner/detectors/ark_runtime/receiver_guard.py",
+        "tests/detectors/ark_runtime/"
+      ],
+      "objective": "Fix reproduced negated/composite predicate, type-token reassignment, and receiver rebinding false-matches; only proven source-bound guards may suppress a candidate.",
+      "worktree": "worktrees/c-static-dev-20261020",
+      "feedback_from": "C-TEST-RG-20261020",
+      "completion": "Patch 71950e65f46e204e6aec21210c8de73fa4f2a1a9 passed developer and independent tests; source commits remain on the dedicated code branch codex/c-static-dev-20261020 and are not merged into the planning worktree because their base differs.",
+      "evidence": {
+        "commits": [
+          "ae5792f84e6b641e8857d0d58fab508f3a306af4",
+          "71950e65f46e204e6aec21210c8de73fa4f2a1a9"
+        ],
+        "tests": "python -m pytest tests/detectors/ark_runtime -q: 152 passed, 3 skipped",
+        "limitations": "Unsupported composite/negated predicates and unresolved alias relationships remain unknown; rebinding and same-origin resampling may be conservative. Controls are not product evidence or formal accuracy metrics.",
+        "independent_report_commit": "36bf6c5ff",
+        "independent_tests": "python -m unittest tests.detectors.ark_runtime.test_receiver_guard -v: 10 passed, 1 skipped"
+      }
+    },
+    {
+      "id": "C-TEST-RG-20261020",
+      "kind": "testing",
+      "status": "COMPLETED",
+      "scope": [
+        "tests/detectors/ark_runtime/test_receiver_guard.py",
+        "receiver_guard source controls"
+      ],
+      "objective": "Independently reproduce the negated/composite predicate false-match and adversarially replay fix ae5792f84e6b641e8857d0d58fab508f3a306af4.",
+      "worktree": "worktrees/c-static-test-20261020",
+      "feedback_to": "C-DEV-RG-20261020",
+      "completion": "Independent baseline, first-patch replay and final replay are documented in research/deliveries/c-line/receiver_guard_test_review_20261020.md (latest report commit 36bf6c5ff).",
+      "confirmed_baseline_findings": [
+        "Negated IsTypedArray condition on the true edge was reported matched.",
+        "IsTypedArray(receiver) || other condition was reported matched although the guard may be false."
+      ]
+    },
+    {
+      "id": "C-LLM-REVIEW-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "COMPLETED_SOURCE_REVIEW_RUNTIME_UNKNOWN",
+      "objective": "Review the exact parent/fixed TypedArray allocation-exception candidates against source and builder semantics, separating source-level missing exception handling from runtime/product impact.",
+      "worktree": "worktrees/worktrees/c-static-review-20261020",
+      "input": "commits c758818dbfd0b146a908d43d21f6ca1706c33783 and 81ca57487d04ea30cd11c271e86494a4e130f43e; exact source hashes in tests/detectors/ark_runtime/test_exception_guard.py",
+      "completion": "Independent source review committed as 95011774f; parent Filter/Map missing exception protection is supported, fixed ordering is confirmed, runtime/product impact remains unknown.",
+      "report": "research/deliveries/c-line/second_layer_exception_guard_review_20261020.md",
+      "limitations": "No shipped-product binding, runtime reproduction, exploitability or full-CI evidence; aggregate parser/detector coverage remains partial/blocked."
+    },
+    {
+      "id": "C-NEXT-RG-BINDING-20261020",
+      "kind": "development_and_testing",
+      "status": "COMPLETED_WITH_CONSERVATIVE_LIMITATIONS",
+      "objective": "Check that IsFastTypeArray(typeOfSameReceiver) remains source-bound if the type variable is reassigned, aliased, shadowed, or joined across control flow; add only evidence-backed fixes and controls.",
+      "trigger": "Independent tester reproduced type-token reassignment and receiver rebinding false-matches; these are now part of the current fix and replay loop.",
+      "completion": "Concrete behavior and matching tests documented; unsupported data flow remains unknown."
+    },
+    {
+      "id": "C-NEXT-RG-ALIAS-20261020",
+      "kind": "development_and_testing",
+      "status": "COMPLETED_SAME_COMMIT_INDEPENDENT_REPLAY",
+      "objective": "Evaluate whether safe source-bound alias and same-origin type resampling cases can be proven without weakening rebinding protection; keep unknown when identity cannot be proven.",
+      "development_worktree": "worktrees/worktrees/c-static-alias-dev-20261020",
+      "testing_worktree": "worktrees/worktrees/c-static-alias-test-20261020",
+      "evidence": "Independent test report observes alias and same-origin resampling remain unknown; rebinding after a guard can conservatively remain candidate.",
+      "completion": "Developer commit 2d79560cad45db75bb1b0c6d0677200294e17d10 independently replayed on tester commit cd52fc1899112ed23b82bfe168f2056a58715b95. No cross-object guard leak observed.",
+      "developer_commit": "2d79560cad45db75bb1b0c6d0677200294e17d10",
+      "developer_report": "research/deliveries/c-line/receiver_guard_alias_identity_20261020.md",
+      "developer_validation": "16 passed, 1 skipped focused; 158 passed, 3 skipped Ark Runtime; git diff --check passed",
+      "prior_independent_baseline_report": "research/deliveries/c-line/receiver_guard_alias_test_review_20261020.md",
+      "prior_independent_baseline_commit": "5d2ada9a77d710412c700446ae5d02f3b3bed98a",
+      "prior_feedback": "Baseline found saved=input rebind/restore and immutable alias remained candidate/unknown; cross-object guard was not incorrectly reused. Exact developer commit replay is active.",
+      "independent_report_commit": "2fe2182508e88611cc0de005a8764092693291fb",
+      "independent_report": "research/deliveries/c-line/receiver_guard_alias_identity_validation_20261020.md",
+      "independent_tests": "receiver_guard: 16 passed, 1 skipped; Ark Runtime: 158 passed, 3 skipped (161 collected)",
+      "matrix_result": "same-origin alias/restore/self-assignment/post-guard token resampling matched; cross-object and saved=count negative controls candidate; opaque/reference alias writes unknown; no unsafe cross-object match",
+      "limitations": "Historical repository comparison skipped because pinned Git store absent in tester environment. This validates source-level rule behavior, not product security or formal precision/recall."
+    },
+    {
+      "id": "C-DEV-REPLAY-20261020",
+      "kind": "development_and_testing",
+      "status": "COMPLETED_INDEPENDENT_REPLAY",
+      "objective": "Extend the registered source-bound exception-guard research profile to already modeled parent/fixed revisions if exact source identity supports it, then run CLI parent/fixed replay; preserve partial coverage and candidate-only semantics.",
+      "worktree": "worktrees/worktrees/c-static-replay-dev-20261020",
+      "test_worktree": "worktrees/worktrees/c-static-replay-test-20261020",
+      "evidence_pointer": "research/deliveries/c-line/replay_20261019/C_LINE_KNOWN_SAMPLE_REPLAY_20261019.json",
+      "completion": "Developer commit a6b1cf699781c6c74ff3fca4559a1b7c9a9cb501 independently replayed: exact-bound parent emits two exception-guard candidates; fixed emits zero; source identity and unbound revision boundary checked. Both remain partial/blocked.",
+      "independent_baseline_report": "research/deliveries/c-line/exception_guard_cli_replay_20261020.md",
+      "independent_baseline_commit": "532aab6d6",
+      "independent_report_commit": "39afcc6fa",
+      "independent_report": "research/deliveries/c-line/exception_guard_cli_replay_20261020.md",
+      "independent_tests": "Ark Runtime suite: 155 passed, 3 skipped; adapter identity test 1 passed. Unbound control was source-equivalent Gitee mirror because original parent object could not be fetched."
+    },
+    {
+      "id": "C-TEST-EXCEPTION-CLI-20261020",
+      "kind": "independent_testing",
+      "status": "COMPLETED_SAME_COMMIT_PARTIAL_BLOCKED_PRESERVED",
+      "worktree": "worktrees/worktrees/c-static-replay-test-20261020",
+      "objective": "Verify on the same code commit that exact-bound parent produces the registered-adapter candidate, exact fixed source produces no same-rule candidate, an unbound commit remains excluded, and CLI partial/blocked states stay explicit.",
+      "baseline_report": "research/deliveries/c-line/exception_guard_cli_replay_20261020.md",
+      "feedback_to": "C-DEV-REPLAY-20261020",
+      "developer_commit": "a6b1cf699781c6c74ff3fca4559a1b7c9a9cb501",
+      "report_commit": "39afcc6fa",
+      "result": "parent=2 candidates, fixed=0 same-rule candidates; both parser/internal partial and detector blocked; source-equivalent mirror neighbor rejected because commit is not model-bound",
+      "limitations": "Original parent^1 full object absent from pinned store; GitHub port 443 unreachable and Gitee rejected unadvertised SHA, so mirror neighbor is not claimed as the exact parent control."
+    },
+    {
+      "id": "C-TEST-ALIAS-20261020",
+      "kind": "independent_testing",
+      "status": "COMPLETED_SAME_COMMIT_REPLAY",
+      "worktree": "worktrees/worktrees/c-static-alias-test-20261020",
+      "objective": "Independently replay alias-identity implementation on exact developer SHA; verify safe aliases reduce candidate/unknown without cross-object unsound matches.",
+      "feedback_to": "C-NEXT-RG-ALIAS-20261020",
+      "developer_commit": "2d79560cad45db75bb1b0c6d0677200294e17d10",
+      "tester_commit": "cd52fc1899112ed23b82bfe168f2056a58715b95",
+      "report_commit": "2fe2182508e88611cc0de005a8764092693291fb",
+      "report": "research/deliveries/c-line/receiver_guard_alias_identity_validation_20261020.md",
+      "result": "No cross-object guard misuse; proven same-object alias/restoration matched; unsupported alias forms remained candidate or unknown."
+    },
+    {
+      "id": "C-NEXT-RUNNER-APPLICABILITY-20261020",
+      "kind": "development_and_independent_testing",
+      "status": "COMPLETED_SAME_COMMIT_INDEPENDENT_REPLAY",
+      "objective": "Separate exact target applicability from dependency files kept in ScanContext; preserve target partial/blocked and exact source identity.",
+      "input": "openharmony/arkcompiler_ets_runtime@a65a2853ccae13da167d9aa4720ab8b11ec16656; target ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp (blob 68fb3b0adc4f9062889a861be51b7be90362e37a, SHA256 76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c); creator new_object_stub_builder.cpp (blob 991ac5ac034a1a027e3200787ec25c55b3f15b69, SHA256 3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0)",
+      "developer_prompt": "Implement runner applicability through optional select_applicable_units(context, units), retaining all units in ScanContext for exact creator blob/SHA checks but excluding dependencies from target coverage. Fallback to supported_languages. Test target+exact dependency, target-only missing dependency, and unrelated same-language unit. Preserve C1 target partial/blocked with 13 parser issues.",
+      "tester_prompt": "Independently replay same exact-bound CLI cases on developer commit; assert only the target is applicable, creator remains available in ScanContext, target-only is blocked for missing dependency, unrelated file excluded, and partial/blocked remains explicit.",
+      "second_layer_prompt": "If a source-bound candidate remains, inspect its code evidence only; separate detector evidence from exploitability/runtime/product unknown. No second-layer feature development.",
+      "completion": "Same-commit independent replay, exact target/dependency identity, target coverage count corrected without changing target partial/blocked or findings; relevant runner and Ark tests pass.",
+      "developer_agent": "ark_static_dev",
+      "test_agent": "ark_static_test",
+      "trigger": "Scout reproduced runner.py selecting every supported-language unit while Ark adapter select_applicable_units() is not invoked: target+creator gives applicable_files=2 and creator not_analyzed; target-only is blocked for missing creator.",
+      "scout_report": "research/deliveries/c-line/scout_20261020/next_slice_proposal.md",
+      "reproduction_reports": [
+        "research/deliveries/c-line/scout_20261020/c1_registered.json",
+        "research/deliveries/c-line/scout_20261020/c1_target_only.json"
+      ],
+      "independent_baseline_commit": "fbc54b5a1",
+      "independent_baseline_report": "research/deliveries/c-line/type_safety_replay_baseline_20261020.md",
+      "independent_baseline": "target-only: applicable=1, missing creator => blocked/not_analyzed; target+creator: applicable=2, target partial, creator complete but not_analyzed; plus unrelated same-language: applicable=3, target partial and other files not_analyzed; fixed control partial/blocked/0 findings.",
+      "independent_test_suite": "Ark Runtime 155 passed, 3 skipped; no production changes; worktree clean.",
+      "developer_commit": "85a1f1e6f91247e5fbad39fb6bd03f64201700bb",
+      "developer_report_commit": "463f6e3b9",
+      "developer_report": "research/deliveries/c-line/scout_20261020/c1_post_fix.md",
+      "developer_validation": "Ark Runtime 162 passed, 3 skipped; runner/source-binding suites 34 passed; CLI C1 applicable_files=1, scope_files=1, target partial with 13 parse issues, detector blocked, 0 diagnostics.",
+      "implementation": "Runner calls optional select_applicable_units(context, language_units); validates identity/language/duplicates/context membership; dependencies remain accessible from full context; other detectors retain language fallback.",
+      "independent_test_commit": "a8035945b4412a440cfe7306e51fb95aa2fc6f78",
+      "independent_report_commit": "84e73672bc95fde70070e8f5369f712911a923dd",
+      "independent_report": "research/deliveries/c-line/runner_applicability_replay_20261020.md",
+      "result": "Three exact-bound CLI scopes, invalid selector, and no-hook fallback verified. applicable_files=1 for target in all target-containing scopes; missing creator remains blocked; target remains partial/blocked with 13 parser issues and 0 diagnostics.",
+      "limitations": "Ark suite independently ran 159 tests (3 skipped) versus developer-side 162; differing test inventory/revision is unresolved. Core runner/source-binding suite 34 passed. Broader suite recorded 4 named failures (2 Windows symlink privilege, 1 CRLF bytes, 1 ETS parser state; last root cause unknown)."
+    },
+    {
+      "id": "C-TEST-RUNNER-APPLICABILITY-20261020",
+      "kind": "independent_testing",
+      "status": "COMPLETED_SAME_COMMIT_REPLAY",
+      "objective": "Independently verify the registered CLI scope-mapping baseline and replay the runner applicability fix on the same commit.",
+      "worktree": "worktrees/worktrees/c-static-replay-test-20261020",
+      "feedback_to": "C-NEXT-RUNNER-APPLICABILITY-20261020",
+      "baseline_cases": [
+        "target+exact creator dependency",
+        "target only",
+        "target+dependency+unrelated same-language file"
+      ],
+      "constraints": "No production edits; exact commit/blob/SHA; no safety inference from zero findings; preserve partial/blocked.",
+      "report_commit": "84e73672bc95fde70070e8f5369f712911a923dd",
+      "baseline_report": "research/deliveries/c-line/type_safety_replay_baseline_20261020.md",
+      "baseline_result": "Exact C1 target and creator source identities match model. Parser/internal analysis remains partial; baseline does not determine rule behavior or safety.",
+      "developer_commit": "85a1f1e6f91247e5fbad39fb6bd03f64201700bb",
+      "tester_commit": "a8035945b4412a440cfe7306e51fb95aa2fc6f78",
+      "report": "research/deliveries/c-line/runner_applicability_replay_20261020.md"
+    },
+    {
+      "id": "C-NEXT-C1-PARTIAL-20261020",
+      "kind": "development_and_independent_testing",
+      "status": "COMPLETED_NO_CODE_EXPECTED_MACRO_LIMITATION",
+      "objective": "Trace C1 target partial parsing (13 concrete issue locations) and detector_model_incomplete/unknown local observation; fix only a reproducible parser or model limitation that can add accurate candidates without relaxing exact bindings.",
+      "input": "openharmony/arkcompiler_ets_runtime@a65a2853ccae13da167d9aa4720ab8b11ec16656; target ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp; runner post-fix reports and source-bound model.",
+      "developer_agent": "ark_static_dev",
+      "test_agent": "ark_static_test",
+      "developer_prompt": "Reproduce C1 exact-bound target through registered CLI after runner fix; map all 13 parser issues to syntax/AST stages and distinguish parser partial from detector internal/model incompleteness. Do not alter source binding or infer a vulnerability. Implement only a narrow parser/model fix if a minimal source example proves a concrete defect; otherwise produce evidence-backed root cause and recommendation.",
+      "tester_prompt": "Independently record C1 parser/coverage baseline and a nearby fixed/safe/control input if available. On any developer commit, replay the same pinned target and verify source identity, issue count/location, partial/blocked semantics, and candidate locations. Check negative control for no broadened path/model binding.",
+      "completion": "Same-commit evidence for concrete parser/model fix plus controls, or a report explaining unsupported syntax/effect boundary and next highest-value source-bound case; unknown remains explicit.",
+      "blocking_prerequisites": [],
+      "independent_baseline_commit": "ea27fa0efe9562d16663b81f4c1d7d03ce8fd90c",
+      "independent_baseline_report": "research/deliveries/c-line/c1_partial_baseline_20261020.md",
+      "baseline": "Exact-bound C1 with creator: applicable_files=1; target parse partial (13 issues), analysis partial/detector_model_incomplete, detector blocked, 0 diagnostics; creator parse complete and verified.",
+      "baseline_test_commit": "starting runner replay branch at 84e73672bc95fde70070e8f5369f712911a923dd; report-only commit ea27fa0efe9562d16663b81f4c1d7d03ce8fd90c",
+      "preliminary_scout": "13 raw Tree-sitter C++ errors/holes cluster around legal unexpanded IR_IF/IR_ELSE, BRANCH and typed-array macros; Map 2747 unknown follows user-JS JSCallDispatch effect and appears conservatively expected. Precise macro/parser controls and report still pending.",
+      "developer_scout_commit": "68f9371d4e967884404cf7ed4c70805cbc517499",
+      "developer_scout_report": "research/deliveries/c-line/c1_partial_state_root_cause_20261020.md",
+      "root_cause": "13 Tree-sitter locations are raw-source/no-preprocessor cascades around exact pinned Ark IR_IF/IR_ELSE, BRANCH, and typed-array case-list macros; standalone Label initializer parses. Expanded equivalents parse complete. detector_model_incomplete is runner partial-state label. Map 2747 unknown follows user-JS JSCallDispatch effects and remains conservatively unknown.",
+      "next_candidate": "Prototype exact-source macro-aware parse profile with pinned header blobs, explicit build/preprocessor config, preserved source locations, and partial fallback if inputs are missing; do not globally textual-rewrite macros.",
+      "independent_control_commit": "3004ebf0d65166e4a0dc236d2f4fb3d7152f1f5c",
+      "independent_control_report": "research/deliveries/c-line/scout_20261020/independent_parser_controls.md",
+      "conclusion": "Seven raw/expanded controls support the 13 raw macro/preprocessor parse errors as expected limitations/cascades; standalone Label array parses complete. Map 2747 remains unknown after JSCallDispatch effect. Synthetic new:<byte-offset> target labels differed while source identity and semantic observation matched; discrepancy remains unexplained.",
+      "no_code_change": "No parser/detector fix justified by current evidence. Avoid global macro textual rewriting."
+    },
+    {
+      "id": "C-TEST-C1-PARTIAL-20261020",
+      "kind": "independent_testing",
+      "status": "COMPLETED_INDEPENDENT_PARSER_CONTROLS",
+      "objective": "Preserve exact-bound C1 partial baseline and independently validate any narrow parser/model change on the same source commit.",
+      "worktree": "worktrees/worktrees/c-static-replay-test-20261020",
+      "report_commit": "ea27fa0efe9562d16663b81f4c1d7d03ce8fd90c",
+      "report": "research/deliveries/c-line/c1_partial_baseline_20261020.md",
+      "feedback_to": "C-NEXT-C1-PARTIAL-20261020",
+      "independent_control_commit": "3004ebf0d65166e4a0dc236d2f4fb3d7152f1f5c",
+      "independent_control_report": "research/deliveries/c-line/scout_20261020/independent_parser_controls.md"
+    },
+    {
+      "id": "C-NEXT-MACRO-PARSE-POC-20261020",
+      "kind": "development_feasibility_and_independent_testing",
+      "status": "FEASIBILITY_SCOUT_COMPLETE_NO_PRODUCTION_CHANGE",
+      "objective": "Evaluate a narrow exact-source macro-aware parse profile for Ark C++ DSL to reduce avoidable partial coverage without fabricating a compile configuration or source locations.",
+      "input": "C1 target and exact headers at a65a2853ccae13da167d9aa4720ab8b11ec16656; source/header identities in c1_partial_state_root_cause_20261020.md and independent_parser_controls.md.",
+      "developer_agent": "ark_static_dev",
+      "test_agent": "ark_static_test",
+      "developer_prompt": "Inspect existing parser/build interfaces and local preprocessing tools. Prototype only in isolated research artifacts if possible. Bind exact commit/header blobs, explicit include/define/toolchain profile, and source mapping; do not mutate raw source or production parser. If required build facts are absent, retain raw partial.",
+      "tester_prompt": "Independently validate preprocessor output source mapping, exact header binding and raw fallback for missing defines/includes; check raw and expanded positive/negative fixtures plus a safe/fixed source control.",
+      "second_layer_prompt": "Only review candidates emitted after exact-source parsing; no LLM feature development and no vulnerability claim from parse completion.",
+      "completion": "Feasibility evidence and bounded PoC or a no-go rationale; no source coverage upgrade without explicit reproducible config and accurate mapping.",
+      "blocking_prerequisites": [],
+      "developer_scout_commit": "7dc34a6995763691143d4575c0dd81049794f18d",
+      "developer_report": "research/deliveries/c-line/scout_20261020/c1_macro_parse_profile_feasibility.md",
+      "isolated_poc": [
+        "research/deliveries/c-line/scout_20261020/macro_parse_profile_feasibility_poc.py",
+        "research/deliveries/c-line/scout_20261020/macro_parse_profile_feasibility_poc.json"
+      ],
+      "independent_report_commit": "24412cc6083b3b8cad9b611a2b0303fd71eeceeb",
+      "independent_report": "research/deliveries/c-line/scout_20261020/independent_macro_feasibility.md",
+      "result": "Exact pinned IR_ELSE control expands with line map; IR_IF/BRANCH/token-paste refused; full C1 fails closed at source_local_undef_not_supported, raw fallback remains 13-issue partial. No compiler or build profile found; no production code or dependency changes.",
+      "next_step": "No full C1 production parser integration until reproducible toolchain/config and complete source map are available. Continue with other exact-bound source candidates."
+    },
+    {
+      "id": "C-LLM-REVIEW-TYPEDARRAY-LENGTH-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "COMPLETED_SOURCE_CANDIDATE_RUNTIME_UNKNOWN",
+      "objective": "Review the exact-bound signed ToIndex to TypedArray allocation-length candidate and fixed revision using source evidence only.",
+      "candidate": "I7W51D / ark.runtime.typedarray-length-signed-to-unsigned-narrowing",
+      "parent": {
+        "commit": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+        "path": "ecmascript/base/typed_array_helper.cpp",
+        "blob": "c5153346369f0182e73098b8d008eca6d750b36d",
+        "sha256": "4be243a68180be845defbcc01b259070db68b18da8500d245eea4929e7b9eca5"
+      },
+      "fixed": {
+        "commit": "82c21d656880923800c94b53b035c76d219313b5",
+        "path": "ecmascript/base/typed_array_helper.cpp",
+        "blob": "89ffed8b3ff112a271c8a074967b7b5e8ebe2f6f",
+        "sha256": "373f5babdd5dd2f93d01512901d02e6b39d6b57c636e72b07b8d80d27eb509ab"
+      },
+      "reviewer": "typedarray_length_review",
+      "prompt": "Verify exact source identities, trace ToIndex and allocation length plus all range checks on parent/fixed, assess source-level support and counterevidence, separate trigger reachability and runtime/product unknowns. Do not change detector or claim vulnerability from role labels.",
+      "completion": "Independent second-layer reviewer verified both source identities and traced the downstream range checks. Parent signed narrowing is supported as a source pattern; successful allocation/security/product impact is not established.",
+      "report": "research/deliveries/c-line/typedarray_length_candidate_review_20261020.md",
+      "reviewer_assessment": {
+        "source_candidate": "credible signed int32 narrowing in parent; fixed changes to uint32_t and allocator signature",
+        "counterevidence": "downstream MAX_TYPED_ARRAY_INDEX and INT_MAX byte-length checks prevent inferring successful allocation from the cast change alone",
+        "adjacent_boundary": "both versions narrow to 32 bits; values above UINT32_MAX need separate analysis",
+        "unknown": [
+          "runtime trigger and observable boundary behavior",
+          "shipped-product/runtime impact",
+          "whether uint32 truncation is observable or blocked downstream"
+        ],
+        "runtime_reproduction": "not_run"
+      }
+    },
+    {
+      "objective": "Investigate the adjacent >UINT32_MAX TypedArray length boundary against exact parent/fixed source and downstream range checks; keep or improve a narrow candidate only if source evidence warrants it.",
+      "candidate": "Adjacent to I7W51D; not presumed vulnerable",
+      "input": {
+        "parent": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+        "fixed": "82c21d656880923800c94b53b035c76d219313b5",
+        "path": "ecmascript/base/typed_array_helper.cpp"
+      },
+      "status": "COMPLETED_NO_ADDITIONAL_CANDIDATE",
+      "feedback_loop": "Developer sends exact test matrix and expected candidate behavior to independent tester; tester replays same developer commit and returns discrepancies; developer responds/fixes only concrete defects; second-layer review follows only if a candidate survives.",
+      "blocking_prerequisites": [],
+      "id": "C-DEV-U32-LENGTH-20261020",
+      "kind": "development_and_candidate_analysis",
+      "developer_agent": "ark_static_dev",
+      "developer_prompt": "ROLE: C-line static-analysis developer. OBJECTIVE: determine whether the exact-bound TypedArray path has a narrow, source-supported candidate at ToIndex values above UINT32_MAX, and improve the candidate only if repository evidence demonstrates a concrete detector defect. INPUTS: Ark Runtime parent 3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c and fixed 82c21d656880923800c94b53b035c76d219313b5; path ecmascript/base/typed_array_helper.cpp; review research/deliveries/c-line/typedarray_length_candidate_review_20261020.md. TASKS: verify exact commit/tree/blob/SHA; trace ToIndex, conversion, allocation and every downstream bound check for values around INT32_MAX, UINT32_MAX and SAFE_NUMBER; compare source-equivalent positive and safe/fixed controls; inspect the detector/replay output for this exact source pair. If the path is fully rejected downstream, report no candidate. If a concrete source-level defect exists, implement the smallest candidate/test change, retaining exact source binding and candidate-only wording. Do not claim runtime exploitability or product impact. CONSTRAINTS: preserve teammate state; isolate target execution; no fabricated labels/metrics; unknown and not_run stay explicit; do not develop the second-layer LLM reviewer. DELIVERABLES: structured report with source hashes, conversion table, checks and counterevidence; if code changes, focused tests and commit SHA. FEEDBACK: provide the exact baseline/candidate cases and proposed test expectations to C-TEST-U32-LENGTH-20261020 before finalizing.",
+      "deliverables": [
+        "exact-bound source analysis",
+        "narrow detector/test patch only if concrete defect",
+        "report and commit SHA"
+      ],
+      "completion": "Source review, focused regression suite, and independent tester review complete; no additional boundary candidate or code change justified.",
+      "checkpoint": {
+        "worktree": "D:\\openHarmonyScanner\\worktrees\\worktrees\\c-static-alias-dev-20261020",
+        "branch": "codex/c-static-alias-dev-20261020",
+        "base": "7dc34a6995763691143d4575c0dd81049794f18d",
+        "verified": "exact parent/fixed identities and blobs; parent int32_t vs fixed uint32_t cast reaches downstream allocator max-length check",
+        "matrix_sent_to_tester": [
+          "-1",
+          "0",
+          "INT32_MAX±",
+          "UINT32_MAX±",
+          "2^32",
+          "MAX_SAFE_INTEGER",
+          "MAX_SAFE_INTEGER+1",
+          "fractional controls"
+        ],
+        "caveat": "Out-of-range floating-to-integer conversion is unknown; do not assume modulo/wrap semantics.",
+        "next": "Trace ToIndex/MAX_ARRAY_INDEX/allocation semantics and detector coverage; patch only on concrete defect."
+      },
+      "tester_feedback_commit": "6ca5574c104d3902c7684c3df541871b24350284",
+      "next": "Reconcile direct detector invocation results; document source-only no-change finding and exact not_run boundary; then obtain tester review.",
+      "developer_report": "research/deliveries/c-line/typedarray_u32_length_boundary_20261020.md",
+      "developer_report_commit": "6d97874a3639f60a4c2b17c3c30643d0b5987218",
+      "validation": "python -m pytest tests/detectors/ark_runtime tests/detectors/test_cpp_memory_safety_detectors.py -q: 179 passed, 3 skipped",
+      "result": "No justified >UINT32_MAX production/test patch. Out-of-range double-to-uint32 result remains unknown. Fixed representable INT32_MAX+1..UINT32_MAX reaches later byteLength>INT_MAX rejection. Generic direct detector complete parse 0 findings is narrow only; registered Ark Runtime exact replay is not_run; effective coverage remains unknown.",
+      "independent_review_commit": "420a71eefab561c9e67cbe07249cecc63deb4cd4",
+      "independent_review": "research/deliveries/c-line/u32_length_developer_report_review_20261020.md",
+      "limitations": [
+        "No runtime/compiler/product validation",
+        "No exact-bound registered Ark Runtime detector rule/binding on this base",
+        "No inference from generic detector 0 findings to safety or coverage"
+      ]
+    },
+    {
+      "objective": "Investigate the adjacent >UINT32_MAX TypedArray length boundary against exact parent/fixed source and downstream range checks; keep or improve a narrow candidate only if source evidence warrants it.",
+      "candidate": "Adjacent to I7W51D; not presumed vulnerable",
+      "input": {
+        "parent": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+        "fixed": "82c21d656880923800c94b53b035c76d219313b5",
+        "path": "ecmascript/base/typed_array_helper.cpp"
+      },
+      "status": "COMPLETED_INDEPENDENT_SOURCE_AND_DETECTOR_REVIEW",
+      "feedback_loop": "Developer sends exact test matrix and expected candidate behavior to independent tester; tester replays same developer commit and returns discrepancies; developer responds/fixes only concrete defects; second-layer review follows only if a candidate survives.",
+      "blocking_prerequisites": [],
+      "id": "C-TEST-U32-LENGTH-20261020",
+      "kind": "independent_testing",
+      "test_agent": "ark_static_test",
+      "tester_prompt": "ROLE: independent C-line tester. OBJECTIVE: adversarially test the developer's exact-bound analysis of TypedArray length values above UINT32_MAX and report whether the candidate survives downstream checks. INPUTS: parent 3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c and fixed 82c21d656880923800c94b53b035c76d219313b5; exact path/hash binding and developer report/commit supplied by C-DEV-U32-LENGTH-20261020. TASKS: independently verify object identities; construct source-level boundary cases around INT32_MAX, UINT32_MAX and SAFE_NUMBER, with negative/fixed/safe controls; replay any developer patch on the exact commit; verify no cross-file/source-binding leakage and that blocked/partial status remains accurate. Give adversarial feedback to developer and require a response to each discrepancy. Do not infer runtime/product impact from static output. CONSTRAINTS: no production edits except isolated test changes; do not overwrite shared work; no accuracy claims from this small source-bound set. DELIVERABLES: test report with exact SHAs, command/results, case matrix, discrepancies and unresolved unknowns; commit report/test changes. DONE WHEN: same-commit replay is independently reproduced or a concrete mismatch is documented with feedback returned to developer.",
+      "feedback_to": "C-DEV-U32-LENGTH-20261020",
+      "deliverables": [
+        "independent boundary matrix",
+        "same-commit replay or precise discrepancy",
+        "report and commit SHA"
+      ],
+      "completion": "Independent source baseline, generic detector complete/not_run controls, and developer report review completed; no discrepancy; no product/runtime inference.",
+      "independent_baseline": {
+        "worktree_base": "24412cc6083b3b8cad9b611a2b0303fd71eeceeb",
+        "source_store": "D:\\openHarmonyScanner\\tmp\\c8-i9k03b-baseline-source-20261019",
+        "verified": "parent/fixed commit/tree/blob/SHA and downstream js_tagged_value.cpp/.h, js_typed_array.h, builtins_arraybuffer.cpp exact identities; downstream objects equal across revisions",
+        "matrix": "-1, 0, INT32_MAX, INT32_MAX+1, UINT32_MAX-1, UINT32_MAX, UINT32_MAX+1, 2^32+1, SAFE_NUMBER, SAFE_NUMBER+1, 1.75, 2^32+0.75",
+        "finding": "Fixed representable values above INT32_MAX through UINT32_MAX pass the index ceiling but positive byteLength exceeds INT_MAX for all element sizes >=1; no allocation-success inference.",
+        "unknown": "Out-of-range floating-to-integer conversion is not assumed to wrap; no runtime test performed."
+      },
+      "matrix_received": true,
+      "replay_gate": "Independent same-commit replay begins only after developer shares any code/test commit; source baseline work proceeds meanwhile.",
+      "independent_report": "research/deliveries/c-line/u32_length_independent_baseline_20261020.md",
+      "independent_report_commit": "58792ad3f266a8e25e66a24469f81548d138bafd",
+      "same_commit_replay": "pending developer conclusion/commit; no detector claim yet",
+      "generic_detector_report": "research/deliveries/c-line/u32_length_generic_detector_control_20261020.md",
+      "generic_detector_report_commit": "6ca5574c104d3902c7684c3df541871b24350284",
+      "independent_validation": "Both exact blobs tree-sitter parse complete; generic CppIntegerBoundsDetector direct API completes/analyzes target/0 findings. not_run inputs block with no analyzed files. No registered Ark Runtime rule/binding/replay claim.",
+      "tests": "python -m unittest tests.detectors.test_cpp_memory_safety_detectors: 17 passed",
+      "feedback_to_developer": "Treat generic direct result as a narrow detector control only; do not use not_run zero as a negative or imply registered Ark Runtime coverage.",
+      "independent_report_review_commit": "420a71eefab561c9e67cbe07249cecc63deb4cd4",
+      "independent_report_review": "research/deliveries/c-line/u32_length_developer_report_review_20261020.md"
+    },
+    {
+      "objective": "Refine the exact-bound IB8BCA candidate in BuiltinsDataViewStubBuilder::SetTypedValue, determine whether the parent signed 32-bit bounds arithmetic can be bypassed by representable inputs, and preserve conservative unknowns where runtime/build semantics are unavailable.",
+      "candidate": "IB8BCA / ark.runtime.dataview-index-width-bounds; parent SetTypedValue emits one candidate; fixed source has related unknowns in broader replay.",
+      "input": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "parent": {
+          "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+          "tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+          "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+          "blob": "aedb6d26681535371d1e9ed90b697b923b8100e6",
+          "sha256": "bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548"
+        },
+        "fixed": {
+          "commit": "48fcec3686e45175f95b4600b579026a65149966",
+          "tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+          "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+          "blob": "dce9388e8b7e33c87aec33ac4d067fe40370561b",
+          "sha256": "89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386"
+        },
+        "source_store": "D:\\openHarmonyScanner\\tmp\\arkruntime-gitee-audit-20261023.git",
+        "rule_version": "1.0.0 in recorded C10 replay; verify rule exists on actual task base before replay"
+      },
+      "feedback_loop": "Developer sends exact code/source-case matrix and expected outcomes to independent tester. Tester runs on same developer commit and returns discrepancies; developer answers/fixes only concrete detector defects. Second-layer reviewer independently traces source semantics and returns candidate disposition; no LLM feature work.",
+      "blocking_prerequisites": [],
+      "id": "C-DEV-IB8BCA-20261020",
+      "kind": "development_and_candidate_refinement",
+      "status": "COMPLETED_WITH_BRANCH_SCOPE_CORRECTION",
+      "developer_agent": "ark_static_dev",
+      "developer_prompt": "ROLE: C-line static-analysis developer. OBJECTIVE: refine the source-bound IB8BCA DataView SetTypedValue candidate for precision. INPUT: exact parent/fixed commit/tree/blob/SHA and source store in this task record; candidate `ark.runtime.dataview-index-width-bounds`, rule v1.0.0 in historical C10 replay. TASKS: (1) inspect actual branch/code and verify whether this exact rule and source binding are present before invoking it; if absent, mark registered replay not_run. (2) trace `TaggedIsInt`, nonnegative index guard, `GetElementSize`, parent `Int32Add(index, elementSize)` comparison against view byteLength, parent `index + byteOffset` and store width; compare fixed `ZExtInt32ToInt64`/unsigned compare and later truncation. (3) derive source-level trigger boundaries for each instantiated DataView type (INT32/FLOAT32/FLOAT64) and safe/fixed controls without assuming product/runtime reachability. (4) only make a narrow detector/test patch if a concrete false positive or missed candidate is reproduced on the actual supported code path; do not make generic arithmetic claims. CONSTRAINTS: exact object identity, preserve teammates' work, no fabricated C++ runtime semantics or product claims, no accuracy metrics from this single pair, no second-layer feature development. DELIVERABLES: structured report with source hashes, method/line anchors, input-boundary table, counterevidence and unknowns; if code changes, tests and commit SHA. FEEDBACK: give C-TEST-IB8BCA-20261020 exact matrix/expected statuses before finalizing.",
+      "completion": "Exact source trace, boundary matrix, current-branch registered replay and independent feedback complete. Planning HEAD 85eb094 contains rule v1.1.0; parent yields one candidate at line 75 and fixed yields zero diagnostics, while both detector outcomes remain partial/blocked. No code change was justified in this slice; candidate remains source-level only.",
+      "developer_report": "research/deliveries/c-line/ib8bca_dataview_width_boundary_20261020.md",
+      "developer_report_commit": "97c38b802db29f56cc79bcafc2011026be2e6dc3",
+      "validation": "python -m pytest tests/detectors/ark_runtime tests/detectors/test_cpp_memory_safety_detectors.py -q: 179 passed, 3 skipped",
+      "result": "The active planning branch contains INDEX_BOUNDS_RULE_ID and exact bindings (rule v1.1.0), contrary to stale developer/test worktree branches. Exact registered replay on planning HEAD 85eb094 emitted parent 1 candidate at line 75 and fixed 0 diagnostics; both remain partial/blocked detector_model_incomplete. Prior not_run conclusions apply only to old worktrees.",
+      "tester_report_commit": "22a6a2c8768bd18b3f169fa3e1ed47ef027f3853",
+      "tester_response": "Independent matrix/source trace agrees; parent overflow branch remains unknown; no discrepancy.",
+      "current_planning_branch_replay": {
+        "branch_head": "85eb0948515e777d53996caf8f7ecb4b87897c90",
+        "rule_version": "1.1.0 on the current planning model",
+        "method": "Exact Git blobs + repository C++ parser complete/no issues + git_object/light-ast context + ArkRuntimeTypeSafetyDetector through run_all_with_coverage",
+        "artifact_script": "research/deliveries/c-line/ib8bca_registered_replay_20261020.py",
+        "artifact_output": "research/deliveries/c-line/ib8bca_registered_replay_20261020.json",
+        "report": "research/deliveries/c-line/ib8bca_registered_replay_current_branch_20261020.md",
+        "parent": {
+          "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+          "parse": "complete, 0 issues",
+          "applicable_files": 1,
+          "candidate_count": 1,
+          "candidate_line": 75,
+          "coverage": "partial",
+          "detector_status": "blocked",
+          "limitation": "detector_model_incomplete"
+        },
+        "fixed": {
+          "commit": "48fcec3686e45175f95b4600b579026a65149966",
+          "parse": "complete, 0 issues",
+          "applicable_files": 1,
+          "candidate_count": 0,
+          "coverage": "partial",
+          "detector_status": "blocked",
+          "limitation": "detector_model_incomplete"
+        },
+        "interpretation": "Parent candidate is preserved; fixed zero is not safety; both detector outcomes remain partial/unknown. Static only; no IR/runtime/product claim."
+      },
+      "registered_replay_addendum": "research/deliveries/c-line/ib8bca_registered_replay_addendum_20261020.md",
+      "registered_replay_independent_tester": "Completed by independent tester on planning HEAD 85eb094; report commit 5f44834e97ab6e8b7720389c40f869caa1be0268.",
+      "report": "research/deliveries/c-line/ib8bca_dataview_width_boundary_20261020.md",
+      "report_commit": "c30c51433b84dd0164ed5d12d166ade5cb731c7e"
+    },
+    {
+      "objective": "Refine the exact-bound IB8BCA candidate in BuiltinsDataViewStubBuilder::SetTypedValue, determine whether the parent signed 32-bit bounds arithmetic can be bypassed by representable inputs, and preserve conservative unknowns where runtime/build semantics are unavailable.",
+      "candidate": "IB8BCA / ark.runtime.dataview-index-width-bounds; parent SetTypedValue emits one candidate; fixed source has related unknowns in broader replay.",
+      "input": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "parent": {
+          "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+          "tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+          "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+          "blob": "aedb6d26681535371d1e9ed90b697b923b8100e6",
+          "sha256": "bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548"
+        },
+        "fixed": {
+          "commit": "48fcec3686e45175f95b4600b579026a65149966",
+          "tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+          "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+          "blob": "dce9388e8b7e33c87aec33ac4d067fe40370561b",
+          "sha256": "89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386"
+        },
+        "source_store": "D:\\openHarmonyScanner\\tmp\\arkruntime-gitee-audit-20261023.git",
+        "rule_version": "1.0.0 in recorded C10 replay; verify rule exists on actual task base before replay"
+      },
+      "feedback_loop": "Developer sends exact code/source-case matrix and expected outcomes to independent tester. Tester runs on same developer commit and returns discrepancies; developer answers/fixes only concrete detector defects. Second-layer reviewer independently traces source semantics and returns candidate disposition; no LLM feature work.",
+      "blocking_prerequisites": [],
+      "id": "C-TEST-IB8BCA-20261020",
+      "kind": "independent_testing",
+      "status": "COMPLETED_INDEPENDENT_CURRENT_BRANCH_REPLAY",
+      "test_agent": "ark_static_test",
+      "tester_prompt": "ROLE: independent C-line tester. OBJECTIVE: independently verify the IB8BCA SetTypedValue source candidate and adversarially replay any developer change. INPUT: exact parent/fixed commits, trees, blobs, SHA-256 and local object store in the execution tree; developer matrix/commit when available. TASKS: independently verify source identity; trace the same guard/add/compare/buffer-offset/store sequence without relying on the developer conclusion; build boundary cases around INT32_MAX and each elementSize, negative/ordinary indexes, exact end-of-view and one-past-end, fixed widened control, plus unrelated/safe controls. Check actual test/profile availability; never label blocked/not_run or zero findings as a negative. Replay any patch on the exact developer commit, compare every discrepancy and send it to developer for response. CONSTRAINTS: no production edits; preserve state; no runtime/product/security claim from static replay. DELIVERABLES: independent report with hashes, command outputs, case matrix, whether exact registered rule replay was run, results and unknowns; commit report. DONE WHEN: independent same-commit replay is complete or a concrete limitation is documented and developer has responded.",
+      "feedback_to": "C-DEV-IB8BCA-20261020",
+      "completion": "Independent source matrix plus exact registered replay completed on current planning HEAD 85eb094; parent one candidate at line 75; fixed zero; both partial/blocked. Earlier not_run applied only to old tester HEAD 420a71e.",
+      "report": "research/deliveries/c-line/ib8bca_registered_replay_addendum_20261020.md",
+      "report_commit": "5f44834e97ab6e8b7720389c40f869caa1be0268",
+      "result": "Exact object identities and source sequence independently verified; source arithmetic matrix covers 4-byte and 8-byte types, exact fit, first past end, ordinary, negative and offset controls. Parent IR overflow outcome unknown; fixed widened comparison rejects first-past-end at source level.",
+      "registered_rule_replay": "completed on planning HEAD 85eb094; old-base not_run applies only to test HEAD 420a71e",
+      "runtime_test": "not_run",
+      "current_planning_branch_replay": {
+        "branch_head": "85eb0948515e777d53996caf8f7ecb4b87897c90",
+        "rule_version": "1.1.0 on the current planning model",
+        "method": "Exact Git blobs + repository C++ parser complete/no issues + git_object/light-ast context + ArkRuntimeTypeSafetyDetector through run_all_with_coverage",
+        "artifact_script": "research/deliveries/c-line/ib8bca_registered_replay_20261020.py",
+        "artifact_output": "research/deliveries/c-line/ib8bca_registered_replay_20261020.json",
+        "report": "research/deliveries/c-line/ib8bca_registered_replay_current_branch_20261020.md",
+        "parent": {
+          "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+          "parse": "complete, 0 issues",
+          "applicable_files": 1,
+          "candidate_count": 1,
+          "candidate_line": 75,
+          "coverage": "partial",
+          "detector_status": "blocked",
+          "limitation": "detector_model_incomplete"
+        },
+        "fixed": {
+          "commit": "48fcec3686e45175f95b4600b579026a65149966",
+          "parse": "complete, 0 issues",
+          "applicable_files": 1,
+          "candidate_count": 0,
+          "coverage": "partial",
+          "detector_status": "blocked",
+          "limitation": "detector_model_incomplete"
+        },
+        "interpretation": "Parent candidate is preserved; fixed zero is not safety; both detector outcomes remain partial/unknown. Static only; no IR/runtime/product claim."
+      },
+      "prior_worktree_scope": "Baseline commit 420a71e lacked the registered rule/binding; its not_run conclusion was correct for that checkout only.",
+      "latest_feedback": "Independent tester reproduced planning-branch registered replay. No code change in this slice; developer and tester source matrices agree."
+    },
+    {
+      "objective": "Refine the exact-bound IB8BCA candidate in BuiltinsDataViewStubBuilder::SetTypedValue, determine whether the parent signed 32-bit bounds arithmetic can be bypassed by representable inputs, and preserve conservative unknowns where runtime/build semantics are unavailable.",
+      "candidate": "IB8BCA / ark.runtime.dataview-index-width-bounds; parent SetTypedValue emits one candidate; fixed source has related unknowns in broader replay.",
+      "input": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "parent": {
+          "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+          "tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+          "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+          "blob": "aedb6d26681535371d1e9ed90b697b923b8100e6",
+          "sha256": "bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548"
+        },
+        "fixed": {
+          "commit": "48fcec3686e45175f95b4600b579026a65149966",
+          "tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+          "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+          "blob": "dce9388e8b7e33c87aec33ac4d067fe40370561b",
+          "sha256": "89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386"
+        },
+        "source_store": "D:\\openHarmonyScanner\\tmp\\arkruntime-gitee-audit-20261023.git",
+        "rule_version": "1.0.0 in recorded C10 replay; verify rule exists on actual task base before replay"
+      },
+      "feedback_loop": "Developer sends exact code/source-case matrix and expected outcomes to independent tester. Tester runs on same developer commit and returns discrepancies; developer answers/fixes only concrete detector defects. Second-layer reviewer independently traces source semantics and returns candidate disposition; no LLM feature work.",
+      "blocking_prerequisites": [],
+      "id": "C-LLM-REVIEW-IB8BCA-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "COMPLETED_SOURCE_CANDIDATE_RUNTIME_UNKNOWN",
+      "reviewer": "typedarray_length_review",
+      "second_layer_prompt": "ROLE: second-layer source reviewer only; do not implement or change detector/model code. OBJECTIVE: inspect whether the exact parent `BuiltinsDataViewStubBuilder::SetTypedValue` candidate supports a plausible source-level bounds-check defect and what the fixed revision changes. INPUT: parent d62f6de64daa7e11a7936a6153748a7c5fae9e41 / blob aedb6d26681535371d1e9ed90b697b923b8100e6 / SHA bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548; fixed 48fcec3686e45175f95b4600b579026a65149966 / blob dce9388e8b7e33c87aec33ac4d067fe40370561b / SHA 89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386. TASKS: verify both identities; inspect guard and operation order, integer types, element-size instantiations, view byte length, byte offset and store widths; assess possible overflow/bypass and counterevidence. Separate source-level candidate plausibility from compiled-stub semantics, triggering/reachability, runtime and product impact. Return a candidate/unknown/no-support disposition with evidence and explicit unknowns. No code, detector/model feature work, PoC or vulnerability claim.",
+      "completion": "Second-layer source review verified exact parent/fixed identities and retained the candidate for follow-up; no LLM/detector feature development.",
+      "report": "research/deliveries/c-line/second_layer_ib8bca_review_20261020.md",
+      "report_commit": "85eb0948515e777d53996caf8f7ecb4b87897c90",
+      "disposition": "plausible source-level bounds-check bypass candidate; not a confirmed vulnerability",
+      "unknowns": [
+        "Ark DSL/backend lowering of integer operations",
+        "fast-path reachability for boundary tagged integers",
+        "feasible backing-buffer sizes and runtime store behavior",
+        "product impact",
+        "fixed final truncation under all runtime mutation/resizable-buffer behavior"
+      ],
+      "result": "Plausible parent source-level signed-add-before-bounds-check bypass candidate; fixed widens compare. Compiled/IR behavior and all runtime/product effects remain unknown."
+    },
+    {
+      "id": "C-DEV-DV-API-20261020",
+      "kind": "development_and_candidate_refinement",
+      "status": "COMPLETED_WITH_FAIL_CLOSED_DEPENDENCY_PROOF",
+      "worktree": "planning worktree; exact base 85eb0948515e777d53996caf8f7ecb4b87897c90",
+      "feedback_from": "C-TEST-DV-API-20261020",
+      "objective": "Refine the exact-bound DataView API index-width candidate in BuiltinsDataView::GetViewValue and SetViewValue. The source-bound detector currently emits two parent candidates (lines 394 and 455) but no fixed candidates; fixed replay remains partial/unknown in DataViewConstructor, GetViewValue, and SetViewValue. Determine whether any parent candidate represents unsafe arithmetic or whether uint32_t types, nonnegative conversion, element-size limits, view construction invariants, and underlying buffer bounds prove it safe. Improve the model only where exact source evidence permits a narrow sound distinction.",
+      "input": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "parent": {
+          "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+          "tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+          "path": "ecmascript/builtins/builtins_dataview.cpp",
+          "blob": "e6bac984354292405ae62f7728170d7be5e3760e",
+          "sha256": "bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c"
+        },
+        "fixed": {
+          "commit": "48fcec3686e45175f95b4600b579026a65149966",
+          "tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+          "path": "ecmascript/builtins/builtins_dataview.cpp",
+          "blob": "a2376e822e995333b2400520ca5b882de9578b5e",
+          "sha256": "39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b"
+        },
+        "rule": "ark.runtime.dataview-index-width-bounds v1.1.0; exact bindings exist on planning base 85eb094"
+      },
+      "developer_prompt": "ROLE: C-line static-analysis developer. BASE: planning HEAD 85eb0948515e777d53996caf8f7ecb4b87897c90. OBJECTIVE: make the index-width rule retain only well-supported narrow candidates across exact-bound BuiltinsDataView::GetViewValue and SetViewValue, and correctly retain unknown where proof is incomplete. TASKS: independently verify the pinned parent/fixed tree/blob/SHA; inspect index conversion, signedness and widths, negative checks, element-size range, bounds comparison, offset addition, constructor invariants, buffer max length, and exact detector traces at parent lines 394/455. Send the tester a boundary/control matrix and expected detector outcomes before finalizing. If a concrete false positive/false negative is proven, make the smallest source-bound model/test change and add positive/fixed/safe/unrelated/unknown controls; do not generalize to unbound sources. If source proof does not support a change, make no code patch and report the reason. Replay the registered detector on exact parent and fixed contexts and report candidate count, coverage, and unknowns. CONSTRAINTS: preserve other work; do not fabricate labels or product/runtime impact; fixed zero is not safe; no second-layer LLM feature implementation. DELIVERABLE: focused code/test change if justified, exact command outputs, hashes, report, and commit SHA; respond to the tester discrepancies before closing.",
+      "blocking_prerequisites": [],
+      "feedback_loop": "Tester provides independent baseline matrix first. Developer returns precise expected outcomes, implements only evidence-backed change, then tester replays same developer commit; developer answers concrete discrepancies.",
+      "registered_baseline_replay": {
+        "script": "research/deliveries/c-line/ib8bca_dataview_api_registered_replay_20261020.py",
+        "output": "research/deliveries/c-line/ib8bca_dataview_api_registered_baseline_20261020.json",
+        "base": "85eb0948515e777d53996caf8f7ecb4b87897c90",
+        "parent_candidates": [
+          {
+            "line": 394,
+            "function": "BuiltinsDataView::GetViewValue"
+          },
+          {
+            "line": 455,
+            "function": "BuiltinsDataView::SetViewValue"
+          }
+        ],
+        "fixed_candidates": 0,
+        "coverage": "parent and fixed partial; detector blocked due detector_model_incomplete"
+      },
+      "second_layer_feedback": "Review commit 2f37175fdc1b49edc9157f8b079f35c8b793a873 finds no source-supported uint32 wraparound OOB on these API paths; reconcile against exact source/test matrix and avoid suppressing beyond proven bounds.",
+      "tester_baseline_report": "research/deliveries/c-line/dataview_api_independent_baseline_20261020.md",
+      "tester_baseline_commit": "99e5c6e085522b3ace646d5db0f3cc6bf589f4aa",
+      "developer_commits": [
+        "40b7732e30f94dd77d15867ec69e2e026f609760",
+        "76efed37d814ec68b56ebd6a00662efa7d137a4a"
+      ],
+      "developer_report": "research/deliveries/c-line/dataview_api_width_proof_developer_report_20261020.md",
+      "developer_replay": "research/deliveries/c-line/dataview_api_width_proof_replay_20261020.py",
+      "same_commit_replay": {
+        "commit": "76efed37d814ec68b56ebd6a00662efa7d137a4a",
+        "parent_without_helpers": "candidates at lines 394 and 455",
+        "parent_exact_helpers": "both candidates suppressed with explicit API unknowns retained",
+        "mutated_helper_with_stale_blob": "both candidates restored",
+        "fixed_with_or_without_helpers": "zero findings; constructor/get/set remain unknown",
+        "set_typed_value_control": "candidate unaffected in synthetic rule-level control",
+        "coverage": "all five cases complete parse, blocked with partial coverage; applicable_files=1",
+        "tests": "196 passed, 3 skipped"
+      },
+      "developer_report_commit": "76efed37d814ec68b56ebd6a00662efa7d137a4a"
+    },
+    {
+      "id": "C-TEST-DV-API-20261020",
+      "kind": "independent_testing",
+      "status": "COMPLETED_SAME_COMMIT_REPLAY_AFTER_FAIL_CLOSED_FIX",
+      "test_agent": "ark_static_test",
+      "feedback_to": "C-DEV-DV-API-20261020",
+      "objective": "Independently verify the exact source semantics and detector behavior for DataView GetViewValue/SetViewValue candidates, provide adversarial controls before developer changes, then replay any developer commit and return concrete discrepancies.",
+      "input": "Same exact parent/fixed source bindings and planning base as C-DEV-DV-API-20261020. Current analyzer yields two parent candidates at lines 394 and 455 and fixed zero candidates plus unknowns for DataViewConstructor/GetViewValue/SetViewValue.",
+      "tester_prompt": "ROLE: independent C-line tester. OBJECTIVE: test whether DataView GetViewValue and SetViewValue candidates are supported by exact source types/invariants and adversarially replay any developer change. TASKS: independently verify source identities; trace Number/ToIndex conversion, negative rejection, uint32_t conversions, elementSize, view size, byteOffset, constructor constraints, all buffer-size caps, and get/set sinks. Build a matrix for ordinary valid index, last valid element, exact-end, first-past-end, negative, INT32_MAX, maximum view/buffer offset, each element width, malformed/unrelated safe controls, fixed source, and the separate signed Int32Add SetTypedValue candidate. Record parent/fixed expected source behavior versus detector behavior; do not call an unsupported parse/model result negative. Send baseline matrix to developer before implementation. After developer provides a commit, run focused tests and exact registered parent/fixed replay on that same commit, report every discrepancy and preserve partial/blocked status. CONSTRAINTS: no production edits, preserve state, no product/runtime/vulnerability claims without execution/evidence. DELIVERABLE: independent report with hashes, case matrix, exact commands/results, coverage and limitations; commit report if feasible.",
+      "blocking_prerequisites": [],
+      "registered_baseline_replay": {
+        "script": "research/deliveries/c-line/ib8bca_dataview_api_registered_replay_20261020.py",
+        "output": "research/deliveries/c-line/ib8bca_dataview_api_registered_baseline_20261020.json",
+        "base": "85eb0948515e777d53996caf8f7ecb4b87897c90",
+        "parent_candidates": [
+          {
+            "line": 394,
+            "function": "BuiltinsDataView::GetViewValue"
+          },
+          {
+            "line": 455,
+            "function": "BuiltinsDataView::SetViewValue"
+          }
+        ],
+        "fixed_candidates": 0,
+        "coverage": "parent and fixed partial; detector blocked due detector_model_incomplete"
+      },
+      "second_layer_feedback": "Review commit 2f37175fdc1b49edc9157f8b079f35c8b793a873 finds no source-supported uint32 wraparound OOB on these API paths; reconcile against exact source/test matrix and avoid suppressing beyond proven bounds.",
+      "completion": "Independent same-commit replay of developer fix 76efed37 complete. Exact helper suppression, missing/mutated helper fallback, fixed unknowns, SetTypedValue control, and target-only applicability all matched.",
+      "report": "research/deliveries/c-line/dataview_api_independent_baseline_20261020.md",
+      "report_commit": "99e5c6e085522b3ace646d5db0f3cc6bf589f4aa",
+      "registered_replay": "Independent exact registered replay on planning baseline 85eb094; parent 2 candidates, fixed 0; both complete AST but detector_model_incomplete/partial.",
+      "same_commit_report": "research/deliveries/c-line/dataview_api_width_proof_followup_review_20261020.md",
+      "same_commit_report_commit": "171fbec43c220287fbd0c81172641f0da16e72a0",
+      "initial_mismatch_report": "research/deliveries/c-line/dataview_api_width_proof_independent_review_20261020.md",
+      "initial_mismatch_report_commit": "5b6265835de280bc9a68bbc507e17c36e53d41db"
+    },
+    {
+      "id": "C-LLM-REVIEW-DV-API-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "COMPLETED_SOURCE_REVIEW_NO_OOB_EVIDENCE",
+      "reviewer": "typedarray_length_review",
+      "objective": "Independently review the exact parent/fixed DataView GetViewValue and SetViewValue source paths for candidate plausibility and counterevidence; do not implement detector or LLM features.",
+      "input": "Same exact source identity pins as C-DEV-DV-API-20261020; focus on lines 394 and 455, plus the constructor and backing-buffer size invariants.",
+      "second_layer_prompt": "ROLE: second-layer source reviewer only. Verify exact source identities; trace index conversion/range, elementSize, uint32_t arithmetic, DataView construction bounds, backing-buffer constraints, and GetValueFromBuffer/SetValueInBuffer sinks. Decide separately for parent and fixed whether the detector candidates are plausible source-level defects, disproven by source invariants, or unresolved. Identify counterevidence and unknown compiled/runtime/product behavior. Do not change code/model or add an LLM feature. Return a concise source report with exact lines and evidence; do not promote to confirmed vulnerability.",
+      "blocking_prerequisites": [],
+      "completion": "Exact parent/fixed identities verified. Index conversion is capped at INT32_MAX, supported element sizes are <=8, and constructor bounds the view within a uint32 backing length; the proposed uint32 wraparound-to-OOB path is unsupported on these source paths. A large-index conversion compatibility concern and unusual buffer/runtime paths remain unknown.",
+      "report": "research/deliveries/c-line/second_layer_dataview_api_review_20261020.md",
+      "report_commit": "2f37175fdc1b49edc9157f8b079f35c8b793a873",
+      "disposition": "No source-supported OOB candidate in GetViewValue/SetViewValue; possible conversion compatibility concern only; runtime/product unknown."
+    },
+    {
+      "id": "C-DEV-C1-MAP-EFFECT-20261020",
+      "kind": "development_and_precision_refinement",
+      "status": "COMPLETED_DIRECT_CANDIDATE_ADAPTER_UNKNOWN",
+      "worktree": "parallel development lane; planning base fbb537a39183b719bd587e0dd4a5ba83c6d85925",
+      "feedback_from": "C-TEST-C1-MAP-EFFECT-20261020",
+      "objective": "Investigate the newly surfaced C1 Map line-2733 candidate: the source TypedArray read passes destination `newArrayType` to FastGetPropertyByIndex, while custom species may return a different element width with the same Number/BigInt content type. Verify exact GetValueFromBuffer byte-span checks and implement a narrow source-bound candidate rule only if the detector gap and source evidence are reproduced. Keep historical line-2747 callback/JSType unknowns separate.",
+      "input": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "target": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+        "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+        "planning_base": "fbb537a39183b719bd587e0dd4a5ba83c6d85925",
+        "locations": [
+          2713,
+          2721,
+          2733,
+          2739,
+          2747
+        ],
+        "current_replay": "planning HEAD fbb537a: partial with 12 effectful_helper_contract unknowns; Map stops at FastGetPropertyByIndex line 2733; exact call uses thisValue as read receiver and newArrayType sampled from species result",
+        "historical_replay": "analyzer HEAD 463f6e3: partial with 5 observations including Map line 2747 type_fact_invalidated_by_call after JSCallDispatch"
+      },
+      "developer_prompt": "ROLE: C-line static-analysis developer. BASE: fbb537a39183b719bd587e0dd4a5ba83c6d85925. Reconcile current fbb537a Map output (helper-effect unknown at line 2733) with historical 463f6e3 output (sink unknown at line 2747). The exact line-2733 call reads from source `thisValue` but passes `newArrayType` sampled from the species-created destination. Verify source/helper tree pins, TypedArraySpeciesCreate content-type constraints, exact GetValueFromBuffer/element-load byte-span checks, and runtime fallback. Determine if a same-content species result of a different element width can make the source read use a wider load than the source backing span. Send the tester your expected source-width matrix before finalizing. If exact source evidence plus a reproduced detector gap supports it, add the narrowest source-bound parent/fixed candidate model and positive/safe/unknown controls; keep callback/sink JSType effects separate. If not, report why. Do not claim confirmed runtime/product impact; no LLM feature implementation or human/product approval gates.",
+      "blocking_prerequisites": [],
+      "feedback_loop": "Independent tester provides the initial source/control matrix; developer responds with predicted statuses; tester replays the exact developer commit and returns discrepancies; developer addresses only concrete reproducible defects.",
+      "expected_controls": [
+        "current fbb537a exact C-line model: Map unknown at line 2733",
+        "historical 463f6e3 model: Map unknown at line 2747",
+        "Uint8 source length 1 + Float64 species result",
+        "same-width same-kind control",
+        "Float64 source + Uint8 species result",
+        "Number versus BigInt species rejection",
+        "last valid/exact-end source index",
+        "exact GetValueFromBuffer byte-span guard",
+        "missing or mismatched helper source",
+        "callback/HClass/JSType sink control"
+      ],
+      "completion": "Implemented exact source-bound direct-RHS Map read candidate at line 2733. Exact direct analyze_unit replay emits a pre-callback source-width candidate; later callback loop state and line-2747 sink remain unknown. Adapter did not activate the bound profile because exact runtime_stubs.cpp dependency parses partial (7 issues) under strict complete-AST gate, so production adapter remains unknown/no finding. No runtime/product conclusion.",
+      "report": "research/deliveries/c-line/c1_map_type_fact_effect_review_20261020.md",
+      "report_commit": "b34dfc6908ab757d7b714c10940d80bce25f2edc",
+      "second_layer_report": "research/deliveries/c-line/second_layer_c1_map_effect_review_20261020.md",
+      "second_layer_report_commit": "081dbdee3be71e7121586a6169c66b94b73afc8a",
+      "candidate_evidence": "Exact Map source read at 2733 passes destination newArrayType to source thisValue; direct analyzer produces a source-level width-mismatch candidate before callback. Runtime/product behavior is unverified; production adapter stays unknown because one exact helper dependency has partial AST.",
+      "done_when": "Focused source evidence, narrow detector code, direct replay and explicit adapter integration limitation are committed; partial/unknown truth is preserved.",
+      "implementation_commit": "fa8d1655083a49dd3dccacded9b240f99ae0fd8d",
+      "candidate_report": "research/deliveries/c-line/c1_map_species_read_width_candidate_20261020.md",
+      "candidate_report_commit": "fa8d1655083a49dd3dccacded9b240f99ae0fd8d"
+    },
+    {
+      "id": "C-TEST-C1-MAP-EFFECT-20261020",
+      "kind": "independent_testing",
+      "status": "COMPLETED_DIRECT_ANALYZER_REPLAY_ADAPTER_GATE_LIMITATION",
+      "test_agent": "c_map_effect_test",
+      "feedback_to": "C-DEV-C1-MAP-EFFECT-20261020",
+      "objective": "Independently reconcile current versus historical C1 Map model outputs, verify the exact FastGetPropertyByIndex helper effect, then adversarially test whether any bounded effect summary can soundly reduce the current unknown; replay any justified developer change without editing production code.",
+      "input": "Same pinned source identity and planning base as C-DEV-C1-MAP-EFFECT-20261020; baseline report c1_partial_state_root_cause_20261020.md identifies the Map observation at line 2747 as unknown after JSCallDispatch at 2739.",
+      "tester_prompt": "ROLE: independent C-line tester. Verify target and helper source identities/tree membership from the pinned Git object store. Reproduce analyze_unit research_partial on current planning HEAD fbb537a with RuntimeTypeModel and c_line_static_model, and historical analyzer HEAD 463f6e3 separately. Current expected baseline: 12 unknowns; Map stops at FastGetPropertyByIndex line 2733 with effectful_helper_contract; no line-2747 sink observation. Historical expected baseline: Map line 2747 type_fact_invalidated_by_call. Independently trace the exact helper body/runtime fallback, species result publication, callback effects, HClass/JSType, and FastSetPropertyByIndex semantics. Send the developer an adversarial matrix. Test safe/unknown/unrelated controls and any proposed change on its exact SHA; report discrepancies and preserve partial/blocked. No production edits or safety/product/accuracy claims. Commit the independent report.",
+      "blocking_prerequisites": [],
+      "same_commit_replay_required": false,
+      "historical_vs_current_baseline": "Current fbb537a: Map line 2733 effectful_helper_contract; historical 463f6e3: line 2747 type_fact_invalidated_by_call",
+      "independent_source_result": "Confirmed width mismatch path: Uint8 source length 1 + Float32/Float64 species returns 4/8-byte load after logical-index-only guard; inverse-width and same-width controls are distinguishable; BigInt-vs-Number species is rejected. Runtime and product impact remain unknown.",
+      "current_replay_report_pending": false,
+      "report": "research/deliveries/c-line/c1_map_species_read_width_independent_test_20261020.md",
+      "report_commit": "28e94ce37",
+      "replay_commit": "fa8d1655083a49dd3dccacded9b240f99ae0fd8d",
+      "independent_replay": "Bound direct analysis: candidate at 2733 on first pass, later loop-state unknown at 2733 after callback, and 2747 type-fact unknown; unbound analysis retains helper-effect unknown at 2733. Both remain limited/partial. Direct replay did not validate adapter six-dependency gate; developer replay found adapter profile disabled because runtime_stubs.cpp dependency AST is partial (7 issues). Width controls are supported by exact source inspection, not detector fixtures.",
+      "completion": "Independent report 28e94ce37 documents direct analyzer replay on source bytes, but replay used the explicit lower-level bound flag. Developer also exercised adapter with six pinned blobs; it stayed unknown because runtime_stubs.cpp AST was partial (7 parser issues). No runtime/product claim."
+    },
+    {
+      "id": "C-LLM-REVIEW-C1-MAP-EFFECT-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "COMPLETED_SOURCE_CANDIDATE_FOUND_RUNTIME_UNKNOWN",
+      "reviewer": "c_map_effect_review",
+      "objective": "Independently assess the C1 Map line-2733 source/destination JSType mismatch as a candidate, verify exact byte-span/load bounds and species content-type semantics, and keep the separate historical line-2747 callback type invalidation scoped independently.",
+      "second_layer_prompt": "ROLE: source reviewer only. Verify target and helper path membership in exact C1 commit a65a2853ccae13da167d9aa4720ab8b11ec16656 using the pinned local Git object store. Reconcile current planning HEAD fbb537a (Map unknown at line 2733 from FastGetPropertyByIndex effectful_helper_contract) with historical analyzer HEAD 463f6e3 (Map sink unknown at line 2747). Trace NewTypedArray, custom species construction, result publication, user callback dispatch, object prototype/HClass/JSType changes, exact helper body/runtime fallback, and FastSetPropertyByIndex. Classify each model unknown separately and identify whether any narrow source-bound effect summary is justified. Report exact source pins, counterevidence, and unknown compiler/runtime/product behavior. Do not edit code or assert a confirmed vulnerability.",
+      "blocking_prerequisites": [],
+      "report_required": true,
+      "report": "research/deliveries/c-line/second_layer_c1_map_effect_review_20261020.md",
+      "report_commit": "081dbdee3be71e7121586a6169c66b94b73afc8a",
+      "initial_report_superseded_commit": "bc321c70fa5c2043b30c225d51ddf590b9e79990",
+      "completion": "Verified exact same-tree target, species helpers, runtime fallback, array-buffer loads, JSType/HClass and codegen paths. Identified line-2733 source-width candidate; runtime/product impact remains unknown. Separate line-2747 HClass hypothesis is not candidate-worthy on available evidence."
+    },
+    {
+      "id": "C-NEXT-C1-MAP-ADAPTER-20261020",
+      "kind": "development_and_precision_refinement",
+      "status": "COMPLETED_NO_GO_MACRO_EXPANSION_UNBOUND",
+      "base": {
+        "branch": "codex/c-line-parallel-plan-20261020",
+        "commit": "fc8b03905cce1accfc9e7e810a7c604328d669fe",
+        "upstream_source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656"
+      },
+      "objective": "Resolve whether the strict C1 Map adapter can soundly admit the exact helper evidence when runtime_stubs.cpp is file-partial but the specific runtime fallback function may parse cleanly. Do not globally waive complete-AST requirements. Either implement and test an exact pinned function-scoped completeness proof, or preserve adapter unknown and document why the needed function is contaminated.",
+      "target": "ecmascript/stubs/runtime_stubs.cpp::GetTypedArrayPropertyByIndex plus existing six-file C1 species read-width evidence set",
+      "developer_prompt": "ROLE: C-line detector developer. BASE exact local planning HEAD fc8b03905cce1accfc9e7e810a7c604328d669fe; target upstream source commit a65a2853ccae13da167d9aa4720ab8b11ec16656. Start from the existing Map line-2733 direct-analyzer candidate and current adapter no-finding result. Reproduce why the adapter refuses source-width binding: runtime_stubs.cpp is exact-blob pinned but parse_status partial with 7 issues. Inspect the parser diagnostics and the exact GetTypedArrayPropertyByIndex function AST/source span, its declarations/callees and any macro dependencies. Send the independent tester a predicted positive/missing/mutated/unrelated control matrix before coding. Only if every source fact required by the runtime fallback is in a syntactically complete, exact-blob-bound function region may you implement a narrowly scoped function-level evidence check; keep translation-unit status partial and all unrelated incomplete evidence unknown. Never relax _dependency_error globally, never treat a partial file as complete, never suppress the helper unknown on a name-only match. Add persistent tests for exact positive gate, unrelated parse errors outside the bound function if safely supported, malformed relevant function, missing/mutated helper, wrong commit, and generic/unbound control. If function-level proof is not reliable, make no production change and commit a concise no-go report. No product/runtime claim without execution evidence.",
+      "tester_prompt": "ROLE: independent C-line tester. Do not edit production code. Verify exact target and six helper blob/SHA identities from the pinned Git object store. Reproduce baseline adapter: partial target, exact source pins, no line-2733 finding because runtime_stubs.cpp has partial parse (7 issues). Independently inspect parser error locations and the AST region for GetTypedArrayPropertyByIndex. Before developer changes, send a matrix: exact relevant function parses clean, parse error outside function, parse error inside function, missing helper, mutated bytes with stale pinned blob, wrong revision, unbound generic model. On exact developer commit, run positive and fail-closed controls; verify adapter result is still partial and no unrelated file or broad dependency waiver is admitted. Report exact commands, outcomes, and any discrepancy; no product/safety/accuracy claim.",
+      "feedback_loop": "Developer sends predicted boundary matrix before implementation; independent tester returns baseline observations; tester replays exact developer commit and reports discrepancies; developer fixes concrete reproducible defects only.",
+      "expected_controls": [
+        "exact C1 target and all six same-commit pins",
+        "runtime_stubs.cpp file partial but relevant function region parse-valid",
+        "relevant runtime function parse error => remain unknown",
+        "missing or SHA/blob-mutated dependency => remain unknown",
+        "wrong target commit => remain unknown",
+        "generic model and unrelated function remain unchanged",
+        "target output remains partial/limited"
+      ],
+      "state_at_start": "The line-2733 source candidate is emitted by direct analyze_unit with explicit bound flag; production adapter was replayed with exact target and six helpers but remained unknown because runtime_stubs.cpp AST was partial (7 issues).",
+      "done_when": "A regression-tested exact function-region gate is committed and same-commit replay passes, or a specific no-go report preserves adapter unknown with reason and next executable source candidate.",
+      "completion": "No production adapter change. The clean byte region is a function_definition whose declarator is DEF_RUNTIME_STUBS; the macro, registration, runtime-call ID, declaration and RUNTIME_TRACE/preprocessing chain are not all bound. Strict adapter remains unknown/zero finding; direct analyzer candidate remains source-level only.",
+      "developer_commit": "874edb47a89d542be682fe3de6c4df7020caa180",
+      "developer_report": "research/deliveries/c-line/c1_map_adapter_function_scope_nogo_20261020.md",
+      "additional_inputs_needed": [
+        "runtime_stub_list.h",
+        "rt_call_signature.h",
+        "runtime_stubs.h",
+        "js_typed_array.h",
+        "runtime_call_id.h",
+        "rt_call_signature.cpp",
+        "preprocessing/build configuration"
+      ]
+    },
+    {
+      "id": "C-TEST-C1-MAP-ADAPTER-20261020",
+      "kind": "independent_testing",
+      "status": "COMPLETED_INDEPENDENT_FAIL_CLOSED_REPLAY",
+      "test_agent": "c_map_effect_test",
+      "feedback_to": "C-NEXT-C1-MAP-ADAPTER-20261020",
+      "same_commit_replay_required": true,
+      "objective": "Independently determine whether exact runtime fallback function evidence can be used safely despite file-level partial parsing, and replay any narrow developer change.",
+      "tester_prompt": "ROLE: independent tester on the C1 Map adapter boundary. Do not edit production code. Use exact source identities from the task tree. Reproduce strict adapter no-finding and inspect Tree-sitter error ranges versus the full GetTypedArrayPropertyByIndex definition and any relevant macro/callee declarations. Send a predicted outcome matrix to the developer before code changes. Replay the exact developer SHA and test all positive/fail-closed controls in the developer prompt. Confirm target status remains partial/limited and no rule is enabled by a partial unrelated function, wrong blob, missing dependency, or generic model. Commit a factual report with commands and limitations.",
+      "blocking_prerequisites": [],
+      "report_required": true,
+      "report": "research/deliveries/c-line/c1_map_adapter_independent_test_20261020.md",
+      "report_commit": "d546f30cac5da010c6f6f863c2c73733e6dcc61c",
+      "completion": "Exact target+six dependencies produced blocked/partial/0 findings. Missing, mutated, stale-OID dependency, wrong commit, default/unbound and unrelated controls remained fail-closed. No positive adapter activation was tested because no complete macro/dispatch proof exists."
+    },
+    {
+      "id": "C-LLM-REVIEW-C1-MAP-WIDTH-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "COMPLETED_CONDITIONAL_SOURCE_CANDIDATE_RUNTIME_UNKNOWN",
+      "reviewer": "c_map_effect_review",
+      "feedback_to": "C-NEXT-C1-MAP-ADAPTER-20261020",
+      "objective": "Reassess the line-2733 species result/source read-width candidate independently for semantic plausibility, identify likely false-positive conditions and explain what exact runtime experiment would resolve them; do not implement detector or LLM features.",
+      "review_prompt": "ROLE: second-layer source reviewer only. Independently inspect exact Ark Runtime commit a65a2853ccae13da167d9aa4720ab8b11ec16656 and the current source-level candidate/report. Trace species protector fallback, TypedArraySpeciesCreate content-type and length checks, Map source read arguments, Float32/Float64 byte offset/load, and runtime fallback. Decide whether Uint8 source plus same-Number-content Float64/Float32 species is truly candidate-worthy from source alone; distinguish overread beyond view from allocation padding/ArrayBuffer behavior and identify any guard/copy behavior that could invalidate the theory. Review the direct analyzer replay versus strict adapter result. Give counterevidence, exact source pins, and the smallest isolated runtime/ASan experiment needed. Preserve partial/unknown; do not claim exploitability/product impact and do not edit implementation.",
+      "blocking_prerequisites": [],
+      "report_required": true,
+      "report": "research/deliveries/c-line/c1_map_species_width_second_layer_review_20261020.md",
+      "report_commit": "2d5b973490da9d0a805cb170893b01ef0733307f",
+      "completion": "Conditional source-level width mismatch survives source review; no proof of concrete runtime types, native allocation OOB, exploitability or product impact. Adapter remains partial/no finding.",
+      "counterevidence": "Species path is conditional and custom; backing allocation padding, emitted machine load and observable consequence are unverified."
+    },
+    {
+      "id": "C-DEV-EXACT-BOUND-SCOUT-20261020",
+      "kind": "source_candidate_development_scout",
+      "status": "COMPLETE_ONE_CONDITIONAL_SOURCE_CANDIDATE",
+      "base": {
+        "branch": "codex/c-line-parallel-plan-20261020",
+        "commit": "d546f30cac5da010c6f6f863c2c73733e6dcc61c",
+        "upstream_source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656"
+      },
+      "objective": "Identify at most one next high-signal candidate path in exact-bound C-line Ark Runtime sources not already closed by the C-line execution tree. Prefer source-level control-flow/type/bounds defects that map to existing detector models and whose exact helper/declaration AST dependencies parse complete. Do not implement until the independent tester confirms source identity and a concrete gap.",
+      "developer_prompt": "ROLE: C-line static-candidate scout. BASE current planning branch HEAD d546f30cac5da010c6f6f863c2c73733e6dcc61c; upstream Ark Runtime source commit a65a2853ccae13da167d9aa4720ab8b11ec16656 and exact local Git object store. Review current task tree and detector models. Exclude already completed Map width, Map callback JSType, TypedArray length, IB8BCA SetTypedValue, DataView API width, receiver guards, and macro parse feasibility slices. Inspect remaining exact-source TypedArray/DataView/ArrayBuffer stub flows with precise candidate semantics. Return zero or one hypothesis only; bind source commit/tree/path/blob/SHA and all helper/declaration pins, reproduce current detector/direct-analysis baseline, state a plausible trigger and source-level sensitive operation, enumerate counterevidence, parser statuses and safe/fixed/unrelated controls. Prefer no candidate over weak volume. Send exact candidate/control matrix to C-TEST-EXACT-BOUND-SCOUT before recommending implementation. No production edits in scout stage; no runtime/product/accuracy claims.",
+      "feedback_loop": "Scout shares candidate and predicted controls with independent tester; tester verifies exact identity and challenges baseline; only a reproduced source candidate becomes a separate dev/test implementation task. L2 review follows a candidate, not an empty scan.",
+      "deliverable": "research/deliveries/c-line/c_exact_bound_scout_20261020.md (commit a5c9d5e135997e2058133f007bf9e7ba1b371f1c); one conditional negative-TDouble Float32Array constructor candidate, exact source identities, source-predicted controls, limits, and adjacent no-go flows.",
+      "done_when": "Independent source and current-model evidence select one narrow candidate or document why no additional candidate is presently justified.",
+      "completion": "One conditional source-level candidate survives: both CommonStub and TypedHCR Float32Array double fast paths lack a negative lower-bound check; negative integral TDouble may reach NewFloat32ArrayWithSize/NewByteArray. No production edit. TaggedInt -1 is rejected; runtime TDouble reachability and allocation consequences remain unknown.",
+      "counterevidence": "Runtime representation reachability, compiled lowering, allocator behavior, and product impact were not executed; source paths remain partial/unknown where noted."
+    },
+    {
+      "id": "C-TEST-EXACT-BOUND-SCOUT-20261020",
+      "kind": "independent_candidate_testing",
+      "status": "COMPLETE_SOURCE_CANDIDATE_CONFIRMED_RUNTIME_UNKNOWN",
+      "tester_agent": "c1_adapter_test",
+      "feedback_to": "C-DEV-EXACT-BOUND-SCOUT-20261020",
+      "objective": "Independently inspect remaining exact-bound source candidates and reproduce/challenge the developer shortlist without editing production code.",
+      "tester_prompt": "ROLE: independent C-line candidate tester. BASE d546f30cac5da010c6f6f863c2c73733e6dcc61c and exact source object store commit a65a2853ccae13da167d9aa4720ab8b11ec16656. Independently inspect detector/task-tree closed slices and remaining TypedArray/DataView/ArrayBuffer source flows. Do not edit production code. Verify exact target/helper identities and parse statuses; reproduce any candidate output and challenge its trigger with safe/fixed/unrelated/missing-evidence controls. Send findings to developer before any implementation. Accept zero candidates if evidence does not support a narrow signal. Preserve partial/unknown/not_run; no safety/product/accuracy claim. Commit a concise independent report with commands and result.",
+      "report": "research/deliveries/c-line/exact_bound_scout_independent_test_20261020.md",
+      "report_commit": "14b1044f18b5acebf8c57b4cd0451e7eb9e1ab22",
+      "completion": "Independent source replay confirms missing lower-bound checks in CommonStub and TypedHCR TDouble branches and no visible downstream negative-value validation. TaggedInt -1 is blocked; fractional and over-limit controls follow slow paths. Runtime TDouble reachability, conversion edge semantics, compilation, allocation result and product impact remain unknown/not_run.",
+      "counterevidence": "The negative-integer TDouble representation is not shown reachable from user input on a product build; no compiler/runtime execution was performed."
+    },
+    {
+      "id": "C-LLM-REVIEW-EXACT-BOUND-SCOUT-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "COMPLETE_CONDITIONAL_SOURCE_CANDIDATE_RUNTIME_NOT_RUN",
+      "reviewer": "c1_width_review",
+      "objective": "Perform source-semantic second-layer review only if the scout/test loop selects a new candidate; do not reopen already completed source reviews or develop LLM features.",
+      "review_prompt": "ROLE: second-layer source reviewer. After C-DEV-EXACT-BOUND-SCOUT and C-TEST-EXACT-BOUND-SCOUT identify a candidate and exact report, independently assess whether the source trigger can reach the sensitive operation and whether stated guards/counterevidence defeat it. Verify source pins, propose smallest isolated runtime test if warranted, and clearly separate source candidate from runtime/product vulnerability. If no candidate survives, record not_run and do not invent one. No detector or LLM implementation.",
+      "report": "research/deliveries/c-line/c_float32array_negative_double_second_layer_review_20261020.md",
+      "report_commit": "b264f287c7f3d17cecec4e0bd8741d9e1ff8ed72",
+      "completion": "Source candidate survives review. Math.ceil(-1.1) is a source-supported route to TDouble(-1.0), which can pass both missing-lower-bound fast paths. NewByteArray yields a very large 64-bit allocation request and a 16-byte 32-bit allocation with large uint32 length/byteLength metadata; the initializer interval is empty on both widths, refuting the earlier immediate-overwrite concern. A later indexed-read concern is conditional and competes with the signed inline fast-getter guard. Runtime/build/allocator behavior remains not_run; no product or confirmed memory-safety claim.",
+      "counterevidence": "Exact fast-path selection, supported build architectures, generated lowering, allocator/OOM behavior, later getter dispatch, and whether any malformed object is observable are unverified."
+    },
+    {
+      "id": "C-DEV-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020",
+      "kind": "isolated_component_runtime_development",
+      "status": "COMPLETE_RUNTIME_NOT_RUN_ENVIRONMENT_INVENTORY",
+      "base": {
+        "planning_branch": "codex/c-line-parallel-plan-20261020",
+        "planning_commit": "0d06ef0c8083438a962229a03be2c2572c92a917",
+        "source_repository": "openharmony/arkcompiler_ets_runtime",
+        "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656"
+      },
+      "developer_agent": "float32_runtime_dev",
+      "objective": "Determine whether a safe isolated Ark Runtime build or existing executable can validate the source-level negative-TDouble Float32Array constructor candidate; if runnable, execute the narrow source-pinned control matrix and record allocation, metadata, and getter behavior. Do not modify production source or detector logic.",
+      "developer_prompt": "ROLE=isolated component runtime investigator. INPUT=exact source pins in c_exact_bound_scout_20261020.md and c_float32array_negative_double_second_layer_review_20261020.md. GOAL=distinguish source hypothesis from compiled runtime. STEPS=inventory binaries/build inputs; pin source/config/architecture; run in an isolated temporary process the Math.ceil(-1.1), tagged-int -1, positive integral TDouble, and negative-zero controls; capture constructor path, pointer-width allocation size, InitializeWithSpecialValue(start,end), stored metadata, and subsequent access behavior. OUTPUT=reproducible report/logs or evidenced not_run feasibility note. STOP=one definitive executed result or precise blocker after inventory. NEVER=run product/shared service, edit production code, claim confirmed exploitability without evidence, or treat empty initializer interval as overwrite.",
+      "feedback_to": "C-TEST-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020",
+      "report_required": true,
+      "report": "research/deliveries/c-line/float32array_runtime_development_20261020.md",
+      "source_inventory": "research/deliveries/c-line/float32array_runtime_source_inventory_20261020.txt",
+      "report_commit": "3b537b2aedafc1ab14b6751965551c0bbee50bf3",
+      "completion": "No compatible Ark executable or configured build tree/toolchain was found in the inspected local source/build roots. Exact candidate source pins were verified. Runtime and ASan tests remain not_run; no production source was changed.",
+      "limitations": "The report does not establish the source candidate as unreachable or safe; a matching Linux build root, GN/Ninja/Clang, frontend, and runtime outputs are still missing."
+    },
+    {
+      "id": "C-TEST-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020",
+      "kind": "independent_component_runtime_testing",
+      "status": "COMPLETE_RUNTIME_NOT_RUN_SOURCE_ACCESS_PATH_REPORTED",
+      "tester_agent": "float32_runtime_test",
+      "feedback_to": "C-DEV-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020",
+      "objective": "Independently challenge the exact source arithmetic and any available runtime reproduction, especially init interval, 32/64-bit metadata/backing mismatch, and signed fast-getter guard; do not accept source-derived controls as executed tests.",
+      "tester_prompt": "ROLE=independent adversarial runtime tester. INPUT=exact source pins and developer candidate. GOAL=try to falsify reachability, allocation arithmetic, or later-access concern. STEPS=independently reread the pinned source; recompute ZExt/size/alignment and initializer [start,end) semantics; inspect signed inline and uint32 runtime getter paths; locate an executable/build independently; if available, run isolated controls and compare behavior. OUTPUT=separate report with exact commands/source/architecture/results and explicit not_run fields. STOP=one independent determination. NEVER=accept developer claims without replay, change production code, or report static predictions as passing tests.",
+      "report_required": true,
+      "report": "research/deliveries/c-line/float32array_runtime_independent_test_20261020.md",
+      "report_commit": "3b537b2aedafc1ab14b6751965551c0bbee50bf3",
+      "completion": "Independent arithmetic confirms 64-bit allocation size 0x400000010, 32-bit size 16, and empty initializer interval [16,16). It identifies a distinct ordinary TypedArray IC-miss/C++ getter path with uint32 length checks and no visible ByteArray span validation; this is a conditional 32-bit source-level out-of-allocation read hypothesis only. Runtime, ASan, and object observability remain not_run.",
+      "counterevidence": "No compatible runtime/build was available; constructor path selection, successful allocation, concrete access and observable impact remain unverified."
+    },
+    {
+      "id": "C-LLM-REVIEW-FLOAT32-IC-MISS-20261020",
+      "kind": "second_layer_candidate_review_addendum",
+      "status": "COMPLETE_CONDITIONAL_32BIT_OUT_OF_ALLOCATION_READ_SOURCE_ONLY",
+      "reviewer": "c1_width_review",
+      "base_source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "input": "C-DEV-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020 and C-TEST-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020 reports; exact existing Float32Array candidate pins.",
+      "objective": "Independently assess the ordinary indexed-property load route for a 32-bit malformed negative-TDouble Float32Array; resolve whether the inline signed guard applies and whether another bound defeats an index-zero raw read.",
+      "review_prompt": "ROLE=second-layer source reviewer. Independently trace LoadValueMiss/LoadTypedArrayValueMiss for canonical key 0, IsValidIntegerIndex, FastGetPropertyByIndex, GetDataPointFromBuffer, ByteArray data start, and generic IC-disabled path. Bind source commit/tree/blob/SHA, enumerate guards/counterevidence, and separate conditional source evidence from runtime/product impact. No detector/LLM implementation and no exploit claim.",
+      "report": "research/deliveries/c-line/c_float32array_negative_double_property_load_review_20261020.md",
+      "report_commit": "413c29e4d08ee4f7f328a26dbcf131735c0da81b",
+      "completion": "Source review finds the ordinary IC-miss and IC-disabled generic paths use uint32 array-length checks and no ByteLength consistency guard before a Float32 raw read at ByteArray DATA_OFFSET. If the 32-bit constructor path returns the predicted 16-byte backing object, index 0 reaches a four-byte read beyond the allocated payload. This remains conditional source evidence; runtime path selection, allocation success, and product impact are not_run.",
+      "counterevidence": "No 32-bit build/runtime/ASan execution; no product profile or exploitation evidence. The compiler inline builtin's signed guard is valid for its own path but does not cover this ordinary runtime miss path."
+    },
+    {
+      "id": "C-DEV-FLOAT32-STATIC-CANDIDATE-20261020",
+      "kind": "source_bound_detector_development",
+      "status": "COMPLETE_EXACT_BOUND_CANDIDATE_SAME_SHA_TESTED",
+      "base": {
+        "planning_branch": "codex/c-line-parallel-plan-20261020",
+        "planning_commit": "3b537b2aedafc1ab14b6751965551c0bbee50bf3",
+        "source_repository": "openharmony/arkcompiler_ets_runtime",
+        "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656"
+      },
+      "developer_agent": "float32_runtime_dev",
+      "objective": "Add at most one narrow source-bound detector candidate for the negative-integral-TDouble Float32Array fast-path predicate gap, so a later second-layer reviewer can inspect it. Preserve exact source identity and candidate-only semantics; never label it a confirmed vulnerability.",
+      "developer_prompt": "ROLE=Ark Runtime static detector developer. INPUT=current OHScanner source-binding architecture and exact Ark pins in the C-line scout/review reports. GOAL=emit one high-signal, exact-bound candidate for the Float32Array negative-TDouble constructor gap, with source-level 32-bit indexed-read context retained as supporting evidence. STEPS=inspect model/adapter/analyzer registration; prefer complete bindings and exact blob+SHA checks; implement only if necessary evidence is available; create positive, fixed-lower-bound, integer-tag, positive-double, unrelated, wrong-commit, missing-helper, and mutated-helper controls; keep parser partial/blocked and runtime unknown explicit. OUTPUT=small production change plus focused tests/report and a developer-to-tester expected-result matrix. STOP=one candidate on exact source and zero/unknown on controls, or evidence-based no-go. NEVER=broaden commits/paths, equate zero with safety, claim product impact, modify Ark Runtime source, or develop second-layer LLM.",
+      "feedback_to": "C-TEST-FLOAT32-STATIC-CANDIDATE-20261020",
+      "report_required": true,
+      "report": "research/deliveries/c-line/c_float32array_negative_double_static_rule_20261020.md",
+      "done_when": "The exact bound revision yields no more than one candidate-only finding and all safe/fixed/unrelated/missing-evidence controls preserve no-candidate or unknown behavior, independently replayable on the same code commit.",
+      "implementation_commit": "46fdb5887c49a552b249fb20805025ba6316d8d0",
+      "tester_report_commit": "6d41c4746b41c21af9139d2853acc1d0c9189ffa"
+    },
+    {
+      "id": "C-TEST-FLOAT32-STATIC-CANDIDATE-20261020",
+      "kind": "independent_source_bound_detector_testing",
+      "status": "COMPLETE_SAME_SHA_REPLAY_WITH_EXPLICIT_NOT_RUN_CONTROLS",
+      "tester_agent": "float32_runtime_test",
+      "feedback_to": "C-DEV-FLOAT32-STATIC-CANDIDATE-20261020",
+      "objective": "Independently verify source identity, parser/dependency states, and developer candidate controls; replay implementation on the exact commit and ensure findings do not spread to safe, fixed, unrelated, wrong-commit, or incomplete evidence.",
+      "tester_prompt": "ROLE=independent Ark Runtime static-detector tester. INPUT=exact source commit a65a2853ccae13da167d9aa4720ab8b11ec16656, current adapter/model and developer expected matrix. GOAL=challenge candidate precision and fail-closed identity behavior. STEPS=record exact blob/SHA/parser baseline before changes; don't edit production detector/model; independently exercise exact parent, source with added negative lower-bound, tagged-int/positive TDouble code controls, unrelated function, wrong commit, missing/mutated helper; after developer SHA arrives, replay all cases through unit tests and registered CLI where available. OUTPUT=independent same-commit report, commands/results, explicit partial/blocked/not_run. STOP=one precise independent determination. NEVER=claim safety from zero findings, alter source binding, or report runtime vulnerability based on static outputs.",
+      "report_required": true,
+      "report": "research/deliveries/c-line/float32array_static_candidate_cli_baseline_20261020.md",
+      "done_when": "Independent same-commit replay confirms exactly the intended narrow candidate and fail-closed controls, or identifies a concrete mismatch returned to developer before closure.",
+      "implementation_commit": "46fdb5887c49a552b249fb20805025ba6316d8d0",
+      "report_commit": "6d41c4746b41c21af9139d2853acc1d0c9189ffa"
+    },
+    {
+      "id": "C-LLM-REVIEW-FLOAT32-STATIC-CANDIDATE-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "COMPLETE_ACCEPTED_SOURCE_CANDIDATE_WITH_RUNTIME_LIMITS",
+      "reviewer": "c1_width_review",
+      "objective": "Review the static candidate emitted by the developer/tester loop against the exact source report, focusing on trigger plausibility, the conditional 32-bit load path, and source/runtime/product limits. Do not implement detector or LLM features.",
+      "review_prompt": "ROLE=second-layer source candidate reviewer. INPUT=the exact registered static-candidate finding and source/control reports after same-commit test replay. Independently verify source pins, candidate evidence, safe/fixed counterevidence, and whether the finding says only what source evidence supports. Confirm the 32-bit out-of-allocation read remains conditional on runtime/build/allocation/access behavior not_run. OUTPUT=short accept/narrow/reject review with exact evidence and unknowns. NEVER=trust candidate role labels, infer a confirmed product vulnerability, or change the detector/LLM.",
+      "report": "research/deliveries/c-line/float32array_negative_double_final_second_layer_review_20261020.md",
+      "review_commit": "9df21f2f5833dbf7d91b289da5923dce6ad09fca",
+      "implementation_commit": "46fdb5887c49a552b249fb20805025ba6316d8d0"
+    },
+    {
+      "id": "C-SCOUT-ARRAYBUFFER-MUTATION-NEXT",
+      "kind": "exact_bound_source_scout",
+      "status": "COMPLETE_SCOPED_NO_GO_NO_CANDIDATE",
+      "agent": "scout_arraybuffer_mutation",
+      "objective": "Select at most one high-signal, not-yet-closed ArrayBuffer lifecycle/mutation candidate at exact Ark Runtime source pins, or document a source-evidence no-go.",
+      "scope": "ArrayBuffer slice/clone/transfer/resizable/grow/detach and backing-store allocation/copy; exclude completed C-line candidates in the tree.",
+      "scout_prompt": "ROLE=exact-bound C-line source scout A. INPUT=current execution tree, detector catalog/model and exact Ark Runtime a65 source. GOAL=identify at most one precise ArrayBuffer lifecycle/mutation source candidate not already closed. STEPS=verify clean exact commit/tree/blob/SHA; trace source trigger through helpers/declarations; inspect parser status and current scanner/direct-analysis baseline; list counterevidence and source-derived controls; return zero candidate if evidence is weak; formulate structured developer/tester follow-ups with feedback. OUTPUT=committed concise report, exact pins, candidate or no-go, safe/fixed/unrelated/identity/helper controls, unknowns, and ROLE/INPUT/GOAL/STEPS/OUTPUT/STOP/NEVER prompts. STOP=one reproducible candidate or evidence-based no-go. NEVER=edit production code, duplicate closed work, infer runtime/product impact, or convert unknown/not_run into pass.",
+      "report_required": true,
+      "done_when": "Independent source triage commits exact-bound evidence selecting no more than one candidate or a defensible no-go, with reproducible developer/tester prompts.",
+      "report": "research/deliveries/c-line/arraybuffer_mutation_scout_20261020.md",
+      "report_commit": "38e9420babdb768071f6b1ab9615f6c7221d508d"
+    },
+    {
+      "id": "C-SCOUT-TYPEDARRAY-COPY-NEXT",
+      "kind": "exact_bound_source_scout",
+      "status": "COMPLETE_ONE_CONDITIONAL_SET_ARRAYLIKE_CANDIDATE",
+      "agent": "scout_typedarray_copy",
+      "objective": "Select at most one high-signal, not-yet-closed TypedArray copy/mutation candidate at exact Ark Runtime source pins, or document a source-evidence no-go.",
+      "scope": "TypedArray set/copyWithin/fill/reverse/sort/species-backed copy and indexed mutation; exclude closed length, Float32 negative-double, DataView/IB8BCA, receiver-guard, and C1 Map tasks.",
+      "scout_prompt": "ROLE=exact-bound C-line source scout B. INPUT=current execution tree, detector catalog/model and exact Ark Runtime a65 source. GOAL=identify at most one precise TypedArray copy/mutation source candidate not already closed. STEPS=verify clean exact commit/tree/blob/SHA; trace source trigger through helpers/declarations; inspect parser status and current scanner/direct-analysis baseline; list counterevidence and source-derived controls; return zero candidate if evidence is weak; formulate structured developer/tester follow-ups with feedback. OUTPUT=committed concise report, exact pins, candidate or no-go, safe/fixed/unrelated/identity/helper controls, unknowns, and ROLE/INPUT/GOAL/STEPS/OUTPUT/STOP/NEVER prompts. STOP=one reproducible candidate or evidence-based no-go. NEVER=edit production code, duplicate closed work, infer runtime/product impact, or convert unknown/not_run into pass.",
+      "report_required": true,
+      "done_when": "Independent source triage commits exact-bound evidence selecting no more than one candidate or a defensible no-go, with reproducible developer/tester prompts.",
+      "report": "research/deliveries/c-line/typedarray_copy_mutation_scout_20261020.md",
+      "report_commit": "6ffe9211ed839a241f94b0fe8ff93af126bb846a"
+    },
+    {
+      "id": "C-DEV-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
+      "kind": "source_bound_detector_development",
+      "status": "COMPLETE_EXACT_BOUND_CANDIDATE_SAME_SHA_TESTED_AND_REVIEWED",
+      "developer_agent": "scout_arraybuffer_mutation",
+      "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "objective": "Implement at most one exact-bound candidate for TypedArray.set(arrayLike, offset) uint64 range-sum / uint32 byte-index wrap, only if exact method/helper source evidence and parser scope are sufficient.",
+      "developer_prompt": "ROLE=Ark Runtime source-bound detector developer. INPUT=research/deliveries/c-line/typedarray_copy_mutation_scout_20261020.md and exact Ark Runtime a65 pins. GOAL=emit at most one narrow candidate for set(arrayLike, offset) unsigned range-sum/byte-index wrap. STEPS=verify clean revision/tree/blob/SHA; establish parser completeness for exact method and SetValueInBuffer; model only ordinary array-like path; add positive source-derived trigger; add in-range, one-past/fixed-check, zero-view-offset, stable-array fast-path, unrelated, wrong-commit, missing-helper and mutated-helper controls; preserve partial/unknown if incomplete. OUTPUT=small detector/test/report change plus expected-result matrix for independent replay. STOP=one precise candidate with controls or evidence-based no-go. NEVER=edit Ark Runtime source, duplicate closed scopes, claim runtime/product impact or accuracy, equate zero with safety, or implement second-layer LLM.",
+      "feedback_to": "C-TEST-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
+      "report_required": true,
+      "done_when": "Same exact source identity yields no more than one candidate, controls fail closed or produce no candidate, and independent replay on the implementation SHA confirms it.",
+      "implementation_commit": "f0ecebbe2d8b7b5318e3258b39088e03943a32ac",
+      "report": "research/deliveries/c-line/typedarray_set_arraylike_offset_wrap_dev_20261020.md"
+    },
+    {
+      "id": "C-TEST-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
+      "kind": "independent_source_bound_detector_testing",
+      "status": "COMPLETE_SAME_SHA_REPLAY_WITH_EXPLICIT_NOT_RUN_CONTROLS",
+      "tester_agent": "float32_runtime_test",
+      "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "objective": "Independently challenge set(arrayLike, offset) trigger arithmetic, parser/dependency pins and fail-closed behavior, then replay on developer SHA.",
+      "tester_prompt": "ROLE=independent Ark Runtime static-detector tester. INPUT=scout report, exact pins and developer commit/control matrix. GOAL=challenge trigger arithmetic, route selection and source-identity fail-closed behavior without editing production detector/model. STEPS=independently verify blobs and parser states; calculate source-derived byte indices; establish preimplementation registered/direct-analysis baseline; after developer SHA, replay positive and safe/fixed cases, wrong commit/blob, missing/mutated method/helper; return counterexamples before closure. OUTPUT=same-SHA independent report with commands/results and explicit partial/blocked/not_run. STOP=one independent determination; if no implementation, report no-go/not_run. NEVER=claim exploitability/product impact or formal accuracy, claim safety from zero, modify production bindings, or broaden excluded scope.",
+      "feedback_to": "C-DEV-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
+      "report_required": true,
+      "done_when": "Tester confirms one precise finding or returns a concrete mismatch, and keeps runtime/build/product impact unknown unless executed.",
+      "preimplementation_report": "research/deliveries/c-line/typedarray_set_arraylike_independent_baseline_20261020.md",
+      "preimplementation_report_commit": "b9e064ce05bb2d05e5a013add39572433df51d15",
+      "report": "research/deliveries/c-line/typedarray_set_arraylike_independent_replay_20261020.md",
+      "report_commit": "c92433444e2dbef8e81449d8709a20a8dfbe8f5d",
+      "implementation_commit": "f0ecebbe2d8b7b5318e3258b39088e03943a32ac"
+    },
+    {
+      "id": "C-LLM-REVIEW-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "COMPLETE_ACCEPTED_CONDITIONAL_CROSS_VIEW_SOURCE_CANDIDATE",
+      "reviewer": "c1_width_review",
+      "objective": "Review exact registered set(arrayLike) candidate evidence and same-SHA controls. Do not implement LLM or detector.",
+      "review_prompt": "ROLE=second-layer source candidate reviewer. INPUT=exact developer SHA, independent replay, scout evidence, source pins and candidate. GOAL=accept/narrow/reject based on arithmetic, call-route plausibility, sensitive write, controls and unknowns. STEPS=independently recompute 2^64-2048 plus srcLen 2049 and uint32 byte ranges; inspect exact SetValueInBuffer path and whether target view bound is enforced elsewhere; verify source identities and partial evidence; preserve runtime/product limits. OUTPUT=concise review report with exact evidence and unresolved runtime questions. STOP=accept/narrow/reject. NEVER=call this confirmed exploitation, infer product impact, or edit detector/LLM.",
+      "report": "research/deliveries/c-line/typedarray_set_arraylike_final_review_20261020.md",
+      "review_commit": "be8a4ea06a52e6e71ab83405fde3cb6f2156408f",
+      "implementation_commit": "f0ecebbe2d8b7b5318e3258b39088e03943a32ac"
+    }
+  ],
+  "feedback_loop": [
+    "IB8BCA developer, independent tester, and second-layer reviewer are complete. Current planning branch registered replay: exact parent emits one candidate at line 75; fixed emits zero diagnostics; both remain partial/blocked due detector_model_incomplete.",
+    "The tester addendum corrects the older branch-local not_run statement: test HEAD 420a71e lacked the rule, while planning HEAD 85eb094 has exact bindings. Keep the two branch scopes distinct.",
+    "The IB8BCA parent SetTypedValue candidate is plausible at source level; compiled IR, reachability, runtime effects, backing allocation feasibility, and product impact remain unknown. Fixed zero is not a safety result.",
+    "The DataView GetViewValue/SetViewValue slice has completed through exact-source review, source-bound detector refinement, adversarial stale-blob mismatch repair, and same-commit independent replay. The next slice should start from current branch HEAD and select a concrete source-bound candidate; do not repeat this completed baseline work.",
+    "The developer/tester loop for the DataView API slice closed: tester supplied baseline controls, developer made a narrow source-bound change, tester found a stale dependency identity bypass, developer fixed it, and tester replayed the fix on the exact commit. Separate source review assessed candidate plausibility only; no LLM feature work.",
+    "An earlier fetch/push attempt failed at GitHub port 443; a later fetch confirmed upstream baseline d07dc397 and the planning branch push succeeded. The pinned upstream baseline is verified at fetch time but may advance later.",
+    "Second-layer API review completed at 2f37175: GetViewValue/SetViewValue uint32 wraparound-to-OOB route is not supported by source invariants; large-index conversion compatibility and unusual buffer/runtime behavior remain unknown.",
+    "DataView API width refinement completed: exact helper bytes are required to match both model-pinned SHA-256 and recomputed Git blob OID. The tester found and documented the stale-blob mismatch flaw in 40b7732; developer fixed it in 76efed37 and independent same-commit replay passed. Results remain blocked/partial with unknown runtime/product behavior; no safety or accuracy claim.",
+    "Latest upstream C-line base was fetched successfully as d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03. Planning branch closure commit fbb537a39183b719bd587e0dd4a5ba83c6d85925 was subsequently pushed successfully. The current slice is the C1 TypedArray Map line-2733 source/destination JSType width mismatch; developer/tester/reviewer tasks are C-DEV-C1-MAP-EFFECT, C-TEST-C1-MAP-EFFECT, and C-LLM-REVIEW-C1-MAP-EFFECT. The detector currently reports unknown; source review supports a concrete width-mismatch candidate, with runtime/product impact unverified.",
+    "C1 Map species-width slice: implementation fa8d165 emits a direct-analyzer source candidate at 2733; independent report 28e94ce37 confirms the pre-callback candidate while preserving later-loop and line-2747 unknowns. The strict detector adapter remains unknown/no finding because pinned runtime_stubs.cpp has partial AST; do not describe this as an integrated adapter finding. Existing ark_runtime tests pass 193, 3 skipped; compileall passes.",
+    "Next C1 slice launched from fc8b039: audit function-scoped completeness for the pinned runtime fallback behind the Map source-width candidate; developer and independent tester share exact positive/fail-closed matrix, while second-layer reviewer independently tests source-level candidate plausibility and counterevidence. Preserve strict file partial status and do not relax the adapter on a name/hash alone.",
+    "C1 Map adapter function-scoped audit closed no-go at 874edb4; independent fail-closed replay d546f30 and second-layer conditional source review 2d5b973 preserve strict adapter unknown. New next step is a one-candidate, exact-bound scout with independent tester, excluding completed C-line slices and preferring complete helper/declaration AST evidence; second-layer review is conditional on a candidate surviving.",
+    "Exact-bound scout 20261020: developer report a5c9d5e and independent tester report 14b1044 confirm a conditional Float32Array negative-TDouble candidate in CommonStub and TypedHCR. Second-layer report b264f28 finds Math.ceil(-1.1) as a source-supported TDouble(-1.0) route. Corrected arithmetic shows an empty initializer interval on 32/64-bit, a 16-byte backing allocation with large uint32 metadata on 32-bit, and a signed inline-getter guard that may block simple access. Runtime/build/accessibility remains unknown/not_run; no production change. Next independent tasks validate a safe local runtime/build and challenge arithmetic/access dispatch."
+  ],
+  "authorization": "config/collaboration/standing_authorization.json",
+  "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
+}

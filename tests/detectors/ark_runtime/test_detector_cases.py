@@ -62,12 +62,12 @@ class ContractAdapterTests(unittest.TestCase):
         obligations = coverage['detectors'][DETECTOR_ID]['evidence_obligations'][0]['obligations']
         self.assertIn('parse_completeness_impact', [o['kind'] for o in obligations])
 
-    def test_mixed_scope_retains_valid_complete_file_candidate(self):
+    def test_exact_selector_excludes_unrelated_same_language_file(self):
         bad = replace(case('C04'), path='src/other.cpp', parse_status='partial')
         reports, coverage = self.run_detector((case('C03'), bad))
         self.assertEqual(reports[0].diagnostic_count, 1)
         self.assertEqual(coverage['detectors'][DETECTOR_ID]['coverage_counts'],
-                         {'complete': 1, 'partial': 0, 'not_analyzed': 1, 'failed': 0})
+                         {'complete': 1, 'partial': 0, 'not_analyzed': 0, 'failed': 0})
 
     def test_aggregate_limited_does_not_discard_valid_local_candidate(self):
         code = wrap(PREFIX + 'Label good(GetEnvironment());\nLabel other(GetEnvironment());\n'
@@ -108,6 +108,18 @@ class ContractAdapterTests(unittest.TestCase):
         self.assertEqual(coverage['detectors'][DETECTOR_ID]['coverage_counts']['not_analyzed'], 1)
         self.assertTrue(any('creator dependency blob/SHA-256' in limitation
                             for limitation in reports[0].limitations))
+
+    def test_dependency_bytes_cannot_claim_a_stale_pinned_blob_oid(self):
+        path = 'ecmascript/js_dataview.cpp'
+        altered = unit('int value;\n// altered helper bytes\n', path)
+        ctx = context((altered,))
+        facts = dict(ctx.shared_facts)
+        facts['source_blob_oid'] = {path: '5057a103a88096b5db0e39be0feca2864a2ff8eb'}
+        ctx = replace(ctx, shared_facts=facts)
+        error = ArkRuntimeTypeSafetyDetector._dependency_error(
+            ctx, path, '5057a103a88096b5db0e39be0feca2864a2ff8eb',
+            '3782d04ee5c44504bf453b3b45f96d7431ff902fb575257c425c707890b83243')
+        self.assertIn('blob/SHA-256', error)
 
     @staticmethod
     def _registry(model):

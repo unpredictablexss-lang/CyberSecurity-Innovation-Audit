@@ -1,0 +1,35 @@
+# Float32Array negative-TDouble candidate: ordinary property-load route addendum
+
+Date: 2026-10-20. This addendum independently checks whether the malformed 32-bit Float32Array described in `c_float32array_negative_double_second_layer_review_20261020.md` can reach a raw element read through the ordinary TypedArray property-load miss path. Scope is pinned-source review only; no build/runtime test or exploitability claim.
+
+## Result
+
+The ordinary property-load route removes the earlier source uncertainty about the inline signed guard. In the exact source, an IC miss for a TypedArray receiver dispatches to `LoadTypedArrayValueMiss`. For numeric key `"0"`, `IsValidIntegerIndex` checks detachment, integrality, negative zero and `val >= arrLen`; it does not inspect ByteLength. `arrLen` is `uint32_t`, so the malformed stored `0xffffffff` is compared as positive `4294967295`; index zero passes. With IC enabled, the miss path then calls `JSTypedArray::FastGetPropertyByIndex`, whose second `uint32_t` guard also passes index zero and whose raw read is based on the object's Float32 element type. `ByteArray` is explicitly treated as non-detached, and the data-point helper returns `ByteArray + DATA_OFFSET` without a backing-span check. With IC disabled, the fallback generic TypedArray `[[Get]]` reaches `IntegerIndexedElementGet<true>`, which has the same uint32 length comparison and then performs the type-sized buffer read.
+
+Therefore, if the 32-bit negative-TDouble constructor fast path runs and allocation returns the 16-byte ByteArray predicted by source arithmetic, the ordinary `a[0]` load has a source-reachable path to a four-byte Float32 read at the ByteArray data offset even though the allocation ends at that offset. On the successful allocation path, `NewByteArray` stores its HClass and metadata, `NewFloat32ArrayWithSize` stores the view fields and returns the new typed array; no same-function check rejects the uint32 `0xffffffff` length or reconciles it with backing bytes. A normal fresh heap may have space for this 16-byte object, but that is runtime behavior, not proven here. If allocation fails, exception/return behavior is outside this source-only conclusion. No detachment, byteLength, or element-type guard in the reviewed ordinary load chain defeats this specific index-zero path. This strengthens the 32-bit source candidate to a conditional out-of-allocation read hypothesis. It still depends on the constructor stub being selected, allocation succeeding, this 32-bit build/configuration existing, and the reviewed commits matching the executable; those remain untested. This is not a claim that a product build is affected or that exploitation is possible.
+
+## Exact pins
+
+All reviewed files belong to `openharmony/arkcompiler_ets_runtime`, commit `a65a2853ccae13da167d9aa4720ab8b11ec16656`, tree `8781f036a3e7e04d8e0b34970d5f623b42875016`, from the local exact object store.
+
+| Path | Blob | SHA-256 | Relevant source behavior |
+|---|---|---|---|
+| `ecmascript/ic/ic_runtime.cpp` | `b537f58ae2f00286cbbef456d0a33cdfe382f896` | `e0aa8acddc21b361a6fdc6d70782d2ebc4f15464ffd77d37d193ca1bc83dc0cf` | `LoadValueMiss` detects TypedArray receiver; `LoadTypedArrayValueMiss` canonicalizes key, validates integer index, and dispatches to typed-array getter or generic property path |
+| `ecmascript/js_typed_array.cpp` | `098c2a22cae3152af3a59063dda25e145f03bbd7` | `e67c0ce082885efb6fa5894f7a1998a41eb4cddfa2e381c8335497e10e2b9bbe` | `IsValidIntegerIndex`, `FastGetPropertyByIndex`, and generic `IntegerIndexedElementGet<true>` use uint32 length and omit byteLength validation before read |
+| `ecmascript/builtins/builtins_arraybuffer.cpp` | `2aa22c58803df690a5a2b326451e02297dc5e2f6` | `4d388d997313cf7c900f1f0d54fbe826266845665424e32cc9dd4cdbaa62dcc9` | ByteArray is non-detached; data pointer is `ByteArray + DATA_OFFSET`; typed buffer getter reads the requested element bytes without checking ByteArray extent |
+| `ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp` | `68fb3b0adc4f9062889a861be51b7be90362e37a` | `76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c` | Inline helper has the signed `Int32GreaterThanOrEqual` guard previously identified; that guard is not the route used by this ordinary C++ IC-miss handler |
+| `ecmascript/byte_array.h` | `82780d249f5170b4ec5bf0474e71fd1cb110b67a` | `4acb3d1f596efa3e9d7d943ea7c423fe13c7077c512e251ac994a72426d92ddc` | ByteArray data begins at aligned `DATA_OFFSET` (16 for this layout); the 32-bit wrapped allocation size is 16 bytes |
+| `ecmascript/compiler/common_stubs.cpp` | `6267f2f27a98a298b1190e327abbfa2bd58203f8` | `5a401580e666596fcf2ea89a8dc0321009b53ef5320b20edc59d37781d852212` | Negative TDouble constructor guard and fast allocation branch |
+| `ecmascript/compiler/new_object_stub_builder.cpp` | `991ac5ac034a1a027e3200787ec25c55b3f15b69` | `3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0` | ByteArray allocation and Float32Array return path |
+
+## Guard-by-guard challenge
+
+- **IC receiver dispatch:** `LoadValueMiss` calls `LoadTypedArrayValueMiss` when `receiver->IsTypedArray()` or `IsSharedTypedArray()` is true. The constructor creates a Float32Array HClass, so the intended malformed object satisfies this category if the constructor fast path completes.
+- **Canonical numeric index:** string key `"0"` is a canonical integral numeric index. `IsValidIntegerIndex` rejects detached buffers, nonintegral values, negative zero and negative indexes. Zero satisfies each condition.
+- **Length:** `GetArrayLength()` returns uint32. Stored `-1` bits become `0xffffffff`, so zero is below the recorded length. No byteLength consistency check appears in this validity test.
+- **Detachment:** `BuiltinsArrayBuffer::IsDetachedBuffer` returns false immediately for a ByteArray.
+- **Element type / byte span:** runtime `FastGetPropertyByIndex` gets the JSType from the object's HClass; for this object that is Float32Array, so the byte index is `0 * 4 + 0`. The buffer read reaches ByteArray data offset 16 and requests a FLOAT32-width (four-byte) load. Neither this chain nor `GetDataPointFromBuffer` checks that ByteArray allocation extends beyond the data offset.
+- **Alternative IC-disabled path:** `LoadTypedArrayValueMiss` uses generic `GetProperty` when IC is disabled. `IntegerIndexedElementGet<true>` repeats the integer-index validity logic using the uint32 array length, then calculates `index * elementSize + offset` and calls `BuiltinsArrayBuffer::GetValueFromBuffer`; no ByteLength check was found there either.
+
+The earlier inline signed guard remains real counterevidence for a different fast-stub path, but it does not defeat this specific ordinary runtime IC-miss route. The next useful evidence is still a local 32-bit debug/ASan run of `new Float32Array(Math.ceil(-1.1)); a[0]`, instrumenting constructor path selection, allocation size, IC-miss handler, and read address. Include tagged-int `-1` and positive integral-TDouble controls. Until such a run and a supported 32-bit build profile are established, keep the result as a conditional source candidate only.
+

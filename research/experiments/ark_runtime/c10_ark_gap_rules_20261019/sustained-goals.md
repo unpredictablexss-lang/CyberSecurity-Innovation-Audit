@@ -1,8 +1,7 @@
-# G10-AR-1..4 持续执行目标
+# G10-AR 持续执行目标（C 线）
 
-- **G10-AR-1 固定身份与适用性：已完成。** 固定 IAO7GO/I7W51D/IB8BCA parent/fixed commit、tree-role blob/source hash，`native_inline_lowering.cpp` 必须被 selector 适用。
-- **G10-AR-2 规则与五类控制：已完成。** 三个稳定 rule ID/v1.0.0 均有 positive/fixed/safe/unrelated/unknown；RangeError、fixed、0 findings 均不得转 safe。
-- **G10-AR-3 语义增强：持续。** 下一片补跨函数 effect summary、精确 CFG dominance、alias/loop、整数区间与 DataView/Atomics 溢出证明；无法证明保持 unknown。
-- **G10-AR-4 独立与产品闭环：持续。** 冻结版本后做独立盲 holdout；对满足入口/权限/触发/CIA 门槛的候选执行授权隔离 PoC、修复和重验，不攻击线上服务。
+持续提高 Ark Runtime 静态候选的精度与可用覆盖：只提交来源绑定、可复现、窄范围的候选；以精确 parent/fixed 源码、正向/安全/无关/未知控制和独立回放验证每个切片。第二层大模型只做候选源码语义复核，不在本目标中开发或接入 LLM 功能。
 
-每轮只推进一个最小可验证切片，保留 exact commands、source identity、patch、controls、pass/fail/skip/block、限制和下一最小切片。
+每轮推进一个具体的规则、解析、语义或覆盖改进；开发者先给独立测试者边界矩阵和预期，测试者回报可复现差异，开发者只修复具体缺陷。每轮以实现/回归/源码或组件报告交付为完成标准，不等待产品 profile、真人评测、独立 holdout 或全案例闭合。正式准确率与产品验证是有相应资料时才做的可选后续工作。
+
+保留真实未知：静态候选不是已确认漏洞；不完整覆盖、无诊断或未执行均不等于安全/通过；没有可靠标签不报 Precision/Recall；产品影响无证据记 unknown。目标代码执行应隔离，保存精确源码版本和复现材料。

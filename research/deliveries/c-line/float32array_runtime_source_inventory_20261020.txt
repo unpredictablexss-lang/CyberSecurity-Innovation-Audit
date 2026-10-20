@@ -1,0 +1,40 @@
+# Source/build inventory transcript (2026-10-20)
+
+Workspace file search:
+`rg --files D:\OpenHarmony807 -g ark_js_vm -g ark_js_vm.exe -g ark_aot_compiler -g libark_jsruntime.so -g libark_jsruntime.dylib -g libark_jsruntime.dll -g build.ninja -g CMakeCache.txt -g toolchain.ninja`
+Result: no Ark VM/compiler/shared-library hits. Returned only CMake/Ninja fixture files under third-party test trees.
+
+Source repository:
+`git -C D:\OpenHarmony807\repos\arkcompiler_ets_runtime rev-parse HEAD`
+`a65a2853ccae13da167d9aa4720ab8b11ec16656`
+
+Source Git blob checks:
+`git -C D:\OpenHarmony807\repos\arkcompiler_ets_runtime rev-parse HEAD:ecmascript/compiler/common_stubs.cpp`
+`6267f2f27a98a298b1190e327abbfa2bd58203f8`
+`git -C D:\OpenHarmony807\repos\arkcompiler_ets_runtime rev-parse HEAD:ecmascript/compiler/typed_hcr_lowering.cpp`
+`1ad4e329a226fc9941db30fa7a10a6562f58f68d`
+`git -C D:\OpenHarmony807\repos\arkcompiler_ets_runtime rev-parse HEAD:ecmascript/compiler/new_object_stub_builder.cpp`
+`991ac5ac034a1a027e3200787ec25c55b3f15b69`
+
+Source repository cleanliness:
+`git -C D:\OpenHarmony807\repos\arkcompiler_ets_runtime status --porcelain=v1`
+Result: empty; clean checkout.
+
+Build root checks:
+`Test-Path D:\OpenHarmony807\.repo` => False
+`Test-Path D:\OpenHarmony807\build.sh` => False
+`Test-Path D:\OpenHarmony807\out` => False
+`Test-Path D:\OpenHarmony807\repos\arkcompiler_ets_runtime\out` => False
+`Test-Path D:\OpenHarmony807\repos\arkcompiler_ets_runtime\build` => False
+
+WSL2 Ubuntu tool check (`wsl -d Ubuntu -- bash -lc ...`):
+`gn=missing`
+`ninja=missing`
+`clang++=missing`
+`clang++-18=missing`
+`clang++-17=missing`
+`g++=missing`
+`cmake=missing`
+`python3=missing`
+
+Runtime and PoC: not run. No executable exists to generate command output, stderr, or VM logs. No source changes or build installations were made.

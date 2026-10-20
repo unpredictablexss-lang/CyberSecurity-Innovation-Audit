@@ -1,0 +1,86 @@
+{
+  "limitations": [
+    "Candidate/zero-finding output is not a vulnerability/safety verdict.",
+    "Partial detector model coverage remains unknown.",
+    "No generated IR, runtime, product, or exploitability validation is performed."
+  ],
+  "method": "exact Git blobs -> complete AST -> git_object/light-ast ScanContext -> registered Ark Runtime detector via run_all_with_coverage",
+  "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "results": [
+    {
+      "analyzed_files": [],
+      "applicable_files": 1,
+      "blob": "aedb6d26681535371d1e9ed90b697b923b8100e6",
+      "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+      "coverage_status": "partial",
+      "detector_status": "blocked",
+      "diagnostics": [
+        {
+          "line": 75,
+          "rule_id": "ark.runtime.dataview-index-width-bounds",
+          "source_sha256": "bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548"
+        }
+      ],
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp: bounded_index_width_model_no_general_bounds_proof",
+        "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+        "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+        "Diagnostic does not establish vulnerability, reachability or security impact.",
+        "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+        "Coverage incomplete or unsupported; do not infer safety."
+      ],
+      "parse_issue_count": 0,
+      "parse_status": "complete",
+      "partially_inspected_files": [
+        "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp"
+      ],
+      "role": "parent",
+      "sha256": "bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548",
+      "tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+      "unexamined": [
+        {
+          "analysis_status": "partial",
+          "file": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+          "parse_status": "complete",
+          "reason": "detector_model_incomplete"
+        }
+      ]
+    },
+    {
+      "analyzed_files": [],
+      "applicable_files": 1,
+      "blob": "dce9388e8b7e33c87aec33ac4d067fe40370561b",
+      "commit": "48fcec3686e45175f95b4600b579026a65149966",
+      "coverage_status": "partial",
+      "detector_status": "blocked",
+      "diagnostics": [],
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataViewStubBuilder::SetTypedValue",
+        "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+        "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+        "Diagnostic does not establish vulnerability, reachability or security impact.",
+        "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+        "Coverage incomplete or unsupported; do not infer safety."
+      ],
+      "parse_issue_count": 0,
+      "parse_status": "complete",
+      "partially_inspected_files": [
+        "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp"
+      ],
+      "role": "fixed",
+      "sha256": "89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386",
+      "tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+      "unexamined": [
+        {
+          "analysis_status": "partial",
+          "file": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+          "parse_status": "complete",
+          "reason": "detector_model_incomplete"
+        }
+      ]
+    }
+  ]
+}

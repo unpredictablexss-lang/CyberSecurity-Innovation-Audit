@@ -6,12 +6,15 @@ from .analysis import analyze_unit
 from .exception_guard import analyze_exception_guard
 from .receiver_guard import analyze_receiver_guard
 from .runtime_exception import analyze_native_inline_exception_propagation
+from .negative_double_length import analyze_negative_double_length
+from .arraylike_set_bounds import analyze_arraylike_set_bounds
 from .size_overflow import (analyze_size_overflow_unit, index_bounds_result,
                             length_narrowing_result)
 from .model import (AnalysisBudget, RuntimeTypeModel, DETECTOR_ID, RULE_ID,
                     EXCEPTION_GUARD_RULE_ID, RECEIVER_TYPE_GUARD_RULE_ID,
                     SIZE_OVERFLOW_RULE_ID, LENGTH_NARROWING_RULE_ID,
                     INDEX_BOUNDS_RULE_ID, NATIVE_EXCEPTION_RULE_ID,
+                    NEGATIVE_DOUBLE_LENGTH_RULE_ID, ARRAYLIKE_SET_BOUNDS_RULE_ID,
                     RULE_VERSIONS, VERSION)
 
 
@@ -27,20 +30,29 @@ class ArkRuntimeTypeSafetyDetector:
 
     def select_applicable_units(self, context, units):
         if context.request.repository != self.model.source_repository:
-            return ()
+            # Preserve the detector's prior language-scoped behavior outside
+            # the exact-source model; those files are recorded not_analyzed.
+            return tuple(units)
         paths = {row[1] for row in (
             self.model.target_bindings + self.model.exception_guard_bindings
             + self.model.receiver_guard_bindings + self.model.size_overflow_bindings
             + self.model.length_narrowing_bindings + self.model.index_bounds_bindings
-            + self.model.native_exception_bindings)}
-        return tuple(unit for unit in units if unit.path in paths)
+            + self.model.native_exception_bindings + self.model.species_read_width_bindings
+            + tuple(row for row in self.model.negative_double_length_bindings
+                    if row[1] == 'ecmascript/compiler/common_stubs.cpp')
+            + tuple(self.model.arraylike_set_bounds_bindings)
+            + tuple(self.model.arraylike_set_bounds_dependencies))}
+        selected = tuple(unit for unit in units if unit.path in paths)
+        # Preserve legacy language-scoped coverage when no modeled target is
+        # present; helper-only scans must not silently become not_applicable.
+        return selected or tuple(units)
 
     def __init__(self, model=None, budget=None):
         self.model = model or RuntimeTypeModel()
         self.budget = budget or AnalysisBudget()
 
     @staticmethod
-    def _dependency_error(context, path, expected_blob):
+    def _dependency_error(context, path, expected_blob, expected_sha256=None):
         dependency = next((item for item in context.units if item.path == path), None)
         blob_oids = context.shared_facts.get('source_blob_oid', {})
         ast = context.shared_facts.get('ast', {})
@@ -48,9 +60,11 @@ class ArkRuntimeTypeSafetyDetector:
             return 'creator dependency is outside the scanned source scope: ' + path
         raw = dependency.text.encode('utf-8')
         source_digest = sha256(raw).hexdigest()
+        actual_blob = sha1(b'blob ' + str(len(raw)).encode('ascii') + bytes((0,)) + raw).hexdigest()
         ast_entry = ast.get(path)
         if (dependency.language != 'cpp' or dependency.sha256 != source_digest
-                or blob_oids.get(path) != expected_blob):
+                or (expected_sha256 is not None and dependency.sha256 != expected_sha256)
+                or actual_blob != expected_blob or blob_oids.get(path) != expected_blob):
             return 'creator dependency blob/SHA-256 does not match the version-bound model: ' + path
         if (not isinstance(ast_entry, dict) or ast_entry.get('parse_status') != 'complete'
                 or dependency.parse_status != 'complete'):
@@ -81,6 +95,13 @@ class ArkRuntimeTypeSafetyDetector:
                                   if row[0] == context.request.commit and row[1] == unit.path), None)
             native_binding = next((row for row in self.model.native_exception_bindings
                                    if row[0] == context.request.commit and row[1] == unit.path), None)
+            negative_double_binding = next((row for row in self.model.negative_double_length_bindings
+                                            if row[0] == context.request.commit and row[1] == unit.path
+                                            and row[1] == 'ecmascript/compiler/common_stubs.cpp'), None)
+            species_binding = next((row for row in self.model.species_read_width_bindings
+                                    if row[0] == context.request.commit and row[1] == unit.path), None)
+            arraylike_set_binding = next((row for row in self.model.arraylike_set_bounds_bindings
+                                          if row[0] == context.request.commit and row[1] == unit.path), None)
             if type_binding is not None:
                 rule_bindings.append((RULE_ID, type_binding))
             if exception_binding is not None:
@@ -95,6 +116,10 @@ class ArkRuntimeTypeSafetyDetector:
                 rule_bindings.append((INDEX_BOUNDS_RULE_ID, index_binding))
             if native_binding is not None:
                 rule_bindings.append((NATIVE_EXCEPTION_RULE_ID, native_binding))
+            if negative_double_binding is not None:
+                rule_bindings.append((NEGATIVE_DOUBLE_LENGTH_RULE_ID, negative_double_binding))
+            if arraylike_set_binding is not None:
+                rule_bindings.append((ARRAYLIKE_SET_BOUNDS_RULE_ID, arraylike_set_binding))
             if not rule_bindings:
                 outcomes.append((unit.path, 'not_analyzed'))
                 limitations.append(unit.path + ': exact upstream repository/commit/path is not in the reviewed model')
@@ -106,6 +131,17 @@ class ArkRuntimeTypeSafetyDetector:
                 outcomes.append((unit.path, 'not_analyzed'))
                 limitations.append(unit.path + ': ' + dependency_error)
                 continue
+            index_width_evidence = None
+            if index_binding is not None:
+                evidence_rows = tuple(row for row in self.model.index_bounds_dependencies
+                                      if row[0] == context.request.commit)
+                if evidence_rows:
+                    evidence_errors = tuple(self._dependency_error(context, path, blob, expected_sha)
+                                            for _, path, blob, expected_sha in evidence_rows)
+                    if not any(evidence_errors):
+                        index_width_evidence = '\n'.join(
+                            next(item.text for item in context.units if item.path == path)
+                            for _, path, _, _ in evidence_rows)
             raw = unit.text.encode('utf-8')
             git_blob = sha1(b'blob ' + str(len(raw)).encode('ascii') + bytes((0,)) + raw).hexdigest()
             if (context.request.provenance != 'git_object' or context.request.profile_id != 'light-ast'
@@ -119,6 +155,33 @@ class ArkRuntimeTypeSafetyDetector:
                 outcomes.append((unit.path, 'not_analyzed'))
                 limitations.append(unit.path + ': target source blob/SHA-256 does not match the version-bound model')
                 continue
+            species_read_width_bound = False
+            if (species_binding is not None and type_binding is not None
+                    and species_binding == type_binding
+                    and unit.path == 'ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp'
+                    and context.request.repository == self.model.source_repository
+                    and context.request.commit == species_binding[0]
+                    and unit.sha256 == species_binding[3]
+                    and git_blob == species_binding[2]):
+                evidence_rows = tuple(row for row in self.model.species_read_width_dependencies
+                                      if row[0] == species_binding[0])
+                # Require the complete, exact dependency set. Omissions or additions
+                # invalidate this narrowly scoped summary and preserve generic unknowns.
+                expected_paths = {
+                    'ecmascript/compiler/new_object_stub_builder.cpp',
+                    'ecmascript/base/typed_array_helper.cpp',
+                    'ecmascript/stubs/runtime_stubs.cpp',
+                    'ecmascript/js_typed_array.cpp',
+                    'ecmascript/builtins/builtins_arraybuffer.cpp',
+                    'ecmascript/compiler/builtins/builtins_arraybuffer_stub_builder.cpp',
+                }
+                if ({row[1] for row in evidence_rows} == expected_paths
+                        and len(evidence_rows) == len(expected_paths)):
+                    evidence_errors = tuple(self._dependency_error(context, path, blob, expected_sha)
+                                            for _, path, blob, expected_sha in evidence_rows)
+                    species_read_width_bound = not any(evidence_errors)
+                if not species_read_width_bound:
+                    limitations.append(unit.path + ': species read-width source evidence is incomplete or mismatched; retaining unknown helper effects')
             ast_entry = ast.get(unit.path)
             if (not isinstance(ast_entry, dict) or ast_entry.get('parse_status') != unit.parse_status
                     or unit.parse_status not in ('complete', 'partial')):
@@ -129,15 +192,20 @@ class ArkRuntimeTypeSafetyDetector:
             for rule_id, _ in rule_bindings:
                 if rule_id == RULE_ID:
                     result = analyze_unit(unit, model=self.model, budget=self.budget,
-                                          research_partial=unit.parse_status == 'partial')
+                                          research_partial=unit.parse_status == 'partial',
+                                          species_read_width_bound=species_read_width_bound)
                 elif rule_id == SIZE_OVERFLOW_RULE_ID:
                     result = analyze_size_overflow_unit(unit, self.model.digest)
                 elif rule_id == LENGTH_NARROWING_RULE_ID:
                     result = length_narrowing_result(unit, self.model.digest)
                 elif rule_id == INDEX_BOUNDS_RULE_ID:
-                    result = index_bounds_result(unit, self.model.digest)
+                    result = index_bounds_result(unit, self.model.digest, index_width_evidence)
                 elif rule_id == NATIVE_EXCEPTION_RULE_ID:
                     result = analyze_native_inline_exception_propagation(unit)
+                elif rule_id == NEGATIVE_DOUBLE_LENGTH_RULE_ID:
+                    result = analyze_negative_double_length(context, self.model)
+                elif rule_id == ARRAYLIKE_SET_BOUNDS_RULE_ID:
+                    result = analyze_arraylike_set_bounds(context, self.model)
                 elif rule_id == EXCEPTION_GUARD_RULE_ID:
                     result = analyze_exception_guard(
                         unit, creator_name=self.model.exception_guard_creator[0],
@@ -178,6 +246,22 @@ class ArkRuntimeTypeSafetyDetector:
                             ('runtime_path_feasibility', 'Establish that Reflect.apply inlining can reach the unguarded helper under a realistic call.'),
                             ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
                             ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
+                        )
+                    elif rule_id == NEGATIVE_DOUBLE_LENGTH_RULE_ID:
+                        obligations = (
+                            ('fast_path_representation', 'Verify the compiled runtime can deliver a negative integral TDouble to this constructor fast path; Math.ceil(-1.1) is only a source-supported route.'),
+                            ('allocator_observation', 'Measure pointer-width allocation size, allocator success/failure, and stored TypedArray/ByteArray metadata in an isolated build.'),
+                            ('indexed_access', 'Verify the exact compiled indexed-read and indexed-write dispatch before asserting any out-of-bounds consequence; the 32-bit later-read hypothesis is second-layer/source-review information only.'),
+                            ('runtime_build_selection', 'Bind CommonStub/TypedHCR selection and architecture to an exact local runtime build.'),
+                            ('security_impact', 'Establish a concrete runtime impact; this source-bound rule emits only a candidate.'),
+                        )
+                    elif rule_id == ARRAYLIKE_SET_BOUNDS_RULE_ID:
+                        obligations = (
+                            ('integer_wrap_dispatch', 'Confirm the exact runtime conversion of array-like length and offset, including the selected ordinary-object branch.'),
+                            ('cross_view_write', 'Reproduce the calculated indices against a nonzero-offset view and verify whether bytes before that view change; this source candidate does not claim an allocation-boundary out-of-bounds access.'),
+                            ('source_side_effects', 'Challenge array-like length/index/value getters, detachment checks, and any reentrant behavior that could change the source-level path.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected product before making product claims.'),
+                            ('isolated_runtime_validation', 'Run a local isolated reproducer and a corrected-check control; runtime and ASan status remain not_run until executed.'),
                         )
                     elif rule_id == LENGTH_NARROWING_RULE_ID:
                         obligations = (
@@ -229,6 +313,10 @@ class ArkRuntimeTypeSafetyDetector:
                         message=(
                             'Candidate only: Reflect.apply native-inline result uses exception-sentinel comparison without a proven pending-exception exit. trace=' + trace
                             if rule_id == NATIVE_EXCEPTION_RULE_ID else
+                            'Candidate only: exact C1 CommonStub and TypedHCR Float32Array double-length branches lack a nonnegative guard before the allocation helper; runtime behavior and memory impact are unverified. trace=' + trace
+                            if rule_id == NEGATIVE_DOUBLE_LENGTH_RULE_ID else
+                            'Candidate only: unchecked array-like TypedArray.set length/offset sum can wrap before byte-index narrowing. trace=' + trace
+                            if rule_id == ARRAYLIKE_SET_BOUNDS_RULE_ID else
                             'Candidate only: signed 32-bit ToIndex result narrows a TypedArray allocation length. trace=' + trace
                             if rule_id == LENGTH_NARROWING_RULE_ID else
                             'Candidate only: 32-bit DataView/Atomics index arithmetic reaches a local bounds check. trace=' + trace

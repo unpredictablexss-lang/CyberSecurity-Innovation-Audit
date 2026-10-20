@@ -20,7 +20,7 @@ class ArkRuntimeCatalogTests(unittest.TestCase):
         self.assertFalse(metadata["default_enabled"])
         detector = build_registry((DETECTOR_ID,)).detectors()[0]
         self.assertEqual(detector.detector_id, DETECTOR_ID)
-        self.assertEqual(detector.version, "0.6.2")
+        self.assertEqual(detector.version, "0.6.3")
         self.assertEqual(detector.model.target_bindings[0][0],
                          "a65a2853ccae13da167d9aa4720ab8b11ec16656")
         self.assertEqual(detector.model.source_dependencies, ((
