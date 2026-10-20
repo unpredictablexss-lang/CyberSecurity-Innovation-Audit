@@ -49,12 +49,73 @@ def range_plan(settings, store, repository_id, baseline, endpoint, includes, det
     return repo, a, b, commits
 
 
+
+def multimode_triage_preview(scan_specs, body, provider, nonces):
+    """Build a separately consented, immutable source-egress preview per endpoint."""
+    from .agent import audit_task_consent_preview
+    if body.get("audit_mode") != "standard_review" or not body.get("auto_triage"):
+        raise ValueError("automatic model triage requires standard review and an explicit preview")
+    if len(scan_specs) != len(nonces) or not scan_specs or len(scan_specs) > 8:
+        raise ValueError("invalid endpoint count or consent nonce count")
+    max_candidates = body.get("max_triage_candidates", 3)
+    max_r2 = body.get("max_r2_candidates", 0)
+    cap = body.get("max_cost_usd")
+    previews = []
+    for spec, nonce in zip(scan_specs, nonces):
+        workflow = service.audit_workflow_sha256(
+            spec["plan_sha256"], "standard_review", True, max_candidates, max_r2, cap
+        )
+        preview = audit_task_consent_preview(
+            spec["audit_plan"], workflow, spec["include_paths"], max_candidates,
+            nonce, provider, max_r2, max_cost_usd=cap
+        )
+        if not preview.get("eligible"):
+            raise ValueError("endpoint automatic triage unavailable: " + preview.get("reason", "unknown"))
+        previews.append({"commit": spec["commit"], "plan_sha256": spec["plan_sha256"],
+                         "workflow_sha256": workflow, **preview})
+    return previews
+
+
+def bind_multimode_triage(settings, scan_specs, body):
+    """Fail closed on every endpoint before any scan or operation is queued."""
+    approvals = body.get("triage_approvals") or []
+    if not body.get("auto_triage", False):
+        if approvals:
+            raise ValueError("model authorization submitted for a static-only operation")
+        return scan_specs
+    if body.get("audit_mode") != "standard_review":
+        raise ValueError("automatic triage is only supported in standard review mode")
+    if len(approvals) != len(scan_specs):
+        raise ValueError("each fixed endpoint needs its own reviewed model consent")
+    from .agent import ProviderConfig
+    provider = ProviderConfig.from_env(settings.data_dir)
+    if not provider.configured:
+        raise ValueError("model provider not configured; static endpoint scans remain available")
+    nonces = [row.get("consent_nonce") if isinstance(row, dict) else None for row in approvals]
+    previews = multimode_triage_preview(scan_specs, body, provider, nonces)
+    enriched = []
+    for spec, approval, preview in zip(scan_specs, approvals, previews):
+        if approval.get("consent_sha256") != preview["consent_sha256"]:
+            raise ValueError("endpoint consent expired: source, model, policy or budget changed")
+        enriched.append({
+            **spec, "audit_mode": "standard_review",
+            "workflow_sha256": preview["workflow_sha256"],
+            "max_r2_candidates": body.get("max_r2_candidates", 0),
+            "max_cost_usd": body.get("max_cost_usd"),
+            "triage_authorization": {
+                "authorized": True, "consent_sha256": preview["consent_sha256"],
+                "snapshot": preview["manifest"],
+            },
+        })
+    return enriched
+
+
 def enqueue_range(settings, store, ops, body):
     repo, a, b, commits = range_plan(settings, store, body["repository_id"], body["baseline"],
                                     body["endpoint"], body["include_paths"], body["detector_ids"],
                                     body["timeout_seconds"], body["memory_mb"])
     audit_mode = body.get("audit_mode", "standard_review")
-    scans = [{**a, "audit_mode": audit_mode}, {**b, "audit_mode": audit_mode}]
+    scans = bind_multimode_triage(settings, [{**a, "audit_mode": audit_mode}, {**b, "audit_mode": audit_mode}], body)
     return ops.create_with_scans("revision_range", {"repository_id": repo["id"], "baseline": a["commit"],
         "endpoint": b["commit"], "commits": commits, "audit_mode": audit_mode,
         "timeout_seconds": body["timeout_seconds"] * 2 + 60,
@@ -73,7 +134,7 @@ def enqueue_branch_comparison(settings, store, ops, body):
                                body["timeout_seconds"], body["memory_mb"])
              for item in (before, after)]
     audit_mode = body.get("audit_mode", "standard_review")
-    specs = [{**spec, "audit_mode": audit_mode} for spec in specs]
+    specs = bind_multimode_triage(settings, [{**spec, "audit_mode": audit_mode} for spec in specs], body)
     return ops.create_with_scans("branch_comparison", {
         "repository_id": repo["id"], "audit_mode": audit_mode,
         "baseline_ref": body["baseline_ref"], "baseline": before["commit"],
