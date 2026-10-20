@@ -287,3 +287,15 @@ objective: 在同一开发 commit 上复验 target/dependency 分离及旧 detec
 steps: [复跑 target+creator、target-only、target+creator+unrelated, 核对 full commit/tree/blob/SHA, 核对 applicable_files 与逐文件 parse/internal/detector 状态, 复跑 runner 与 Ark 测试]
 constraints: [不修改生产代码, 不把零诊断当安全, 不把 coverage 计数变化当解析或漏洞修复]
 ```
+
+### 独立基线完成（runner applicability）
+
+测试线报告 `research/deliveries/c-line/type_safety_replay_baseline_20261020.md`（提交 `fbc54b5a1`）独立复现了三种 CLI scope。C1 exact target 与 creator 的 commit/blob/SHA 均匹配模型。target-only 因 creator 缺失而 blocked/not_analyzed；target+creator 时 target 是 partial、creator complete 但 not_analyzed；再加入 unrelated 同语言文件时三个文件都被计入 applicable，但只有 target partial，其余 not_analyzed。exact fixed 对照同样 partial/blocked/零诊断。Ark Runtime 155 passed、3 skipped。
+
+这与 scout 共同支持 runner applicability 与完整 dependency context 混用的问题；同时证据明确 target 的 13 个 parser issue 和 detector model incomplete 仍存在，所以本轮只修 scope 归属，不修 parser、不改 detector rule，也不将零诊断说成安全。独立基线已提交，开发线正在按同一输入实现 selector/context 分离；测试线将在具体开发提交后复验。
+
+### runner applicability 开发提交待独立复验
+
+开发线已提交 `85a1f1e6f91247e5fbad39fb6bd03f64201700bb`。Runner 现在调用 optional `select_applicable_units(context, language_units)`，校验选择结果必须来自当前上下文、语言受支持且没有重复；无此 hook 的 detectors 保持原语言筛选。选出的目标集合用于 normalized report 与 coverage，完整 `ScanContext` 仍保留依赖供 Ark adapter 验证 exact blob/SHA。
+
+开发线验证：Ark Runtime 162 passed、3 skipped；runner/source-binding 34 passed。C1 修复后真实 CLI 为 `scope_files=1 / applicable_files=1`，target 仍有 13 个 parser issue、`partial / blocked`、0 diagnostics。修复后证据在 `research/deliveries/c-line/scout_20261020/c1_post_fix.md/.json`。测试线已取得 exact developer commit，正在复验 target+dependency、target-only、unrelated same-language、selector 越界与 fallback；在复验返回前不关闭该 slice。

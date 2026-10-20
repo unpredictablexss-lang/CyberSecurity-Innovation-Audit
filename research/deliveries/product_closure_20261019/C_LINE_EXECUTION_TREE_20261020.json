@@ -134,7 +134,7 @@
     {
       "id": "C-NEXT-RUNNER-APPLICABILITY-20261020",
       "kind": "development_and_independent_testing",
-      "status": "IN_PROGRESS_DEVELOPMENT_AND_INDEPENDENT_BASELINE",
+      "status": "DEVELOPMENT_COMMITTED_AWAITING_INDEPENDENT_REPLAY",
       "objective": "Separate exact target applicability from dependency files kept in ScanContext; preserve target partial/blocked and exact source identity.",
       "input": "openharmony/arkcompiler_ets_runtime@a65a2853ccae13da167d9aa4720ab8b11ec16656; target ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp (blob 68fb3b0adc4f9062889a861be51b7be90362e37a, SHA256 76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c); creator new_object_stub_builder.cpp (blob 991ac5ac034a1a027e3200787ec25c55b3f15b69, SHA256 3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0)",
       "developer_prompt": "Implement runner applicability through optional select_applicable_units(context, units), retaining all units in ScanContext for exact creator blob/SHA checks but excluding dependencies from target coverage. Fallback to supported_languages. Test target+exact dependency, target-only missing dependency, and unrelated same-language unit. Preserve C1 target partial/blocked with 13 parser issues.",
@@ -148,12 +148,21 @@
       "reproduction_reports": [
         "research/deliveries/c-line/scout_20261020/c1_registered.json",
         "research/deliveries/c-line/scout_20261020/c1_target_only.json"
-      ]
+      ],
+      "independent_baseline_commit": "fbc54b5a1",
+      "independent_baseline_report": "research/deliveries/c-line/type_safety_replay_baseline_20261020.md",
+      "independent_baseline": "target-only: applicable=1, missing creator => blocked/not_analyzed; target+creator: applicable=2, target partial, creator complete but not_analyzed; plus unrelated same-language: applicable=3, target partial and other files not_analyzed; fixed control partial/blocked/0 findings.",
+      "independent_test_suite": "Ark Runtime 155 passed, 3 skipped; no production changes; worktree clean.",
+      "developer_commit": "85a1f1e6f91247e5fbad39fb6bd03f64201700bb",
+      "developer_report_commit": "463f6e3b9",
+      "developer_report": "research/deliveries/c-line/scout_20261020/c1_post_fix.md",
+      "developer_validation": "Ark Runtime 162 passed, 3 skipped; runner/source-binding suites 34 passed; CLI C1 applicable_files=1, scope_files=1, target partial with 13 parse issues, detector blocked, 0 diagnostics.",
+      "implementation": "Runner calls optional select_applicable_units(context, language_units); validates identity/language/duplicates/context membership; dependencies remain accessible from full context; other detectors retain language fallback."
     },
     {
       "id": "C-TEST-RUNNER-APPLICABILITY-20261020",
       "kind": "independent_testing",
-      "status": "BASELINE_IN_PROGRESS",
+      "status": "INDEPENDENT_REPLAY_IN_PROGRESS",
       "objective": "Independently verify the registered CLI scope-mapping baseline and replay the runner applicability fix on the same commit.",
       "worktree": "worktrees/worktrees/c-static-replay-test-20261020",
       "feedback_to": "C-NEXT-RUNNER-APPLICABILITY-20261020",
@@ -162,7 +171,11 @@
         "target only",
         "target+dependency+unrelated same-language file"
       ],
-      "constraints": "No production edits; exact commit/blob/SHA; no safety inference from zero findings; preserve partial/blocked."
+      "constraints": "No production edits; exact commit/blob/SHA; no safety inference from zero findings; preserve partial/blocked.",
+      "report_commit": "fbc54b5a1",
+      "baseline_report": "research/deliveries/c-line/type_safety_replay_baseline_20261020.md",
+      "baseline_result": "Exact C1 target and creator source identities match model. Parser/internal analysis remains partial; baseline does not determine rule behavior or safety.",
+      "developer_commit": "85a1f1e6f91247e5fbad39fb6bd03f64201700bb"
     }
   ],
   "feedback_loop": [
