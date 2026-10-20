@@ -78,9 +78,12 @@ function Workspace() {
   else content = <Card><Empty description="页面不存在；旧任务链接仍可直接访问。"><Button onClick={() => go("/overview")}>返回总览</Button></Empty></Card>;
   return <Layout className="app workbench-v41">
     <Layout.Sider width={228} collapsedWidth={64} breakpoint="lg" className="sidebar" theme="light">
-      <a className="brand" href="#/overview" aria-label="OHScanner 总览"><span className="brand-mark">O.</span><div>OHScanner<small>SECURITY WORKSPACE</small></div></a>
+      <a className="brand" href="#/overview" aria-label="OHScanner 鸿鉴·智溯 总览">
+        <span className="brand-mark" aria-hidden="true"><span>OH</span><i /></span>
+        <div className="brand-copy"><strong className="brand-name">OHScanner</strong><b className="brand-cn">鸿鉴·智溯</b><small>OPENHARMONY SECURITY</small></div>
+      </a>
       <div className="workspace-card"><span>OH</span><div><strong>源码审计工作区</strong><small>固定源码 · 可追溯证据</small></div></div>
-      <nav aria-label="主导航"><Menu theme="light" mode="inline" selectedKeys={[route.section]} defaultOpenKeys={["new-audit"]} onClick={({ key }) => go(key)} items={[
+      <div className="sidebar-scroll"><nav aria-label="主导航"><Menu theme="light" mode="inline" selectedKeys={[route.section]} defaultOpenKeys={["new-audit"]} onClick={({ key }) => go(key)} items={[
         { key: "workspace-label", type: "group", label: "工作区", children: [] },
         { key: "/overview", icon: <AppstoreOutlined />, label: "总览" },
         { key: "new-audit", icon: <PlusOutlined />, label: "新建审计", children: [
@@ -99,7 +102,13 @@ function Workspace() {
         { type: "divider" },
         { key: "/settings", icon: <SettingOutlined />, label: "系统设置" },
       ]} /></nav>
-      <div className="sidebar-bottom"><span className="workspace-avatar">OS</span><div><strong>Local workspace</strong><small>MiSans · 固定版本审计</small></div></div>
+      <section className="sidebar-bottom" aria-label="审计能力">
+        <div className="capability-heading"><span className="capability-signal" /><span>SECURITY AUDIT</span><span className="capability-version">OH</span></div>
+        <div className="capability-row"><span className="capability-icon capability-icon-scan" aria-hidden="true">01</span><div><strong>多引擎静态扫描</strong><small>多路检测 · 交叉分析</small></div></div>
+        <div className="capability-divider" />
+        <div className="capability-row"><span className="capability-icon capability-icon-ai" aria-hidden="true">AI</span><div><strong>证据驱动智能审计</strong><small>线索关联 · 可追溯研判</small></div></div>
+      </section>
+      </div>
     </Layout.Sider>
     <Layout><Layout.Header className="topbar"><Space className="workspace-breadcrumb"><Text type="secondary">OHScanner</Text><span>/</span><Text strong>{path === "/overview" ? "总览" : path.startsWith("/audits/") ? "新建审计" : path.startsWith("/tasks") ? "任务中心" : path === "/risks" ? "风险中心" : path === "/investigations" ? "智能调查" : path === "/poc" ? "PoC 验证" : path === "/impact" ? "影响与修复" : path === "/reports" ? "报告中心" : path.startsWith("/settings") ? "系统设置" : "高级操作"}</Text></Space>
       <Space><Text className="worker-status" type="secondary">{health ? health.worker_running ? "Worker 运行中" : "Worker 未运行" : "服务状态未知"}</Text><Button type="text" icon={<ReloadOutlined />} onClick={() => void refresh()}>刷新</Button></Space></Layout.Header>
@@ -107,7 +116,7 @@ function Workspace() {
         {error && <Alert className="section-gap" type="error" showIcon message={error} description="数据刷新失败，当前视图可能保留上次成功结果。" />}
         {health && !health.worker_running && <Alert className="section-gap" type="warning" message="扫描 Worker 未运行，排队任务将等待启动。" />}
         {content}
-      </Layout.Content><Layout.Footer className="footer">OHScanner · 候选 / 覆盖 / 证据分别记录 · 采用内嵌 MiSans VF Web 字体与系统回退</Layout.Footer>
+      </Layout.Content>
     </Layout>
   </Layout>;
 }
