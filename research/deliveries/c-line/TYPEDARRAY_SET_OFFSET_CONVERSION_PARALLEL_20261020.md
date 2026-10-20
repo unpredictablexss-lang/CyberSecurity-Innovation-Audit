@@ -52,4 +52,13 @@ stop: 不改生产代码，不将微型计算称作 Ark Runtime 执行；runtime
 | C-DEV-SET-OFFSET-CONVERSION-20261020 | completed_with_correction | 初版转换结论成立；view 范围推论经 correction commit `28eb558` 更正 |
 | C-TEST-SET-OFFSET-CONVERSION-20261020 | completed | 同一 scanner SHA/tree 独立复算确认 correction 算术；未运行 Ark Runtime |
 
+## 收尾运行时构建尝试
+
+随后启动了有界开发/独立测试子任务。开发线固定同一 scanner SHA 和 Ark source commit，在私有 WSL OverlayFS 输出目录中尝试 `rk3568 / ark_js_host_linux_tools_packages`；源码以只读绑定挂载，官方预编译包已核验哈希。构建在 HB `[LOAD] Checking all build args...` 等待 Kali/WSL 9p 读取时停滞，未启动 GN/Ninja/clang；为结束本轮，构建进程被显式 TERM 停止，返回码 1 不能解释为自然构建失败。
+
+- 开发记录：`stage_20261020/C_LINE_ARK_RUNTIME_BUILD_ATTEMPT_20261020.md`（`5e2e92a1a`）
+- 独立验收：`typedarray_set_offset_runtime_acceptance_addendum_20261020.md`（`429ee4d2a514061a36fe51a1fc296f316ae54b09`）
+- 产物检查：没有 `ark_js_vm` 或 `es2abc`；候选 witness、offset 0 控制、offset 4097 RangeError 控制均 `not_run`
+- 收尾状态：源码级 view-boundary candidate 保留；backing-store OOB、运行时行为和产品影响未确认。不要继续重复相同构建路线；仅在出现新的可用工具链/构建环境或其他具体证据后再开任务。
+
 证据提交：开发 `194495c845240aab728e8480ac62c6a9dd488130`，更正 `28eb558366f8bf224ccdb593f67635e7dc07afae`，独立测试 `edf0cb0c48dce15f722b34caa167e82a88de3474`。下一切片应以新的 source/runtime/build 证据为触发点，避免重复审计已闭环的算术；当前 runtime 依赖缺失已记录，不作为本源码结论的阻塞项。

@@ -29,3 +29,11 @@ C 线已验收的 Ark Runtime 静态集成变更已接到本轮 fetch 的最新�
 
 - 开发与最新主线集成：[C_LINE_MAINLINE_INTEGRATION_20261020.md](../../../../c-mainline-dev-closeout-20261020/research/deliveries/c-line/C_LINE_MAINLINE_INTEGRATION_20261020.md)
 - 精确 SHA 独立复验：[C_LINE_MAINLINE_TEST_20261020.md](../../../../c-mainline-test-closeout-20261020/research/deliveries/c-line/C_LINE_MAINLINE_TEST_20261020.md)
+
+## 收尾追加：TypedArray.set 运行时尝试
+
+针对上节的源码级 view-boundary candidate，开发线在 Ark Runtime `a65a2853ccae13da167d9aa4720ab8b11ec16656` 上尝试了隔离 host-tools 构建。构建使用只读源码绑定、私有 ext4 OverlayFS 输出/HOME/prebuilts；官方预编译包的哈希已核验。HB 停在 `[LOAD] Checking all build args...`，工作进程等待 Kali/WSL 9p 源码读取，未启动 GN、Ninja 或 clang。为控制收尾范围，进程组经显式 TERM 停止，返回码 1 属于人工停止，不是自然构建失败。
+
+开发报告：[C_LINE_ARK_RUNTIME_BUILD_ATTEMPT_20261020.md](../../../../c-runtime-dev-closeout-20261020/research/deliveries/c-line/stage_20261020/C_LINE_ARK_RUNTIME_BUILD_ATTEMPT_20261020.md)；独立验收补充：[typedarray_set_offset_runtime_acceptance_addendum_20261020.md](typedarray_set_offset_runtime_acceptance_addendum_20261020.md)。测试线核对了精确源码身份及隔离输出；没有 `ark_js_vm` 或 `es2abc`。候选 witness、offset 0 控制和 offset 4097 拒绝控制均为 `not_run`。源码算术候选仍是：写入 2048 字节落在非零 byteOffset 目标 view 之前，但仍在 backing ArrayBuffer 内。运行时行为、backing-store OOB、产品适用性和安全影响均未确认，分别保持 `not_run` / `unknown`；不报告漏洞确认或准确率指标。
+
+本轮以可交付源码结论、独立算术复核及明确记录的运行时构建阻塞收尾。任务树状态仍为 `CLOSEOUT_READY_SOURCE_CANDIDATE_RUNTIME_NOT_RUN`；只有出现新的可用构建条件或其他具体证据时再开下一切片。
