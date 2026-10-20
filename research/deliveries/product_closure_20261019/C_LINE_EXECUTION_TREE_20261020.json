@@ -402,10 +402,48 @@
       "blocking_prerequisites": [],
       "id": "C-DEV-IB8BCA-20261020",
       "kind": "development_and_candidate_refinement",
-      "status": "READY_FOR_PARALLEL_EXECUTION",
+      "status": "COMPLETED_WITH_BRANCH_SCOPE_CORRECTION",
       "developer_agent": "ark_static_dev",
       "developer_prompt": "ROLE: C-line static-analysis developer. OBJECTIVE: refine the source-bound IB8BCA DataView SetTypedValue candidate for precision. INPUT: exact parent/fixed commit/tree/blob/SHA and source store in this task record; candidate `ark.runtime.dataview-index-width-bounds`, rule v1.0.0 in historical C10 replay. TASKS: (1) inspect actual branch/code and verify whether this exact rule and source binding are present before invoking it; if absent, mark registered replay not_run. (2) trace `TaggedIsInt`, nonnegative index guard, `GetElementSize`, parent `Int32Add(index, elementSize)` comparison against view byteLength, parent `index + byteOffset` and store width; compare fixed `ZExtInt32ToInt64`/unsigned compare and later truncation. (3) derive source-level trigger boundaries for each instantiated DataView type (INT32/FLOAT32/FLOAT64) and safe/fixed controls without assuming product/runtime reachability. (4) only make a narrow detector/test patch if a concrete false positive or missed candidate is reproduced on the actual supported code path; do not make generic arithmetic claims. CONSTRAINTS: exact object identity, preserve teammates' work, no fabricated C++ runtime semantics or product claims, no accuracy metrics from this single pair, no second-layer feature development. DELIVERABLES: structured report with source hashes, method/line anchors, input-boundary table, counterevidence and unknowns; if code changes, tests and commit SHA. FEEDBACK: give C-TEST-IB8BCA-20261020 exact matrix/expected statuses before finalizing.",
-      "completion": "Pending developer source trace and independent feedback."
+      "completion": "Exact source trace, boundary matrix, current-branch registered replay and independent feedback complete. Planning HEAD 85eb094 contains rule v1.1.0; parent yields one candidate at line 75 and fixed yields zero diagnostics, while both detector outcomes remain partial/blocked. No code change was justified in this slice; candidate remains source-level only.",
+      "developer_report": "research/deliveries/c-line/ib8bca_dataview_width_boundary_20261020.md",
+      "developer_report_commit": "97c38b802db29f56cc79bcafc2011026be2e6dc3",
+      "validation": "python -m pytest tests/detectors/ark_runtime tests/detectors/test_cpp_memory_safety_detectors.py -q: 179 passed, 3 skipped",
+      "result": "The active planning branch contains INDEX_BOUNDS_RULE_ID and exact bindings (rule v1.1.0), contrary to stale developer/test worktree branches. Exact registered replay on planning HEAD 85eb094 emitted parent 1 candidate at line 75 and fixed 0 diagnostics; both remain partial/blocked detector_model_incomplete. Prior not_run conclusions apply only to old worktrees.",
+      "tester_report_commit": "22a6a2c8768bd18b3f169fa3e1ed47ef027f3853",
+      "tester_response": "Independent matrix/source trace agrees; parent overflow branch remains unknown; no discrepancy.",
+      "current_planning_branch_replay": {
+        "branch_head": "85eb0948515e777d53996caf8f7ecb4b87897c90",
+        "rule_version": "1.1.0 on the current planning model",
+        "method": "Exact Git blobs + repository C++ parser complete/no issues + git_object/light-ast context + ArkRuntimeTypeSafetyDetector through run_all_with_coverage",
+        "artifact_script": "research/deliveries/c-line/ib8bca_registered_replay_20261020.py",
+        "artifact_output": "research/deliveries/c-line/ib8bca_registered_replay_20261020.json",
+        "report": "research/deliveries/c-line/ib8bca_registered_replay_current_branch_20261020.md",
+        "parent": {
+          "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+          "parse": "complete, 0 issues",
+          "applicable_files": 1,
+          "candidate_count": 1,
+          "candidate_line": 75,
+          "coverage": "partial",
+          "detector_status": "blocked",
+          "limitation": "detector_model_incomplete"
+        },
+        "fixed": {
+          "commit": "48fcec3686e45175f95b4600b579026a65149966",
+          "parse": "complete, 0 issues",
+          "applicable_files": 1,
+          "candidate_count": 0,
+          "coverage": "partial",
+          "detector_status": "blocked",
+          "limitation": "detector_model_incomplete"
+        },
+        "interpretation": "Parent candidate is preserved; fixed zero is not safety; both detector outcomes remain partial/unknown. Static only; no IR/runtime/product claim."
+      },
+      "registered_replay_addendum": "research/deliveries/c-line/ib8bca_registered_replay_addendum_20261020.md",
+      "registered_replay_independent_tester": "Completed by independent tester on planning HEAD 85eb094; report commit 5f44834e97ab6e8b7720389c40f869caa1be0268.",
+      "report": "research/deliveries/c-line/ib8bca_dataview_width_boundary_20261020.md",
+      "report_commit": "c30c51433b84dd0164ed5d12d166ade5cb731c7e"
     },
     {
       "objective": "Refine the exact-bound IB8BCA candidate in BuiltinsDataViewStubBuilder::SetTypedValue, determine whether the parent signed 32-bit bounds arithmetic can be bypassed by representable inputs, and preserve conservative unknowns where runtime/build semantics are unavailable.",
@@ -433,11 +471,46 @@
       "blocking_prerequisites": [],
       "id": "C-TEST-IB8BCA-20261020",
       "kind": "independent_testing",
-      "status": "READY_FOR_PARALLEL_EXECUTION",
+      "status": "COMPLETED_INDEPENDENT_CURRENT_BRANCH_REPLAY",
       "test_agent": "ark_static_test",
       "tester_prompt": "ROLE: independent C-line tester. OBJECTIVE: independently verify the IB8BCA SetTypedValue source candidate and adversarially replay any developer change. INPUT: exact parent/fixed commits, trees, blobs, SHA-256 and local object store in the execution tree; developer matrix/commit when available. TASKS: independently verify source identity; trace the same guard/add/compare/buffer-offset/store sequence without relying on the developer conclusion; build boundary cases around INT32_MAX and each elementSize, negative/ordinary indexes, exact end-of-view and one-past-end, fixed widened control, plus unrelated/safe controls. Check actual test/profile availability; never label blocked/not_run or zero findings as a negative. Replay any patch on the exact developer commit, compare every discrepancy and send it to developer for response. CONSTRAINTS: no production edits; preserve state; no runtime/product/security claim from static replay. DELIVERABLES: independent report with hashes, command outputs, case matrix, whether exact registered rule replay was run, results and unknowns; commit report. DONE WHEN: independent same-commit replay is complete or a concrete limitation is documented and developer has responded.",
       "feedback_to": "C-DEV-IB8BCA-20261020",
-      "completion": "Pending independent source baseline and same-commit replay if a patch exists."
+      "completion": "Independent source matrix plus exact registered replay completed on current planning HEAD 85eb094; parent one candidate at line 75; fixed zero; both partial/blocked. Earlier not_run applied only to old tester HEAD 420a71e.",
+      "report": "research/deliveries/c-line/ib8bca_registered_replay_addendum_20261020.md",
+      "report_commit": "5f44834e97ab6e8b7720389c40f869caa1be0268",
+      "result": "Exact object identities and source sequence independently verified; source arithmetic matrix covers 4-byte and 8-byte types, exact fit, first past end, ordinary, negative and offset controls. Parent IR overflow outcome unknown; fixed widened comparison rejects first-past-end at source level.",
+      "registered_rule_replay": "completed on planning HEAD 85eb094; old-base not_run applies only to test HEAD 420a71e",
+      "runtime_test": "not_run",
+      "current_planning_branch_replay": {
+        "branch_head": "85eb0948515e777d53996caf8f7ecb4b87897c90",
+        "rule_version": "1.1.0 on the current planning model",
+        "method": "Exact Git blobs + repository C++ parser complete/no issues + git_object/light-ast context + ArkRuntimeTypeSafetyDetector through run_all_with_coverage",
+        "artifact_script": "research/deliveries/c-line/ib8bca_registered_replay_20261020.py",
+        "artifact_output": "research/deliveries/c-line/ib8bca_registered_replay_20261020.json",
+        "report": "research/deliveries/c-line/ib8bca_registered_replay_current_branch_20261020.md",
+        "parent": {
+          "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+          "parse": "complete, 0 issues",
+          "applicable_files": 1,
+          "candidate_count": 1,
+          "candidate_line": 75,
+          "coverage": "partial",
+          "detector_status": "blocked",
+          "limitation": "detector_model_incomplete"
+        },
+        "fixed": {
+          "commit": "48fcec3686e45175f95b4600b579026a65149966",
+          "parse": "complete, 0 issues",
+          "applicable_files": 1,
+          "candidate_count": 0,
+          "coverage": "partial",
+          "detector_status": "blocked",
+          "limitation": "detector_model_incomplete"
+        },
+        "interpretation": "Parent candidate is preserved; fixed zero is not safety; both detector outcomes remain partial/unknown. Static only; no IR/runtime/product claim."
+      },
+      "prior_worktree_scope": "Baseline commit 420a71e lacked the registered rule/binding; its not_run conclusion was correct for that checkout only.",
+      "latest_feedback": "Independent tester reproduced planning-branch registered replay. No code change in this slice; developer and tester source matrices agree."
     },
     {
       "objective": "Refine the exact-bound IB8BCA candidate in BuiltinsDataViewStubBuilder::SetTypedValue, determine whether the parent signed 32-bit bounds arithmetic can be bypassed by representable inputs, and preserve conservative unknowns where runtime/build semantics are unavailable.",
@@ -465,18 +538,80 @@
       "blocking_prerequisites": [],
       "id": "C-LLM-REVIEW-IB8BCA-20261020",
       "kind": "second_layer_candidate_review",
-      "status": "IN_PROGRESS_SOURCE_REVIEW",
+      "status": "COMPLETED_SOURCE_CANDIDATE_RUNTIME_UNKNOWN",
       "reviewer": "typedarray_length_review",
       "second_layer_prompt": "ROLE: second-layer source reviewer only; do not implement or change detector/model code. OBJECTIVE: inspect whether the exact parent `BuiltinsDataViewStubBuilder::SetTypedValue` candidate supports a plausible source-level bounds-check defect and what the fixed revision changes. INPUT: parent d62f6de64daa7e11a7936a6153748a7c5fae9e41 / blob aedb6d26681535371d1e9ed90b697b923b8100e6 / SHA bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548; fixed 48fcec3686e45175f95b4600b579026a65149966 / blob dce9388e8b7e33c87aec33ac4d067fe40370561b / SHA 89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386. TASKS: verify both identities; inspect guard and operation order, integer types, element-size instantiations, view byte length, byte offset and store widths; assess possible overflow/bypass and counterevidence. Separate source-level candidate plausibility from compiled-stub semantics, triggering/reachability, runtime and product impact. Return a candidate/unknown/no-support disposition with evidence and explicit unknowns. No code, detector/model feature work, PoC or vulnerability claim.",
-      "completion": "Candidate was already emitted by the recorded static replay; independent source review is now in progress. No second-layer feature development."
+      "completion": "Second-layer source review verified exact parent/fixed identities and retained the candidate for follow-up; no LLM/detector feature development.",
+      "report": "research/deliveries/c-line/second_layer_ib8bca_review_20261020.md",
+      "report_commit": "85eb0948515e777d53996caf8f7ecb4b87897c90",
+      "disposition": "plausible source-level bounds-check bypass candidate; not a confirmed vulnerability",
+      "unknowns": [
+        "Ark DSL/backend lowering of integer operations",
+        "fast-path reachability for boundary tagged integers",
+        "feasible backing-buffer sizes and runtime store behavior",
+        "product impact",
+        "fixed final truncation under all runtime mutation/resizable-buffer behavior"
+      ],
+      "result": "Plausible parent source-level signed-add-before-bounds-check bypass candidate; fixed widens compare. Compiled/IR behavior and all runtime/product effects remain unknown."
+    },
+    {
+      "id": "C-DEV-DV-API-20261020",
+      "kind": "development_and_candidate_refinement",
+      "status": "IN_PROGRESS",
+      "worktree": "planning worktree; exact base 85eb0948515e777d53996caf8f7ecb4b87897c90",
+      "feedback_from": "C-TEST-DV-API-20261020",
+      "objective": "Refine the exact-bound DataView API index-width candidate in BuiltinsDataView::GetViewValue and SetViewValue. The source-bound detector currently emits two parent candidates (lines 394 and 455) but no fixed candidates; fixed replay remains partial/unknown in DataViewConstructor, GetViewValue, and SetViewValue. Determine whether any parent candidate represents unsafe arithmetic or whether uint32_t types, nonnegative conversion, element-size limits, view construction invariants, and underlying buffer bounds prove it safe. Improve the model only where exact source evidence permits a narrow sound distinction.",
+      "input": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "parent": {
+          "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+          "tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+          "path": "ecmascript/builtins/builtins_dataview.cpp",
+          "blob": "e6bac984354292405ae62f7728170d7be5e3760e",
+          "sha256": "bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c"
+        },
+        "fixed": {
+          "commit": "48fcec3686e45175f95b4600b579026a65149966",
+          "tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+          "path": "ecmascript/builtins/builtins_dataview.cpp",
+          "blob": "a2376e822e995333b2400520ca5b882de9578b5e",
+          "sha256": "39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b"
+        },
+        "rule": "ark.runtime.dataview-index-width-bounds v1.1.0; exact bindings exist on planning base 85eb094"
+      },
+      "developer_prompt": "ROLE: C-line static-analysis developer. BASE: planning HEAD 85eb0948515e777d53996caf8f7ecb4b87897c90. OBJECTIVE: make the index-width rule retain only well-supported narrow candidates across exact-bound BuiltinsDataView::GetViewValue and SetViewValue, and correctly retain unknown where proof is incomplete. TASKS: independently verify the pinned parent/fixed tree/blob/SHA; inspect index conversion, signedness and widths, negative checks, element-size range, bounds comparison, offset addition, constructor invariants, buffer max length, and exact detector traces at parent lines 394/455. Send the tester a boundary/control matrix and expected detector outcomes before finalizing. If a concrete false positive/false negative is proven, make the smallest source-bound model/test change and add positive/fixed/safe/unrelated/unknown controls; do not generalize to unbound sources. If source proof does not support a change, make no code patch and report the reason. Replay the registered detector on exact parent and fixed contexts and report candidate count, coverage, and unknowns. CONSTRAINTS: preserve other work; do not fabricate labels or product/runtime impact; fixed zero is not safe; no second-layer LLM feature implementation. DELIVERABLE: focused code/test change if justified, exact command outputs, hashes, report, and commit SHA; respond to the tester discrepancies before closing.",
+      "blocking_prerequisites": [],
+      "feedback_loop": "Tester provides independent baseline matrix first. Developer returns precise expected outcomes, implements only evidence-backed change, then tester replays same developer commit; developer answers concrete discrepancies."
+    },
+    {
+      "id": "C-TEST-DV-API-20261020",
+      "kind": "independent_testing",
+      "status": "IN_PROGRESS_BASELINE_THEN_SAME_COMMIT_REPLAY",
+      "test_agent": "ark_static_test",
+      "feedback_to": "C-DEV-DV-API-20261020",
+      "objective": "Independently verify the exact source semantics and detector behavior for DataView GetViewValue/SetViewValue candidates, provide adversarial controls before developer changes, then replay any developer commit and return concrete discrepancies.",
+      "input": "Same exact parent/fixed source bindings and planning base as C-DEV-DV-API-20261020. Current analyzer yields two parent candidates at lines 394 and 455 and fixed zero candidates plus unknowns for DataViewConstructor/GetViewValue/SetViewValue.",
+      "tester_prompt": "ROLE: independent C-line tester. OBJECTIVE: test whether DataView GetViewValue and SetViewValue candidates are supported by exact source types/invariants and adversarially replay any developer change. TASKS: independently verify source identities; trace Number/ToIndex conversion, negative rejection, uint32_t conversions, elementSize, view size, byteOffset, constructor constraints, all buffer-size caps, and get/set sinks. Build a matrix for ordinary valid index, last valid element, exact-end, first-past-end, negative, INT32_MAX, maximum view/buffer offset, each element width, malformed/unrelated safe controls, fixed source, and the separate signed Int32Add SetTypedValue candidate. Record parent/fixed expected source behavior versus detector behavior; do not call an unsupported parse/model result negative. Send baseline matrix to developer before implementation. After developer provides a commit, run focused tests and exact registered parent/fixed replay on that same commit, report every discrepancy and preserve partial/blocked status. CONSTRAINTS: no production edits, preserve state, no product/runtime/vulnerability claims without execution/evidence. DELIVERABLE: independent report with hashes, case matrix, exact commands/results, coverage and limitations; commit report if feasible.",
+      "blocking_prerequisites": []
+    },
+    {
+      "id": "C-LLM-REVIEW-DV-API-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "IN_PROGRESS_SOURCE_REVIEW_ONLY",
+      "reviewer": "typedarray_length_review",
+      "objective": "Independently review the exact parent/fixed DataView GetViewValue and SetViewValue source paths for candidate plausibility and counterevidence; do not implement detector or LLM features.",
+      "input": "Same exact source identity pins as C-DEV-DV-API-20261020; focus on lines 394 and 455, plus the constructor and backing-buffer size invariants.",
+      "second_layer_prompt": "ROLE: second-layer source reviewer only. Verify exact source identities; trace index conversion/range, elementSize, uint32_t arithmetic, DataView construction bounds, backing-buffer constraints, and GetValueFromBuffer/SetValueInBuffer sinks. Decide separately for parent and fixed whether the detector candidates are plausible source-level defects, disproven by source invariants, or unresolved. Identify counterevidence and unknown compiled/runtime/product behavior. Do not change code/model or add an LLM feature. Return a concise source report with exact lines and evidence; do not promote to confirmed vulnerability.",
+      "blocking_prerequisites": []
     }
   ],
   "feedback_loop": [
-    "Completed I7W51D second-layer review supports a source-level signed narrowing candidate; runtime/product impact remains unknown.",
-    "Completed adjacent >UINT32_MAX work added no candidate: conversion result remains unknown; effective Ark rule coverage on the current base is unknown/not_run.",
-    "Next parallel slice is exact-bound IB8BCA SetTypedValue: developer refines only a concrete detector defect, tester independently traces and replays, and second-layer reviewer inspects source semantics without developing LLM features.",
-    "Developer must disclose whether the registered Ark rule/source binding is present on its actual branch; absent rule means CLI replay not_run, not zero findings.",
-    "Keep candidate-only semantics and unknown/not_run; no product, exploitability or accuracy claim without suitable evidence."
+    "IB8BCA developer, independent tester, and second-layer reviewer are complete. Current planning branch registered replay: exact parent emits one candidate at line 75; fixed emits zero diagnostics; both remain partial/blocked due detector_model_incomplete.",
+    "The tester addendum corrects the older branch-local not_run statement: test HEAD 420a71e lacked the rule, while planning HEAD 85eb094 has exact bindings. Keep the two branch scopes distinct.",
+    "The IB8BCA parent SetTypedValue candidate is plausible at source level; compiled IR, reachability, runtime effects, backing allocation feasibility, and product impact remain unknown. Fixed zero is not a safety result.",
+    "Next slice: inspect source-bound candidates in BuiltinsDataView::GetViewValue and SetViewValue. Existing replay reports two parent candidates and fixed zero, but fixed still has unknowns in constructor/get/set; developer and tester must check integer types, conversion ranges, view/buffer invariants, branch semantics, and avoid broad suppression or unsupported candidate expansion.",
+    "The tester supplies independent source boundary controls first; developer responds with exact expected outcomes and any detector/test change; tester replays the developer commit and returns discrepancies. A separate source reviewer assesses candidate plausibility only; no LLM feature work.",
+    "A fresh remote fetch failed again at GitHub port 443. Local pinned-source work continues; do not label local revision as remote latest."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
