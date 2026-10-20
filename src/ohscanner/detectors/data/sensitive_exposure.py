@@ -270,7 +270,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.1'
+    version = '0.21.2'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -479,7 +479,24 @@ class LocalFlow:
         if n.type=='call_expression':
             if n.id in self.call_results:
                 return self.call_results[n.id]
-            fn=self.text(n.child_by_field_name('function'))
+            function=n.child_by_field_name('function')
+            fn=self.text(function)
+            args=n.child_by_field_name('arguments')
+            # Only a directly declared std::string local value is modeled.
+            # Pointer/reference aliases, arbitrary same-name methods and inferred
+            # receiver types need separate binding evidence.
+            if (function is not None and function.type=='field_expression'
+                    and self.text(function.child_by_field_name('operator'))=='.'
+                    and self.text(function.child_by_field_name('field'))=='c_str'
+                    and args is not None and not args.named_children):
+                receiver=function.child_by_field_name('argument')
+                if (receiver is not None and receiver.type=='identifier'
+                        and types.get(self.text(receiver))=='std::string'):
+                    flows=self.expr(receiver,env,types)
+                    if flows:
+                        self.gaps.add('std::string c_str receiver dependency is syntax-bound; compiler type identity remains unresolved')
+                    return self.addstep(flows,
+                        f'{n.start_point[0]+1} std::string receiver {self.text(receiver)}.c_str()')
             if (fn in STATUS_RETURN_CALLS and fn not in self.shadows
                     and fn not in self.function_definitions):
                 self.gaps.add('modeled status-return API; argument escape remains a candidate: '+fn)
@@ -489,7 +506,6 @@ class LocalFlow:
                 return (self.source('heuristic suspected sensitive-return API '+fn,n),)
             if fn in ('strlen','strnlen','strnlen_s','wcslen') and fn not in self.function_definitions and fn not in self.shadows:
                 return () # A scalar length is not the sensitive material itself.
-            args=n.child_by_field_name('arguments')
             if fn not in self.shadows and fn not in self.function_definitions and (fn in self.output_calls or fn in self.copy_calls or fn in ('memcpy_s','strcpy_s','snprintf','snprintf_s')):
                 return () # modeled return is a status/count, not the output buffer
             vals=tuple(v for a in (args.named_children if args else []) for v in self.expr(a,env,types))
@@ -1074,6 +1090,10 @@ class LocalFlow:
             if not name:continue
             declared.add(name);state.types.pop(name,None);state.values[name]=();state.shadows.add(name)
             if type_text in self.fields:state.types[name]=type_text
+            declarator=d.child_by_field_name('declarator') if d.type=='init_declarator' else d
+            if (type_text=='std::string' and declarator is not None
+                    and declarator.type=='identifier'):
+                state.types[name]=type_text
             value=d.child_by_field_name('value')
             if value:
                 self.effects(value,state,fnname)

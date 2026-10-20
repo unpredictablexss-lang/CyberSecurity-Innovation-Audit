@@ -21,12 +21,12 @@ BASE = '6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f'
 TARGET = 'src/ohscanner/detectors/data/sensitive_exposure.py'
 
 
-def baseline_detector():
-    source = subprocess.check_output(['git', 'show', BASE + ':' + TARGET], cwd=ROOT)
+def baseline_detector(revision=BASE):
+    source = subprocess.check_output(['git', 'show', revision + ':' + TARGET], cwd=ROOT)
     module = types.ModuleType('src.ohscanner.detectors.data._d84_baseline')
     module.__package__ = 'src.ohscanner.detectors.data'
     sys.modules[module.__name__] = module
-    exec(compile(source, BASE + ':' + TARGET, 'exec'), module.__dict__)
+    exec(compile(source, revision + ':' + TARGET, 'exec'), module.__dict__)
     return module.SensitiveExposureDetector
 
 

@@ -461,6 +461,55 @@ void UnreviewedName(SessionKey *maybe){ HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{publi
         self.assertEqual(run.status,'blocked')
         self.assertIn('unreviewed sensitive-name heuristic',' '.join(run.limitations))
         self.assertTrue(run.findings[0].evidence_obligations)
+
+    def test_std_string_local_c_str_preserves_receiver_dependency(self):
+        for statement,expression in (
+                ('std::string value=key;','value.c_str()'),
+                ('std::string value{key};','value.c_str()'),
+                ('std::string value=key; value += "suffix";','value.c_str()'),
+                ('std::string value="prefix"; value += key;','value.c_str()'),
+                ('std::string value=key; std::string out=(value += "suffix");','out.c_str()')):
+            with self.subTest(statement=statement):
+                run=self.analyze('void Callback(const char *key) {'+statement+
+                                 f'HILOG_INFO(1,"%{{public}}s",{expression}); }}')
+                self.assertEqual(len(run.findings),1)
+                self.assertIn('std::string receiver',run.findings[0].message)
+                self.assertIn('Callback parameter 0',run.findings[0].message)
+                self.assertIn('compiler type identity',' '.join(run.limitations))
+
+    def test_std_string_local_c_str_safe_and_same_name_controls(self):
+        cases=(
+            'std::string value="safe";',
+            'std::string value=key; value="redacted";',
+            'Fake value=key;',
+            'string value=key;',
+        )
+        for statement in cases:
+            with self.subTest(statement=statement):
+                run=self.analyze(
+                    'struct Fake { Fake(const char *); const char *c_str() { return "safe"; } }; '
+                    'struct string { string(const char *); const char *c_str() { return "safe"; } }; '
+                    'void Callback(const char *key) {'+statement+
+                                 'HILOG_INFO(1,"%{public}s",value.c_str()); }')
+                self.assertEqual(len(run.findings),0)
+
+    def test_std_string_c_str_private_and_partial_preserve_obligations(self):
+        run=self.analyze(
+            'void Callback(const char *key) { std::string value=key; '
+            'HILOG_INFO(1,"%{private}s",value.c_str()); }',partial='partial')
+        self.assertEqual(len(run.findings),1)
+        self.assertTrue(any(o.kind=='sink_privacy' for o in run.findings[0].evidence_obligations))
+        self.assertNotEqual(dict(run.file_outcomes)['service.cpp'],'complete')
+
+    def test_std_string_c_str_unknown_profile_remains_unreviewed(self):
+        context=self.context(
+            'void f(const char *sessionKey) { std::string value=sessionKey; '
+            'HILOG_INFO(1,"%{public}s",value.c_str()); }')
+        run=SensitiveExposureDetector().detect(context,context.units)
+        self.assertEqual(len(run.findings),1)
+        self.assertEqual(run.status,'blocked')
+        self.assertIn('heuristic suspected sensitive identifier sessionKey',run.findings[0].message)
+        self.assertIn('std::string receiver value.c_str()',run.findings[0].message)
     def test_format_positional_rejected(self):
         with self.assertRaises(ValueError):formats('%2$s')
     def test_default_private(self):

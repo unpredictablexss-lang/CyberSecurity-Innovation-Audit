@@ -1,0 +1,275 @@
+{
+  "baseline": "e72855e970405bb8043cf4bb961207848c957a97",
+  "detector_version": "0.21.2",
+  "controls": {
+    "string_local": {
+      "before": {
+        "candidate_count": 0,
+        "status": "completed",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "complete"
+          ]
+        ],
+        "findings": []
+      },
+      "after": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.log.sensitive-value",
+            "message": "Candidate local sensitive-material dependency: service.cpp:1 source Callback parameter 0 -> 1 assign value -> 1 std::string receiver value.c_str() -> 1 HILOG_INFO public operand 0",
+            "obligations": [
+              "local_flow",
+              "source_semantics",
+              "type_identity",
+              "runtime_log_visibility",
+              "execution_and_identity",
+              "security_impact"
+            ]
+          }
+        ]
+      }
+    },
+    "string_brace_init": {
+      "before": {
+        "candidate_count": 0,
+        "status": "completed",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "complete"
+          ]
+        ],
+        "findings": []
+      },
+      "after": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.log.sensitive-value",
+            "message": "Candidate local sensitive-material dependency: service.cpp:1 source Callback parameter 0 -> 1 assign value -> 1 std::string receiver value.c_str() -> 1 HILOG_INFO public operand 0",
+            "obligations": [
+              "local_flow",
+              "source_semantics",
+              "type_identity",
+              "runtime_log_visibility",
+              "execution_and_identity",
+              "security_impact"
+            ]
+          }
+        ]
+      }
+    },
+    "compound_lhs": {
+      "before": {
+        "candidate_count": 0,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": []
+      },
+      "after": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.log.sensitive-value",
+            "message": "Candidate local sensitive-material dependency: service.cpp:1 source Callback parameter 0 -> 1 assign value -> 1 compound assign value (+=) -> 1 std::string receiver value.c_str() -> 1 HILOG_INFO public operand 0",
+            "obligations": [
+              "local_flow",
+              "source_semantics",
+              "type_identity",
+              "runtime_log_visibility",
+              "execution_and_identity",
+              "security_impact"
+            ]
+          }
+        ]
+      }
+    },
+    "compound_rhs": {
+      "before": {
+        "candidate_count": 0,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": []
+      },
+      "after": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.log.sensitive-value",
+            "message": "Candidate local sensitive-material dependency: service.cpp:1 source Callback parameter 0 -> 1 compound assign value (+=) -> 1 std::string receiver value.c_str() -> 1 HILOG_INFO public operand 0",
+            "obligations": [
+              "local_flow",
+              "source_semantics",
+              "type_identity",
+              "runtime_log_visibility",
+              "execution_and_identity",
+              "security_impact"
+            ]
+          }
+        ]
+      }
+    },
+    "safe_overwrite": {
+      "before": {
+        "candidate_count": 0,
+        "status": "completed",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "complete"
+          ]
+        ],
+        "findings": []
+      },
+      "after": {
+        "candidate_count": 0,
+        "status": "completed",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "complete"
+          ]
+        ],
+        "findings": []
+      }
+    },
+    "safe_literal": {
+      "before": {
+        "candidate_count": 0,
+        "status": "completed",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "complete"
+          ]
+        ],
+        "findings": []
+      },
+      "after": {
+        "candidate_count": 0,
+        "status": "completed",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "complete"
+          ]
+        ],
+        "findings": []
+      }
+    },
+    "unrelated_same_name": {
+      "before": {
+        "candidate_count": 0,
+        "status": "completed",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "complete"
+          ]
+        ],
+        "findings": []
+      },
+      "after": {
+        "candidate_count": 0,
+        "status": "completed",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "complete"
+          ]
+        ],
+        "findings": []
+      }
+    }
+  },
+  "upstream": {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "verified_files": [
+      {
+        "path": "core/authentication/src/auth_session_key.c",
+        "sha256": "5dc2f567cd127876aaaf35f7373c4b5a802a5802607eb7d05e34f62d5870701f",
+        "blob": "0569ee21db9bf2a3ccfd10c020b3c0d45c01cc50",
+        "size": 23151
+      },
+      {
+        "path": "core/authentication/src/auth_hichain.c",
+        "sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+        "blob": "1aadc4dafe81bc42f9916b9bd7aa3f9f0a616c2d",
+        "size": 22279
+      },
+      {
+        "path": "core/authentication/src/auth_hichain_adapter.c",
+        "sha256": "0bbbfe21cf79a85343848f59620cedb1b67a42d5f1196d7e36816e9cd562f6de",
+        "blob": "5b4f711bd9de233843fd6efe48267e0b10831206",
+        "size": 14989
+      },
+      {
+        "path": "dfx/log/src/auth_log.c",
+        "sha256": "66efee6c3dc668112c46f1f412290b92e3830472f506f4778523736e4a78c9ca",
+        "blob": "f499877ece96baee3173bd43326607ad0fb91268",
+        "size": 1041
+      }
+    ],
+    "before_count": 5,
+    "after_count": 5,
+    "identical_findings_and_outcomes": true
+  },
+  "limitations": [
+    "Candidates are syntax-bound; compiler type identity and product impact remain unknown.",
+    "Only directly declared std::string local values with zero-argument dot c_str() calls are modeled.",
+    "Parenthesized constructor syntax is ambiguous in this parser and is not treated as a value declaration.",
+    "Aliases, references, pointers, temporary receivers and arbitrary same-name methods are not modeled.",
+    "The four real C files check regressions only; they do not validate C++ receiver-model completeness.",
+    "No independent accuracy labels or formal precision/recall metrics are claimed."
+  ]
+}
