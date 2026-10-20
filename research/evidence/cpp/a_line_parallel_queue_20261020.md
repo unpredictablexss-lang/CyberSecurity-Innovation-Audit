@@ -453,3 +453,22 @@ The independent test line located real production-source adjacent controls at th
 ### 2026-10-20 follow-up — dSoftBus source-bound controls
 
 T62's independent test line reviewed four local guard-before-use controls in the exact vulnerable `bus_center_client_proxy.cpp` blob (including guarded `BusCenterClientProxy` use and unrelated input-pointer guards), confirmed their early-return ordering, and replayed the exact vulnerable/fixed whole-file objects at 5/0. Syntax parsing is complete, but `ohscanner.cpp.null_dereference` remains semantic coverage 0/1 and both runs are blocked, so absence of diagnostics at control sites is inconclusive. Preserve CVE-2025-26690 as PARTIAL/BLOCK; product build/reachability/impact and signed publisher attestation are still unknown. See [T62 control addendum](t62_dsoftbus_controls_20261020/README.md) and [verifier](verify_t62_dsoftbus_controls_20261020.py).
+
+
+## Next parallel wave — started 2026-10-20
+
+### D22 — generic null guard/dominance feasibility (development)
+
+- **Role / sustained goal:** A-line C/C++ null-dereference detector developer; improve generic local guard-before-use modeling only when evidence proves a real, reusable gap.
+- **Input:** PR #35 scanner code baseline `81dd4aea9bb51522ac912b33504ef0d2ddb79089`; exact dSoftBus vulnerable/fixed source identities and T62 source-bound controls.
+- **Steps:** Reproduce 5/0 and coverage 0/1 blocked state; determine whether the gap is detector semantics or coverage accounting; if a real detector gap exists, implement with vulnerable/fixed/safe/unrelated/renamed/partial controls and focused tests.
+- **Completion gate:** Reusable controls preserve the vulnerable root and quiet only source-proven guarded operations; otherwise commit a no-change assessment naming the blocker. Keep CVE-2025-26690 PARTIAL/BLOCK until independent acceptance and product evidence.
+- **Boundaries:** Separate worktree; no shared parser, API, schema, Catalog, or owner-only docs edits; no PR push.
+
+### T2 — fresh replay of remaining 13-row matrix gaps (independent test)
+
+- **Role / sustained goal:** Independent A-line static regression tester; close only reproducible source-bound replay gaps and maintain explicit blockers.
+- **Input:** PR #35 scanner code baseline `81dd4aea9bb51522ac912b33504ef0d2ddb79089`, 13-row inventory, exact source objects and existing T2/T3 records.
+- **Steps:** Identify rows not freshly replayed; verify repo/commit/tree/blob/SHA and CLI scope/rule/parse coverage; run only reconstructible current-CLI cases; retain N/A, missing-fix and parser-partial labels.
+- **Completion gate:** Every attempted row has provenance, command, version, findings/locations, parse state and PASS/PARTIAL/BLOCK; all unrun rows have a minimal missing-input blocker.
+- **Boundaries:** Separate worktree; no detector/tests/fixtures or developer conclusions edited; no owner-only docs changes; no PR push.
