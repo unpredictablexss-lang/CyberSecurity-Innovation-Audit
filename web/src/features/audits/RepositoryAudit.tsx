@@ -108,7 +108,8 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
               <InputNumber stringMode min="0.00000001" max="999999" step="0.01"
                 style={{ width: 240 }} addonBefore="USD" />
             </Form.Item>
-            <Form.Item name="auto_r2" valuePropName="checked" hidden>
+            <Form.Item name="auto_r2" valuePropName="checked"
+              extra="允许在同一授权源码范围内按需继续深入调查；模型只能使用已审查的只读工具和预算。">
               <Checkbox>授权后允许按证据缺口自动继续跨文件追查</Checkbox>
             </Form.Item>
             {autoR2 && <Form.Item name="max_r2_candidates" label="最多深入追查候选数">
