@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "D98_T97_IN_PROGRESS",
+  "status": "D99_T98_IN_PROGRESS",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -526,22 +526,52 @@
       "id": "D98",
       "kind": "development",
       "title": "收窄修复all-return switch后的不可达语句误候选",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D97", "T96"],
       "input": "T96 D97_VALIDATION exhaustive_all_return_switch_revives_dead_fallthrough: all explicit case arms plus default return, yet switch-following material sink is still scanned.",
       "completion": "Suppress only a post-switch path proven unreachable from a complete, unambiguous all-return switch. Missing default, fallthrough, mixed exits, unknown/duplicate labels, partial AST or incomplete selected units retain conservative behavior.",
-      "tests": ["T97"]
+      "tests": ["T97"],
+      "commit": "b3dfd70894290c344017c33198b905c70eb51985",
+      "integration_commit": "0334616ec",
+      "evidence_commit": "5b1a4ca513d662a02eb2987888b22d8445adf85a",
+      "evidence_integration_commit": "1c6f16864",
+      "completion": "A complete unambiguous switch with canonical unique decimal labels, one default and direct bare return in every arm now ends the post-switch path. Uncertain/partial control flow remains conservative.",
+      "validation": "0.21.13; developer7 methods with 5 baseline subassertion failures→0; data335 and compatibility62 pass. Independent T97 16 methods/data335/compat62 pass. T85 direct/Runner24, common24 IDs/messages/evidence,638 calls and890/915 unchanged; 3 files remain partial. Grouped fallthrough labels and return-expression arms remain known gaps."
     },
     {
       "id": "T97",
       "kind": "testing",
       "title": "独立挑战switch全return可达性与保守反控制",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "depends_on": ["D97", "T96"],
       "feedback_to": ["D98"],
-      "completion": "Independently verify complete all-return switch postlude reachability, while checking missing default, fallthrough, mixed exits and partial input remain conservative; fixed T85 replay."
+      "completion": "Independent 16-method switch-return matrix closed the naked-return unreachable-postlude finding while retaining real reachable logs; goto/partial/mixed exits remain conservative.",
+      "commit": "dc963d80a2e8858586769aa284e763f062a146b7",
+      "integration_commit": "a90741eb3",
+      "validation": "16 methods; baseline3 failures→0; full data335 and compatibility62 pass. T8524/24, common evidence and638 calls unchanged; grouped fallthrough and return-expression variants remain known gaps."
+    },
+    {
+      "id": "D99",
+      "kind": "development",
+      "title": "評估分組case標籤及return表達式的終止證明",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
+      "depends_on": ["D98", "T97"],
+      "input": "T97 records grouped consecutive case labels and return-expression arms as known_gap_not_passed after naked-return closure.",
+      "completion": "Implement only when AST structure proves grouped labels share the same direct return and every unique case/default arm terminates; preserve duplicate, fallthrough, mixed-exit, partial and unknown cases.",
+      "tests": ["T98"]
+    },
+    {
+      "id": "T98",
+      "kind": "testing",
+      "title": "獨立挑战switch分组标签和return表达式终止语义",
+      "status": "IN_PROGRESS",
+      "agent": "/root/t83_static_feedback",
+      "depends_on": ["D98", "T97"],
+      "feedback_to": ["D99"],
+      "completion": "Independently validate grouped labels, return expression arms, and their fallthrough boundaries; fixed T85 and conservative negative controls."
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
@@ -573,13 +603,13 @@
     "known_disclosed_cves": "0.19.11"
   },
   "integrated_tests": {
-    "data": 312,
+    "data": 335,
     "known_and_corpus": 39,
     "parser_linkage": 16,
     "ast_parser": 7,
-    "total": 374,
+    "total": 397,
     "result": "PASS"
   },
   "remote_branch": "origin/codex/d-owner-20261020-01a1571f",
-  "pushed_head": "8f6841ef997d5ce8e0aaf3de925b59061bee3fa8"
+  "pushed_head": "ad947a10289e0669225ba9461393466341d733f1"
 }

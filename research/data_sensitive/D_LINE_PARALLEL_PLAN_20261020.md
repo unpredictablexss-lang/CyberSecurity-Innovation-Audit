@@ -274,6 +274,25 @@ flowchart TD
 - **反馈**：任一仍可达分支被当作死代码抑制，或all-return死代码保留成材料候选，都报告精确源片段、direct/Runner与期望并交D98修复/复测。分歧时固定selected scope和AST证据。
 - **固定回归**：fresh-source baseline/final、完整data、T85 direct/Runner；记录IDs/evidence、638 calls、890/915、coverage和工具版本。报告边界，不报无标签准确率，不推送owner。
 
+### D99（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：C++ switch 分组标签及return表达式终止证明开发者。
+- **基线**：D98/T97集成版0.21.13，已支持每个唯一数字case/default各自直接裸return；T97另记录 grouped consecutive labels 和 return-expression arms 为 `known_gap_not_passed`。
+- **目标**：评估是否可在AST明确支持时识别 `case 0: case 1: return;` 这类标签组，以及直接 `return expr;` 作为终止arm。只有每个可选入口都归属一个终止arm、标签唯一且default完整时才能证明后续不可达。
+- **反控制**：有后续语句的fallthrough、case语句共享造成的跨入口活性、重复/非规范标签、缺default、unknown/partial AST、返回表达式内未知语法和嵌套控制流，不得当作终止证明；真实switch内部sink保持。
+- **反馈/验证**：先冻结最小形态交T98；只有具名反例支持才改。修订后跑data/兼容性、T85 direct/Runner和fixed-source归档，比较ID/evidence、638 call facts、coverage；报告仍未支持项。
+
+### T98（并行独立挑战线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立 switch 标签分组与return语义挑战者。
+- **矩阵**：连续同体label共享裸return；每组独立return；return字面量/函数调用表达式；表达式含未知调用；分组标签后存在可执行语句；case间fallthrough；多组加default；缺default/重复label/非数字label；switch内部sink与switch后sink。
+- **反馈**：若D99将任何仍可达路径判死并压掉真实候选，立即提供最小代码和direct/Runner证据；若当前解析器无法区分组标签或return expression，要求保持known/partial并明确报告，而不强迫实现。
+- **固定回归**：fresh-process固定src、data和T85 direct/Runner；记录身份、evidence、638调用事实及coverage。不得把候选数当标签，不推送owner。
+
 ### T92（并行独立挑战线）
 
 **结构化 vibe coding 提示词**
