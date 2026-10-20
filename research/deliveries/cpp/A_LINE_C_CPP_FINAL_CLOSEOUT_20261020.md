@@ -3,10 +3,10 @@
 ## 快照与范围
 
 - 最终代码快照：`3ec1139e5990b9a706975e876d9b53a1a6f1c14d`（基于当前可用 `origin/main` `0f53af62283dbd0f249280805e8286a04b2d43b9`）；后续提交仅补入本验收表与重放/保全报告。
-- 分支：`codex/a-line-final-closeout-20261020`。已推送并核实远端分支指向交付提交 `fb6e31a397c34f5ebb768c834f62fb0a5111c0dd`；尚未创建/合入 PR。
+- 分支：`codex/a-line-final-closeout-20261020`。初始交付提交 `fb6e31a397c34f5ebb768c834f62fb0a5111c0dd` 及其状态修正提交 `27377ddd3877f3636334dc451b52afc4a06653fe` 已推送；当前继续复核的新增材料在后续提交中。尚未创建/合入 PR。
 - A 分支比较基线：`f193636e7b1384f0ca2e360b4ec3b0b0348d9340`。只选入有测试/来源支撑的 bounds 规则、resource lifetime 精化和 unsafe memory call 的 partial 文件状态修复。`integer_bounds` 与 main 无有效代码差异；`memory_safety.py` 无有效差异。
 - 实际 Catalog：bounds 0.3.0、integer_bounds 0.2.1、resource_lifetime 0.4.2、unsafe_memory_call 0.5.0 默认启用；null_dereference 0.6.0 与 path_traversal 0.3.0 默认关闭，显式选择才运行。没有依赖升级。
-- 13 案历史静态口径为 2 PASS / 9 PARTIAL / 2 N/A；产品级为 0 PASS / 11 PARTIAL-BLOCK / 2 N/A。此处只对四项进行最终快照的真实源 CLI 回放，其余保留历史证据并明确本快照未重放。
+- 初次最终验收保留的静态历史口径为 2 PASS / 9 PARTIAL / 2 N/A。随后对 CVE-2025-0587 的精确 vulnerable/fixed 源码补做根因差分复核，当前静态口径调整为 3 PASS / 8 PARTIAL / 2 N/A；产品级仍为 0 PASS / 11 PARTIAL-BLOCK / 2 N/A。四项最终快照真实源 CLI 回放，其他案例仍按表内标记。
 
 ## 13 案验收表
 
@@ -22,7 +22,7 @@
 | 6 | cJSON CVE-2026-67215 tree amplification | PARTIAL | not_run；历史目标完整但语义聚合 partial，缺根因匹配修复对照 | PARTIAL-BLOCK |
 | 7 | web_webview CVE-2026-27648 | PARTIAL | not_run；历史全文件解析 partial，fragment 结果不能替代全源 | PARTIAL-BLOCK |
 | 8 | dSoftBus CVE-2025-26690 | PARTIAL | not_run；历史 5/0 摘要没有当前源绑定复放，语义控制不完整 | PARTIAL-BLOCK |
-| 9 | Ark runtime CVE-2025-0587 | PARTIAL | vulnerable 1、fixed 0；两侧 parse/coverage complete | PARTIAL-BLOCK |
+| 9 | Ark runtime CVE-2025-0587 | PASS | vulnerable 1、fixed 0；两侧 parse/coverage complete；精确补丁差分命中候选所在函数 | PARTIAL-BLOCK |
 | 10 | Ark runtime CVE-2025-23420 | PASS | vulnerable 5、fixed 0；另有同源 comparator snapshot safe control 0；均 complete | PARTIAL-BLOCK |
 | 11 | kernel_liteos_a CVE-2025-20042 | N/A | not_applicable；无本轮适用规则 | N/A |
 | 12 | kernel_liteos_a CVE-2025-21098 | N/A | not_applicable；无本轮适用规则 | N/A |
@@ -36,6 +36,10 @@
 - CVE-2025-23420：`js_array.cpp` vulnerable `aeee3fd12c03193545edea4b8e0fdfa3d9a03d11` 为 5 个 bounds 候选；fixed `1b235315` 前缀版本 0。额外在 vulnerable commit 的 `array_helper.cpp` comparator snapshot 控制为 0。解析/规则覆盖 complete；候选尚未逐条证明等于 CVE 公告根因；运行影响 not_run。
 - Curl CVE-2026-92391：`lib/mime.c` vulnerable `01346829096c61b372692f6dc43ffa778c6caccd` 1 个 resource_lifetime 候选，fixed `d7546809d5bd548b69ec49fca26565c8f6f0d344` 为 0；完整解析/规则覆盖；运行影响 not_run。
 - Contacts：`contacts_data_ability.cpp` `b02aadfc2d801ee30573fcb2d13490298e146fea` 3 个 path traversal 候选；完整解析/规则覆盖。尝试查找官方 6.1 LTS 对应修复源，公开 refs/可用 6.0 clone 均未提供匹配修复对象；产品调用链和归一化行为未验证，因此安全对照、运行影响与产品结论 unknown/not_run。
+
+### CVE-2025-0587 source-root-cause review
+
+The exact vulnerable/fixed Git objects were diffed after the initial closeout. In `AtomicHelper::ValidateAtomicAccess`, the vulnerable source converts `GetArrayLength()` to signed `int32_t` and narrows the `ToIndex` result through `DoubleInRangeInt32` before its bounds check; the detector candidate is at the corresponding `index` conversion (vulnerable source blob `7fd67717571c6d8fe7b10bf294998e952dc61e36`, SHA-256 `f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541`). The fixed blob `80d7ad14e70825ef2daf7b3f2fc956a891bf8b2c` keeps length unsigned, converts the index to `uint64_t`, checks it against length before offset arithmetic, and performs the offset multiplication in the wide type. This exact function-level patch relation, together with complete vulnerable/fixed CLI parse and 1/0 candidate delta, supports **bounded static PASS**. It does not establish attacker reachability, a successful out-of-bounds access, execution impact, or applicability to a shipped product build; those remain unknown/not_run. The March 2025 OpenHarmony bulletin independently lists CVE-2025-0587 as an integer-overflow issue in `arkcompiler_ets_runtime` affecting OpenHarmony 4.1 and 5.0.2 lines ([official security mailing-list bulletin](https://lists.openatom.io/hyperkitty/list/security@openharmony.io/thread/435GCMWA4TBKSDHCKDUQKITICCLLBCBI/)).
 
 ## 代码、回归和记录保全
 
@@ -56,4 +60,3 @@
 | 产品集成方 | 11 个适用案例的产品源码 pin、构建宏/配置、调用入口和可复现运行证据 | 将源扫描结果与实际产品构建、入口可达性、触发条件和影响关联；之前不提升产品判定 |
 
 本轮未增加漏洞家族或扩展候选扫描。没有可靠标签时不报 Precision/Recall；历史 unknown/candidate 不升级。`not_run` 表示未执行。
-
