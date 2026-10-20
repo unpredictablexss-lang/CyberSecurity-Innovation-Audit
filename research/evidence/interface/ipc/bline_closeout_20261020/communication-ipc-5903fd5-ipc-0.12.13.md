@@ -1,0 +1,559 @@
+# OHScanner M2 reviewed-detector execution
+
+> Detection candidates and coverage limitations, NOT validated vulnerabilities.
+
+- Source repository (declared): `openharmony/communication_ipc`
+- Pinned commit: `5903fd5f7332a427cb3f6915b0202ee5c76c63b5`
+- Git tree: `0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac`
+- Snapshot SHA-256: `4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d`
+- Source files indexed: 697
+- Parsing coverage: `{"complete": 442, "not_run": 37, "partial": 218}`
+- Detector runs: 1
+- Total unverified diagnostics: 14
+- Validated vulnerabilities: **0** (no runtime verification performed)
+
+## Per-detector results
+
+| Detector | Execution | Inspected files | Complete | Partial | Not analyzed | Diagnostics | Coverage |
+|---|---|---:|---:|---:|---:|---:|---|
+| `ohscanner.interface.ipc` | completed | 660 | 442 | 218 | 0 | 14 | partial |
+
+## Candidate evidence and missing proof
+
+| Detector | Candidate ID | File:line | Rule | Unverified proof obligations |
+|---|---|---|---|---|
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:ca88225a02a0fe72` | `dbinder/dbinder_service/src/dbinder_service_stub.cpp:168` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:e5c3a944e38716fd` | `dbinder/dbinder_service/src/dbinder_service_stub.cpp:172` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:2dc3665b93253dce` | `dbinder/dbinder_service/src/dbinder_service_stub.cpp:190` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:2f37f269ff85f764` | `dbinder/dbinder_service/src/dbinder_service_stub.cpp:194` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:1ae68a66948e0021` | `ipc/native/src/ani/rpc/src/rpc_ani_class.cpp:153` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:769b6c1f4853e5f5` | `ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp:118` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:be13fd9ad5bb5f78` | `ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp:139` | `ipc.auth.missing` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:1c15c945a529931b` | `ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp:139` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:037a70552f593f64` | `ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp:167` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:5501bf2ba361596d` | `ipc/native/src/core/framework/source/ipc_object_stub.cpp:165` | `ipc.auth.missing` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; dispatch_binding=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:a184f5535a3ef73b` | `ipc/native/src/napi_common/source/napi_remote_object.cpp:917` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:33c80dc529b992ed` | `ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp:193` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:2aea18570c3e3821` | `ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp:210` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:1831439990fdf6c8` | `ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp:231` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+
+## Coverage gaps
+
+Scope counts source inspection, not complete semantic coverage; partial remains unknown.
+Files without a claiming detector: 37
+- `ipc/native/src/ani/rpc/ets/@ohos.rpc.ets`
+- `ipc/native/src/taihe/test/test_main.ets`
+- `test/unittest/js/NapiIRemoteProxy.js`
+- `test/unittest/js/NapiRemoteObjectTest.js`
+- `test/unittest/js/ipcActsObject.js`
+- `test/unittest/js/ipcActsRemoteObject.js`
+- `test/unittest/js/ipcActsTaihe01.js`
+- `test/unittest/js/ipcActsTaihe02.js`
+- `test/unittest/js/ipcActsTaihe03.js`
+- `test/unittest/js/ipcActsTaihe04.js`
+- `test/unittest/js/ipcActsTaihe05.js`
+- `test/unittest/js/ipcActsTest01.js`
+- `test/unittest/js/ipcActsTest02.js`
+- `test/unittest/js/ipcActsTest03.js`
+- `test/unittest/js/ipcActsTest04.js`
+- `test/unittest/js/ipcActsTestA.js`
+- `test/unittest/js/ipcActsTestB.js`
+- `test/unittest/js/ipcActsTestC.js`
+- `test/unittest/js/ipcActsTestD.js`
+- `test/unittest/js/ipcActsTestE.js`
+- `test/unittest/js/ipcActsTestF.js`
+- `test/unittest/js/ipcActsTestG.js`
+- `test/unittest/js/ipcActstaihe06.js`
+- `test/unittest/js/ipcApiStageMessageSequence_001_030.js`
+- `test/unittest/js/ipcApiStageMessageSequence_0310_0600.js`
+- `test/unittest/js/ipcApiStageMessageSequence_1810_2100.js`
+- `test/unittest/js/ipcCapiTest.js`
+- `test/unittest/js/ipcMessageSequence0760_1050.js`
+- `test/unittest/js/ipcMessageSequenceTest.js`
+- `test/unittest/js/module/adddeathrecipientTest.ts`
+- `test/unittest/js/module/appendTest.ts`
+- `test/unittest/js/module/bindTest.ts`
+- `test/unittest/js/module/binderconnectorTest.ts`
+- `test/unittest/js/module/binderinvokerTest.ts`
+- `test/unittest/js/module/binderinvokerdTest.ts`
+- `test/unittest/js/module/bufferobjectTest.ts`
+- `test/unittest/js/module/bufferobjectarrayTest.ts`
+- `ohscanner.interface.ipc`: partial, 442/660 applicable files examined; unexamined=218
+
+## Limitations
+
+- Diagnostics are candidates/evidence only, not proof of security impact.
+- Zero diagnostics does NOT mean the component is free of vulnerabilities.
+- Git origin name is user declared; source is pinned local objects, not an OH product build.
+- No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.
+- Some indexed source files have no claiming detector; their security analysis is unknown.
+- `ohscanner.interface.ipc`: Model=oh-ipc-2026.10-v33; first-party bounded structured syntax interpretation, no external scanner execution.
+- `ohscanner.interface.ipc`: Private branch pass reconstructs Tree-sitter nodes; public shared facts/schema are unchanged.
+- `ohscanner.interface.ipc`: No compiler CFG, arbitrary virtual dispatch, alias analysis or full-program authorization proof. Macros are expanded only from the scan's own sources and only when unambiguous; the catalogue is never an #include resolution, and what the expander refused is counted in the macro-expansion limitation rather than assumed away.
+- `ohscanner.interface.ipc`: Unmodeled callees/authorization remain evidence obligations; no findings does not establish safety.
+- `ohscanner.interface.ipc`: Interface-descriptor identity is read from the class's own base clause: a comparison is counted as this transaction's guard only when the source names the interface the class implements. A comparison against another interface, or one whose identity the analysed sources do not state, is reported with that reason instead of counting as a guard or as a proven mismatch.
+- `ohscanner.interface.ipc`: Descriptor consistency is separate from caller authorization; relay candidates are not exploit proofs.
+- `ohscanner.interface.ipc`: IPC roots require a source-indexed class dispatcher with code, request Parcel and reply Parcel; explicit service/transport roots and Stub inner helpers are separate allowlisted entry kinds. Test/fuzz/mock path roots are excluded from product candidate analysis and counted in limitations. Entry discovery is not reachability: dispatcher-level guards and macro-conditional reachability remain obligations, not conclusions.
+- `ohscanner.interface.ipc`: Entry-coverage measurements are published in the interface research report, not in this result.
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at IPCObjectStub::IsDeviceIdIllegal
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at IPCSkeleton::GetLocalDeviceID
+- `ohscanner.interface.ipc`: Cross-service boundary coverage: 0 call(s) on a handle built by iface_cast<> in the scanned sources, 0 carrying the original caller's identity (SetCallingIdentity with a calling-token value active), 0 executing as the service. Each boundary is recorded with the identity that crossed it; no candidate is emitted from the boundary itself, and a downstream service's own guards are not read from this corpus.
+- `ohscanner.interface.ipc`: Entry/dispatch coverage: 40 dispatcher(s) (14 in stub classes, 0 with a recognizable guard before dispatch), 56 binding(s) by grade {'source_dispatch': 47, 'source_dispatch_case_call': 9}, transactions {'dynamic': 46, 'enum': 10}, unresolved dispatch {}, 11 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe.
+- `ohscanner.interface.ipc`: Excluded 34 test/fuzz/mock entry root(s) from product candidate analysis; the source paths are retained in scope, but test-target findings are not mixed into product candidates.
+- `ohscanner.interface.ipc`: Macro catalogue truncated at 400 source(s): a macro defined only in a file that was not catalogued stays unexpanded, and a guard inside it is not seen.
+- `ohscanner.interface.ipc`: Macro expansion: 2955 invocation(s) expanded in 202 file(s), 1891 of them carrying control flow; 41 file(s) left unexpanded (ambiguous_definition_variants=4369,conditional_definition_requires_build_profile=2512,expansion_worsened_the_parse=10,source_local_undef_not_supported=31,variadic_stringify_or_token_paste=603). The catalogue is the scan's own sources, never #include; where a macro was expanded, quoted conditions come from the expanded form while a finding's line is mapped back to the original file.
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in dbinder/c/include/dbinder_service_inner.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in dbinder/c/include/dbinder_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in dbinder/c/include/dbinder_trans_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in dbinder/c/include/dbinder_types.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in dbinder/c/ipc_adapter/include/dbinder_ipc_adapter.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in dbinder/dbinder_service/include/dbinder_log.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in dl_deps/dsoftbus_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/c/dbinder/include/dbinder_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/c/ipc/include/ipc_skeleton.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/c/ipc/include/serializer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/c_api/include/ipc_cparcel.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/c_api/include/ipc_cremote_object.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/c_api/include/ipc_cskeleton.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/c_api/include/ipc_inner_object.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/cj/include/ashmem_impl.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/cj/include/ipc_ffi.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/cj/include/ipc_utils_ffi.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/cj/include/iremote_object_impl.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/cj/include/message_sequence_impl.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/cj/include/remote_object_holder_impl.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/cj/include/remote_object_impl.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/cj/include/remote_proxy_holder_impl.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ipc_core/include/iremote_object.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ipc_napi_common/include/napi_remote_object.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/rust/tests/c/src/ipc_rust_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/adapter/access_token/include/access_token_adapter.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/adapter/include/rpc_bytrace.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/adapter/include/rpc_os_adapter.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/ipc/include/ipc_invoker.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/ipc/src/linux/include/sys_binder.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/ipc/src/liteos_a/include/lite_ipc.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/manager/include/ipc_process_skeleton.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/manager/include/ipc_skeleton_pri.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/manager/include/ipc_thread_pool.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/manager/include/iremote_invoker.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/manager/include/rpc_log.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/manager/include/serializer_inner.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/rpc/include/dbinder_invoker.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/rpc/include/rpc_feature_set.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/rpc/include/rpc_process_skeleton.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/rpc/include/rpc_trans_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/rpc/ipc_adapter/include/ipc_proxy_inner.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/rpc/ipc_adapter/include/ipc_stub_inner.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/rpc/socket_trans/include/rpc_socket_trans.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/rpc/trans_adapter/include/rpc_softbus_trans.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/c/rpc/trans_adapter/include/rpc_trans.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/ani/rpc/src/rpc_ani.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/c_api/include/ipc_internal_utils.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/c_api/source/ipc_cparcel.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/dbinder/include/databus_socket_listener.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/dbinder/include/dbinder_base_invoker_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/framework/include/ipc_debug.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/framework/include/ipc_process_skeleton.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/framework/include/ipc_thread_pool.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/framework/include/ipc_thread_skeleton.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/framework/include/ipc_workthread.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/framework/include/sys_binder.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/framework/source/ipc_process_skeleton.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/framework/source/ipc_thread_pool.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/framework/source/ipc_thread_skeleton.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/framework/source/ipc_workthread.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/invoker/include/binder_invoker.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/invoker/include/invoker_factory.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/invoker/include/iremote_invoker.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/invoker/source/binder_invoker.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/core/invoker/source/invoker_factory.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/napi/src/napi_calling_info.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/napi/src/napi_ipc_skeleton.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/napi/src/napi_message_option.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/napi/src/napi_remote_proxy.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/napi/src/napi_rpc_native_module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/napi_common/source/napi_remote_object.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ipc/native/src/taihe/src/ani_constructor.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/auxiliary/native/include/test_service_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/distributedtest/include/dbinder_test_service_skeleton.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/distributedtest/src/dbinder_distributed_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/binderinvokermock_fuzzer/binderinvokermock001_fuzzer/binderinvokermock001_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/binderinvokermock_fuzzer/binderinvokermock002_fuzzer/binderinvokermock002_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/dbindercallbackstubmock_fuzzer/dbindercallbackstubmock001_fuzzer/dbindercallbackstubmock001_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/dbindercallbackstubmock_fuzzer/dbindercallbackstubmock002_fuzzer/dbindercallbackstubmock002_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/dbinderdatabusinvokermock_fuzzer/dbinderdatabusinvokermock001_fuzzer/dbinderdatabusinvokermock001_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/dbinderdatabusinvokermock_fuzzer/dbinderdatabusinvokermock002_fuzzer/dbinderdatabusinvokermock002_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/dbinderdatabusinvokermock_fuzzer/dbinderdatabusinvokermock003_fuzzer/dbinderdatabusinvokermock003_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/dbinderdatabusinvokermock_fuzzer/dbinderdatabusinvokermock004_fuzzer/dbinderdatabusinvokermock004_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/dbinderdatabusinvokermock_fuzzer/dbinderdatabusinvokermock005_fuzzer/dbinderdatabusinvokermock005_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/dbinderdatabusinvokermock_fuzzer/dbinderdatabusinvokermock006_fuzzer/dbinderdatabusinvokermock006_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/dbinderdatabusinvokermock_fuzzer/dbinderdatabusinvokermock007_fuzzer/dbinderdatabusinvokermock007_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/dbinderremotelistenermock_fuzzer/dbinderremotelistenermock_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/hitraceinvokermock_fuzzer/hitraceinvokermock001_fuzzer/hitraceinvokermock001_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/ipcobjectproxymock_fuzzer/ipcobjectproxymock001_fuzzer/ipcobjectproxymock001_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/ipcobjectproxymock_fuzzer/ipcobjectproxymock002_fuzzer/ipcobjectproxymock002_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/ipcprocessskeletonmock_fuzzer/ipcprocessskeletonmock001_fuzzer/ipcprocessskeletonmock001_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/ipcprocessskeletonmock_fuzzer/ipcprocessskeletonmock002_fuzzer/ipcprocessskeletonmock002_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/ipcprocessskeletonmock_fuzzer/ipcprocessskeletonmock003_fuzzer/ipcprocessskeletonmock003_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/ipcprocessskeletonmock_fuzzer/ipcprocessskeletonmock004_fuzzer/ipcprocessskeletonmock004_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/ipcskeletonmock_fuzzer/ipcskeletonmock001_fuzzer/ipcskeletonmock001_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/fuzztest/ipc/native/mock/ipcskeletonmock_fuzzer/ipcskeletonmock002_fuzzer/ipcskeletonmock002_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/moduletest/ipc/capi/ipc_capi_remote_object_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/moduletest/ipc/cppapi/ipc_core_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/moduletest/rpc/c_lite/include/rpc_mini_samgr.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/moduletest/rpc/c_lite/samgr/rpc_samgr.c
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/moduletest/rpc/cppapi/src/rpc_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/moduletest/rpc/cppapi/src/rpc_server_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/c_lite/adapter/access_token_adapter_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/c_lite/ipc/client/IpcClientTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/c_lite/ipc/samgr/IpcSamgrTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/c_lite/ipc/server/IpcServerTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/c_lite/rpc/client/RpcClientTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/c_lite/rpc/samgr/RpcSamgrTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/c_lite/rpc/server/RpcServerTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/c_lite/serializer/utils_serializer_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/binder_debug_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/binder_invoker_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/buffer_object_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/comm_auth_info_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/databus_socket_listener_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/dbinder_callback_stub_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/dbinder_session_object_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/hitrace_invoker_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/invoker_factory_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/invoker_rawdata_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_binder_databus_invoker_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_block_thread_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_capi_parcel_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_capi_remote_object_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_capi_skeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_connector_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_core_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_file_desc_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_hitrace_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_napi_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_object_proxy_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_object_stub_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_payload_statistics_impl_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_payload_statistics_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_process_skeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_skeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_so_dlclose_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_thread_pool_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_thread_skeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/ipc_trace_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/iremote_object_unitest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/message_option_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/message_parcel_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/message_parcel_unittest_AcquireObject.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/mock_iremote_invoker.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/peer_holder_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/process_skeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/rpc_feature_set_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/common/stub_refcount_object_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/dbinder_service/dbinder_base_invoker_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/dbinder_service/dbinder_death_recipient_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/dbinder_service/dbinder_remote_listener_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/dbinder_service/dbinder_sa_death_recipient_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/dbinder_service/dbinder_service_death_recipient_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/dbinder_service/dbinder_service_stub_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/dbinder_service/dbinder_service_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/c_api/ipc_cparcel_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/c_api/ipc_cremote_object_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/c_api/ipc_cskeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/c_api/ipc_inner_object_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/c_api/ipc_internal_utils_additional_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/c_api/ipc_internal_utils_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/c_api/ipc_remote_object_internal_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/binder_invoker_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/databus_socket_listener_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/dbinder_callback_stub_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/dbinder_databus_invoker_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/dbinder_softbus_client_additional_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/dbinder_softbus_client_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/ipc_file_descriptor_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/ipc_object_proxy_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/ipc_object_stub_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/ipc_process_skeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/ipc_skeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/ipc_thread_skeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/ipc_trace_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/ipc_workthread_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/iremote_broker_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/iremote_object_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/message_parcel_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/ipc/native/core/process_skeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/mock/mock_iremote_invoker.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in utils/include/doubly_linked_list.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in utils/include/rpc_session_handle.h
+- `ohscanner.interface.ipc`: Path budget exceeded: conservative state join; path precision reduced.
+- `ohscanner.interface.ipc`: Preprocessor conditional inside a function body: arms are explored as alternatives because the build variant is unknown. A guard written inside an arm is credited only on that arm's paths, the no-arm-taken path is kept when the chain has no #else, and facts proved before the conditional still hold in every arm.
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: dbinder/c/include/dbinder_stub.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: dbinder/c/include/dbinder_types.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: dbinder/c/ipc_adapter/mini/dbinder_ipc_adapter.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: dbinder/c/ipc_adapter/small/dbinder_ipc_adapter.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: dbinder/c/src/dbinder_service.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: dbinder/c/src/dbinder_stub.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: dbinder/dbinder_service/include/dbinder_remote_listener.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: dbinder/dbinder_service/include/dbinder_sa_death_recipient.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: dbinder/dbinder_service/src/dbinder_service.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: dbinder/dbinder_service/src/dbinder_service_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: dl_deps/dsoftbus_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/cj/include/ashmem_impl.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/cj/include/ipc_ffi.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/cj/include/message_sequence_impl.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/cj/include/remote_object_holder_impl.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/cj/include/remote_object_impl.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/cj/include/remote_object_internal_impl.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/cj/include/remote_proxy_holder_impl.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/cj/src/ashmem_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/cj/src/remote_object_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/ipc_core/include/ipc_file_descriptor.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/ipc_core/include/ipc_object_proxy.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/ipc_core/include/ipc_object_stub.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/ipc_core/include/iremote_broker.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/ipc_core/include/message_option.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/ipc_core/include/message_parcel.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/ipc_core/include/peer_holder.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/libdbinder/include/dbinder_service_stub.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/innerkits/rust/include/remote_object_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/adapter/access_token/src/access_token_adapter.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/ipc/src/linux/serializer_inner.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/ipc/src/liteos_a/ipc_invoker.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/ipc/src/liteos_a/serializer_inner.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/manager/include/ipc_process_skeleton.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/manager/include/ipc_thread_pool.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/manager/include/rpc_types.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/manager/src/ipc_process_skeleton.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/manager/src/ipc_skeleton.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/manager/src/ipc_thread_pool.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/manager/src/rpc_log.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/manager/src/serializer.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/rpc/ipc_adapter/mini/ipc_proxy_inner.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/rpc/ipc_adapter/small/ipc_proxy_inner.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/rpc/ipc_adapter/small/ipc_stub_inner.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/rpc/socket_trans/src/rpc_mini_socket_trans.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/rpc/socket_trans/src/rpc_socket_trans.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/rpc/src/dbinder_invoker.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/rpc/src/rpc_feature_set.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/rpc/src/rpc_process_skeleton.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/c/rpc/trans_adapter/src/rpc_softbus_trans.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/ani/rpc/include/ani_rpc_error.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/ani/rpc/include/ani_util_class.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/ani/rpc/include/ani_util_common.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/ani/rpc/include/ani_util_native_ptr.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/ani/rpc/include/rpc_ani_class.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/c_api/include/ipc_remote_object_internal.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/dbinder/include/databus_socket_listener.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/dbinder/include/dbinder_base_invoker_define.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/dbinder/include/dbinder_base_invoker_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/dbinder/include/dbinder_base_invoker_object.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/dbinder/include/dbinder_callback_stub.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/dbinder/include/dbinder_databus_invoker.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/dbinder/include/dbinder_softbus_client.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/dbinder/source/dbinder_softbus_client.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/include/buffer_object.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/include/comm_auth_info.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/include/ipc_payload_statistics_impl.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/include/ipc_process_skeleton.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/include/ipc_thread_pool.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/include/ipc_thread_skeleton.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/include/ipc_trace.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/include/ipc_workthread.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/include/process_skeleton.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/include/stub_refcount_object.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/include/sys_binder.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/source/binder_debug.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/source/ipc_file_descriptor.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/source/ipc_object_proxy.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/source/ipc_object_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/source/ipc_process_skeleton.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/source/ipc_thread_pool.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/source/ipc_thread_skeleton.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/source/message_parcel.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/framework/source/process_skeleton.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/invoker/include/binder_connector.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/invoker/include/binder_invoker.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/invoker/include/hitrace_invoker.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/invoker/include/invoker_factory.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/invoker/include/invoker_rawdata.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/invoker/include/iremote_invoker.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/invoker/source/binder_connector.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/invoker/source/binder_invoker.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/core/invoker/source/hitrace_invoker.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi/src/napi_calling_info.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi/src/napi_ipc_skeleton.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi_common/include/napi_ashmem.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi_common/include/napi_message_parcel.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi_common/include/napi_message_sequence.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi_common/include/napi_remote_object_holder.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi_common/include/napi_remote_object_internal.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi_common/include/napi_remote_proxy_holder.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi_common/include/napi_rpc_error.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi_common/source/napi_ashmem.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi_common/source/napi_message_parcel_read.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi_common/source/napi_message_sequence_read.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi_common/source/napi_message_sequence_write.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi_common/source/napi_remote_object.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/napi_common/source/napi_remote_object_holder.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/taihe/inc/taihe_ani_remote_object.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/taihe/inc/taihe_ashmem.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/taihe/inc/taihe_message_option.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/taihe/inc/taihe_message_sequence.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/taihe/inc/taihe_remote_object.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/taihe/inc/taihe_remote_proxy.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/include/assist_test_service.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/include/foo_service.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/include/ipc_test_helper.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/include/test_capi_skeleton.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/include/test_service.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/include/test_service_base.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/include/test_service_client.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/include/test_service_death_recipient.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/include/test_service_proxy.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/include/test_service_stub.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/src/test_capi_skeleton.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/src/test_service.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/src/test_service_client.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/src/test_service_proxy.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/auxiliary/native/src/test_service_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/distributedtest/include/dbinder_test_service_skeleton.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/distributedtest/src/dbinder_distributed_test.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/distributedtest/src/dbinder_test_agent.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/distributedtest/src/dbinder_test_service_skeleton.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/example/small/client/client_business_impl.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/example/small/client/client_callback.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/example/small/client/client_main.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/example/small/server/server_business_impl.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/example/small/server/server_main.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/fuzztest/data_generator/include/fuzz_data_generator.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/fuzztest/dbinder_service/closedatabussession_fuzzer/closedatabussession_fuzzer.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/fuzztest/dbinder_service/loadsystemabilitycomplete_fuzzer/loadsystemabilitycomplete_fuzzer.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/fuzztest/dbinder_service/noticedevicedie_fuzzer/noticedevicedie_fuzzer.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/fuzztest/dbinder_service/noticeservicedie_fuzzer/noticeservicedie_fuzzer.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/fuzztest/dbinder_service/senddatatoremote_fuzzer/senddatatoremote_fuzzer.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/fuzztest/ipc/native/mock/dbinderdatabusinvokermock_fuzzer/dbinderdatabusinvokermock007_fuzzer/dbinderdatabusinvokermock007_fuzzer.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/fuzztest/ipc/native/mock/dbinderservicemock_fuzzer/dbinderservicemock001_fuzzer/dbinderservicemock001_fuzzer.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/fuzztest/ipc/native/mock/dbinderservicemock_fuzzer/dbinderservicemock002_fuzzer/dbinderservicemock002_fuzzer.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/fuzztest/ipc/native/mock/dbinderservicemock_fuzzer/dbinderservicemock003_fuzzer/dbinderservicemock003_fuzzer.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/fuzztest/ipc/native/mock/dbinderservicemock_fuzzer/dbinderservicemock004_fuzzer/dbinderservicemock004_fuzzer.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/fuzztest/ipc/native/mock/dbinderservicemock_fuzzer/dbinderservicemock005_fuzzer/dbinderservicemock005_fuzzer.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/moduletest/ipc/c_lite/client/ipc_test_client.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/moduletest/ipc/c_lite/samgr/samgr.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/moduletest/ipc/c_lite/server/ipc_test_server.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/moduletest/ipc/capi/ipc_capi_remote_object_module_test.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/moduletest/ipc/cppapi/ipc_core_module_test.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/moduletest/rpc/c_lite/samgr/rpc_mini_samgr.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/moduletest/rpc/c_lite/samgr/rpc_samgr.c
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/moduletest/rpc/cppapi/include/rpc_test_service_base.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/moduletest/rpc/cppapi/include/rpc_test_service_proxy.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/moduletest/rpc/cppapi/include/rpc_test_service_stub.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/moduletest/rpc/cppapi/src/rpc_client_test.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/moduletest/rpc/cppapi/src/rpc_server_test.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/c_lite/adapter/access_token_adapter_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/c_lite/ipc/client/IpcClientTest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/c_lite/ipc/samgr/IpcSamgrTest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/c_lite/ipc/server/IpcServerTest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/c_lite/rpc/client/RpcClientTest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/c_lite/rpc/samgr/RpcSamgrTest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/c_lite/rpc/server/RpcServerTest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/c_lite/serializer/utils_serializer_test.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/binder_debug_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/comm_auth_info_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/dbinder_session_object_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/hitrace_invoker_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/invoker_rawdata_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/ipc_block_thread_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/ipc_capi_parcel_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/ipc_capi_remote_object_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/ipc_hitrace_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/ipc_napi_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/ipc_payload_statistics_impl_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/ipc_payload_statistics_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/ipc_so_dlclose_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/message_option_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/rpc_feature_set_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/common/stub_refcount_object_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/dbinder_service/dbinder_remote_listener_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/dbinder_service/dbinder_service_death_recipient_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/dbinder_service/dbinder_service_stub_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/dbinder_service/dbinder_service_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/dbinder_service/mock_dbinder_base_invoker.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/dbinder_service/mock_dbinder_remote_listener.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/c_api/ipc_cparcel_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/c_api/ipc_cremote_object_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/c_api/ipc_inner_object_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/c_api/ipc_remote_object_internal_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/binder_invoker_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/databus_socket_listener_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/dbinder_callback_stub_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/dbinder_databus_invoker_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/dbinder_softbus_client_additional_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/dbinder_softbus_client_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/ipc_file_descriptor_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/ipc_object_stub_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/ipc_process_skeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/ipc_skeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/ipc_thread_skeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/ipc_trace_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/ipc_workthread_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/iremote_object_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/message_parcel_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/unittest/ipc/native/core/process_skeleton_unittest.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: utils/include/doubly_linked_list.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: utils/src/rpc_session_handle.c
+- `ohscanner.interface.ipc`: Request-derived value pid is passed to to_string with unresolved mutation effects; related range/allocation facts were invalidated.
+- `ohscanner.interface.ipc`: Request-derived value remotePid is passed to ZLOGE with unresolved mutation effects; related range/allocation facts were invalidated.
+- `ohscanner.interface.ipc`: Request-derived value remotePid is passed to ZLOGW with unresolved mutation effects; related range/allocation facts were invalidated.
+- `ohscanner.interface.ipc`: Request-derived value remoteUid is passed to ZLOGE with unresolved mutation effects; related range/allocation facts were invalidated.
+- `ohscanner.interface.ipc`: Request-derived value remoteUid is passed to ZLOGW with unresolved mutation effects; related range/allocation facts were invalidated.
+- `ohscanner.interface.ipc`: Request-derived value stubIndex is passed to ZLOGW with unresolved mutation effects; related range/allocation facts were invalidated.
+- `ohscanner.interface.ipc`: Request-derived value tokenId is passed to ZLOGW with unresolved mutation effects; related range/allocation facts were invalidated.
+- `ohscanner.interface.ipc`: Request-derived value uid is passed to to_string with unresolved mutation effects; related range/allocation facts were invalidated.
+- `ohscanner.interface.ipc`: Unknown request pointer env is passed to CreateMessageOption; request range/allocation facts were invalidated.
+- `ohscanner.interface.ipc`: Unknown request pointer env is passed to CreateMessageSequence; request range/allocation facts were invalidated.
+- `ohscanner.interface.ipc`: Unknown request pointer param is passed to OnJsRemoteRequest; request range/allocation facts were invalidated.
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: ANIRemoteObject::GetCallingInfo
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: ANIRemoteObject::callOnRemoteMessageRequest
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: AniError::ThrowError
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: DBinderCallbackStub::ProcessData
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: DBinderCallbackStub::ProcessProto
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: DBinderServiceStub::AddDbinderDeathRecipient
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: DBinderServiceStub::ProcessDeathRecipient
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: DBinderServiceStub::ProcessProto
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: DBinderServiceStub::RemoveDbinderDeathRecipient
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCObjectStub::AddAuthInfo
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCObjectStub::CreateSessionName
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCObjectStub::GetGrantedSessionName
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCObjectStub::GetSessionName
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCObjectStub::GetSessionNameForPidUid
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCObjectStub::InvokerDataBusThread
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCObjectStub::InvokerThread
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCObjectStub::IsDeviceIdIllegal
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCObjectStub::IsSamgrCall
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCObjectStub::OnRemoteDump
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCObjectStub::RemoveSessionName
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCTrace::Finish
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCTrace::IsEnabled
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: IPCTrace::Start
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: NAPIRemoteObject::OnJsRemoteRequest
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: ProcessSkeleton::ConvertAddr
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: ProcessSkeleton::GetSamgrFlag
+- `ohscanner.interface.ipc`: Owner M2 adapter: single interpretation pass; partial source inspection is not full analysis.
+- `ohscanner.interface.ipc`: Unavailable AST units: 0; cross-file context from these units is unknown.
+- `ohscanner.interface.ipc`: M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.
+- `ohscanner.interface.ipc`: Execution is synchronous; hard timeout/memory isolation is not yet implemented.
+- `ohscanner.interface.ipc`: Diagnostic does not establish vulnerability, reachability or security impact.
+- `ohscanner.interface.ipc`: INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.
+
+## Frozen execution plan
+
+- Planner: 0.1.1; mode: explicit
+- Plan SHA-256: `3c01472cd7af5c0088714f4e0d7f929a949f31404c29a095d8eb5406e5c0543f`
+- Language matching plans attempts; actual coverage remains in the results above.
