@@ -337,3 +337,9 @@ constraints: [不改生产代码, 不以同源合成控制报正式准确率, �
 测试线报告 `research/deliveries/c-line/scout_20261020/independent_parser_controls.md`（提交 `3004ebf0d65166e4a0dc236d2f4fb3d7152f1f5c`）验证了 raw `IR_IF/IR_ELSE`、raw `BRANCH`（即便源中有定义但未执行宏展开）和 typed-array case-list macro 都会 partial；等价 expanded C++ complete；单独 Label 数组 complete。目标与三个 header 的 blob/SHA 全部绑定同一 C1 commit/tree。Map 2747 仍是可能受 `JSCallDispatch` 影响的 unknown。内部 synthetic label 的 byte-offset 值两次复现不同，但源身份与语义 observation 相同，原因未明，按原样保留 unknown。
 
 因此不对 detector/model 做放宽，也不把 13 个 raw-source issue 伪装成修复。本轮以具体 root-cause 和独立控制结束。开发线正在做下一候选的可行性侦察：能否在隔离 PoC 中以精确 source/header blob、明确 include/define/toolchain profile 做宏感知解析并保留源位置；缺任何必要构建输入时仍必须回到 raw partial。测试线随后独立验证 source mapping 和 fallback，再决定是否值得触碰生产 parser。
+
+### Macro-aware C1 方案可行性闭环与第二层候选复核
+
+宏解析可行性报告、独立测试和隔离 PoC 已归档在 `research/deliveries/c-line/scout_20261020/`。团队确认：只有 IR_ELSE 的简单控制能用已有 helper 安全展开并保留行映射；完整 C1 因 source-local `#undef` fail closed，IR_IF/BRANCH/typed-array token-paste 仍拒绝。没有编译器和 build profile，也没有建立可复现的完整 source map，因此这轮不改生产 parser，不安装工具链，不用手写 build profile 冒充产品配置；raw scan 保持 13 个 issue 的 partial。之后发现本地 exact compile profile 时可重启；否则转向其他 exact-bound 候选。
+
+第二层模型现开始审查 `I7W51D`（`typedarray-length-signed-to-unsigned-narrowing`）的 parent/fixed 对：parent `3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c` 与 fixed `82c21d656880923800c94b53b035c76d219313b5`，精确文件身份列于机器任务树。审查只核对 `ToIndex`、signed length、allocation 和范围/溢出校验，给出代码支持、反证和 unknown；不开发第二层功能，也不把 replay 的 vulnerable/fixed role 标签当结论。该候选当前仍是 candidate/unassessed。

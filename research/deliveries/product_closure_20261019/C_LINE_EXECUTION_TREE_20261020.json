@@ -225,7 +225,7 @@
     {
       "id": "C-NEXT-MACRO-PARSE-POC-20261020",
       "kind": "development_feasibility_and_independent_testing",
-      "status": "FEASIBILITY_SCOUT_IN_PROGRESS",
+      "status": "FEASIBILITY_SCOUT_COMPLETE_NO_PRODUCTION_CHANGE",
       "objective": "Evaluate a narrow exact-source macro-aware parse profile for Ark C++ DSL to reduce avoidable partial coverage without fabricating a compile configuration or source locations.",
       "input": "C1 target and exact headers at a65a2853ccae13da167d9aa4720ab8b11ec16656; source/header identities in c1_partial_state_root_cause_20261020.md and independent_parser_controls.md.",
       "developer_agent": "ark_static_dev",
@@ -234,15 +234,46 @@
       "tester_prompt": "Independently validate preprocessor output source mapping, exact header binding and raw fallback for missing defines/includes; check raw and expanded positive/negative fixtures plus a safe/fixed source control.",
       "second_layer_prompt": "Only review candidates emitted after exact-source parsing; no LLM feature development and no vulnerability claim from parse completion.",
       "completion": "Feasibility evidence and bounded PoC or a no-go rationale; no source coverage upgrade without explicit reproducible config and accurate mapping.",
-      "blocking_prerequisites": []
+      "blocking_prerequisites": [],
+      "developer_scout_commit": "7dc34a6995763691143d4575c0dd81049794f18d",
+      "developer_report": "research/deliveries/c-line/scout_20261020/c1_macro_parse_profile_feasibility.md",
+      "isolated_poc": [
+        "research/deliveries/c-line/scout_20261020/macro_parse_profile_feasibility_poc.py",
+        "research/deliveries/c-line/scout_20261020/macro_parse_profile_feasibility_poc.json"
+      ],
+      "independent_report_commit": "24412cc6083b3b8cad9b611a2b0303fd71eeceeb",
+      "independent_report": "research/deliveries/c-line/scout_20261020/independent_macro_feasibility.md",
+      "result": "Exact pinned IR_ELSE control expands with line map; IR_IF/BRANCH/token-paste refused; full C1 fails closed at source_local_undef_not_supported, raw fallback remains 13-issue partial. No compiler or build profile found; no production code or dependency changes.",
+      "next_step": "No full C1 production parser integration until reproducible toolchain/config and complete source map are available. Continue with other exact-bound source candidates."
+    },
+    {
+      "id": "C-LLM-REVIEW-TYPEDARRAY-LENGTH-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "IN_PROGRESS_SOURCE_REVIEW",
+      "objective": "Review the exact-bound signed ToIndex to TypedArray allocation-length candidate and fixed revision using source evidence only.",
+      "candidate": "I7W51D / ark.runtime.typedarray-length-signed-to-unsigned-narrowing",
+      "parent": {
+        "commit": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+        "path": "ecmascript/base/typed_array_helper.cpp",
+        "blob": "c5153346369f0182e73098b8d008eca6d750b36d",
+        "sha256": "4be243a68180be845defbcc01b259070db68b18da8500d245eea4929e7b9eca5"
+      },
+      "fixed": {
+        "commit": "82c21d656880923800c94b53b035c76d219313b5",
+        "path": "ecmascript/base/typed_array_helper.cpp",
+        "blob": "89ffed8b3ff112a271c8a074967b7b5e8ebe2f6f",
+        "sha256": "373f5babdd5dd2f93d01512901d02e6b39d6b57c636e72b07b8d80d27eb509ab"
+      },
+      "reviewer": "typedarray_length_review",
+      "prompt": "Verify exact source identities, trace ToIndex and allocation length plus all range checks on parent/fixed, assess source-level support and counterevidence, separate trigger reachability and runtime/product unknowns. Do not change detector or claim vulnerability from role labels."
     }
   ],
   "feedback_loop": [
-    "Independent controls confirm the raw-source macro limitation and preserve the no-code parser root-cause result.",
-    "Developer feasibility scout evaluates a pinned, explicit preprocessor profile and source-location preservation in isolated artifacts.",
-    "Independent test line verifies exact header/config binding and raw partial fallback when required build inputs are missing.",
-    "Only after PoC/test proof may a production parser change be proposed; incomplete expansion remains partial/unknown.",
-    "Second-layer review applies only to actually emitted source-bound candidates; possible JS callback escape stays unknown."
+    "C1 macro feasibility is delivered as a bounded no-go for production integration under missing toolchain/build profile; unsupported expansion still falls back to raw partial.",
+    "Second-layer reviewer inspects the next source-bound TypedArray length candidate against exact parent/fixed source without developing model behavior.",
+    "A candidate review yields evidence, counterevidence and unknown obligations; only a concrete detector defect goes back to development.",
+    "Select another exact-bound candidate or macro profile work only when required configuration/source-map proof is available.",
+    "Project goal remains active and future slices continue without human/holdout/product prerequisite gates."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
