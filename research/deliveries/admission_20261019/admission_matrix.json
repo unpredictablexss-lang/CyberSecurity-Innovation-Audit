@@ -1,0 +1,85 @@
+{
+  "baseline_commit": "ab30df6a01797af455d2abbbc9533ab15964ee68",
+  "decision": "NOT_ADMITTED",
+  "draft_ready": false,
+  "matrix": [
+    {
+      "item": "accurate_complete_analysis",
+      "status": "BLOCKED",
+      "supported": false,
+      "evidence": [
+        "C plan says C5 independent holdout is blocked before sampling",
+        "D49 explicitly says no independent blind set and no Precision/Recall",
+        "Detector coverage remains partial/blocked in C/D replays"
+      ],
+      "minimal_remediation": "Freeze rules first, then create a leakage-ledger-controlled holdout with two independent blind labels, adjudication and family-level TP/FP/FN/unknown reporting."
+    },
+    {
+      "item": "cwe_cve_support",
+      "status": "PARTIAL",
+      "supported": true,
+      "evidence": [
+        "Known-CVE detector encodes 17 CVE IDs and 12 CWE IDs",
+        "Historical benchmark pins CWE-416/125/476/787 and selected CVEs",
+        "Audit report distinguishes disclosure, component reproduction and product unknowns"
+      ],
+      "minimal_remediation": "Create one evidence table per delivered finding binding CVE/CWE, exact source/fix objects, detector rule/version, applicability and unresolved obligations; remove unsupported mappings."
+    },
+    {
+      "item": "reproducible_poc",
+      "status": "BLOCKED",
+      "supported": false,
+      "evidence": [
+        "libpng CVE-2026-46675 and libtiff CVE-2025-9900 have component Harness references",
+        "C plan states no candidate passed the dynamic gate and no PoC was built for C line",
+        "cJSON/curl/OpenHarmony cases lack complete product PoCs"
+      ],
+      "minimal_remediation": "Package deterministic vulnerable/fixed component fixtures, exact build command, sanitizer/runtime output and replay script for every claimed case; product PoC remains separate until entry/impact are proven."
+    },
+    {
+      "item": "affected_modules_versions_branches",
+      "status": "PARTIAL",
+      "supported": true,
+      "evidence": [
+        "Audit record and D49/D50 pin multiple repository commits and component versions",
+        "Several affected OpenHarmony release branches are described",
+        "Product build manifest, exact branch adoption and complete call-chain applicability remain unknown"
+      ],
+      "minimal_remediation": "Add a machine-readable applicability matrix with repository, full commit/tree/blob, product manifest/build, affected/fixed branch and version range for every case."
+    },
+    {
+      "item": "fix_and_revalidation",
+      "status": "BLOCKED",
+      "supported": false,
+      "evidence": [
+        "Upstream fix commits and some parent/fix source replays exist",
+        "No product fix build and post-fix product retest exist",
+        "C3/C6 gates remain blocked; partial 1->0 static deltas are not fix validation"
+      ],
+      "minimal_remediation": "For each admitted case, record patch, patched source identity, same-environment rerun, regression controls and product/component impact retest."
+    },
+    {
+      "item": "performance_and_innovation",
+      "status": "PARTIAL",
+      "supported": true,
+      "evidence": [
+        "C11 executes reproducible batch/shard/cache/limit measurements with wall and peak RSS",
+        "Historical performance data covers component platform cost, not accuracy",
+        "Innovation evidence is not yet packaged as an independent comparison against baselines"
+      ],
+      "minimal_remediation": "Add preregistered baseline comparisons for scan architecture/caching/evidence gating on the same identity/coverage set, plus ablation and failure-boundary analysis; never use throughput as correctness evidence."
+    },
+    {
+      "item": "complete_report",
+      "status": "PARTIAL",
+      "supported": true,
+      "evidence": [
+        "Audit record is 29,553 bytes and import manifest binds source blob and SHA-256",
+        "The report separates public disclosure, local component state, candidates and unknowns",
+        "Machine-readable per-case deliverable bundle, consolidated evidence index and final product conclusions are incomplete"
+      ],
+      "minimal_remediation": "Produce a final indexed report bundle linking every claim to machine artifacts, commands, hashes, PoC, fix/retest and limitations; keep candidate counts out of security conclusions."
+    }
+  ],
+  "decision_rule": "All competition deliverable items must be independently supported; candidate/static/component evidence cannot satisfy product confirmation."
+}

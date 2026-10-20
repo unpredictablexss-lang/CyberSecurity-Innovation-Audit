@@ -1,0 +1,92 @@
+[
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\deliveries\\c-line\\OHScanner_G盘源码漏洞审查记录_20261018.md",
+    "sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+    "bytes": 29553
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\deliveries\\c-line\\source-audit-import-manifest-20261018.json",
+    "sha256": "366cea424965746435065d5872ccefa20c362bac52bd783648427c56a54db8bf",
+    "bytes": 1067
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-latest-20261019\\research\\deliveries\\c-line-development-plan-20261018.md",
+    "sha256": "cdd3846d4eead99d722c311cda665f316002fe547b03fd56ec9333f9d4aa11ba",
+    "bytes": 17069
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-latest-20261019\\research\\deliveries\\c-line\\README.md",
+    "sha256": "9192fa17be47af418e6d778f796ca7675432464967a1f8167f24fb578e85a84a",
+    "bytes": 5996
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\data_sensitive\\D49_KNOWN_CVE_REPLAY\\README.md",
+    "sha256": "90d503b3f1d1439deca7cd30bd9aa8868dd230d7660426a82a52dbf156e2a17b",
+    "bytes": 3193
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\data_sensitive\\D50_COMPONENT_CVE_REPLAY\\README.md",
+    "sha256": "0fdb8bf1513bc74335dea4a56fdc12709afa7d6700a142e6929256c1ca5ff89a",
+    "bytes": 3364
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\experiments\\performance_20261019\\run_performance_admission.py",
+    "sha256": "34e83b4fa46df912278237bf8168ff2d0cb4228932d607535de9dcb7654ea1ec",
+    "bytes": 24319
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\experiments\\performance_20261019\\run_admission_audit.py",
+    "sha256": "0ed7656977f50f6133a1d65a72983167e51a74ce0d9c19286baacaa7b75ecdc2",
+    "bytes": 20332
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\experiments\\performance_20261019\\out\\raw-index.json",
+    "sha256": "1727480f3c86841ee71202d90f9a63f8de22afb7889700c84b4fe764414d8aab",
+    "bytes": 89680
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\experiments\\performance_20261019\\out\\summary.json",
+    "sha256": "df83f3eb7a1415734606289cefc36aeee524cf0dfd74a2d62caf1dc57ed8561f",
+    "bytes": 15861
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\deliveries\\admission_20261019\\admission_matrix.json",
+    "sha256": "02db4be15fb3af4a341c5efbe2e3c1a89a67063357dd7aed3bf35daa68ac644d",
+    "bytes": 4595
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\deliveries\\admission_20261019\\ADMISSION_REPORT.md",
+    "sha256": "c7c343a18545cafa79f73ada035cf306bcfa2144ffdb2ed96f823ece0b31e741",
+    "bytes": 6127
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\deliveries\\admission_20261019\\commands.txt",
+    "sha256": "11ee261fc269ec2c9a29df90ba1867909bb7aa519d88952cddca667b93f7b6bd",
+    "bytes": 564
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\deliveries\\admission_20261019\\environment.json",
+    "sha256": "5ace94745f786cd60a38e40e4469196d9c8b621505e7c113a0a0903f7cf95ef3",
+    "bytes": 659
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\deliveries\\admission_20261019\\performance_results.json",
+    "sha256": "3417b400aa1fa73f7e460417ef292dc0946e77fb97756c4bb261471fd6cb9ed2",
+    "bytes": 12931
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\deliveries\\admission_20261019\\supported_cwe_cve.json",
+    "sha256": "3fba26d5d914f81751f4c0e11f11f5578e0dc570d055cf49bdd0765661d741e5",
+    "bytes": 2168
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\deliveries\\admission_20261019\\sustained-goals.md",
+    "sha256": "39564ae773b1b1130270882f5c06cb2e7fd1609ce77d12e29e6458e62bf1eb50",
+    "bytes": 797
+  },
+  {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019\\research\\deliveries\\admission_20261019\\validation.txt",
+    "sha256": "aa44b8ae2efb4d2dcdb7269aa193f438d5c673ffbb1e1544c620d8d3c1a206b6",
+    "bytes": 4622
+  }
+]

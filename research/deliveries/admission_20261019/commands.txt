@@ -1,0 +1,4 @@
+git -C E:\网安\CyberSecurity-Innovation-Audit-c11-performance-20261019 rev-parse HEAD
+git -C E:\网安\CyberSecurity-Innovation-Audit-c11-performance-20261019 status --porcelain
+C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe research/experiments/performance_20261019/run_performance_admission.py --out-dir research/experiments/performance_20261019/out
+C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe research/experiments/performance_20261019/run_admission_audit.py

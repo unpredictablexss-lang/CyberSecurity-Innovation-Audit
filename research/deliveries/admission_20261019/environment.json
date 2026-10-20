@@ -1,0 +1,11 @@
+{
+  "captured_at": "2026-10-19T18:56:13.301161+08:00",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-c11-performance-20261019",
+  "baseline_commit": "ab30df6a01797af455d2abbbc9533ab15964ee68",
+  "git_head": "ab30df6a01797af455d2abbbc9533ab15964ee68",
+  "git_tree": "b4dc74e0cdf75d923f4c6bfc44be6a453ca86915",
+  "git_status_porcelain": "?? research/deliveries/admission_20261019/\n?? research/experiments/performance_20261019/\n",
+  "network_policy": "No fetch/checkout/commit/push/merge/reset was executed by C11."
+}
