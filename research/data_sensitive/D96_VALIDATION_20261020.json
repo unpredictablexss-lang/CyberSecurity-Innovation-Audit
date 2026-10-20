@@ -13268,5 +13268,28 @@
     "Switch declaration support does not establish case ordering, fallthrough or feasibility.",
     "Unknown header target retains material-write candidate, literal-only input introduces no source.",
     "Selected source API binding is still incomplete; lines890/915 candidates retained."
-  ]
+  ],
+  "independent_delivery": {
+    "commit": "8a40b217c74b371d224a3153fa26543699f9c493",
+    "files": [
+      {
+        "path": "research/data_sensitive/T95_HANDOFF_20261020.md",
+        "blob": "eacec844e7d3d214f1a31ebee9a4ddbf7bc6c933",
+        "sha256": "a3a6a15ced1c906c79596f0048adf9f6df5bab08b986692c35c235c8b29fa4d1",
+        "bytes": 6495
+      },
+      {
+        "path": "research/data_sensitive/T95_FIXED_HEADER_REPLAY.json",
+        "blob": "6856e3e971a11124bb422c8426caf81b80299cd4",
+        "sha256": "068d99c9f677f7431eb16feb96dca127eab48389bc8cbc6d7f687ee3bcc1946e",
+        "bytes": 1630181
+      }
+    ],
+    "methods": 15,
+    "baseline_failed_subassertions": 11,
+    "after_failed_subassertions": 0,
+    "full_data_tests": 291,
+    "full_data_failures": 0,
+    "interpretation": "T95 independent full-source archive control/replay; independent files are not copied into development delivery."
+  }
 }
