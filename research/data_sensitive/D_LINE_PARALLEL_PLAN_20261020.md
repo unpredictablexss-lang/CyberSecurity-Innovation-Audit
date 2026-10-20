@@ -191,6 +191,28 @@ flowchart TD
 - **固定回归**：用D94固定完整src归档和原T85 direct/Runner重放，并复核D93/T92 890/915 source identity、共同诊断/coverage、638调用事实。不得只跑detector或将candidate数当准确率。
 - **交付**：独立控制测试、source/build身份、hash、精确候选差异和限制报告；不删除缓存或原始证据，不推送。
 
+### D95（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：有界 C/C++ 指针目标状态与分支合并开发者。
+- **基线**：D94/T93最终owner集成，敏感规则0.21.9。D94只追踪有限raw-pointer槽；这轮只核验路径合并/作用域状态，不扩成通用别名分析。
+- **目标控制**：if/else两支均指向同一个已知标量/成员目标时，`*p=material`应继续传播到该目标sink；两支指向不同目标、一路无效或目标未知时，应保留unresolved material-write candidate，不能同时把两个目标都当作确定受影响。
+- **状态控制**：分支后重绑定必须替换旧目标；内层同名pointer/scalar离开scope后恢复外层绑定；循环内目标变化不能泄漏过期alias。保留literal-only写入无材料候选、真实memcpy/out-slot写入传播、未知目标候选和`static_cast<T>(nullptr)`不生source。
+- **反馈和范围**：先复现具体失败并交T94。只实现最小路径状态合并；没有失败就不改代码，提交具名验证与边界报告。不得放宽候选规则以迎合分支正控。
+- **验证**：固定T85 direct/Runner仍24；24共同ID/message/evidence、638调用事实、890/915与3 partial coverage不退；专项测试与完整data、AST/parser/known/linkage回归通过。
+
+### T94（并行独立挑战线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立指针路径状态挑战员；从owner D94/T93 HEAD自行构建baseline，独立生成代码片段并核对Runner。
+- **矩阵**：两支汇合到相同目标；两支目标不同；存在无效/null/未知分支；分支后重绑定；块级pointer/scalar shadow与scope恢复；循环内重新绑定。记录哪些路径可证明、哪些必须unknown。
+- **安全反例**：literal-only metadata不得造材料；真实material经memcpy或pointee写入且后续日志必须保留；unknown write不得静默消失；nullptr cast不生source。
+- **反馈**：对每个失败立即反馈D95并固定修订SHA重跑；当D95没有修复必要时，提交“现有保守行为满足控制”的独立证据，不强行要求代码变化。
+- **固定回归**：fresh-process完整src、T85 direct/Runner以及D93/T92 890/915。逐项比24共同诊断身份/消息/证据、638原始调用位置与coverage；不把数量当准确率。
+- **交付**：独立源码测试、重放脚本、固定对象及SHA/coverage报告；不提交cache/临时records，不推送。
+
 ### T92（并行独立挑战线）
 
 **结构化 vibe coding 提示词**
