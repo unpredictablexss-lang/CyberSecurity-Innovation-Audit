@@ -20,6 +20,24 @@ def _severity(candidate):
     )
 
 
+SEVERITY_LABELS = {
+    "critical": "严重", "high": "高危", "medium": "中危",
+    "low": "低危", "info": "提示", "unknown": "未分级",
+}
+
+
+def severity_metadata(candidate):
+    """Display a detector's tentative severity; never infer a verified impact."""
+    value = str(candidate.get("severity") or "").lower()
+    if value not in SEVERITY_LABELS or value == "unknown":
+        value = "unknown"
+    return {
+        "severity": value,
+        "severity_label": SEVERITY_LABELS[value],
+        "severity_evidence": "detector_preliminary_unverified",
+    }
+
+
 def coverage_snapshot(job, report):
     """Return scanner coverage facts without turning missing coverage into safety."""
     parsing = report.get("source_parsing", {})
@@ -244,6 +262,9 @@ def risk_snapshot(settings, store, ops, job, report):
             "source_sha256": original.get("source_sha256"),
             "evidence_level": "candidate", "vulnerability_state": "candidate",
             "risk_tier": tier, "risk_tier_label": tier_labels[tier],
+            # Severity (potential impact) is orthogonal to evidence confidence.
+            # Neither the detector nor a model is permitted to confirm a product flaw.
+            **severity_metadata(original),
             "reasons": reasons, "obligation_count": len(obligations),
             "obligations_open": obligations_open,
             "human_review_status": manual_status,
