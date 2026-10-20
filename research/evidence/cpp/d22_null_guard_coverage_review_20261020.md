@@ -1,7 +1,7 @@
 # D22 null-dereference guard coverage review
 
-Date: 2026-10-20  
-Scanner baseline: PR #35 head `81dd4aea9bb51522ac912b33504ef0d2ddb79089`  
+Date: 2026-10-20
+Scanner baseline: PR #35 head `81dd4aea9bb51522ac912b33504ef0d2ddb79089`
 Disposition: **NO CHANGE / PARTIAL / BLOCK**
 
 ## Reproduction
