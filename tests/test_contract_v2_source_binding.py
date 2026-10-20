@@ -78,6 +78,13 @@ class NotMyLanguage(FixedFindings):
     supported_languages = ("js",)
 
 
+class SelectsOnePath(FixedFindings):
+    detector_id = "ohscanner.test.selects-one-path"
+
+    def select_applicable_units(self, context, units):
+        return tuple(unit for unit in units if unit.path == "src/a.cpp")
+
+
 def finding(**overrides):
     fields = dict(file="src/a.cpp", line=2, rule_id="test.rule", message="candidate message")
     fields.update(overrides)
@@ -99,6 +106,16 @@ def expect_diagnostic_id(source_hash):
 
 
 class SourceBindingTests(unittest.TestCase):
+    def test_applicability_selector_limits_scope_without_changing_source_binding(self):
+        first = source_unit(path="src/a.cpp")
+        other = source_unit(OTHER_SOURCE, path="src/b.cpp")
+        report, coverage = run_one(
+            SelectsOnePath([finding()]), units=(first, other))
+        self.assertEqual(len(report.diagnostics), 1)
+        self.assertEqual(report.diagnostics[0].source_sha256, first.sha256)
+        self.assertEqual(coverage["applicable_files"], 1)
+        self.assertEqual(coverage["not_analyzed_files"], [])
+
     def test_an_unset_hash_is_bound_by_the_runner_to_the_analyzed_unit(self):
         report, _coverage = run_one(FixedFindings([finding()]))
         self.assertEqual(report.schema_version, 2)
