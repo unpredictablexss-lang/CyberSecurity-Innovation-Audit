@@ -1,0 +1,243 @@
+{
+  "schema_version": "a-line-test-audit-v1",
+  "audit_id": "T57",
+  "created_date": "2026-10-29",
+  "status": "completed_with_limitations",
+  "disposition": "PARTIAL/BLOCK",
+  "source": {
+    "repository": "openharmony/systemabilitymgr_safwk",
+    "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+    "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+    "provenance": "local project Git object DB; detached source checkout D:/openHarmonyScanner/tmp/t57-safwk-source-20261029",
+    "objects": {
+      "listen": {
+        "path": "test/services/safwk/unittest/listen_ability/src/listen_ability_stub.cpp",
+        "blob": "fd8eb179e31c013603732b054aa14460b38ed75b",
+        "bytes": 6549,
+        "sha256": "90e79b5a013f3d18a21db2bf0652f668be4ae36a21e8933e56f9ca634390a39e"
+      },
+      "probe": {
+        "path": "test/services/safwk/unittest/multi_instance_test_probe/src/multi_instance_test_probe.cpp",
+        "blob": "fbb8e7be8294011c6d87713d506d04dbb5aa81c0",
+        "bytes": 7095,
+        "sha256": "40e1439c78f9b48edcf5baaa71499fcc1484d427cbb44582043b3833c451e76d"
+      },
+      "listen_build": {
+        "path": "test/services/safwk/unittest/listen_ability/BUILD.gn",
+        "blob": "a04fc51d2c4688aedf7b0de36b447e15ee2b5ed5",
+        "bytes": 1737,
+        "sha256": "8ac600c892d1cf9f3f96dbe8d577a873633f922a2be32eb7b5b2b3283bc99101"
+      },
+      "probe_build": {
+        "path": "test/services/safwk/unittest/multi_instance_test_probe/BUILD.gn",
+        "blob": "e84342dbe6fa64034f65d701cbacca429a9dbf92",
+        "bytes": 1367,
+        "sha256": "bf0b43906b38f68bfe05ce604469760339394fe8bb893e4632389ebb1294fd5a"
+      },
+      "test_root_build": {
+        "path": "test/BUILD.gn",
+        "blob": "39cae2e53d9e48cd208fe2476873edbe29caf1f2",
+        "bytes": 897,
+        "sha256": "277f9be6fa2a9a9e1581cc20c9739d9714a52b9bda0026365630f7ec8828abd2"
+      },
+      "unittest_build": {
+        "path": "test/services/safwk/unittest/BUILD.gn",
+        "blob": "6cee0d85e65ce94a12dfab663e85b50738cc0cca",
+        "bytes": 11891,
+        "sha256": "9078edaaa9da83a9710a55341debdb56752bf40518977967f98c3d183d41c4cb"
+      },
+      "prod_build": {
+        "path": "interfaces/innerkits/safwk/BUILD.gn",
+        "blob": "a04a67165d42c965e6374b1912aab7ce0e13f3c1",
+        "bytes": 4367,
+        "sha256": "8a137145d3b5f261d86f972403e6a19caa5be9965566931d885fa0d4ff010b91"
+      },
+      "probe_stub": {
+        "path": "test/services/safwk/unittest/multi_instance_test_probe/src/multi_instance_test_probe_stub.cpp",
+        "blob": "545ea8dbb3c6d2aee9cbb50c9e77b5e277609dd2",
+        "bytes": 2665,
+        "sha256": "9e62c2cceed0c40ec45e1c6f0d1bcf7ccf6ef079969ee677fce4227d7b7825de"
+      }
+    }
+  },
+  "cases": [
+    {
+      "queue_id": "CR-0247",
+      "candidate_id": "ohscanner.interface.ipc:075308ad2851d018",
+      "repository": "openharmony/systemabilitymgr_safwk",
+      "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+      "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+      "path": "test/services/safwk/unittest/listen_ability/src/listen_ability_stub.cpp",
+      "line": 129,
+      "line_text": "return reply.WriteInt32(TriggerRemoveForTest()) ? ERR_OK : ERR_FLATTEN_OBJECT;",
+      "blob": "fd8eb179e31c013603732b054aa14460b38ed75b",
+      "source_sha256": "90e79b5a013f3d18a21db2bf0652f668be4ae36a21e8933e56f9ca634390a39e",
+      "a0_rule": "ipc.relay.descriptor-boundary",
+      "detector_version_A0": "0.5.0",
+      "current_findings_at_line": 0,
+      "current_finding_ids": [],
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence"
+    },
+    {
+      "queue_id": "CR-0248",
+      "candidate_id": "ohscanner.interface.ipc:09d7f0a3a31a31ef",
+      "repository": "openharmony/systemabilitymgr_safwk",
+      "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+      "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+      "path": "test/services/safwk/unittest/listen_ability/src/listen_ability_stub.cpp",
+      "line": 131,
+      "line_text": "return reply.WriteInt32(TriggerRepublishForTest()) ? ERR_OK : ERR_FLATTEN_OBJECT;",
+      "blob": "fd8eb179e31c013603732b054aa14460b38ed75b",
+      "source_sha256": "90e79b5a013f3d18a21db2bf0652f668be4ae36a21e8933e56f9ca634390a39e",
+      "a0_rule": "ipc.relay.descriptor-boundary",
+      "detector_version_A0": "0.5.0",
+      "current_findings_at_line": 0,
+      "current_finding_ids": [],
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence"
+    },
+    {
+      "queue_id": "CR-0249",
+      "candidate_id": "ohscanner.interface.ipc:6d9a6d750ccc6f9e",
+      "repository": "openharmony/systemabilitymgr_safwk",
+      "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+      "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+      "path": "test/services/safwk/unittest/listen_ability/src/listen_ability_stub.cpp",
+      "line": 177,
+      "line_text": "if (IsPrivateRequest(code)) {",
+      "blob": "fd8eb179e31c013603732b054aa14460b38ed75b",
+      "source_sha256": "90e79b5a013f3d18a21db2bf0652f668be4ae36a21e8933e56f9ca634390a39e",
+      "a0_rule": "ipc.relay.descriptor-boundary",
+      "detector_version_A0": "0.5.0",
+      "current_findings_at_line": 0,
+      "current_finding_ids": [],
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence"
+    },
+    {
+      "queue_id": "CR-0250",
+      "candidate_id": "ohscanner.interface.ipc:8214baf4f04f8eab",
+      "repository": "openharmony/systemabilitymgr_safwk",
+      "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+      "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+      "path": "test/services/safwk/unittest/listen_ability/src/listen_ability_stub.cpp",
+      "line": 178,
+      "line_text": "return HandlePrivateRequest(code, data, reply);",
+      "blob": "fd8eb179e31c013603732b054aa14460b38ed75b",
+      "source_sha256": "90e79b5a013f3d18a21db2bf0652f668be4ae36a21e8933e56f9ca634390a39e",
+      "a0_rule": "ipc.relay.descriptor-boundary",
+      "detector_version_A0": "0.5.0",
+      "current_findings_at_line": 0,
+      "current_finding_ids": [],
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence"
+    },
+    {
+      "queue_id": "CR-0251",
+      "candidate_id": "ohscanner.interface.ipc:057579611a73ab80",
+      "repository": "openharmony/systemabilitymgr_safwk",
+      "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+      "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+      "path": "test/services/safwk/unittest/multi_instance_test_probe/src/multi_instance_test_probe.cpp",
+      "line": 133,
+      "line_text": "return Publish(this) ? ERR_OK : ERR_INVALID_OPERATION;",
+      "blob": "fbb8e7be8294011c6d87713d506d04dbb5aa81c0",
+      "source_sha256": "40e1439c78f9b48edcf5baaa71499fcc1484d427cbb44582043b3833c451e76d",
+      "a0_rule": "ipc.auth.missing",
+      "detector_version_A0": "0.5.0",
+      "current_findings_at_line": 0,
+      "current_finding_ids": [],
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence"
+    }
+  ],
+  "current_cli_replays": {
+    "listen": {
+      "path": "research/evidence/cpp/t57_safwk_listen_cli_20261029.json",
+      "markdown": "research/evidence/cpp/t57_safwk_listen_cli_20261029.md",
+      "snapshot_sha256": "aead7cdff9dfbfe2c2230ca448f12f1a35a5dd2adfb3429fa7e1706c526f9111",
+      "scope_files": 1,
+      "scope_bytes": 6549,
+      "parse": {
+        "complete": 1
+      },
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.12",
+      "status": "completed",
+      "findings": 0,
+      "coverage": {
+        "complete": 1,
+        "partial": 0,
+        "not_analyzed": 0,
+        "failed": 0
+      }
+    },
+    "probe": {
+      "path": "research/evidence/cpp/t57_safwk_probe_cli_20261029.json",
+      "markdown": "research/evidence/cpp/t57_safwk_probe_cli_20261029.md",
+      "snapshot_sha256": "f01bef94528bd9c29b11163b843bbf0a7390ca176f4a83a59c6a3f4195c897a8",
+      "scope_files": 1,
+      "scope_bytes": 7095,
+      "parse": {
+        "complete": 1
+      },
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.12",
+      "status": "completed",
+      "findings": 0,
+      "coverage": {
+        "complete": 1,
+        "partial": 0,
+        "not_analyzed": 0,
+        "failed": 0
+      }
+    }
+  },
+  "gn_review": {
+    "listen_test": {
+      "target": "ohos_shared_library(\"listen_test\")",
+      "gn": "test/services/safwk/unittest/listen_ability/BUILD.gn",
+      "candidate_source_in_target": true,
+      "test_build_dep": true,
+      "testonly_directly_declared": false,
+      "entry_observation": "OnRemoteRequest dispatches IsPrivateRequest separately, then checks GetDescriptor()==ReadInterfaceToken() before HandleInterfaceRequest; private request path does not use that token check. The reviewed A0 lines 129,131 are reply serialization in the private request handler; line 177 is private-request selection; line 178 enters that handler.",
+      "product_scope": "The target is under test/services/safwk/unittest and included by test/BUILD.gn deploy group; not a production target established by source evidence."
+    },
+    "multi_instance_test_probe": {
+      "target": "ohos_shared_library(\"multi_instance_test_probe\")",
+      "gn": "test/services/safwk/unittest/multi_instance_test_probe/BUILD.gn",
+      "candidate_source_in_target": true,
+      "testonly_directly_declared": false,
+      "test_deploy_group": true,
+      "target_root": "test/BUILD.gn",
+      "testonly_group": true,
+      "stub_source": "test/services/safwk/unittest/multi_instance_test_probe/src/multi_instance_test_probe_stub.cpp",
+      "entry_observation": "CR-0251 is Publish(this) in service lifecycle method, not itself an IPC request handler. Separate sibling MultiInstanceTestProbeStub::OnRemoteRequest dispatches GET_PID/unload/remove/republish/on-demand operations and no descriptor token check is visible in that stub; target is routed through a test deploy group but product inclusion/image profile and service registration/authorization context were not established."
+    }
+  },
+  "limitations": [
+    "Current IPC CLI 0.12.12 per-file scans completed with full parsing and zero findings; that is not safety evidence and does not explain historical 0.5.0 candidates.",
+    "The ListenAbility interface-token check is after the private-request branch; do not describe it as guarding private request codes. The exact A0 locations are reply writes and dispatcher branch.",
+    "multi_instance_test_probe is built as a shared library without direct testonly=true, though test/BUILD.gn deploys its group from test; product selection/reachability/authorization are unresolved.",
+    "No product build, registration policy, runtime caller identity or dynamic validation was examined."
+  ],
+  "queue_preservation": {
+    "rows": 345,
+    "selected_ids": [
+      "CR-0247",
+      "CR-0248",
+      "CR-0249",
+      "CR-0250",
+      "CR-0251"
+    ],
+    "selected_original_status_counts": {
+      "not_testable": 5
+    },
+    "selected_queue_status_counts": {
+      "paused_pending_evidence": 5
+    },
+    "status_changed": false
+  },
+  "detector_tests_fixtures_api_or_queue_modified": false
+}

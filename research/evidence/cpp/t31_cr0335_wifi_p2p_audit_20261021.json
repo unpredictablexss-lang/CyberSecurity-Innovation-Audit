@@ -1,0 +1,66 @@
+{
+  "record_id": "CR-0335",
+  "audit_line": "T31",
+  "baseline": "0eef782dd1e9d511321041ea75e49b55e1f64ebd",
+  "repository": "openharmony/communication_wifi",
+  "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+  "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+  "candidate_id_a0": "ohscanner.interface.ipc:301c45d0f546f9f3",
+  "candidate_source": {
+    "path": "wifi/frameworks/native/src/wifi_p2p_callback_stub.cpp",
+    "blob": "1cc8c5c0c0e60a17f49332a7bf7ea1d7d1115b91",
+    "sha256": "d43aa28a22134dd47c85d17a5e0b017f9fb1d6b2611327c7f92140fbe347fc03",
+    "size_bytes": 15974,
+    "candidate_line": 385,
+    "candidate_line_text": "    if (memcpy_s(cfgData, cfgLen, dataBuffer, cfgLen) != EOK) {",
+    "function": "WifiP2pCallbackStub::RemoteOnConfigChanged",
+    "reviewed_range": [359, 394]
+  },
+  "a0_status": {
+    "original_status": "not_reproduced",
+    "queue_status": "queued_not_reproduced"
+  },
+  "prior_t21_identity_mismatch": {
+    "incorrect_task_commit_value": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+    "incorrect_task_blob_value": "6106eb782ab6ffb605ec6ebff9e47ed5df923375",
+    "incorrect_task_sha256_value": "b23dc2a3573232cf9b2c4c682f20062b3a17d29335ec2b69799a8df01fd71793",
+    "resolution": "T31 uses only the frozen A0 CSV/JSON identity. The commit is e336c82..., tree edd28e..., and candidate path blob/SHA are 1cc8c5.../d43aa.... T21's comparison established the alternate values do not identify this A0 source; they are not used as this audit's baseline."
+  },
+  "cli_replay": {
+    "command": "python -m src.cli.main ohscan-run --repo-dir D:/Temp/cr0335_t31_wifi_audit_20261021 --repository openharmony/communication_wifi --commit e336c82b3b107d87f68c5e0448cc246b50b53b38 --include wifi/frameworks/native/src/wifi_p2p_callback_stub.cpp --detector ohscanner.interface.ipc --json-out research/evidence/cpp/t31_cr0335_wifi_p2p_cli_20261021.json --md-out research/evidence/cpp/t31_cr0335_wifi_p2p_cli_20261021.md",
+    "scanner_baseline": "0eef782dd1e9d511321041ea75e49b55e1f64ebd",
+    "detector_id": "ohscanner.interface.ipc",
+    "detector_version": "0.12.12",
+    "model_version": "oh-ipc-2026.10-v32",
+    "profile_id": "light-ast",
+    "status": "completed",
+    "parse_status": "complete",
+    "scope_file_count": 1,
+    "diagnostic_count": 1,
+    "finding": {
+      "diagnostic_id": "ohscanner.interface.ipc:975eebe9b420d417",
+      "rule_id": "ipc.parcel.copy-range",
+      "file": "wifi/frameworks/native/src/wifi_p2p_callback_stub.cpp",
+      "line": 385,
+      "symbol": "WifiP2pCallbackStub::RemoteOnConfigChanged",
+      "source_sha256": "d43aa28a22134dd47c85d17a5e0b017f9fb1d6b2611327c7f92140fbe347fc03"
+    }
+  },
+  "source_review": {
+    "transaction": "P2PInterfaceCode::WIFI_CBK_CMD_CFG_CHANGE (0x3208)",
+    "dispatch_binding": "InitHandleMap maps the transaction to RemoteOnConfigChanged",
+    "length_guard": "cfgLen <= 0 and cfgLen > MAX_LEN (1024) return before ReadBuffer/copy",
+    "allocation": "cfgData allocates cfgLen bytes",
+    "parcel_read": "ReadBuffer(cfgLen) must return non-null",
+    "copy_relation": "memcpy_s destination capacity and source count are both cfgLen",
+    "interpretation": "The IPC detector emits the expected copy-range candidate, but the queue-bound source code shows a pre-read positive/max-length guard, exact-size destination and matching copy count. This source alone does not substantiate the queued CWE-125 claim. The finding is a candidate, not a confirmed vulnerability; absence of a demonstrated OOB read does not establish product safety."
+  },
+  "disposition": "PARTIAL/BLOCK",
+  "blocking_evidence": [
+    "No product build/profile or effective remote callback ownership and caller authorization evidence.",
+    "Parcel ReadBuffer behavior at the product revision and runtime behavior were not independently established.",
+    "No trusted fixed source is bound for a vulnerable/fixed differential."
+  ],
+  "queue_mutation": false,
+  "verifier": "research/evidence/cpp/verify_t31_cr0335_wifi_p2p_audit.py"
+}

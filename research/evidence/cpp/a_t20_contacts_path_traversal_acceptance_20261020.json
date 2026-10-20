@@ -1,0 +1,87 @@
+{
+  "task": "T20",
+  "lane": "independent_testing_evidence",
+  "date": "2026-10-20",
+  "checkout": {
+    "base_pr30": "8ec5f56a12e90bba56953b39eb17faa20e154da9",
+    "head": "24b114094886b8d3e606afbbcd7b64af1dfa69ac",
+    "dirty_at_start": false,
+    "modified_detector_tests_fixtures_catalog": false
+  },
+  "source": {
+    "repository": "applications/standard/contacts_data",
+    "release": "OpenHarmony-6.1-LTS",
+    "commit": "b02aadfc2d801ee30573fcb2d13490298e146fea",
+    "tree": "ef183625ccbc842f47b076eb75e68b665d7c21c6",
+    "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+    "blob": "32c6a26a9a6c1f4ec3172f45bc3dbe4d3668abe6",
+    "bytes": 80944,
+    "sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383",
+    "identity_verified_from_bare_git": true,
+    "verifier": {
+      "path": "research/evidence/cpp/verify_a_t20_contacts_path_traversal.py",
+      "command": "py -3.10 research/evidence/cpp/verify_a_t20_contacts_path_traversal.py --git-dir D:/openHarmonyScanner/openharmony/.repo/project-objects/applications_contacts_data.git",
+      "result": "PASS"
+    }
+  },
+  "detector": {
+    "id": "ohscanner.cpp.path_traversal",
+    "version": "0.3.0",
+    "rule_id": "ohcpp-path-traversal-source-to-file-sink-candidate-001",
+    "production_catalog_registered": false,
+    "production_selection_result": "ValueError: unknown or not-yet-approved detector: ohscanner.cpp.path_traversal"
+  },
+  "replay": {
+    "status": "completed",
+    "file_outcome": "complete",
+    "parser": "src.parser.ast.parse_source",
+    "profile": "light-ast",
+    "parse_status": "complete",
+    "parse_issue_count": 0,
+    "finding_count": 3,
+    "findings": [
+      {"line": 789, "sink": "fileUtils.DeleteFile(srcFilePath)", "identity_quality": "complete"},
+      {"line": 790, "sink": "fileUtils.DeleteFile(filePath)", "identity_quality": "complete"},
+      {"line": 794, "sink": "fileUtils.DeleteFile(srcFilePath)", "identity_quality": "complete"}
+    ],
+    "output": "research/evidence/cpp/contacts_path_traversal_20261019/contacts_61lts_exact_object_replay_T20_20261020.json",
+    "independent_later_script_replay": {
+        "script_source_commit": "63916ab5425b9d1e9c3e15797a07f74a3b5828d5",
+        "script_blob": "972bb7e4a2bbbbff6c0e3ef1a0300db312cb2e06",
+      "output": "research/evidence/cpp/contacts_path_traversal_20261019/contacts_61lts_exact_object_replay_T20_owner_review_20261020.json",
+      "same_source_identity_parse_status_and_candidate_locations": true
+    }
+  },
+  "controls": {
+    "focused_unittest_command": "py -3.10 -m unittest tests.detectors.test_cpp_path_traversal_detector -v",
+    "focused_tests_passed": 12,
+    "focused_tests_total": 12,
+    "covered": [
+      "cross-function source-to-file positive",
+      "synthetic basename control",
+      "starts_with containment control",
+      "direct slash/backslash separator rejection",
+      "unrelated field and unrelated API",
+      "no-sink",
+      "presence-only and reversed-polarity controls",
+      "late guard and per-sink ordering",
+      "partial parse retains candidates and blocks run"
+    ],
+    "trusted_fixed_contacts_source": "not_found"
+  },
+  "disposition": {
+    "rule_mechanism_regression": "PASS",
+    "a0_case_acceptance": "BLOCK",
+    "reasons": [
+      "no trusted fixed source for differential acceptance",
+      "detector is not registered in Catalog, so production CLI replay is unavailable",
+      "caller trust/reachability and filesystem-root semantics remain unknown"
+    ],
+    "claim": "source-bound static candidates only; not a confirmed vulnerability or exploitability finding"
+  },
+  "scope": {
+    "command": "py -3.10 scripts/check_change_scope.py --base 8ec5f56a12e90bba56953b39eb17faa20e154da9 --lane cpp",
+    "result": "PASS, 0 violations",
+    "changed_path_count": 13
+  }
+}

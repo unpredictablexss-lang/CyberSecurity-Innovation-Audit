@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-10-20",
+  "purpose": "Additive current-status updates; historical dated matrices and source ledgers remain immutable.",
+  "base_matrix": "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+  "updates": [
+    {
+      "case_id": "openharmony-cve-2025-26690",
+      "baseline_status_at_2026_10_19": "BLOCK",
+      "current_status": "PARTIAL",
+      "reason": "D22 recovered and source-bound the exact vulnerable/fixed Git objects, then replayed both with the current CLI. This removes the old missing-object blocker; detector semantic coverage remains partial/blocked, so full static acceptance and product confirmation remain incomplete.",
+      "detector": "ohscanner.cpp.null_dereference",
+      "detector_version": "0.6.0",
+      "rule": "ohcpp-null-dereference-candidate-001",
+      "rule_version": "1.4.0",
+      "source_scope": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+      "vulnerable": {
+        "commit": "258662cd9840b55a31546a72d91027f6368cea84",
+        "tree": "366a4ced9400653c9628c0b677e4ae657c0e7bd8",
+        "blob": "a82b71fb5520b02278a4af695bbe918d14c1048e",
+        "sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+        "parse": "complete 1/1",
+        "detector_coverage": "partial/blocked; 0/1 semantically complete",
+        "candidate_lines": [71, 82, 97, 108, 123],
+        "cli_report": "research/evidence/cpp/a_static_baseline_20261019/d22-cve-2025-26690-vulnerable.json"
+      },
+      "fixed": {
+        "commit": "192f3e11d74beeaa3d879333471deb8a24a7e1c5",
+        "tree": "1d58ba0ef706a6f69dd372bd496c8058810882aa",
+        "blob": "13ddbe93a7f617784dec0f3761e09f66b5c3217c",
+        "sha256": "5a093d91efc624147d40bf3f4dbbe3ab7ab6d724b17978298e9d5c30d9e5eb81",
+        "parse": "complete 1/1",
+        "detector_coverage": "partial/blocked; 0/1 semantically complete",
+        "same_rule_findings": 0,
+        "cli_report": "research/evidence/cpp/a_static_baseline_20261019/d22-cve-2025-26690-fixed.json"
+      },
+      "replay_report": "research/evidence/cpp/a_static_baseline_20261019/d22_cve_2025_26690_upstream_object_replay_20261020.md",
+      "source_identity_record": "research/evidence/cpp/a_static_baseline_20261019/d22_cve_2025_26690_upstream_object_replay_20261020.json",
+      "remaining_blockers": [
+        "detector semantic coverage is partial/blocked",
+        "no product build profile, runtime allocation-failure test, caller reachability, or impact evidence",
+        "no dSoftBus-specific safe/unrelated source controls"
+      ]
+    }
+  ]
+}

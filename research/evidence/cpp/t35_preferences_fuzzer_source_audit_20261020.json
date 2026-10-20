@@ -1,0 +1,243 @@
+{
+  "schema_version": "t35-preferences-fuzzer-source-audit-v1",
+  "task": "T35",
+  "source": {
+    "repository": "openharmony/distributeddatamgr_preferences",
+    "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+    "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+    "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+    "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+    "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf"
+  },
+  "build": {
+    "path": "test/native/fuzztest/dbpreferences_fuzzer/BUILD.gn",
+    "blob": "b9a2eacecbc180514c963e59d3f9365068ae20e5",
+    "sha256": "2f3268757bbe0e66f9cb1eac4b6fc5c6f2be0a1f063931052969bd840b3c217e",
+    "markers": [
+      "ohos_fuzztest(\"DBPreferencesFuzzTest\")",
+      "group(\"fuzztest\")",
+      "testonly = true"
+    ]
+  },
+  "queue": {
+    "source": "original frozen A0 queue.csv and queue.json",
+    "rows_total": 345,
+    "target_rows": [
+      {
+        "queue_id": "CR-0025",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:02527e382bee583e",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 65,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:e018ece329b53813",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0026",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:c66fe4e97e268674",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 66,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:32b09d121dae57aa",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0027",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:688f26cd50ff6e74",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 74,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:c4eb1d6fb40d59b5",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0028",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:4e315d4b4e371f5a",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 75,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:2542a26133b617e1",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0029",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:050f6d4b24abc1b5",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 83,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:d4db1a1b8ac8e87a",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0030",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:ebd54f03aa0ada18",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 84,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:cc5e3053794992ec",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0031",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:a5781585e98a08c7",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 92,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:4eb09648862c68a8",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0032",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:aa0e0664b5c21ef1",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 93,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:3e5cce5d642651d1",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0033",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:afbd3cfde08e4a96",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 101,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:50c93b4762a41541",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0034",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:d04688459c701bf8",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 102,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:2b77a33d55a575fc",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0035",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:ac0f84941d2c483d",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 110,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:ca194fbf605dc358",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0036",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:1fa003373b2e8ee5",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 111,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:279a12bd13cd499c",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0037",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:a77f0203668313a3",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 112,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:2939e3de23a444ef",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0038",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:ad23bb0eb7c6c778",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 121,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:b662b450001c19f4",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0039",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:f8f2f590e64fd6f4",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 122,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:204b5bc0a8b23f85",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      },
+      {
+        "queue_id": "CR-0040",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:67a5782421a8b1f8",
+        "source_key": "openharmony/distributeddatamgr_preferences|ohcpp-shared-ptr-race-candidate-001|test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp|39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "line": 123,
+        "symbol": "preferences_",
+        "cli_diagnostic_id": "ohscanner.cpp.shared_ptr_race:b8d0819e33221773",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence",
+        "disposition": "PARTIAL",
+        "queue_preserved": true
+      }
+    ],
+    "queue_states_changed": false
+  },
+  "cli": {
+    "raw": "t35_preferences_fuzzer_replay_20261020.json",
+    "tool": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "parse": {
+      "complete": 1
+    },
+    "diagnostic_count": 19,
+    "scope": [
+      "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp"
+    ],
+    "build_profile": "none"
+  },
+  "source_assessment": {
+    "fuzzer_entry": "LLVMFuzzerTestOneInput",
+    "harness_calls_preferences_api": true,
+    "candidate_member_production_function_evidence": false,
+    "is_product_reachability_proof": false,
+    "disposition": "PARTIAL",
+    "reason": "The static shared_ptr candidates refer to the fuzzer harness static preferences_ in a fuzz-only test target. It calls Preferences APIs in test harness code, but no production function using this harness member or product-reachable concurrent access is evidenced; a fuzz-only target does not prove product use or prove absence of a race."
+  }
+}

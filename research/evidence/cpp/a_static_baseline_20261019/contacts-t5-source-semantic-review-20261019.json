@@ -1,0 +1,103 @@
+{
+  "schema": "contacts-t5-source-semantic-review-v1",
+  "review_date": "2026-10-19",
+  "lane": "T5 independent source review",
+  "scanner_checkout": {
+    "path": "D:/openHarmonyScanner/worktrees/a-t1-audit-pr30-20261019",
+    "head": "8132dd9a338ba11a77a38cc4c87465f16bfeda47",
+    "scope": "PR #30 base before D5; no D5 changes cherry-picked"
+  },
+  "source": {
+    "repository": "openharmony/applications_contacts_data",
+    "component": "applications/standard/contacts_data",
+    "commit": "b02aadfc2d801ee30573fcb2d13490298e146fea",
+    "tree": "ef183625ccbc842f47b076eb75e68b665d7c21c6",
+    "files": [
+      {
+        "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+        "blob": "32c6a26a9a6c1f4ec3172f45bc3dbe4d3668abe6",
+        "bytes": 80944,
+        "sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383",
+        "provenance": "official GitHub file fetch at exact commit; verified against local .repo project-objects commit/tree/blob"
+      },
+      {
+        "path": "ability/common/utils/src/file_utils.cpp",
+        "blob": "7d39485e3b3f253d474d8e49952e16ced7ccd605",
+        "bytes": 6843,
+        "sha256": "4de09b2a9de7ad538044e1e0b9f2ea84cc8acf9bf6a5cd1b7431c861a59d181f",
+        "provenance": "official GitHub file fetch at exact commit; source hash and Git blob verified"
+      }
+    ],
+    "parser": {
+      "command": "python -c \"from pathlib import Path; from src.parser.ast import parse_source; p=Path(r'D:/openHarmonyScanner/tmp/contacts-t5-b02aadfc-20261019/contacts_data_ability.cpp'); x=parse_source(p.read_text(encoding='utf-8'),language='cpp'); print(x.parse_status, len(x.issues), len(x.functions), len(x.calls))\"",
+      "result": "complete",
+      "issues": 0,
+      "functions": 57,
+      "calls": 525,
+      "scope": "single exact source file; parser coverage does not establish product reachability"
+    }
+  },
+  "official_ref_snapshot": {
+    "remote": "https://gitcode.com/openharmony/applications_contacts_data",
+    "observed_date": "2026-10-19",
+    "observation": "Parent reviewer ran read-only git ls-remote --heads; T5 did not fetch or checkout remote refs.",
+    "refs": [
+      {"name": "refs/heads/OpenHarmony-6.1-LTS", "commit": "b02aadfc2d801ee30573fcb2d13490298e146fea", "relation": "matches the exact A0 source commit in this review"},
+      {"name": "refs/heads/master", "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9", "relation": "target source file differs from exact A0 blob"},
+      {"name": "refs/heads/weekly_20261019", "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9", "relation": "same observed commit as master; target source file differs from exact A0 blob"}
+    ],
+    "different_master_file_identity": {
+      "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "blob": "c93e950725adc93276916b3c96c5ac7a5bb5b6b7",
+      "bytes": 85339,
+      "sha256": "c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6",
+      "verification_note": "Previously verified exact local Git object identity; it is not the A0 blob 32c6a26a9a6c1f4ec3172f45bc3dbe4d3668abe6. No fixed-source status is inferred from branch-name or tip identity alone."
+    },
+    "fixed_source_conclusion": "These observed refs do not provide a trusted fixed source object for this A0 case. This is limited to the observed branch heads and the compared target-file identities; no claim is made about every historical branch, tag, or commit."
+  },
+  "source_chains": [
+    {
+      "name": "A0 disclosed PortraitFileName path",
+      "status": "PARTIAL",
+      "lines": {
+        "entry_permission_and_batch": "598-610, 693-741",
+        "bucket_extraction": "852-889",
+        "path_construction_and_sink": "767-797",
+        "helper_file_operations": "799-825",
+        "delete_implementation": "208-215 in ability/common/utils/src/file_utils.cpp"
+      },
+      "chain": "DataShareValuesBucket PortraitFileName string -> GetPortraitValue / GetStringValueFromDataShareValue (type/non-empty validation only) -> groupPath + portraitFileName at srcFilePath -> SavePortraitFileAndBlob helper -> DeleteFile(srcFilePath) on error (line 789) and cleanup (line 794) -> FileUtils::DeleteFile calls unlink(filePath.c_str()) without containment validation.",
+      "reasoning": "The helper may fail on invalid image data before or during file handling; caller then deletes the attacker-derived source path. The source shows no basename, separator, canonicalization, or root-containment check before the path is used. BatchInsert invokes HandleContactPortrait before InsertExecute, so later database validation is not a guard for this file operation.",
+      "disclosed_root_cause_match": true,
+      "limits": ["No trusted fixed source/control was bound in this source-only review.", "WRITE_CONTACTS is user_grant/system_basic and availableType SYSTEM; actual build/signature/permission assignment and process filesystem reachability are unknown.", "Static source chain does not establish exploitability or a product vulnerability confirmation.", "D1 helper-to-helper source argument mapping for SavePortraitFileAndBlob is a known analysis boundary; independent CLI finding identity remains unverified."]
+    },
+    {
+      "name": "contactId/rawContactId-derived secondary filePath",
+      "status": "PARTIAL candidate; separate from A0 disclosed root cause",
+      "lines": {"construction": "783-784", "delete_sink": "790", "extraction": "852-889"},
+      "chain": "contactId and rawContactId strings -> groupPath + contactId + '_' + rawContactId -> SavePortraitFileAndBlob output path and failure-path DeleteFile(filePath).",
+      "reasoning": "The shared extraction checks type and non-empty value but source contains no local path delimiter validation before this use. This is a distinct input pair and sink path; the A0 disclosed input uses IDs '1' and '1' and therefore does not demonstrate traversal through these fields.",
+      "disclosed_root_cause_match": false,
+      "limits": ["Do not merge this candidate into the PortraitFileName finding.", "No independent exploit input or fixed/safe control established here.", "Handler executes before InsertExecute; downstream persistence validation does not protect this operation."]
+    }
+  ],
+  "guard_polarity_probe": {
+    "status": "PRELIMINARY; dirty D1 implementation, not frozen D5 CLI/fixture acceptance",
+    "implementation": "D1 worktree a2bb9e500fa0e1ed1079d3edcda6e6a7a53493d5, then dirty and actively changing",
+    "probe": "in-memory call to _rejects_path_separators with two minimal C++ guard snippets",
+    "positive_reject_guard": "if (path.find_first_of(\"/\\\\\") != std::string::npos) { return; }",
+    "positive_result": "reject_separators_before_io -> ['path'] (classified as safe by helper)",
+    "reverse_guard": "if (path.find_first_of(\"/\\\\\") == std::string::npos) { return; }",
+    "reverse_result": "[] (not classified as safe by helper)",
+    "interpretation": "At this probe instant polarity behavior was correct for these two snippets. It is not final acceptance: D1 tree was dirty, the helper probe is not scanner CLI or fixture execution, and code may have changed after the probe.",
+    "required_after_D5_freeze": ["re-run exact positive reject-when-found guard", "re-run reversed == npos early-return guard", "exercise both through production CLI/fixtures", "verify safe transform and absence-of-sink controls", "bind D5 commit and rule version in the replay manifest"]
+  },
+  "disposition": {
+    "overall": "PARTIAL",
+    "why": "Exact vulnerable source identity and source-level candidate chains are verified, and parser reports complete for the target file. No exact fixed object or independent safe/unrelated control was established in this task; current D5 implementation is not frozen and no D5 production CLI/fixture replay occurred.",
+    "independent_retest": "T3 should independently rerun after D5 frozen snapshot; include D5 CLI/fixture replay and manifest source/hash verification.",
+    "minimum_missing": ["D5 frozen full commit and immutable detector/rule identity", "production CLI/fixture replay on exact A0 source", "trusted fixed source or explicit BLOCK for absent fix", "safe and unrelated controls with exact source identities", "product build/permission/filesystem reachability evidence if making product-level claims"]
+  }
+}

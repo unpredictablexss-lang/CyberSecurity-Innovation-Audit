@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "audit": "Independent Safwk local ability manager IPC audit CR-0244–CR-0246",
+  "checkout": {
+    "branch": "codex/t45-safwk-audit-20261027",
+    "base_commit": "cb911db1e04189cc91008f7bc194290f7f5bd8e0"
+  },
+  "source": {
+    "repository": "openharmony/systemabilitymgr_safwk",
+    "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+    "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+    "path": "services/safwk/src/local_ability_manager_stub.cpp",
+    "blob": "e08d0c62c1fa8bc296d601f2049d0c570cb6783c",
+    "bytes": 13827,
+    "sha256": "e3992a67f44b497f120d96e73d3692bf3b62e158a7191babb9506d379cb84f16"
+  },
+  "cli": {
+    "report": "research/evidence/cpp/a_t45_safwk_cli_20261027.json",
+    "markdown": "research/evidence/cpp/a_t45_safwk_cli_20261027.md",
+    "detector": "ohscanner.interface.ipc",
+    "version": "0.12.12",
+    "model": "oh-ipc-2026.10-v32",
+    "scope_files": 1,
+    "scope_bytes": 13827,
+    "findings": 3,
+    "parse_counts": {
+      "partial": 1
+    },
+    "coverage_counts": {
+      "complete": 0,
+      "partial": 1,
+      "not_analyzed": 0,
+      "failed": 0
+    }
+  },
+  "cases": [
+    {
+      "queue_id": "CR-0244",
+      "candidate_id": "ohscanner.interface.ipc:6df98b6ba6ac3b8d",
+      "line": 93,
+      "path": "services/safwk/src/local_ability_manager_stub.cpp",
+      "a0_rule": "ipc.relay.descriptor-boundary",
+      "a0_finding_id": "ohscanner.interface.ipc:6df98b6ba6ac3b8d",
+      "finding_id": "ohscanner.interface.ipc:02da7dacd4dae341",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "source_sha256": "e3992a67f44b497f120d96e73d3692bf3b62e158a7191babb9506d379cb84f16",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence"
+    },
+    {
+      "queue_id": "CR-0245",
+      "candidate_id": "ohscanner.interface.ipc:7b9bcc1e2f4758a6",
+      "line": 98,
+      "path": "services/safwk/src/local_ability_manager_stub.cpp",
+      "a0_rule": "ipc.relay.descriptor-boundary",
+      "a0_finding_id": "ohscanner.interface.ipc:7b9bcc1e2f4758a6",
+      "finding_id": "ohscanner.interface.ipc:07fce4eb18a5a3f6",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "source_sha256": "e3992a67f44b497f120d96e73d3692bf3b62e158a7191babb9506d379cb84f16",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence"
+    },
+    {
+      "queue_id": "CR-0246",
+      "candidate_id": "ohscanner.interface.ipc:517546e0e46841a8",
+      "line": 131,
+      "path": "services/safwk/src/local_ability_manager_stub.cpp",
+      "a0_rule": "ipc.auth.missing",
+      "a0_finding_id": "ohscanner.interface.ipc:517546e0e46841a8",
+      "finding_id": "ohscanner.interface.ipc:f041d0e6789ac565",
+      "rule_id": "ipc.auth.missing",
+      "source_sha256": "e3992a67f44b497f120d96e73d3692bf3b62e158a7191babb9506d379cb84f16",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence"
+    }
+  ],
+  "source_observations": {
+    "dispatcher": "OnRemoteRequest: EnforceInterceToken -> CheckPermission(code) -> memberFuncMap_ lookup/handler; failed guards return ERR_PERMISSION_DENIED",
+    "descriptor": "EnforceInterceToken compares ReadInterfaceToken to LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN",
+    "permission_map": {
+      "SYSTEM_ABILITY_EXT_TRANSACTION": "ohos.permission.ACCESS_EXT_SYSTEM_ABILITY",
+      "SERVICE_CONTROL_CMD_TRANSACTION": "ohos.permission.CONTROL_SVC_CMD",
+      "all_other_codes_including_START": "ohos.permission.MANAGE_SYSTEM_ABILITY"
+    },
+    "permission_impl": "VerifyAccessToken(IPCSkeleton::GetCallingTokenID(), permission); only PERMISSION_GRANTED continues",
+    "start": "StartAbilityInner validates SA ID and non-empty eventStr then StartAbility parses JSON, sets start reason, and asynchronously starts SA"
+  },
+  "build_evidence": {
+    "production": "interfaces/innerkits/safwk/BUILD.gn includes source in ohos_shared_library(system_ability_fwk); access-token and IPC dependencies under is_standard_system",
+    "test": "test/services/safwk/unittest/BUILD.gn compiles source; source contains OnRemoteRequest, StartAbilityInner, and CheckPermission cases",
+    "product_profile": "unknown; no target build run"
+  },
+  "limitations": [
+    "Target source parser and IPC detector coverage are partial.",
+    "Static source shows guards before handler dispatch, but detector flags same file as candidates; resolve detector/model behavior and full parse before treating as closed.",
+    "Product permission grants, caller identity policy, service registration, remote reachability, sensitive target scope and CIA impact are unverified.",
+    "No trusted fixed source/control pair; no build or runtime test run."
+  ],
+  "disposition": "PARTIAL/BLOCK",
+  "queue_preservation": {
+    "all_ids": "CR-0244..CR-0246",
+    "states_unchanged": true,
+    "status_changed": false
+  },
+  "detector_tests_fixtures_api_or_queue_modified": false
+}

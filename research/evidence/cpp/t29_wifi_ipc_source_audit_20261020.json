@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "audit_id": "T29",
+  "queue_id": "CR-0336",
+  "candidate_id": "ohscanner.interface.ipc:fc3ec640b7a45ebb",
+  "original_status": "not_testable",
+  "queue_status": "queued_first_batch",
+  "disposition": "PARTIAL/BLOCK",
+  "source": {
+    "repository": "openharmony/communication_wifi",
+    "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+    "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+    "path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_sta_sa/wifi_device_mgr_stub.cpp",
+    "line": 40,
+    "blob": "6106eb782ab6ffb605ec6ebff9e47ed5df923375",
+    "bytes": 2088,
+    "sha256": "b23dc2a3573232cf9b2c4c682f20062b3a17d29335ec2b69799a8df01fd71793"
+  },
+  "related_sources": [
+    {"path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_sta_sa/wifi_device_mgr_service_impl.cpp", "blob": "6764cab322c82d860905316ace540f839816f7bf", "bytes": 12438, "sha256": "053b74d3f95dded15ed95f49a2c31d4768e4777bf633066abdb45e326638916b"},
+    {"path": "wifi/services/wifi_standard/sa_profile/1120.json", "blob": "443352b2ca7b14b0fa3c7641641f99157199219a", "bytes": 431, "sha256": "82372154d39c540886b9c341f06fbd4a4e23652f5f6c176355bb2649e4747bb3"},
+    {"path": "wifi/frameworks/native/interfaces/i_wifi_device.h", "blob": "2b80cb7e2c014c2a3abc6b0e88ca65166c5cee05", "bytes": 24024, "sha256": "5fab7617b31c3faf4c801b5bb695be25f5932a9338f1710bc471ed956219cc40"},
+    {"path": "wifi/frameworks/native/src/wifi_device_mgr_proxy.cpp", "blob": "02bffe5db40d5b4968cc52f791744ae222771810", "bytes": 1599, "sha256": "8ec179448ed7cfb77656b154fe99de530f3b6912998ae540ddd03e7e80dc3197"},
+    {"path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_sta_sa/wifi_device_stub.cpp", "blob": "fc32789e244b4caf80aba734bb51404096f93770", "bytes": 78448, "sha256": "b03d7cd9c03d30724f9a87fefdbe1cfb0f572bd2887a30b6c0db6769488a2823"},
+    {"path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_sta_sa/wifi_device_service_impl.cpp", "blob": "e87d25c4d79a7d40d16e73a908883c3076db182a", "bytes": 119767, "sha256": "ceddcfaa19da3573b94652b98490aa40558ac902b9cae97148fbf8d810bccd4e"}
+  ],
+  "cli": {
+    "report": "research/evidence/cpp/t29_wifi_ipc_candidate_20261020.json",
+    "detector": "ohscanner.interface.ipc",
+    "version": "0.12.12",
+    "rule": "ipc.capability.export",
+    "profile": "light-ast",
+    "build_profile": "none",
+    "scope_files": 2,
+    "parse_complete": 2,
+    "parse_partial": 0,
+    "findings": [{"file": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_sta_sa/wifi_device_mgr_stub.cpp", "line": 40, "symbol": "WifiDeviceMgrStub::GetWifiRemoteInner", "severity": "unassessed"}],
+    "snapshot_sha256": "37bf27f6cbd08cb7aa1b19690b400a6326b86b6c9f2805d68e4a729891b2bacf"
+  },
+  "source_review": {
+    "token_check": "interface-token equality check is present before transaction dispatch",
+    "manager_publication": "WifiDeviceMgrServiceImpl initializes and publishes the manager; SA source profile 1120 names libwifi_device_ability.z.so and distributed=false",
+    "recipient": "GetWifiRemoteInner writes an IWifiDevice remote object; device stub dispatches recipient operations",
+    "recipient_permissions": "Permission checks are present in WifiDeviceServiceImpl for sensitive operations; full operation-to-permission map and deployed policy are unverified",
+    "unknowns": ["target build/profile selection", "effective SA access policy", "caller token domain and allowed callers", "full reachable operation authorization map", "target-derived authorized/unauthorized comparison", "runtime impact"]
+  },
+  "interpretation": "Source-bound candidate reproduced; do not treat export alone as proof of an unauthorized capability or treat missing product evidence as safety."
+}

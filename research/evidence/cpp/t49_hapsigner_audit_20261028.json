@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "task": "T49",
+  "status": "PARTIAL/BLOCK",
+  "queue_id": "CR-0300",
+  "repository": "openharmony/developtools_hapsigner",
+  "source": {
+    "commit": "2697b2298b111e90c0999e79595645a68437f3d7",
+    "tree": "dbee4af9158f1d0663a0a776d2e7db5aa1f9201c",
+    "path": "binary_sign_tool/hap/sign/include/elf_sign_context.h",
+    "line": 46,
+    "blob": "44e062bc5572c3a658cc9eaceb149f70e320f963",
+    "sha256": "cde0bb719af2db91517921d44f31d439126658f36125bd9d703c249fd0869808"
+  },
+  "scanner": {
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "parse": "complete",
+    "diagnostic_count": 0,
+    "interpretation": "The historical A0 candidate does not reproduce under the current detector on its exact source file. This is not a safety conclusion or a confirmed detector miss: the old ID has no separately recorded rule lineage and the scanner is syntax-candidate-only."
+  },
+  "source_review": {
+    "candidate_expression": "const std::shared_ptr<ELFIO::endianess_convertor>& GetConvertor() const { return convertor; }",
+    "lifecycle": "SignElf::Sign constructs ElfSignContext as a stack local, calls Load, then passes it by reference to section building and writing within that invocation. Load assigns convertor from that invocation's ELFIO reader. No cross-invocation shared context was found in the inspected exact-tree callers.",
+    "synchronization": "No mutex/atomic is present in ElfSignContext. The examined call path is synchronous and object-local; no same-instance parallel access was found in the exact-source call chain.",
+    "build": "binary-sign-tool GN executable includes signature_tools_hap_src; signature_tools_hap.gni lists sign_elf.cpp, elf_sign_context.cpp, and elf_sign_writer.cpp. This establishes a declared target source relationship, not a locked product profile or actual shipped build.",
+    "limitations": ["External callers and product build/profile are not fully established.", "No target-derived concurrent runtime harness or impact evidence.", "No trusted fixed source is available."]
+  },
+  "context_objects": {
+    "binary_sign_tool/BUILD.gn": {"blob": "9a26b0faf22abb6934775a68d2a5dfda9efc1736", "sha256": "2d361aa500d42adf869f51b205e04adf08bde12ade9b671c043e5fe8220d61b0"},
+    "binary_sign_tool/hap/signature_tools_hap.gni": {"blob": "23e6ef22ab6c10c7f53ee31571769c806e63a55b", "sha256": "178616872c52b2749252c097bd374e78f613228688111a99ef3920d74d7caf12"},
+    "binary_sign_tool/hap/sign/src/sign_elf.cpp": {"blob": "0abb0625cc6f8c8446a8d31772e58ca8cc21aeef", "sha256": "dc1578936151b9827da1ae0a081ad043f2827528d4581cf76e2f4784b151cec3"},
+    "binary_sign_tool/hap/sign/src/elf_sign_context.cpp": {"blob": "cf7eb6d64412d0252099802394361daaf40dcc3f", "sha256": "28c05f60371bb1f4a917334d2c49112acab1672857198e45f049d662c0cdccd5"},
+    "binary_sign_tool/hap/sign/src/elf_sign_writer.cpp": {"blob": "462231792af20ba521cead7cfedff10420f8144d", "sha256": "0ce5cd0ec253fb1a0ad5a92ad0aeaff52f55d5a20b592a626e82081fb98e9722"}
+  },
+  "queue": {"original_status": "not_testable", "queue_status": "paused_pending_evidence", "states_changed": false},
+  "disposition": "No detector change. Preserve PARTIAL/BLOCK and the original A0 state. Current evidence argues against a same-instance overlapping access in the inspected stack-local path, but does not establish product-wide safety or security impact."
+}

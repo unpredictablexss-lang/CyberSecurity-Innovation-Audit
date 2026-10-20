@@ -1,0 +1,692 @@
+{
+  "schema_version": "d39-preferences-fuzzer-replay-v1",
+  "task": "D39",
+  "source": {
+    "repository": "openharmony/distributeddatamgr_preferences",
+    "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+    "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+    "file": {
+      "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+      "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+      "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+      "bytes": 4668
+    }
+  },
+  "build_target": {
+    "file": {
+      "path": "test/native/fuzztest/preferences_fuzzer/BUILD.gn",
+      "blob": "8506a0917b7fbff48a6d14ccb4c1f931db5db251",
+      "sha256": "d10327b19d3006cc1f0c9ad52d858a009cd0c90d8d4c0e14be6e2d870c132488",
+      "bytes": 2704
+    },
+    "target": "ohos_fuzztest(PreferencesFuzzTest)",
+    "test_group": "group(\"fuzztest\") [testonly = true]",
+    "production_evidence": false
+  },
+  "behavior": {
+    "entry": "LLVMFuzzerTestOneInput",
+    "api_sequence": [
+      "SetUpTestCase",
+      "GetAllFuzz",
+      "GetAllDataFuzz",
+      "GetAllDatasFuzz",
+      "DeleteFuzz",
+      "ClearFuzz",
+      "FlushFuzz",
+      "FlushSyncFuzz",
+      "TearDownTestCase"
+    ],
+    "thread_creation_or_dispatch_in_entry": false,
+    "interpretation": "All harness calls are sequential in this entry; this does not establish thread behavior inside production Preferences implementation."
+  },
+  "queue": {
+    "total_rows": 345,
+    "audited_ids": [
+      "CR-0097",
+      "CR-0098",
+      "CR-0099",
+      "CR-0100",
+      "CR-0101",
+      "CR-0102",
+      "CR-0103",
+      "CR-0104",
+      "CR-0105",
+      "CR-0106",
+      "CR-0107",
+      "CR-0108",
+      "CR-0109",
+      "CR-0110",
+      "CR-0111",
+      "CR-0112",
+      "CR-0113",
+      "CR-0114",
+      "CR-0115"
+    ],
+    "a0_status_unchanged": true
+  },
+  "cli": {
+    "raw": "d39_preferences_fuzzer_cli_20261024.json",
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "scope_files": 1,
+    "scope_loc": 147,
+    "parse": {
+      "complete": 1
+    },
+    "findings": 19,
+    "elapsed_seconds": 0.026334600002883235,
+    "command": "python -m src.cli.main ohscan-run --repo-dir D:/openHarmonyScanner/tmp/d37-preferences-source-20261024 --repository openharmony/distributeddatamgr_preferences --commit bff9efd79afc0d7d1ed22a63ff355f1600404596 --include test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp --detector ohscanner.cpp.shared_ptr_race"
+  },
+  "items": [
+    {
+      "queue_id": "CR-0097",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:8c001ab6b61655a9",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 46,
+        "line_text": "Preferences_ = PreferencesHelper::GetPreferences(\"/data/test/test\", errCode);"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 46,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c8d862df309bc6e8"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0098",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:6fa799209979ed98",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 51,
+        "line_text": "Preferences_->Clear();"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 51,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:e06970342e1589e5"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0099",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:fd12bb85d27e5ed3",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 53,
+        "line_text": "Preferences_ = nullptr;"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 53,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d45a2ab1ccd87b57"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0100",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:df995ba35b25330d",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 68,
+        "line_text": "PreferencesFuzzTest::Preferences_->PutInt(key, value);"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 68,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:04d7f855cf838e0b"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0101",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:6fea6d762d719930",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 69,
+        "line_text": "PreferencesFuzzTest::Preferences_->GetAll();"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 69,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:cb9638502cb08b2f"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0102",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:9d37768a1adf09a5",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 77,
+        "line_text": "PreferencesFuzzTest::Preferences_->PutInt(key, value);"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 77,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:a70e637212a6b076"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0103",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:3e0568f98c80832c",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 78,
+        "line_text": "PreferencesFuzzTest::Preferences_->GetAllData();"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 78,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:e5f12e89e2779b69"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0104",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:5eff63bb82542e38",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 86,
+        "line_text": "PreferencesFuzzTest::Preferences_->PutInt(key, value);"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 86,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3a308d9708b0802e"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0105",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:3e60df8f38ebeedd",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 87,
+        "line_text": "PreferencesFuzzTest::Preferences_->GetAllDatas();"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 87,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3fe8ca30d4133ecb"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0106",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:ae8d8eda39f50813",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 95,
+        "line_text": "PreferencesFuzzTest::Preferences_->PutLong(key, value);"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 95,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:9f5b14f9a7844537"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0107",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:bddb8ee2558ee13a",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 96,
+        "line_text": "PreferencesFuzzTest::Preferences_->Delete(key);"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 96,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:6258aa5e23a470ef"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0108",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:f5e8afd6b076ab07",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 104,
+        "line_text": "PreferencesFuzzTest::Preferences_->PutLong(key, value);"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 104,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:18aee91f72dc1998"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0109",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:53e9a2eec32b23a4",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 105,
+        "line_text": "PreferencesFuzzTest::Preferences_->Clear();"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 105,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:8918a41536d3f1ca"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0110",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:21efdf1711cdef82",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 113,
+        "line_text": "PreferencesFuzzTest::Preferences_->PutLong(key, value);"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 113,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ee90232ed4af5aa3"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0111",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:81fc586ab79af26b",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 114,
+        "line_text": "PreferencesFuzzTest::Preferences_->Flush();"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 114,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:68cf0b81f60deac9"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0112",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:5d337449c8165114",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 115,
+        "line_text": "PreferencesFuzzTest::Preferences_->GetLong(key);"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 115,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c09682270995ec1c"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0113",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:9581b7ba8d54735b",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 124,
+        "line_text": "PreferencesFuzzTest::Preferences_->PutLong(key, value);"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 124,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:5028826f569067e8"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0114",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:d1af9d3a79a01c7c",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 125,
+        "line_text": "PreferencesFuzzTest::Preferences_->FlushSync();"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 125,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:a88fb238c64aa7e3"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0115",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:6e00e707d8a7be60",
+      "source": {
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "blob": "fad8bdb1b87a8566b355b0ea4dbd5020c42c405c",
+        "sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29",
+        "bytes": 4668,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 126,
+        "line_text": "PreferencesFuzzTest::Preferences_->GetLong(key);"
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 126,
+        "symbol": "Preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:4bacb2ad7ca38c0b"
+      },
+      "disposition": "PARTIAL",
+      "queue_preserved": true
+    }
+  ],
+  "overall_disposition": "PARTIAL",
+  "detector_change": "none; all 19 findings correspond to a test-only fuzz harness and no labeled product-root miss was established",
+  "queue_states_changed": false,
+  "structured_vibe_prompt": {
+    "role": "A 线 Preferences shared_ptr_race 开发负责人",
+    "sustained_goal": "区分 fuzz harness 语法候选与产品可达、同一对象存在实际并发重叠的根因；继续按精确来源维护回归证据。",
+    "input": "D39 固定 source/build 对象、完整 CLI 原始输出、CR-0097–CR-0115 行映射，以及生产 Preferences 实现和构建依赖。",
+    "steps": [
+      "先独立核对 PreferencesFuzzTest 的构建依赖、生产目标入口和发布 profile；不能由 testonly fuzz group 推断产品包含或排除生产实现。",
+      "分别追踪同一 Preferences 实例的读写、析构/重置和任务/回调生命周期，核验锁、原子、线程派发及 join/happens-before。",
+      "只有绑定到已标注产品根因的真实漏检才改 detector；补漏洞、修复、安全、无关、改名和 partial controls，并记录 scope、rule、coverage、耗时。",
+      "由独立测试线复验来源、逐行 finding、产品构建上下文、顺序/并发事实和 A0 阻塞原因；没有证据时保持原 A0 状态。"
+    ],
+    "completion_gate": "仅在产品入口、同对象并发交错、缺失同步及根因标注都被独立证据支持后讨论产品漏洞闭环；否则维持 PARTIAL/BLOCK。",
+    "boundaries": [
+      "不将 fuzz harness 告警自动升级为产品漏洞，也不自动标记为误报。",
+      "不按 CVE、仓库、函数名或源码哈希硬编码；不改 A0 队列。",
+      "不把 parser partial、候选或零结果表述为安全结论。"
+    ]
+  }
+}

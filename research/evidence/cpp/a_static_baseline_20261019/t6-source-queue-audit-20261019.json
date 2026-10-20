@@ -1,0 +1,296 @@
+{
+  "schema": "a-line-t6-source-queue-audit-v1",
+  "date": "2026-10-19",
+  "role": "independent test/source-provenance audit",
+  "checkout": "D:/openHarmonyScanner/worktrees/a-t6-source-queue-20261019",
+  "base_commit": "50b2806a7df38cd1ad07f257873617fe9d6b8337",
+  "independent_test_only": true,
+  "source_review": {
+    "path": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit\\research\\deliveries\\cpp\\源漏洞审查记录_20261018_A线整合版.md",
+    "sha256": "0e331b9da1845eeb0c72edf226bf93a7e0de93d42f1de1e2ad2122b9fcd3ba4a",
+    "access": "read-only original A-line working tree copy"
+  },
+  "source_ledger": {
+    "path": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit\\research\\deliveries\\cpp\\coverage_ledger_20261019.json",
+    "sha256": "e991abd2c020e5157278779374ed2f029ac6aacfddef4887adbcd160b58f8812"
+  },
+  "baseline_matrix": {
+    "path": "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+    "sha256": "912a74f099ff181140c976a29027427baf872708796717237e26c7de97818541",
+    "scanner_base": "8ec5f56a12e90bba56953b39eb17faa20e154da9",
+    "cases": 13,
+    "semantics": "immutable pre-development baseline; its statuses are not overwritten by later T3 outcomes"
+  },
+  "case_status_counts": {
+    "PASS": 3,
+    "PARTIAL": 7,
+    "BLOCK": 1,
+    "N/A": 2
+  },
+  "cases": [
+    {
+      "case_id": "libtiff-cve-2025-9900",
+      "disposition": "PARTIAL",
+      "dev": "基于固定函数形态的 unsigned dimension subtraction 与 scaled pointer offset 候选已回归；近期证据为 vulnerable 1 / fixed 0。目标二文件仍 parser partial/blocked，产品构建 profile、完整 preprocessing 和攻击者可控调用条件未知。",
+      "test": "复核 D2/T3 的 1/0 原始报告及源码哈希；建立可复现的目标宏/头文件上下文后同版本重跑，候选必须仍定位 TIFFReadRGBAImageOriented 的根因。产品级结论另需构建图与 caller/输入边界证据。",
+      "minimum_next_evidence": "获得产品所选 GN/profile 和生成配置头文件的 source-bound preprocessing 输入；用同一两文件 scope 对 vulnerable/fixed 完成足够目标分析，并绑定 safe/unrelated source controls。若无法获得 profile，保留 PARTIAL。",
+      "source_chain": "upstream vulnerable commit 9dff73bebc5661f2dace6f16e14cf9e857172f4e / tree 986499c84247e9a1f49560128bbe7580d8ebea1a / libtiff/tif_getimage.c blob 6c7b5031a1937bb48cc79808a59618d8a4f6237e / SHA256 cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3; fixed commit 3e0dcf0ec651638b2bd849b2e6f3124b36890d99 / tree 77361ef7262189e16a2010b5c333f6b275d17f09 / blob 2774caa0eef24bce2a619d2686a23d59fb5ef9db / SHA256 de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8. Both full identity pairs appear in matrix; source object availability and parser profile are separate.",
+      "evidence_refs": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+        "research/evidence/cpp/a_t3_first_wave_acceptance_20261019.md"
+      ]
+    },
+    {
+      "case_id": "libpng-ghsa-qvg3-h654-xq3j",
+      "disposition": "PARTIAL",
+      "dev": "资源生命周期规则已有该 stale zstream/UAF 形状研究，但 exact-source production CLI runs remain 0 findings and blocked; vulnerable/fixed target files are partial. Do not claim detector success from ASan or byte identity.",
+      "test": "T4/T3 confirmed file blob and SHA matches for vulnerable, fix-parent and fixed pngrutil.c; upstream full fix trees remain absent from recorded local object stores. Four variants were replayed under the same synthetic transport tree.",
+      "minimum_next_evidence": "提供 parser 可见的 zstream owner/release/use state and caller sequence across required files; rerun original byte-bound snapshots under a complete source scope. Obtain exact upstream tree IDs for fix parent and fixed commit, and source-bound safe/unrelated controls. Keep product call path separate.",
+      "source_chain": "vulnerable upstream v1.6.55 commit c3e304954a9cfd154bc0dfbfea2b01cd61d6546d, pngrutil.c blob a4eda54c8cb3d36cf1651dba159067b65030e3aa, SHA256 b328fb05352226866b1e44c8cddd3e03df35413f1f38f4d81ba51afe4f2333a5e; fix parent 4eeb825ab26605ed34cd74495d4cce920939fe9f blob 5513951681f52da994ba72c96af135bfede5393e; official fix aa77ef38c17ab2fc1b41bec09fb973c6a386641d blob 482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a SHA256 a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e. Fix tree IDs explicitly not obtained; scan tree c78da20c3ffe37b09653eaa3b49c5213745ac4bd is synthetic.",
+      "evidence_refs": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+        "research/evidence/cpp/a_t3_first_wave_acceptance_20261019.md"
+      ]
+    },
+    {
+      "case_id": "libpng-ghsa-m4pc-p4q3-4c7j",
+      "disposition": "PARTIAL",
+      "dev": "resource_lifetime 0.3.0/D4 and later component evidence do not close the detector case; four scoped files parse partial. A D3-era 0.1.9 replay recorded 2/0 candidates at pngrtran.c:1187 and :1228 but all four files remained partial; T3 0.3.0 replay was 0/0 partial. Versioned results must remain separate.",
+      "test": "T4/T3 exact upstream tags and all eight target-file OIDs matched synthetic snapshot blobs; same four-file scope. D4/T3 identities carry upstream commit/tree while scan synthetic IDs are kept distinct.",
+      "minimum_next_evidence": "Obtain parser/type context that exposes cross-file owner/release/use sequence for pngrtran.c and its three dependencies; rerun vulnerable v1.6.55 and fixed v1.6.56 using one frozen detector version, then bind safe/unrelated controls. Record product build/linkage/call sequence separately.",
+      "source_chain": "upstream vulnerable v1.6.55 c3e304954a9cfd154bc0dfbfea2b01cd61d6546d / tree e01f5780f93eaa6d74cca003bb39b427c8f1e910; fixed v1.6.56 d5515b5b8be3901aac04e5bd8bd5c89f287bcd33 / tree a28bb962645843af84063c77f574f6d88da79f76. Files pngset.c, png.c, pngread.c, pngrtran.c have exact per-file OIDs/SHA in T4 manifest; T3 checked bytes. Current tagged refs were read-only checked on 2026-10-19.",
+      "evidence_refs": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+        "research/evidence/cpp/a_t3_first_wave_acceptance_20261019.md"
+      ]
+    },
+    {
+      "case_id": "curl-cve-2026-92391",
+      "disposition": "PASS",
+      "dev": "D3 rule 0.3.0 produces one root candidate on exact vulnerable lib/mime.c and zero on exact fix; both complete.",
+      "test": "T3 independently repeated the same-version 0.3.0 differential with same source scope and snapshot identities; PASS is limited to static regression, not product call path or impact.",
+      "minimum_next_evidence": "No blocking static regression item. For product assurance, bind OH product build/caller and prove whether untrusted input can create deep nested MIME; otherwise retain product impact unknown.",
+      "source_chain": "upstream curl 8.22.0 commit 01346829096c61b372692f6dc43ffa778c6caccd / tree 6ae23d9333713707a02588b44ed238a50e8b3bde; fixed commit d7546809d5bd548b69ec49fca26565c8f6f0d344 / tree 52a8416729366487cdd3b6012071f5f8370e769f. Official tags curl-8_22_0 peeled to 0134682 and curl-8_23_0 peeled to 3163ec0 as observed 2026-10-19. Exact source SHA and report metadata are in T3 acceptance.",
+      "evidence_refs": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+        "research/evidence/cpp/a_t3_first_wave_acceptance_20261019.md"
+      ]
+    },
+    {
+      "case_id": "cjson-cve-2026-67216",
+      "disposition": "PARTIAL",
+      "dev": "Distinct compare-cost candidate is observed at cJSON.c:3161 on OH source under 0.3.0; cJSON.c parser/detector coverage remains partial/blocked. No trusted fixed source identified.",
+      "test": "T3 confirmed source snapshot commit/tree and file SHA; controls include one synthetic safe-shaped compare control and unrelated control, not an independent project safety proof.",
+      "minimum_next_evidence": "Find a vendor/upstream fix that bounds compare work for this exact exponential root cause, bind its full source identity, and complete analysis of cJSON.c at the target operation; rerun vuln/fix plus safe/unrelated. If no real fix exists, fixed comparison remains BLOCK and keep synthetic controls explicitly labeled.",
+      "source_chain": "OH third_party_cjson 1.7.19 commit 0c2c9dff82cc85539c8362132d7a5f6bf7d1e748 / tree 0d8e50cc18f9ae178e9969eed40f8a0c94fb3856; cJSON.c blob 152b2caa479c9f448001652913c980a6dafb82e0 / SHA256 427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb. Scan transport snapshot commit 105eaddbf0d0110b07d16bdefc81ffc796e1444a / tree 3c07134d5a05aa546b15739e32503a2ca192d258 is synthetic byte packaging.",
+      "evidence_refs": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+        "research/evidence/cpp/a_t3_first_wave_acceptance_20261019.md"
+      ]
+    },
+    {
+      "case_id": "cjson-cve-2026-67215",
+      "disposition": "PARTIAL",
+      "dev": "Distinct JSON Patch add/copy tree amplification followed by recursive-delete candidate is observed at cJSON_Utils.c:861; related cJSON.c remains partial and detector analysis blocked.",
+      "test": "T3 exact source replay and rule-specific synthetic positive/unrelated controls reproduce candidate. No trusted fix object or full detector target coverage.",
+      "minimum_next_evidence": "Obtain real fix matching add/copy amplification then recursive delete, or explicitly retain fixed comparison as BLOCK; complete parse/model context for cross-file cJSON/cJSON_Utils flow; add/verify a safe guarded tree control and unrelated control before claiming the root rule regression. Product build condition for cJSON_Utils remains unknown.",
+      "source_chain": "OH third_party_cjson commit 0c2c9dff82cc85539c8362132d7a5f6bf7d1e748 / tree 0d8e50cc18f9ae178e9969eed40f8a0c94fb3856; cJSON.c SHA256 427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb; cJSON_Utils.c blob 8fa24f8e9bf452cf1ba49d1325c85423ce742c74 / SHA256 bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9. Synthetic scan tree 3c07134d5a05aa546b15739e32503a2ca192d258. Matrix provenance separately lists scan_snapshot commit 461676384f5d25c47042ddfccd7a89134d5f45d2 on the same tree; T3 CLI report uses 105eaddbf0d0110b07d16bdefc81ffc796e1444a. This is a transport identity role discrepancy to keep explicit.",
+      "evidence_refs": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+        "research/evidence/cpp/a_t3_first_wave_acceptance_20261019.md"
+      ]
+    },
+    {
+      "case_id": "openharmony-cve-2026-27648",
+      "disposition": "BLOCK",
+      "dev": "Current independent acceptance is blocked. Source ledger contains exact 6.0/5.1/5.0.3 vulnerable/fixed commit-tree-blob-SHA pairs, but T3 acceptance describes a fixed-only frozen replay while T1 matrix stores vulnerable/fixed replay snapshots with both parses partial and 0 findings. Evidence needs reconciliation before detector outcome can be trusted.",
+      "test": "Exact source identity values are present in T1 matrix; raw baseline reports show partial parse (23 issues) and blocked for both entries. This conflicts with T3 minimum item saying vulnerable full TU was unavailable; the underlying source-store coverage must be rechecked rather than deleting either record.",
+      "minimum_next_evidence": "Against the official source objects, re-extract vulnerable and fixed full TU bytes for each scoped release pair, verify blob/SHA, run one frozen bounds detector with explicit scope, compare parser diagnostics and candidate location, then isolate the smallest parser blocker. Bind safe/unrelated controls. Product release mapping is already listed by advisory but actual product build linkage/reachability still unknown.",
+      "source_chain": "OpenHarmony 2026-04 notice; source ledger has commit/tree/blob/SHA for release lines 6.0, 5.1, 5.0.3. T1 synthetic scan snapshot vuln a15cbf4ef20673cfcf1856bf40a723b3ce026564/tree 03e16f6f4f2c33c2cd08e31c14e00be689230c39; fixed fa0d92ccbf47b7cdc7efb727c79cbdfc168469eb/tree 9873e4146e4a521b80f05a61c24d9c6047f696a7; exact replay hashes are in matrix and `web27648-*.json`.",
+      "evidence_refs": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+        "research/evidence/cpp/a_t3_first_wave_acceptance_20261019.md"
+      ]
+    },
+    {
+      "case_id": "openharmony-cve-2025-26690",
+      "disposition": "PARTIAL",
+      "dev": "Null dereference rule reports 5 vulnerable / 0 fixed candidates from exact official fetched file bytes, but model coverage is partial and run blocked; upstream commit trees remain unbound.",
+      "test": "T1/T3 verify file blob IDs and raw SHA-256 for both commits and independent synthetic-package replay. Project object store lacks both source commit objects; no exact safe/unrelated source controls; current product replay absent.",
+      "minimum_next_evidence": "Recover authoritative upstream commit/tree objects (or obtain verified tree IDs from an official immutable endpoint) for both exact commits; rerun frozen current detector on those commit objects/full caller scope; confirm all candidate lines actually match the allocation-failure root and bind safe/unrelated controls. Product build/caller/attacker error path remains separate.",
+      "source_chain": "openharmony/communication_dsoftbus; vulnerable 258662cd9840b55a31546a72d91027f6368cea84, file core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp, blob a82b71fb5520b02278a4af695bbe918d14c1048e, SHA256 5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6. Fixed 192f3e11d74beeaa3d879333471deb8a24a7e1c5, blob 13ddbe93a7f617784dec0f3761e09f66b5c3217c, SHA256 5a093d91efc624147d40bf3f4dbbe3ab7ab6d724b17978298e9d5c30d9e5eb81. Source bytes were official GitHub fetch; local synthetic snapshots are not the upstream trees.",
+      "evidence_refs": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+        "research/evidence/cpp/a_t3_first_wave_acceptance_20261019.md"
+      ]
+    },
+    {
+      "case_id": "openharmony-cve-2025-0587",
+      "disposition": "PASS",
+      "dev": "Exact pinned vulnerable/fixed pair 1/0, complete parse, plus independently source-bound synthetic safe/unrelated controls 0/0.",
+      "test": "T3 checked exact commits, trees, source hashes and positions; the regression acceptance is complete at the static rule level. Synthetic controls are not real-project truth labels.",
+      "minimum_next_evidence": "No blocker for static regression acceptance. Product version/build/caller and attacker-controlled index path are not confirmed; preserve that product-level gap if in scope.",
+      "source_chain": "arkcompiler_ets_runtime vulnerable commit cae11f121c030a90ba41d8e4d866f91292f25892/tree 61ff01d9a06b4186125a04e2b790e07640f57198/blob 7fd67717571c6d8fe7b10bf294998e952dc61e36/SHA256 f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541; fixed commit 5aa9c035e98911ec7ed28065a2138c2709792a42/tree 05ac3902979e37ae08efa2d1e3ed32472a69d0cc; source paths/hashes in raw matrix. Both exact commits and trees available locally.",
+      "evidence_refs": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+        "research/evidence/cpp/a_t3_first_wave_acceptance_20261019.md"
+      ]
+    },
+    {
+      "case_id": "openharmony-cve-2025-23420",
+      "disposition": "PASS",
+      "dev": "Exact pinned vulnerable/fixed pair 5/0, complete parse, plus independently source-bound synthetic safe/unrelated controls 0/0.",
+      "test": "T3 independently verified exact commit/tree/blob/hash and line list; pass is only static regression acceptance. Historical delivery did not prove product branch containment.",
+      "minimum_next_evidence": "No blocker for static regression acceptance. Product release branch, build/caller reachability, and impact remain unknown if advancing to product claim.",
+      "source_chain": "arkcompiler_ets_runtime vulnerable commit aeee3fd12c03193545edea4b8e0fdfa3d9a03d11/tree 0eea26c9eb6846f4d19926be83092c06f0d98692/blob 2c58914ad27b6b3c5f570dbd2fe0ed02d1d9e471/SHA256 b7f28be2f63850ba1cb57a35d518930986855784d2081124e555f2a57d673e9b; fixed commit 1b23531531e768398682582969c2a9f17e72cafe/tree 52f27683e2f6e1ba8272aee7d5202c73059e10b4; fixed patch SHA256 e0b61dde4058080ee28184d49b3d7da80e4ad428bc2030a04fc5f69bccbc0512.",
+      "evidence_refs": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+        "research/evidence/cpp/a_t3_first_wave_acceptance_20261019.md"
+      ]
+    },
+    {
+      "case_id": "openharmony-cve-2025-20042",
+      "disposition": "N/A",
+      "dev": "历史台账明确在当前 lexical-bounds 规则范围外。",
+      "test": "N/A exclusion preserved; no scan or safety verdict.",
+      "minimum_next_evidence": "No action unless A-line scope/rule applicability changes; then reopen with explicit criteria.",
+      "source_chain": "Source ledger classification only; no source pair required for current scope.",
+      "evidence_refs": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+        "research/evidence/cpp/a_t3_first_wave_acceptance_20261019.md"
+      ]
+    },
+    {
+      "case_id": "openharmony-cve-2025-21098",
+      "disposition": "N/A",
+      "dev": "历史台账明确在当前 A 规则范围外。",
+      "test": "N/A exclusion preserved; no scan or safety verdict.",
+      "minimum_next_evidence": "No action unless A-line scope/rule applicability changes; then reopen with explicit criteria.",
+      "source_chain": "Source ledger classification only; no source pair required for current scope.",
+      "evidence_refs": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+        "research/evidence/cpp/a_t3_first_wave_acceptance_20261019.md"
+      ]
+    },
+    {
+      "case_id": "contacts-portrait-filename-path-traversal",
+      "disposition": "PARTIAL",
+      "dev": "D6 path-traversal v0.3.0 reproduces exact A0 file candidates at lines 789/790/794; D6 regression and guard-order controls pass. Line 790 has separate bucket-ID semantics; finding identity remains partial.",
+      "test": "T5 independently confirmed source commit/tree/blob/SHA, complete syntax parse and candidate locations; current refs OpenHarmony-6.1-LTS matches A0 commit, master and weekly_20261019 point to 341cc3... with different target blob; these sampled refs do not yield a fixed source.",
+      "minimum_next_evidence": "Obtain and source-bind a trusted fixed implementation for the A0 root cause or keep fixed comparison BLOCK; resolve field/permission semantics for PortraitFileName and bucket ID; obtain owner admission for Catalog then rerun production CLI. Product build, path root/containment and attacker reachability need evidence for product claim.",
+      "source_chain": "applications/standard/contacts_data commit b02aadfc2d801ee30573fcb2d13490298e146fea/tree ef183625ccbc842f47b076eb75e68b665d7c21c6; dataBusiness/contacts/src/contacts_data_ability.cpp blob 32c6a26a9a6c1f4ec3172f45bc3dbe4d3668abe6, 80,944 bytes, SHA256 70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383. master 341cc3bf41b48e9a5f278dd088f40a2041d2f1c9/tree 2054824c04bb403eeea128a9262edfb3001efa4f has different blob c93e950725adc93276916b3c96c5ac7a5bb5b6b7/SHA256 c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6.",
+      "evidence_refs": [
+        "research/evidence/cpp/a_static_baseline_20261019/matrix.json",
+        "research/evidence/cpp/a_t3_first_wave_acceptance_20261019.md"
+      ]
+    }
+  ],
+  "remote_ref_observations": {
+    "observed_at": "2026-10-19",
+    "method": "git ls-remote --heads/--tags; read-only; no checkout or fetch",
+    "refs": [
+      {
+        "repo": "https://gitcode.com/openharmony/applications_contacts_data.git",
+        "ref": "OpenHarmony-6.1-LTS",
+        "tip": "b02aadfc2d801ee30573fcb2d13490298e146fea",
+        "interpretation": "matches exact A0 source; not a fixed source"
+      },
+      {
+        "repo": "https://gitcode.com/openharmony/applications_contacts_data.git",
+        "ref": "master",
+        "tip": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+        "interpretation": "target file blob differs from A0; no fixed inference"
+      },
+      {
+        "repo": "https://gitcode.com/openharmony/applications_contacts_data.git",
+        "ref": "weekly_20261019",
+        "tip": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+        "interpretation": "same tip as master; target file blob differs from A0"
+      },
+      {
+        "repo": "https://github.com/curl/curl.git",
+        "ref": "refs/tags/curl-8_22_0^{}",
+        "tip": "01346829096c61b372692f6dc43ffa778c6caccd"
+      },
+      {
+        "repo": "https://github.com/curl/curl.git",
+        "ref": "refs/tags/curl-8_23_0^{}",
+        "tip": "3163ec065643ba20709f190111f42c3e1fe95273"
+      },
+      {
+        "repo": "https://github.com/pnggroup/libpng.git",
+        "ref": "refs/tags/v1.6.55^{}",
+        "tip": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d"
+      },
+      {
+        "repo": "https://github.com/pnggroup/libpng.git",
+        "ref": "refs/tags/v1.6.56^{}",
+        "tip": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33"
+      },
+      {
+        "repo": "https://github.com/pnggroup/libpng.git",
+        "ref": "refs/tags/v1.6.59 (annotated tag object)",
+        "tip": "a543b51f2de2904f3436830394b1013782f7f9e6",
+        "interpretation": "annotated tag object; peeled commit is recorded separately"
+      },
+      {
+        "repo": "https://github.com/pnggroup/libpng.git",
+        "ref": "refs/tags/v1.6.59^{}",
+        "tip": "cd952f49f95bb27154ae77dbb103032d95f6e580",
+        "interpretation": "peeled tagged commit observed read-only"
+      }
+    ],
+    "limits": "Remote refs prove only the observed ref tips. They do not prove a target source is fixed, that no later/earlier fixed commit exists, or product branch inclusion."
+  },
+  "queue_345": {
+    "path": "research/deliveries/cpp/a0_triage_20261019/queue.json",
+    "sha256": "cb528dcbcf91482db4d15264425bd43ea2332b45b6c3c86b88f34a5bc823733c",
+    "csv_path": "research/deliveries/cpp/a0_triage_20261019/queue.csv",
+    "csv_sha256": "a174c0a74986e8410c53f173b84bb446c59000c3867add612a14e8aab4396d27",
+    "reconciliation_path": "research/deliveries/cpp/a0_triage_20261019/reconciliation_20261019.json",
+    "reconciliation_sha256": "0542fb35052e8085b9429eceb478a0a5119d8f11895b961f03e48b95f06881ff",
+    "count": 345,
+    "unique_ids": 345,
+    "original_status_counts": {
+      "not_reproduced": 9,
+      "not_testable": 336
+    },
+    "queue_state_counts": {
+      "queued_not_reproduced": 9,
+      "queued_first_batch": 5,
+      "paused_pending_evidence": 331
+    },
+    "all_original_ids_and_states_preserved": true,
+    "unknown_family_leakage_rows": 345,
+    "reconciliation_overall_ok": true,
+    "interpretation": "Integrity PASS only; no candidate truth labels, TP/FP/FN/TN, precision or recall inferred."
+  },
+  "discrepancy_notes": [
+    "T1 matrix is immutable pre-development evidence; use T3/T5 later outcomes for current case dispositions while preserving baseline status.",
+    "web_webview T1 matrix contains vulnerable and fixed synthetic replay rows with exact file hashes, both partial/blocked; T3 first-wave text says the frozen result had only a fixed-source replay / vulnerable full TU unavailable. T6 marks BLOCK pending a byte-for-byte reconciliation and current frozen rerun.",
+    "libpng 33416 findings differ by detector version and phase: early baseline/T4 0/0, D3-era 0.3.0 T3 0/0 partial, later D3 report cited 0.1.9 2/0 partial. Keep each version/scope record separate; do not collapse them into a pass.",
+    "CVE-2025-26690 current source package gives exact file OID/SHA and 5/0 candidate delta, but no authoritative tree IDs; historical summary alone is insufficient for full-source PASS.",
+    "cJSON source ledger records transport snapshot commit 461676384f5d25c47042ddfccd7a89134d5f45d2 while replay reports identify scan commit 105eaddbf0d0110b07d16bdefc81ffc796e1444a; both point at tree 3c07134d5a05aa546b15739e32503a2ca192d258 and the same source SHA, but record the role distinction explicitly in future source manifests."
+  ],
+  "development_queue": [
+    "libtiff: restore parser context using pinned product build configuration; maintain 1/0 candidate only as partial until target completeness and controls.",
+    "libpng 46675/33416: isolate parser blockers and expose cross-function resource state; exact source sequence and controls; never relax partial statuses.",
+    "cJSON 67215/67216: implement distinct rule changes only with complete target context, safe/unrelated controls; fixed-source subtask remains blocked until real root-cause fix exists.",
+    "web_webview: resolve matrix-vs-T3 source/replay discrepancy, then reproduce in complete source scope before modifying bounds.",
+    "dsoftbus: after tree binding, check that reported null-deref locations correspond to exact root operation and complete detector model.",
+    "Contacts: owner Catalog admission / production path remains a gated development task; source and direct rule regression are already bound."
+  ],
+  "test_queue": [
+    "For each partial/block item, replay exact commit/tree/blob/SHA identity on frozen code and preserve before/after source hash and scope.",
+    "Seek official immutable commit/tree identities for dsoftbus, libpng 46675 and any missing fixed object; do not substitute synthetic scan commit/tree.",
+    "Acquire trusted fixed-source pairs for Contacts and cJSON only when a source actually fixes the disclosed root cause; otherwise retain fixed comparison BLOCK.",
+    "Bind project-safe/unrelated controls with independent source labels where available; synthetic controls remain synthetic and cannot yield precision/recall.",
+    "Continue the 345-item A0 queue without altering candidate_id/original_status; prioritize first batch but preserve all paused records and resolve the 345 unknown-family mappings separately.",
+    "Track product build, caller/entry permission and attacker-controlled input as a separate evidence lane from static detector acceptance."
+  ],
+  "limits": [
+    "Source-only outcomes do not confirm a current OpenHarmony product vulnerability or safety.",
+    "T6 does not modify detectors, tests, fixtures, catalog, API, or the original 345 records.",
+    "Unknowns remain open; exact file identity is not semantic validation."
+  ]
+}

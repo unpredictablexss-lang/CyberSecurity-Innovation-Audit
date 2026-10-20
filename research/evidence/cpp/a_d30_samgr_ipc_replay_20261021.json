@@ -1,0 +1,55 @@
+{
+  "schema_version": "a-d30-samgr-ipc-replay-v1",
+  "audit": "D30 current production IPC detector replay for A0 CR-0219 through CR-0226",
+  "date": "2026-10-21",
+  "lane": "development/replay (IPC detector owner remains B)",
+  "integration_baseline": "3aa6acc13ab7f39b0ebaee092a3e3e5b9b83bfa2",
+  "source": {
+    "repository": "openharmony/systemabilitymgr_samgr",
+    "commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff",
+    "tree": "b7a89e95be788f2f2372258e341f7be842c7826d",
+    "path": "services/samgr/native/source/system_ability_manager_stub.cpp",
+    "blob": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
+    "bytes": 78212,
+    "sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433",
+    "commit_tree_blob_sha_verified": true
+  },
+  "cli": {
+    "invocation_id": "git-index:08e2a552b839:5c9865cdc829:ohscanner.interface.ipc",
+    "command": "python -m src.cli.main ohscan-run --repo-dir research/evidence/cpp/.d30_samgr_source_repo --repository openharmony/systemabilitymgr_samgr --commit 08e2a552b839ea7727251cb9b749a5c1dd9cfeff --include services/samgr/native/source/system_ability_manager_stub.cpp --detector ohscanner.interface.ipc --json-out research/evidence/cpp/a_d30_samgr_ipc_cli_20261021.json --md-out research/evidence/cpp/a_d30_samgr_ipc_cli_20261021.md",
+    "detector": "ohscanner.interface.ipc",
+    "detector_version": "0.12.12",
+    "rule": "ipc.capability.export",
+    "rule_version": null,
+    "profile": "light-ast",
+    "build_profile": "none",
+    "source_parse_status": "partial",
+    "source_analysis_status": "partial",
+    "selected_files": 1,
+    "selected_bytes": 78212,
+    "diagnostic_count_all_rules": 10,
+    "matched_candidate_count_for_ids": 8,
+    "result": "all_eight_expected_source_locations_hit; overall_case_PARTIAL",
+    "cli_json_sha256": "036c457ef2bb385466d5aad454dd54469ba04ca4005515ff70751ef02893e02a"
+  },
+  "cases": [
+    {"queue_id":"CR-0219","old_candidate_id":"ohscanner.interface.ipc:04a66a31ff68330e","line":464,"method":"CheckRemtSystemAbilityInner","rule":"ipc.capability.export","current_cli_hit_id":"ohscanner.interface.ipc:2af8fbf91642cbbf","queue_status":"queued_not_reproduced","original_status":"not_reproduced"},
+    {"queue_id":"CR-0220","old_candidate_id":"ohscanner.interface.ipc:d25bf1cd70fc1a15","line":551,"method":"CheckSystemAbilityImmeInner","rule":"ipc.capability.export","current_cli_hit_id":"ohscanner.interface.ipc:e6305216fc6e7a94","queue_status":"queued_not_reproduced","original_status":"not_reproduced"},
+    {"queue_id":"CR-0221","old_candidate_id":"ohscanner.interface.ipc:38dbb42209c3b6bc","line":668,"method":"GetSystemAbilityInner","rule":"ipc.capability.export","current_cli_hit_id":"ohscanner.interface.ipc:b810e0670174d80e","queue_status":"queued_not_reproduced","original_status":"not_reproduced"},
+    {"queue_id":"CR-0222","old_candidate_id":"ohscanner.interface.ipc:f4b4ee6abf220a93","line":706,"method":"CheckSystemAbilityInner","rule":"ipc.capability.export","current_cli_hit_id":"ohscanner.interface.ipc:c50c9e08852ab64f","queue_status":"queued_not_reproduced","original_status":"not_reproduced"},
+    {"queue_id":"CR-0223","old_candidate_id":"ohscanner.interface.ipc:a89d4fbb76239732","line":1485,"method":"GetExtensionRunningSaListInner","rule":"ipc.capability.export","current_cli_hit_id":"ohscanner.interface.ipc:d21108b21819c7b8","queue_status":"queued_not_reproduced","original_status":"not_reproduced"},
+    {"queue_id":"CR-0224","old_candidate_id":"ohscanner.interface.ipc:1ab7b873ef0e71d2","line":1692,"method":"GetSystemAbilityWithUserIdInner","rule":"ipc.capability.export","current_cli_hit_id":"ohscanner.interface.ipc:cfca2b2cdef00a5b","queue_status":"queued_not_reproduced","original_status":"not_reproduced"},
+    {"queue_id":"CR-0225","old_candidate_id":"ohscanner.interface.ipc:79b120286d7e2168","line":1735,"method":"CheckSystemAbilityWithUserIdInner","rule":"ipc.capability.export","current_cli_hit_id":"ohscanner.interface.ipc:2ffa938ee632d9d4","queue_status":"queued_not_reproduced","original_status":"not_reproduced"},
+    {"queue_id":"CR-0226","old_candidate_id":"ohscanner.interface.ipc:c85193fe8d815688","line":1784,"method":"CheckSystemAbilityByUserIdInner","rule":"ipc.capability.export","current_cli_hit_id":"ohscanner.interface.ipc:5f76290f7adec957","queue_status":"queued_not_reproduced","original_status":"not_reproduced"}
+  ],
+  "interpretation": {
+    "detector_gap_reproduced": false,
+    "candidate_status": "all eight prior IPC export locations are reproduced by current production CLI under the current rule; this is a root-cause candidate only",
+    "limits": ["The selected source file is parser/analysis partial (detector_model_incomplete).", "No source-bound fixed version was available or evaluated.", "No product build flags, SELinux/caller policy, external reachability or target-derived harness were available.", "Current rule version is not exposed by this CLI output; detector version is 0.12.12.", "Finding is not proof of unauthorized export or confirmed vulnerability."],
+    "queue_preserved": true
+  },
+  "owner_request": {
+    "required": false,
+    "reason": "No current-detector miss was reproduced; no IPC detector code is changed. If future evidence shows a same-source miss, request B-owner review with the exact transaction registration, authorization guard, capability sink, parse status, and positive/guarded controls before changing production rules."
+  }
+}

@@ -1,0 +1,359 @@
+{
+  "schema_version": 1,
+  "purpose": "D24 source-bound shared_ptr_race replay; research candidate evidence only",
+  "source_repository": "openharmony/distributeddatamgr_data_share",
+  "source_commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+  "source_tree": "f731230c116c94d7619f5514c828b33ffac69924",
+  "queue_ids": [
+    "CR-0005",
+    "CR-0006",
+    "CR-0007",
+    "CR-0008",
+    "CR-0009",
+    "CR-0010",
+    "CR-0011",
+    "CR-0012"
+  ],
+  "queue_rows": [
+    {
+      "queue_id": "CR-0005",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:d05464fbe27c637e",
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "repo_project_path": "foundation/distributeddatamgr/data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/ets/ani/include/ani_observer.h",
+      "line": "29",
+      "blob": "b3e2063220f2613568f8ef7445b839f9753433c1",
+      "source_sha256": "fc09a00ed10c2f11666e098f0d8f491ef30cb9f8b9de36d09982114cc8b2b7f9",
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.2.0-proposed",
+      "rule": "ohcpp-shared-ptr-race-candidate-001",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "checkout_blob_oid": "b3e2063220f2613568f8ef7445b839f9753433c1",
+      "checkout_sha256": "fc09a00ed10c2f11666e098f0d8f491ef30cb9f8b9de36d09982114cc8b2b7f9"
+    },
+    {
+      "queue_id": "CR-0006",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:d264343b8bf00c1e",
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "repo_project_path": "foundation/distributeddatamgr/data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/ets/ani/include/datashare_ani.h",
+      "line": "84",
+      "blob": "00d494b2d269950be5901725cfdc0f40393e14f2",
+      "source_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273",
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.2.0-proposed",
+      "rule": "ohcpp-shared-ptr-race-candidate-001",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "checkout_blob_oid": "00d494b2d269950be5901725cfdc0f40393e14f2",
+      "checkout_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273"
+    },
+    {
+      "queue_id": "CR-0007",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:6ad5dd5a59bf0953",
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "repo_project_path": "foundation/distributeddatamgr/data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/ets/ani/include/datashare_ani.h",
+      "line": "90",
+      "blob": "00d494b2d269950be5901725cfdc0f40393e14f2",
+      "source_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273",
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.2.0-proposed",
+      "rule": "ohcpp-shared-ptr-race-candidate-001",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "checkout_blob_oid": "00d494b2d269950be5901725cfdc0f40393e14f2",
+      "checkout_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273"
+    },
+    {
+      "queue_id": "CR-0008",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:4a1862ded6f4ab44",
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "repo_project_path": "foundation/distributeddatamgr/data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/ets/ani/include/datashare_ani.h",
+      "line": "91",
+      "blob": "00d494b2d269950be5901725cfdc0f40393e14f2",
+      "source_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273",
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.2.0-proposed",
+      "rule": "ohcpp-shared-ptr-race-candidate-001",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "checkout_blob_oid": "00d494b2d269950be5901725cfdc0f40393e14f2",
+      "checkout_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273"
+    },
+    {
+      "queue_id": "CR-0009",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:8841a93b3cd93abd",
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "repo_project_path": "foundation/distributeddatamgr/data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/ets/ani/include/datashare_ani.h",
+      "line": "101",
+      "blob": "00d494b2d269950be5901725cfdc0f40393e14f2",
+      "source_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273",
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.2.0-proposed",
+      "rule": "ohcpp-shared-ptr-race-candidate-001",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "checkout_blob_oid": "00d494b2d269950be5901725cfdc0f40393e14f2",
+      "checkout_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273"
+    },
+    {
+      "queue_id": "CR-0010",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:345871e178e060cf",
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "repo_project_path": "foundation/distributeddatamgr/data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/js/napi/dataShare/include/napi_datashare_observer.h",
+      "line": "27",
+      "blob": "cb40b90d9c1e9d5618920f92199ef0a8a883a2bd",
+      "source_sha256": "ace04e477a8e14bdf2a8793b20f748deda883ec507efa83a1d23c503649b80fc",
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.2.0-proposed",
+      "rule": "ohcpp-shared-ptr-race-candidate-001",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "checkout_blob_oid": "cb40b90d9c1e9d5618920f92199ef0a8a883a2bd",
+      "checkout_sha256": "ace04e477a8e14bdf2a8793b20f748deda883ec507efa83a1d23c503649b80fc"
+    },
+    {
+      "queue_id": "CR-0011",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:a15546f2de0f7c99",
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "repo_project_path": "foundation/distributeddatamgr/data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/native/consumer/include/datashare_helper_impl.h",
+      "line": "34",
+      "blob": "3e7003a57ac19a0a872f80f950b6fb613a495dbb",
+      "source_sha256": "32bd085756ca6474c935c2706a7c46931ea929c228153efa28f7e23f24c5dcea",
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.2.0-proposed",
+      "rule": "ohcpp-shared-ptr-race-candidate-001",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "checkout_blob_oid": "3e7003a57ac19a0a872f80f950b6fb613a495dbb",
+      "checkout_sha256": "32bd085756ca6474c935c2706a7c46931ea929c228153efa28f7e23f24c5dcea"
+    },
+    {
+      "queue_id": "CR-0012",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:c1f80d0b65c46106",
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "repo_project_path": "foundation/distributeddatamgr/data_share",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/native/provider/include/datashare_stub_impl.h",
+      "line": "33",
+      "blob": "b3cc65d4a39b596cad57477e30e06bc7a673b37c",
+      "source_sha256": "81df12f7bf672ed146509837fc73c7ad857237d08f47cb4af54341311ebc284c",
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.2.0-proposed",
+      "rule": "ohcpp-shared-ptr-race-candidate-001",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "checkout_blob_oid": "b3cc65d4a39b596cad57477e30e06bc7a673b37c",
+      "checkout_sha256": "81df12f7bf672ed146509837fc73c7ad857237d08f47cb4af54341311ebc284c"
+    }
+  ],
+  "cli_replays": [
+    {
+      "path": "research/evidence/cpp/d24_datashare_race_headers_20261020.json",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "git_tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "snapshot_sha256": "b8357921123fe0b28c4ff4a65d43a3a74a4e4a63ce3e748b6ad598c2cb304d46",
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.5.1",
+      "run_status": "completed",
+      "elapsed_seconds": 0.03129350000017439,
+      "diagnostic_count": 5,
+      "coverage_counts": {
+        "complete": 5
+      },
+      "files": [
+        {
+          "path": "frameworks/ets/ani/include/ani_observer.h",
+          "status": "complete",
+          "issues": 0
+        },
+        {
+          "path": "frameworks/ets/ani/include/datashare_ani.h",
+          "status": "complete",
+          "issues": 0
+        },
+        {
+          "path": "frameworks/js/napi/dataShare/include/napi_datashare_observer.h",
+          "status": "complete",
+          "issues": 0
+        },
+        {
+          "path": "frameworks/native/consumer/include/datashare_helper_impl.h",
+          "status": "complete",
+          "issues": 0
+        },
+        {
+          "path": "frameworks/native/provider/include/datashare_stub_impl.h",
+          "status": "complete",
+          "issues": 0
+        }
+      ],
+      "findings": [
+        {
+          "file": "frameworks/ets/ani/include/datashare_ani.h",
+          "line": 84,
+          "symbol": "dataProxyHandle_",
+          "source_blob_oid": "00d494b2d269950be5901725cfdc0f40393e14f2",
+          "source_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273"
+        },
+        {
+          "file": "frameworks/ets/ani/include/datashare_ani.h",
+          "line": 90,
+          "symbol": "jsProxyDataObsManager_",
+          "source_blob_oid": "00d494b2d269950be5901725cfdc0f40393e14f2",
+          "source_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273"
+        },
+        {
+          "file": "frameworks/ets/ani/include/datashare_ani.h",
+          "line": 91,
+          "symbol": "dataProxyHandle_",
+          "source_blob_oid": "00d494b2d269950be5901725cfdc0f40393e14f2",
+          "source_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273"
+        },
+        {
+          "file": "frameworks/native/provider/include/datashare_stub_impl.h",
+          "line": 35,
+          "symbol": "uvQueue_",
+          "source_blob_oid": "b3cc65d4a39b596cad57477e30e06bc7a673b37c",
+          "source_sha256": "81df12f7bf672ed146509837fc73c7ad857237d08f47cb4af54341311ebc284c"
+        },
+        {
+          "file": "frameworks/native/provider/include/datashare_stub_impl.h",
+          "line": 42,
+          "symbol": "uvQueue_",
+          "source_blob_oid": "b3cc65d4a39b596cad57477e30e06bc7a673b37c",
+          "source_sha256": "81df12f7bf672ed146509837fc73c7ad857237d08f47cb4af54341311ebc284c"
+        }
+      ]
+    },
+    {
+      "path": "research/evidence/cpp/d24_datashare_race_bounded_20261020.json",
+      "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "git_tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "snapshot_sha256": "25ca8bffa4a6728e65786368b25a08d4dc0c1955a4cdc7e12dc9083e6b8f71bf",
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.5.1",
+      "run_status": "completed",
+      "elapsed_seconds": 0.15090819999932137,
+      "diagnostic_count": 5,
+      "coverage_counts": {
+        "complete": 10
+      },
+      "files": [
+        {
+          "path": "frameworks/ets/ani/include/ani_observer.h",
+          "status": "complete",
+          "issues": 0
+        },
+        {
+          "path": "frameworks/ets/ani/include/datashare_ani.h",
+          "status": "complete",
+          "issues": 0
+        },
+        {
+          "path": "frameworks/ets/ani/src/cxx/ani_observer.cpp",
+          "status": "complete",
+          "issues": 0
+        },
+        {
+          "path": "frameworks/ets/ani/src/cxx/datashare_ani.cpp",
+          "status": "complete",
+          "issues": 0
+        },
+        {
+          "path": "frameworks/js/napi/dataShare/include/napi_datashare_observer.h",
+          "status": "complete",
+          "issues": 0
+        },
+        {
+          "path": "frameworks/js/napi/dataShare/src/napi_datashare_observer.cpp",
+          "status": "complete",
+          "issues": 0
+        },
+        {
+          "path": "frameworks/native/consumer/include/datashare_helper_impl.h",
+          "status": "complete",
+          "issues": 0
+        },
+        {
+          "path": "frameworks/native/consumer/src/datashare_helper.cpp",
+          "status": "complete",
+          "issues": 0
+        },
+        {
+          "path": "frameworks/native/provider/include/datashare_stub_impl.h",
+          "status": "complete",
+          "issues": 0
+        },
+        {
+          "path": "frameworks/native/provider/src/datashare_stub_impl.cpp",
+          "status": "complete",
+          "issues": 0
+        }
+      ],
+      "findings": [
+        {
+          "file": "frameworks/ets/ani/include/datashare_ani.h",
+          "line": 84,
+          "symbol": "dataProxyHandle_",
+          "source_blob_oid": "00d494b2d269950be5901725cfdc0f40393e14f2",
+          "source_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273"
+        },
+        {
+          "file": "frameworks/ets/ani/include/datashare_ani.h",
+          "line": 90,
+          "symbol": "jsProxyDataObsManager_",
+          "source_blob_oid": "00d494b2d269950be5901725cfdc0f40393e14f2",
+          "source_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273"
+        },
+        {
+          "file": "frameworks/ets/ani/include/datashare_ani.h",
+          "line": 91,
+          "symbol": "dataProxyHandle_",
+          "source_blob_oid": "00d494b2d269950be5901725cfdc0f40393e14f2",
+          "source_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273"
+        },
+        {
+          "file": "frameworks/native/provider/include/datashare_stub_impl.h",
+          "line": 35,
+          "symbol": "uvQueue_",
+          "source_blob_oid": "b3cc65d4a39b596cad57477e30e06bc7a673b37c",
+          "source_sha256": "81df12f7bf672ed146509837fc73c7ad857237d08f47cb4af54341311ebc284c"
+        },
+        {
+          "file": "frameworks/native/provider/include/datashare_stub_impl.h",
+          "line": 42,
+          "symbol": "uvQueue_",
+          "source_blob_oid": "b3cc65d4a39b596cad57477e30e06bc7a673b37c",
+          "source_sha256": "81df12f7bf672ed146509837fc73c7ad857237d08f47cb4af54341311ebc284c"
+        }
+      ]
+    }
+  ],
+  "focused_tests": {
+    "command": "python -m unittest tests.detectors.test_cpp_shared_ptr_race_detector -v",
+    "result": "39 passed before any edits; no detector or test edits retained"
+  },
+  "interpretation": "The CLI M2 adapter invokes the detector per file. Reported candidates do not demonstrate same-object unsynchronized concurrent access. Cross-file ResultSetHolder accesses are not combined by the current CLI adapter. No source-backed production-path generic rule gap was established; no detector change is delivered. All queue rows retain original not_testable / paused_pending_evidence."
+}

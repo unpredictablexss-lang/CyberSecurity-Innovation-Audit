@@ -1,0 +1,611 @@
+{
+  "schema_version": "t43-taihe-ffi-independent-audit-v1",
+  "task": "T43",
+  "integration_base": "aacc11729e95d19171fdbf70c30859ce2a05e246",
+  "source_identity": {
+    "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+    "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+    "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+    "files": {
+      "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244
+      },
+      "test/ra_napi_image/author/include/image_source_taihe.h": {
+        "path": "test/ra_napi_image/author/include/image_source_taihe.h",
+        "blob": "c6272d8afbb19537b74c2548be62a3764342204d",
+        "sha256": "0d15a3fdbfdb19c9fc0736ca7e0d87a756cbbef2ca230c255d919109cbf87c6c",
+        "bytes": 2617,
+        "loc": 72
+      }
+    }
+  },
+  "build_classification": {
+    "searched_scope": [
+      "test/ani_image/author",
+      "test/ra_napi_image/author"
+    ],
+    "root_build_identity": {
+      "path": "BUILD.gn",
+      "blob": "8246cde93862bd16967667b1fd2db6e31ac135b7",
+      "sha256": "3ed91e30bf5e65838f85b8d6c707a8d9162b9dba8958a0e93543b089a615b5d0",
+      "bytes": 16885,
+      "loc": 432
+    },
+    "nested_test_build_files": [
+      "test/integer/author/BUILD.gn",
+      "test/integer/user/BUILD.gn"
+    ],
+    "root_build_references_audited_sources": {
+      "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp": false,
+      "test/ra_napi_image/author/include/image_source_taihe.h": false
+    },
+    "result": "BLOCK_product_target_not_bound; root BUILD.gn is Taihe tool build and does not reference audited test files",
+    "supporting_source_text": {
+      "test/ra_napi_image/author/include/image_source_taihe.h": "This file is a test file."
+    },
+    "product_build_inclusion_proven": false,
+    "note": "The only root BUILD.gn builds Taihe tooling and does not name either audited source; the nested test BUILD files are only under test/integer. No product target/installable source set was bound. The header itself labels itself a test file. Do not infer product exposure or non-exposure from path names alone."
+  },
+  "cli": {
+    "raw": "t43_taihe_ffi_cli_20261026.json",
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "scope_files": 2,
+    "scope_loc": 316,
+    "parse": {
+      "complete": 2
+    },
+    "finding_count": 16,
+    "elapsed_seconds": 0.012299300000449875,
+    "command": "python -m src.cli.main ohscan-run --repo-dir D:\\openHarmonyScanner\\tmp\\t43-taihe-source-20261026 --repository openharmony/arkcompiler_taihe_ffi_gen --commit d91f43e80d892bca694c6b0fce8ea27cd644919f --include test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp --include test/ra_napi_image/author/include/image_source_taihe.h --detector ohscanner.cpp.shared_ptr_race"
+  },
+  "a0": {
+    "row_count": 345,
+    "queue_csv_sha256": "a174c0a74986e8410c53f173b84bb446c59000c3867add612a14e8aab4396d27",
+    "audited_ids": [
+      "CR-0197",
+      "CR-0198",
+      "CR-0199",
+      "CR-0200",
+      "CR-0201",
+      "CR-0202",
+      "CR-0203",
+      "CR-0204",
+      "CR-0205",
+      "CR-0206",
+      "CR-0207",
+      "CR-0208",
+      "CR-0209",
+      "CR-0210",
+      "CR-0211",
+      "CR-0212",
+      "CR-0213"
+    ],
+    "queue_states_changed": false
+  },
+  "items": [
+    {
+      "queue_id": "CR-0197",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:79e51c0229cccd3a",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 71,
+      "source_line": "PixelMapImpl(std::shared_ptr<OHOS::Media::PixelMap> ptr) : m_pdata(ptr)",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:8d6286e5eafb34fd",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0198",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:de54cea01a9c9bbf",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 77,
+      "source_line": "if (this->m_pdata != nullptr) {",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:880bc0ba329b194d",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0199",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:d425904fa46cf5ba",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 78,
+      "source_line": "this->m_pdata = nullptr;",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3ad2d1d372fafff8",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0200",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:8b7859ed80be46fa",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 93,
+      "source_line": "this->m_pdata->GetImageInfo(imgInfo);",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:26c9c90f2b13cc18",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0201",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:151952632e5f40a0",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 100,
+      "source_line": "this->m_pdata->IsHdr()};",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:bf85e66d6de6c9b6",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0202",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:82d716753c9f0d3e",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 105,
+      "source_line": "return this->m_pdata->GetRowBytes();",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:fd51492cdc79af3b",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0203",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:797234d8c528c9ff",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 110,
+      "source_line": "return this->m_pdata->GetByteCount();",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:624d7032e82ec827",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0204",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:514e38dbc06c9c99",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 115,
+      "source_line": "this->m_pdata->ReadPixels(buff.size(), buff.data());",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c4b7b7f2942f8f07",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0205",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:9f467dc7ac8c3150",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 121,
+      "source_line": "this->m_pdata->scale(static_cast<float>(x), static_cast<float>(y), OHOS::Media::AntiAliasingOption::NONE);",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:1ea1fecb0e6dc1fb",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0206",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:f58a12a1785b31ae",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 127,
+      "source_line": "this->m_pdata->scale(static_cast<float>(x), static_cast<float>(y),",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:5d42d40f86152d59",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0207",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:91f03e860a807027",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 135,
+      "source_line": "this->m_pdata->crop(rect);",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:6bb80129cb32948f",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0208",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:529dcf6d71d50e19",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 141,
+      "source_line": "this->m_pdata->flip(horizontal, vertical);",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:150c0d2b5aa5e7d8",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0209",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:bda385760db60213",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 147,
+      "source_line": "this->m_pdata.reset();",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:90e903ce531fb54a",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0210",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:a9d8444140e78d1d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 172,
+      "source_line": "this->m_pdata = OHOS::Media::ImageSource::CreateImageSource(this->filePath_, opts, errorCode);",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:14c582e97324b03b",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0211",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:80b6d01164f09d57",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 180,
+      "source_line": "this->m_pdata = OHOS::Media::ImageSource::CreateImageSource(fd, opts, errorCode);",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:dc40f6c2ce9e21a6",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0212",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:3400f98fda9ae2c0",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": 232,
+      "source_line": "this->m_pdata.reset();",
+      "source": {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "loc": 244,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:f12d5f19f8387b31",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "symbol": "m_pdata",
+        "evidence_type": "syntax"
+      },
+      "mapping": "exact_cli_match",
+      "disposition": "PARTIAL"
+    },
+    {
+      "queue_id": "CR-0213",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:e2cd1413821a7954",
+      "path": "test/ra_napi_image/author/include/image_source_taihe.h",
+      "line": 57,
+      "source_line": "return navIncPixelMap_;",
+      "source": {
+        "path": "test/ra_napi_image/author/include/image_source_taihe.h",
+        "blob": "c6272d8afbb19537b74c2548be62a3764342204d",
+        "sha256": "0d15a3fdbfdb19c9fc0736ca7e0d87a756cbbef2ca230c255d919109cbf87c6c",
+        "bytes": 2617,
+        "loc": 72,
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+        "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d"
+      },
+      "a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "cli": null,
+      "mapping": "no_current_cli_diagnostic_at_A0_location",
+      "disposition": "PARTIAL"
+    }
+  ],
+  "semantics": [
+    "The 16 candidates in ohos.multimedia.image.image.impl.cpp all map to exact current CLI findings. They include PixelMapImpl member initialization, null/reset operations, dereferences and shared ImageSourceImpl member operations; these are lexical shared_ptr observations, not proof of concurrent access to the same object.",
+    "Those methods are ordinary synchronous wrapper methods in this file; no thread creation, lock protocol, or cross-thread same-object overlap is established by the reviewed translation unit.",
+    "CR-0213 is a header member return (`return navIncPixelMap_;`) and has no current CLI finding at line 57. That is a detector/A0 mapping discrepancy, not evidence of safety; whether copying/reading this shared_ptr overlaps a write remains unknown.",
+    "The first translation unit is under ani_image/author and the second header explicitly says it is a test file. Build target inclusion, product configuration, actual callers, thread lifecycle, attacker control, and CIA impact are not established. No trustworthy fixed source or security ground truth is bound for these candidate rows."
+  ],
+  "limitations": [
+    "No product BUILD.gn target could be located in/above the two author subtrees from the pinned source object.",
+    "No same-object cross-thread overlap or unsynchronized conflicting access is shown by the selected source scope.",
+    "A0 identifiers are candidate observations, not 17 separate races or vulnerabilities; 16 map to CLI diagnostics and one does not.",
+    "There is no trusted fixed source/control pair for this candidate family."
+  ],
+  "overall_disposition": "PARTIAL/BLOCK",
+  "detector_tests_fixtures_or_A0_modified": false
+}

@@ -1,0 +1,261 @@
+{
+  "schema_version": "d38-preferences-vector-fuzzer-replay-v1",
+  "task": "D38",
+  "source": {
+    "repository": "openharmony/distributeddatamgr_preferences",
+    "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+    "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+    "file": {
+      "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+      "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+      "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+      "bytes": 2888
+    }
+  },
+  "build_target": {
+    "file": {
+      "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/BUILD.gn",
+      "blob": "56471b31f18f3184a79badfacf35a6fa8ab03552",
+      "sha256": "54a176a31ab5e5d768d1f4408ec86e1b85c6a47880088936c23a528ba5d59770",
+      "bytes": 2086
+    },
+    "target": "ohos_fuzztest(DBPreferencesVectorFuzzTest)",
+    "test_group": "group(\"fuzztest\") [testonly = true]",
+    "harness_entry": "LLVMFuzzerTestOneInput",
+    "production_evidence": false
+  },
+  "queue": {
+    "total_rows": 345,
+    "audited_ids": [
+      "CR-0091",
+      "CR-0092",
+      "CR-0093",
+      "CR-0094",
+      "CR-0095",
+      "CR-0096"
+    ],
+    "a0_status_unchanged": true
+  },
+  "cli": {
+    "raw": "d38_preferences_vector_fuzzer_20261024.json",
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "scope_files": 1,
+    "scope_loc": 93,
+    "parse": {
+      "complete": 1
+    },
+    "findings": 6,
+    "elapsed_seconds": 0.0057744000005186535,
+    "command": "python -m src.cli.main ohscan-run --repo-dir D:/openHarmonyScanner/tmp/d37-preferences-source-20261024 --repository openharmony/distributeddatamgr_preferences --commit bff9efd79afc0d7d1ed22a63ff355f1600404596 --include test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp --detector ohscanner.cpp.shared_ptr_race"
+  },
+  "items": [
+    {
+      "queue_id": "CR-0091",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:06ade1d2ed885ecd",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+        "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+        "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+        "bytes": 2888,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 45
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 45,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:07d9e0bcac5b3c28"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact DBPreferencesVectorFuzzTest is test-only; Put/Get calls in the harness execute sequentially and do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0092",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:6b18bd91f7df751d",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+        "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+        "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+        "bytes": 2888,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 50
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 50,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:99b4bea93cf5d266"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact DBPreferencesVectorFuzzTest is test-only; Put/Get calls in the harness execute sequentially and do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0093",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:6ab2772ccedc921b",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+        "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+        "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+        "bytes": 2888,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 52
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 52,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:9ff4745d9094a32e"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact DBPreferencesVectorFuzzTest is test-only; Put/Get calls in the harness execute sequentially and do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0094",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:c02b95d8680dbd4c",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+        "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+        "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+        "bytes": 2888,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 68
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 68,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ae7a984b69ab110b"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact DBPreferencesVectorFuzzTest is test-only; Put/Get calls in the harness execute sequentially and do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0095",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:ba9f218745cfe55e",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+        "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+        "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+        "bytes": 2888,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 77
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 77,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:653de71495ef3908"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact DBPreferencesVectorFuzzTest is test-only; Put/Get calls in the harness execute sequentially and do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0096",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:4bb20c1c3fcb67e8",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+        "blob": "3de64e85dcba575ed35b6bc7f3e5b2fbcf223e2c",
+        "sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe",
+        "bytes": 2888,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 78
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 78,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:eb9d0be0d85827d7"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact DBPreferencesVectorFuzzTest is test-only; Put/Get calls in the harness execute sequentially and do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    }
+  ],
+  "overall_disposition": "PARTIAL",
+  "detector_change": "none; six source-bound harness candidates reproduce, no production-root miss established",
+  "queue_states_changed": false,
+  "structured_vibe_prompt": {
+    "role": "A 线 Preferences shared_ptr_race 开发负责人",
+    "sustained_goal": "区分测试 harness 语法候选与生产可达、确有并发交错的同对象根因；保持精确源码绑定和 A0 状态。",
+    "input": "D38 的 exact source/build 身份、raw CLI 输出及 CR-0091–CR-0096 行映射。",
+    "steps": [
+      "追踪 production BUILD inclusion 与可达调用链；不得从 fuzz target 依赖推断生产发布。",
+      "核验同一 shared_ptr 对象的并发读写、任务生命周期及锁/原子/join 同步关系。",
+      "只有复现具体生产源码漏检时才改 detector，并补 positive、fixed、safe、unrelated、renamed、partial controls。",
+      "逐次记录 commit/tree/blob/SHA、scope、profile、rule version、覆盖、耗时和可复跑命令。"
+    ],
+    "completion_gate": "独立复核产品构建/可达性和同对象重叠未同步访问；证据不足则维持 PARTIAL/BLOCK，不把测试候选升级为产品根因。",
+    "boundaries": [
+      "不按 CVE、仓库名、函数名或源码哈希硬编码。",
+      "不改 A0 状态、共享 API、Catalog 或 detector schema。",
+      "不得把零结果或 parser partial 解释为安全。"
+    ]
+  }
+}

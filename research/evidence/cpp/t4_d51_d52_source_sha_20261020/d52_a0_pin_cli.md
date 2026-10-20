@@ -1,0 +1,52 @@
+# OHScanner M2 reviewed-detector execution
+
+> Detection candidates and coverage limitations, NOT validated vulnerabilities.
+
+- Source repository (declared): `openharmony/global_i18n`
+- Pinned commit: `d13c698ebb238fa416a711bd3befe871e85721b6`
+- Git tree: `d667c4f54ca12ef664b3bab9ec80b93653c5a7b7`
+- Snapshot SHA-256: `5e939a0ba39ed1044cc83ea79e0530a40716d505ba34773d9d53421ef7ac8e8f`
+- Source files indexed: 2
+- Parsing coverage: `{"complete": 2}`
+- Detector runs: 1
+- Total unverified diagnostics: 0
+- Validated vulnerabilities: **0** (no runtime verification performed)
+
+## Per-detector results
+
+| Detector | Execution | Inspected files | Complete | Partial | Not analyzed | Diagnostics | Coverage |
+|---|---|---:|---:|---:|---:|---:|---|
+| `ohscanner.cpp.shared_ptr_race` | completed | 2 | 2 | 0 | 0 | 0 | complete |
+
+## Candidate evidence and missing proof
+
+| Detector | Candidate ID | File:line | Rule | Unverified proof obligations |
+|---|---|---|---|---|
+| — | — | — | — | No reported candidate; NOT proof of safety |
+
+## Coverage gaps
+
+Scope counts source inspection, not complete semantic coverage; partial remains unknown.
+Files without a claiming detector: 0
+- `ohscanner.cpp.shared_ptr_race`: complete, 2/2 applicable files examined; unexamined=0
+
+## Limitations
+
+- Diagnostics are candidates/evidence only, not proof of security impact.
+- Zero diagnostics does NOT mean the component is free of vulnerabilities.
+- Git origin name is user declared; source is pinned local objects, not an OH product build.
+- No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.
+- `ohscanner.cpp.shared_ptr_race`: Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.
+- `ohscanner.cpp.shared_ptr_race`: First-party A algorithm: syntax candidates only; no CVE or validated vulnerability.
+- `ohscanner.cpp.shared_ptr_race`: Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.
+- `ohscanner.cpp.shared_ptr_race`: No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.
+- `ohscanner.cpp.shared_ptr_race`: completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.
+- `ohscanner.cpp.shared_ptr_race`: M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.
+- `ohscanner.cpp.shared_ptr_race`: Execution is synchronous; hard timeout/memory isolation is not yet implemented.
+- `ohscanner.cpp.shared_ptr_race`: Diagnostic does not establish vulnerability, reachability or security impact.
+
+## Frozen execution plan
+
+- Planner: 0.1.1; mode: explicit
+- Plan SHA-256: `a6bb34126d880fd8e349d4564cf130489a4d44c84634d0ab0eed82816cbcbd72`
+- Language matching plans attempts; actual coverage remains in the results above.

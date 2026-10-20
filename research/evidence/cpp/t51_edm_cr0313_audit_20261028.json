@@ -1,0 +1,75 @@
+{
+  "audit": "T51",
+  "case": "CR-0313",
+  "a0_binding": {
+    "candidate_id": "ohscanner.interface.ipc:5657d9fd6560d387",
+    "repository": "openharmony/customization_enterprise_device_management",
+    "commit": "e1e278bc85dc0277ab79cfdc029558a61492d3da",
+    "tree": "74f22f00256d82a81ad9c1965ae0ec64ce3936a1",
+    "path": "test/unittest/services/edm/src/system_timer_manager_test.cpp",
+    "line": 70,
+    "blob": "ba005fd32dc4c38b1534166bec129a8e70952fdd",
+    "source_sha256": "e34724edb8dc221ee9b17eebc20a01acefade0f0414d79eda4d8944c2830bbc2",
+    "original_status": "not_testable",
+    "queue_status": "paused_pending_evidence",
+    "detector": "ohscanner.interface.ipc",
+    "detector_version": "0.5.0",
+    "rule": "ipc.relay.descriptor-boundary"
+  },
+  "source_objects": {
+    "candidate": {
+      "path": "test/unittest/services/edm/src/system_timer_manager_test.cpp",
+      "blob": "ba005fd32dc4c38b1534166bec129a8e70952fdd",
+      "sha256": "e34724edb8dc221ee9b17eebc20a01acefade0f0414d79eda4d8944c2830bbc2",
+      "bytes": 31470
+    },
+    "test_build": {
+      "path": "test/unittest/services/edm/BUILD.gn",
+      "blob": "d45d561a9aea84af7f1835c3c073ae92f01e6105",
+      "sha256": "fe63d4be2d4b13cea21b3c9f99dc18bb937cef1e542ce22ea4a9d6c220cb90e2",
+      "bytes": 24008
+    },
+    "product_build": {
+      "path": "services/edm/BUILD.gn",
+      "blob": "ec7b9746bf4acd7aa9ff981b669fa6917bcc2eb1",
+      "sha256": "bfe7f0c85ae5faca3ae4d8683e56dc3901e7ac6a7651081e468522834c41e7d8",
+      "bytes": 11702
+    }
+  },
+  "current_cli": {
+    "profile_id": "light-ast",
+    "snapshot_sha256": "52291530e43d7e546321fb1ac907634f1b838649e2c678e39ca5624a594adbbd",
+    "scope_files": 1,
+    "scope_bytes": 31470,
+    "parser_status": {
+      "partial": 1
+    },
+    "detector": "ohscanner.interface.ipc",
+    "detector_version": "0.12.12",
+    "findings": 0,
+    "coverage_status": "partial",
+    "coverage_reason": "detector_model_incomplete"
+  },
+  "build_classification": {
+    "test_target": "EdmServicesUnitTest (ohos_unittest)",
+    "test_source_condition": "!enterprise_device_management_feature_pc_only",
+    "test_support_library_testonly": true,
+    "production_target": "edmservice (ohos_shared_library)",
+    "production_timer_manager_source": "services/edm/src/system_manager/system_timer_manager.cpp",
+    "candidate_stub_present_in_production": false
+  },
+  "source_semantics": {
+    "candidate_symbol": "TestTimerCallbackStub::OnRemoteRequest",
+    "test_behavior": "The test callback consumes its local MessageParcel and dispatches a timer ID.",
+    "production_behavior": "SystemTimerManager::OnTimerTriggered sends a callback request to the client; the test stub is not that production entry."
+  },
+  "disposition": "PARTIAL/BLOCK",
+  "interpretation": "The A0 line maps to a test-only callback stub, not a demonstrated product IPC flaw. Current CLI has zero findings but partial parser/model coverage, so this is not a safety result. Preserve original A0 status and paused queue state.",
+  "queue_reconciliation": {
+    "rows_json": 345,
+    "rows_csv": 345,
+    "original_status": "not_testable",
+    "queue_status": "paused_pending_evidence",
+    "status_changed": false
+  }
+}

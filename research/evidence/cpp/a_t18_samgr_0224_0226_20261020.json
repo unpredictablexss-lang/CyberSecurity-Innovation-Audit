@@ -1,0 +1,117 @@
+{
+  "schema_version": "a-t18-samgr-source-review-v1",
+  "audit": "T18 independent per-ID source-flow review for Samgr CR-0224/0225/0226",
+  "review_date": "2026-10-20",
+  "basis_commit": "eb12f3b8a1c52e21450f59cb69f0a9e9041e8873",
+  "source": {
+    "repository": "openharmony/systemabilitymgr_samgr",
+    "mirror": "D:/openHarmonyScanner/openharmony/.repo/project-objects/systemabilitymgr_samgr.git",
+    "commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff",
+    "tree": "b7a89e95be788f2f2372258e341f7be842c7826d",
+    "path": "services/samgr/native/source/system_ability_manager_stub.cpp",
+    "blob": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
+    "bytes": 78212,
+    "sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433",
+    "transaction_enum_path": "interfaces/innerkits/samgr_proxy/include/samgr_ipc_interface_code.h",
+    "transaction_enum_lines": "62-65",
+    "shared_registration_path": "services/samgr/native/source/system_ability_manager_stub.cpp",
+    "shared_registration_lines": "229-245",
+    "feature_guard": "SUPPORT_MULTI_INSTANCE",
+    "common_dispatch": "OnRemoteRequest enforces SAMANAGER_INTERFACE_TOKEN then dispatches memberFuncMap_; lines 293-309",
+    "common_selinux_helper": "CheckGetSAPermission calls ServiceChecker only with WITH_SELINUX; otherwise returns true; lines 47-56"
+  },
+  "cases": [
+    {
+      "queue_id": "CR-0224",
+      "candidate_id": "ohscanner.interface.ipc:1ab7b873ef0e71d2",
+      "reported_line": 1692,
+      "symbol": "SystemAbilityManagerStub::GetSystemAbilityWithUserIdInner",
+      "transaction": "GET_SYSTEM_ABILITY_WITH_USERID_TRANSACTION = 45",
+      "mapping": "SetMultiInstanceFuncMap -> LocalGetSystemAbilityWithUserId",
+      "method_lines": "1656-1695",
+      "parcel_inputs": [
+        "ReadInt32(systemAbilityId)",
+        "ReadInt32(userId) after permission check"
+      ],
+      "guards": [
+        "CheckInputSysAbilityId(systemAbilityId)",
+        "if SUPPORT_PENGLAI_MODE and runtime isPengLai_: CheckPengLaiPermission(systemAbilityId)",
+        "CheckGetSAPermission(systemAbilityId); not CanRequest() in this method"
+      ],
+      "operation": "GetSystemAbility(systemAbilityId,userId); non-null remote object is written to reply as an IRemoteObject",
+      "manager_guards": "GetCallingUserId()==BASE_USER; IsValidUser(userId); GetMultiUserManager(userId) non-null; then per-user mgr CheckSystemAbility(systemAbilityId)",
+      "fd_or_other_sensitive_inputs": "No FD operations found in this method; parcel inputs are two int32 values. Output is remote capability.",
+      "per_id_conclusion": "Source-local SA permission gate dominates lookup/export; multi-instance feature guard; manager also restricts caller user to BASE_USER and validates target user/manager. Whether caller can reach this transaction as a BASE_USER identity, and which SAs policy permits, are product-specific unknowns."
+    },
+    {
+      "queue_id": "CR-0225",
+      "candidate_id": "ohscanner.interface.ipc:79b120286d7e2168",
+      "reported_line": 1735,
+      "symbol": "SystemAbilityManagerStub::CheckSystemAbilityWithUserIdInner",
+      "transaction": "CHECK_SYSTEM_ABILITY_WITH_USERID_TRANSACTION = 46",
+      "mapping": "SetMultiInstanceFuncMap -> LocalCheckSystemAbilityWithUserId",
+      "method_lines": "1699-1738",
+      "parcel_inputs": [
+        "ReadInt32(systemAbilityId)",
+        "ReadInt32(userId) after permission check"
+      ],
+      "guards": [
+        "CheckInputSysAbilityId(systemAbilityId)",
+        "if SUPPORT_PENGLAI_MODE and runtime isPengLai_: CheckPengLaiPermission(systemAbilityId)",
+        "CheckGetSAPermission(systemAbilityId); not CanRequest() in this method"
+      ],
+      "operation": "CheckSystemAbility(systemAbilityId,userId); non-null remote object is written to reply as an IRemoteObject",
+      "manager_guards": "GetCallingUserId()==BASE_USER; IsValidUser(userId); GetMultiUserManager(userId) non-null; then per-user mgr CheckSystemAbility(systemAbilityId)",
+      "fd_or_other_sensitive_inputs": "No FD operations found in this method; parcel inputs are two int32 values. Output is remote capability.",
+      "per_id_conclusion": "Source-local SA permission gate dominates lookup/export; multi-instance feature guard; manager also restricts caller user to BASE_USER and validates target user/manager. This is independently traced from CR-0224 and not inferred from it."
+    },
+    {
+      "queue_id": "CR-0226",
+      "candidate_id": "ohscanner.interface.ipc:c85193fe8d815688",
+      "reported_line": 1784,
+      "symbol": "SystemAbilityManagerStub::CheckSystemAbilityByUserIdInner",
+      "transaction": "CHECK_SYSTEM_ABILITY_BY_USERID_TRANSACTION = 47",
+      "mapping": "SetMultiInstanceFuncMap -> LocalCheckSystemAbilityByUserId",
+      "method_lines": "1742-1793",
+      "parcel_inputs": [
+        "ReadInt32(systemAbilityId)",
+        "ReadBool(isExist) after permission check",
+        "ReadInt32(userId)"
+      ],
+      "guards": [
+        "CheckInputSysAbilityId(systemAbilityId)",
+        "if SUPPORT_PENGLAI_MODE and runtime isPengLai_: CheckPengLaiPermission(systemAbilityId)",
+        "CheckGetSAPermission(systemAbilityId); not CanRequest() in this method"
+      ],
+      "operation": "CheckSystemAbilityByUserId(systemAbilityId,isExist,userId); non-null remote object and isExist bool are written to reply",
+      "manager_guards": "sets isExist=false; GetCallingUserId()==BASE_USER; IsValidUser(userId); GetMultiUserManager(userId) non-null; then per-user mgr CheckSystemAbility(systemAbilityId,isExist)",
+      "fd_or_other_sensitive_inputs": "No FD operations found in this method; parcel inputs are int32, bool, int32. Output is remote capability plus bool.",
+      "per_id_conclusion": "Source-local SA permission gate dominates lookup/export; feature guard plus base-user and target-user checks occur in manager. The extra boolean is caller-controlled query mode, not evidence of a bypass by itself."
+    }
+  ],
+  "family_scope": {
+    "ids": [
+      "CR-0224",
+      "CR-0225",
+      "CR-0226"
+    ],
+    "finding_family": "ipc.capability.export; three distinct per-user transaction/method paths",
+    "queue_state": "all rows preserve original_status=not_reproduced and queue_status=queued_not_reproduced",
+    "scanner_coverage": "Original A0 source file is detector/parser partial (detector_model_incomplete); this review does not convert that scan to a clean result."
+  },
+  "unknowns": [
+    "Target product build values for SUPPORT_MULTI_INSTANCE, WITH_SELINUX, SUPPORT_PENGLAI_MODE and runtime PengLai state.",
+    "Effective SELinux service policy mapping caller SIDs to the input SA identifiers; helper is allow-all when WITH_SELINUX is not compiled.",
+    "Whether untrusted principals can invoke this stub and be represented as BASE_USER under the product IPC identity/user mapping.",
+    "Product registration/reachability of this service and the availability/exposure of each selected per-user SA.",
+    "The returned IRemoteObject interfaces, permissions on their methods, and any demonstrable confidentiality/integrity/availability impact.",
+    "Target-derived runtime harness and caller-context test are absent."
+  ],
+  "minimum_next_evidence": [
+    "Exact target build config and matching source revision showing these feature macros and service registration.",
+    "Effective product SELinux policy plus caller SID/UID/user mapping and representative allow/deny rules for tested SA IDs.",
+    "Target-derived IPC harness that invokes codes 45/46/47 with authorized and unauthorized callers, valid/invalid user IDs, and representative SA IDs; capture reply object identity and access behavior.",
+    "Trace the returned SA interfaces and show concrete unauthorized operation/data access before any vulnerability disposition change."
+  ],
+  "disposition": "PARTIAL; original queue disposition unchanged. Source-level gates and object exports are confirmed, but no product-bound bypass or impact is demonstrated; do not report a confirmed vulnerability from these source facts."
+}

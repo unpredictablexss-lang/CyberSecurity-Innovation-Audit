@@ -1,0 +1,339 @@
+{
+  "schema_version": 1,
+  "task": "T50",
+  "scope": "independent production CLI replay and source-context audit; no detector, test, fixture, or A0 edits",
+  "source": {
+    "repository": "openharmony/ai_intelligent_voice_framework",
+    "commit": "19188608475123695def986a399641bfa64a49f7",
+    "tree": "0ec80bfd6532b91f450d2f84517c461a4f7a18ae",
+    "a0_snapshot_sha256": "a2499e0c8f9ba4ec53e169f6c88d46cc10004f69d6b1b7339f80cf9b5891a4d5",
+    "supporting_files": {
+      "services/intell_voice_engine/server/base/adapter_callback_service.cpp": {
+        "blob": "032c29f1cb732641e36b6d4b914bcdd279377894",
+        "sha256": "35684c6acf24363ea5b400c374c38afce8ef438d163c2d0adf641cba406b760f",
+        "bytes": 1089
+      },
+      "services/intell_voice_engine/server/base/engine_util.cpp": {
+        "blob": "93c4324f76f9ac8df4abd790fa550df7bfda9d02",
+        "sha256": "9aab65a80134ec82fa41709f2fd583d653d56d75e4d71bd61d9a4384ab3b1885",
+        "bytes": 10086
+      },
+      "services/intell_voice_engine/server/enroll/enroll_engine.cpp": {
+        "blob": "c3775d528b9bd2faea434f380768ca22d94f4bf7",
+        "sha256": "f362dabe356fa15a9b209f61ec9124de693f20a63e45c352ca519952841ce478",
+        "bytes": 11867
+      },
+      "services/intell_voice_engine/server/wakeup/headset/headset_wakeup_engine_impl.cpp": {
+        "blob": "d3dc2b4b750c0d7f24b8fa0ef2ea655f4175dce4",
+        "sha256": "2120f29cb6101b5af7452bd16f9a13d49b152362f71b1c2765d7d70c19356df4",
+        "bytes": 14093
+      },
+      "services/intell_voice_engine/server/wakeup/high_power/high_power_wakeup_engine.cpp": {
+        "blob": "9e492a0cc27ce647c104881529b977514776b665",
+        "sha256": "ed5f264260da771aa6bddb4074e4b45f424161c9d0cce1c6c35fb103a655e6fe",
+        "bytes": 3843
+      },
+      "services/intell_voice_engine/server/wakeup/wakeup_engine_impl.cpp": {
+        "blob": "4bd36439d539010b6daf1478d1a4bac1de85de90",
+        "sha256": "54175e89b4e4616e67f5fed9500af9dc091bdc4a69c17b9e9fff3e6800a5ab7b",
+        "bytes": 29771
+      },
+      "services/intell_voice_engine/BUILD.gn": {
+        "blob": "1ce106f82a08f4f4bbfd9d8a6b6070b753fd285c",
+        "sha256": "c00ca05fec2d0c0a7fdf988248b05ca96b459e9279ae21027d6e5bce74814efa",
+        "bytes": 7610
+      },
+      "intell_voice_service.gni": {
+        "blob": "3ef5591d6c44088a28c65bf459165c12c967462d",
+        "sha256": "06ed4a81c37f6aeef4a3c3fd6d47681fb8800358521bef3559390dc392396a53",
+        "bytes": 1297
+      },
+      "services/intell_voice_service/server/sa/intell_voice_service_stub.h": {
+        "blob": "36add8d87590def310e42ef9b0f450075590fddc",
+        "sha256": "c5672ae9b51c98f1512bc16fe40490c5c7cc529e359531284389c9c2f980d816",
+        "bytes": 2226
+      },
+      "services/intell_voice_service/server/sa/intell_voice_service.cpp": {
+        "blob": "9e6893bf0a64ba6e1f060b645702f99a2745f3ff",
+        "sha256": "5002aa457c97f6b9ee5e705bb0a17ec079e7ad3cc13dd1e2bf2c2b3845bb72fb",
+        "bytes": 15249
+      },
+      "services/intell_voice_service/server/sa/intell_voice_service.h": {
+        "blob": "00cf6778acf353ba5af77bec6bd9680e6e84d570",
+        "sha256": "c903176fc49c927eb7746f071baa6acba535ee36e5d48e3e7aacacd1a47195bd",
+        "bytes": 3671
+      },
+      "services/intell_voice_engine/proxy/intell_voice_service_proxy.cpp": {
+        "blob": "8f7c04c36ed61b1da174deab3bf1668546d0878c",
+        "sha256": "b59123c455d1e965270fe56e5d40ed35c345398bcaf1d1650f0e7bdcdedfb3df",
+        "bytes": 8972
+      }
+    }
+  },
+  "scanner_checkout": "1184edd0fc10a34bd76e87f33cffbee0c75538ad",
+  "a0_rows": [
+    {
+      "review_id": "CR-0301",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:fbadd6da21877e43",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_sha256": "c849a94b117c762a10019817cd6899224c96f5eae3e7bbb0d76b7236f6680d7a",
+      "mutated": false
+    },
+    {
+      "review_id": "CR-0302",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:92834dd99dd089bf",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_sha256": "db1c9317dd3d170334ed98b4cbe2de93c34ab5dab328d684cab6babcfab0f3eb",
+      "mutated": false
+    },
+    {
+      "review_id": "CR-0303",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:17827af15edb5483",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_sha256": "db1c9317dd3d170334ed98b4cbe2de93c34ab5dab328d684cab6babcfab0f3eb",
+      "mutated": false
+    },
+    {
+      "review_id": "CR-0304",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:984ccba14bff9bda",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_sha256": "db1c9317dd3d170334ed98b4cbe2de93c34ab5dab328d684cab6babcfab0f3eb",
+      "mutated": false
+    },
+    {
+      "review_id": "CR-0305",
+      "candidate_id": "ohscanner.interface.ipc:e777b1353fbbe284",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_sha256": "55dc2d68954cf94eb41014010fc6696236d9839fa8246aebd2faa8d033d30fc6",
+      "mutated": false
+    }
+  ],
+  "replays": [
+    {
+      "review_id": "CR-0301",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:fbadd6da21877e43",
+      "target_file": "services/intell_voice_engine/server/base/adapter_callback_service.h",
+      "a0_line": 28,
+      "target_identity": {
+        "blob": "6ea96592785c7e8a80a6c737cfa660f90d00abe2",
+        "sha256": "c849a94b117c762a10019817cd6899224c96f5eae3e7bbb0d76b7236f6680d7a",
+        "bytes": 1402
+      },
+      "run_snapshot_sha256": "049cd84159f63d31fbd793ab729705b27a8eb40cdc3340e4026b2fa0c1f95720",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "run_status": "completed",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.5.1",
+      "model_version": null,
+      "findings": [],
+      "a0_root_candidate_reproduced": false,
+      "limitations": [
+        "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+        "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+        "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+        "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+        "services/intell_voice_engine/server/base/adapter_callback_service.h: modeled accesses to 'services/intell_voice_engine/server/base/adapter_callback_service.h::OHOS::AdapterCallbackService::listener_' are constructor initialization only; stable-owner shape is not a concurrency proof."
+      ],
+      "classification": "PARTIAL/BLOCK"
+    },
+    {
+      "review_id": "CR-0302",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:92834dd99dd089bf",
+      "target_file": "services/intell_voice_engine/server/base/engine_util.h",
+      "a0_line": 77,
+      "target_identity": {
+        "blob": "372c98882e16df8f2e87e4b73936871cfb16b315",
+        "sha256": "db1c9317dd3d170334ed98b4cbe2de93c34ab5dab328d684cab6babcfab0f3eb",
+        "bytes": 3385
+      },
+      "run_snapshot_sha256": "7ceff8eb70855389bfcd2c7ed91aa8fb7cd04a7cdea55f168afd586ff849d052",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "run_status": "completed",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.5.1",
+      "model_version": null,
+      "findings": [
+        {
+          "file": "services/intell_voice_engine/server/base/engine_util.h",
+          "line": 77,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''adapter_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        },
+        {
+          "file": "services/intell_voice_engine/server/base/engine_util.h",
+          "line": 78,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''adapter_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        },
+        {
+          "file": "services/intell_voice_engine/server/base/engine_util.h",
+          "line": 86,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''adapter_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        }
+      ],
+      "a0_root_candidate_reproduced": true,
+      "limitations": [
+        "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+        "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+        "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+        "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+        "services/intell_voice_engine/server/base/engine_util.h: pairwise analysis of 'services/intell_voice_engine/server/base/engine_util.h::OHOS::EngineUtil::adapter_' leaves synchronization unproven for the mixed atomic/non-atomic synchronization protocol, different or one-sided mutexes, conditional/deferred locks, unresolved lock aliases or cross-function paths."
+      ],
+      "classification": "PARTIAL/BLOCK"
+    },
+    {
+      "review_id": "CR-0303",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:17827af15edb5483",
+      "target_file": "services/intell_voice_engine/server/base/engine_util.h",
+      "a0_line": 78,
+      "target_identity": {
+        "blob": "372c98882e16df8f2e87e4b73936871cfb16b315",
+        "sha256": "db1c9317dd3d170334ed98b4cbe2de93c34ab5dab328d684cab6babcfab0f3eb",
+        "bytes": 3385
+      },
+      "run_snapshot_sha256": "7ceff8eb70855389bfcd2c7ed91aa8fb7cd04a7cdea55f168afd586ff849d052",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "run_status": "completed",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.5.1",
+      "model_version": null,
+      "findings": [
+        {
+          "file": "services/intell_voice_engine/server/base/engine_util.h",
+          "line": 77,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''adapter_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        },
+        {
+          "file": "services/intell_voice_engine/server/base/engine_util.h",
+          "line": 78,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''adapter_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        },
+        {
+          "file": "services/intell_voice_engine/server/base/engine_util.h",
+          "line": 86,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''adapter_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        }
+      ],
+      "a0_root_candidate_reproduced": true,
+      "limitations": [
+        "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+        "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+        "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+        "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+        "services/intell_voice_engine/server/base/engine_util.h: pairwise analysis of 'services/intell_voice_engine/server/base/engine_util.h::OHOS::EngineUtil::adapter_' leaves synchronization unproven for the mixed atomic/non-atomic synchronization protocol, different or one-sided mutexes, conditional/deferred locks, unresolved lock aliases or cross-function paths."
+      ],
+      "classification": "PARTIAL/BLOCK"
+    },
+    {
+      "review_id": "CR-0304",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:984ccba14bff9bda",
+      "target_file": "services/intell_voice_engine/server/base/engine_util.h",
+      "a0_line": 86,
+      "target_identity": {
+        "blob": "372c98882e16df8f2e87e4b73936871cfb16b315",
+        "sha256": "db1c9317dd3d170334ed98b4cbe2de93c34ab5dab328d684cab6babcfab0f3eb",
+        "bytes": 3385
+      },
+      "run_snapshot_sha256": "7ceff8eb70855389bfcd2c7ed91aa8fb7cd04a7cdea55f168afd586ff849d052",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "run_status": "completed",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.5.1",
+      "model_version": null,
+      "findings": [
+        {
+          "file": "services/intell_voice_engine/server/base/engine_util.h",
+          "line": 77,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''adapter_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        },
+        {
+          "file": "services/intell_voice_engine/server/base/engine_util.h",
+          "line": 78,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''adapter_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        },
+        {
+          "file": "services/intell_voice_engine/server/base/engine_util.h",
+          "line": 86,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''adapter_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        }
+      ],
+      "a0_root_candidate_reproduced": true,
+      "limitations": [
+        "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+        "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+        "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+        "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+        "services/intell_voice_engine/server/base/engine_util.h: pairwise analysis of 'services/intell_voice_engine/server/base/engine_util.h::OHOS::EngineUtil::adapter_' leaves synchronization unproven for the mixed atomic/non-atomic synchronization protocol, different or one-sided mutexes, conditional/deferred locks, unresolved lock aliases or cross-function paths."
+      ],
+      "classification": "PARTIAL/BLOCK"
+    },
+    {
+      "review_id": "CR-0305",
+      "candidate_id": "ohscanner.interface.ipc:e777b1353fbbe284",
+      "target_file": "services/intell_voice_service/server/sa/intell_voice_service_stub.cpp",
+      "a0_line": 70,
+      "target_identity": {
+        "blob": "79a9acae7a4bb5a6dab18b40159f2aab52fcb544",
+        "sha256": "55dc2d68954cf94eb41014010fc6696236d9839fa8246aebd2faa8d033d30fc6",
+        "bytes": 7963
+      },
+      "run_snapshot_sha256": "59299dfe24510ec24a794a4db4a25c2b53b7f0e0f7dea307e23171acd4ef06aa",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "run_status": "completed",
+      "detector_id": "ohscanner.interface.ipc",
+      "detector_version": "0.12.12",
+      "model_version": "oh-ipc-2026.10-v32",
+      "findings": [
+        {
+          "file": "services/intell_voice_service/server/sa/intell_voice_service_stub.cpp",
+          "line": 70,
+          "rule_id": "ipc.capability.export",
+          "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=IntellVoiceServiceStub::CreateEngineInner [entry-source=services/intell_voice_service/server/sa/intell_voice_service_stub.cpp]; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((60, 'type == INTELL_VOICE_HEADSET_WAKEUP => True'), (65, 'ret != 0 => False'), (69, 'engine != nullptr => True'))"
+        }
+      ],
+      "a0_root_candidate_reproduced": true,
+      "limitations": [
+        "Model=oh-ipc-2026.10-v32; first-party bounded structured syntax interpretation, no external scanner execution.",
+        "Private branch pass reconstructs Tree-sitter nodes; public shared facts/schema are unchanged.",
+        "No compiler CFG, arbitrary virtual dispatch, alias analysis or full-program authorization proof. Macros are expanded only from the scan's own sources and only when unambiguous; the catalogue is never an #include resolution, and what the expander refused is counted in the macro-expansion limitation rather than assumed away.",
+        "Unmodeled callees/authorization remain evidence obligations; no findings does not establish safety.",
+        "Interface-descriptor identity is read from the class's own base clause: a comparison is counted as this transaction's guard only when the source names the interface the class implements. A comparison against another interface, or one whose identity the analysed sources do not state, is reported with that reason instead of counting as a guard or as a proven mismatch.",
+        "Descriptor consistency is separate from caller authorization; relay candidates are not exploit proofs.",
+        "IPC roots require a source-indexed class dispatcher with code, request Parcel and reply Parcel; explicit service/transport roots and Stub inner helpers are separate allowlisted entry kinds. Test/fuzz/mock path roots are excluded from product candidate analysis and counted in limitations. Entry discovery is not reachability: dispatcher-level guards and macro-conditional reachability remain obligations, not conclusions.",
+        "Entry-coverage measurements are published in the interface research report, not in this result.",
+        "Cross-service boundary coverage: 0 call(s) on a handle built by iface_cast<> in the scanned sources, 0 carrying the original caller's identity (SetCallingIdentity with a calling-token value active), 0 executing as the service. Each boundary is recorded with the identity that crossed it; no candidate is emitted from the boundary itself, and a downstream service's own guards are not read from this corpus.",
+        "Entry/dispatch coverage: 1 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 1 binding(s) by grade {'unresolved_handler': 1}, transactions {'unresolved': 1}, unresolved dispatch {'map_found_but_never_dispatched': 1}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe.",
+        "Loops are conservatively explored zero/one iterations; no induction or termination proof."
+      ],
+      "classification": "PARTIAL/BLOCK"
+    }
+  ],
+  "source_review": {
+    "CR-0301": "listener_ is initialized from the constructor argument and read by the callback implementation; callback instances are constructed in enroll, headset wakeup, high-power wakeup and wakeup engine code. Concurrent lifetime/dispatch overlap and caller impact are not established.",
+    "CR-0302_to_0304": "The current shared_ptr detector reports engine_util.h lines 77, 78 and 86. They are assignment, null check/read, and reset of EngineUtil::adapter_. These operations appear in common base templates; the component has multiple derived engines and external call sites. Locking/serialization differs by caller and was not proven to dominate every same-instance operation. The base class itself declares no synchronization member for adapter_.",
+    "build": "The pinned engine BUILD.gn includes the callback and engine utility implementation in engine_source when intelligent_voice_framework_engine_enable is enabled; the GNI default enables that feature. A product-specific resolved GN profile/image and runtime thread overlap were not established.",
+    "CR-0305": "IPC capability-export finding reproduced at line 70. D48's pinned source review shows the concrete virtual factory checks MANAGE_INTELLIGENT_VOICE and the Stub exits on nonzero before export; this cross-file guard does not establish product caller grants, reachability, product build, capability impact, or a fixed-source comparison."
+  },
+  "assessment": {
+    "all_cases": "PARTIAL/BLOCK",
+    "reason": "Source candidates and current CLI behavior are bound, but concurrency/reachability/product authorization and impact are not proven. No trusted vulnerable/fixed pair exists in these A0 rows.",
+    "a0_mutated": false
+  }
+}

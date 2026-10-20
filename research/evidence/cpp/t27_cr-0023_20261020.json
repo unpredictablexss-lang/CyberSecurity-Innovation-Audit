@@ -1,0 +1,48 @@
+{
+  "schema_version": "t27-preferences-source-audit-v1",
+  "task": "T27",
+  "queue_id": "CR-0023",
+  "source": {
+    "repository": "openharmony/distributeddatamgr_preferences",
+    "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+    "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+    "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+    "line": 48,
+    "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+    "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf"
+  },
+  "original_a0": {
+    "candidate_id": "ohscanner.cpp.shared_ptr_race:325abf25b06a4bba",
+    "original_status": "not_testable",
+    "queue_status": "paused_pending_evidence",
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "detector_version": "0.2.0-proposed",
+    "rule": "ohcpp-shared-ptr-race-candidate-001"
+  },
+  "source_observation": {
+    "operation": "read",
+    "description": "DBPreferencesFuzzTest::TearDownTestCase calls preferences_->Clear()."
+  },
+  "cli_replay": {
+    "file": "t27_preferences_header_and_fuzzer_20261020.json",
+    "status": "completed",
+    "parse_status": {
+      "complete": 2
+    },
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "rule_version": "0.5.1",
+    "matching_findings": [
+      {
+        "line": 48,
+        "symbol": "preferences_"
+      }
+    ]
+  },
+  "disposition": "PARTIAL",
+  "limits": [
+    "Static syntax candidates do not prove concurrent access to the same live object.",
+    "Target build, runtime schedule/thread affinity, external reachability and security impact were not established.",
+    "For CR-0022–CR-0024, the source is a test-only fuzz target; candidate statements are not production-path vulnerability proof."
+  ],
+  "queue_preserved": true
+}

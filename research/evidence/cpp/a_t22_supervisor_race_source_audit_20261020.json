@@ -1,0 +1,53 @@
+{
+  "schema_version": "a-line-t22-source-audit-v1",
+  "task": "T22",
+  "base": "8ec5f56a12e90bba56953b39eb17faa20e154da9",
+  "independent_of_detector_implementation_labels": true,
+  "source": {
+    "repository": "openharmony/resourceschedule_resource_schedule_service",
+    "project_path": "foundation/resourceschedule/resource_schedule_service",
+    "commit": "6d60b51a0bc8528c901e42bd80459f9a2030cf9b",
+    "tree": "1c9fde3c8ae5a01325af83a74be06a40f112b4f6",
+    "path": "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/include/supervisor.h",
+    "blob": "270b4cf2916b9df24d3396401c87fb5e9271c5d3",
+    "sha256": "8fa6f2fa21dc48e65c2d89b61b8e3de7d4da8c5945a915b9567e6fe0c55947cb"
+  },
+  "neighboring_source_blobs": {
+    "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/supervisor.cpp": "031a58301e777d6dbb29c064fdb3474316d7dcd4",
+    "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/cgroup_event_handler.cpp": "8e8b20d1566b8922e094db9c6e1d92abd2045453",
+    "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/sched_controller.cpp": "75dfec4440565673ebc7df7a62c602fe7f7b72b8"
+  },
+  "queue_source": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit\\research\\deliveries\\a-line-triage\\20261018\\queue.csv",
+  "a0_queue_verification": {
+    "verifier": "research/deliveries/cpp/a0_triage_20261019/verify_triage.py (run from a temporary copy to preserve its source worktree)",
+    "source_candidates": 345,
+    "queue_rows": 345,
+    "original_status_counts": {"not_reproduced": 9, "not_testable": 336},
+    "queue_status_counts": {"paused_pending_evidence": 331, "queued_first_batch": 5, "queued_not_reproduced": 9},
+    "source_hash_manifest_missing_or_mismatched": 0,
+    "duplicate_ids": 0,
+    "overall_ok": true
+  },
+  "original_rows": [
+    {"queue_id":"CR-0001","candidate_id":"ohscanner.cpp.shared_ptr_race:96112eb15e426e15","line":90,"original_status":"not_testable","queue_status":"paused_pending_evidence","mapping":"PASS","race":"PARTIAL","follow_up_priority":"low"},
+    {"queue_id":"CR-0002","candidate_id":"ohscanner.cpp.shared_ptr_race:8e9aa0aa292ae104","line":91,"original_status":"not_testable","queue_status":"paused_pending_evidence","mapping":"PASS","race":"PARTIAL","follow_up_priority":"low"},
+    {"queue_id":"CR-0003","candidate_id":"ohscanner.cpp.shared_ptr_race:98bc2912246f6b5b","line":195,"original_status":"not_testable","queue_status":"paused_pending_evidence","mapping":"PASS","race":"PARTIAL","follow_up_priority":"high"},
+    {"queue_id":"CR-0004","candidate_id":"ohscanner.cpp.shared_ptr_race:e8d7ee4495f26860","line":236,"original_status":"not_testable","queue_status":"paused_pending_evidence","mapping":"PASS","race":"PARTIAL","follow_up_priority":"highest"}
+  ],
+  "source_findings": [
+    {"queue_id":"CR-0001","symbol":"ProcessRecord::~ProcessRecord","operation":"abilities_.clear()","line":90,"lock_or_atomic":"none found","lifecycle":"destructor follows last shared owner in normal shared_ptr lifetime","assessment":"no source-derived concurrent access demonstrated"},
+    {"queue_id":"CR-0002","symbol":"ProcessRecord::~ProcessRecord","operation":"windows_.clear()","line":91,"lock_or_atomic":"none found","lifecycle":"destructor follows last shared owner in normal shared_ptr lifetime","assessment":"no source-derived concurrent access demonstrated"},
+    {"queue_id":"CR-0003","symbol":"Application::GetPidsMap","operation":"return pidsMap_ by value","line":195,"writers":["Application::AddProcessRecord","Application::RemoveProcessRecord","Application::GetProcessRecordNonNull"],"lock_or_atomic":"none found","reader_context":"synchronous SchedController diagnostic dump and other supervisor/event-handler traversals","assessment":"plausible unsynchronized read/write overlap; exact product scheduling unverified"},
+    {"queue_id":"CR-0004","symbol":"Supervisor::GetUidsMap","operation":"return uidsMap_ by value","line":236,"writers":["Supervisor::GetAppRecordNonNull","Supervisor::RemoveApplication"],"lock_or_atomic":"none found","reader_context":"synchronous SchedController::DumpProcess* paths; resource event updates are posted to FFRT queue","assessment":"plausible unsynchronized read/write overlap; exact OnDump service thread unverified"}
+  ],
+  "validation_limits": {
+    "target_product_build_bound": false,
+    "target_derived_harness": false,
+    "tsan_run": false,
+    "race_confirmed": false,
+    "cia_impact_established": false,
+    "a0_queue_modified": false,
+    "overall_case_status": "PARTIAL",
+    "blocking_evidence": ["product build options", "OnDump execution thread", "target-derived concurrent schedule", "reproducible race and consequence"]
+  }
+}

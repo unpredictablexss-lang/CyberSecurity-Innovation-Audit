@@ -1,0 +1,85 @@
+{
+  "audit_id": "T46-safwk-expire-lru-cache-CR-0241-0243",
+  "source": {
+    "repository": "openharmony/systemabilitymgr_safwk",
+    "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+    "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+    "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+    "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+    "sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3"
+  },
+  "queue": {
+    "ids": [
+      {
+        "queue_id": "CR-0241",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:e1f8e663a99fed14",
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+        "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "line": "165",
+        "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      {
+        "queue_id": "CR-0242",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:cf0f05c9433c35a5",
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+        "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "line": "171",
+        "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      {
+        "queue_id": "CR-0243",
+        "candidate_id": "ohscanner.cpp.shared_ptr_race:9334b8f1904462c0",
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "commit": "21c83c874a34e8d28e6a355a3b56e5167252ed27",
+        "tree": "e115202d315867371b3b7c885b4f017e10cb163f",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "line": "183",
+        "blob": "3e004bca071eb51d0e108845addf5ec3e25dbc65",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3",
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      }
+    ],
+    "states_changed": false
+  },
+  "cli": {
+    "artifact": "t46_safwk_expire_lru_cache_cli_20261027.json",
+    "tool": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "parse_status": "complete",
+    "scope_files": 1,
+    "scope_loc": 194,
+    "diagnostic_count": 0,
+    "validated_vulnerability": 0,
+    "findings_at_a0_lines": 0
+  },
+  "line_review": {
+    "CR-0241": {
+      "line": 165,
+      "operation": "data_.erase(key) in DoRemove",
+      "guard": "Remove acquires lock_guard(lock_) before DoRemove"
+    },
+    "CR-0242": {
+      "line": 171,
+      "operation": "data_.clear() in DoClear",
+      "guard": "Clear acquires lock_guard(lock_) before DoClear"
+    },
+    "CR-0243": {
+      "line": 183,
+      "operation": "data_.erase(iter->first) in DoClearExpiredCache",
+      "guard": "only DoAdd calls DoClearExpiredCache; Add holds lock_guard(lock_) before DoAdd"
+    }
+  },
+  "disposition": "PARTIAL/BLOCK: exact parse complete but zero findings is not a safety result. Source review maps all three writes to public-method lock paths; no unsynchronized same-object race is established. All A0 rows remain not_testable / paused_pending_evidence."
+}

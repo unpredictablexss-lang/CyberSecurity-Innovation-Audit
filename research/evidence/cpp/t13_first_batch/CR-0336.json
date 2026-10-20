@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "audit": "T13 independent A0 first-batch source triage",
+  "queue_id": "CR-0336",
+  "candidate_id": "ohscanner.interface.ipc:fc3ec640b7a45ebb",
+  "original_status": "not_testable",
+  "queue_status": "queued_first_batch",
+  "evidence_disposition": "PARTIAL/QUEUED",
+  "source": {
+    "repository": "openharmony/communication_wifi",
+    "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+    "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+    "path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_sta_sa/wifi_device_mgr_stub.cpp",
+    "blob": "6106eb782ab6ffb605ec6ebff9e47ed5df923375",
+    "bytes": 2088,
+    "sha256": "b23dc2a3573232cf9b2c4c682f20062b3a17d29335ec2b69799a8df01fd71793"
+  },
+  "related_source": {
+    "path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_sta_sa/wifi_device_mgr_service_impl.cpp",
+    "blob": "6764cab322c82d860905316ace540f839816f7bf",
+    "bytes": 12438,
+    "sha256": "053b74d3f95dded15ed95f49a2c31d4768e4777bf633066abdb45e326638916b"
+  },
+  "confirmed_facts": [
+    "The stub validates the interface token and dispatches WIFI_MGR_GET_DEVICE_SERVICE.",
+    "GetWifiRemoteInner reads instId, retrieves a stored remote object, and writes it to the reply at source line 40.",
+    "The implementation rejects negative IDs and performs a mutex-protected lookup of the stored remote-object map."
+  ],
+  "unknowns": [
+    "Target SA publication/access-control policy, build profile, caller token domain, and intended caller set.",
+    "Recipient-side IWifiDevice methods and their own authorization checks; capability sensitivity is not established by export alone."
+  ],
+  "minimum_next_evidence": "Bind product SA manifest/policy and build profile; resolve allowed caller tokens/permissions and recipient interface operations/auth checks; run authorized/unauthorized caller comparison on the same target build."
+}

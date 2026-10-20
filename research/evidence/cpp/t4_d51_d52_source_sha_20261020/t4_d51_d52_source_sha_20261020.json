@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "task": "T4 independent source SHA and CLI cross-check for D51/D52",
+  "integration_target": "91747d4cad7503e58c466402e905088153f1deb4",
+  "run_date_local": "2026-10-20",
+  "run_date_basis": "Current T4 CLI executions performed during this task on 2026-10-20 Asia/Shanghai; this does not establish dates of historical artifacts.",
+  "disposition": "PARTIAL/BLOCK",
+  "detector": "ohscanner.cpp.shared_ptr_race",
+  "detector_version": "0.5.1",
+  "object_database_root": "openharmony/.repo/project-objects",
+  "object_database_gaps": [],
+  "a0_queue": {
+    "read_only_path": "D:/openHarmonyScanner/worktrees/a-triage-t2-20261019/research/deliveries/a-line-triage/20261019/candidate_triage_queue.csv",
+    "sha256": "687d773986910a600e558833515137160ed50037889a2b6cc31c024433c3b45b",
+    "row_count": 345,
+    "unique_review_ids": 345,
+    "original_final_status_counts": {
+      "not_testable": 336,
+      "not_reproduced": 9
+    },
+    "queue_status_column_present": false,
+    "queue_status_verification": "BLOCK: source CSV has no queue_status column; this T4 run did not edit the queue or A0 status fields."
+  },
+  "cases": [
+    {
+      "review_id": "CR-0341",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:63b7b6b9dff04365",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "snapshot_sha256": "9fc6f1440f14899a71e9d4b99bd343782ad97eae5d1fa66b44c7fe23f4d3992c",
+      "path": "services/huks_standard/huks_service/extension/ability_native/inc/hks_crypto_ext_stub_impl.h",
+      "blob": "2c12eef68c03b83e27c805b651bf99c981efac45",
+      "source_sha256": "f189d4fbcb83e989ed3367fa8cb656e39a62f9aeddeb22b39c8d82352b435f45",
+      "cli_json": "d51_cli.json",
+      "cli_markdown": "d51_cli.md",
+      "parse_complete": 1,
+      "diagnostic_count": 0,
+      "bare_object_db_verified": true,
+      "result": "REPLAYED_PARTIAL_BLOCK"
+    },
+    {
+      "review_id": "CR-0255",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:da71855714407620",
+      "repository": "openharmony/global_i18n",
+      "commit": "d13c698ebb238fa416a711bd3befe871e85721b6",
+      "tree": "d667c4f54ca12ef664b3bab9ec80b93653c5a7b7",
+      "snapshot_sha256": "533c3b8e09bbe318349ff90d92d07e2ea5d13fb2730f5fad2b102f6a0a7c54f8",
+      "path": "interfaces/ets/ani/i18n/include/simple_number_format_addon.h",
+      "blob": "23803c9108c4e4c6b88a92ad366b600108a16317",
+      "source_sha256": "588f5783b8be2b3c1b49874e43464dce8c750cb340437f334053b57a665d4289",
+      "cli_json": "d52_a0_pin_cli.json",
+      "cli_markdown": "d52_a0_pin_cli.md",
+      "parse_complete": 2,
+      "diagnostic_count": 0,
+      "bare_object_db_verified": true,
+      "checkout_git_context_verified": true,
+      "result": "REPLAYED_PARTIAL_BLOCK"
+    },
+    {
+      "review_id": "CR-0256",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:d34ea3729a3995d7",
+      "repository": "openharmony/global_i18n",
+      "commit": "d13c698ebb238fa416a711bd3befe871e85721b6",
+      "tree": "d667c4f54ca12ef664b3bab9ec80b93653c5a7b7",
+      "snapshot_sha256": "533c3b8e09bbe318349ff90d92d07e2ea5d13fb2730f5fad2b102f6a0a7c54f8",
+      "path": "interfaces/ets/ani/intl/include/number_format_addon.h",
+      "blob": "216b68e9e1ba22c1c478b5966ebc713fe00e5bfe",
+      "source_sha256": "a2548ed27d5e424132a1ed16cde48fdedb1e85dc89f504ab86f7267f57a20389",
+      "cli_json": "d52_a0_pin_cli.json",
+      "cli_markdown": "d52_a0_pin_cli.md",
+      "parse_complete": 2,
+      "diagnostic_count": 0,
+      "bare_object_db_verified": true,
+      "checkout_git_context_verified": true,
+      "result": "REPLAYED_PARTIAL_BLOCK"
+    }
+  ],
+  "historical_d52_binding": {
+    "status": "STALE_MISMATCH",
+    "claimed_commit": "5e1210b17e720af2748685ee65bd480709c08a52",
+    "claimed_tree": "80d9a2200344cf348f3dd582c74e8c4aa7ed2969",
+    "a0_commit": "d13c698ebb238fa416a711bd3befe871e85721b6",
+    "a0_tree": "d667c4f54ca12ef664b3bab9ec80b93653c5a7b7",
+    "component_blobs_identical": true,
+    "old_evidence_modified": false
+  },
+  "historical_run_date": {
+    "claimed_date": "2026-10-29",
+    "current_date": "2026-10-20",
+    "status": "BLOCK_UNVERIFIED",
+    "original_execution_timestamp_found": false,
+    "original_run_log_found": false,
+    "old_evidence_modified": false
+  },
+  "scope": {
+    "detector_tests_fixtures_a0_status_modified": false,
+    "new_paths": [
+      "research/evidence/cpp/a_line_parallel_queue_20261020_T4_D51_D52_source_sha_addendum.md",
+      "research/evidence/cpp/t4_d51_d52_source_sha_20261020/t4_d51_d52_source_sha_20261020.json",
+      "research/evidence/cpp/t4_d51_d52_source_sha_20261020/t4_d51_d52_source_sha_20261020.md",
+      "research/evidence/cpp/t4_d51_d52_source_sha_20261020/verify_t4_d51_d52_source_sha.py",
+      "research/evidence/cpp/t4_d51_d52_source_sha_20261020/d51_cli.json",
+      "research/evidence/cpp/t4_d51_d52_source_sha_20261020/d51_cli.md",
+      "research/evidence/cpp/t4_d51_d52_source_sha_20261020/d52_a0_pin_cli.json",
+      "research/evidence/cpp/t4_d51_d52_source_sha_20261020/d52_a0_pin_cli.md"
+    ]
+  }
+}

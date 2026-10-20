@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "task": "D28",
+  "review_ids": ["CR-0016", "CR-0017", "CR-0018"],
+  "source": {
+    "repository": "openharmony/distributeddatamgr_data_share",
+    "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+    "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+    "path": "frameworks/native/provider/src/datashare_stub.cpp",
+    "blob": "cb62502d82c0534a6b9466f7a5d0a9e122d85693",
+    "source_sha256": "cc742b1811c6c6ce2c351e27619a74ec1e5f472502a7a712c50d49fbaeed667a",
+    "bytes": 26370
+  },
+  "baseline": {
+    "tool": "ohscanner.interface.ipc",
+    "version": "0.12.12",
+    "profile": "light-ast",
+    "findings": [
+      {"queue_id": "CR-0016", "line": 204, "rule_id": "ipc.auth.missing", "symbol": "DataShareStub::OpenFileInner"},
+      {"queue_id": "CR-0017", "line": 221, "rule_id": "ipc.capability.export", "symbol": "DataShareStub::CmdOpenFile"},
+      {"queue_id": "CR-0018", "line": 243, "rule_id": "ipc.capability.export", "symbol": "DataShareStub::CmdOpenFileWithErrCode"}
+    ],
+    "parse_status": "partial",
+    "selected_files": 1,
+    "validated_vulnerability": 0,
+    "report": "d28_cr0016_18_cli_20261020.json"
+  },
+  "analysis": {
+    "rule_gap_reproduced": false,
+    "detector_change": false,
+    "disposition": "PARTIAL/BLOCK",
+    "notes": [
+      "CR-0016 unpacks URI and mode and calls virtual OpenFile without a direct permission check in OpenFileInner. Other operations define VerifyPermissionAndUri, but the selected source does not establish provider policy, implementation behavior, or whether authorization is enforced in another layer.",
+      "CR-0017 and CR-0018 send a nonnegative descriptor through the reply Parcel. Both close the local tagged descriptor after WriteFileDescriptor and close it on write failure; this ownership cleanup does not establish whether the recipient is entitled to the resource.",
+      "The current production CLI emits the three expected candidates at the exact queue locations. No demonstrated miss or incorrect detector model justifies a rule change.",
+      "The one-file CLI parse is partial and leaves OpenFileInner / provider implementation and policy context unresolved. No fixed source, product build/profile, caller authorization contract, or runtime/harness evidence was supplied."
+    ],
+      "queue_states_preserved": true,
+      "original_queue_state": "not_testable / queued_first_batch"
+  }
+}
