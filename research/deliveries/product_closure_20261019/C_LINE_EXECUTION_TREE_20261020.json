@@ -3,8 +3,8 @@
   "date": "2026-10-20",
   "baseline": {
     "remote": "origin/codex/c-line-parallel-plan-20261020",
-    "commit": "6ffe9211e",
-    "refresh": "2026-10-20 local planning branch contains parallel ArrayBuffer no-go and TypedArray.set(arrayLike) candidate reports; remote remains at e2daccc5b after repeated transient GitHub HTTPS timeouts. Developer, independent tester and second-layer review are active for the candidate. Developer flagged a source-path/blob-OID mismatch in the scout report; tester is independently verifying corrected pins before any binding. Ark Runtime source revision remains a65a2853ccae13da167d9aa4720ab8b11ec16656."
+    "commit": "f0ecebbe2",
+    "refresh": "2026-10-20 local planning tip f0ecebbe2 includes exact-bound TypedArray.set array-like wrap candidate implementation; independent source/arithmetic baseline committed as b9e064ce0 and tester same-SHA replay plus second-layer review are active. Remote remains e2daccc5b due repeated GitHub HTTPS timeouts. Candidate retains partial/blocked because declaration header has 33 parser issues; runtime/ASan/product impact not_run/unknown."
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
   "status": "ACTIVE",
@@ -989,31 +989,35 @@
     {
       "id": "C-DEV-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
       "kind": "source_bound_detector_development",
-      "status": "IN_PROGRESS_BASELINE_CONFIRMED_IMPLEMENTATION_PENDING",
+      "status": "COMPLETE_EXACT_BOUND_CANDIDATE_TESTS_PASSED_INDEPENDENT_REPLAY_PENDING",
       "developer_agent": "scout_arraybuffer_mutation",
       "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
       "objective": "Implement at most one exact-bound candidate for TypedArray.set(arrayLike, offset) uint64 range-sum / uint32 byte-index wrap, only if exact method/helper source evidence and parser scope are sufficient.",
       "developer_prompt": "ROLE=Ark Runtime source-bound detector developer. INPUT=research/deliveries/c-line/typedarray_copy_mutation_scout_20261020.md and exact Ark Runtime a65 pins. GOAL=emit at most one narrow candidate for set(arrayLike, offset) unsigned range-sum/byte-index wrap. STEPS=verify clean revision/tree/blob/SHA; establish parser completeness for exact method and SetValueInBuffer; model only ordinary array-like path; add positive source-derived trigger; add in-range, one-past/fixed-check, zero-view-offset, stable-array fast-path, unrelated, wrong-commit, missing-helper and mutated-helper controls; preserve partial/unknown if incomplete. OUTPUT=small detector/test/report change plus expected-result matrix for independent replay. STOP=one precise candidate with controls or evidence-based no-go. NEVER=edit Ark Runtime source, duplicate closed scopes, claim runtime/product impact or accuracy, equate zero with safety, or implement second-layer LLM.",
       "feedback_to": "C-TEST-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
       "report_required": true,
-      "done_when": "Same exact source identity yields no more than one candidate, controls fail closed or produce no candidate, and independent replay on the implementation SHA confirms it."
+      "done_when": "Same exact source identity yields no more than one candidate, controls fail closed or produce no candidate, and independent replay on the implementation SHA confirms it.",
+      "implementation_commit": "f0ecebbe28b8fd57f4b175f9a35b9516aa7b3b5d",
+      "report": "research/deliveries/c-line/typedarray_set_arraylike_offset_wrap_dev_20261020.md"
     },
     {
       "id": "C-TEST-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
       "kind": "independent_source_bound_detector_testing",
-      "status": "IN_PROGRESS_INDEPENDENT_BASELINE_AND_MATRIX",
+      "status": "IN_PROGRESS_SAME_SHA_REPLAY",
       "tester_agent": "float32_runtime_test",
       "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
       "objective": "Independently challenge set(arrayLike, offset) trigger arithmetic, parser/dependency pins and fail-closed behavior, then replay on developer SHA.",
       "tester_prompt": "ROLE=independent Ark Runtime static-detector tester. INPUT=scout report, exact pins and developer commit/control matrix. GOAL=challenge trigger arithmetic, route selection and source-identity fail-closed behavior without editing production detector/model. STEPS=independently verify blobs and parser states; calculate source-derived byte indices; establish preimplementation registered/direct-analysis baseline; after developer SHA, replay positive and safe/fixed cases, wrong commit/blob, missing/mutated method/helper; return counterexamples before closure. OUTPUT=same-SHA independent report with commands/results and explicit partial/blocked/not_run. STOP=one independent determination; if no implementation, report no-go/not_run. NEVER=claim exploitability/product impact or formal accuracy, claim safety from zero, modify production bindings, or broaden excluded scope.",
       "feedback_to": "C-DEV-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
       "report_required": true,
-      "done_when": "Tester confirms one precise finding or returns a concrete mismatch, and keeps runtime/build/product impact unknown unless executed."
+      "done_when": "Tester confirms one precise finding or returns a concrete mismatch, and keeps runtime/build/product impact unknown unless executed.",
+      "preimplementation_report": "research/deliveries/c-line/typedarray_set_arraylike_independent_baseline_20261020.md",
+      "preimplementation_report_commit": "b9e064ce05bb2d05e5a013add39572433df51d15"
     },
     {
       "id": "C-LLM-REVIEW-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
       "kind": "second_layer_candidate_review",
-      "status": "PENDING_DEVELOPER_TESTER_SAME_SHA_RESULT",
+      "status": "PENDING_SAME_SHA_TESTER_RESULT",
       "reviewer": "c1_width_review",
       "objective": "Review exact registered set(arrayLike) candidate evidence and same-SHA controls. Do not implement LLM or detector.",
       "review_prompt": "ROLE=second-layer source candidate reviewer. INPUT=exact developer SHA, independent replay, scout evidence, source pins and candidate. GOAL=accept/narrow/reject based on arithmetic, call-route plausibility, sensitive write, controls and unknowns. STEPS=independently recompute 2^64-2048 plus srcLen 2049 and uint32 byte ranges; inspect exact SetValueInBuffer path and whether target view bound is enforced elsewhere; verify source identities and partial evidence; preserve runtime/product limits. OUTPUT=concise review report with exact evidence and unresolved runtime questions. STOP=accept/narrow/reject. NEVER=call this confirmed exploitation, infer product impact, or edit detector/LLM."
