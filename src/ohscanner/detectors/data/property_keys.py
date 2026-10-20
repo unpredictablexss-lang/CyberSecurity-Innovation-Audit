@@ -124,11 +124,13 @@ class PropertyKeyBindings:
             return None
         if literal != 'password':
             return None
-        result = f'{flow.u.path}:{node.start_point[0]+1} sha256={flow.u.sha256}'
+        result = (f'{flow.u.path}:{node.start_point[0]+1} '
+                  f'symbol={"::".join(scope + (name,))} byte={declaration.start_byte} '
+                  f'sha256={flow.u.sha256}')
         self.cache[key] = result
         return result
 
-    def bind(self, call, argument):
+    def bind(self, call, argument, allow_target_macro=False):
         flow = self.flow
         if (not flow.heuristic_sources or flow.u.language != 'cpp'
                 or flow.u.parse_status != 'complete' or flow.tree.root_node.has_error
@@ -136,7 +138,8 @@ class PropertyKeyBindings:
             return None
         api = flow.text(call.child_by_field_name('function'))
         units = flow.resolver.units if flow.resolver is not None else (flow.u,)
-        modeled_tokens = '|'.join(re.escape(token) for token in (api, 'std', 'string', 'c_str'))
+        tokens = ('std', 'string', 'c_str') + (() if allow_target_macro else (api,))
+        modeled_tokens = '|'.join(re.escape(token) for token in tokens)
         if any(re.search(r'^\s*#\s*define\s+(?:' + modeled_tokens + r')\b', unit.text, re.M)
                for unit in units):
             return None
