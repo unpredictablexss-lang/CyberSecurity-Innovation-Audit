@@ -76,6 +76,18 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
                              scan["plan_sha256"])
             self.assertFalse(auth["revoked"])
 
+    def test_retried_approved_submission_reuses_original_operation_and_jobs(self):
+        _, scans = self.approved()
+        first = self.ops.create_with_scans("revision_range", {"baseline": "a" * 40},
+                                           self.repo["id"], scans)
+        second = self.ops.create_with_scans("revision_range", {"baseline": "a" * 40},
+                                            self.repo["id"], scans)
+        self.assertEqual(first["id"], second["id"])
+        self.assertEqual(first["spec"]["scan_ids"], second["spec"]["scan_ids"])
+        with self.store.connect() as db:
+            self.assertEqual(db.execute("SELECT count(*) FROM operations").fetchone()[0], 1)
+            self.assertEqual(db.execute("SELECT count(*) FROM jobs").fetchone()[0], 2)
+
     def test_replaying_other_endpoint_approval_is_rejected(self):
         body, _ = self.approved()
         body["triage_approvals"].reverse()
