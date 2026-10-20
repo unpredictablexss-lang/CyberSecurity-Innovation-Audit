@@ -1,0 +1,57 @@
+{
+  "id": "D56",
+  "title": "Pasteboard source lineage and version boundary",
+  "date": "2026-10-21",
+  "timezone": "Asia/Shanghai",
+  "result": {
+    "historical_snapshot_in_current_git_ancestry": true,
+    "dd22_commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "dd22_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "current_commit": "e73747b227104e6743e957ce31040edf58507221",
+    "current_tree": "4128cdf9ad11d393c30f2839f43419e97a5a466d",
+    "cve_source_fix_ancestor_of_current": true,
+    "product_fixed_status": "unknown_without_build_fingerprint_and_patch_level",
+    "d52_exact_line_cve_mapping": "unproven"
+  },
+  "repositories": [
+    {"url": "https://gitcode.com/openharmony/miscservices_pasteboard", "method": "full --mirror clone", "shallow": false, "ref_count_heads": 13, "ref_count_tags": 3, "all_ref_commit_count": 221},
+    {"url": "https://gitcode.com/openharmony/distributeddatamgr_pasteboard", "method": "full --mirror clone", "shallow": false, "ref_count_heads": 302, "ref_count_tags": 47, "all_ref_commit_count": 12702},
+    {"url": "https://gitee.com/openharmony/security", "method": "full --mirror clone", "shallow": false}
+  ],
+  "evidence": {
+    "d52_stub": {"path": "services/zidl/src/pasteboard_service_stub.cpp", "blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b", "bytes": 6288, "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868", "finding": "line 41 is OnRemoteRequest opening brace; GET_PASTE_DATA dispatch reaches core getter"},
+    "d52_core_getter": {"path": "services/core/src/pasteboard_service.cpp", "blob": "c380ac266a85edd818caa811f11b99722d351788", "bytes": 17335, "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52", "finding": "GetPasteData copies current user's clip without permission gate"},
+    "earliest_verified_gate_in_fetched_refs": {"commit": "e13a4ad3b72be7650ccb75de560790c04fa84795", "author_date": "2022-08-15T11:37:06+08:00", "commit_date": "2022-08-27T10:00:47+08:00", "parent": "9fd07a8a7c5b9ef2087a551e90efadf838078b04", "tree": "a4969d1d7e4186603696c1de7cba2b9f686f7b3d", "same_tree_parallel_commit": "ae45d0c8e1a489defb8135041436c3e428436e05", "finding": "adds CheckPastePermission before GetPasteData returns clip data; checks focus/default-IME and ShareOption including InApp app-id match; reachable in checked release tags"},
+    "gate_search_scope": "git log --all --reverse -S'CheckPastePermission' -- services/core/src/pasteboard_service.cpp across fetched full GitCode mirror refs; earliest observed commit copies are ae45d0c8e1a489defb8135041436c3e428436e05 and e13a4ad3b72be7650ccb75de560790c04fa84795 with identical tree; not a claim beyond fetched refs",
+    "gate_helper_evolution": {"commit": "cedbaeb9f55f524fb93c9d76ec06a4dc7b213ba7", "date": "2022-08-30", "finding": "later changes helper to HasPastePermission; not the first source-side read gate"},
+    "verifier_change": {"commit": "721fecac75d9c51b0b145469abc6c9c78c17753e", "date": "2024-03-23", "finding": "later VerifyPermission change, includes default-IME exception"},
+    "cve_fix": {"upstream_commit": "f27fb584ee3dd14ec38b66d64e50cd7e70325bca", "tree": "1fc6df6efc5a5f9c9b072a570c6486f62c0478cd", "backport_5_0_3": "7ea520735f926b1f4720390e3d56f353642dbfa7", "backport_tree": "69a592799ce6ed3877fe5a571aebcda90d355864", "finding": "removes IsDefaultIME privilege allowance from VerifyPermission"},
+    "idl_migration": {"merge_commit": "a8427a6b548db7a0f64f5d3f297f755ec4db804c", "first_parent": "333c73f50ba74cd612a2f15aa679ec963e8ba411", "finding": "deletes handwritten service stub and adds IDL"},
+    "local_caller_change": {"commit": "67ebf975e802cd1f7c25c9d225537fc10dabb987", "finding": "5.1.0 release branch only; not current master ancestor; separate from CVE fix"},
+    "advisory": {"repo_commit": "3ab66b799f5fe23b58ad7e1793f576727710bc87", "tree": "180a31aa568571587a704f6ccf6ada86b3f3ae8a", "path": "zh/security-disclosure/2025/2025-06.md", "blob": "3d29b0704275db717d19a0f63bf2ca896801834b", "sha256": "618bd902a93f12702e3b0c92599a17e914352a13c781b2e1caa914050fedb45e", "finding": "CVE-2025-27247 names OpenHarmony-v5.0.3-Release affected and links PR !1106 / 5.0.3.x"}
+  },
+  "tag_comparison": [
+    {"tag": "v4.1", "commit": "ae11962072207bd4b444631ac1ce818560e68327", "getter": "HasPastePermission; default-IME path present"},
+    {"tag": "v5.0.0", "commit": "8972d1c68ed74839e26999abdac74a64584d0b92", "getter": "VerifyPermission; IsDefaultIME present"},
+    {"tag": "v5.0.1", "commit": "6102fdd1b2e5f954bad1718d9f96a11efb215886", "getter": "VerifyPermission; IsDefaultIME present"},
+    {"tag": "v5.0.2", "commit": "fbed84bb3608e7b41c41309a59420d162ae086c9", "getter": "VerifyPermission; IsDefaultIME present"},
+    {"tag": "v5.0.3", "commit": "d91a9b38fc801a269dc684c0c9735dc68ddbb0b8", "getter": "VerifyPermission; IsDefaultIME removed in checked source"}
+  ],
+  "scope_boundaries": [
+    "Source lineage and ancestry are established; product binaries and patch installation are not inspected.",
+    "Official bulletin calls the v5.0.3 release family affected while checked tag source contains the patch; exact device patch level is required to classify a product.",
+    "CVE advisory does not identify the D52 line-41 detector location or exact old blob as its root-cause location.",
+    "Local shallow OpenHarmony807 clone is not used to infer history.",
+    "No scanner implementation files modified."
+  ],
+  "reproduction": {
+    "gitcode_old_repo": "git clone --mirror https://gitcode.com/openharmony/miscservices_pasteboard.git miscservices_pasteboard.git",
+    "gitcode_current_repo": "git clone --mirror https://gitcode.com/openharmony/distributeddatamgr_pasteboard.git distributeddatamgr_pasteboard.git",
+    "gitee_security_repo": "git clone --mirror https://gitee.com/openharmony/security.git security.git",
+    "ancestry_check": "git --git-dir=distributeddatamgr_pasteboard.git merge-base --is-ancestor dd22c7cb5e5f207a6c38c50f45b7369ee8575840 e73747b227104e6743e957ce31040edf58507221",
+    "gate_search": "git --git-dir=distributeddatamgr_pasteboard.git log --all --reverse -S'CheckPastePermission' --format='%H %ad %s' --date=iso-strict -- services/core/src/pasteboard_service.cpp",
+    "migration_diff": "git --git-dir=distributeddatamgr_pasteboard.git diff a8427a6b548db7a0f64f5d3f297f755ec4db804c^1 a8427a6b548db7a0f64f5d3f297f755ec4db804c --name-status",
+    "advisory_read": "git --git-dir=security.git show 3ab66b799f5fe23b58ad7e1793f576727710bc87:zh/security-disclosure/2025/2025-06.md",
+    "hash_check": "git cat-file blob <commit>:<path>; git hash-object <saved-file>; Get-FileHash -Algorithm SHA256 <saved-file>"
+  }
+}
