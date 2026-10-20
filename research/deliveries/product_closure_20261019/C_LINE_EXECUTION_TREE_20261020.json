@@ -869,7 +869,7 @@
     {
       "id": "C-DEV-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020",
       "kind": "isolated_component_runtime_development",
-      "status": "IN_PROGRESS_RUNTIME_FEASIBILITY_AND_REPRODUCTION",
+      "status": "COMPLETE_RUNTIME_NOT_RUN_ENVIRONMENT_INVENTORY",
       "base": {
         "planning_branch": "codex/c-line-parallel-plan-20261020",
         "planning_commit": "0d06ef0c8083438a962229a03be2c2572c92a917",
@@ -882,19 +882,36 @@
       "feedback_to": "C-TEST-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020",
       "report_required": true,
       "report": "research/deliveries/c-line/float32array_runtime_development_20261020.md",
-      "done_when": "A narrowly scoped component runtime result is captured with exact source/config/arch and controls, or local build/execution impossibility is supported by inspected evidence and a bounded next step."
+      "source_inventory": "research/deliveries/c-line/float32array_runtime_source_inventory_20261020.txt",
+      "completion": "No compatible Ark executable or configured build tree/toolchain was found in the inspected local source/build roots. Exact candidate source pins were verified. Runtime and ASan tests remain not_run; no production source was changed.",
+      "limitations": "The report does not establish the source candidate as unreachable or safe; a matching Linux build root, GN/Ninja/Clang, frontend, and runtime outputs are still missing."
     },
     {
       "id": "C-TEST-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020",
       "kind": "independent_component_runtime_testing",
-      "status": "IN_PROGRESS_INDEPENDENT_RUNTIME_AND_ARITHMETIC_CHALLENGE",
+      "status": "COMPLETE_RUNTIME_NOT_RUN_SOURCE_ACCESS_PATH_REPORTED",
       "tester_agent": "float32_runtime_test",
       "feedback_to": "C-DEV-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020",
       "objective": "Independently challenge the exact source arithmetic and any available runtime reproduction, especially init interval, 32/64-bit metadata/backing mismatch, and signed fast-getter guard; do not accept source-derived controls as executed tests.",
       "tester_prompt": "ROLE=independent adversarial runtime tester. INPUT=exact source pins and developer candidate. GOAL=try to falsify reachability, allocation arithmetic, or later-access concern. STEPS=independently reread the pinned source; recompute ZExt/size/alignment and initializer [start,end) semantics; inspect signed inline and uint32 runtime getter paths; locate an executable/build independently; if available, run isolated controls and compare behavior. OUTPUT=separate report with exact commands/source/architecture/results and explicit not_run fields. STOP=one independent determination. NEVER=accept developer claims without replay, change production code, or report static predictions as passing tests.",
       "report_required": true,
       "report": "research/deliveries/c-line/float32array_runtime_independent_test_20261020.md",
-      "done_when": "Independent arithmetic and runtime evidence either corroborates or narrows the candidate, with architecture and unexecuted paths stated explicitly."
+      "completion": "Independent arithmetic confirms 64-bit allocation size 0x400000010, 32-bit size 16, and empty initializer interval [16,16). It identifies a distinct ordinary TypedArray IC-miss/C++ getter path with uint32 length checks and no visible ByteArray span validation; this is a conditional 32-bit source-level out-of-allocation read hypothesis only. Runtime, ASan, and object observability remain not_run.",
+      "counterevidence": "No compatible runtime/build was available; constructor path selection, successful allocation, concrete access and observable impact remain unverified."
+    },
+    {
+      "id": "C-LLM-REVIEW-FLOAT32-IC-MISS-20261020",
+      "kind": "second_layer_candidate_review_addendum",
+      "status": "COMPLETE_CONDITIONAL_32BIT_OUT_OF_ALLOCATION_READ_SOURCE_ONLY",
+      "reviewer": "c1_width_review",
+      "base_source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "input": "C-DEV-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020 and C-TEST-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020 reports; exact existing Float32Array candidate pins.",
+      "objective": "Independently assess the ordinary indexed-property load route for a 32-bit malformed negative-TDouble Float32Array; resolve whether the inline signed guard applies and whether another bound defeats an index-zero raw read.",
+      "review_prompt": "ROLE=second-layer source reviewer. Independently trace LoadValueMiss/LoadTypedArrayValueMiss for canonical key 0, IsValidIntegerIndex, FastGetPropertyByIndex, GetDataPointFromBuffer, ByteArray data start, and generic IC-disabled path. Bind source commit/tree/blob/SHA, enumerate guards/counterevidence, and separate conditional source evidence from runtime/product impact. No detector/LLM implementation and no exploit claim.",
+      "report": "research/deliveries/c-line/c_float32array_negative_double_property_load_review_20261020.md",
+      "report_commit": "413c29e4d08ee4f7f328a26dbcf131735c0da81b",
+      "completion": "Source review finds the ordinary IC-miss and IC-disabled generic paths use uint32 array-length checks and no ByteLength consistency guard before a Float32 raw read at ByteArray DATA_OFFSET. If the 32-bit constructor path returns the predicted 16-byte backing object, index 0 reaches a four-byte read beyond the allocated payload. This remains conditional source evidence; runtime path selection, allocation success, and product impact are not_run.",
+      "counterevidence": "No 32-bit build/runtime/ASan execution; no product profile or exploitation evidence. The compiler inline builtin's signed guard is valid for its own path but does not cover this ordinary runtime miss path."
     }
   ],
   "feedback_loop": [
