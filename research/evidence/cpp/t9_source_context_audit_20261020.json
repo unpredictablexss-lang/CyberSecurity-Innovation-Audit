@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "task": "T9 exact-source build-context and preprocessed CLI audit",
+  "scanner_worktree_head": "efa09aaaac01f81084034ea0994c310007ba1dbf",
+  "scanner_baseline": "81dd4aea9bb51522ac912b33504ef0d2ddb79089",
+  "scanner_src_matches_baseline": true,
+  "cases": {
+    "libpng_33416": "PARTIAL/BLOCK",
+    "libpng_46675": "PARTIAL/BLOCK",
+    "libtiff_9900": "PARTIAL/BLOCK"
+  },
+  "libpng_preprocessed_cli": {
+    "33416-vuln": {
+      "upstream_parent_commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+      "upstream_target_sha256": "9bd59a79669db37b2ecc481439481eb5f49bf77bee0de4b1aba649915609b3d0",
+      "derived_preprocessed_commit": "028a638c4a03d910539a0ab0e7d86195c7004ca9",
+      "preprocessed_artifact": "33416-vuln-pngset.c.i",
+      "preprocessed_bytes": 248965,
+      "preprocessed_sha256": "7f37d3823c1070c8ad5132089c36a1f8e3f973ff1449cfac0ebebcbc4f34dc60",
+      "source_map": "GCC #line markers retained",
+      "cli_report": "33416-vuln-cli.json",
+      "cli_report_sha256": "66ca43af3fa0e7de93c432bb8fa3473c4183d9b6f01e9f7f4e5b2b316ce57a82",
+      "parse": {
+        "partial": 1
+      },
+      "detector": "ohscanner.cpp.resource_lifetime",
+      "detector_version": "0.4.2",
+      "detector_status": "blocked",
+      "findings": 0
+    },
+    "33416-fixed": {
+      "upstream_parent_commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+      "upstream_target_sha256": "d3a203e40b6a6000a7cb78a61e0fd9664b0c39a65d82260efedb0f0184a8bc19",
+      "derived_preprocessed_commit": "af176e8b16d9bfe9208834de25c1f810b0d5c0e3",
+      "preprocessed_artifact": "33416-fixed-pngset.c.i",
+      "preprocessed_bytes": 250011,
+      "preprocessed_sha256": "ed0d26b3d1d98e743abdc279f7be024629650f9212a0dca8c7b3863c6a6902d7",
+      "source_map": "GCC #line markers retained",
+      "cli_report": "33416-fixed-cli.json",
+      "cli_report_sha256": "0ae0fef9fd06263d752d2f603f3b3d59196282ee1e9f7a2bc91c5424d2d46f51",
+      "parse": {
+        "partial": 1
+      },
+      "detector": "ohscanner.cpp.resource_lifetime",
+      "detector_version": "0.4.2",
+      "detector_status": "blocked",
+      "findings": 0
+    },
+    "46675-vuln": {
+      "upstream_parent_commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+      "upstream_target_sha256": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e",
+      "derived_preprocessed_commit": "971c7bd8060aea71d1cc0349c2a7113eaab896d1",
+      "preprocessed_artifact": "46675-vuln-pngrutil.c.i",
+      "preprocessed_bytes": 390203,
+      "preprocessed_sha256": "8434001252d648cf93c2b84895f38c36717ac0706e96b2f25324a06889be6c10",
+      "source_map": "GCC #line markers retained",
+      "cli_report": "46675-vuln-cli.json",
+      "cli_report_sha256": "11316a146495453cb9fd83a68766bd4780ad5cdaf423f6476c34fa9d13e1c6bd",
+      "parse": {
+        "partial": 1
+      },
+      "detector": "ohscanner.cpp.resource_lifetime",
+      "detector_version": "0.4.2",
+      "detector_status": "blocked",
+      "findings": 0
+    },
+    "46675-fixed": {
+      "upstream_parent_commit": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+      "upstream_target_sha256": "a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e",
+      "derived_preprocessed_commit": "7d4f200f6ea5a07e93fceb931796e8acfff6e3a6",
+      "preprocessed_artifact": "46675-fixed-pngrutil.c.i",
+      "preprocessed_bytes": 390569,
+      "preprocessed_sha256": "81f8693fea9892433250899f6ad05caf07f80fd045780b9c470f98842d93c0aa",
+      "source_map": "GCC #line markers retained",
+      "cli_report": "46675-fixed-cli.json",
+      "cli_report_sha256": "80d9077b67c7f3142c4863ce5e3bb5856abd3ca8a0afbeb27351e206f8daab97",
+      "parse": {
+        "partial": 1
+      },
+      "detector": "ohscanner.cpp.resource_lifetime",
+      "detector_version": "0.4.2",
+      "detector_status": "blocked",
+      "findings": 0
+    }
+  },
+  "libtiff_preprocessed": {
+    "vulnerable": {
+      "artifact": "tiff-vuln.i",
+      "bytes": 234187,
+      "sha256": "502c806ef700126e4bb8fb9e15f4512c89a136c831466f3f3229141835f1cfc5",
+      "source_map": "GCC #line markers retained",
+      "cli": "not_run: local promisor mirror lacks ancestor c6b523b5911c298a3e099c380a79446ad207b21e"
+    },
+    "fixed": {
+      "artifact": "tiff-fixed.i",
+      "bytes": 237103,
+      "sha256": "1edf650ada64cff5c6d0e91767812789b8764c83bbcae583bce604199389a061",
+      "source_map": "GCC #line markers retained",
+      "cli": "not_run: local promisor mirror lacks ancestor c6b523b5911c298a3e099c380a79446ad207b21e"
+    }
+  },
+  "verifiers": {
+    "t61": "PASS",
+    "t6": "PASS",
+    "t23_a0": "PASS; 345 IDs/status baseline retained"
+  },
+  "interpretation": "Exact-source preprocessing with upstream/CMake compile context was obtained. The scanner still reports partial/blocked for both libpng preprocessed source files; libtiff source-mapped preprocessed inputs were generated but CLI replay could not be constructed from the available promisor mirror. No zero finding is a safe/fixed conclusion. No source, detector, test, fixture, or A0 data changed."
+}
