@@ -1,0 +1,522 @@
+{
+  "study": "T93 independently discovered cast type-name source regression",
+  "first_D94_expected_failure": true,
+  "raw_initial_replay_sha256": "8f27ee6946941b98fddf55979e0f9e1c8435472f275d17cd7c8e872e70abcb1a",
+  "runs": [
+    {
+      "revision": "fd36dc2e61abfe01c1a2e244b97d75254ffd5f82",
+      "version": "0.21.8",
+      "src_archive_sha256": "2f3da21d0cdc4fdc5ef24e2cc15df69df0c66e4567a931da61eeeabfe532c112",
+      "case": {
+        "case": "null-sensitive-type-cast",
+        "source": "struct PrivateKeyInfo{int unused;};\nvoid sample(PrivateKeyInfo **output){*output=static_cast<PrivateKeyInfo *>(nullptr);}",
+        "source_sha256": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247",
+        "model": "unknown-profile heuristic",
+        "target_statement": null,
+        "after_contract": "none",
+        "direct_target_candidates": [],
+        "runner_target_diagnostics": [],
+        "all_direct_findings": [],
+        "all_runner_diagnostics": [],
+        "call_facts": [
+          {
+            "name": "static_cast<PrivateKeyInfo *>",
+            "arguments": [
+              "nullptr"
+            ],
+            "line": 2,
+            "start_byte": 81,
+            "end_byte": 119
+          }
+        ],
+        "direct_status": "blocked",
+        "direct_file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "runner_status": "blocked",
+        "runner_coverage": {
+          "schema_version": 1,
+          "detectors": {
+            "ohscanner.data.sensitive_exposure": {
+              "scope_mode": "per_file",
+              "status": "partial",
+              "applicable_files": 1,
+              "analyzed_files": [],
+              "partially_inspected_files": [
+                "service.cpp"
+              ],
+              "source_sha256": {
+                "service.cpp": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247"
+              },
+              "unexamined": [
+                {
+                  "file": "service.cpp",
+                  "parse_status": "complete",
+                  "reason": "detector_model_incomplete",
+                  "analysis_status": "partial"
+                }
+              ],
+              "inspected_files": [
+                "service.cpp"
+              ],
+              "not_analyzed_files": [],
+              "coverage_counts": {
+                "complete": 0,
+                "partial": 1,
+                "not_analyzed": 0,
+                "failed": 0
+              },
+              "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+              "evidence_obligations": []
+            }
+          }
+        }
+      },
+      "test_count": 13,
+      "failure_count": 18
+    },
+    {
+      "revision": "5d33abf99857584a7194cb466590592e397e9339",
+      "version": "0.21.9",
+      "src_archive_sha256": "6450cce0c26f5e3c1bdbd2a4b6ff9f4d60d1143ad339eeaf53ce28d410052d4f",
+      "case": {
+        "case": "null-sensitive-type-cast",
+        "source": "struct PrivateKeyInfo{int unused;};\nvoid sample(PrivateKeyInfo **output){*output=static_cast<PrivateKeyInfo *>(nullptr);}",
+        "source_sha256": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247",
+        "model": "unknown-profile heuristic",
+        "target_statement": null,
+        "after_contract": "none",
+        "direct_target_candidates": [
+          {
+            "file": "service.cpp",
+            "line": 2,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source heuristic suspected sensitive-return API static_cast<PrivateKeyInfo *> -> 2 unresolved material write *output",
+            "evidence_type": "syntax",
+            "column": null,
+            "candidate_cwe": null,
+            "symbol": "sample",
+            "evidence_obligations": [
+              {
+                "kind": "destination_binding",
+                "description": "Resolve pointer/member aliases and the exact destination object written by *output.",
+                "status": "unknown"
+              },
+              {
+                "kind": "sink_behavior",
+                "description": "Determine whether the unresolved destination exposes or forwards material.",
+                "status": "unknown"
+              },
+              {
+                "kind": "runtime_log_visibility",
+                "description": "No log exposure or reader reachability is established by this call alone.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Establish recoverable sensitive material and concrete impact independently.",
+                "status": "unknown"
+              }
+            ],
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "source_sha256": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247",
+            "rule_version": null,
+            "rule_lineage_id": null,
+            "symbol_identity": null,
+            "ast_fingerprint": null,
+            "identity_quality": "unknown"
+          }
+        ],
+        "runner_target_diagnostics": [
+          {
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:fcf3b4b51d633264",
+            "provider": "ohscanner.data.sensitive_exposure",
+            "evidence_type": "syntax",
+            "file": "service.cpp",
+            "line": 2,
+            "column": null,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "severity": "unassessed",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source heuristic suspected sensitive-return API static_cast<PrivateKeyInfo *> -> 2 unresolved material write *output",
+            "candidate_cwe": null,
+            "confidence": "unassessed",
+            "symbol": "sample",
+            "source_sha256": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247",
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:fcf3b4b51d633264",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.9",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "service.cpp",
+                "line": 2,
+                "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source heuristic suspected sensitive-return API static_cast<PrivateKeyInfo *> -> 2 unresolved material write *output",
+                "source_blob_oid": null,
+                "source_sha256": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247",
+                "byte_start": 36,
+                "byte_end": 121,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "fixture/t89",
+                "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "snapshot_sha256": "489238921c87b7908c10d1d1ec455a08ed5897822559124f7743b70b726deae1",
+                "profile_id": "m0-synthetic",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.9",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "service.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247",
+                "byte_start": 36,
+                "byte_end": 121,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:fcf3b4b51d633264"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            },
+            "source_binding": "bound"
+          }
+        ],
+        "all_direct_findings": [
+          {
+            "file": "service.cpp",
+            "line": 2,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source heuristic suspected sensitive-return API static_cast<PrivateKeyInfo *> -> 2 unresolved material write *output",
+            "evidence_type": "syntax",
+            "column": null,
+            "candidate_cwe": null,
+            "symbol": "sample",
+            "evidence_obligations": [
+              {
+                "kind": "destination_binding",
+                "description": "Resolve pointer/member aliases and the exact destination object written by *output.",
+                "status": "unknown"
+              },
+              {
+                "kind": "sink_behavior",
+                "description": "Determine whether the unresolved destination exposes or forwards material.",
+                "status": "unknown"
+              },
+              {
+                "kind": "runtime_log_visibility",
+                "description": "No log exposure or reader reachability is established by this call alone.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Establish recoverable sensitive material and concrete impact independently.",
+                "status": "unknown"
+              }
+            ],
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "source_sha256": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247",
+            "rule_version": null,
+            "rule_lineage_id": null,
+            "symbol_identity": null,
+            "ast_fingerprint": null,
+            "identity_quality": "unknown"
+          }
+        ],
+        "all_runner_diagnostics": [
+          {
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:fcf3b4b51d633264",
+            "provider": "ohscanner.data.sensitive_exposure",
+            "evidence_type": "syntax",
+            "file": "service.cpp",
+            "line": 2,
+            "column": null,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "severity": "unassessed",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source heuristic suspected sensitive-return API static_cast<PrivateKeyInfo *> -> 2 unresolved material write *output",
+            "candidate_cwe": null,
+            "confidence": "unassessed",
+            "symbol": "sample",
+            "source_sha256": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247",
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:fcf3b4b51d633264",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.9",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "service.cpp",
+                "line": 2,
+                "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source heuristic suspected sensitive-return API static_cast<PrivateKeyInfo *> -> 2 unresolved material write *output",
+                "source_blob_oid": null,
+                "source_sha256": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247",
+                "byte_start": 36,
+                "byte_end": 121,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "fixture/t89",
+                "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "snapshot_sha256": "489238921c87b7908c10d1d1ec455a08ed5897822559124f7743b70b726deae1",
+                "profile_id": "m0-synthetic",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.9",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "service.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247",
+                "byte_start": 36,
+                "byte_end": 121,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:fcf3b4b51d633264"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            },
+            "source_binding": "bound"
+          }
+        ],
+        "call_facts": [
+          {
+            "name": "static_cast<PrivateKeyInfo *>",
+            "arguments": [
+              "nullptr"
+            ],
+            "line": 2,
+            "start_byte": 81,
+            "end_byte": 119
+          }
+        ],
+        "direct_status": "blocked",
+        "direct_file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "runner_status": "blocked",
+        "runner_coverage": {
+          "schema_version": 1,
+          "detectors": {
+            "ohscanner.data.sensitive_exposure": {
+              "scope_mode": "per_file",
+              "status": "partial",
+              "applicable_files": 1,
+              "analyzed_files": [],
+              "partially_inspected_files": [
+                "service.cpp"
+              ],
+              "source_sha256": {
+                "service.cpp": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247"
+              },
+              "unexamined": [
+                {
+                  "file": "service.cpp",
+                  "parse_status": "complete",
+                  "reason": "detector_model_incomplete",
+                  "analysis_status": "partial"
+                }
+              ],
+              "inspected_files": [
+                "service.cpp"
+              ],
+              "not_analyzed_files": [],
+              "coverage_counts": {
+                "complete": 0,
+                "partial": 1,
+                "not_analyzed": 0,
+                "failed": 0
+              },
+              "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+              "evidence_obligations": [
+                {
+                  "diagnostic_id": "ohscanner.data.sensitive_exposure:fcf3b4b51d633264",
+                  "file": "service.cpp",
+                  "source_sha256": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247",
+                  "analysis_status": "partial",
+                  "source_binding": {
+                    "repository": "fixture/t89",
+                    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                    "snapshot_sha256": "489238921c87b7908c10d1d1ec455a08ed5897822559124f7743b70b726deae1",
+                    "profile_id": "m0-synthetic",
+                    "detector_id": "ohscanner.data.sensitive_exposure",
+                    "detector_version": "0.21.9",
+                    "rule_id": "data.sensitive.unresolved-escape",
+                    "file": "service.cpp",
+                    "source_sha256": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247"
+                  },
+                  "consequence_impact": null,
+                  "consequence_cwe": null,
+                  "model_version": null,
+                  "obligations": [
+                    {
+                      "kind": "destination_binding",
+                      "description": "Resolve pointer/member aliases and the exact destination object written by *output.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "sink_behavior",
+                      "description": "Determine whether the unresolved destination exposes or forwards material.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "runtime_log_visibility",
+                      "description": "No log exposure or reader reachability is established by this call alone.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "security_impact",
+                      "description": "Establish recoverable sensitive material and concrete impact independently.",
+                      "status": "unknown"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "test_count": 13,
+      "failure_count": 2
+    }
+  ],
+  "disposition": "Resolved by operand-preserving C++ pointer-cast syntax handling; original and final fixed results retained.",
+  "resolution": {
+    "revision": "fe8080e4cd48a53422f4647981b3871575a31f01",
+    "version": "0.21.9",
+    "src_archive_sha256": "6d3a496cb1c9132bdb922a4cf1cac48381cebf7dd7ef11fca0459cd37b08776a",
+    "case": {
+      "case": "null-sensitive-type-cast",
+      "source": "struct PrivateKeyInfo{int unused;};\nvoid sample(PrivateKeyInfo **output){*output=static_cast<PrivateKeyInfo *>(nullptr);}",
+      "source_sha256": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247",
+      "model": "unknown-profile heuristic",
+      "target_statement": null,
+      "after_contract": "none",
+      "direct_target_candidates": [],
+      "runner_target_diagnostics": [],
+      "all_direct_findings": [],
+      "all_runner_diagnostics": [],
+      "call_facts": [
+        {
+          "name": "static_cast<PrivateKeyInfo *>",
+          "arguments": [
+            "nullptr"
+          ],
+          "line": 2,
+          "start_byte": 81,
+          "end_byte": 119
+        }
+      ],
+      "direct_status": "blocked",
+      "direct_file_outcomes": [
+        [
+          "service.cpp",
+          "partial"
+        ]
+      ],
+      "runner_status": "blocked",
+      "runner_coverage": {
+        "schema_version": 1,
+        "detectors": {
+          "ohscanner.data.sensitive_exposure": {
+            "scope_mode": "per_file",
+            "status": "partial",
+            "applicable_files": 1,
+            "analyzed_files": [],
+            "partially_inspected_files": [
+              "service.cpp"
+            ],
+            "source_sha256": {
+              "service.cpp": "0d77a5057293a02665146433f466d8888d932d3e889afcbe2c92e7e90aadc247"
+            },
+            "unexamined": [
+              {
+                "file": "service.cpp",
+                "parse_status": "complete",
+                "reason": "detector_model_incomplete",
+                "analysis_status": "partial"
+              }
+            ],
+            "inspected_files": [
+              "service.cpp"
+            ],
+            "not_analyzed_files": [],
+            "coverage_counts": {
+              "complete": 0,
+              "partial": 1,
+              "not_analyzed": 0,
+              "failed": 0
+            },
+            "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+            "evidence_obligations": []
+          }
+        }
+      }
+    },
+    "test_count": 13,
+    "failure_count": 0
+  }
+}
