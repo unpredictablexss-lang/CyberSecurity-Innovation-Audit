@@ -22,9 +22,9 @@ bash ./build.sh --product-name rk3568 --build-target ark_js_host_linux_tools_pac
 - 隔离输出：`/tmp/c-runtime-ark-overlay-20261020/out-nosdk`
 - 工作区 staging：`D:\openHarmonyScanner\tmp\c-runtime-ark-build-20261020\root`（WSL 内 `/mnt/d/openHarmonyScanner/tmp/c-runtime-ark-build-20261020/root`）
 
-该命令日志包含 ohpm 初始化成功及为 `rk3568` 生成的 preloader 元数据，最后可见行停在 `[LOAD] Checking all build args...`。随后核查时没有正在运行的 hb/build.sh/ninja 构建进程；隔离输出下没有 `ark_js_vm`、`es2abc` 或 `ark_js_host*` 可执行文件。进程终止时的退出码没有被捕获，故不推断具体失败诊断。`--no-prebuilt-sdk=true` 绕过了共享旧日志所示 SDK bootstrap，但未产生可运行 Ark runtime。
+该命令日志包含 ohpm 初始化成功及为 `rk3568` 生成的 preloader 元数据，最后可见行停在 `[LOAD] Checking all build args...`。开发线确认该进程组在 3:16 后由其以 TERM 停止；它不是自然退出，故没有构建退出码或后续终端诊断。此时尚未启动 GN/Ninja/clang。隔离输出下没有 `ark_js_vm`、`es2abc` 或 `ark_js_host*` 可执行文件。`--no-prebuilt-sdk=true` 绕过了共享旧日志所示 SDK bootstrap，但仍未产生可运行 Ark runtime。
 
-工具链来源：开发线报告下载并校验了官方 Node 14.21.1 和 Hvigor 5.0.3.906；Linux Python 3.12.10 来自 OpenHarmony prebuilts。仍缺少的具体终端原因无法从最后日志行确定；可证的阻塞是构建未到生成 host runtime 的阶段，且没有可执行产物。
+工具链来源：开发线报告下载并校验了官方 Node 14.21.1 和 Hvigor 5.0.3.906；Linux Python 3.12.10 来自 OpenHarmony prebuilts。由于构建在 args 检查阶段由 TERM 停止，没有可据以判断后续 GN/Ninja 编译是否可行的自然构建结果；可证状态是本轮没有产出 host runtime，也没有可执行产物。
 
 ## 独立验收状态
 
