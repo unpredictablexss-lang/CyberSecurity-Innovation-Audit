@@ -2,7 +2,10 @@
   "schema": "ohscanner.c-line-closeout-task-tree/v1",
   "date": "2026-10-20",
   "baseline": {
-    "latest_main": "0f53af62283dbd0f249280805e8286a04b2d43b9",
+    "latest_main": "4b0e16576a45a111b4fad7e8f82819a47ed472f5",
+    "stage_branch_base": "0f53af62283dbd0f249280805e8286a04b2d43b9",
+    "main_advanced_during_work": ["f076b8c667b619c1454b03da3e5ef4e0e8a23611", "4b0e16576a45a111b4fad7e8f82819a47ed472f5"],
+    "post_runtime_followup": "Selectively replay C changes onto latest main after component runs, inspect Catalog/source_identity/parser overlaps, then rerun relevant compatibility suite; do not wholesale merge topic branches.",
     "other_remote_topics_not_integrated": {
       "codex/c-line-scanner-optimization-20261019": {"tip": "448bd1b14906e883199168653360df30863c095a", "ahead_behind_main": "13/128"},
       "codex/c11-alias-cross-helper-20261020": {"tip": "3d9274ba2c3d37f1fec8f633036049a3a208922f", "ahead_behind_main": "4/35"},

@@ -3,6 +3,7 @@
 ## 基线与任务树复核
 
 - 已从 `origin` fetch；最新 `origin/main` 为 `0f53af62283dbd0f249280805e8286a04b2d43b9`，本地与远端 `codex/c-line-parallel-plan-20261020` 都为 `cfdbd21eac05f6b515d123a29640f5011733ab03`，未见该分支的新远端提交。
+- 随后共享 remote-tracking ref 已推进到 `origin/main@4b0e16576a45a111b4fad7e8f82819a47ed472f5`（经 `f076b8c`、`4b0e165` 两个 D104 closeout commits）；本 worktree 新一轮 fetch 由于 GitHub 443 超时未成功，但该 SHA 已在本地 ref。C 阶段分支当前仍基于 `0f53af6`（ahead 8 / behind 2）；main 的 D104 改动包含 Catalog、source identity 与 parser 等可能交叠文件，所以暂不在两个组件运行 workstream 中途改写代码基线。组件与报告结束后，下一步应按路径冲突检查把 C 变更选择性重放到 `4b0e1657` 并重跑 Runner/Catalog/Parser 兼容集，不整体搬入平台更改。
 - 本次 fetch 也核对了未合入 main 的 C topic refs：C scanner optimization `448bd1b`（相对 main 13 ahead / 128 behind）、C11 alias `3d9274b`（4/35）、C12 semantics `7bf57a8`（7/35）、C13 replay `40fd4d5`（10/35）。它们是相互分叉的独立 topic snapshots，planning task tree 没有标为进行中；本轮不整体合并这些分支，避免将 C-line 核心代码和 scope 不明的历史提交带入已选收尾线。
 - 当前静态集成阶段分支 `codex/c-line-ark-stage-20261020` HEAD `79916713cf6e4b590a588c9cd4d50e115e187436`，代码提交 `e798fa77fda843ff00f3b0ac7367f4eea02eb5ac` 基于最新 main；交付报告记录构建在 WSL NTFS/P9 参数检查阶段停滞。
 - 旧 C execution tree 含 42 个 workstream，静态候选、独立 same-SHA 测试和 source review 全部为完成状态；Float32Array/TypedArray.set 的运行环境盘点也已终结为 `runtime_not_run`。本计划只续接其明确的最小后续动作：把可复现源码/构建输入放在 Linux 原生文件系统，再执行一个现有 Ark Runtime 组件测试。它不重开静态规则、不把环境搜索写成漏洞结论。
