@@ -280,7 +280,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.11'
+    version = '0.21.12'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -1340,6 +1340,58 @@ class LocalFlow:
         self.effects(node,state,fnname)
         return set()
 
+    def exact_switch_pointer_join(self,node,state,fnname):
+        """Only exhaustive flat arms: one identical raw-pointer retarget + break."""
+        units=self.resolver.units if self.resolver is not None else (self.u,)
+        if (self.tree.root_node.has_error or any(u.parse_status!='complete'
+                or re.search(r'^\s*#',u.text,re.M) for u in units)):
+            return None
+        condition=node.child_by_field_name('condition')
+        value=condition.child_by_field_name('value') if condition else None
+        body=node.child_by_field_name('body')
+        if (value is None or value.type!='identifier' or body is None
+                or body.type!='compound_statement'):
+            return None
+        cases=[c for c in body.named_children if c.type!='comment']
+        if len(cases)<2 or any(c.type!='case_statement' for c in cases):return None
+        labels=set();defaults=0;assignments=[];binding=None
+        for case in cases:
+            label=case.child_by_field_name('value')
+            if label is None:
+                defaults+=1
+            else:
+                text=self.text(label)
+                if (label.type!='number_literal' or not re.fullmatch(r'0|[1-9][0-9]*',text)
+                        or int(text)>2147483647 or text in labels):
+                    return None
+                labels.add(text)
+            statements=[c for c in case.named_children
+                        if c.type!='comment' and (label is None or c.id!=label.id)]
+            if (len(statements)!=2 or statements[0].type!='expression_statement'
+                    or statements[1].type!='break_statement'
+                    or len(statements[0].named_children)!=1):
+                return None
+            assignment=statements[0].named_children[0]
+            left=assignment.child_by_field_name('left');right=assignment.child_by_field_name('right')
+            if (assignment.type!='assignment_expression' or self.text(assignment.child_by_field_name('operator'))!='='
+                    or left is None or left.type!='identifier' or self.text(left) not in state.pointers
+                    or right is None or right.type!='pointer_expression'
+                    or self.text(right.child_by_field_name('operator'))!='&'):
+                return None
+            operand=right.child_by_field_name('argument')
+            if operand is None or operand.type!='identifier':return None
+            target=self.pointer_target(right,state.pointers,state.shadows)
+            if not target.bound or target.slot in state.pointers:return None
+            current=(self.text(left),target)
+            if binding is not None and binding!=current:return None
+            binding=current;assignments.append(assignment)
+        if defaults!=1:return None
+        branches=[]
+        for assignment in assignments:
+            branch=state.clone();self.effects(assignment,branch,fnname);branches.append(branch)
+        self.gaps.add('exact flat switch pointer join; general case/fallthrough/control-flow proof remains unresolved')
+        return self.merge(branches)
+
     @staticmethod
     def restore_scope(state,entry,declared):
         if state is None:return
@@ -1403,9 +1455,15 @@ class LocalFlow:
             if cond and any(x.type=='declaration' for x in walk(cond)):
                 self.gaps.add('switch header binding only; case ordering/feasibility unresolved')
                 entry=state.clone();declared=self.header_effects(cond,state,fnname)
+                joined=self.exact_switch_pointer_join(node,state,fnname)
+                if joined is not None:
+                    self.restore_scope(joined,entry,declared)
+                    return BlockResult(joined)
                 probe=state.clone();self.effects(node.child_by_field_name('body'),probe,fnname)
                 merged=self.merge([state,probe]);self.restore_scope(merged,entry,declared)
                 return BlockResult(merged)
+            joined=self.exact_switch_pointer_join(node,state,fnname)
+            if joined is not None:return BlockResult(joined)
         if kind in ('comment','empty_statement'):return BlockResult(state)
         if kind in ('while_statement','do_statement','for_statement','range_based_for_statement'):
             self.gaps.add(f'loop body analyzed for may-flow only at line {node.start_point[0]+1}; iteration count/path feasibility unresolved')
