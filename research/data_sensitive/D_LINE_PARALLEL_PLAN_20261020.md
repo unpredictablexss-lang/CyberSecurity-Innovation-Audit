@@ -170,6 +170,27 @@ flowchart TD
 - **验证**：最小query、实际buffer write、length日志和输出、same-name body/callback、宏重定义和partial/missing API控制；固定T85三文件 direct/Runner诊断身份/coverage/原始跨度前后比对。
 - **交付**：若版本绑定无法证明，报告保留candidate的证据，不为减少数量编造安全结论；提交报告、控制测试、完整源档replay及对T92反馈修复。
 
+### D94（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：敏感数据流与有界指针输出建模开发者。
+- **固定失败证据**：阅读 `D93_POINTER_OUTPUT_GAP_20261020.json`。完整可见自定义helper执行 `*length = (unsigned char)value[0]`，调用者随后记录 `length`；当前结果为0 candidate、coverage partial，原因为 `pointer/member assignment requires alias proof`。此项是已知未通过，不是安全metadata正控。
+- **目标**：让无法证明目标别名的material-derived标量指针写入至少保留 unresolved write/call candidate；目标别名可证明时，将材料继续传播到后续sink。literal-only常量metadata写入不应产生material来源候选。
+- **反控制**：局部变量/指针成员/引用和安全可证明别名；同名自定义helper、参数与局部shadow、目标未知、callback、宏覆盖、missing/partial声明、混合literal与material写入。不得按函数名放行或将unknown alias推断为安全。
+- **反馈和边界**：先新增能复现原失败的测试，反馈T93；仅实现必要的alias/write范围，不扩成通用C++别名分析。不能跟踪时保留候选并标明partial/unknown。
+- **验证交付**：专项控制与全data测试；T85三文件及D93/T92固定重放，比较诊断身份/证据、coverage、638调用事实及890/915；提交源码、测试、固定重放报告与限制。
+
+### T93（并行独立挑战线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立敏感流反例测试员；自行从最新owner HEAD构建基线，不把D94的期望结论当作oracle。
+- **测试矩阵**：复现材料派生的 `*length=(unsigned char)value[0]` 后续日志；可证明与不可证明的指针别名；literal-only metadata；shadow/局部遮蔽；同名helper真实副作用；callback/macro；unknown和partial输入。
+- **反馈规则**：若material-derived write在目标未知时静默变为无候选，立即反馈D94并在修订SHA复测；若literal metadata引入材料候选或已证明alias没有传播，也反馈修正。所有未覆盖情形保留unknown/partial。
+- **固定回归**：用D94固定完整src归档和原T85 direct/Runner重放，并复核D93/T92 890/915 source identity、共同诊断/coverage、638调用事实。不得只跑detector或将candidate数当准确率。
+- **交付**：独立控制测试、source/build身份、hash、精确候选差异和限制报告；不删除缓存或原始证据，不推送。
+
 ### T92（并行独立挑战线）
 
 **结构化 vibe coding 提示词**
