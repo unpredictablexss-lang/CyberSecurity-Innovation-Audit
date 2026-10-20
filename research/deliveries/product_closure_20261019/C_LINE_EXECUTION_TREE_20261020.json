@@ -557,7 +557,7 @@
     {
       "id": "C-DEV-DV-API-20261020",
       "kind": "development_and_candidate_refinement",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_WITH_FAIL_CLOSED_DEPENDENCY_PROOF",
       "worktree": "planning worktree; exact base 85eb0948515e777d53996caf8f7ecb4b87897c90",
       "feedback_from": "C-TEST-DV-API-20261020",
       "objective": "Refine the exact-bound DataView API index-width candidate in BuiltinsDataView::GetViewValue and SetViewValue. The source-bound detector currently emits two parent candidates (lines 394 and 455) but no fixed candidates; fixed replay remains partial/unknown in DataViewConstructor, GetViewValue, and SetViewValue. Determine whether any parent candidate represents unsafe arithmetic or whether uint32_t types, nonnegative conversion, element-size limits, view construction invariants, and underlying buffer bounds prove it safe. Improve the model only where exact source evidence permits a narrow sound distinction.",
@@ -601,12 +601,29 @@
       },
       "second_layer_feedback": "Review commit 2f37175fdc1b49edc9157f8b079f35c8b793a873 finds no source-supported uint32 wraparound OOB on these API paths; reconcile against exact source/test matrix and avoid suppressing beyond proven bounds.",
       "tester_baseline_report": "research/deliveries/c-line/dataview_api_independent_baseline_20261020.md",
-      "tester_baseline_commit": "99e5c6e085522b3ace646d5db0f3cc6bf589f4aa"
+      "tester_baseline_commit": "99e5c6e085522b3ace646d5db0f3cc6bf589f4aa",
+      "developer_commits": [
+        "40b7732e30f94dd77d15867ec69e2e026f609760",
+        "76efed37d814ec68b56ebd6a00662efa7d137a4a"
+      ],
+      "developer_report": "research/deliveries/c-line/dataview_api_width_proof_developer_report_20261020.md",
+      "developer_replay": "research/deliveries/c-line/dataview_api_width_proof_replay_20261020.py",
+      "same_commit_replay": {
+        "commit": "76efed37d814ec68b56ebd6a00662efa7d137a4a",
+        "parent_without_helpers": "candidates at lines 394 and 455",
+        "parent_exact_helpers": "both candidates suppressed with explicit API unknowns retained",
+        "mutated_helper_with_stale_blob": "both candidates restored",
+        "fixed_with_or_without_helpers": "zero findings; constructor/get/set remain unknown",
+        "set_typed_value_control": "candidate unaffected in synthetic rule-level control",
+        "coverage": "all five cases complete parse, blocked with partial coverage; applicable_files=1",
+        "tests": "196 passed, 3 skipped"
+      },
+      "developer_report_commit": "76efed37d814ec68b56ebd6a00662efa7d137a4a"
     },
     {
       "id": "C-TEST-DV-API-20261020",
       "kind": "independent_testing",
-      "status": "COMPLETED_INDEPENDENT_BASELINE_AWAITING_DEVELOPER_REPLAY",
+      "status": "COMPLETED_SAME_COMMIT_REPLAY_AFTER_FAIL_CLOSED_FIX",
       "test_agent": "ark_static_test",
       "feedback_to": "C-DEV-DV-API-20261020",
       "objective": "Independently verify the exact source semantics and detector behavior for DataView GetViewValue/SetViewValue candidates, provide adversarial controls before developer changes, then replay any developer commit and return concrete discrepancies.",
@@ -634,7 +651,12 @@
       "completion": "Independent source and registered baseline replay complete; parent has two candidates at lines 394 and 455, fixed has zero diagnostics, both partial/blocked. Boundary matrix and controls sent to developer; same-commit replay awaits any justified code change.",
       "report": "research/deliveries/c-line/dataview_api_independent_baseline_20261020.md",
       "report_commit": "99e5c6e085522b3ace646d5db0f3cc6bf589f4aa",
-      "registered_replay": "Independent exact registered replay on planning baseline 85eb094; parent 2 candidates, fixed 0; both complete AST but detector_model_incomplete/partial."
+      "registered_replay": "Independent exact registered replay on planning baseline 85eb094; parent 2 candidates, fixed 0; both complete AST but detector_model_incomplete/partial.",
+      "same_commit_report": "research/deliveries/c-line/dataview_api_width_proof_followup_review_20261020.md",
+      "same_commit_report_commit": "171fbec43c220287fbd0c81172641f0da16e72a0",
+      "initial_mismatch_report": "research/deliveries/c-line/dataview_api_width_proof_independent_review_20261020.md",
+      "initial_mismatch_report_commit": "5b6265835de280bc9a68bbc507e17c36e53d41db",
+      "completion": "Independent same-commit replay of developer fix 76efed37 complete. Exact helper suppression, missing/mutated helper fallback, fixed unknowns, SetTypedValue control, and target-only applicability all matched."
     },
     {
       "id": "C-LLM-REVIEW-DV-API-20261020",
@@ -655,10 +677,11 @@
     "IB8BCA developer, independent tester, and second-layer reviewer are complete. Current planning branch registered replay: exact parent emits one candidate at line 75; fixed emits zero diagnostics; both remain partial/blocked due detector_model_incomplete.",
     "The tester addendum corrects the older branch-local not_run statement: test HEAD 420a71e lacked the rule, while planning HEAD 85eb094 has exact bindings. Keep the two branch scopes distinct.",
     "The IB8BCA parent SetTypedValue candidate is plausible at source level; compiled IR, reachability, runtime effects, backing allocation feasibility, and product impact remain unknown. Fixed zero is not a safety result.",
-    "Next slice: inspect source-bound candidates in BuiltinsDataView::GetViewValue and SetViewValue. Existing replay reports two parent candidates and fixed zero, but fixed still has unknowns in constructor/get/set; developer and tester must check integer types, conversion ranges, view/buffer invariants, branch semantics, and avoid broad suppression or unsupported candidate expansion.",
-    "The tester supplies independent source boundary controls first; developer responds with exact expected outcomes and any detector/test change; tester replays the developer commit and returns discrepancies. A separate source reviewer assesses candidate plausibility only; no LLM feature work.",
-    "A fresh remote fetch failed again at GitHub port 443. Local pinned-source work continues; do not label local revision as remote latest.",
-    "Second-layer API review completed at 2f37175: GetViewValue/SetViewValue uint32 wraparound-to-OOB route is not supported by source invariants; large-index conversion compatibility and unusual buffer/runtime behavior remain unknown. Developer/tester should reconcile independently before any detector narrowing."
+    "The DataView GetViewValue/SetViewValue slice has completed through exact-source review, source-bound detector refinement, adversarial stale-blob mismatch repair, and same-commit independent replay. The next slice should start from current branch HEAD and select a concrete source-bound candidate; do not repeat this completed baseline work.",
+    "The developer/tester loop for the DataView API slice closed: tester supplied baseline controls, developer made a narrow source-bound change, tester found a stale dependency identity bypass, developer fixed it, and tester replayed the fix on the exact commit. Separate source review assessed candidate plausibility only; no LLM feature work.",
+    "A fresh remote fetch previously failed at GitHub port 443, so remote default-branch freshness remains unverified. The requested planning branch push later succeeded; do not label it as the latest upstream source.",
+    "Second-layer API review completed at 2f37175: GetViewValue/SetViewValue uint32 wraparound-to-OOB route is not supported by source invariants; large-index conversion compatibility and unusual buffer/runtime behavior remain unknown.",
+    "DataView API width refinement completed: exact helper bytes are required to match both model-pinned SHA-256 and recomputed Git blob OID. The tester found and documented the stale-blob mismatch flaw in 40b7732; developer fixed it in 76efed37 and independent same-commit replay passed. Results remain blocked/partial with unknown runtime/product behavior; no safety or accuracy claim."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
