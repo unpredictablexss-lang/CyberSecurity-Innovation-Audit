@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "D95_T94_IN_PROGRESS",
+  "status": "D96_T95_IN_PROGRESS",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -434,22 +434,52 @@
       "id": "D95",
       "kind": "development",
       "title": "收紧分支与作用域中的raw-pointer目标合并",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D94", "T93"],
       "input": "D94's bounded PointerTarget state invalidates uncertain targets. Independently challenge same-target and divergent-target branch merges, invalid branch paths, shadow restoration and loop rebinding; implement only if a concrete failure exists.",
       "completion": "Same-target branches preserve proven propagation; divergent/invalid/unknown branch targets retain unresolved material-write candidates without contaminating both destinations. Scope and loop changes do not leak stale targets.",
-      "tests": ["T94"]
+      "tests": ["T94"],
+      "commit": "c4605710ac517ca5b61f48fef03b31860fb88966",
+      "integration_commit": "347bfd7bc",
+      "evidence_commit": "2663898f3b0a06bbdc61fbd20a947381b068f24d",
+      "evidence_integration_commit": "9c298fefe",
+      "completion": "For-header pointer declarations restore the outer target after loop scope; branch joins and divergent-target behavior remain conservative and unchanged.",
+      "validation": "Developer6/258 and compat62; independent T94 11/269; owner data269 and compatibility66 pass. T85 remains direct/Runner24, all common evidence and638 calls unchanged; coverage states same, version-only obligation field changed."
     },
     {
       "id": "T94",
       "kind": "testing",
       "title": "独立挑战raw-pointer分支、shadow与重绑定边界",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "depends_on": ["D94", "T93"],
       "feedback_to": ["D95"],
-      "completion": "Independent fixed-SHA controls for convergent/divergent branches, invalid targets, rebinding, nested shadow and loops; strict T85 and D93/T92 identities remain stable."
+      "completion": "Independent fixed-SHA controls for convergent/divergent branches, invalid targets, rebinding, nested shadow and loops; found the for-header scope defect and confirmed its repair.",
+      "commit": "15532397ce53bdec57cbb66accc2976110d25cf9",
+      "integration_commit": "5e5665319",
+      "validation": "Independent11/11 and full data269/269; T85 remains24/24 with no finding/call fact changes, 638 calls, 890/915 unchanged and3 partial. Coverage comparison differs only by detector version in nested source-binding obligations."
+    },
+    {
+      "id": "D96",
+      "kind": "development",
+      "title": "核验if/while/switch初始化器指针作用域恢复",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
+      "depends_on": ["D95", "T94"],
+      "input": "D95 fixed for-header pointer shadow restoration. T95 independently tests whether other C++ control-statement declaration scopes restore pointer targets correctly.",
+      "completion": "Fix only a concrete scope-lifetime failure for if/while/switch/condition declarations. Proven outer target resumes after the control statement; inner target does not leak. Preserve conservative branch joins and existing material-write controls.",
+      "tests": ["T95"]
+    },
+    {
+      "id": "T95",
+      "kind": "testing",
+      "title": "独立挑战控制语句初始化器与pointer shadow寿命",
+      "status": "IN_PROGRESS",
+      "agent": "/root/t83_static_feedback",
+      "depends_on": ["D95", "T94"],
+      "feedback_to": ["D96"],
+      "completion": "Independently test if/while/switch declaration or initializer scope, nested shadow, loop condition, and range-for lifetime where supported; report concrete failures and fixed-source compatibility."
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
@@ -477,15 +507,15 @@
   ],
   "candidate_policy": "Do not reduce counts by hiding independent root causes; prefer source-bound relation evidence and explicit unresolved guards.",
   "current_versions": {
-    "sensitive_exposure": "0.21.9",
+    "sensitive_exposure": "0.21.10",
     "known_disclosed_cves": "0.19.11"
   },
   "integrated_tests": {
-    "data": 252,
+    "data": 269,
     "known_and_corpus": 39,
     "parser_linkage": 16,
     "ast_parser": 11,
-    "total": 318,
+    "total": 335,
     "result": "PASS"
   },
   "remote_branch": "origin/codex/d-owner-20261020-01a1571f",
