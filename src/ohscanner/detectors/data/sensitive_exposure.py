@@ -280,7 +280,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.10'
+    version = '0.21.11'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -1299,8 +1299,7 @@ class LocalFlow:
     def declaration(self,node,state,fnname):
         type_text=self.text(node.child_by_field_name('type'))
         declared=set()
-        for d in node.named_children:
-            if d.type not in ('init_declarator','identifier','pointer_declarator','reference_declarator','array_declarator'):continue
+        for d in node.children_by_field_name('declarator'):
             name=self.name(d)
             if not name:continue
             for pointer,target in list(state.pointers.items()):
@@ -1313,7 +1312,10 @@ class LocalFlow:
             if (type_text=='std::string' and declarator is not None
                     and declarator.type=='identifier'):
                 state.types[name]=type_text
-            value=d.child_by_field_name('value')
+            # A condition declaration puts its initializer on the declaration,
+            # unlike the init_declarator used by ordinary declarations.
+            value=(d.child_by_field_name('value') if d.type=='init_declarator'
+                   else node.child_by_field_name('value'))
             if value:
                 self.effects(value,state,fnname)
                 state.values[name]=self.addstep(self.value(value,state),f'{node.start_point[0]+1} assign {name}')
@@ -1325,6 +1327,18 @@ class LocalFlow:
                 if re.search(r'\bconst\b',self.text(node)):
                     state.pointers[name]=PointerTarget(target.slot,False)
         return declared
+
+    def header_effects(self,node,state,fnname):
+        """Bind only the explicit header declaration shapes, in source order."""
+        if node is None:return set()
+        if node.type=='declaration':return self.declaration(node,state,fnname)
+        if node.type in ('condition_clause','init_statement'):
+            declared=set()
+            for child in node.named_children:
+                declared.update(self.header_effects(child,state,fnname))
+            return declared
+        self.effects(node,state,fnname)
+        return set()
 
     @staticmethod
     def restore_scope(state,entry,declared):
@@ -1366,9 +1380,8 @@ class LocalFlow:
             return BlockResult(state)
         if kind=='if_statement':
             self.gaps.add('branch merge is may-flow; no path feasibility proof')
-            cond=node.child_by_field_name('condition');self.effects(cond,state,fnname)
-            if cond and any(x.type=='declaration' for x in walk(cond)):
-                self.gaps.add('if initializer binding not analyzed')
+            entry=state.clone();cond=node.child_by_field_name('condition')
+            declared=self.header_effects(cond,state,fnname)
             known=self.truth(cond);results=[]
             fields=('consequence',) if known is True else ('alternative',) if known is False else ('consequence','alternative')
             for field in fields:
@@ -1376,12 +1389,23 @@ class LocalFlow:
                 if child is None:result=BlockResult(branch)
                 elif child.type=='declaration':
                     # Implicit branch scope: names do not escape the branch.
-                    entry=branch.clone();names=self.declaration(child,branch,fnname)
-                    self.restore_scope(branch,entry,names);result=BlockResult(branch)
+                    branch_entry=branch.clone();names=self.declaration(child,branch,fnname)
+                    self.restore_scope(branch,branch_entry,names);result=BlockResult(branch)
                 else:result=self.statement(child,branch,fnname)
                 results.append(result)
-            return BlockResult(self.merge([r.fallthrough_state for r in results]),
-                               tuple(exit for result in results for exit in result.exit_states))
+            merged=self.merge([r.fallthrough_state for r in results])
+            exits=tuple(exit for result in results for exit in result.exit_states)
+            self.restore_scope(merged,entry,declared)
+            for exit in exits:self.restore_scope(exit.state,entry,declared)
+            return BlockResult(merged,exits)
+        if kind=='switch_statement':
+            cond=node.child_by_field_name('condition')
+            if cond and any(x.type=='declaration' for x in walk(cond)):
+                self.gaps.add('switch header binding only; case ordering/feasibility unresolved')
+                entry=state.clone();declared=self.header_effects(cond,state,fnname)
+                probe=state.clone();self.effects(node.child_by_field_name('body'),probe,fnname)
+                merged=self.merge([state,probe]);self.restore_scope(merged,entry,declared)
+                return BlockResult(merged)
         if kind in ('comment','empty_statement'):return BlockResult(state)
         if kind in ('while_statement','do_statement','for_statement','range_based_for_statement'):
             self.gaps.add(f'loop body analyzed for may-flow only at line {node.start_point[0]+1}; iteration count/path feasibility unresolved')
@@ -1396,8 +1420,7 @@ class LocalFlow:
             for header in node.named_children:
                 if header.id == body.id:
                     continue
-                if header.type=='declaration':header_declared.update(self.declaration(header,state,fnname))
-                else:self.effects(header,state,fnname)
+                header_declared.update(self.header_effects(header,state,fnname))
             branch=state.clone()
             result=self.statement(body,branch,fnname)
             merged=self.merge([state,result.fallthrough_state,
