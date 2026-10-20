@@ -581,7 +581,25 @@
       },
       "developer_prompt": "ROLE: C-line static-analysis developer. BASE: planning HEAD 85eb0948515e777d53996caf8f7ecb4b87897c90. OBJECTIVE: make the index-width rule retain only well-supported narrow candidates across exact-bound BuiltinsDataView::GetViewValue and SetViewValue, and correctly retain unknown where proof is incomplete. TASKS: independently verify the pinned parent/fixed tree/blob/SHA; inspect index conversion, signedness and widths, negative checks, element-size range, bounds comparison, offset addition, constructor invariants, buffer max length, and exact detector traces at parent lines 394/455. Send the tester a boundary/control matrix and expected detector outcomes before finalizing. If a concrete false positive/false negative is proven, make the smallest source-bound model/test change and add positive/fixed/safe/unrelated/unknown controls; do not generalize to unbound sources. If source proof does not support a change, make no code patch and report the reason. Replay the registered detector on exact parent and fixed contexts and report candidate count, coverage, and unknowns. CONSTRAINTS: preserve other work; do not fabricate labels or product/runtime impact; fixed zero is not safe; no second-layer LLM feature implementation. DELIVERABLE: focused code/test change if justified, exact command outputs, hashes, report, and commit SHA; respond to the tester discrepancies before closing.",
       "blocking_prerequisites": [],
-      "feedback_loop": "Tester provides independent baseline matrix first. Developer returns precise expected outcomes, implements only evidence-backed change, then tester replays same developer commit; developer answers concrete discrepancies."
+      "feedback_loop": "Tester provides independent baseline matrix first. Developer returns precise expected outcomes, implements only evidence-backed change, then tester replays same developer commit; developer answers concrete discrepancies.",
+      "registered_baseline_replay": {
+        "script": "research/deliveries/c-line/ib8bca_dataview_api_registered_replay_20261020.py",
+        "output": "research/deliveries/c-line/ib8bca_dataview_api_registered_baseline_20261020.json",
+        "base": "85eb0948515e777d53996caf8f7ecb4b87897c90",
+        "parent_candidates": [
+          {
+            "line": 394,
+            "function": "BuiltinsDataView::GetViewValue"
+          },
+          {
+            "line": 455,
+            "function": "BuiltinsDataView::SetViewValue"
+          }
+        ],
+        "fixed_candidates": 0,
+        "coverage": "parent and fixed partial; detector blocked due detector_model_incomplete"
+      },
+      "second_layer_feedback": "Review commit 2f37175fdc1b49edc9157f8b079f35c8b793a873 finds no source-supported uint32 wraparound OOB on these API paths; reconcile against exact source/test matrix and avoid suppressing beyond proven bounds."
     },
     {
       "id": "C-TEST-DV-API-20261020",
@@ -592,17 +610,39 @@
       "objective": "Independently verify the exact source semantics and detector behavior for DataView GetViewValue/SetViewValue candidates, provide adversarial controls before developer changes, then replay any developer commit and return concrete discrepancies.",
       "input": "Same exact parent/fixed source bindings and planning base as C-DEV-DV-API-20261020. Current analyzer yields two parent candidates at lines 394 and 455 and fixed zero candidates plus unknowns for DataViewConstructor/GetViewValue/SetViewValue.",
       "tester_prompt": "ROLE: independent C-line tester. OBJECTIVE: test whether DataView GetViewValue and SetViewValue candidates are supported by exact source types/invariants and adversarially replay any developer change. TASKS: independently verify source identities; trace Number/ToIndex conversion, negative rejection, uint32_t conversions, elementSize, view size, byteOffset, constructor constraints, all buffer-size caps, and get/set sinks. Build a matrix for ordinary valid index, last valid element, exact-end, first-past-end, negative, INT32_MAX, maximum view/buffer offset, each element width, malformed/unrelated safe controls, fixed source, and the separate signed Int32Add SetTypedValue candidate. Record parent/fixed expected source behavior versus detector behavior; do not call an unsupported parse/model result negative. Send baseline matrix to developer before implementation. After developer provides a commit, run focused tests and exact registered parent/fixed replay on that same commit, report every discrepancy and preserve partial/blocked status. CONSTRAINTS: no production edits, preserve state, no product/runtime/vulnerability claims without execution/evidence. DELIVERABLE: independent report with hashes, case matrix, exact commands/results, coverage and limitations; commit report if feasible.",
-      "blocking_prerequisites": []
+      "blocking_prerequisites": [],
+      "registered_baseline_replay": {
+        "script": "research/deliveries/c-line/ib8bca_dataview_api_registered_replay_20261020.py",
+        "output": "research/deliveries/c-line/ib8bca_dataview_api_registered_baseline_20261020.json",
+        "base": "85eb0948515e777d53996caf8f7ecb4b87897c90",
+        "parent_candidates": [
+          {
+            "line": 394,
+            "function": "BuiltinsDataView::GetViewValue"
+          },
+          {
+            "line": 455,
+            "function": "BuiltinsDataView::SetViewValue"
+          }
+        ],
+        "fixed_candidates": 0,
+        "coverage": "parent and fixed partial; detector blocked due detector_model_incomplete"
+      },
+      "second_layer_feedback": "Review commit 2f37175fdc1b49edc9157f8b079f35c8b793a873 finds no source-supported uint32 wraparound OOB on these API paths; reconcile against exact source/test matrix and avoid suppressing beyond proven bounds."
     },
     {
       "id": "C-LLM-REVIEW-DV-API-20261020",
       "kind": "second_layer_candidate_review",
-      "status": "IN_PROGRESS_SOURCE_REVIEW_ONLY",
+      "status": "COMPLETED_SOURCE_REVIEW_NO_OOB_EVIDENCE",
       "reviewer": "typedarray_length_review",
       "objective": "Independently review the exact parent/fixed DataView GetViewValue and SetViewValue source paths for candidate plausibility and counterevidence; do not implement detector or LLM features.",
       "input": "Same exact source identity pins as C-DEV-DV-API-20261020; focus on lines 394 and 455, plus the constructor and backing-buffer size invariants.",
       "second_layer_prompt": "ROLE: second-layer source reviewer only. Verify exact source identities; trace index conversion/range, elementSize, uint32_t arithmetic, DataView construction bounds, backing-buffer constraints, and GetValueFromBuffer/SetValueInBuffer sinks. Decide separately for parent and fixed whether the detector candidates are plausible source-level defects, disproven by source invariants, or unresolved. Identify counterevidence and unknown compiled/runtime/product behavior. Do not change code/model or add an LLM feature. Return a concise source report with exact lines and evidence; do not promote to confirmed vulnerability.",
-      "blocking_prerequisites": []
+      "blocking_prerequisites": [],
+      "completion": "Exact parent/fixed identities verified. Index conversion is capped at INT32_MAX, supported element sizes are <=8, and constructor bounds the view within a uint32 backing length; the proposed uint32 wraparound-to-OOB path is unsupported on these source paths. A large-index conversion compatibility concern and unusual buffer/runtime paths remain unknown.",
+      "report": "research/deliveries/c-line/second_layer_dataview_api_review_20261020.md",
+      "report_commit": "2f37175fdc1b49edc9157f8b079f35c8b793a873",
+      "disposition": "No source-supported OOB candidate in GetViewValue/SetViewValue; possible conversion compatibility concern only; runtime/product unknown."
     }
   ],
   "feedback_loop": [
@@ -611,7 +651,8 @@
     "The IB8BCA parent SetTypedValue candidate is plausible at source level; compiled IR, reachability, runtime effects, backing allocation feasibility, and product impact remain unknown. Fixed zero is not a safety result.",
     "Next slice: inspect source-bound candidates in BuiltinsDataView::GetViewValue and SetViewValue. Existing replay reports two parent candidates and fixed zero, but fixed still has unknowns in constructor/get/set; developer and tester must check integer types, conversion ranges, view/buffer invariants, branch semantics, and avoid broad suppression or unsupported candidate expansion.",
     "The tester supplies independent source boundary controls first; developer responds with exact expected outcomes and any detector/test change; tester replays the developer commit and returns discrepancies. A separate source reviewer assesses candidate plausibility only; no LLM feature work.",
-    "A fresh remote fetch failed again at GitHub port 443. Local pinned-source work continues; do not label local revision as remote latest."
+    "A fresh remote fetch failed again at GitHub port 443. Local pinned-source work continues; do not label local revision as remote latest.",
+    "Second-layer API review completed at 2f37175: GetViewValue/SetViewValue uint32 wraparound-to-OOB route is not supported by source invariants; large-index conversion compatibility and unusual buffer/runtime behavior remain unknown. Developer/tester should reconcile independently before any detector narrowing."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
