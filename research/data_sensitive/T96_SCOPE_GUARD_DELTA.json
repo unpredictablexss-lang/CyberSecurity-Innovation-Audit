@@ -1,0 +1,1909 @@
+{
+  "schema": 1,
+  "study": "T96 partial selected unit direct/Runner scope guard regression",
+  "initial": {
+    "revision": "ae71c3c8e099c42b1d5df81b1fe9c32cddd2a39a",
+    "version": "0.21.12",
+    "src_tree_oid": "4bc618594e413190db772c65497468b00f5d92f3",
+    "src_archive_sha256": "5102293deefea25a041fb23113ba5b63bae7d2b9d7b07a382523ce091ea7408a",
+    "tests": {
+      "count": 14,
+      "failures": 1,
+      "errors": 0,
+      "log": "test_complete_same_target (t96_independent_snapshot_tests.T96SwitchTargetTests.test_complete_same_target) ... ok\ntest_complete_three_arms (t96_independent_snapshot_tests.T96SwitchTargetTests.test_complete_three_arms) ... ok\ntest_different_target (t96_independent_snapshot_tests.T96SwitchTargetTests.test_different_target) ... ok\ntest_duplicate_label_no_semantic_proof (t96_independent_snapshot_tests.T96SwitchTargetTests.test_duplicate_label_no_semantic_proof) ... ok\ntest_fallthrough_preserves_unknown (t96_independent_snapshot_tests.T96SwitchTargetTests.test_fallthrough_preserves_unknown) ... ok\ntest_header_scope (t96_independent_snapshot_tests.T96SwitchTargetTests.test_header_scope) ... ok\ntest_literal_only (t96_independent_snapshot_tests.T96SwitchTargetTests.test_literal_only) ... ok\ntest_macro_source (t96_independent_snapshot_tests.T96SwitchTargetTests.test_macro_source) ... ok\ntest_missing_default (t96_independent_snapshot_tests.T96SwitchTargetTests.test_missing_default) ... ok\ntest_partial_unit_does_not_grant_exact_target_proof (t96_independent_snapshot_tests.T96SwitchTargetTests.test_partial_unit_does_not_grant_exact_target_proof) ... FAIL\ntest_previous_scopes_copy_and_nullcast (t96_independent_snapshot_tests.T96SwitchTargetTests.test_previous_scopes_copy_and_nullcast) ... ok\ntest_return_live_preserves_unknown (t96_independent_snapshot_tests.T96SwitchTargetTests.test_return_live_preserves_unknown) ... ok\ntest_switch_condition_escape_is_not_hidden_by_target_proof (t96_independent_snapshot_tests.T96SwitchTargetTests.test_switch_condition_escape_is_not_hidden_by_target_proof) ... ok\ntest_unknown_target (t96_independent_snapshot_tests.T96SwitchTargetTests.test_unknown_target) ... ok\n\n======================================================================\nFAIL: test_partial_unit_does_not_grant_exact_target_proof (t96_independent_snapshot_tests.T96SwitchTargetTests.test_partial_unit_does_not_grant_exact_target_proof)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020\\tests\\detectors\\data\\test_t96_switch_target_joins.py\", line 87, in test_partial_unit_does_not_grant_exact_target_proof\n    self.assertTrue(any('unresolved material write' in r['message'] for r in rows),rows)\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not true : [{'diagnostic_id': 'ohscanner.data.sensitive_exposure:cb2895152b0e4eee', 'provider': 'ohscanner.data.sensitive_exposure', 'evidence_type': 'syntax', 'file': 'service.cpp', 'line': 6, 'column': None, 'rule_id': 'data.log.sensitive-value', 'severity': 'unassessed', 'message': 'Candidate local sensitive-material dependency: service.cpp:2 source Callback parameter 0 -> 4 assign second -> 6 HILOG_INFO public operand 0', 'candidate_cwe': 'CWE-532', 'confidence': 'unassessed', 'symbol': 'Callback', 'source_sha256': 'fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4', 'consequence_impact': None, 'consequence_cwe': None, 'finding_identity': {'schema_version': 'ohscanner.finding-identity-record.v1', 'stable': {'id': None, 'status': 'unknown', 'basis': None, 'unknown_reasons': ['identity_quality:unknown', 'missing:ast_fingerprint', 'missing:rule_lineage_id', 'missing:symbol_identity']}, 'occurrence': {'id': None, 'status': 'unknown', 'basis': None, 'unknown_reasons': ['missing:rule_version', 'missing:source_blob_oid']}, 'observation': {'legacy_diagnostic_id': 'ohscanner.data.sensitive_exposure:cb2895152b0e4eee', 'detector_id': 'ohscanner.data.sensitive_exposure', 'detector_version': '0.21.12', 'rule_id': 'data.log.sensitive-value', 'rule_version': None, 'file': 'service.cpp', 'line': 6, 'message': 'Candidate local sensitive-material dependency: service.cpp:2 source Callback parameter 0 -> 4 assign second -> 6 HILOG_INFO public operand 0', 'source_blob_oid': None, 'source_sha256': 'fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4', 'byte_start': 254, 'byte_end': 289, 'identity_quality': 'unknown', 'rule_lineage_id': None, 'symbol_identity': None, 'ast_fingerprint': None}, 'source_binding': {'repository': 'fixture/t89', 'commit': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'snapshot_sha256': '0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd', 'profile_id': 'm0-synthetic', 'detector_id': 'ohscanner.data.sensitive_exposure', 'detector_version': '0.21.12', 'rule_id': 'data.log.sensitive-value', 'rule_version': None, 'file': 'service.cpp', 'source_blob_oid': None, 'source_sha256': 'fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4', 'byte_start': 254, 'byte_end': 289, 'status': 'unbound', 'verification': 'not_performed_by_identity_layer'}, 'historical_ids': ['ohscanner.data.sensitive_exposure:cb2895152b0e4eee'], 'backfilled': False, 'interpretation': 'Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance.'}, 'source_binding': 'bound'}]\n\n----------------------------------------------------------------------\nRan 14 tests in 0.069s\n\nFAILED (failures=1)\n"
+    },
+    "cases": [
+      {
+        "case": "partial-selected-unit",
+        "source": "void HILOG_INFO(int,const char*,...);\nvoid Callback(const char *key,int selector){unsigned first=0,second=0;\nunsigned *p=&first;switch(selector){case 0:p=&second;break;default:p=&second;break;}\n*p=(unsigned char)key[0];\nHILOG_INFO(1,\"%{public}u\",first);\nHILOG_INFO(1,\"%{public}u\",second);\n}",
+        "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+        "model": "explicit Callback argument 0 source",
+        "cpp_control_flow_contract": null,
+        "frontend_parse_status": {
+          "partial.h": "partial",
+          "service.cpp": "complete"
+        },
+        "target_statement": "*p=(unsigned char)key[0];",
+        "after_contract": "material",
+        "known_defect": null,
+        "direct_target_candidates": [
+          {
+            "file": "service.cpp",
+            "line": 4,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+            "evidence_type": "syntax",
+            "column": null,
+            "candidate_cwe": null,
+            "symbol": "Callback",
+            "evidence_obligations": [
+              {
+                "kind": "destination_binding",
+                "description": "Resolve pointer/member aliases and the exact destination object written by *p.",
+                "status": "unknown"
+              },
+              {
+                "kind": "sink_behavior",
+                "description": "Determine whether the unresolved destination exposes or forwards material.",
+                "status": "unknown"
+              },
+              {
+                "kind": "runtime_log_visibility",
+                "description": "No log exposure or reader reachability is established by this call alone.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Establish recoverable sensitive material and concrete impact independently.",
+                "status": "unknown"
+              }
+            ],
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "rule_version": null,
+            "rule_lineage_id": null,
+            "symbol_identity": null,
+            "ast_fingerprint": null,
+            "identity_quality": "unknown"
+          }
+        ],
+        "runner_target_diagnostics": [],
+        "all_direct_findings": [
+          {
+            "file": "service.cpp",
+            "line": 4,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+            "evidence_type": "syntax",
+            "column": null,
+            "candidate_cwe": null,
+            "symbol": "Callback",
+            "evidence_obligations": [
+              {
+                "kind": "destination_binding",
+                "description": "Resolve pointer/member aliases and the exact destination object written by *p.",
+                "status": "unknown"
+              },
+              {
+                "kind": "sink_behavior",
+                "description": "Determine whether the unresolved destination exposes or forwards material.",
+                "status": "unknown"
+              },
+              {
+                "kind": "runtime_log_visibility",
+                "description": "No log exposure or reader reachability is established by this call alone.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Establish recoverable sensitive material and concrete impact independently.",
+                "status": "unknown"
+              }
+            ],
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "rule_version": null,
+            "rule_lineage_id": null,
+            "symbol_identity": null,
+            "ast_fingerprint": null,
+            "identity_quality": "unknown"
+          }
+        ],
+        "all_runner_diagnostics": [
+          {
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:cb2895152b0e4eee",
+            "provider": "ohscanner.data.sensitive_exposure",
+            "evidence_type": "syntax",
+            "file": "service.cpp",
+            "line": 6,
+            "column": null,
+            "rule_id": "data.log.sensitive-value",
+            "severity": "unassessed",
+            "message": "Candidate local sensitive-material dependency: service.cpp:2 source Callback parameter 0 -> 4 assign second -> 6 HILOG_INFO public operand 0",
+            "candidate_cwe": "CWE-532",
+            "confidence": "unassessed",
+            "symbol": "Callback",
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:cb2895152b0e4eee",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.log.sensitive-value",
+                "rule_version": null,
+                "file": "service.cpp",
+                "line": 6,
+                "message": "Candidate local sensitive-material dependency: service.cpp:2 source Callback parameter 0 -> 4 assign second -> 6 HILOG_INFO public operand 0",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 254,
+                "byte_end": 289,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "fixture/t89",
+                "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                "profile_id": "m0-synthetic",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.log.sensitive-value",
+                "rule_version": null,
+                "file": "service.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 254,
+                "byte_end": 289,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:cb2895152b0e4eee"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            },
+            "source_binding": "bound"
+          }
+        ],
+        "call_facts": [
+          {
+            "name": "HILOG_INFO",
+            "arguments": [
+              "1",
+              "\"%{public}u\"",
+              "first"
+            ],
+            "line": 5,
+            "start_byte": 220,
+            "end_byte": 252
+          },
+          {
+            "name": "HILOG_INFO",
+            "arguments": [
+              "1",
+              "\"%{public}u\"",
+              "second"
+            ],
+            "line": 6,
+            "start_byte": 254,
+            "end_byte": 287
+          }
+        ],
+        "direct_status": "blocked",
+        "direct_file_outcomes": [
+          [
+            "partial.h",
+            "partial"
+          ],
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "runner_status": "blocked",
+        "runner_coverage": {
+          "schema_version": 1,
+          "detectors": {
+            "ohscanner.data.sensitive_exposure": {
+              "scope_mode": "per_file",
+              "status": "partial",
+              "applicable_files": 2,
+              "analyzed_files": [],
+              "partially_inspected_files": [
+                "service.cpp"
+              ],
+              "source_sha256": {
+                "partial.h": "d12746c2fc747086abc70e73e480cdf6f6c7fc5709ff6930ae1a60d0f7ac1613",
+                "service.cpp": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4"
+              },
+              "unexamined": [
+                {
+                  "file": "partial.h",
+                  "parse_status": "partial",
+                  "reason": "incomplete_ast:partial",
+                  "analysis_status": "not_analyzed"
+                },
+                {
+                  "file": "service.cpp",
+                  "parse_status": "complete",
+                  "reason": "detector_model_incomplete",
+                  "analysis_status": "partial"
+                }
+              ],
+              "inspected_files": [
+                "service.cpp"
+              ],
+              "not_analyzed_files": [
+                "partial.h"
+              ],
+              "coverage_counts": {
+                "complete": 0,
+                "partial": 1,
+                "not_analyzed": 1,
+                "failed": 0
+              },
+              "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+              "evidence_obligations": [
+                {
+                  "diagnostic_id": "ohscanner.data.sensitive_exposure:cb2895152b0e4eee",
+                  "file": "service.cpp",
+                  "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                  "analysis_status": "partial",
+                  "source_binding": {
+                    "repository": "fixture/t89",
+                    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                    "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                    "profile_id": "m0-synthetic",
+                    "detector_id": "ohscanner.data.sensitive_exposure",
+                    "detector_version": "0.21.12",
+                    "rule_id": "data.log.sensitive-value",
+                    "file": "service.cpp",
+                    "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4"
+                  },
+                  "consequence_impact": null,
+                  "consequence_cwe": null,
+                  "model_version": null,
+                  "obligations": [
+                    {
+                      "kind": "local_flow",
+                      "description": "service.cpp:2 source Callback parameter 0 -> 4 assign second -> 6 HILOG_INFO public operand 0",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "source_semantics",
+                      "description": "Synthetic explicit Callback argument source for binding regression; no product claim",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "type_identity",
+                      "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "runtime_log_visibility",
+                      "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "execution_and_identity",
+                      "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "security_impact",
+                      "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                      "status": "unknown"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "case": "partial-selected-first-not-exact",
+        "source": "void HILOG_INFO(int,const char*,...);\nvoid Callback(const char *key,int selector){unsigned first=0,second=0;\nunsigned *p=&first;switch(selector){case 0:p=&second;break;default:p=&second;break;}\n*p=(unsigned char)key[0];\nHILOG_INFO(1,\"%{public}u\",first);\nHILOG_INFO(1,\"%{public}u\",second);\n}",
+        "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+        "model": "explicit Callback argument 0 source",
+        "cpp_control_flow_contract": null,
+        "frontend_parse_status": {
+          "partial.h": "partial",
+          "service.cpp": "complete"
+        },
+        "target_statement": "HILOG_INFO(1,\"%{public}u\",first);",
+        "after_contract": "no-log",
+        "known_defect": null,
+        "direct_target_candidates": [],
+        "runner_target_diagnostics": [],
+        "all_direct_findings": [
+          {
+            "file": "service.cpp",
+            "line": 4,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+            "evidence_type": "syntax",
+            "column": null,
+            "candidate_cwe": null,
+            "symbol": "Callback",
+            "evidence_obligations": [
+              {
+                "kind": "destination_binding",
+                "description": "Resolve pointer/member aliases and the exact destination object written by *p.",
+                "status": "unknown"
+              },
+              {
+                "kind": "sink_behavior",
+                "description": "Determine whether the unresolved destination exposes or forwards material.",
+                "status": "unknown"
+              },
+              {
+                "kind": "runtime_log_visibility",
+                "description": "No log exposure or reader reachability is established by this call alone.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Establish recoverable sensitive material and concrete impact independently.",
+                "status": "unknown"
+              }
+            ],
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "rule_version": null,
+            "rule_lineage_id": null,
+            "symbol_identity": null,
+            "ast_fingerprint": null,
+            "identity_quality": "unknown"
+          }
+        ],
+        "all_runner_diagnostics": [
+          {
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:cb2895152b0e4eee",
+            "provider": "ohscanner.data.sensitive_exposure",
+            "evidence_type": "syntax",
+            "file": "service.cpp",
+            "line": 6,
+            "column": null,
+            "rule_id": "data.log.sensitive-value",
+            "severity": "unassessed",
+            "message": "Candidate local sensitive-material dependency: service.cpp:2 source Callback parameter 0 -> 4 assign second -> 6 HILOG_INFO public operand 0",
+            "candidate_cwe": "CWE-532",
+            "confidence": "unassessed",
+            "symbol": "Callback",
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:cb2895152b0e4eee",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.log.sensitive-value",
+                "rule_version": null,
+                "file": "service.cpp",
+                "line": 6,
+                "message": "Candidate local sensitive-material dependency: service.cpp:2 source Callback parameter 0 -> 4 assign second -> 6 HILOG_INFO public operand 0",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 254,
+                "byte_end": 289,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "fixture/t89",
+                "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                "profile_id": "m0-synthetic",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.log.sensitive-value",
+                "rule_version": null,
+                "file": "service.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 254,
+                "byte_end": 289,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:cb2895152b0e4eee"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            },
+            "source_binding": "bound"
+          }
+        ],
+        "call_facts": [
+          {
+            "name": "HILOG_INFO",
+            "arguments": [
+              "1",
+              "\"%{public}u\"",
+              "first"
+            ],
+            "line": 5,
+            "start_byte": 220,
+            "end_byte": 252
+          },
+          {
+            "name": "HILOG_INFO",
+            "arguments": [
+              "1",
+              "\"%{public}u\"",
+              "second"
+            ],
+            "line": 6,
+            "start_byte": 254,
+            "end_byte": 287
+          }
+        ],
+        "direct_status": "blocked",
+        "direct_file_outcomes": [
+          [
+            "partial.h",
+            "partial"
+          ],
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "runner_status": "blocked",
+        "runner_coverage": {
+          "schema_version": 1,
+          "detectors": {
+            "ohscanner.data.sensitive_exposure": {
+              "scope_mode": "per_file",
+              "status": "partial",
+              "applicable_files": 2,
+              "analyzed_files": [],
+              "partially_inspected_files": [
+                "service.cpp"
+              ],
+              "source_sha256": {
+                "partial.h": "d12746c2fc747086abc70e73e480cdf6f6c7fc5709ff6930ae1a60d0f7ac1613",
+                "service.cpp": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4"
+              },
+              "unexamined": [
+                {
+                  "file": "partial.h",
+                  "parse_status": "partial",
+                  "reason": "incomplete_ast:partial",
+                  "analysis_status": "not_analyzed"
+                },
+                {
+                  "file": "service.cpp",
+                  "parse_status": "complete",
+                  "reason": "detector_model_incomplete",
+                  "analysis_status": "partial"
+                }
+              ],
+              "inspected_files": [
+                "service.cpp"
+              ],
+              "not_analyzed_files": [
+                "partial.h"
+              ],
+              "coverage_counts": {
+                "complete": 0,
+                "partial": 1,
+                "not_analyzed": 1,
+                "failed": 0
+              },
+              "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+              "evidence_obligations": [
+                {
+                  "diagnostic_id": "ohscanner.data.sensitive_exposure:cb2895152b0e4eee",
+                  "file": "service.cpp",
+                  "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                  "analysis_status": "partial",
+                  "source_binding": {
+                    "repository": "fixture/t89",
+                    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                    "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                    "profile_id": "m0-synthetic",
+                    "detector_id": "ohscanner.data.sensitive_exposure",
+                    "detector_version": "0.21.12",
+                    "rule_id": "data.log.sensitive-value",
+                    "file": "service.cpp",
+                    "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4"
+                  },
+                  "consequence_impact": null,
+                  "consequence_cwe": null,
+                  "model_version": null,
+                  "obligations": [
+                    {
+                      "kind": "local_flow",
+                      "description": "service.cpp:2 source Callback parameter 0 -> 4 assign second -> 6 HILOG_INFO public operand 0",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "source_semantics",
+                      "description": "Synthetic explicit Callback argument source for binding regression; no product claim",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "type_identity",
+                      "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "runtime_log_visibility",
+                      "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "execution_and_identity",
+                      "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "security_impact",
+                      "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                      "status": "unknown"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "case": "partial-selected-second-not-exact",
+        "source": "void HILOG_INFO(int,const char*,...);\nvoid Callback(const char *key,int selector){unsigned first=0,second=0;\nunsigned *p=&first;switch(selector){case 0:p=&second;break;default:p=&second;break;}\n*p=(unsigned char)key[0];\nHILOG_INFO(1,\"%{public}u\",first);\nHILOG_INFO(1,\"%{public}u\",second);\n}",
+        "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+        "model": "explicit Callback argument 0 source",
+        "cpp_control_flow_contract": null,
+        "frontend_parse_status": {
+          "partial.h": "partial",
+          "service.cpp": "complete"
+        },
+        "target_statement": "HILOG_INFO(1,\"%{public}u\",second);",
+        "after_contract": "no-log",
+        "known_defect": null,
+        "direct_target_candidates": [],
+        "runner_target_diagnostics": [
+          {
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:cb2895152b0e4eee",
+            "provider": "ohscanner.data.sensitive_exposure",
+            "evidence_type": "syntax",
+            "file": "service.cpp",
+            "line": 6,
+            "column": null,
+            "rule_id": "data.log.sensitive-value",
+            "severity": "unassessed",
+            "message": "Candidate local sensitive-material dependency: service.cpp:2 source Callback parameter 0 -> 4 assign second -> 6 HILOG_INFO public operand 0",
+            "candidate_cwe": "CWE-532",
+            "confidence": "unassessed",
+            "symbol": "Callback",
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:cb2895152b0e4eee",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.log.sensitive-value",
+                "rule_version": null,
+                "file": "service.cpp",
+                "line": 6,
+                "message": "Candidate local sensitive-material dependency: service.cpp:2 source Callback parameter 0 -> 4 assign second -> 6 HILOG_INFO public operand 0",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 254,
+                "byte_end": 289,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "fixture/t89",
+                "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                "profile_id": "m0-synthetic",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.log.sensitive-value",
+                "rule_version": null,
+                "file": "service.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 254,
+                "byte_end": 289,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:cb2895152b0e4eee"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            },
+            "source_binding": "bound"
+          }
+        ],
+        "all_direct_findings": [
+          {
+            "file": "service.cpp",
+            "line": 4,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+            "evidence_type": "syntax",
+            "column": null,
+            "candidate_cwe": null,
+            "symbol": "Callback",
+            "evidence_obligations": [
+              {
+                "kind": "destination_binding",
+                "description": "Resolve pointer/member aliases and the exact destination object written by *p.",
+                "status": "unknown"
+              },
+              {
+                "kind": "sink_behavior",
+                "description": "Determine whether the unresolved destination exposes or forwards material.",
+                "status": "unknown"
+              },
+              {
+                "kind": "runtime_log_visibility",
+                "description": "No log exposure or reader reachability is established by this call alone.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Establish recoverable sensitive material and concrete impact independently.",
+                "status": "unknown"
+              }
+            ],
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "rule_version": null,
+            "rule_lineage_id": null,
+            "symbol_identity": null,
+            "ast_fingerprint": null,
+            "identity_quality": "unknown"
+          }
+        ],
+        "all_runner_diagnostics": [
+          {
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:cb2895152b0e4eee",
+            "provider": "ohscanner.data.sensitive_exposure",
+            "evidence_type": "syntax",
+            "file": "service.cpp",
+            "line": 6,
+            "column": null,
+            "rule_id": "data.log.sensitive-value",
+            "severity": "unassessed",
+            "message": "Candidate local sensitive-material dependency: service.cpp:2 source Callback parameter 0 -> 4 assign second -> 6 HILOG_INFO public operand 0",
+            "candidate_cwe": "CWE-532",
+            "confidence": "unassessed",
+            "symbol": "Callback",
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:cb2895152b0e4eee",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.log.sensitive-value",
+                "rule_version": null,
+                "file": "service.cpp",
+                "line": 6,
+                "message": "Candidate local sensitive-material dependency: service.cpp:2 source Callback parameter 0 -> 4 assign second -> 6 HILOG_INFO public operand 0",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 254,
+                "byte_end": 289,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "fixture/t89",
+                "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                "profile_id": "m0-synthetic",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.log.sensitive-value",
+                "rule_version": null,
+                "file": "service.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 254,
+                "byte_end": 289,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:cb2895152b0e4eee"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            },
+            "source_binding": "bound"
+          }
+        ],
+        "call_facts": [
+          {
+            "name": "HILOG_INFO",
+            "arguments": [
+              "1",
+              "\"%{public}u\"",
+              "first"
+            ],
+            "line": 5,
+            "start_byte": 220,
+            "end_byte": 252
+          },
+          {
+            "name": "HILOG_INFO",
+            "arguments": [
+              "1",
+              "\"%{public}u\"",
+              "second"
+            ],
+            "line": 6,
+            "start_byte": 254,
+            "end_byte": 287
+          }
+        ],
+        "direct_status": "blocked",
+        "direct_file_outcomes": [
+          [
+            "partial.h",
+            "partial"
+          ],
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "runner_status": "blocked",
+        "runner_coverage": {
+          "schema_version": 1,
+          "detectors": {
+            "ohscanner.data.sensitive_exposure": {
+              "scope_mode": "per_file",
+              "status": "partial",
+              "applicable_files": 2,
+              "analyzed_files": [],
+              "partially_inspected_files": [
+                "service.cpp"
+              ],
+              "source_sha256": {
+                "partial.h": "d12746c2fc747086abc70e73e480cdf6f6c7fc5709ff6930ae1a60d0f7ac1613",
+                "service.cpp": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4"
+              },
+              "unexamined": [
+                {
+                  "file": "partial.h",
+                  "parse_status": "partial",
+                  "reason": "incomplete_ast:partial",
+                  "analysis_status": "not_analyzed"
+                },
+                {
+                  "file": "service.cpp",
+                  "parse_status": "complete",
+                  "reason": "detector_model_incomplete",
+                  "analysis_status": "partial"
+                }
+              ],
+              "inspected_files": [
+                "service.cpp"
+              ],
+              "not_analyzed_files": [
+                "partial.h"
+              ],
+              "coverage_counts": {
+                "complete": 0,
+                "partial": 1,
+                "not_analyzed": 1,
+                "failed": 0
+              },
+              "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+              "evidence_obligations": [
+                {
+                  "diagnostic_id": "ohscanner.data.sensitive_exposure:cb2895152b0e4eee",
+                  "file": "service.cpp",
+                  "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                  "analysis_status": "partial",
+                  "source_binding": {
+                    "repository": "fixture/t89",
+                    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                    "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                    "profile_id": "m0-synthetic",
+                    "detector_id": "ohscanner.data.sensitive_exposure",
+                    "detector_version": "0.21.12",
+                    "rule_id": "data.log.sensitive-value",
+                    "file": "service.cpp",
+                    "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4"
+                  },
+                  "consequence_impact": null,
+                  "consequence_cwe": null,
+                  "model_version": null,
+                  "obligations": [
+                    {
+                      "kind": "local_flow",
+                      "description": "service.cpp:2 source Callback parameter 0 -> 4 assign second -> 6 HILOG_INFO public operand 0",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "source_semantics",
+                      "description": "Synthetic explicit Callback argument source for binding regression; no product claim",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "type_identity",
+                      "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "runtime_log_visibility",
+                      "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "execution_and_identity",
+                      "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "security_impact",
+                      "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                      "status": "unknown"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "full_snapshot_replay_sha256": "b6055bf7a69e54aaaff3948c2d7fdd6a0cee4e914d8d3d61c71c688f3b657aef"
+  },
+  "expected": "Both direct and Runner must retain unresolved rather than exact first/second sink under a selected partial source, as required by the D97 admission contract.",
+  "interpretation": "This is an entrypoint/proof-scope mismatch, not a labeled vulnerability or a material-loss result.",
+  "final": {
+    "revision": "4958df655f86c1199bc326138aaf3b4ecaf9587e",
+    "version": "0.21.12",
+    "src_tree_oid": "8722df5e4698bb2d060b668b91ecc113cee3e58d",
+    "src_archive_sha256": "5bdd4522aff316f9b858b6ab056b79e3c89cf9c5116a800324a4f87839f07045",
+    "tests": {
+      "count": 14,
+      "failures": 0,
+      "errors": 0,
+      "log": "test_complete_same_target (t96_independent_snapshot_tests.T96SwitchTargetTests.test_complete_same_target) ... ok\ntest_complete_three_arms (t96_independent_snapshot_tests.T96SwitchTargetTests.test_complete_three_arms) ... ok\ntest_different_target (t96_independent_snapshot_tests.T96SwitchTargetTests.test_different_target) ... ok\ntest_duplicate_label_no_semantic_proof (t96_independent_snapshot_tests.T96SwitchTargetTests.test_duplicate_label_no_semantic_proof) ... ok\ntest_fallthrough_preserves_unknown (t96_independent_snapshot_tests.T96SwitchTargetTests.test_fallthrough_preserves_unknown) ... ok\ntest_header_scope (t96_independent_snapshot_tests.T96SwitchTargetTests.test_header_scope) ... ok\ntest_literal_only (t96_independent_snapshot_tests.T96SwitchTargetTests.test_literal_only) ... ok\ntest_macro_source (t96_independent_snapshot_tests.T96SwitchTargetTests.test_macro_source) ... ok\ntest_missing_default (t96_independent_snapshot_tests.T96SwitchTargetTests.test_missing_default) ... ok\ntest_partial_unit_does_not_grant_exact_target_proof (t96_independent_snapshot_tests.T96SwitchTargetTests.test_partial_unit_does_not_grant_exact_target_proof) ... ok\ntest_previous_scopes_copy_and_nullcast (t96_independent_snapshot_tests.T96SwitchTargetTests.test_previous_scopes_copy_and_nullcast) ... ok\ntest_return_live_preserves_unknown (t96_independent_snapshot_tests.T96SwitchTargetTests.test_return_live_preserves_unknown) ... ok\ntest_switch_condition_escape_is_not_hidden_by_target_proof (t96_independent_snapshot_tests.T96SwitchTargetTests.test_switch_condition_escape_is_not_hidden_by_target_proof) ... ok\ntest_unknown_target (t96_independent_snapshot_tests.T96SwitchTargetTests.test_unknown_target) ... ok\n\n----------------------------------------------------------------------\nRan 14 tests in 0.061s\n\nOK\n"
+    },
+    "cases": [
+      {
+        "case": "partial-selected-unit",
+        "source": "void HILOG_INFO(int,const char*,...);\nvoid Callback(const char *key,int selector){unsigned first=0,second=0;\nunsigned *p=&first;switch(selector){case 0:p=&second;break;default:p=&second;break;}\n*p=(unsigned char)key[0];\nHILOG_INFO(1,\"%{public}u\",first);\nHILOG_INFO(1,\"%{public}u\",second);\n}",
+        "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+        "model": "explicit Callback argument 0 source",
+        "cpp_control_flow_contract": null,
+        "frontend_parse_status": {
+          "partial.h": "partial",
+          "service.cpp": "complete"
+        },
+        "target_statement": "*p=(unsigned char)key[0];",
+        "after_contract": "material",
+        "known_defect": null,
+        "direct_target_candidates": [
+          {
+            "file": "service.cpp",
+            "line": 4,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+            "evidence_type": "syntax",
+            "column": null,
+            "candidate_cwe": null,
+            "symbol": "Callback",
+            "evidence_obligations": [
+              {
+                "kind": "destination_binding",
+                "description": "Resolve pointer/member aliases and the exact destination object written by *p.",
+                "status": "unknown"
+              },
+              {
+                "kind": "sink_behavior",
+                "description": "Determine whether the unresolved destination exposes or forwards material.",
+                "status": "unknown"
+              },
+              {
+                "kind": "runtime_log_visibility",
+                "description": "No log exposure or reader reachability is established by this call alone.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Establish recoverable sensitive material and concrete impact independently.",
+                "status": "unknown"
+              }
+            ],
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "rule_version": null,
+            "rule_lineage_id": null,
+            "symbol_identity": null,
+            "ast_fingerprint": null,
+            "identity_quality": "unknown"
+          }
+        ],
+        "runner_target_diagnostics": [
+          {
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:79a456ff024a186b",
+            "provider": "ohscanner.data.sensitive_exposure",
+            "evidence_type": "syntax",
+            "file": "service.cpp",
+            "line": 4,
+            "column": null,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "severity": "unassessed",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+            "candidate_cwe": null,
+            "confidence": "unassessed",
+            "symbol": "Callback",
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:79a456ff024a186b",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "service.cpp",
+                "line": 4,
+                "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 194,
+                "byte_end": 220,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "fixture/t89",
+                "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                "profile_id": "m0-synthetic",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "service.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 194,
+                "byte_end": 220,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:79a456ff024a186b"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            },
+            "source_binding": "bound"
+          }
+        ],
+        "all_direct_findings": [
+          {
+            "file": "service.cpp",
+            "line": 4,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+            "evidence_type": "syntax",
+            "column": null,
+            "candidate_cwe": null,
+            "symbol": "Callback",
+            "evidence_obligations": [
+              {
+                "kind": "destination_binding",
+                "description": "Resolve pointer/member aliases and the exact destination object written by *p.",
+                "status": "unknown"
+              },
+              {
+                "kind": "sink_behavior",
+                "description": "Determine whether the unresolved destination exposes or forwards material.",
+                "status": "unknown"
+              },
+              {
+                "kind": "runtime_log_visibility",
+                "description": "No log exposure or reader reachability is established by this call alone.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Establish recoverable sensitive material and concrete impact independently.",
+                "status": "unknown"
+              }
+            ],
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "rule_version": null,
+            "rule_lineage_id": null,
+            "symbol_identity": null,
+            "ast_fingerprint": null,
+            "identity_quality": "unknown"
+          }
+        ],
+        "all_runner_diagnostics": [
+          {
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:79a456ff024a186b",
+            "provider": "ohscanner.data.sensitive_exposure",
+            "evidence_type": "syntax",
+            "file": "service.cpp",
+            "line": 4,
+            "column": null,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "severity": "unassessed",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+            "candidate_cwe": null,
+            "confidence": "unassessed",
+            "symbol": "Callback",
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:79a456ff024a186b",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "service.cpp",
+                "line": 4,
+                "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 194,
+                "byte_end": 220,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "fixture/t89",
+                "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                "profile_id": "m0-synthetic",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "service.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 194,
+                "byte_end": 220,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:79a456ff024a186b"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            },
+            "source_binding": "bound"
+          }
+        ],
+        "call_facts": [
+          {
+            "name": "HILOG_INFO",
+            "arguments": [
+              "1",
+              "\"%{public}u\"",
+              "first"
+            ],
+            "line": 5,
+            "start_byte": 220,
+            "end_byte": 252
+          },
+          {
+            "name": "HILOG_INFO",
+            "arguments": [
+              "1",
+              "\"%{public}u\"",
+              "second"
+            ],
+            "line": 6,
+            "start_byte": 254,
+            "end_byte": 287
+          }
+        ],
+        "direct_status": "blocked",
+        "direct_file_outcomes": [
+          [
+            "partial.h",
+            "partial"
+          ],
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "runner_status": "blocked",
+        "runner_coverage": {
+          "schema_version": 1,
+          "detectors": {
+            "ohscanner.data.sensitive_exposure": {
+              "scope_mode": "per_file",
+              "status": "partial",
+              "applicable_files": 2,
+              "analyzed_files": [],
+              "partially_inspected_files": [
+                "service.cpp"
+              ],
+              "source_sha256": {
+                "partial.h": "d12746c2fc747086abc70e73e480cdf6f6c7fc5709ff6930ae1a60d0f7ac1613",
+                "service.cpp": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4"
+              },
+              "unexamined": [
+                {
+                  "file": "partial.h",
+                  "parse_status": "partial",
+                  "reason": "incomplete_ast:partial",
+                  "analysis_status": "not_analyzed"
+                },
+                {
+                  "file": "service.cpp",
+                  "parse_status": "complete",
+                  "reason": "detector_model_incomplete",
+                  "analysis_status": "partial"
+                }
+              ],
+              "inspected_files": [
+                "service.cpp"
+              ],
+              "not_analyzed_files": [
+                "partial.h"
+              ],
+              "coverage_counts": {
+                "complete": 0,
+                "partial": 1,
+                "not_analyzed": 1,
+                "failed": 0
+              },
+              "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+              "evidence_obligations": [
+                {
+                  "diagnostic_id": "ohscanner.data.sensitive_exposure:79a456ff024a186b",
+                  "file": "service.cpp",
+                  "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                  "analysis_status": "partial",
+                  "source_binding": {
+                    "repository": "fixture/t89",
+                    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                    "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                    "profile_id": "m0-synthetic",
+                    "detector_id": "ohscanner.data.sensitive_exposure",
+                    "detector_version": "0.21.12",
+                    "rule_id": "data.sensitive.unresolved-escape",
+                    "file": "service.cpp",
+                    "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4"
+                  },
+                  "consequence_impact": null,
+                  "consequence_cwe": null,
+                  "model_version": null,
+                  "obligations": [
+                    {
+                      "kind": "destination_binding",
+                      "description": "Resolve pointer/member aliases and the exact destination object written by *p.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "sink_behavior",
+                      "description": "Determine whether the unresolved destination exposes or forwards material.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "runtime_log_visibility",
+                      "description": "No log exposure or reader reachability is established by this call alone.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "security_impact",
+                      "description": "Establish recoverable sensitive material and concrete impact independently.",
+                      "status": "unknown"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "case": "partial-selected-first-not-exact",
+        "source": "void HILOG_INFO(int,const char*,...);\nvoid Callback(const char *key,int selector){unsigned first=0,second=0;\nunsigned *p=&first;switch(selector){case 0:p=&second;break;default:p=&second;break;}\n*p=(unsigned char)key[0];\nHILOG_INFO(1,\"%{public}u\",first);\nHILOG_INFO(1,\"%{public}u\",second);\n}",
+        "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+        "model": "explicit Callback argument 0 source",
+        "cpp_control_flow_contract": null,
+        "frontend_parse_status": {
+          "partial.h": "partial",
+          "service.cpp": "complete"
+        },
+        "target_statement": "HILOG_INFO(1,\"%{public}u\",first);",
+        "after_contract": "no-log",
+        "known_defect": null,
+        "direct_target_candidates": [],
+        "runner_target_diagnostics": [],
+        "all_direct_findings": [
+          {
+            "file": "service.cpp",
+            "line": 4,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+            "evidence_type": "syntax",
+            "column": null,
+            "candidate_cwe": null,
+            "symbol": "Callback",
+            "evidence_obligations": [
+              {
+                "kind": "destination_binding",
+                "description": "Resolve pointer/member aliases and the exact destination object written by *p.",
+                "status": "unknown"
+              },
+              {
+                "kind": "sink_behavior",
+                "description": "Determine whether the unresolved destination exposes or forwards material.",
+                "status": "unknown"
+              },
+              {
+                "kind": "runtime_log_visibility",
+                "description": "No log exposure or reader reachability is established by this call alone.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Establish recoverable sensitive material and concrete impact independently.",
+                "status": "unknown"
+              }
+            ],
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "rule_version": null,
+            "rule_lineage_id": null,
+            "symbol_identity": null,
+            "ast_fingerprint": null,
+            "identity_quality": "unknown"
+          }
+        ],
+        "all_runner_diagnostics": [
+          {
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:79a456ff024a186b",
+            "provider": "ohscanner.data.sensitive_exposure",
+            "evidence_type": "syntax",
+            "file": "service.cpp",
+            "line": 4,
+            "column": null,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "severity": "unassessed",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+            "candidate_cwe": null,
+            "confidence": "unassessed",
+            "symbol": "Callback",
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:79a456ff024a186b",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "service.cpp",
+                "line": 4,
+                "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 194,
+                "byte_end": 220,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "fixture/t89",
+                "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                "profile_id": "m0-synthetic",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "service.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 194,
+                "byte_end": 220,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:79a456ff024a186b"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            },
+            "source_binding": "bound"
+          }
+        ],
+        "call_facts": [
+          {
+            "name": "HILOG_INFO",
+            "arguments": [
+              "1",
+              "\"%{public}u\"",
+              "first"
+            ],
+            "line": 5,
+            "start_byte": 220,
+            "end_byte": 252
+          },
+          {
+            "name": "HILOG_INFO",
+            "arguments": [
+              "1",
+              "\"%{public}u\"",
+              "second"
+            ],
+            "line": 6,
+            "start_byte": 254,
+            "end_byte": 287
+          }
+        ],
+        "direct_status": "blocked",
+        "direct_file_outcomes": [
+          [
+            "partial.h",
+            "partial"
+          ],
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "runner_status": "blocked",
+        "runner_coverage": {
+          "schema_version": 1,
+          "detectors": {
+            "ohscanner.data.sensitive_exposure": {
+              "scope_mode": "per_file",
+              "status": "partial",
+              "applicable_files": 2,
+              "analyzed_files": [],
+              "partially_inspected_files": [
+                "service.cpp"
+              ],
+              "source_sha256": {
+                "partial.h": "d12746c2fc747086abc70e73e480cdf6f6c7fc5709ff6930ae1a60d0f7ac1613",
+                "service.cpp": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4"
+              },
+              "unexamined": [
+                {
+                  "file": "partial.h",
+                  "parse_status": "partial",
+                  "reason": "incomplete_ast:partial",
+                  "analysis_status": "not_analyzed"
+                },
+                {
+                  "file": "service.cpp",
+                  "parse_status": "complete",
+                  "reason": "detector_model_incomplete",
+                  "analysis_status": "partial"
+                }
+              ],
+              "inspected_files": [
+                "service.cpp"
+              ],
+              "not_analyzed_files": [
+                "partial.h"
+              ],
+              "coverage_counts": {
+                "complete": 0,
+                "partial": 1,
+                "not_analyzed": 1,
+                "failed": 0
+              },
+              "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+              "evidence_obligations": [
+                {
+                  "diagnostic_id": "ohscanner.data.sensitive_exposure:79a456ff024a186b",
+                  "file": "service.cpp",
+                  "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                  "analysis_status": "partial",
+                  "source_binding": {
+                    "repository": "fixture/t89",
+                    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                    "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                    "profile_id": "m0-synthetic",
+                    "detector_id": "ohscanner.data.sensitive_exposure",
+                    "detector_version": "0.21.12",
+                    "rule_id": "data.sensitive.unresolved-escape",
+                    "file": "service.cpp",
+                    "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4"
+                  },
+                  "consequence_impact": null,
+                  "consequence_cwe": null,
+                  "model_version": null,
+                  "obligations": [
+                    {
+                      "kind": "destination_binding",
+                      "description": "Resolve pointer/member aliases and the exact destination object written by *p.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "sink_behavior",
+                      "description": "Determine whether the unresolved destination exposes or forwards material.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "runtime_log_visibility",
+                      "description": "No log exposure or reader reachability is established by this call alone.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "security_impact",
+                      "description": "Establish recoverable sensitive material and concrete impact independently.",
+                      "status": "unknown"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "case": "partial-selected-second-not-exact",
+        "source": "void HILOG_INFO(int,const char*,...);\nvoid Callback(const char *key,int selector){unsigned first=0,second=0;\nunsigned *p=&first;switch(selector){case 0:p=&second;break;default:p=&second;break;}\n*p=(unsigned char)key[0];\nHILOG_INFO(1,\"%{public}u\",first);\nHILOG_INFO(1,\"%{public}u\",second);\n}",
+        "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+        "model": "explicit Callback argument 0 source",
+        "cpp_control_flow_contract": null,
+        "frontend_parse_status": {
+          "partial.h": "partial",
+          "service.cpp": "complete"
+        },
+        "target_statement": "HILOG_INFO(1,\"%{public}u\",second);",
+        "after_contract": "no-log",
+        "known_defect": null,
+        "direct_target_candidates": [],
+        "runner_target_diagnostics": [],
+        "all_direct_findings": [
+          {
+            "file": "service.cpp",
+            "line": 4,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+            "evidence_type": "syntax",
+            "column": null,
+            "candidate_cwe": null,
+            "symbol": "Callback",
+            "evidence_obligations": [
+              {
+                "kind": "destination_binding",
+                "description": "Resolve pointer/member aliases and the exact destination object written by *p.",
+                "status": "unknown"
+              },
+              {
+                "kind": "sink_behavior",
+                "description": "Determine whether the unresolved destination exposes or forwards material.",
+                "status": "unknown"
+              },
+              {
+                "kind": "runtime_log_visibility",
+                "description": "No log exposure or reader reachability is established by this call alone.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Establish recoverable sensitive material and concrete impact independently.",
+                "status": "unknown"
+              }
+            ],
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "rule_version": null,
+            "rule_lineage_id": null,
+            "symbol_identity": null,
+            "ast_fingerprint": null,
+            "identity_quality": "unknown"
+          }
+        ],
+        "all_runner_diagnostics": [
+          {
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:79a456ff024a186b",
+            "provider": "ohscanner.data.sensitive_exposure",
+            "evidence_type": "syntax",
+            "file": "service.cpp",
+            "line": 4,
+            "column": null,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "severity": "unassessed",
+            "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+            "candidate_cwe": null,
+            "confidence": "unassessed",
+            "symbol": "Callback",
+            "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:79a456ff024a186b",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "service.cpp",
+                "line": 4,
+                "message": "Candidate sensitive-data escape with unresolved binding: material assignment has unresolved pointer/member destination; path=service.cpp:2 source Callback parameter 0 -> 4 unresolved material write *p",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 194,
+                "byte_end": 220,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "fixture/t89",
+                "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                "profile_id": "m0-synthetic",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.12",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "service.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                "byte_start": 194,
+                "byte_end": 220,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:79a456ff024a186b"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            },
+            "source_binding": "bound"
+          }
+        ],
+        "call_facts": [
+          {
+            "name": "HILOG_INFO",
+            "arguments": [
+              "1",
+              "\"%{public}u\"",
+              "first"
+            ],
+            "line": 5,
+            "start_byte": 220,
+            "end_byte": 252
+          },
+          {
+            "name": "HILOG_INFO",
+            "arguments": [
+              "1",
+              "\"%{public}u\"",
+              "second"
+            ],
+            "line": 6,
+            "start_byte": 254,
+            "end_byte": 287
+          }
+        ],
+        "direct_status": "blocked",
+        "direct_file_outcomes": [
+          [
+            "partial.h",
+            "partial"
+          ],
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "runner_status": "blocked",
+        "runner_coverage": {
+          "schema_version": 1,
+          "detectors": {
+            "ohscanner.data.sensitive_exposure": {
+              "scope_mode": "per_file",
+              "status": "partial",
+              "applicable_files": 2,
+              "analyzed_files": [],
+              "partially_inspected_files": [
+                "service.cpp"
+              ],
+              "source_sha256": {
+                "partial.h": "d12746c2fc747086abc70e73e480cdf6f6c7fc5709ff6930ae1a60d0f7ac1613",
+                "service.cpp": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4"
+              },
+              "unexamined": [
+                {
+                  "file": "partial.h",
+                  "parse_status": "partial",
+                  "reason": "incomplete_ast:partial",
+                  "analysis_status": "not_analyzed"
+                },
+                {
+                  "file": "service.cpp",
+                  "parse_status": "complete",
+                  "reason": "detector_model_incomplete",
+                  "analysis_status": "partial"
+                }
+              ],
+              "inspected_files": [
+                "service.cpp"
+              ],
+              "not_analyzed_files": [
+                "partial.h"
+              ],
+              "coverage_counts": {
+                "complete": 0,
+                "partial": 1,
+                "not_analyzed": 1,
+                "failed": 0
+              },
+              "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+              "evidence_obligations": [
+                {
+                  "diagnostic_id": "ohscanner.data.sensitive_exposure:79a456ff024a186b",
+                  "file": "service.cpp",
+                  "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4",
+                  "analysis_status": "partial",
+                  "source_binding": {
+                    "repository": "fixture/t89",
+                    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                    "snapshot_sha256": "0b9a9c009d639a05bce0ab6cebf25f0f998b78a9908eeb0d2cce86bd242467fd",
+                    "profile_id": "m0-synthetic",
+                    "detector_id": "ohscanner.data.sensitive_exposure",
+                    "detector_version": "0.21.12",
+                    "rule_id": "data.sensitive.unresolved-escape",
+                    "file": "service.cpp",
+                    "source_sha256": "fdd424bb93adef637543812c249c419af280e350d1aa71f60b0fe7e82889f2e4"
+                  },
+                  "consequence_impact": null,
+                  "consequence_cwe": null,
+                  "model_version": null,
+                  "obligations": [
+                    {
+                      "kind": "destination_binding",
+                      "description": "Resolve pointer/member aliases and the exact destination object written by *p.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "sink_behavior",
+                      "description": "Determine whether the unresolved destination exposes or forwards material.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "runtime_log_visibility",
+                      "description": "No log exposure or reader reachability is established by this call alone.",
+                      "status": "unknown"
+                    },
+                    {
+                      "kind": "security_impact",
+                      "description": "Establish recoverable sensitive material and concrete impact independently.",
+                      "status": "unknown"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "full_snapshot_replay_sha256": "89015e72db007882ef7c37de8e69baaea8cf7c6afec909ac9f53925604ebaf3b"
+  },
+  "result": "fixed: both direct and Runner retain unresolved write under selected partial input; exact log not admitted."
+}
