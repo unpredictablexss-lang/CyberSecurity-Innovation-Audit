@@ -38,7 +38,7 @@ The current Ark Runtime detector model has no typed-array length-narrowing rule 
 
 ## Validation and limitations
 
-Direct replay used the exact source objects and a Tree-sitter C++ parse (`root_node.has_error == False`) before setting `SourceUnit.parse_status='complete'`; it then called `CppIntegerBoundsDetector.detect(context, (unit,))`. Parent and fixed each returned `status=completed`, `analyzed_files=('ecmascript/base/typed_array_helper.cpp',)`, and no findings. A separate partial-status control returned `status=blocked`, `analyzed_files=()`, confirming the empty blocked result must not be read as a negative.
+Direct replay used the exact source objects and a Tree-sitter C++ parse (`root_node.has_error == False`) before setting `SourceUnit.parse_status='complete'`; it then called `CppIntegerBoundsDetector.detect(context, (unit,))`. Parent and fixed each returned `status=completed`, `analyzed_files=('ecmascript/base/typed_array_helper.cpp',)`, and no findings. A separate partial-status control returned `status=blocked`, `analyzed_files=()`, confirming the empty blocked result must not be read as a negative. Independent tester reproduced both controls and source identities in commit `6ca5574c104d3902c7684c3df541871b24350284`, report `research/deliveries/c-line/u32_length_generic_detector_control_20261020.md` in the tester worktree.
 
 Regression command: `python -m pytest tests/detectors/ark_runtime tests/detectors/test_cpp_memory_safety_detectors.py -q`
 
