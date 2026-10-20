@@ -1,0 +1,39 @@
+cwd=E:\网安\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c8_parallel_20261019\worktrees\partial-owner
+
+# Git identity and pinned source-audit original (read-only)
+git rev-parse --show-toplevel
+git rev-parse HEAD
+git status --short --branch
+git remote -v
+git rev-parse origin/codex/c-line-ark-runtime-20261018^{tree}
+git ls-tree origin/codex/c-line-ark-runtime-20261018 -- research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md
+git show origin/codex/c-line-ark-runtime-20261018:research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md
+
+# Baseline focused parser-owner tests
+/usr/bin/python3 -m unittest tests.detectors.ark_runtime.test_parser_owner -v
+# Result: baseline-focused-tests.txt, 13 tests, 1 skipped, 0 failed.
+
+# Preserved regression: configured but missing external target source
+/usr/bin/python3 -c <missing bound target read_bytes reproducer>
+# Result: regression-file-not-found.txt, FileNotFoundError, exit 1.
+
+# Final focused parser-owner tests
+/usr/bin/python3 -m unittest tests.detectors.ark_runtime.test_parser_owner -v
+# Result: final-focused-tests.txt, 14 tests, 1 skipped, 0 failed.
+
+# Missing external target classified as unknown/limitation
+OHSCANNER_ARK_REPO=<worktree>/research/experiments/ark_runtime/c9_partial_owner_acceptance_20261019/missing-external-target \
+/usr/bin/python3 -m unittest tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_bound_typedarray_target_stays_partial_and_unknown -v
+# Result: final-missing-external-target.txt, 1 test, 0 failed.
+
+# Reconciliation fail-closed self-test
+C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/reconcile.py --self-test-fail-closed
+# Result: reconciliation-fail-closed-self-test.txt; missing remains blocked_missing_input.
+
+# Remote-pinned original strict reconciliation
+C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/reconcile.py --strict-input --write-run-manifest
+# Result: reconciliation-strict-remote-pinned.txt; input remote_pinned_original_located, hash matches, structured import blocked_no_entries, exit 11.
+
+# Docs budget attempt
+/usr/bin/python3 scripts/check_docs_context_budget.py
+# Result: baseline-docs-budget.txt; FileNotFoundError because this worktree has no scripts/check_docs_context_budget.py, exit 2.

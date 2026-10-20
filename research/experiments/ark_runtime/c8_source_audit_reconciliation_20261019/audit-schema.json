@@ -6,7 +6,6 @@
   "required": [
     "schema_version",
     "entry_id",
-    "source_identity",
     "observation",
     "mapping",
     "controls",
@@ -14,10 +13,12 @@
     "artifacts",
     "claim_boundary"
   ],
-  "properties": {
-    "schema_version": {"const": "ohscanner.source-audit-entry/v2"},
-    "entry_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]{3,128}$"},
-    "source_identity": {
+  "anyOf": [
+    {"required": ["source_identity"]},
+    {"required": ["source_identities"]}
+  ],
+  "$defs": {
+    "sourceIdentity": {
       "type": "object",
       "required": ["repository", "path", "commit", "tree", "blob", "sha256", "identity_status"],
       "properties": {
@@ -32,6 +33,39 @@
       },
       "additionalProperties": true
     },
+    "control": {
+      "type": "object",
+      "required": ["control_id", "kind", "expected"],
+      "properties": {
+        "control_id": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["positive", "fixed", "safe", "unrelated", "unknown"]},
+        "expected": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["role", "path", "sha256", "git_blob"],
+      "properties": {
+        "role": {"type": "string", "minLength": 1},
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "minLength": 1},
+        "git_blob": {"type": "string", "minLength": 1},
+        "git_object": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "schema_version": {"const": "ohscanner.source-audit-entry/v2"},
+    "entry_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]{3,128}$"},
+    "finding_identity": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{3,160}$"},
+    "source_identity": {"$ref": "#/$defs/sourceIdentity"},
+    "source_identities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/sourceIdentity"}
+    },
     "observation": {
       "type": "object",
       "required": ["summary", "scope", "fact_status", "limitations"],
@@ -39,7 +73,9 @@
         "summary": {"type": "string", "minLength": 1},
         "scope": {"type": "string", "minLength": 1},
         "fact_status": {"enum": ["provisional_substitute_evidence", "source_fact", "unknown"]},
-        "limitations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+        "limitations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "source_role": {"type": "string", "minLength": 1},
+        "source_report_finding_id": {"type": "string", "minLength": 1}
       },
       "additionalProperties": true
     },
@@ -49,27 +85,22 @@
       "properties": {
         "detector_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
         "rule_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
-        "control_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+        "control_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "mapping_status": {"enum": ["mapped", "partial_mapping", "unknown"]}
       },
       "additionalProperties": true
     },
-    "controls": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "object",
-        "required": ["control_id", "kind", "expected"],
-        "properties": {
-          "control_id": {"type": "string", "minLength": 1},
-          "kind": {"enum": ["positive", "fixed", "safe", "unrelated", "unknown"]},
-          "expected": {"type": "string", "minLength": 1}
-        },
-        "additionalProperties": true
-      }
-    },
+    "controls": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/control"}},
     "evidence_gate": {
       "type": "object",
-      "required": ["entry_or_permission_boundary", "reachable_sensitive_operation", "trigger_condition", "cia_impact", "audit_evidence", "validated_vulnerability"],
+      "required": [
+        "entry_or_permission_boundary",
+        "reachable_sensitive_operation",
+        "trigger_condition",
+        "cia_impact",
+        "audit_evidence",
+        "validated_vulnerability"
+      ],
       "properties": {
         "entry_or_permission_boundary": {"type": "string", "minLength": 1},
         "reachable_sensitive_operation": {"type": "string", "minLength": 1},
@@ -80,21 +111,7 @@
       },
       "additionalProperties": true
     },
-    "artifacts": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "object",
-        "required": ["role", "path", "sha256", "git_blob"],
-        "properties": {
-          "role": {"type": "string", "minLength": 1},
-          "path": {"type": "string", "minLength": 1},
-          "sha256": {"type": "string", "minLength": 1},
-          "git_blob": {"type": "string", "minLength": 1}
-        },
-        "additionalProperties": true
-      }
-    },
+    "artifacts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/artifact"}},
     "claim_boundary": {
       "type": "object",
       "required": ["classification", "assessment_status", "product_vulnerability", "cia", "cve", "metrics"],
@@ -103,8 +120,17 @@
         "assessment_status": {"enum": ["unassessed", "assessed"]},
         "product_vulnerability": {"type": "boolean"},
         "cia": {"type": "boolean"},
+        "cwe": {"type": "boolean"},
         "cve": {"type": "boolean"},
-        "metrics": {"type": "boolean"}
+        "metrics": {"const": false}
+      },
+      "additionalProperties": true
+    },
+    "compatibility": {
+      "type": "object",
+      "properties": {
+        "legacy_v1": {"const": "read_only"},
+        "historical_ids_rewritten": {"const": false}
       },
       "additionalProperties": true
     }

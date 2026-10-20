@@ -1,0 +1,212 @@
+{
+  "schema_version": "c9.partial-owner.artifact-hashes/v2",
+  "baselines": {
+    "review_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "review_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+    "review_blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+    "static_commit": "09ba5aba03c7c7d6787bace349b8fc0a6b0a5457",
+    "static_tree": "d15b91627c94d9c3043d7d58d47fcf9af7e42454",
+    "known_cves_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "known_cves_blob": "a2ddd5ff2afc2f6fb0f1677ea3ffbbfc580a195b"
+  },
+  "artifacts": [
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\baseline-docs-budget.txt",
+      "sha256": "b9448d4e440e729b5df3a94187ec94de648c225e5b5d651de4f78003a535cad3",
+      "git_blob": "7d549b0ae76cd773af82afba1cba72838c0ef310",
+      "size_bytes": 437
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\baseline-focused-tests.txt",
+      "sha256": "5fa6a090e521ecbe1136400e4c38ba829ff8bf173b0d0b6b9ff86ca0f29b0d47",
+      "git_blob": "a0ed1bb8b440c61a43a605cdeae1d316fc59add1",
+      "size_bytes": 2099
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\commands.txt",
+      "sha256": "a655c9696ab5754111f5c1ad86c9e41571132411bc987b44e799d8771ce08e43",
+      "git_blob": "0210a09e1fc543402c750653c8f8a741fb348d93",
+      "size_bytes": 2522
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\control-matrix.json",
+      "sha256": "fca657fa42c531bdcb01c640e5b925b5f70c7f4a97436d99f849fd0d2187a301",
+      "git_blob": "6dadbe8e36fd8b9e53b01a6f887be5d963dbd0ce",
+      "size_bytes": 3405
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\exact-audit-map-self-test.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size_bytes": 0
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\exact-audit-map-self-test.stdout.txt",
+      "sha256": "209d9288f6ac977187100022f9b3f433ebdbb98139ff490fe58fd8ee8d0ef29b",
+      "git_blob": "1acb48dc29b684e628d94ed6aed2ba75a53b4b5b",
+      "size_bytes": 737
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\exact-focused-tests.stderr.txt",
+      "sha256": "5495901b092a6ba1738719d3a27698602681191a10a5ea3be2b2ad66d78a4b55",
+      "git_blob": "04da5272b70c913b24a2b9ddf8eb8793af2ca59d",
+      "size_bytes": 2847
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\exact-focused-tests.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size_bytes": 0
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\exact-missing-external-target.stderr.txt",
+      "sha256": "c14b474d4d83d9f7744dbe2e5a34b3f6bf81ac38ae6dc86e53ca359e799960ea",
+      "git_blob": "97213f0220730050b7b6c7f523995cd838130756",
+      "size_bytes": 285
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\exact-missing-external-target.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size_bytes": 0
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\exact-reconcile-fail-closed-self-test.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size_bytes": 0
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\exact-reconcile-fail-closed-self-test.stdout.txt",
+      "sha256": "3848f1c85cb7c37e36da6c017b526a408607ff7eac794e54c0bcb600f0d27cdd",
+      "git_blob": "eb4c2e9a7b5e24036e7e4162daf2b58261915e10",
+      "size_bytes": 3135
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\exact-verification.json",
+      "sha256": "827b927f006c14992ea8bf57283d2c0c7ac26191cdc390b0bb2680554da38296",
+      "git_blob": "81de0118028c68288148a97bc1a1abf5dea0e38c",
+      "size_bytes": 11761
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\final-focused-tests.txt",
+      "sha256": "ffbf7b6ebf8a9dccd965b7684aff2ba501f0d01c7a4bbdeed6b5a15b84716652",
+      "git_blob": "9a40c2490d5099af5d77ab6c0388b5f77b58e518",
+      "size_bytes": 2222
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\final-missing-external-target.txt",
+      "sha256": "258b636843f8e978fbb1e36b775e8dfdd3f37fb2b85c2e3f64564722a1c5da83",
+      "git_blob": "1be5e3accd9b45e55323b2d1d4df4ab9b1edcaae",
+      "size_bytes": 760
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\known-cve-coverage-0.16.0.json",
+      "sha256": "a41cc2a165fc5fae67db9288fb9d9ac437b7aedffc958bf758bc8561e7d85a4c",
+      "git_blob": "d3e88ba90a9c8e055c73686a25d4c81dea48289a",
+      "size_bytes": 7352
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\limitations-and-next-slice.md",
+      "sha256": "d52e3f33acf1e0980471f6e06d3bd0eec1dbe368c919ba93276b8e2c299b5a25",
+      "git_blob": "3445f12f87719a71920b592de9a10812459a5549",
+      "size_bytes": 6163
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\migration-conflicts-09ba5ab.json",
+      "sha256": "104f59ea79a1db7fb2cd00e26bb69ec73b500289c3413914c23e7a60f5e5e559",
+      "git_blob": "99afe1f62d01104ed6c1931f910971c0e7c8f13f",
+      "size_bytes": 4072
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\parser-owner.patch",
+      "sha256": "b3fc3df48c75be25f8768368b10f03b8d869767b120c063d549133061494a9ba",
+      "git_blob": "023ea2894ba03d7c05daab4f082e034064763a03",
+      "size_bytes": 3158
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\reconciliation-fail-closed-self-test.txt",
+      "sha256": "fc269e6a9908ff31c704c0b964fdd76fe25397677ecbb7d751cba42a453946ed",
+      "git_blob": "d34692795886fbe996b8b9dd4e94f3a666bfd0ec",
+      "size_bytes": 3504
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\reconciliation-strict-hash-mismatch.txt",
+      "sha256": "2812ea82d8faf9ccda7dd472518437a472698594a272c1d082cf24602233b8c3",
+      "git_blob": "6ce0664072d04ec3aa4ca326b1b66ba78c27679a",
+      "size_bytes": 14713
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\reconciliation-strict-remote-pinned.txt",
+      "sha256": "bac477f20493fa6a22ff354fd5ca3bfd99a27631327abe3147475815eeeecf9f",
+      "git_blob": "5f4fece1ec5a63b6ed8efc79f6afb8f956bfee6a",
+      "size_bytes": 14907
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\regression-file-not-found.txt",
+      "sha256": "f943ba9d9009bcd2f6ff48a44334f618be7d77c290f28416b928917edc520d83",
+      "git_blob": "8c056d58c6012f62d5706cb2e20e760c0a6ae360",
+      "size_bytes": 864
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\remote-coverage-ledger.json",
+      "sha256": "a92dcfede52a0e74fbc0cac7ccfb6a4600ccf4af87a6e7f0c81f3fd0ba388bad",
+      "git_blob": "24190be2c7f64f516706845e7ba04d78b40b064b",
+      "size_bytes": 181867
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\remote-ref-code-comparison.json",
+      "sha256": "97666bde68866e8a43ca7570deb72f8c6fb688300c71ff3e8a997306647511df",
+      "git_blob": "0c5b63431ba16ad6d27398143f43f1ee279dfef4",
+      "size_bytes": 1728
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\run-manifest.json",
+      "sha256": "503f11ba83ba563e4349f6d750677428048d5fb31c05adb587fdcaed2d432e90",
+      "git_blob": "4b8ee15844a2a0256ceba28bc401e5d755744940",
+      "size_bytes": 3728
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\source-audit-entry-reconciliation.json",
+      "sha256": "c69962cdd2d7a76a468cec7109b4e91ff1201a3f8c6dc8e6bd679e83dfa761c4",
+      "git_blob": "fcd9b46aed3f73e99e644e66b095844b9639057a",
+      "size_bytes": 25401
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\source-audit-original.md",
+      "sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+      "git_blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+      "size_bytes": 29553
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c8_source_audit_reconciliation_20261019\\audit-entry-map.py",
+      "sha256": "72117eaefd1cb4b15c73df1d735bb5ea521a5fc06664db86de0fbdaed629e3b6",
+      "git_blob": "9afe957fe8431208f2a55c2adf97b62c0f022cbf",
+      "size_bytes": 13475
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c8_source_audit_reconciliation_20261019\\audit-entry-mapping.json",
+      "sha256": "238737f7487fdf4bcbddd84713d8f920c8fa7402a3fddfe3925448d3679169a2",
+      "git_blob": "dad97d9c96ae75f0d7e069d52753ede54171d34a",
+      "size_bytes": 127086
+    },
+    {
+      "path": "src\\ohscanner\\detectors\\ark_runtime\\syntax.py",
+      "sha256": "3de88d5819149d216201c23b534f94078b5890b545623efa7f70970fd589ba42",
+      "git_blob": "9782642a68168d298aa55d40a49dd4fd32adcd14",
+      "size_bytes": 19387
+    },
+    {
+      "path": "tests\\detectors\\ark_runtime\\test_parser_owner.py",
+      "sha256": "79d45b8c5697f6fa99b33f0a50f618d91e6ceb7a083438cf9c027ed1ab9cf171",
+      "git_blob": "f8bbb97630da17673a59ad8ef493a39a1cc4e13f",
+      "size_bytes": 15334
+    },
+    {
+      "path": "tests\\detectors\\ark_runtime\\fixtures\\ark_runtime\\parser_owner\\missing_external_owner.cpp",
+      "sha256": "d94675c1703c837ca19306259a3bd0b1d76750beb9b1ec9e8c697a4c48303f0c",
+      "git_blob": "2605df5383946d702bd15c687756e62207b8aab0",
+      "size_bytes": 81
+    }
+  ]
+}

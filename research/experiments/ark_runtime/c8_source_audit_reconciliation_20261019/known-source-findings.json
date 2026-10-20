@@ -1,8 +1,8 @@
 {
   "schema_version": "c8.source-audit.known-source-findings/v1",
-  "generated_for": "C8-AUDIT-RECONCILIATION",
+  "generated_for": "C8-AUDIT-RECONCILIATION-PARTIAL-OWNER",
   "evidence_policy": {
-    "source_audit_input": "missing",
+    "source_audit_input": "remote_pinned_original_located",
     "extracted_vulnerability_entries": 0,
     "provisional_substitute_evidence": true,
     "product_vulnerability_claim": "not_asserted",
@@ -10,7 +10,13 @@
     "cve_claim": "not_asserted",
     "precision_recall_claim": "not_asserted",
     "fp_fn_claim": "not_asserted",
-    "scanner_execution": false
+    "scanner_execution": false,
+    "cwe_claim": "not_asserted",
+    "source_audit_original_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "source_audit_original_blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+    "structured_entries_extracted": 0,
+    "prose_rows_reconciled_in_c9": 8,
+    "reconciliation_correction": "remote pinned original located; substitute findings remain non-input evidence"
   },
   "mapping_catalog": {
     "detectors": [
@@ -21,6 +27,14 @@
         "rules": [
           "ark.runtime.typedarray-store-type-origin",
           "ark.runtime.typedarray-allocation-exception-guard"
+        ]
+      },
+      {
+        "detector_id": "ohscanner.cpp.path_traversal",
+        "version": "0.1.0-research",
+        "catalog_status": "research_only_not_enabled_product_catalog",
+        "rules": [
+          "ohcpp-path-traversal-candidate-001"
         ]
       }
     ],
@@ -114,6 +128,31 @@
         "control_id": "C8-DEPENDENCY-UNKNOWN-001",
         "kind": "unknown",
         "expected": "unknown when dependency/replay evidence is absent"
+      },
+      {
+        "control_id": "A-PATH-POS-001",
+        "kind": "positive",
+        "expected": "candidate/unassessed only when external string reaches a file sink without verified containment"
+      },
+      {
+        "control_id": "A-PATH-FIX-001",
+        "kind": "fixed",
+        "expected": "no candidate for basename, canonical containment or literal allowlist control"
+      },
+      {
+        "control_id": "A-PATH-SAFE-001",
+        "kind": "safe",
+        "expected": "no candidate for marked restricted-path negative control; not product safety proof"
+      },
+      {
+        "control_id": "A-PATH-UNR-001",
+        "kind": "unrelated",
+        "expected": "no candidate for non-DataShare source, non-target API or path composition without file sink"
+      },
+      {
+        "control_id": "A-PATH-UNKNOWN-001",
+        "kind": "unknown",
+        "expected": "blocked/unknown for cross-function, wrapper, macro, partial parse or unresolved containment"
       }
     ]
   },
@@ -799,7 +838,7 @@
         "commit": "556cb145fec9f52afd1c49d10290e01036200f00",
         "tree": "7ccd0895622669ac33595c1058e5f0ede0b8e5a5",
         "blob": "52f5b06be8c9ef28512516291faddeda2c24cab9",
-        "sha256": "901f01cce59539d71fb334480a5b7911b2e1d7296cd1b76db3074a1261a74997",
+        "sha256": "2ede13db1316fcdfb5e5639aa6d154dcc7dc4e8ed2cc9b5dfaafe3a91c9a0a10",
         "identity_status": "verified_local"
       },
       "observation": {
@@ -842,8 +881,9 @@
         {
           "role": "status_record",
           "path": "docs/项目现状与下一步.md",
-          "sha256": "901f01cce59539d71fb334480a5b7911b2e1d7296cd1b76db3074a1261a74997",
-          "git_blob": "52f5b06be8c9ef28512516291faddeda2c24cab9"
+          "sha256": "2ede13db1316fcdfb5e5639aa6d154dcc7dc4e8ed2cc9b5dfaafe3a91c9a0a10",
+          "git_blob": "52f5b06be8c9ef28512516291faddeda2c24cab9",
+          "git_object": "556cb145fec9f52afd1c49d10290e01036200f00:docs/项目现状与下一步.md"
         },
         {
           "role": "c7_missing_dependency_evidence",
@@ -870,7 +910,7 @@
         "commit": "556cb145fec9f52afd1c49d10290e01036200f00",
         "tree": "7ccd0895622669ac33595c1058e5f0ede0b8e5a5",
         "blob": "52f5b06be8c9ef28512516291faddeda2c24cab9",
-        "sha256": "901f01cce59539d71fb334480a5b7911b2e1d7296cd1b76db3074a1261a74997",
+        "sha256": "2ede13db1316fcdfb5e5639aa6d154dcc7dc4e8ed2cc9b5dfaafe3a91c9a0a10",
         "identity_status": "verified_local"
       },
       "observation": {
@@ -914,8 +954,9 @@
         {
           "role": "status_record",
           "path": "docs/项目现状与下一步.md",
-          "sha256": "901f01cce59539d71fb334480a5b7911b2e1d7296cd1b76db3074a1261a74997",
-          "git_blob": "52f5b06be8c9ef28512516291faddeda2c24cab9"
+          "sha256": "2ede13db1316fcdfb5e5639aa6d154dcc7dc4e8ed2cc9b5dfaafe3a91c9a0a10",
+          "git_blob": "52f5b06be8c9ef28512516291faddeda2c24cab9",
+          "git_object": "556cb145fec9f52afd1c49d10290e01036200f00:docs/项目现状与下一步.md"
         },
         {
           "role": "c7_missing_replay_evidence",
@@ -931,6 +972,217 @@
         "cia": false,
         "cve": false,
         "metrics": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    },
+    {
+      "entry_id": "A-PATH-DELIVERY-20261018",
+      "finding_identity": "A-PATH-DELIVERY-20261018",
+      "source_identity": {
+        "repository": "origin/codex/a-path-source-sink-20261018",
+        "path": "research/deliveries/cpp/A_PATH_TRAVERSAL_DELIVERY_20261018.md",
+        "commit": "bc27c2ca520223acec6ae6e44e1535e5e4e73404",
+        "tree": "d7cc9d82880ff52ef6c650c9b87cbdd533c57607",
+        "blob": "e64b841019257d05edd239401ddd3b05317e4b1f",
+        "sha256": "c0aa3fda056788cd04a5c16f18efd063e2ef11e5cfa8f78ff6b28bb1bced5dbc",
+        "identity_status": "verified_local"
+      },
+      "observation": {
+        "summary": "A_PATH_TRAVERSAL_DELIVERY_20261018 records a research-only path source-to-file-sink detector and developer controls.",
+        "scope": "detector research delivery and regression mapping; not source-audit input and not product verification",
+        "fact_status": "provisional_substitute_evidence",
+        "source_role": "a_path_source_to_sink_delivery",
+        "limitations": [
+          "The delivery explicitly labels all detector findings candidate and not confirmed.",
+          "The detector is not registered in the product Runner/Catalog at the fixed base.",
+          "No independent labeled truth exists; no accuracy claim is made."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.cpp.path_traversal"
+        ],
+        "rule_ids": [
+          "ohcpp-path-traversal-candidate-001"
+        ],
+        "control_ids": [
+          "A-PATH-POS-001",
+          "A-PATH-FIX-001",
+          "A-PATH-SAFE-001",
+          "A-PATH-UNR-001",
+          "A-PATH-UNKNOWN-001"
+        ],
+        "mapping_status": "mapped"
+      },
+      "controls": [
+        {
+          "control_id": "A-PATH-POS-001",
+          "kind": "positive",
+          "expected": "candidate/unassessed only when external string reaches a file sink without verified containment"
+        },
+        {
+          "control_id": "A-PATH-FIX-001",
+          "kind": "fixed",
+          "expected": "no candidate for basename, canonical containment or literal allowlist control"
+        },
+        {
+          "control_id": "A-PATH-SAFE-001",
+          "kind": "safe",
+          "expected": "no candidate for marked restricted-path negative control; not product safety proof"
+        },
+        {
+          "control_id": "A-PATH-UNR-001",
+          "kind": "unrelated",
+          "expected": "no candidate for non-DataShare source, non-target API or path composition without file sink"
+        },
+        {
+          "control_id": "A-PATH-UNKNOWN-001",
+          "kind": "unknown",
+          "expected": "blocked/unknown for cross-function, wrapper, macro, partial parse or unresolved containment"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "unknown for product admission; research fixture entry points only",
+        "reachable_sensitive_operation": "unknown for product reachability; modeled file open/create/delete sinks only",
+        "trigger_condition": "unknown beyond bounded developer fixtures and the recorded direct research run",
+        "cia_impact": "not asserted by substitute evidence",
+        "audit_evidence": "pinned A_PATH_TRAVERSAL_DELIVERY_20261018 Git blob and its recorded regression matrix",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "a_path_delivery",
+          "path": "research/deliveries/cpp/A_PATH_TRAVERSAL_DELIVERY_20261018.md",
+          "sha256": "c0aa3fda056788cd04a5c16f18efd063e2ef11e5cfa8f78ff6b28bb1bced5dbc",
+          "git_blob": "e64b841019257d05edd239401ddd3b05317e4b1f",
+          "git_object": "origin/codex/a-path-source-sink-20261018:research/deliveries/cpp/A_PATH_TRAVERSAL_DELIVERY_20261018.md"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "candidate",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cwe": false,
+        "cve": false,
+        "metrics": false
+      },
+      "compatibility": {
+        "legacy_v1": "read_only",
+        "historical_ids_rewritten": false
+      },
+      "schema_version": "ohscanner.source-audit-entry/v2"
+    },
+    {
+      "entry_id": "A-SAMPLE30-CONTACTS-PATH-TRAVERSAL-001",
+      "finding_identity": "ohscanner-contacts-path-traversal-001",
+      "source_identity": {
+        "repository": "openharmony/applications_contacts_data",
+        "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+        "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+        "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+        "blob": "c93e950725adc93276916b3c96c5ac7a5bb5b6b7",
+        "sha256": "c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6",
+        "identity_status": "recorded_external"
+      },
+      "observation": {
+        "summary": "A sample30 technical report records ohscanner-contacts-path-traversal-001; this reconciliation retains it only as substitute evidence for the missing source-audit input.",
+        "scope": "source-bound sample30 report and PoC source manifest; the missing 源码漏洞审查记录_20261018.md original is not reconstructed",
+        "fact_status": "provisional_substitute_evidence",
+        "source_role": "a_sample30_confirmed_finding_substitute",
+        "source_report_finding_id": "ohscanner-contacts-path-traversal-001",
+        "limitations": [
+          "The technical report is substitute evidence, not the missing source-audit record original.",
+          "This reconciliation does not adopt source-report status, CWE/CVE or product-confirmed wording as its own conclusion.",
+          "The source manifest records external source identities but the target product repositories are not present in this worktree."
+        ]
+      },
+      "mapping": {
+        "detector_ids": [
+          "ohscanner.cpp.path_traversal"
+        ],
+        "rule_ids": [
+          "ohcpp-path-traversal-candidate-001"
+        ],
+        "control_ids": [
+          "A-PATH-POS-001",
+          "A-PATH-FIX-001",
+          "A-PATH-SAFE-001",
+          "A-PATH-UNR-001",
+          "A-PATH-UNKNOWN-001"
+        ],
+        "mapping_status": "mapped"
+      },
+      "controls": [
+        {
+          "control_id": "A-PATH-POS-001",
+          "kind": "positive",
+          "expected": "candidate/unassessed only when external string reaches a file sink without verified containment"
+        },
+        {
+          "control_id": "A-PATH-FIX-001",
+          "kind": "fixed",
+          "expected": "no candidate for basename, canonical containment or literal allowlist control"
+        },
+        {
+          "control_id": "A-PATH-SAFE-001",
+          "kind": "safe",
+          "expected": "no candidate for marked restricted-path negative control; not product safety proof"
+        },
+        {
+          "control_id": "A-PATH-UNR-001",
+          "kind": "unrelated",
+          "expected": "no candidate for non-DataShare source, non-target API or path composition without file sink"
+        },
+        {
+          "control_id": "A-PATH-UNKNOWN-001",
+          "kind": "unknown",
+          "expected": "blocked/unknown for cross-function, wrapper, macro, partial parse or unresolved containment"
+        }
+      ],
+      "evidence_gate": {
+        "entry_or_permission_boundary": "source report assertion only: WRITE_CONTACTS-gated Contacts DataShare entry",
+        "reachable_sensitive_operation": "source report assertion only: portrait path composition reaches delete/unlink on save failure",
+        "trigger_condition": "source report assertion only: attacker-controlled PortraitFileName with dot segments",
+        "cia_impact": "source report assertion only: integrity and availability effect; not independently re-promoted here",
+        "audit_evidence": "pinned sample30 technical report, PoC source manifest and adjacent provenance artifacts",
+        "validated_vulnerability": false
+      },
+      "artifacts": [
+        {
+          "role": "sample30_technical_report",
+          "path": "research/deliveries/a-line-sample30/20261018/report/technical-report.md",
+          "sha256": "8f17eb3c749abfc89f66cca226581c5f409faa48508ed55a1688a5b6af742533",
+          "git_blob": "fa7a92614f9001c1fc8a697ee1c2d0c9137d3503",
+          "git_object": "758d22f354b4aede80d21f321761e4515ab86047:research/deliveries/a-line-sample30/20261018/report/technical-report.md"
+        },
+        {
+          "role": "sample30_poc_source_manifest",
+          "path": "research/deliveries/a-line-sample30/20261018/poc/ohscanner-contacts-path-traversal/source_manifest.json",
+          "sha256": "b9234fc08f8b3bef54565443c1e9ac601cdfa40a22c5cd9aa1e243bc3e299d2c",
+          "git_blob": "ec79185d8b8beb16e9d1809e176f89e440996843",
+          "git_object": "758d22f354b4aede80d21f321761e4515ab86047:research/deliveries/a-line-sample30/20261018/poc/ohscanner-contacts-path-traversal/source_manifest.json"
+        },
+        {
+          "role": "sample30_adjacent_provenance",
+          "path": "research/deliveries/a-line-sample30/20261018/evidence/provenance_adjacent.json",
+          "sha256": "a2a98987b11b09bc5e8308ab185f83155070fb2fd55a6c9c703730ff719d9834",
+          "git_blob": "c807c0cd3c826ad006a9c26720f5f47ee4aef90a",
+          "git_object": "758d22f354b4aede80d21f321761e4515ab86047:research/deliveries/a-line-sample30/20261018/evidence/provenance_adjacent.json"
+        }
+      ],
+      "claim_boundary": {
+        "classification": "candidate",
+        "assessment_status": "unassessed",
+        "product_vulnerability": false,
+        "cia": false,
+        "cwe": false,
+        "cve": false,
+        "metrics": false
+      },
+      "compatibility": {
+        "legacy_v1": "read_only",
+        "historical_ids_rewritten": false
       },
       "schema_version": "ohscanner.source-audit-entry/v2"
     }

@@ -1,0 +1,42 @@
+{
+  "schema_version": "c8.source-audit.mapping-self-test/v1",
+  "status": "pass",
+  "cases": [
+    {
+      "case": "review_blob",
+      "passed": true
+    },
+    {
+      "case": "review_sha256",
+      "passed": true
+    },
+    {
+      "case": "static_tree",
+      "passed": true
+    },
+    {
+      "case": "known_blob",
+      "passed": true
+    },
+    {
+      "case": "entries_36",
+      "passed": true
+    },
+    {
+      "case": "known_cves_17_3",
+      "passed": true
+    },
+    {
+      "case": "no_substitute",
+      "passed": true
+    },
+    {
+      "case": "partial_identity_rejected",
+      "passed": true
+    },
+    {
+      "case": "migration_conflicts",
+      "passed": true
+    }
+  ]
+}

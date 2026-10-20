@@ -1,0 +1,2286 @@
+{
+  "schema_version": "c8.source-audit.full-entry-map/v1",
+  "bindings": {
+    "review_original": {
+      "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+      "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+      "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+      "sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240"
+    },
+    "current_head": {
+      "commit": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+      "tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c"
+    },
+    "latest_static_baseline": {
+      "ref": "origin/codex/c-line-static-20261019",
+      "commit": "09ba5aba03c7c7d6787bace349b8fc0a6b0a5457",
+      "tree": "d15b91627c94d9c3043d7d58d47fcf9af7e42454"
+    },
+    "known_cves_baseline": {
+      "ref": "origin/main",
+      "commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "tree": "8c5a296d8304d98193a29a4695aaf61ca0c0996c",
+      "path": "src/ohscanner/detectors/known_cves.py",
+      "blob": "a2ddd5ff2afc2f6fb0f1677ea3ffbbfc580a195b",
+      "version": "0.16.0"
+    }
+  },
+  "entry_counts": {
+    "all": 36
+  },
+  "claim_boundary": {
+    "substitute_evidence_used_as_input": false,
+    "product_vulnerability": "not_asserted",
+    "cia": "not_asserted",
+    "metrics": "not_computed"
+  },
+  "entries": [
+    {
+      "finding_id": "AUDIT-CVE-2026-46675",
+      "kind": "public_cve",
+      "title": "#### CVE-2026-46675 — libpng 顺序读取中的悬空指针读取",
+      "cve_ids": [
+        "CVE-2026-46675"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-46675"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "libpng",
+        "repository_paths_from_original": [
+          "G:\\OpenHarmony-GitCode-Mirror"
+        ],
+        "head_spellings_from_original": [
+          "e57b1079564a"
+        ],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 35,
+          "line_end": 42,
+          "excerpt_sha256": "f38d6335ac163968496f732794ea3cfbae99c1d9dcd34596a65b6fa218bd3ee1",
+          "excerpt": "#### CVE-2026-46675 — libpng 顺序读取中的悬空指针读取\n\n- **公开披露：confirmed。** libpng GHSA 于 2026-09-29 发布：libpng 1.6.0–1.6.58 受影响，1.6.59 修复。特制 zTXt/iTXt/iCCP 块配合调用方先调用 png_read_info()、未读取图像行便调用 png_read_end()，可能使解压继续读取已释放的输入缓冲。公告给出的最坏影响是崩溃，不是代码执行。\n- **本地组件：confirmed。** 仓库 G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\third_party_libpng，master，HEAD e57b1079564a，工作树干净。README.OpenSource 和 BUILD.gn 指向 libpng 1.6.55；install.py 从 libpng-1.6.55.tar.gz 构建，现有补丁名单包含 CVE-2026-33416、CVE-2026-33636、CVE-2026-34757，但未列 CVE-2026-46675。手机产品配置包含 libpng。\n- **动态证据边界：** 先前在 WSL /tmp 的隔离副本用特制 PNG 和 ASan 复现了堆 use-after-free；对临时副本应用上游修复后，同一输入不再触发。仓库本身未改动。**这是组件 Harness 证据，不是 OpenHarmony 产品崩溃确认。**\n- **产品状态：unknown。** 当前镜像非测试源码中没有找到满足公告所需罕见顺序的产品调用点；没有设备或产品构建验证。\n- **来源：** [libpng 官方 GHSA](https://github.com/pnggroup/libpng/security/advisories/GHSA-qvg3-h654-xq3j)；[上游修复提交](https://github.com/pnggroup/libpng/commit/aa77ef38c17ab2fc1b41bec09fb973c6a386641d)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-libpng-cve-2026-46675",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2026-46675 — libpng 顺序读取中的悬空指针读取\n\n- **公开披露：confirmed。** libpng GHSA 于 2026-09-29 发布：libpng 1.6.0–1.6.58 受影响，1.6.59 修复。特制 zTXt/iTXt/iCCP 块配合调用方先调用 png_read_info()、未读取图像行便调用 png_read_end()，可能使解压继续读取已释放的输入缓冲。公告给出的最坏影响是崩溃，不是代码执行。\n- **本地组件：confirmed。** 仓库 G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\third_party_libpng，master，HEAD e57b1079564a，工作树干净。README.OpenSource 和 BUILD.gn 指向 libpng 1.6.55；install.py 从 libpng-1.6.55.tar.gz 构建，现有补丁名单包含 CVE-2026-33416、CVE-2026-33636、CVE-2026-34757，但未列 CVE-2026-46675。手机产品配置包含 libpng。\n- **动态证据边界：** 先前在 WSL /tmp 的隔离副本用特制 PNG 和 ASan 复现了堆 use-after-free；对临时副本应用上游修复后，同一输入不再触发。仓库本身未改动。**这是组件 Harness 证据，不是 OpenHarmony 产品崩溃确认。**\n- **产品状态：unknown。** 当前镜像非测试源码中没有找到满足公告所需罕见顺序的产品调用点；没有设备或产品构建验证。\n- **来源：** [libpng 官方 GHSA](https://github.com/pnggroup/libpng/security/advisories/GHSA-qvg3-h654-xq3j)；[上游修复提交](https://github.com/pnggroup/libpng/commit/aa77ef38c17ab2fc1b41bec09fb973c6a386641d)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "PATCH-ONLY-CVE-2026-33416",
+      "kind": "patch_list_only",
+      "title": "- **本地组件：confirmed。** 仓库 G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\third_party_libpng，master，HEAD e57b1079564a，工作树干净。README.OpenSource 和 BUILD.gn 指向 libpng 1.6.55；install.py 从 libpng-1.6.55.tar.gz 构建，现有补丁名单包含 CVE-2026-33416、CVE-2026-33636、CVE-2026-34757，但未列 CVE-2026-46675。手机产品配置包含 libpng。",
+      "cve_ids": [
+        "CVE-2026-33416"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-33416"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "libpng",
+        "repository_paths_from_original": [
+          "G:\\OpenHarmony-GitCode-Mirror"
+        ],
+        "head_spellings_from_original": [
+          "e57b1079564a"
+        ],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 38,
+          "line_end": 38,
+          "excerpt_sha256": "a295b66e9b1c298273d1bb799e6a175ecc00dc9cf98531326ba96f889e97efca",
+          "excerpt": "- **本地组件：confirmed。** 仓库 G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\third_party_libpng，master，HEAD e57b1079564a，工作树干净。README.OpenSource 和 BUILD.gn 指向 libpng 1.6.55；install.py 从 libpng-1.6.55.tar.gz 构建，现有补丁名单包含 CVE-2026-33416、CVE-2026-33636、CVE-2026-34757，但未列 CVE-2026-46675。手机产品配置包含 libpng。"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": null,
+            "coverage_status": "unknown_not_covered_by_known_cves_0.16.0",
+            "actual_result": "patch-list-only",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "unknown_or_unmapped"
+      },
+      "controls": [
+        "AUDIT-PATCH-LIST-ONLY-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "- **本地组件：confirmed。** 仓库 G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\third_party_libpng，master，HEAD e57b1079564a，工作树干净。README.OpenSource 和 BUILD.gn 指向 libpng 1.6.55；install.py 从 libpng-1.6.55.tar.gz 构建，现有补丁名单包含 CVE-2026-33416、CVE-2026-33636、CVE-2026-34757，但未列 CVE-2026-46675。手机产品配置包含 libpng。",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "patch_list_only",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "PATCH-ONLY-CVE-2026-34757",
+      "kind": "patch_list_only",
+      "title": "- **本地组件：confirmed。** 仓库 G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\third_party_libpng，master，HEAD e57b1079564a，工作树干净。README.OpenSource 和 BUILD.gn 指向 libpng 1.6.55；install.py 从 libpng-1.6.55.tar.gz 构建，现有补丁名单包含 CVE-2026-33416、CVE-2026-33636、CVE-2026-34757，但未列 CVE-2026-46675。手机产品配置包含 libpng。",
+      "cve_ids": [
+        "CVE-2026-34757"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-34757"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "libpng",
+        "repository_paths_from_original": [
+          "G:\\OpenHarmony-GitCode-Mirror"
+        ],
+        "head_spellings_from_original": [
+          "e57b1079564a"
+        ],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 38,
+          "line_end": 38,
+          "excerpt_sha256": "a295b66e9b1c298273d1bb799e6a175ecc00dc9cf98531326ba96f889e97efca",
+          "excerpt": "- **本地组件：confirmed。** 仓库 G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\third_party_libpng，master，HEAD e57b1079564a，工作树干净。README.OpenSource 和 BUILD.gn 指向 libpng 1.6.55；install.py 从 libpng-1.6.55.tar.gz 构建，现有补丁名单包含 CVE-2026-33416、CVE-2026-33636、CVE-2026-34757，但未列 CVE-2026-46675。手机产品配置包含 libpng。"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": null,
+            "coverage_status": "unknown_not_covered_by_known_cves_0.16.0",
+            "actual_result": "patch-list-only",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "unknown_or_unmapped"
+      },
+      "controls": [
+        "AUDIT-PATCH-LIST-ONLY-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "- **本地组件：confirmed。** 仓库 G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\third_party_libpng，master，HEAD e57b1079564a，工作树干净。README.OpenSource 和 BUILD.gn 指向 libpng 1.6.55；install.py 从 libpng-1.6.55.tar.gz 构建，现有补丁名单包含 CVE-2026-33416、CVE-2026-33636、CVE-2026-34757，但未列 CVE-2026-46675。手机产品配置包含 libpng。",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "patch_list_only",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2025-9900",
+      "kind": "public_cve",
+      "title": "#### CVE-2025-9900 — libtiff 调色板读取越界写",
+      "cve_ids": [
+        "CVE-2025-9900"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2025-9900"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "libtiff",
+        "repository_paths_from_original": [
+          "G:\\OpenHarmony-GitCode-Mirror"
+        ],
+        "head_spellings_from_original": [
+          "d4a0516c477d"
+        ],
+        "version_mentions": [
+          "v4.7.1"
+        ],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 43,
+          "line_end": 50,
+          "excerpt_sha256": "2664d10066753d5fcebd9aa747faf380c2f0b6aa744a38de3a1c7adea8fe5b07",
+          "excerpt": "#### CVE-2025-9900 — libtiff 调色板读取越界写\n\n- **公开披露：confirmed。** Red Hat 公告描述特制 TIFF 元数据可造成 write-what-where 风险；上游 4.7.1 发布说明包含修复。\n- **本地组件：confirmed。** 仓库 G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\third_party_libtiff，master，HEAD d4a0516c477d，工作树干净；本地版本为 4.7.0。关键路径在 libtiff/tif_getimage.c 的 put8bitcmaptile / TIFFReadRGBAImageOriented。\n- **动态证据边界：** 先前在隔离副本以特制 16×16 调色板 TIFF 和较小目标缓冲运行 ASan，观察到越界写。该结果确认组件级问题路径；未证明远程代码执行，也未找到产品中会以受攻击者控制尺寸调用该 API 的入口。\n- **产品状态：unknown。**\n- **来源：** [Red Hat CVE-2025-9900 公告](https://access.redhat.com/security/cve/cve-2025-9900)；[libtiff 4.7.1 发布说明](https://libtiff.gitlab.io/libtiff/releases/v4.7.1.html)；[TIFFReadRGBAImage API](https://libtiff.gitlab.io/libtiff/functions/TIFFReadRGBAImage.html)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-libtiff-cve-2025-9900",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2025-9900 — libtiff 调色板读取越界写\n\n- **公开披露：confirmed。** Red Hat 公告描述特制 TIFF 元数据可造成 write-what-where 风险；上游 4.7.1 发布说明包含修复。\n- **本地组件：confirmed。** 仓库 G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\third_party_libtiff，master，HEAD d4a0516c477d，工作树干净；本地版本为 4.7.0。关键路径在 libtiff/tif_getimage.c 的 put8bitcmaptile / TIFFReadRGBAImageOriented。\n- **动态证据边界：** 先前在隔离副本以特制 16×16 调色板 TIFF 和较小目标缓冲运行 ASan，观察到越界写。该结果确认组件级问题路径；未证明远程代码执行，也未找到产品中会以受攻击者控制尺寸调用该 API 的入口。\n- **产品状态：unknown。**\n- **来源：** [Red Hat CVE-2025-9900 公告](https://access.redhat.com/security/cve/cve-2025-9900)；[libtiff 4.7.1 发布说明](https://libtiff.gitlab.io/libtiff/releases/v4.7.1.html)；[TIFFReadRGBAImage API](https://libtiff.gitlab.io/libtiff/functions/TIFFReadRGBAImage.html)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2026-92391",
+      "kind": "public_cve",
+      "title": "#### CVE-2026-92391 — libcurl 深层 MIME 释放递归导致栈溢出",
+      "cve_ids": [
+        "CVE-2026-92391"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-92391"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "libcurl",
+        "repository_paths_from_original": [
+          "G:\\OpenHarmony-GitCode-Mirror"
+        ],
+        "head_spellings_from_original": [
+          "1386bb128bb0"
+        ],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 51,
+          "line_end": 57,
+          "excerpt_sha256": "e6b2de25463fab88ac90616376ab3d229a59fc1d72fac181564171549981d258",
+          "excerpt": "#### CVE-2026-92391 — libcurl 深层 MIME 释放递归导致栈溢出\n\n- **公开披露：confirmed。** curl 官方 2026-10-14 公告说明，通过公开 API 构造数千层嵌套 MIME 后，curl_mime_free() 递归释放会耗尽栈并崩溃；官方定为低危。受影响版本 7.56.0–8.22.0，8.23.0 修复。\n- **本地组件：confirmed。** 仓库 G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\third_party_curl，master，HEAD 1386bb128bb0，工作树干净。curlver.h 标记 8.8.0，BUILD.gn 编入 lib/mime.c；mime.c 的子结构清理会递归调用 curl_mime_free()。\n- **产品状态：unknown。** request_request 当前可见的 curl_adp.cpp 构造平面表单，没有证据显示产品入口可构造数千层嵌套结构。本轮没有完成 curl 的动态复现。\n- **来源：** [curl 官方 CVE-2026-92391 公告](https://curl.se/docs/CVE-2026-92391.html)；[上游修复提交](https://github.com/curl/curl/commit/d7546809d5bd548b69ec49fca2)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-curl-cve-2026-92391",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2026-92391 — libcurl 深层 MIME 释放递归导致栈溢出\n\n- **公开披露：confirmed。** curl 官方 2026-10-14 公告说明，通过公开 API 构造数千层嵌套 MIME 后，curl_mime_free() 递归释放会耗尽栈并崩溃；官方定为低危。受影响版本 7.56.0–8.22.0，8.23.0 修复。\n- **本地组件：confirmed。** 仓库 G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\third_party_curl，master，HEAD 1386bb128bb0，工作树干净。curlver.h 标记 8.8.0，BUILD.gn 编入 lib/mime.c；mime.c 的子结构清理会递归调用 curl_mime_free()。\n- **产品状态：unknown。** request_request 当前可见的 curl_adp.cpp 构造平面表单，没有证据显示产品入口可构造数千层嵌套结构。本轮没有完成 curl 的动态复现。\n- **来源：** [curl 官方 CVE-2026-92391 公告](https://curl.se/docs/CVE-2026-92391.html)；[上游修复提交](https://github.com/curl/curl/commit/d7546809d5bd548b69ec49fca2)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2026-67216",
+      "kind": "public_cve",
+      "title": "#### CVE-2026-67216 — cJSON_Compare 指数级 CPU 复杂度",
+      "cve_ids": [
+        "CVE-2026-67216"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-67216"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "cJSON",
+        "repository_paths_from_original": [
+          "G:\\OpenHarmony-GitCode-Mirror"
+        ],
+        "head_spellings_from_original": [
+          "0c2c9dff82cc"
+        ],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 58,
+          "line_end": 64,
+          "excerpt_sha256": "0adb37c7b8d27a4ee69cbbbac2fca5fa5d92d105b768a66baa4388109317c031",
+          "excerpt": "#### CVE-2026-67216 — cJSON_Compare 指数级 CPU 复杂度\n\n- **公开披露：confirmed，但来源评级有差异。** GitHub Advisory 将 GHSA 标为 Unreviewed；Red Hat 也发布了 CVE 说明，并指出必须由宿主程序显式将输入交给 cJSON_Compare() 与结构匹配的参考文档比较，普通 JSON 解析入口本身不足以触发。\n- **本地组件：candidate / strong source match。** G:\\OpenHarmony-GitCode-Mirror\\repos\\third_party_cJSON（独立于 98 仓库 campaign 目录），master，HEAD 0c2c9dff82cc，工作树干净，版本 1.7.19。代码包含 cJSON_Compare() 递归对象比较路径。此前观察到嵌套输入比较耗时快速增长，但这只是组件级计时实验。\n- **产品状态：unknown。** 抽样产品调用点未确认把攻击者可控输入送入该比较函数；没有产品级 DoS 复现。\n- **来源：** [GitHub Advisory GHSA-ff2v-f99f-wm3f](https://github.com/advisories/GHSA-ff2v-f99f-wm3f)；[Red Hat CVE-2026-67216 说明](https://access.redhat.com/security/cve/cve-2026-67216)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-cjson-cve-2026-67216",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2026-67216 — cJSON_Compare 指数级 CPU 复杂度\n\n- **公开披露：confirmed，但来源评级有差异。** GitHub Advisory 将 GHSA 标为 Unreviewed；Red Hat 也发布了 CVE 说明，并指出必须由宿主程序显式将输入交给 cJSON_Compare() 与结构匹配的参考文档比较，普通 JSON 解析入口本身不足以触发。\n- **本地组件：candidate / strong source match。** G:\\OpenHarmony-GitCode-Mirror\\repos\\third_party_cJSON（独立于 98 仓库 campaign 目录），master，HEAD 0c2c9dff82cc，工作树干净，版本 1.7.19。代码包含 cJSON_Compare() 递归对象比较路径。此前观察到嵌套输入比较耗时快速增长，但这只是组件级计时实验。\n- **产品状态：unknown。** 抽样产品调用点未确认把攻击者可控输入送入该比较函数；没有产品级 DoS 复现。\n- **来源：** [GitHub Advisory GHSA-ff2v-f99f-wm3f](https://github.com/advisories/GHSA-ff2v-f99f-wm3f)；[Red Hat CVE-2026-67216 说明](https://access.redhat.com/security/cve/cve-2026-67216)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2026-67215",
+      "kind": "public_cve",
+      "title": "#### CVE-2026-67215 — cJSON JSON Patch 递归导致资源耗尽",
+      "cve_ids": [
+        "CVE-2026-67215"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-67215"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "cJSON",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 65,
+          "line_end": 73,
+          "excerpt_sha256": "eccc9a3b611f98a554b023d4683cd39d1b8b13eb2aa788c9b305adcaea992a22",
+          "excerpt": "#### CVE-2026-67215 — cJSON JSON Patch 递归导致资源耗尽\n\n- **公开披露：confirmed。** Red Hat 记录了对不可信 JSON Patch 输入的无界递归/栈资源耗尽问题。\n- **本地组件：candidate / code-path match。** 本地 cJSON 1.7.19 源码包含 cJSON_Utils JSON Patch 实现；构建配置中 cJSON_Utils.c 仅在 ohos_lite 路径编译，标准配置主要编译 cJSON.c。\n- **产品状态：unknown。** 尚未证明标准产品镜像编入该 Utils 文件，也未找到攻击者可控调用点；本项不作为已确认的 OpenHarmony 产品漏洞。\n- **来源：** [Red Hat CVE-2026-67215 说明](https://access.redhat.com/security/cve/cve-2026-67215)。\n\n### B. OpenHarmony 或上游公告确认，但当前本地产品状态未确认\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-cjson-cve-2026-67215",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2026-67215 — cJSON JSON Patch 递归导致资源耗尽\n\n- **公开披露：confirmed。** Red Hat 记录了对不可信 JSON Patch 输入的无界递归/栈资源耗尽问题。\n- **本地组件：candidate / code-path match。** 本地 cJSON 1.7.19 源码包含 cJSON_Utils JSON Patch 实现；构建配置中 cJSON_Utils.c 仅在 ohos_lite 路径编译，标准配置主要编译 cJSON.c。\n- **产品状态：unknown。** 尚未证明标准产品镜像编入该 Utils 文件，也未找到攻击者可控调用点；本项不作为已确认的 OpenHarmony 产品漏洞。\n- **来源：** [Red Hat CVE-2026-67215 说明](https://access.redhat.com/security/cve/cve-2026-67215)。\n\n### B. OpenHarmony 或上游公告确认，但当前本地产品状态未确认\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2026-27648",
+      "kind": "public_cve",
+      "title": "#### CVE-2026-27648 — web_webview 越界写",
+      "cve_ids": [
+        "CVE-2026-27648"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-27648"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "web_webview",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 74,
+          "line_end": 79,
+          "excerpt_sha256": "93c7bc7bec8b301d8d41cf29f33580480875eaf097a102d46a2eb4db8cf63d15",
+          "excerpt": "#### CVE-2026-27648 — web_webview 越界写\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 4 月公告列为 CVSS 8.8，影响 5.0.3、5.1.0、6.0 发布线；漏洞涉及 NWebHandlerDelegate::FlowbufStrAtIndex 未校验 ashmem flowbuffer 范围及 curIndex 容器索引。修复分别见 chromium_src PR #7093、#7110、#7108。\n- **本地状态：unknown。** campaign-100-20261017 当前目录没有 web_webview 仓库，因此不能从本地快照确认受影响代码或修复状态；没有运行 PoC。\n- **来源：** [OpenHarmony 2026 年 4 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-04.md)；[6.0 修复 PR #7093](https://gitcode.com/openharmony-tpc/chromium_src/pull/7093)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-webview-cve-2026-27648",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2026-27648 — web_webview 越界写\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 4 月公告列为 CVSS 8.8，影响 5.0.3、5.1.0、6.0 发布线；漏洞涉及 NWebHandlerDelegate::FlowbufStrAtIndex 未校验 ashmem flowbuffer 范围及 curIndex 容器索引。修复分别见 chromium_src PR #7093、#7110、#7108。\n- **本地状态：unknown。** campaign-100-20261017 当前目录没有 web_webview 仓库，因此不能从本地快照确认受影响代码或修复状态；没有运行 PoC。\n- **来源：** [OpenHarmony 2026 年 4 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-04.md)；[6.0 修复 PR #7093](https://gitcode.com/openharmony-tpc/chromium_src/pull/7093)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2025-25212",
+      "kind": "public_cve",
+      "title": "#### CVE-2025-25212 — 剪贴板观察者无限注册导致本地 DoS",
+      "cve_ids": [
+        "CVE-2025-25212"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2025-25212"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "pasteboard",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [
+          "dd22c7cb5e5f"
+        ],
+        "version_mentions": [
+          "v5.0.3",
+          "v5.0.3"
+        ],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 80,
+          "line_end": 86,
+          "excerpt_sha256": "731283f52892276837775f3e2b779122d73e27564b0c85755db0e3785b226757",
+          "excerpt": "#### CVE-2025-25212 — 剪贴板观察者无限注册导致本地 DoS\n\n- **公开披露：confirmed。** OpenHarmony/NVD 记录影响 v5.0.3 及以前版本；官方 PR #1539 将观察者按 (userId, PID) 管理、限制每进程数量并在应用退出时清理。官方 CNA 与 NVD 的 CVSS 分别为 3.3 和 5.5，存在评分差异。\n- **本地历史快照：confirmed。** miscservices_pasteboard 仓库 master，HEAD dd22c7cb5e5f，工作树干净，组件版本 3.1（提交日期 2022-07-22）。services/core/src/pasteboard_service.cpp:221 将观察者直接放入集合而无数量上限，:290 遍历并通知。该本地旧快照支持“历史源码存在无限累积路径”。\n- **当前产品：unknown。** 该快照不是 v5.0.3 的精确构建；调用权限、具体产品服务注册和运行时资源影响未在设备验证。\n- **来源：** [NVD CVE-2025-25212](https://nvd.nist.gov/vuln/detail/CVE-2025-25212)；[官方修复 PR #1539](https://gitcode.com/openharmony/distributeddatamgr_pasteboard/merge_requests/1539)；[OpenHarmony 安全公告归档](https://gitcode.com/openharmony/security/tree/master/zh/security-disclosure)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-pasteboard-cve-2025-25212",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2025-25212 — 剪贴板观察者无限注册导致本地 DoS\n\n- **公开披露：confirmed。** OpenHarmony/NVD 记录影响 v5.0.3 及以前版本；官方 PR #1539 将观察者按 (userId, PID) 管理、限制每进程数量并在应用退出时清理。官方 CNA 与 NVD 的 CVSS 分别为 3.3 和 5.5，存在评分差异。\n- **本地历史快照：confirmed。** miscservices_pasteboard 仓库 master，HEAD dd22c7cb5e5f，工作树干净，组件版本 3.1（提交日期 2022-07-22）。services/core/src/pasteboard_service.cpp:221 将观察者直接放入集合而无数量上限，:290 遍历并通知。该本地旧快照支持“历史源码存在无限累积路径”。\n- **当前产品：unknown。** 该快照不是 v5.0.3 的精确构建；调用权限、具体产品服务注册和运行时资源影响未在设备验证。\n- **来源：** [NVD CVE-2025-25212](https://nvd.nist.gov/vuln/detail/CVE-2025-25212)；[官方修复 PR #1539](https://gitcode.com/openharmony/distributeddatamgr_pasteboard/merge_requests/1539)；[OpenHarmony 安全公告归档](https://gitcode.com/openharmony/security/tree/master/zh/security-disclosure)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2022-45877",
+      "kind": "public_cve",
+      "title": "#### CVE-2022-45877 — 跨设备认证 PIN 明文传输",
+      "cve_ids": [
+        "CVE-2022-45877"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2022-45877"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "device_manager",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 87,
+          "line_end": 92,
+          "excerpt_sha256": "30b093df611265e2ee7995cf1afc103a23b86b9c6cd876d63b6eaca23abebcd4",
+          "excerpt": "#### CVE-2022-45877 — 跨设备认证 PIN 明文传输\n\n- **公开披露：confirmed。** OpenHarmony 2022 年 12 月公告记录 3.1 至 3.1.4 发布线存在跨设备认证 PIN 明文传输问题；公告 CVSS 8.3，NVD 评分 5.3。修复 PR #915 从认证令牌移除 PIN，改由设备本地 UI 处理。\n- **本地状态：unknown。** campaign 镜像缺少 distributedhardware_device_manager 和 applications_hap。只有旧 security_deviceauth，其中 PIN 进入 PAKE 参数；这不足以证明 PIN 以明文上网。\n- **来源：** [OpenHarmony 2022 年 12 月公告](https://gitcode.com/openharmony/security/blob/master/en/security-disclosure/2022/2022-12.md)；[NVD CVE-2022-45877](https://nvd.nist.gov/vuln/detail/CVE-2022-45877)；[设备管理器修复 PR #915](https://gitcode.com/openharmony/distributedhardware_device_manager/merge_requests/915)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-device-manager-cve-2022-45877",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2022-45877 — 跨设备认证 PIN 明文传输\n\n- **公开披露：confirmed。** OpenHarmony 2022 年 12 月公告记录 3.1 至 3.1.4 发布线存在跨设备认证 PIN 明文传输问题；公告 CVSS 8.3，NVD 评分 5.3。修复 PR #915 从认证令牌移除 PIN，改由设备本地 UI 处理。\n- **本地状态：unknown。** campaign 镜像缺少 distributedhardware_device_manager 和 applications_hap。只有旧 security_deviceauth，其中 PIN 进入 PAKE 参数；这不足以证明 PIN 以明文上网。\n- **来源：** [OpenHarmony 2022 年 12 月公告](https://gitcode.com/openharmony/security/blob/master/en/security-disclosure/2022/2022-12.md)；[NVD CVE-2022-45877](https://nvd.nist.gov/vuln/detail/CVE-2022-45877)；[设备管理器修复 PR #915](https://gitcode.com/openharmony/distributedhardware_device_manager/merge_requests/915)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2026-58313",
+      "kind": "public_cve",
+      "title": "#### CVE-2026-58313 — bundlemanager_app_domain_verify UAF",
+      "cve_ids": [
+        "CVE-2026-58313"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-58313"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "app_domain_verify",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [
+          "80513aacffbb"
+        ],
+        "version_mentions": [
+          "v6.1"
+        ],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 93,
+          "line_end": 98,
+          "excerpt_sha256": "28fca5929a156043fdfcbf127cf71ed33e49fcfd48cc548496d2916efe80a3b7",
+          "excerpt": "#### CVE-2026-58313 — bundlemanager_app_domain_verify UAF\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 8 月公告列出 v6.1 发布线 UAF，本地攻击者可导致任意代码执行，CVSS 7.8。\n- **本地状态：unknown / 有保护迹象。** bundlemanager_app_domain_verify master，HEAD 80513aacffbb，工作树干净；frameworks/common/include/utils/lru_cache_util.h 中 LRU 访问带互斥保护。但公告未在摘要中给出足以将该 CVE 精确映射到此处 LRU 代码的根因，所以不能仅凭这把锁宣布根因已修复，也不能说当前 master 仍受影响。\n- **来源：** [OpenHarmony 2026 年 8 月公告邮件](https://lists.openatom.io/hyperkitty/list/security%40openharmony.io/thread/IJ5WNUSUCN7CDCFQLO4FWYGJONVN2WYL/)；[官方 2026 年 8 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-08.md)；[相关仓库 PR #229](https://gitcode.com/openharmony/bundlemanager_app_domain_verify/pull/229)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-appdomainverify-cve-2026-58313",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2026-58313 — bundlemanager_app_domain_verify UAF\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 8 月公告列出 v6.1 发布线 UAF，本地攻击者可导致任意代码执行，CVSS 7.8。\n- **本地状态：unknown / 有保护迹象。** bundlemanager_app_domain_verify master，HEAD 80513aacffbb，工作树干净；frameworks/common/include/utils/lru_cache_util.h 中 LRU 访问带互斥保护。但公告未在摘要中给出足以将该 CVE 精确映射到此处 LRU 代码的根因，所以不能仅凭这把锁宣布根因已修复，也不能说当前 master 仍受影响。\n- **来源：** [OpenHarmony 2026 年 8 月公告邮件](https://lists.openatom.io/hyperkitty/list/security%40openharmony.io/thread/IJ5WNUSUCN7CDCFQLO4FWYGJONVN2WYL/)；[官方 2026 年 8 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-08.md)；[相关仓库 PR #229](https://gitcode.com/openharmony/bundlemanager_app_domain_verify/pull/229)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2026-28733",
+      "kind": "public_cve",
+      "title": "#### CVE-2026-28733 — filemanagement_storage_service UAF",
+      "cve_ids": [
+        "CVE-2026-28733"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-28733"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "storage_service",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [
+          "cf373c3bf087"
+        ],
+        "version_mentions": [
+          "v5.1.0",
+          "v5.1"
+        ],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 99,
+          "line_end": 104,
+          "excerpt_sha256": "f0972939800419bb4f1c7bd744fe47fa9e243758d4633dfd9447aaa8ffcd4e5b",
+          "excerpt": "#### CVE-2026-28733 — filemanagement_storage_service UAF\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 5 月公告记录 v5.1.0 发布线 UAF，公告影响为本地任意代码执行，CVSS 6.5。\n- **当前本地：看起来已有并发保护，但未做发布版本验证。** filemanagement_storage_service master，HEAD cf373c3bf087，工作树干净；services/storage_daemon/ipc/src/storage_daemon_provider.cpp:362 起访问统计表时取 mutexStats_，:415-417 在同一锁下复制并清空表；修复参考 PR #2114。当前 master 未复现公告中的同一缺陷，未对 v5.1 发布分支做二进制或动态核验。\n- **来源：** [OpenHarmony 2026 年 5 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-05.md)；[修复 PR #2114](https://gitcode.com/openharmony/filemanagement_storage_service/pull/2114)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-storage-cve-2026-28733",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2026-28733 — filemanagement_storage_service UAF\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 5 月公告记录 v5.1.0 发布线 UAF，公告影响为本地任意代码执行，CVSS 6.5。\n- **当前本地：看起来已有并发保护，但未做发布版本验证。** filemanagement_storage_service master，HEAD cf373c3bf087，工作树干净；services/storage_daemon/ipc/src/storage_daemon_provider.cpp:362 起访问统计表时取 mutexStats_，:415-417 在同一锁下复制并清空表；修复参考 PR #2114。当前 master 未复现公告中的同一缺陷，未对 v5.1 发布分支做二进制或动态核验。\n- **来源：** [OpenHarmony 2026 年 5 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-05.md)；[修复 PR #2114](https://gitcode.com/openharmony/filemanagement_storage_service/pull/2114)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2026-25850",
+      "kind": "public_cve",
+      "title": "#### CVE-2026-25850 — 外置卷挂载权限设置可能导致信息泄露",
+      "cve_ids": [
+        "CVE-2026-25850"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-25850"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "storage_service",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 105,
+          "line_end": 110,
+          "excerpt_sha256": "ce2f9cab33279d8aeadb94920768f057037a63b338c9791ef07a63e8ecd58bb7",
+          "excerpt": "#### CVE-2026-25850 — 外置卷挂载权限设置可能导致信息泄露\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 5 月公告记录外置卷处理权限问题，涉及 5.1/6.0 发布线。\n- **当前本地：似乎已修复，发布线映射未闭环。** 当前 filemanagement_storage_service master 未找到生产路径调用递归 TravelChmod；现有 ext4 路径未见对整棵目录递归 chmod 0777，HMFS 路径设置挂载根目录权限为 0775。修复参考 #2666、#2674。没有对具体产品镜像和文件系统组合动态验证。\n- **来源：** [OpenHarmony 2026 年 5 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-05.md)；[PR #2666 补丁](https://gitcode.com/openharmony/filemanagement_storage_service/pull/2666.patch)；[PR #2674 补丁](https://gitcode.com/openharmony/filemanagement_storage_service/pull/2674.patch)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-storage-cve-2026-25850",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2026-25850 — 外置卷挂载权限设置可能导致信息泄露\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 5 月公告记录外置卷处理权限问题，涉及 5.1/6.0 发布线。\n- **当前本地：似乎已修复，发布线映射未闭环。** 当前 filemanagement_storage_service master 未找到生产路径调用递归 TravelChmod；现有 ext4 路径未见对整棵目录递归 chmod 0777，HMFS 路径设置挂载根目录权限为 0775。修复参考 #2666、#2674。没有对具体产品镜像和文件系统组合动态验证。\n- **来源：** [OpenHarmony 2026 年 5 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-05.md)；[PR #2666 补丁](https://gitcode.com/openharmony/filemanagement_storage_service/pull/2666.patch)；[PR #2674 补丁](https://gitcode.com/openharmony/filemanagement_storage_service/pull/2674.patch)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2026-28751",
+      "kind": "public_cve",
+      "title": "#### CVE-2026-28751 — filemanagement_storage_service 输入校验不足导致 DoS",
+      "cve_ids": [
+        "CVE-2026-28751"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-28751"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "storage_service",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 111,
+          "line_end": 116,
+          "excerpt_sha256": "8dbaaad9dcf2eb080d097e938c91a823bc0fd1cfbcbfd2218247c8470c33c81c",
+          "excerpt": "#### CVE-2026-28751 — filemanagement_storage_service 输入校验不足导致 DoS\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 4 月公告列出 5.0.3、5.1、6.0 发布线，CVSS 3.3。\n- **本地状态：unknown。** 仓库存在，但本轮材料没有把公告根因映射到具体源码或修复提交；不据公告推断本地 master 有漏洞。\n- **来源：** [OpenHarmony 2026 年 4 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-04.md)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-storage-cve-2026-28751",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2026-28751 — filemanagement_storage_service 输入校验不足导致 DoS\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 4 月公告列出 5.0.3、5.1、6.0 发布线，CVSS 3.3。\n- **本地状态：unknown。** 仓库存在，但本轮材料没有把公告根因映射到具体源码或修复提交；不据公告推断本地 master 有漏洞。\n- **来源：** [OpenHarmony 2026 年 4 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-04.md)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2025-27247",
+      "kind": "public_cve",
+      "title": "#### CVE-2025-27247 — 剪贴板权限绕过/敏感信息泄露",
+      "cve_ids": [
+        "CVE-2025-27247"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2025-27247"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "pasteboard",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [
+          "v5.0.3",
+          "v5.0.3",
+          "v5.0.0"
+        ],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 117,
+          "line_end": 122,
+          "excerpt_sha256": "5400c27609527c36a10829371f1c4fef4aebe79e546cdc8161dc4cc111dd02ed",
+          "excerpt": "#### CVE-2025-27247 — 剪贴板权限绕过/敏感信息泄露\n\n- **公开披露：confirmed。** OpenHarmony 2025 年 6 月公告列 v5.0.3，CVSS 5.5。\n- **本地历史路径：confirmed / 当前状态 unknown。** 旧 miscservices_pasteboard 快照的 GET_PASTE_DATA 服务路径未见服务端读取权限检查；该仓库是 2022 年组件快照，不是 v5.0.3 对应代码。后续 API 12 / OpenHarmony 5.0.0.18 加入读取授权，所以不能将旧路径写成当前 5.0.3 或当前 master 的漏洞。\n- **来源：** [OpenHarmony 2025 年 6 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2025/2025-06.md)；[NVD CVE-2025-27247](https://nvd.nist.gov/vuln/detail/CVE-2025-27247)；[OpenHarmony 5.0.0 发布说明](https://github.com/openharmony/docs/blob/master/en/release-notes/OpenHarmony-v5.0.0-release.md)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2025-27247 — 剪贴板权限绕过/敏感信息泄露\n\n- **公开披露：confirmed。** OpenHarmony 2025 年 6 月公告列 v5.0.3，CVSS 5.5。\n- **本地历史路径：confirmed / 当前状态 unknown。** 旧 miscservices_pasteboard 快照的 GET_PASTE_DATA 服务路径未见服务端读取权限检查；该仓库是 2022 年组件快照，不是 v5.0.3 对应代码。后续 API 12 / OpenHarmony 5.0.0.18 加入读取授权，所以不能将旧路径写成当前 5.0.3 或当前 master 的漏洞。\n- **来源：** [OpenHarmony 2025 年 6 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2025/2025-06.md)；[NVD CVE-2025-27247](https://nvd.nist.gov/vuln/detail/CVE-2025-27247)；[OpenHarmony 5.0.0 发布说明](https://github.com/openharmony/docs/blob/master/en/release-notes/OpenHarmony-v5.0.0-release.md)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2025-57052",
+      "kind": "public_cve",
+      "title": "#### CVE-2025-57052 — cJSON JSON Pointer 数组索引校验",
+      "cve_ids": [
+        "CVE-2025-57052"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2025-57052"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "cJSON",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 123,
+          "line_end": 128,
+          "excerpt_sha256": "58c1e013603deaa9d14dd0eb0d5b4844d573a9baee383274ef11921018874221",
+          "excerpt": "#### CVE-2025-57052 — cJSON JSON Pointer 数组索引校验\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 6 月公告将其列为 third_party_cJSON 漏洞，CVSS 9.8，影响 5.0.3 和 5.1.0 发布线。\n- **当前本地：已有修复迹象。** 独立根目录 third_party_cJSON 当前为 1.7.19；current cJSON_Utils.c 的 JSON Pointer 数组索引使用位置游标，而旧受影响实现使用错误的 pointer[0]。当前本地代码不匹配旧缺陷；未审计具体 5.0.3/5.1 发布镜像。\n- **来源：** [OpenHarmony 2026 年 6 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-06.md)；[上游修复提交](https://github.com/DaveGamble/cJSON/commit/74e1ff4994aa4139126967f6d289b675b4b36fef)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-cjson-cve-2025-57052",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2025-57052 — cJSON JSON Pointer 数组索引校验\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 6 月公告将其列为 third_party_cJSON 漏洞，CVSS 9.8，影响 5.0.3 和 5.1.0 发布线。\n- **当前本地：已有修复迹象。** 独立根目录 third_party_cJSON 当前为 1.7.19；current cJSON_Utils.c 的 JSON Pointer 数组索引使用位置游标，而旧受影响实现使用错误的 pointer[0]。当前本地代码不匹配旧缺陷；未审计具体 5.0.3/5.1 发布镜像。\n- **来源：** [OpenHarmony 2026 年 6 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-06.md)；[上游修复提交](https://github.com/DaveGamble/cJSON/commit/74e1ff4994aa4139126967f6d289b675b4b36fef)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2026-33636",
+      "kind": "public_cve",
+      "title": "#### CVE-2026-33636 — libpng ARM Neon 调色板边界访问",
+      "cve_ids": [
+        "CVE-2026-33636"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-33636"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "libpng",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 129,
+          "line_end": 137,
+          "excerpt_sha256": "cb906a6024575561142937f76be7185d9f815fbe9c12135ed1d7558c4fb50561",
+          "excerpt": "#### CVE-2026-33636 — libpng ARM Neon 调色板边界访问\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 5 月公告列第三方 libpng 漏洞；上游 GHSA 描述 ARM Neon 调色板路径越界。\n- **当前主 libpng：有补丁。** third_party_libpng/install.py 补丁清单包含 CVE-2026-33636.patch。\n- **产品状态：unknown。** graphic_standard 中另有 Flutter 依赖线索，但 third_party_flutter 仓库不在当前 campaign 镜像，无法确认产品最终 pin 的 Flutter/libpng 版本及该补丁是否覆盖该产物。\n- **来源：** [OpenHarmony 2026 年 5 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-05.md)；[libpng 上游 GHSA-wjr5-c57x-95m2](https://github.com/pnggroup/libpng/security/advisories/GHSA-wjr5-c57x-95m2)。\n\n### C. 已核对但当前快照不应计作漏洞\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-libpng-cve-2026-33636",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2026-33636 — libpng ARM Neon 调色板边界访问\n\n- **公开披露：confirmed。** OpenHarmony 2026 年 5 月公告列第三方 libpng 漏洞；上游 GHSA 描述 ARM Neon 调色板路径越界。\n- **当前主 libpng：有补丁。** third_party_libpng/install.py 补丁清单包含 CVE-2026-33636.patch。\n- **产品状态：unknown。** graphic_standard 中另有 Flutter 依赖线索，但 third_party_flutter 仓库不在当前 campaign 镜像，无法确认产品最终 pin 的 Flutter/libpng 版本及该补丁是否覆盖该产物。\n- **来源：** [OpenHarmony 2026 年 5 月公告](https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-05.md)；[libpng 上游 GHSA-wjr5-c57x-95m2](https://github.com/pnggroup/libpng/security/advisories/GHSA-wjr5-c57x-95m2)。\n\n### C. 已核对但当前快照不应计作漏洞\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2026-92392",
+      "kind": "public_cve",
+      "title": "#### CVE-2026-92392 — curl HTTP/2 上传 UAF：本地版本不在受影响范围",
+      "cve_ids": [
+        "CVE-2026-92392"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-92392"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "source_audit_row",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 138,
+          "line_end": 143,
+          "excerpt_sha256": "0c9d4b8fc3dc75a261ce99457217c4ac61f7ac164fd87477a04bce707e3aa37d",
+          "excerpt": "#### CVE-2026-92392 — curl HTTP/2 上传 UAF：本地版本不在受影响范围\n\n- **公开披露：confirmed。** curl 官方公告列受影响 8.12.0–8.22.0；低于 8.12.0 不受影响。公告虽讨论满足多项约束时可能转成 RCE，但不能把该影响套到不在受影响版本范围的本地代码。\n- **当前本地：not affected by version。** third_party_curl 为 8.8.0，低于引入版本 8.12.0。\n- **来源：** [curl 官方 CVE-2026-92392 公告](https://curl.se/docs/CVE-2026-92392.html)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-curl-cve-2026-92392",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2026-92392 — curl HTTP/2 上传 UAF：本地版本不在受影响范围\n\n- **公开披露：confirmed。** curl 官方公告列受影响 8.12.0–8.22.0；低于 8.12.0 不受影响。公告虽讨论满足多项约束时可能转成 RCE，但不能把该影响套到不在受影响版本范围的本地代码。\n- **当前本地：not affected by version。** third_party_curl 为 8.8.0，低于引入版本 8.12.0。\n- **来源：** [curl 官方 CVE-2026-92392 公告](https://curl.se/docs/CVE-2026-92392.html)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "AUDIT-CVE-2026-9079",
+      "kind": "public_cve",
+      "title": "#### CVE-2026-9079 — curl 代理密码残留",
+      "cve_ids": [
+        "CVE-2026-9079"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2026-9079"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "source_audit_row",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 144,
+          "line_end": 149,
+          "excerpt_sha256": "014c94d2e78901128fa73fd9c57b77c99014c633d58f6f15cb5574320c3db63d",
+          "excerpt": "#### CVE-2026-9079 — curl 代理密码残留\n\n- **公开披露：confirmed。** curl 官方 CVE 表列出该问题及受影响版本范围含 8.8.0。\n- **当前本地：未列为已确认漏洞。** 会话复核指出 setopt.c 附近存在代理凭据清理逻辑；目前只有这一处局部对应关系，没有单独完成公告根因到补丁 hunk 的审计。因此状态记为 unknown/疑似已修复，不能仅凭版本号报漏洞，也不把“已修复”写成 confirmed。\n- **来源：** [curl 官方 CVE 列表](https://curl.se/docs/CVE-2026-9079.html)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": "ohknowncve-curl-cve-2026-9079",
+            "coverage_status": "rule_present_source_signature_only",
+            "actual_result": "not_run_in_this_slice",
+            "product_status": "unknown"
+          }
+        ],
+        "mapping_status": "rule_present"
+      },
+      "controls": [
+        "AUDIT-EXTERNAL-PUBLIC-001",
+        "AUDIT-EXTERNAL-LOCAL-001",
+        "AUDIT-EXTERNAL-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "#### CVE-2026-9079 — curl 代理密码残留\n\n- **公开披露：confirmed。** curl 官方 CVE 表列出该问题及受影响版本范围含 8.8.0。\n- **当前本地：未列为已确认漏洞。** 会话复核指出 setopt.c 附近存在代理凭据清理逻辑；目前只有这一处局部对应关系，没有单独完成公告根因到补丁 hunk 的审计。因此状态记为 unknown/疑似已修复，不能仅凭版本号报漏洞，也不把“已修复”写成 confirmed。\n- **来源：** [curl 官方 CVE 列表](https://curl.se/docs/CVE-2026-9079.html)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "public_cve",
+        "cve_claim": "public_disclosure_only",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "MANUAL-UpdateApp-仓库中的公开开发签名材料",
+      "kind": "manual_candidate",
+      "title": "### UpdateApp 仓库中的公开开发签名材料",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "MANUAL-UpdateApp-仓库中的公开开发签名材料"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "update_update_app",
+        "repository_paths_from_original": [
+          "G:\\OpenHarmony-GitCode-Mirror"
+        ],
+        "head_spellings_from_original": [
+          "a4fd66e7da16"
+        ],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 154,
+          "line_end": 160,
+          "excerpt_sha256": "e5df5847ede6df3b43d1d5a6ab5980bf38e14ddd30012b75b602d04f466247ac",
+          "excerpt": "### UpdateApp 仓库中的公开开发签名材料\n\n- **已确认事实：** update_update_app 仓库跟踪 signature/OpenHarmony.p12、.cer、.csr 等材料。仓库 master，HEAD a4fd66e7da16，工作树干净。build-profile.json5 的 release 配置引用这些文件。\n- **密钥核验边界：** 先前用 OpenHarmony 签名工具公开文档中的示例口令验证过容器可打开；仅记录容器含证书及私钥条目，不输出口令或私钥。仓库 .cer 指纹与 P12 中同名证书不匹配，仓库构建配置中的口令也不能打开该容器。官方资料说明 SDK 可提供开发签名材料，并建议商用产品替换。\n- **结论：candidate / impact unknown。** 尚无证据证明量产镜像信任该开发根证书、存在用该密钥签出的恶意 HAP，或设备会接受替换包。不能据此宣称提权或系统代码执行。\n- **位置与来源：** G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\update_update_app\\signature\\OpenHarmony.p12；build-profile.json5:6、19-29；[官方签名校验说明](https://github.com/openharmony/docs/blob/master/en/device-dev/subsystems/subsys-security-sigverify.md)；[hapsigntool 使用指南](https://gitee.com/openharmony/docs/blob/master/en/application-dev/security/hapsigntool-guidelines.md)。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [],
+        "mapping_status": "unknown_or_unmapped"
+      },
+      "controls": [
+        "AUDIT-MANUAL-CANDIDATE-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "### UpdateApp 仓库中的公开开发签名材料\n\n- **已确认事实：** update_update_app 仓库跟踪 signature/OpenHarmony.p12、.cer、.csr 等材料。仓库 master，HEAD a4fd66e7da16，工作树干净。build-profile.json5 的 release 配置引用这些文件。\n- **密钥核验边界：** 先前用 OpenHarmony 签名工具公开文档中的示例口令验证过容器可打开；仅记录容器含证书及私钥条目，不输出口令或私钥。仓库 .cer 指纹与 P12 中同名证书不匹配，仓库构建配置中的口令也不能打开该容器。官方资料说明 SDK 可提供开发签名材料，并建议商用产品替换。\n- **结论：candidate / impact unknown。** 尚无证据证明量产镜像信任该开发根证书、存在用该密钥签出的恶意 HAP，或设备会接受替换包。不能据此宣称提权或系统代码执行。\n- **位置与来源：** G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\update_update_app\\signature\\OpenHarmony.p12；build-profile.json5:6、19-29；[官方签名校验说明](https://github.com/openharmony/docs/blob/master/en/device-dev/subsystems/subsys-security-sigverify.md)；[hapsigntool 使用指南](https://gitee.com/openharmony/docs/blob/master/en/application-dev/security/hapsigntool-guidelines.md)。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "manual_candidate",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "MANUAL-app_domain_verify-共享优先级字段竞争",
+      "kind": "manual_candidate",
+      "title": "### app_domain_verify 共享优先级字段竞争",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "MANUAL-app_domain_verify-共享优先级字段竞争"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "app_domain_verify",
+        "repository_paths_from_original": [
+          "G:\\OpenHarmony-GitCode-Mirror"
+        ],
+        "head_spellings_from_original": [
+          "80513aacffbb"
+        ],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 161,
+          "line_end": 166,
+          "excerpt_sha256": "7da12f8876240fd5d7d27549a9eac93458227f1ee0842ccd2858c72324f9be59",
+          "excerpt": "### app_domain_verify 共享优先级字段竞争\n\n- **状态：candidate；安全影响 unknown。** app_domain_verify_task_mgr.h:46 配置 4 个 worker；verify_task.cpp:39-53、136-138 为同一个 VerifyTask 调度多个 URI 回调并读取 appVerifyBaseInfo_.priority；domain_verifier.cpp:22-35、61-83、93-105 可能写该共享字段；verify_http_task.cpp:47-62 将回调交回同一个 VerifyTask。\n- **风险边界：** 静态证据支持并发读写候选；没有 TSan、设备测试或利用验证，也未证明可绕过域名校验或提升权限。当前仓库 master HEAD 80513aacffbb，工作树干净。\n- **位置：** G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\bundlemanager_app_domain_verify\\frameworks\\verifier\\src\\verify_task.cpp 等。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [],
+        "mapping_status": "unknown_or_unmapped"
+      },
+      "controls": [
+        "AUDIT-MANUAL-CANDIDATE-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "### app_domain_verify 共享优先级字段竞争\n\n- **状态：candidate；安全影响 unknown。** app_domain_verify_task_mgr.h:46 配置 4 个 worker；verify_task.cpp:39-53、136-138 为同一个 VerifyTask 调度多个 URI 回调并读取 appVerifyBaseInfo_.priority；domain_verifier.cpp:22-35、61-83、93-105 可能写该共享字段；verify_http_task.cpp:47-62 将回调交回同一个 VerifyTask。\n- **风险边界：** 静态证据支持并发读写候选；没有 TSan、设备测试或利用验证，也未证明可绕过域名校验或提升权限。当前仓库 master HEAD 80513aacffbb，工作树干净。\n- **位置：** G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\bundlemanager_app_domain_verify\\frameworks\\verifier\\src\\verify_task.cpp 等。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "manual_candidate",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "MANUAL-storage_service-统计表读取竞争",
+      "kind": "manual_candidate",
+      "title": "### storage_service 统计表读取竞争",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "MANUAL-storage_service-统计表读取竞争"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "storage_service",
+        "repository_paths_from_original": [
+          "G:\\OpenHarmony-GitCode-Mirror"
+        ],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 167,
+          "line_end": 172,
+          "excerpt_sha256": "47f015328e40864d3d25de88e5eb3c12c3e2acecbce55fb4651f66c02e079c36",
+          "excerpt": "### storage_service 统计表读取竞争\n\n- **状态：candidate；影响 unknown。** storage_daemon_provider.cpp 中 opStatistics_ 在多个位置访问；部分访问由 mutexStats_ 保护，但 StorageRadarThd 对 opStatistics_.empty() 的检查曾发现未持同一把锁。需要先确认所有调用上下文和对象生命周期，再以 TSan 或受控并发验证。\n- **当前证据边界：** 尚无 TSan 结果、产品影响或利用路径；不作为已确认的 CVE-2026-28733 根因。公开 CVE 与此候选是两件事。\n- **位置：** G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\filemanagement_storage_service\\services\\storage_daemon\\ipc\\src\\storage_daemon_provider.cpp，特别是 :181-187、:362、:415-417、:453 及统计线程相关代码。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [],
+        "mapping_status": "unknown_or_unmapped"
+      },
+      "controls": [
+        "AUDIT-MANUAL-CANDIDATE-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "### storage_service 统计表读取竞争\n\n- **状态：candidate；影响 unknown。** storage_daemon_provider.cpp 中 opStatistics_ 在多个位置访问；部分访问由 mutexStats_ 保护，但 StorageRadarThd 对 opStatistics_.empty() 的检查曾发现未持同一把锁。需要先确认所有调用上下文和对象生命周期，再以 TSan 或受控并发验证。\n- **当前证据边界：** 尚无 TSan 结果、产品影响或利用路径；不作为已确认的 CVE-2026-28733 根因。公开 CVE 与此候选是两件事。\n- **位置：** G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\repos\\filemanagement_storage_service\\services\\storage_daemon\\ipc\\src\\storage_daemon_provider.cpp，特别是 :181-187、:362、:415-417、:453 及统计线程相关代码。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "manual_candidate",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "MANUAL-security_asset-跨账号参数触发前置副作用",
+      "kind": "manual_candidate",
+      "title": "### security_asset 跨账号参数触发前置副作用",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "MANUAL-security_asset-跨账号参数触发前置副作用"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "security_asset",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 173,
+          "line_end": 178,
+          "excerpt_sha256": "33e6d0e8b34aa8333fe33d1718fd97444ca2177a05b9fb489f7c4dfd7b4c4e1e",
+          "excerpt": "### security_asset 跨账号参数触发前置副作用\n\n- **状态：candidate / impact unknown。** stub.rs:182-188 从请求映射构造 CallingInfo，携带可选 UserId，并在进入具体应用操作权限校验前调用 upgrade_single_clone_app_data；permission_check.rs 对显式 UserId 要求系统 HAP 与跨本地账号权限。\n- **风险边界：** 目前只确认存在权限检查前的前置状态操作线索；没有证明普通应用可越权读取/写入跨账号数据。后续应验证调用身份、克隆数据升级的副作用和失败回滚行为。\n- **位置：** security_asset 的 services stub、calling_info.rs:55-79、db_operator/src/common/permission_check.rs:31。\n"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [],
+        "mapping_status": "unknown_or_unmapped"
+      },
+      "controls": [
+        "AUDIT-MANUAL-CANDIDATE-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "original_text": "### security_asset 跨账号参数触发前置副作用\n\n- **状态：candidate / impact unknown。** stub.rs:182-188 从请求映射构造 CallingInfo，携带可选 UserId，并在进入具体应用操作权限校验前调用 upgrade_single_clone_app_data；permission_check.rs 对显式 UserId 要求系统 HAP 与跨本地账号权限。\n- **风险边界：** 目前只确认存在权限检查前的前置状态操作线索；没有证明普通应用可越权读取/写入跨账号数据。后续应验证调用身份、克隆数据升级的副作用和失败回滚行为。\n- **位置：** security_asset 的 services stub、calling_info.rs:55-79、db_operator/src/common/permission_check.rs:31。\n",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "manual_candidate",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "NEG-security_asset-群组删除线索-请求仍经过-Bundle-Manager-成员资格校验-没有确认未授权删除",
+      "kind": "negative_control",
+      "title": "- security_asset 群组删除线索：请求仍经过 Bundle Manager 成员资格校验；没有确认未授权删除。",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "NEG-security_asset-群组删除线索-请求仍经过-Bundle-Manager-成员资格校验-没有确认未授权删除"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "security_asset",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 181,
+          "line_end": 181,
+          "excerpt_sha256": "222cdc7378e852b64ff97bfa00dda40b5e32f01a896a79b6098431ed89bd14fb",
+          "excerpt": "- security_asset 群组删除线索：请求仍经过 Bundle Manager 成员资格校验；没有确认未授权删除。"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [],
+        "mapping_status": "unknown_or_unmapped"
+      },
+      "controls": [
+        "AUDIT-NEGATIVE-CONTROL-001"
+      ],
+      "actual_result": {
+        "original_text": "- security_asset 群组删除线索：请求仍经过 Bundle Manager 成员资格校验；没有确认未授权删除。",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "negative_control",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "NEG-request_request-的-O_NOFOLLOW-路径线索-FD-后续会按-canonical-app-base-校验-没有演示目录逃逸",
+      "kind": "negative_control",
+      "title": "- request_request 的 O_NOFOLLOW/路径线索：FD 后续会按 canonical app base 校验；没有演示目录逃逸。",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "NEG-request_request-的-O_NOFOLLOW-路径线索-FD-后续会按-canonical-app-base-校验-没有演示目录逃逸"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "request_request",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 182,
+          "line_end": 182,
+          "excerpt_sha256": "5edd64982cb333eefc645ad57c181b92c768269877501223756b3fd181ec4c8c",
+          "excerpt": "- request_request 的 O_NOFOLLOW/路径线索：FD 后续会按 canonical app base 校验；没有演示目录逃逸。"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [],
+        "mapping_status": "unknown_or_unmapped"
+      },
+      "controls": [
+        "AUDIT-NEGATIVE-CONTROL-001"
+      ],
+      "actual_result": {
+        "original_text": "- request_request 的 O_NOFOLLOW/路径线索：FD 后续会按 canonical app base 校验；没有演示目录逃逸。",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "negative_control",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "NEG-request_request-的-FD-双重关闭线索-MsgParcel-write_file-会复制文件描述符-未确认双重关闭",
+      "kind": "negative_control",
+      "title": "- request_request 的 FD 双重关闭线索：MsgParcel write_file 会复制文件描述符；未确认双重关闭。",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "NEG-request_request-的-FD-双重关闭线索-MsgParcel-write_file-会复制文件描述符-未确认双重关闭"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "request_request",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 183,
+          "line_end": 183,
+          "excerpt_sha256": "53cd78ba4a5842c89a724e3b09d7c615968369f40e9065e9999082dff9ffdff5",
+          "excerpt": "- request_request 的 FD 双重关闭线索：MsgParcel write_file 会复制文件描述符；未确认双重关闭。"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [],
+        "mapping_status": "unknown_or_unmapped"
+      },
+      "controls": [
+        "AUDIT-NEGATIVE-CONTROL-001"
+      ],
+      "actual_result": {
+        "original_text": "- request_request 的 FD 双重关闭线索：MsgParcel write_file 会复制文件描述符；未确认双重关闭。",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "negative_control",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "NEG-security_deviceauth-的负长度-IPC-线索-相关-IPC-stub-仅允许-native-SYSTEM_CORE-调用-没有低权限攻击路径证据",
+      "kind": "negative_control",
+      "title": "- security_deviceauth 的负长度 IPC 线索：相关 IPC stub 仅允许 native SYSTEM_CORE 调用；没有低权限攻击路径证据。",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "NEG-security_deviceauth-的负长度-IPC-线索-相关-IPC-stub-仅允许-native-SYSTEM_CORE-调用-没有低权限攻击路径证据"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "security_deviceauth",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 184,
+          "line_end": 184,
+          "excerpt_sha256": "a14d40659a3f421ef963973726f0f277d157e372ac1784ce2f1d82ed541f95ce",
+          "excerpt": "- security_deviceauth 的负长度 IPC 线索：相关 IPC stub 仅允许 native SYSTEM_CORE 调用；没有低权限攻击路径证据。"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [],
+        "mapping_status": "unknown_or_unmapped"
+      },
+      "controls": [
+        "AUDIT-NEGATIVE-CONTROL-001"
+      ],
+      "actual_result": {
+        "original_text": "- security_deviceauth 的负长度 IPC 线索：相关 IPC stub 仅允许 native SYSTEM_CORE 调用；没有低权限攻击路径证据。",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "negative_control",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "NEG-旧剪贴板-任意应用可读-线索-旧代码快照中确有服务端无读取授权路径-但-API-12-5-0-0-18-后续增加读取授权-按历史缺陷记录-不能当当前-0day",
+      "kind": "negative_control",
+      "title": "- 旧剪贴板“任意应用可读”线索：旧代码快照中确有服务端无读取授权路径，但 API 12 / 5.0.0.18 后续增加读取授权。按历史缺陷记录，不能当当前 0day。",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "NEG-旧剪贴板-任意应用可读-线索-旧代码快照中确有服务端无读取授权路径-但-API-12-5-0-0-18-后续增加读取授权-按历史缺陷记录-不能当当前-0day"
+        ],
+        "cwe": "unknown_not_provided_by_original"
+      },
+      "source_identity": {
+        "component": "source_audit_row",
+        "repository_paths_from_original": [],
+        "head_spellings_from_original": [],
+        "version_mentions": [],
+        "full_commit": "unknown",
+        "tree": "unknown",
+        "file_blob": "unknown",
+        "source_sha256": "unknown",
+        "identity_status": "partial_external_identity_from_original",
+        "strict_eligible": false,
+        "audit_record": {
+          "line_start": 185,
+          "line_end": 185,
+          "excerpt_sha256": "cfef9c36c9581462b81dcf04091160a9ae22ff1aad4fcc30ab7907de373235e5",
+          "excerpt": "- 旧剪贴板“任意应用可读”线索：旧代码快照中确有服务端无读取授权路径，但 API 12 / 5.0.0.18 后续增加读取授权。按历史缺陷记录，不能当当前 0day。"
+        }
+      },
+      "detector_rule": {
+        "known_cves_0.16.0": [],
+        "mapping_status": "unknown_or_unmapped"
+      },
+      "controls": [
+        "AUDIT-NEGATIVE-CONTROL-001"
+      ],
+      "actual_result": {
+        "original_text": "- 旧剪贴板“任意应用可读”线索：旧代码快照中确有服务端无读取授权路径，但 API 12 / 5.0.0.18 后续增加读取授权。按历史缺陷记录，不能当当前 0day。",
+        "scanner_result": "not_run_original_manual_review",
+        "product_status": "unknown_not_promoted",
+        "classification": "negative_control",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "CVE-2025-24304",
+      "kind": "c_line_ark_runtime_replay",
+      "title": "CVE-2025-24304",
+      "cve_ids": [
+        "CVE-2025-24304"
+      ],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "CVE-2025-24304"
+        ],
+        "cwe": "not_asserted"
+      },
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+        "vulnerable_tree": "454e898b43b55950b104053cf42d32645474ef8f",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "blob": "2aae41b75a5ffd1441309439ff3834d959f71b79",
+            "sha256": "6133af44de48ec3ff00fdc7b06597fbef1c9a270cc04ba48d09b4475976c2381",
+            "bytes": "unknown"
+          }
+        ],
+        "fixed_commit": "6627179cbf6f8d40d1adfcf5c3c686b902f42419",
+        "fixed_tree": "fa482a14984ee8cd8f424131cb5179ba7a6a9422",
+        "fixed_files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "blob": "1818dd72f5ac68aa7f8ee7a38a59b923f4ab5476",
+            "sha256": "unknown",
+            "bytes": "unknown"
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "detector_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "ark.runtime.typedarray-store-type-origin",
+        "mapping_status": "mapped_remote_ref_rule_current_checkout_absent",
+        "control_ids": [
+          "C8-TO-POS-001",
+          "C8-TO-FIX-001",
+          "C8-TO-SAFE-001",
+          "C8-TO-UNR-001",
+          "C8-TO-UNKNOWN-001",
+          "C8-TO-UNKNOWN-002",
+          "C8-TO-UNKNOWN-003",
+          "C8-TO-UNKNOWN-004",
+          "C8-TO-UNKNOWN-005",
+          "C8-TO-UNKNOWN-006"
+        ],
+        "known_cves_0.16.0": [
+          {
+            "detector_id": "ohscanner.known_disclosed_cves",
+            "detector_version": "0.16.0",
+            "rule_id": null,
+            "coverage_status": "unknown_not_covered_by_known_cves_0.16.0",
+            "actual_result": "alternate Ark type-origin mapping exists",
+            "product_status": "unknown"
+          }
+        ]
+      },
+      "controls": [
+        "C8-TO-POS-001",
+        "C8-TO-FIX-001",
+        "C8-TO-SAFE-001",
+        "C8-TO-UNR-001",
+        "C8-TO-UNKNOWN-001",
+        "C8-TO-UNKNOWN-002",
+        "C8-TO-UNKNOWN-003",
+        "C8-TO-UNKNOWN-004",
+        "C8-TO-UNKNOWN-005",
+        "C8-TO-UNKNOWN-006"
+      ],
+      "actual_result": {
+        "scanner_result": "Map root 1->0; family candidates remain; partial/blocked",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "candidate_static_response",
+        "cve_claim": "not_asserted",
+        "cia_claim": "not_asserted"
+      },
+      "audit_record_identity": {
+        "line_start": 202,
+        "line_end": 202,
+        "excerpt_sha256": "f40267336c8340e280b50ce0f24d9f523203696dc1eb93a15eb4d1afa2454940",
+        "excerpt": "| CVE-2025-24304 / TypedArray Map | OpenHarmony 公告确认 Ark Runtime 越界写并列出受影响发布线；!11130 的源码/测试修复是新建结果数组的类型令牌来源。CVE 与该具体提交的直接一对一映射未证实，属于强推断。 | 官方 5.0.2 pin 到 release fix：Map 根因候选 1→0；固定侧仍有 Filter、With、ToReversed 三个未决同类候选，整文件 partial/blocked，家族固定版验收未通过。 | 未构建/未运行。 | 未确认产品构建、攻击路径或影响。 |"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "IBS5YG",
+      "kind": "c_line_ark_runtime_replay",
+      "title": "IBS5YG",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "IBS5YG"
+        ],
+        "cwe": "not_asserted"
+      },
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+        "vulnerable_tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+            "sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+            "bytes": 150433
+          }
+        ],
+        "fixed_commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+        "fixed_tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "fixed_files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+            "sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+            "bytes": 150509
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "detector_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "ark.runtime.typedarray-store-type-origin",
+        "mapping_status": "mapped_remote_ref_rule_current_checkout_absent",
+        "control_ids": [
+          "C8-TO-POS-001",
+          "C8-TO-FIX-001",
+          "C8-TO-SAFE-001",
+          "C8-TO-UNR-001",
+          "C8-TO-UNKNOWN-001",
+          "C8-TO-UNKNOWN-002",
+          "C8-TO-UNKNOWN-003",
+          "C8-TO-UNKNOWN-004",
+          "C8-TO-UNKNOWN-005",
+          "C8-TO-UNKNOWN-006"
+        ],
+        "known_cves_0.16.0": []
+      },
+      "controls": [
+        "C8-TO-POS-001",
+        "C8-TO-FIX-001",
+        "C8-TO-SAFE-001",
+        "C8-TO-UNR-001",
+        "C8-TO-UNKNOWN-001",
+        "C8-TO-UNKNOWN-002",
+        "C8-TO-UNKNOWN-003",
+        "C8-TO-UNKNOWN-004",
+        "C8-TO-UNKNOWN-005",
+        "C8-TO-UNKNOWN-006"
+      ],
+      "actual_result": {
+        "scanner_result": "TypeOrigin 1->0; partial/blocked",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "candidate_static_response",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "audit_record_identity": {
+        "line_start": 203,
+        "line_end": 203,
+        "excerpt_sha256": "e6783674c65358b8c8fd734a1301ff59413db79fded5d57bd1d2ce7ec5eea1fc",
+        "excerpt": "| IBS5YG / TypedArray Filter 结果类型来源 | 上游 issue/PR 与父/修复 diff 指向 Filter 将源对象类型令牌用于 species-sensitive 新结果的 indexed store；未核实 CVE/安全公告。 | 精确直接父/修复：TypeOrigin 候选 1→0；CLI 分析 partial/blocked。产品快照与 master 的 0 告警伴随 unresolved/partial，不能作为安全结论。 | 上游回归未构建/未运行。 | 未确认。 |"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "I7KZJ7",
+      "kind": "c_line_ark_runtime_replay",
+      "title": "I7KZJ7",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "I7KZJ7"
+        ],
+        "cwe": "not_asserted"
+      },
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "087449d3d657d081611cf1bf4c731ff048748812",
+        "vulnerable_tree": "cc51f309bf6446ae401597235fe5ebd3477ec63e",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "blob": "caa5467917bbd9079a4d72cdfb419266e315a624",
+            "bytes": 34880,
+            "sha256": "170660d6f15ad88ddee04db4ded3e76932832631d0613e78318edf2b0ad6fc85"
+          }
+        ],
+        "fixed_commit": "1b0ac0aa076b91d92b5d5aba91e92bc6c2a06c50",
+        "fixed_tree": "48ac0d65b920c7401055fcfae68d538e03a25e6c",
+        "fixed_files": [
+          {
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "blob": "319347a5ea62df52e8427ad6822f65e70c997a11",
+            "bytes": 35080,
+            "sha256": "f698f40394524b5b95a1bbef4fe8b1ccef05e52226d9d1f30ef54decca711a62"
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "detector_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "ark.runtime.typedarray-buffer-size-multiplication-overflow",
+        "mapping_status": "mapped_remote_ref_rule_current_checkout_absent",
+        "control_ids": [
+          "C9-I7KZJ7-POS-001",
+          "C9-I7KZJ7-FIX-001",
+          "C9-I7KZJ7-SAFE-001",
+          "C9-I7KZJ7-UNR-001",
+          "C9-I7KZJ7-UNKNOWN-001"
+        ],
+        "known_cves_0.16.0": []
+      },
+      "controls": [
+        "C9-I7KZJ7-POS-001",
+        "C9-I7KZJ7-FIX-001",
+        "C9-I7KZJ7-SAFE-001",
+        "C9-I7KZJ7-UNR-001",
+        "C9-I7KZJ7-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "scanner_result": "multiplication root 1->0; partial/blocked",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "candidate_static_response",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "audit_record_identity": {
+        "line_start": 204,
+        "line_end": 204,
+        "excerpt_sha256": "251ec4e95529a9404ad40d5a8d0b214a084338e1c8149063a75b5d3d4af4af88",
+        "excerpt": "| I7KZJ7 / TypedArray 缓冲区长度乘法 | 上游源码/测试显示 32 位元素宽度乘元素数后用于分配、而复制仍按元素数循环；无已核实 CVE/安全公告，安全影响未动态确认。 | 初始无适用规则；新乘法规则接入后，精确父/修复呈 root-specific 1→0。两侧 full-file 分析仍 partial/blocked。 | 未运行；相关大内存回归未构建。 | 未确认。 |"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "IC7B8Q",
+      "kind": "c_line_ark_runtime_replay",
+      "title": "IC7B8Q",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "IC7B8Q"
+        ],
+        "cwe": "not_asserted"
+      },
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+        "vulnerable_tree": "27ec52bd443ccd4e45b472731114e8547df71ea2",
+        "vulnerable_files": [
+          "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+        ],
+        "fixed_commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+        "fixed_tree": "identity manifest",
+        "fixed_files": [
+          "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+          "test/moduletest/typedarraymapoverflow/typedarraymapoverflow.js"
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "detector_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+        "mapping_status": "mapped_remote_ref_rule_current_checkout_absent",
+        "control_ids": [
+          "C8-EG-POS-001",
+          "C8-EG-FIX-001",
+          "C8-EG-SAFE-001",
+          "C8-EG-UNR-001",
+          "C8-EG-UNKNOWN-001"
+        ],
+        "known_cves_0.16.0": []
+      },
+      "controls": [
+        "C8-EG-POS-001",
+        "C8-EG-FIX-001",
+        "C8-EG-SAFE-001",
+        "C8-EG-UNR-001",
+        "C8-EG-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "scanner_result": "exception candidates 2->0; partial/blocked",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "candidate_static_response",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "audit_record_identity": {
+        "line_start": 205,
+        "line_end": 205,
+        "excerpt_sha256": "a8d5ea7abc7b0ed9a52d0d4f2a839dfed1250c647554d7e52798aea582fc84fa",
+        "excerpt": "| IC7B8Q / TypedArray Map 分配异常 | 上游父/修复和回归源码显示 NewTypedArray 可能留 pending exception，Map 在检查异常前读取结果 HClass；无 CVE/安全公告关联。 | 生产 CLI 父版本 2 个异常路径候选→修复版 0；两次均因整 TU partial 而 blocked。 | 未构建/未运行递归栈耗尽回归。 | 未确认。 |"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "IAO7GO",
+      "kind": "c_line_ark_runtime_replay",
+      "title": "IAO7GO",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "IAO7GO"
+        ],
+        "cwe": "not_asserted"
+      },
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724",
+        "vulnerable_tree": "0c8d65e759bf96b4632573561748a180a93cf413",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/compiler/native_inline_lowering.cpp",
+            "blob": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+            "sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463",
+            "bytes": "unknown"
+          }
+        ],
+        "fixed_commit": "18d8532a200d0c9aa64a6dfe2b146dc841b52bf8",
+        "fixed_tree": "372e6906218c245e59643a7437f2d92e435401d6",
+        "fixed_files": [
+          {
+            "path": "ecmascript/compiler/native_inline_lowering.cpp",
+            "blob": "df03fdce8a37cf2245577aec23c4c26deeebf02f",
+            "sha256": "6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce",
+            "bytes": "unknown"
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "detector_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+        "mapping_status": "mapped_remote_ref_rule_current_checkout_absent_selector_miss",
+        "control_ids": [
+          "C9-IAO7GO-UNKNOWN-001"
+        ],
+        "known_cves_0.16.0": []
+      },
+      "controls": [
+        "C9-IAO7GO-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "scanner_result": "0->0 because selector matched 0 applicable files",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "miss_coverage_selector_not_applicable",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "audit_record_identity": {
+        "line_start": 206,
+        "line_end": 206,
+        "excerpt_sha256": "0610a52231f56341a7dce11dff981032ffca8cfe186508e4912c4ca809b33463",
+        "excerpt": "| IAO7GO / Reflect.apply 异常传播 | 官方上游 issue 与源码测试支持异常传播根因；未核实安全分类或 CVE。 | 生产入口父/修复均 0，但原因是 `native_inline_lowering.cpp` 不满足当前 Ark Runtime 语义 selector（0 applicable files），属于未分析/漏覆盖，不能计作修复命中或安全。 | 未运行。 | 未确认。 |"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "I7W51D",
+      "kind": "c_line_ark_runtime_replay",
+      "title": "I7W51D",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "I7W51D"
+        ],
+        "cwe": "not_asserted"
+      },
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+        "vulnerable_tree": "f86de4aedd95c719b6215273cf10ab15e26d99e4",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "blob": "c5153346369f0182e73098b8d008eca6d750b36d",
+            "bytes": 35770,
+            "sha256": "4be243a68180be845defbcc01b259070db68b18da8500d245eea4929e7b9eca5"
+          },
+          {
+            "path": "ecmascript/base/typed_array_helper.h",
+            "blob": "8541d4a548bb118748443e822f1b603c36789389",
+            "bytes": 4579,
+            "sha256": "3bef83523fcd1f21d61b283cef88c76cd50044316fd6d76f507a3e24368463fa"
+          },
+          {
+            "path": "test/moduletest/typearray/typearray.js",
+            "blob": "78480fc1207e2193df72e69a951d2e2cf3a4d9ba",
+            "bytes": 5707,
+            "sha256": "27f86b91b4a6b224757ac5f079189164ec679e134916b0705900e95798285c2e"
+          },
+          {
+            "path": "test/moduletest/typearray/expect_output.txt",
+            "blob": "7ab1a90e65c389e127b52cb0f6692fb6f149d6f6",
+            "bytes": 1250,
+            "sha256": "0642d5f0e5659ea96cc4f58d34f6f9cfd749396532506d19c81ce8391d12c11d"
+          }
+        ],
+        "fixed_commit": "82c21d656880923800c94b53b035c76d219313b5",
+        "fixed_tree": "cfad2654abd1554b35b0817f43ca8585dd937106",
+        "fixed_files": [
+          {
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "blob": "89ffed8b3ff112a271c8a074967b7b5e8ebe2f6f",
+            "bytes": 35773,
+            "sha256": "373f5babdd5dd2f93d01512901d02e6b39d6b57c636e72b07b8d80d27eb509ab"
+          },
+          {
+            "path": "ecmascript/base/typed_array_helper.h",
+            "blob": "b61397cbb48ef14e6bf784ab37a172eaf76ca6df",
+            "bytes": 4580,
+            "sha256": "fc3cd9260b98b50984370115591b6100db29d09688094912f474f01bbed7dfdd"
+          },
+          {
+            "path": "test/moduletest/typearray/typearray.js",
+            "blob": "d101f70d7c944e555ba5a78e28a576fcd361b89f",
+            "bytes": 5790,
+            "sha256": "60407a9e323cc894e5a19525ffbda4501e37a017c4d867a25d149569dec7cde6"
+          },
+          {
+            "path": "test/moduletest/typearray/expect_output.txt",
+            "blob": "e11ba0cec65559d1bdf4f0e1760ccb4a3ab345a6",
+            "bytes": 1261,
+            "sha256": "52b6d60f276bcdfea6449e8398f01f30686c73174b7160974a1038d5b5126f28"
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "detector_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "unknown_no_rule_mapping",
+        "mapping_status": "unmapped_rule_limitation",
+        "control_ids": [
+          "C9-I7W51D-UNKNOWN-001"
+        ],
+        "known_cves_0.16.0": []
+      },
+      "controls": [
+        "C9-I7W51D-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "scanner_result": "0->0; no length-narrowing rule",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "miss_rule_length_narrowing_uncovered",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "audit_record_identity": {
+        "line_start": 207,
+        "line_end": 207,
+        "excerpt_sha256": "d4bd4be3392221dc29565cec094e9fe48140400bba69c928386c48f23d9d42bd",
+        "excerpt": "| I7W51D / TypedArray 长度窄化 | 上游修复将长度转换由有符号 32 位改为无符号 32 位，回归预期 RangeError；现有证据未建立内存破坏或安全影响。 | 乘法规则父/修复 0→0，detector blocked/partial；此机制没有对应窄化规则，不记为安全通过。 | 未运行。 | 不据此确认漏洞。 |"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "IB8BCA",
+      "kind": "c_line_ark_runtime_replay",
+      "title": "IB8BCA",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "IB8BCA"
+        ],
+        "cwe": "not_asserted"
+      },
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+        "vulnerable_tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/base/atomic_helper.cpp",
+            "blob": "7fd67717571c6d8fe7b10bf294998e952dc61e36",
+            "bytes": 7176,
+            "sha256": "f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541"
+          },
+          {
+            "path": "ecmascript/builtins/builtins_dataview.cpp",
+            "blob": "e6bac984354292405ae62f7728170d7be5e3760e",
+            "bytes": 21732,
+            "sha256": "bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c"
+          },
+          {
+            "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+            "blob": "aedb6d26681535371d1e9ed90b697b923b8100e6",
+            "bytes": 11399,
+            "sha256": "bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548"
+          },
+          {
+            "path": "test/moduletest/dataview/dataview.js",
+            "blob": "6ee13490c7d9bf21913e49358ff4b73260ee4975",
+            "bytes": 2796,
+            "sha256": "e7c79938c81a14e72a0fc3bea6a9fbce735ce7dcd6e0224919578dd7dc885a87"
+          },
+          {
+            "path": "test/moduletest/dataview/expect_output.txt",
+            "blob": "74195556e20fea6c4ee7c68ce59910bb363ce223",
+            "bytes": 1116,
+            "sha256": "bf16c3fb375b7b78938fd71228eebcd9f3220cf41309148cb14290ea5fcca7a7"
+          }
+        ],
+        "fixed_commit": "48fcec3686e45175f95b4600b579026a65149966",
+        "fixed_tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+        "fixed_files": [
+          {
+            "path": "ecmascript/base/atomic_helper.cpp",
+            "blob": "80d7ad14e70825ef2daf7b3f2fc956a891bf8b2c",
+            "bytes": 6995,
+            "sha256": "39521f4c6fa6b4b65d8b3daacd80f6e051b5a01c5aa814c9ac2ffc432529b36b"
+          },
+          {
+            "path": "ecmascript/builtins/builtins_dataview.cpp",
+            "blob": "a2376e822e995333b2400520ca5b882de9578b5e",
+            "bytes": 21718,
+            "sha256": "39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b"
+          },
+          {
+            "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+            "blob": "dce9388e8b7e33c87aec33ac4d067fe40370561b",
+            "bytes": 11561,
+            "sha256": "89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386"
+          },
+          {
+            "path": "test/moduletest/dataview/dataview.js",
+            "blob": "decb8eafb42ced6aed4d1b7394e4d273e98dee3c",
+            "bytes": 2915,
+            "sha256": "d4b66af1edd5f8ea5c67d7903d95bbaefd7e1983ec9341aa37640530ccc217be"
+          },
+          {
+            "path": "test/moduletest/dataview/expect_output.txt",
+            "blob": "5d395d0ba691ce9df5c6a381f30e8ced7352b5f6",
+            "bytes": 1161,
+            "sha256": "43d2a9ed8ed99361a259a6d11e285cac33c13c4ab936ee011575c63b28560aa4"
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "detector_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "unknown_no_rule_mapping",
+        "mapping_status": "unmapped_rule_limitation",
+        "control_ids": [
+          "C9-IB8BCA-UNKNOWN-001"
+        ],
+        "known_cves_0.16.0": []
+      },
+      "controls": [
+        "C9-IB8BCA-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "scanner_result": "0->0; no DataView/Atomics boundary model",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "miss_rule_dataview_boundary_uncovered",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "audit_record_identity": {
+        "line_start": 208,
+        "line_end": 208,
+        "excerpt_sha256": "e9be57999597a8e7297c3918f19b26e796268723a08e9f9f13f7d866bcfedd12",
+        "excerpt": "| IB8BCA / DataView 索引宽度与边界 | 上游源码/测试支持索引宽度调整；尚无具体越界见证或安全公告。 | 选定源码范围父/修复 0→0，detector blocked/partial，缺少适用的 DataView/Atomics 边界模型。 | 未运行。 | 未确认。 |"
+      },
+      "evidence_role": "source_audit_original"
+    },
+    {
+      "finding_id": "IAO7E8",
+      "kind": "c_line_ark_runtime_replay",
+      "title": "IAO7E8",
+      "cve_ids": [],
+      "id_mapping": {
+        "finding_to_cve_or_id": [
+          "IAO7E8"
+        ],
+        "cwe": "not_asserted"
+      },
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "c4c52fb57b6e204128e1520340c8e66c8e708981",
+        "vulnerable_tree": "7e1498c2be74908365e2a984e0c5edd5f639fc2f",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "blob": "e1e4f6411df4733b8f1ba5b679189e29d904a63f",
+            "sha256": "f1cdd8d0707cab2ac9bb9e024383151435bfc279c6815c5eceb98925974ff1a4",
+            "bytes": 125744
+          }
+        ],
+        "fixed_commit": "2a70904be0e21a37a666eb00cab49d02068260ea",
+        "fixed_tree": "8e5503ee7eebbb8e72bc6d5ca0cb88d5775301ef",
+        "fixed_files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "blob": "df765b9c212dc2e55c38dc385f85f183ce6606da",
+            "sha256": "b51826a74a89d6ee105c4087b4260363a7abfd632bb2c68d43c0ee9b17c883c5",
+            "bytes": 125744
+          },
+          {
+            "path": "test/moduletest/typedarrayfilter/typedarrayfilter.js",
+            "blob": "c0e05428adb80360d355e17bb87c8db16d46f04b",
+            "sha256": "unknown",
+            "bytes": "unknown"
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "detector_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "ark.runtime.typedarray-receiver-type-guard",
+        "mapping_status": "mapped_remote_ref_rule_current_checkout_absent_unseen_only",
+        "control_ids": [
+          "C9-IAO7E8-POS-001",
+          "C9-IAO7E8-FIX-001",
+          "C9-IAO7E8-SAFE-001",
+          "C9-IAO7E8-UNKNOWN-001"
+        ],
+        "known_cves_0.16.0": []
+      },
+      "controls": [
+        "C9-IAO7E8-POS-001",
+        "C9-IAO7E8-FIX-001",
+        "C9-IAO7E8-SAFE-001",
+        "C9-IAO7E8-UNKNOWN-001"
+      ],
+      "actual_result": {
+        "scanner_result": "receiver-guard 1->0; detector blocked/partial",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "candidate_static_response",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "audit_record_identity": {
+        "line_start": 209,
+        "line_end": 209,
+        "excerpt_sha256": "1a2aadbfd1c0d0e112018368c3ae38b68482ccf0ae126e083edffbf510d13d05",
+        "excerpt": "| IAO7E8 / TypedArray Filter 接收者类型校验顺序（PR !9063） | 固定父提交 `c4c52fb57b6e204128e1520340c8e66c8e708981` 在 `GetViewedArrayBuffer(thisValue)` 前只有空值检查，随后才验证 EcmaObject 与 Fast TypedArray；普通对象可设置 TypedArray 原型。修复 `2a70904be0e21a37a666eb00cab49d02068260ea` 将 buffer 读取移入同接收者 `IsFastTypeArray` 成功分支。无 CVE/安全公告关联已核实；PR 页面本轮浏览器不可访问，来源由本地官方上游 Git 对象、精确 diff 和新增回归源码核对。 | 新 receiver-type-guard 规则经生产 CLI：父版本 Filter 位置 1413 命中 1，修复版同根因 0；两份运行均 completed-with-limitations、detector blocked，故为静态候选响应，不是完整 TU 安全结论。 | 未构建/未运行上游 `typedarrayfilter` 回归。 | 未确认产品绑定、入口/权限、攻击者控制与实际影响。 |"
+      },
+      "evidence_role": "source_audit_original"
+    }
+  ]
+}

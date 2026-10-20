@@ -1,0 +1,89 @@
+{
+  "schema_version": "c9.partial-owner.run-manifest/v1",
+  "run_id": "c9-partial-owner-acceptance-20261019",
+  "checkout": {
+    "worktree": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner",
+    "head": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "head_tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git"
+  },
+  "parser_owner": {
+    "baseline": "13 tests, 1 skipped, 0 failed",
+    "regression_exact_error": "FileNotFoundError: missing external target source",
+    "final": "14 tests, 1 skipped, 0 failed",
+    "missing_external_target": "1 test, 0 failed; unknown/limitation",
+    "syntax_py_modified": false
+  },
+  "reconciliation": {
+    "original_status": "remote_pinned_original_located",
+    "original_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "original_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+    "original_blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+    "original_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+    "strict_status": "blocked_no_entries",
+    "strict_exit_code": 11,
+    "missing_self_test_status": "blocked_missing_input",
+    "product_claim": "not_asserted"
+  },
+  "controls": "control-matrix.json",
+  "patch": "parser-owner.patch",
+  "commands": "commands.txt",
+  "limitations": "limitations-and-next-slice.md",
+  "artifacts": [
+    "source-audit-original.md",
+    "source-audit-entry-reconciliation.json",
+    "remote-coverage-ledger.json",
+    "remote-ref-code-comparison.json",
+    "baseline-focused-tests.txt",
+    "regression-file-not-found.txt",
+    "final-focused-tests.txt",
+    "final-missing-external-target.txt",
+    "reconciliation-fail-closed-self-test.txt",
+    "reconciliation-strict-hash-mismatch.txt",
+    "reconciliation-strict-remote-pinned.txt"
+  ],
+  "patch_identity": {
+    "sha256": "b3fc3df48c75be25f8768368b10f03b8d869767b120c063d549133061494a9ba",
+    "size_bytes": 3158,
+    "fixture_git_blob": "2605df5383946d702bd15c687756e62207b8aab0"
+  },
+  "baseline_bindings": {
+    "review_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "review_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+    "review_blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+    "static_commit": "09ba5aba03c7c7d6787bace349b8fc0a6b0a5457",
+    "static_tree": "d15b91627c94d9c3043d7d58d47fcf9af7e42454",
+    "known_cves_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "known_cves_blob": "a2ddd5ff2afc2f6fb0f1677ea3ffbbfc580a195b"
+  },
+  "audit_reconciliation": {
+    "full_entries": 36,
+    "public_cve": 17,
+    "patch_list_only": 2,
+    "manual_candidate": 4,
+    "negative_control": 5,
+    "c_line_rows": 8,
+    "mapping": "../../c8_source_audit_reconciliation_20261019/audit-entry-mapping.json"
+  },
+  "known_cves_coverage": {
+    "detector": "ohscanner.known_disclosed_cves",
+    "version": "0.16.0",
+    "covered_rules": 17,
+    "unknown_not_covered": 3,
+    "uncovered_cves": [
+      "CVE-2025-24304",
+      "CVE-2026-33416",
+      "CVE-2026-34757"
+    ],
+    "ledger": "known-cve-coverage-0.16.0.json"
+  },
+  "exact_verification": "exact-verification.json",
+  "migration_conflicts": "migration-conflicts-09ba5ab.json",
+  "unresolved_findings": [
+    "IAO7GO selector miss: 0 applicable files",
+    "I7W51D length narrowing rule absent",
+    "IB8BCA DataView/Atomics boundary rule absent",
+    "CVE-2026-33416 and CVE-2026-34757 are patch-list-only and unknown",
+    "product entry/privilege/trigger/CIA/build/version evidence remains open"
+  ]
+}

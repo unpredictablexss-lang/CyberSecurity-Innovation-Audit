@@ -1,0 +1,33 @@
+{
+  "schema_version": "c9.partial-owner.remote-ref-code-comparison/v1",
+  "ref": "origin/codex/c-line-ark-runtime-20261018",
+  "ref_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+  "comparison_mode": "read-only git show/ls-tree/diff; no checkout or code import",
+  "current": {
+    "detector_version": "0.7.0",
+    "model_blob": "a990f6bd44bf7b93dd8d802affee9c30b8d849f4",
+    "syntax_blob": "9782642a68168d298aa55d40a49dd4fd32adcd14",
+    "unseen_detector": "absent",
+    "unseen_model": "absent",
+    "unseen_tests": "absent"
+  },
+  "remote_ref": {
+    "unseen_version": "0.8.10",
+    "model_blob": "0b506c1c8bdb2d4ab6fe8fdf7d0d18a85090ee5b",
+    "syntax_blob": "8507a127856d22af01a6eaa64738c8030ed414af",
+    "unseen_detector_blob": "da8f812513391846dec27635d4db647534cd39ad",
+    "unseen_model_blob": "43cbd0e7cd696c004002a6ff9a6fd434550f6d07",
+    "unseen_test_blob": "6fdd8ca5a5741f8cf13d181ae7c2a56216c82a23"
+  },
+  "diff_numstat": [
+    "syntax.py: 368 insertions, 87 deletions in current relative to remote ref",
+    "unseen_detector.py: absent in current; remote ref has 284 lines",
+    "unseen_model.py: absent in current; remote ref has 29 lines",
+    "test_unseen_detector.py: absent in current; remote ref has 212 lines"
+  ],
+  "interpretation": [
+    "Remote-ref syntax.py contains lexical owner hints for partial input; the current syntax.py rejects lexical hints and resolves owners only from complete visible AST, which is stricter for this acceptance goal.",
+    "Remote-ref unseen_* was compared read-only and not imported into the partial-owner worktree.",
+    "No claim is made that the remote-ref 0.8.10 implementation is the current checkout implementation."
+  ]
+}

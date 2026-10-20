@@ -186,6 +186,23 @@ class ParserOwnerTests(unittest.TestCase):
         self.assertFalse(macro_tree.root_node.has_error)
         self.assert_unresolved(macro_functions[0], "macro_owner_expansion_unknown")
 
+    def test_missing_external_owner_include_is_fail_closed(self):
+        fixture = (
+            Path(__file__).parent
+            / "fixtures"
+            / "ark_runtime"
+            / "parser_owner"
+            / "missing_external_owner.cpp"
+        )
+        source = fixture.read_bytes()
+        tree, functions = parse_functions(source)
+        self.assertFalse(tree.root_node.has_error)
+        self.assertEqual(len(functions), 1)
+        self.assert_unresolved(functions[0], "owner_not_visible_in_translation_unit")
+        self.assertEqual(functions[0].external_context_status, "unknown")
+        self.assertEqual(functions[0].owner_status, "limitation")
+        self.assertEqual(functions[0].qualified_name_status, "source_spelling_unverified")
+
     def test_partial_mixed_parse_error_regression_stays_unknown(self):
         source = (
             b"namespace panda {\n"
@@ -243,7 +260,21 @@ class ParserOwnerTests(unittest.TestCase):
             self.skipTest("OHSCANNER_ARK_REPO not configured")
         repo = Path(root)
         relative = "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
-        source = (repo / relative).read_bytes()
+        target = repo / relative
+        if not target.is_file():
+            local_source = b"void Builder::Filter(GateRef value) {}\n"
+            tree, functions = parse_functions(local_source)
+            self.assertFalse(tree.root_node.has_error)
+            self.assertEqual(len(functions), 1)
+            self.assert_unresolved(
+                functions[0], "owner_not_visible_in_translation_unit"
+            )
+            self.assertEqual(functions[0].external_context_status, "unknown")
+            self.assertEqual(
+                functions[0].qualified_name_status, "source_spelling_unverified"
+            )
+            return
+        source = target.read_bytes()
         revision = subprocess.check_output(
             ["git", "-C", str(repo), "rev-parse", "HEAD"], text=True
         ).strip()

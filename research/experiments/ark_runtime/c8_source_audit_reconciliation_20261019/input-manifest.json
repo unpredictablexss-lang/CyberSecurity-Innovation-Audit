@@ -1,34 +1,65 @@
 {
-  "schema_version": "c8.source-audit.input-manifest/v1",
-  "input_path": "源码漏洞审查记录_20261018.md",
-  "resolved_path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\源码漏洞审查记录_20261018.md",
-  "status": "missing",
-  "execution_status": "blocked_missing_input",
-  "sha256": "unknown",
+  "schema_version": "c8.source-audit.input-manifest/v2",
+  "input_path": "research/experiments/ark_runtime/c9_partial_owner_acceptance_20261019/source-audit-original.md",
+  "resolved_path": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner\\research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\source-audit-original.md",
+  "status": "remote_pinned_original_located",
+  "execution_status": "input_located_remote_pinned",
+  "sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
   "git_identity": {
-    "commit": "unknown",
-    "tree": "unknown",
-    "blob": "unknown",
-    "status": "not_available"
+    "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+    "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+    "status": "verified_local_pinned_object_after_explicit_fetch",
+    "ref": "origin/codex/c-line-ark-runtime-20261018",
+    "path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md"
+  },
+  "checkout_identity": {
+    "worktree": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner",
+    "head": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "head_tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+    "detached": true,
+    "remote_origin": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git"
   },
   "search_evidence": {
-    "checkout": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019",
-    "head": "556cb145fec9f52afd1c49d10290e01036200f00",
-    "head_tree": "7ccd0895622669ac33595c1058e5f0ede0b8e5a5",
-    "branch": "codex/c-line-scanner-optimization-20261019",
-    "remote": "origin https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "searched_at": "2026-10-19",
     "worktree_basename_count": 0,
     "tracked_path_count": 0,
     "history_path_count": 0,
     "pinned_object_path_count": 0,
-    "search_method": "local worktree + git ls-files + git log --all --name-only + git rev-list --objects --all; no fetch/checkout/push/merge/network",
-    "searched_at": "2026-10-19"
+    "latest_local_ref_checked": "origin/codex/a-path-source-sink-20261018",
+    "latest_local_ref_commit": "bc27c2ca520223acec6ae6e44e1535e5e4e73404",
+    "latest_local_ref_tree": "d7cc9d82880ff52ef6c650c9b87cbdd533c57607",
+    "search_method": "local worktree + git ls-files + git log --all --name-only + git rev-list --objects --all + local ref tree scan; no fetch/checkout/reset/push/network by AC-AUDIT-03",
+    "note": "Superseded: after the coordinator-reported explicit fetch, git show/ls-tree located the original at the recorded remote ref and pinned commit/tree/path/blob. No fetch was performed by this agent.",
+    "located_ref": "origin/codex/c-line-ark-runtime-20261018",
+    "located_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "located_path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
+    "located_blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea"
   },
+  "substitute_evidence_not_imported_as_input": [
+    {
+      "role": "a_sample30_confirmed_finding",
+      "source_report_finding_id": "ohscanner-contacts-path-traversal-001",
+      "source_commit": "758d22f354b4aede80d21f321761e4515ab86047",
+      "source_path": "research/deliveries/a-line-sample30/20261018/report/technical-report.md",
+      "boundary": "substitute evidence only; not the missing source-audit original and not product-confirmed by this reconciliation"
+    },
+    {
+      "role": "a_path_source_to_sink_delivery",
+      "source_commit": "bc27c2ca520223acec6ae6e44e1535e5e4e73404",
+      "source_path": "research/deliveries/cpp/A_PATH_TRAVERSAL_DELIVERY_20261018.md",
+      "boundary": "research detector delivery and controls; not the missing source-audit original"
+    }
+  ],
   "input_assertions": {
-    "file_read": false,
+    "file_read": true,
     "entries_extracted": 0,
     "fabricated_entries": false,
-    "missing_input_is_not_safe_or_miss": true
+    "missing_input_is_not_safe_or_miss": true,
+    "hash_refresh_explicit": false,
+    "read_method": "git show origin/codex/c-line-ark-runtime-20261018:path (read-only)",
+    "structured_entries_extracted": 0,
+    "prose_rows_reconciled_in_c9": 8
   },
-  "next_obligation": "Provide or restore the exact source-audit Markdown file, then rerun reconcile.py and rebind its SHA-256 and Git identity."
+  "next_obligation": "The original is hash-bound and its eight C-line rows are reconciled in c9. Keep structured import blocked_no_entries until explicit source-bound entry JSON is supplied; do not infer product findings from prose."
 }

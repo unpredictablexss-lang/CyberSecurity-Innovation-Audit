@@ -1,0 +1,19 @@
+test_bound_typedarray_target_stays_partial_and_unknown (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_bound_typedarray_target_stays_partial_and_unknown) ... skipped 'OHSCANNER_ARK_REPO not configured'
+test_fixed_macro_shape_restores_only_visible_structural_owner (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_fixed_macro_shape_restores_only_visible_structural_owner) ... ok
+test_missing_external_owner_include_is_fail_closed (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_missing_external_owner_include_is_fail_closed) ... ok
+test_missing_macro_and_type_declarations_remain_unknown_on_partial_file (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_missing_macro_and_type_declarations_remain_unknown_on_partial_file) ... ok
+test_nested_namespaces_and_same_named_methods_keep_distinct_owners (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_nested_namespaces_and_same_named_methods_keep_distinct_owners) ... ok
+test_owner_and_signature_controls_do_not_collapse_to_name_only (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_owner_and_signature_controls_do_not_collapse_to_name_only) ... ok
+test_partial_mixed_parse_error_regression_stays_unknown (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_partial_mixed_parse_error_regression_stays_unknown) ... ok
+test_positive_complete_visible_class_owner_is_source_bound (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_positive_complete_visible_class_owner_is_source_bound) ... ok
+test_safe_control_is_candidate_unassessed_and_not_a_safety_verdict (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_safe_control_is_candidate_unassessed_and_not_a_safety_verdict) ... ok
+test_truncated_namespace_disables_owner_recovery (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_truncated_namespace_disables_owner_recovery) ... ok
+test_unknown_ambiguous_qualifier_is_fail_closed (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_unknown_ambiguous_qualifier_is_fail_closed) ... ok
+test_unknown_cross_translation_unit_owner_is_not_name_guessed (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_unknown_cross_translation_unit_owner_is_not_name_guessed) ... ok
+test_unknown_missing_owner_token_and_macro_expansion (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_unknown_missing_owner_token_and_macro_expansion) ... ok
+test_unrelated_same_name_functions_keep_source_bound_owner_identities (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_unrelated_same_name_functions_keep_source_bound_owner_identities) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.023s
+
+OK (skipped=1)

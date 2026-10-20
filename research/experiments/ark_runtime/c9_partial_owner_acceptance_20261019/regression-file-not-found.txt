@@ -1,0 +1,10 @@
+cwd=/mnt/e/网安/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c8_parallel_20261019/worktrees/partial-owner
+exact_argv=/usr/bin/python3 -c <missing bound target read_bytes reproducer>
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/usr/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/e/网安/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c8_parallel_20261019/worktrees/partial-owner/research/experiments/ark_runtime/c9_partial_owner_acceptance_20261019/missing-external-target/ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp'
+exit_code=1

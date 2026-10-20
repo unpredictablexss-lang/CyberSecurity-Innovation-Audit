@@ -1,0 +1,10 @@
+cwd=/mnt/e/网安/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c8_parallel_20261019/worktrees/partial-owner
+exact_argv=/usr/bin/python3 -m unittest tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_bound_typedarray_target_stays_partial_and_unknown -v
+OHSCANNER_ARK_REPO=/mnt/e/网安/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c8_parallel_20261019/worktrees/partial-owner/research/experiments/ark_runtime/c9_partial_owner_acceptance_20261019/missing-external-target
+test_bound_typedarray_target_stays_partial_and_unknown (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+OK
+exit_code=0

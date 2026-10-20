@@ -1,0 +1,75 @@
+{
+  "schema_version": "c9.partial-owner.control-matrix/v1",
+  "controls": [
+    {
+      "kind": "positive",
+      "control_id": "C9-OWNER-POS-001",
+      "test": "tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_positive_complete_visible_class_owner_is_source_bound",
+      "expected": "resolved owner_identity; owner_source=ast; qualified_name_status=resolved_owner",
+      "observed": "pass"
+    },
+    {
+      "kind": "fixed",
+      "control_id": "C9-OWNER-FIX-001",
+      "test": "tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_fixed_macro_shape_restores_only_visible_structural_owner",
+      "expected": "broken macro shape remains owner unknown/limitation; syntactically fixed source restores visible panda::Builder owner",
+      "observed": "pass"
+    },
+    {
+      "kind": "safe",
+      "control_id": "C9-OWNER-SAFE-001",
+      "test": "tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_safe_control_is_candidate_unassessed_and_not_a_safety_verdict",
+      "expected": "candidate/unassessed and owner unknown/limitation; owner_status is never safe",
+      "observed": "pass"
+    },
+    {
+      "kind": "unrelated",
+      "control_id": "C9-OWNER-UNR-001",
+      "test": "tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_unrelated_same_name_functions_keep_source_bound_owner_identities",
+      "expected": "same function name in distinct namespaces keeps distinct source-bound owner identities",
+      "observed": "pass"
+    },
+    {
+      "kind": "unknown",
+      "control_id": "C9-OWNER-UNKNOWN-EXT-001",
+      "test": "test_bound_typedarray_target_stays_partial_and_unknown with OHSCANNER_ARK_REPO pointing to missing-external-target",
+      "expected": "missing external target source does not raise FileNotFoundError; local unresolved owner is unknown/limitation",
+      "observed": "pass"
+    },
+    {
+      "kind": "unknown",
+      "control_id": "C9-OWNER-UNKNOWN-INC-001",
+      "test": "test_missing_external_owner_include_is_fail_closed",
+      "expected": "missing include leaves owner_identity=None, owner_status=limitation and external_context_status=unknown",
+      "observed": "pass"
+    },
+    {
+      "kind": "unknown",
+      "control_id": "C9-OWNER-UNKNOWN-MACRO-001",
+      "test": "test_unknown_missing_owner_token_and_macro_expansion",
+      "expected": "anonymous and macro-expanded owner tokens remain unknown/limitation",
+      "observed": "pass"
+    },
+    {
+      "kind": "unknown",
+      "control_id": "C9-OWNER-UNKNOWN-CROSSTU-001",
+      "test": "test_unknown_cross_translation_unit_owner_is_not_name_guessed",
+      "expected": "owner absent from this TU is owner_not_visible_in_translation_unit and unknown/limitation",
+      "observed": "pass"
+    },
+    {
+      "kind": "unknown",
+      "control_id": "C9-OWNER-UNKNOWN-AMBIG-001",
+      "test": "test_unknown_ambiguous_qualifier_is_fail_closed",
+      "expected": "namespace/class name collision is ambiguous_owner_qualifier and unknown/limitation",
+      "observed": "pass"
+    },
+    {
+      "kind": "unknown",
+      "control_id": "C9-OWNER-UNKNOWN-PARTIAL-001",
+      "test": "test_partial_mixed_parse_error_regression_stays_unknown",
+      "expected": "partial parse disables owner recovery for every extracted function",
+      "observed": "pass"
+    }
+  ]
+}

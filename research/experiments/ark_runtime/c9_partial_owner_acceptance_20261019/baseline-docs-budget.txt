@@ -1,0 +1,4 @@
+cwd=/mnt/e/网安/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c8_parallel_20261019/worktrees/partial-owner
+exact_argv=/usr/bin/python3 scripts/check_docs_context_budget.py
+/usr/bin/python3: can't open file '/mnt/e/网安/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c8_parallel_20261019/worktrees/partial-owner/scripts/check_docs_context_budget.py': [Errno 2] No such file or directory
+exit_code=2

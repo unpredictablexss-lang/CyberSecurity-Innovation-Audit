@@ -1,0 +1,335 @@
+cwd=E:\网安\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c8_parallel_20261019\worktrees\partial-owner
+exact_argv=C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe research\experiments\ark_runtime/c8_source_audit_reconciliation_20261019/reconcile.py --strict-input --write-run-manifest
+{
+  "schema_version": "c8.source-audit.run-manifest/v2",
+  "run_id": "c8-source-audit-reconciliation-20261019",
+  "generated_at": "2026-10-19T06:23:22+00:00",
+  "exact_command": {
+    "cwd": "E:\\����\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner",
+    "executable": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "argv": [
+      "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "E:\\����\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner\\research\\experiments\\ark_runtime\\c8_source_audit_reconciliation_20261019\\reconcile.py",
+      "--strict-input",
+      "--write-run-manifest"
+    ],
+    "shell_rendering": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe E:\\����\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner\\research\\experiments\\ark_runtime\\c8_source_audit_reconciliation_20261019\\reconcile.py --strict-input --write-run-manifest"
+  },
+  "checkout_identity": {
+    "worktree": "E:\\����\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner",
+    "head": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "head_tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+    "base": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "base_tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+    "detached": true,
+    "remote_origin": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git"
+  },
+  "blocked": true,
+  "blocked_status": "blocked_no_entries",
+  "expected_exit_code": 11,
+  "exit_code": 11,
+  "input": {
+    "status": "remote_pinned_original_located",
+    "path": "research/experiments/ark_runtime/c9_partial_owner_acceptance_20261019/source-audit-original.md",
+    "resolved_path": "E:\\����\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner\\research\\experiments\\ark_runtime\\c9_partial_owner_acceptance_20261019\\source-audit-original.md",
+    "recorded_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+    "actual_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+    "git_identity": {
+      "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+      "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+      "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+      "status": "verified_local_pinned_object_after_explicit_fetch",
+      "ref": "origin/codex/c-line-ark-runtime-20261018",
+      "path": "research/deliveries/c-line/OHScanner_G��Դ��©������¼_20261018.md"
+    },
+    "provenance_status": "verified_local_pinned_object_after_explicit_fetch",
+    "explicit_hash_refresh": false
+  },
+  "scanner_execution": false,
+  "metrics_computed": false,
+  "extracted_vulnerability_entries": 0,
+  "entry_mappings": [],
+  "known_substitute_findings": [
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-001",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-002",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-003",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-004",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-005",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-006",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C4-EXG-FILTER-UNKNOWN",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C4-EXG-MAP-UNKNOWN",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C4-EXG-TOREVERSED-UNKNOWN",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C4-EXG-ORDER-UNKNOWN",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C7-DEPENDENCY-LIMIT-UNKNOWN",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C7-REPLAY-LIMIT-UNKNOWN",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "A-PATH-DELIVERY-20261018",
+      "source_report_finding_id": null,
+      "source_role": "a_path_source_to_sink_delivery",
+      "classification": "candidate",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "A-SAMPLE30-CONTACTS-PATH-TRAVERSAL-001",
+      "source_report_finding_id": "ohscanner-contacts-path-traversal-001",
+      "source_role": "a_sample30_confirmed_finding_substitute",
+      "classification": "candidate",
+      "product_vulnerability": false
+    }
+  ],
+  "validation": {
+    "worktree_identity": "pass",
+    "input_presence": "pass",
+    "input_hash": "pass",
+    "entry_schema": "pass",
+    "mapping": "not_evaluated",
+    "known_substitute_evidence": "pass",
+    "regression_scaffolding": "pass"
+  },
+  "failure_codes": [
+    "input_no_supported_entries"
+  ],
+  "failures": [
+    "input has no fenced c8-audit-entries JSON block; prose is never inferred"
+  ],
+  "unknown_ledger": [
+    "input exists but no supported explicit entries were extracted"
+  ],
+  "self_test": {
+    "schema_version": "c8.source-audit.fail-closed-self-test/v1",
+    "generated_at": "2026-10-19T06:20:48+00:00",
+    "cwd": "E:\\����\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner",
+    "exact_argv": [
+      "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "E:\\����\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner\\research\\experiments\\ark_runtime\\c8_source_audit_reconciliation_20261019\\reconcile.py",
+      "--self-test-fail-closed"
+    ],
+    "scanner_execution": false,
+    "metrics_computed": false,
+    "cases": [
+      {
+        "case": "missing",
+        "first_status": "blocked_missing_input",
+        "rerun_status": "blocked_missing_input",
+        "failure_codes": [
+          "input_missing"
+        ],
+        "entry_count": 0,
+        "mapped_entry_ids": [],
+        "mapped_source_identity_count": 0,
+        "rerunnable_stable": true,
+        "expected_status": "blocked_missing_input",
+        "expected_failure_codes": [
+          "input_missing"
+        ],
+        "passed": true
+      },
+      {
+        "case": "present_no_entries",
+        "first_status": "blocked_no_entries",
+        "rerun_status": "blocked_no_entries",
+        "failure_codes": [
+          "input_no_supported_entries"
+        ],
+        "entry_count": 0,
+        "mapped_entry_ids": [],
+        "mapped_source_identity_count": 0,
+        "rerunnable_stable": true,
+        "expected_status": "blocked_no_entries",
+        "expected_failure_codes": [
+          "input_no_supported_entries"
+        ],
+        "passed": true
+      },
+      {
+        "case": "schema_invalid",
+        "first_status": "blocked_schema_invalid",
+        "rerun_status": "blocked_schema_invalid",
+        "failure_codes": [
+          "input_schema_invalid"
+        ],
+        "entry_count": 1,
+        "mapped_entry_ids": [],
+        "mapped_source_identity_count": 0,
+        "rerunnable_stable": true,
+        "expected_status": "blocked_schema_invalid",
+        "expected_failure_codes": [
+          "input_schema_invalid"
+        ],
+        "passed": true
+      },
+      {
+        "case": "hash_mismatch",
+        "first_status": "blocked_hash_mismatch",
+        "rerun_status": "blocked_hash_mismatch",
+        "failure_codes": [
+          "input_hash_mismatch"
+        ],
+        "entry_count": 0,
+        "mapped_entry_ids": [],
+        "mapped_source_identity_count": 0,
+        "rerunnable_stable": true,
+        "expected_status": "blocked_hash_mismatch",
+        "expected_failure_codes": [
+          "input_hash_mismatch"
+        ],
+        "passed": true
+      },
+      {
+        "case": "valid_mapping",
+        "first_status": "not_blocked",
+        "rerun_status": "not_blocked",
+        "failure_codes": [],
+        "entry_count": 1,
+        "mapped_entry_ids": [
+          "SELFTEST-PATH-ENTRY-001"
+        ],
+        "mapped_source_identity_count": 1,
+        "rerunnable_stable": true,
+        "expected_status": "not_blocked",
+        "expected_failure_codes": [],
+        "passed": true
+      }
+    ],
+    "status": "pass"
+  },
+  "hashes": {
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/README.md": {
+      "sha256": "efe096b66e6925a3b033555f7b39c5c316641d052c534902edf119b17d99e58f",
+      "git_blob": "b746c88dca624f46277678e383667b246e264abe",
+      "size_bytes": 4345
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/audit-schema.json": {
+      "sha256": "dcb9b3b1f0df769726d379b01dc5dd633248d97422b1b84ba554535cef2aef83",
+      "git_blob": "8bb3b301c4be06423a021f4f9cd916059ff74831",
+      "size_bytes": 5330
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/input-manifest.json": {
+      "sha256": "ba6e0a03780cb28aa9e258c1da358f2e8355dac33c5f08a1a2971a8def4957db",
+      "git_blob": "b11ee248395d78d1b604c2589bc51267793486fc",
+      "size_bytes": 3986
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/known-source-findings.json": {
+      "sha256": "6166907edbfe1dc23a34e3615ca935b0359ff49a2d08729bb459cd405eae139d",
+      "git_blob": "59fd73874180e487fc6929bb2bdbe4ac786162ee",
+      "size_bytes": 46754
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/expected-regressions.json": {
+      "sha256": "09806893603d8ecbadee35e09c94f3fa0578db174e0dbfee2762d95a2a605a7e",
+      "git_blob": "1820847758408721927bebcd96e791a6671513ec",
+      "size_bytes": 10939
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/reconcile.py": {
+      "sha256": "24eb3e6353dc11498254d45187f4e8770182a8b2e03276fbee9db21fbbdad598",
+      "git_blob": "903d440c7df69c51545d2a65fce7a06d765a65dc",
+      "size_bytes": 48910
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/minimal-patch.diff": {
+      "sha256": "3c50cc9235239623511b7f88297f30c0d89cf4e32837ddb4572eea96ec4c99da",
+      "git_blob": "418761f0e59b5dec352f47cc6c2220fc156c7dad",
+      "size_bytes": 97391
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/fail-closed-self-test.json": {
+      "sha256": "c6768be98e780172965b64bedb91edce61742ab4afd9cb0803511dc8a9b4cef3",
+      "git_blob": "89f5e5b51722dafd61175289bf3d7a7ce4c72ba1",
+      "size_bytes": 3139
+    }
+  },
+  "minimal_patch": {
+    "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/minimal-patch.diff",
+    "generation_command": "git diff --binary -- research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019 ':(exclude)research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/run-manifest.json' > research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/minimal-patch.diff",
+    "generated_output_excluded": [
+      "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/run-manifest.json",
+      "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/fail-closed-self-test.json"
+    ],
+    "sha256": "3c50cc9235239623511b7f88297f30c0d89cf4e32837ddb4572eea96ec4c99da",
+    "git_blob": "418761f0e59b5dec352f47cc6c2220fc156c7dad",
+    "size_bytes": 97391
+  },
+  "limitations": [
+    "The source-audit original is located as a remote pinned Git object and hash-bound through the c9 read-only copy; its prose was read with git show.",
+    "The original contains prose rows, not an explicit c8-audit-entries JSON block; structured extraction therefore remains blocked_no_entries.",
+    "No substitute evidence is promoted to product confirmed/reportable in this reconciliation.",
+    "No scanner was executed by this script; expected regressions are mapping/acceptance scaffolding only.",
+    "No Precision/Recall, FP/FN, CWE/CVE or product impact conclusion is computed or imported.",
+    "ohscanner.cpp.path_traversal is research-only and not enabled in the product Runner/Catalog at the fixed base."
+  ],
+  "next_slice": [
+    "Preserve the remote pinned original identity and the c9 row-to-source/rule/control reconciliation; do not convert prose into product findings.",
+    "If machine import is required, add explicit source-bound entry JSON with repo/commit/tree/blob/source SHA-256 and detector/rule/control identities.",
+    "Keep multi-file, multi-commit and v1 read-only compatibility work in later auditable slices without rewriting historical IDs."
+  ]
+}
+exit_code=11

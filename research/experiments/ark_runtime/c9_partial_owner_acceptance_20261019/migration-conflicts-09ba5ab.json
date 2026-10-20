@@ -1,0 +1,98 @@
+{
+  "schema_version": "c8.source-audit.migration-conflicts/v1",
+  "from": {
+    "commit": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c"
+  },
+  "to": {
+    "commit": "09ba5aba03c7c7d6787bace349b8fc0a6b0a5457",
+    "tree": "d15b91627c94d9c3043d7d58d47fcf9af7e42454"
+  },
+  "review_binding": {
+    "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+    "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+    "sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240"
+  },
+  "entries": [
+    {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/README.md",
+      "classification": "carry_over_addition",
+      "target_exists": false,
+      "target_blob": null,
+      "decision": "carry dirty evidence without overwriting teammate work"
+    },
+    {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/audit-schema.json",
+      "classification": "carry_over_addition",
+      "target_exists": false,
+      "target_blob": null,
+      "decision": "carry dirty evidence without overwriting teammate work"
+    },
+    {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/expected-regressions.json",
+      "classification": "carry_over_addition",
+      "target_exists": false,
+      "target_blob": null,
+      "decision": "carry dirty evidence without overwriting teammate work"
+    },
+    {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/input-manifest.json",
+      "classification": "carry_over_addition",
+      "target_exists": false,
+      "target_blob": null,
+      "decision": "carry dirty evidence without overwriting teammate work"
+    },
+    {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/known-source-findings.json",
+      "classification": "carry_over_addition",
+      "target_exists": false,
+      "target_blob": null,
+      "decision": "carry dirty evidence without overwriting teammate work"
+    },
+    {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/reconcile.py",
+      "classification": "carry_over_addition",
+      "target_exists": false,
+      "target_blob": null,
+      "decision": "carry dirty evidence without overwriting teammate work"
+    },
+    {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/run-manifest.json",
+      "classification": "carry_over_addition",
+      "target_exists": false,
+      "target_blob": null,
+      "decision": "carry dirty evidence without overwriting teammate work"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/syntax.py",
+      "classification": "target_missing_required_dependency",
+      "target_exists": false,
+      "target_blob": null,
+      "decision": "carry syntax.py; 09ba tests import it but tree lacks it"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/test_parser_owner.py",
+      "classification": "semantic_content_conflict",
+      "target_exists": true,
+      "target_blob": "020476984a906f9b7fcbc4feb55451d152e6a060",
+      "decision": "retain current fail-closed tests; reject 09ba lexical_scope and unclassified read_bytes failure"
+    },
+    {
+      "path": "research/experiments/ark_runtime/c9_partial_owner_acceptance_20261019/",
+      "classification": "carry_over_untracked_directory",
+      "decision": "carry exact evidence"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/ark_runtime/parser_owner/",
+      "classification": "carry_over_untracked_fixture",
+      "decision": "carry fail-closed fixtures"
+    },
+    {
+      "path": "src/ohscanner/detectors/known_cves.py",
+      "classification": "target_only_addition_no_conflict",
+      "target_blob": "a2ddd5ff2afc2f6fb0f1677ea3ffbbfc580a195b",
+      "decision": "bind 0.16.0 coverage only"
+    }
+  ]
+}

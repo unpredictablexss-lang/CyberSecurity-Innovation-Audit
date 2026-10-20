@@ -1,0 +1,585 @@
+{
+  "schema_version": "c9.partial-owner.source-audit-entry-reconciliation/v1",
+  "generated_for": "C8-PARTIAL-OWNER",
+  "input": {
+    "status": "remote_pinned_original_located",
+    "ref": "origin/codex/c-line-ark-runtime-20261018",
+    "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+    "path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
+    "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+    "sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+    "original_copy": "research/experiments/ark_runtime/c9_partial_owner_acceptance_20261019/source-audit-original.md",
+    "latest_static_baseline": {
+      "commit": "09ba5aba03c7c7d6787bace349b8fc0a6b0a5457",
+      "tree": "d15b91627c94d9c3043d7d58d47fcf9af7e42454",
+      "ref": "origin/codex/c-line-static-20261019"
+    },
+    "known_cves_baseline": {
+      "commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "tree": "8c5a296d8304d98193a29a4695aaf61ca0c0996c",
+      "blob": "a2ddd5ff2afc2f6fb0f1677ea3ffbbfc580a195b",
+      "detector_version": "0.16.0"
+    }
+  },
+  "scope": "Section 5 C-line Ark Runtime rows (lines 202-209) only; CVE/manual rows outside Ark rules remain source-bound original text and are not promoted.",
+  "entries": [
+    {
+      "row_id": "CVE-2025-24304",
+      "original_line": 202,
+      "ledger_case_id": "ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+        "vulnerable_tree": "454e898b43b55950b104053cf42d32645474ef8f",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "blob": "2aae41b75a5ffd1441309439ff3834d959f71b79",
+            "sha256": "6133af44de48ec3ff00fdc7b06597fbef1c9a270cc04ba48d09b4475976c2381",
+            "bytes": "unknown"
+          }
+        ],
+        "fixed_commit": "6627179cbf6f8d40d1adfcf5c3c686b902f42419",
+        "fixed_tree": "fa482a14984ee8cd8f424131cb5179ba7a6a9422",
+        "fixed_files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "blob": "1818dd72f5ac68aa7f8ee7a38a59b923f4ab5476",
+            "sha256": "unknown",
+            "bytes": "unknown"
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "finding_to_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "ark.runtime.typedarray-store-type-origin",
+        "mapping_status": "mapped_remote_ref_rule_current_checkout_absent",
+        "control_ids": [
+          "C8-TO-POS-001",
+          "C8-TO-FIX-001",
+          "C8-TO-SAFE-001",
+          "C8-TO-UNR-001",
+          "C8-TO-UNKNOWN-001",
+          "C8-TO-UNKNOWN-002",
+          "C8-TO-UNKNOWN-003",
+          "C8-TO-UNKNOWN-004",
+          "C8-TO-UNKNOWN-005",
+          "C8-TO-UNKNOWN-006"
+        ]
+      },
+      "claim_boundary": {
+        "product_vulnerability": "not_asserted",
+        "cia": "not_asserted",
+        "cve": "not_asserted",
+        "metrics": "not_asserted",
+        "source_audit_claim": "original_row_reconciled_to_source_identity_and_rule_control_only"
+      },
+      "actual_result": {
+        "scanner_result": "Map root 1->0; family candidates remain; partial/blocked",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "candidate_static_response",
+        "cve_claim": "not_asserted",
+        "cia_claim": "not_asserted"
+      },
+      "known_cves_0_16_0": [
+        {
+          "detector_id": "ohscanner.known_disclosed_cves",
+          "detector_version": "0.16.0",
+          "rule_id": null,
+          "coverage_status": "unknown_not_covered_by_known_cves_0.16.0",
+          "actual_result": "alternate Ark type-origin mapping exists",
+          "product_status": "unknown"
+        }
+      ]
+    },
+    {
+      "row_id": "IBS5YG",
+      "original_line": 203,
+      "ledger_case_id": "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+        "vulnerable_tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+            "sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+            "bytes": 150433
+          }
+        ],
+        "fixed_commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+        "fixed_tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "fixed_files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+            "sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+            "bytes": 150509
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "finding_to_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "ark.runtime.typedarray-store-type-origin",
+        "mapping_status": "mapped_remote_ref_rule_current_checkout_absent",
+        "control_ids": [
+          "C8-TO-POS-001",
+          "C8-TO-FIX-001",
+          "C8-TO-SAFE-001",
+          "C8-TO-UNR-001",
+          "C8-TO-UNKNOWN-001",
+          "C8-TO-UNKNOWN-002",
+          "C8-TO-UNKNOWN-003",
+          "C8-TO-UNKNOWN-004",
+          "C8-TO-UNKNOWN-005",
+          "C8-TO-UNKNOWN-006"
+        ]
+      },
+      "claim_boundary": {
+        "product_vulnerability": "not_asserted",
+        "cia": "not_asserted",
+        "cve": "not_asserted",
+        "metrics": "not_asserted",
+        "source_audit_claim": "original_row_reconciled_to_source_identity_and_rule_control_only"
+      },
+      "actual_result": {
+        "scanner_result": "TypeOrigin 1->0; partial/blocked",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "candidate_static_response",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "known_cves_0_16_0": []
+    },
+    {
+      "row_id": "I7KZJ7",
+      "original_line": 204,
+      "ledger_case_id": "ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "087449d3d657d081611cf1bf4c731ff048748812",
+        "vulnerable_tree": "cc51f309bf6446ae401597235fe5ebd3477ec63e",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "blob": "caa5467917bbd9079a4d72cdfb419266e315a624",
+            "bytes": 34880,
+            "sha256": "170660d6f15ad88ddee04db4ded3e76932832631d0613e78318edf2b0ad6fc85"
+          }
+        ],
+        "fixed_commit": "1b0ac0aa076b91d92b5d5aba91e92bc6c2a06c50",
+        "fixed_tree": "48ac0d65b920c7401055fcfae68d538e03a25e6c",
+        "fixed_files": [
+          {
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "blob": "319347a5ea62df52e8427ad6822f65e70c997a11",
+            "bytes": 35080,
+            "sha256": "f698f40394524b5b95a1bbef4fe8b1ccef05e52226d9d1f30ef54decca711a62"
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "finding_to_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "ark.runtime.typedarray-buffer-size-multiplication-overflow",
+        "mapping_status": "mapped_remote_ref_rule_current_checkout_absent",
+        "control_ids": [
+          "C9-I7KZJ7-POS-001",
+          "C9-I7KZJ7-FIX-001",
+          "C9-I7KZJ7-SAFE-001",
+          "C9-I7KZJ7-UNR-001",
+          "C9-I7KZJ7-UNKNOWN-001"
+        ]
+      },
+      "claim_boundary": {
+        "product_vulnerability": "not_asserted",
+        "cia": "not_asserted",
+        "cve": "not_asserted",
+        "metrics": "not_asserted",
+        "source_audit_claim": "original_row_reconciled_to_source_identity_and_rule_control_only"
+      },
+      "actual_result": {
+        "scanner_result": "multiplication root 1->0; partial/blocked",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "candidate_static_response",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "known_cves_0_16_0": []
+    },
+    {
+      "row_id": "IC7B8Q",
+      "original_line": 205,
+      "ledger_case_id": "ARK-TYPEDARRAY-MAP-NEWARRAY-PENDING-EXCEPTION-IC7B8Q",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+        "vulnerable_tree": "27ec52bd443ccd4e45b472731114e8547df71ea2",
+        "vulnerable_files": [
+          "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+        ],
+        "fixed_commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+        "fixed_tree": "identity manifest",
+        "fixed_files": [
+          "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+          "test/moduletest/typedarraymapoverflow/typedarraymapoverflow.js"
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "finding_to_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+        "mapping_status": "mapped_remote_ref_rule_current_checkout_absent",
+        "control_ids": [
+          "C8-EG-POS-001",
+          "C8-EG-FIX-001",
+          "C8-EG-SAFE-001",
+          "C8-EG-UNR-001",
+          "C8-EG-UNKNOWN-001"
+        ]
+      },
+      "claim_boundary": {
+        "product_vulnerability": "not_asserted",
+        "cia": "not_asserted",
+        "cve": "not_asserted",
+        "metrics": "not_asserted",
+        "source_audit_claim": "original_row_reconciled_to_source_identity_and_rule_control_only"
+      },
+      "actual_result": {
+        "scanner_result": "exception candidates 2->0; partial/blocked",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "candidate_static_response",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "known_cves_0_16_0": []
+    },
+    {
+      "row_id": "IAO7GO",
+      "original_line": 206,
+      "ledger_case_id": "ARK-COMPILER-REFLECT-APPLY-PENDING-EXCEPTION-IAO7GO",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724",
+        "vulnerable_tree": "0c8d65e759bf96b4632573561748a180a93cf413",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/compiler/native_inline_lowering.cpp",
+            "blob": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+            "sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463",
+            "bytes": "unknown"
+          }
+        ],
+        "fixed_commit": "18d8532a200d0c9aa64a6dfe2b146dc841b52bf8",
+        "fixed_tree": "372e6906218c245e59643a7437f2d92e435401d6",
+        "fixed_files": [
+          {
+            "path": "ecmascript/compiler/native_inline_lowering.cpp",
+            "blob": "df03fdce8a37cf2245577aec23c4c26deeebf02f",
+            "sha256": "6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce",
+            "bytes": "unknown"
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "finding_to_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+        "mapping_status": "mapped_remote_ref_rule_current_checkout_absent_selector_miss",
+        "control_ids": [
+          "C9-IAO7GO-UNKNOWN-001"
+        ]
+      },
+      "claim_boundary": {
+        "product_vulnerability": "not_asserted",
+        "cia": "not_asserted",
+        "cve": "not_asserted",
+        "metrics": "not_asserted",
+        "source_audit_claim": "original_row_reconciled_to_source_identity_and_rule_control_only"
+      },
+      "actual_result": {
+        "scanner_result": "0->0 because selector matched 0 applicable files",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "miss_coverage_selector_not_applicable",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "known_cves_0_16_0": []
+    },
+    {
+      "row_id": "I7W51D",
+      "original_line": 207,
+      "ledger_case_id": "ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+        "vulnerable_tree": "f86de4aedd95c719b6215273cf10ab15e26d99e4",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "blob": "c5153346369f0182e73098b8d008eca6d750b36d",
+            "bytes": 35770,
+            "sha256": "4be243a68180be845defbcc01b259070db68b18da8500d245eea4929e7b9eca5"
+          },
+          {
+            "path": "ecmascript/base/typed_array_helper.h",
+            "blob": "8541d4a548bb118748443e822f1b603c36789389",
+            "bytes": 4579,
+            "sha256": "3bef83523fcd1f21d61b283cef88c76cd50044316fd6d76f507a3e24368463fa"
+          },
+          {
+            "path": "test/moduletest/typearray/typearray.js",
+            "blob": "78480fc1207e2193df72e69a951d2e2cf3a4d9ba",
+            "bytes": 5707,
+            "sha256": "27f86b91b4a6b224757ac5f079189164ec679e134916b0705900e95798285c2e"
+          },
+          {
+            "path": "test/moduletest/typearray/expect_output.txt",
+            "blob": "7ab1a90e65c389e127b52cb0f6692fb6f149d6f6",
+            "bytes": 1250,
+            "sha256": "0642d5f0e5659ea96cc4f58d34f6f9cfd749396532506d19c81ce8391d12c11d"
+          }
+        ],
+        "fixed_commit": "82c21d656880923800c94b53b035c76d219313b5",
+        "fixed_tree": "cfad2654abd1554b35b0817f43ca8585dd937106",
+        "fixed_files": [
+          {
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "blob": "89ffed8b3ff112a271c8a074967b7b5e8ebe2f6f",
+            "bytes": 35773,
+            "sha256": "373f5babdd5dd2f93d01512901d02e6b39d6b57c636e72b07b8d80d27eb509ab"
+          },
+          {
+            "path": "ecmascript/base/typed_array_helper.h",
+            "blob": "b61397cbb48ef14e6bf784ab37a172eaf76ca6df",
+            "bytes": 4580,
+            "sha256": "fc3cd9260b98b50984370115591b6100db29d09688094912f474f01bbed7dfdd"
+          },
+          {
+            "path": "test/moduletest/typearray/typearray.js",
+            "blob": "d101f70d7c944e555ba5a78e28a576fcd361b89f",
+            "bytes": 5790,
+            "sha256": "60407a9e323cc894e5a19525ffbda4501e37a017c4d867a25d149569dec7cde6"
+          },
+          {
+            "path": "test/moduletest/typearray/expect_output.txt",
+            "blob": "e11ba0cec65559d1bdf4f0e1760ccb4a3ab345a6",
+            "bytes": 1261,
+            "sha256": "52b6d60f276bcdfea6449e8398f01f30686c73174b7160974a1038d5b5126f28"
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "finding_to_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "unknown_no_rule_mapping",
+        "mapping_status": "unmapped_rule_limitation",
+        "control_ids": [
+          "C9-I7W51D-UNKNOWN-001"
+        ]
+      },
+      "claim_boundary": {
+        "product_vulnerability": "not_asserted",
+        "cia": "not_asserted",
+        "cve": "not_asserted",
+        "metrics": "not_asserted",
+        "source_audit_claim": "original_row_reconciled_to_source_identity_and_rule_control_only"
+      },
+      "actual_result": {
+        "scanner_result": "0->0; no length-narrowing rule",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "miss_rule_length_narrowing_uncovered",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "known_cves_0_16_0": []
+    },
+    {
+      "row_id": "IB8BCA",
+      "original_line": 208,
+      "ledger_case_id": "ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+        "vulnerable_tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/base/atomic_helper.cpp",
+            "blob": "7fd67717571c6d8fe7b10bf294998e952dc61e36",
+            "bytes": 7176,
+            "sha256": "f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541"
+          },
+          {
+            "path": "ecmascript/builtins/builtins_dataview.cpp",
+            "blob": "e6bac984354292405ae62f7728170d7be5e3760e",
+            "bytes": 21732,
+            "sha256": "bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c"
+          },
+          {
+            "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+            "blob": "aedb6d26681535371d1e9ed90b697b923b8100e6",
+            "bytes": 11399,
+            "sha256": "bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548"
+          },
+          {
+            "path": "test/moduletest/dataview/dataview.js",
+            "blob": "6ee13490c7d9bf21913e49358ff4b73260ee4975",
+            "bytes": 2796,
+            "sha256": "e7c79938c81a14e72a0fc3bea6a9fbce735ce7dcd6e0224919578dd7dc885a87"
+          },
+          {
+            "path": "test/moduletest/dataview/expect_output.txt",
+            "blob": "74195556e20fea6c4ee7c68ce59910bb363ce223",
+            "bytes": 1116,
+            "sha256": "bf16c3fb375b7b78938fd71228eebcd9f3220cf41309148cb14290ea5fcca7a7"
+          }
+        ],
+        "fixed_commit": "48fcec3686e45175f95b4600b579026a65149966",
+        "fixed_tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+        "fixed_files": [
+          {
+            "path": "ecmascript/base/atomic_helper.cpp",
+            "blob": "80d7ad14e70825ef2daf7b3f2fc956a891bf8b2c",
+            "bytes": 6995,
+            "sha256": "39521f4c6fa6b4b65d8b3daacd80f6e051b5a01c5aa814c9ac2ffc432529b36b"
+          },
+          {
+            "path": "ecmascript/builtins/builtins_dataview.cpp",
+            "blob": "a2376e822e995333b2400520ca5b882de9578b5e",
+            "bytes": 21718,
+            "sha256": "39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b"
+          },
+          {
+            "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+            "blob": "dce9388e8b7e33c87aec33ac4d067fe40370561b",
+            "bytes": 11561,
+            "sha256": "89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386"
+          },
+          {
+            "path": "test/moduletest/dataview/dataview.js",
+            "blob": "decb8eafb42ced6aed4d1b7394e4d273e98dee3c",
+            "bytes": 2915,
+            "sha256": "d4b66af1edd5f8ea5c67d7903d95bbaefd7e1983ec9341aa37640530ccc217be"
+          },
+          {
+            "path": "test/moduletest/dataview/expect_output.txt",
+            "blob": "5d395d0ba691ce9df5c6a381f30e8ced7352b5f6",
+            "bytes": 1161,
+            "sha256": "43d2a9ed8ed99361a259a6d11e285cac33c13c4ab936ee011575c63b28560aa4"
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "finding_to_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "unknown_no_rule_mapping",
+        "mapping_status": "unmapped_rule_limitation",
+        "control_ids": [
+          "C9-IB8BCA-UNKNOWN-001"
+        ]
+      },
+      "claim_boundary": {
+        "product_vulnerability": "not_asserted",
+        "cia": "not_asserted",
+        "cve": "not_asserted",
+        "metrics": "not_asserted",
+        "source_audit_claim": "original_row_reconciled_to_source_identity_and_rule_control_only"
+      },
+      "actual_result": {
+        "scanner_result": "0->0; no DataView/Atomics boundary model",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "miss_rule_dataview_boundary_uncovered",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "known_cves_0_16_0": []
+    },
+    {
+      "row_id": "IAO7E8",
+      "original_line": 209,
+      "ledger_case_id": "ARK-TYPEDARRAY-FILTER-RECEIVER-TYPE-GUARD-IAO7E8",
+      "source_identity": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "vulnerable_commit": "c4c52fb57b6e204128e1520340c8e66c8e708981",
+        "vulnerable_tree": "7e1498c2be74908365e2a984e0c5edd5f639fc2f",
+        "vulnerable_files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "blob": "e1e4f6411df4733b8f1ba5b679189e29d904a63f",
+            "sha256": "f1cdd8d0707cab2ac9bb9e024383151435bfc279c6815c5eceb98925974ff1a4",
+            "bytes": 125744
+          }
+        ],
+        "fixed_commit": "2a70904be0e21a37a666eb00cab49d02068260ea",
+        "fixed_tree": "8e5503ee7eebbb8e72bc6d5ca0cb88d5775301ef",
+        "fixed_files": [
+          {
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "blob": "df765b9c212dc2e55c38dc385f85f183ce6606da",
+            "sha256": "b51826a74a89d6ee105c4087b4260363a7abfd632bb2c68d43c0ee9b17c883c5",
+            "bytes": 125744
+          },
+          {
+            "path": "test/moduletest/typedarrayfilter/typedarrayfilter.js",
+            "blob": "c0e05428adb80360d355e17bb87c8db16d46f04b",
+            "sha256": "unknown",
+            "bytes": "unknown"
+          }
+        ],
+        "identity_status": "recorded_in_remote_pinned_coverage_ledger_not_reverified_as_product_source",
+        "ledger_blob": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70"
+      },
+      "finding_to_rule": {
+        "detector_id": "ohscanner.ark.runtime.type_safety",
+        "rule_id": "ark.runtime.typedarray-receiver-type-guard",
+        "mapping_status": "mapped_remote_ref_rule_current_checkout_absent_unseen_only",
+        "control_ids": [
+          "C9-IAO7E8-POS-001",
+          "C9-IAO7E8-FIX-001",
+          "C9-IAO7E8-SAFE-001",
+          "C9-IAO7E8-UNKNOWN-001"
+        ]
+      },
+      "claim_boundary": {
+        "product_vulnerability": "not_asserted",
+        "cia": "not_asserted",
+        "cve": "not_asserted",
+        "metrics": "not_asserted",
+        "source_audit_claim": "original_row_reconciled_to_source_identity_and_rule_control_only"
+      },
+      "actual_result": {
+        "scanner_result": "receiver-guard 1->0; detector blocked/partial",
+        "dynamic_evidence": "not_run",
+        "product_status": "unknown",
+        "classification": "candidate_static_response",
+        "cve_claim": "not_applicable",
+        "cia_claim": "not_asserted"
+      },
+      "known_cves_0_16_0": []
+    }
+  ],
+  "limitations": [
+    "Original prose is not an explicit c8-audit-entries JSON block; this reconciliation is a read-only row-to-source/rule/control ledger, not a product finding import.",
+    "The current partial-owner checkout does not contain the remote-ref unseen_* implementation or all remote-ref rule modules; mapping records that boundary and does not import code.",
+    "No product build, attacker entry, privilege boundary, reachable sensitive operation, trigger, CIA impact, CVE/CWE confirmation, or metrics conclusion is asserted.",
+    "No Precision/Recall, FP/FN or zero-error claim is computed."
+  ]
+}

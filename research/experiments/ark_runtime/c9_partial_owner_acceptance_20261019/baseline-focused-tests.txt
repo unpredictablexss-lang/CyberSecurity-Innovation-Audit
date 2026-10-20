@@ -1,0 +1,21 @@
+cwd=/mnt/e/网安/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c8_parallel_20261019/worktrees/partial-owner
+exact_argv=/usr/bin/python3 -m unittest tests.detectors.ark_runtime.test_parser_owner -v
+test_bound_typedarray_target_stays_partial_and_unknown (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... skipped 'OHSCANNER_ARK_REPO not configured'
+test_fixed_macro_shape_restores_only_visible_structural_owner (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_missing_macro_and_type_declarations_remain_unknown_on_partial_file (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_nested_namespaces_and_same_named_methods_keep_distinct_owners (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_owner_and_signature_controls_do_not_collapse_to_name_only (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_partial_mixed_parse_error_regression_stays_unknown (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_positive_complete_visible_class_owner_is_source_bound (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_safe_control_is_candidate_unassessed_and_not_a_safety_verdict (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_truncated_namespace_disables_owner_recovery (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_unknown_ambiguous_qualifier_is_fail_closed (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_unknown_cross_translation_unit_owner_is_not_name_guessed (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_unknown_missing_owner_token_and_macro_expansion (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_unrelated_same_name_functions_keep_source_bound_owner_identities (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.015s
+
+OK (skipped=1)
+exit_code=0

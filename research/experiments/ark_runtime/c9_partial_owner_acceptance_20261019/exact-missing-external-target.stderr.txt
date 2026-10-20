@@ -1,0 +1,6 @@
+test_bound_typedarray_target_stays_partial_and_unknown (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_bound_typedarray_target_stays_partial_and_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.065s
+
+OK
