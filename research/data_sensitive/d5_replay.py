@@ -11,13 +11,17 @@ import argparse
 import hashlib
 import json
 import os
-import resource
 import signal
 import subprocess
 import sys
 import time
 from importlib import metadata
 from pathlib import Path
+
+try:
+    import resource
+except ModuleNotFoundError:  # Windows has no resource module.
+    resource = None
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
@@ -49,6 +53,33 @@ def git_bytes(store: Path, spec: str, timeout: int) -> bytes:
 def canonical_hash(value: object) -> str:
     data = json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()
     return hashlib.sha256(data).hexdigest()
+
+
+def peak_rss() -> int | None:
+    if resource is None:
+        return None
+    try:
+        return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    except (AttributeError, OSError):
+        return None
+
+
+def write_blocked(output: Path, exc: Exception) -> dict:
+    record = {"schema": 1, "status": "blocked", "error_type": type(exc).__name__, "error": str(exc),
+              "exit_code": 2, "network_access": "not attempted", "head_switch": "not attempted"}
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(record, ensure_ascii=False, indent=2), file=sys.stderr)
+    return record
+
+
+def bounded_child(command: list[str], output: Path, seconds: float) -> int:
+    """Enforce a wall budget on platforms without SIGALRM, including Windows."""
+    try:
+        return subprocess.run(command, timeout=seconds).returncode
+    except subprocess.TimeoutExpired:
+        write_blocked(output, TimeoutError(f"replay exceeded {seconds}s budget"))
+        return 2
 
 
 def replay(args: argparse.Namespace) -> dict:
@@ -99,10 +130,7 @@ def replay(args: argparse.Namespace) -> dict:
     )
     context = ScanContext(request, units, {"ast": ast})
     run = HistoricalSensitiveExposureDetector(model).detect(context, units)
-    try:
-        max_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    except (AttributeError, OSError):
-        max_rss = None
+    max_rss = peak_rss()
     return {
         "schema": 1,
         "mode": "offline_research_only",
@@ -165,24 +193,29 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--git-timeout", type=int, default=30)
     parser.add_argument("--budget-seconds", type=int, default=60)
+    parser.add_argument("--_budget-worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.git_timeout < 1 or args.budget_seconds < 1:
         parser.error("--git-timeout and --budget-seconds must be positive")
     def time_budget(_signum, _frame):
         raise TimeoutError(f"replay exceeded {args.budget_seconds}s budget")
-    signal.signal(signal.SIGALRM, time_budget)
-    signal.alarm(args.budget_seconds)
+    has_alarm = hasattr(signal, "SIGALRM") and hasattr(signal, "alarm")
+    if not has_alarm and not args._budget_worker:
+        return bounded_child(
+            [sys.executable, str(Path(__file__).resolve()), *sys.argv[1:], "--_budget-worker"],
+            args.output, args.budget_seconds,
+        )
+    if has_alarm:
+        signal.signal(signal.SIGALRM, time_budget)
+        signal.alarm(args.budget_seconds)
     try:
         result = replay(args)
     except (OSError, subprocess.SubprocessError, ValueError, KeyError, TimeoutError) as exc:
-        error = {"schema": 1, "status": "blocked", "error_type": type(exc).__name__, "error": str(exc),
-                 "exit_code": 2, "network_access": "not attempted", "head_switch": "not attempted"}
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(json.dumps(error, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
-        print(json.dumps(error, ensure_ascii=False, indent=2), file=sys.stderr)
+        write_blocked(args.output, exc)
         return 2
     finally:
-        signal.alarm(0)
+        if has_alarm:
+            signal.alarm(0)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))
