@@ -1,0 +1,151 @@
+{
+  "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+  "experiment": "pinned_c1_macro_parse_feasibility_nonproduction",
+  "full_target_expansion": {
+    "applied_any": false,
+    "expansion_count": 0,
+    "fatal": [
+      "source_local_undef_not_supported"
+    ],
+    "fully_resolved": false,
+    "refused": []
+  },
+  "ir_else_control": {
+    "expanded_parse_status": "complete",
+    "expansions": [
+      {
+        "carries_control_flow": true,
+        "definition_locations": [
+          {
+            "file": "ecmascript/compiler/stub_builder.h",
+            "line": 1569,
+            "source_sha256": "a11ca83c0a8bbe16ea4ce9dabb2ab3aca2ee9c680a95433371e79494e2a92cb0"
+          }
+        ],
+        "expanded": "else if (_ife.IsFalseBranch())",
+        "macro": "IR_ELSE",
+        "original_line": 4,
+        "round": 1
+      }
+    ],
+    "fatal": [],
+    "raw_parse_status": "partial",
+    "refused": [],
+    "source_line_round_trip": {
+      "expanded_line": 4,
+      "original_line": 4
+    }
+  },
+  "limitations": [
+    "This probe uses the existing bounded token expander, not a C/C++ preprocessor.",
+    "It does not establish a build configuration or parse completeness for the target TU."
+  ],
+  "macro_catalog_count": 48,
+  "macro_refusal_controls": {
+    "BRANCH": {
+      "applied_any": false,
+      "expansion_count": 0,
+      "fatal": [],
+      "fully_resolved": false,
+      "refused": [
+        [
+          "BRANCH",
+          "variadic_stringify_or_token_paste"
+        ]
+      ]
+    },
+    "BUILTIN_COMPILER_TYPED_ARRAY_TYPES": {
+      "applied_any": true,
+      "expansion_count": 1,
+      "fatal": [],
+      "fully_resolved": false,
+      "refused": [
+        [
+          "BUILTIN_COMPILER_TYPED_ARRAY_LABEL",
+          "variadic_stringify_or_token_paste"
+        ],
+        [
+          "BUILTIN_COMPILER_TYPED_ARRAY_LABEL",
+          "variadic_stringify_or_token_paste"
+        ],
+        [
+          "BUILTIN_COMPILER_TYPED_ARRAY_LABEL",
+          "variadic_stringify_or_token_paste"
+        ],
+        [
+          "BUILTIN_COMPILER_TYPED_ARRAY_LABEL",
+          "variadic_stringify_or_token_paste"
+        ],
+        [
+          "BUILTIN_COMPILER_TYPED_ARRAY_LABEL",
+          "variadic_stringify_or_token_paste"
+        ],
+        [
+          "BUILTIN_COMPILER_TYPED_ARRAY_LABEL",
+          "variadic_stringify_or_token_paste"
+        ],
+        [
+          "BUILTIN_COMPILER_TYPED_ARRAY_LABEL",
+          "variadic_stringify_or_token_paste"
+        ],
+        [
+          "BUILTIN_COMPILER_TYPED_ARRAY_LABEL",
+          "variadic_stringify_or_token_paste"
+        ],
+        [
+          "BUILTIN_COMPILER_TYPED_ARRAY_LABEL",
+          "variadic_stringify_or_token_paste"
+        ],
+        [
+          "BUILTIN_COMPILER_TYPED_ARRAY_LABEL",
+          "variadic_stringify_or_token_paste"
+        ],
+        [
+          "BUILTIN_COMPILER_TYPED_ARRAY_LABEL",
+          "variadic_stringify_or_token_paste"
+        ]
+      ]
+    },
+    "IR_IF": {
+      "applied_any": false,
+      "expansion_count": 0,
+      "fatal": [],
+      "fully_resolved": false,
+      "refused": [
+        [
+          "IR_IF",
+          "variadic_stringify_or_token_paste"
+        ]
+      ]
+    }
+  },
+  "schema_version": 1,
+  "source_bindings": {
+    "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp": {
+      "git_blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+      "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c"
+    },
+    "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h": {
+      "git_blob": "017286724e4cd6df1a369589293efe920660c4c6",
+      "sha256": "f5b25eed46bfe6e951c6ad8b79ff76bfee8d402868839d21e6d41cd84ef3f8e3"
+    },
+    "ecmascript/compiler/circuit_builder.h": {
+      "git_blob": "df296de399f31a97417ed124f4ed8f8e4fd608b7",
+      "sha256": "41ce63da35d4f9abf5e32bcd417384fadcb018718d002b798e339da11a1a7d70"
+    },
+    "ecmascript/compiler/stub_builder.h": {
+      "git_blob": "9e2fbd3ede1da91133dcd936018285e597944515",
+      "sha256": "a11ca83c0a8bbe16ea4ce9dabb2ab3aca2ee9c680a95433371e79494e2a92cb0"
+    }
+  },
+  "target": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+  "toolchain_on_path": {
+    "cl": null,
+    "clang": null,
+    "clang++": null,
+    "clang-cl": null,
+    "cpp": null,
+    "g++": null,
+    "gcc": null
+  }
+}
