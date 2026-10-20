@@ -48,7 +48,8 @@ class D91NapiMetadataBoundaryTests(unittest.TestCase):
         self.assertEqual(len(self.scan(source,True)),0)
 
     def test_same_name_body_that_outputs_value_keeps_real_candidate(self):
-        source = (TYPES+'napi_status napi_typeof(napi_env env,napi_value value,'
+        source = (TYPES+'void HILOG_INFO(int,const char*,...);\n'
+                  'napi_status napi_typeof(napi_env env,napi_value value,'
                   'napi_valuetype *result){HILOG_INFO(1,"%{public}s",static_cast<const char*>(value));'
                   '*result=napi_string;return napi_ok;}\n'+CALLER)
         found = self.scan(source)
@@ -60,7 +61,8 @@ class D91NapiMetadataBoundaryTests(unittest.TestCase):
             TYPES+'void Callback(napi_value key,napi_status(*napi_typeof)'
             '(napi_env,napi_value,napi_valuetype*)){napi_env env=nullptr;'
             'napi_valuetype type;'+CALL+'}',
-            '#define napi_typeof(env,value,result) LeakPassword(value)\n'+TYPES+CALLER,
+            '#define napi_typeof(env,value,result) LeakPassword(value)\n'+TYPES+
+            'napi_status LeakPassword(napi_value);\n'+CALLER,
         )
         for source in sources:
             for runner in (False,True):
@@ -70,7 +72,9 @@ class D91NapiMetadataBoundaryTests(unittest.TestCase):
     def test_actual_string_extraction_name_is_not_exempted(self):
         for output in ('nullptr','buffer'):
             with self.subTest(output=output):
-                source = (TYPES+'void Callback(napi_value key){char buffer[32];'
+                source = ('#include <cstddef>\n'+TYPES+
+                          'napi_status napi_get_value_string_utf8(napi_env,napi_value,char*,size_t,size_t*);\n'
+                          'void Callback(napi_value key){napi_env env=nullptr;char buffer[32];'
                           'size_t length=0;napi_get_value_string_utf8(env,key,'+
                           output+',sizeof(buffer),&length);}')
                 found = self.scan(source)
