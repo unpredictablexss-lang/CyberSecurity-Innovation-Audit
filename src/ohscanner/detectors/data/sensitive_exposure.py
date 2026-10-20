@@ -280,7 +280,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.14'
+    version = '0.21.15'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -1423,6 +1423,31 @@ class LocalFlow:
                     and all(LocalFlow.bounded_return_expression(c) for c in args.named_children))
         return False
 
+    def direct_bounded_return(self,node):
+        if node is None or node.type!='return_statement':return False
+        values=node.named_children
+        return len(values)<=1 and (not values or self.bounded_return_expression(values[0]))
+
+    def bounded_switch_return_arm(self,node):
+        """One return, or one if/else with a direct return in each branch."""
+        if self.direct_bounded_return(node):return True
+        if node.type!='if_statement':return False
+        condition=node.child_by_field_name('condition')
+        value=condition.child_by_field_name('value') if condition else None
+        if (value is None or len(condition.named_children)!=1
+                or not self.bounded_return_expression(value)):
+            return False
+        for field in ('consequence','alternative'):
+            branch=node.child_by_field_name(field)
+            if branch is not None and branch.type=='else_clause':
+                children=[c for c in branch.named_children if c.type!='comment']
+                branch=children[0] if len(children)==1 else None
+            if branch is not None and branch.type=='compound_statement':
+                children=[c for c in branch.named_children if c.type!='comment']
+                branch=children[0] if len(children)==1 else None
+            if not self.direct_bounded_return(branch):return False
+        return True
+
     def exact_switch_returns(self,node,state,fnname):
         """Consecutive empty labels may share the next direct bounded return."""
         arms=self.exact_switch_cases(node)
@@ -1430,10 +1455,7 @@ class LocalFlow:
         returning=[]
         for arm in arms:
             if not arm:continue # Consecutive labels enter the next nonempty arm.
-            if len(arm)!=1 or arm[0].type!='return_statement':return None
-            values=arm[0].named_children
-            if len(values)>1 or (values and not self.bounded_return_expression(values[0])):
-                return None
+            if len(arm)!=1 or not self.bounded_switch_return_arm(arm[0]):return None
             returning.append(arm[0])
         if not returning:
             return None
@@ -1443,9 +1465,10 @@ class LocalFlow:
         while function is not None and function.type!='function_definition':function=function.parent
         if function is None or any(n.type in ('goto_statement','labeled_statement') for n in walk(function)):
             return None
-        exits=tuple(exit for returned in returning
-                    for exit in self.statement(returned,state.clone(),fnname).exit_states)
-        self.gaps.add('exact grouped direct-return switch; general switch exits/feasibility remain unresolved')
+        results=[self.statement(returned,state.clone(),fnname) for returned in returning]
+        if any(result.fallthrough_state is not None for result in results):return None
+        exits=tuple(exit for result in results for exit in result.exit_states)
+        self.gaps.add('exact grouped return/if-else-return switch; general switch exits/feasibility remain unresolved')
         return BlockResult(None,exits)
 
     @staticmethod
