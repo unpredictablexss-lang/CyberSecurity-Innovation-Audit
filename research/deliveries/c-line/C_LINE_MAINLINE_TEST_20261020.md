@@ -82,3 +82,17 @@ Ran 97 tests; OK; 1 skipped.
 ```
 
 The three Ark skips are the exact historical exception-guard replay and receiver-guard replay (their pinned Ark Git stores were not supplied), plus parser-owner's bound TypedArray repository case (`OHSCANNER_ARK_REPO` was not configured). Those results remain skipped, not passes. No component runtime execution or accuracy measurement was performed. The applicable synthetic tests cover exact source binding, default-off/explicit Catalog selection, wrong identities, fixed and safe controls, and unknown/partial outcomes.
+
+## Exact developer SHA replay
+
+At the developer line's request, I checked out exact commit `4e1268a980fd103326c7dbaa6ca2e78d2ba43e69` detached in this isolated test worktree and ran the same suites. The tested commit tree is `0495b0db7d05f02e2ce4e48149f7571c8bdd8023`; its first parent is C integration report fix `764f7698f6babdcccb2cd68eba75ed1b0afefc9e`, and its second parent is `origin/main` snapshot `c380a474718e8ec4497aff55b18a1dd38bafa13f`.
+
+```text
+python -B -m unittest discover -s tests/detectors/ark_runtime -t . -q
+Ran 212 tests; OK; 3 skipped.
+
+python -B -m unittest tests.test_contract_v2_source_binding tests.test_ohscanner_contract tests.test_audit_plan tests.detectors.test_known_case_corpus tests.detectors.ark_runtime.test_catalog tests.detectors.ark_runtime.test_parser_owner tests.detectors.ark_runtime.test_detector_cases -q
+Ran 97 tests; OK; 1 skipped.
+```
+
+Environment and skip reasons match the preceding replay: Python 3.12.15 WSL venv; two pinned historical Ark Git replay cases skipped because no local pinned source store was supplied, and one repository-bound TypedArray case skipped because `OHSCANNER_ARK_REPO` was unset. No implicit source fetch occurred. `git diff --check` on the exact commit's integration patch passed. This independently confirms the latest-main integration preserves source-bound admission, fixed/wrong-identity controls, partial/unknown handling, and Runner applicability without promoting candidates or treating zero findings as safe.
