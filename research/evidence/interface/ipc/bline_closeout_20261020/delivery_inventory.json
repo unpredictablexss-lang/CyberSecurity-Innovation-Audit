@@ -4,7 +4,7 @@
   "code_base": {
     "repository": "CyberSecurity-Innovation-Audit",
     "branch": "codex/b-ipc-closeout-20261020",
-    "main_sha": "dd8b12b9f0fcf3d8bc96a2d7fbb3d679809d2e35",
+    "main_sha": "4b0e16576a45a111b4fad7e8f82819a47ed472f5",
     "b_source_branch": "codex/b-ipc-integration-20261020",
     "b_source_sha": "40e3d79f38629b273214f1efee0f22b7443849f1",
     "detector": "ohscanner.interface.ipc",
@@ -12,13 +12,13 @@
     "model_version": "oh-ipc-2026.10-v33",
     "data06_rule": "ipc.parcel.array-allocation-width",
     "data06_rule_version": "0.1.0",
-    "code_commit_sha": "dd8b12b9f0fcf3d8bc96a2d7fbb3d679809d2e35",
+    "code_commit_sha": "4a8806acaa456120c496f185c8a424e0fca1671a",
     "evidence_commit_sha": "ed1be347e433f3e931f5f72b36c2e7562752798a",
     "main_sha_at_start": "0f53af62283dbd0f249280805e8286a04b2d43b9",
     "latest_main_sha": "4b0e16576a45a111b4fad7e8f82819a47ed472f5",
     "branch_head_used_for_replays": "4a8806acaa456120c496f185c8a424e0fca1671a",
     "delivery_branch": "codex/b-ipc-closeout-20261020",
-    "delivery_commit_sha": "recorded_by_git_head_and_final_response",
+    "delivery_commit_sha": "recorded by final git HEAD",
     "source_code_changes_in_closeout": false,
     "historical_b_evidence_branch": "work/ipc-20261017",
     "historical_b_evidence_branch_sha": "a77dbdb235a08fb8bae2be3c3f6cdce7de33b3e7",
@@ -304,7 +304,7 @@
     },
     {
       "command": "Targeted re-run of CVE-2022-42463 fixed endpoint with Windows Python 3.13",
-      "result": "failed before report publication in dataclasses.asdict(ToolDiagnostic): TypeError unhashable type list; original pinned endpoint report/log preserved; runtime serialization fix and rerun outstanding"
+      "result": "Exact pinned source-file M2 CLI replay completed_with_limitations: one candidate at integer line 275; source SHA and byte_start=10154 match. The original full-scope report/log remain preserved. A full-scope rerun hit a Python 3.13 Tree-sitter cleanup access violation during immutable-source re-read, so full-scope regeneration remains outstanding."
     }
   ],
   "not_run_or_unknown": {
@@ -313,7 +313,7 @@
     "independent_accuracy_holdout": "not_run",
     "platform_candidate_detail_and_report_export": "not_run",
     "per_rule_applicable_and_evaluated_counters": "not implemented; cross-line runner protocol proposal required; zero-candidate coverage remains unknown",
-    "dsoftbus_fixed_locator_regression": "reproduced in current report artifact: line serialized as string frozenlist despite source byte offset 10154 resolving to line 275; repair and targeted replay outstanding"
+    "dsoftbus_fixed_locator_regression": "Focused exact-commit CLI replay passes: source-file scope emits integer line 275, matching source SHA df12623d91c29c9794d7e718ba9cf20d7e3ecc78884cb691d8304263d06c939b and byte_start 10154. Original full-component report is preserved with its anomalous line; a full-scope rerun currently terminates with Python 3.13 Tree-sitter cleanup access violation during immutable-source re-read, so full-scope report regeneration remains outstanding."
   },
   "code_file_bindings": [
     {
@@ -592,9 +592,9 @@
     "historical_inputs/research/deliveries/ipc/20261019-eight-component-rule-coverage-audit/rule_coverage.csv": "32513231581c90252ec151fd527dc3e251cedd688bf114548ab5f00c4a3274da"
   },
   "delivery_state": {
-    "engineering": "fixed-scope implementation replays completed; current report locator anomaly and Python 3.13 identity-sidecar serialization failure remain open",
+    "engineering": "IPC 0.12.13 fixed-scope replays and focused locator replay completed; original full-scope DSoftBus fixed report retains a locator anomaly and full-scope regeneration is limited by Python 3.13 Tree-sitter cleanup access violation.",
     "mainline_code": "IPC 0.12.13/model v33 and DATA-06 were already integrated before this delivery; latest main SHA 4b0e16576a45a111b4fad7e8f82819a47ed472f5",
-    "delivery_package": "committed on local branch codex/b-ipc-closeout-20261020; push attempted but github.com:443 connection failed; evidence delta not on main",
+    "delivery_package": "Evidence package committed on local delivery branch; push attempted but github.com:443 connection failed; evidence delta is not on main.",
     "deployment": "not_run / unknown",
     "vulnerability_validation": "not validated; validated_vulnerability=0",
     "accuracy_evaluation": "not_run",

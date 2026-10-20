@@ -289,7 +289,14 @@
               "current_line": "frozenlist",
               "expected_current_line_from_bound_source": 275,
               "source_byte_start": 10154,
-              "explanation": "same source/rule/symbol and same source byte offset; current report serialized line as string \"frozenlist\". Raw pinned source and byte offset resolve to line 275; treat as locator/report metadata regression, not a candidate addition or removal."
+              "explanation": "Original full-component fixed report retains its serialized locator anomaly. Exact-commit CLI replay of the finding source file emitted integer line 275 with the same source SHA and byte_start=10154. Full-component retry hit Python 3.13 Tree-sitter cleanup access violation during immutable-source re-read; original artifact is preserved and full-scope regeneration remains outstanding.",
+              "focused_replay": {
+                "artifact": "disclosed_cve_0.12.13/cve-2022-42463/fixed_locator_replay.json",
+                "status": "completed_with_limitations",
+                "scope": "core/transmission/trans_channel/auth/src/trans_auth_manager.c (1 exact pinned source file)",
+                "line": 275,
+                "source_sha256": "df12623d91c29c9794d7e718ba9cf20d7e3ecc78884cb691d8304263d06c939b"
+              }
             }
           ]
         }

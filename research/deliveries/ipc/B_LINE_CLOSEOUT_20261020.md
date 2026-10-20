@@ -46,7 +46,7 @@
 | CVE-2025-26693 | 10 / 7 |
 | **合计** | **53 / 22（75 条观察）** |
 
-28 个端点中 6 个 `completed`、22 个 `completed_with_limitations`。与历史 `0.12.12` 对照，候选观察数量均为 75，稳定来源/规则/符号锚点为 75 个；没有候选锚点新增或消失。发现一项可复现的定位元数据回归：`CVE-2022-42463` fixed 端点相同文件、规则、符号和源码 SHA 的观察，历史行号是 `275`，当前 JSON 将 `line` 写为字符串 `frozenlist`。来源 SHA 与 `byte_start=10154` 绑定；在精确 pinned blob 中该字节偏移映射到第 275 行，候选锚点仍存在。对比索引将其标为定位异常，不记为真实候选新增/消失。需修复报告定位序列化并重跑该端点；没有据此升级或撤销安全结论。逐 CVE/逐端点差异见 `cve_candidate_comparison.json`，全部报告、日志和固定 SHA 见 `disclosed_cve_0.12.13/`。
+28 个端点中 6 个 `completed`、22 个 `completed_with_limitations`。与历史 `0.12.12` 对照，候选观察数量均为 75，稳定来源/规则/符号锚点为 75 个；没有候选锚点新增或消失。发现原全仓 fixed 报告存在定位元数据异常：`CVE-2022-42463` 的固定来源 SHA 与 `byte_start=10154` 映射到第 275 行，但原报告序列化为字符串 `frozenlist`。已在相同固定 commit 上通过统一 CLI 对该精确源码文件复放，输出整数行号 `275`，来源 SHA 和 byte offset 一致；产物为 `disclosed_cve_0.12.13/cve-2022-42463/fixed_locator_replay.json/.md/.log`。候选锚点仍保留，不记为新增或消失。全仓重跑在 Python 3.13 Tree-sitter 对象清理时于 immutable-source 二次读取发生原生 access violation，原始全范围报告与日志保留，完整范围重新生成列为环境限制。没有据此升级或撤销安全结论。逐 CVE/逐端点差异见 `cve_candidate_comparison.json`，全部报告、日志和固定 SHA 见 `disclosed_cve_0.12.13/`。
 
 这些是披露版本控制和设计回归，不是独立 holdout。命中不证明产品入口、攻击者可达性、权限影响或漏洞有效性；所有候选保持 `candidate/unknown`，`validated_vulnerability=0`。
 
@@ -93,4 +93,6 @@ python -m pytest -q @ipcFiles
 python -m pytest -q tests/detectors/test_known_disclosed_cves.py
 ```
 
-逐仓与逐 CVE 的统一 CLI 参数、固定提交、source SHA、JSON/Markdown 哈希和日志均记录在 `eight_repo_0.12.13/summary.json`、`disclosed_cve_0.12.13/summary.json` 与相邻产物。固定历史输入在 `historical_inputs/`。运行环境保留于原工作区的 `D:\openHarmonyScanner	mp\`，不应把临时 checkout 当作证据；复跑请依据 summary 固定的 commit/tree 并核验 tree。
+逐仓与逐 CVE 的统一 CLI 参数、固定提交、source SHA、JSON/Markdown 哈希和日志均记录在 `eight_repo_0.12.13/summary.json`、`disclosed_cve_0.12.13/summary.json` 与相邻产物。固定历史输入在 `historical_inputs/`。运行环境保留于原工作区的 `D:\openHarmonyScanner\tmp\`，不应把临时 checkout 当作证据；复跑请依据 summary 固定的 commit/tree 并核验 tree。
+
+代码未修改；上述八仓与 28 个 CVE 端点原始回放绑定于扫描器源码提交 `4a8806acaa456120c496f185c8a424e0fca1671a`，回放提交与当前交付 SHA 不同；经逐文件比较，IPC family、Runner、Git source loader 和报告序列化代码在两者间无差异，测试代码另有变化。最终交付提交只增加证据复核和定位回放补充。完整全仓 fixed 端点重跑受 Python 3.13 Tree-sitter 清理崩溃限制；成功的精确文件回放已绑定同一 pinned commit，不能替代原全仓范围报告。
