@@ -1,7 +1,7 @@
 """Local definition identities and provenance, evaluated on generated paths."""
 from dataclasses import dataclass, replace
 from .syntax import compact, name_node, walk
-from .cross_helper import in_cyclic_region, unwrap_identity_expression
+from .cross_helper import effectful_helper_problem, in_cyclic_region, unwrap_identity_expression
 from .model import NAMESPACE, OWNER
 
 
@@ -40,9 +40,10 @@ class OriginState:
 
 
 class OriginEvaluator:
-    def __init__(self, fn, model, cyclic_ranges=(), identity_helpers=()):
+    def __init__(self, fn, model, cyclic_ranges=(), identity_helpers=(), helper_contracts=()):
         self.fn, self.model = fn, model
         self.identity_helpers = tuple(identity_helpers)
+        self.helper_contracts = tuple(helper_contracts)
         self.cyclic_ranges = tuple(cyclic_ranges)
 
     @staticmethod
@@ -125,6 +126,9 @@ class OriginEvaluator:
             return ''
         fn, root = self.fn, instruction.node
         for node in walk(root):
+            effect_problem = effectful_helper_problem(fn, node, self.helper_contracts)
+            if effect_problem:
+                return effect_problem
             if node.type in ('new_expression', 'delete_expression', 'update_expression'):
                 return 'unmodeled_cpp_lifetime_or_update_expression'
             if node.type == 'assignment_expression':

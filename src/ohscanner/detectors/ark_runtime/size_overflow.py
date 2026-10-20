@@ -43,6 +43,8 @@ class SizeOverflowCandidate:
     start_byte: int
     end_byte: int
     may_overflow: bool
+    sign_width_loss: bool = False
+    conversion_evidence: tuple = ()
 
 
 def _width(type_text):
@@ -197,6 +199,18 @@ def _operand_identity_name(expression, helper_names=()):
     return normalized if re.fullmatch(r'[A-Za-z_]\w*', normalized) else None
 
 
+def _factor_identity_name(expression, helper_names=()):
+    direct = _operand_identity_name(expression, helper_names)
+    if direct:
+        return direct
+    cast = re.fullmatch(
+        r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*[^>]+\s*>\s*'
+        r'\(\s*([^;()]+)\s*\)', expression.strip())
+    c_cast = re.fullmatch(r'\(\s*[\w:]+\s*\)\s*([^;()]+)', expression.strip())
+    return _operand_identity_name(cast.group(1) if cast else c_cast.group(1) if c_cast else '',
+                                 helper_names)
+
+
 def _alias_roots(source, helper_names=()):
     aliases = {}
     masked = _mask_cpp_noncode(source)
@@ -241,22 +255,41 @@ def _split_product(expression):
     return None
 
 
-def _operand_width(expression, type_map, aliases=None, helper_names=()):
+def _signed(type_text):
+    if isinstance(type_text, int):
+        return False
+    normalized = re.sub(r'\b(const|volatile|typename)\b', '', type_text or '')
+    normalized = re.sub(r'\s+', '', normalized).replace('&', '').replace('*', '')
+    if normalized in _INTEGER_WIDTHS:
+        return _INTEGER_WIDTHS[normalized][1]
+    if normalized in ('int', 'signed', 'signedint', 'longlong', 'longlongint'):
+        return True
+    return False
+
+
+def _operand_facts(expression, type_map, aliases=None, helper_names=(), signed_map=None):
     aliases = aliases or {}
     expression = expression.strip()
     cast = re.fullmatch(
         r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*([^>]+)\s*>\s*'
-        r'\(\s*([\w:]+)\s*\)', expression)
-    c_cast = re.fullmatch(r'\(\s*([\w:]+)\s*\)\s*([\w:]+)', expression)
-    root = _operand_identity_name(expression, helper_names)
+        r'\(\s*([^;()]+)\s*\)', expression)
+    c_cast = re.fullmatch(r'\(\s*([\w:]+)\s*\)\s*([^;()]+)', expression)
+    inner = cast.group(2) if cast else c_cast.group(2) if c_cast else expression
+    root = _operand_identity_name(inner, helper_names)
     if root is None:
-        return None, None
-    source_width = type_map.get(root, type_map.get(next((k for k, v in aliases.items() if v == root), root)))
-    if cast:
-        return source_width, _width(cast.group(1))
-    if c_cast:
-        return source_width, _width(c_cast.group(1))
-    return source_width, source_width
+        return None, None, None, None
+    resolved = type_map.get(root, type_map.get(next((k for k, v in aliases.items() if v == root), root)))
+    source_signed = (signed_map or {}).get(root, _signed(resolved))
+    if cast or c_cast:
+        target = cast.group(1) if cast else c_cast.group(1)
+        return resolved, _width(target), source_signed, _signed(target)
+    return resolved, resolved, source_signed, source_signed
+
+
+def _operand_width(expression, type_map, aliases=None, helper_names=(), signed_map=None):
+    source, operation, _, _ = _operand_facts(
+        expression, type_map, aliases, helper_names, signed_map)
+    return source, operation
 
 
 def _text_allocations(source, size_name, aliases=None):
@@ -330,6 +363,7 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
         r'\((?P<params>[^;{}]*)\)\s*(?:const\s*)?\{')
     excluded = {'if', 'for', 'while', 'switch', 'catch', 'sizeof', 'alignof'}
     candidates = []
+    limitations = []
     cursor = 0
     while True:
         function = function_pattern.search(masked, cursor)
@@ -358,6 +392,7 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
             r'uintptr_t|intptr_t)|unsigned(?:\s+int)?|signed(?:\s+int)?|int|'
             r'(?:unsigned\s+)?long\s+long))\s+(?P<name>\w+)\s*=\s*(?P<expr>[^;]+);')
         type_map = {}
+        signed_map = {}
         type_pattern = re.compile(
             r'\b((?:(?:std::)?(?:u?int(?:8|16|32|64)_t|size_t|ssize_t|'
             r'uintptr_t|intptr_t)|unsigned(?:\s+int)?|signed(?:\s+int)?|int|'
@@ -365,22 +400,39 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
         function_region = text[function.start():closing + 1]
         for declaration in type_pattern.finditer(_mask_cpp_noncode(function_region)):
             type_map[declaration.group(2)] = _width(declaration.group(1))
+            signed_map[declaration.group(2)] = _signed(declaration.group(1))
         for declaration in declarations.finditer(body_mask):
             result_type = _width(declaration.group('type'))
             product = _split_product(body[declaration.start('expr'):declaration.end('expr')])
             if product is None or result_type is None:
                 continue
             left, right = product
-            left_source, left_op = _operand_width(left, type_map, aliases, identity_helper_names)
-            right_source, right_op = _operand_width(right, type_map, aliases, identity_helper_names)
+            left_source, left_op, left_signed, left_target_signed = _operand_facts(
+                left, type_map, aliases, identity_helper_names, signed_map)
+            right_source, right_op, right_signed, right_target_signed = _operand_facts(
+                right, type_map, aliases, identity_helper_names, signed_map)
             if None in (left_source, right_source, left_op, right_op):
+                unresolved_allocated, _ = _text_allocations(body, declaration.group('name'), aliases)
+                if unresolved_allocated:
+                    limitations.append(
+                        'numeric_conversion_semantics_unmodeled:' + declaration.group('name'))
                 continue
             factor_names = tuple(name for operand in (left, right)
-                                 if (name := _operand_identity_name(operand, identity_helper_names)))
+                                 if (name := _factor_identity_name(operand, identity_helper_names)))
             if len(factor_names) != 2:
                 continue
             operation_width = max(32, left_op, right_op)
-            may_overflow = operation_width < left_source + right_source
+            width_loss = operation_width < left_source + right_source
+            left_sign_loss = left_signed and left_op < left_source
+            right_sign_loss = right_signed and right_op < right_source
+            sign_width_loss = left_sign_loss or right_sign_loss
+            may_overflow = width_loss or sign_width_loss
+            conversion_evidence = tuple(sorted(set(
+                (side + '_signed_source_to_' + ('signed' if target_signed else 'unsigned') + '_target')
+                for side, source_signed, target_signed in (
+                    ('left', left_signed, left_target_signed),
+                    ('right', right_signed, right_target_signed))
+                if source_signed and not target_signed)))
             result_name = declaration.group('name')
             allocated, allocation_lines = _text_allocations(body, result_name, aliases)
             if not allocated:
@@ -400,9 +452,9 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
             candidates.append(SizeOverflowCandidate(
                 line, column, function_name, result_name, factor_names,
                 body_line + min(allocation_lines) - 1, loop_line,
-                start_byte, end_byte, may_overflow))
+                start_byte, end_byte, may_overflow, sign_width_loss, conversion_evidence))
         cursor = closing + 1
-    return tuple(candidates), ()
+    return tuple(candidates), tuple(sorted(set(limitations)))
 
 
 def analyze_size_overflow(source):
@@ -419,12 +471,17 @@ def size_overflow_result_from_flows(unit, model_digest, flows, limitations=()):
     observations = tuple(
         Observation(
             kind='candidate', line=flow.line, column=flow.column,
-            reason='narrow_product_flows_to_allocation_and_copy_loop',
+            reason=('signed_narrowing_product_flows_to_allocation_and_copy_loop'
+                    if flow.sign_width_loss else
+                    'narrow_product_flows_to_allocation_and_copy_loop'),
             target_identity=flow.result_name,
             token_origin=' * '.join(flow.factor_names),
             token_line=flow.line, creation_line=flow.allocation_line,
             path=(flow.line, flow.allocation_line, flow.loop_line),
-            constraints=((flow.line, 'product_width_covers_factor_ranges', not flow.may_overflow),
+            constraints=((flow.line, 'product_width_covers_factor_ranges',
+                          not (flow.may_overflow and not flow.sign_width_loss)),
+                         (flow.line, 'conversion_preserves_signed_source_width',
+                          not flow.sign_width_loss),
                          (flow.loop_line, 'copy_loop_uses_factor_bound', True)),
             symbol=flow.function, region_start_byte=flow.start_byte,
             region_end_byte=flow.end_byte,

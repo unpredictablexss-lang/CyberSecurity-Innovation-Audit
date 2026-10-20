@@ -1,0 +1,63 @@
+{
+  "cases": [
+    {
+      "identity": "CVE-2025-24304",
+      "before": "candidate=1",
+      "after": "fixed candidate=0",
+      "status": "unchanged"
+    },
+    {
+      "identity": "IBS5YG",
+      "before": "candidate=1",
+      "after": "fixed candidate=0",
+      "status": "unchanged"
+    },
+    {
+      "identity": "I7KZJ7",
+      "before": "candidate=1",
+      "after": "fixed candidate=0",
+      "status": "unchanged"
+    },
+    {
+      "identity": "IC7B8Q",
+      "before": "candidate=1",
+      "after": "fixed candidate=0",
+      "status": "unchanged"
+    },
+    {
+      "identity": "I7E0FM",
+      "before": "candidate=1",
+      "after": "fixed candidate=0",
+      "status": "unchanged"
+    },
+    {
+      "identity": "IAO7GO",
+      "before": "candidate=1",
+      "after": "fixed candidate=0",
+      "status": "unchanged"
+    },
+    {
+      "identity": "I7W51D",
+      "before": "candidate=1",
+      "after": "fixed candidate=0",
+      "status": "unchanged"
+    },
+    {
+      "identity": "IB8BCA",
+      "before": "candidate=1",
+      "after": "fixed candidate=0; fixed remains explicit unknown",
+      "status": "unchanged"
+    },
+    {
+      "identity": "IAO7E8",
+      "before": "candidate=1",
+      "after": "fixed candidate=0",
+      "status": "unchanged"
+    }
+  ],
+  "basis": "C11 source-bound known-case matrix and C12 regression test; this slice did not replay full product source or upgrade any verdict.",
+  "evidence": [
+    "logs-final/known-regression.txt",
+    "logs-final/ark-full.txt"
+  ]
+}
