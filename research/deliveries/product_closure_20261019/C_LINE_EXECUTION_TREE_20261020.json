@@ -343,14 +343,18 @@
       ],
       "completion": "Pending developer baseline and independent replay.",
       "independent_baseline": {
-        "worktree_base": "clean 24412cc",
+        "worktree_base": "24412cc6083b3b8cad9b611a2b0303fd71eeceeb",
         "source_store": "D:\\openHarmonyScanner\\tmp\\c8-i9k03b-baseline-source-20261019",
-        "verified": "parent/fixed commit, tree, typed_array_helper.cpp blob and SHA-256 match the review bindings",
-        "current": "independent downstream range-check trace and boundary matrix in progress; same-commit replay awaits developer case matrix/commit",
-        "unknown": "out-of-range floating double to integer conversion behavior is not inferred from static source alone"
+        "verified": "parent/fixed commit/tree/blob/SHA and downstream js_tagged_value.cpp/.h, js_typed_array.h, builtins_arraybuffer.cpp exact identities; downstream objects equal across revisions",
+        "matrix": "-1, 0, INT32_MAX, INT32_MAX+1, UINT32_MAX-1, UINT32_MAX, UINT32_MAX+1, 2^32+1, SAFE_NUMBER, SAFE_NUMBER+1, 1.75, 2^32+0.75",
+        "finding": "Fixed representable values above INT32_MAX through UINT32_MAX pass the index ceiling but positive byteLength exceeds INT_MAX for all element sizes >=1; no allocation-success inference.",
+        "unknown": "Out-of-range floating-to-integer conversion is not assumed to wrap; no runtime test performed."
       },
       "matrix_received": true,
-      "replay_gate": "Independent same-commit replay begins only after developer shares any code/test commit; source baseline work proceeds meanwhile."
+      "replay_gate": "Independent same-commit replay begins only after developer shares any code/test commit; source baseline work proceeds meanwhile.",
+      "independent_report": "research/deliveries/c-line/u32_length_independent_baseline_20261020.md",
+      "independent_report_commit": "58792ad3f266a8e25e66a24469f81548d138bafd",
+      "same_commit_replay": "pending developer conclusion/commit; no detector claim yet"
     }
   ],
   "feedback_loop": [
