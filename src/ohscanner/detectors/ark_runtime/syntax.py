@@ -51,7 +51,7 @@ def _lexical_namespace_ranges(data):
         return None
 
     def blank(match):
-        return re.sub(rb'[^\n]', b' ', match.group(0))
+        return re.sub(rb'[^\r\n]', b' ', match.group(0))
 
     masked = _CPP_NON_CODE.sub(blank, data)
     braces = []
