@@ -53,3 +53,9 @@ python -m unittest tests.detectors.test_cpp_memory_safety_detectors -v
 ```
 
 Result: 20 tests passed. Coverage includes integer/bounds positive shapes, checked/fixed and safe shapes, unrelated accessors/operators, deterministic output, partial-parse and budget fail-closed behavior, and hash-bound fixture control classes. This validates the detector control suite on the integrated checkout; it does not replace the source-bound safe/unrelated controls or product reachability evidence missing from CVE-2025-0587 and CVE-2025-23420. Those rows remain PARTIAL.
+
+## Webview detector-gap audit (2026-10-20)
+
+An independent development review found no supported `bounds` rule change: the exact source-derived Chromium Flowbuffer function fragments retain the D11 patched-root differential (six vulnerable-root candidates versus zero in the fixed fragment) with safe/unrelated controls quiet. The six ordinary-argument residuals are not proven safe or vulnerable and remain unresolved. The exact A0 `openharmony/web_webview` full-file CLI pair remains partial/blocked with zero diagnostics on both sides, so it does not establish a miss or a safe/fixed differential. See `d15_webview_residuals_20261020/review.md` and `webview_exact_a0_20261020/README.md`.
+
+Next development action: request a parser-owner assessment of localized recovery for the Flowbuffer region in `nweb_handler_delegate.cc`, keeping this separate from bounds-rule changes. Reuse the exact A0 pair and D11 safe/unrelated/renamed/partial controls; require target-region coverage before judging findings. No parser, detector, Catalog, API, or fixture change was made in this audit.
