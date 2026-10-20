@@ -4,7 +4,7 @@
   "baseline": {
     "remote": "origin/codex/c-line-static-20261019",
     "commit": "d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03",
-    "refresh": "2026-10-20 latest fetch attempt failed transiently (GitHub HTTPS 443); local branch includes implementation SHA 46fdb5887c49a552b249fb20805025ba6316d8d0, independent same-SHA replay report 6d41c4746b41c21af9139d2853acc1d0c9189ffa, and pending second-layer review. Push retry pending. Ark Runtime source baseline remains exact commit a65a2853ccae13da167d9aa4720ab8b11ec16656."
+    "refresh": "2026-10-20 latest fetch attempt failed transiently (GitHub HTTPS 443); local planning branch now contains Float32 static candidate implementation 46fdb5887c49a552b249fb20805025ba6316d8d0, developer report 3000142700f6f79e73472deebf963be07a2405f7, independent same-SHA replay 6d41c4746b41c21af9139d2853acc1d0c9189ffa, and final second-layer review 9df21f2f5833dbf7d91b289da5923dce6ad09fca. Task tree update committed as 61d114f38; push retry pending. Ark Runtime source baseline remains exact a65a2853ccae13da167d9aa4720ab8b11ec16656."
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
   "status": "ACTIVE",
@@ -952,10 +952,13 @@
     {
       "id": "C-LLM-REVIEW-FLOAT32-STATIC-CANDIDATE-20261020",
       "kind": "second_layer_candidate_review",
-      "status": "IN_PROGRESS_FINAL_SAME_SHA_REVIEW",
+      "status": "COMPLETE_ACCEPTED_SOURCE_CANDIDATE_WITH_RUNTIME_LIMITS",
       "reviewer": "c1_width_review",
       "objective": "Review the static candidate emitted by the developer/tester loop against the exact source report, focusing on trigger plausibility, the conditional 32-bit load path, and source/runtime/product limits. Do not implement detector or LLM features.",
-      "review_prompt": "ROLE=second-layer source candidate reviewer. INPUT=the exact registered static-candidate finding and source/control reports after same-commit test replay. Independently verify source pins, candidate evidence, safe/fixed counterevidence, and whether the finding says only what source evidence supports. Confirm the 32-bit out-of-allocation read remains conditional on runtime/build/allocation/access behavior not_run. OUTPUT=short accept/narrow/reject review with exact evidence and unknowns. NEVER=trust candidate role labels, infer a confirmed product vulnerability, or change the detector/LLM."
+      "review_prompt": "ROLE=second-layer source candidate reviewer. INPUT=the exact registered static-candidate finding and source/control reports after same-commit test replay. Independently verify source pins, candidate evidence, safe/fixed counterevidence, and whether the finding says only what source evidence supports. Confirm the 32-bit out-of-allocation read remains conditional on runtime/build/allocation/access behavior not_run. OUTPUT=short accept/narrow/reject review with exact evidence and unknowns. NEVER=trust candidate role labels, infer a confirmed product vulnerability, or change the detector/LLM.",
+      "report": "research/deliveries/c-line/float32array_negative_double_final_second_layer_review_20261020.md",
+      "review_commit": "9df21f2f5833dbf7d91b289da5923dce6ad09fca",
+      "implementation_commit": "46fdb5887c49a552b249fb20805025ba6316d8d0"
     }
   ],
   "feedback_loop": [
