@@ -27,7 +27,7 @@ Ark Runtime 源码：`a65a2853ccae13da167d9aa4720ab8b11ec16656`
 ./build.sh --product-name rk3568 --build-target ark_js_host_linux_tools_packages --build-target ets_frontend_build
 ```
 
-仓内 `test/run_ts_test262.py` 使用 `ark_js_vm` 运行 `.abc` 文件。当前 runtime checkout 的 `out/` 中无 `ark_js_vm`、`ark_js_host*` 或 `es2abc`；在工作区源码、`artifact_build` 和已知 worktrees 的文件名搜索也未发现这些预构建执行文件。
+仓内 `test/run_ts_test262.py` 使用 `ark_js_vm` 运行 `.abc` 文件。当前 runtime checkout 的 `out/` 中无 `ark_js_vm`、`ark_js_host*` 或 `es2abc`。随后对整个 `D:\openHarmonyScanner` 做文件名搜索（排除 `.git`）也未找到上述执行文件；搜索记录了两个含尾随点目录的 Windows 路径错误，未发现的结论限于可访问文件路径。
 
 观测到的工具链状态：WSL Linux 有 Python `3.14.7`，没有 `node`（`node: command not found`）；Windows 主机可解析 `node.exe`，但版本为 `22.14.0`，不是项目要求的 Node 14.21.1。先前共享构建尝试记录缺少 Linux Python 预置及 Hvigor；本独立任务没有启动构建，也没有修改共享源码、构建输出或工具链。
 
