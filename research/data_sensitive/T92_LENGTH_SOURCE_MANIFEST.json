@@ -1,0 +1,171 @@
+{
+  "study": "T92 independent length-query versus byte-output API roles",
+  "not_product_linkage_proof": true,
+  "files": [
+    {
+      "repository": "openharmony/arkui_napi",
+      "commit": "bfe8fad581ca6112e7d55c38ca60150753f4af35",
+      "tree": "941f9a6bf1e0b5af2366f119c5876caa801eda20",
+      "path": "native_engine/native_api.cpp",
+      "blob": "aa8bd54b4cc5f60b686c889acb58d5a4a7d2c66a",
+      "bytes": 188318,
+      "sha256": "913b9f357493296ff3c4823c1d8daf0b0aba2e077bc887313f5a96082ec14f9e",
+      "parse_status": "partial"
+    },
+    {
+      "repository": "openharmony/arkui_napi",
+      "commit": "bfe8fad581ca6112e7d55c38ca60150753f4af35",
+      "tree": "941f9a6bf1e0b5af2366f119c5876caa801eda20",
+      "path": "native_engine/native_api_internal.h",
+      "blob": "98fdd71989fbff237e460f0eec66a7a56e9a2509",
+      "bytes": 9516,
+      "sha256": "95e1f1c352b8b95a0f30c268b8f5068cb074008d6e9310c2664b257f5b912454",
+      "parse_status": "complete"
+    },
+    {
+      "repository": "openharmony/arkui_napi",
+      "commit": "bfe8fad581ca6112e7d55c38ca60150753f4af35",
+      "tree": "941f9a6bf1e0b5af2366f119c5876caa801eda20",
+      "path": "interfaces/kits/napi/native_api.h",
+      "blob": "c78cd3b511997ba3ec6978aedfcf6c035a577311",
+      "bytes": 17678,
+      "sha256": "135eaaea8a5eefa20000c70545d8e37fd2aa047ee9c0c33ce306548692728300",
+      "parse_status": "partial"
+    },
+    {
+      "repository": "openharmony/arkui_napi",
+      "commit": "bfe8fad581ca6112e7d55c38ca60150753f4af35",
+      "tree": "941f9a6bf1e0b5af2366f119c5876caa801eda20",
+      "path": "interfaces/kits/napi/common.h",
+      "blob": "9067f16bd1fafb8d9d2d38d6451b8f8f523029a9",
+      "bytes": 1190,
+      "sha256": "d99da646a3bc8bec56e067481b350488a345ab63760e13f497abed3c57b7bfe9",
+      "parse_status": "complete"
+    },
+    {
+      "repository": "openharmony/third_party_node",
+      "commit": "d6bfaf5c015d29fee58e3c94f01d463fb87a9497",
+      "tree": "15c96bac208e49fff566342812dbb0dd0e4c4ea4",
+      "path": "src/js_native_api.h",
+      "blob": "e804d1d45d236519d248e3d40fa0a6c2a6d378ec",
+      "bytes": 28805,
+      "sha256": "d47a6f979387d00f603cf1193eeb4d4e3164307123a33891590fe6601fed95b4",
+      "parse_status": "partial"
+    },
+    {
+      "repository": "openharmony/third_party_node",
+      "commit": "d6bfaf5c015d29fee58e3c94f01d463fb87a9497",
+      "tree": "15c96bac208e49fff566342812dbb0dd0e4c4ea4",
+      "path": "src/js_native_api_types.h",
+      "blob": "464d4983245acc2945f5bdff8ea9552a476c001f",
+      "bytes": 4543,
+      "sha256": "0823951156077b35c7a2759b83e30bad3a82a8ee934f44eaa75e9ccd364e63a5",
+      "parse_status": "complete"
+    }
+  ],
+  "dependency_evidence": [
+    {
+      "repository": "openharmony/security_certificate_framework",
+      "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+      "tree": "e69153afa89928e1318d8b36cf37c65386465fe7",
+      "path": "frameworks/js/napi/certificate/BUILD.gn",
+      "blob": "2704e74e4448d6741046f26620f6b8bf32211cc2",
+      "bytes": 2484,
+      "sha256": "0a6105367f678cd6ca63654259da9f529f4c3b16b81e28ed59a9abd7029b1a52"
+    },
+    {
+      "repository": "openharmony/security_certificate_framework",
+      "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+      "tree": "e69153afa89928e1318d8b36cf37c65386465fe7",
+      "path": "bundle.json",
+      "blob": "27d73a1e08dcfad0f901a2bd29af1263bad7c477",
+      "bytes": 2785,
+      "sha256": "60953091b57769e4189434869c738191a2efa3a3c17c0b1544ceb3e1acc6c028"
+    }
+  ],
+  "binding_assessment": {
+    "status": "unknown",
+    "observed_component_dependencies": [
+      "napi:ace_napi",
+      "node:node_header_notice"
+    ],
+    "reason": "Pinned certificate BUILD.gn/bundle.json name NAPI/node components but do not lock their Git revisions. No build/linkage record binds e270 to the examined external commits."
+  },
+  "reviewed_api_roles": {
+    "napi_typeof": {
+      "implementation_lines": [
+        677,
+        713
+      ],
+      "arguments": [
+        "environment handle",
+        "input JS value handle",
+        "output napi_valuetype enum pointer"
+      ],
+      "return": "napi_status; ClearLastError returns napi_ok and CHECK_ENV/CHECK_ARG failures return napi_invalid_arg",
+      "material_output": "none in examined direct function body; no caller binding established"
+    },
+    "napi_get_value_string_utf8": {
+      "implementation_lines": [
+        819,
+        848
+      ],
+      "arguments": [
+        "environment handle",
+        "input JS string handle",
+        "byte output buffer or nullptr for length-only query",
+        "buffer capacity",
+        "output byte count/length pointer"
+      ],
+      "null_buffer_branch": "Utf8Length - 1 only",
+      "non_null_buffer_branch": "WriteUtf8 writes content plus NUL",
+      "certificate_call_roles": {
+        "890": "nullptr,0 length query",
+        "915": "reinterpret_cast<char *>(newBlob->data),newBlob->size byte extraction"
+      }
+    }
+  },
+  "reuses_pinned_api_manifest": "research/data_sensitive/T90_API_SOURCE_MANIFEST.json",
+  "include_context": [
+    {
+      "repository": "openharmony/security_certificate_framework",
+      "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+      "tree": "e69153afa89928e1318d8b36cf37c65386465fe7",
+      "path": "frameworks/js/napi/certificate/inc/napi_cert_utils.h",
+      "blob": "1ed8854bebe1bf0406cd93ea286cb2b477e58bfc",
+      "bytes": 5411,
+      "sha256": "f41171cf41f7f6a3bef4f6d7249fd409a7826c470acff07bd90732032252cf87",
+      "observed": "includes napi/native_api.h; include spelling alone does not pin revision"
+    }
+  ],
+  "caller_facts": [
+    {
+      "name": "napi_get_value_string_utf8",
+      "arguments": [
+        "env",
+        "arg",
+        "nullptr",
+        "0",
+        "&length"
+      ],
+      "line": 890,
+      "start_byte": 32305,
+      "end_byte": 32362,
+      "original_span_sha256": "efc7c6eec9ea6189bb878e3818abc43e05444775bae60aa2c6483b617fb02ee2"
+    },
+    {
+      "name": "napi_get_value_string_utf8",
+      "arguments": [
+        "env",
+        "arg",
+        "reinterpret_cast<char *>(newBlob->data)",
+        "newBlob->size",
+        "&length"
+      ],
+      "line": 915,
+      "start_byte": 33125,
+      "end_byte": 33226,
+      "original_span_sha256": "b22c0e27b49aeb7fbd274591db7dabd1b2c0ad1dbf7779e3a4cad99fc30fa01d"
+    }
+  ]
+}
