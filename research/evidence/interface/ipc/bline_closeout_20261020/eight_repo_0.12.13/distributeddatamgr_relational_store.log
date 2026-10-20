@@ -1,0 +1,8 @@
+$ python -m src.cli ohscan-run --repo-dir D:\openHarmonyScanner\tmp\b-ipc-eight-run-d844686f\distributeddatamgr_relational_store --repository openharmony/distributeddatamgr_relational_store --commit 42f13ea84e2f90ed511a2bd4aa5be14c5996eba8 --detector ohscanner.interface.ipc --json-out D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\distributeddatamgr_relational_store.json --md-out D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\distributeddatamgr_relational_store.md
+[OK] M2 pinned-source candidate evidence run; NOT validated vulnerabilities
+[OK] source commit: 42f13ea84e2f90ed511a2bd4aa5be14c5996eba8
+[OK] first-party detectors: 1
+[OK] unverified diagnostics: 0
+[OK] run coverage: completed_with_limitations
+[OK] JSON report: D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\distributeddatamgr_relational_store.json
+[OK] Markdown report: D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\distributeddatamgr_relational_store.md

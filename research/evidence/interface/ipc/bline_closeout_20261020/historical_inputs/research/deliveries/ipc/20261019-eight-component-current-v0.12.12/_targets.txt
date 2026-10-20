@@ -1,0 +1,8 @@
+aafwk_standard
+applications_contacts_data
+communication_netmanager_ext
+distributeddatamgr_relational_store
+graphic_standard
+miscservices_pasteboard
+multimedia_histreamer
+security_deviceauth

@@ -1,0 +1,696 @@
+# OHScanner M2 reviewed-detector execution
+
+> Detection candidates and coverage limitations, NOT validated vulnerabilities.
+
+- Source repository (declared): `openharmony/distributeddatamgr_relational_store`
+- Pinned commit: `42f13ea84e2f90ed511a2bd4aa5be14c5996eba8`
+- Git tree: `f4698163f10e769c9014daa6e65856b12def8fdf`
+- Snapshot SHA-256: `69074839144fa0495b0c1d92aef80fca93730158c19a38b0e7ba61834a2932ec`
+- Source files indexed: 1350
+- Parsing coverage: `{"complete": 790, "not_run": 185, "partial": 375}`
+- Detector runs: 1
+- Total unverified diagnostics: 0
+- Validated vulnerabilities: **0** (no runtime verification performed)
+
+## Per-detector results
+
+| Detector | Execution | Inspected files | Complete | Partial | Not analyzed | Diagnostics | Coverage |
+|---|---|---:|---:|---:|---:|---:|---|
+| `ohscanner.interface.ipc` | completed | 1165 | 790 | 375 | 0 | 0 | partial |
+
+## Candidate evidence and missing proof
+
+| Detector | Candidate ID | File:line | Rule | Unverified proof obligations |
+|---|---|---|---|---|
+| — | — | — | — | No reported candidate; NOT proof of safety |
+
+## Coverage gaps
+
+Scope counts source inspection, not complete semantic coverage; partial remains unknown.
+Files without a claiming detector: 185
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule1/test-rule1-correct.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule1/test-rule1-violations.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule12/test-rule12-correct.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule12/test-rule12-violations.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule14/test-rule14-correct.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule14/test-rule14-violations.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule2/test-rule2-correct.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule2/test-rule2-violations.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule3/test-rule3-correct.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule3/test-rule3-violations.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule4/test-rule4-correct.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule4/test-rule4-violations.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule5/test-rule5-correct.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule5/test-rule5-violations.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule6/test-rule6-correct.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule6/test-rule6-violations.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule7/test-rule7-correct.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule7/test-rule7-violations.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule9/test-rule9-correct.js`
+- `DatabaseCheckPlugin/src/test/kotlin/com/example/databasecheck/testdata/Rule9/test-rule9-violations.js`
+- `frameworks/ets/cloud_extension/@ohos.data.cloudExtension.ets`
+- `frameworks/js/napi/cloud_extension/cloud_extension_stub.js`
+- `test/ets/cloud_data/entry/src/main/ets/Application/AbilityStage.ts`
+- `test/ets/cloud_data/entry/src/main/ets/MainAbility/MainAbility.ts`
+- `test/ets/cloud_data/entry/src/main/ets/MainAbility/pages/index/index.ets`
+- `test/ets/cloud_data/entry/src/main/ets/TestAbility/TestAbility.ts`
+- `test/ets/cloud_data/entry/src/main/ets/TestAbility/pages/index.ets`
+- `test/ets/cloud_data/entry/src/main/ets/TestRunner/OpenHarmonyTestRunner.ts`
+- `test/ets/cloud_data/entry/src/main/ets/test/CloudConfigEtsTest.test.ets`
+- `test/ets/cloud_data/entry/src/main/ets/test/List.test.ets`
+- `test/ets/cloud_data_no_permission/entry/src/main/ets/Application/AbilityStage.ts`
+- `test/ets/cloud_data_no_permission/entry/src/main/ets/MainAbility/MainAbility.ts`
+- `test/ets/cloud_data_no_permission/entry/src/main/ets/MainAbility/pages/index/index.ets`
+- `test/ets/cloud_data_no_permission/entry/src/main/ets/TestAbility/TestAbility.ts`
+- `test/ets/cloud_data_no_permission/entry/src/main/ets/TestAbility/pages/index.ets`
+- `test/ets/cloud_data_no_permission/entry/src/main/ets/TestRunner/OpenHarmonyTestRunner.ts`
+- `test/ets/cloud_data_no_permission/entry/src/main/ets/test/CloudConfigEtsTest.test.ets`
+- `test/ets/cloud_data_no_permission/entry/src/main/ets/test/List.test.ets`
+- `test/ets/cloud_data_system/entry/src/main/ets/Application/AbilityStage.ts`
+- `test/ets/cloud_data_system/entry/src/main/ets/MainAbility/MainAbility.ts`
+- `test/ets/cloud_data_system/entry/src/main/ets/MainAbility/pages/index/index.ets`
+- `test/ets/cloud_data_system/entry/src/main/ets/TestAbility/TestAbility.ts`
+- `test/ets/cloud_data_system/entry/src/main/ets/TestAbility/pages/index.ets`
+- `test/ets/cloud_data_system/entry/src/main/ets/TestRunner/OpenHarmonyTestRunner.ts`
+- `test/ets/cloud_data_system/entry/src/main/ets/test/CloudConfigEtsTest.test.ets`
+- `test/ets/cloud_data_system/entry/src/main/ets/test/List.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/Application/AbilityStage.ts`
+- `test/ets/relational_store/entry/src/main/ets/MainAbility/MainAbility.ts`
+- `test/ets/relational_store/entry/src/main/ets/MainAbility/pages/index/index.ets`
+- `test/ets/relational_store/entry/src/main/ets/TestAbility/TestAbility.ts`
+- `test/ets/relational_store/entry/src/main/ets/TestAbility/pages/index.ets`
+- `test/ets/relational_store/entry/src/main/ets/TestRunner/OpenHarmonyTestRunner.ts`
+- `test/ets/relational_store/entry/src/main/ets/test/CleanDeviceDirtyData.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/List.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbErrMsgOptimize.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbErrMsgRange.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbGroupIdEts.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbOnErrorLog.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbPredicatesPerfEts.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbQueryByStep.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbQueryWithDuplicate.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbQueryWithoutRowCount.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbSetDistributedTable.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbStoreBatchInsertWithReturning.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbStoreDeleteWithReturning.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbStoreExecuteSql.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbStoreGetRdbStoreSyncEts.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbStoreSyncEx.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbStoreTransInsertJsunit.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbStoreTransJsunit.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbStoreTransaction.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbStoreUndefined.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbStoreUpdateWithReturning.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbstoreCustomTokenizerEts.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbstoreDataChangeEts.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbstoreGetSqlInfoEts.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbstorePerfStatEts.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbstorePredicatesEts.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbstoreRekeyEts.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbstoreRekeyVectorEts.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbstoreSetLocaleEts.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RdbstoreTransactionJsunit.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RelationalStoreCloseTest.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RelationalStoreEtsTest.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RequestFullDataDonationNonSystem.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/RetainDeviceData.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/ReturningMultiThreaded.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/TestUtils.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/TransQueryWithoutRowCount.test.ets`
+- `test/ets/relational_store/entry/src/main/ets/test/UpdateDistributedInfo.test.ets`
+- `test/ets/relational_store_system/entry/src/main/ets/Application/AbilityStage.ts`
+- `test/ets/relational_store_system/entry/src/main/ets/MainAbility/MainAbility.ts`
+- `test/ets/relational_store_system/entry/src/main/ets/MainAbility/pages/index/index.ets`
+- `test/ets/relational_store_system/entry/src/main/ets/TestAbility/TestAbility.ts`
+- `test/ets/relational_store_system/entry/src/main/ets/TestAbility/pages/index.ets`
+- `test/ets/relational_store_system/entry/src/main/ets/TestRunner/OpenHarmonyTestRunner.ts`
+- `test/ets/relational_store_system/entry/src/main/ets/test/AssetExtension.test.ets`
+- `test/ets/relational_store_system/entry/src/main/ets/test/CleanDeviceDirtyData.test.ets`
+- `test/ets/relational_store_system/entry/src/main/ets/test/List.test.ets`
+- `test/ets/relational_store_system/entry/src/main/ets/test/RequestFullDataDonation.test.ets`
+- `test/ets/relational_store_system/entry/src/main/ets/test/RetainDeviceData.test.ets`
+- `test/ets/relational_store_system/entry/src/main/ets/test/UpdateDistributedInfo.test.ets`
+- `test/js/clouddata/unittest/src/CloudClientTest.js`
+- `test/js/clouddata/unittest/src/CloudShareTest.js`
+- `test/js/clouddata/unittest/src/CloudSyncConfigCallback.js`
+- `test/js/clouddata/unittest/src/CloudSyncConfigPromise.js`
+- `test/js/dataability/unittest/src/DataAbilityPredicatesJsunit.test.js`
+- `test/js/rdb/performance/src/PredicatestPerf.js`
+- `test/js/rdb/performance/src/RdbHelperCallbackPerf.js`
+- `test/js/rdb/performance/src/RdbHelperPromisePerf.js`
+- `test/js/rdb/performance/src/RdbStoreCallbackPerf.js`
+- `test/js/rdb/performance/src/RdbStoreOthersCallbackPerf.js`
+- `test/js/rdb/performance/src/RdbStorePromisePerf.js`
+- `test/js/rdb/performance/src/RdbStoreSyncPerf.js`
+- `test/js/rdb/performance/src/ResultSetPerf.js`
+- `test/js/rdb/unittest/src/RdbStoreDataShareJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbStoreDistributedJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbStoreResultSetJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbstoreCreateDeleteWithFAContextJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbstoreDeleteJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbstoreEncryptionJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbstoreInsertJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbstorePredicatesComplexFiledJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbstorePredicatesJoinBJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbstorePredicatesJoinJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbstorePredicatesJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbstoreRdbstoreJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbstoreStoreExcuteSqlJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbstoreTransactionJsunit.test.js`
+- `test/js/rdb/unittest/src/RdbstoreUpdateJsunit.test.js`
+- `test/js/relationalstore/performance/src/PredicatestPerf.js`
+- `test/js/relationalstore/performance/src/RdbHelperCallbackPerf.js`
+- `test/js/relationalstore/performance/src/RdbHelperPromisePerf.js`
+- `test/js/relationalstore/performance/src/RdbStoreCallbackPerf.js`
+- `test/js/relationalstore/performance/src/RdbStoreOthersCallbackPerf.js`
+- `test/js/relationalstore/performance/src/RdbStorePromisePerf.js`
+- `test/js/relationalstore/performance/src/RdbStoreSyncPerf.js`
+- `test/js/relationalstore/performance/src/ResultSetPerf.js`
+- `test/js/relationalstore/performance/src/SceneGetValuesBucketPerf.js`
+- `test/js/relationalstore/unittest/src/RdbStoreAssetResultSetJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreAttachJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreCloud.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreCloudSync.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreCorruptJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreDataChange.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreDataShareJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreDistributedJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreQueryByCursor.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreQueryByStep.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreQueryByStepSync.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreRdExecuteJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreReadOnlyJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreResultSetGetRow.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreResultSetGetValue.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreResultSetJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreResultSetSyncJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreStatisticsJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreValueType.test.js`
+- `test/js/relationalstore/unittest/src/RdbStoreVectorJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreAfterCloseJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreAfterCloseSyncJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreBackupRestoreWithFAContextJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreCallBackJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreConcurrentQueryWithCrud.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreCreateDeleteWithFAContextJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreCustomDir.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreDeleteJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreDeleteSyncJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreEncryptionJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreInsertJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreInsertSyncJsUnit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreLockRowJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreMemoryDbJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstorePluginLibsJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstorePredicatesComplexFiledJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstorePredicatesJoinBJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstorePredicatesJoinJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstorePredicatesJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstorePromiseJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreRdbstoreJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreStoreExcuteJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreStoreExcuteSqlJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreStoreExcuteSyncJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreUpdateJsunit.test.js`
+- `test/js/relationalstore/unittest/src/RdbstoreUpdateSyncJsunit.test.js`
+- `ohscanner.interface.ipc`: partial, 790/1165 applicable files examined; unexamined=375
+
+## Limitations
+
+- Diagnostics are candidates/evidence only, not proof of security impact.
+- Zero diagnostics does NOT mean the component is free of vulnerabilities.
+- Git origin name is user declared; source is pinned local objects, not an OH product build.
+- No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.
+- Some indexed source files have no claiming detector; their security analysis is unknown.
+- `ohscanner.interface.ipc`: Model=oh-ipc-2026.10-v33; first-party bounded structured syntax interpretation, no external scanner execution.
+- `ohscanner.interface.ipc`: Private branch pass reconstructs Tree-sitter nodes; public shared facts/schema are unchanged.
+- `ohscanner.interface.ipc`: No compiler CFG, arbitrary virtual dispatch, alias analysis or full-program authorization proof. Macros are expanded only from the scan's own sources and only when unambiguous; the catalogue is never an #include resolution, and what the expander refused is counted in the macro-expansion limitation rather than assumed away.
+- `ohscanner.interface.ipc`: Unmodeled callees/authorization remain evidence obligations; no findings does not establish safety.
+- `ohscanner.interface.ipc`: Interface-descriptor identity is read from the class's own base clause: a comparison is counted as this transaction's guard only when the source names the interface the class implements. A comparison against another interface, or one whose identity the analysed sources do not state, is reported with that reason instead of counting as a guard or as a proven mismatch.
+- `ohscanner.interface.ipc`: Descriptor consistency is separate from caller authorization; relay candidates are not exploit proofs.
+- `ohscanner.interface.ipc`: IPC roots require a source-indexed class dispatcher with code, request Parcel and reply Parcel; explicit service/transport roots and Stub inner helpers are separate allowlisted entry kinds. Test/fuzz/mock path roots are excluded from product candidate analysis and counted in limitations. Entry discovery is not reachability: dispatcher-level guards and macro-conditional reachability remain obligations, not conclusions.
+- `ohscanner.interface.ipc`: Entry-coverage measurements are published in the interface research report, not in this result.
+- `ohscanner.interface.ipc`: Cross-service boundary coverage: 0 call(s) on a handle built by iface_cast<> in the scanned sources, 0 carrying the original caller's identity (SetCallingIdentity with a calling-token value active), 0 executing as the service. Each boundary is recorded with the identity that crossed it; no candidate is emitted from the boundary itself, and a downstream service's own guards are not read from this corpus.
+- `ohscanner.interface.ipc`: Entry/dispatch coverage: 16 dispatcher(s) (8 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe.
+- `ohscanner.interface.ipc`: Excluded 9 test/fuzz/mock entry root(s) from product candidate analysis; the source paths are retained in scope, but test-target findings are not mixed into product candidates.
+- `ohscanner.interface.ipc`: Macro catalogue truncated at 400 source(s): a macro defined only in a file that was not catalogued stays unexpanded, and a guard inside it is not seen.
+- `ohscanner.interface.ipc`: Macro expansion: 4054 invocation(s) expanded in 61 file(s), 1615 of them carrying control flow; 14 file(s) left unexpanded (conditional_definition_requires_build_profile=911,expansion_worsened_the_parse=2,raw_string_tokenization_not_supported=4,source_local_undef_not_supported=8,variadic_stringify_or_token_paste=5352). The catalogue is the scan's own sources, never #include; where a macro was expanded, quoted conditions come from the expanded form while a finding's line is mapped back to the original file.
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/cj/include/relational_store_impl_literesultset.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/cj/include/relational_store_impl_rdbpredicatesproxy.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/cj/include/relational_store_impl_rdbstore.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/cj/include/relational_store_impl_resultsetproxy.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/cj/include/relational_store_impl_transaction.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/cj/src/relational_store_literesultset_ffi.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/cj/src/relational_store_resultset_ffi.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/cj/src/relational_store_store_ffi.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/cj/src/relational_store_transaction_ffi.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/ets/taihe/cloud_data/src/ani_constructor.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/ets/taihe/relational_store/include/ani_utils.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/ets/taihe/relational_store/src/ani_constructor.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/dataability/src/entry_point.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/dataability/src/napi_data_ability_predicates.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/rdb/include/napi_values_bucket.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/rdb/src/entry_point.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/rdb/src/napi_rdb_const_properties.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/rdb/src/napi_rdb_predicates.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/rdb/src/napi_rdb_store.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/rdb/src/napi_rdb_store_helper.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/relationalstore/include/napi_rdb_store.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/relationalstore/mock/include/napi_rdb_store.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/relationalstore/src/entry_point.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/relationalstore/src/napi_rdb_const_properties.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/relationalstore/src/napi_rdb_store.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/sendablerelationalstore/src/entry_point.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/cloud_data/include/cloud_notifier_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/cloud_data/src/cloud_notifier_stub.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/dataability/src/ishared_result_set_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/dfx/include/rdb_fault_hiview_reporter.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/icu/src/icu_collect.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/obs_mgr_adapter/obs_mgr_adapter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rd/include/grd_api_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rd/include/grd_error.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rd/include/grd_type_export.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rd/src/rd_utils.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/include/corrupted_handle_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/include/rdb_perfStat.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/include/rdb_security_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/include/rdb_sql_log.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/include/rdb_sql_statistic.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/include/rdb_store_impl.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/include/share_block.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/include/shared_block_serializer_info.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/include/sqlite_connection.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/include/sqlite_utils.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/include/statement.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/include/trans_db.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/include/transaction_impl.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/src/big_integer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/src/rdb_security_manager.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/src/share_block.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/src/shared_block_serializer_info.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb/src/value_object.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb_crypt/relational_store_crypt.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb_service_adapter/include/rdb_notifier_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb_service_adapter/include/rdb_types_util.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/rdb_service_adapter/src/rdb_notifier_stub.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/appdatafwk/include/abs_shared_block.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/appdatafwk/include/multi_platform_endian.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/appdatafwk/include/serializable.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/appdatafwk/include/shared_block.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/cloud_data/include/cloud_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/cloud_data/include/cloud_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/dataability/include/data_ability_predicates.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/dataability/include/ishared_result_set.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/dataability/include/predicates_utils.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/abs_predicates.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/abs_rdb_predicates.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/abs_result_set.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/abs_shared_result_set.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/big_integer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/cache_result_set.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/knowledge_types.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/rdb_helper.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/rdb_predicates.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/rdb_store.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/rdb_store_config.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/remote_result_set.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/result_set.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/shared_result_set.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/task_executor.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/transaction.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/value_object.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/values_bucket.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb/include/values_buckets.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb_data_ability_adapter/include/rdb_data_ability_utils.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb_data_share_adapter/include/rdb_result_set_bridge.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/rdb_data_share_adapter/include/rdb_utils.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/include/data_asset.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/include/oh_cursor.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/include/oh_data_value.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/include/oh_data_values.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/include/oh_data_values_buckets.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/include/oh_predicates.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/include/oh_rdb_crypto_param.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/include/oh_rdb_transaction.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/include/oh_rdb_types.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/include/oh_value_object.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/include/oh_values_bucket.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/include/relational_store.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/include/relational_store_error_code.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/src/relational_asset.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/ndk/src/relational_types_v0.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ability_base/include/bundle_mgr_helper.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ability_base/include/data_ability_observer_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ability_base/include/dataobs_mgr_client.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ability_base/include/res_config.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ability_base/include/resource_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ability_runtime/include/appkit/ability_runtime/context/ability_native_thread.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ability_runtime/include/appkit/ability_runtime/context_impl.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ability_runtime/include/base_interfaces.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ability_runtime/include/dataobs_manager/data_ability_observer_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ability_runtime/include/resource_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/access_token/include/nativetoken_kit.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/access_token/include/setproc_common.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/access_token/include/token_setproc.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/bundle_framework/include/bundlemgr/bundle_mgr_proxy.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/bundle_framework/include/bundlemgr/bundle_user_mgr_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/bundle_framework/include/bundlemgr/bundle_user_mgr_proxy.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/c_utils/ashmem.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/common_event_service/include/base_interfaces.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/common_event_service/include/base_obj.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/eventhandler/include/event_handler.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/eventhandler/include/inner_event.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/file_api/include/asset/asset_recv_callback_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/file_api/include/asset/asset_send_callback_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/file_api/include/iremote_object.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hilog/include/hilog/log_c.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hisysevent/include/easy_event_builder.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hisysevent/include/easy_event_encoder.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hisysevent/include/easy_socket_writer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hisysevent/include/easy_util.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hisysevent/include/encoded_param.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hisysevent/include/hisysevent.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hisysevent/include/hisysevent_c.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hisysevent/include/hisysevent_easy.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hitrace/include/hitrace/hitracechainc.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hitrace/include/hitrace_meter.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hitrace/include/hitrace_meter/hitrace_meter.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hitrace/include/hitrace_meter/hitrace_meter_c.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hitrace/include/hitrace_meter_c.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/hitrace/mock_hitrace_meter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/huks/include/hks_api.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/huks/include/hks_error_code.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/huks/include/hks_log.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/huks/include/hks_mem.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/huks/include/hks_param.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/huks/include/hks_tag.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/huks/include/hks_type.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/huks/include/hks_type_enum.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/huks/mock_huks.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/binder_invoker.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/databus_socket_listener.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/dbinder_base_invoker_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/dbinder_base_invoker_process.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/dsoftbus_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/invoker_factory.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/ipc_debug.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/ipc_process_skeleton.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/ipc_thread_pool.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/ipc_thread_skeleton.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/ipc_workthread.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/iremote_invoker.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/iremote_object.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/ipc/include/sys_binder.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/napi/include/napi/js_native_api.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/napi/include/napi/native_api.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/napi/include/napi/native_node_api.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/napi/include/napi/node_api.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/napi/include/uv.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/napi/include/uv/tree.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/napi/include/uv/unix.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/napi/include/uv/win.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/resource_management/include/res_config.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/resource_management/include/resource_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/external_inner_kit/samgr/include/if_system_ability_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/frameworks/native/kvstore_mock/relational_store_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/frameworks/native/rdb/fdsan/fdsan_mock.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/frameworks/native/rdb/fdsan/fdsan_mock.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/frameworks/native/rdb/hisysevent_c.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/frameworks/native/rdb/mock.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/frameworks/native/rdb/mock.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/frameworks/native/rdb/shared_block_mock.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/frameworks/native/rdb/sys/file.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/frameworks/native/rdb/sys/ioctl.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/frameworks/native/win32/dlfcn.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rdbmock/frameworks/native/win32/openssl/hmac.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/cache_result_set_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_attach_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_bigint_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_callback_icu_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_concurrent_querywithcurd_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_corrupt_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_delete_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_distributed_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_duplicate_column_data_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_encrypt_decrypt_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_execute_rd_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_execute_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_get_store_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_helper_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_insert_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_memory_db_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_open_callback_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_predicates_join_b_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_predicates_join_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_predicates_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_rd_data_aging_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_read_only_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_sql_utils_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_step_result_get_row_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_step_result_set_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_store_backup_restore_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_store_concurrent_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_store_config_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_store_interface_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_store_rekeyEx_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_store_rekey_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_store_subscribe_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_transaction_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_update_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_upgrade_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_value_bucket_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/rdb_wal_limit_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/restricted_db_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/transaction_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/interface/value_object_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/appdatafwk/unittest/serializable_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/clouddata/unittest/cloud_data_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/clouddata/unittest/cloud_manager_mock_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/clouddata/unittest/mock/include/system_ability_manager_mock.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/dataability/unittest/data_ability_predicates_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/distributedtest/rdb_store_impl_test/distributed_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/mock/connection_mock.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/mock/dataobs_mgr_client_mock.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/mock/rdb_manager_mock.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/mock/rdb_service_mock.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/mock/statement_mock.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/big_integer_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/cache_block_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/clean_device_dirty_data_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/connection_pool_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/connection_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/convert_db_status_native_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/delay_actuator_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/delay_notify_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/dynamic_load_test/dynamic_load_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/mock_obs_manage_test/global_resource_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/mock_obs_manage_test/mock_global_resource.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/mock_obs_manage_test/mock_rdb_security_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/mock_timeout_test/rdb_timeout_interrupt_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/mockservice/async_after_open_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/mockservice/rdb_store_impl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/multiProcess/rdb_store_multiprocess_createDB_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/multiThread/rdb_connection_rd_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/multiThread/rdb_connection_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/multiThread/rdb_sql_utils_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/primary_replica_info_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/raw_data_parser_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rd_utils_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_audit_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_audit_txn_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_db_info_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_distributed_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_double_write_binlog_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_double_write_concurrent_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_double_write_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_encrypt_decrypt_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_encrypt_upgrade_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_error_log_test/get_rdb_store_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_error_log_test/rdb_error_log_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_error_log_test/rdb_perfStat_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_execute_rd_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_fault_hiview_reporter_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_get_store_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_predicates_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_replica_path_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_security_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_sqlite_shared_result_set_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_step_result_set_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_store_backup_restore_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_store_impl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_store_rekey_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_store_rekey_vector_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_timeout_nomock_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_trans_db_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/rdb_utils_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/silent_proxy_test/silent_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/sqlite_statement_test/sqlite_statement_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/sqlite_utils_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb/unittest/transaction_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb_data_ability_adapter/unittest/data_ability_utils_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb_data_share_adapter/unittest/rdb_data_share_adapter_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb_service_adapter/unittest/rdb_manager_impl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb_service_adapter/unittest/rdb_service_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb_service_adapter/unittest/rdb_types_util_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb_service_adapter/unittest/result_set_proxy_adapter_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/native/rdb_service_adapter/unittest/result_set_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/fuzztest/ohvalueobject_fuzzer/ohvalueobject_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/fuzztest/relationalstorecapi_fuzzer/relationalstorecapi_fuzzer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_asset_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_crypto_param_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_cursor_getSize_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_cursor_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_performance_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_predicates_pref_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_predicates_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_query_without_rowCount_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_store_configv2_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_store_corrupt_handler_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_store_rekeyEx_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_store_returning_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_store_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_transaction_capi_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_transaction_query_without_rowCount_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/rdb_vector_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ndk/unittest/relational_cursor_test.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/cj/mock/relational_store_mock.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/cj/src/relational_store_core_ffi.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/cj/src/relational_store_impl_literesultset_core.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/cj/src/relational_store_impl_literesultset_extended.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/cj/src/relational_store_impl_rdbstore_config.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/cj/src/relational_store_impl_resultsetproxy_extended.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/cj/src/relational_store_literesultset_ffi.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/cj/src/relational_store_predicates_ffi.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/cj/src/relational_store_resultset_ffi.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/cj/src/relational_store_store_ffi.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/cj/src/relational_store_transaction_ffi.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/cj/src/relational_store_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/common/include/logger.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/ets/taihe/cloud_data/src/ani_cloud_data_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/ets/taihe/relational_store/include/error_throw_utils.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/ets/taihe/relational_store/include/ohos.data.relationalStore.impl.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/ets/taihe/relational_store/src/ani_rdb_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/ets/taihe/relational_store/src/ani_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/ets/taihe/relational_store/src/lite_result_set_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/ets/taihe/relational_store/src/rdb_store_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/ets/taihe/relational_store/src/result_set_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/ets/taihe/relational_store/src/transaction_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/cloud_data/src/js_client.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/cloud_data/src/js_cloud_share.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/cloud_data/src/js_cloud_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/cloud_data/src/js_config.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/cloud_data/src/napi_queue.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/common/src/js_sendable_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/common/src/js_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/dataability/src/napi_data_ability_predicates.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/rdb/include/napi_rdb_error.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/rdb/src/napi_async_call.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/rdb/src/napi_data_share_adapter.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/rdb/src/napi_rdb_predicates.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/rdb/src/napi_rdb_store.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/rdb/src/napi_rdb_store_helper.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/rdb/src/napi_result_set.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/relationalstore/include/napi_rdb_error.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/relationalstore/src/napi_async_call.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/relationalstore/src/napi_data_share_adapter.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/relationalstore/src/napi_lite_result_set.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/relationalstore/src/napi_rdb_context.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/relationalstore/src/napi_rdb_js_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/relationalstore/src/napi_rdb_predicates.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/relationalstore/src/napi_rdb_sendable_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/relationalstore/src/napi_rdb_store.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/relationalstore/src/napi_rdb_store_helper.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/relationalstore/src/napi_result_set.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/relationalstore/src/napi_transaction.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/js/napi/sendablerelationalstore/src/napi_rdb_store_convert_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/appdatafwk/src/shared_block.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/cloud_data/include/cloud_notifier_stub.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/cloud_data/include/icloud_service.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/dataability/src/ishared_result_set_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rd/src/rd_connection.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rd/src/rd_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb/include/irdb_service.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb/include/iresult_set.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb/include/rdb_platform.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb/include/sqlite_errno.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb/src/cache_block.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb/src/rdb_audit_logger.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb/src/rdb_store_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb/src/sqlite_connection.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb/src/sqlite_shared_result_set.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb/src/sqlite_statement.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb/src/sqlite_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb/src/step_result_set.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb/src/trans_db.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb_service_adapter/include/rdb_notifier_stub.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: frameworks/native/rdb_service_adapter/src/rdb_manager_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/inner_api/dataability/include/ishared_result_set.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/inner_api/rdb/include/cache_result_set.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/inner_api/rdb_data_share_adapter/include/rdb_utils.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/ndk/src/oh_rdb_transaction.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: interfaces/ndk/src/relational_store.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_base/include/ability_connect_callback_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_base/include/ability_manager_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_base/include/ability_scheduler_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_base/include/app_debug_listener_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_base/include/data_ability_observer_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_base/include/dataobs_mgr_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_base/include/extension_manager_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_base/include/free_install_observer_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_base/include/iability_manager_collaborator.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_base/include/iprepare_terminate_callback_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_base/include/resource_manager.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_runtime/include/ability_connect_callback_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_runtime/include/base_def.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_runtime/include/base_interfaces.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_runtime/include/dataobs_manager/data_ability_observer_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ability_runtime/include/resource_manager.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/bundle_framework/include/bundlemgr/bundle_event_callback_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/bundle_framework/include/bundlemgr/bundle_installer_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/bundle_framework/include/bundlemgr/bundle_mgr_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/bundle_framework/include/bundlemgr/bundle_status_callback_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/bundle_framework/include/bundlemgr/bundle_stream_installer_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/bundle_framework/include/bundlemgr/bundle_user_mgr_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/bundle_framework/include/bundlemgr/clean_cache_callback_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/bundle_framework/include/bundlemgr/get_largest_items_callback_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/bundle_framework/include/bundlemgr/process_cache_callback_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/bundle_framework/include/bundlemgr/status_receiver_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/bundle_framework/include/default_app/default_app_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/bundle_framework/include/verify/iverify_manager.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/common_event_service/include/base_def.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/common_event_service/include/base_interfaces.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/common_event_service/include/int_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/common_event_service/include/string_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/file_api/include/asset/i_asset_recv_callback.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/file_api/include/asset/i_asset_send_callback.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/file_api/include/i_file_dfs_listener.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/file_api/include/i_file_trans_listener.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/file_api/include/ipc/i_file_dfs_listener.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ipc/include/dbinder_base_invoker_interface.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ipc/include/dbinder_base_invoker_object.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/ipc/include/dbinder_base_invoker_process.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/resource_management/include/resource_manager.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/samgr/include/if_local_ability_manager.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/samgr/include/if_system_ability_manager.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/samgr/include/iservice_registry.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/samgr/include/isystem_ability_load_callback.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/samgr/include/isystem_ability_status_change.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: rdbmock/external_inner_kit/samgr/include/isystem_process_status_change.h
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/native/rdb/unittest/rd_utils_test.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/native/rdb/unittest/rdb_double_write_binlog_test.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/native/rdb/unittest/rdb_execute_rd_test.cpp
+- `ohscanner.interface.ipc`: Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: test/ndk/unittest/rdb_store_test.cpp
+- `ohscanner.interface.ipc`: Request-derived value code is passed to LOG_ERROR with unresolved mutation effects; related range/allocation facts were invalidated.
+- `ohscanner.interface.ipc`: Owner M2 adapter: single interpretation pass; partial source inspection is not full analysis.
+- `ohscanner.interface.ipc`: Unavailable AST units: 0; cross-file context from these units is unknown.
+- `ohscanner.interface.ipc`: M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.
+- `ohscanner.interface.ipc`: Execution is synchronous; hard timeout/memory isolation is not yet implemented.
+- `ohscanner.interface.ipc`: Diagnostic does not establish vulnerability, reachability or security impact.
+- `ohscanner.interface.ipc`: INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.
+
+## Frozen execution plan
+
+- Planner: 0.1.1; mode: explicit
+- Plan SHA-256: `ae1d9c724315c59db7c78eb32119d8832d2f52e41e1c7551701a0c3bf0ab5ba8`
+- Language matching plans attempts; actual coverage remains in the results above.

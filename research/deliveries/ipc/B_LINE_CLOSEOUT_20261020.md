@@ -1,60 +1,96 @@
 # B 线 IPC 收尾交付（2026-10-20）
 
-本交付以主线 `dd8b12b9f0fcf3d8bc96a2d7fbb3d679809d2e35` 为起点，检测器 `ohscanner.interface.ipc` 为 `0.12.13`，模型为 `oh-ipc-2026.10-v33`。DATA-06 已在主线注册，规则 `ipc.parcel.array-allocation-width` 为 `0.1.0`。B 集成来源 `40e3d79f38629b273214f1efee0f22b7443849f1` 的 DATA-06 实现、控制夹具和解析修复均已进入主线；与 B 分支相比，主线还保留了更严格的 IPC 防护与来源绑定。B 分支上其余差异主要是删除既有安全/固定夹具或修改测试期望，未迁入。
+## 代码与版本
 
-## 已执行的复验
+本交付分支：`codex/b-ipc-closeout-20261020`。本轮生产扫描使用分支代码提交 `4a8806acaa456120c496f185c8a424e0fca1671a`；扫描器 `ohscanner.interface.ipc` 为 `0.12.13`，模型 `oh-ipc-2026.10-v33`。本轮没有改动检测器源代码，最终交付提交会只包含报告与证据整理。DATA-06 规则 `ipc.parcel.array-allocation-width@0.1.0`、测试、控制样例和共享保护均已在主线；主线比旧 B 分支保留了更严格的守卫、来源绑定和 partial 传播。B 集成源码来源 `40e3d79f38629b273214f1efee0f22b7443849f1` 的必要部分已集成，未将旧分支整批覆盖主线。
 
-- IPC 回归：`python -m pytest -q <从 tests/ 选择的 test_ipc*.py 文件>`，结果 **377 passed, 47 skipped**。跳过项仍按测试自身的环境/覆盖条件标记；没有折算成通过。
-- DATA-06 针对性套件：`python -m pytest -q tests/test_ipc_t74_cj_array_bounds_integration_challenge.py tests/test_ipc_family_depth.py tests/test_ipc_family_matrix.py tests/test_ipc_rule_versions.py tests/test_ipc_holdout_contract.py`，**44 passed**。套件核对两个 vulnerable Git 修订、官方 fixed 修订、仓库身份、源 SHA、正例去重、错误仓库、CheckReadLength-only、无关方法、短输入、安全控制及注释回归。
-- 统一 CLI 固定源码回放：见 [bline_closeout_20261020](../../evidence/interface/ipc/bline_closeout_20261020/)。DATA-06 两个 vulnerable 修订分别得到 1 条 `ipc.parcel.array-allocation-width` candidate；官方修复 `de3a68cc8b7d6f18017fd261060def0e38dce54a` 得到 0 条。三者均由 M2 `ohscan-run` 在单文件固定范围报告，运行状态 completed，文件 SHA 与测试 manifest 一致。两个历史修订属于同一 CVE/函数根因，按 1 个根因计，不按 2 个漏洞计。
-- IPC 同源基线比较：在固定 `communication_ipc` commit `5903fd5f7332a427cb3f6915b0202ee5c76c63b5` 上，从 0.12.12 升至 0.12.13 重跑 M2 CLI。两次均为 697 个源文件、同一 tree、同一 snapshot，解析覆盖均为 complete 442 / partial 218 / not_run 37，candidate observations **14 → 14**。逐项比较结果：14 retained、0 added、0 removed，身份均按 file/line/rule/symbol/source SHA 对齐；14 条观察合为 12 个 file/rule/symbol 分组。当前结果仍有 partial 源，任务状态 `completed_with_limitations`；14 条是观察数，不是 14 个已确认漏洞，也不是 14 个独立根因。原 0.12.12 JSON 保存在原工作区 `D:\openHarmonyScanner\tmp\b-ipc-replay-20261020\integrated.json`，本次 0.12.13 JSON 和 Markdown 随本交付保存。
-- Contacts 解析复核：对固定 Contacts Git 对象 `b02aadfc2d801ee30573fcb2d13490298e146fea:dataBusiness/contacts/src/contacts_data_ability.cpp` 直接调用当前 `src.parser.ast.parse_source`。原始字节 80,944，SHA-256 `70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383`，状态 `complete`，`parse_issues=[]`。本轮没有重现 IPC Parser 回归；Contacts 的既有路径候选属 C++ 路径规则，与 IPC 家族分开记录。
-- 已披露 CVE 回归：`python -m pytest -q tests/detectors/test_known_disclosed_cves.py`，**21 passed**，覆盖当前测试文件中的 17 个 CVE 标识。此结果是测试套件回归，不能充当“14 个固定披露 CVE 的精确 vulnerable/fixed Git 版本回放”；该 14 项清单在当前 B 交付材料/可用缓存中没有找到，因此精确版本回放记为 `not_run`，没有用 0.12.12 的历史报告代替。
+完整原始固定清单和历史输出已随包保存于 `research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/`。这使旧 `0.12.12` 结果保持为历史基线，不冒充本次 `0.12.13` 实测。
 
-## 候选复核索引与范围差异
+## 固定八仓回放
 
-结构化的 14 条候选观察对照、各自规则和源码 SHA 位于本目录证据索引 `candidate_comparison.json`。所有观察在固定同一源码树上保持身份不变；本轮没有增删候选。已有 2026-10-17 B 线真实组件测量和 2026-10-20 `communication_ipc` 旧回放是不同范围，不将其 30 个历史观察/28 个根因聚类基线与本轮 14 个 observation 混算。
+使用历史八仓 manifest 固定的 commit/tree/scope，逐仓经统一 M2 CLI `ohscan-run` 执行 `0.12.13`。八仓均完成，状态均为 `completed_with_limitations`：
 
-用户给出的“八仓固定范围、30 observations、28 roots”作为比较基线保留。当前仓库内未找到对应八仓 manifest、逐仓 Git SHA/树身份和历史 30 条 observation 的逐项导出；只有单仓 `communication_ipc` 固定回放材料可复用。因此八仓全量同范围复跑与逐条身份变化解释为 `not_run / missing exact scope manifest`，没有换用最新 HEAD 或扩大到其他仓库扫描。后续补齐原八仓精确仓库/提交清单后，可按同一 Runner 比较。
+| 仓库 | 固定 commit | 候选观察 | complete / partial / not_run |
+|---|---|---:|---:|
+| `aafwk_standard` | `834a566b1372268c7bbb0c40362322f812ca6efc` | 15 | 1246 / 507 / 18 |
+| `applications_contacts_data` | `341cc3bf41b48e9a5f278dd088f40a2041d2f1c9` | 4 | 199 / 19 / 142 |
+| `communication_netmanager_ext` | `8c35917b7e2f152813b13a20530a8452cf73d938` | 0 | 441 / 191 / 22 |
+| `distributeddatamgr_relational_store` | `42f13ea84e2f90ed511a2bd4aa5be14c5996eba8` | 0 | 790 / 375 / 185 |
+| `graphic_standard` | `a73af6bd3bac599b9359cba10ca7b5f82a02d5d9` | 8 | 969 / 219 / 4 |
+| `miscservices_pasteboard` | `dd22c7cb5e5f207a6c38c50f45b7369ee8575840` | 2 | 59 / 8 / 1 |
+| `multimedia_histreamer` | `847aafa3dc32bcf92eb8a2d2277b8d34bff98362` | 0 | 346 / 230 / 0 |
+| `security_deviceauth` | `2cf21e46f43c63857c40a79b004eda14f79b04c2` | 1 | 291 / 145 / 0 |
+| **合计** | — | **30** | **4341 / 1694 / 372** |
 
-## 数据与结论边界
+与固定 `0.12.12` 基线相比，候选观察为 **30 → 30**：30 retained、0 added、0 removed；规则分布未变。解析 complete 增加 39、partial 减少 39、not_run 保持 372。使用历史 triage 的同一 `root_cluster` 映射，观察仍为 **28 个候选复核锚点簇**；该聚类只是复核组织方式，不等同于已确认漏洞根因。Contacts 的两个旧 partial 观察仍保持 partial/unknown。逐仓身份和覆盖差异见 `eight_repo_candidate_comparison.json`，八份原始 JSON/Markdown 与日志见 `eight_repo_0.12.13/`。
 
-- DATA-06 的 CVE-2025-26474 挑战把两个 vulnerable 修订回放识别为同一个源码根因，官方 fixed 修订无命中。它是设计控制和已披露漏洞的源码回归，不是独立 holdout 评估。
-- DATA-06 当前测量声明仍是 `measurement_status=not_run`、空 holdout；本轮没有生成 Precision/Recall，也没有把设计控制计作准确率证据。
-- 源码命中和修复对照不能单独证明产品构建纳入、部署、攻击者可达性、权限边界或 CIA 影响。候选继续保持 candidate/unknown；`validated_vulnerability=0`。
-- 当前规则适用/实际评估逐规则统计尚未成为共享 Runner 协议。零候选规则的覆盖保持 unknown，不解读为安全。
-- 具备本地 CLI 验收；未连接隔离平台环境，本轮没有做候选详情页面与报告导出接线验收。
+## 已披露 CVE 精确版本回放
+
+已按旧 B 线冻结的 14 项清单、固定 vulnerable/fixed commit/tree 与原定 scope，通过当前统一 CLI 完成 **14 个 CVE、28 个版本端点回放**。本轮不是新仓库全量扫描；没有将历史 `0.12.12` 报告计成本次运行。
+
+| CVE | vulnerable / fixed 候选观察 |
+|---|---:|
+| CVE-2024-12082 | 7 / 4 |
+| CVE-2024-38382 | 7 / 5 |
+| CVE-2024-39775 | 2 / 0 |
+| CVE-2023-25176 | 1 / 0 |
+| CVE-2022-42463 | 1 / 1 |
+| CVE-2025-27247 | 4 / 3 |
+| CVE-2025-25212 | 3 / 2 |
+| CVE-2025-27563 | 3 / 0 |
+| CVE-2023-0035 | 1 / 0 |
+| CVE-2023-0036 | 1 / 0 |
+| CVE-2024-39612 | 2 / 0 |
+| CVE-2025-26691 | 9 / 0 |
+| CVE-2024-21816 | 2 / 0 |
+| CVE-2025-26693 | 10 / 7 |
+| **合计** | **53 / 22（75 条观察）** |
+
+28 个端点中 6 个 `completed`、22 个 `completed_with_limitations`。与历史 `0.12.12` 对照，候选观察数量均为 75，稳定来源/规则/符号锚点为 75 个；没有候选锚点新增或消失。发现一项可复现的定位元数据回归：`CVE-2022-42463` fixed 端点相同文件、规则、符号和源码 SHA 的观察，历史行号是 `275`，当前 JSON 将 `line` 写为字符串 `frozenlist`。来源 SHA 与 `byte_start=10154` 绑定；在精确 pinned blob 中该字节偏移映射到第 275 行，候选锚点仍存在。对比索引将其标为定位异常，不记为真实候选新增/消失。需修复报告定位序列化并重跑该端点；没有据此升级或撤销安全结论。逐 CVE/逐端点差异见 `cve_candidate_comparison.json`，全部报告、日志和固定 SHA 见 `disclosed_cve_0.12.13/`。
+
+这些是披露版本控制和设计回归，不是独立 holdout。命中不证明产品入口、攻击者可达性、权限影响或漏洞有效性；所有候选保持 `candidate/unknown`，`validated_vulnerability=0`。
+
+## DATA-06 与 Contacts 解析控制
+
+DATA-06 固定源码挑战经 M2 CLI 回放：两个固定 vulnerable 修订各 1 条 `ipc.parcel.array-allocation-width@0.1.0` 候选，官方修复 `de3a68cc8b7d6f18017fd261060def0e38dce54a` 为 0 条。报告绑定各自固定 commit 和源码 SHA；两处 vulnerable 修订归为同一候选根因。它是设计控制和已披露 CVE 回归，不是 holdout。复现参数与原始报告见本目录 `data06-*.json/.md`。
+
+本轮纠正了先前写错的 Contacts 路径。真实 IPC Parser 问题位于固定 `applications_contacts_data@341cc3bf` 的 `dataBusiness/poster/src/poster_call_stub.cpp`，Git blob `7cf9459f8f3b360dd85ba1587afc2a792e8a79fa`，源码 SHA `da61331914d7d1f92afea3b58eff862d0b1b2f98ec102258d7807cf8798a7f50`。第 21 行 `#include "contacts_common_event.h" ` 在右引号和 LF 间有一个空格：共享 parser 原始状态为 partial，私有 IPC 解析副本为 complete；字节长度、LF 偏移与原始 source SHA 不变。M2 继续将该源码单元报告为 partial，并为第 44、46 行两个候选保留 `parse_completeness_impact` 义务。固定八仓 CLI 报告与针对性归一化控制均复现此行为。详细精确源记录见 `contacts_parser_replay.json`。这是 IPC 适配器内的窄恢复，不是共享 Parser 的全局修复；无需据此扩大成 Parser 重构。
+
+## 验证与剩余交付项
+
+- 针对 DATA-06、IPC 家族、规则版本与 holdout 契约：**44 passed**。
+- IPC 相关回归：**377 passed, 47 skipped**。跳过项仍保留测试报告自己的状态，不折算为通过。
+- 已披露 CVE 单测：**21 passed**；该套件不替代上文 14 个精确版本回放。
+- `communication_ipc` 固定 commit `5903fd5f7332a427cb3f6915b0202ee5c76c63b5` 同源对照：`0.12.12` 与 `0.12.13` 均为 697 个源文件、同一 tree/snapshot，14 retained、0 added、0 removed；解析为 442 complete / 218 partial / 37 not_run。证据见 `communication-ipc-5903fd5-ipc-0.12.13.json/.md` 与 `candidate_comparison.json`。
+- 逐规则适用文件数/实际评估文件数尚未形成共享 Runner 协议。建议作为明确的跨线小交付：每个 `detector_id + rule_id + rule_version` 记录 `applicable / evaluated_complete / evaluated_partial / not_run / candidate_count` 和不适用/未评估原因；来源 SHA 继续绑定观察。该协议落地前，零候选规则覆盖保持 unknown；不启动平台重构。
+- 当前回放发现的 DSoftBus fixed 定位序列化异常需要修复并针对性重跑，是本交付明确未关闭的代码回归。
+- 独立准确率评估 `not_run`；产品 build、部署、入口、权限、影响和修复验证均 `unknown/not_run`。未提供 Precision/Recall，也没有将候选命中升级成已验证漏洞。
+- 对 CVE-2022-42463 fixed 报告做针对性再运行时，Windows Python 3.13 的 CLI 在 `dataclasses.asdict(ToolDiagnostic)` 处报 `TypeError: unhashable type: 'list'`，未生成新的报告。此前固定 28 端点原始产物保留；这项 Python 3.13 运行/身份侧车序列化回归需要定位修复后重跑受影响端点。
+- 隔离平台环境未连接，候选详情页和报告导出接线验收 `not_run`。
 
 ## 状态
 
 | 层级 | 状态 |
 |---|---|
-| B 线工程实现 | DATA-06 与主线 IPC 0.12.13/model v33 代码已集成；回归通过 |
-| 本轮证据交付 | 已提交并推送；证据报告有 SHA 清单 |
-| 主线合入 | 检测器代码原已在 main；本轮收尾报告/回放材料已于 `0f53af62283dbd0f249280805e8286a04b2d43b9` 快进合入 main |
-| 部署 | 未验证；产品部署状态 unknown |
-| 漏洞验证 | 未验证产品漏洞；源码回归与修复对照完成，validated_vulnerability=0 |
-| 独立准确率评估 | not_run；DATA-06 holdout 未冻结 |
-| 产品验证 | not_run；产品 build、入口/权限与影响证据缺失 |
+| B 线检测器工程 | DATA-06 与 IPC 0.12.13/model v33 已集成；本轮固定范围代码回放完成 |
+| 本轮证据包 | 本提交包含固定八仓、14 CVE/28 端点、DATA-06、Contacts 解析、差异索引和 SHA 清单 |
+| 主线代码合入 | 已合入；本轮新增证据包是否合入主线单独跟踪，不宣称已合入 |
+| 分支推送 | 待完成推送尝试；平台连接限制若仍阻止，会在交付状态中列明 |
+| 部署 | 未验证，unknown |
+| 漏洞验证 | 产品漏洞未验证；validated_vulnerability=0 |
+| 独立准确率评估 | not_run |
+| 产品验证/平台接线 | not_run；产品证据与隔离平台环境未提供 |
 
-复现命令：
+## 复现
+
+Windows PowerShell（Python 环境使用当前工作区安装依赖）：
 
 ```powershell
-$env:T74_IPC_GIT = '<包含 manifest 固定提交的 communication_ipc Git checkout>'
 python -m pytest -q tests/test_ipc_t74_cj_array_bounds_integration_challenge.py tests/test_ipc_family_depth.py tests/test_ipc_family_matrix.py tests/test_ipc_rule_versions.py tests/test_ipc_holdout_contract.py
 $ipcFiles = @(Get-ChildItem tests -File -Filter 'test_ipc*.py' | ForEach-Object { $_.FullName })
 $ipcFiles += @(Get-ChildItem tests/detectors -File -Filter 'test_ipc*.py' | ForEach-Object { $_.FullName })
 python -m pytest -q @ipcFiles
 python -m pytest -q tests/detectors/test_known_disclosed_cves.py
-python -m src.cli ohscan-run --repo-dir '<communication_ipc checkout>' --repository openharmony/communication_ipc --commit 84d681288793785e8f39f71c824f211edaed8f1e --include interfaces/innerkits/cj/src/message_sequence_impl.cpp --detector ohscanner.interface.ipc --json-out '<out>/data06-old-cve-parent.json' --md-out '<out>/data06-old-cve-parent.md'
-python -m src.cli ohscan-run --repo-dir '<communication_ipc checkout>' --repository openharmony/communication_ipc --commit 67cd9d3e8e08971ba614a19f99b5f6b7ec4ea039 --include interfaces/innerkits/cj/src/message_sequence_impl.cpp --detector ohscanner.interface.ipc --json-out '<out>/data06-old-umbrella-issue-revision.json' --md-out '<out>/data06-old-umbrella-issue-revision.md'
-python -m src.cli ohscan-run --repo-dir '<communication_ipc checkout>' --repository openharmony/communication_ipc --commit de3a68cc8b7d6f18017fd261060def0e38dce54a --include interfaces/innerkits/cj/src/message_sequence_impl.cpp --detector ohscanner.interface.ipc --json-out '<out>/data06-official-security-fix.json' --md-out '<out>/data06-official-security-fix.md'
 ```
 
-要重放 697 个文件的版本对照，`--repo-dir` 必须是包含旧扫描提交 `5903fd5f7332a427cb3f6915b0202ee5c76c63b5` 对象的本地 `communication_ipc` Git 数据库，并省略 `--include`：
-
-```powershell
-python -m src.cli ohscan-run --repo-dir '<communication_ipc Git checkout>' --repository openharmony/communication_ipc --commit 5903fd5f7332a427cb3f6915b0202ee5c76c63b5 --detector ohscanner.interface.ipc --json-out '<out>/communication-ipc-5903fd5-ipc-0.12.13.json' --md-out '<out>/communication-ipc-5903fd5-ipc-0.12.13.md'
-```
-
-精确源对象可先从已有本地 bare Git 缓存读取，或从已授权公开 upstream 获取；不得把缺失对象替换成 HEAD。报告 SHA-256、固定源版本和最终提交绑定由本目录 `delivery_inventory.json` 与 `candidate_comparison.json` 提供。新扫描边界仅为已固定的 DATA-06 三个源码版本和一项既有 `communication_ipc` 对照回放；没有启动全量仓库扫描。
+逐仓与逐 CVE 的统一 CLI 参数、固定提交、source SHA、JSON/Markdown 哈希和日志均记录在 `eight_repo_0.12.13/summary.json`、`disclosed_cve_0.12.13/summary.json` 与相邻产物。固定历史输入在 `historical_inputs/`。运行环境保留于原工作区的 `D:\openHarmonyScanner	mp\`，不应把临时 checkout 当作证据；复跑请依据 summary 固定的 commit/tree 并核验 tree。
