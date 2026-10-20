@@ -291,6 +291,30 @@ class WorkbenchTests(unittest.TestCase):
             all(x["evidence"].get("obligations") for x in service.findings(web))
         )
 
+    def test_real_scan_overview_risks_preserves_severity_api_contract(self):
+        """A real scan -> persisted report -> API must agree with presentation routing."""
+        from src.workbench.smart_audit import severity_metadata, _severity
+        job = self.completed()
+        report = service.read_report(self.settings, job)
+        findings = {item["id"]: item for item in service.findings(report)}
+        self.assertTrue(findings)
+        response = self.client.get("/api/v1/overview/risks?scan_limit=10&limit=100")
+        self.assertEqual(response.status_code, 200, response.text)
+        rows = [row for row in response.json()["items"] if row["audit_id"] == job["id"]]
+        self.assertTrue(rows)
+        for row in rows:
+            with self.subTest(candidate_id=row["candidate_id"]):
+                candidate = findings[row["candidate_id"]]
+                expected = severity_metadata(candidate)
+                for field in ("severity", "severity_label", "severity_evidence", "severity_basis"):
+                    self.assertEqual(row[field], expected[field])
+                self.assertIn(row["vulnerability_state"], ("candidate", "confirmed"))
+                self.assertIn(row["human_review_status"],
+                              ("unassessed", "under_review", "plausible_unproven",
+                               "likely_false_positive", "refuted"))
+                if expected["severity"] in {"high", "critical"}:
+                    self.assertGreaterEqual(_severity(candidate), 4)
+
     def test_candidate_clusters_keep_each_line_identity(self):
         job = self.completed()
         report = service.read_report(self.settings, job)
