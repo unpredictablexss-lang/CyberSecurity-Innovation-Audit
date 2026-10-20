@@ -22,7 +22,7 @@ bash ./build.sh --product-name rk3568 \
 
 - 工作目录为只读 staging 源根 `/mnt/d/openHarmonyScanner/tmp/c-runtime-ark-build-20261020/root`；单独 out 为 `/tmp/c-runtime-ark-overlay-20261020/out-nosdk`，HOME 为 `/tmp/c-runtime-ark-overlay-20261020/home-nosdk`，日志为 `/tmp/c-runtime-ark-overlay-20261020/build-nosdk.log`。
 - 构建脚本将 `--prebuilt-sdk=true` 附加在传给 HB 的参数末尾，但显式 `--no-prebuilt-sdk=true` 仍同时存在。HB 写入私有 hb args 与 rk3568 preloader 文件后，约 3 分钟仍停在 `[LOAD] Checking all build args...`。Python HB worker 多数处于对 D: 9p 源树元数据读取的 D 状态；没有 GN、Ninja、clang 进程，out 约 204 KiB，仅含参数和 preloader 信息。
-- 为控制挂起时间，向本次确认的进程组 414 发送 TERM；进程已退出。日志和 out 均保留，没有清理或覆盖。
+- 为控制挂起时间，向本次确认的进程组 414 发送 TERM；进程已退出。统一执行会话返回 exit code 1（由 TERM 中止导致，不是 HB/GN/Ninja 的自然构建结果）。日志和 out 均保留，没有清理或覆盖。
 - 结果：构建未进入编译阶段；无 Ark Runtime 二进制或可运行测试工件。`ark_js_host_linux_tools_packages` 未完成。这个 blocker 是 Kali/WSL 9p 上 HB 参数加载停滞，不能解释为源码构建失败或测试通过。
 
 ## witness 与当前结论
@@ -47,3 +47,4 @@ offset 0 与 4097 controls、官方 `typedarrayset` 模块测试、真实修复�
 - 无 SDK 重试日志：`/tmp/c-runtime-ark-overlay-20261020/build-nosdk.log`
 - 两轮隔离输出：`/tmp/c-runtime-ark-overlay-20261020/out/`、`/tmp/c-runtime-ark-overlay-20261020/out-nosdk/`
 - 部分完整仓库复制曾因耗时停止；部分目录保留于 `D:\openHarmonyScanner\tmp\c-runtime-ark-build-20261020\private\prebuilts`，未清理。
+
