@@ -302,10 +302,20 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200, response.text)
         rows = [row for row in response.json()["items"] if row["audit_id"] == job["id"]]
         self.assertTrue(rows)
+        finding_list = self.client.get(f"/api/v1/scans/{job['id']}/findings?limit=200")
+        self.assertEqual(finding_list.status_code, 200, finding_list.text)
+        displayed = {row["id"]: row for row in finding_list.json()["items"]}
         for row in rows:
             with self.subTest(candidate_id=row["candidate_id"]):
                 candidate = findings[row["candidate_id"]]
                 expected = severity_metadata(candidate)
+                self.assertEqual(displayed[row["candidate_id"]]["risk_presentation"], expected)
+                # Preserve the raw detector assertion independently from UI presentation.
+                self.assertEqual(displayed[row["candidate_id"]]["severity"], candidate["severity"])
+                detail = self.client.get(
+                    f"/api/v1/scans/{job['id']}/findings/{row['candidate_id']}")
+                self.assertEqual(detail.status_code, 200, detail.text)
+                self.assertEqual(detail.json()["risk_presentation"], expected)
                 for field in ("severity", "severity_label", "severity_evidence", "severity_basis"):
                     self.assertEqual(row[field], expected[field])
                 self.assertIn(row["vulnerability_state"], ("candidate", "confirmed"))
