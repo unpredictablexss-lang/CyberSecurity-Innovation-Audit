@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-17",
+  "base_sha": "e510c99c67f31ec6c73365f9ab749c79ca6ff0a1",
+  "branch": "feat/teammate-d-sensitive-exposure-20261017",
+  "python": "/home/lzc/projects/CyberSecurity-Innovation-Audit/.venv-web/bin/python",
+  "full_suite": {
+    "cases": 522,
+    "passed": 511,
+    "skipped": 11,
+    "failed": 0,
+    "errors": 0,
+    "log_sha256": "bdd798d1f8d2b9af754649685102f7e44216d580f274d261b28f667f52901dea"
+  },
+  "new_d_suite": {
+    "unittest_methods": 10,
+    "synthetic_fixture_controls": 32,
+    "failed": 0,
+    "independent_holdout": false
+  },
+  "skip_reasons": [
+    "test_corpus_ipc_object_stub_send_request_dispatch (test_ipc_entry_index.EntryIndexTests) ... skipped 'perf-corpus/communication_ipc not present'",
+    "test_attack_triggers_on_the_vulnerable_revision_only (test_poc_runner.Auth01IntegrationTests) ... skipped 'AUTH-01 runtime harness must execute only through the Docker validation worker'",
+    "test_record_keeps_validated_vulnerability_at_zero (test_poc_runner.Auth01IntegrationTests) ... skipped 'AUTH-01 runtime harness must execute only through the Docker validation worker'",
+    "test_a_changed_digest_fails (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_a_moved_quote_fails_instead_of_describing_other_code (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_no_block_means_no_claim (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_the_harness_declares_a_partial_reachability_block (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_the_rendered_record_states_what_is_not_established (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_verification_checks_the_digest_and_the_quoted_line (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_real_historical_sources_produce_linked_detector_candidates (test_shared_ptr_race_poc.SharedPtrRacePocTests) ... skipped 'historical detector replay requires locally preserved source artifacts: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h, outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h'",
+    "test_source_hashes_and_quotes_are_verified (test_shared_ptr_race_poc.SharedPtrRacePocTests) ... skipped 'optional preserved historical source artifacts are unavailable: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h, outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h'"
+  ],
+  "compileall": "passed",
+  "git_diff_check": "passed",
+  "real_replay": {
+    "selected_files": 9,
+    "candidates": 0,
+    "coverage": {
+      "complete": 0,
+      "partial": 3,
+      "not_analyzed": 6,
+      "failed": 0
+    },
+    "equal": true
+  },
+  "validated_vulnerability": 0,
+  "catalog_registered": false,
+  "proposed_detector_id_confirmed_by_owner": false,
+  "publication_note": "Pre-publication test snapshot; later branch push/PR state is recorded by GitHub and chat receipt",
+  "push_performed": false,
+  "draft_pr_created": false
+}

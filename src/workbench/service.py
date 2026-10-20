@@ -8,6 +8,7 @@ import os
 import subprocess
 import sys
 from src.ohscanner.contracts import safe_relative_path
+from src.ohscanner.detectors.admission import pending_admissions
 from src.ohscanner.detectors.catalog import build_registry, catalog_metadata
 from src.ohscanner.git_source import _git, resolve_commit, MAX_BLOB_BYTES
 
@@ -16,7 +17,61 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-ENGINE_MODEL_FILES = ()  # Reviewed shipped model data only; C/D models remain withheld.
+def audit_workflow_sha256(plan_sha256, audit_mode, auto_triage=False,
+                          max_triage_candidates=3, max_r2_candidates=0,
+                          max_cost_usd=None):
+    if audit_mode not in {"standard_review", "static_only"}:
+        raise ValueError("unsupported audit workflow mode")
+    if (not isinstance(auto_triage, bool)
+            or not isinstance(max_triage_candidates, int)
+            or isinstance(max_triage_candidates, bool)
+            or not 1 <= max_triage_candidates <= 5
+            or not isinstance(max_r2_candidates, int)
+            or isinstance(max_r2_candidates, bool)
+            or not 0 <= max_r2_candidates <= max_triage_candidates):
+        raise ValueError("invalid triage workflow budget")
+    payload = {
+        "version": 4, "plan_sha256": plan_sha256, "audit_mode": audit_mode,
+        "auto_triage": auto_triage if audit_mode == "standard_review" else False,
+        "max_triage_candidates": max_triage_candidates if auto_triage and audit_mode == "standard_review" else 0,
+        "max_r2_candidates": (max_r2_candidates
+                              if auto_triage and audit_mode == "standard_review" else 0),
+        "max_cost_usd": (max_cost_usd
+                         if auto_triage and audit_mode == "standard_review" else None),
+    }
+    return sha(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode())
+
+
+def audit_workflow_summary(audit_mode, auto_triage=False,
+                           max_triage_candidates=3, max_r2_candidates=0,
+                           max_cost_usd=None):
+    if audit_mode == "standard_review":
+        return {
+            "scan_stage": "fixed_static_scan",
+            "triage_stage": ("task_authorized_bounded_r1_conditional_r2"
+                             if auto_triage and max_r2_candidates
+                             else "task_authorized_bounded_r1" if auto_triage
+                             else "user_authorized_candidate_batch"),
+            "automatic_model_calls": bool(auto_triage),
+            "candidate_limit_per_authorized_batch": max_triage_candidates if auto_triage else 5,
+            "conditional_r2_candidate_limit": max_r2_candidates if auto_triage else 0,
+            "platform_cost_budget_usd": (max_cost_usd if auto_triage else None),
+            "source_consent_required": True,
+        }
+    if audit_mode == "static_only":
+        return {
+            "scan_stage": "fixed_static_scan",
+            "triage_stage": "not_requested",
+            "automatic_model_calls": False,
+            "candidate_limit_per_authorized_batch": 0,
+            "source_consent_required": False,
+        }
+    raise ValueError("unsupported audit workflow mode")
+
+
+ENGINE_MODEL_FILES = (
+    "src/ohscanner/detectors/data/historical_profiles.json",
+)  # Freeze D exact-revision profile data with the engine identity.
 
 
 def engine_fingerprint():
@@ -38,23 +93,111 @@ def engine_fingerprint():
     return digest.hexdigest()
 
 
-def check_repository(settings, path):
+def _inside_any_root(path, roots):
+    return any(path.is_relative_to(root) for root in roots)
+
+
+def _git_metadata_directories(repository, roots):
+    marker = repository / ".git"
+    if marker.is_symlink():
+        raise ValueError("repository Git metadata cannot be a symlink")
+    if marker.is_dir():
+        git_dir = marker.resolve(strict=True)
+    elif marker.is_file():
+        try:
+            content = marker.read_text(encoding="utf-8")[:4096].strip()
+        except (OSError, UnicodeError) as error:
+            raise ValueError("repository Git directory pointer is unreadable") from error
+        if not content.lower().startswith("gitdir:"):
+            raise ValueError("repository Git directory pointer is invalid")
+        target = Path(content.split(":", 1)[1].strip()).expanduser()
+        target = target if target.is_absolute() else repository / target
+        if target.is_symlink():
+            raise ValueError("repository Git directory cannot be a symlink")
+        git_dir = target.resolve(strict=True)
+    else:
+        # A bare repository stores its Git metadata in the repository directory.
+        git_dir = repository
+
+    if not _inside_any_root(git_dir, roots):
+        raise ValueError("repository Git metadata is outside configured target roots")
+
+    common_dir = git_dir
+    common_file = git_dir / "commondir"
+    if common_file.is_symlink():
+        raise ValueError("repository Git common directory cannot be a symlink")
+    if common_file.is_file():
+        try:
+            value = common_file.read_text(encoding="utf-8")[:4096].strip()
+        except (OSError, UnicodeError) as error:
+            raise ValueError("repository Git common directory pointer is unreadable") from error
+        target = Path(value).expanduser()
+        target = target if target.is_absolute() else git_dir / target
+        if target.is_symlink():
+            raise ValueError("repository Git common directory cannot be a symlink")
+        common_dir = target.resolve(strict=True)
+        if not _inside_any_root(common_dir, roots):
+            raise ValueError("repository Git common directory is outside configured target roots")
+
+    for object_dir in {git_dir / "objects", common_dir / "objects"}:
+        if object_dir.is_symlink():
+            raise ValueError("repository Git objects cannot be a symlink")
+        alternates = object_dir / "info" / "alternates"
+        if alternates.is_symlink():
+            raise ValueError("repository Git alternates cannot be a symlink")
+        if not alternates.is_file():
+            continue
+        try:
+            entries = alternates.read_text(encoding="utf-8")[:65536].splitlines()
+        except (OSError, UnicodeError) as error:
+            raise ValueError("repository Git alternates are unreadable") from error
+        if len(entries) > 64:
+            raise ValueError("repository Git alternates exceed the safe limit")
+        for entry in entries:
+            if not entry.strip():
+                continue
+            target = Path(entry.strip()).expanduser()
+            target = target if target.is_absolute() else object_dir / target
+            resolved_target = target.resolve(strict=True)
+            if not _inside_any_root(resolved_target, roots):
+                raise ValueError("repository Git alternate objects are outside configured target roots")
+    return git_dir
+
+
+def check_repository(settings, path, timeout=30):
     raw = Path(path).expanduser()
     if raw.is_symlink():
         raise ValueError("repository cannot be a symlink")
     resolved = raw.resolve(strict=True)
+    from .source_roots import load_managed_roots, managed_root_is_current
+
+    roots = []
+    managed = {row["path"]: row for row in load_managed_roots(settings.data_dir)}
+    for configured in settings.target_roots:
+        candidate = Path(configured)
+        try:
+            if candidate.resolve(strict=False) != candidate:
+                continue
+            root_record = managed.get(str(candidate))
+            if root_record is not None and not managed_root_is_current(root_record):
+                continue
+            roots.append(candidate)
+        except (OSError, RuntimeError):
+            continue
+    roots = tuple(roots)
     if not any(
         resolved.is_relative_to(root) and resolved != root
-        for root in settings.target_roots
+        for root in roots
     ):
         raise ValueError("repository is outside configured target roots")
-    bare = _git(resolved, "rev-parse", "--is-bare-repository").strip()
+    _git_metadata_directories(resolved, roots)
+    bare = _git(resolved, "rev-parse", "--is-bare-repository", timeout=timeout).strip()
     if bare not in (b"true", b"false"):
         raise ValueError("not a local Git repository")
     if (
         bare == b"false"
         and Path(
-            _git(resolved, "rev-parse", "--show-toplevel").decode().strip()
+            _git(resolved, "rev-parse", "--show-toplevel", timeout=timeout).decode().strip()
         ).resolve()
         != resolved
     ):
@@ -63,14 +206,14 @@ def check_repository(settings, path):
     return resolved
 
 
-def revision(repo, requested):
+def revision(repo, requested, timeout=30):
     if (
         not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_./-]{0,199}", requested)
         or ".." in requested
     ):
         raise ValueError("invalid revision; select a local branch, tag or commit")
     commit = (
-        _git(Path(repo["path"]), "rev-parse", "--verify", requested + "^{commit}")
+        _git(Path(repo["path"]), "rev-parse", "--verify", requested + "^{commit}", timeout=timeout)
         .decode()
         .strip()
     )
@@ -78,26 +221,45 @@ def revision(repo, requested):
     return {"requested_revision": requested, "commit": commit, "git_tree": tree}
 
 
-def revisions(repo):
+def revisions(repo, timeout=30):
     text = _git(
         Path(repo["path"]),
         "for-each-ref",
+        "--count=2000",
         "--format=%(refname) %(objectname)",
         "refs/heads",
         "refs/tags",
         "refs/remotes",
+        timeout=timeout,
     ).decode()
-    return [
+    rows = [
         {"ref": r.split(" ", 1)[0], "object": r.split(" ", 1)[1]}
         for r in text.splitlines()
     ][:2000]
+    available = {row["ref"] for row in rows}
+    default_ref = None
+    # Prefer the repository's advertised default branch. For local mirrors
+    # without origin/HEAD, use the branch currently checked out at HEAD.
+    for symbolic_ref in ("refs/remotes/origin/HEAD", "HEAD"):
+        try:
+            candidate = _git(
+                Path(repo["path"]), "symbolic-ref", "--quiet", symbolic_ref,
+                timeout=timeout,
+            ).decode().strip()
+        except (OSError, ValueError, subprocess.TimeoutExpired):
+            continue
+        if candidate in available:
+            default_ref = candidate
+            break
+    return [dict(row, is_default=row["ref"] == default_ref) for row in rows]
 
 
 def detector_metadata():
     catalog = catalog_metadata()
+    pending_ids = {row["id"] for row in pending_admissions()}
     result = []
     for key, spec in catalog.items():
-        if spec["kind"] == "example":
+        if spec["kind"] == "example" or key in pending_ids:
             continue
         detector = build_registry((key,)).detectors()[0]
         result.append(
@@ -112,7 +274,7 @@ def detector_metadata():
     return result
 
 
-def audit_plan(repo, requested, includes, detector_ids=None):
+def audit_plan(repo, requested, includes, detector_ids=None, timeout_seconds=300, memory_mb=2048):
     if not includes or len(includes) > 100 or len(set(includes)) != len(includes):
         raise ValueError("select 1..100 distinct include paths")
     for path in includes:
@@ -123,7 +285,11 @@ def audit_plan(repo, requested, includes, detector_ids=None):
     fixed = revision(repo, requested)
     request = {"repo_dir": repo["path"], "repository": repo["name"],
                "commit": fixed["commit"], "includes": includes,
-               "selected_detector_ids": detector_ids}
+               "selected_detector_ids": detector_ids,
+               "execution_budget": {
+                   "timeout_seconds": timeout_seconds,
+                   "memory_mb": memory_mb,
+               }}
     try:
         result = subprocess.run(
             [sys.executable, "-m", "src.workbench.plan_child", str(os.getpid())],
@@ -141,7 +307,7 @@ def audit_plan(repo, requested, includes, detector_ids=None):
 
 
 def make_spec(repo, requested, includes, detector_ids, timeout_seconds, memory_mb):
-    fixed, plan = audit_plan(repo, requested, includes, detector_ids)
+    fixed, plan = audit_plan(repo, requested, includes, detector_ids, timeout_seconds, memory_mb)
     ids = list(plan["suggested_detector_ids"]) if detector_ids is None else list(detector_ids)
     if not ids:
         raise ValueError("No applicable approved detector; analysis remains unknown, no scan queued")
@@ -281,6 +447,24 @@ def source(settings, store, job, file):
     repo = store.repository(job["repository_id"])
     root = check_repository(settings, repo["path"])
     commit = job["spec"]["commit"]
+    if inventory[file].get("archive_binding") is not None:
+        from src.ohscanner.git_source import load_git_sources
+        binding = inventory[file]["archive_binding"]
+        _, tree, archive_sources, archive_inventory = load_git_sources(
+            root, commit, (binding["archive_path"],)
+        )
+        if tree != job["spec"]["git_tree"]:
+            raise ValueError("source archive tree binding mismatch")
+        selected = next((item for item in archive_sources if item.path == file), None)
+        if selected is None or selected.archive_binding != binding:
+            raise ValueError("source archive member differs from committed scan inventory")
+        if sha(selected.data) != inventory[file]["sha256"]:
+            raise ValueError("source archive member hash mismatch")
+        return {
+            "file": file, "commit": commit, "blob": None,
+            "sha256": sha(selected.data), "text": selected.data.decode("utf-8"),
+            "archive_binding": binding,
+        }
     entry = _git(root, "ls-tree", "-z", commit, "--", file).split(b"\0")[0]
     if not entry:
         raise KeyError("source object missing")

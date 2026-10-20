@@ -2,6 +2,9 @@
 
 import copy
 import json
+import io
+import hashlib
+import tarfile
 from pathlib import Path
 import subprocess
 import tempfile
@@ -126,9 +129,17 @@ class WorkbenchTests(unittest.TestCase):
             "ohscanner.cpp.null_dereference", "ohscanner.cpp.bounds",
             "ohscanner.cpp.integer_bounds", "ohscanner.cpp.resource_lifetime",
             "ohscanner.cpp.unsafe_memory_call", "ohscanner.interface.ipc",
-            "ohscanner.oh.arkts_js",
+            "ohscanner.cpp.path_traversal", "ohscanner.ark.runtime.type_safety",
+            "ohscanner.oh.arkts_js", "ohscanner.data.sensitive_exposure",
+            "ohscanner.known_disclosed_cves",
         })
         self.assertTrue(all(x["version"] for x in r.json()))
+        cve_detector = next(
+            x for x in r.json() if x["id"] == "ohscanner.known_disclosed_cves"
+        )
+        self.assertEqual(cve_detector["kind"], "research_candidate")
+        self.assertFalse(cve_detector["default_enabled"])
+        self.assertIn("independent holdout", cve_detector["admission_reason"])
 
     def test_mutation_requires_header(self):
         self.assertEqual(self.client.post("/api/v1/scans", json={}).status_code, 403)
@@ -148,6 +159,17 @@ class WorkbenchTests(unittest.TestCase):
             ).status_code,
             400,
         )
+
+    def test_local_api_responses_disallow_embedding_and_unused_browser_capabilities(self):
+        response = self.client.get("/api/v1/health")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["x-frame-options"], "DENY")
+        self.assertEqual(response.headers["referrer-policy"], "no-referrer")
+        self.assertEqual(response.headers["permissions-policy"],
+                         "camera=(), microphone=(), geolocation=()")
+        self.assertEqual(response.headers["cross-origin-resource-policy"], "same-origin")
+        self.assertEqual(response.headers["x-content-type-options"], "nosniff")
+        self.assertEqual(response.headers["cache-control"], "no-store")
 
     def test_repository_outside_roots(self):
         r = self.client.post(
@@ -347,6 +369,165 @@ class WorkbenchTests(unittest.TestCase):
             service.read_report(self.settings, job)["validated_vulnerability"], 0
         )
 
+
+    def test_cjson_cve_candidate_runs_through_api_worker_report_and_source_viewer(self):
+        source = """static cJSON_bool decode_array_index_from_pointer(const unsigned char * const pointer, size_t * const index) {
+            size_t parsed_index = 0;
+            size_t position = 0;
+            for (position = 0; (pointer[position] >= '0') && (pointer[0] <= '9'); position++) {
+                parsed_index = (10 * parsed_index) + (size_t)(pointer[position] - '0');
+            }
+            if ((pointer[position] != '\\0') && (pointer[position] != '/')) return 0;
+            *index = parsed_index;
+            return 1;
+        }"""
+        (self.repo / "cJSON_Utils.c").write_text(source)
+        git(self.repo, "add", "cJSON_Utils.c")
+        git(self.repo, "commit", "-qm", "add pinned cJSON component fixture")
+        self.commit = git(self.repo, "rev-parse", "HEAD")
+        job_request = self.queue(detector_ids=["ohscanner.known_disclosed_cves"])
+        Worker(self.settings).run(once=True)
+        job = self.store.job(job_request["id"])
+        self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+        report = service.read_report(self.settings, job)
+        diagnostics = report["detector_runs"][0]["diagnostics"]
+        candidate = next(item for item in diagnostics if item["symbol"] == "CVE-2025-57052")
+        self.assertEqual(candidate["source_sha256"], hashlib.sha256(source.encode()).hexdigest())
+        self.assertEqual(report["validated_vulnerability"], 0)
+        viewed = service.source(self.settings, self.store, job, candidate["file"])
+        self.assertEqual(viewed["text"], source)
+    def test_device_manager_cve_candidate_runs_through_api_worker_report_and_source_viewer(self):
+        source = """void DmAuthManager::OnGroupCreated(int64_t requestId, const std::string &groupId) {
+            int32_t pinCode = GeneratePincode();
+            nlohmann::json jsonObj;
+            jsonObj[PIN_CODE_KEY] = pinCode;
+            jsonObj[PIN_TOKEN] = authResponseContext_->token;
+            authResponseContext_->authToken = jsonObj.dump();
+            authMessageProcessor_->SetResponseContext(authResponseContext_);
+            std::string message = authMessageProcessor_->CreateSimpleMessage(MSG_TYPE_RESP_AUTH);
+            softbusConnector_->GetSoftbusSession()->SendData(authResponseContext_->sessionId, message);
+        }"""
+        (self.repo / "dm_auth_manager.cpp").write_text(source)
+        git(self.repo, "add", "dm_auth_manager.cpp")
+        git(self.repo, "commit", "-qm", "add pinned device manager CVE source fixture")
+        self.commit = git(self.repo, "rev-parse", "HEAD")
+        request = self.queue(detector_ids=["ohscanner.known_disclosed_cves"])
+        Worker(self.settings).run(once=True)
+        job = self.store.job(request["id"])
+        self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+        report = service.read_report(self.settings, job)
+        diagnostics = [
+            item for run in report["detector_runs"] for item in run["diagnostics"]
+            if item["symbol"] == "CVE-2022-45877"
+        ]
+        self.assertEqual(1, len(diagnostics))
+        candidate = diagnostics[0]
+        self.assertEqual("CWE-319", candidate["candidate_cwe"])
+        self.assertEqual(hashlib.sha256(source.encode()).hexdigest(), candidate["source_sha256"])
+        self.assertEqual(0, report["validated_vulnerability"])
+        viewed = service.source(self.settings, self.store, job, candidate["file"])
+        self.assertEqual(viewed["text"], source)
+
+    def test_webview_cve_candidate_runs_through_api_worker_report_and_source_viewer(self):
+        source = """char *FlowbufStrAtIndex(void *mem, int i, int *argIndex, size_t *strLen) {
+            char *header = (char *)mem;
+            size_t offset = header[i * INDEX_SIZE];
+            *strLen = *(header + (i * INDEX_SIZE) + 1) - 1;
+            *argIndex = header[i * INDEX_SIZE + 2];
+            return (char *)mem + HEADER_SIZE + offset;
+        }
+        int ProcessNativeProxyResultNewFlowbuf(Args *args, int flowbufSize, int argIndex) {
+            size_t argsSize = args->GetSize();
+            std::vector<std::vector<uint8_t>> dataList(argsSize +
+                static_cast<size_t>(flowbufSize));
+            size_t curIndex = 0;
+            char *value = FlowbufStrAtIndex(nullptr, 0, &argIndex, &strLen);
+            while (argIndex == curIndex) {
+                dataList[curIndex] = {};
+            }
+            return 0;
+        }"""
+        (self.repo / "nweb_handler_delegate.cc").write_text(source)
+        git(self.repo, "add", "nweb_handler_delegate.cc")
+        git(self.repo, "commit", "-qm", "add pinned WebView component fixture")
+        self.commit = git(self.repo, "rev-parse", "HEAD")
+        job_request = self.queue(detector_ids=["ohscanner.known_disclosed_cves"])
+        Worker(self.settings).run(once=True)
+        job = self.store.job(job_request["id"])
+        self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+        report = service.read_report(self.settings, job)
+        diagnostics = report["detector_runs"][0]["diagnostics"]
+        candidate = next(item for item in diagnostics if item["symbol"] == "CVE-2026-27648")
+        self.assertEqual(candidate["source_sha256"], hashlib.sha256(source.encode()).hexdigest())
+        self.assertEqual(report["validated_vulnerability"], 0)
+        viewed = service.source(self.settings, self.store, job, candidate["file"])
+        self.assertEqual(viewed["text"], source)
+
+    def test_libpng_neon_cve_candidate_and_fix_run_through_api_worker_report(self):
+        fixture_dir = ROOT / "tests" / "fixtures" / "data_sensitive" / "cve_2026_33636"
+        relative = Path("arm/palette_neon_intrinsics.c")
+        source_path = self.repo / relative
+        source_path.parent.mkdir(parents=True)
+        vulnerable = (fixture_dir / "libpng-1.6.55-palette_neon_intrinsics.c").read_bytes()
+        fixed = (fixture_dir / "libpng-1.6.56-palette_neon_intrinsics.c").read_bytes()
+
+        def scan_blob(blob, message):
+            source_path.write_bytes(blob)
+            git(self.repo, "add", str(relative))
+            git(self.repo, "commit", "-qm", message)
+            request = self.queue(detector_ids=["ohscanner.known_disclosed_cves"])
+            Worker(self.settings).run(once=True)
+            job = self.store.job(request["id"])
+            self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+            return job, service.read_report(self.settings, job)
+
+        vulnerable_job, vulnerable_report = scan_blob(vulnerable, "add pinned libpng 1.6.55 source")
+        vulnerable_findings = [
+            item for run in vulnerable_report["detector_runs"] for item in run["diagnostics"]
+            if item["symbol"] == "CVE-2026-33636"
+        ]
+        self.assertEqual(2, len(vulnerable_findings))
+        self.assertTrue(all(item["source_sha256"] == hashlib.sha256(vulnerable).hexdigest()
+                            for item in vulnerable_findings))
+        self.assertEqual(0, vulnerable_report["validated_vulnerability"])
+        viewed = service.source(self.settings, self.store, vulnerable_job, vulnerable_findings[0]["file"])
+        self.assertEqual(viewed["text"].encode(), vulnerable)
+
+        _, fixed_report = scan_blob(fixed, "replace with pinned libpng 1.6.56 fixed source")
+        fixed_findings = [
+            item for run in fixed_report["detector_runs"] for item in run["diagnostics"]
+            if item["symbol"] == "CVE-2026-33636"
+        ]
+        self.assertEqual([], fixed_findings)
+        self.assertEqual(0, fixed_report["validated_vulnerability"])
+
+    def test_archived_candidate_runs_through_api_worker_and_source_viewer(self):
+        archive_path = self.repo / "vendor" / "sample.tar.gz"
+        archive_path.parent.mkdir()
+        payload = b'#define PNG_LIBPNG_VER_STRING "1.6.55"\n'
+        with tarfile.open(archive_path, "w:gz") as archive:
+            member = tarfile.TarInfo("libpng/png.h")
+            member.size = len(payload)
+            archive.addfile(member, io.BytesIO(payload))
+        git(self.repo, "add", "vendor/sample.tar.gz")
+        git(self.repo, "commit", "-qm", "add pinned source archive")
+        self.commit = git(self.repo, "rev-parse", "HEAD")
+        job_request = self.queue(detector_ids=["ohscanner.known_disclosed_cves"])
+        Worker(self.settings).run(once=True)
+        job = self.store.job(job_request["id"])
+        self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+        report = service.read_report(self.settings, job)
+        diagnostics = report["detector_runs"][0]["diagnostics"]
+        self.assertTrue(any(item["symbol"] == "CVE-2026-46675" for item in diagnostics))
+        candidate = next(item for item in diagnostics if item["symbol"] == "CVE-2026-46675")
+        self.assertEqual(candidate["source_archive_binding"]["archive_path"], "vendor/sample.tar.gz")
+        self.assertEqual(report["validated_vulnerability"], 0)
+        viewed = service.source(self.settings, self.store, job, candidate["file"])
+        self.assertEqual(viewed["text"], payload.decode())
+        self.assertIsNone(viewed["blob"])
+        self.assertEqual(viewed["archive_binding"]["archive_path"], "vendor/sample.tar.gz")
+        self.assertEqual(viewed["archive_binding"]["member_sha256"], candidate["source_sha256"])
+
     def test_review_cannot_self_promote(self):
         job = self.completed()
         identity = service.findings(service.read_report(self.settings, job))[0]["id"]
@@ -360,10 +541,11 @@ class WorkbenchTests(unittest.TestCase):
     def test_agent_review_queue_binds_entire_report_and_deduplicates(self):
         job = self.completed()
         expected = service.findings(service.read_report(self.settings, job))
-        # Scanner publication automatically places the full candidate set in the queue.
+        # New scans do not create a non-executable legacy queue pointer; the
+        # compatibility endpoint remains explicit and binds the frozen report.
         queued_items = [x for x in self.app.state.operations.list()
                         if x["kind"] == "candidate_review_batch" and x["spec"].get("job_id") == job["id"]]
-        self.assertEqual(len(queued_items), 1)
+        self.assertEqual(queued_items, [])
         queued = self.client.post("/api/v1/operations/agent-review-queue",
                                   json={"job_id": job["id"]}, headers=HEADERS)
         self.assertEqual(queued.status_code, 201, queued.text)
@@ -440,6 +622,86 @@ class WorkbenchTests(unittest.TestCase):
             self.assertEqual(response.status_code, 409, response.text)
         report = service.read_report(self.settings, job)
         self.assertEqual(report["validated_vulnerability"], 0)
+
+    def test_case_confirmation_requires_bound_gate_and_latest_human_decision(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "human confirmation gate",
+            "links": [{"job_id": job["id"], "candidate_id": candidate["id"], "rationale": "test"}],
+        }).json()
+        evidence = self.client.post(
+            f"/api/v1/scans/{job['id']}/findings/{candidate['id']}/evidence",
+            headers=HEADERS,
+            json={"file": candidate["file"], "start_line": candidate["line"],
+                  "end_line": candidate["line"], "note": "human-reviewed source evidence"},
+        )
+        self.assertEqual(evidence.status_code, 201, evidence.text)
+
+        ops = self.app.state.operations
+        validation = ops.create("validation", {"case_id": case["id"]})
+        claimed = ops.claim(validation=True)
+        self.assertEqual(claimed["id"], validation["id"])
+        ops.finish(validation["id"], {
+            "status": "completed_with_limitations", "validation_gate": "passed",
+            "case_id": case["id"], "reachability_status": "verified",
+        }, state="completed_with_limitations")
+
+        payload = {
+            "outcome": "confirmed", "reviewer_kind": "human", "reviewer": "reviewer:test",
+            "notes": "Source and runtime evidence reviewed; residual scope documented.",
+            "evidence_ids": [evidence.json()["id"]],
+            "validation_operation_ids": [validation["id"]],
+            "remaining_unknowns": ["Other callers are outside this case."],
+        }
+        accepted = self.client.post(f"/api/v1/cases/{case['id']}/assessments",
+                                    headers=HEADERS, json=payload)
+        self.assertEqual(accepted.status_code, 201, accepted.text)
+        report = self.client.get(f"/api/v1/cases/{case['id']}/report.json")
+        self.assertEqual(report.status_code, 200, report.text)
+        self.assertEqual(report.json()["validated_vulnerability"], 1)
+        self.assertEqual(report.json()["validation_basis"]["validation_operation_id"], validation["id"])
+        validation_summary = next(x for x in report.json()["operations"] if x["id"] == validation["id"])
+        self.assertEqual(validation_summary["reachability_status"], "verified")
+        self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.md").status_code, 200)
+        self.assertEqual(service.read_report(self.settings, job)["validated_vulnerability"], 0)
+
+        payload.update(outcome="candidate", notes="New human review reopens the case.",
+                       validation_operation_ids=[])
+        reopened = self.client.post(f"/api/v1/cases/{case['id']}/assessments",
+                                    headers=HEADERS, json=payload)
+        self.assertEqual(reopened.status_code, 201, reopened.text)
+        self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.json").json()
+                         ["validated_vulnerability"], 0)
+
+    def test_case_confirmation_rejects_unverified_product_reachability(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "unverified reachability", "links": [{
+                "job_id": job["id"], "candidate_id": candidate["id"], "rationale": "test"}],
+        }).json()
+        evidence = self.client.post(
+            f"/api/v1/scans/{job['id']}/findings/{candidate['id']}/evidence",
+            headers=HEADERS,
+            json={"file": candidate["file"], "start_line": candidate["line"],
+                  "end_line": candidate["line"], "note": "source evidence"},
+        )
+        ops = self.app.state.operations
+        validation = ops.create("validation", {"case_id": case["id"]})
+        self.assertEqual(ops.claim(validation=True)["id"], validation["id"])
+        ops.finish(validation["id"], {
+            "status": "completed_with_limitations", "validation_gate": "passed",
+            "case_id": case["id"], "reachability_status": "unknown",
+        }, state="completed_with_limitations")
+        rejected = self.client.post(f"/api/v1/cases/{case['id']}/assessments", headers=HEADERS, json={
+            "outcome": "confirmed", "reviewer_kind": "human", "reviewer": "reviewer:test",
+            "notes": "Attempted without product reachability", "evidence_ids": [evidence.json()["id"]],
+            "validation_operation_ids": [validation["id"]], "remaining_unknowns": ["scope"],
+        })
+        self.assertEqual(rejected.status_code, 409, rejected.text)
+        self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.json").json()
+                         ["validated_vulnerability"], 0)
 
     def test_case_links_require_existing_run_candidates(self):
         job = self.completed()

@@ -15,11 +15,6 @@ Two shapes, because the memory operation differs:
   argument 1, not the memcpy position, and the destination's capacity has to be
   stated by a declaration in the analysed function for the question to be
   decidable at all.
-* `ipc.parcel.fd-backing-size` -- a uniquely resolved `MessageParcelWarp`
-  receiver reaches a `ReadRawData` body that maps a Parcel-carried fd, but no
-  same-fd backing-capacity guard exits before `mmap`. This bounded shape is a
-  candidate with entry, fd-origin and impact obligations; it does not establish
-  a product vulnerability.
 
 A bound checked against another buffer, or against the parcel's own remaining
 size rather than the destination, does not satisfy the criterion. A destination
@@ -32,5 +27,4 @@ CWE = "CWE-20"
 RULES = (
     "ipc.parcel.bounds",
     "ipc.parcel.write-bounds",
-    "ipc.parcel.fd-backing-size",
 )

@@ -1,10 +1,21 @@
-export function approvedDetectorIds(detectors: any[]): string[];
+export function auditWorkflowLabel(plan: any, auditMode?: string): string;
+export function defaultRepositoryRevision(refs: any[]): string;
+export function approvedDetectorIds(detectors: any[], explicitIds?: string[]): string[];
+export function researchDetectorIds(detectors: any[]): string[];
 export function includePaths(value?: unknown): string[];
-export function snapshotPayload(values: any, detectors: any[]): any;
+export function snapshotPayload(values: any, detectors: any[], explicitIds?: string[]): any;
 export function datePreviewPayload(values: any): any;
-export function operationPayload(kind: string, values: any, detectors: any[]): any;
+export function operationPayload(kind: string, values: any, detectors: any[], explicitIds?: string[]): any;
 export function recentRange(days: number, timezone: string, now?: Date): { start: string; end: string };
 export function localDateTime(date: Date, timezone: string): string;
 export function requestGate(): { next(): number; invalidate(): void; current(id: number): boolean };
 
-export function planPayload(values: any, detectors: any[]): any;
+export function planPayload(values: any, detectors: any[], explicitIds?: string[]): any;
+export function isValidTaskCostBudget(value: unknown): boolean;
+export function taskAuthorizationPayload(values: any): {
+  auto_triage: boolean;
+  max_triage_candidates: number;
+  max_r2_candidates: number;
+  max_cost_usd: string | null;
+};
+export function auditErrorMessage(error: unknown): string;

@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "study": "D93 negative custom scalar-output binding probe",
+  "scanner_revision": "0420a3905b1558e1d1251ac11e5e2034e6c3e45d",
+  "version": "0.21.8",
+  "source": "using size_t=decltype(sizeof(0)); using napi_env=void*; using napi_value=const char*; using napi_status=int; const int napi_ok=0; void HILOG_INFO(int,const char*,...);\nnapi_status napi_get_value_string_utf8(napi_env env,napi_value value,char *buffer,size_t size,size_t *length){*length=(unsigned char)value[0];return napi_ok;}\nvoid Callback(const char *key){size_t length=0;napi_get_value_string_utf8(nullptr,key,nullptr,0,&length);HILOG_INFO(1,\"%{public}u\",(unsigned)length);}",
+  "source_sha256": "6418a2ed4490a1416a566ce2ad68fec5503f93b56e608884ff2a89ae1d1a006c",
+  "profile": "tests.detectors.data.test_sensitive_exposure.MODEL marks Callback parameter0 material",
+  "observed": {
+    "detector_id": "ohscanner.data.sensitive_exposure",
+    "version": "0.21.8",
+    "status": "blocked",
+    "analyzed_files": [
+      "service.cpp"
+    ],
+    "findings": [],
+    "limitations": [
+      "Candidate only: runtime log readers, production enablement and impact require independent review.",
+      "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+      "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+      "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+      "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+      "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+      "service.cpp: bounded same-file helper expansion; compiler type identity remains unknown",
+      "service.cpp: pointer/member assignment requires alias proof"
+    ],
+    "file_outcomes": [
+      [
+        "service.cpp",
+        "partial"
+      ]
+    ]
+  },
+  "expected": "Retain unresolved material write/call or actual output candidate; custom output named length is not inherently metadata",
+  "result": "known_gap_not_passed",
+  "reason": "Pointer/member assignment requires alias proof; same-file summary does not expose the unknown material write as a candidate",
+  "scope": "Developer research negative, not a passing safe control and not added to the executable passing suite"
+}

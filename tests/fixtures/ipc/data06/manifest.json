@@ -1,0 +1,35 @@
+[
+  {
+    "sample_id": "cj_array_allocation_width_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-06",
+    "expected_rule": "ipc.parcel.array-allocation-width",
+    "file": "cj_array_allocation_width_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "cj_array_allocation_width_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-06",
+    "expected_rule": null,
+    "file": "cj_array_allocation_width_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.parcel.array-allocation-width"
+    ]
+  },
+  {
+    "sample_id": "cj_array_allocation_width_safe",
+    "data_origin": "synthetic",
+    "family": "DATA-06",
+    "expected_rule": null,
+    "file": "cj_array_allocation_width_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.parcel.array-allocation-width"
+    ]
+  }
+]

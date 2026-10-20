@@ -1,5 +1,0 @@
-ARGV: /sandbox/out/bin/copy_range_safe_control
-ASAN_OPTIONS=detect_leaks=0:halt_on_error=1:abort_on_error=0
-UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1
-TSAN_OPTIONS=halt_on_error=1:exitcode=66:second_deadlock_stack=1
-safe_control_bytes=1024

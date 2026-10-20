@@ -1,0 +1,450 @@
+{
+    "schema":  1,
+    "repository":  "openharmony/communication_dsoftbus",
+    "retrieval":  "Read-only GitHub REST Git Data API responses via approved GitHub connector; no repository writes",
+    "retrieved_on":  "2026-10-18",
+    "commits":  {
+                    "d33177135ec6c6aaf4a4c42de1f6878652b330e3":  {
+                                                                     "sha":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                                                                     "tree_sha":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                                                                     "parent_shas":  [
+                                                                                         "033c2b0395cc55131e969616696638948957a181",
+                                                                                         "81afa0edbdc030be5c6b398d296bce4745f96349"
+                                                                                     ],
+                                                                     "api_url":  "https://api.github.com/repos/openharmony/communication_dsoftbus/git/commits/d33177135ec6c6aaf4a4c42de1f6878652b330e3"
+                                                                 },
+                    "63efce3ff7f2708527eb29216decaf5fe2dc33d0":  {
+                                                                     "sha":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                                                                     "tree_sha":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                                                                     "parent_shas":  [
+                                                                                         "d33177135ec6c6aaf4a4c42de1f6878652b330e3"
+                                                                                     ],
+                                                                     "api_url":  "https://api.github.com/repos/openharmony/communication_dsoftbus/git/commits/63efce3ff7f2708527eb29216decaf5fe2dc33d0"
+                                                                 }
+                },
+    "trees":  [
+                  {
+                      "sha":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "entries":  1374,
+                      "truncated":  false,
+                      "api_url":  "https://api.github.com/repos/openharmony/communication_dsoftbus/git/trees/18e92bf9aaf515b182240309ed1a4a12dd2b2d03"
+                  },
+                  {
+                      "sha":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "entries":  1374,
+                      "truncated":  false,
+                      "api_url":  "https://api.github.com/repos/openharmony/communication_dsoftbus/git/trees/13fa948bd917684af7fd8e7b8c3f59b6943e1647"
+                  }
+              ],
+    "files":  [
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "adapter/BUILD.gn",
+                      "blob":  "1e639b49124ce8f2c61641acbb325105707a7c4b",
+                      "size":  5892,
+                      "api_tree_blob":  "1e639b49124ce8f2c61641acbb325105707a7c4b",
+                      "api_tree_size":  5892
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "adapter/common/include/softbus_adapter_log.h",
+                      "blob":  "c91ad41cb765496501204144a63a2b3fe0f53c14",
+                      "size":  3212,
+                      "api_tree_blob":  "c91ad41cb765496501204144a63a2b3fe0f53c14",
+                      "api_tree_size":  3212
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "adapter/common/log/softbus_adapter_log.c",
+                      "blob":  "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+                      "size":  1321,
+                      "api_tree_blob":  "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+                      "api_tree_size":  1321
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "BUILD.gn",
+                      "blob":  "d2b40361094430cfdb6f8803cd7e79ec33841482",
+                      "size":  779,
+                      "api_tree_blob":  "d2b40361094430cfdb6f8803cd7e79ec33841482",
+                      "api_tree_size":  779
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/BUILD.gn",
+                      "blob":  "1229eab9264b654aa3699e1b153748af26ee22f3",
+                      "size":  1080,
+                      "api_tree_blob":  "1229eab9264b654aa3699e1b153748af26ee22f3",
+                      "api_tree_size":  1080
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/common/BUILD.gn",
+                      "blob":  "fdb4134d81ff74875c7fbd0e6d7f327239f3e53a",
+                      "size":  4020,
+                      "api_tree_blob":  "fdb4134d81ff74875c7fbd0e6d7f327239f3e53a",
+                      "api_tree_size":  4020
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/common/include/softbus_log.h",
+                      "blob":  "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+                      "size":  1770,
+                      "api_tree_blob":  "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+                      "api_tree_size":  1770
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/common/log/softbus_log.c",
+                      "blob":  "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+                      "size":  2814,
+                      "api_tree_blob":  "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+                      "api_tree_size":  2814
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/common/softbus_property/softbus_feature_config.c",
+                      "blob":  "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+                      "size":  9327,
+                      "api_tree_blob":  "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+                      "api_tree_size":  9327
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/frame/BUILD.gn",
+                      "blob":  "79f86c96d0a3423ebbc4e8c516d6fa4a9255c572",
+                      "size":  7070,
+                      "api_tree_blob":  "79f86c96d0a3423ebbc4e8c516d6fa4a9255c572",
+                      "api_tree_size":  7070
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/frame/standard/init/src/softbus_server.cfg",
+                      "blob":  "8b2f1e4b3afed0f330062f9127b14d62065ab34c",
+                      "size":  242,
+                      "api_tree_blob":  "8b2f1e4b3afed0f330062f9127b14d62065ab34c",
+                      "api_tree_size":  242
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/frame/standard/init/src/softbus_server_musl.cfg",
+                      "blob":  "720e1ada763bd90db8ba3e45b94cce66adbfc3dd",
+                      "size":  256,
+                      "api_tree_blob":  "720e1ada763bd90db8ba3e45b94cce66adbfc3dd",
+                      "api_tree_size":  256
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/transmission/common/include/softbus_app_info.h",
+                      "blob":  "393c79b2cceb39e781a1680384754f02560bf7a9",
+                      "size":  2049,
+                      "api_tree_blob":  "393c79b2cceb39e781a1680384754f02560bf7a9",
+                      "api_tree_size":  2049
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/transmission/common/include/softbus_message_open_channel.h",
+                      "blob":  "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+                      "size":  1638,
+                      "api_tree_blob":  "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+                      "api_tree_size":  1638
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/transmission/common/src/softbus_message_open_channel.c",
+                      "blob":  "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+                      "size":  8610,
+                      "api_tree_blob":  "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+                      "api_tree_size":  8610
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/transmission/trans.gni",
+                      "blob":  "3b02d1aec3ac52d0fe81f74096319029a5ece9ec",
+                      "size":  2459,
+                      "api_tree_blob":  "3b02d1aec3ac52d0fe81f74096319029a5ece9ec",
+                      "api_tree_size":  2459
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_listener.c",
+                      "blob":  "a1ec743693b4636e2f815216ee5c93815629ae19",
+                      "size":  10963,
+                      "api_tree_blob":  "a1ec743693b4636e2f815216ee5c93815629ae19",
+                      "api_tree_size":  10963
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+                      "blob":  "52ade9ae7136204a0174d94a77bf8dd008c9d505",
+                      "size":  26641,
+                      "api_tree_blob":  "52ade9ae7136204a0174d94a77bf8dd008c9d505",
+                      "api_tree_size":  26641
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+                      "blob":  "c8d21576547ddad1f87341d451a895ebb515b90e",
+                      "size":  8686,
+                      "api_tree_blob":  "c8d21576547ddad1f87341d451a895ebb515b90e",
+                      "api_tree_size":  8686
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/transmission/trans_channel/tcp_direct/tcp_direct.gni",
+                      "blob":  "af6fbe2b17b275656296952b35159171c4f67484",
+                      "size":  1585,
+                      "api_tree_blob":  "af6fbe2b17b275656296952b35159171c4f67484",
+                      "api_tree_size":  1585
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "core/transmission/trans_channel/trans_channel.gni",
+                      "blob":  "ab333455f9c87d8ff862a7d7a1f79fe537e4eb58",
+                      "size":  2158,
+                      "api_tree_blob":  "ab333455f9c87d8ff862a7d7a1f79fe537e4eb58",
+                      "api_tree_size":  2158
+                  },
+                  {
+                      "commit":  "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+                      "tree":  "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+                      "path":  "dsoftbus.gni",
+                      "blob":  "5cf8bbf13431d4cd78481423a9680220c8441a26",
+                      "size":  2083,
+                      "api_tree_blob":  "5cf8bbf13431d4cd78481423a9680220c8441a26",
+                      "api_tree_size":  2083
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "adapter/BUILD.gn",
+                      "blob":  "1e639b49124ce8f2c61641acbb325105707a7c4b",
+                      "size":  5892,
+                      "api_tree_blob":  "1e639b49124ce8f2c61641acbb325105707a7c4b",
+                      "api_tree_size":  5892
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "adapter/common/include/softbus_adapter_log.h",
+                      "blob":  "c91ad41cb765496501204144a63a2b3fe0f53c14",
+                      "size":  3212,
+                      "api_tree_blob":  "c91ad41cb765496501204144a63a2b3fe0f53c14",
+                      "api_tree_size":  3212
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "adapter/common/log/softbus_adapter_log.c",
+                      "blob":  "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+                      "size":  1321,
+                      "api_tree_blob":  "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+                      "api_tree_size":  1321
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "BUILD.gn",
+                      "blob":  "d2b40361094430cfdb6f8803cd7e79ec33841482",
+                      "size":  779,
+                      "api_tree_blob":  "d2b40361094430cfdb6f8803cd7e79ec33841482",
+                      "api_tree_size":  779
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/BUILD.gn",
+                      "blob":  "1229eab9264b654aa3699e1b153748af26ee22f3",
+                      "size":  1080,
+                      "api_tree_blob":  "1229eab9264b654aa3699e1b153748af26ee22f3",
+                      "api_tree_size":  1080
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/common/BUILD.gn",
+                      "blob":  "fdb4134d81ff74875c7fbd0e6d7f327239f3e53a",
+                      "size":  4020,
+                      "api_tree_blob":  "fdb4134d81ff74875c7fbd0e6d7f327239f3e53a",
+                      "api_tree_size":  4020
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/common/include/softbus_log.h",
+                      "blob":  "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+                      "size":  1770,
+                      "api_tree_blob":  "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+                      "api_tree_size":  1770
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/common/log/softbus_log.c",
+                      "blob":  "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+                      "size":  2814,
+                      "api_tree_blob":  "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+                      "api_tree_size":  2814
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/common/softbus_property/softbus_feature_config.c",
+                      "blob":  "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+                      "size":  9327,
+                      "api_tree_blob":  "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+                      "api_tree_size":  9327
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/frame/BUILD.gn",
+                      "blob":  "79f86c96d0a3423ebbc4e8c516d6fa4a9255c572",
+                      "size":  7070,
+                      "api_tree_blob":  "79f86c96d0a3423ebbc4e8c516d6fa4a9255c572",
+                      "api_tree_size":  7070
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/frame/standard/init/src/softbus_server.cfg",
+                      "blob":  "8b2f1e4b3afed0f330062f9127b14d62065ab34c",
+                      "size":  242,
+                      "api_tree_blob":  "8b2f1e4b3afed0f330062f9127b14d62065ab34c",
+                      "api_tree_size":  242
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/frame/standard/init/src/softbus_server_musl.cfg",
+                      "blob":  "720e1ada763bd90db8ba3e45b94cce66adbfc3dd",
+                      "size":  256,
+                      "api_tree_blob":  "720e1ada763bd90db8ba3e45b94cce66adbfc3dd",
+                      "api_tree_size":  256
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/transmission/common/include/softbus_app_info.h",
+                      "blob":  "393c79b2cceb39e781a1680384754f02560bf7a9",
+                      "size":  2049,
+                      "api_tree_blob":  "393c79b2cceb39e781a1680384754f02560bf7a9",
+                      "api_tree_size":  2049
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/transmission/common/include/softbus_message_open_channel.h",
+                      "blob":  "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+                      "size":  1638,
+                      "api_tree_blob":  "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+                      "api_tree_size":  1638
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/transmission/common/src/softbus_message_open_channel.c",
+                      "blob":  "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+                      "size":  8610,
+                      "api_tree_blob":  "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+                      "api_tree_size":  8610
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/transmission/trans.gni",
+                      "blob":  "3b02d1aec3ac52d0fe81f74096319029a5ece9ec",
+                      "size":  2459,
+                      "api_tree_blob":  "3b02d1aec3ac52d0fe81f74096319029a5ece9ec",
+                      "api_tree_size":  2459
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_listener.c",
+                      "blob":  "a1ec743693b4636e2f815216ee5c93815629ae19",
+                      "size":  10963,
+                      "api_tree_blob":  "a1ec743693b4636e2f815216ee5c93815629ae19",
+                      "api_tree_size":  10963
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+                      "blob":  "f929832bb488cef82cbc9c22427f548ae9935c98",
+                      "size":  26736,
+                      "api_tree_blob":  "f929832bb488cef82cbc9c22427f548ae9935c98",
+                      "api_tree_size":  26736
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+                      "blob":  "c8d21576547ddad1f87341d451a895ebb515b90e",
+                      "size":  8686,
+                      "api_tree_blob":  "c8d21576547ddad1f87341d451a895ebb515b90e",
+                      "api_tree_size":  8686
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/transmission/trans_channel/tcp_direct/tcp_direct.gni",
+                      "blob":  "af6fbe2b17b275656296952b35159171c4f67484",
+                      "size":  1585,
+                      "api_tree_blob":  "af6fbe2b17b275656296952b35159171c4f67484",
+                      "api_tree_size":  1585
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "core/transmission/trans_channel/trans_channel.gni",
+                      "blob":  "ab333455f9c87d8ff862a7d7a1f79fe537e4eb58",
+                      "size":  2158,
+                      "api_tree_blob":  "ab333455f9c87d8ff862a7d7a1f79fe537e4eb58",
+                      "api_tree_size":  2158
+                  },
+                  {
+                      "commit":  "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+                      "tree":  "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+                      "path":  "dsoftbus.gni",
+                      "blob":  "5cf8bbf13431d4cd78481423a9680220c8441a26",
+                      "size":  2083,
+                      "api_tree_blob":  "5cf8bbf13431d4cd78481423a9680220c8441a26",
+                      "api_tree_size":  2083
+                  }
+              ],
+    "local_offline_recheck":  {
+                                  "cache_directory":  "outputs/d4-source-cache",
+                                  "unique_blobs_checked":  13,
+                                  "manifest_rows_checked":  24,
+                                  "checks":  [
+                                                 "Git blob SHA-1",
+                                                 "manifest file SHA-256 and byte size",
+                                                 "commit-to-tree and tree-path-to-blob mapping against the complete GitHub API responses",
+                                                 "13 critical static source facts"
+                                             ],
+                                  "result":  "all passed; verification is of the local source cache plus recorded API responses, not an independently reconstructed signed Git object database",
+                                  "verifier_script_sha256":  "9b9a0eecfc14296b6a20ba9496deec1ea46249655c4361687689f31d7aad65a8"
+                              }
+}

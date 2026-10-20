@@ -12,6 +12,7 @@ import time
 from .settings import Settings
 from .store import Store
 from .service import artifact_dir, sha, check_repository
+from .worker_env import remove_agent_provider_environment, worker_child_environment
 
 
 class Worker:
@@ -61,6 +62,7 @@ class Worker:
                     stdout=log,
                     stderr=subprocess.STDOUT,
                     start_new_session=True,
+                    env=worker_child_environment(os.environ),
                 )
                 with self.store.connect() as db:
                     db.execute(
@@ -138,28 +140,31 @@ class Worker:
                 key, final["status"], final["error"] or "Verified result published"
             )
             if final["status"] in {"completed", "completed_with_limitations"} and final["report_sha256"]:
-                # Queue the full candidate set from this immutable report. Review batches
-                # remain queued until a source-handling-approved model provider is configured.
-                try:
-                    from .operations_store import Operations
-                    from . import service
-                    report = service.read_report(self.settings, final)
-                    candidates = service.findings(report)
-                    if candidates:
-                        task = Operations(self.store).create("candidate_review_batch", {
-                            "job_id": key, "report_sha256": final["report_sha256"],
-                            "candidate_count_at_enqueue": len(candidates),
-                            "timeout_seconds": 60, "memory_mb": 512,
-                        })
-                        self.store.event(key, "agent_review_queued",
-                                         f"All {len(candidates)} candidates queued in operation {task['id']}; no candidate truncation")
-                    else:
-                        self.store.event(key, "agent_review_not_required",
-                                         "Zero static candidates; no second-pass source exploration was run. Coverage/unknown remains governed by the scan report.")
-                except Exception as exc:
-                    self.store.event(key, "agent_review_queue_enqueue_failed",
-                                     "Candidate queue insertion failed; scan remains valid and re-enqueue is available: "
-                                     + type(exc).__name__ + ": " + str(exc)[:1000])
+                # Only explicit task-level consent can create executable bounded triage.
+                # Do not add the legacy candidate_review_batch pointer: no Worker claims it.
+                self._enqueue_authorized_triage(final)
+
+    def _enqueue_authorized_triage(self, job):
+        if not self.store.triage_authorization(job["id"]):
+            return
+        try:
+            from .operations_store import Operations
+            from .smart_audit import enqueue_authorized_triage
+            ops = Operations(self.store)
+            batch = enqueue_authorized_triage(self.settings, self.store, ops, job)
+            if batch:
+                self.store.event(
+                    job["id"], "triage_batch_" + batch["status"],
+                    "Authorized R1 triage batch " + batch["id"] + ": "
+                    + str(batch["selected_count"]) + "/" + str(batch["candidate_count"])
+                    + " candidates selected; unselected remain unassessed",
+                )
+        except Exception as exc:
+            self.store.event(
+                job["id"], "triage_batch_enqueue_failed",
+                "Static report remains valid; automatic triage did not start: "
+                + type(exc).__name__ + ": " + str(exc)[:1000],
+            )
 
     def run(self, once=False):
         with (self.settings.data_dir / "worker.lock").open("a") as lock:
@@ -167,7 +172,15 @@ class Worker:
                 fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
             except BlockingIOError:
                 raise RuntimeError("another Worker already owns this data directory")
+            # Apply additive operation/triage schema migrations under their backup lock
+            # before inspecting older job rows for optional task-level consent.
+            from .operations_store import Operations
+            Operations(self.store)
             self.store.recover()
+            # Recover the transition after a committed scan if the process stopped
+            # before writing its idempotent triage batch. Old tasks have no consent row.
+            for completed in self.store.authorized_completed_jobs_missing_batch():
+                self._enqueue_authorized_triage(completed)
             while True:
                 job = self.store.claim()
                 if job:
@@ -182,7 +195,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--once", action="store_true", help="drain queue and exit")
     args = parser.parse_args()
-    Worker(Settings.from_env()).run(args.once)
+    settings = Settings.from_env()
+    remove_agent_provider_environment(os.environ)
+    Worker(settings).run(args.once)
 
 
 if __name__ == "__main__":

@@ -17,7 +17,10 @@
     "file": "export_guarded_fixed.cpp",
     "split": "design",
     "variant": "fixed",
-    "notes": "export_positive plus one line: a reviewed permission check that returns in its failure branch, dominating the write (budget 1, measured). No candidate. The export itself is unchanged, so what the pair isolates is the caller authorization on the path to it."
+    "notes": "export_positive plus one line: a reviewed permission check that returns in its failure branch, dominating the write (budget 1, measured). No candidate. The export itself is unchanged, so what the pair isolates is the caller authorization on the path to it.",
+    "control_rules": [
+      "ipc.capability.export"
+    ]
   },
   {
     "sample_id": "export_null_safe",
@@ -27,7 +30,10 @@
     "file": "export_null_safe.cpp",
     "split": "design",
     "variant": "safe",
-    "notes": "export_positive with the object written into the reply replaced by a null pointer (budget 1). An export of nothing hands no capability to anyone, so nothing is raised. This is the unrelated control for the export pair: it shows the rule reads what is exported and not merely that an export call is present."
+    "notes": "export_positive with the object written into the reply replaced by a null pointer (budget 1). An export of nothing hands no capability to anyone, so nothing is raised. This is the unrelated control for the export pair: it shows the rule reads what is exported and not merely that an export call is present.",
+    "control_rules": [
+      "ipc.capability.export"
+    ]
   },
   {
     "sample_id": "onehop_ungated_positive",
@@ -47,7 +53,10 @@
     "file": "onehop_credited_fixed.cpp",
     "split": "design",
     "variant": "fixed",
-    "notes": "onehop_ungated_positive with the implementer gaining a reviewed caller-role gate, and no other change (budget 1, measured). The candidate is suppressed and the run records the credited hop: the dispatch site, the implementer and the gate are each cited with file and non-zero line (27, 32, 33), plus the run-level statement of how many implementer guards were read one hop out and what a hop that is not unique, not in scope, or not dominating leaves behind. That citation is the evidence the credit was earned from a body that was read, not inherited from a name."
+    "notes": "onehop_ungated_positive with the implementer gaining a reviewed caller-role gate, and no other change (budget 1, measured). The candidate is suppressed and the run records the credited hop: the dispatch site, the implementer and the gate are each cited with file and non-zero line (27, 32, 33), plus the run-level statement of how many implementer guards were read one hop out and what a hop that is not unique, not in scope, or not dominating leaves behind. That citation is the evidence the credit was earned from a body that was read, not inherited from a name.",
+    "control_rules": [
+      "ipc.capability.export"
+    ]
   },
   {
     "sample_id": "onehop_not_unique_positive",

@@ -20,6 +20,17 @@ from .cpp_macros import Expansion, catalog_for_units, expand_with_catalog
 from .entry_index import EntryIndex
 from .families import merge_policy
 from .models import DISCLOSURE_CALLS, IpcPolicy, consequence_for
+from src.parser.syntax_normalize import normalize_member_pointer_syntax
+
+_TEST_ONLY_PATH_SEGMENTS = frozenset({
+    "test", "tests", "unittest", "unittests", "fuzz", "fuzztest",
+    "fuzztests", "fuzzer", "fuzzers", "mock", "mocks", "rdbmock",
+})
+
+
+def _test_only_source(path):
+    segments = path.replace(chr(92), "/").lower().split("/")
+    return bool(_TEST_ONLY_PATH_SEGMENTS.intersection(segments))
 
 
 def parses_clean(source, grammar):
@@ -106,9 +117,28 @@ def _returned_fact(value):
     return frozenset()
 
 
+def _returned_caller_class(value):
+    """The caller class established by a true-valued helper return, if any.
+
+    Unlike a permission fact, a caller-role predicate must remain on the
+    caller-class channel when summarized through a local boolean helper.
+    """
+    if (value.kind == "predicate" and len(value.predicate) >= 3
+            and value.predicate[0] == "caller_class"
+            and value.predicate[2] is True):
+        return frozenset({value.predicate[1]})
+    return frozenset()
+
+
 @dataclass
 class State:
     env: dict = field(default_factory=dict)
+    # Local reference/pointer aliases to Parcel-derived request values. The
+    # target key lets mutations through an alias invalidate later proofs.
+    request_aliases: dict = field(default_factory=dict)
+    request_pointer_aliases: frozenset = frozenset()
+    request_pointer_vars: frozenset = frozenset()
+    request_pointer_unknowns: frozenset = frozenset()
     auth: frozenset = frozenset()
     descriptor: frozenset = frozenset()
     owner: frozenset = frozenset()
@@ -154,7 +184,7 @@ class State:
     returned: Value = UNKNOWN
 
     def fork(self, **kwargs):
-        return replace(self, env=dict(self.env), **kwargs)
+        return replace(self, env=dict(self.env), request_aliases=dict(self.request_aliases), **kwargs)
 
 
 @dataclass(frozen=True)
@@ -208,9 +238,58 @@ class Observation:
     descriptor_identity: str = ""
 
 
+def normalize_include_trailing_space(source):
+    """Recover one valid include-line ending rejected by the current grammar.
+
+    For a quoted or angled #include followed by exactly one ASCII space and LF,
+    replace that space with CR. Length and LF offsets stay unchanged. This is a
+    parser-only copy; evidence and source hashes always use the original bytes.
+    """
+    include_line = re.compile(
+        rb'(?m)^(?P<directive>[ \t]*#[ \t]*include[ \t]+'
+        rb'(?:"[^"\r\n]*"|<[^>\r\n]*>))[ ]\n'
+    )
+    return include_line.sub(lambda match: match.group("directive") + b"\r\n", source)
+
+
+def _blank_interface_descriptor_macro(source):
+    """Blank only the literal form of OH IPC descriptor declarations in the parse copy.
+
+    The original SourceUnit remains intact and descriptor_symbol_expectation reads
+    its literal directly. Non-literal arguments are left untouched and stay partial.
+    """
+    pattern = re.compile(
+        rb'(?<![A-Za-z0-9_])DECLARE_INTERFACE_DESCRIPTOR\s*'
+        rb'\(\s*(?:u|U|L)?"[^"\\\r\n]*"\s*\)'
+    )
+    return pattern.sub(lambda match: b" " * len(match.group(0)), source)
+
+
+def _blank_visibility_annotations(source):
+    """Blank narrow line-leading export annotations in the private parse copy.
+
+    EXPORT and FFI_EXPORT are build-visibility annotations, not C++ syntax or
+    authorization checks. Only blank them when they occupy a declaration line
+    and are followed by a type-like token; preserve bytes and line positions.
+    """
+    pattern = re.compile(
+        rb"(?m)^(?P<indent>[ \t]*)(?P<macro>EXPORT|FFI_EXPORT)"
+        rb"(?=[ \t]+(?:(?:static|const|extern|inline|virtual|void|bool|char|"
+        rb"short|int|long|float|double|auto|size_t|ssize_t|wchar_t|"
+        rb"u?int[0-9]+_t|napi_[A-Za-z0-9_]+)\b|"
+        rb"[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)+(?:[*&])?)"
+        rb"[ \t*&])"
+    )
+    return pattern.sub(
+        lambda match: match.group("indent") + b" " * len(match.group("macro")),
+        source,
+    )
+
+
 def normalize_syntax(source):
-    """Model only known format-string tokens, statement-carrying macro arguments
-    and unresolved member dispatch.
+    """Model known format-string tokens, statement-carrying macro arguments,
+    unresolved member dispatch, exact include endings, declaration visibility
+    annotations and literal OH IPC descriptor declaration macros.
 
     Byte lengths/newlines remain unchanged. Original source is retained for
     evidence. This is not macro expansion or resolution of member pointers.
@@ -238,15 +317,10 @@ def normalize_syntax(source):
             return match.group(0)
         return b'""'+b' '*(len(token)-2)
     normalized=re.sub(pattern,fmt,source,flags=re.S)
-    # `(this->*Ident)(args)` parses once the member-pointer operator is read as a
-    # plain member access, which keeps the receiver visible.
-    normalized=re.sub(rb'\(this\s*->\s*\*\s*[A-Za-z_]\w*\)(?=\s*\()',
-                      lambda m:m.group(0).replace(b'*',b' ',1),normalized)
-    # `(this->*(iter->second))(args)`, `(this->*(funcIter->second))(parcel)`: the
-    # target is itself an expression, so there is nothing to keep. Blanking the
-    # operator preserves every byte offset and leaves a plain call. The target is
-    # unresolved here, which is exactly what the dispatch index resolves instead.
-    normalized=re.sub(rb'this\s*->\s*\*\s*(?=\()',lambda m:b' '*len(m.group(0)),normalized)
+    normalized = normalize_member_pointer_syntax(normalized)
+    normalized = normalize_include_trailing_space(normalized)
+    normalized = _blank_visibility_annotations(normalized)
+    normalized = _blank_interface_descriptor_macro(normalized)
     normalized=_blank_macro_statement_arguments(normalized)
     return normalized
 
@@ -410,6 +484,7 @@ def _top_level_arguments(source, open_index, close_index):
 
 class Interpreter:
     def __init__(self, units, policy: IpcPolicy, request=None):
+        self.units = tuple(units)
         # A harness may hand this walk a hand-built policy; the families' reviewed
         # additions are merged in either way, so a walk through the detector and a
         # walk through a script interpret the same sources under the same policy.
@@ -421,15 +496,24 @@ class Interpreter:
         # Reviewed service-account roles by the constant a guard names, and the
         # operations each role authorizes. An account role is not a permission, so
         # it travels on its own channel and is consumed only by `authorized`.
-        self.account_roles = {entry.constant: entry
-                              for entry in self.policy.service_account_roles}
+        repository = request.repository if request is not None else None
+        account_models = tuple(
+            entry for entry in self.policy.service_account_roles
+            if not entry.repository or entry.repository == repository
+        ) + tuple(
+            entry for entry in self.policy.repository_service_account_roles
+            if entry.repository and entry.repository == repository
+        )
+        self.account_roles = {entry.constant: entry for entry in account_models}
         self.account_accepts = {entry.role: frozenset(entry.accepted_operations)
-                               for entry in self.policy.service_account_roles}
+                                for entry in account_models}
         self.account_notes = set()
         self.functions = []
         self.observations = []
         self.limitations = set()
+        self.test_only_roots_skipped = set()
         self.seen_permissions = set()
+        self.permission_mismatch_roots = set()
         # Provenance for every cross-TU one-hop guard this run credited, one line
         # each. Kept separately from `limitations` while the walk is in progress so
         # a hop note is never mistaken for a refusal, and merged in `run()`.
@@ -459,7 +543,7 @@ class Interpreter:
         self.macro_files_unexpanded = set()
         self.macro_refusal_reasons = {}
         self.macro_catalog = self._build_macro_catalog(units)
-        for unit in units:
+        for unit in self.units:
             grammar = tree_sitter_c.language() if unit.language == "c" else tree_sitter_cpp.language()
             raw=unit.text.encode("utf-8")
             source=raw
@@ -475,7 +559,7 @@ class Interpreter:
                 self._record_expansion(unit,expansion)
             normalized=normalize_syntax(source)
             if normalized!=raw:
-                self.limitations.add("Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: "+unit.path)
+                self.limitations.add("Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: "+unit.path)
             tree = Parser(Language(grammar)).parse(normalized)
             if tree.root_node.has_error:
                 self.limitations.add("Partial source: only error-free functions can be inspected in " + unit.path)
@@ -498,7 +582,7 @@ class Interpreter:
                             owner = source[n.start_byte:n.end_byte].decode() if n else ""
                             break
                         parent = parent.parent
-                params, parcels = [], []
+                params, parcels, ref_params = [], [], []
                 plist = dec.child_by_field_name("parameters")
                 for param in plist.named_children if plist else ():
                     pd = param.child_by_field_name("declarator")
@@ -510,15 +594,239 @@ class Interpreter:
                     pname_node = ids[-1] if ids else pd
                     pname = source[pname_node.start_byte:pname_node.end_byte].decode()
                     params.append(pname)
-                    if re.search(r"\b(?:MessageParcel|Parcel)\b",source[param.start_byte:param.end_byte].decode()):
+                    parameter_text = source[param.start_byte:param.end_byte].decode()
+                    if ("&" in parameter_text
+                            and "const" not in parameter_text.split("&", 1)[0]):
+                        ref_params.append(pname)
+                    if re.search(r"\b(?:MessageParcel|Parcel)\b",parameter_text):
                         parcels.append(pname)
                 body = node.child_by_field_name("body")
                 if body and not node.has_error:
                     self.functions.append(Function(unit.path, terminal(q), q, owner, node, body,
                                                    source, tuple(params), tuple(parcels[:1]),
+                                                   tuple(ref_params),
+                                                   line=node.start_point[0] + 1,
                                                    reply_params=tuple(parcels[1:])))
         self._build_index(units)
 
+    def unbounded_observer_registrations(self):
+        """Find unbounded observer sinks and bind direct source paths when possible.
+
+        Candidate discovery remains conservative when the hierarchy is missing or
+        ambiguous. A path note is attached only when one scanned stub implementation
+        is unique and the observer argument is forwarded unchanged through the
+        implementation to the collection insertion.
+        """
+        def body_text(fn):
+            return fn.text(fn.body)
+
+        def named_calls(fn, name):
+            for node in walk(fn.body, "call_expression"):
+                callee_node = node.child_by_field_name("function")
+                if callee_node is None or terminal(fn.text(callee_node)) != name:
+                    continue
+                arguments_node = node.child_by_field_name("arguments")
+                arguments = tuple(fn.text(arg).strip() for arg in
+                                  (arguments_node.named_children if arguments_node else ()))
+                yield node, arguments
+
+        roots = [fn for fn in self.functions
+                 if fn.name.startswith("On") and "Observer" in fn.name
+                 and re.search(r"\bSubscribeObserver\s*\(", body_text(fn))]
+        if not roots:
+            return ()
+        subscribe_impls = [fn for fn in self.functions if fn.name == "SubscribeObserver"
+                           and re.search(r"\bAddObserver\s*\(", body_text(fn))]
+        if not subscribe_impls:
+            return ()
+        sink_owners = {fn.owner for fn in subscribe_impls if fn.owner}
+        if not sink_owners:
+            return ()
+        sinks = []
+        for fn in self.functions:
+            if fn.name != "AddObserver" or fn.owner not in sink_owners:
+                continue
+            body = body_text(fn)
+            insert = re.search(
+                r"(?:->|\.)\s*(?:insert|push_back|emplace|emplace_back)\s*\(\s*[^)]*\b(observer|callback)\b",
+                body,
+            )
+            if insert is None:
+                continue
+            aggregate_count = re.search(
+                r"\b(?:auto|uint(?:32_t)?|size_t)\s+(\w+)\s*=\s*GetAllObserversSize\s*\(", body
+            )
+            aggregate_name = aggregate_count.group(1) if aggregate_count and "MAX_OBSERVER_COUNT" in body else None
+            insertion_byte = fn.body.start_byte + len(body[:insert.start()].encode("utf-8"))
+            bounded = False
+            for branch in walk(fn.body, "if_statement"):
+                if branch.end_byte > insertion_byte:
+                    continue
+                condition = fn.text(branch.child_by_field_name("condition"))
+                consequence_node = branch.child_by_field_name("consequence")
+                direct_exit = consequence_node is not None and (
+                    consequence_node.type in ("return_statement", "throw_statement")
+                    or any(child.type in ("return_statement", "throw_statement")
+                           for child in consequence_node.named_children)
+                )
+                if (aggregate_name
+                        and re.search(r"\bMAX_OBSERVER_COUNT\b", condition)
+                        and re.search(r"\b" + re.escape(aggregate_name) + r"\b", condition)
+                        and re.search(r"(?:>=|>)", condition)
+                        and direct_exit):
+                    bounded = True
+                    break
+            if bounded:
+                continue
+            line = fn.body.start_point[0] + 1 + body[:insert.start()].count("\n")
+            path_notes = []
+            if self.index is not None:
+                sink_param_name = insert.group(1)
+                sink_positions = [i for i, name in enumerate(fn.params) if name == sink_param_name]
+                if len(sink_positions) == 1:
+                    sink_observer_pos = sink_positions[0]
+                    for root in roots:
+                        entry = self.index.one_hop_definition(root.owner, "SubscribeObserver")
+                        if entry is None:
+                            continue
+                        implementations = [candidate for candidate in self.functions_by_owner_name.get(
+                            (entry.owner.rsplit("::", 1)[-1], entry.name), ())
+                            if candidate.file == entry.file and candidate.qualified == entry.qualified]
+                        if len(implementations) != 1:
+                            continue
+                        implementation = implementations[0]
+                        observer_positions = [i for i, name in enumerate(implementation.params)
+                                              if name in ("observer", "callback")]
+                        if len(observer_positions) != 1:
+                            continue
+                        observer_pos = observer_positions[0]
+                        root_calls = list(named_calls(root, "SubscribeObserver"))
+                        if len(root_calls) != 1:
+                            continue
+                        root_node, root_args = root_calls[0]
+                        if observer_pos >= len(root_args):
+                            continue
+                        root_value = root_args[observer_pos]
+                        if not re.fullmatch(r"[A-Za-z_]\w*", root_value):
+                            continue
+                        add_calls = [(node, args) for node, args in named_calls(implementation, "AddObserver")
+                                     if sink_observer_pos < len(args)
+                                     and args[sink_observer_pos] == implementation.params[observer_pos]]
+                        if not add_calls:
+                            continue
+                        root_name = (root.qualified if "::" in root.qualified or not root.owner
+                                     else root.owner + "::" + root.name)
+                        implementation_name = (
+                            implementation.qualified if "::" in implementation.qualified
+                            or not implementation.owner else implementation.owner + "::" + implementation.name)
+                        sink_name = (fn.qualified if "::" in fn.qualified or not fn.owner
+                                     else fn.owner + "::" + fn.name)
+                        add_lines = ",".join(str(node.start_point[0] + 1) for node, _ in add_calls)
+                        path_notes.append(
+                            "source-indexed direct-argument path: " + root_name + " at "
+                            + root.file + ":" + str(root_node.start_point[0] + 1) + " forwards "
+                            + root_value + " to " + implementation_name + " at "
+                            + implementation.file + ":" + str(implementation.line or
+                                implementation.body.start_point[0] + 1) + "; AddObserver call site(s) "
+                            + implementation.file + ":" + add_lines + " forward its "
+                            + implementation.params[observer_pos] + " parameter unchanged to "
+                            + sink_name + " at " + fn.file + ":" + str(line)
+                            + ", where that parameter is inserted. This is source-path evidence only."
+                        )
+            path_note = path_notes[0] if len(set(path_notes)) == 1 else None
+            sinks.append((fn, line, insert.group(1), path_note))
+        return tuple(sinks)
+
+    def privileged_permission_grants(self):
+        """Find a default-app exemption and bind it to the scanned IPC path.
+
+        Keep conservative candidate discovery when a unique source hierarchy is
+        unavailable, but attach a concrete path only when the source index resolves
+        the stub virtual call to one implementation and that implementation calls
+        the verifier. A missing or partial class graph is not proof that no path
+        exists.
+        """
+        roots = [fn for fn in self.functions
+                 if fn.name == "OnGetPasteData"
+                 and re.search(r"\bGetPasteData\s*\(", fn.text(fn.body))]
+        if not roots:
+            return ()
+
+        paths_by_owner = {}
+        if self.index is not None:
+            for root in roots:
+                entry = self.index.one_hop_definition(root.owner, "GetPasteData")
+                if entry is None:
+                    continue
+                implementations = [
+                    fn for fn in self.functions_by_owner_name.get(
+                        (entry.owner.rsplit("::", 1)[-1], entry.name), ())
+                    if fn.file == entry.file and fn.qualified == entry.qualified
+                ]
+                if len(implementations) != 1:
+                    continue
+                implementation = implementations[0]
+                if not re.search(r"\bVerifyPermission\s*\(",
+                                 implementation.text(implementation.body)):
+                    continue
+                root_line = root.body.start_point[0] + 1
+                implementation_line = implementation.body.start_point[0] + 1
+                root_name = (root.qualified if "::" in root.qualified or not root.owner
+                             else root.owner + "::" + root.name)
+                implementation_name = (
+                    implementation.qualified if "::" in implementation.qualified
+                    or not implementation.owner else implementation.owner + "::" + implementation.name)
+                paths_by_owner.setdefault(implementation.owner, []).append(
+                    "source-indexed within this scope: " + root_name + " at "
+                    + root.file + ":" + str(root_line) + " -> "
+                    + implementation_name + " at " + implementation.file + ":"
+                    + str(implementation_line) + " -> VerifyPermission"
+                )
+
+        results = []
+        for verifier in self.functions:
+            if verifier.name != "VerifyPermission" or not verifier.owner:
+                continue
+            body = verifier.text(verifier.body)
+            privilege = re.search(
+                r"\b(?:auto|bool)\s+(\w+)\s*=\s*IsDefaultIME\s*\(", body
+            )
+            grant = re.search(
+                r"\b(?:auto|bool)\s+isGrant\s*=\s*([^;]+);", body
+            )
+            if privilege is None or grant is None:
+                continue
+            if not re.search(r"\b" + re.escape(privilege.group(1)) + r"\b", grant.group(1)):
+                continue
+            callers = [fn for fn in self.functions
+                       if fn.name == "GetPasteData" and fn.owner == verifier.owner
+                       and re.search(r"\bVerifyPermission\s*\(", fn.text(fn.body))]
+            if not callers:
+                continue
+            line = verifier.body.start_point[0] + 1 + body[:grant.start()].count("\n")
+            path_notes = paths_by_owner.get(verifier.owner, ())
+            path_note = path_notes[0] if len(set(path_notes)) == 1 else None
+            helper_candidates = [candidate for candidate in self.functions
+                                 if candidate.name == "IsDefaultIME"
+                                 and candidate.owner == verifier.owner]
+            empty_branch_note = None
+            if len(helper_candidates) == 1:
+                helper = helper_candidates[0]
+                helper_body = helper.text(helper.body)
+                empty_true = re.search(
+                    r"if\s*\(\s*(\w+(?:->\w+|\.\w+)*)\s*\.\s*empty\s*\(\s*\)\s*\)\s*\{\s*return\s+true\s*;",
+                    helper_body,
+                )
+                if empty_true is not None:
+                    helper_line = helper.body.start_point[0] + 1 + helper_body[:empty_true.start()].count("\n")
+                    empty_branch_note = (
+                        helper.qualified + " returns true when " + empty_true.group(1)
+                        + " is empty at " + helper.file + ":" + str(helper_line)
+                        + "; because the result contributes to isGrant, empty configuration "
+                        + "can contribute to the verifier grant. Configuration state is unknown."
+                    )
+            results.append((verifier, line, privilege.group(1), path_note, empty_branch_note))
+        return tuple(results)
     def _build_macro_catalog(self, units):
         """Catalogue the scan's own `#define`s, headers first.
 
@@ -617,7 +925,21 @@ class Interpreter:
                 env[key] = values.pop() if len(values) == 1 else UNKNOWN
             def intersection(attr):
                 return frozenset.intersection(*(getattr(s, attr) for s in group))
-            result.append(State(env=env, auth=intersection("auth"),
+            alias_names = set().union(*(s.request_aliases.keys() for s in group))
+            request_aliases = {name: frozenset().union(*(
+                s.request_aliases.get(name, frozenset()) for s in group))
+                for name in alias_names}
+            pointer_aliases = frozenset().union(*(s.request_pointer_aliases for s in group))
+            pointer_vars = frozenset().union(*(s.request_pointer_vars for s in group))
+            pointer_unknowns = frozenset().union(*(s.request_pointer_unknowns for s in group))
+            for name in pointer_vars:
+                if any(name not in s.request_aliases or name in s.request_pointer_unknowns
+                       for s in group):
+                    pointer_unknowns = pointer_unknowns | {name}
+            result.append(State(env=env, request_aliases=request_aliases,
+                                request_pointer_aliases=pointer_aliases,
+                                request_pointer_vars=pointer_vars,
+                                request_pointer_unknowns=pointer_unknowns, auth=intersection("auth"),
                                 descriptor=intersection("descriptor"), owner=intersection("owner"),
                                 lower=intersection("lower"), upper=intersection("upper"), size_lower=intersection("size_lower"), caller_class=intersection("caller_class"),
                                 # A view live on every path is still a view; an
@@ -723,8 +1045,8 @@ class Interpreter:
                      if f.owner in (prefix, short)]
         return qualified[0] if len(qualified) == 1 else None
 
-    def delegated(self, callee):
-        """One hop from a handler into the service singleton it delegates to.
+    def delegated(self, fn, callee):
+        """Resolve a source-backed singleton or typed-member receiver.
 
         OpenHarmony stubs hand the request to the service implementation, which
         lives in another file: `DelayedSingleton<XxxService>::GetInstance()->Method()`
@@ -735,7 +1057,7 @@ class Interpreter:
         """
         if self.index is None:
             return None
-        target = self.index.resolve_receiver(callee)
+        target = self.index.resolve_receiver(callee, fn.owner)
         if not target or "::" not in target:
             return None
         owner, name = target.rsplit("::", 1)
@@ -760,15 +1082,15 @@ class Interpreter:
         because it is source-derived and independent of which root is being walked.
         """
         if self.index is None or not name:
-            return None, None
+            return None, None, None
         if "::" in callee or "." in callee or "->" in callee:
-            return None, None
+            return None, None, None
         key = (fn.owner, name)
         if key not in self.hop_cache:
             self.hop_cache[key] = self.index.one_hop_definition(fn.owner, name)
         entry = self.hop_cache[key]
         if entry is None:
-            return None, None
+            return None, None, None
         # Read the implementer through the same frame type the rest of the walk
         # uses, so one body-walking implementation covers both. A body written
         # inside the class carries only its own name, so the owner is put back:
@@ -785,32 +1107,42 @@ class Interpreter:
         arguments = node.child_by_field_name("arguments")
         supplied = list(arguments.named_children) if arguments is not None else []
         bindings = {}
-        for position, name in enumerate(implementation.params):
+        for position, param_name in enumerate(implementation.params):
             if position >= len(supplied):
                 break
-            if not name:
+            if not param_name:
                 continue
             decided = self._decisive(fn, supplied[position])
             if decided is not None:
-                bindings[name] = decided
+                bindings[param_name] = decided
         # Reading the implementer's body must not report into this walk: it starts
         # from that body's own guards, not from this path's.
         with self.lookahead():
             gate = self.dispatch_guard(implementation, bindings)
-        # What the call hands back comes from the body this hop reached, so a later
-        # `WriteRemoteObject` of one of those values exports *that* call's product.
+            contract = self.caller_class_contract_through(implementation)
+        required_role = contract[0] if contract else None
+        role_guarded = bool(gate and (required_role is None or required_role in gate[2]))
+        # Bind only contract-reviewed reference outputs. A role gate only protects
+        # those results when it proves the exact role required by the API contract.
+        output_positions = (dict(self.policy.disclosure_output_calls).get(name, ())
+                            if required_role is not None else ())
         self.bind_result(state, implementation, args,
                          Value("call_result", implementation.qualified,
-                               "guarded" if gate else "unguarded"))
+                               "guarded" if role_guarded else "unguarded"),
+                         disclosure_positions=output_positions,
+                         disclosure_guarded=role_guarded)
         if gate is not None:
+            gate_function, gate_node, gate_roles = gate
             self.hop_notes.add(
                 "Cross-TU one-hop guard credited: " + fn.qualified + " at "
                 + self._where(fn.file, fn, node) + " dispatches to "
                 + implementation.qualified + " at " + implementation.file + ":"
-                + str(implementation.line) + ", whose caller-role gate at "
-                + self._where(implementation.file, implementation, gate[0])
-                + " admits " + ", ".join(gate[1]) + ".")
-        return implementation, gate
+                + str(implementation.line) + ", whose source-derived delegation chain "
+                + "reaches caller-role gate at "
+                + self._where(gate_function.file, gate_function, gate_node)
+                + " in " + gate_function.qualified + ", whose caller-role gate admits "
+                + ", ".join(gate_roles) + ".")
+        return implementation, gate, required_role
 
     def _where(self, file, fn, node):
         """`file:line` for a node, read back through the macro line map."""
@@ -836,8 +1168,9 @@ class Interpreter:
         self.proxy_notes.add((self._where(fn.file, fn, node), method,
                               "caller" if state.forwarded else "service"))
 
-    def bind_result(self, state, implementation, args, produced):
-        """Bind what a dispatched call hands back, so a later export can be traced.
+    def bind_result(self, state, implementation, args, produced,
+                    disclosure_positions=(), disclosure_guarded=False):
+        """Bind reviewed result outputs and reference results from a dispatch."
 
         A stub receives the remote object from the implementation it dispatches to
         and then writes it into the reply. Which caller variable holds it is a
@@ -849,10 +1182,18 @@ class Interpreter:
         """
         params = implementation.params
         for position in range(min(len(params), len(args))):
-            if params[position] not in implementation.ref_params:
+            # A repository-scoped disclosure contract may supply exact output
+            # positions when a partial header/index did not recover the declaration.
+            if (position not in disclosure_positions
+                    and params[position] not in implementation.ref_params):
                 continue
             if args[position].key:
-                state.env[args[position].key] = produced
+                if position in disclosure_positions:
+                    kind = "sensitive_result_guarded" if disclosure_guarded else "sensitive_result"
+                    state.env[args[position].key] = Value(kind, implementation.qualified,
+                                                          implementation.name)
+                else:
+                    state.env[args[position].key] = produced
 
     @staticmethod
     def _leaves(branch):
@@ -869,8 +1210,12 @@ class Interpreter:
         """
         modelled = (self.policy.sensitive_calls | self.policy.object_sensitive_calls
                     | self.policy.capability_calls | self.policy.copy_calls
-                    | self.policy.boolean_permissions | self.policy.result_permissions)
+                    | self.policy.boolean_permissions | self.policy.result_permissions
+                    | frozenset({"ResetCallingIdentity", "SetCallingIdentity"}))
         outputs = set(implementation.ref_params)
+        contract = self.repository_caller_class_contract(implementation.qualified)
+        if contract:
+            modelled = modelled | frozenset(contract[1])
         for statement in statements:
             for item in walk(statement):
                 if item.type in ("assignment_expression", "update_expression"):
@@ -890,7 +1235,7 @@ class Interpreter:
                     return True
         return False
 
-    def dispatch_guard(self, implementation, bindings=None):
+    def dispatch_guard(self, implementation, bindings=None, seen=None):
         """What a cross-TU one-hop dispatch lands on, when the callee gates on role.
 
         Returns ``(gate_node, roles)`` when the implementer's own body rejects
@@ -918,8 +1263,11 @@ class Interpreter:
         are declined, so an unread or partial guard leaves the call a candidate
         rather than being read as one.
         """
-        if implementation.body is None:
+        seen = set() if seen is None else set(seen)
+        key = (implementation.file, implementation.qualified, implementation.line)
+        if implementation.body is None or key in seen or len(seen) >= 3:
             return None
+        seen.add(key)
         frame = State(env={name: Value("request", name)
                            for name in implementation.params if name})
         # What the call site proves about the parameters. `&& errorCode` is true
@@ -953,7 +1301,33 @@ class Interpreter:
                 continue
             roles = sorted(set().union(*(s.auth | s.caller_class for s in no)))
             if roles:
-                return item, roles
+                return implementation, item, roles
+
+        # Follow only a unique terminal return through a source-typed member
+        # receiver. This is deliberately narrower than general interprocedural
+        # flow: no modeled operation may occur before the delegation.
+        returns = [(i, item) for i, item in enumerate(statements)
+                   if item.type == "return_statement"]
+        if len(returns) == 1:
+            position, returned = returns[0]
+            expression = returned.named_children[0] if returned.named_children else None
+            if (position == len(statements) - 1 and expression is not None
+                    and expression.type == "call_expression"
+                    and not self._modelled_before(implementation, statements[:position])):
+                callee = implementation.text(expression.child_by_field_name("function"))
+                helper = self.delegated(implementation, callee)
+                if helper is not None:
+                    arguments = expression.child_by_field_name("arguments")
+                    supplied = list(arguments.named_children) if arguments is not None else []
+                    nested_bindings = {}
+                    for index, name in enumerate(helper.params):
+                        if index < len(supplied) and name:
+                            decided = self._decisive(implementation, supplied[index])
+                            if decided is not None:
+                                nested_bindings[name] = decided
+                    nested_gate = self.dispatch_guard(helper, nested_bindings, seen)
+                    if nested_gate is not None:
+                        return nested_gate
         return None
 
     @staticmethod
@@ -980,9 +1354,55 @@ class Interpreter:
                 return Value("constant", "1")
         return None
 
-    def authorized(self, state, name):
-        expected = dict(self.policy.expected_permissions).get(name)
-        if expected:return expected in state.auth
+    def repository_caller_class_contract(self, qualified):
+        repository = self.request.repository if self.request is not None else None
+        for owner, method, role, effects in self.policy.repository_caller_class_contracts:
+            if owner == repository and method == qualified:
+                return role, tuple(effects)
+        return None
+
+    def caller_class_contract_through(self, implementation, depth=0, visited=()):
+        """Resolve an exact repository contract through a short direct-return chain.
+
+        Only a unique terminal member call with a source-resolved receiver is
+        followed. This deliberately does not guess based on a method's short name.
+        """
+        contract = self.repository_caller_class_contract(implementation.qualified)
+        if contract:
+            return contract
+        key = (implementation.file, implementation.qualified, implementation.line)
+        if depth >= 2 or key in visited or implementation.body is None:
+            return None
+        statements = list(implementation.body.named_children)
+        returns = [(i, item) for i, item in enumerate(statements)
+                   if item.type == "return_statement"]
+        if len(returns) != 1:
+            return None
+        position, returned = returns[0]
+        expression = returned.named_children[0] if returned.named_children else None
+        if (position != len(statements) - 1 or expression is None
+                or expression.type != "call_expression"
+                or self._modelled_before(implementation, statements[:position])):
+            return None
+        callee = implementation.text(expression.child_by_field_name("function"))
+        helper = self.delegated(implementation, callee)
+        if helper is None:
+            return None
+        return self.caller_class_contract_through(helper, depth + 1,
+                                                   tuple(visited) + (key,))
+
+    def expected_permission(self, name, qualified=""):
+        repository = self.request.repository if self.request is not None else None
+        for owner, method, expected in self.policy.repository_expected_permissions:
+            if owner == repository and method == qualified:
+                return expected
+        contracts = dict(self.policy.expected_permissions)
+        return contracts.get(qualified) or contracts.get(name)
+
+    def authorized(self, state, name, qualified=""):
+        expected = self.expected_permission(name, qualified)
+        if expected:
+            return expected in state.auth
         # A service-account role is accepted only for the operations the reviewed
         # record names. Recognizing the account that guards an interface is not a
         # statement that the account may do anything else, so this set is computed
@@ -1059,7 +1479,7 @@ class Interpreter:
                      if side.kind == "constant" else None)
             if entry is None:
                 continue
-            if other.kind == "caller" and other.subject == "token":
+            if other.kind == "caller" and other.subject in ("token", "full_token"):
                 because = "a caller TokenID, which is a different identity domain from a UID"
             elif other.kind == "request":
                 because = "a request-derived value, which is not the caller"
@@ -1114,7 +1534,8 @@ class Interpreter:
             "a comparison it makes against a reviewed service account is recorded on its "
             "own account-model line when the source resolves it.")
 
-    def action(self, fn, node, state, name, args, depth=0, guard=None):
+    def action(self, fn, node, state, name, args, depth=0, guard=None,
+               required_role=None):
         """Report the candidate a modelled call is, unless `guard` explains it.
 
         `guard` is what `dispatch_guard` read one class hop away, when this call is
@@ -1128,11 +1549,44 @@ class Interpreter:
         if self.root is None:
             return
         root_key = (self.root.file, self.root.qualified)
-        sensitive = name in self.policy.sensitive_calls or name in self.policy.object_sensitive_calls
+        sensitive = (name in self.policy.sensitive_calls
+                     or name in self.policy.object_sensitive_calls
+                     or required_role is not None)
+        expected_contract = (self.expected_permission(fn.name, fn.qualified)
+                             or self.expected_permission(self.root.name, self.root.qualified))
+        if name in self.policy.boolean_permissions | self.policy.result_permissions and expected_contract:
+            observed_permissions = {arg.key for arg in args
+                                    if arg.kind == "constant" and arg.key}
+            if observed_permissions and expected_contract not in observed_permissions:
+                root_key = (self.root.file, self.root.qualified)
+                self.permission_mismatch_roots.add(root_key)
+                operation = fn.name if self.expected_permission(fn.name, fn.qualified) else self.root.name
+                self.emit("AUTH-02", "ipc.auth.missing", fn, node, state,
+                          "Service operation " + operation + " checks permission "
+                          + ", ".join(sorted(observed_permissions)) + " but its reviewed "
+                          "contract requires " + expected_contract + ".",
+                          call=operation)
         if sensitive:
             for issue_fn,issue_node,issue_rule,issue_message in state.identity_issues:
                 self.emit("AUTH-03",issue_rule,issue_fn,issue_node,state,issue_message,call=name)
-        if sensitive and not self.authorized(state, name) and guard is None:
+        if required_role is not None and (guard is None or required_role not in guard[2]):
+            self.emit("AUTH-03", "ipc.auth.caller-class", fn, node, state,
+                      "Repository-reviewed operation " + name + " requires caller role "
+                      + required_role + ", but no matching dominating role gate was established.",
+                      call=name)
+        expected_permission = self.expected_permission(name, fn.qualified)
+        permission_mismatch = (expected_permission and state.auth
+                               and expected_permission not in state.auth)
+        if sensitive and permission_mismatch and guard is None:
+            if (self.root.file, self.root.qualified) not in self.permission_mismatch_roots:
+                observed = ", ".join(sorted(state.auth))
+                self.emit("AUTH-02", "ipc.auth.missing", fn, node, state,
+                          "Sensitive modeled call " + name + " has a permission mismatch: "
+                          "reviewed contract requires " + expected_permission + ", but this "
+                          "path checks " + observed + "."
+                          + self.auth_note(state), call=name)
+        elif (sensitive and required_role is None
+              and not self.authorized(state, name, fn.qualified) and guard is None):
             if self.root_grade == "dispatch" and "dispatcher-guard-observed" in self.root_note:
                 # A guard runs before dispatch, so this is a guard-coverage question
                 # (does it dominate this transaction?), not an absent-authorization
@@ -1192,6 +1646,13 @@ class Interpreter:
                 cap = args[1].key if index == 3 else self.capacities.get(args[0].key)
                 upper = any(key == length and (cap is not None and bound in (cap,"sizeof("+args[0].key+")"))
                             for key, bound in state.upper)
+                # A direct local `new T[n]` allocation states its exact capacity.
+                # Keep the fact on the pointer value so reassignment invalidates
+                # it, and only credit the copy when its length is the same
+                # request-derived expression.
+                allocated = args[0]
+                if allocated.kind == "allocation" and allocated.key == length:
+                    upper = True
                 if not upper or length not in state.lower:
                     self.emit("DATA-01", "ipc.parcel.copy-range", fn, node, state,
                               "Parcel-derived copy length " + length + " lacks matched nonnegative/destination-capacity bounds.",
@@ -1265,6 +1726,70 @@ class Interpreter:
                          terms=(where, "this class implements " + stated))
         return Value("descriptor_expected", name, subject="unresolved",
                      terms=(where, "no interface is stated for " + (owner_name or "this function")))
+
+    def descriptor_symbol_expectation(self, fn, symbol):
+        """Resolve a source-defined descriptor string against the stated stub interface.
+
+        Some stubs compare a parcel token with Str8ToStr16(DESCRIPTOR) rather
+        than calling GetDescriptor(). The symbol spelling alone is not enough:
+        only accept a unique class-owned string definition and compare its literal
+        with the interface literal declared in the source. A mismatch remains a
+        candidate; an absent or ambiguous binding stays unresolved.
+        """
+        interfaces = (self.index.implemented_interfaces(fn.owner)
+                      if self.index is not None and fn.owner else ())
+        if len(interfaces) != 1:
+            return Value("descriptor_expected", symbol, subject="unresolved",
+                         terms=(symbol, "the class's implemented interface is not unique in the analysed sources"))
+
+        owner = terminal(fn.owner)
+        actual_pattern = re.compile(
+            r"\b(?:const\s+)?(?:std::)?string\s+" + re.escape(owner)
+            + r"\s*::\s*" + re.escape(symbol)
+            + r"\s*(?:\(\s*(?:u8|u|U|L)?\"((?:[^\"\\]|\\.)*)\"\s*\)|"
+              r"=\s*(?:u8|u|U|L)?\"((?:[^\"\\]|\\.)*)\")\s*;"
+        )
+        actuals = []
+        for unit in self.units:
+            for match in actual_pattern.finditer(unit.text):
+                literal = match.group(1) if match.group(1) is not None else match.group(2)
+                # Escapes need C++ literal decoding. Refuse them rather than
+                # comparing their source spelling as though it were the value.
+                if "\\" in literal:
+                    continue
+                line = unit.text.count("\n", 0, match.start()) + 1
+                actuals.append((literal, unit.path, line))
+        if len(actuals) != 1:
+            return Value("descriptor_expected", symbol, subject="unresolved",
+                         terms=(symbol, "the class-owned " + symbol + " string definition is absent or ambiguous"))
+
+        interface = interfaces[0]
+        interface_pattern = re.compile(
+            r"\b(?:class|struct)\s+" + re.escape(interface.name)
+            + r"\b[^{};]*\{([\s\S]*?)\}\s*;"
+        )
+        declared = []
+        macro = re.compile(
+            r"\bDECLARE_INTERFACE_DESCRIPTOR\s*\(\s*(?:u8|u|U|L)?\"([^\"\\]*)\"\s*\)"
+        )
+        for unit in self.units:
+            for class_match in interface_pattern.finditer(unit.text):
+                body_start = class_match.start(1)
+                for value_match in macro.finditer(class_match.group(1)):
+                    line = unit.text.count("\n", 0, body_start + value_match.start()) + 1
+                    declared.append((value_match.group(1), unit.path, line))
+        if len(declared) != 1:
+            return Value("descriptor_expected", interface.name, subject="unresolved",
+                         terms=(interface.name, interface.name + " descriptor declaration is absent or ambiguous"))
+
+        actual, actual_file, actual_line = actuals[0]
+        expected, expected_file, expected_line = declared[0]
+        subject = "interface" if actual == expected else "mismatch"
+        terms = (
+            symbol + " is " + repr(actual) + " at " + actual_file + ":" + str(actual_line),
+            interface.name + " declares " + repr(expected) + " at " + expected_file + ":" + str(expected_line),
+        )
+        return Value("descriptor_expected", interface.name, subject=subject, terms=terms)
 
     def descriptor_note(self, issues):
         """Why a comparison that was read does not count as a guard.
@@ -1351,7 +1876,7 @@ class Interpreter:
         statements = list(helper.body.named_children)
         probe = state.fork()
         probe.env.update(dict(zip(helper.params, args)))
-        check = index = comparison = None
+        rejected = None
         for position, item in enumerate(statements):
             # Locals hold the token as often as the call site does, so bind the
             # declarations met on the way to the check the way the body walk binds
@@ -1367,30 +1892,37 @@ class Interpreter:
                 continue
             read = self.value(helper, item.child_by_field_name("condition"), probe, depth)
             if read.kind == "predicate" and read.predicate[:1] == ("descriptor",):
-                check, index, comparison = item, position, read
-                break
-        if check is None:
-            return None
-        expected = comparison.predicate[3]
-        line_map = self.line_maps.get(helper.file) or {}
-        line = check.start_point[0] + 1
-        where = helper.qualified + " at " + helper.file + ":" + str(line_map.get(line, line))
-        if expected.subject not in _DESCRIPTOR_ACCEPTED:
-            return ("seen", (expected.subject, expected.key) + tuple(expected.terms))
-        # The predicate is true when the operands are equal, so on an equality
-        # test it is the `else` branch that sees the mismatch, and on `!=` the
-        # consequence. That branch has to leave for the check to be a guard.
-        mismatch = (check.child_by_field_name("alternative") if comparison.predicate[2]
-                    else check.child_by_field_name("consequence"))
-        if mismatch is not None and mismatch.type == "else_clause":
-            mismatch = mismatch.named_children[-1] if mismatch.named_children else None
-        block = mismatch if mismatch is not None and mismatch.type == "compound_statement" else None
-        leaving = block.named_children if block is not None else ([mismatch] if mismatch is not None else [])
-        if not any(item.type in _RELAY_LEAVES for item in leaving):
-            return None
-        if not any(item.type == "switch_statement" for item in statements[index + 1:]):
-            return None
-        return ("guarded", where)
+                comparison = read
+                expected = comparison.predicate[3]
+                if expected.subject not in _DESCRIPTOR_ACCEPTED:
+                    # Remember a concrete mismatch, but do not let an earlier
+                    # comparison against another interface hide a later guard
+                    # for this transaction.
+                    rejected = rejected or ((expected.subject, expected.key)
+                                             + tuple(expected.terms))
+                    continue
+                # The predicate is true when the operands are equal, so on an
+                # equality test it is the `else` branch that sees mismatch, and
+                # on `!=` the consequence. That branch must exit directly.
+                mismatch = (item.child_by_field_name("alternative")
+                            if comparison.predicate[2]
+                            else item.child_by_field_name("consequence"))
+                if mismatch is not None and mismatch.type == "else_clause":
+                    mismatch = mismatch.named_children[-1] if mismatch.named_children else None
+                block = mismatch if mismatch is not None and mismatch.type == "compound_statement" else None
+                leaving = (block.named_children if block is not None
+                           else ([mismatch] if mismatch is not None else []))
+                if not any(part.type in _RELAY_LEAVES for part in leaving):
+                    continue
+                if not any(part.type == "switch_statement" for part in statements[position + 1:]):
+                    continue
+                line_map = self.line_maps.get(helper.file) or {}
+                line = item.start_point[0] + 1
+                where = helper.qualified + " at " + helper.file + ":" + str(line_map.get(line, line))
+                return ("guarded", where)
+        if rejected is not None:
+            return ("seen", rejected)
+        return None
 
     def value(self, fn, node, state, depth):
         if node is None:
@@ -1426,7 +1958,9 @@ class Interpreter:
                 if held is not None and held.kind == "proxy":
                     self.boundary(fn, node, name, state)
             if name in self.policy.caller_token_calls | self.policy.caller_uid_calls:
-                return Value("self" if state.reset else "caller", text, "uid" if name in self.policy.caller_uid_calls else "token")
+                subject = ("uid" if name in self.policy.caller_uid_calls else
+                           "full_token" if name == "GetCallingFullTokenID" else "token")
+                return Value("self" if state.reset else "caller", text, subject)
             if name in self.policy.self_calls:
                 return Value("self", text, "uid" if name in ("getuid","geteuid") else "token")
             if name == "ResetCallingIdentity":
@@ -1440,13 +1974,28 @@ class Interpreter:
                 # Only a token read as the calling token is the original caller.
                 # The service's own saved identity is a different principal.
                 state.forwarded = bool(args and args[0].kind == "caller"
-                                       and args[0].subject == "token")
+                                       and args[0].subject in ("token", "full_token"))
                 return UNKNOWN
             if name == "ReadInterfaceToken":
                 rv = state.env.get(receiver, UNKNOWN)
                 return Value("descriptor_read", rv.key) if rv.kind == "parcel" else UNKNOWN
             if name == "GetDescriptor":
                 return self.descriptor_expectation(fn, callee, state)
+            if (name == "Str8ToStr16" and len(args) == 1
+                    and args[0] == Value("constant", "DESCRIPTOR")
+                    and "DESCRIPTOR" not in state.env):
+                return self.descriptor_symbol_expectation(fn, "DESCRIPTOR")
+            if name == "compare" and receiver:
+                # `ReadInterfaceToken()` is commonly copied into a local
+                # std::u16string and checked with compare() instead of ==/!=.
+                # Preserve the descriptor provenance through that exact
+                # one-argument string comparison; the result is not itself a
+                # guard until the caller compares it with zero below.
+                compared = state.env.get(receiver, UNKNOWN)
+                if (compared.kind == "descriptor_read" and len(args) == 1
+                        and args[0].kind == "descriptor_expected"):
+                    return Value("descriptor_compare", compared.key,
+                                 terms=(args[0],))
             if name == "AsObject" and receiver and not args:
                 # `sptr<T>::AsObject()` hands back the IRemoteObject that smart
                 # pointer already holds -- the same object, not a new one. A reply
@@ -1465,6 +2014,9 @@ class Interpreter:
                     return held
             if name in ("GetTokenTypeFlag", "GetTokenType") and args and args[0].kind=="caller" and args[0].subject=="token":
                 return Value("caller_type",args[0].key)
+            if (callee == "TokenIdKit::IsSystemAppByFullTokenID" and len(args) == 1
+                    and args[0].kind == "caller" and args[0].subject == "full_token"):
+                return Value("predicate", predicate=("caller_class", "system_app", True))
             if name=="GetNativeTokenInfo" and len(args)>1 and args[0].kind=="caller" and args[0].subject=="token":
                 state.env[args[1].key]=Value("caller_info",args[1].key)
             if name=="compare" and args:
@@ -1502,12 +2054,15 @@ class Interpreter:
                           "Unresolved member-pointer IPC dispatch lacks interface-descriptor validation; callee remains unknown.")
             helper = self.resolve(fn, callee)
             if helper is None:
-                helper = self.delegated(callee)
+                helper = self.delegated(fn, callee)
             if helper is not None:
                 self.note_shadowed_role_predicate(helper)
+            self.invalidate_mutable_request_arguments(
+                fn, node, state, args, helper, name)
             implementation = guard = None
             if helper is None:
-                implementation, guard = self.one_hop_dispatch(fn, node, callee, name, args, state)
+                implementation, guard, required_role = self.one_hop_dispatch(
+                    fn, node, callee, name, args, state)
                 if implementation is None:
                     # Reviewed caller-role predicates, by exact name, and only for a
                     # call this file does not itself define: a local function of the
@@ -1528,7 +2083,8 @@ class Interpreter:
                                              + "; reviewed-name credit refused; caller authorization remains unknown.")
                     elif role is not None and not args:
                         return Value("predicate", predicate=(role[0], role[1], True))
-            self.action(fn, node, state, name, args, depth, guard=guard)
+            self.action(fn, node, state, name, args, depth, guard=guard,
+                        required_role=required_role if implementation is not None else None)
             if name in self.policy.reply_write_calls:
                 rv = state.env.get(receiver, UNKNOWN)
                 if rv.kind == "reply_parcel":
@@ -1577,6 +2133,10 @@ class Interpreter:
                         *(s.auth | _returned_fact(s.returned) for s in good)) - state.auth
                     if common:
                         return Value("predicate", predicate=("auth", sorted(common)[0], True))
+                    common_class = frozenset.intersection(
+                        *(s.caller_class | _returned_caller_class(s.returned) for s in good)) - state.caller_class
+                    if common_class:
+                        return Value("predicate", predicate=("caller_class", sorted(common_class)[0], True))
                 self.limitations.add("Unresolved multi-outcome helper return: " + helper.qualified)
                 return UNKNOWN
             if name in self.policy.boolean_permissions | self.policy.result_permissions:
@@ -1602,13 +2162,21 @@ class Interpreter:
                 # A disclosure-class call's product is the sensitive value. The
                 # value is only a candidate *source*: whether it reaches a caller
                 # is decided by what the path does with it, not by the call.
-                return Value("sensitive_result", text, name)
+                return Value("sensitive_result_guarded" if guard is not None else "sensitive_result", text, name)
             return Value("unknown", text)
         if node.type == "binary_expression":
             left = self.value(fn,node.child_by_field_name("left"),state,depth)
             right = self.value(fn,node.child_by_field_name("right"),state,depth)
             op = fn.text(node.child_by_field_name("operator"))
             if op in ("==", "!=", "<", "<=", ">", ">="):
+                compared = left if left.kind == "descriptor_compare" else (
+                    right if right.kind == "descriptor_compare" else None)
+                zero = right if left.kind == "descriptor_compare" else left
+                if (compared is not None and zero.kind == "constant"
+                        and zero.key == "0" and op in ("==", "!=")):
+                    expected = compared.terms[0] if compared.terms else UNKNOWN
+                    return Value("predicate", predicate=(
+                        "descriptor", compared.key, op == "==", expected))
                 if left.kind == "descriptor_read" and right.kind == "descriptor_expected" or right.kind == "descriptor_read" and left.kind == "descriptor_expected":
                     rd = left if left.kind == "descriptor_read" else right
                     expected = right if left.kind == "descriptor_read" else left
@@ -1669,7 +2237,11 @@ class Interpreter:
                                  definition.line), op=="=="))
                         return Value("predicate",predicate=("auth_unknown",symbol,op=="=="))
                 if left.kind == "request" and right.kind != "request":
-                    if op=="<" and right.key=="0":
+                    if op in ("<", "<=") and right.key=="0":
+                        # On the continuation after `if (n < 0) return` or
+                        # `if (n <= 0) return`, the signed length is
+                        # nonnegative. The <= form is common in IPC handlers;
+                        # treating it as an upper bound loses this fact.
                         return Value("predicate",predicate=("lower",left.key,False))
                     if op in ("<", "<="):
                         return Value("predicate",predicate=("upper",(left.key,right.key),True))
@@ -1699,8 +2271,17 @@ class Interpreter:
             typ=fn.text(node.child_by_field_name("type"))
             if typ=="HCameraDevice":
                 self.action(fn,node,state,"CreateCameraDevice",[])
+            allocation = None
+            declarator = node.child_by_field_name("declarator")
+            if declarator is not None and declarator.type == "new_declarator":
+                sizes = declarator.named_children
+                size = sizes[-1] if sizes else None
+                if size is not None and size.type == "identifier":
+                    length = self.value(fn, size, state, depth)
+                    if length.kind == "request":
+                        allocation = Value("allocation", length.key)
             for child in node.named_children:self.value(fn,child,state,depth)
-            return UNKNOWN
+            return allocation or UNKNOWN
         if node.type=="field_expression" and fn.text(node.child_by_field_name("field"))=="processName":
             base=self.value(fn,node.child_by_field_name("argument"),state,depth)
             if base.kind=="caller_info":return Value("caller_process",base.key)
@@ -1715,15 +2296,182 @@ class Interpreter:
             return Value("constant",text)
         if node.type == "assignment_expression":
             left_node=node.child_by_field_name("left")
+            # Parentheses are transparent around an lvalue. Unwrap them before
+            # classifying pointer writes so `(*p) += value` invalidates the
+            # same request facts as `*p += value`.
+            while (left_node is not None
+                   and left_node.type == "parenthesized_expression"
+                   and left_node.named_children):
+                left_node = left_node.named_children[0]
             if left_node is not None and left_node.type == "subscript_expression":
                 # The write side indexes the destination just as the read side
                 # does; reading only the right-hand side left an index taken
                 # from the parcel unexamined whenever it was used to store.
                 self.value(fn,left_node,state,depth)
             left=fn.text(left_node)
-            value=self.value(fn,node.child_by_field_name("right"),state,depth)
+            operator = fn.text(node.child_by_field_name("operator"))
+            if (operator and left_node is not None and left_node.type == "identifier"
+                    and left in state.request_pointer_unknowns
+                    and left not in state.request_pointer_vars):
+                self.invalidate_all_request_facts(
+                    state, "Write through reference with unknown request origin " + left
+                    + " invalidated request range/allocation facts.")
+            if operator and left_node is not None and left_node.type == "conditional_expression":
+                for item in walk(left_node, "identifier"):
+                    candidate = fn.text(item)
+                    current = state.env.get(candidate, UNKNOWN)
+                    if candidate in state.request_pointer_unknowns:
+                        self.invalidate_all_request_facts(
+                            state, "Write through ambiguous request-derived lvalue invalidated "
+                            "request range/allocation facts.")
+                        break
+                    if (candidate in state.request_pointer_aliases
+                            or candidate in state.request_aliases
+                            or current.kind == "request"):
+                        self.invalidate_request_value(
+                            state, candidate,
+                            "Write through ambiguous request-derived lvalue invalidated "
+                            "request range/allocation facts.")
+            if operator != "=" and left_node is not None and left_node.type == "identifier":
+                current = state.env.get(left, UNKNOWN)
+                if current.kind == "request":
+                    self.invalidate_request_value(
+                        state, left,
+                        "Request-derived value " + left
+                        + " is changed by compound assignment; related range/allocation facts were invalidated.")
+                    # Preserve Parcel taint for later candidate detection, but
+                    # do not reuse bounds or capacity facts for the old value.
+                    self.assign(state, left, Value("request", left, "mutated"))
+                    return state.env[left]
+            right_node = node.child_by_field_name("right")
+            if (operator != "" and left_node is not None
+                    and left_node.type == "pointer_expression"
+                    and fn.text(left_node.child_by_field_name("operator")) == "*"):
+                target_node = left_node.child_by_field_name("argument")
+                target_name = fn.text(target_node) if target_node is not None else ""
+                if (target_name in state.request_pointer_unknowns
+                        or target_name not in state.request_aliases):
+                    self.invalidate_all_request_facts(
+                        state, "Write through unknown request pointer " + target_name
+                        + " invalidated request range/allocation facts.")
+                elif target_name:
+                    self.invalidate_request_value(
+                        state, target_name,
+                        "Write through request pointer alias " + target_name
+                        + " invalidated the origin range/allocation facts.")
+            if (operator != "" and left_node is not None
+                    and left_node.type == "subscript_expression"):
+                base_node = left_node.child_by_field_name("argument")
+                indices_node = left_node.child_by_field_name("indices")
+                possible_bases = ([base_node] if base_node is not None else [])
+                if indices_node is not None:
+                    # C/C++ permits `index[pointer]` as equivalent to
+                    # `pointer[index]`; inspect both sides for a tracked base.
+                    possible_bases.extend(indices_node.named_children)
+
+                def request_pointer_base(expression):
+                    while expression is not None and expression.type == "parenthesized_expression":
+                        expression = (expression.named_children[0]
+                                      if expression.named_children else None)
+                    if expression is None:
+                        return ""
+                    if expression.type == "identifier":
+                        candidate = fn.text(expression)
+                        return candidate if candidate in state.request_pointer_vars else ""
+                    if expression.type == "binary_expression":
+                        arithmetic = fn.text(expression.child_by_field_name("operator"))
+                        if arithmetic not in ("+", "-"):
+                            return ""
+                        operands = [expression.child_by_field_name("left")]
+                        if arithmetic == "+":
+                            operands.append(expression.child_by_field_name("right"))
+                        for operand in operands:
+                            candidate = request_pointer_base(operand)
+                            if candidate:
+                                return candidate
+                    return ""
+
+                base_name = next((candidate for expression in possible_bases
+                                  if (candidate := request_pointer_base(expression))), "")
+                if base_name in state.request_pointer_vars:
+                    if (base_name in state.request_pointer_unknowns
+                            or base_name not in state.request_aliases):
+                        self.invalidate_all_request_facts(
+                            state, "Write through unknown request pointer " + base_name
+                            + " invalidated request range/allocation facts.")
+                    else:
+                        self.invalidate_request_value(
+                            state, base_name,
+                            "Write through request pointer alias " + base_name
+                            + " invalidated the origin range/allocation facts.")
+            if (operator == "=" and left in state.request_aliases
+                    and left not in state.request_pointer_vars):
+                self.invalidate_request_value(
+                    state, left,
+                    "Request-derived value behind reference alias " + left
+                    + " is assigned a new value; related range/allocation facts were invalidated.")
+            if (operator == "=" and left in state.request_pointer_vars):
+                new_keys = frozenset()
+                if right_node is not None and right_node.type == "pointer_expression":
+                    target = right_node.child_by_field_name("argument")
+                    if target is not None and target.type == "identifier":
+                        target_name = fn.text(target)
+                        target_value = state.env.get(target_name, UNKNOWN)
+                        new_keys = (state.request_aliases.get(target_name)
+                                    or (frozenset({target_value.key})
+                                        if target_value.kind == "request" else frozenset()))
+                elif right_node is not None and right_node.type == "identifier":
+                    target_name = fn.text(right_node)
+                    target_value = state.env.get(target_name, UNKNOWN)
+                    new_keys = (state.request_aliases.get(target_name)
+                                or (frozenset({target_value.key})
+                                    if target_value.kind == "request" else frozenset()))
+                if new_keys:
+                    state.request_aliases[left] = frozenset(new_keys)
+                    state.request_pointer_aliases = state.request_pointer_aliases | {left}
+                    state.request_pointer_unknowns = state.request_pointer_unknowns - {left}
+                else:
+                    self.invalidate_request_value(
+                        state, left,
+                        "Request pointer alias " + left
+                        + " is rebound to an unresolved target; prior range/allocation facts were invalidated.")
+                    state.request_aliases.pop(left, None)
+                    state.request_pointer_aliases = state.request_pointer_aliases - {left}
+                    state.request_pointer_unknowns = state.request_pointer_unknowns | {left}
+            value=self.value(fn,right_node,state,depth)
             self.assign(state,left,value)
             return state.env[left]
+        if node.type == "update_expression":
+            # `n++`, `--n`, and their postfix/prefix forms change the value
+            # without an assignment_expression node. Invalidate both range
+            # facts and any allocation sized from the old request value.
+            argument = node.child_by_field_name("argument")
+            if argument is not None and argument.type == "identifier":
+                variable = fn.text(argument)
+                if (variable in state.request_pointer_unknowns
+                        and variable not in state.request_pointer_vars):
+                    self.invalidate_all_request_facts(
+                        state, "Updated reference has unknown request origin " + variable
+                        + "; request range/allocation facts were invalidated.")
+                else:
+                    self.invalidate_request_value(
+                        state, variable,
+                        "Request-derived value " + variable
+                        + " is updated in place; related range/allocation facts were invalidated.")
+            else:
+                for identifier in walk(argument, "identifier") if argument else ():
+                    variable = fn.text(identifier)
+                    if (variable in state.request_pointer_unknowns
+                            and variable not in state.request_pointer_vars):
+                        self.invalidate_all_request_facts(
+                            state, "Updated reference has unknown request origin " + variable
+                            + "; request range/allocation facts were invalidated.")
+                    else:
+                        self.invalidate_request_value(
+                            state, variable,
+                            "Request-derived value " + variable
+                            + " is updated in place; related range/allocation facts were invalidated.")
+            return UNKNOWN
         if node.type == "subscript_expression":
             base_node = node.child_by_field_name("argument")
             base = self.value(fn, base_node, state, depth)
@@ -1826,6 +2574,8 @@ class Interpreter:
         missing guard on a path whose product is handed back, not the read alone.
         """
         for value in args:
+            if value.kind == "sensitive_result_guarded":
+                continue
             if value.kind != "sensitive_result":
                 continue
             source = value.subject
@@ -1850,6 +2600,14 @@ class Interpreter:
         # Reassignment invalidates guard facts about the old value.
         old=state.env.get(name)
         if old:
+            if old.kind == "request":
+                # A capacity expression names the value used at allocation
+                # time. If that request value is rebound, do not let the old
+                # capacity prove a later copy safe merely because the spelling
+                # of the variable stayed the same.
+                for target, allocated in tuple(state.env.items()):
+                    if allocated.kind == "allocation" and allocated.key == old.key:
+                        state.env[target] = UNKNOWN
             state.lower=state.lower-{old.key}
             state.upper=frozenset((k,b) for k,b in state.upper if k!=old.key)
             state.owner=state.owner-{old.key}
@@ -1867,6 +2625,178 @@ class Interpreter:
             value=replace(value,key=name)
             state.parcel_views=state.parcel_views|{name}
         state.env[name]=value
+
+    def invalidate_request_value(self, state, variable, reason):
+        current = state.env.get(variable, UNKNOWN)
+        keys = (state.request_aliases.get(variable)
+                or (frozenset({current.key}) if current.kind == "request" else frozenset()))
+        if not keys:
+            return False
+        has_range = (bool(keys & state.lower)
+                     or any(bound_key in keys for bound_key, _bound in state.upper))
+        has_allocation = any(value.kind == "allocation" and value.key in keys
+                             for value in state.env.values())
+        if not has_range and not has_allocation:
+            return False
+        state.lower = state.lower - keys
+        state.upper = frozenset((bound_key, bound) for bound_key, bound in state.upper
+                                if bound_key not in keys)
+        for name, value in tuple(state.env.items()):
+            if value.kind == "allocation" and value.key in keys:
+                state.env[name] = UNKNOWN
+            elif value.kind == "request" and value.key in keys:
+                state.env[name] = Value("request", value.key, "mutated")
+        self.limitations.add(reason)
+        return True
+
+    def invalidate_mutable_request_arguments(self, fn, node, state, args, helper, name):
+        """Drop range/allocation facts when a call may change a request value.
+
+        Local non-const reference parameters and explicit address arguments are
+        source-visible mutation channels. An unresolved call receiving a bare
+        request-derived scalar is also uncertain: it may bind a C++ reference,
+        so this bounded interpreter cannot keep an allocation/copy proof across
+        that call. Copy-family calls are parameter-aware: their destination
+        (argument zero) is writable, while the remaining arguments are inputs.
+        """
+        arguments = node.child_by_field_name("arguments")
+        supplied = list(arguments.named_children) if arguments is not None else []
+        if not supplied:
+            return
+        copy_call = name in self.policy.copy_calls
+        value_apis = (set(self.policy.parcel_view_calls)
+                      | set(self.policy.parcel_reads) | set(self.policy.parcel_dest_reads)
+                      | set(self.policy.reply_write_calls)
+                      | set(self.policy.boolean_permissions) | set(self.policy.result_permissions))
+        ref_positions = ({index for index, parameter in enumerate(helper.params)
+                          if parameter in helper.ref_params} if helper is not None else set())
+        for index, argument in enumerate(supplied):
+            variable = None
+            target = argument
+            # Only inspect casts for the writable destination argument. A cast
+            # around a source pointer is a read and must not invalidate facts.
+            if copy_call and index == 0:
+                while target is not None:
+                    if target.type == "parenthesized_expression" and target.named_children:
+                        target = target.named_children[0]
+                        continue
+                    if target.type == "cast_expression":
+                        target = target.child_by_field_name("value")
+                        continue
+                    if target.type == "call_expression":
+                        cast_callee = fn.text(target.child_by_field_name("function")).strip()
+                        cast_args = target.child_by_field_name("arguments")
+                        cast_values = list(cast_args.named_children) if cast_args else []
+                        if (re.match(r"^(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<",
+                                     cast_callee)
+                                and len(cast_values) == 1):
+                            target = cast_values[0]
+                            continue
+                    if target.type == "binary_expression":
+                        operator = fn.text(target.child_by_field_name("operator"))
+                        left = target.child_by_field_name("left")
+                        right = target.child_by_field_name("right")
+                        bases = [left] if operator == "-" else [left, right]
+                        tracked_base = next((base for base in bases
+                            if base is not None and base.type == "identifier"
+                            and fn.text(base) in state.request_pointer_aliases), None)
+                        if tracked_base is not None and operator in ("+", "-"):
+                            # Pointer arithmetic still writes through its base.
+                            # Conservatively treat any simple tracked-base offset
+                            # as a write to that request-derived value.
+                            target = tracked_base
+                            continue
+                    break
+                if (target is not None and target.type != "identifier"):
+                    destination_identifiers = list(walk(target, "identifier"))
+                    destination_origins = [item for item in destination_identifiers
+                                           if (fn.text(item) in state.request_pointer_aliases
+                                               or fn.text(item) in state.request_aliases
+                                               or fn.text(item) in state.request_pointer_unknowns
+                                               or state.env.get(fn.text(item), UNKNOWN).kind == "request")]
+                    if destination_origins and (len({fn.text(item) for item in destination_origins}) > 1
+                                                or any(fn.text(item) in state.request_pointer_unknowns
+                                                       for item in destination_origins)):
+                        self.invalidate_all_request_facts(
+                            state, "Ambiguous request-derived destination passed to "
+                            + name + "; request range/allocation facts were invalidated.")
+                    if destination_origins:
+                        target = destination_origins[0]
+            elif target is not None and target.type in ("unary_expression", "pointer_expression"):
+                # Passing `*p` to an unresolved call binds a reference to the
+                # request-derived scalar. The call can mutate it even though
+                # the argument is not spelled as `p` or `&value`.
+                operator = fn.text(target.child_by_field_name("operator"))
+                dereferenced = target.child_by_field_name("argument")
+                if (operator == "*" and dereferenced is not None
+                        and dereferenced.type == "identifier"
+                        and fn.text(dereferenced) in state.request_pointer_vars):
+                    target = dereferenced
+            explicit_address = (target is not None
+                                and target.type in ("unary_expression", "pointer_expression")
+                                and fn.text(target.child_by_field_name("operator")) == "&")
+            if explicit_address:
+                target = target.child_by_field_name("argument")
+            if target is not None and target.type == "identifier":
+                variable = fn.text(target)
+            # An unknown call can bind a complex lvalue to a reference or
+            # mutate through a pointer expression (for example `*(p + 0)`,
+            # `p[0]`, `0[p]`, `p + 0`, or `&p[0]`). Keep this conservative
+            # only for non-value APIs; known Parcel readers consume these
+            # expressions and must not invalidate request facts.
+            if (not variable and not copy_call and name not in value_apis
+                    and target is not None):
+                request_origins = [item for item in walk(target, "identifier")
+                                   if (fn.text(item) in state.request_pointer_aliases
+                                       or fn.text(item) in state.request_aliases
+                                       or state.env.get(fn.text(item), UNKNOWN).kind == "request")]
+                if len({fn.text(item) for item in request_origins}) > 1:
+                    self.invalidate_all_request_facts(
+                        state, "Ambiguous request-derived argument passed to " + name
+                        + "; request range/allocation facts were invalidated.")
+                variable = fn.text(request_origins[0]) if request_origins else None
+            current = state.env.get(variable, UNKNOWN) if variable else UNKNOWN
+            is_tracked_request_target = (bool(variable)
+                and (variable in state.request_aliases
+                     or variable in state.request_pointer_aliases
+                     or current.kind == "request"))
+            is_copy_destination = (copy_call and index == 0
+                                   and (is_tracked_request_target
+                                        or (variable in state.request_pointer_unknowns
+                                            and current.kind != "allocation")))
+            address_writable = explicit_address and (
+                not copy_call or (index == 0 and is_tracked_request_target))
+            may_mutate = (address_writable or is_copy_destination or index in ref_positions
+                          or (not copy_call and helper is not None
+                              and variable in state.request_aliases)
+                          or (not copy_call and helper is not None
+                              and variable in state.request_pointer_vars)
+                          or (helper is None and name not in value_apis and not copy_call))
+            if not variable or not may_mutate:
+                continue
+            if variable in state.request_pointer_unknowns:
+                self.invalidate_all_request_facts(
+                    state, "Unknown request pointer " + variable
+                    + " is passed to " + name + "; request range/allocation facts were invalidated.")
+                continue
+            self.invalidate_request_value(state, variable,
+                "Request-derived value " + variable + " is passed to " + name
+                + " with unresolved mutation effects; related range/allocation facts were invalidated.")
+
+    def invalidate_all_request_facts(self, state, reason):
+        keys = {value.key for value in state.env.values() if value.kind == "request"}
+        keys.update(key for key, _bound in state.upper)
+        keys.update(state.lower)
+        if not keys:
+            return
+        state.lower = state.lower - keys
+        state.upper = frozenset((key, bound) for key, bound in state.upper if key not in keys)
+        for name, value in tuple(state.env.items()):
+            if value.kind == "allocation" and value.key in keys:
+                state.env[name] = UNKNOWN
+            elif value.kind == "request" and value.key in keys:
+                state.env[name] = Value("request", value.key, "mutated")
+        self.limitations.add(reason)
 
     def refine(self,fn,node,state,truth,depth):
         if node is None:return [state.fork()]
@@ -2006,7 +2936,183 @@ class Interpreter:
                         d=dec.child_by_field_name("declarator")
                         ids=list(walk(d,"identifier")) if d else []
                         name=fn.text(ids[-1] if ids else d)
-                        self.assign(s,name,self.value(fn,dec.child_by_field_name("value"),s,depth))
+                        initializer = dec.child_by_field_name("value")
+                        pointer_decl = (d is not None
+                                        and any(part.type == "pointer_declarator"
+                                                for part in walk(d, "pointer_declarator"))
+                                        and "const" not in fn.text(node).split("*", 1)[0])
+                        if pointer_decl:
+                            s.request_pointer_vars = s.request_pointer_vars | {name}
+                            s.request_pointer_unknowns = s.request_pointer_unknowns | {name}
+                            pointer_initializer = initializer
+                            while (pointer_initializer is not None
+                                   and pointer_initializer.type == "parenthesized_expression"
+                                   and pointer_initializer.named_children):
+                                pointer_initializer = pointer_initializer.named_children[0]
+                            # A direct allocator result is fresh storage and
+                            # cannot alias a request scalar whose facts we
+                            # track. Keep it out of the unknown request-pointer
+                            # set so ordinary malloc-backed copy targets stay
+                            # candidate-free.
+                            allocator_result = pointer_initializer
+                            while allocator_result is not None:
+                                if (allocator_result.type == "parenthesized_expression"
+                                        and allocator_result.named_children):
+                                    allocator_result = allocator_result.named_children[0]
+                                    continue
+                                if allocator_result.type == "cast_expression":
+                                    allocator_result = allocator_result.child_by_field_name("value")
+                                    continue
+                                break
+                            if (allocator_result is not None
+                                    and allocator_result.type == "call_expression"
+                                    and fn.text(allocator_result.child_by_field_name("function")).strip()
+                                        .split("::")[-1] in {"malloc", "calloc"}):
+                                s.request_pointer_unknowns = s.request_pointer_unknowns - {name}
+                            if (pointer_initializer is not None
+                                    and pointer_initializer.type in ("pointer_expression", "unary_expression")
+                                    and fn.text(pointer_initializer.child_by_field_name("operator")) == "&"):
+                                addressed = pointer_initializer.child_by_field_name("argument")
+                                if addressed is not None and addressed.type == "identifier":
+                                    addressed_name = fn.text(addressed)
+                                    addressed_value = s.env.get(addressed_name, UNKNOWN)
+                                    if (addressed_name in s.env
+                                            and addressed_value.kind != "request"
+                                            and addressed_name not in s.request_aliases
+                                            and addressed_name not in s.request_pointer_aliases):
+                                        s.request_pointer_unknowns = s.request_pointer_unknowns - {name}
+                            if (pointer_initializer is not None
+                                    and pointer_initializer.type == "identifier"):
+                                source_pointer = fn.text(pointer_initializer)
+                                source_keys = s.request_aliases.get(source_pointer, frozenset())
+                                if source_keys:
+                                    s.request_aliases[name] = (frozenset(source_keys)
+                                        | s.request_aliases.get(name, frozenset()))
+                                    s.request_pointer_aliases = s.request_pointer_aliases | {name}
+                                    s.request_pointer_unknowns = s.request_pointer_unknowns - {name}
+                        ref_initializer = initializer
+                        while (ref_initializer is not None
+                               and ref_initializer.type == "parenthesized_expression"
+                               and ref_initializer.named_children):
+                            ref_initializer = ref_initializer.named_children[0]
+                        deref_initializer = (ref_initializer is not None
+                            and ref_initializer.type in ("pointer_expression", "unary_expression")
+                            and fn.text(ref_initializer.child_by_field_name("operator")) == "*")
+                        subscript_initializer = (ref_initializer is not None
+                            and ref_initializer.type == "subscript_expression")
+                        ref_alias = (d is not None and d.type == "reference_declarator"
+                                     and "const" not in fn.text(node).split("&", 1)[0]
+                                     and ref_initializer is not None
+                                     and (ref_initializer.type == "identifier" or deref_initializer
+                                          or subscript_initializer
+                                          or ref_initializer.type == "conditional_expression"))
+                        address_alias = (initializer is not None
+                                         and initializer.type in ("unary_expression", "pointer_expression")
+                                         and fn.text(initializer.child_by_field_name("operator")) == "&"
+                                         and "const" not in fn.text(node).split("*", 1)[0])
+                        if ref_alias or address_alias:
+                            target = (ref_initializer.child_by_field_name("argument")
+                                      if ref_alias and deref_initializer
+                                      else ref_initializer if ref_alias
+                                      else initializer.child_by_field_name("argument"))
+                            origin = fn.text(target) if target is not None and target.type == "identifier" else ""
+                            if not origin and ref_alias and deref_initializer and target is not None:
+                                while (target.type == "parenthesized_expression"
+                                       and target.named_children):
+                                    target = target.named_children[0]
+                                target_operator = fn.text(target.child_by_field_name("operator"))
+                                if target_operator == "&":
+                                    addressed = target.child_by_field_name("argument")
+                                    if addressed is not None and addressed.type == "identifier":
+                                        origin = fn.text(addressed)
+                                # A reference may bind through pointer arithmetic
+                                # too: `int& alias = *(p + offset)`. Preserve the
+                                # tracked pointer's origin for later writes.
+                                if not origin:
+                                    origin = next((fn.text(item) for item in walk(target, "identifier")
+                                                   if fn.text(item) in s.request_pointer_vars), "")
+                            if subscript_initializer:
+                                def request_pointer_base(expression):
+                                    while (expression is not None
+                                           and expression.type == "parenthesized_expression"
+                                           and expression.named_children):
+                                        expression = expression.named_children[0]
+                                    if expression is None:
+                                        return ""
+                                    if expression.type == "identifier":
+                                        candidate = fn.text(expression)
+                                        return candidate if candidate in s.request_pointer_vars else ""
+                                    if expression.type == "binary_expression":
+                                        arithmetic = fn.text(expression.child_by_field_name("operator"))
+                                        if arithmetic not in ("+", "-"):
+                                            return ""
+                                        operands = [expression.child_by_field_name("left")]
+                                        if arithmetic == "+":
+                                            operands.append(expression.child_by_field_name("right"))
+                                        for operand in operands:
+                                            candidate = request_pointer_base(operand)
+                                            if candidate:
+                                                return candidate
+                                    return ""
+
+                                subscript_base = ref_initializer.child_by_field_name("argument")
+                                subscript_indices = ref_initializer.child_by_field_name("indices")
+                                origin = request_pointer_base(subscript_base)
+                                if not origin and subscript_indices is not None:
+                                    origin = next((candidate for item in subscript_indices.named_children
+                                                   if (candidate := request_pointer_base(item))), "")
+                            origin_names = [origin] if origin else []
+                            if ref_alias and ref_initializer is not None:
+                                origin_expression = (ref_initializer.child_by_field_name("argument")
+                                    if deref_initializer else ref_initializer)
+                                while (origin_expression is not None
+                                       and origin_expression.type == "parenthesized_expression"
+                                       and origin_expression.named_children):
+                                    origin_expression = origin_expression.named_children[0]
+                                if (origin_expression is not None
+                                        and origin_expression.type == "conditional_expression"):
+                                    origin_names.extend(fn.text(item)
+                                        for item in walk(origin_expression, "identifier")
+                                        if (fn.text(item) in s.request_pointer_vars
+                                            or fn.text(item) in s.request_aliases
+                                            or s.env.get(fn.text(item), UNKNOWN).kind == "request"))
+                            origin_keys = frozenset()
+                            for candidate in set(origin_names):
+                                origin_value = s.env.get(candidate, UNKNOWN)
+                                candidate_keys = s.request_aliases.get(candidate)
+                                if not candidate_keys and origin_value.kind == "request":
+                                    candidate_keys = frozenset({origin_value.key})
+                                origin_keys = origin_keys | (candidate_keys or frozenset())
+                            if origin_keys:
+                                # A same-name alias may shadow an outer local
+                                # whose lifetime is outside this block. Keep
+                                # every possible origin because block-scope
+                                # restoration is not modeled here.
+                                s.request_aliases[name] = (frozenset(origin_keys)
+                                    | s.request_aliases.get(name, frozenset()))
+                                if address_alias:
+                                    s.request_pointer_aliases = s.request_pointer_aliases | {name}
+                                    s.request_pointer_unknowns = s.request_pointer_unknowns - {name}
+                                else:
+                                    s.request_pointer_aliases = s.request_pointer_aliases - {name}
+                            elif (ref_alias and deref_initializer and ref_initializer is not None
+                                  and any(fn.text(item) in s.request_pointer_unknowns
+                                          for item in walk(ref_initializer, "identifier"))):
+                                # The reference may bind through a pointer whose
+                                # request origin is unresolved (for example a
+                                # pointer arithmetic rebind). Calls/writes via
+                                # this alias must not retain stale proofs.
+                                s.request_pointer_unknowns = s.request_pointer_unknowns | {name}
+                                # Merely declaring a local alias does not change
+                                # the request value. Writes and calls through the
+                                # alias invalidate the facts at their use sites.
+                        self.assign(s,name,self.value(fn,initializer,s,depth))
+                    elif dec.type == "pointer_declarator":
+                        name_node = next(walk(dec, "identifier"), None)
+                        name = fn.text(name_node) if name_node is not None else ""
+                        if name and "const" not in fn.text(node).split("*", 1)[0]:
+                            s.request_pointer_vars = s.request_pointer_vars | {name}
+                            s.request_pointer_unknowns = s.request_pointer_unknowns | {name}
                     elif dec.type=="array_declarator":
                         name=fn.text(dec.child_by_field_name("declarator"));size=fn.text(dec.child_by_field_name("size"))
                         self.capacities[name]=size
@@ -2014,6 +3120,30 @@ class Interpreter:
                         self.capacities["sizeof("+name+")"]=size
             elif kind=="expression_statement":
                 for expr in node.named_children:
+                    macro_guard = self._fail_fast_macro_predicate(fn, expr, s, depth)
+                    if macro_guard is not None:
+                        # The definition is source-bound and proves that a false
+                        # condition returns from this function. Only the normal
+                        # continuation receives the predicate's true facts.
+                        guarded = self.refine(fn, macro_guard, s, True, depth)
+                        for continuation in guarded:
+                            continuation.trace = (continuation.trace +
+                                ((expr.start_point[0] + 1,
+                                  "source-verified fail-fast macro => true"),))[-20:]
+                        if guarded:
+                            safe = guarded[0]
+                            s.auth = safe.auth
+                            s.descriptor = safe.descriptor
+                            s.owner = safe.owner
+                            s.lower = safe.lower
+                            s.upper = safe.upper
+                            s.size_lower = safe.size_lower
+                            s.caller_class = safe.caller_class
+                            s.service_account = safe.service_account
+                            s.trace = safe.trace
+                        else:
+                            s.flow = "return"
+                        continue
                     if (expr.type=="call_expression" and terminal(fn.text(expr.child_by_field_name("function")))
                             == "ResetCallingIdentity"):
                         # The call stands alone, so its returned identity has no
@@ -2032,16 +3162,70 @@ class Interpreter:
                 self.value(fn,node,s,depth)
         return self.bounded(done+active)
 
-    def _entry_roots(self):
-        """Entry roots: the legacy name allowlist, then source-derived dispatch handlers.
+    def _fail_fast_macro_predicate(self, fn, expr, state, depth):
+        """Recognize only source-proven `if (!arg) return` macro wrappers.
 
-        The allowlist is kept as the lower-grade fallback, so nothing that was
-        analysed before stops being analysed. Dispatch-derived handlers are added
-        only when the index bound them to exactly one definition.
+        Some OpenHarmony fail-fast macros stringify their condition for logging,
+        so the bounded expander refuses them. For descriptor guards, model the
+        normal continuation only when the scan contains one unconditional macro
+        definition with the narrow two-parameter shape checked below. The macro
+        name alone never grants a guard.
+        """
+        if expr.type != "call_expression":
+            return None
+        name_node = expr.child_by_field_name("function")
+        name = terminal(fn.text(name_node)) if name_node is not None else ""
+        definitions = self.macro_catalog.get(name, ()) if self.macro_catalog else ()
+        if not definitions:
+            return None
+        signatures = {(item.get("body", ""), tuple(item.get("parameters") or ()),
+                       tuple(item.get("conditional_context") or ())) for item in definitions}
+        if len(signatures) != 1:
+            return None
+        body, params, conditions = next(iter(signatures))
+        if conditions or len(params) != 2:
+            return None
+        cond_param, return_param = params
+        pattern = (r"^do\s*\{\s*bool\s+([A-Za-z_]\w*)\s*=\s*\(\s*"
+                   + re.escape(cond_param) + r"\s*\)\s*;\s*if\s*\(\s*!\s*\1\s*\)\s*\{"
+                   + r".*?\breturn\s+" + re.escape(return_param)
+                   + r"\s*;.*?\}\s*\}\s*while\s*\(\s*0\s*\)$")
+        if not re.match(pattern, body):
+            return None
+        arguments = expr.child_by_field_name("arguments")
+        args = list(arguments.named_children) if arguments is not None else []
+        if len(args) != 2:
+            return None
+        predicate = self.value(fn, args[0], state, depth)
+        if predicate.kind != "predicate" or predicate.predicate[:1] != ("descriptor",):
+            return None
+        return args[0]
+
+    def _entry_roots(self):
+        """Build roots from source-confirmed IPC dispatchers and explicit service entries.
+
+        A method name plus one Parcel parameter is insufficient: fuzz wrappers and
+        test helpers commonly use the same names without implementing the IPC
+        dispatch signature. IPC roots therefore require a class method admitted by
+        EntryIndex's code/Parcel/Parcel signature check. Service and transport
+        roots remain explicit policy entries. Handler roots still require a unique
+        source-derived dispatch binding below.
         """
         roots, seen = [], set()
+        dispatcher_keys = ({(item.file, item.name, item.line)
+                            for item in self.index.dispatchers if item.owner}
+                           if self.index is not None else set())
         for fn in self.functions:
-            if not ((fn.name in self.policy.entry_names or fn.name in self.policy.transport_entries or (fn.name.endswith("Inner") and "Stub" in fn.owner)) and fn.parcel_params or fn.qualified in self.policy.service_entries):
+            is_ipc_dispatcher = (fn.name in self.policy.entry_names
+                                 and fn.owner and fn.parcel_params and fn.reply_params and len(fn.params) >= 3
+                                 and (fn.file, fn.name, fn.line) in dispatcher_keys)
+            is_inner_helper = (fn.name.endswith("Inner") and "Stub" in fn.owner and fn.parcel_params)
+            is_explicit_entry = (fn.name in self.policy.transport_entries and fn.parcel_params)
+            is_service_entry = fn.qualified in self.policy.service_entries
+            if not (is_ipc_dispatcher or is_inner_helper or is_explicit_entry or is_service_entry):
+                continue
+            if _test_only_source(fn.file):
+                self.test_only_roots_skipped.add((fn.file, fn.qualified))
                 continue
             roots.append((fn, "allowlist", ""))
             seen.add((fn.file, fn.qualified))
@@ -2054,6 +3238,9 @@ class Interpreter:
                                      + "::" + name + "; not used as an entry")
                 continue
             fn = matches[0]
+            if _test_only_source(fn.file):
+                self.test_only_roots_skipped.add((fn.file, fn.qualified))
+                continue
             if (fn.file, fn.qualified) in seen:
                 continue
             seen.add((fn.file, fn.qualified))
@@ -2073,13 +3260,17 @@ class Interpreter:
             if obs.rule=="ipc.auth.missing":
                 # Permission call somewhere is not coverage. Keep the primary
                 # finding and add the explicit coverage subtype for these roots.
-                if obs.root_key in self.seen_permissions:
+                if (obs.root_key in self.seen_permissions
+                        and "checks permission " not in obs.message):
                     revised.append(replace(obs,family="AUTH-04",rule="ipc.auth.guard-coverage",
                         message="Authorization checks exist in the analyzed entry set, but this modeled sensitive path has no matched caller guard. "+obs.message))
             revised.append(obs)
         summary=self._macro_summary()
         if summary is not None:
             self.limitations.add(summary)
+        if self.test_only_roots_skipped:
+            self.limitations.add("Excluded " + str(len(self.test_only_roots_skipped))
+                                 + " test/fuzz/mock entry root(s) from product candidate analysis; the source paths are retained in scope, but test-target findings are not mixed into product candidates.")
         if self.index is not None:
             # A refused hop is the whole reason a one-hop call site keeps its
             # candidate, and the reason is recorded on the index rather than in

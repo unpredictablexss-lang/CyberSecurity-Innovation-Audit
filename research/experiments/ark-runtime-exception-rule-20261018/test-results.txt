@@ -1,9 +1,0 @@
-test_detector_rejects_mixed_source_binding (research.tests.test_ark_runtime_exception_protection_detector.ExceptionPropagationDetectorTests.test_detector_rejects_mixed_source_binding) ... ok
-test_exact_fix_uses_pending_exception_helper (research.tests.test_ark_runtime_exception_protection_detector.ExceptionPropagationDetectorTests.test_exact_fix_uses_pending_exception_helper) ... ok
-test_exact_parent_is_candidate_with_source_bound_obligations (research.tests.test_ark_runtime_exception_protection_detector.ExceptionPropagationDetectorTests.test_exact_parent_is_candidate_with_source_bound_obligations) ... ok
-test_unrelated_lower_call_runtime_is_not_applicable (research.tests.test_ark_runtime_exception_protection_detector.ExceptionPropagationDetectorTests.test_unrelated_lower_call_runtime_is_not_applicable) ... ok
-
-----------------------------------------------------------------------
-Ran 4 tests in 0.369s
-
-OK

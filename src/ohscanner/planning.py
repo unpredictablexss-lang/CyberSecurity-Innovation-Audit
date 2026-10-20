@@ -14,29 +14,32 @@ from src.workbench.planning import plan_audit, metadata_from_detectors
 
 def approved_metadata():
     rows, instances = [], []
+    pending = pending_admissions()
+    pending_ids = {row['id'] for row in pending}
     for ident, spec in catalog_metadata().items():
-        if spec['kind'] != 'research_candidate':
+        if spec['kind'] != 'research_candidate' or ident in pending_ids:
             continue
         detector = build_registry((ident,)).detectors()[0]
         rows.append({'id': ident, **spec, 'version': detector.version,
                      'supported_languages': list(detector.supported_languages),
                      'evidence_level': 'candidate/unassessed'})
         instances.append(detector)
-    return metadata_from_detectors(rows, instances) + pending_admissions()
+    return metadata_from_detectors(rows, instances) + pending
 
 
-def plan_context(context, tree, inventory, sources, selected_detector_ids=None):
+def plan_context(context, tree, inventory, sources, selected_detector_ids=None, execution_budget=None):
     manifest = manifest_from_context(context, tree, inventory, sources)
     return plan_audit(manifest, approved_metadata(),
-                      selected_detector_ids=selected_detector_ids)
+                      selected_detector_ids=selected_detector_ids,
+                      execution_budget=execution_budget)
 
 
-def preview_plan(repo_dir, repository, commit, includes, selected_detector_ids=None):
+def preview_plan(repo_dir, repository, commit, includes, selected_detector_ids=None, execution_budget=None):
     if selected_detector_ids:
         build_registry(tuple(selected_detector_ids))
     context, tree, inventory, _, sources = prepare_git_context(
         Path(repo_dir), repository, commit, tuple(includes))
-    plan = plan_context(context, tree, inventory, sources, selected_detector_ids)
+    plan = plan_context(context, tree, inventory, sources, selected_detector_ids, execution_budget)
     pinned2, tree2, sources2, inventory2 = load_git_sources(Path(repo_dir), commit, tuple(includes))
     signature = lambda rows: tuple((s.path, s.language, s.oid, s.data) for s in rows)
     if (pinned2 != context.request.commit or tree2 != tree or inventory2 != inventory

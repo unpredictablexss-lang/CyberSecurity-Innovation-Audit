@@ -1,0 +1,42 @@
+{
+  "cve": "CVE-2022-45877",
+  "detector_version": "0.10.0",
+  "upstream_repository": "https://github.com/openharmony/distributedhardware_device_manager",
+  "fix_commit": "8bea775dc169bca2d9a1ce57ada2d86cbd179163",
+  "old_commit": "97c3d5c7b07a0ab599afcc1464143b255e7dbb68",
+  "source_path": "services/devicemanagerservice/src/authentication/dm_auth_manager.cpp",
+  "evidence_boundary": "component source regression only; no OpenHarmony product build or dynamic device test",
+  "runs": [
+    {
+      "commit": "97c3d5c7b07a0ab599afcc1464143b255e7dbb68",
+      "source_sha256": "fb4fc22fe6543cd1c1dcb452f0fbab6ae20aee1970d8935ea9f3eebd3ace895a",
+      "status": "blocked",
+      "parse_status": "partial",
+      "candidate_count": 1,
+      "findings": [
+        {
+          "file": "services/devicemanagerservice/src/authentication/dm_auth_manager.cpp",
+          "line": 348,
+          "rule_id": "ohknowncve-device-manager-cve-2022-45877",
+          "symbol": "CVE-2022-45877",
+          "candidate_cwe": "CWE-319",
+          "message": "Candidate component-code match for CVE-2022-45877: DmAuthManager::OnGroupCreated serializes PIN_CODE_KEY into authToken and sends the authentication response through SoftBus. This is a component-source candidate; product version, build inclusion, peer visibility, and impact are not established. Product reachability and vulnerability status remain unconfirmed."
+        }
+      ],
+      "limitations": [
+        "services/devicemanagerservice/src/authentication/dm_auth_manager.cpp: parse_status=partial; lexical matches are retained but remaining coverage is unknown."
+      ]
+    },
+    {
+      "commit": "8bea775dc169bca2d9a1ce57ada2d86cbd179163",
+      "source_sha256": "2611593bc66fe32b43b8868cf9e31a48367fd221e196516d05027261c25f6165",
+      "status": "blocked",
+      "parse_status": "partial",
+      "candidate_count": 0,
+      "findings": [],
+      "limitations": [
+        "services/devicemanagerservice/src/authentication/dm_auth_manager.cpp: parse_status=partial; lexical matches are retained but remaining coverage is unknown."
+      ]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 export const auditLinks = [
-  { path: "/audits/repository", title: "仓库安全扫描", description: "固定一个仓库的源码快照" },
+  { path: "/audits/repository", title: "仓库审计", description: "先做静态扫描，再授权模型辅助研判" },
   { path: "/audits/time", title: "时间增量扫描", description: "按提交者时间固定两端并比较" },
   { path: "/audits/versions", title: "跨版本安全分析", description: "分支、Tag、SHA 与案例版本矩阵" },
 ];
@@ -19,6 +19,16 @@ export function jobDetailPath(id, tab = "findings") {
 }
 export function detailTab(value) {
   return ["findings", "clusters", "coverage", "source", "events", "reports"].includes(value) ? value : "findings";
+}
+
+export function riskQueuePath(filters) {
+  const params = new URLSearchParams();
+  if (filters.scan_limit && filters.scan_limit !== "20") params.set("scan_limit", filters.scan_limit);
+  for (const key of ["risk_tier", "triage_state", "repository", "detector_id", "q"]) {
+    if (filters[key]) params.set(key, filters[key]);
+  }
+  const query = params.toString();
+  return "/risks" + (query ? "?" + query : "");
 }
 
 export function retainRiskSource(selected, jobs) {

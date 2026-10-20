@@ -1,0 +1,407 @@
+{
+  "schema": 1,
+  "purpose": "D6 reproducibility of the historical static candidate delta from exact GitHub commit file snapshots",
+  "retrieval": {
+    "provider": "GitHub first-party read-only fetch_file API",
+    "repository": "openharmony/communication_dsoftbus",
+    "refs": [
+      "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "63efce3ff7f2708527eb29216decaf5fe2dc33d0"
+    ],
+    "local_target_commit_objects": "not present; file contents fetched by exact commit ref and verified against reviewed profiles",
+    "cache_path": "\\\\wsl.localhost\\Ubuntu-22.04\\tmp\\ohscanner-dsoftbus-source-20261018\\\\cache",
+    "cache_committed": false,
+    "profile_entries_verified": 20,
+    "unique_source_blobs": 11,
+    "integrity": "passed"
+  },
+  "source_entries": [
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+      "blob": "f929832bb488cef82cbc9c22427f548ae9935c98",
+      "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9",
+      "size": 26736,
+      "verified_size": 26736,
+      "verified_sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9",
+      "verified_git_blob": "f929832bb488cef82cbc9c22427f548ae9935c98",
+      "integrity": "passed"
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/transmission/common/src/softbus_message_open_channel.c",
+      "blob": "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+      "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5",
+      "size": 8610,
+      "verified_size": 8610,
+      "verified_sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5",
+      "verified_git_blob": "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+      "integrity": "passed"
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/transmission/common/include/softbus_message_open_channel.h",
+      "blob": "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+      "sha256": "4e22f4cf81aaf6def79785d153f443c0e29da464aba7e0219a5615fb252b7ce5",
+      "size": 1638,
+      "verified_size": 1638,
+      "verified_sha256": "4e22f4cf81aaf6def79785d153f443c0e29da464aba7e0219a5615fb252b7ce5",
+      "verified_git_blob": "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+      "integrity": "passed"
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/transmission/common/include/softbus_app_info.h",
+      "blob": "393c79b2cceb39e781a1680384754f02560bf7a9",
+      "sha256": "db322ec201fb1cd1d8606f339593c2cb08ab5a2de3588a37625bf4977f514500",
+      "size": 2049,
+      "verified_size": 2049,
+      "verified_sha256": "db322ec201fb1cd1d8606f339593c2cb08ab5a2de3588a37625bf4977f514500",
+      "verified_git_blob": "393c79b2cceb39e781a1680384754f02560bf7a9",
+      "integrity": "passed"
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/common/log/softbus_log.c",
+      "blob": "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+      "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b",
+      "size": 2814,
+      "verified_size": 2814,
+      "verified_sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b",
+      "verified_git_blob": "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+      "integrity": "passed"
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/common/include/softbus_log.h",
+      "blob": "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+      "sha256": "59fdd037fac0eee9cf904bb8d07a4bfac9a70d177886315b371ba4700af06df8",
+      "size": 1770,
+      "verified_size": 1770,
+      "verified_sha256": "59fdd037fac0eee9cf904bb8d07a4bfac9a70d177886315b371ba4700af06df8",
+      "verified_git_blob": "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+      "integrity": "passed"
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "adapter/common/log/softbus_adapter_log.c",
+      "blob": "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+      "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79",
+      "size": 1321,
+      "verified_size": 1321,
+      "verified_sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79",
+      "verified_git_blob": "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+      "integrity": "passed"
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "adapter/common/include/softbus_adapter_log.h",
+      "blob": "c91ad41cb765496501204144a63a2b3fe0f53c14",
+      "sha256": "6b953411b9d6163fcd5f13aed62c4895e38b9292261a934ba5ef027bd2037352",
+      "size": 3212,
+      "verified_size": 3212,
+      "verified_sha256": "6b953411b9d6163fcd5f13aed62c4895e38b9292261a934ba5ef027bd2037352",
+      "verified_git_blob": "c91ad41cb765496501204144a63a2b3fe0f53c14",
+      "integrity": "passed"
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+      "blob": "c8d21576547ddad1f87341d451a895ebb515b90e",
+      "sha256": "eecde0623c13d9718c4e787890fe19672d6305784920b6e8c17afca3a3b042c5",
+      "size": 8686,
+      "verified_size": 8686,
+      "verified_sha256": "eecde0623c13d9718c4e787890fe19672d6305784920b6e8c17afca3a3b042c5",
+      "verified_git_blob": "c8d21576547ddad1f87341d451a895ebb515b90e",
+      "integrity": "passed"
+    },
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/common/softbus_property/softbus_feature_config.c",
+      "blob": "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+      "sha256": "068244ad006cdb012a6a23ca46f7bddca96a6bcbbd7ee8de21544bf1f9937c01",
+      "size": 9327,
+      "verified_size": 9327,
+      "verified_sha256": "068244ad006cdb012a6a23ca46f7bddca96a6bcbbd7ee8de21544bf1f9937c01",
+      "verified_git_blob": "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+      "integrity": "passed"
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+      "blob": "52ade9ae7136204a0174d94a77bf8dd008c9d505",
+      "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc",
+      "size": 26641,
+      "verified_size": 26641,
+      "verified_sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc",
+      "verified_git_blob": "52ade9ae7136204a0174d94a77bf8dd008c9d505",
+      "integrity": "passed"
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/transmission/common/src/softbus_message_open_channel.c",
+      "blob": "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+      "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5",
+      "size": 8610,
+      "verified_size": 8610,
+      "verified_sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5",
+      "verified_git_blob": "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+      "integrity": "passed"
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/transmission/common/include/softbus_message_open_channel.h",
+      "blob": "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+      "sha256": "4e22f4cf81aaf6def79785d153f443c0e29da464aba7e0219a5615fb252b7ce5",
+      "size": 1638,
+      "verified_size": 1638,
+      "verified_sha256": "4e22f4cf81aaf6def79785d153f443c0e29da464aba7e0219a5615fb252b7ce5",
+      "verified_git_blob": "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+      "integrity": "passed"
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/transmission/common/include/softbus_app_info.h",
+      "blob": "393c79b2cceb39e781a1680384754f02560bf7a9",
+      "sha256": "db322ec201fb1cd1d8606f339593c2cb08ab5a2de3588a37625bf4977f514500",
+      "size": 2049,
+      "verified_size": 2049,
+      "verified_sha256": "db322ec201fb1cd1d8606f339593c2cb08ab5a2de3588a37625bf4977f514500",
+      "verified_git_blob": "393c79b2cceb39e781a1680384754f02560bf7a9",
+      "integrity": "passed"
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/common/log/softbus_log.c",
+      "blob": "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+      "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b",
+      "size": 2814,
+      "verified_size": 2814,
+      "verified_sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b",
+      "verified_git_blob": "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+      "integrity": "passed"
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/common/include/softbus_log.h",
+      "blob": "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+      "sha256": "59fdd037fac0eee9cf904bb8d07a4bfac9a70d177886315b371ba4700af06df8",
+      "size": 1770,
+      "verified_size": 1770,
+      "verified_sha256": "59fdd037fac0eee9cf904bb8d07a4bfac9a70d177886315b371ba4700af06df8",
+      "verified_git_blob": "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+      "integrity": "passed"
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "adapter/common/log/softbus_adapter_log.c",
+      "blob": "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+      "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79",
+      "size": 1321,
+      "verified_size": 1321,
+      "verified_sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79",
+      "verified_git_blob": "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+      "integrity": "passed"
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "adapter/common/include/softbus_adapter_log.h",
+      "blob": "c91ad41cb765496501204144a63a2b3fe0f53c14",
+      "sha256": "6b953411b9d6163fcd5f13aed62c4895e38b9292261a934ba5ef027bd2037352",
+      "size": 3212,
+      "verified_size": 3212,
+      "verified_sha256": "6b953411b9d6163fcd5f13aed62c4895e38b9292261a934ba5ef027bd2037352",
+      "verified_git_blob": "c91ad41cb765496501204144a63a2b3fe0f53c14",
+      "integrity": "passed"
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+      "blob": "c8d21576547ddad1f87341d451a895ebb515b90e",
+      "sha256": "eecde0623c13d9718c4e787890fe19672d6305784920b6e8c17afca3a3b042c5",
+      "size": 8686,
+      "verified_size": 8686,
+      "verified_sha256": "eecde0623c13d9718c4e787890fe19672d6305784920b6e8c17afca3a3b042c5",
+      "verified_git_blob": "c8d21576547ddad1f87341d451a895ebb515b90e",
+      "integrity": "passed"
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/common/softbus_property/softbus_feature_config.c",
+      "blob": "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+      "sha256": "068244ad006cdb012a6a23ca46f7bddca96a6bcbbd7ee8de21544bf1f9937c01",
+      "size": 9327,
+      "verified_size": 9327,
+      "verified_sha256": "068244ad006cdb012a6a23ca46f7bddca96a6bcbbd7ee8de21544bf1f9937c01",
+      "verified_git_blob": "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+      "integrity": "passed"
+    }
+  ],
+  "runs": [
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "profile_id": "dsoftbus-tcp-json-d33177135ec6",
+      "detector_id": "ohscanner.data.sensitive_exposure",
+      "detector_version": "0.4.0",
+      "status": "blocked",
+      "required_files": 10,
+      "parsing": {
+        "parsing_status": {
+          "complete": 4,
+          "partial": 6
+        },
+        "languages": {
+          "c": 6,
+          "cpp": 4
+        }
+      },
+      "file_outcomes": [
+        [
+          "adapter/common/include/softbus_adapter_log.h",
+          "partial"
+        ],
+        [
+          "adapter/common/log/softbus_adapter_log.c",
+          "partial"
+        ],
+        [
+          "core/common/include/softbus_log.h",
+          "partial"
+        ],
+        [
+          "core/common/log/softbus_log.c",
+          "partial"
+        ],
+        [
+          "core/common/softbus_property/softbus_feature_config.c",
+          "partial"
+        ],
+        [
+          "core/transmission/common/include/softbus_app_info.h",
+          "partial"
+        ],
+        [
+          "core/transmission/common/include/softbus_message_open_channel.h",
+          "partial"
+        ],
+        [
+          "core/transmission/common/src/softbus_message_open_channel.c",
+          "partial"
+        ],
+        [
+          "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "partial"
+        ],
+        [
+          "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+          "partial"
+        ]
+      ],
+      "finding_count": 1,
+      "findings": [
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 671,
+          "symbol": "ProcessReceivedData",
+          "rule_id": "data.log.sensitive-value",
+          "candidate_cwe": "CWE-532",
+          "source_sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9",
+          "message": "Candidate local sensitive-material dependency: core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c:649 source DecryptMessage successful output crypInfo.out may carry Base64 session key -> reviewed one-hop parameter 2 -> MsgCryptInfo.out -> 671 SoftBusLog public operand 0"
+        }
+      ]
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "profile_id": "dsoftbus-tcp-json-63efce3ff7f2",
+      "detector_id": "ohscanner.data.sensitive_exposure",
+      "detector_version": "0.4.0",
+      "status": "blocked",
+      "required_files": 10,
+      "parsing": {
+        "parsing_status": {
+          "complete": 4,
+          "partial": 6
+        },
+        "languages": {
+          "c": 6,
+          "cpp": 4
+        }
+      },
+      "file_outcomes": [
+        [
+          "adapter/common/include/softbus_adapter_log.h",
+          "partial"
+        ],
+        [
+          "adapter/common/log/softbus_adapter_log.c",
+          "partial"
+        ],
+        [
+          "core/common/include/softbus_log.h",
+          "partial"
+        ],
+        [
+          "core/common/log/softbus_log.c",
+          "partial"
+        ],
+        [
+          "core/common/softbus_property/softbus_feature_config.c",
+          "partial"
+        ],
+        [
+          "core/transmission/common/include/softbus_app_info.h",
+          "partial"
+        ],
+        [
+          "core/transmission/common/include/softbus_message_open_channel.h",
+          "partial"
+        ],
+        [
+          "core/transmission/common/src/softbus_message_open_channel.c",
+          "partial"
+        ],
+        [
+          "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "partial"
+        ],
+        [
+          "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+          "partial"
+        ]
+      ],
+      "finding_count": 0,
+      "findings": []
+    }
+  ],
+  "comparison": {
+    "before_candidates": 1,
+    "after_candidates": 0,
+    "interpretation": "Reproduced static candidate delta; both full runs blocked with 6 of 10 files partial. The deleted historical log call is consistent with candidate disappearance but does not establish product exploitability or a verified fix."
+  },
+  "validated_vulnerability": 0,
+  "public_runner_integration": "not tested by this research-only replay; D remains blocked in Catalog admission",
+  "dynamic_harness": "not_run",
+  "product_impact": "unknown"
+}

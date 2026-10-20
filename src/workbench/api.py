@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 import fcntl
 import sqlite3
+import subprocess
+import uuid
 from typing import Literal
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
@@ -13,10 +15,17 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from .settings import Settings
 from .store import Store, TERMINAL
 from . import service
+from .repository_management import discover_repositories, repository_catalog, repository_roots
+from .source_roots import add_managed_root, record_root_check, remove_managed_root
 
 
 class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
+
+
+class SourceRootInput(StrictModel):
+    alias: str = Field(default="", max_length=80)
+    path: str = Field(min_length=1, max_length=4096)
 
 
 class RepositoryInput(StrictModel):
@@ -33,11 +42,22 @@ class AuditPlanInput(StrictModel):
         default_factory=lambda: ["."], min_length=1, max_length=100
     )
     detector_ids: list[str] | None = Field(default=None, max_length=16)
+    timeout_seconds: int = Field(default=300, ge=1, le=3600)
+    memory_mb: int = Field(default=2048, ge=256, le=8192)
+    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
+    auto_triage: bool = False
+    max_triage_candidates: int = Field(default=3, ge=1, le=5)
+    max_r2_candidates: int = Field(default=0, ge=0, le=5)
+    max_cost_usd: str | None = Field(default=None, min_length=1, max_length=16,
+                                     pattern=r"^\d{1,6}(?:\.\d{1,8})?$")
 
 
 class ScanInput(AuditPlanInput):
     detector_ids: list[str] | None = Field(default=None, min_length=1, max_length=16)
     expected_plan_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    expected_workflow_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    expected_triage_consent_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    triage_consent_nonce: str | None = Field(default=None, pattern=r"^[a-f0-9]{32}$")
     timeout_seconds: int = Field(default=300, ge=1, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
@@ -111,6 +131,10 @@ def create_app(settings=None):
                 return JSONResponse({"detail": "request too large"}, status_code=413)
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
         response.headers["Cache-Control"] = "no-store"
         return response
 
@@ -148,11 +172,11 @@ def create_app(settings=None):
     @app.get("/api/v1/health")
     def health():
         from .agent import public_status
-        agent = public_status()
+        agent = public_status(settings.data_dir)
         return {
             "status": "ok",
             "version": "0.1.0",
-            "target_roots": [str(p) for p in settings.target_roots],
+            "target_root_count": len(settings.target_roots),
             "capabilities": {
                 "snapshot_scan": True,
                 "audit_planning": True,
@@ -188,7 +212,43 @@ def create_app(settings=None):
 
     @app.get("/api/v1/repositories")
     def repositories():
+        """Return the ordinary user catalog without server filesystem paths."""
+        return [{"id": item["id"], "name": item["name"]} for item in store.repositories()]
+
+    @app.get("/api/v1/repositories/list")
+    def repository_list():
+        return [{"id": item["id"], "name": item["name"]} for item in store.repositories()]
+
+    @app.get("/api/v1/repositories/managed")
+    def managed_repositories():
+        """Return path-bearing records for the settings management view."""
         return store.repositories()
+
+    @app.get("/api/v1/repositories/catalog")
+    def repository_catalog_route():
+        return repository_catalog(settings, store)
+
+    @app.get("/api/v1/repositories/roots")
+    def repository_roots_route():
+        return repository_roots(settings, store)
+
+    @app.post("/api/v1/repositories/roots", status_code=201)
+    def add_repository_root(body: SourceRootInput):
+        root = add_managed_root(settings, body.alias, body.path)
+        return {
+            key: root[key]
+            for key in ("id", "alias", "path", "managed", "last_checked_at", "discovery")
+        }
+
+    @app.delete("/api/v1/repositories/roots/{root_id}")
+    def delete_repository_root(root_id: str):
+        return remove_managed_root(settings, root_id)
+
+    @app.get("/api/v1/repositories/discover")
+    def repository_discover(root_index: int | None = None, root_id: str | None = None):
+        result = discover_repositories(settings, store, root_index, root_id)
+        record_root_check(settings, result["root_id"])
+        return result
 
     @app.post("/api/v1/repositories", status_code=201)
     def register(body: RepositoryInput):
@@ -207,13 +267,55 @@ def create_app(settings=None):
 
     @app.post("/api/v1/audit-plans")
     def audit_plan(body: AuditPlanInput):
+        if body.max_r2_candidates > body.max_triage_candidates:
+            raise ValueError("conditional R2 candidate budget cannot exceed the R1 candidate budget")
+        if body.max_r2_candidates and not body.auto_triage:
+            raise ValueError("conditional R2 requires task-level automatic triage authorization")
+        if body.auto_triage and body.max_cost_usd is None:
+            raise ValueError("任务级自动研判需要设置大于零的 USD 费用上限。")
         repo = store.repository(body.repository_id)
         service.check_repository(settings, repo["path"])
-        _, plan = service.audit_plan(repo, body.revision, body.include_paths, body.detector_ids)
-        return plan
+        _, plan = service.audit_plan(
+            repo, body.revision, body.include_paths, body.detector_ids,
+            body.timeout_seconds, body.memory_mb,
+        )
+        workflow_sha256 = service.audit_workflow_sha256(
+            plan["plan_sha256"], body.audit_mode, body.auto_triage,
+            body.max_triage_candidates, body.max_r2_candidates,
+            body.max_cost_usd)
+        triage_preview = None
+        if body.auto_triage:
+            if body.audit_mode != "standard_review":
+                raise ValueError("automatic triage is only available in standard review mode")
+            from .agent import ProviderConfig, audit_task_consent_preview
+            provider = ProviderConfig.from_env(settings.data_dir)
+            triage_preview = audit_task_consent_preview(
+                plan, workflow_sha256, body.include_paths, body.max_triage_candidates,
+                uuid.uuid4().hex, provider, body.max_r2_candidates,
+                max_cost_usd=body.max_cost_usd,
+            )
+            if not triage_preview.get("eligible"):
+                raise ValueError("automatic triage cannot be authorized: " + triage_preview.get("reason", "provider unavailable"))
+        result = {
+            **plan,
+            "audit_mode": body.audit_mode,
+            "workflow_sha256": workflow_sha256,
+            "workflow": service.audit_workflow_summary(
+                body.audit_mode, body.auto_triage, body.max_triage_candidates,
+                body.max_r2_candidates, body.max_cost_usd),
+        }
+        if triage_preview is not None:
+            result["triage_authorization_preview"] = triage_preview
+        return result
 
     @app.post("/api/v1/scans", status_code=201)
     def scan(body: ScanInput):
+        if body.max_r2_candidates > body.max_triage_candidates:
+            raise ValueError("conditional R2 candidate budget cannot exceed the R1 candidate budget")
+        if body.max_r2_candidates and not body.auto_triage:
+            raise ValueError("conditional R2 requires task-level automatic triage authorization")
+        if body.auto_triage and body.max_cost_usd is None:
+            raise ValueError("任务级自动研判需要设置大于零的 USD 费用上限。")
         repo = store.repository(body.repository_id)
         service.check_repository(settings, repo["path"])
         spec = service.make_spec(
@@ -226,6 +328,37 @@ def create_app(settings=None):
         )
         if body.expected_plan_sha256 and body.expected_plan_sha256 != spec["plan_sha256"]:
             raise ValueError("Source or rule plan changed since preview; refresh the plan before scanning")
+        workflow_sha256 = service.audit_workflow_sha256(
+            spec["plan_sha256"], body.audit_mode, body.auto_triage,
+            body.max_triage_candidates, body.max_r2_candidates,
+            body.max_cost_usd)
+        if body.expected_workflow_sha256 and body.expected_workflow_sha256 != workflow_sha256:
+            raise ValueError("Audit workflow changed since preview; refresh the plan before scanning")
+        spec["audit_mode"] = body.audit_mode
+        spec["max_r2_candidates"] = body.max_r2_candidates
+        spec["max_cost_usd"] = body.max_cost_usd if body.auto_triage else None
+        spec["workflow_sha256"] = workflow_sha256
+        if body.auto_triage:
+            if body.audit_mode != "standard_review":
+                raise ValueError("automatic triage is only available in standard review mode")
+            if not body.expected_triage_consent_sha256 or not body.triage_consent_nonce:
+                raise ValueError("task-level model source egress preview and explicit authorization are required")
+            from .agent import ProviderConfig, audit_task_consent_preview
+            provider = ProviderConfig.from_env(settings.data_dir)
+            preview = audit_task_consent_preview(
+                spec["audit_plan"], workflow_sha256, body.include_paths,
+                body.max_triage_candidates, body.triage_consent_nonce, provider,
+                body.max_r2_candidates, max_cost_usd=body.max_cost_usd,
+            )
+            if preview["consent_sha256"] != body.expected_triage_consent_sha256:
+                raise ValueError("task-level source egress preview expired; provider, source, scope, policy or budget changed")
+            spec["triage_authorization"] = {
+                "authorized": True,
+                "consent_sha256": preview["consent_sha256"],
+                "snapshot": preview["manifest"],
+            }
+        elif body.expected_triage_consent_sha256 or body.triage_consent_nonce:
+            raise ValueError("triage consent cannot be submitted unless automatic triage was selected")
         return store.create_job(repo["id"], spec)
 
     @app.get("/api/v1/scans/{key}")
@@ -234,7 +367,14 @@ def create_app(settings=None):
 
     @app.post("/api/v1/scans/{key}/cancel")
     def cancel(key: str):
-        return store.cancel(key)
+        before = store.job(key)
+        job = store.cancel(key)
+        # Cancelling an audit stops its static worker and any task-bound model work.
+        app.state.operations.cancel_triage_for_job(
+            key, before.get("report_sha256"),
+            force=before["status"] not in TERMINAL,
+        )
+        return job
 
     @app.post("/api/v1/scans/{key}/retry", status_code=201)
     def retry(key: str):
@@ -254,6 +394,9 @@ def create_app(settings=None):
             old["memory_mb"],
         )
         spec["retry_of"] = key
+        audit_mode = old.get("audit_mode", "static_only")
+        spec["audit_mode"] = audit_mode
+        spec["workflow_sha256"] = service.audit_workflow_sha256(spec["plan_sha256"], audit_mode)
         return store.create_job(repo["id"], spec)
 
     @app.get("/api/v1/scans/{key}/events")
@@ -330,9 +473,23 @@ def create_app(settings=None):
         job = store.job(key)
         report = service.read_report(settings, job)
         item = service.finding(report, identity)
+        try:
+            source = service.source(settings, store, job, item["file"])
+        except (ValueError, KeyError, OSError, subprocess.SubprocessError, UnicodeError):
+            source = None
+            source_status = "unavailable"
+            source_limitation = (
+                "固定报告中的候选和证据义务仍可查看，但原仓库源码当前无法从已批准的本地源码根目录重新读取。"
+                "请到“系统设置 → 仓库与源码管理”检查源码根目录和登记状态；恢复访问前，源码复核与模型研判保持未知。"
+            )
+        else:
+            source_status = "available"
+            source_limitation = None
         return {
             **item,
-            "source": service.source(settings, store, job, item["file"]),
+            "source": source,
+            "source_status": source_status,
+            "source_limitation": source_limitation,
             "reviews": store.reviews(key, identity),
             "supplemental_evidence": store.source_evidence(key, identity),
             "binding": {

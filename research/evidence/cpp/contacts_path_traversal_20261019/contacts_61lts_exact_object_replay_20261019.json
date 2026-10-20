@@ -1,0 +1,54 @@
+{
+  "source_path": "git-object:b02aadfc2d801ee30573fcb2d13490298e146fea:dataBusiness/contacts/src/contacts_data_ability.cpp",
+  "source_bytes": 80944,
+  "git_object_identity": {
+    "commit": "b02aadfc2d801ee30573fcb2d13490298e146fea",
+    "tree": "ef183625ccbc842f47b076eb75e68b665d7c21c6",
+    "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+    "blob": "32c6a26a9a6c1f4ec3172f45bc3dbe4d3668abe6"
+  },
+  "source_sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383",
+  "parse_status": "complete",
+  "parser": "src.parser.ast.parse_source",
+  "parse_issue_count": 0,
+  "detector_id": "ohscanner.cpp.path_traversal",
+  "detector_version": "0.3.0",
+  "run_status": "completed",
+  "file_outcomes": {
+    "dataBusiness/contacts/src/contacts_data_ability.cpp": "complete"
+  },
+  "elapsed_seconds": 0.17509900000004563,
+  "findings": [
+    {
+      "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "line": 789,
+      "column": 19,
+      "rule_id": "ohcpp-path-traversal-source-to-file-sink-candidate-001",
+      "rule_version": "0.3.0",
+      "symbol": "HandleContactPortrait",
+      "source_sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383",
+      "identity_quality": "complete"
+    },
+    {
+      "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "line": 790,
+      "column": 19,
+      "rule_id": "ohcpp-path-traversal-source-to-file-sink-candidate-001",
+      "rule_version": "0.3.0",
+      "symbol": "HandleContactPortrait",
+      "source_sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383",
+      "identity_quality": "complete"
+    },
+    {
+      "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "line": 794,
+      "column": 15,
+      "rule_id": "ohcpp-path-traversal-source-to-file-sink-candidate-001",
+      "rule_version": "0.3.0",
+      "symbol": "HandleContactPortrait",
+      "source_sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383",
+      "identity_quality": "complete"
+    }
+  ],
+  "limitations": []
+}

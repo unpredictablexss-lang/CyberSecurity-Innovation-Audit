@@ -1,6 +1,8 @@
 """M1: offline Git object index, AST coverage and source identity regression tests."""
 
 import json
+import io
+import tarfile
 from pathlib import Path
 import subprocess
 import sys
@@ -12,6 +14,7 @@ from src.ohscanner.contracts import ScanRequest
 from src.ohscanner.frontend import index_sources
 from src.ohscanner.git_source import load_git_sources
 from src.ohscanner.indexing import prepare_git_context, run_git_index
+from src.ohscanner.planning import plan_context
 from src.ohscanner.mocks import MockCppDetector
 from src.ohscanner.runner import DetectorRegistry, run_all, run_all_with_coverage
 
@@ -275,6 +278,57 @@ class GitObjectIndexTests(unittest.TestCase):
         )
         self.assertIn(units[0].parse_status, ("partial", "failed"))
         self.assertNotEqual(coverage["parsing_status"], {"complete": 1})
+
+    def test_tracked_tar_gz_members_are_indexed_and_bound_to_archive(self):
+        payload = b"int png_decode(void) { png_read_end(png_ptr, info_ptr); return 0; }\n"
+        archive_path = self.repo / "vendor" / "libpng.tar.gz"
+        archive_path.parent.mkdir()
+        with tarfile.open(archive_path, "w:gz") as tar:
+            info = tarfile.TarInfo("libpng/png.c")
+            info.size = len(payload)
+            tar.addfile(info, io.BytesIO(payload))
+            readme = b"release notes\n"
+            info = tarfile.TarInfo("libpng/README.md")
+            info.size = len(readme)
+            tar.addfile(info, io.BytesIO(readme))
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-qm", "add source archive")
+        commit = git(self.repo, "rev-parse", "HEAD")
+        context, tree, inventory, _, sources = prepare_git_context(
+            self.repo, "fixture/archive-sample", commit, ("vendor/libpng.tar.gz",)
+        )
+        source = next(item for item in sources if item.archive_binding)
+        self.assertEqual(source.path, "vendor/libpng.tar.gz.members/libpng/png.c")
+        self.assertEqual(source.data, payload)
+        self.assertEqual(source.archive_binding["archive_path"], "vendor/libpng.tar.gz")
+        self.assertEqual(source.archive_binding["member_path"], "libpng/png.c")
+        self.assertEqual(source.archive_binding["member_sha256"], context.units[0].sha256)
+        self.assertEqual(inventory["source_archives"][0]["selected_sources"], 1)
+        manifest = __import__("src.workbench.sources", fromlist=["manifest_from_context"]).manifest_from_context(
+            context, tree, inventory, sources
+        )
+        self.assertIsNone(manifest.files[0].blob_oid)
+        self.assertEqual(manifest.files[0].archive_binding["archive_path"], "vendor/libpng.tar.gz")
+
+    def test_invalid_tracked_archive_is_partial_not_a_false_clean_result(self):
+        from src.ohscanner.git_source import _archive_member_sources
+        selected, inventory = _archive_member_sources("bad.tar.gz", "b" * 40, b"not a gzip tar")
+        self.assertEqual(selected, ())
+        self.assertEqual(inventory["status"], "partial")
+        self.assertTrue(inventory["limitations"])
+
+    def test_archive_member_limits_are_fail_closed(self):
+        from src.ohscanner.git_source import _archive_member_sources
+        payload = b"x" * (1024 * 1024 + 1)
+        buffer = io.BytesIO()
+        with tarfile.open(fileobj=buffer, mode="w:gz") as tar:
+            info = tarfile.TarInfo("large.c")
+            info.size = len(payload)
+            tar.addfile(info, io.BytesIO(payload))
+        selected, inventory = _archive_member_sources("large.tar.gz", "a" * 40, buffer.getvalue())
+        self.assertEqual(selected, ())
+        self.assertEqual(inventory["oversize"], 1)
+        self.assertEqual(inventory["skipped"][0]["reason"], "oversize")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,0 @@
-# Run from D:\openHarmonyScanner\CyberSecurity-Innovation-Audit in PowerShell.
-
-# Exact-source replay; verifies pinned source blob IDs/SHA-256 and current model/Detector hashes.
-python research\experiments\ark-runtime-exception-guard-20261018\replay_guard_fix.py
-
-# Focused regression suite for exact parent/fix and safe/unrelated controls.
-python -m unittest research.tests.test_ark_runtime_exception_guard -v
