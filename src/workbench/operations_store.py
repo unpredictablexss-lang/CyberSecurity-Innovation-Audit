@@ -724,10 +724,29 @@ class Operations:
             raise ValueError("invalid scan operation")
         key = uuid.uuid4().hex
         job_ids = [uuid.uuid4().hex for _ in scan_specs]
+        # An HTTP retry with the same reviewed endpoint consents must not schedule
+        # duplicate Provider calls; a fresh preview nonce is a deliberate new run.
+        authorized = [item.get("triage_authorization", {}) for item in scan_specs]
+        consent_key = None
+        if all(a.get("authorized") is True for a in authorized):
+            binding = {"kind": kind, "repository_id": repository_id,
+                       "endpoints": [{"plan_sha256": item.get("plan_sha256"),
+                                      "consent_sha256": auth["consent_sha256"]}
+                                     for item, auth in zip(scan_specs, authorized)]}
+            consent_key = hashlib.sha256(
+                json.dumps(binding, sort_keys=True, separators=(",", ":")).encode()
+            ).hexdigest()
         spec = {**spec, "scan_ids": job_ids}
+        if consent_key:
+            spec["operation_consent_group_sha256"] = consent_key
         stamp = now()
         with self.store.connect() as db:
             db.execute("BEGIN IMMEDIATE")
+            if consent_key:
+                for prior in db.execute("SELECT * FROM operations WHERE kind=?", (kind,)):
+                    previous = json.loads(prior["spec"])
+                    if previous.get("operation_consent_group_sha256") == consent_key:
+                        return self.row(prior)
             if db.execute("SELECT 1 FROM repositories WHERE id=?", (repository_id,)).fetchone() is None:
                 raise KeyError("repository not found")
             if db.execute("SELECT count(*) FROM operations WHERE status IN ('queued','running')").fetchone()[0] >= 100:
