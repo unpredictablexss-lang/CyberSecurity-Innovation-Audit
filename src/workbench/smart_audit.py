@@ -15,8 +15,13 @@ def _digest(value):
 
 
 def _severity(candidate):
+    # Use the *same* tentative tier that the risk API displays. The scanner
+    # currently emits severity='unassessed'; otherwise AI routing would ignore
+    # a CWE-based high-risk label shown in the UI.
+    # This changes scheduling priority only, not confidence/verification.
+    value = severity_metadata(candidate)["severity"]
     return {"critical": 5, "high": 4, "medium": 3, "low": 2, "info": 1}.get(
-        str(candidate.get("severity", "")).lower(), 0
+        value, 0
     )
 
 
