@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "D92_T91_IN_PROGRESS",
+  "status": "D92_T91_COMPLETED_NEXT_QUEUE_READY",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -331,26 +331,34 @@
       "id": "D92",
       "kind": "development",
       "title": "绑定CERT_PRIVATE_KEY的key属性名而保留取值路径",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
       "input": "D90/T89 exact certificate source shows CERT_PRIVATE_KEY.c_str() at napi_cert_utils.cpp:298 in argument 2 of napi_get_named_property; fixed header declares CERT_PRIVATE_KEY=\"key\". Current property key proof explicitly accepts only CERT_PASSWORD=\"password\", leaving line298 as heuristic source.",
-      "completion": "Narrowly prove the exact immutable CERT_PRIVATE_KEY literal is a property-name operand at the exact API argument position; actual napi_get_named_property output and subsequent private-key material stay candidates. Do not generalize all constant strings; same-name shadow, changed value, altered call position, wrapper and missing/partial-header controls retain candidates. Replay exact T85 direct/Runner and full IDs/coverage/source positions.",
+      "completion": "Narrow immutable symbol/literal/property-read arg2 proof only; output value propagation fixed; T91 independent controls and fixed-source replayer agree; unknown/API/body/partial controls remain candidate.",
       "tests": [
         "T91"
-      ]
+      ],
+      "commit": "0420a3905b1558e1d1251ac11e5e2034e6c3e45d",
+      "evidence_commit": "e44449b14d3eb0f8e0bc08a721aee983284e896e",
+      "integration_commit": "5fc06ba65",
+      "final_evidence_integration": "f37240e51",
+      "validation": "0.21.8; exact CERT_PRIVATE_KEY=\"key\" property-name candidate removed; get output3 source adds 8 downstream unknown candidates; strict T85 direct/Runner19→26; shared18 legacy findings unchanged; 638 source call facts/3 partial coverage unchanged; developer8 + owner data213 + compatibility61 pass"
     },
     {
       "id": "T91",
       "kind": "testing",
       "title": "独立挑战private-key schema键与真实密钥材料边界",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
       "feedback_to": [
         "D92"
       ],
-      "completion": "Independently verify fixed source and declaration identity at e270; challenge exact argument-2 schema-key exclusion versus output argument/source extraction, renamed/same-name value/shadow, altered constant, custom wrapper, partial header; direct/Runner fixed-src replayer and repair feedback."
+      "completion": "Independent fixed-archive replay verified exact key role, retained real private-key output and eight downstream flows; no false suppression found.",
+      "commit": "55df3dbaf821a38813d1e40c6efcfd262655e395",
+      "integration_commit": "e65d43a72",
+      "validation": "Independent12 methods, baseline8 subtest failures→0; data213; exact T85 direct+Runner19→26, only298 removed plus8 output3 descendants added; common18 identities/messages/evidence and638 call facts unchanged; coverage3 partial"
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",

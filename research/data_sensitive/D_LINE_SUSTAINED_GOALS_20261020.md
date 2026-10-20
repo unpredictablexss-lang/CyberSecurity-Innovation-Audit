@@ -32,4 +32,4 @@
 
 截至本次更新，D89/T88、D90/T89、D91/T90均已完成并集成。D89固定三文件direct/Runner仅移除第349行schema-key候选；D90修复函数指针/局部callable遮蔽漏报而不放宽cleanup候选；D91/T90核验N-API一般语义但确认无法证明与证书构建绑定，185类型查询、192长度查询及208字节提取仍保留unknown。D91/T90合并16项和负责人完整data193项通过，严格三文件仍19 direct/19 Runner。当前D92/T91围绕CERT_PRIVATE_KEY="key"的精确property-name参数绑定与真实key输出边界并行执行。权威状态见任务树，结构化提示词见并行计划。
 
-D90/T89闭环见[D线第6轮报告](D_LINE_ROUND6_SUMMARY_20261020.md)：不新增清理豁免，修复两类同名callable遮蔽漏报；原三文件仍19/19、附加七文件20 direct/18 Runner不变。D91/T90闭环见[D线第7轮报告](D_LINE_ROUND7_SUMMARY_20261020.md)：API一般契约与绑定证明分开；证书构建缺跨仓库版本关联，napi_typeof及相邻查询/提取流继续unknown。当前队列：D92/T91仅审查第298行 `CERT_PRIVATE_KEY="key"` 在精确NAPI property-read参数角色中的候选误报，实际输出材料必须保留。
+D90/T89闭环见[D线第6轮报告](D_LINE_ROUND6_SUMMARY_20261020.md)：不新增清理豁免，修复两类同名callable遮蔽漏报；原三文件仍19/19、附加七文件20 direct/18 Runner不变。D91/T90闭环见[D线第7轮报告](D_LINE_ROUND7_SUMMARY_20261020.md)：API一般契约与绑定证明分开；证书构建缺跨仓库版本关联，napi_typeof及相邻查询/提取流继续unknown。D92/T91闭环见[D线第8轮报告](D_LINE_ROUND8_SUMMARY_20261020.md)：仅排除第298行精确schema-key输入，同时修复此前中性输出名漏掉的private-key-property材料流，direct/Runner由19增至26；新增8条是需后续审查的unknown路径，不等同确认漏洞。下一轮应优先复核这些新增source→sink trace与剩余API边界，从最具体的可证失败继续。
