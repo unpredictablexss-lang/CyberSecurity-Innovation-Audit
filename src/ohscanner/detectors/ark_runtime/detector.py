@@ -27,13 +27,18 @@ class ArkRuntimeTypeSafetyDetector:
 
     def select_applicable_units(self, context, units):
         if context.request.repository != self.model.source_repository:
-            return ()
+            # Preserve the detector's prior language-scoped behavior outside
+            # the exact-source model; those files are recorded not_analyzed.
+            return tuple(units)
         paths = {row[1] for row in (
             self.model.target_bindings + self.model.exception_guard_bindings
             + self.model.receiver_guard_bindings + self.model.size_overflow_bindings
             + self.model.length_narrowing_bindings + self.model.index_bounds_bindings
             + self.model.native_exception_bindings)}
-        return tuple(unit for unit in units if unit.path in paths)
+        selected = tuple(unit for unit in units if unit.path in paths)
+        # Preserve legacy language-scoped coverage when no modeled target is
+        # present; helper-only scans must not silently become not_applicable.
+        return selected or tuple(units)
 
     def __init__(self, model=None, budget=None):
         self.model = model or RuntimeTypeModel()
@@ -106,6 +111,17 @@ class ArkRuntimeTypeSafetyDetector:
                 outcomes.append((unit.path, 'not_analyzed'))
                 limitations.append(unit.path + ': ' + dependency_error)
                 continue
+            index_width_evidence = None
+            if index_binding is not None:
+                evidence_rows = tuple(row for row in self.model.index_bounds_dependencies
+                                      if row[0] == context.request.commit)
+                if evidence_rows:
+                    evidence_errors = tuple(self._dependency_error(context, path, blob)
+                                            for _, path, blob, _ in evidence_rows)
+                    if not any(evidence_errors):
+                        index_width_evidence = '\n'.join(
+                            next(item.text for item in context.units if item.path == path)
+                            for _, path, _, _ in evidence_rows)
             raw = unit.text.encode('utf-8')
             git_blob = sha1(b'blob ' + str(len(raw)).encode('ascii') + bytes((0,)) + raw).hexdigest()
             if (context.request.provenance != 'git_object' or context.request.profile_id != 'light-ast'
@@ -135,7 +151,7 @@ class ArkRuntimeTypeSafetyDetector:
                 elif rule_id == LENGTH_NARROWING_RULE_ID:
                     result = length_narrowing_result(unit, self.model.digest)
                 elif rule_id == INDEX_BOUNDS_RULE_ID:
-                    result = index_bounds_result(unit, self.model.digest)
+                    result = index_bounds_result(unit, self.model.digest, index_width_evidence)
                 elif rule_id == NATIVE_EXCEPTION_RULE_ID:
                     result = analyze_native_inline_exception_propagation(unit)
                 elif rule_id == EXCEPTION_GUARD_RULE_ID:

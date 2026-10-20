@@ -678,8 +678,40 @@ def analyze_index_bounds_flows(source):
     return tuple(candidates), tuple(sorted(set(limitations)))
 
 
-def index_bounds_result(unit, model_digest):
+def _dataview_width_evidence_is_bounded(source, evidence):
+    """Check the small helper facts needed to rule out this u32 wrap path."""
+    if not evidence:
+        return False
+    if not re.search(
+            r'uint32_t\s+JSDataView::GetElementSize\s*\([^)]*\)\s*\{[\s\S]*?'
+            r'case\s+DataViewType::INT8:[\s\S]*?size\s*=\s*1;[\s\S]*?'
+            r'size\s*=\s*2;[\s\S]*?size\s*=\s*4;[\s\S]*?size\s*=\s*8;[\s\S]*?'
+            r'return\s+size;[\s\S]*?\}', evidence):
+        return False
+    if not re.search(
+            r'int32_t\s+NumberHelper::DoubleInRangeInt32\s*\(\s*double\s+\w+\s*\)\s*\{'
+            r'[\s\S]*?return\s+INT_MAX;[\s\S]*?return\s+INT_MIN;[\s\S]*?'
+            r'return\s+base::NumberHelper::DoubleToInt\s*\(', evidence):
+        return False
+    # Only the two API functions with local negative checks and a view-end
+    # guard qualify. Do not affect Atomics or the compiler's SetTypedValue.
+    api = ('GetViewValue', 'SetViewValue')
+    return all(name in source and re.search(
+        rf'{name}[\s\S]*?if\s*\(\s*index\w*\s*<\s*0\s*\)[\s\S]*?'
+        r'if\s*\([\s\S]{0,160}elementSize\s*>\s*size\s*\)', source)
+        for name in api)
+
+
+def index_bounds_result(unit, model_digest, width_evidence=None):
     candidates, limitations = analyze_index_bounds_flows(unit.text)
+    width_proof = _dataview_width_evidence_is_bounded(unit.text, width_evidence)
+    if width_proof:
+        suppressed = tuple(item for item in candidates
+                           if any(name in item.function for name in ('GetViewValue', 'SetViewValue')))
+        candidates = tuple(item for item in candidates if item not in suppressed)
+        limitations = tuple(limitations) + tuple(
+            'dataview_u32_index_wrap_excluded_by_exact_width_bounds:' + name
+            for name in sorted({item.function.rsplit('::', 1)[-1] for item in suppressed}))
     observations = tuple(Observation(
         'candidate', item.line, item.column,
         'signed_32_bit_index_arithmetic_reaches_dataview_or_atomic_bounds_check',
@@ -691,7 +723,8 @@ def index_bounds_result(unit, model_digest):
         return AnalysisResult('limited', 'not_analyzed', (), limitations,
                               steps=0, model_digest=model_digest)
     if any(not item.startswith(('index_width_bounds_arithmetic_not_fully_proven:',
-                                'dataview_atomic_index_bounds_semantics_unmodeled:'))
+                                'dataview_atomic_index_bounds_semantics_unmodeled:',
+                                'dataview_u32_index_wrap_excluded_by_exact_width_bounds:'))
            for item in limitations):
         return AnalysisResult('failed', 'failed', observations, limitations,
                               steps=len(candidates), model_digest=model_digest)

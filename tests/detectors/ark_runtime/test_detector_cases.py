@@ -62,12 +62,12 @@ class ContractAdapterTests(unittest.TestCase):
         obligations = coverage['detectors'][DETECTOR_ID]['evidence_obligations'][0]['obligations']
         self.assertIn('parse_completeness_impact', [o['kind'] for o in obligations])
 
-    def test_mixed_scope_retains_valid_complete_file_candidate(self):
+    def test_exact_selector_excludes_unrelated_same_language_file(self):
         bad = replace(case('C04'), path='src/other.cpp', parse_status='partial')
         reports, coverage = self.run_detector((case('C03'), bad))
         self.assertEqual(reports[0].diagnostic_count, 1)
         self.assertEqual(coverage['detectors'][DETECTOR_ID]['coverage_counts'],
-                         {'complete': 1, 'partial': 0, 'not_analyzed': 1, 'failed': 0})
+                         {'complete': 1, 'partial': 0, 'not_analyzed': 0, 'failed': 0})
 
     def test_aggregate_limited_does_not_discard_valid_local_candidate(self):
         code = wrap(PREFIX + 'Label good(GetEnvironment());\nLabel other(GetEnvironment());\n'

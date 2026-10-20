@@ -160,6 +160,20 @@ class RuntimeTypeModel:
          'dce9388e8b7e33c87aec33ac4d067fe40370561b',
          '89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386'),
     )
+    index_bounds_dependencies: tuple = (
+        ('d62f6de64daa7e11a7936a6153748a7c5fae9e41', 'ecmascript/js_dataview.cpp',
+         '5057a103a88096b5db0e39be0feca2864a2ff8eb',
+         '3782d04ee5c44504bf453b3b45f96d7431ff902fb575257c425c707890b83243'),
+        ('d62f6de64daa7e11a7936a6153748a7c5fae9e41', 'ecmascript/base/number_helper.cpp',
+         'a648bf6cf36715d57c6466f0ab4bfdc00bdc8f35',
+         '94db5ecc8ff7ea79d656950abacd9c24756ccf6aa0e3b2b895d7dc9961dbc91f'),
+        ('48fcec3686e45175f95b4600b579026a65149966', 'ecmascript/js_dataview.cpp',
+         '5057a103a88096b5db0e39be0feca2864a2ff8eb',
+         '3782d04ee5c44504bf453b3b45f96d7431ff902fb575257c425c707890b83243'),
+        ('48fcec3686e45175f95b4600b579026a65149966', 'ecmascript/base/number_helper.cpp',
+         'a648bf6cf36715d57c6466f0ab4bfdc00bdc8f35',
+         '94db5ecc8ff7ea79d656950abacd9c24756ccf6aa0e3b2b895d7dc9961dbc91f'),
+    )
     native_exception_bindings: tuple = (
         ('3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724',
          'ecmascript/compiler/native_inline_lowering.cpp',
@@ -287,6 +301,7 @@ class RuntimeTypeModel:
         + tuple((revision, path, blob) for revision, path, blob, _ in self.size_overflow_bindings)
         + tuple((revision, path, blob) for revision, path, blob, _ in self.length_narrowing_bindings)
         + tuple((revision, path, blob) for revision, path, blob, _ in self.index_bounds_bindings)
+        + tuple((revision, path, blob) for revision, path, blob, _ in self.index_bounds_dependencies)
         + tuple((revision, path, blob) for revision, path, blob, _ in self.native_exception_bindings)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.api_overload_evidence)
                 + tuple((self.effect_summary_revision, path, blob) for path, blob in self.source_dependencies)

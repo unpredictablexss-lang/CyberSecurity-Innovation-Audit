@@ -1,0 +1,169 @@
+{
+  "limitations": [
+    "Candidate/zero-finding output is not a vulnerability/safety verdict.",
+    "Partial detector model coverage remains unknown.",
+    "No generated IR, runtime, product, or exploitability validation is performed."
+  ],
+  "method": "exact Git blobs -> complete AST -> git_object/light-ast ScanContext -> registered Ark Runtime detector via run_all_with_coverage",
+  "path": "ecmascript/builtins/builtins_dataview.cpp",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "results": [
+    {
+      "analyzed_files": [],
+      "applicable_files": 1,
+      "blob": "e6bac984354292405ae62f7728170d7be5e3760e",
+      "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+      "coverage_status": "partial",
+      "dependencies_supplied": false,
+      "detector_status": "blocked",
+      "diagnostics": [
+        {
+          "line": 394,
+          "rule_id": "ark.runtime.dataview-index-width-bounds",
+          "source_sha256": "bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c"
+        },
+        {
+          "line": 455,
+          "rule_id": "ark.runtime.dataview-index-width-bounds",
+          "source_sha256": "bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c"
+        }
+      ],
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/builtins/builtins_dataview.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::DataViewConstructor",
+        "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+        "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+        "Diagnostic does not establish vulnerability, reachability or security impact.",
+        "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+        "Coverage incomplete or unsupported; do not infer safety."
+      ],
+      "parse_issue_count": 0,
+      "parse_status": "complete",
+      "partially_inspected_files": [
+        "ecmascript/builtins/builtins_dataview.cpp"
+      ],
+      "role": "parent",
+      "sha256": "bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c",
+      "tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+      "unexamined": [
+        {
+          "analysis_status": "partial",
+          "file": "ecmascript/builtins/builtins_dataview.cpp",
+          "parse_status": "complete",
+          "reason": "detector_model_incomplete"
+        }
+      ]
+    },
+    {
+      "analyzed_files": [],
+      "applicable_files": 1,
+      "blob": "e6bac984354292405ae62f7728170d7be5e3760e",
+      "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+      "coverage_status": "partial",
+      "dependencies_supplied": true,
+      "detector_status": "blocked",
+      "diagnostics": [],
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/builtins/builtins_dataview.cpp: dataview_u32_index_wrap_excluded_by_exact_width_bounds:GetViewValue",
+        "ecmascript/builtins/builtins_dataview.cpp: dataview_u32_index_wrap_excluded_by_exact_width_bounds:SetViewValue",
+        "ecmascript/builtins/builtins_dataview.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::DataViewConstructor",
+        "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+        "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+        "Diagnostic does not establish vulnerability, reachability or security impact.",
+        "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+        "Coverage incomplete or unsupported; do not infer safety."
+      ],
+      "parse_issue_count": 0,
+      "parse_status": "complete",
+      "partially_inspected_files": [
+        "ecmascript/builtins/builtins_dataview.cpp"
+      ],
+      "role": "parent",
+      "sha256": "bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c",
+      "tree": "a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1",
+      "unexamined": [
+        {
+          "analysis_status": "partial",
+          "file": "ecmascript/builtins/builtins_dataview.cpp",
+          "parse_status": "complete",
+          "reason": "detector_model_incomplete"
+        }
+      ]
+    },
+    {
+      "analyzed_files": [],
+      "applicable_files": 1,
+      "blob": "a2376e822e995333b2400520ca5b882de9578b5e",
+      "commit": "48fcec3686e45175f95b4600b579026a65149966",
+      "coverage_status": "partial",
+      "dependencies_supplied": false,
+      "detector_status": "blocked",
+      "diagnostics": [],
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/builtins/builtins_dataview.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::DataViewConstructor",
+        "ecmascript/builtins/builtins_dataview.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::GetViewValue",
+        "ecmascript/builtins/builtins_dataview.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::SetViewValue",
+        "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+        "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+        "Diagnostic does not establish vulnerability, reachability or security impact.",
+        "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+        "Coverage incomplete or unsupported; do not infer safety."
+      ],
+      "parse_issue_count": 0,
+      "parse_status": "complete",
+      "partially_inspected_files": [
+        "ecmascript/builtins/builtins_dataview.cpp"
+      ],
+      "role": "fixed",
+      "sha256": "39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b",
+      "tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+      "unexamined": [
+        {
+          "analysis_status": "partial",
+          "file": "ecmascript/builtins/builtins_dataview.cpp",
+          "parse_status": "complete",
+          "reason": "detector_model_incomplete"
+        }
+      ]
+    },
+    {
+      "analyzed_files": [],
+      "applicable_files": 1,
+      "blob": "a2376e822e995333b2400520ca5b882de9578b5e",
+      "commit": "48fcec3686e45175f95b4600b579026a65149966",
+      "coverage_status": "partial",
+      "dependencies_supplied": true,
+      "detector_status": "blocked",
+      "diagnostics": [],
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/builtins/builtins_dataview.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::DataViewConstructor",
+        "ecmascript/builtins/builtins_dataview.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::GetViewValue",
+        "ecmascript/builtins/builtins_dataview.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::SetViewValue",
+        "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+        "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+        "Diagnostic does not establish vulnerability, reachability or security impact.",
+        "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+        "Coverage incomplete or unsupported; do not infer safety."
+      ],
+      "parse_issue_count": 0,
+      "parse_status": "complete",
+      "partially_inspected_files": [
+        "ecmascript/builtins/builtins_dataview.cpp"
+      ],
+      "role": "fixed",
+      "sha256": "39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b",
+      "tree": "6ff7f405071d29fc3ecf9bac1abd9d59a485909f",
+      "unexamined": [
+        {
+          "analysis_status": "partial",
+          "file": "ecmascript/builtins/builtins_dataview.cpp",
+          "parse_status": "complete",
+          "reason": "detector_model_incomplete"
+        }
+      ]
+    }
+  ]
+}
