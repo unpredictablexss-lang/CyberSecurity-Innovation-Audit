@@ -1,0 +1,447 @@
+# OHScanner M2 reviewed-detector execution
+
+> Detection candidates and coverage limitations, NOT validated vulnerabilities.
+
+- Source repository (declared): `openharmony/multimedia_histreamer`
+- Pinned commit: `847aafa3dc32bcf92eb8a2d2277b8d34bff98362`
+- Git tree: `6b0d47808cbb711a343c8817f262ec7cde87bf0b`
+- Snapshot SHA-256: `9583e43690522343d20bdd130e13ed6bcc05e0c752bad51ae37a35a90df982e7`
+- Source files indexed: 576
+- Parsing coverage: `{"complete": 345, "partial": 231}`
+- Detector runs: 1
+- Total unverified diagnostics: 0
+- Validated vulnerabilities: **0** (no runtime verification performed)
+
+## Per-detector results
+
+| Detector | Execution | Inspected files | Complete | Partial | Not analyzed | Diagnostics | Coverage |
+|---|---|---:|---:|---:|---:|---:|---|
+| `ohscanner.interface.ipc` | completed | 576 | 345 | 231 | 0 | 0 | partial |
+
+## Candidate evidence and missing proof
+
+| Detector | Candidate ID | File:line | Rule | Unverified proof obligations |
+|---|---|---|---|---|
+| — | — | — | — | No reported candidate; NOT proof of safety |
+
+## Coverage gaps
+
+Scope counts source inspection, not complete semantic coverage; partial remains unknown.
+Files without a claiming detector: 0
+- `ohscanner.interface.ipc`: partial, 345/576 applicable files examined; unexamined=231
+
+## Limitations
+
+- Diagnostics are candidates/evidence only, not proof of security impact.
+- Zero diagnostics does NOT mean the component is free of vulnerabilities.
+- Git origin name is user declared; source is pinned local objects, not an OH product build.
+- No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.
+- `ohscanner.interface.ipc`: Model=oh-ipc-2026.10-v32; first-party bounded structured syntax interpretation, no external scanner execution.
+- `ohscanner.interface.ipc`: Private branch pass reconstructs Tree-sitter nodes; public shared facts/schema are unchanged.
+- `ohscanner.interface.ipc`: No compiler CFG, arbitrary virtual dispatch, alias analysis or full-program authorization proof. Macros are expanded only from the scan's own sources and only when unambiguous; the catalogue is never an #include resolution, and what the expander refused is counted in the macro-expansion limitation rather than assumed away.
+- `ohscanner.interface.ipc`: Unmodeled callees/authorization remain evidence obligations; no findings does not establish safety.
+- `ohscanner.interface.ipc`: Interface-descriptor identity is read from the class's own base clause: a comparison is counted as this transaction's guard only when the source names the interface the class implements. A comparison against another interface, or one whose identity the analysed sources do not state, is reported with that reason instead of counting as a guard or as a proven mismatch.
+- `ohscanner.interface.ipc`: Descriptor consistency is separate from caller authorization; relay candidates are not exploit proofs.
+- `ohscanner.interface.ipc`: IPC roots require a source-indexed class dispatcher with code, request Parcel and reply Parcel; explicit service/transport roots and Stub inner helpers are separate allowlisted entry kinds. Test/fuzz/mock path roots are excluded from product candidate analysis and counted in limitations. Entry discovery is not reachability: dispatcher-level guards and macro-conditional reachability remain obligations, not conclusions.
+- `ohscanner.interface.ipc`: Entry-coverage measurements are published in the interface research report, not in this result.
+- `ohscanner.interface.ipc`: Cross-service boundary coverage: 0 call(s) on a handle built by iface_cast<> in the scanned sources, 0 carrying the original caller's identity (SetCallingIdentity with a calling-token value active), 0 executing as the service. Each boundary is recorded with the identity that crossed it; no candidate is emitted from the boundary itself, and a downstream service's own guards are not read from this corpus.
+- `ohscanner.interface.ipc`: Entry/dispatch coverage: 1 dispatcher(s) (1 in stub classes, 0 with a recognizable guard before dispatch), 9 binding(s) by grade {'source_dispatch': 9}, transactions {'dynamic': 9}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe.
+- `ohscanner.interface.ipc`: Macro catalogue truncated at 400 source(s): a macro defined only in a file that was not catalogued stays unexpanded, and a guard inside it is not seen.
+- `ohscanner.interface.ipc`: Macro expansion: 1959 invocation(s) expanded in 157 file(s), 49 of them carrying control flow; 22 file(s) left unexpanded (ambiguous_definition_variants=106,conditional_definition_requires_build_profile=7444,expansion_worsened_the_parse=3,source_local_undef_not_supported=19,variadic_stringify_or_token_paste=1762). The catalogue is the scan's own sources, never #include; where a macro was expanded, quoted conditions come from the expanded form while a finding's line is mapped back to the original file.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AVBufferQueueProducerStub::DetachBuffer; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AVBufferQueueProducerStub::PushBuffer; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AVBufferQueueProducerStub::ReturnBuffer; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/foundation/osal/filesystem/file_system.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/foundation/osal/thread/condition_variable.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/foundation/osal/thread/mutex.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/foundation/osal/thread/task.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/foundation/osal/thread/thread.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/foundation/utils/dump_buffer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/include/foundation/cpp_ext/memory_ext.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/include/foundation/log.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/include/foundation/osal/base/synchronizer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/include/foundation/utils/blocking_queue.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/include/foundation/utils/buffer_pool.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/include/foundation/utils/ring_buffer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/include/pipeline/core/error_code.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/include/plugin/common/any.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/include/plugin/common/plugin_attr_desc.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/include/plugin/common/plugin_memory.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/include/plugin/common/plugin_meta.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/include/plugin/convert/ffmpeg_convert.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/core/compatible_check.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/core/filter_base.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/core/media_sync_manager.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/core/pipeline_core.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/core/port.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/codec/async_mode.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/codec/audio_decoder/audio_decoder_filter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/codec/audio_encoder/audio_encoder_filter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/codec/codec_filter_base.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/codec/codec_mode.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/codec/sync_mode.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/codec/video_decoder/video_decoder_filter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/codec/video_encoder/video_encoder_filter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/common/plugin_settings.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/common/plugin_utils.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/demux/data_packer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/demux/demuxer_filter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/demux/type_finder.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/muxer/muxer_filter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/sink/audio_sink/audio_sink_filter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/sink/output_sink/output_sink_filter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/sink/video_sink/video_sink_filter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/source/audio_capture/audio_capture_filter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/source/media_source/media_source_filter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/pipeline/filters/source/video_capture/video_capture_filter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/common/share_memory.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/common/surface_allocator.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/convert/ffmpeg_convert.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/core/audio_sink.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/core/base.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/core/codec.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/core/plugin_loader.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/core/plugin_register.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/core/plugin_wrapper.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/core/video_sink.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/codec_adapter/codec_buffer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/codec_adapter/codec_buffer_pool.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/codec_adapter/codec_cmd_executor.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/codec_adapter/codec_port.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/codec_adapter/codec_utils.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/codec_adapter/hdi_codec_adapter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/codec_adapter/hdi_codec_manager.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/demuxer/aac_demuxer/aac_demuxer_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/demuxer/minimp4_demuxer/minimp4_demuxer_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/demuxer/wav_demuxer/wav_demuxer_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/audio_decoder/audio_ffmpeg_decoder_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/audio_decoder/audio_ffmpeg_decoder_plugin.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/audio_encoder/audio_ffmpeg_encoder_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/audio_encoder/audio_ffmpeg_encoder_plugin.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/audio_encoder/ffmpeg_au_enc_config.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/audio_encoder/ffmpeg_au_enc_config.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/demuxer/ffmpeg_demuxer_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/demuxer/ffmpeg_demuxer_plugin.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/demuxer/ffmpeg_track_meta.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/demuxer/ffmpeg_track_meta.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/muxer/ffmpeg_muxer_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/muxer/ffmpeg_muxer_plugin.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/utils/aac_audio_config_parser.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/utils/avc_config_data_parser.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/utils/ffmpeg_codec_map.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/utils/ffmpeg_utils.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/utils/ffmpeg_utils.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/video_decoder/video_ffmpeg_decoder_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/video_decoder/video_ffmpeg_decoder_plugin.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/video_encoder/ffmpeg_vid_enc_config.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/video_encoder/ffmpeg_vid_enc_config.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/video_encoder/video_ffmpeg_encoder_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/ffmpeg_adapter/video_encoder/video_ffmpeg_encoder_plugin.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/hdi_adapter/sink/hos_au_sink.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/lite_aac_decoder/lite_aac_decoder_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/minimp3_adapter/minimp3_decoder_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/minimp3_adapter/minimp3_demuxer_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/minimp3_adapter/minimp3_wrapper.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/sink/audio_server_sink/audio_server_sink_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/sink/file_sink/file_fd_sink_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/sink/sdl/audio_sink/sdl_audio_sink_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/sink/sdl/video_sink/sdl_video_sink_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/sink/video_surface_sink/surface_sink_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/audio_capture/audio_capture_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/file_source/file_fd_source_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/file_source/file_source_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/http_lite_source/http_lite_source_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/http_source/download/downloader.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/http_source/download/http_curl_client.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/http_source/hls/hls_media_downloader.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/http_source/hls/m3u8.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/http_source/hls/playlist_downloader.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/http_source/http/http_media_downloader.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/http_source/http_source_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/http_source/monitor/download_monitor.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/std_stream_source/std_stream_source_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/video_capture/video_capture_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/plugin/plugins/source/video_capture/video_file_capture_plugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/common/media_stat_stub.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/lite/hiplayer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/player/internal/playing_state.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/player/internal/state.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/player/internal/state_machine.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/player/internal/state_machine.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/player/lite/hiplayer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/player/lite/hiplayer_impl.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/player/standard/hiplayer_callback_looper.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/player/standard/hiplayer_impl.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/recorder/internal/recording_state.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/recorder/internal/state.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/recorder/internal/state_machine.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/recorder/internal/state_machine.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/recorder/standard/hirecorder_impl.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in engine/scene/standard/hst_engine_factory.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/histreamer/hiplayer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/inner_api/buffer/avbuffer_queue_define.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/inner_api/buffer/avbuffer_queue_producer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/inner_api/common/log.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/inner_api/cpp_ext/memory_ext.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/inner_api/meta/any.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/inner_api/meta/meta.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/inner_api/osal/task/blocking_queue.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/inner_api/osal/utils/ring_buffer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/inner_api/plugin/plugin_memory.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/kits/c/native_avbuffer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/kits/c/native_avbuffer_info.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/kits/c/native_averrors.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/kits/c/native_avformat.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interface/kits/c/native_avmemory.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/buffer/avbuffer/av_hardware_memory.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/buffer/avbuffer/av_shared_memory_ext.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/buffer/avbuffer/av_surface_memory.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/buffer/avbuffer/avmemory.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/buffer/avbuffer_queue/include/avbuffer_queue_impl.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/buffer/avbuffer_queue/include/avbuffer_queue_producer_impl.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/buffer/avsharedmemory/avsharedmemorybase.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/common/avsharedmemorypool.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/common/plugin_attr_desc.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/common/share_memory.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/common/surface_allocator.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/meta/any.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/meta/format.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/meta/meta.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/osal/base/synchronizer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/osal/filesystem/file_system.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/osal/task/ffrt/task.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/osal/task/pthread/condition_variable.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/osal/task/pthread/mutex.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/osal/task/pthread/task.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/osal/task/pthread/thread.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/osal/utils/util.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/pipeline/pipeline.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/plugin/plugin_loader.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in src/plugin/plugin_register.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/audio_player/TestFastPlayer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/audio_recorder/TestFastRecorder.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/helper/lite_stream_player.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/helper/std_audio_recorder.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_lite_stream_player.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_player_exit.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_3da_player_fast.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_audio_recorder_fast.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_audio_recorder_fast_audio_function.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_audio_recorder_fast_codec_aac.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_audio_recorder_fast_prepare.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_audio_recorder_fast_start_pause.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_audio_recorder_fast_stop_reset.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_audio_recorder_slow.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_player_fast.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_player_slow_1.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_player_slow_2.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_video_player_fast_1.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_video_player_fast_2.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_video_player_fast_3.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_video_player_fast_4.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_single_video_player_slow.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/test_std_stream_player.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/scenetest/video_player/TestFastVedioPlayer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestAacDemuxerPlugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestAlgoExt.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestAny.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestAudioCapturePlugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestAudioSinkPlugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestBitReader.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestBufferPool.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestCommon.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestCompatibleCheck.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestDataPacker.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestFFmpegAudioDecoder.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestFFmpegAudioEncoder.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestFFmpegAvcConfigDataParser.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestFFmpegDemuxer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestFFmpegUtils.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestFFmpegVidEncConfig.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestFFmpegVideoDecoder.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestFileSourcePlugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestFilter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestHiPlayer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestHttpSourcePlugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestMeta.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestMimeDefs.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestMiniMp4DemuxerPlugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestPipline.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestPlugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestPluginCommon.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestPluginManager.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestPluginSetting.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestSurfaceSinkPlugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestSynchronizer.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestVideoFFmpegEncoder.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/TestWavDemuxerPlugin.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tests/unittest/avbuffer/avbuffer_framework_unit_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tests/unittest/avbuffer/avbuffer_func_unit_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tests/unittest/format/avformat_unit_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tests/unittest/meta/any_func_unit_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tests/unittest/meta/meta_func_unit_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/foundation/osal/filesystem/file_system.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/foundation/osal/thread/condition_variable.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/foundation/osal/thread/mutex.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/foundation/osal/thread/task.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/foundation/osal/thread/thread.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/foundation/utils/dump_buffer.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/foundation/osal/base/synchronizer.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/foundation/utils/blocking_queue.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/foundation/utils/dump_buffer.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/foundation/utils/ring_buffer.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/foundation/utils/steady_clock.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/pipeline/core/media_sync_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/pipeline/filters/sink/audio_sink/audio_sink_filter.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/pipeline/filters/source/audio_capture/audio_capture_filter.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/plugin/common/plugin_tags.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/plugin/common/plugin_time.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/plugin/interface/audio_sink_plugin.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/plugin/interface/codec_plugin.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/plugin/interface/demuxer_plugin.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/plugin/interface/muxer_plugin.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/plugin/interface/output_sink_plugin.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/plugin/interface/plugin_definition.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/plugin/interface/source_plugin.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/include/plugin/interface/video_sink_plugin.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/core/compatible_check.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/core/filter_base.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/core/filter_base.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/core/media_sync_manager.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/core/pipeline_core.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/core/port.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/codec/async_mode.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/codec/audio_decoder/audio_decoder_filter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/codec/audio_encoder/audio_encoder_filter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/codec/codec_filter_base.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/codec/codec_mode.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/codec/sync_mode.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/codec/video_decoder/video_decoder_filter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/codec/video_encoder/video_encoder_filter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/common/buffer_calibration/audio_buffer_calibration.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/common/buffer_calibration/pts_calibration_strategy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/common/buffer_calibration/strict_monotonic_pts_cal.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/common/plugin_settings.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/common/plugin_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/demux/data_packer.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/demux/demuxer_filter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/demux/type_finder.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/muxer/muxer_filter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/sink/audio_sink/audio_sink_filter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/sink/media_synchronous_sink.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/sink/output_sink/output_sink_filter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/sink/video_sink/video_sink_filter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/source/audio_capture/audio_capture_filter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/source/media_source/media_source_filter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/pipeline/filters/source/video_capture/video_capture_filter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/common/share_memory.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/common/surface_allocator.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/convert/ffmpeg_convert.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/core/audio_sink.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/core/base.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/core/plugin_core_utils.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/core/plugin_loader.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/core/plugin_register.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/core/video_sink.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/codec_adapter/codec_buffer.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/codec_adapter/codec_buffer_pool.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/codec_adapter/codec_cmd_executor.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/codec_adapter/codec_port.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/codec_adapter/codec_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/codec_adapter/hdi_codec_adapter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/codec_adapter/hdi_codec_manager.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/demuxer/aac_demuxer/aac_demuxer_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/demuxer/minimp4_demuxer/minimp4_demuxer_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/demuxer/wav_demuxer/wav_demuxer_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/ffmpeg_adapter/audio_encoder/audio_ffmpeg_encoder_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/ffmpeg_adapter/audio_encoder/ffmpeg_au_enc_config.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/ffmpeg_adapter/demuxer/ffmpeg_demuxer_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/ffmpeg_adapter/demuxer/ffmpeg_track_meta.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/ffmpeg_adapter/muxer/ffmpeg_muxer_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/ffmpeg_adapter/utils/aac_audio_config_parser.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/ffmpeg_adapter/utils/avc_config_data_parser.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/ffmpeg_adapter/utils/ffmpeg_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/ffmpeg_adapter/video_decoder/video_ffmpeg_decoder_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/ffmpeg_adapter/video_encoder/ffmpeg_vid_enc_config.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/ffmpeg_adapter/video_encoder/video_ffmpeg_encoder_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/hdi_adapter/sink/hos_au_sink.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/lite_aac_decoder/lite_aac_decoder_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/minimp3_adapter/minimp3_decoder_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/minimp3_adapter/minimp3_demuxer_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/sink/audio_server_sink/audio_server_sink_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/sink/file_sink/file_fd_sink_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/sink/sdl/audio_sink/sdl_audio_sink_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/sink/sdl/video_sink/sdl_video_sink_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/sink/video_surface_sink/surface_sink_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/audio_capture/audio_capture_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/file_source/file_fd_source_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/file_source/file_source_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/http_lite_source/http_lite_source_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/http_source/download/downloader.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/http_source/download/http_curl_client.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/http_source/hls/hls_media_downloader.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/http_source/hls/m3u8.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/http_source/hls/playlist_downloader.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/http_source/http/http_media_downloader.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/http_source/monitor/download_monitor.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/std_stream_source/std_stream_source_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/stream_source/stream_source_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/video_capture/video_capture_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/plugin/plugins/source/video_capture/video_file_capture_plugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/scene/common/media_stat_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/scene/player/internal/playing_state.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/scene/player/internal/state.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/scene/player/internal/state_machine.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/scene/player/lite/hiplayer.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/scene/player/lite/hiplayer_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/scene/player/standard/hiplayer_callback_looper.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/scene/player/standard/hiplayer_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/scene/recorder/internal/recording_state.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/scene/recorder/internal/state.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/scene/recorder/internal/state_machine.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: engine/scene/recorder/standard/hirecorder_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interface/inner_api/common/native_mfmagic.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interface/inner_api/osal/task/blocking_queue.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interface/inner_api/osal/utils/dump_buffer.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interface/inner_api/osal/utils/ring_buffer.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interface/inner_api/osal/utils/steady_clock.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interface/inner_api/plugin/plugin_definition.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/buffer/avbuffer/av_hardware_memory.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/buffer/avbuffer/av_shared_memory_ext.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/buffer/avbuffer/av_surface_memory.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/buffer/avbuffer/av_virtual_memory.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/buffer/avbuffer/avmemory.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/buffer/avbuffer_queue/avbuffer_queue_producer_proxy.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/buffer/avbuffer_queue/avbuffer_queue_producer_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/buffer/avsharedmemory/avsharedmemorybase.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/capi/common/native_avbuffer_queue_define.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/common/avsharedmemorypool.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/common/plugin_time.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/common/share_memory.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/common/surface_allocator.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/meta/any.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/meta/format.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/meta/meta.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/osal/base/synchronizer.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/osal/filesystem/file_system.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/osal/task/ffrt/task.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/osal/task/pthread/condition_variable.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/osal/task/pthread/mutex.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/osal/task/pthread/task.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/osal/task/pthread/thread.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/pipeline/pipeline.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/plugin/plugin_loader.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: src/plugin/plugin_register.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/scenetest/helper/lite_stream_player.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/scenetest/helper/std_audio_recorder.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/unittest/TestPlugin.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/unittest/TestPluginSetting.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: tests/unittest/avbuffer/avbuffer_unit_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: tests/unittest/common/include/unittest_log.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: tests/unittest/format/avformat_unit_test.cpp
+- `ohscanner.interface.ipc`: Owner M2 adapter: single interpretation pass; partial source inspection is not full analysis.
+- `ohscanner.interface.ipc`: Unavailable AST units: 0; cross-file context from these units is unknown.
+- `ohscanner.interface.ipc`: M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.
+- `ohscanner.interface.ipc`: Execution is synchronous; hard timeout/memory isolation is not yet implemented.
+- `ohscanner.interface.ipc`: Diagnostic does not establish vulnerability, reachability or security impact.
+- `ohscanner.interface.ipc`: INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.

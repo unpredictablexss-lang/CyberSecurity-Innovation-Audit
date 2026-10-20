@@ -1,0 +1,8 @@
+$ python -m src.cli ohscan-run --repo-dir D:\openHarmonyScanner\tmp\b-ipc-eight-run-d844686f\miscservices_pasteboard --repository openharmony/miscservices_pasteboard --commit dd22c7cb5e5f207a6c38c50f45b7369ee8575840 --detector ohscanner.interface.ipc --json-out D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\miscservices_pasteboard.json --md-out D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\miscservices_pasteboard.md
+[OK] M2 pinned-source candidate evidence run; NOT validated vulnerabilities
+[OK] source commit: dd22c7cb5e5f207a6c38c50f45b7369ee8575840
+[OK] first-party detectors: 1
+[OK] unverified diagnostics: 2
+[OK] run coverage: completed_with_limitations
+[OK] JSON report: D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\miscservices_pasteboard.json
+[OK] Markdown report: D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\miscservices_pasteboard.md

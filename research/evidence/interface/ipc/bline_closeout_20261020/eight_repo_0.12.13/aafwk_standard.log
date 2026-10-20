@@ -1,0 +1,8 @@
+$ python -m src.cli ohscan-run --repo-dir D:\openHarmonyScanner\tmp\b-ipc-eight-run-d844686f\aafwk_standard --repository openharmony/aafwk_standard --commit 834a566b1372268c7bbb0c40362322f812ca6efc --detector ohscanner.interface.ipc --json-out D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\aafwk_standard.json --md-out D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\aafwk_standard.md
+[OK] M2 pinned-source candidate evidence run; NOT validated vulnerabilities
+[OK] source commit: 834a566b1372268c7bbb0c40362322f812ca6efc
+[OK] first-party detectors: 1
+[OK] unverified diagnostics: 15
+[OK] run coverage: completed_with_limitations
+[OK] JSON report: D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\aafwk_standard.json
+[OK] Markdown report: D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\aafwk_standard.md

@@ -1,0 +1,8 @@
+$ python -m src.cli ohscan-run --repo-dir D:\openHarmonyScanner\tmp\b-ipc-eight-retry-6a9b472f\security_deviceauth --repository openharmony/security_deviceauth --commit 2cf21e46f43c63857c40a79b004eda14f79b04c2 --detector ohscanner.interface.ipc --json-out D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\security_deviceauth.json --md-out D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\security_deviceauth.md
+[OK] M2 pinned-source candidate evidence run; NOT validated vulnerabilities
+[OK] source commit: 2cf21e46f43c63857c40a79b004eda14f79b04c2
+[OK] first-party detectors: 1
+[OK] unverified diagnostics: 1
+[OK] run coverage: completed_with_limitations
+[OK] JSON report: D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\security_deviceauth.json
+[OK] Markdown report: D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\security_deviceauth.md

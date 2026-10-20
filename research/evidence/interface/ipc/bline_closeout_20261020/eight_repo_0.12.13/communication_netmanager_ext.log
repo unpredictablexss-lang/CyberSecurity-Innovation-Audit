@@ -1,0 +1,8 @@
+$ python -m src.cli ohscan-run --repo-dir D:\openHarmonyScanner\tmp\b-ipc-eight-run-d844686f\communication_netmanager_ext --repository openharmony/communication_netmanager_ext --commit 8c35917b7e2f152813b13a20530a8452cf73d938 --detector ohscanner.interface.ipc --json-out D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\communication_netmanager_ext.json --md-out D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\communication_netmanager_ext.md
+[OK] M2 pinned-source candidate evidence run; NOT validated vulnerabilities
+[OK] source commit: 8c35917b7e2f152813b13a20530a8452cf73d938
+[OK] first-party detectors: 1
+[OK] unverified diagnostics: 0
+[OK] run coverage: completed_with_limitations
+[OK] JSON report: D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\communication_netmanager_ext.json
+[OK] Markdown report: D:\openHarmonyScanner\worktrees\b-ipc-closeout-20261020\research\evidence\interface\ipc\bline_closeout_20261020\eight_repo_0.12.13\communication_netmanager_ext.md
