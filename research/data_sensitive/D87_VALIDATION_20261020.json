@@ -1,0 +1,1578 @@
+{
+  "baseline": "7d8a25a67f76d962a0196518c394a27c0f03f841",
+  "revision": "working_tree",
+  "before_version": "0.21.3",
+  "after_version": "0.21.4",
+  "before_implementation_sha256": {
+    "src/ohscanner/detectors/data/sensitive_exposure.py": "1a67e769be83884713f76539957dee37cc76716bb95db0ebbc79ac44601e8605"
+  },
+  "after_implementation_sha256": {
+    "src/ohscanner/detectors/data/sensitive_exposure.py": "bbd5881c5c11ca1cfea38596d9033a7681aa76f0c1acad3b908d8c37f2670e28",
+    "src/ohscanner/detectors/data/property_keys.py": "6de0d8c692af2ef9177bea54c97f333168cf55498d0548e13848a4c1eb5e63e5"
+  },
+  "controls": {
+    "bound_global_schema_key": {
+      "before": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:1 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 1 unresolved call napi_has_named_property",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      },
+      "after": {
+        "candidate_count": 0,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": []
+      }
+    },
+    "unknown_wrapper": {
+      "before": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:1 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 1 unresolved call UnknownWrapper",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      },
+      "after": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:1 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 1 unresolved call UnknownWrapper",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      }
+    },
+    "hardcoded_material_as_key": {
+      "before": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:1 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 1 unresolved call napi_has_named_property",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      },
+      "after": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:1 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 1 unresolved call napi_has_named_property",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      }
+    },
+    "dynamic_material_as_key": {
+      "before": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:1 source heuristic suspected sensitive identifier password -> 1 unresolved call napi_has_named_property",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      },
+      "after": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:1 source heuristic suspected sensitive identifier password -> 1 unresolved call napi_has_named_property",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      }
+    },
+    "reference_parameter_shadow": {
+      "before": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:1 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 1 unresolved call napi_has_named_property",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      },
+      "after": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:1 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 1 unresolved call napi_has_named_property",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      }
+    },
+    "actual_property_value": {
+      "before": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 1,
+            "rule": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:1 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 1 unresolved call napi_get_named_property",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      },
+      "after": {
+        "candidate_count": 1,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "service.cpp",
+            "partial"
+          ]
+        ],
+        "findings": [
+          {
+            "file": "service.cpp",
+            "line": 2,
+            "rule": "data.sensitive.unresolved-escape",
+            "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:1 source napi_get_named_property password-property output argument 3 -> 2 unresolved call Consume",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "strict_t85_scope": [
+    {
+      "key": "wifi",
+      "repository": "openharmony/communication_wifi",
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+      "files": [
+        {
+          "path": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/wifi_asset/wifi_asset_manager.cpp",
+          "blob": "017fcaa45dafdd4cde2a07788de892a7b7691b74",
+          "bytes": 23465,
+          "sha256": "f4dc9b41ff21d71355a8395aeea20a0514e68e86e38603882f3070b64343d113"
+        },
+        {
+          "path": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/log/wifi_logger.h",
+          "blob": "0797ee6a5f4d2d37ea8098519c0c59d332f7f0b9",
+          "bytes": 4095,
+          "sha256": "2b2bbdf1995cab1b5d5d3bdaa9e901ccba41de1278ddbe657b225220607a26c6"
+        }
+      ],
+      "source_commit_tree_blob_verified": true,
+      "parse_status": {
+        "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/log/wifi_logger.h": "complete",
+        "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/wifi_asset/wifi_asset_manager.cpp": "complete"
+      },
+      "snapshot_sha256": "19def4d4d750dcd5fc1353a607e13ca5e320f55cce2a579a1342b4661cbfb13e",
+      "before": {
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/log/wifi_logger.h",
+            "partial"
+          ],
+          [
+            "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/wifi_asset/wifi_asset_manager.cpp",
+            "partial"
+          ]
+        ],
+        "candidate_count": 3,
+        "findings": [
+          {
+            "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/wifi_asset/wifi_asset_manager.cpp",
+            "line": 189,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "d66c306c9295577afb07a0de7eb5929e8efd89f93b8f34c7d9b0194e782e4617",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/wifi_asset/wifi_asset_manager.cpp",
+            "line": 205,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "c8104fd4218cb7ebe1075dfb6b287a5c1ffeb654b320aa5c6ea2147219d1ff44",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact",
+              "callee_binding"
+            ]
+          },
+          {
+            "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/wifi_asset/wifi_asset_manager.cpp",
+            "line": 216,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "08f0831ae95e960ebc720c8f5af13e2ed0507e9b4d63573b34aec47541c8f988",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      },
+      "after": {
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/log/wifi_logger.h",
+            "partial"
+          ],
+          [
+            "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/wifi_asset/wifi_asset_manager.cpp",
+            "partial"
+          ]
+        ],
+        "candidate_count": 3,
+        "findings": [
+          {
+            "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/wifi_asset/wifi_asset_manager.cpp",
+            "line": 189,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "d66c306c9295577afb07a0de7eb5929e8efd89f93b8f34c7d9b0194e782e4617",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/wifi_asset/wifi_asset_manager.cpp",
+            "line": 205,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "c8104fd4218cb7ebe1075dfb6b287a5c1ffeb654b320aa5c6ea2147219d1ff44",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact",
+              "callee_binding"
+            ]
+          },
+          {
+            "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/wifi_asset/wifi_asset_manager.cpp",
+            "line": 216,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "08f0831ae95e960ebc720c8f5af13e2ed0507e9b4d63573b34aec47541c8f988",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      },
+      "identical_candidates_and_outcomes": true,
+      "after_binding_notes": []
+    },
+    {
+      "key": "cert",
+      "repository": "openharmony/security_certificate_framework",
+      "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+      "tree": "e69153afa89928e1318d8b36cf37c65386465fe7",
+      "files": [
+        {
+          "path": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "blob": "fb0f6cdbf2e151a933ce718a0f95e7ab8e449c28",
+          "bytes": 67298,
+          "sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+        },
+        {
+          "path": "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+          "blob": "59985f31f7a7a2a18e4ce4c40345636321ddefef",
+          "bytes": 11206,
+          "sha256": "32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80"
+        },
+        {
+          "path": "frameworks/common/v1.0/inc/cf_log.h",
+          "blob": "6eaa53317a8494baecc743b80043d400c316edee",
+          "bytes": 3266,
+          "sha256": "489ea3537091147d5bec365471698f3d5d177dbc86473beb25fd7bc906beccb9"
+        }
+      ],
+      "source_commit_tree_blob_verified": true,
+      "parse_status": {
+        "frameworks/common/v1.0/inc/cf_log.h": "partial",
+        "frameworks/js/napi/certificate/inc/napi_cert_defines.h": "complete",
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp": "complete"
+      },
+      "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+      "before": {
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "frameworks/common/v1.0/inc/cf_log.h",
+            "partial"
+          ],
+          [
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "partial"
+          ],
+          [
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "partial"
+          ]
+        ],
+        "candidate_count": 21,
+        "findings": [
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 185,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "53c9dfc650e936afa0cd184369aa51f6b3bd3153ecfebe95a7a5ccab105ee002",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 192,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "6bf663201dc34091f7769d35d89885f5022c119dc8a8450d08c9c3de63e10f25",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 208,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "5c310ee067e5ba92a43d489e4fba5e106f53c9593550945eae031a9a9c91153b",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 298,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "c45dd482add5c6c676452372404f38bc17bfbf1c6d43c9419d294ce6ea62361a",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 310,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "5250af4815fdfec5c576917aeeea64a5a6c52c886875ac981fce37e4307c133c",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 317,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "8218ebdde8ae80c3028d08f441f3670a8f9539e366f89993a52d35a9cc74fa33",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 324,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "8d7dc2fb66ad4de9feaa7d5bef29b11f26107d079023e7166017da0b88aef9d2",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 328,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "383af8a67f0e981dba3e8531a892b63da36dc9591d5964bb4a78348a380bfd2b",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 342,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "457efe11f349ffd0db4e885a54aabbea816c409069dc245386267be3788ceab6",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 347,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "6bf49f07ae1ad213eeca9bb44e8c0302c316e851c685da6f6c05e515cc761d96",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 349,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "1c64ac7d0e02ead2c33c51ad6e8cf93d96de14fb35f7f688a889c16ec765a78a",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 352,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "97e2ea0f2a30041d43044383b2553715976af8bed000c2e4ed8e22eea8355a4f",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 364,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "38068d107409f0a3653ad59034fa4c44c21208025f1e8743c400f05e15b608f6",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 381,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "42a7c9a6a214ac07d10701c4b657607ab02b1438e1b2ee566019090b5b3bed8a",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 384,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "5257498992975bcc87f0a22de5f96b73c9aa9b3a01c4ac48e9361e88d03e68de",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 386,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "9ea62909c89038e9f002039ae77572256676112638ea3586c7e860225a5f7348",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 388,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "16e9988001a52a4a64cc292c90d6c1cf6e2ea35a35f64a395092b24939b0c2f5",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1825,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "424f5ffff9885a632a7033ec4a8de860d4e4343f19a0ebbda09b08f3b189ee62",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1832,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "6a8b2d8ad67bf2e6f17edc3946a48d85888afd283ab666cccf26074b206a64ab",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1880,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "6e53195c5ce320f2a0e23bf961ad7f6330fa3499b42ea3afee7cafbc76f60116",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1882,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "4070d46779354ad855e4baac314846c8b8014c22745a10817fa7ef91b4c10bac",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      },
+      "after": {
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "frameworks/common/v1.0/inc/cf_log.h",
+            "partial"
+          ],
+          [
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "partial"
+          ],
+          [
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "partial"
+          ]
+        ],
+        "candidate_count": 21,
+        "findings": [
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 185,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "53c9dfc650e936afa0cd184369aa51f6b3bd3153ecfebe95a7a5ccab105ee002",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 192,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "6bf663201dc34091f7769d35d89885f5022c119dc8a8450d08c9c3de63e10f25",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 208,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "5c310ee067e5ba92a43d489e4fba5e106f53c9593550945eae031a9a9c91153b",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 298,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "c45dd482add5c6c676452372404f38bc17bfbf1c6d43c9419d294ce6ea62361a",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 310,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "5250af4815fdfec5c576917aeeea64a5a6c52c886875ac981fce37e4307c133c",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 317,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "8218ebdde8ae80c3028d08f441f3670a8f9539e366f89993a52d35a9cc74fa33",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 324,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "8d7dc2fb66ad4de9feaa7d5bef29b11f26107d079023e7166017da0b88aef9d2",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 328,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "383af8a67f0e981dba3e8531a892b63da36dc9591d5964bb4a78348a380bfd2b",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 342,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "457efe11f349ffd0db4e885a54aabbea816c409069dc245386267be3788ceab6",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 347,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "6bf49f07ae1ad213eeca9bb44e8c0302c316e851c685da6f6c05e515cc761d96",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 349,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "1c64ac7d0e02ead2c33c51ad6e8cf93d96de14fb35f7f688a889c16ec765a78a",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 352,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "97e2ea0f2a30041d43044383b2553715976af8bed000c2e4ed8e22eea8355a4f",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 364,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "38068d107409f0a3653ad59034fa4c44c21208025f1e8743c400f05e15b608f6",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 381,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "42a7c9a6a214ac07d10701c4b657607ab02b1438e1b2ee566019090b5b3bed8a",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 384,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "5257498992975bcc87f0a22de5f96b73c9aa9b3a01c4ac48e9361e88d03e68de",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 386,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "9ea62909c89038e9f002039ae77572256676112638ea3586c7e860225a5f7348",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 388,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "16e9988001a52a4a64cc292c90d6c1cf6e2ea35a35f64a395092b24939b0c2f5",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1825,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "424f5ffff9885a632a7033ec4a8de860d4e4343f19a0ebbda09b08f3b189ee62",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1832,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "6a8b2d8ad67bf2e6f17edc3946a48d85888afd283ab666cccf26074b206a64ab",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1880,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "6e53195c5ce320f2a0e23bf961ad7f6330fa3499b42ea3afee7cafbc76f60116",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1882,
+            "rule": "data.sensitive.unresolved-escape",
+            "message_sha256": "4070d46779354ad855e4baac314846c8b8014c22745a10817fa7ef91b4c10bac",
+            "obligations": [
+              "callee_binding",
+              "sink_behavior",
+              "runtime_log_visibility",
+              "security_impact"
+            ]
+          }
+        ]
+      },
+      "identical_candidates_and_outcomes": true,
+      "after_binding_notes": []
+    }
+  ],
+  "different_diagnostic_scope": {
+    "key": "cert_definition_only_diagnostic",
+    "repository": "openharmony/security_certificate_framework",
+    "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+    "tree": "e69153afa89928e1318d8b36cf37c65386465fe7",
+    "files": [
+      {
+        "path": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+        "blob": "fb0f6cdbf2e151a933ce718a0f95e7ab8e449c28",
+        "bytes": 67298,
+        "sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+      },
+      {
+        "path": "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+        "blob": "59985f31f7a7a2a18e4ce4c40345636321ddefef",
+        "bytes": 11206,
+        "sha256": "32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80"
+      }
+    ],
+    "source_commit_tree_blob_verified": true,
+    "parse_status": {
+      "frameworks/js/napi/certificate/inc/napi_cert_defines.h": "complete",
+      "frameworks/js/napi/certificate/src/napi_cert_utils.cpp": "complete"
+    },
+    "snapshot_sha256": "18c4ae752d07e9df800409c77d94ef9a39e065a53d9fe27068f34b66ad0a48dc",
+    "before": {
+      "status": "blocked",
+      "file_outcomes": [
+        [
+          "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+          "partial"
+        ],
+        [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "partial"
+        ]
+      ],
+      "candidate_count": 21,
+      "findings": [
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 185,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "53c9dfc650e936afa0cd184369aa51f6b3bd3153ecfebe95a7a5ccab105ee002",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 192,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "6bf663201dc34091f7769d35d89885f5022c119dc8a8450d08c9c3de63e10f25",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 208,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "5c310ee067e5ba92a43d489e4fba5e106f53c9593550945eae031a9a9c91153b",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 298,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "c45dd482add5c6c676452372404f38bc17bfbf1c6d43c9419d294ce6ea62361a",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 310,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "5250af4815fdfec5c576917aeeea64a5a6c52c886875ac981fce37e4307c133c",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 317,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "8218ebdde8ae80c3028d08f441f3670a8f9539e366f89993a52d35a9cc74fa33",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 324,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "8d7dc2fb66ad4de9feaa7d5bef29b11f26107d079023e7166017da0b88aef9d2",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 328,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "383af8a67f0e981dba3e8531a892b63da36dc9591d5964bb4a78348a380bfd2b",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 342,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "457efe11f349ffd0db4e885a54aabbea816c409069dc245386267be3788ceab6",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 347,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "6bf49f07ae1ad213eeca9bb44e8c0302c316e851c685da6f6c05e515cc761d96",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 349,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "1c64ac7d0e02ead2c33c51ad6e8cf93d96de14fb35f7f688a889c16ec765a78a",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 352,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "97e2ea0f2a30041d43044383b2553715976af8bed000c2e4ed8e22eea8355a4f",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 364,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "38068d107409f0a3653ad59034fa4c44c21208025f1e8743c400f05e15b608f6",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 381,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "42a7c9a6a214ac07d10701c4b657607ab02b1438e1b2ee566019090b5b3bed8a",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 384,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "5257498992975bcc87f0a22de5f96b73c9aa9b3a01c4ac48e9361e88d03e68de",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 386,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "9ea62909c89038e9f002039ae77572256676112638ea3586c7e860225a5f7348",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 388,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "16e9988001a52a4a64cc292c90d6c1cf6e2ea35a35f64a395092b24939b0c2f5",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1825,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "424f5ffff9885a632a7033ec4a8de860d4e4343f19a0ebbda09b08f3b189ee62",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1832,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "6a8b2d8ad67bf2e6f17edc3946a48d85888afd283ab666cccf26074b206a64ab",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1880,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "6e53195c5ce320f2a0e23bf961ad7f6330fa3499b42ea3afee7cafbc76f60116",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1882,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "4070d46779354ad855e4baac314846c8b8014c22745a10817fa7ef91b4c10bac",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        }
+      ]
+    },
+    "after": {
+      "status": "blocked",
+      "file_outcomes": [
+        [
+          "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+          "partial"
+        ],
+        [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "partial"
+        ]
+      ],
+      "candidate_count": 20,
+      "findings": [
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 185,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "9a48a16e316900a8bbe09c27c1c31ccf16ea02f988db9a2ce204fdc6476858da",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 192,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "262e2a63a48551a3ce42bda2a7510b331210b46ad9b5bef92acd70ad82c63af2",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 208,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "bace78490d2574920dbdbac336bbfb370a44fe1b9360c8e566ffbaae3c231d4f",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 298,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "c45dd482add5c6c676452372404f38bc17bfbf1c6d43c9419d294ce6ea62361a",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 310,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "5250af4815fdfec5c576917aeeea64a5a6c52c886875ac981fce37e4307c133c",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 317,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "8218ebdde8ae80c3028d08f441f3670a8f9539e366f89993a52d35a9cc74fa33",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 324,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "8d7dc2fb66ad4de9feaa7d5bef29b11f26107d079023e7166017da0b88aef9d2",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 328,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "383af8a67f0e981dba3e8531a892b63da36dc9591d5964bb4a78348a380bfd2b",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 347,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "2e8c20e80c3e491077442e350a0e79961c22f89670e81a835486c1f44903544b",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 349,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "1c64ac7d0e02ead2c33c51ad6e8cf93d96de14fb35f7f688a889c16ec765a78a",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 352,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "257a165bd978749c87ef90e9a91b451cd5c3da26196ef6fbb10405774dae7514",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 364,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "38068d107409f0a3653ad59034fa4c44c21208025f1e8743c400f05e15b608f6",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 381,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "42a7c9a6a214ac07d10701c4b657607ab02b1438e1b2ee566019090b5b3bed8a",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 384,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "5257498992975bcc87f0a22de5f96b73c9aa9b3a01c4ac48e9361e88d03e68de",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 386,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "9ea62909c89038e9f002039ae77572256676112638ea3586c7e860225a5f7348",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 388,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "16e9988001a52a4a64cc292c90d6c1cf6e2ea35a35f64a395092b24939b0c2f5",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1825,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "424f5ffff9885a632a7033ec4a8de860d4e4343f19a0ebbda09b08f3b189ee62",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1832,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "6a8b2d8ad67bf2e6f17edc3946a48d85888afd283ab666cccf26074b206a64ab",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1880,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "6e53195c5ce320f2a0e23bf961ad7f6330fa3499b42ea3afee7cafbc76f60116",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        },
+        {
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1882,
+          "rule": "data.sensitive.unresolved-escape",
+          "message_sha256": "4070d46779354ad855e4baac314846c8b8014c22745a10817fa7ef91b4c10bac",
+          "obligations": [
+            "callee_binding",
+            "sink_behavior",
+            "runtime_log_visibility",
+            "security_impact"
+          ]
+        }
+      ]
+    },
+    "identical_candidates_and_outcomes": false,
+    "after_binding_notes": [
+      "frameworks/js/napi/certificate/src/napi_cert_utils.cpp: reviewed NAPI property-name argument 2 is not fetched password material: napi_get_named_property; bound constant frameworks/js/napi/certificate/inc/napi_cert_defines.h:203 sha256=32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80",
+      "frameworks/js/napi/certificate/src/napi_cert_utils.cpp: reviewed NAPI property-name argument 2 is not fetched password material: napi_has_named_property; bound constant frameworks/js/napi/certificate/inc/napi_cert_defines.h:203 sha256=32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80"
+    ]
+  },
+  "limits": [
+    "Only the bound global schema name password in exact NAPI read-key argument 2 is excluded.",
+    "Unknown wrappers, other material operands, API macro/body shadows and partial inputs remain candidates.",
+    "The diagnostic two-file scope is not a same-scope warning reduction.",
+    "No target execution, product leakage or formal accuracy metric is established."
+  ]
+}
