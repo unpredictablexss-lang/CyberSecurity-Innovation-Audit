@@ -85,7 +85,8 @@ def _unique_observations(items):
     return tuple(unique[key] for key in sorted(unique))
 
 
-def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
+def analyze_unit(unit, *, model=None, budget=None, research_partial=False,
+                 species_read_width_bound=False):
     model, budget = model or RuntimeTypeModel(), budget or AnalysisBudget()
     if model.build_profile != 'assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified':
         return AnalysisResult('limited', 'not_analyzed', limitations=('model_build_profile_unresolved',),
@@ -217,7 +218,8 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
         limitations.extend(graph.limitations)
         evaluator = OriginEvaluator(fn, model,
             ((graph.instructions[i].node.start_byte, graph.instructions[i].node.end_byte) for i in graph.cyclic_nodes),
-            identity_helpers, helper_contracts)
+            identity_helpers, helper_contracts,
+            species_read_width_bound=species_read_width_bound)
         host_problems = [(inst, evaluator.unsupported_cpp_effect(inst)) for inst in graph.instructions]
         host_problems = [(inst, problem) for inst, problem in host_problems if problem]
         generated_control = False

@@ -34,7 +34,7 @@ class ArkRuntimeTypeSafetyDetector:
             self.model.target_bindings + self.model.exception_guard_bindings
             + self.model.receiver_guard_bindings + self.model.size_overflow_bindings
             + self.model.length_narrowing_bindings + self.model.index_bounds_bindings
-            + self.model.native_exception_bindings)}
+            + self.model.native_exception_bindings + self.model.species_read_width_bindings)}
         selected = tuple(unit for unit in units if unit.path in paths)
         # Preserve legacy language-scoped coverage when no modeled target is
         # present; helper-only scans must not silently become not_applicable.
@@ -88,6 +88,8 @@ class ArkRuntimeTypeSafetyDetector:
                                   if row[0] == context.request.commit and row[1] == unit.path), None)
             native_binding = next((row for row in self.model.native_exception_bindings
                                    if row[0] == context.request.commit and row[1] == unit.path), None)
+            species_binding = next((row for row in self.model.species_read_width_bindings
+                                    if row[0] == context.request.commit and row[1] == unit.path), None)
             if type_binding is not None:
                 rule_bindings.append((RULE_ID, type_binding))
             if exception_binding is not None:
@@ -137,6 +139,33 @@ class ArkRuntimeTypeSafetyDetector:
                 outcomes.append((unit.path, 'not_analyzed'))
                 limitations.append(unit.path + ': target source blob/SHA-256 does not match the version-bound model')
                 continue
+            species_read_width_bound = False
+            if (species_binding is not None and type_binding is not None
+                    and species_binding == type_binding
+                    and unit.path == 'ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp'
+                    and context.request.repository == self.model.source_repository
+                    and context.request.commit == species_binding[0]
+                    and unit.sha256 == species_binding[3]
+                    and git_blob == species_binding[2]):
+                evidence_rows = tuple(row for row in self.model.species_read_width_dependencies
+                                      if row[0] == species_binding[0])
+                # Require the complete, exact dependency set. Omissions or additions
+                # invalidate this narrowly scoped summary and preserve generic unknowns.
+                expected_paths = {
+                    'ecmascript/compiler/new_object_stub_builder.cpp',
+                    'ecmascript/base/typed_array_helper.cpp',
+                    'ecmascript/stubs/runtime_stubs.cpp',
+                    'ecmascript/js_typed_array.cpp',
+                    'ecmascript/builtins/builtins_arraybuffer.cpp',
+                    'ecmascript/compiler/builtins/builtins_arraybuffer_stub_builder.cpp',
+                }
+                if ({row[1] for row in evidence_rows} == expected_paths
+                        and len(evidence_rows) == len(expected_paths)):
+                    evidence_errors = tuple(self._dependency_error(context, path, blob, expected_sha)
+                                            for _, path, blob, expected_sha in evidence_rows)
+                    species_read_width_bound = not any(evidence_errors)
+                if not species_read_width_bound:
+                    limitations.append(unit.path + ': species read-width source evidence is incomplete or mismatched; retaining unknown helper effects')
             ast_entry = ast.get(unit.path)
             if (not isinstance(ast_entry, dict) or ast_entry.get('parse_status') != unit.parse_status
                     or unit.parse_status not in ('complete', 'partial')):
@@ -147,7 +176,8 @@ class ArkRuntimeTypeSafetyDetector:
             for rule_id, _ in rule_bindings:
                 if rule_id == RULE_ID:
                     result = analyze_unit(unit, model=self.model, budget=self.budget,
-                                          research_partial=unit.parse_status == 'partial')
+                                          research_partial=unit.parse_status == 'partial',
+                                          species_read_width_bound=species_read_width_bound)
                 elif rule_id == SIZE_OVERFLOW_RULE_ID:
                     result = analyze_size_overflow_unit(unit, self.model.digest)
                 elif rule_id == LENGTH_NARROWING_RULE_ID:

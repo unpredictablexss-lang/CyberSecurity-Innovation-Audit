@@ -49,6 +49,40 @@ class RuntimeTypeModel:
         # Exact D-drive current snapshot binding, admitted for explicit research only.
         ('a65a2853ccae13da167d9aa4720ab8b11ec16656', 'ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp', '68fb3b0adc4f9062889a861be51b7be90362e37a', '76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c'),
     )
+    # Exact C1 source profile for the Map species-result/source-read width
+    # mismatch. The candidate is emitted only for this target blob and flow.
+    species_read_width_bindings: tuple = (
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp',
+         '68fb3b0adc4f9062889a861be51b7be90362e37a',
+         '76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c'),
+    )
+    species_read_width_dependencies: tuple = (
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/compiler/new_object_stub_builder.cpp',
+         '991ac5ac034a1a027e3200787ec25c55b3f15b69',
+         '3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0'),
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/base/typed_array_helper.cpp',
+         'bcb422fe67f4e670adcca31fffd4da7e2b3b0b21',
+         '3c42388b716e82601cee4e43aedddc8ac709fe1363b0753c7efa24745380110d'),
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/stubs/runtime_stubs.cpp',
+         '14dc06350881b1fa0fdabeeb8465ae9063224d6c',
+         '0c390fb329387ff75943089da0e7eecab4bc1df21da1be4f33db969b2bf79a46'),
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/js_typed_array.cpp',
+         '098c2a22cae3152af3a59063dda25e145f03bbd7',
+         'e67c0ce082885efb6fa5894f7a1998a41eb4cddfa2e381c8335497e10e2b9bbe'),
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/builtins/builtins_arraybuffer.cpp',
+         '2aa22c58803df690a5a2b326451e02297dc5e2f6',
+         '4d388d997313cf7c900f1f0d54fbe826266845665424e32cc9dd4cdbaa62dcc9'),
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/compiler/builtins/builtins_arraybuffer_stub_builder.cpp',
+         '21d7f79fa83ffc05e7510a532f39398075aeae16',
+         '0e41c2def0393275293c3cd1df983bccec42bee7bfa6ed58567a11b00ad745d6'),
+    )
     source_dependencies: tuple = (('ecmascript/compiler/new_object_stub_builder.cpp', '757b8d050d306d349822600deacb295c7a54245e'),)
     # Reviewed declarations backing the glue-aware HClass read and builder
     # constructor overloads. These are semantic evidence inputs, not an
@@ -303,6 +337,8 @@ class RuntimeTypeModel:
         + tuple((revision, path, blob) for revision, path, blob, _ in self.index_bounds_bindings)
         + tuple((revision, path, blob) for revision, path, blob, _ in self.index_bounds_dependencies)
         + tuple((revision, path, blob) for revision, path, blob, _ in self.native_exception_bindings)
+                + tuple((revision, path, blob) for revision, path, blob, _ in self.species_read_width_bindings)
+                + tuple((revision, path, blob) for revision, path, blob, _ in self.species_read_width_dependencies)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.api_overload_evidence)
                 + tuple((self.effect_summary_revision, path, blob) for path, blob in self.source_dependencies)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.exception_guard_dependencies))
@@ -318,6 +354,8 @@ def c_line_static_model():
         version='0.8.13',
         effect_summary_revision='c-line-static-contract-v14',
         target_bindings=(base.target_bindings[-1],),
+        species_read_width_bindings=(base.species_read_width_bindings[-1],),
+        species_read_width_dependencies=base.species_read_width_dependencies,
         exception_guard_bindings=(base.exception_guard_bindings[-1],),
         receiver_guard_bindings=(),
         size_overflow_bindings=base.size_overflow_bindings,

@@ -40,11 +40,13 @@ class OriginState:
 
 
 class OriginEvaluator:
-    def __init__(self, fn, model, cyclic_ranges=(), identity_helpers=(), helper_contracts=()):
+    def __init__(self, fn, model, cyclic_ranges=(), identity_helpers=(), helper_contracts=(),
+                 species_read_width_bound=False):
         self.fn, self.model = fn, model
         self.identity_helpers = tuple(identity_helpers)
         self.helper_contracts = tuple(helper_contracts)
         self.cyclic_ranges = tuple(cyclic_ranges)
+        self.species_read_width_bound = bool(species_read_width_bound)
 
     @staticmethod
     def token_key(value):
@@ -128,6 +130,21 @@ class OriginEvaluator:
         for node in walk(root):
             effect_problem = effectful_helper_problem(fn, node, self.helper_contracts)
             if effect_problem:
+                # This exact helper's contract is intentionally type-stable:
+                # it reads a TypedArray element using the supplied JSType but
+                # does not mutate the receiver's HClass. Its cross-object
+                # width misuse is analyzed separately at the call site below.
+                stable = dict(self.model.type_stable_operations)
+                callee = node.child_by_field_name('function') if node.type == 'call_expression' else None
+                helper_name = fn.call_name(node).removeprefix('this->') if node.type == 'call_expression' else ''
+                if (self.species_read_width_bound and fn.qualified_name == OWNER + '::Map'
+                        and helper_name == 'FastGetPropertyByIndex'
+                        and len(fn.arguments(node)) == stable.get(helper_name)
+                        and not fn.resolve(helper_name, node)
+                        and callee is not None and callee.type == 'identifier'
+                        and tuple(fn.text(arg).strip() for arg in fn.arguments(node))
+                        == ('glue', 'thisValue', 'index', 'newArrayType')):
+                    continue
                 return effect_problem
             if node.type in ('new_expression', 'delete_expression', 'update_expression'):
                 return 'unmodeled_cpp_lifetime_or_update_expression'
@@ -453,6 +470,28 @@ class OriginEvaluator:
         if node.type != 'call_expression':
             return None
         name = fn.call_name(node)
+        if (self.species_read_width_bound and fn.qualified_name == OWNER + '::Map'
+                and name in ('FastGetPropertyByIndex', 'this->FastGetPropertyByIndex',
+                             OWNER + '::FastGetPropertyByIndex')):
+            args = fn.arguments(node)
+            if (len(args) != 4 or fn.resolve('FastGetPropertyByIndex', node)
+                    or tuple(fn.text(arg).strip() for arg in args)
+                    != ('glue', 'thisValue', 'index', 'newArrayType')):
+                return ('unknown', UNKNOWN, UNKNOWN, 'species_source_read_signature_unresolved')
+            source = self.value(args[1], state)
+            source_type = self.value(args[3], state)
+            result = next((value for value in state.values.values()
+                           if value.kind == 'object' and value.identity == source_type.origin), UNKNOWN)
+            if source.kind != 'object' or source_type.kind != 'type':
+                return ('unknown', source, source_type, 'species_source_read_origin_unresolved')
+            if (source_type.valid and source.identity != source_type.origin
+                    and result.kind == 'object' and result.may_differ
+                    and result.creation_line):
+                return ('candidate', source, source_type,
+                        'species_result_type_used_for_source_element_read_width')
+            if not source_type.valid:
+                return ('unknown', source, source_type, 'species_source_read_type_invalidated')
+            return None
         property_name, property_arity, property_target_index, property_token_index = model.property_store
         is_element_store = name in (model.store_name, 'this->' + model.store_name,
                                     OWNER + '::' + model.store_name)
