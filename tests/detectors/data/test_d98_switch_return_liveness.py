@@ -45,7 +45,8 @@ class D98SwitchReturnLivenessTests(unittest.TestCase):
         for runner in (False,True):
             findings=scan(source,runner)
             self.assertTrue(any('unresolved call LeakKey' in f.message for f in findings))
-            self.assertTrue(any(f.line==7 for f in findings))
+            # D99 now proves the direct return terminal, while retaining LeakKey.
+            self.assertFalse(any(f.line==7 for f in findings))
 
     def test_selected_partial_and_macro_context_keep_post_switch_candidate(self):
         from tests.detectors.data.test_t93_scalar_pointer_writes import T93ScalarPointerTests
