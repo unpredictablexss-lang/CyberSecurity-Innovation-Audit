@@ -214,14 +214,39 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
         raise ValueError("source unit manifest does not match ScanRequest")
     reports, sidecar = [], {"schema_version": 1, "detectors": {}}
     for detector in registry.detectors():
-        applicable = tuple(unit for unit in context.units
-                           if unit.language in detector.supported_languages)
+        language_units = tuple(unit for unit in context.units
+                               if unit.language in detector.supported_languages)
+        selector = getattr(detector, "select_applicable_units", None)
+        selector_error = None
+        if callable(selector):
+            try:
+                selected_applicable = tuple(selector(context, language_units))
+                context_ids = {id(unit) for unit in language_units}
+                selected_ids = [id(unit) for unit in selected_applicable]
+                if (any(unit_id not in context_ids for unit_id in selected_ids)
+                        or len(selected_ids) != len(set(selected_ids))
+                        or any(unit.language not in detector.supported_languages
+                               for unit in selected_applicable)):
+                    raise ValueError("applicability selector returned duplicate, unsupported, or out-of-context units")
+                applicable = selected_applicable
+            except Exception as exc:
+                # Keep reporting conservative scope on a broken selector, but never
+                # execute a detector against an unvalidated selection.
+                applicable = language_units
+                selector_error = exc
+        else:
+            applicable = language_units
         selected = applicable
         skipped = {}
         run = None
         error = None
         start = perf_counter()
-        if not applicable:
+        if selector_error is not None:
+            run = DetectorRun(detector.detector_id, detector.version, "failed",
+                              limitations=("Invalid detector applicability selection: "
+                                           + selector_error.__class__.__name__,))
+            selected = ()
+        elif not applicable:
             run = DetectorRun(detector.detector_id, detector.version, "blocked",
                               limitations=("not_applicable: no source with supported language.",))
         else:

@@ -62,12 +62,13 @@ class ContractAdapterTests(unittest.TestCase):
         obligations = coverage['detectors'][DETECTOR_ID]['evidence_obligations'][0]['obligations']
         self.assertIn('parse_completeness_impact', [o['kind'] for o in obligations])
 
-    def test_mixed_scope_retains_valid_complete_file_candidate(self):
+    def test_unbound_same_language_file_is_outside_model_target_scope(self):
         bad = replace(case('C04'), path='src/other.cpp', parse_status='partial')
         reports, coverage = self.run_detector((case('C03'), bad))
         self.assertEqual(reports[0].diagnostic_count, 1)
+        self.assertEqual(coverage['detectors'][DETECTOR_ID]['applicable_files'], 1)
         self.assertEqual(coverage['detectors'][DETECTOR_ID]['coverage_counts'],
-                         {'complete': 1, 'partial': 0, 'not_analyzed': 1, 'failed': 0})
+                         {'complete': 1, 'partial': 0, 'not_analyzed': 0, 'failed': 0})
 
     def test_aggregate_limited_does_not_discard_valid_local_candidate(self):
         code = wrap(PREFIX + 'Label good(GetEnvironment());\nLabel other(GetEnvironment());\n'
@@ -108,6 +109,67 @@ class ContractAdapterTests(unittest.TestCase):
         self.assertEqual(coverage['detectors'][DETECTOR_ID]['coverage_counts']['not_analyzed'], 1)
         self.assertTrue(any('creator dependency blob/SHA-256' in limitation
                             for limitation in reports[0].limitations))
+
+    def test_selector_counts_only_model_target_but_keeps_dependency_in_context(self):
+        target = case('C03')
+        dependency = unit('void NewObjectStubBuilder::Build() {}\n', 'src/creator.cpp')
+        ctx, model = self.bound_fixture((target, dependency))
+        dependency_blob = sha1(b'blob ' + str(len(dependency.text.encode())).encode()
+                               + bytes((0,)) + dependency.text.encode()).hexdigest()
+        model = replace(model, source_dependencies=((dependency.path, dependency_blob),))
+
+        reports, coverage = run_all_with_coverage(ctx, self._registry(model))
+
+        detector_coverage = coverage['detectors'][DETECTOR_ID]
+        self.assertEqual(detector_coverage['applicable_files'], 1)
+        self.assertEqual(detector_coverage['source_sha256'], {target.path: target.sha256})
+        self.assertEqual(detector_coverage['coverage_counts'],
+                         {'complete': 1, 'partial': 0, 'not_analyzed': 0, 'failed': 0})
+        self.assertEqual(reports[0].diagnostic_count, 1)
+        self.assertEqual({finding.file for finding in reports[0].diagnostics}, {target.path})
+
+    def test_selector_does_not_count_unrelated_same_language_or_emit_its_findings(self):
+        target = case('C03')
+        unrelated = replace(case('C03'), path='src/unrelated.cpp')
+        ctx, model = self.bound_fixture((target, unrelated))
+
+        reports, coverage = run_all_with_coverage(ctx, self._registry(model))
+
+        detector_coverage = coverage['detectors'][DETECTOR_ID]
+        self.assertEqual(detector_coverage['applicable_files'], 1)
+        self.assertEqual(detector_coverage['source_sha256'], {target.path: target.sha256})
+        self.assertEqual(reports[0].diagnostic_count, 1)
+        self.assertEqual({finding.file for finding in reports[0].diagnostics}, {target.path})
+
+    def test_invalid_selector_cannot_emit_out_of_context_finding(self):
+        target = case('C03')
+        ctx, model = self.bound_fixture((target,))
+        detector = ArkRuntimeTypeSafetyDetector(model=model)
+        detector.select_applicable_units = lambda _context, _units: (case('C03'),)
+        registry = DetectorRegistry()
+        registry.register(detector)
+
+        reports, coverage = run_all_with_coverage(ctx, registry)
+
+        self.assertEqual(reports[0].status, 'failed')
+        self.assertEqual(reports[0].diagnostic_count, 0)
+        self.assertTrue(any('Invalid detector applicability selection' in limitation
+                            for limitation in reports[0].limitations))
+        self.assertEqual(coverage['detectors'][DETECTOR_ID]['applicable_files'], 1)
+
+    def test_selector_dependency_missing_from_context_remains_blocked(self):
+        target = case('C03')
+        ctx, model = self.bound_fixture((target,))
+        model = replace(model, source_dependencies=(('src/creator.cpp', '1' * 40),))
+
+        reports, coverage = run_all_with_coverage(ctx, self._registry(model))
+
+        self.assertEqual(reports[0].status, 'blocked')
+        self.assertEqual(reports[0].diagnostic_count, 0)
+        self.assertTrue(any('creator dependency is outside the scanned source scope'
+                            in limitation for limitation in reports[0].limitations))
+        self.assertEqual(coverage['detectors'][DETECTOR_ID]['applicable_files'], 1)
+        self.assertEqual(coverage['detectors'][DETECTOR_ID]['coverage_counts']['not_analyzed'], 1)
 
     @staticmethod
     def _registry(model):
