@@ -3,8 +3,8 @@
   "date": "2026-10-20",
   "baseline": {
     "remote": "origin/codex/c-line-parallel-plan-20261020",
-    "commit": "e2daccc5b",
-    "refresh": "2026-10-20 fetched origin successfully; local and remote planning tip e2daccc5b. Float32 candidate implementation, same-SHA independent replay, and second-layer review are committed and pushed. Two next-slice scouts are active in parallel: ArrayBuffer lifecycle/mutation and TypedArray copy/mutation. Ark Runtime source baseline remains a65a2853ccae13da167d9aa4720ab8b11ec16656."
+    "commit": "6ffe9211e",
+    "refresh": "2026-10-20 local planning branch contains parallel ArrayBuffer no-go and TypedArray.set(arrayLike) candidate reports; remote remains at e2daccc5b after repeated transient GitHub HTTPS timeouts. Developer, independent tester and second-layer review are active for the candidate. Developer flagged a source-path/blob-OID mismatch in the scout report; tester is independently verifying corrected pins before any binding. Ark Runtime source revision remains a65a2853ccae13da167d9aa4720ab8b11ec16656."
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
   "status": "ACTIVE",
@@ -963,24 +963,60 @@
     {
       "id": "C-SCOUT-ARRAYBUFFER-MUTATION-NEXT",
       "kind": "exact_bound_source_scout",
-      "status": "IN_PROGRESS_PARALLEL_SOURCE_TRIAGE",
+      "status": "COMPLETE_SCOPED_NO_GO_NO_CANDIDATE",
       "agent": "scout_arraybuffer_mutation",
       "objective": "Select at most one high-signal, not-yet-closed ArrayBuffer lifecycle/mutation candidate at exact Ark Runtime source pins, or document a source-evidence no-go.",
       "scope": "ArrayBuffer slice/clone/transfer/resizable/grow/detach and backing-store allocation/copy; exclude completed C-line candidates in the tree.",
       "scout_prompt": "ROLE=exact-bound C-line source scout A. INPUT=current execution tree, detector catalog/model and exact Ark Runtime a65 source. GOAL=identify at most one precise ArrayBuffer lifecycle/mutation source candidate not already closed. STEPS=verify clean exact commit/tree/blob/SHA; trace source trigger through helpers/declarations; inspect parser status and current scanner/direct-analysis baseline; list counterevidence and source-derived controls; return zero candidate if evidence is weak; formulate structured developer/tester follow-ups with feedback. OUTPUT=committed concise report, exact pins, candidate or no-go, safe/fixed/unrelated/identity/helper controls, unknowns, and ROLE/INPUT/GOAL/STEPS/OUTPUT/STOP/NEVER prompts. STOP=one reproducible candidate or evidence-based no-go. NEVER=edit production code, duplicate closed work, infer runtime/product impact, or convert unknown/not_run into pass.",
       "report_required": true,
-      "done_when": "Independent source triage commits exact-bound evidence selecting no more than one candidate or a defensible no-go, with reproducible developer/tester prompts."
+      "done_when": "Independent source triage commits exact-bound evidence selecting no more than one candidate or a defensible no-go, with reproducible developer/tester prompts.",
+      "report": "research/deliveries/c-line/arraybuffer_mutation_scout_20261020.md",
+      "report_commit": "38e9420babdb768071f6b1ab9615f6c7221d508d"
     },
     {
       "id": "C-SCOUT-TYPEDARRAY-COPY-NEXT",
       "kind": "exact_bound_source_scout",
-      "status": "IN_PROGRESS_PARALLEL_SOURCE_TRIAGE",
+      "status": "COMPLETE_ONE_CONDITIONAL_SET_ARRAYLIKE_CANDIDATE",
       "agent": "scout_typedarray_copy",
       "objective": "Select at most one high-signal, not-yet-closed TypedArray copy/mutation candidate at exact Ark Runtime source pins, or document a source-evidence no-go.",
       "scope": "TypedArray set/copyWithin/fill/reverse/sort/species-backed copy and indexed mutation; exclude closed length, Float32 negative-double, DataView/IB8BCA, receiver-guard, and C1 Map tasks.",
       "scout_prompt": "ROLE=exact-bound C-line source scout B. INPUT=current execution tree, detector catalog/model and exact Ark Runtime a65 source. GOAL=identify at most one precise TypedArray copy/mutation source candidate not already closed. STEPS=verify clean exact commit/tree/blob/SHA; trace source trigger through helpers/declarations; inspect parser status and current scanner/direct-analysis baseline; list counterevidence and source-derived controls; return zero candidate if evidence is weak; formulate structured developer/tester follow-ups with feedback. OUTPUT=committed concise report, exact pins, candidate or no-go, safe/fixed/unrelated/identity/helper controls, unknowns, and ROLE/INPUT/GOAL/STEPS/OUTPUT/STOP/NEVER prompts. STOP=one reproducible candidate or evidence-based no-go. NEVER=edit production code, duplicate closed work, infer runtime/product impact, or convert unknown/not_run into pass.",
       "report_required": true,
-      "done_when": "Independent source triage commits exact-bound evidence selecting no more than one candidate or a defensible no-go, with reproducible developer/tester prompts."
+      "done_when": "Independent source triage commits exact-bound evidence selecting no more than one candidate or a defensible no-go, with reproducible developer/tester prompts.",
+      "report": "research/deliveries/c-line/typedarray_copy_mutation_scout_20261020.md",
+      "report_commit": "6ffe9211ed839a241f94b0fe8ff93af126bb846a"
+    },
+    {
+      "id": "C-DEV-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
+      "kind": "source_bound_detector_development",
+      "status": "IN_PROGRESS_BASELINE_CONFIRMED_IMPLEMENTATION_PENDING",
+      "developer_agent": "scout_arraybuffer_mutation",
+      "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "objective": "Implement at most one exact-bound candidate for TypedArray.set(arrayLike, offset) uint64 range-sum / uint32 byte-index wrap, only if exact method/helper source evidence and parser scope are sufficient.",
+      "developer_prompt": "ROLE=Ark Runtime source-bound detector developer. INPUT=research/deliveries/c-line/typedarray_copy_mutation_scout_20261020.md and exact Ark Runtime a65 pins. GOAL=emit at most one narrow candidate for set(arrayLike, offset) unsigned range-sum/byte-index wrap. STEPS=verify clean revision/tree/blob/SHA; establish parser completeness for exact method and SetValueInBuffer; model only ordinary array-like path; add positive source-derived trigger; add in-range, one-past/fixed-check, zero-view-offset, stable-array fast-path, unrelated, wrong-commit, missing-helper and mutated-helper controls; preserve partial/unknown if incomplete. OUTPUT=small detector/test/report change plus expected-result matrix for independent replay. STOP=one precise candidate with controls or evidence-based no-go. NEVER=edit Ark Runtime source, duplicate closed scopes, claim runtime/product impact or accuracy, equate zero with safety, or implement second-layer LLM.",
+      "feedback_to": "C-TEST-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
+      "report_required": true,
+      "done_when": "Same exact source identity yields no more than one candidate, controls fail closed or produce no candidate, and independent replay on the implementation SHA confirms it."
+    },
+    {
+      "id": "C-TEST-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
+      "kind": "independent_source_bound_detector_testing",
+      "status": "IN_PROGRESS_INDEPENDENT_BASELINE_AND_MATRIX",
+      "tester_agent": "float32_runtime_test",
+      "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "objective": "Independently challenge set(arrayLike, offset) trigger arithmetic, parser/dependency pins and fail-closed behavior, then replay on developer SHA.",
+      "tester_prompt": "ROLE=independent Ark Runtime static-detector tester. INPUT=scout report, exact pins and developer commit/control matrix. GOAL=challenge trigger arithmetic, route selection and source-identity fail-closed behavior without editing production detector/model. STEPS=independently verify blobs and parser states; calculate source-derived byte indices; establish preimplementation registered/direct-analysis baseline; after developer SHA, replay positive and safe/fixed cases, wrong commit/blob, missing/mutated method/helper; return counterexamples before closure. OUTPUT=same-SHA independent report with commands/results and explicit partial/blocked/not_run. STOP=one independent determination; if no implementation, report no-go/not_run. NEVER=claim exploitability/product impact or formal accuracy, claim safety from zero, modify production bindings, or broaden excluded scope.",
+      "feedback_to": "C-DEV-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
+      "report_required": true,
+      "done_when": "Tester confirms one precise finding or returns a concrete mismatch, and keeps runtime/build/product impact unknown unless executed."
+    },
+    {
+      "id": "C-LLM-REVIEW-TYPEDARRAY-SET-ARRAYLIKE-WRAP-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "PENDING_DEVELOPER_TESTER_SAME_SHA_RESULT",
+      "reviewer": "c1_width_review",
+      "objective": "Review exact registered set(arrayLike) candidate evidence and same-SHA controls. Do not implement LLM or detector.",
+      "review_prompt": "ROLE=second-layer source candidate reviewer. INPUT=exact developer SHA, independent replay, scout evidence, source pins and candidate. GOAL=accept/narrow/reject based on arithmetic, call-route plausibility, sensitive write, controls and unknowns. STEPS=independently recompute 2^64-2048 plus srcLen 2049 and uint32 byte ranges; inspect exact SetValueInBuffer path and whether target view bound is enforced elsewhere; verify source identities and partial evidence; preserve runtime/product limits. OUTPUT=concise review report with exact evidence and unresolved runtime questions. STOP=accept/narrow/reject. NEVER=call this confirmed exploitation, infer product impact, or edit detector/LLM."
     }
   ],
   "feedback_loop": [
