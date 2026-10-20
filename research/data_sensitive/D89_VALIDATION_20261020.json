@@ -1,0 +1,3253 @@
+{
+  "schema": 1,
+  "study": "D89 fixed macro-role pipeline and metadata feedback closure",
+  "full_evidence": {
+    "path": "D:\\openHarmonyScanner\\outputs\\D89_FULL_PIPELINE_20261020.json",
+    "sha256": "8073b1aae60c80c8f55938e40612df557adad94040fe15b65187ca4f0aca8fe8",
+    "producer": "T88_verify_macros.py"
+  },
+  "source": {
+    "key": "cert",
+    "repository": "openharmony/security_certificate_framework",
+    "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+    "tree": "e69153afa89928e1318d8b36cf37c65386465fe7",
+    "files": [
+      {
+        "path": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+        "blob": "fb0f6cdbf2e151a933ce718a0f95e7ab8e449c28",
+        "bytes": 67298,
+        "sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+        "commit_tree_blob_verified": true
+      },
+      {
+        "path": "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+        "blob": "59985f31f7a7a2a18e4ce4c40345636321ddefef",
+        "bytes": 11206,
+        "sha256": "32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80",
+        "commit_tree_blob_verified": true
+      },
+      {
+        "path": "frameworks/common/v1.0/inc/cf_log.h",
+        "blob": "6eaa53317a8494baecc743b80043d400c316edee",
+        "bytes": 3266,
+        "sha256": "489ea3537091147d5bec365471698f3d5d177dbc86473beb25fd7bc906beccb9",
+        "commit_tree_blob_verified": true
+      }
+    ]
+  },
+  "runs": [
+    {
+      "revision": "6aa4a5937547fea123f4a3114e7d133430955118",
+      "version": "0.21.5",
+      "implementation_sha256": {
+        "src/parser/ast.py": "a5bea3b01ae29eb66cb2ce2c639eea980dc5402e0e73c181d7fb5dc7e7e37438",
+        "src/parser/syntax_normalize.py": "1736982261ace36f5118fa91505c2f0ceab9a99969f6594ab4b1f8385f9d4c4c",
+        "src/ohscanner/detectors/data/sensitive_exposure.py": "f549adf0009d912672565e7d96ee57c6b65a369a9d27138e667fecbfb39d61a9",
+        "src/ohscanner/detectors/data/property_keys.py": "6de0d8c692af2ef9177bea54c97f333168cf55498d0548e13848a4c1eb5e63e5",
+        "src/ohscanner/detectors/data/log_macro_roles.py": null
+      },
+      "src_archive_sha256": "ad23fa61fdcb1ee99739b396094912a786e0ac8765365a0b305162358e9eb524",
+      "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+      "parse_status": {
+        "frameworks/common/v1.0/inc/cf_log.h": "complete",
+        "frameworks/js/napi/certificate/inc/napi_cert_defines.h": "complete",
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp": "complete"
+      },
+      "independent_tests": {
+        "count": 13,
+        "failures": 6,
+        "errors": 0
+      },
+      "direct": {
+        "count": 20,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "frameworks/common/v1.0/inc/cf_log.h",
+            "partial"
+          ],
+          [
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "partial"
+          ],
+          [
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "partial"
+          ]
+        ]
+      },
+      "runner": {
+        "count": 20,
+        "parsing": [
+          {
+            "file": "frameworks/common/v1.0/inc/cf_log.h",
+            "status": "complete",
+            "issues": [],
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete"
+          },
+          {
+            "file": "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "status": "complete",
+            "issues": [],
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete"
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "status": "complete",
+            "issues": [],
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete"
+          }
+        ],
+        "identities": [
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 185,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+            "message_sha256": "9a48a16e316900a8bbe09c27c1c31ccf16ea02f988db9a2ce204fdc6476858da",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 185,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 call CertGetStringFromValue argument 1 -> 185 unresolved call napi_typeof",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 6843,
+                "byte_end": 6883,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 6843,
+                "byte_end": 6883,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 192,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+            "message_sha256": "262e2a63a48551a3ce42bda2a7510b331210b46ad9b5bef92acd70ad82c63af2",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 192,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 call CertGetStringFromValue argument 1 -> 192 unresolved call napi_get_value_string_utf8",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 7055,
+                "byte_end": 7136,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 7055,
+                "byte_end": 7136,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:e5b51b525803481f"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 208,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+            "message_sha256": "bace78490d2574920dbdbac336bbfb370a44fe1b9360c8e566ffbaae3c231d4f",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 208,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 call CertGetStringFromValue argument 1 -> 208 unresolved call napi_get_value_string_utf8",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 7535,
+                "byte_end": 7623,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 7535,
+                "byte_end": 7623,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 298,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+            "message_sha256": "c45dd482add5c6c676452372404f38bc17bfbf1c6d43c9419d294ce6ea62361a",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 298,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:298 source heuristic suspected sensitive-return API CERT_PRIVATE_KEY.c_str -> 298 unresolved call napi_get_named_property",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 10751,
+                "byte_end": 10845,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 10751,
+                "byte_end": 10845,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 310,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+            "message_sha256": "5250af4815fdfec5c576917aeeea64a5a6c52c886875ac981fce37e4307c133c",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 310,
+                "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1900 source heuristic suspected sensitive field privateKey -> 1900 call GetKeyInfoFromValue argument 2 -> 1838 call GetPrivateKeyInfoFromValue argument 2 -> 363 call GetPrivateKeyFromValue argument 2 -> 310 unresolved call AllocatePrivateKey",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11150,
+                "byte_end": 11194,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11150,
+                "byte_end": 11194,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:364ac023d3546cf9"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 317,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e93b12f78e4df683",
+            "message_sha256": "8218ebdde8ae80c3028d08f441f3670a8f9539e366f89993a52d35a9cc74fa33",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:e93b12f78e4df683",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 317,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:317 source heuristic suspected sensitive field privateKey -> 317 unresolved call CfFree",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11358,
+                "byte_end": 11402,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11358,
+                "byte_end": 11402,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:e93b12f78e4df683"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 324,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+            "message_sha256": "8d7dc2fb66ad4de9feaa7d5bef29b11f26107d079023e7166017da0b88aef9d2",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 324,
+                "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:324 source heuristic suspected sensitive field privateKey -> 324 unresolved call CopyBlobDataToPrivateKey",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11591,
+                "byte_end": 11662,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11591,
+                "byte_end": 11662,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:03797152f3f0281e"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 328,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:22cde2151aec3df3",
+            "message_sha256": "383af8a67f0e981dba3e8531a892b63da36dc9591d5964bb4a78348a380bfd2b",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:22cde2151aec3df3",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 328,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:328 source heuristic suspected sensitive field privateKey -> 328 unresolved call CfFree",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11749,
+                "byte_end": 11793,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11749,
+                "byte_end": 11793,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:22cde2151aec3df3"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 347,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+            "message_sha256": "2e8c20e80c3e491077442e350a0e79961c22f89670e81a835486c1f44903544b",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 347,
+                "message": "Candidate sensitive-data escape with unresolved binding: other NAPI operands remain unresolved; only the bound property-name operand is excluded; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source heuristic suspected sensitive identifier password -> 347 unresolved call napi_get_named_property",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12258,
+                "byte_end": 12353,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12258,
+                "byte_end": 12353,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:e93ad875588b206e"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 349,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:844d3a7e3ca54295",
+            "message_sha256": "1c64ac7d0e02ead2c33c51ad6e8cf93d96de14fb35f7f688a889c16ec765a78a",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:844d3a7e3ca54295",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 349,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:349 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 349 unresolved call LOGE",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12406,
+                "byte_end": 12479,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12406,
+                "byte_end": 12479,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:844d3a7e3ca54295"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 352,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+            "message_sha256": "257a165bd978749c87ef90e9a91b451cd5c3da26196ef6fbb10405774dae7514",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 352,
+                "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 unresolved call CertGetStringFromValue",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12509,
+                "byte_end": 12589,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12509,
+                "byte_end": 12589,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:a671d81d320f1188"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 364,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0",
+            "message_sha256": "38068d107409f0a3653ad59034fa4c44c21208025f1e8743c400f05e15b608f6",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 364,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:364 source heuristic suspected sensitive identifier privateKey -> 364 unresolved call CfFree | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1900 source heuristic suspected sensitive field privateKey -> 1900 call GetKeyInfoFromValue argument 2 -> 1838 call GetPrivateKeyInfoFromValue argument 2 -> 364 unresolved call CfFree",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12962,
+                "byte_end": 12992,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12962,
+                "byte_end": 12992,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 381,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+            "message_sha256": "42a7c9a6a214ac07d10701c4b657607ab02b1438e1b2ee566019090b5b3bed8a",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 381,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:381 source heuristic suspected sensitive field privateKey -> 381 unresolved call CF_FREE_PTR",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13531,
+                "byte_end": 13581,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13531,
+                "byte_end": 13581,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 384,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+            "message_sha256": "5257498992975bcc87f0a22de5f96b73c9aa9b3a01c4ac48e9361e88d03e68de",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 384,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:384 source heuristic suspected sensitive field privateKeyPassword -> 384 unresolved call memset_s",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13650,
+                "byte_end": 13753,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13650,
+                "byte_end": 13753,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:8696221a7f8aac44"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 386,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+            "message_sha256": "9ea62909c89038e9f002039ae77572256676112638ea3586c7e860225a5f7348",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 386,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:386 source heuristic suspected sensitive field privateKeyPassword -> 386 unresolved call CF_FREE_PTR",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13811,
+                "byte_end": 13869,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13811,
+                "byte_end": 13869,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 388,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+            "message_sha256": "16e9988001a52a4a64cc292c90d6c1cf6e2ea35a35f64a395092b24939b0c2f5",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 388,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:369 source heuristic suspected sensitive identifier privateKey -> 369 call FreePrivateKeyInfo argument 0 -> 388 unresolved call CF_FREE_PTR | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:388 source heuristic suspected sensitive identifier privateKey -> 388 unresolved call CF_FREE_PTR | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1878 source heuristic suspected sensitive field privateKey -> 1878 call FreePrivateKeyInfo argument 0 -> 388 unresolved call CF_FREE_PTR | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1900 source heuristic suspected sensitive field privateKey -> 1900 call GetKeyInfoFromValue argument 2 -> 1838 call GetPrivateKeyInfoFromValue argument 2 -> 369 call FreePrivateKeyInfo argument 0 -> 388 unresolved call CF_FREE_PTR",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13880,
+                "byte_end": 13914,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13880,
+                "byte_end": 13914,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:82792263021a6b6e"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1825,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+            "message_sha256": "424f5ffff9885a632a7033ec4a8de860d4e4343f19a0ebbda09b08f3b189ee62",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 1825,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1825 source heuristic suspected sensitive-return API CMS_PARSER_PRIVATE_KEY.c_str -> 1825 unresolved call napi_has_named_property",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 63744,
+                "byte_end": 63830,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 63744,
+                "byte_end": 63830,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:b2a270198971ce7a"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1832,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+            "message_sha256": "6a8b2d8ad67bf2e6f17edc3946a48d85888afd283ab666cccf26074b206a64ab",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 1832,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1832 source heuristic suspected sensitive-return API CMS_PARSER_PRIVATE_KEY.c_str -> 1832 unresolved call napi_get_named_property",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 63951,
+                "byte_end": 64059,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 63951,
+                "byte_end": 64059,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1880,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039",
+            "message_sha256": "6e53195c5ce320f2a0e23bf961ad7f6330fa3499b42ea3afee7cafbc76f60116",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 1880,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1878 source heuristic suspected sensitive field privateKey -> 1878 call FreePrivateKeyInfo argument 0 -> 1878 FreePrivateKeyInfo may write through argument 0 -> 1880 unresolved call CfBlobDataFree",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 65431,
+                "byte_end": 65483,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 65431,
+                "byte_end": 65483,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1882,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+            "message_sha256": "4070d46779354ad855e4baac314846c8b8014c22745a10817fa7ef91b4c10bac",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 1882,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1878 source heuristic suspected sensitive field privateKey -> 1878 call FreePrivateKeyInfo argument 0 -> 1878 FreePrivateKeyInfo may write through argument 0 -> 1882 unresolved call CF_FREE_PTR",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 65525,
+                "byte_end": 65552,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.5",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 65525,
+                "byte_end": 65552,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:eaba53a60f1f66da"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          }
+        ],
+        "coverage": {
+          "status": "partial",
+          "applicable_files": 3,
+          "analyzed_files": [],
+          "partially_inspected_files": [
+            "frameworks/common/v1.0/inc/cf_log.h",
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp"
+          ],
+          "inspected_files": [
+            "frameworks/common/v1.0/inc/cf_log.h",
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp"
+          ],
+          "not_analyzed_files": [],
+          "coverage_counts": {
+            "complete": 0,
+            "partial": 3,
+            "not_analyzed": 0,
+            "failed": 0
+          }
+        }
+      }
+    },
+    {
+      "revision": "5c82be52e05a814e7d29a43c6627b5e53a1ad2c0",
+      "version": "0.21.6",
+      "implementation_sha256": {
+        "src/parser/ast.py": "a5bea3b01ae29eb66cb2ce2c639eea980dc5402e0e73c181d7fb5dc7e7e37438",
+        "src/parser/syntax_normalize.py": "1736982261ace36f5118fa91505c2f0ceab9a99969f6594ab4b1f8385f9d4c4c",
+        "src/ohscanner/detectors/data/sensitive_exposure.py": "702b18a384e3931a6563c703920ef5417a4a0ff61ced7242e85a636326c4cffc",
+        "src/ohscanner/detectors/data/property_keys.py": "8bffa5b9a6cf126324273fe3c14251a0526940fd496d6d84c96205101b3d8302",
+        "src/ohscanner/detectors/data/log_macro_roles.py": "2c7d2e6b7b3a74d493fe67aff8a237f3f625a7aaaf8e580585ea6f545e5888f3"
+      },
+      "src_archive_sha256": "7a3790150d3702a0388c3b8037b175c359ed1497a7e74b2f79e579c45a659784",
+      "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+      "parse_status": {
+        "frameworks/common/v1.0/inc/cf_log.h": "complete",
+        "frameworks/js/napi/certificate/inc/napi_cert_defines.h": "complete",
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp": "complete"
+      },
+      "independent_tests": {
+        "count": 13,
+        "failures": 0,
+        "errors": 0
+      },
+      "direct": {
+        "count": 19,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "frameworks/common/v1.0/inc/cf_log.h",
+            "partial"
+          ],
+          [
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "partial"
+          ],
+          [
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "partial"
+          ]
+        ]
+      },
+      "runner": {
+        "count": 19,
+        "parsing": [
+          {
+            "file": "frameworks/common/v1.0/inc/cf_log.h",
+            "status": "complete",
+            "issues": [],
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete"
+          },
+          {
+            "file": "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "status": "complete",
+            "issues": [],
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete"
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "status": "complete",
+            "issues": [],
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete"
+          }
+        ],
+        "identities": [
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 185,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+            "message_sha256": "9a48a16e316900a8bbe09c27c1c31ccf16ea02f988db9a2ce204fdc6476858da",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 185,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 call CertGetStringFromValue argument 1 -> 185 unresolved call napi_typeof",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 6843,
+                "byte_end": 6883,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 6843,
+                "byte_end": 6883,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 192,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+            "message_sha256": "262e2a63a48551a3ce42bda2a7510b331210b46ad9b5bef92acd70ad82c63af2",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 192,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 call CertGetStringFromValue argument 1 -> 192 unresolved call napi_get_value_string_utf8",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 7055,
+                "byte_end": 7136,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 7055,
+                "byte_end": 7136,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:e5b51b525803481f"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 208,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+            "message_sha256": "bace78490d2574920dbdbac336bbfb370a44fe1b9360c8e566ffbaae3c231d4f",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 208,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 call CertGetStringFromValue argument 1 -> 208 unresolved call napi_get_value_string_utf8",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 7535,
+                "byte_end": 7623,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 7535,
+                "byte_end": 7623,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 298,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+            "message_sha256": "c45dd482add5c6c676452372404f38bc17bfbf1c6d43c9419d294ce6ea62361a",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 298,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:298 source heuristic suspected sensitive-return API CERT_PRIVATE_KEY.c_str -> 298 unresolved call napi_get_named_property",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 10751,
+                "byte_end": 10845,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 10751,
+                "byte_end": 10845,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 310,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+            "message_sha256": "5250af4815fdfec5c576917aeeea64a5a6c52c886875ac981fce37e4307c133c",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 310,
+                "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1900 source heuristic suspected sensitive field privateKey -> 1900 call GetKeyInfoFromValue argument 2 -> 1838 call GetPrivateKeyInfoFromValue argument 2 -> 363 call GetPrivateKeyFromValue argument 2 -> 310 unresolved call AllocatePrivateKey",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11150,
+                "byte_end": 11194,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11150,
+                "byte_end": 11194,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:364ac023d3546cf9"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 317,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e93b12f78e4df683",
+            "message_sha256": "8218ebdde8ae80c3028d08f441f3670a8f9539e366f89993a52d35a9cc74fa33",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:e93b12f78e4df683",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 317,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:317 source heuristic suspected sensitive field privateKey -> 317 unresolved call CfFree",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11358,
+                "byte_end": 11402,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11358,
+                "byte_end": 11402,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:e93b12f78e4df683"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 324,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+            "message_sha256": "8d7dc2fb66ad4de9feaa7d5bef29b11f26107d079023e7166017da0b88aef9d2",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 324,
+                "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:324 source heuristic suspected sensitive field privateKey -> 324 unresolved call CopyBlobDataToPrivateKey",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11591,
+                "byte_end": 11662,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11591,
+                "byte_end": 11662,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:03797152f3f0281e"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 328,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:22cde2151aec3df3",
+            "message_sha256": "383af8a67f0e981dba3e8531a892b63da36dc9591d5964bb4a78348a380bfd2b",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:22cde2151aec3df3",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 328,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:328 source heuristic suspected sensitive field privateKey -> 328 unresolved call CfFree",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11749,
+                "byte_end": 11793,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 11749,
+                "byte_end": 11793,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:22cde2151aec3df3"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 347,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+            "message_sha256": "2e8c20e80c3e491077442e350a0e79961c22f89670e81a835486c1f44903544b",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 347,
+                "message": "Candidate sensitive-data escape with unresolved binding: other NAPI operands remain unresolved; only the bound property-name operand is excluded; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source heuristic suspected sensitive identifier password -> 347 unresolved call napi_get_named_property",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12258,
+                "byte_end": 12353,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12258,
+                "byte_end": 12353,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:e93ad875588b206e"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 352,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+            "message_sha256": "257a165bd978749c87ef90e9a91b451cd5c3da26196ef6fbb10405774dae7514",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 352,
+                "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 unresolved call CertGetStringFromValue",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12509,
+                "byte_end": 12589,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12509,
+                "byte_end": 12589,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:a671d81d320f1188"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 364,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0",
+            "message_sha256": "38068d107409f0a3653ad59034fa4c44c21208025f1e8743c400f05e15b608f6",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 364,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:364 source heuristic suspected sensitive identifier privateKey -> 364 unresolved call CfFree | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1900 source heuristic suspected sensitive field privateKey -> 1900 call GetKeyInfoFromValue argument 2 -> 1838 call GetPrivateKeyInfoFromValue argument 2 -> 364 unresolved call CfFree",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12962,
+                "byte_end": 12992,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 12962,
+                "byte_end": 12992,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 381,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+            "message_sha256": "42a7c9a6a214ac07d10701c4b657607ab02b1438e1b2ee566019090b5b3bed8a",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 381,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:381 source heuristic suspected sensitive field privateKey -> 381 unresolved call CF_FREE_PTR",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13531,
+                "byte_end": 13581,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13531,
+                "byte_end": 13581,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 384,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+            "message_sha256": "5257498992975bcc87f0a22de5f96b73c9aa9b3a01c4ac48e9361e88d03e68de",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 384,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:384 source heuristic suspected sensitive field privateKeyPassword -> 384 unresolved call memset_s",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13650,
+                "byte_end": 13753,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13650,
+                "byte_end": 13753,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:8696221a7f8aac44"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 386,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+            "message_sha256": "9ea62909c89038e9f002039ae77572256676112638ea3586c7e860225a5f7348",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 386,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:386 source heuristic suspected sensitive field privateKeyPassword -> 386 unresolved call CF_FREE_PTR",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13811,
+                "byte_end": 13869,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13811,
+                "byte_end": 13869,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 388,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+            "message_sha256": "16e9988001a52a4a64cc292c90d6c1cf6e2ea35a35f64a395092b24939b0c2f5",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 388,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:369 source heuristic suspected sensitive identifier privateKey -> 369 call FreePrivateKeyInfo argument 0 -> 388 unresolved call CF_FREE_PTR | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:388 source heuristic suspected sensitive identifier privateKey -> 388 unresolved call CF_FREE_PTR | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1878 source heuristic suspected sensitive field privateKey -> 1878 call FreePrivateKeyInfo argument 0 -> 388 unresolved call CF_FREE_PTR | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1900 source heuristic suspected sensitive field privateKey -> 1900 call GetKeyInfoFromValue argument 2 -> 1838 call GetPrivateKeyInfoFromValue argument 2 -> 369 call FreePrivateKeyInfo argument 0 -> 388 unresolved call CF_FREE_PTR",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13880,
+                "byte_end": 13914,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 13880,
+                "byte_end": 13914,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:82792263021a6b6e"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1825,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+            "message_sha256": "424f5ffff9885a632a7033ec4a8de860d4e4343f19a0ebbda09b08f3b189ee62",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 1825,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1825 source heuristic suspected sensitive-return API CMS_PARSER_PRIVATE_KEY.c_str -> 1825 unresolved call napi_has_named_property",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 63744,
+                "byte_end": 63830,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 63744,
+                "byte_end": 63830,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:b2a270198971ce7a"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1832,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+            "message_sha256": "6a8b2d8ad67bf2e6f17edc3946a48d85888afd283ab666cccf26074b206a64ab",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 1832,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1832 source heuristic suspected sensitive-return API CMS_PARSER_PRIVATE_KEY.c_str -> 1832 unresolved call napi_get_named_property",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 63951,
+                "byte_end": 64059,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 63951,
+                "byte_end": 64059,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1880,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039",
+            "message_sha256": "6e53195c5ce320f2a0e23bf961ad7f6330fa3499b42ea3afee7cafbc76f60116",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 1880,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1878 source heuristic suspected sensitive field privateKey -> 1878 call FreePrivateKeyInfo argument 0 -> 1878 FreePrivateKeyInfo may write through argument 0 -> 1880 unresolved call CfBlobDataFree",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 65431,
+                "byte_end": 65483,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 65431,
+                "byte_end": 65483,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1882,
+            "rule_id": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+            "message_sha256": "4070d46779354ad855e4baac314846c8b8014c22745a10817fa7ef91b4c10bac",
+            "finding_identity": {
+              "schema_version": "ohscanner.finding-identity-record.v1",
+              "stable": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "identity_quality:unknown",
+                  "missing:ast_fingerprint",
+                  "missing:rule_lineage_id",
+                  "missing:symbol_identity"
+                ]
+              },
+              "occurrence": {
+                "id": null,
+                "status": "unknown",
+                "basis": null,
+                "unknown_reasons": [
+                  "missing:rule_version",
+                  "missing:source_blob_oid"
+                ]
+              },
+              "observation": {
+                "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "line": 1882,
+                "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1878 source heuristic suspected sensitive field privateKey -> 1878 call FreePrivateKeyInfo argument 0 -> 1878 FreePrivateKeyInfo may write through argument 0 -> 1882 unresolved call CF_FREE_PTR",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 65525,
+                "byte_end": 65552,
+                "identity_quality": "unknown",
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null
+              },
+              "source_binding": {
+                "repository": "openharmony/security_certificate_framework",
+                "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                "profile_id": "light-ast",
+                "detector_id": "ohscanner.data.sensitive_exposure",
+                "detector_version": "0.21.6",
+                "rule_id": "data.sensitive.unresolved-escape",
+                "rule_version": null,
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_blob_oid": null,
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "byte_start": 65525,
+                "byte_end": 65552,
+                "status": "unbound",
+                "verification": "not_performed_by_identity_layer"
+              },
+              "historical_ids": [
+                "ohscanner.data.sensitive_exposure:eaba53a60f1f66da"
+              ],
+              "backfilled": false,
+              "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+            }
+          }
+        ],
+        "coverage": {
+          "status": "partial",
+          "applicable_files": 3,
+          "analyzed_files": [],
+          "partially_inspected_files": [
+            "frameworks/common/v1.0/inc/cf_log.h",
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp"
+          ],
+          "inspected_files": [
+            "frameworks/common/v1.0/inc/cf_log.h",
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp"
+          ],
+          "not_analyzed_files": [],
+          "coverage_counts": {
+            "complete": 0,
+            "partial": 3,
+            "not_analyzed": 0,
+            "failed": 0
+          }
+        }
+      }
+    }
+  ],
+  "difference": {
+    "direct_added_sites": [],
+    "direct_removed_sites": [
+      [
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+        349,
+        "data.sensitive.unresolved-escape",
+        "GetPrivateKeyPasswordFromValue"
+      ]
+    ],
+    "direct_changed_evidence_sites": [],
+    "runner_added_sites": [],
+    "runner_removed_sites": [
+      [
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+        349,
+        "data.sensitive.unresolved-escape"
+      ]
+    ],
+    "same_site_runner_identities": [
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          185,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          192,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          208,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          298,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          310,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          317,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:e93b12f78e4df683",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:e93b12f78e4df683",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          324,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          328,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:22cde2151aec3df3",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:22cde2151aec3df3",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          347,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          352,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          364,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          381,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          384,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          386,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          388,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          1825,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          1832,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          1880,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          1882,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      }
+    ],
+    "all_original_call_positions_unchanged": true
+  },
+  "same_remaining_runner_legacy_ids": true,
+  "same_remaining_runner_messages": true,
+  "same_original_snapshot": true,
+  "same_parse_projections": true,
+  "metadata_failure_feedback": {
+    "reported_by": "T88 independent tests",
+    "intermediate_state": "uncommitted live prototype before metadata guard; no immutable intermediate revision recorded",
+    "reproducer_prefix": "#define __FUNCTION__ password",
+    "explicit_log_operand": "CERT_PASSWORD.c_str()",
+    "actual_implicit_operand": "password through public __FUNCTION__ prefix slot",
+    "observed_intermediate_direct": 0,
+    "observed_intermediate_runner": 0,
+    "required": "retain unresolved candidate",
+    "repair": "reject selected define/undef metadata overrides and per-call local metadata/terminal shadows",
+    "fixed_implementation": "5c82be52e05a814e7d29a43c6627b5e53a1ad2c0",
+    "fixed_actual_header_controls": {
+      "implementation": "5c82be52e05a814e7d29a43c6627b5e53a1ad2c0",
+      "header_path": "frameworks/common/v1.0/inc/cf_log.h",
+      "header_sha256": "489ea3537091147d5bec365471698f3d5d177dbc86473beb25fd7bc906beccb9",
+      "source_policy": "synthetic caller with original exact-hash upstream header, loaded in fixed src snapshot",
+      "cases": [
+        {
+          "name": "none",
+          "source": "#include \"cf_log.h\"\nconst std::string CERT_PASSWORD=\"password\";\nvoid sample(napi_env env,napi_value obj,const char *password){\nbool present=false; napi_has_named_property(env,obj,CERT_PASSWORD.c_str(),&present);\nLOGE(\"get property %{public}s failed!\",CERT_PASSWORD.c_str());\n}\n",
+          "source_sha256": "f3960a3707f31e030e4df9472732d5899eb855149aaa6a40d18ef92e13d925e2",
+          "expected": 0,
+          "direct": 0,
+          "runner": 0
+        },
+        {
+          "name": "function_override",
+          "source": "#define __FUNCTION__ password\n#include \"cf_log.h\"\nconst std::string CERT_PASSWORD=\"password\";\nvoid sample(napi_env env,napi_value obj,const char *password){\nbool present=false; napi_has_named_property(env,obj,CERT_PASSWORD.c_str(),&present);\nLOGE(\"get property %{public}s failed!\",CERT_PASSWORD.c_str());\n}\n",
+          "source_sha256": "8815614cde07532a8f4ce83ec7adc77efa36f2d2cc749fe023c5ffbc90a00f08",
+          "expected": 1,
+          "direct": 1,
+          "runner": 1
+        },
+        {
+          "name": "file_override",
+          "source": "#define __FILE__ password\n#include \"cf_log.h\"\nconst std::string CERT_PASSWORD=\"password\";\nvoid sample(napi_env env,napi_value obj,const char *password){\nbool present=false; napi_has_named_property(env,obj,CERT_PASSWORD.c_str(),&present);\nLOGE(\"get property %{public}s failed!\",CERT_PASSWORD.c_str());\n}\n",
+          "source_sha256": "840859c43f4ec0f3d1a5baad39e9ccc990609f2f16248cfb1d7ddb2431aec50e",
+          "expected": 1,
+          "direct": 1,
+          "runner": 1
+        },
+        {
+          "name": "line_override",
+          "source": "#define __LINE__ passwordCode\n#include \"cf_log.h\"\nconst std::string CERT_PASSWORD=\"password\";\nvoid sample(napi_env env,napi_value obj,const char *password,unsigned passwordCode){\nbool present=false; napi_has_named_property(env,obj,CERT_PASSWORD.c_str(),&present);\nLOGE(\"get property %{public}s failed!\",CERT_PASSWORD.c_str());\n}\n",
+          "source_sha256": "cd5b642db13aa2dc2ebccb02946942fd8a5cead31f014dcc8546c0b3d5ac0054",
+          "expected": 1,
+          "direct": 1,
+          "runner": 1
+        }
+      ]
+    }
+  },
+  "tests": {
+    "developer_methods": 12,
+    "data_total": 144,
+    "parser_known_corpus": 61,
+    "fixed_independent_methods": 13
+  },
+  "limits": [
+    "One bound schema-name operand site is excluded; no independent precision/recall label or product vulnerability claim.",
+    "The remaining nineteen legacy IDs/messages are equal; stable and occurrence identities remain explicitly unknown.",
+    "All three source files remain partially analyzed under an unknown profile.",
+    "The fallback summary is reviewed only at the exact original header hash; caller and selected-source macro overrides are separate rejection conditions.",
+    "This does not establish an entire product preprocessor or compiler binding environment."
+  ]
+}
