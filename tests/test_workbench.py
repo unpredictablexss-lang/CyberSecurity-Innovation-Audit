@@ -318,7 +318,8 @@ class WorkbenchTests(unittest.TestCase):
                 self.assertEqual(detail.json()["risk_presentation"], expected)
                 for field in ("severity", "severity_label", "severity_evidence", "severity_basis"):
                     self.assertEqual(row[field], expected[field])
-                self.assertIn(row["vulnerability_state"], ("candidate", "confirmed"))
+                self.assertEqual(row["vulnerability_state"], "candidate")
+                self.assertEqual(row["validated_case_ids"], [])
                 self.assertIn(row["human_review_status"],
                               ("unassessed", "under_review", "plausible_unproven",
                                "likely_false_positive", "refuted"))
