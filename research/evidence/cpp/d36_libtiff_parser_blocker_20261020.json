@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "task": "D36 libtiff full translation unit parser blocker localization",
+  "scanner_commit": "73d5c356b1b1dbc081727948d89d6502c862f3af",
+  "source_repository": "libtiff/libtiff (user-declared; exact local Git objects checked)",
+  "scope": [
+    "libtiff/tif_getimage.c",
+    "libtiff/tiffio.h"
+  ],
+  "source_revisions": {
+    "vulnerable": {
+      "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+      "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a",
+      "files": {
+        "libtiff/tif_getimage.c": {
+          "blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e",
+          "sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3",
+          "language": "c",
+          "parse_status": "partial",
+          "parse_issue_count": 6,
+          "parse_issues": [
+            {
+              "end_line": 1383,
+              "kind": "error",
+              "start_line": 1383,
+              "text": "}"
+            },
+            {
+              "end_line": 1393,
+              "kind": "error",
+              "start_line": 1393,
+              "text": "}"
+            },
+            {
+              "end_line": 1687,
+              "kind": "error",
+              "start_line": 1687,
+              "text": "UNROLL8(w, NOP, *cp++ = PACK(pp[0], pp[1], pp[2]);"
+            },
+            {
+              "end_line": 1707,
+              "kind": "error",
+              "start_line": 1707,
+              "text": "UNROLL8(w, NOP, *cp++ = PACK4(pp[0], pp[1], pp[2], pp[3]);"
+            },
+            {
+              "end_line": 1831,
+              "kind": "missing",
+              "start_line": 1831,
+              "text": "UNROLL8(w, NOP, k = 255 - pp[3]; r = (k * (255 - pp[0])) / 255;"
+            },
+            {
+              "end_line": 1833,
+              "kind": "error",
+              "start_line": 1833,
+              "text": "*cp++ = PACK(r, g, b); pp += samplesperpixel);"
+            }
+          ],
+          "indexed_functions": 64
+        },
+        "libtiff/tiffio.h": {
+          "blob": "225f3c1bfeabae2b31a5f35fbfd12d14b570dcd8",
+          "sha256": "70119b9db897a364821a108ff0adc09f26c20ad9b6d9e943eb376ee3edb6166f",
+          "language": "cpp",
+          "parse_status": "partial",
+          "parse_issue_count": 7,
+          "parse_issues": [
+            {
+              "end_line": 483,
+              "kind": "missing",
+              "start_line": 483,
+              "text": "extern void TIFFError(const char *, const char *, ...)"
+            },
+            {
+              "end_line": 485,
+              "kind": "missing",
+              "start_line": 485,
+              "text": "extern void TIFFErrorExt(thandle_t, const char *, const char *, ...)"
+            },
+            {
+              "end_line": 487,
+              "kind": "missing",
+              "start_line": 487,
+              "text": "extern void TIFFWarning(const char *, const char *, ...)"
+            },
+            {
+              "end_line": 489,
+              "kind": "missing",
+              "start_line": 489,
+              "text": "extern void TIFFWarningExt(thandle_t, const char *, const char *, ...)"
+            },
+            {
+              "end_line": 496,
+              "kind": "missing",
+              "start_line": 496,
+              "text": "extern void TIFFWarningExtR(TIFF *, const char *, const char *, ...)"
+            },
+            {
+              "end_line": 498,
+              "kind": "missing",
+              "start_line": 498,
+              "text": "extern void TIFFErrorExtR(TIFF *, const char *, const char *, ...)"
+            },
+            {
+              "end_line": 650,
+              "kind": "missing",
+              "start_line": 650,
+              "text": "}"
+            }
+          ],
+          "indexed_functions": 0
+        }
+      },
+      "header_grammar_comparison": {
+        "current_classification": "cpp",
+        "cpp_status": "partial",
+        "cpp_issue_count": 7,
+        "c_status": "partial",
+        "c_issue_count": 22,
+        "c_issue_lines": [
+          449,
+          451,
+          453,
+          455,
+          457,
+          483,
+          485,
+          487,
+          489,
+          496,
+          498,
+          604,
+          605,
+          606,
+          607,
+          608,
+          650
+        ]
+      }
+    },
+    "fixed": {
+      "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+      "tree": "77361ef7262189e16a2010b5c333f6b275d17f09",
+      "files": {
+        "libtiff/tif_getimage.c": {
+          "blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db",
+          "sha256": "de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8",
+          "language": "c",
+          "parse_status": "partial",
+          "parse_issue_count": 6,
+          "parse_issues": [
+            {
+              "end_line": 1411,
+              "kind": "error",
+              "start_line": 1411,
+              "text": "}"
+            },
+            {
+              "end_line": 1421,
+              "kind": "error",
+              "start_line": 1421,
+              "text": "}"
+            },
+            {
+              "end_line": 1715,
+              "kind": "error",
+              "start_line": 1715,
+              "text": "UNROLL8(w, NOP, *cp++ = PACK(pp[0], pp[1], pp[2]);"
+            },
+            {
+              "end_line": 1735,
+              "kind": "error",
+              "start_line": 1735,
+              "text": "UNROLL8(w, NOP, *cp++ = PACK4(pp[0], pp[1], pp[2], pp[3]);"
+            },
+            {
+              "end_line": 1859,
+              "kind": "missing",
+              "start_line": 1859,
+              "text": "UNROLL8(w, NOP, k = 255 - pp[3]; r = (k * (255 - pp[0])) / 255;"
+            },
+            {
+              "end_line": 1861,
+              "kind": "error",
+              "start_line": 1861,
+              "text": "*cp++ = PACK(r, g, b); pp += samplesperpixel);"
+            }
+          ],
+          "indexed_functions": 64
+        },
+        "libtiff/tiffio.h": {
+          "blob": "6a7ab2f5b7f6697020dfbcac57f8c2617c4b1074",
+          "sha256": "7923903a85c15c047a22bfe52ef1901939d6a7e656c75b814fcb86c6179b120c",
+          "language": "cpp",
+          "parse_status": "partial",
+          "parse_issue_count": 7,
+          "parse_issues": [
+            {
+              "end_line": 498,
+              "kind": "missing",
+              "start_line": 498,
+              "text": "extern void TIFFError(const char *, const char *, ...)"
+            },
+            {
+              "end_line": 500,
+              "kind": "missing",
+              "start_line": 500,
+              "text": "extern void TIFFErrorExt(thandle_t, const char *, const char *, ...)"
+            },
+            {
+              "end_line": 502,
+              "kind": "missing",
+              "start_line": 502,
+              "text": "extern void TIFFWarning(const char *, const char *, ...)"
+            },
+            {
+              "end_line": 504,
+              "kind": "missing",
+              "start_line": 504,
+              "text": "extern void TIFFWarningExt(thandle_t, const char *, const char *, ...)"
+            },
+            {
+              "end_line": 511,
+              "kind": "missing",
+              "start_line": 511,
+              "text": "extern void TIFFWarningExtR(TIFF *, const char *, const char *, ...)"
+            },
+            {
+              "end_line": 513,
+              "kind": "missing",
+              "start_line": 513,
+              "text": "extern void TIFFErrorExtR(TIFF *, const char *, const char *, ...)"
+            },
+            {
+              "end_line": 668,
+              "kind": "missing",
+              "start_line": 668,
+              "text": "}"
+            }
+          ],
+          "indexed_functions": 0
+        }
+      },
+      "header_grammar_comparison": {
+        "current_classification": "cpp",
+        "cpp_status": "partial",
+        "cpp_issue_count": 7,
+        "c_status": "partial",
+        "c_issue_count": 22,
+        "c_issue_lines": [
+          464,
+          466,
+          468,
+          470,
+          472,
+          498,
+          500,
+          502,
+          504,
+          511,
+          513,
+          622,
+          623,
+          624,
+          625,
+          626,
+          668
+        ]
+      }
+    }
+  },
+  "interpretation": "The C translation unit has unexpanded macro invocation syntax errors; the .h file is classified as C++, where conditional-compilation alternatives produce missing nodes. Parsing the header as C also remains partial and is less complete. The current frontend has no compile-command or preprocessing input, so these full-TU partial statuses cannot be safely repaired by changing detector logic or by relabeling coverage."
+}
