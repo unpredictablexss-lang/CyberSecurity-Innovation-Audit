@@ -4,7 +4,7 @@
 
 本轮结果：D83/D84/D85、T83/T84已完成并集成，140项相关测试通过。详见 [交付报告](D_LINE_ROUND_SUMMARY_20261020.md)。以下提示词保留本轮角色和接续设计；实际状态以任务树为准。
 
-接续轮已执行 D86/T85 与 D87/T86：敏感流到0.21.4；T86独立发现并关闭三类引用遮蔽误抑制。负责人当前复验为132项data + 39项known/corpus，共171项通过。第二层模型仍未实现。
+接续轮已执行 D86/T85、D87/T86 与 D88/T87：敏感流到0.21.5；T86独立发现并关闭三类引用遮蔽误抑制，T87独立验证成对空C++ linkage投影。负责人当前复验为132项data + 39项known/corpus + 16项新解析控制，共187项通过。第二层模型仍未实现。
 
 ## 基线情况与本轮取舍
 
@@ -81,3 +81,101 @@ flowchart TD
 ### T87（下一测试切片）
 
 角色：独立前端边界测试。目标：固定复现 `cf_log.h` 的成对跨条件extern C；独立构造完全匹配、未配对、顺序歧义、分支有实际声明、普通extern等控制。检验解析状态、函数/宏体保留、源码行列/字节映射不变；用原T85三文件和D87固定版本跑候选/coverage同源对照。任何未配对变complete或真实路径/行偏移改变即反馈D88，修订后复测。交付独立用例、固定源差异、partial限制和完整命令，不报无标签准确率。
+
+### D89（下一开发切片）
+
+角色：敏感流候选语义开发。输入：T87固定源码显示，证书框架 `utils.cpp:349` 的 unresolved-escape候选把 `CERT_PASSWORD.c_str()` 传入 `LOGE`；完整固定 `cf_log.h` 中 `LOGE→CF_LOG_E→CfPrintLog/HILOG_ERROR` 是有据可查的日志宏链，来源则是值为 `"password"` 的schema属性名。目标：证明精确局部宏定义链、绑定属性常量和该日志参数的数据角色后，消除纯属性名材料候选；真实密码内容仍可达同类日志/输出时必须继续报警。只认完整解析、无宏重定义/歧义的同一固定源码；altered macro、unknown wrapper、partial header及实际密码值保留。先对T88最小失败，交付源码前后Runner诊断/identity/coverage及正反控制。
+
+### T88（下一测试切片）
+
+角色：D89独立日志宏/材料边界挑战。对固定证书真实源码以及具名最小控制测试：schema-key常量经准确`LOGE`宏链、同名但真实password参数、用户值进入format operand、unknown wrapper、重定义/别名宏、partial header。先对D89提交独立跑测，逐案记录候选source、sink、宏链与运行器诊断身份；任何实际secret漏检立即反馈并复测。固定T85三文件比较Runner完整finding identity和覆盖；不能把直接detector结果代替Runner，不能仅凭候选数判断准确度。
+
+
+### D90（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：敏感流静态分析开发负责人。
+- **固定输入**：整合后的 D89/T88；`D89_VALIDATION_20261020.json` 与其 SHA 绑定的 T85 三文件 direct/Runner 重放。remaining Runner traces 在 `napi_cert_utils.cpp` 的 `CfFree`、`CF_FREE_PTR`、`CfBlobDataFree`、`memset_s` 清理调用处出现 unresolved-escape。
+- **目标**：调查这些候选是否属于释放/擦除而非数据外泄，并从真实精确头文件/实现建立身份与参数角色。只有可证明的精确函数体/声明和无泄漏效果，才考虑局部排除；函数名相似、未知实现、同名自定义包装、宏别名歧义或不完整源码都保留候选。
+- **正控制**：已绑定的纯清理调用在精确证明下可减少候选。
+- **反控制**：参数被写日志/返回/保存到全局的同名包装，敏感值与清理参数混合，函数/宏重定义、未知 wrapper、部分头文件均保留候选。
+- **验证**：固定开发 SHA；新增独立单元控制；运行数据检测器套件；比较 T85 原三文件 direct 和 Runner 的完整 finding identity、coverage、源字节和 AST 位置。只报告实际证据，不把候选数量称为准确率。
+- **交付**：实现与自有测试/研究证据独立提交，说明身份、作用域、剩余未知和对 T89 的挑战点；不推送。
+
+### T89（与 D90 并行的独立测试线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立安全测试与源码证据审查员；不要复用 D90 的结论作为预期答案。
+- **输入**：D89 固定 T85 源码归档和 Runner 身份证据；独立检查 `CfFree`、`CF_FREE_PTR`、`CfBlobDataFree`、`memset_s` 的真实定义、声明、宏展开来源及调用参数。
+- **测试矩阵**：确证的释放/擦除；同名但把材料写入全局/日志/返回值的自定义实现；清理与实际输出混合；宏别名/重定义；未知或缺失头文件；局部遮蔽。
+- **反馈规则**：任何反控制被压掉立即反馈 D90 并在修复 SHA 上重测；若源码无法证明纯清理，明确记录“保留候选”的证据，不为了减少候选而放宽规则。
+- **验证**：对固定 D90 SHA 独立运行测试，并用原 T85 三文件分别跑 detector 与 Runner；记录每条诊断身份、消息、覆盖、raw hashes 和 AST spans 的前后变化。不得用 direct 结果代替 Runner，也不得声称正式精确率/召回率。
+- **交付**：独立测试、复现命令和证据报告；保留工作树中的源档缓存，不推送。
+
+
+### D91（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：敏感流数据角色建模开发者。
+- **固定证据**：D89/T88/T90 handoff 指向 `napi_cert_utils.cpp:185` 的 `napi_typeof` unresolved-sink候选；同一函数的 `napi_get_value_string_utf8` 第192/208行实际提取材料，不能被连带压掉。
+- **目标**：从固定版本 N-API 声明/实现确认 `napi_typeof(env,value,&type)` 的精确输入、输出和返回角色；只有确定扫描输入中绑定到该 API 的调用，且完整声明与局部/宏身份未被遮蔽时，才能考虑把类型枚举/status与秘密字节分离。
+- **必须保留**：同名本地函数/函数指针、自定义包装、宏改写、缺失/partial头、未知版本和 `napi_get_value_string_utf8` 实际数据输出。不得按拼写全局豁免，不得把 API 知识伪装成源码绑定事实。
+- **验证**：具名元数据正例、实际材料提取正例、同名/宏/partial/unknown反例；固定T85三文件 direct 与 Runner完整诊断、coverage、call facts 前后对照，所有身份字段unknown如实记录。
+- **交付**：实现或“保留候选”的证据报告、测试、T90反馈修订闭环；如果API身份无法由静态输入证明，默认不作排除。
+
+### T90（并行独立测试切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立API契约与数据流边界测试员，不依赖D91的安全结论。
+- **输入**：固定证书版本和 T85 三文件；独立确认对应 N-API 公共契约/版本及 `napi_typeof` 的入参、输出参数、返回值。
+- **控制**：精确 type-check元数据调用；相邻真实 `napi_get_value_string_utf8` 字节提取；同名自定义函数/回调、重定义宏、未知包装、缺失或partial声明。
+- **反馈**：若同名或未知绑定被排除，立即交D91修复并在固定SHA重跑；若仅API文档证明一般契约却无法证明当前调用身份，明确报告unknown并建议保留。
+- **验证**：fresh-process D91前后完整src归档；严格固定三文件 direct/Runner诊断identity、message、coverage、原始source/call facts比较。不能用直接detector替代Runner，也不能将诊断计数当准确率。
+
+
+### D92（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：NAPI schema-key 数据角色开发者。
+- **固定证据**：T85 certificate commit `e270363a042bf8f0126881c76d1341ad457cc187`，源文件 SHA-256 `5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3`；`napi_cert_utils.cpp:298` 把 `CERT_PRIVATE_KEY.c_str()` 放在 `napi_get_named_property` 第三实参（0基 arg2），同一固定 `napi_cert_defines.h` SHA-256 `32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80` 定义该不可变字符串为 `"key"`。当前只识别 `CERT_PASSWORD="password"`，因此产生名称启发式候选。
+- **目标**：精确绑定常量符号和值及 property-read API 的名称参数角色，只排除这个 schema key 的值来源；不抑制 NAPI 输出参数取出的 private-key 内容及后续 sinks。
+- **反控制**：同名局部变量/参数、不同字面量、常量出现在输出位置、未知 wrapper、API 同名自定义实现、缺少/partial头、实际材料输出都保留候选。不得放宽成“所有 const string 都是安全key”。
+- **验证**：固定 T85 三文件 direct 与 Runner重放；完整诊断ID/message/identity status、coverage、source byte/hash与AST位置比较；只在确凿角色证据下减少候选。
+- **交付**：开发代码、具名正反控制和限制报告，收到T91挑战后修复复测。
+
+### T91（并行独立挑战线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立源码/语义挑战者；不复用D92测试作为独立基线。
+- **输入**：从固定 upstream Git objects 自行提取e270的utils和defines文件，复核commit/tree/blob/bytes/SHA，以及第298行参数索引和 `CERT_PRIVATE_KEY="key"` 声明。
+- **矩阵**：arg2 精确property key；arg3输出引用；不同key常量/同名字面量；参数/局部遮蔽；错位实参；未知包装/同名函数；partial/missing defines；实值流至日志/复制/返回。
+- **反馈规则**：若输出实值、错位参数或未知调用被压掉，立即交D92修复并固定SHA复测。
+- **验证**：对D92完整`src/` Git archive在新进程运行独立控制与T85原三文件direct/Runner；报告所有finding变化、identity字段未知、coverage与raw source/call spans。不能凭count宣称准确率。
+
+
+### D93（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：N-API 字符串访问语义与敏感流候选开发者。
+- **固定输入**：D92/T91 的原证书三文件和完整身份重放。`napi_cert_utils.cpp:890` 使用 `napi_get_value_string_utf8(env,arg,nullptr,0,&length)`查询长度；第915行才把真实字节写入 `newBlob->data`。
+- **目标**：确认空缓冲区/零容量调用的精确API角色、length输出如何流动，以及证书组件的BUILD/include是否绑定到某个具体声明和实现版本。只有调用身份与参数角色可由当前选定输入证明时，才处理第890行的候选。
+- **必须保留**：第915行字节复制、length进入日志/分支等实际依赖、同名自定义函数/函数指针、宏改写、未知wrapper、缺失或partial声明。不能仅凭函数名全局豁免。
+- **验证**：最小query、实际buffer write、length日志和输出、same-name body/callback、宏重定义和partial/missing API控制；固定T85三文件 direct/Runner诊断身份/coverage/原始跨度前后比对。
+- **交付**：若版本绑定无法证明，报告保留candidate的证据，不为减少数量编造安全结论；提交报告、控制测试、完整源档replay及对T92反馈修复。
+
+### T92（并行独立挑战线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立实现身份和数据流边界测试员。
+- **输入**：从固定upstream对象独立检查e270证书utils、BUILD.gn/include和D91/T90记录的arkui_napi/third_party_node对象。不要把同名函数或“master”分支视为版本绑定。
+- **挑战矩阵**：line890标准query、length值后续日志/返回/条件、line915真实buffer写入、同名自定义函数/函数指针、宏覆盖、缺失/partial声明与未知wrapper。
+- **反馈**：若仅名称/空指针形状就抑制自定义或未绑定调用，反馈D93修复；若证据不够，要求原范围保留候选。
+- **验证**：fresh-process完整src档案对照，T85严格三文件direct和Runner逐项记录findings、legacy ID/message、identity unknown、coverage和source/call spans；不把数量变化当准确率。
