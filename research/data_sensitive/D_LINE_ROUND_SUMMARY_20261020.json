@@ -1,0 +1,133 @@
+{
+  "date": "2026-10-20",
+  "status": "MILESTONE_COMPLETED",
+  "code_head": "6bde33ce4295069bfce1da01ce07924a9c6fc482",
+  "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
+  "remote_refs": {
+    "main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "d_next": "0f4560c4712dbf914d762948e2220942f16324ad"
+  },
+  "versions": {
+    "sensitive_exposure": "0.21.2",
+    "known_disclosed_cves": "0.19.11"
+  },
+  "changes": [
+    {
+      "id": "D83",
+      "change": "retain candidates when a quota check is conditional under unbraced if/loop/else; integrate tested Pasteboard evidence and exact insertion anchor",
+      "regression_counterexamples": 10
+    },
+    {
+      "id": "D84",
+      "change": "preserve LHS/RHS may-flow through compound assignment including value expressions"
+    },
+    {
+      "id": "D85",
+      "change": "preserve zero-argument c_str flow for syntactically bound local std::string values without treating arbitrary same-name methods as known APIs"
+    },
+    {
+      "id": "OWNER-WIN",
+      "change": "portable offline error records and enforced child wall-time budget on Windows; unavailable RSS stays null"
+    }
+  ],
+  "test_results": {
+    "suites": [
+      {
+        "suite": "data",
+        "command": [
+          "D:\\openHarmonyScanner\\.venv-c-line\\Scripts\\python.exe",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests/detectors/data",
+          "-t",
+          ".",
+          "-q"
+        ],
+        "exit_code": 0,
+        "tests": 101,
+        "log": "D:\\openHarmonyScanner\\records\\d-line-parallel-20261020-01a1571f\\integration-data-suite.log",
+        "log_sha256": "c284aaf5f8ddf600de2a5cfb896c311d7cccbb2e5fa2b05572ffb320bca7cde5"
+      },
+      {
+        "suite": "known",
+        "command": [
+          "D:\\openHarmonyScanner\\.venv-c-line\\Scripts\\python.exe",
+          "-m",
+          "unittest",
+          "tests.detectors.test_known_disclosed_cves",
+          "tests.detectors.test_known_case_corpus",
+          "tests.detectors.test_d83_adversarial",
+          "-q"
+        ],
+        "exit_code": 0,
+        "tests": 39,
+        "log": "D:\\openHarmonyScanner\\records\\d-line-parallel-20261020-01a1571f\\integration-known-suite.log",
+        "log_sha256": "86fa4598a84ccd53eaa7c4cd6493ea85c0e1b334b1e9f98c42967c052b73729a"
+      }
+    ],
+    "total_tests": 140,
+    "syntax_check": "PASS",
+    "diff_check": "PASS"
+  },
+  "development_commits": {
+    "D83": "e0873d7d4b1ac1c56a62e0393f2c21f5aab846af",
+    "D84": "e72855e970405bb8043cf4bb961207848c957a97",
+    "D85": "6131e8c26d2b29dc45022be982effb1c1e1d317e",
+    "T83": "30baf4c5dd3bf64f4b476e803b470409e0faeb66",
+    "T84": "ddda953d64f3c1ecf2ae5b6f60e5e82a7a53b544"
+  },
+  "real_source_replays": [
+    {
+      "sample": "Pasteboard",
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "scope": "67 applicable C/C++ files plus one declaration indexed",
+      "candidate_count": 2,
+      "difference": "same real-source count; quota location222->241; permission guard remains unknown",
+      "report": "D83_PASTEBOARD_REPLAY_20261020.json"
+    },
+    {
+      "sample": "DSoftBus historical profile",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "scope": "4 selected C files",
+      "candidate_count": 5,
+      "difference": "same findings/outcomes",
+      "report": "D85_VALIDATION_20261020.json"
+    },
+    {
+      "sample": "DSoftBus current profile",
+      "commit": "9f922677e147b939d6db899bde181d609d64711b",
+      "scope": "5 selected source/header files",
+      "candidate_count": 1,
+      "difference": "same findings/outcomes",
+      "report": "T83_REAL_SOURCE_D85.json"
+    },
+    {
+      "sample": "Wi-Fi",
+      "scope": "1 selected fixed file",
+      "candidate_count": 1,
+      "difference": "same signatures across3versions×2repetitions",
+      "report": "T84_CROSS_COMPONENT_REPLAY_20261020.json"
+    },
+    {
+      "sample": "IoT Connect",
+      "scope": "1 selected fixed file",
+      "candidate_count": 1,
+      "difference": "same signatures across3versions×2repetitions",
+      "report": "T84_CROSS_COMPONENT_REPLAY_20261020.json"
+    }
+  ],
+  "limitations": [
+    "All source findings remain candidates; product impact and runtime visibility not established.",
+    "Real samples retain partial detector coverage; sample scopes must not be enlarged.",
+    "Wi-Fi raw bytes/blob verified; commit/tree association inherited from prior record, not newly verified.",
+    "Real replay samples did not exercise every newly added C++ shape; synthetic controls cover those bounded semantics.",
+    "No reliable independent labels, formal precision/recall or second-layer LLM implementation."
+  ],
+  "next_tasks": [
+    "D86",
+    "T85"
+  ],
+  "next_queue_requires_product_or_human_approval": false
+}
