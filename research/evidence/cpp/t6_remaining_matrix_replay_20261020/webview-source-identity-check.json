@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_bare_mirror": "D:/openHarmonyScanner/tmp/chromium-src-cve-2026-27648-audit.git",
+  "source_path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+  "results": [
+    {
+      "variant": "vulnerable",
+      "commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+      "tree": "4ed3b46721fbfe04059af4ddb18bcd5272ce4762",
+      "blob": "78e83fea67a2db3297cc59f07566a0c0b6153e7a",
+      "source_bytes": 185698,
+      "source_sha256": "aa401c305ed30b70007917d97b726986a26aff2d00fb49649466533f4a48a920",
+      "functions": [
+        {"name": "FlowbufStrAtIndex", "start_line": 4428, "end_line": 4458},
+        {"name": "ProcessNativeProxyResultNewFlowbuf", "start_line": 4460, "end_line": 4586}
+      ],
+      "fragment_bytes": 4684,
+      "fragment_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973",
+      "fragment_parse": "complete",
+      "identity_and_fragment_match": true
+    },
+    {
+      "variant": "fixed",
+      "commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+      "tree": "a7769bf612be457e6e368f14ee355f3ea8ed2935",
+      "blob": "27e93e338ced03aeed6e7d892e29d4d0740f3653",
+      "source_bytes": 185982,
+      "source_sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483",
+      "functions": [
+        {"name": "FlowbufStrAtIndex", "start_line": 4428, "end_line": 4463},
+        {"name": "ProcessNativeProxyResultNewFlowbuf", "start_line": 4465, "end_line": 4592}
+      ],
+      "fragment_bytes": 4968,
+      "fragment_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74",
+      "fragment_parse": "complete",
+      "identity_and_fragment_match": true
+    }
+  ]
+}
