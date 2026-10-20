@@ -270,7 +270,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.2'
+    version = '0.21.3'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -429,6 +429,10 @@ class LocalFlow:
                 return (self.source('heuristic suspected sensitive identifier '+ident,n),)
             return ()
         if n.type in ('string_literal','char_literal','number_literal','sizeof_expression','null','true','false'):return ()
+        if n.type=='alignof_expression' and self.u.language=='cpp':
+            # C++ alignof describes a type's alignment, not the operand's bytes.
+            # In particular, a sensitive name inside decltype is not read here.
+            return ()
         if n.type=='field_expression':
             obj=n.child_by_field_name('argument'); field=self.text(n.child_by_field_name('field'))
             root=self.text(obj)
@@ -1079,6 +1083,7 @@ class LocalFlow:
                 for arg in args.named_children:self.effects(arg,state,fnname)
             self.apply_call(node,state,fnname);return
         if node.type in ('string_literal','char_literal','number_literal','identifier','sizeof_expression'):return
+        if node.type=='alignof_expression' and self.u.language=='cpp':return
         for child in node.named_children:self.effects(child,state,fnname)
 
     def declaration(self,node,state,fnname):
