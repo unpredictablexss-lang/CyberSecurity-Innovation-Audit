@@ -32,14 +32,16 @@ The downstream order is cast, `AllocateTypedArrayBuffer` max-index check, `uint6
 
 ## Detector coverage and replay status
 
-I directly invoked the repository's generic `CppIntegerBoundsDetector.detect` on `SourceUnit`s extracted from the exact parent and fixed target blobs. It returned 0 findings for parent and 0 for fixed. This is a detector-specific not-match, not a registered Ark Runtime replay.
+I first invoked the repository's generic `CppIntegerBoundsDetector.detect` with `parse_status='partial'`; it correctly returned blocked with zero analyzed files. That first empty result is **not** a detector negative. I then parsed each exact target blob with the repository's Tree-sitter C++ dependency (`tree_sitter_cpp`, `root_node.has_error == False`) and repeated the direct detector invocation with `parse_status='complete'`. For both source blobs the direct detector result was `completed`, analyzed the target file, and emitted zero findings. This is a generic detector-specific not-match on a syntax-complete input, not a registered Ark Runtime replay and not a safety conclusion.
 
-The current Ark Runtime detector model has no typed-array length-narrowing rule or exact bindings for these two commits/path. Therefore the requested registered Ark Runtime CLI replay is **not_run** on this base; no CLI candidate/suppression claim is made. Existing Ark Runtime size-overflow analysis covers a different multiplication-flow pattern and is not treated as a length-conversion rule.
+The current Ark Runtime detector model has no typed-array length-narrowing rule or exact bindings for these two commits/path. Therefore the requested registered Ark Runtime CLI replay is **not_run** on this base; no CLI candidate/suppression claim is made. Existing Ark Runtime size-overflow analysis covers a different multiplication-flow pattern and is not treated as a length-conversion rule. Effective detector coverage for this exact length path remains **unknown**.
 
 ## Validation and limitations
 
-Command: `python -m pytest tests/detectors/ark_runtime tests/detectors/test_cpp_memory_safety_detectors.py -q`
+Direct replay used the exact source objects and a Tree-sitter C++ parse (`root_node.has_error == False`) before setting `SourceUnit.parse_status='complete'`; it then called `CppIntegerBoundsDetector.detect(context, (unit,))`. Parent and fixed each returned `status=completed`, `analyzed_files=('ecmascript/base/typed_array_helper.cpp',)`, and no findings. A separate partial-status control returned `status=blocked`, `analyzed_files=()`, confirming the empty blocked result must not be read as a negative.
 
-Result: **179 passed, 3 skipped**. An earlier attempted test path `tests/detectors/test_cpp_integer_bounds_detector.py` does not exist; that command collected no tests and was replaced by the actual memory-safety detector suite above.
+Regression command: `python -m pytest tests/detectors/ark_runtime tests/detectors/test_cpp_memory_safety_detectors.py -q`
+
+Result: **179 passed, 3 skipped**. These are regression-suite checks, not a registered Ark Runtime replay of this exact source pair. An earlier attempted test path `tests/detectors/test_cpp_integer_bounds_detector.py` does not exist; that command collected no tests and was replaced by the actual memory-safety detector suite above.
 
 The independent tester's source-baseline report is commit `58792ad3f266a8e25e66a24469f81548d138bafd`, file `research/deliveries/c-line/u32_length_independent_baseline_20261020.md` in its test worktree. Its findings agree with the source trace above. No compiler/runtime execution, product build context, allocation-success evidence, or exploitability assessment was performed. Parser/build-profile and product impact remain unknown.
