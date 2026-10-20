@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "task": "T5 independent fresh D51/D52 source-bound replay",
+  "run_date_local": "2026-10-20",
+  "timezone": "Asia/Shanghai",
+  "run_window_utc": {
+    "earliest_observed_before_execution": "2026-10-20T02:10:12Z",
+    "latest_observed_after_execution": "2026-10-20T02:12:35Z",
+    "basis": "task clock observations bracketing the two synchronous CLI executions; not a timestamp embedded by CLI"
+  },
+  "scanner": {
+    "commit": "81dd4aea9bb51522ac912b33504ef0d2ddb79089",
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "detector_version": "0.5.1",
+    "profile": "light-ast",
+    "build_profile": "none",
+    "macro_expansion": false
+  },
+  "integration_base": "6286eabd7b1da2ab83d7b2b03cf26ce5a331846d",
+  "a0_queue": {
+    "path": "research/deliveries/a-line-triage/20261019/candidate_triage_queue.csv",
+    "sha256": "687d773986910a600e558833515137160ed50037889a2b6cc31c024433c3b45b",
+    "row_count": 345,
+    "unique_review_ids": 345,
+    "tested_rows_status": "not_testable",
+    "queue_status_field_present": false,
+    "modified": false
+  },
+  "cases": [
+    {
+      "review_id": "CR-0341",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:63b7b6b9dff04365",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "queue_snapshot_sha256": "9fc6f1440f14899a71e9d4b99bd343782ad97eae5d1fa66b44c7fe23f4d3992c",
+      "path": "services/huks_standard/huks_service/extension/ability_native/inc/hks_crypto_ext_stub_impl.h",
+      "blob": "2c12eef68c03b83e27c805b651bf99c981efac45",
+      "source_sha256": "f189d4fbcb83e989ed3367fa8cb656e39a62f9aeddeb22b39c8d82352b435f45",
+      "cli_artifact": "d51_cli.json",
+      "scope_files": 1,
+      "parse_complete": 1,
+      "coverage": "complete",
+      "finding_count": 0,
+      "result": "FRESH_REPLAY_NO_FINDING_PARTIAL_BLOCK"
+    },
+    {
+      "review_id": "CR-0255",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:da71855714407620",
+      "repository": "openharmony/global_i18n",
+      "commit": "d13c698ebb238fa416a711bd3befe871e85721b6",
+      "tree": "d667c4f54ca12ef664b3bab9ec80b93653c5a7b7",
+      "queue_snapshot_sha256": "533c3b8e09bbe318349ff90d92d07e2ea5d13fb2730f5fad2b102f6a0a7c54f8",
+      "path": "interfaces/ets/ani/i18n/include/simple_number_format_addon.h",
+      "blob": "23803c9108c4e4c6b88a92ad366b600108a16317",
+      "source_sha256": "588f5783b8be2b3c1b49874e43464dce8c750cb340437f334053b57a665d4289",
+      "cli_artifact": "d52_cli.json",
+      "scope_files": 2,
+      "parse_complete": 2,
+      "coverage": "complete",
+      "finding_count": 0,
+      "result": "FRESH_REPLAY_NO_FINDING_PARTIAL_BLOCK"
+    },
+    {
+      "review_id": "CR-0256",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:d34ea3729a3995d7",
+      "repository": "openharmony/global_i18n",
+      "commit": "d13c698ebb238fa416a711bd3befe871e85721b6",
+      "tree": "d667c4f54ca12ef664b3bab9ec80b93653c5a7b7",
+      "queue_snapshot_sha256": "533c3b8e09bbe318349ff90d92d07e2ea5d13fb2730f5fad2b102f6a0a7c54f8",
+      "path": "interfaces/ets/ani/intl/include/number_format_addon.h",
+      "blob": "216b68e9e1ba22c1c478b5966ebc713fe00e5bfe",
+      "source_sha256": "a2548ed27d5e424132a1ed16cde48fdedb1e85dc89f504ab86f7267f57a20389",
+      "cli_artifact": "d52_cli.json",
+      "scope_files": 2,
+      "parse_complete": 2,
+      "coverage": "complete",
+      "finding_count": 0,
+      "result": "FRESH_REPLAY_NO_FINDING_PARTIAL_BLOCK"
+    }
+  ],
+  "historical_artifacts": {
+    "claims_date": "2026-10-29",
+    "date_status": "BLOCK_UNVERIFIED",
+    "modified": false,
+    "fresh_replay_replaces_historical_date_claim": false
+  },
+  "limitations": [
+    "No finding is not a safety conclusion and does not independently refute the A0 candidate.",
+    "No fixed source or same-root negative control was replayed in this test task.",
+    "The queue lacks queue_status, so only original_final_status was independently checked.",
+    "Repository ownership and product reachability/build context remain unverified."
+  ],
+  "scope": {
+    "detector_tests_fixtures_a0_status_modified": false,
+    "new_files": [
+      "research/evidence/cpp/t5_d51_d52_fresh_replay_20261020/README.md",
+      "research/evidence/cpp/t5_d51_d52_fresh_replay_20261020/summary.json",
+      "research/evidence/cpp/t5_d51_d52_fresh_replay_20261020/d51_cli.json",
+      "research/evidence/cpp/t5_d51_d52_fresh_replay_20261020/d51_cli.md",
+      "research/evidence/cpp/t5_d51_d52_fresh_replay_20261020/d52_cli.json",
+      "research/evidence/cpp/t5_d51_d52_fresh_replay_20261020/d52_cli.md",
+      "research/evidence/cpp/t5_d51_d52_fresh_replay_20261020/verify.py"
+    ]
+  }
+}
