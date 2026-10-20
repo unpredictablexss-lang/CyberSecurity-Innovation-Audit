@@ -1,0 +1,357 @@
+{
+  "schema": 1,
+  "repository": "openharmony/arkui_napi",
+  "commit": "bfe8fad581ca6112e7d55c38ca60150753f4af35",
+  "tree": "941f9a6bf1e0b5af2366f119c5876caa801eda20",
+  "source_files": [
+    {
+      "path": "tools/check_helper.cpp",
+      "blob": "1a09ef1a72404b3ee8f43654ebfce231752cb5bf",
+      "bytes": 27569,
+      "sha256": "9d0db3824096f4ca900e40d057bbe02efdc8238833519e0f8249e345ce3a75be",
+      "utf8_strict": true
+    },
+    {
+      "path": "tools/check_helper.h",
+      "blob": "ddb5fa9ba850c6d5d2884150ed72fdde797d8787",
+      "bytes": 4581,
+      "sha256": "519a1e84323e92b22b27ffc61842cd26a4a4a43a7e0f70d35ee98fac29ec85ac",
+      "utf8_strict": true
+    },
+    {
+      "path": "tools/api_meta.h",
+      "blob": "a9cf66eaad0fea32c843211e1ec13693a1b4aaf4",
+      "bytes": 1287,
+      "sha256": "6004bd8ca0921929c3ae9e9d7a13baf66a1cb99c2853f94d547599e04bd66838",
+      "utf8_strict": true
+    }
+  ],
+  "build_metadata": [
+    {
+      "path": "tools/BUILD.gn",
+      "blob": "07f964a254a05e9a67c656c5a17b4949481feb2a",
+      "bytes": 1821,
+      "sha256": "cbc526e2b96e65aa6ef1dd66f108c474edc4f3a60f5f5d55fad9e5c24d6bf97b",
+      "utf8_strict": true
+    },
+    {
+      "path": "BUILD.gn",
+      "blob": "6cec9ca2801a2d76bdacd660fc2c94d9192a5c3e",
+      "bytes": 13992,
+      "sha256": "8a1793b5d57d184a6cad9fecb44188b66b376a5406ceb157d93d802b55784c40",
+      "utf8_strict": true
+    },
+    {
+      "path": "napi.gni",
+      "blob": "830b2edec792d3cd4dcaadab11bbec9344cf6392",
+      "bytes": 2602,
+      "sha256": "00d3fc0342933466bb782f896309c0321307586b838efbb6258f11390955db58",
+      "utf8_strict": true
+    },
+    {
+      "path": "bundle.json",
+      "blob": "d4c18e73a33f1b75f65129db48da903dbd166b8d",
+      "bytes": 6404,
+      "sha256": "2b0ca2d718808ed090a76e56a212a06c87ed69aaffb2170c491946cb3f608c98",
+      "utf8_strict": true
+    }
+  ],
+  "source_bytes": 33437,
+  "build_boundary": {
+    "target": "//foundation/arkui/napi/tools:checkapi",
+    "build_file": "tools/BUILD.gn",
+    "target_line": 24,
+    "sources_assignment_line": 27,
+    "sources_assignment": "sources = [\n    \"check_api.cpp\",\n    \"check_helper.cpp\",\n    \"check_match.cpp\",\n    \"load_abc.cpp\",\n    \"load_so.cpp\",\n    \"parse_json.cpp\",\n  ]",
+    "sources_assignment_sha256": "abd1a728616aa40965ecc695af72dfd2e91cee48af5754ae699c2b80c30a879f",
+    "literal_target_sources": [
+      "tools/check_api.cpp",
+      "tools/check_helper.cpp",
+      "tools/check_match.cpp",
+      "tools/load_abc.cpp",
+      "tools/load_so.cpp",
+      "tools/parse_json.cpp"
+    ],
+    "selected_target_sources": [
+      "tools/check_helper.cpp"
+    ],
+    "unselected_target_sources": [
+      "tools/check_api.cpp",
+      "tools/check_match.cpp",
+      "tools/load_abc.cpp",
+      "tools/load_so.cpp",
+      "tools/parse_json.cpp"
+    ],
+    "headers": "selected only as local header closure; no claim that GN sources enumerates all headers",
+    "configuration": "not_run: GN generation/compiler/linking/target execution not performed; build variables and dependency graph unknown"
+  },
+  "includes": [
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 15,
+      "include": "check_helper.h",
+      "syntax": "quoted",
+      "same_tree_path_candidates": [
+        "tools/check_helper.h"
+      ],
+      "selected_candidates": [
+        "tools/check_helper.h"
+      ],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 17,
+      "include": "cctype",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 19,
+      "include": "cstring",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 20,
+      "include": "fstream",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 21,
+      "include": "iostream",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 22,
+      "include": "mutex",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 23,
+      "include": "ostream",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 24,
+      "include": "queue",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 25,
+      "include": "set",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 26,
+      "include": "sstream",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 27,
+      "include": "string",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 28,
+      "include": "utility",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 29,
+      "include": "vector",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 30,
+      "include": "ark_native_engine.h",
+      "syntax": "quoted",
+      "same_tree_path_candidates": [
+        "native_engine/impl/ark/ark_native_engine.h"
+      ],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 32,
+      "include": "jsnapi.h",
+      "syntax": "quoted",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 33,
+      "include": "native_utils.h",
+      "syntax": "quoted",
+      "same_tree_path_candidates": [
+        "native_engine/native_utils.h"
+      ],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.cpp",
+      "line": 34,
+      "include": "napi/native_node_api.h",
+      "syntax": "quoted",
+      "same_tree_path_candidates": [
+        "interfaces/inner_api/napi/native_node_api.h"
+      ],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.h",
+      "line": 18,
+      "include": "map",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.h",
+      "line": 20,
+      "include": "set",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.h",
+      "line": 21,
+      "include": "sstream",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.h",
+      "line": 22,
+      "include": "string",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.h",
+      "line": 23,
+      "include": "unordered_map",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.h",
+      "line": 24,
+      "include": "vector",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.h",
+      "line": 25,
+      "include": "api_meta.h",
+      "syntax": "quoted",
+      "same_tree_path_candidates": [
+        "tools/api_meta.h"
+      ],
+      "selected_candidates": [
+        "tools/api_meta.h"
+      ],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/check_helper.h",
+      "line": 27,
+      "include": "napi/native_api.h",
+      "syntax": "quoted",
+      "same_tree_path_candidates": [
+        "interfaces/kits/napi/native_api.h"
+      ],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/api_meta.h",
+      "line": 18,
+      "include": "string",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    },
+    {
+      "from": "tools/api_meta.h",
+      "line": 20,
+      "include": "ostream",
+      "syntax": "system",
+      "same_tree_path_candidates": [],
+      "selected_candidates": [],
+      "resolution": "path candidates only; compiler include order, conditions and external versions not evaluated"
+    }
+  ],
+  "configured_origin": {
+    "status": "unknown",
+    "command_exit": 1,
+    "reason": "No configured remote.origin.url value; object identity is verified independently."
+  },
+  "selection": "Bounded helper plus two local headers, not complete checkapi/ace_napi/Ark/STL analysis.",
+  "retrieval": "Local pinned Git objects only; lazy fetch disabled; no target execution.",
+  "search_notes": "Initial HEAD probes on commonlibrary_c_utils/commonlibrary_utils_lite/bounds stores had no HEAD ref; explicit arkui_napi fixed objects are readable. Missing HEAD/config was not treated as scan safety."
+}
