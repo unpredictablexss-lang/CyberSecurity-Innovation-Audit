@@ -29,6 +29,28 @@ class ReceiverGuardTests(unittest.TestCase):
         result = analyze_receiver_guard(unit(wrap(body)))
         self.assertEqual([item.kind for item in result.observations], ['matched'])
 
+    def test_negated_typedarray_predicate_does_not_protect_true_branch(self):
+        body = ("Label typed(GetEnvironment());\n"
+                "BRANCH(!IsTypedArray(input), &typed, slowPath); Bind(&typed);\n"
+                "GateRef buffer = GetViewedArrayBuffer(input);")
+        result = analyze_receiver_guard(unit(wrap(body)))
+        self.assertEqual([item.kind for item in result.observations], ['unknown'])
+        self.assertIn('receiver_type_guard_not_resolved', result.limitations)
+
+    def test_direct_positive_typedarray_predicate_is_supported(self):
+        body = ("Label typed(GetEnvironment());\n"
+                "BRANCH(IsTypedArray(input), &typed, slowPath); Bind(&typed);\n"
+                "GateRef buffer = GetViewedArrayBuffer(input);")
+        result = analyze_receiver_guard(unit(wrap(body)))
+        self.assertEqual([item.kind for item in result.observations], ['matched'])
+
+    def test_compound_predicate_is_not_assumed_to_protect_receiver(self):
+        body = ("Label typed(GetEnvironment());\n"
+                "BRANCH(IsTypedArray(input) || count, &typed, slowPath); Bind(&typed);\n"
+                "GateRef buffer = GetViewedArrayBuffer(input);")
+        result = analyze_receiver_guard(unit(wrap(body)))
+        self.assertEqual([item.kind for item in result.observations], ['unknown'])
+
     def test_other_object_guard_does_not_protect_receiver(self):
         body = ("Label typed(GetEnvironment());\n"
                 "GateRef inputTag = GetObjectType(LoadHClass(input));\n"

@@ -33,43 +33,48 @@ def _typed_array_guard(fn, instruction, receiver):
     if instruction.kind != 'BRANCH' or not instruction.arguments:
         return False
     condition = instruction.arguments[0]
-    for call in walk(condition):
-        if call.type != 'call_expression' or fn.call_name(call) not in ('IsFastTypeArray', 'IsTypedArray'):
+    # Only accept a direct positive predicate. Finding it somewhere inside a
+    # compound expression is not enough: negation, OR, or another wrapper can
+    # make the true branch reachable when the receiver is not a TypedArray.
+    if condition.type != 'call_expression':
+        return False
+    call = condition
+    if fn.call_name(call) not in ('IsFastTypeArray', 'IsTypedArray'):
+        return False
+    args = fn.arguments(call)
+    if len(args) != 1:
+        return False
+    if fn.call_name(call) == 'IsTypedArray':
+        return _same_binding(fn, args[0], receiver)
+    if args[0].type != 'identifier':
+        return False
+    type_binding = fn.resolve(fn.text(args[0]), args[0])
+    if type_binding is None:
+        return False
+    # Bind the type predicate to the same receiver's runtime HClass.
+    for node in walk(fn.body):
+        if node.type != 'call_expression' or fn.call_name(node) != 'GetObjectType':
             continue
-        args = fn.arguments(call)
-        if len(args) != 1:
+        outer_args = fn.arguments(node)
+        if len(outer_args) != 1 or outer_args[0].type != 'call_expression':
             continue
-        if fn.call_name(call) == 'IsTypedArray' and _same_binding(fn, args[0], receiver):
-            return True
-        if args[0].type != 'identifier':
+        load = outer_args[0]
+        if fn.call_name(load) != 'LoadHClass':
             continue
-        type_binding = fn.resolve(fn.text(args[0]), args[0])
-        if type_binding is None:
-            continue
-        # Bind the type predicate to the same receiver's runtime HClass.
-        for node in walk(fn.body):
-            if node.type != 'call_expression' or fn.call_name(node) != 'GetObjectType':
-                continue
-            outer_args = fn.arguments(node)
-            if len(outer_args) != 1 or outer_args[0].type != 'call_expression':
-                continue
-            load = outer_args[0]
-            if fn.call_name(load) != 'LoadHClass':
-                continue
-            load_args = fn.arguments(load)
-            if (len(load_args) == 1 and _same_binding(fn, load_args[0], receiver)
-                    and type_binding.name):
-                parent = node.parent
-                while parent is not None and parent.type not in ('init_declarator', 'assignment_expression'):
-                    parent = parent.parent
-                if parent is not None and parent.type == 'init_declarator':
-                    declarator = parent.child_by_field_name('declarator')
-                    identifier = declarator
-                    while identifier is not None and identifier.type not in ('identifier', 'field_identifier'):
-                        identifier = identifier.child_by_field_name('declarator')
-                    if (identifier is not None
-                            and fn.resolve(fn.text(identifier), identifier) == type_binding):
-                        return True
+        load_args = fn.arguments(load)
+        if (len(load_args) == 1 and _same_binding(fn, load_args[0], receiver)
+                and type_binding.name):
+            parent = node.parent
+            while parent is not None and parent.type not in ('init_declarator', 'assignment_expression'):
+                parent = parent.parent
+            if parent is not None and parent.type == 'init_declarator':
+                declarator = parent.child_by_field_name('declarator')
+                identifier = declarator
+                while identifier is not None and identifier.type not in ('identifier', 'field_identifier'):
+                    identifier = identifier.child_by_field_name('declarator')
+                if (identifier is not None
+                        and fn.resolve(fn.text(identifier), identifier) == type_binding):
+                    return True
     return False
 
 
