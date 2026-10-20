@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "status": "matched",
+  "independent_replay_sha256": "e77e5dfeff3d1b2a4e49127a6208d2d16382a0133dc3dec2acb52034ad3ad57c",
+  "manifest_sha256": "14363e3c9841e225ddf8187de3908276969cbb15e65b1ec422596be5d79a70b4",
+  "developer_artifact_sha256": "6b3633241095f18bbd5be56c653999103e4c053893474c054e693f393caeb9cd",
+  "checks": {
+    "scanner_revision_same": true,
+    "source_commit_tree_same": true,
+    "source_path_blob_bytes_sha_same": true,
+    "source_snapshot_same": true,
+    "build_target_source_set_same": true,
+    "unselected_target_cpp_same": true,
+    "direct_run_same": true,
+    "runner_status_same": true,
+    "runner_diagnostics_same": true,
+    "coverage_same": true,
+    "all_217_original_call_records_same": true
+  },
+  "interpretation": "Independent execution preceded this comparison. Matching blocked zero-candidate output is not a safety or accuracy conclusion; runtime IDs/timing are not compared."
+}
