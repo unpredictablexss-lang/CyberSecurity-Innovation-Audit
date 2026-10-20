@@ -300,7 +300,25 @@
         "narrow detector/test patch only if concrete defect",
         "report and commit SHA"
       ],
-      "completion": "Pending parallel execution and independent tester feedback."
+      "completion": "Pending parallel execution and independent tester feedback.",
+      "checkpoint": {
+        "worktree": "D:\\openHarmonyScanner\\worktrees\\worktrees\\c-static-alias-dev-20261020",
+        "branch": "codex/c-static-alias-dev-20261020",
+        "base": "7dc34a6995763691143d4575c0dd81049794f18d",
+        "verified": "exact parent/fixed identities and blobs; parent int32_t vs fixed uint32_t cast reaches downstream allocator max-length check",
+        "matrix_sent_to_tester": [
+          "-1",
+          "0",
+          "INT32_MAX±",
+          "UINT32_MAX±",
+          "2^32",
+          "MAX_SAFE_INTEGER",
+          "MAX_SAFE_INTEGER+1",
+          "fractional controls"
+        ],
+        "caveat": "Out-of-range floating-to-integer conversion is unknown; do not assume modulo/wrap semantics.",
+        "next": "Trace ToIndex/MAX_ARRAY_INDEX/allocation semantics and detector coverage; patch only on concrete defect."
+      }
     },
     {
       "objective": "Investigate the adjacent >UINT32_MAX TypedArray length boundary against exact parent/fixed source and downstream range checks; keep or improve a narrow candidate only if source evidence warrants it.",
@@ -330,7 +348,9 @@
         "verified": "parent/fixed commit, tree, typed_array_helper.cpp blob and SHA-256 match the review bindings",
         "current": "independent downstream range-check trace and boundary matrix in progress; same-commit replay awaits developer case matrix/commit",
         "unknown": "out-of-range floating double to integer conversion behavior is not inferred from static source alone"
-      }
+      },
+      "matrix_received": true,
+      "replay_gate": "Independent same-commit replay begins only after developer shares any code/test commit; source baseline work proceeds meanwhile."
     }
   ],
   "feedback_loop": [
