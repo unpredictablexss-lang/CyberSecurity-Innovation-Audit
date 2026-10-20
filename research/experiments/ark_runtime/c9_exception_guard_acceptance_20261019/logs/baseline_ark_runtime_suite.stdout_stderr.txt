@@ -1,0 +1,121 @@
+test_arrow_allocation_inside_cycle_is_not_a_fresh_identity (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_budget_after_multiple_paths_discards_truncated_candidates (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_compound_assignment_is_not_token_copy (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_copywithin_reviewed_reads_preserve_same_object_type (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_deleted_special_member_has_no_body_and_cannot_crash_parser (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_fresh_read_does_not_revalidate_an_old_copy (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_global_creator_type_homonym_is_not_a_reviewed_builder (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_host_builder_write_does_not_mutate_runtime_type (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_host_gate_ref_rebinding_is_not_a_runtime_phi (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_host_return_cannot_emit_future_label (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_later_function_budget_retains_only_completed_function_evidence (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_mechanism_matrix (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_multiple_supported_functions_keep_independent_states (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_other_reviewed_owner_function_uses_actual_symbol (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_readonly_summary_requires_exact_builder_receiver (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_same_type_creator_and_exact_buffer_copy_preserve_origin (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_same_type_creator_requires_token_from_its_exact_exemplar (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_shadowed_equality_macro_is_not_admitted (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_species_creation_invalidates_current_type_but_not_token_origin (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_two_stale_snapshots_cannot_prove_current_destination_type (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_unknown_build_profile_does_not_silently_drop_assertions (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_unknown_loop_never_upgrades_file_coverage (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_unknown_reference_parameter_cannot_reuse_pre_call_alias (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_unknown_runtime_call_still_invalidates_same_type_relation (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_unmodelled_cpp_expression_writes_cannot_leave_type_facts_live (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_unmodelled_generated_return_does_not_fall_through (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_unreviewed_constructor_in_detached_block_still_blocks_host_proof (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_verified_by_value_call_does_not_refresh_old_token (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_visible_type_helper_definition_requires_review (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests) ... ok
+test_aggregate_limited_does_not_discard_valid_local_candidate (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_catalog_allows_explicit_selection_but_keeps_c_out_of_defaults (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_complete_fixture_produces_source_bound_v2_candidate (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_direct_adapter_rejects_mixed_source_context (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_exactly_bound_partial_fixture_preserves_candidate_and_unknown_scope (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_missing_facts_are_not_bypassed_in_direct_adapter (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_mixed_scope_retains_valid_complete_file_candidate (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_model_digest_binds_repository_revision_and_target_blob (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_same_inputs_produce_stable_ids (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_source_content_hash_tamper_is_rejected (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_target_blob_mismatch_is_rejected_before_partial_analysis (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_visible_incompatible_store_signature_is_unknown (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_exact_parent_and_fixed_source_through_registered_adapter (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardHistoricalTests) ... skipped 'Pinned Ark Git store not supplied; no implicit fetch'
+test_branch_and_loop_paths_keep_local_candidate_or_guard_match (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_budget_exhaustion_does_not_emit_candidate (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_exception_return_before_use_suppresses_candidate (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_fixture_control_matrix_positive_fixed_safe_unrelated_unknown (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_guard_before_effect_is_matched_and_guard_after_effect_is_candidate (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_historical_missing_guard_mechanism_regression (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_load_hclass_signature_mismatch_is_unknown (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_missing_exception_guard_is_candidate (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_missing_expected_caller_keeps_candidate_partial (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_nested_call_in_declaration_fails_closed_as_unknown (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_nested_call_in_expression_fails_closed_as_unknown (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_pending_exception_check_on_other_glue_is_not_accepted (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_potential_throw_helper_requires_guard_before_external_effect (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_reassigned_gate_ref_is_not_treated_as_allocation_result (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_sensitive_read_requires_exact_wrapper_expression (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_unknown_effect_fails_closed_for_potential_throw_helper (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_unmodeled_effect_fails_closed_as_unknown (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_zero_length_return_path_is_unknown_not_safe (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_bound_current_component_is_explicitly_selected_but_partial_stays_unknown (tests.detectors.ark_runtime.test_historical.CurrentComponentRunnerBindingTests) ... skipped 'Component Git store not supplied; no implicit fetch'
+test_current_component_rules_remain_default_off_and_require_explicit_selection (tests.detectors.ark_runtime.test_historical.CurrentComponentRunnerBindingTests) ... skipped 'Component Git store not supplied; no implicit fetch'
+test_same_path_at_unbound_commit_is_not_analyzed (tests.detectors.ark_runtime.test_historical.CurrentComponentWrongVersionTests) ... skipped 'Component Git store not supplied; no implicit fetch'
+test_C01_pinned_before_has_origin_candidate (tests.detectors.ark_runtime.test_historical.HistoricalPairTests) ... skipped 'Pinned Ark Git store not supplied; no implicit fetch'
+test_C02_pinned_fix_has_no_rule_candidate (tests.detectors.ark_runtime.test_historical.HistoricalPairTests) ... skipped 'Pinned Ark Git store not supplied; no implicit fetch'
+test_exact_parent_and_fix_through_runner_keep_candidate_and_coverage_distinct (tests.detectors.ark_runtime.test_historical.HistoricalPairTests) ... skipped 'Pinned Ark Git store not supplied; no implicit fetch'
+test_C09_host_branch_merge_is_unknown (tests.detectors.ark_runtime.test_ir_path.GeneratedPathTests) ... ok
+test_C10_unmodelled_control_stops_inference (tests.detectors.ark_runtime.test_ir_path.GeneratedPathTests) ... ok
+test_C11_damaged_target_is_not_analyzed (tests.detectors.ark_runtime.test_ir_path.GeneratedPathTests) ... ok
+test_C12_detached_label_has_no_runtime_predecessor (tests.detectors.ark_runtime.test_ir_path.GeneratedPathTests) ... ok
+test_budget_expiry_after_a_candidate_does_not_publish_it (tests.detectors.ark_runtime.test_ir_path.GeneratedPathTests) ... ok
+test_false_generated_branch_prunes_sink (tests.detectors.ark_runtime.test_ir_path.GeneratedPathTests) ... ok
+test_repeated_immutable_predicate_cannot_be_true_and_false (tests.detectors.ark_runtime.test_ir_path.GeneratedPathTests) ... ok
+test_scope_depth_budget_is_bounded (tests.detectors.ark_runtime.test_ir_path.GeneratedPathTests) ... ok
+test_state_budget_does_not_publish_partial_candidates (tests.detectors.ark_runtime.test_ir_path.GeneratedPathTests) ... ok
+test_time_budget_does_not_publish_partial_candidates (tests.detectors.ark_runtime.test_ir_path.GeneratedPathTests) ... ok
+test_type_equality_guard_is_narrow_suppression (tests.detectors.ark_runtime.test_ir_path.GeneratedPathTests) ... ok
+test_type_equality_is_not_valid_after_unknown_mutation (tests.detectors.ark_runtime.test_ir_path.GeneratedPathTests) ... ok
+test_unknown_label_is_not_a_reachable_path (tests.detectors.ark_runtime.test_ir_path.GeneratedPathTests) ... ok
+test_bound_typedarray_target_stays_partial_and_unknown (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... skipped 'OHSCANNER_ARK_REPO not configured'
+test_fixed_macro_shape_restores_only_visible_structural_owner (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_missing_macro_and_type_declarations_remain_unknown_on_partial_file (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_nested_namespaces_and_same_named_methods_keep_distinct_owners (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_owner_and_signature_controls_do_not_collapse_to_name_only (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_partial_mixed_parse_error_regression_stays_unknown (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_positive_complete_visible_class_owner_is_source_bound (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_safe_control_is_candidate_unassessed_and_not_a_safety_verdict (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_truncated_namespace_disables_owner_recovery (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_unknown_ambiguous_qualifier_is_fail_closed (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_unknown_cross_translation_unit_owner_is_not_name_guessed (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_unknown_missing_owner_token_and_macro_expansion (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_unrelated_same_name_functions_keep_source_bound_owner_identities (tests.detectors.ark_runtime.test_parser_owner.ParserOwnerTests) ... ok
+test_C03_renamed_variables_still_form_candidate (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_C04_target_type_has_same_identity (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_C05_local_object_alias_preserves_identity (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_C06_token_copy_preserves_origin (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_C07_reassignment_kills_old_object_fact (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_C08_other_owner_is_not_a_modelled_call (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_byte_budget_does_not_produce_empty_safe_result (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_conditional_compilation_needs_build_context (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_fixed_C3_effect_counterexamples_are_unknown (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_fixed_explicit_assignment_transfer_keeps_proven_origin (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_local_shadow_is_not_the_outer_object (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_namespace_homonym_is_not_bound (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_overload_with_wrong_signature_cannot_replace_modelled_caller (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_reassigned_creator_helper_loses_its_proven_owner (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_reassignment_of_type_token_uses_new_definition (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_relevant_macro_redefinition_is_not_silently_ignored (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_safe_control_is_not_a_security_verdict (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_unknown_compound_transform_discards_old_origin (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_unknown_escape_invalidates_same_object_guarantee (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_unmodeled_lambda_is_not_expanded_as_current_function (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_unqualified_owner_with_exact_signature_is_not_namespace_proof (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_unresolved_receiver_is_unknown_not_silently_matched (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_wrong_namespace_owner_is_not_bound (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+test_wrong_sink_arity_stays_unknown (tests.detectors.ark_runtime.test_type_origin.TypeOriginTests) ... ok
+
+----------------------------------------------------------------------
+Ran 116 tests in 0.337s
+
+OK (skipped=8)

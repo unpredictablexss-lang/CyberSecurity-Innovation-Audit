@@ -1,0 +1,28 @@
+test_branch_and_loop_paths_keep_local_candidate_or_guard_match (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_budget_exhaustion_does_not_emit_candidate (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_copy_and_store_ordering_matrix_keeps_unproven_order_unknown (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_exception_return_before_use_suppresses_candidate (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_fixture_control_matrix_positive_fixed_safe_unrelated_unknown (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_guard_before_effect_is_matched_and_guard_after_effect_is_candidate (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_guard_pending_branch_must_exit_before_copy_or_store (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_historical_missing_guard_mechanism_regression (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_load_hclass_signature_mismatch_is_unknown (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_missing_exception_guard_is_candidate (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_missing_expected_caller_keeps_candidate_partial (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_nested_call_in_declaration_fails_closed_as_unknown (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_nested_call_in_expression_fails_closed_as_unknown (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_pending_exception_check_on_other_glue_is_not_accepted (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_potential_throw_helper_requires_guard_before_external_effect (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_reassigned_gate_ref_is_not_treated_as_allocation_result (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_same_instruction_copy_store_order_is_unknown_for_either_effect_order (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_sensitive_read_requires_exact_wrapper_expression (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_unknown_effect_fails_closed_for_potential_throw_helper (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_unmodeled_effect_fails_closed_as_unknown (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_zero_length_return_path_is_unknown_not_safe (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_zero_length_unknown_path_does_not_turn_guarded_nonzero_path_into_safe (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+test_zero_length_unknown_path_preserves_nonzero_candidate (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.103s
+
+OK

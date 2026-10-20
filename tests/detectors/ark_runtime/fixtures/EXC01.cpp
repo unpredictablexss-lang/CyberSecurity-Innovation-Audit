@@ -43,9 +43,7 @@ GateRef output = builder.NewTypedArraySameType(glue, input, inputTag, count);
 Label empty(GetEnvironment()); Label copy(GetEnvironment()); Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label done(GetEnvironment());
 BRANCH(Int32Equal(count, Int32(0)), &empty, &copy);
 Bind(&empty); return;
-Bind(&copy); BRANCH(HasPendingException(glue), &exception, &normal);
-Bind(&exception); result->WriteVariable(Exception()); Jump(&done);
-Bind(&normal); CopyTypedArrayBuffer(glue, input, output); Jump(&done);
+Bind(&copy); CopyTypedArrayBuffer(glue, input, output); Jump(&done);
 Bind(&done);
 }
 }

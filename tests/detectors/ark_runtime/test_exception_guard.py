@@ -114,7 +114,7 @@ class ExceptionGuardSyntheticTests(unittest.TestCase):
             ('Fixed', ('NewTypedArray', 4), ('LoadHClass',), (), 'matched', 'complete'),
             ('Safe', ('NewTypedArraySameType', 4), ('CopyTypedArrayBuffer',), (), 'matched', 'complete'),
             ('Unrelated', ('NewTypedArray', 4), ('CopyTypedArrayBuffer',), (), None, 'complete'),
-            ('Unknown', ('NewTypedArraySameType', 4), ('CopyTypedArrayBuffer',), (), 'unknown', 'partial'),
+            ('Unknown', ('NewTypedArraySameType', 4), ('CopyTypedArrayBuffer',), (), 'candidate_unknown', 'partial'),
         )
         for name, creator, effects, throwing, expected, outcome in controls:
             with self.subTest(control=name):
@@ -127,6 +127,10 @@ class ExceptionGuardSyntheticTests(unittest.TestCase):
                     self.assertEqual(kinds, [])
                 elif expected == 'unknown':
                     self.assertIn('unknown', kinds)
+                elif expected == 'candidate_unknown':
+                    self.assertIn('candidate', kinds)
+                    self.assertIn('unknown', kinds)
+                    self.assertNotIn('matched', kinds)
                 else:
                     self.assertEqual(kinds, [expected])
                 self.assertEqual(result.file_outcome, outcome)
@@ -206,6 +210,150 @@ class ExceptionGuardSyntheticTests(unittest.TestCase):
         self.assertIn('unknown', [item.kind for item in result.observations])
         self.assertIn('result_return_before_modeled_effect_order_unknown', result.limitations)
         self.assertEqual(result.file_outcome, 'partial')
+
+    def test_guard_pending_branch_must_exit_before_copy_or_store(self):
+        for effect in (
+            'CopyTypedArrayBuffer(glue, input, output);',
+            'StoreTypedArrayElement(glue, output, input, inputTag, count);',
+        ):
+            with self.subTest(effect=effect.split('(', 1)[0]):
+                body = PREFIX + (
+                    'Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label done(GetEnvironment());\n'
+                    'BRANCH(HasPendingException(glue), &exception, &normal);\n'
+                    'Bind(&exception); result->WriteVariable(Exception()); ' + effect + ' Jump(&done);\n'
+                    'Bind(&normal); Jump(&done);\n'
+                    'Bind(&done);')
+                result = analyze_exception_guard(
+                    unit(wrap(body)),
+                    effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
+                self.assertEqual([item.kind for item in result.observations], ['candidate'])
+                self.assertEqual(
+                    result.observations[0].reason,
+                    'pending_exception_guard_missing_before_result_or_external_effect')
+
+    def test_copy_and_store_ordering_matrix_keeps_unproven_order_unknown(self):
+        effects = (
+            'CopyTypedArrayBuffer(glue, input, output);',
+            'StoreTypedArrayElement(glue, output, input, inputTag, count);',
+        )
+        for creator in ('NewTypedArray', 'NewTypedArraySameType'):
+            for effect in effects:
+                name = effect.split('(', 1)[0]
+                with self.subTest(creator=creator, effect=name, order='guard_before_effect'):
+                    body = (
+                        'GateRef inputTag = GetObjectType(LoadHClass(input));\n'
+                        'NewObjectStubBuilder builder(this);\n'
+                        'GateRef output = builder.' + creator + '(glue, input, inputTag, count);\n'
+                        'Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label done(GetEnvironment());\n'
+                        'BRANCH(HasPendingException(glue), &exception, &normal);\n'
+                        'Bind(&exception); result->WriteVariable(Exception()); Jump(&done);\n'
+                        'Bind(&normal); ' + effect + ' Jump(&done);\n'
+                        'Bind(&done);')
+                    result = analyze_exception_guard(
+                        unit(wrap(body)),
+                        effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
+                    self.assertEqual([item.kind for item in result.observations], ['matched'])
+
+                with self.subTest(creator=creator, effect=name, order='guard_after_effect'):
+                    body = (
+                        'GateRef inputTag = GetObjectType(LoadHClass(input));\n'
+                        'NewObjectStubBuilder builder(this);\n'
+                        'GateRef output = builder.' + creator + '(glue, input, inputTag, count);\n'
+                        + effect + '\n'
+                        'Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label done(GetEnvironment());\n'
+                        'BRANCH(HasPendingException(glue), &exception, &normal);\n'
+                        'Bind(&exception); result->WriteVariable(Exception()); Jump(&done);\n'
+                        'Bind(&normal); Jump(&done);\n'
+                        'Bind(&done);')
+                    result = analyze_exception_guard(
+                        unit(wrap(body)),
+                        effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
+                    self.assertEqual([item.kind for item in result.observations], ['candidate'])
+
+                with self.subTest(creator=creator, effect=name, order='missing_guard'):
+                    body = (
+                        'GateRef inputTag = GetObjectType(LoadHClass(input));\n'
+                        'NewObjectStubBuilder builder(this);\n'
+                        'GateRef output = builder.' + creator + '(glue, input, inputTag, count);\n'
+                        + effect)
+                    result = analyze_exception_guard(
+                        unit(wrap(body)),
+                        effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
+                    self.assertEqual([item.kind for item in result.observations], ['candidate'])
+
+                with self.subTest(creator=creator, effect=name, order='unknown_effect'):
+                    body = (
+                        'GateRef inputTag = GetObjectType(LoadHClass(input));\n'
+                        'NewObjectStubBuilder builder(this);\n'
+                        'GateRef output = builder.' + creator + '(glue, input, inputTag, count);\n'
+                        'UnreviewedOperation(glue);\n'
+                        'Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label done(GetEnvironment());\n'
+                        'BRANCH(HasPendingException(glue), &exception, &normal);\n'
+                        'Bind(&exception); result->WriteVariable(Exception()); Jump(&done);\n'
+                        'Bind(&normal); ' + effect + ' Jump(&done);\n'
+                        'Bind(&done);')
+                    result = analyze_exception_guard(
+                        unit(wrap(body)),
+                        effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
+                    self.assertEqual([item.kind for item in result.observations], ['unknown'])
+                    self.assertIn('unmodeled_effect_before_exception_guard', result.limitations)
+
+    def test_same_instruction_copy_store_order_is_unknown_for_either_effect_order(self):
+        expressions = (
+            'StoreTypedArrayElement(glue, output, CopyTypedArrayBuffer(glue, input, output), inputTag, count);',
+            'CopyTypedArrayBuffer(glue, input, StoreTypedArrayElement(glue, output, input, inputTag, count));',
+        )
+        for expression in expressions:
+            with self.subTest(expression=expression.split('(', 1)[0]):
+                body = PREFIX + expression
+                for effect_names in (
+                    ('CopyTypedArrayBuffer', 'StoreTypedArrayElement'),
+                    ('StoreTypedArrayElement', 'CopyTypedArrayBuffer'),
+                ):
+                    result = analyze_exception_guard(
+                        unit(wrap(body)), effect_names=effect_names)
+                    self.assertEqual([item.kind for item in result.observations], ['unknown'])
+                    self.assertIn(
+                        'effect_signature_or_same_instruction_order_unknown',
+                        result.limitations)
+
+    def test_zero_length_unknown_path_preserves_nonzero_candidate(self):
+        body = PREFIX + (
+            'Label empty(GetEnvironment()); Label effect(GetEnvironment()); Label done(GetEnvironment());\n'
+            'BRANCH(Int32Equal(count, Int32(0)), &empty, &effect);\n'
+            'Bind(&empty); return;\n'
+            'Bind(&effect); CopyTypedArrayBuffer(glue, input, output); Jump(&done);\n'
+            'Bind(&done);')
+        result = analyze_exception_guard(
+            unit(wrap(body)),
+            effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
+        kinds = [item.kind for item in result.observations]
+        self.assertEqual(kinds.count('candidate'), 1)
+        self.assertGreaterEqual(kinds.count('unknown'), 1)
+        self.assertNotIn('matched', kinds)
+        self.assertIn('result_return_before_modeled_effect_order_unknown', result.limitations)
+        self.assertEqual(result.file_outcome, 'partial')
+
+    def test_zero_length_unknown_path_does_not_turn_guarded_nonzero_path_into_safe(self):
+        body = PREFIX + (
+            'Label empty(GetEnvironment()); Label copy(GetEnvironment()); Label exception(GetEnvironment());\n'
+            'Label normal(GetEnvironment()); Label done(GetEnvironment());\n'
+            'BRANCH(Int32Equal(count, Int32(0)), &empty, &copy);\n'
+            'Bind(&empty); return;\n'
+            'Bind(&copy); BRANCH(HasPendingException(glue), &exception, &normal);\n'
+            'Bind(&exception); result->WriteVariable(Exception()); Jump(&done);\n'
+            'Bind(&normal); CopyTypedArrayBuffer(glue, input, output); Jump(&done);\n'
+            'Bind(&done);')
+        result = analyze_exception_guard(
+            unit(wrap(body)),
+            effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
+        kinds = [item.kind for item in result.observations]
+        self.assertEqual(kinds.count('matched'), 1)
+        self.assertGreaterEqual(kinds.count('unknown'), 1)
+        self.assertNotIn('candidate', kinds)
+        self.assertIn('result_return_before_modeled_effect_order_unknown', result.limitations)
+        self.assertEqual(result.file_outcome, 'partial')
+
 
     def test_historical_missing_guard_mechanism_regression(self):
         for caller in ('Filter', 'Map'):

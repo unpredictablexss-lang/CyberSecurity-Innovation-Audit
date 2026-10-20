@@ -1,0 +1,36 @@
+
+
+class C9ExceptionEffectOrderControls(unittest.TestCase):
+    def test_positive_callback_before_tboolean_is_candidate(self):
+        result = self.analyze(source())
+        self.assertEqual([item.kind for item in result.observations], ["candidate"])
+
+    def test_fixed_abrupt_completion_guard_before_tboolean(self):
+        result = self.analyze(source(
+            body="    RETURN_EXCEPTION_IF_ABRUPT_COMPLETION(thread);"))
+        self.assertEqual(result.observations, ())
+        self.assertEqual(result.file_outcome, "complete")
+
+    def test_safe_unrelated_callback_result_is_not_attributed(self):
+        text = source().replace(
+            "bool accepted = callbackOutcome.ToBoolean();",
+            "bool accepted = unrelatedOutcome.ToBoolean();")
+        result = self.analyze(text)
+        self.assertEqual(result.observations, ())
+        self.assertEqual(result.file_outcome, "complete")
+
+    def test_unrelated_translation_unit_is_not_analyzed(self):
+        result = analyze_runtime_exception_propagation(
+            unit("int unrelated;\n", "unrelated.cpp"),
+            source_units=(unit(MACROS, "ecmascript/ecma_macros.h"),))
+        self.assertEqual(result.file_outcome, "not_analyzed")
+        self.assertEqual(result.observations, ())
+
+    def test_unknown_wrapper_is_partial_not_safe(self):
+        wrapped = source().replace(
+            "JSTaggedValue callbackOutcome = JSFunction::Call(info);",
+            "JSTaggedValue callbackOutcome = InvokeCallback(info);")
+        result = self.analyze(wrapped)
+        self.assertEqual(result.observations, ())
+        self.assertEqual(result.file_outcome, "partial")
+        self.assertTrue(result.limitations)

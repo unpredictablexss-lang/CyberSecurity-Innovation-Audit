@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "case_id": "C9-EXCEPTION-GUARD-ORDER-ACCEPTANCE-20261019",
+  "working_tree_only": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard",
+  "head": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+  "head_tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+  "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+  "target_git_object_checked_read_only": {
+    "review_ref": "origin/codex/c-line-ark-runtime-20261018",
+    "review_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "review_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+    "review_path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
+    "review_blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+    "same_ref_exception_guard_blob": "6cd85455663568cbc808948ec9b1fc7e840a2151",
+    "same_ref_runtime_exception_blob": "ff9ecb72ed099745f9f20b04d2b14fedb761230d"
+  },
+  "git_operations": {
+    "fetch_checkout_reset_push_merge_executed_by_this_agent": false,
+    "source_review_read": "git show only",
+    "same_ref_comparison": "read-only"
+  },
+  "runtime": {
+    "windows_python_probe": "Microsoft Store placeholder exited 1; not used",
+    "test_python": "WSL /usr/bin/python3 3.10.12",
+    "tree_sitter": "0.26.0"
+  },
+  "exact_commands": [
+    "wsl.exe -e python3 -m unittest tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests -v",
+    "wsl.exe -e python3 -m unittest tests.detectors.ark_runtime.test_exception_guard -v",
+    "wsl.exe -e python3 -m unittest discover -s tests/detectors/ark_runtime -t . -p 'test_*.py' -v",
+    "wsl.exe -e python3 -m compileall -q src tests/detectors/ark_runtime",
+    "wsl.exe -e python3 scripts/check_docs_context_budget.py",
+    "git diff --check",
+    "git diff --minimal -- src/ohscanner/detectors/ark_runtime/exception_guard.py src/ohscanner/detectors/ark_runtime/model.py tests/detectors/ark_runtime/test_exception_guard.py tests/detectors/ark_runtime/fixtures/EXC01.cpp"
+  ],
+  "results": {
+    "baseline_exception_guard_synthetic": {
+      "total": 18,
+      "passed": 18,
+      "skipped": 0,
+      "errors": 0,
+      "failures": 0
+    },
+    "baseline_ark_runtime_suite": {
+      "total": 116,
+      "passed": 108,
+      "skipped": 8,
+      "errors": 0,
+      "failures": 0
+    },
+    "red_counterexamples": {
+      "total": 23,
+      "passed": 17,
+      "skipped": 0,
+      "errors": 0,
+      "failures": 6
+    },
+    "final_exception_guard_synthetic": {
+      "total": 23,
+      "passed": 23,
+      "skipped": 0,
+      "errors": 0,
+      "failures": 0
+    },
+    "final_exception_guard_full": {
+      "total": 24,
+      "passed": 23,
+      "skipped": 1,
+      "errors": 0,
+      "failures": 0
+    },
+    "final_ark_runtime_suite": {
+      "total": 121,
+      "passed": 113,
+      "skipped": 8,
+      "errors": 0,
+      "failures": 0
+    },
+    "final_compileall": {
+      "exit_code": 0,
+      "status": "passed"
+    },
+    "final_docs_context_budget": {
+      "exit_code": 2,
+      "status": "error_not_pass",
+      "reason": "script absent in this worktree"
+    },
+    "final_git_diff_check": {
+      "exit_code": 0,
+      "status": "passed"
+    }
+  },
+  "skip_policy": "Skips and errors are reported separately and are not counted as passes.",
+  "changed_files": [
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/exception_guard.py",
+      "sha256": "e2a7f4d6c2068242c67f6556758411c99b4ad0391ca77b369a06f9e0dadf5920",
+      "git_blob": "c9276700e73cf6648c98b8fe3d697f753feb1144"
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/model.py",
+      "sha256": "4f74fe53f6f1c229eb804cd89e614c6f798c368915e73bfde672f75eb1515bef",
+      "git_blob": "9fe50dbe97cf3a282ae9d2da0880306a19ba502f"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/test_exception_guard.py",
+      "sha256": "fffff0eb8394eac6b74f5df8bb3ec948272b60517f9bc81f9e6e41d16920ebf9",
+      "git_blob": "5df76bbc9b110e7dca60c94ea23077c0860fc6d6"
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/EXC01.cpp",
+      "sha256": "a3702d37854f4d8ceb385e0fa55ef77dfa1da64616788e65a6db7da84a9b7a82",
+      "git_blob": "3f19fc33dffe158f25781d46cd117b17c6ddfbc2"
+    }
+  ],
+  "minimal_patch": {
+    "path": "minimal.patch",
+    "bytes": 32505,
+    "sha256": "7e98c08417df1439403bf722b6cdde75b7d502791f7095337b4525e97df1693e"
+  },
+  "pre_existing_untracked_preserved": [
+    "research/experiments/ark_runtime/c8_holdout_20261019/",
+    "research/methods/ark_runtime/rule_freeze_0.7.0/"
+  ],
+  "claims_excluded": [
+    "product CIA impact",
+    "CVE or affected product version/branch",
+    "dynamic PoC reproduction",
+    "Precision/Recall or zero FP/FN",
+    "safe verdict from matched/zero diagnostics"
+  ],
+  "patch_validation": {
+    "command": "git apply --check --reverse --ignore-whitespace -- research/experiments/ark_runtime/c9_exception_guard_acceptance_20261019/minimal.patch",
+    "exit_code": 0,
+    "note": "Reverse check validates the patch against the modified worktree; --ignore-whitespace is needed because the Windows checkout reports CRLF normalization."
+  }
+}

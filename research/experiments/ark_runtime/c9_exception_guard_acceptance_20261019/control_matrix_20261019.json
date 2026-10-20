@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "case_id": "C9-EXCEPTION-GUARD-ORDER-ACCEPTANCE-20261019",
+  "detector_id": "ohscanner.ark.runtime.type_safety",
+  "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+  "detector_version": "0.7.1",
+  "security_level": "candidate/unassessed",
+  "evidence_gate": {
+    "candidate_is_not_vulnerability": true,
+    "matched_is_local_order_proof_not_safe_verdict": true,
+    "unknown_is_not_safe_or_miss": true,
+    "partial_or_skipped_is_not_pass": true
+  },
+  "controls": [
+    {
+      "id": "positive_missing_guard_loadhclass",
+      "control_class": "positive",
+      "creator": "NewTypedArray",
+      "effects": [
+        "LoadHClass"
+      ],
+      "order_class": "missing_guard",
+      "observed_semantic_kinds": [
+        "candidate"
+      ],
+      "file_outcome": "complete",
+      "regression": "deterministic_local_control",
+      "interpretation": "candidate/unassessed only"
+    },
+    {
+      "id": "fixed_guard_before_loadhclass",
+      "control_class": "fixed",
+      "creator": "NewTypedArray",
+      "effects": [
+        "LoadHClass"
+      ],
+      "order_class": "guard_before_effect",
+      "observed_semantic_kinds": [
+        "matched"
+      ],
+      "file_outcome": "complete",
+      "regression": "deterministic_local_control",
+      "interpretation": "local order matched; not a product safe verdict"
+    },
+    {
+      "id": "safe_guard_before_copy",
+      "control_class": "safe",
+      "creator": "NewTypedArraySameType",
+      "effects": [
+        "CopyTypedArrayBuffer"
+      ],
+      "order_class": "guard_before_effect",
+      "observed_semantic_kinds": [
+        "matched"
+      ],
+      "file_outcome": "complete",
+      "regression": "deterministic_local_control",
+      "interpretation": "named safe control only; security remains candidate/unassessed"
+    },
+    {
+      "id": "unrelated_effect_before_allocation",
+      "control_class": "unrelated",
+      "creator": "NewTypedArray",
+      "effects": [
+        "CopyTypedArrayBuffer"
+      ],
+      "order_class": "effect_before_obligation",
+      "observed_semantic_kinds": [],
+      "file_outcome": "complete",
+      "regression": "deterministic_local_control",
+      "interpretation": "no obligation match; not a safety conclusion"
+    },
+    {
+      "id": "unknown_zero_length_plus_unguarded_nonzero_copy",
+      "control_class": "unknown",
+      "creator": "NewTypedArraySameType",
+      "effects": [
+        "CopyTypedArrayBuffer"
+      ],
+      "order_class": "zero_length_return_unknown_plus_missing_guard",
+      "observed_semantic_kinds": [
+        "candidate",
+        "unknown"
+      ],
+      "file_outcome": "partial",
+      "regression": "deterministic_local_control",
+      "interpretation": "zero-length path stays unknown; nonzero candidate is retained"
+    },
+    {
+      "id": "zero_length_unknown_plus_guarded_nonzero_copy",
+      "control_class": "unknown",
+      "creator": "NewTypedArraySameType",
+      "effects": [
+        "CopyTypedArrayBuffer"
+      ],
+      "order_class": "zero_length_return_unknown_plus_guard_before_effect",
+      "observed_semantic_kinds": [
+        "matched",
+        "unknown"
+      ],
+      "file_outcome": "partial",
+      "regression": "deterministic_local_control",
+      "interpretation": "zero-length path prevents an overall safe conclusion"
+    },
+    {
+      "id": "guard_after_copy_or_store",
+      "control_class": "positive",
+      "creator": [
+        "NewTypedArray",
+        "NewTypedArraySameType"
+      ],
+      "effects": [
+        "CopyTypedArrayBuffer",
+        "StoreTypedArrayElement"
+      ],
+      "order_class": "guard_after_effect",
+      "observed_semantic_kinds": [
+        "candidate"
+      ],
+      "file_outcome": "complete",
+      "regression": "matrix_regression",
+      "interpretation": "guard after effect cannot suppress candidate"
+    },
+    {
+      "id": "guard_pending_branch_continues_to_copy_or_store",
+      "control_class": "positive",
+      "creator": "NewTypedArray",
+      "effects": [
+        "CopyTypedArrayBuffer",
+        "StoreTypedArrayElement"
+      ],
+      "order_class": "guard_before_effect_but_pending_branch_does_not_exit",
+      "observed_semantic_kinds": [
+        "candidate"
+      ],
+      "file_outcome": "complete",
+      "regression": "previously_false_negative_now_deterministic",
+      "interpretation": "recording Exception is not proof that later effects are safe"
+    },
+    {
+      "id": "same_instruction_copy_store_nesting",
+      "control_class": "unknown",
+      "creator": "NewTypedArray",
+      "effects": [
+        "CopyTypedArrayBuffer",
+        "StoreTypedArrayElement"
+      ],
+      "order_class": "unknown_same_instruction_effect_order",
+      "observed_semantic_kinds": [
+        "unknown"
+      ],
+      "file_outcome": "partial",
+      "regression": "both_nested_orders_and_both_model_orders",
+      "interpretation": "evaluation/effect order is not proved"
+    },
+    {
+      "id": "unknown_effect_before_guard",
+      "control_class": "unknown",
+      "creator": [
+        "NewTypedArray",
+        "NewTypedArraySameType"
+      ],
+      "effects": [
+        "CopyTypedArrayBuffer",
+        "StoreTypedArrayElement"
+      ],
+      "order_class": "unknown_effect",
+      "observed_semantic_kinds": [
+        "unknown"
+      ],
+      "file_outcome": "partial",
+      "regression": "matrix_regression",
+      "interpretation": "unmodeled effect blocks guard proof"
+    }
+  ]
+}

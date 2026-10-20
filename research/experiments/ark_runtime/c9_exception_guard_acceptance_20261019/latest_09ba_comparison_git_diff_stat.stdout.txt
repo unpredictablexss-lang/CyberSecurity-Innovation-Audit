@@ -1,0 +1,5 @@
+ .../detectors/ark_runtime/exception_guard.py       | 532 +++++++++++++++++----
+ tests/detectors/ark_runtime/fixtures/EXC01.cpp     |  49 ++
+ .../detectors/ark_runtime/test_exception_guard.py  | 267 ++++++++++-
+ .../ark_runtime/test_runtime_exception.py          | 485 -------------------
+ 4 files changed, 744 insertions(+), 589 deletions(-)

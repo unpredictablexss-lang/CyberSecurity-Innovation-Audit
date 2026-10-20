@@ -1,0 +1,154 @@
+{
+  "schema": "ark-runtime-holdout-review-verification-v1",
+  "date": "2026-10-19",
+  "base": {
+    "commit": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+    "status": [
+      "?? research/experiments/ark_runtime/c8_holdout_20261019/",
+      "?? research/methods/ark_runtime/rule_freeze_0.7.0/"
+    ]
+  },
+  "reviewed_ref": {
+    "ref": "origin/codex/c-line-ark-runtime-replay-20261019",
+    "commit": "a7962043cda3cbb99f79ada7418508709fc951ca",
+    "tree": "684c42e94c4797640113f0f2ffeca5a0c988a136"
+  },
+  "python": "Python 3.12.14",
+  "commands": [
+    {
+      "name": "review_pinned_artifacts",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "research/experiments/ark_runtime/c8_holdout_20261019/review_pinned_artifacts.py"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\",
+      "environment_overrides": {
+        "PYTHONPATH": ".;E:\\网安\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "started_at_utc": "2026-10-19T05:10:53.9339220Z",
+      "finished_at_utc": "2026-10-19T05:10:56.3879500Z",
+      "wall_seconds": 2.34215,
+      "peak_working_set_kib": 20868.0,
+      "rss_measurement": "Process.PeakWorkingSet64 sampled every 2 ms and refreshed after exit; Windows working-set high-water, not cross-platform ru_maxrss",
+      "timeout_seconds": 600,
+      "timed_out": false,
+      "returncode": 0,
+      "stdout_path": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\research\\experiments\\ark_runtime\\c8_holdout_20261019\\logs\\review_pinned_artifacts.stdout.txt",
+      "stderr_path": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\research\\experiments\\ark_runtime\\c8_holdout_20261019\\logs\\review_pinned_artifacts.stderr.txt",
+      "stdout_sha256": "94982e65c7125e4988507350d3b0dcdd3d26c8638736e6a03fcc51867cc2f4b4",
+      "stderr_sha256": "de277c57cae8db83bd6e9b56198c58aba98dde5595998fad8fc7ad1be41aeb22"
+    },
+    {
+      "name": "ark_runtime_unittest",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/detectors/ark_runtime",
+        "-t",
+        ".",
+        "-q"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\",
+      "environment_overrides": {
+        "PYTHONPATH": ".;E:\\网安\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "started_at_utc": "2026-10-19T05:10:56.3927364Z",
+      "finished_at_utc": "2026-10-19T05:10:56.9129202Z",
+      "wall_seconds": 0.457365,
+      "peak_working_set_kib": 30296.0,
+      "rss_measurement": "Process.PeakWorkingSet64 sampled every 2 ms and refreshed after exit; Windows working-set high-water, not cross-platform ru_maxrss",
+      "timeout_seconds": 600,
+      "timed_out": false,
+      "returncode": 0,
+      "stdout_path": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\research\\experiments\\ark_runtime\\c8_holdout_20261019\\logs\\ark_runtime_unittest.stdout.txt",
+      "stderr_path": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\research\\experiments\\ark_runtime\\c8_holdout_20261019\\logs\\ark_runtime_unittest.stderr.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "d31f10b32f842e5a354def98c4dd4e92b0d02fcb1e5f7799562159f3cf050bd1"
+    },
+    {
+      "name": "compileall",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "-b",
+        "-j",
+        "1",
+        "research/experiments/ark_runtime/c8_holdout_20261019/compile_input"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\",
+      "environment_overrides": {
+        "PYTHONPATH": ".;E:\\网安\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps"
+      },
+      "started_at_utc": "2026-10-19T05:10:56.9204537Z",
+      "finished_at_utc": "2026-10-19T05:10:59.3876137Z",
+      "wall_seconds": 2.459825,
+      "peak_working_set_kib": 25300.0,
+      "rss_measurement": "Process.PeakWorkingSet64 sampled every 2 ms and refreshed after exit; Windows working-set high-water, not cross-platform ru_maxrss",
+      "timeout_seconds": 600,
+      "timed_out": false,
+      "returncode": 0,
+      "stdout_path": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\research\\experiments\\ark_runtime\\c8_holdout_20261019\\logs\\compileall.stdout.txt",
+      "stderr_path": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\research\\experiments\\ark_runtime\\c8_holdout_20261019\\logs\\compileall.stderr.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "docs_context_budget",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "E:\\网安\\CyberSecurity-Innovation-Audit\\scripts\\check_docs_context_budget.py",
+        "--root",
+        "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\",
+      "environment_overrides": {
+        "PYTHONPATH": ".;E:\\网安\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "started_at_utc": "2026-10-19T05:10:59.3889948Z",
+      "finished_at_utc": "2026-10-19T05:10:59.5047677Z",
+      "wall_seconds": 0.083751,
+      "peak_working_set_kib": 18356.0,
+      "rss_measurement": "Process.PeakWorkingSet64 sampled every 2 ms and refreshed after exit; Windows working-set high-water, not cross-platform ru_maxrss",
+      "timeout_seconds": 600,
+      "timed_out": false,
+      "returncode": 1,
+      "stdout_path": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\research\\experiments\\ark_runtime\\c8_holdout_20261019\\logs\\docs_context_budget.stdout.txt",
+      "stderr_path": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\research\\experiments\\ark_runtime\\c8_holdout_20261019\\logs\\docs_context_budget.stderr.txt",
+      "stdout_sha256": "e7aa86b9148356ba2002307941931dd12cfd0951eb009a6b6b29feef534f4ad6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "compileall": {
+    "input_manifest": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\research\\experiments\\ark_runtime\\c8_holdout_20261019\\compile_input_manifest_20261019.json",
+    "input_file_count": 223,
+    "byte_identical_copies": true,
+    "initial_pycacheprefix_probe_error": "WinError 206 filename or extension is too long; retained under logs/compileall_initial_probe.*"
+  },
+  "docs_budget": {
+    "script_path": "E:\\网安\\CyberSecurity-Innovation-Audit\\scripts\\check_docs_context_budget.py",
+    "script_present_in_base": false,
+    "root_override": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\",
+    "note": "The budget checker is read from the main checkout because this pinned base omits scripts/check_docs_context_budget.py; it validates the worktree root via --root and writes nothing."
+  },
+  "performance_scope": "Local static/test/documentation commands only; no repository-scale scan, Worker/API, dynamic Ark runtime or product PoC.",
+  "token_usage": null,
+  "token_status": "not_measured_for_local_subprocess_commands",
+  "cost_usd": null,
+  "cost_status": "not_measured_for_local_subprocess_commands",
+  "metrics_gate": {
+    "eligible_for_metrics": false,
+    "precision": null,
+    "recall": null,
+    "zero_fp_fn_claim_allowed": false,
+    "validated_vulnerability": 0
+  }
+}

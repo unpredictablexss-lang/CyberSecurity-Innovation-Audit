@@ -1,0 +1,45 @@
+test_fixed_abrupt_completion_guard_before_tboolean (tests.detectors.ark_runtime.test_runtime_exception.C9ExceptionEffectOrderControls) ... ok
+test_positive_callback_before_tboolean_is_candidate (tests.detectors.ark_runtime.test_runtime_exception.C9ExceptionEffectOrderControls) ... ok
+test_safe_unrelated_callback_result_is_not_attributed (tests.detectors.ark_runtime.test_runtime_exception.C9ExceptionEffectOrderControls) ... ok
+test_unknown_wrapper_is_partial_not_safe (tests.detectors.ark_runtime.test_runtime_exception.C9ExceptionEffectOrderControls) ... ok
+test_unrelated_translation_unit_is_not_analyzed (tests.detectors.ark_runtime.test_runtime_exception.C9ExceptionEffectOrderControls) ... ok
+test_assigned_callback_result_with_same_thread_guard_is_safe (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_assigned_callback_result_without_guard_is_candidate (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_assigned_callback_wrapper_remains_partial (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_braced_unconditional_exception_return_guards_conversion (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_branch_name_without_source_contract_stays_unknown (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_call_info_pointer_use_with_pending_exception_early_exit_is_guarded (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_call_info_pointer_use_with_value_macro_is_guarded (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_call_info_pointer_use_without_exception_guard_is_candidate (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_callback_result_conversion_before_exception_guard_is_candidate (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_compound_condition_does_not_count_as_pending_exception_guard (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_conditional_return_does_not_prove_exception_exit_dominates (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_derived_branch_override_disables_base_contract (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_early_exit_on_exception_result_guards_conversion (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_generated_callback_pending_state_guard_dominates_conversion (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_generated_callback_result_provenance_survives_renaming (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_generated_callback_result_sentinel_check_does_not_guard_pending_state (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_generated_guard_on_different_thread_keeps_path_unknown (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_guard_in_parent_compound_dominates_loop_pointer_use (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_loop_back_edge_remains_unknown (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_missing_macro_definition_keeps_candidate_and_records_limit (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_negated_exception_test_does_not_guard_exceptional_path (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_nested_pointer_use_without_dominating_guard_is_candidate (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_normal_value_return_does_not_propagate_pending_exception (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_prior_use_is_not_attributed_to_later_callback_result (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_return_reject_macro_is_guarded_only_by_its_pending_branch (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_return_reject_macro_with_unrelated_return_is_not_guarded (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_rule_identifier_is_stable (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_same_thread_exception_macro_before_conversion_guards_use (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_source_derived_helper_effect_reaches_caller_and_guard_fixes_it (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_unmodeled_wrapper_stays_partial_instead_of_becoming_safe (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_unrelated_translation_unit_has_no_applicable_source (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_variable_rename_does_not_change_dataflow_result (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_verified_branch_contract_enables_real_cfg_alias (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_wrapper_without_selected_helper_body_is_partial (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_wrong_true_false_edge_mapping_does_not_verify_branch_contract (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+
+----------------------------------------------------------------------
+Ran 40 tests in 0.124s
+
+OK

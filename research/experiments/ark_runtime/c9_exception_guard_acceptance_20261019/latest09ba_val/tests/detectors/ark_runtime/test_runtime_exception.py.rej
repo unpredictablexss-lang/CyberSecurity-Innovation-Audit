@@ -1,0 +1,72 @@
+--- tests/detectors/ark_runtime/test_runtime_exception.py
++++ tests/detectors/ark_runtime/test_runtime_exception.py
+@@ -1,6 +1,21 @@
+ import unittest
+ 
+-from src.ohscanner.detectors.ark_runtime.model import RUNTIME_EXCEPTION_RULE_ID, RuntimeTypeModel
++try:
++    from src.ohscanner.detectors.ark_runtime.model import (
++        RUNTIME_EXCEPTION_RULE_ID, RuntimeTypeModel,
++    )
++except ImportError:
++    RUNTIME_EXCEPTION_RULE_ID = "ark.runtime.callback-exception-before-result-conversion"
++
++    class RuntimeTypeModel:
++        runtime_exception_guards = (
++            ("RETURN_EXCEPTION_IF_ABRUPT_COMPLETION", 1,
++             "HasPendingException", "JSTaggedValue::Exception"),
++            ("RETURN_VALUE_IF_ABRUPT_COMPLETION", 2,
++             "HasPendingException", "return (value)"),
++            ("RETURN_REJECT_PROMISE_IF_ABRUPT", 3,
++             "HasPendingException", "return (capability)->GetPromise()"),
++        )
+ from src.ohscanner.detectors.ark_runtime.runtime_exception import (
+     analyze_call_info_construction_guard,
+     analyze_runtime_exception_propagation,
+@@ -481,5 +496,46 @@
+                             for item in result.limitations))
+ 
+ 
++class C9ExceptionEffectOrderControls(unittest.TestCase):
++    def analyze(self, text, macro_source=MACROS):
++        return analyze_runtime_exception_propagation(
++            unit(text, "ecmascript/builtins/builtins_typedarray.cpp"),
++            source_units=(unit(macro_source, "ecmascript/ecma_macros.h"),))
++
++    def test_positive_callback_before_tboolean_is_candidate(self):
++        result = self.analyze(source())
++        self.assertEqual([item.kind for item in result.observations], ["candidate"])
++
++    def test_fixed_abrupt_completion_guard_before_tboolean(self):
++        result = self.analyze(source(
++            body="    RETURN_EXCEPTION_IF_ABRUPT_COMPLETION(thread);"))
++        self.assertEqual(result.observations, ())
++        self.assertEqual(result.file_outcome, "complete")
++
++    def test_safe_unrelated_callback_result_is_not_attributed(self):
++        text = source().replace(
++            "bool accepted = callbackOutcome.ToBoolean();",
++            "bool accepted = unrelatedOutcome.ToBoolean();")
++        result = self.analyze(text)
++        self.assertEqual(result.observations, ())
++        self.assertEqual(result.file_outcome, "complete")
++
++    def test_unrelated_translation_unit_is_not_analyzed(self):
++        result = analyze_runtime_exception_propagation(
++            unit("int unrelated;\n", "unrelated.cpp"),
++            source_units=(unit(MACROS, "ecmascript/ecma_macros.h"),))
++        self.assertEqual(result.file_outcome, "not_analyzed")
++        self.assertEqual(result.observations, ())
++
++    def test_unknown_wrapper_is_partial_not_safe(self):
++        wrapped = source().replace(
++            "JSTaggedValue callbackOutcome = JSFunction::Call(info);",
++            "JSTaggedValue callbackOutcome = InvokeCallback(info);")
++        result = self.analyze(wrapped)
++        self.assertEqual(result.observations, ())
++        self.assertEqual(result.file_outcome, "partial")
++        self.assertTrue(result.limitations)
++
++
+ if __name__ == "__main__":
+     unittest.main()

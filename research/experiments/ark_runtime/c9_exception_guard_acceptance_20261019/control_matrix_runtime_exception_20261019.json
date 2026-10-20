@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "case_id": "C9-RUNTIME-EXCEPTION-CONTROLS-20261019",
+  "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+  "security_level": "candidate/unassessed",
+  "mechanisms": [
+    {
+      "mechanism": "callback_abrupt_completion_before_ToBoolean",
+      "controls": [
+        {
+          "class": "positive",
+          "test": "test_positive_callback_before_tboolean_is_candidate",
+          "expected": [
+            "candidate"
+          ],
+          "outcome": "complete"
+        },
+        {
+          "class": "fixed",
+          "test": "test_fixed_abrupt_completion_guard_before_tboolean",
+          "expected": [],
+          "outcome": "complete"
+        },
+        {
+          "class": "safe",
+          "test": "test_safe_unrelated_callback_result_is_not_attributed",
+          "expected": [],
+          "outcome": "complete"
+        },
+        {
+          "class": "unrelated",
+          "test": "test_unrelated_translation_unit_is_not_analyzed",
+          "expected": [],
+          "outcome": "not_analyzed"
+        },
+        {
+          "class": "unknown",
+          "test": "test_unknown_wrapper_is_partial_not_safe",
+          "expected": [],
+          "outcome": "partial"
+        }
+      ]
+    },
+    {
+      "mechanism": "generated_callback_pending_state_before_FastToBoolean",
+      "controls": [
+        {
+          "class": "positive",
+          "test": "test_generated_callback_result_sentinel_check_does_not_guard_pending_state",
+          "expected": [
+            "candidate"
+          ],
+          "outcome": "complete"
+        },
+        {
+          "class": "fixed",
+          "test": "test_generated_callback_pending_state_guard_dominates_conversion",
+          "expected": [],
+          "outcome": "complete"
+        },
+        {
+          "class": "safe",
+          "test": "test_verified_branch_contract_enables_real_cfg_alias/fixed",
+          "expected": [],
+          "outcome": "complete"
+        },
+        {
+          "class": "unrelated",
+          "test": "test_derived_branch_override_disables_base_contract",
+          "expected": [],
+          "outcome": "unknown_contract_rejected"
+        },
+        {
+          "class": "unknown",
+          "test": "test_generated_guard_on_different_thread_keeps_path_unknown",
+          "expected": [],
+          "outcome": "partial"
+        }
+      ]
+    }
+  ],
+  "evidence_gate": {
+    "candidate_is_not_vulnerability": true,
+    "zero_observations_is_not_product_safe": true,
+    "unknown_or_partial_is_not_pass": true,
+    "skips_are_not_passes": true
+  }
+}

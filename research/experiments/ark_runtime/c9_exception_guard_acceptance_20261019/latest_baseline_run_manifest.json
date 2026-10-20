@@ -1,0 +1,150 @@
+{
+  "schema_version": 2,
+  "case_id": "C9-EXCEPTION-GUARD-ORDER-ACCEPTANCE-20261019",
+  "working_tree_only": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard",
+  "old_c_line_baseline": {
+    "head": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+    "role": "current dirty worktree base; all local validation ran here"
+  },
+  "latest_static_baseline": {
+    "head": "09ba5aba03c7c7d6787bace349b8fc0a6b0a5457",
+    "tree": "d15b91627c94d9c3043d7d58d47fcf9af7e42454",
+    "parent_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "parent_main_tree": "8c5a296d8304d98193a29a4695aaf61ca0c0996c",
+    "role": "comparison and portable patch target; not checked out"
+  },
+  "remote_pinned_review": {
+    "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+    "audit_blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea"
+  },
+  "latest_comparison_objects": {
+    "exception_guard": "6cd85455663568cbc808948ec9b1fc7e840a2151",
+    "test_exception_guard": "3663bc760f8a7e4d61059bb652f5a40c4bd75302",
+    "test_runtime_exception": "fa20a586bce33ecfa72b44e32c60ece8f8bc1490",
+    "runtime_exception": null,
+    "known_cves": "a2ddd5ff2afc2f6fb0f1677ea3ffbbfc580a195b"
+  },
+  "known_cves_policy": {
+    "version": "0.16.0",
+    "source": "origin/main db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "implemented_or_modified_by_this_line": false
+  },
+  "runtime": {
+    "windows_python": "Microsoft Store placeholder; not used",
+    "test_python": "WSL /usr/bin/python3 3.10.12",
+    "tree_sitter": "0.26.0",
+    "env": {
+      "PYTHONPATH": "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c8_parallel_20261019/worktrees/exception-guard",
+      "OHSCANNER_ARK_REPO": "<unset>",
+      "PYTHONHASHSEED": "<unset>"
+    }
+  },
+  "exact_commands": [
+    "wsl.exe -e env PYTHONPATH=/mnt/e/网安/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c8_parallel_20261019/worktrees/exception-guard python3 -m unittest tests.detectors.ark_runtime.test_runtime_exception -v",
+    "wsl.exe -e env PYTHONPATH=/mnt/e/网安/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c8_parallel_20261019/worktrees/exception-guard python3 -m unittest tests.detectors.ark_runtime.test_exception_guard tests.detectors.ark_runtime.test_runtime_exception -v",
+    "wsl.exe -e env PYTHONPATH=/mnt/e/网安/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c8_parallel_20261019/worktrees/exception-guard python3 -m unittest discover -s tests/detectors/ark_runtime -t . -p test_*.py -v",
+    "wsl.exe -e env PYTHONPATH=/mnt/e/网安/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c8_parallel_20261019/worktrees/exception-guard python3 -m compileall -q src tests/detectors/ark_runtime",
+    "git diff --check",
+    "git apply --check --reverse --ignore-whitespace -- research/experiments/ark_runtime/c9_exception_guard_acceptance_20261019/old_baseline_7af25f5_minimal.patch",
+    "git apply --check --reverse --ignore-whitespace -- research/experiments/ark_runtime/c9_exception_guard_acceptance_20261019/latest_static_09ba5aba_minimal.patch"
+  ],
+  "results": {
+    "runtime_exception_focused": {
+      "exit_code": 0,
+      "total": 40,
+      "passed": 40,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    },
+    "focused_combined": {
+      "exit_code": 0,
+      "total": 64,
+      "passed": 63,
+      "skipped": 1,
+      "failures": 0,
+      "errors": 0
+    },
+    "ark_runtime_suite": {
+      "exit_code": 0,
+      "total": 161,
+      "passed": 153,
+      "skipped": 8,
+      "failures": 0,
+      "errors": 0
+    },
+    "compileall": {
+      "exit_code": 0,
+      "status": "passed"
+    },
+    "git_diff_check": {
+      "exit_code": 0,
+      "status": "passed"
+    }
+  },
+  "skip_policy": "Skips are not passes. Historical source tests remained skipped because OHSCANNER_ARK_REPO is unset; no fetch was performed.",
+  "algorithm_files": [
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/exception_guard.py",
+      "sha256": "e2a7f4d6c2068242c67f6556758411c99b4ad0391ca77b369a06f9e0dadf5920",
+      "git_blob": "c9276700e73cf6648c98b8fe3d697f753feb1144",
+      "bytes": 29688
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/runtime_exception.py",
+      "sha256": "96d56b4b3c9bd3f579c9b0dd2f29259526546fdfaf411dfc0152f194bdadf1fd",
+      "git_blob": "b2f1cc42f449d6f4c77020b003a1f7c0cbdd0e86",
+      "bytes": 51587
+    },
+    {
+      "path": "tests/detectors/ark_runtime/test_exception_guard.py",
+      "sha256": "fffff0eb8394eac6b74f5df8bb3ec948272b60517f9bc81f9e6e41d16920ebf9",
+      "git_blob": "5df76bbc9b110e7dca60c94ea23077c0860fc6d6",
+      "bytes": 26895
+    },
+    {
+      "path": "tests/detectors/ark_runtime/test_runtime_exception.py",
+      "sha256": "ee4d163994be3dbfcd4c26dc1b22b6ee53b5c95264445502fb085a5f5ce842c5",
+      "git_blob": "69080a6ec0e78a9b085dd8ba2b7edeadc243c916",
+      "bytes": 26155
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/EXC01.cpp",
+      "sha256": "a3702d37854f4d8ceb385e0fa55ef77dfa1da64616788e65a6db7da84a9b7a82",
+      "git_blob": "3f19fc33dffe158f25781d46cd117b17c6ddfbc2",
+      "bytes": 2679
+    }
+  ],
+  "pre_existing_dirty_preserved": [
+    "src/ohscanner/detectors/ark_runtime/model.py",
+    "research/experiments/ark_runtime/c8_holdout_20261019/",
+    "research/methods/ark_runtime/rule_freeze_0.7.0/"
+  ],
+  "patches": [
+    {
+      "path": "old_baseline_7af25f5_minimal.patch",
+      "bytes": 109240,
+      "sha256": "35dc4fd0aa9349466daf7d2c32ac1b5d728e35001994c7cbe37750355a5fe1e9"
+    },
+    {
+      "path": "latest_static_09ba5aba_minimal.patch",
+      "bytes": 156477,
+      "sha256": "88d16ef2a6cf66fed44637da2cfc63126cf828d7c7bd6f5b8ed0d16334459169"
+    }
+  ],
+  "patch_validation": {
+    "old_reverse_check_exit_code": 0,
+    "latest_reverse_check_exit_code": 0,
+    "note": "Both patches were generated from exact Git blobs/worktree bytes and reverse-check against the current dirty worktree. Windows CRLF requires --ignore-whitespace for Git patch checks."
+  },
+  "claims_excluded": [
+    "product CIA impact",
+    "CVE or affected product version/branch",
+    "dynamic PoC reproduction",
+    "Precision/Recall or zero FP/FN",
+    "safe verdict from matched or zero diagnostics",
+    "production CLI detection of I7E0FM before detector/model integration"
+  ]
+}

@@ -1,0 +1,31 @@
+--- a/src/ohscanner/detectors/ark_runtime/runtime_exception.py
++++ b/src/ohscanner/detectors/ark_runtime/runtime_exception.py
+@@ -382,16 +382,10 @@
+             continue
+         name = fn.call_name(node)
+         args = fn.arguments(node)
+-        if name == "FastToBoolean" and len(args) == 1 and _binding_matches(fn, args[0], binding):
++        if (name == "FastToBoolean" and len(args) == 1
++                and binding.type_name == "GateRef"
++                and _binding_matches(fn, args[0], binding)):
+             yield node
+-            continue
+-        callee = node.child_by_field_name("function")
+-        if callee is not None and callee.type == "field_expression":
+-            field = callee.child_by_field_name("field")
+-            receiver = callee.child_by_field_name("argument")
+-            if (field is not None and fn.text(field) == "ToBoolean"
+-                    and _binding_matches(fn, receiver, binding)):
+-                yield node
+ 
+ 
+ def _compound_top_statement(fn, node):
+@@ -430,7 +424,7 @@
+         return None, "unmodeled_generated_callback_exception_path"
+     branch = branches[0]
+     if (fn.call_name(branch) == "Branch"
+-            and fn.qualified_name.rsplit("::", 2)[0] not in owners):
++            and fn.qualified_name.rsplit("::", 1)[0] not in owners):
+         return None, "unmodeled_generated_callback_exception_path"
+     args = fn.arguments(branch)
+     if len(args) != 3:

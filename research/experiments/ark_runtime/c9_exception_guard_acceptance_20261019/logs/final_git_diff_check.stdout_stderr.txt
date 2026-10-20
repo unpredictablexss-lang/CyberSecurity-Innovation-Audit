@@ -1,0 +1,4 @@
+warning: in the working copy of 'src/ohscanner/detectors/ark_runtime/exception_guard.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/ohscanner/detectors/ark_runtime/model.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/detectors/ark_runtime/fixtures/EXC01.cpp', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/detectors/ark_runtime/test_exception_guard.py', LF will be replaced by CRLF the next time Git touches it

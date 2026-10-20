@@ -1,0 +1,11 @@
+--- a/src/ohscanner/detectors/ark_runtime/runtime_exception.py
++++ b/src/ohscanner/detectors/ark_runtime/runtime_exception.py
+@@ -668,6 +668,8 @@
+     else:
+         return False
+     value = returns[0].child_by_field_name("value")
++    if value is None and returns[0].named_children:
++        value = returns[0].named_children[0]
+     if value is None:
+         return False
+     text = re.sub(r"\s+", "", fn.text(value))

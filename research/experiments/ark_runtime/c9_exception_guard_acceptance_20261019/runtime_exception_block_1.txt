@@ -1,0 +1,57 @@
+def _raw_text(data, node):
+    return data[node.start_byte:node.end_byte].decode("utf-8", "replace")
+
+
+def _raw_namespace(data, node):
+    parent = node.parent
+    while parent is not None:
+        if parent.type == "namespace_definition":
+            name = parent.child_by_field_name("name")
+            return _raw_text(data, name).replace(" ", "") if name is not None else ""
+        parent = parent.parent
+    return ""
+
+
+def _class_records(source_units):
+    records = {}
+    for unit in source_units:
+        if unit.language != "cpp" or unit.parse_status not in ("complete", "partial"):
+            continue
+        data = unit.text.encode("utf-8")
+        try:
+            tree, _ = parse_functions(data)
+        except (ValueError, RuntimeError, UnicodeError):
+            continue
+        for node in walk(tree.root_node):
+            if node.type != "class_specifier":
+                continue
+            name = node.child_by_field_name("name")
+            body = node.child_by_field_name("body")
+            if name is None or body is None:
+                continue
+            namespace = _raw_namespace(data, node)
+            class_name = _raw_text(data, name).replace(" ", "")
+            qualified = (namespace + "::" if namespace else "") + class_name
+            bases = []
+            for child in node.named_children:
+                if child.type != "base_class_clause":
+                    continue
+                parts = [item for item in child.named_children
+                         if item.type not in ("access_specifier", "virtual")]
+                if parts:
+                    base = _raw_text(data, parts[-1]).replace(" ", "")
+                    bases.append(base if "::" in base
+                                 else (namespace + "::" if namespace else "") + base)
+            override = any(
+                child.type == "function_declarator"
+                and child.child_by_field_name("declarator") is not None
+                and _raw_text(data, child.child_by_field_name("declarator")).split("::")[-1].startswith("Branch")
+                and child.child_by_field_name("parameters") is not None
+                and len([item for item in child.child_by_field_name("parameters").named_children
+                         if item.type == "parameter_declaration"]) == 3
+                for child in walk(body)
+            )
+            records[qualified] = {"bases": tuple(bases), "override": override}
+    return records
+
+

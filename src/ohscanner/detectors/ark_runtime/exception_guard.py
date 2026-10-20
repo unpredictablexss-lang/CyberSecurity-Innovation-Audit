@@ -124,6 +124,16 @@ def _field_name(fn, call):
     return fn.text(callee.child_by_field_name("field"))
 
 
+def _call_directly_matches_effect(fn, call, name):
+    call_name = fn.call_name(call)
+    return (
+        _short_name(call_name) == name
+        or _field_name(fn, call) == name
+        or (call_name == "CallNGCRuntime"
+            and any(name in fn.text(arg) for arg in fn.arguments(call)))
+    )
+
+
 def _effect_use(fn, instruction, binding, effect_names, sink_name, sink_arity,
                 sink_glue_arg, sink_object_arg):
     calls = [node for node in walk(instruction.node) if node.type == "call_expression"]
@@ -142,13 +152,7 @@ def _effect_use(fn, instruction, binding, effect_names, sink_name, sink_arity,
             field = _field_name(fn, call)
             nested_names = {fn.call_name(child) for child in walk(call)
                             if child.type == "call_expression"}
-            match = (
-                _short_name(call_name) == name
-                or field == name
-                or name in nested_names
-                or (call_name == "CallNGCRuntime"
-                    and any(name in fn.text(arg) for arg in fn.arguments(call)))
-            )
+            match = _call_directly_matches_effect(fn, call, name)
             if not match or not _refers_to_binding(fn, call, binding):
                 continue
             containers = [
@@ -166,7 +170,8 @@ def _effect_use(fn, instruction, binding, effect_names, sink_name, sink_arity,
                 _short_name(fn.call_name(item)) in wrapper_names
                 for item in selected_calls if item != selected
             )
-            valid = not extra_calls and nested_ok
+            selected_match = _call_directly_matches_effect(fn, selected, name)
+            valid = not extra_calls and nested_ok and (selected == call or selected_match)
             return selected, valid
     return None
 
@@ -265,9 +270,10 @@ def _trace_obligation(fn, graph, start, binding, effect_names, sink_name, sink_a
                       sink_glue_arg, sink_object_arg, throwing_names, budget):
     """Return local outcomes for one throwing operation.
 
-    States are: clear (guard proved no pending exception), pending (exception
-    may be pending before an effect), and guarded (the pending branch was
-    explicitly handled before continuing).
+    States are: clear (the guard proved no pending exception) and pending
+    (an exception may be pending before an effect). A pending-exception branch
+    remains pending until an actual terminating return/exit; recording the
+    exception result is not itself proof that later effects are safe.
     """
     queue = deque()
     start_line = graph.instructions[start].node.start_point[0] + 1
@@ -301,6 +307,14 @@ def _trace_obligation(fn, graph, start, binding, effect_names, sink_name, sink_a
             outcomes["unknown"].append(
                 (instruction.problem or "unmodeled_generated_instruction", next_path))
             continue
+        calls = _calls_in_instruction(instruction)
+        if calls and _known_exception_result_write(fn, instruction):
+            for target, _ in instruction.successors:
+                if target is not None and target >= 0:
+                    queue.append((target, state, next_path))
+                elif state == "pending":
+                    outcomes["unknown"].append(("effect_after_external_label_unresolved", next_path))
+            continue
         effect = _effect_use(
             fn, instruction, binding, effect_names, sink_name, sink_arity,
             sink_glue_arg, sink_object_arg,
@@ -330,18 +344,10 @@ def _trace_obligation(fn, graph, start, binding, effect_names, sink_name, sink_a
                 if target is None or target < 0:
                     # Reviewed guard exits terminate this local obligation.
                     continue
-                elif truth is True and state == "pending":
-                    queue.append((target, "guarded", next_path))
-                elif truth is False and state in ("pending", "clear", "guarded"):
+                elif truth is True:
+                    queue.append((target, "pending", next_path))
+                elif truth is False:
                     queue.append((target, "clear", next_path))
-            continue
-        calls = _calls_in_instruction(instruction)
-        if calls and _known_exception_result_write(fn, instruction):
-            for target, _ in instruction.successors:
-                if target is not None and target >= 0:
-                    queue.append((target, state, next_path))
-                elif state == "pending":
-                    outcomes["unknown"].append(("effect_after_external_label_unresolved", next_path))
             continue
         if calls and not _all_calls_local_or_throwing(fn, instruction, throwing_names):
             outcomes["unknown"].append(
@@ -396,6 +402,70 @@ def _unknown_observation(source_line, item, fn, fallback_reason):
         path=path, symbol=fn.qualified_name,
         region_start_byte=fn.node.start_byte, region_end_byte=fn.node.end_byte,
     )
+
+
+def _has_truncated_void_return(fn):
+    children = [child for child in fn.body.named_children
+                if child.type not in ("comment", "empty_statement")]
+    for index, child in enumerate(children):
+        meaningful = any(item.type != "comment" for item in child.named_children)
+        if (child.type == "return_statement" and not meaningful
+                and any(item.type not in ("comment", "empty_statement")
+                        for item in children[index + 1:])):
+            return True
+    return False
+
+
+def _return_continuation_graph(fn, unit, budget):
+    """Rebuild a graph past a void return without changing its path outcome.
+
+    The shared generated graph intentionally stops emitting after a host
+    return. For zero-length/generated early-exit paths this would hide valid
+    later obligations, so analyze a newline-preserving transformed copy where
+    each early return jumps to a terminal label. The original return path is
+    still retained as unknown by the original graph.
+    """
+    if not _has_truncated_void_return(fn):
+        return None
+    from .syntax import parse_functions
+
+    children = [child for child in fn.body.named_children
+                if child.type not in ("comment", "empty_statement")]
+    edits = []
+    labels = []
+    for index, child in enumerate(children):
+        meaningful = any(item.type != "comment" for item in child.named_children)
+        later = any(item.type not in ("comment", "empty_statement")
+                    for item in children[index + 1:])
+        if child.type != "return_statement" or meaningful or not later:
+            continue
+        label = "__ohscanner_return_" + str(len(labels))
+        labels.append(label)
+        edits.append((child.start_byte, child.end_byte, b"Jump(&" + label.encode("ascii") + b");"))
+    if not labels:
+        return None
+
+    declarations = b" " + b" ".join(
+        b"Label " + label.encode("ascii") + b"(GetEnvironment());"
+        for label in labels)
+    bindings = b" " + b" ".join(
+        b"Bind(&" + label.encode("ascii") + b");"
+        for label in labels)
+    edits.append((fn.body.start_byte + 1, fn.body.start_byte + 1, declarations))
+    edits.append((fn.body.end_byte - 1, fn.body.end_byte - 1, bindings))
+
+    data = unit.text.encode("utf-8")
+    for start, end, replacement in sorted(edits, key=lambda item: (item[0], item[1]), reverse=True):
+        data = data[:start] + replacement + data[end:]
+    _, functions = parse_functions(data)
+    matches = [candidate for candidate in functions
+               if candidate.qualified_name == fn.qualified_name
+               and tuple(candidate.parameter_types) == tuple(fn.parameter_types)]
+    if len(matches) != 1:
+        raise ValueError("return_continuation_function_unresolved:"
+                         + fn.qualified_name.rsplit("::", 1)[-1])
+    continued = matches[0]
+    return continued, build_graph(continued, budget)
 
 
 def analyze_exception_guard(unit, *, creator_name=None, creator_arity=None,
@@ -459,83 +529,101 @@ def analyze_exception_guard(unit, *, creator_name=None, creator_arity=None,
         except ValueError as error:
             limitations.append(str(error))
             continue
-        obligations = []
-        for index, instruction in enumerate(graph.instructions):
-            for creator, arity in creator_specs:
-                for binding in _creator_assignment(fn, instruction, creator, arity):
-                    same_instruction_effect = _effect_use(
-                        fn, instruction, binding, effect_names, sink_name, sink_arity,
-                        sink_glue_arg, sink_object_arg)
-                    source_line = instruction.node.start_point[0] + 1
-                    if same_instruction_effect is not None:
+        def consume_graph(graph_fn, graph):
+            nonlocal steps
+            obligations = []
+            for index, instruction in enumerate(graph.instructions):
+                for creator, arity in creator_specs:
+                    for binding in _creator_assignment(graph_fn, instruction, creator, arity):
+                        same_instruction_effect = _effect_use(
+                            graph_fn, instruction, binding, effect_names, sink_name,
+                            sink_arity, sink_glue_arg, sink_object_arg)
+                        source_line = instruction.node.start_point[0] + 1
+                        if same_instruction_effect is not None:
+                            finding = _unknown_observation(
+                                source_line,
+                                ("throw_and_effect_order_unresolved_same_instruction", (source_line,)),
+                                graph_fn, "throw_and_effect_order_unresolved_same_instruction")
+                            findings.append(finding)
+                            limitations.append(finding.reason)
+                            continue
+                        obligations.append(
+                            ("allocation", index, source_line, binding, creator))
+                if throwing_names and _throwing_call(graph_fn, instruction, throwing_names):
+                    if _effect_use(graph_fn, instruction, None, effect_names, sink_name,
+                                   sink_arity, sink_glue_arg, sink_object_arg) is not None:
+                        source_line = instruction.node.start_point[0] + 1
                         finding = _unknown_observation(
                             source_line,
                             ("throw_and_effect_order_unresolved_same_instruction", (source_line,)),
-                            fn, "throw_and_effect_order_unresolved_same_instruction")
+                            graph_fn, "throw_and_effect_order_unresolved_same_instruction")
                         findings.append(finding)
                         limitations.append(finding.reason)
                         continue
                     obligations.append(
-                        ("allocation", index, source_line, binding, creator))
-            if throwing_names and _throwing_call(fn, instruction, throwing_names):
-                if _effect_use(fn, instruction, None, effect_names, sink_name,
-                               sink_arity, sink_glue_arg, sink_object_arg) is not None:
-                    source_line = instruction.node.start_point[0] + 1
+                        ("helper", index, instruction.node.start_point[0] + 1, None, "helper"))
+            for kind, start, source_line, binding, creator in obligations:
+                if kind == "allocation" and any(
+                        index != start and _writes_binding(graph_fn, instruction, binding)
+                        for index, instruction in enumerate(graph.instructions)):
+                    effect = next((
+                        (index, _effect_use(graph_fn, instruction, binding, effect_names,
+                                            sink_name, sink_arity, sink_glue_arg, sink_object_arg))
+                        for index, instruction in enumerate(graph.instructions)
+                        if index > start and _effect_use(
+                            graph_fn, instruction, binding, effect_names, sink_name,
+                            sink_arity, sink_glue_arg, sink_object_arg) is not None
+                    ), None)
+                    if effect is not None:
+                        node, _ = effect[1]
+                        findings.append(Observation(
+                            "unknown", node.start_point[0] + 1, node.start_point[1] + 1,
+                            "allocation_result_gate_ref_reassigned", token_line=source_line,
+                            symbol=graph_fn.qualified_name,
+                            region_start_byte=graph_fn.node.start_byte,
+                            region_end_byte=graph_fn.node.end_byte))
+                        limitations.append("allocation_result_gate_ref_reassigned")
+                    continue
+                outcomes, used_steps = _trace_obligation(
+                    graph_fn, graph, start, binding, effect_names, sink_name, sink_arity,
+                    sink_glue_arg, sink_object_arg, throwing_names, budget)
+                steps += used_steps
+                candidate_reason = (
+                    "allocation_result_hclass_read_on_pending_exception_path"
+                    if kind == "allocation" and effect_names == (sink_name,)
+                    else "pending_exception_guard_missing_before_result_or_external_effect"
+                )
+                matched_reason = (
+                    "pending_exception_check_guards_allocation_result_use"
+                    if kind == "allocation" and effect_names == (sink_name,)
+                    else "pending_exception_check_precedes_result_or_external_effect"
+                )
+                if outcomes["candidate"]:
+                    findings.append(_observation(
+                        "candidate", source_line, outcomes["candidate"][0], graph_fn,
+                        candidate_reason))
+                elif outcomes["matched"]:
+                    findings.append(_observation(
+                        "matched", source_line, outcomes["matched"][0], graph_fn,
+                        matched_reason))
+                for item in sorted(set(outcomes["unknown"]), key=lambda value: (value[1], value[0])):
                     finding = _unknown_observation(
-                        source_line,
-                        ("throw_and_effect_order_unresolved_same_instruction", (source_line,)),
-                        fn, "throw_and_effect_order_unresolved_same_instruction")
+                        source_line, item, graph_fn, "exception_guard_sink_path_unresolved")
                     findings.append(finding)
                     limitations.append(finding.reason)
-                    continue
-                obligations.append(
-                    ("helper", index, instruction.node.start_point[0] + 1, None, "helper"))
-        for kind, start, source_line, binding, creator in obligations:
-            if kind == "allocation" and any(
-                    index != start and _writes_binding(fn, instruction, binding)
-                    for index, instruction in enumerate(graph.instructions)):
-                effect = next((
-                    (index, _effect_use(fn, instruction, binding, effect_names, sink_name,
-                                        sink_arity, sink_glue_arg, sink_object_arg))
-                    for index, instruction in enumerate(graph.instructions)
-                    if index > start and _effect_use(
-                        fn, instruction, binding, effect_names, sink_name,
-                        sink_arity, sink_glue_arg, sink_object_arg) is not None
-                ), None)
-                if effect is not None:
-                    node, _ = effect[1]
-                    findings.append(Observation(
-                        "unknown", node.start_point[0] + 1, node.start_point[1] + 1,
-                        "allocation_result_gate_ref_reassigned", token_line=source_line,
-                        symbol=fn.qualified_name, region_start_byte=fn.node.start_byte,
-                        region_end_byte=fn.node.end_byte))
-                    limitations.append("allocation_result_gate_ref_reassigned")
-                continue
-            outcomes, used_steps = _trace_obligation(
-                fn, graph, start, binding, effect_names, sink_name, sink_arity,
-                sink_glue_arg, sink_object_arg, throwing_names, budget)
-            steps += used_steps
-            candidate_reason = (
-                "allocation_result_hclass_read_on_pending_exception_path"
-                if kind == "allocation" and effect_names == (sink_name,)
-                else "pending_exception_guard_missing_before_result_or_external_effect"
-            )
-            matched_reason = (
-                "pending_exception_check_guards_allocation_result_use"
-                if kind == "allocation" and effect_names == (sink_name,)
-                else "pending_exception_check_precedes_result_or_external_effect"
-            )
-            if outcomes["candidate"]:
-                findings.append(_observation(
-                    "candidate", source_line, outcomes["candidate"][0], fn, candidate_reason))
-            elif outcomes["matched"]:
-                findings.append(_observation(
-                    "matched", source_line, outcomes["matched"][0], fn, matched_reason))
-            for item in sorted(set(outcomes["unknown"]), key=lambda value: (value[1], value[0])):
-                finding = _unknown_observation(
-                    source_line, item, fn, "exception_guard_sink_path_unresolved")
-                findings.append(finding)
-                limitations.append(finding.reason)
+
+        graph_variants = [(fn, graph)]
+        if _has_truncated_void_return(fn):
+            try:
+                continuation = _return_continuation_graph(fn, unit, budget)
+            except (ValueError, RuntimeError) as error:
+                limitations.append(str(error))
+            else:
+                if continuation is not None:
+                    graph_variants.append(continuation)
+        for graph_fn, graph_variant in graph_variants:
+            consume_graph(graph_fn, graph_variant)
+
     if not findings:
         return ExceptionGuardResult(
             "limited" if limitations else "completed",

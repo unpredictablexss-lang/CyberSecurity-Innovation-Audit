@@ -1,0 +1,174 @@
+def _label_name(fn, node):
+    if node is None:
+        return None
+    if node.type == "identifier":
+        return fn.text(node)
+    if node.type in ("unary_expression", "pointer_expression"):
+        return _label_name(fn, node.child_by_field_name("argument") or node.named_children[-1])
+    return None
+
+
+def _binding_matches(fn, node, binding):
+    return (node is not None and node.type == "identifier"
+            and fn.resolve(fn.text(node), node) == binding)
+
+
+def _generated_callback_sources(fn, effect_names=("JSCallDispatch", "JSFunction::Call")):
+    for node in walk(fn.body):
+        if node.type == "init_declarator":
+            declarator = node.child_by_field_name("declarator")
+            value = node.child_by_field_name("value")
+            ident = name_node(declarator)
+        elif node.type == "assignment_expression":
+            ident = node.child_by_field_name("left")
+            value = node.child_by_field_name("right")
+        else:
+            continue
+        if ident is None or value is None or ident.type != "identifier":
+            continue
+        if value.type != "call_expression" or fn.call_name(value) not in effect_names:
+            continue
+        binding = fn.resolve(fn.text(ident), ident)
+        if binding is not None:
+            yield ident, binding, value
+
+
+def _generated_sensitive_uses(fn, binding):
+    for node in walk(fn.body):
+        if node.type != "call_expression":
+            continue
+        name = fn.call_name(node)
+        args = fn.arguments(node)
+        if name == "FastToBoolean" and len(args) == 1 and _binding_matches(fn, args[0], binding):
+            yield node
+            continue
+        callee = node.child_by_field_name("function")
+        if callee is not None and callee.type == "field_expression":
+            field = callee.child_by_field_name("field")
+            receiver = callee.child_by_field_name("argument")
+            if (field is not None and fn.text(field) == "ToBoolean"
+                    and _binding_matches(fn, receiver, binding)):
+                yield node
+
+
+def _compound_top_statement(fn, node):
+    current = node
+    while (current is not None and current.parent is not None
+           and current.parent.type != "compound_statement"):
+        current = current.parent
+    if (current is not None and current.parent is not None
+            and current.parent.type == "compound_statement"):
+        return current
+    return None
+
+
+def _generated_branch_order(fn, source, sink, owners):
+    source_statement = _compound_top_statement(fn, source)
+    sink_statement = _compound_top_statement(fn, sink)
+    if (source_statement is None or sink_statement is None
+            or source_statement.parent != sink_statement.parent):
+        return None, "callback_result_path_not_in_one_basic_compound"
+    compound = source_statement.parent
+    siblings = list(compound.named_children)
+    source_index = siblings.index(source_statement)
+    sink_index = siblings.index(sink_statement)
+    if source_index >= sink_index:
+        return None, "callback_result_use_order_unresolved"
+    branches = []
+    for statement in siblings[source_index + 1:sink_index]:
+        for call in walk(statement):
+            if call.type == "call_expression" and fn.call_name(call) in ("BRANCH", "Branch"):
+                branches.append(call)
+    candidate = ("candidate",
+                 "callback_pending_exception_can_reach_generated_result_conversion")
+    if not branches:
+        return candidate, None
+    if len(branches) != 1:
+        return None, "unmodeled_generated_callback_exception_path"
+    branch = branches[0]
+    if (fn.call_name(branch) == "Branch"
+            and fn.qualified_name.rsplit("::", 2)[0] not in owners):
+        return None, "unmodeled_generated_callback_exception_path"
+    args = fn.arguments(branch)
+    if len(args) != 3:
+        return None, "unmodeled_generated_callback_exception_path"
+    condition, true_label, false_label = args
+    true_name = _label_name(fn, true_label)
+    false_name = _label_name(fn, false_label)
+    if not true_name or not false_name:
+        return None, "unmodeled_generated_callback_exception_path"
+    condition_name = fn.call_name(condition)
+    condition_args = fn.arguments(condition) if condition.type == "call_expression" else ()
+    if condition_name == "HasPendingException" and len(condition_args) == 1:
+        arg = condition_args[0]
+        binding = fn.resolve(fn.text(arg), arg) if arg.type == "identifier" else None
+        if (binding is None or not binding.parameter
+                or binding.name not in ("glue", "thread")):
+            return None, "unmodeled_generated_callback_exception_path"
+    elif (condition_name not in ("TaggedIsException", "TaggedIsTrue")
+          or len(condition_args) != 1):
+        return None, "unmodeled_generated_callback_exception_path"
+
+    binds = {}
+    for item in siblings:
+        for call in walk(item):
+            if call.type != "call_expression" or fn.call_name(call) != "Bind":
+                continue
+            call_args = fn.arguments(call)
+            if len(call_args) == 1:
+                label = _label_name(fn, call_args[0])
+                if label:
+                    binds[label] = item
+    exception_bind = binds.get(true_name)
+    continue_bind = binds.get(false_name)
+    if exception_bind is None or continue_bind is None:
+        return None, "unmodeled_generated_callback_exception_path"
+    exception_index = siblings.index(exception_bind)
+    continue_index = siblings.index(continue_bind)
+    if exception_index >= continue_index:
+        return None, "unmodeled_generated_callback_exception_path"
+    exception_path = siblings[exception_index + 1:continue_index]
+    exits = any(
+        item.type == "return_statement"
+        or any(call.type == "call_expression" and fn.call_name(call) == "Jump"
+               for call in walk(item))
+        for item in exception_path
+    )
+    if not exits or condition_name != "HasPendingException":
+        return candidate, None
+    return ("matched",
+            "pending_exception_check_precedes_generated_result_conversion"), None
+
+
+def _analyze_generated_callback_paths(unit, owners):
+    observations, limitations = [], []
+    applicable = False
+    try:
+        _, functions = parse_functions(unit.text.encode("utf-8"))
+    except (ValueError, RuntimeError, UnicodeError):
+        return False, observations, limitations
+    for fn in functions:
+        for ident, binding, source in _generated_callback_sources(fn):
+            uses = tuple(_generated_sensitive_uses(fn, binding))
+            if not uses:
+                continue
+            applicable = True
+            for sink in uses:
+                outcome, reason = _generated_branch_order(fn, source, sink, owners)
+                if outcome is None:
+                    limitations.append(reason + ":" + fn.qualified_name)
+                    continue
+                kind, detail = outcome
+                observations.append(Observation(
+                    kind, sink.start_point[0] + 1, sink.start_point[1] + 1, detail,
+                    token_line=source.start_point[0] + 1,
+                    symbol=fn.qualified_name,
+                    region_start_byte=fn.node.start_byte,
+                    region_end_byte=fn.node.end_byte,
+                    target_identity=fn.text(ident),
+                    token_origin=fn.call_name(source),
+                    path=(source.start_point[0] + 1, sink.start_point[0] + 1),
+                ))
+    return applicable, observations, limitations
+
+

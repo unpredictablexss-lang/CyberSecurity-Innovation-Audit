@@ -1,0 +1,38 @@
+[
+  {
+    "sample_id": "guard_fallthrough_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-04",
+    "expected_rule": "ipc.auth.guard-coverage",
+    "file": "guard_fallthrough_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "A permission check read from the reviewed result domain (VerifyAccessToken over the calling TokenID), whose failure branch logs and falls through instead of returning. The guard is honest and does not dominate the sensitive call below it, so two candidates land on the same line 7: the guard-coverage rule records the non-dominating guard, and the sensitive call remains a candidate for missing authorization. Two candidates at one line is the expected output of that shape, not two independent defects -- the same coupling the reviewed identity_domain_positive already documents for AUTH-03."
+  },
+  {
+    "sample_id": "guard_fallthrough_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-04",
+    "expected_rule": null,
+    "file": "guard_fallthrough_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "notes": "guard_fallthrough_positive with the fall-through replaced by a return in the failure branch, and no other change (budget 1, measured). The guard now dominates the call, both candidates are suppressed, and the run is clean. The pair isolates domination from presence: the permission check is present in both files and only its control-flow role changed.",
+    "control_rules": [
+      "ipc.auth.guard-coverage"
+    ]
+  },
+  {
+    "sample_id": "guard_fallthrough_unmodelled_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-04",
+    "expected_rule": null,
+    "file": "guard_fallthrough_unmodelled_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "notes": "The non-dominating guard is kept exactly as it is, and the operation it fails to protect is swapped for one that is not on the reviewed sensitive set (budget 1). Nothing is raised, which shows the candidates in the positive come from the sensitive operation being reachable past a non-dominating guard, not from the guard shape alone.",
+    "control_rules": [
+      "ipc.auth.guard-coverage"
+    ]
+  }
+]

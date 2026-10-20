@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "package_id": "cpp-shared-ptr-delayed-singleton-20261014",
+  "detector_id": "ohscanner.cpp.shared_ptr_race",
+  "detector_version": "0.4.0",
+  "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+  "sample_id": "c_utils-singleton-uaf-2026-01",
+  "repository": "openharmony/commonlibrary_c_utils",
+  "candidate_cwe": "CWE-362",
+  "possible_consequence_cwe": "CWE-416",
+  "source_binding_status": "preserved_artifact_hash_verified",
+  "revisions": {
+    "vulnerable": {
+      "commit": "bdfafdaafddb01ab7ae13354ce2ada9555d7935c",
+      "path": "outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h",
+      "sha256": "ce04ace5a2ad702d3f56e30be347dc9583c808dcf5aac80ee761bd70e05f1ad4",
+      "expected": "race",
+      "required_quotes": [
+        "if (instance_ == nullptr) {",
+        "instance_ = temp;",
+        "instance_.reset();"
+      ]
+    },
+    "upstream_fix": {
+      "commit": "9a3f281120307ec7dcce17fae882dcc4e6a6f4d7",
+      "path": "outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h",
+      "sha256": "9ed18694defc088c7bfe69327f6e4668d6c23d72a4f3c5516ad4635e9e511606",
+      "expected": "race_or_clean",
+      "required_quotes": [
+        "std::shared_ptr<T> ptr = atomic_load(&instance_);",
+        "instance_ = temp;",
+        "atomic_store(&instance_, std::shared_ptr<T>(nullptr));"
+      ]
+    },
+    "fully_atomic_patch": {
+      "derived_from": "upstream_fix",
+      "expected": "no_race"
+    }
+  },
+  "source_provenance": {
+    "basis": "preserved source artifacts generated from the historical fixed Git revisions",
+    "git_object_status": "unavailable_in_current_local_store",
+    "policy": "Hash and quote verification is mandatory; current Git provenance is not upgraded to verified."
+  },
+  "known_limitations": [
+    "当前本地 commonlibrary_c_utils Git 对象库缺少两个历史提交，Git object provenance 保持 unknown；只验证保留源码字节、SHA-256 和关键代码引文。",
+    "PoC 使用自编 workload 调用未修改的 singleton.h，证明组件级并发行为，不证明 OpenHarmony 产品入口、权限边界或攻击者控制。",
+    "ThreadSanitizer 数据竞争不等价于稳定 use-after-free 崩溃；CWE-416 仍只是可能后果。",
+    "fully_atomic_patch 是本地修复重验变体，不是上游补丁，也不自动构成 reportable 修复建议。",
+    "线程调度、迭代规模、编译器和 sanitizer 版本会影响动态复现；原始日志和环境必须随结果保存。"
+  ]
+}

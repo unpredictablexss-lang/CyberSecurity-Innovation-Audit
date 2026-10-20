@@ -1,0 +1,550 @@
+diff --git a/src/ohscanner/detectors/ark_runtime/exception_guard.py b/src/ohscanner/detectors/ark_runtime/exception_guard.py
+index 859198c..c927670 100644
+--- a/src/ohscanner/detectors/ark_runtime/exception_guard.py
++++ b/src/ohscanner/detectors/ark_runtime/exception_guard.py
+@@ -124,6 +124,16 @@ def _field_name(fn, call):
+     return fn.text(callee.child_by_field_name("field"))
+ 
+ 
++def _call_directly_matches_effect(fn, call, name):
++    call_name = fn.call_name(call)
++    return (
++        _short_name(call_name) == name
++        or _field_name(fn, call) == name
++        or (call_name == "CallNGCRuntime"
++            and any(name in fn.text(arg) for arg in fn.arguments(call)))
++    )
++
++
+ def _effect_use(fn, instruction, binding, effect_names, sink_name, sink_arity,
+                 sink_glue_arg, sink_object_arg):
+     calls = [node for node in walk(instruction.node) if node.type == "call_expression"]
+@@ -142,13 +152,7 @@ def _effect_use(fn, instruction, binding, effect_names, sink_name, sink_arity,
+             field = _field_name(fn, call)
+             nested_names = {fn.call_name(child) for child in walk(call)
+                             if child.type == "call_expression"}
+-            match = (
+-                _short_name(call_name) == name
+-                or field == name
+-                or name in nested_names
+-                or (call_name == "CallNGCRuntime"
+-                    and any(name in fn.text(arg) for arg in fn.arguments(call)))
+-            )
++            match = _call_directly_matches_effect(fn, call, name)
+             if not match or not _refers_to_binding(fn, call, binding):
+                 continue
+             containers = [
+@@ -166,7 +170,8 @@ def _effect_use(fn, instruction, binding, effect_names, sink_name, sink_arity,
+                 _short_name(fn.call_name(item)) in wrapper_names
+                 for item in selected_calls if item != selected
+             )
+-            valid = not extra_calls and nested_ok
++            selected_match = _call_directly_matches_effect(fn, selected, name)
++            valid = not extra_calls and nested_ok and (selected == call or selected_match)
+             return selected, valid
+     return None
+ 
+@@ -265,9 +270,10 @@ def _trace_obligation(fn, graph, start, binding, effect_names, sink_name, sink_a
+                       sink_glue_arg, sink_object_arg, throwing_names, budget):
+     """Return local outcomes for one throwing operation.
+ 
+-    States are: clear (guard proved no pending exception), pending (exception
+-    may be pending before an effect), and guarded (the pending branch was
+-    explicitly handled before continuing).
++    States are: clear (the guard proved no pending exception) and pending
++    (an exception may be pending before an effect). A pending-exception branch
++    remains pending until an actual terminating return/exit; recording the
++    exception result is not itself proof that later effects are safe.
+     """
+     queue = deque()
+     start_line = graph.instructions[start].node.start_point[0] + 1
+@@ -301,6 +307,14 @@ def _trace_obligation(fn, graph, start, binding, effect_names, sink_name, sink_a
+             outcomes["unknown"].append(
+                 (instruction.problem or "unmodeled_generated_instruction", next_path))
+             continue
++        calls = _calls_in_instruction(instruction)
++        if calls and _known_exception_result_write(fn, instruction):
++            for target, _ in instruction.successors:
++                if target is not None and target >= 0:
++                    queue.append((target, state, next_path))
++                elif state == "pending":
++                    outcomes["unknown"].append(("effect_after_external_label_unresolved", next_path))
++            continue
+         effect = _effect_use(
+             fn, instruction, binding, effect_names, sink_name, sink_arity,
+             sink_glue_arg, sink_object_arg,
+@@ -330,19 +344,11 @@ def _trace_obligation(fn, graph, start, binding, effect_names, sink_name, sink_a
+                 if target is None or target < 0:
+                     # Reviewed guard exits terminate this local obligation.
+                     continue
+-                elif truth is True and state == "pending":
+-                    queue.append((target, "guarded", next_path))
+-                elif truth is False and state in ("pending", "clear", "guarded"):
++                elif truth is True:
++                    queue.append((target, "pending", next_path))
++                elif truth is False:
+                     queue.append((target, "clear", next_path))
+             continue
+-        calls = _calls_in_instruction(instruction)
+-        if calls and _known_exception_result_write(fn, instruction):
+-            for target, _ in instruction.successors:
+-                if target is not None and target >= 0:
+-                    queue.append((target, state, next_path))
+-                elif state == "pending":
+-                    outcomes["unknown"].append(("effect_after_external_label_unresolved", next_path))
+-            continue
+         if calls and not _all_calls_local_or_throwing(fn, instruction, throwing_names):
+             outcomes["unknown"].append(
+                 ("unmodeled_effect_before_exception_guard", next_path))
+@@ -398,6 +404,70 @@ def _unknown_observation(source_line, item, fn, fallback_reason):
+     )
+ 
+ 
++def _has_truncated_void_return(fn):
++    children = [child for child in fn.body.named_children
++                if child.type not in ("comment", "empty_statement")]
++    for index, child in enumerate(children):
++        meaningful = any(item.type != "comment" for item in child.named_children)
++        if (child.type == "return_statement" and not meaningful
++                and any(item.type not in ("comment", "empty_statement")
++                        for item in children[index + 1:])):
++            return True
++    return False
++
++
++def _return_continuation_graph(fn, unit, budget):
++    """Rebuild a graph past a void return without changing its path outcome.
++
++    The shared generated graph intentionally stops emitting after a host
++    return. For zero-length/generated early-exit paths this would hide valid
++    later obligations, so analyze a newline-preserving transformed copy where
++    each early return jumps to a terminal label. The original return path is
++    still retained as unknown by the original graph.
++    """
++    if not _has_truncated_void_return(fn):
++        return None
++    from .syntax import parse_functions
++
++    children = [child for child in fn.body.named_children
++                if child.type not in ("comment", "empty_statement")]
++    edits = []
++    labels = []
++    for index, child in enumerate(children):
++        meaningful = any(item.type != "comment" for item in child.named_children)
++        later = any(item.type not in ("comment", "empty_statement")
++                    for item in children[index + 1:])
++        if child.type != "return_statement" or meaningful or not later:
++            continue
++        label = "__ohscanner_return_" + str(len(labels))
++        labels.append(label)
++        edits.append((child.start_byte, child.end_byte, b"Jump(&" + label.encode("ascii") + b");"))
++    if not labels:
++        return None
++
++    declarations = b" " + b" ".join(
++        b"Label " + label.encode("ascii") + b"(GetEnvironment());"
++        for label in labels)
++    bindings = b" " + b" ".join(
++        b"Bind(&" + label.encode("ascii") + b");"
++        for label in labels)
++    edits.append((fn.body.start_byte + 1, fn.body.start_byte + 1, declarations))
++    edits.append((fn.body.end_byte - 1, fn.body.end_byte - 1, bindings))
++
++    data = unit.text.encode("utf-8")
++    for start, end, replacement in sorted(edits, key=lambda item: (item[0], item[1]), reverse=True):
++        data = data[:start] + replacement + data[end:]
++    _, functions = parse_functions(data)
++    matches = [candidate for candidate in functions
++               if candidate.qualified_name == fn.qualified_name
++               and tuple(candidate.parameter_types) == tuple(fn.parameter_types)]
++    if len(matches) != 1:
++        raise ValueError("return_continuation_function_unresolved:"
++                         + fn.qualified_name.rsplit("::", 1)[-1])
++    continued = matches[0]
++    return continued, build_graph(continued, budget)
++
++
+ def analyze_exception_guard(unit, *, creator_name=None, creator_arity=None,
+                             sink_name="LoadHClass", sink_arity=2, sink_glue_arg=0,
+                             sink_object_arg=1,
+@@ -459,83 +529,101 @@ def analyze_exception_guard(unit, *, creator_name=None, creator_arity=None,
+         except ValueError as error:
+             limitations.append(str(error))
+             continue
+-        obligations = []
+-        for index, instruction in enumerate(graph.instructions):
+-            for creator, arity in creator_specs:
+-                for binding in _creator_assignment(fn, instruction, creator, arity):
+-                    same_instruction_effect = _effect_use(
+-                        fn, instruction, binding, effect_names, sink_name, sink_arity,
+-                        sink_glue_arg, sink_object_arg)
+-                    source_line = instruction.node.start_point[0] + 1
+-                    if same_instruction_effect is not None:
++        def consume_graph(graph_fn, graph):
++            nonlocal steps
++            obligations = []
++            for index, instruction in enumerate(graph.instructions):
++                for creator, arity in creator_specs:
++                    for binding in _creator_assignment(graph_fn, instruction, creator, arity):
++                        same_instruction_effect = _effect_use(
++                            graph_fn, instruction, binding, effect_names, sink_name,
++                            sink_arity, sink_glue_arg, sink_object_arg)
++                        source_line = instruction.node.start_point[0] + 1
++                        if same_instruction_effect is not None:
++                            finding = _unknown_observation(
++                                source_line,
++                                ("throw_and_effect_order_unresolved_same_instruction", (source_line,)),
++                                graph_fn, "throw_and_effect_order_unresolved_same_instruction")
++                            findings.append(finding)
++                            limitations.append(finding.reason)
++                            continue
++                        obligations.append(
++                            ("allocation", index, source_line, binding, creator))
++                if throwing_names and _throwing_call(graph_fn, instruction, throwing_names):
++                    if _effect_use(graph_fn, instruction, None, effect_names, sink_name,
++                                   sink_arity, sink_glue_arg, sink_object_arg) is not None:
++                        source_line = instruction.node.start_point[0] + 1
+                         finding = _unknown_observation(
+                             source_line,
+                             ("throw_and_effect_order_unresolved_same_instruction", (source_line,)),
+-                            fn, "throw_and_effect_order_unresolved_same_instruction")
++                            graph_fn, "throw_and_effect_order_unresolved_same_instruction")
+                         findings.append(finding)
+                         limitations.append(finding.reason)
+                         continue
+                     obligations.append(
+-                        ("allocation", index, source_line, binding, creator))
+-            if throwing_names and _throwing_call(fn, instruction, throwing_names):
+-                if _effect_use(fn, instruction, None, effect_names, sink_name,
+-                               sink_arity, sink_glue_arg, sink_object_arg) is not None:
+-                    source_line = instruction.node.start_point[0] + 1
++                        ("helper", index, instruction.node.start_point[0] + 1, None, "helper"))
++            for kind, start, source_line, binding, creator in obligations:
++                if kind == "allocation" and any(
++                        index != start and _writes_binding(graph_fn, instruction, binding)
++                        for index, instruction in enumerate(graph.instructions)):
++                    effect = next((
++                        (index, _effect_use(graph_fn, instruction, binding, effect_names,
++                                            sink_name, sink_arity, sink_glue_arg, sink_object_arg))
++                        for index, instruction in enumerate(graph.instructions)
++                        if index > start and _effect_use(
++                            graph_fn, instruction, binding, effect_names, sink_name,
++                            sink_arity, sink_glue_arg, sink_object_arg) is not None
++                    ), None)
++                    if effect is not None:
++                        node, _ = effect[1]
++                        findings.append(Observation(
++                            "unknown", node.start_point[0] + 1, node.start_point[1] + 1,
++                            "allocation_result_gate_ref_reassigned", token_line=source_line,
++                            symbol=graph_fn.qualified_name,
++                            region_start_byte=graph_fn.node.start_byte,
++                            region_end_byte=graph_fn.node.end_byte))
++                        limitations.append("allocation_result_gate_ref_reassigned")
++                    continue
++                outcomes, used_steps = _trace_obligation(
++                    graph_fn, graph, start, binding, effect_names, sink_name, sink_arity,
++                    sink_glue_arg, sink_object_arg, throwing_names, budget)
++                steps += used_steps
++                candidate_reason = (
++                    "allocation_result_hclass_read_on_pending_exception_path"
++                    if kind == "allocation" and effect_names == (sink_name,)
++                    else "pending_exception_guard_missing_before_result_or_external_effect"
++                )
++                matched_reason = (
++                    "pending_exception_check_guards_allocation_result_use"
++                    if kind == "allocation" and effect_names == (sink_name,)
++                    else "pending_exception_check_precedes_result_or_external_effect"
++                )
++                if outcomes["candidate"]:
++                    findings.append(_observation(
++                        "candidate", source_line, outcomes["candidate"][0], graph_fn,
++                        candidate_reason))
++                elif outcomes["matched"]:
++                    findings.append(_observation(
++                        "matched", source_line, outcomes["matched"][0], graph_fn,
++                        matched_reason))
++                for item in sorted(set(outcomes["unknown"]), key=lambda value: (value[1], value[0])):
+                     finding = _unknown_observation(
+-                        source_line,
+-                        ("throw_and_effect_order_unresolved_same_instruction", (source_line,)),
+-                        fn, "throw_and_effect_order_unresolved_same_instruction")
++                        source_line, item, graph_fn, "exception_guard_sink_path_unresolved")
+                     findings.append(finding)
+                     limitations.append(finding.reason)
+-                    continue
+-                obligations.append(
+-                    ("helper", index, instruction.node.start_point[0] + 1, None, "helper"))
+-        for kind, start, source_line, binding, creator in obligations:
+-            if kind == "allocation" and any(
+-                    index != start and _writes_binding(fn, instruction, binding)
+-                    for index, instruction in enumerate(graph.instructions)):
+-                effect = next((
+-                    (index, _effect_use(fn, instruction, binding, effect_names, sink_name,
+-                                        sink_arity, sink_glue_arg, sink_object_arg))
+-                    for index, instruction in enumerate(graph.instructions)
+-                    if index > start and _effect_use(
+-                        fn, instruction, binding, effect_names, sink_name,
+-                        sink_arity, sink_glue_arg, sink_object_arg) is not None
+-                ), None)
+-                if effect is not None:
+-                    node, _ = effect[1]
+-                    findings.append(Observation(
+-                        "unknown", node.start_point[0] + 1, node.start_point[1] + 1,
+-                        "allocation_result_gate_ref_reassigned", token_line=source_line,
+-                        symbol=fn.qualified_name, region_start_byte=fn.node.start_byte,
+-                        region_end_byte=fn.node.end_byte))
+-                    limitations.append("allocation_result_gate_ref_reassigned")
+-                continue
+-            outcomes, used_steps = _trace_obligation(
+-                fn, graph, start, binding, effect_names, sink_name, sink_arity,
+-                sink_glue_arg, sink_object_arg, throwing_names, budget)
+-            steps += used_steps
+-            candidate_reason = (
+-                "allocation_result_hclass_read_on_pending_exception_path"
+-                if kind == "allocation" and effect_names == (sink_name,)
+-                else "pending_exception_guard_missing_before_result_or_external_effect"
+-            )
+-            matched_reason = (
+-                "pending_exception_check_guards_allocation_result_use"
+-                if kind == "allocation" and effect_names == (sink_name,)
+-                else "pending_exception_check_precedes_result_or_external_effect"
+-            )
+-            if outcomes["candidate"]:
+-                findings.append(_observation(
+-                    "candidate", source_line, outcomes["candidate"][0], fn, candidate_reason))
+-            elif outcomes["matched"]:
+-                findings.append(_observation(
+-                    "matched", source_line, outcomes["matched"][0], fn, matched_reason))
+-            for item in sorted(set(outcomes["unknown"]), key=lambda value: (value[1], value[0])):
+-                finding = _unknown_observation(
+-                    source_line, item, fn, "exception_guard_sink_path_unresolved")
+-                findings.append(finding)
+-                limitations.append(finding.reason)
++
++        graph_variants = [(fn, graph)]
++        if _has_truncated_void_return(fn):
++            try:
++                continuation = _return_continuation_graph(fn, unit, budget)
++            except (ValueError, RuntimeError) as error:
++                limitations.append(str(error))
++            else:
++                if continuation is not None:
++                    graph_variants.append(continuation)
++        for graph_fn, graph_variant in graph_variants:
++            consume_graph(graph_fn, graph_variant)
++
+     if not findings:
+         return ExceptionGuardResult(
+             "limited" if limitations else "completed",
+diff --git a/src/ohscanner/detectors/ark_runtime/model.py b/src/ohscanner/detectors/ark_runtime/model.py
+index a990f6b..9fe50db 100644
+--- a/src/ohscanner/detectors/ark_runtime/model.py
++++ b/src/ohscanner/detectors/ark_runtime/model.py
+@@ -10,7 +10,7 @@ import json
+ DETECTOR_ID = 'ohscanner.ark.runtime.type_safety'
+ RULE_ID = 'ark.runtime.typedarray-store-type-origin'
+ EXCEPTION_GUARD_RULE_ID = 'ark.runtime.typedarray-allocation-exception-guard'
+-VERSION = '0.7.0'
++VERSION = '0.7.1'
+ NAMESPACE = 'panda::ecmascript::kungfu'
+ OWNER = NAMESPACE + '::BuiltinsTypedArrayStubBuilder'
+ CALLER = OWNER + '::Filter'
+@@ -19,7 +19,7 @@ CALLER = OWNER + '::Filter'
+ @dataclass(frozen=True)
+ class RuntimeTypeModel:
+     """Explicitly versioned assumptions; no historical labels are consumed."""
+-    version: str = '0.7.0'
++    version: str = '0.7.1'
+     source_repository: str = 'openharmony/arkcompiler_ets_runtime'
+     effect_summary_revision: str = 'a0e30483ab3e4aead67ecfb5c708489915e447f9'
+     target_bindings: tuple = (
+diff --git a/tests/detectors/ark_runtime/fixtures/EXC01.cpp b/tests/detectors/ark_runtime/fixtures/EXC01.cpp
+index 08b10b9..3f19fc3 100644
+--- a/tests/detectors/ark_runtime/fixtures/EXC01.cpp
++++ b/tests/detectors/ark_runtime/fixtures/EXC01.cpp
+@@ -43,9 +43,7 @@ GateRef output = builder.NewTypedArraySameType(glue, input, inputTag, count);
+ Label empty(GetEnvironment()); Label copy(GetEnvironment()); Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label done(GetEnvironment());
+ BRANCH(Int32Equal(count, Int32(0)), &empty, &copy);
+ Bind(&empty); return;
+-Bind(&copy); BRANCH(HasPendingException(glue), &exception, &normal);
+-Bind(&exception); result->WriteVariable(Exception()); Jump(&done);
+-Bind(&normal); CopyTypedArrayBuffer(glue, input, output); Jump(&done);
++Bind(&copy); CopyTypedArrayBuffer(glue, input, output); Jump(&done);
+ Bind(&done);
+ }
+ }
+diff --git a/tests/detectors/ark_runtime/test_exception_guard.py b/tests/detectors/ark_runtime/test_exception_guard.py
+index 02d73b2..5df76bb 100644
+--- a/tests/detectors/ark_runtime/test_exception_guard.py
++++ b/tests/detectors/ark_runtime/test_exception_guard.py
+@@ -114,7 +114,7 @@ class ExceptionGuardSyntheticTests(unittest.TestCase):
+             ('Fixed', ('NewTypedArray', 4), ('LoadHClass',), (), 'matched', 'complete'),
+             ('Safe', ('NewTypedArraySameType', 4), ('CopyTypedArrayBuffer',), (), 'matched', 'complete'),
+             ('Unrelated', ('NewTypedArray', 4), ('CopyTypedArrayBuffer',), (), None, 'complete'),
+-            ('Unknown', ('NewTypedArraySameType', 4), ('CopyTypedArrayBuffer',), (), 'unknown', 'partial'),
++            ('Unknown', ('NewTypedArraySameType', 4), ('CopyTypedArrayBuffer',), (), 'candidate_unknown', 'partial'),
+         )
+         for name, creator, effects, throwing, expected, outcome in controls:
+             with self.subTest(control=name):
+@@ -127,6 +127,10 @@ class ExceptionGuardSyntheticTests(unittest.TestCase):
+                     self.assertEqual(kinds, [])
+                 elif expected == 'unknown':
+                     self.assertIn('unknown', kinds)
++                elif expected == 'candidate_unknown':
++                    self.assertIn('candidate', kinds)
++                    self.assertIn('unknown', kinds)
++                    self.assertNotIn('matched', kinds)
+                 else:
+                     self.assertEqual(kinds, [expected])
+                 self.assertEqual(result.file_outcome, outcome)
+@@ -207,6 +211,150 @@ class ExceptionGuardSyntheticTests(unittest.TestCase):
+         self.assertIn('result_return_before_modeled_effect_order_unknown', result.limitations)
+         self.assertEqual(result.file_outcome, 'partial')
+ 
++    def test_guard_pending_branch_must_exit_before_copy_or_store(self):
++        for effect in (
++            'CopyTypedArrayBuffer(glue, input, output);',
++            'StoreTypedArrayElement(glue, output, input, inputTag, count);',
++        ):
++            with self.subTest(effect=effect.split('(', 1)[0]):
++                body = PREFIX + (
++                    'Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label done(GetEnvironment());\n'
++                    'BRANCH(HasPendingException(glue), &exception, &normal);\n'
++                    'Bind(&exception); result->WriteVariable(Exception()); ' + effect + ' Jump(&done);\n'
++                    'Bind(&normal); Jump(&done);\n'
++                    'Bind(&done);')
++                result = analyze_exception_guard(
++                    unit(wrap(body)),
++                    effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
++                self.assertEqual([item.kind for item in result.observations], ['candidate'])
++                self.assertEqual(
++                    result.observations[0].reason,
++                    'pending_exception_guard_missing_before_result_or_external_effect')
++
++    def test_copy_and_store_ordering_matrix_keeps_unproven_order_unknown(self):
++        effects = (
++            'CopyTypedArrayBuffer(glue, input, output);',
++            'StoreTypedArrayElement(glue, output, input, inputTag, count);',
++        )
++        for creator in ('NewTypedArray', 'NewTypedArraySameType'):
++            for effect in effects:
++                name = effect.split('(', 1)[0]
++                with self.subTest(creator=creator, effect=name, order='guard_before_effect'):
++                    body = (
++                        'GateRef inputTag = GetObjectType(LoadHClass(input));\n'
++                        'NewObjectStubBuilder builder(this);\n'
++                        'GateRef output = builder.' + creator + '(glue, input, inputTag, count);\n'
++                        'Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label done(GetEnvironment());\n'
++                        'BRANCH(HasPendingException(glue), &exception, &normal);\n'
++                        'Bind(&exception); result->WriteVariable(Exception()); Jump(&done);\n'
++                        'Bind(&normal); ' + effect + ' Jump(&done);\n'
++                        'Bind(&done);')
++                    result = analyze_exception_guard(
++                        unit(wrap(body)),
++                        effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
++                    self.assertEqual([item.kind for item in result.observations], ['matched'])
++
++                with self.subTest(creator=creator, effect=name, order='guard_after_effect'):
++                    body = (
++                        'GateRef inputTag = GetObjectType(LoadHClass(input));\n'
++                        'NewObjectStubBuilder builder(this);\n'
++                        'GateRef output = builder.' + creator + '(glue, input, inputTag, count);\n'
++                        + effect + '\n'
++                        'Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label done(GetEnvironment());\n'
++                        'BRANCH(HasPendingException(glue), &exception, &normal);\n'
++                        'Bind(&exception); result->WriteVariable(Exception()); Jump(&done);\n'
++                        'Bind(&normal); Jump(&done);\n'
++                        'Bind(&done);')
++                    result = analyze_exception_guard(
++                        unit(wrap(body)),
++                        effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
++                    self.assertEqual([item.kind for item in result.observations], ['candidate'])
++
++                with self.subTest(creator=creator, effect=name, order='missing_guard'):
++                    body = (
++                        'GateRef inputTag = GetObjectType(LoadHClass(input));\n'
++                        'NewObjectStubBuilder builder(this);\n'
++                        'GateRef output = builder.' + creator + '(glue, input, inputTag, count);\n'
++                        + effect)
++                    result = analyze_exception_guard(
++                        unit(wrap(body)),
++                        effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
++                    self.assertEqual([item.kind for item in result.observations], ['candidate'])
++
++                with self.subTest(creator=creator, effect=name, order='unknown_effect'):
++                    body = (
++                        'GateRef inputTag = GetObjectType(LoadHClass(input));\n'
++                        'NewObjectStubBuilder builder(this);\n'
++                        'GateRef output = builder.' + creator + '(glue, input, inputTag, count);\n'
++                        'UnreviewedOperation(glue);\n'
++                        'Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label done(GetEnvironment());\n'
++                        'BRANCH(HasPendingException(glue), &exception, &normal);\n'
++                        'Bind(&exception); result->WriteVariable(Exception()); Jump(&done);\n'
++                        'Bind(&normal); ' + effect + ' Jump(&done);\n'
++                        'Bind(&done);')
++                    result = analyze_exception_guard(
++                        unit(wrap(body)),
++                        effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
++                    self.assertEqual([item.kind for item in result.observations], ['unknown'])
++                    self.assertIn('unmodeled_effect_before_exception_guard', result.limitations)
++
++    def test_same_instruction_copy_store_order_is_unknown_for_either_effect_order(self):
++        expressions = (
++            'StoreTypedArrayElement(glue, output, CopyTypedArrayBuffer(glue, input, output), inputTag, count);',
++            'CopyTypedArrayBuffer(glue, input, StoreTypedArrayElement(glue, output, input, inputTag, count));',
++        )
++        for expression in expressions:
++            with self.subTest(expression=expression.split('(', 1)[0]):
++                body = PREFIX + expression
++                for effect_names in (
++                    ('CopyTypedArrayBuffer', 'StoreTypedArrayElement'),
++                    ('StoreTypedArrayElement', 'CopyTypedArrayBuffer'),
++                ):
++                    result = analyze_exception_guard(
++                        unit(wrap(body)), effect_names=effect_names)
++                    self.assertEqual([item.kind for item in result.observations], ['unknown'])
++                    self.assertIn(
++                        'effect_signature_or_same_instruction_order_unknown',
++                        result.limitations)
++
++    def test_zero_length_unknown_path_preserves_nonzero_candidate(self):
++        body = PREFIX + (
++            'Label empty(GetEnvironment()); Label effect(GetEnvironment()); Label done(GetEnvironment());\n'
++            'BRANCH(Int32Equal(count, Int32(0)), &empty, &effect);\n'
++            'Bind(&empty); return;\n'
++            'Bind(&effect); CopyTypedArrayBuffer(glue, input, output); Jump(&done);\n'
++            'Bind(&done);')
++        result = analyze_exception_guard(
++            unit(wrap(body)),
++            effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
++        kinds = [item.kind for item in result.observations]
++        self.assertEqual(kinds.count('candidate'), 1)
++        self.assertGreaterEqual(kinds.count('unknown'), 1)
++        self.assertNotIn('matched', kinds)
++        self.assertIn('result_return_before_modeled_effect_order_unknown', result.limitations)
++        self.assertEqual(result.file_outcome, 'partial')
++
++    def test_zero_length_unknown_path_does_not_turn_guarded_nonzero_path_into_safe(self):
++        body = PREFIX + (
++            'Label empty(GetEnvironment()); Label copy(GetEnvironment()); Label exception(GetEnvironment());\n'
++            'Label normal(GetEnvironment()); Label done(GetEnvironment());\n'
++            'BRANCH(Int32Equal(count, Int32(0)), &empty, &copy);\n'
++            'Bind(&empty); return;\n'
++            'Bind(&copy); BRANCH(HasPendingException(glue), &exception, &normal);\n'
++            'Bind(&exception); result->WriteVariable(Exception()); Jump(&done);\n'
++            'Bind(&normal); CopyTypedArrayBuffer(glue, input, output); Jump(&done);\n'
++            'Bind(&done);')
++        result = analyze_exception_guard(
++            unit(wrap(body)),
++            effect_names=('CopyTypedArrayBuffer', 'StoreTypedArrayElement'))
++        kinds = [item.kind for item in result.observations]
++        self.assertEqual(kinds.count('matched'), 1)
++        self.assertGreaterEqual(kinds.count('unknown'), 1)
++        self.assertNotIn('candidate', kinds)
++        self.assertIn('result_return_before_modeled_effect_order_unknown', result.limitations)
++        self.assertEqual(result.file_outcome, 'partial')
++
++
+     def test_historical_missing_guard_mechanism_regression(self):
+         for caller in ('Filter', 'Map'):
+             with self.subTest(caller=caller):

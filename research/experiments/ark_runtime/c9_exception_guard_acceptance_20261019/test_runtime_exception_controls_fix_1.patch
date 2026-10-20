@@ -1,0 +1,14 @@
+--- a/tests/detectors/ark_runtime/test_runtime_exception.py
++++ b/tests/detectors/ark_runtime/test_runtime_exception.py
+@@ -497,6 +497,11 @@
+ 
+ 
+ class C9ExceptionEffectOrderControls(unittest.TestCase):
++    def analyze(self, text, macro_source=MACROS):
++        return analyze_runtime_exception_propagation(
++            unit(text, "ecmascript/builtins/builtins_typedarray.cpp"),
++            source_units=(unit(macro_source, "ecmascript/ecma_macros.h"),))
++
+     def test_positive_callback_before_tboolean_is_candidate(self):
+         result = self.analyze(source())
+         self.assertEqual([item.kind for item in result.observations], ["candidate"])

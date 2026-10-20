@@ -1,0 +1,16 @@
+--- a/src/ohscanner/detectors/ark_runtime/runtime_exception.py
++++ b/src/ohscanner/detectors/ark_runtime/runtime_exception.py
+@@ -699,9 +699,11 @@
+         _include_unit(source_units, unit), effect_calls, guards, macro_contracts,
+         parsed_functions=functions, parsed_path=unit.path)
+ 
+-    observations, limitations = [], []
++    owners = _verified_generated_branch_owners(_include_unit(source_units, unit))
++    generated_applicable, observations, limitations = (
++        _analyze_generated_callback_paths(unit, owners))
+     steps = 0
+-    applicable = False
++    applicable = generated_applicable
+     for fn in functions:
+         if fn.node.has_error:
+             continue
