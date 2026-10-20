@@ -178,3 +178,28 @@ test("audit workflow label describes the frozen conditional triage bounds", () =
   } }, "standard_review"),
   "标准研判：静态扫描后，最多 3 条候选单轮研判；高/严重且仍有源码义务未解决时，最多补充核查 2 条");
 });
+
+
+test("all comparison modes serialize consented automatic model review only when enabled", () => {
+  const a = "a".repeat(40), b = "b".repeat(40);
+  const withAI = { ...values, auto_triage: true, max_triage_candidates: 5,
+    max_r2_candidates: 2, max_cost_usd: "5.00" };
+  const inputs = [
+    ["date", { branch: "main", start: "2026-10-01T00:00", end: "2026-10-05T00:00", timezone: "UTC" }],
+    ["range", { baseline: a, endpoint: b }],
+    ["branches", { baseline_ref: "main", endpoint_ref: "dev" }],
+    ["matrix", { case_id: "case", commits_text: a + "\n" + b }],
+  ];
+  for (const [kind, extra] of inputs) {
+    const body = operationPayload(kind, { ...withAI, ...extra }, detectors);
+    assert.equal(body.audit_mode, "standard_review", kind);
+    assert.equal(body.auto_triage, true, kind);
+    assert.equal(body.max_triage_candidates, 5, kind);
+    assert.equal(body.max_r2_candidates, 2, kind);
+    assert.equal(body.max_cost_usd, "5.00", kind);
+    assert.equal("triage_approvals" in body, false, kind);
+    const noAI = operationPayload(kind, { ...withAI, ...extra, audit_mode: "static_only" }, detectors);
+    assert.equal("auto_triage" in noAI, false, kind);
+    assert.equal("max_cost_usd" in noAI, false, kind);
+  }
+});
