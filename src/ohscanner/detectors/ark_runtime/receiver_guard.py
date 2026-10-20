@@ -39,7 +39,7 @@ def _binding_assigned_between(fn, binding, start, end):
     return False
 
 
-def _typed_array_guard(fn, instruction, receiver):
+def _typed_array_guard(fn, instruction):
     if instruction.kind != 'BRANCH' or not instruction.arguments:
         return False
     condition = instruction.arguments[0]
@@ -55,7 +55,9 @@ def _typed_array_guard(fn, instruction, receiver):
     if len(args) != 1:
         return False
     if fn.call_name(call) == 'IsTypedArray':
-        return _same_binding(fn, args[0], receiver)
+        if args[0].type != 'identifier':
+            return False
+        return fn.resolve(fn.text(args[0]), args[0])
     if args[0].type != 'identifier':
         return False
     type_binding = fn.resolve(fn.text(args[0]), args[0])
@@ -72,14 +74,16 @@ def _typed_array_guard(fn, instruction, receiver):
         if fn.call_name(load) != 'LoadHClass':
             continue
         load_args = fn.arguments(load)
-        if (len(load_args) == 1 and _same_binding(fn, load_args[0], receiver)
-                and type_binding.name):
+        if len(load_args) == 1 and load_args[0].type == 'identifier':
+            source_binding = fn.resolve(fn.text(load_args[0]), load_args[0])
+            if source_binding is None or not type_binding.name:
+                continue
             # A cached type token no longer proves the receiver's current
             # type after either binding is assigned again.
             if _binding_assigned_between(fn, type_binding, node.end_byte,
                                          instruction.node.start_byte):
                 continue
-            if _binding_assigned_between(fn, receiver, node.end_byte,
+            if _binding_assigned_between(fn, source_binding, node.end_byte,
                                          instruction.node.start_byte):
                 continue
             parent = node.parent
@@ -92,57 +96,105 @@ def _typed_array_guard(fn, instruction, receiver):
                     identifier = identifier.child_by_field_name('declarator')
                 if (identifier is not None
                         and fn.resolve(fn.text(identifier), identifier) == type_binding):
-                    return True
+                    return source_binding
     return False
 
 
-def _sink_receiver(fn, instruction, sink_name, receiver):
+def _sink_receivers(fn, instruction, sink_name):
     found = []
     for node in walk(instruction.node):
         if node.type != 'call_expression' or fn.call_name(node) != sink_name:
             continue
         args = fn.arguments(node)
-        if len(args) == 1 and _same_binding(fn, args[0], receiver):
-            found.append(node)
+        if len(args) == 1 and args[0].type == 'identifier':
+            found.append((node, fn.resolve(fn.text(args[0]), args[0])))
+        else:
+            found.append((node, None))
     return found
 
 
-def _reachable_without_successful_guard(fn, graph, sink_index, matching_guards, receiver, budget):
-    queue = deque([(graph.entry, False)])
-    seen, steps = set(), 0
+def _declared_gate_values(fn, instruction, values):
+    """Track local GateRef identifiers copied directly from another GateRef."""
+    if instruction.kind != 'declaration' or instruction.node.type != 'declaration':
+        return
+    declared_type = ''.join(fn.text(instruction.node.child_by_field_name('type')).split())
+    if declared_type != 'GateRef':
+        return
+    for child in instruction.node.named_children:
+        if child.type != 'init_declarator':
+            continue
+        declarator = child.child_by_field_name('declarator')
+        # References/pointers have aliasing semantics outside this value-copy
+        # model, so only plain local GateRef identifiers are tracked. A
+        # writable alias can affect any tracked binding; forget those facts.
+        if declarator is None or declarator.type != 'identifier':
+            values.update((key, None) for key in values)
+            return
+        binding = fn.resolve(fn.text(declarator), declarator)
+        value = child.child_by_field_name('value')
+        if binding is None or value is None or value.type != 'identifier':
+            continue
+        source = fn.resolve(fn.text(value), value)
+        values[binding.identity] = values.get(source.identity) if source else None
+
+
+def _reachable_without_successful_guard(fn, graph, sink_index, sink_binding,
+                                         matching_guards, budget):
+    initial = {binding.identity: binding.identity for binding in fn.bindings if binding.parameter
+               and binding.type_name == 'GateRef'}
+    queue = deque([(graph.entry, tuple(sorted(initial.items())), frozenset())])
+    seen, steps, unresolved = set(), 0, False
     while queue:
-        index, guarded = queue.popleft()
+        index, values_tuple, guarded = queue.popleft()
         if index is None or index < 0 or index >= len(graph.instructions):
             continue
-        state = (index, guarded)
+        state = (index, values_tuple, guarded)
         if state in seen:
             continue
         seen.add(state)
         steps += 1
         if steps > budget.max_steps:
             return None, steps
+        values = dict(values_tuple)
         if index == sink_index:
-            if not guarded:
+            target = values.get(sink_binding) if sink_binding else None
+            if target is None:
+                unresolved = True
+                continue
+            if target not in guarded:
                 return True, steps
             continue
         instruction = graph.instructions[index]
         if instruction.problem or instruction.kind == 'unknown':
-            return None, steps
-        if instruction.node.type == 'assignment_expression':
+            unresolved = True
+            continue
+        if instruction.kind == 'declaration':
+            _declared_gate_values(fn, instruction, values)
+        elif instruction.node.type == 'assignment_expression':
             left = instruction.node.child_by_field_name('left')
-            if _same_binding(fn, left, receiver):
-                guarded = False
+            right = instruction.node.child_by_field_name('right')
+            if left is not None and left.type == 'identifier':
+                target_binding = fn.resolve(fn.text(left), left)
+                if target_binding and target_binding.type_name == 'GateRef':
+                    if right is not None and right.type == 'identifier':
+                        source_binding = fn.resolve(fn.text(right), right)
+                        values[target_binding.identity] = (values.get(source_binding.identity)
+                                                           if source_binding else None)
+                    else:
+                        values[target_binding.identity] = None
         for target, truth in instruction.successors:
             if target is None or target < 0:
                 continue
             next_guarded = guarded
-            if index in matching_guards:
-                if truth is True:
-                    next_guarded = True
-                elif truth is False:
-                    next_guarded = False
-            queue.append((target, next_guarded))
-    return False, steps
+            source_binding = matching_guards.get(index)
+            if source_binding is not None and truth is True:
+                source_identity = values.get(source_binding.identity)
+                if source_identity is not None:
+                    next_guarded = guarded | frozenset((source_identity,))
+                else:
+                    unresolved = True
+            queue.append((target, tuple(sorted(values.items())), next_guarded))
+    return (None if unresolved else False), steps
 
 
 def analyze_receiver_guard(unit, *, caller_name=None,
@@ -181,53 +233,48 @@ def analyze_receiver_guard(unit, *, caller_name=None,
     if fn.node.has_error or tuple(fn.parameter_types) != caller_types:
         return ReceiverGuardResult('limited', 'not_analyzed',
                                    limitations=('receiver_guard_caller_parse_or_signature_unknown',))
-    # Parameter positions are declaration offsets; evaluate each GateRef
-    # parameter binding and associate only same-binding queries/accessors.
-    candidates = [binding for binding in fn.bindings if binding.parameter and binding.type_name == 'GateRef']
-    if not candidates:
-        return ReceiverGuardResult('limited', 'not_analyzed',
-                                   limitations=('receiver_parameter_unresolved',))
     try:
         graph = build_graph(fn, budget)
     except ValueError as error:
         return ReceiverGuardResult('limited', 'not_analyzed', limitations=(str(error),))
     observations, limitations, total_steps = [], [], 0
-    for receiver in candidates:
-        sinks = [(index, node) for index, instruction in enumerate(graph.instructions)
-                 for node in _sink_receiver(fn, instruction, sink_name, receiver)]
-        if not sinks:
-            continue
-        guards = {index for index, instruction in enumerate(graph.instructions)
-                  if instruction.kind == 'BRANCH'
-                  and _typed_array_guard(fn, instruction, receiver)}
+    sinks = [(index, node, binding) for index, instruction in enumerate(graph.instructions)
+             for node, binding in _sink_receivers(fn, instruction, sink_name)]
+    if not sinks:
+        outcome = 'partial' if graph.limitations else 'complete'
+        return ReceiverGuardResult('limited' if graph.limitations else 'completed', outcome,
+                                   limitations=tuple(graph.limitations), steps=total_steps)
+    guards = {index: binding for index, instruction in enumerate(graph.instructions)
+              if instruction.kind == 'BRANCH'
+              for binding in (_typed_array_guard(fn, instruction),)
+              if binding is not False and binding is not None
+              and binding.type_name == 'GateRef'}
+    for sink_index, node, sink_binding in sinks:
         if not guards:
-            for index, node in sinks:
-                observations.append(Observation('unknown', node.start_point[0] + 1,
-                                                node.start_point[1] + 1,
-                                                'receiver_type_guard_not_resolved',
-                                                symbol=fn.qualified_name,
-                                                region_start_byte=fn.node.start_byte,
-                                                region_end_byte=fn.node.end_byte))
-                limitations.append('receiver_type_guard_not_resolved')
-            continue
-        for sink_index, node in sinks:
+            unsafe, steps = None, 0
+            unknown_reason = 'receiver_type_guard_not_resolved'
+        elif sink_binding is None:
+            unsafe, steps = None, 0
+            unknown_reason = 'receiver_sink_binding_unresolved'
+        else:
             unsafe, steps = _reachable_without_successful_guard(
-                fn, graph, sink_index, guards, receiver, budget)
-            total_steps += steps
-            if unsafe is None:
-                kind, reason = 'unknown', 'receiver_guard_path_unresolved'
-                limitations.append(reason)
-            elif unsafe:
-                kind, reason = 'candidate', 'backing_buffer_read_not_dominated_by_receiver_type_guard'
-            else:
-                kind, reason = 'matched', 'receiver_type_guard_dominates_backing_buffer_read'
-            observations.append(Observation(kind, node.start_point[0] + 1,
-                                            node.start_point[1] + 1, reason,
-                                            symbol=fn.qualified_name,
-                                            path=(fn.node.start_point[0] + 1,
-                                                  node.start_point[0] + 1),
-                                            region_start_byte=fn.node.start_byte,
-                                            region_end_byte=fn.node.end_byte))
+                fn, graph, sink_index, sink_binding.identity, guards, budget)
+            unknown_reason = 'receiver_guard_path_unresolved'
+        total_steps += steps
+        if unsafe is None:
+            kind, reason = 'unknown', unknown_reason
+            limitations.append(reason)
+        elif unsafe:
+            kind, reason = 'candidate', 'backing_buffer_read_not_dominated_by_receiver_type_guard'
+        else:
+            kind, reason = 'matched', 'receiver_type_guard_dominates_backing_buffer_read'
+        observations.append(Observation(kind, node.start_point[0] + 1,
+                                        node.start_point[1] + 1, reason,
+                                        symbol=fn.qualified_name,
+                                        path=(fn.node.start_point[0] + 1,
+                                              node.start_point[0] + 1),
+                                        region_start_byte=fn.node.start_byte,
+                                        region_end_byte=fn.node.end_byte))
     if not observations:
         outcome = 'partial' if graph.limitations else 'complete'
         return ReceiverGuardResult('limited' if graph.limitations else 'completed', outcome,
