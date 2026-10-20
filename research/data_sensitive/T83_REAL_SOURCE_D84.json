@@ -1,0 +1,163 @@
+{
+  "schema": 1,
+  "study": "T83 exact-source compatibility replay",
+  "repository": "openharmony/communication_dsoftbus",
+  "commit": "9f922677e147b939d6db899bde181d609d64711b",
+  "tree": "4b114179868d96c69eedc4520037552ddc3d65dd",
+  "source_manifest": "research/data_sensitive/D45_DSOFTBUS_CURRENT_PROFILE.json",
+  "source_files": [
+    {
+      "blob": "ca31a384eaf5bc147997ba4a21a41b6cae9a7410",
+      "path": "interfaces/kits/authentication/auth_session_key_struct.h",
+      "sha256": "30a86e2bce66b686133456f5af4820054169b0bddd1dfaade2cfb726290176db",
+      "size": 1232,
+      "commit_tree_blob_verified": true
+    },
+    {
+      "blob": "0799d2acad2d876d9d02e206be40dd39927c8101",
+      "path": "adapter/common/include/softbus_adapter_crypto.h",
+      "sha256": "1a999bf0c65d68b6e46a7dfecf23caac96bf599561df1b84e2192e0bed393dea",
+      "size": 3780,
+      "commit_tree_blob_verified": true
+    },
+    {
+      "blob": "1aadc4dafe81bc42f9916b9bd7aa3f9f0a616c2d",
+      "path": "core/authentication/src/auth_hichain.c",
+      "sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+      "size": 22279,
+      "commit_tree_blob_verified": true
+    },
+    {
+      "blob": "c3b3ebba9eaebcb1b64fed20b954daa9955d8d6f",
+      "path": "dfx/interface/include/auth_log.h",
+      "sha256": "8572980b13d1425c1423618b258c4259ac89ec153e9221d7d610b9860f67145f",
+      "size": 2593,
+      "commit_tree_blob_verified": true
+    },
+    {
+      "blob": "f499877ece96baee3173bd43326607ad0fb91268",
+      "path": "dfx/log/src/auth_log.c",
+      "sha256": "66efee6c3dc668112c46f1f412290b92e3830472f506f4778523736e4a78c9ca",
+      "size": 1041,
+      "commit_tree_blob_verified": true
+    }
+  ],
+  "snapshot_sha256": "a12f8757440bdf91d4c4eab09b53412312068060b617eeeeccbafb06f7890bcd",
+  "detector_version": "0.21.1",
+  "detector_implementation_sha256": "226dea48361bb8e18583d87fce56b28fe37e7175a0412cc9135b25dcdbc4258f",
+  "parse_status": {
+    "adapter/common/include/softbus_adapter_crypto.h": "partial",
+    "core/authentication/src/auth_hichain.c": "complete",
+    "dfx/interface/include/auth_log.h": "partial",
+    "dfx/log/src/auth_log.c": "complete",
+    "interfaces/kits/authentication/auth_session_key_struct.h": "partial"
+  },
+  "candidate_count": 1,
+  "run": {
+    "detector_id": "ohscanner.data.sensitive_exposure",
+    "version": "0.21.1",
+    "status": "blocked",
+    "analyzed_files": [
+      "adapter/common/include/softbus_adapter_crypto.h",
+      "core/authentication/src/auth_hichain.c",
+      "dfx/interface/include/auth_log.h",
+      "dfx/log/src/auth_log.c",
+      "interfaces/kits/authentication/auth_session_key_struct.h"
+    ],
+    "findings": [
+      {
+        "file": "core/authentication/src/auth_hichain.c",
+        "line": 136,
+        "rule_id": "data.sensitive.unresolved-escape",
+        "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=core/authentication/src/auth_hichain.c:126 source OnSessionKeyReturned parameter 1 -> 136 unresolved call AuthSessionSaveSessionKey",
+        "evidence_type": "syntax",
+        "column": null,
+        "candidate_cwe": null,
+        "symbol": "OnSessionKeyReturned",
+        "evidence_obligations": [
+          {
+            "kind": "callee_binding",
+            "description": "Resolve the exact overload, receiver, and implementation for AuthSessionSaveSessionKey.",
+            "status": "unknown"
+          },
+          {
+            "kind": "sink_behavior",
+            "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+            "status": "unknown"
+          },
+          {
+            "kind": "runtime_log_visibility",
+            "description": "No log exposure or reader reachability is established by this call alone.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Establish recoverable sensitive material and concrete impact independently.",
+            "status": "unknown"
+          }
+        ],
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "source_sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+        "rule_version": null,
+        "rule_lineage_id": null,
+        "symbol_identity": null,
+        "ast_fingerprint": null,
+        "identity_quality": "unknown"
+      }
+    ],
+    "limitations": [
+      "Candidate only: runtime log readers, production enablement and impact require independent review.",
+      "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+      "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+      "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+      "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+      "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+      "adapter/common/include/softbus_adapter_crypto.h: detailed syntax partial",
+      "adapter/common/include/softbus_adapter_crypto.h: local type definition needs identity review",
+      "adapter/common/include/softbus_adapter_crypto.h: preprocessor/build context not expanded",
+      "core/authentication/src/auth_hichain.c: bounded same-file helper expansion; compiler type identity remains unknown",
+      "core/authentication/src/auth_hichain.c: branch merge is may-flow; no path feasibility proof",
+      "core/authentication/src/auth_hichain.c: conditional effects are may-flow; no path feasibility proof",
+      "core/authentication/src/auth_hichain.c: conditional value is may-flow; no path feasibility proof",
+      "core/authentication/src/auth_hichain.c: helper call has unresolved overload/arity: UnregTrustDataChangeListener",
+      "core/authentication/src/auth_hichain.c: nonliteral/unsupported log format: AUTH_LOGE",
+      "core/authentication/src/auth_hichain.c: nonliteral/unsupported log format: AUTH_LOGI",
+      "core/authentication/src/auth_hichain.c: pointer/member assignment requires alias proof",
+      "core/authentication/src/auth_hichain.c: preprocessor/build context not expanded",
+      "core/authentication/src/auth_hichain.c: short-circuit effects are may-flow; no path feasibility proof",
+      "core/authentication/src/auth_hichain.c: unknown field/alias propagation; aggregate object taint is propagated as a may-flow",
+      "core/authentication/src/auth_hichain.c: unmodeled call may mutate/escape sensitive value: AuthSessionSaveSessionKey",
+      "dfx/interface/include/auth_log.h: detailed syntax partial",
+      "dfx/interface/include/auth_log.h: preprocessor/build context not expanded",
+      "dfx/log/src/auth_log.c: preprocessor/build context not expanded",
+      "interfaces/kits/authentication/auth_session_key_struct.h: detailed syntax partial",
+      "interfaces/kits/authentication/auth_session_key_struct.h: local type definition needs identity review",
+      "interfaces/kits/authentication/auth_session_key_struct.h: preprocessor/build context not expanded"
+    ],
+    "file_outcomes": [
+      [
+        "adapter/common/include/softbus_adapter_crypto.h",
+        "partial"
+      ],
+      [
+        "core/authentication/src/auth_hichain.c",
+        "partial"
+      ],
+      [
+        "dfx/interface/include/auth_log.h",
+        "partial"
+      ],
+      [
+        "dfx/log/src/auth_log.c",
+        "partial"
+      ],
+      [
+        "interfaces/kits/authentication/auth_session_key_struct.h",
+        "partial"
+      ]
+    ]
+  },
+  "network": "explicit pinned raw-source fetch allowed",
+  "interpretation": "Source-bound static candidates only; 5-file scope, incomplete coverage retained. Development compatibility inputs are not independent labels; no accuracy claim, runtime execution, unauthorized-reader evidence or product impact is established."
+}
