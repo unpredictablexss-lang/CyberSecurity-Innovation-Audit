@@ -753,11 +753,11 @@ class OwnerIntegrationTests(unittest.TestCase):
         self.assertEqual(r.status_code, 422)
         self.assertEqual(self.store.jobs(), [])
 
-    def test_c_remains_blocked_while_d_requires_explicit_research_selection(self):
+    def test_c_is_explicit_research_only_while_d_requires_explicit_selection(self):
         c_id = 'ohscanner.ark.runtime.type_safety'
-        r = self.client.post('/api/v1/scans', json=self.request(detector_ids=[c_id]), headers=fixtures.HEADERS)
-        self.assertEqual(r.status_code, 409, r.text)
-        self.assertIn('not-yet-approved', r.text)
+        plan = self.plan(detector_ids=[c_id])
+        self.assertEqual(plan['selection_mode'], 'explicit')
+        self.assertEqual(plan['suggested_detector_ids'], [c_id])
         self.assertEqual(self.store.jobs(), [])
 
         d_id = 'ohscanner.data.sensitive_exposure'
