@@ -58,7 +58,8 @@ def git(git_dir: str, *args: str, binary: bool = False):
     return result.stdout if binary else result.stdout.decode("utf-8").strip()
 
 
-def replay(git_dir: str, pin: dict[str, str], include_dependencies: bool) -> dict[str, object]:
+def replay(git_dir: str, pin: dict[str, str], include_dependencies: bool,
+           mutate_first_dependency: bool = False) -> dict[str, object]:
     tree = git(git_dir, "rev-parse", pin["commit"] + "^{tree}")
     blob = git(git_dir, "rev-parse", pin["commit"] + ":" + PATH)
     raw = git(git_dir, "show", pin["commit"] + ":" + PATH, binary=True)
@@ -76,12 +77,16 @@ def replay(git_dir: str, pin: dict[str, str], include_dependencies: bool) -> dic
     asts = {PATH: ast.to_dict()}
     blobs = {PATH: blob}
     if include_dependencies:
-        for dependency_path, expected_blob, expected_sha in DEPENDENCIES:
+        for dependency_index, (dependency_path, expected_blob, expected_sha) in enumerate(DEPENDENCIES):
             dep_blob = git(git_dir, "rev-parse", pin["commit"] + ":" + dependency_path)
             dep_raw = git(git_dir, "show", pin["commit"] + ":" + dependency_path, binary=True)
             dep_sha = hashlib.sha256(dep_raw).hexdigest()
             if (dep_blob, dep_sha) != (expected_blob, expected_sha):
                 raise SystemExit(f"dependency identity mismatch for {pin['role']}: {dependency_path}")
+            if mutate_first_dependency and dependency_index == 0:
+                # Adversarial control: altered bytes/SHA with stale claimed blob OID.
+                dep_raw += b"\n// altered after pin\n"
+                dep_sha = hashlib.sha256(dep_raw).hexdigest()
             dep_text = dep_raw.decode("utf-8")
             dep_ast = parse_source(dep_text, "cpp")
             dep_unit = SourceUnit(dependency_path, "cpp", dep_text, dep_sha, dep_ast.parse_status,
@@ -107,6 +112,7 @@ def replay(git_dir: str, pin: dict[str, str], include_dependencies: bool) -> dic
     return {
         **pin,
         "dependencies_supplied": include_dependencies,
+        "mutated_dependency_bytes": mutate_first_dependency,
         "parse_status": ast.parse_status,
         "parse_issue_count": len(ast.parse_issues),
         "detector_status": report.status,
@@ -132,7 +138,8 @@ def main() -> None:
         "path": PATH,
         "method": "exact Git blobs -> complete AST -> git_object/light-ast ScanContext -> registered Ark Runtime detector via run_all_with_coverage",
         "results": [replay(args.git_dir, pin, supplied)
-                    for pin in PINS for supplied in (False, True)],
+                    for pin in PINS for supplied in (False, True)]
+                   + [replay(args.git_dir, PINS[0], True, mutate_first_dependency=True)],
         "limitations": [
             "Candidate/zero-finding output is not a vulnerability/safety verdict.",
             "Partial detector model coverage remains unknown.",

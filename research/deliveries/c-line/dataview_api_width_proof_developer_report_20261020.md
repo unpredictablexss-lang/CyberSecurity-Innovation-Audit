@@ -17,7 +17,7 @@ Target identities were independently checked against the local Git object store:
 | Parent | `d62f6de64daa7e11a7936a6153748a7c5fae9e41` | `a26f18bc7b1cd97fb926ae61b3655ddbf2caf8d1` | `e6bac984354292405ae62f7728170d7be5e3760e` | `bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c` |
 | Fixed | `48fcec3686e45175f95b4600b579026a65149966` | `6ff7f405071d29fc3ecf9bac1abd9d59a485909f` | `a2376e822e995333b2400520ca5b882de9578b5e` | `39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b` |
 
-The two evidence dependencies are identical at both commits: `js_dataview.cpp` blob `5057a103a88096b5db0e39be0feca2864a2ff8eb`, SHA-256 `3782d04ee5c44504bf453b3b45f96d7431ff902fb575257c425c707890b83243`; `number_helper.cpp` blob `a648bf6cf36715d57c6466f0ab4bfdc00bdc8f35`, SHA-256 `94db5ecc8ff7ea79d656950abacd9c24756ccf6aa0e3b2b895d7dc9961dbc91f`.
+The two evidence dependencies are identical at both commits: `js_dataview.cpp` blob `5057a103a88096b5db0e39be0feca2864a2ff8eb`, SHA-256 `3782d04ee5c44504bf453b3b45f96d7431ff902fb575257c425c707890b83243`; `number_helper.cpp` blob `a648bf6cf36715d57c6466f0ab4bfdc00bdc8f35`, SHA-256 `94db5ecc8ff7ea79d656950abacd9c24756ccf6aa0e3b2b895d7dc9961dbc91f`. Dependency validation recomputes Git blob identity from bytes and compares both the model's expected blob and SHA-256; a self-consistent but changed SourceUnit cannot borrow the pinned `source_blob_oid` fact.
 
 ## Controls and replay
 
@@ -34,9 +34,10 @@ The registered replay produced:
 - Parent with no dependencies: two candidates at lines 394/455; detector blocked and coverage partial.
 - Parent with both exact dependencies: zero diagnostics; explicit API wrap-excluded unknowns plus constructor unknown; detector blocked and coverage partial.
 - Fixed with or without dependencies: zero diagnostics; existing constructor/get/set unknowns; detector blocked and coverage partial.
+- Adversarial parent helper with an appended comment and stale pinned blob metadata: candidates at 394/455 are restored; the altered helper cannot suppress them.
 - In all four runs, only the target `builtins_dataview.cpp` counted as applicable; helper files remained available in context but were not counted as target files.
 
-Validation passed: `python -m pytest tests/detectors/ark_runtime tests/test_runner_applicable_units.py -q` (195 passed, 3 skipped); `git diff --check` passed. The exact replay JSON is saved beside the replay script. Repository-wide `python -m pytest -q` could not collect seven unrelated test modules because this Windows environment lacks `fastapi` and POSIX `fcntl`. A broader runner-focused set also had three pre-existing environment failures in M1 Git tests (CRLF expectation, ArkTS parser not_run, and symlink privilege); its other 53 tests passed.
+Validation passed: `python -m pytest tests/detectors/ark_runtime tests/test_runner_applicable_units.py -q` (196 passed, 3 skipped after adding the stale-blob regression); `git diff --check` passed. The exact replay JSON is saved beside the replay script. Repository-wide `python -m pytest -q` could not collect seven unrelated test modules because this Windows environment lacks `fastapi` and POSIX `fcntl`. A broader runner-focused set also had three pre-existing environment failures in M1 Git tests (CRLF expectation, ArkTS parser not_run, and symlink privilege); its other 53 tests passed.
 
 ## Limits
 

@@ -109,6 +109,18 @@ class ContractAdapterTests(unittest.TestCase):
         self.assertTrue(any('creator dependency blob/SHA-256' in limitation
                             for limitation in reports[0].limitations))
 
+    def test_dependency_bytes_cannot_claim_a_stale_pinned_blob_oid(self):
+        path = 'ecmascript/js_dataview.cpp'
+        altered = unit('int value;\n// altered helper bytes\n', path)
+        ctx = context((altered,))
+        facts = dict(ctx.shared_facts)
+        facts['source_blob_oid'] = {path: '5057a103a88096b5db0e39be0feca2864a2ff8eb'}
+        ctx = replace(ctx, shared_facts=facts)
+        error = ArkRuntimeTypeSafetyDetector._dependency_error(
+            ctx, path, '5057a103a88096b5db0e39be0feca2864a2ff8eb',
+            '3782d04ee5c44504bf453b3b45f96d7431ff902fb575257c425c707890b83243')
+        self.assertIn('blob/SHA-256', error)
+
     @staticmethod
     def _registry(model):
         registry = DetectorRegistry()

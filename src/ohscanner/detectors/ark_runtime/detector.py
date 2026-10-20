@@ -45,7 +45,7 @@ class ArkRuntimeTypeSafetyDetector:
         self.budget = budget or AnalysisBudget()
 
     @staticmethod
-    def _dependency_error(context, path, expected_blob):
+    def _dependency_error(context, path, expected_blob, expected_sha256=None):
         dependency = next((item for item in context.units if item.path == path), None)
         blob_oids = context.shared_facts.get('source_blob_oid', {})
         ast = context.shared_facts.get('ast', {})
@@ -53,9 +53,11 @@ class ArkRuntimeTypeSafetyDetector:
             return 'creator dependency is outside the scanned source scope: ' + path
         raw = dependency.text.encode('utf-8')
         source_digest = sha256(raw).hexdigest()
+        actual_blob = sha1(b'blob ' + str(len(raw)).encode('ascii') + bytes((0,)) + raw).hexdigest()
         ast_entry = ast.get(path)
         if (dependency.language != 'cpp' or dependency.sha256 != source_digest
-                or blob_oids.get(path) != expected_blob):
+                or (expected_sha256 is not None and dependency.sha256 != expected_sha256)
+                or actual_blob != expected_blob or blob_oids.get(path) != expected_blob):
             return 'creator dependency blob/SHA-256 does not match the version-bound model: ' + path
         if (not isinstance(ast_entry, dict) or ast_entry.get('parse_status') != 'complete'
                 or dependency.parse_status != 'complete'):
@@ -116,8 +118,8 @@ class ArkRuntimeTypeSafetyDetector:
                 evidence_rows = tuple(row for row in self.model.index_bounds_dependencies
                                       if row[0] == context.request.commit)
                 if evidence_rows:
-                    evidence_errors = tuple(self._dependency_error(context, path, blob)
-                                            for _, path, blob, _ in evidence_rows)
+                    evidence_errors = tuple(self._dependency_error(context, path, blob, expected_sha)
+                                            for _, path, blob, expected_sha in evidence_rows)
                     if not any(evidence_errors):
                         index_width_evidence = '\n'.join(
                             next(item.text for item in context.units if item.path == path)
