@@ -79,13 +79,73 @@ class ReceiverGuardTests(unittest.TestCase):
         result = analyze_receiver_guard(unit(wrap(body)))
         self.assertEqual([item.kind for item in result.observations], ['matched'])
 
+    def test_guarded_alias_proves_same_receiver_identity(self):
+        body = ("Label typed(GetEnvironment());\n"
+                "GateRef saved = input;\n"
+                "GateRef savedTag = GetObjectType(LoadHClass(saved));\n"
+                "BRANCH(IsFastTypeArray(savedTag), &typed, slowPath); Bind(&typed);\n"
+                "GateRef buffer = GetViewedArrayBuffer(input);")
+        result = analyze_receiver_guard(unit(wrap(body)))
+        self.assertEqual([item.kind for item in result.observations], ['matched'])
+
+    def test_same_origin_type_resampling_preserves_guard_proof(self):
+        body = ("Label first(GetEnvironment()); Label second(GetEnvironment());\n"
+                "GateRef firstTag = GetObjectType(LoadHClass(input));\n"
+                "BRANCH(IsFastTypeArray(firstTag), &first, slowPath); Bind(&first);\n"
+                "GateRef saved = input;\n"
+                "GateRef secondTag = GetObjectType(LoadHClass(saved));\n"
+                "BRANCH(IsFastTypeArray(secondTag), &second, slowPath); Bind(&second);\n"
+                "GateRef buffer = GetViewedArrayBuffer(input);")
+        result = analyze_receiver_guard(unit(wrap(body)))
+        self.assertEqual([item.kind for item in result.observations], ['matched'])
+
+    def test_restoring_guarded_receiver_from_stable_alias_preserves_guard(self):
+        body = ("Label typed(GetEnvironment());\n"
+                "GateRef saved = input;\n"
+                "GateRef inputTag = GetObjectType(LoadHClass(input));\n"
+                "BRANCH(IsFastTypeArray(inputTag), &typed, slowPath); Bind(&typed);\n"
+                "input = count; input = saved;\n"
+                "GateRef buffer = GetViewedArrayBuffer(input);")
+        result = analyze_receiver_guard(unit(wrap(body)))
+        self.assertEqual([item.kind for item in result.observations], ['matched'])
+
+    def test_guarded_alias_rebound_to_other_object_remains_candidate(self):
+        body = ("Label typed(GetEnvironment());\n"
+                "GateRef saved = input;\n"
+                "GateRef savedTag = GetObjectType(LoadHClass(saved));\n"
+                "BRANCH(IsFastTypeArray(savedTag), &typed, slowPath); Bind(&typed);\n"
+                "saved = count;\n"
+                "GateRef buffer = GetViewedArrayBuffer(saved);")
+        result = analyze_receiver_guard(unit(wrap(body)))
+        self.assertEqual([item.kind for item in result.observations], ['candidate'])
+
+    def test_complex_receiver_rebind_remains_unknown(self):
+        body = ("Label typed(GetEnvironment());\n"
+                "GateRef saved = input;\n"
+                "GateRef inputTag = GetObjectType(LoadHClass(input));\n"
+                "BRANCH(IsFastTypeArray(inputTag), &typed, slowPath); Bind(&typed);\n"
+                "input = count ? saved : count;\n"
+                "GateRef buffer = GetViewedArrayBuffer(input);")
+        result = analyze_receiver_guard(unit(wrap(body)))
+        self.assertEqual([item.kind for item in result.observations], ['unknown'])
+
+    def test_reference_alias_write_remains_unknown(self):
+        body = ("Label typed(GetEnvironment());\n"
+                "GateRef &saved = input;\n"
+                "GateRef inputTag = GetObjectType(LoadHClass(input));\n"
+                "BRANCH(IsFastTypeArray(inputTag), &typed, slowPath); Bind(&typed);\n"
+                "saved = count;\n"
+                "GateRef buffer = GetViewedArrayBuffer(input);")
+        result = analyze_receiver_guard(unit(wrap(body)))
+        self.assertEqual([item.kind for item in result.observations], ['unknown'])
+
     def test_other_object_guard_does_not_protect_receiver(self):
         body = ("Label typed(GetEnvironment());\n"
                 "GateRef inputTag = GetObjectType(LoadHClass(input));\n"
                 "BRANCH(IsFastTypeArray(inputTag), &typed, slowPath); Bind(&typed);\n"
                 "GateRef buffer = GetViewedArrayBuffer(count);")
         result = analyze_receiver_guard(unit(wrap(body)))
-        self.assertEqual([item.kind for item in result.observations], ['unknown'])
+        self.assertEqual([item.kind for item in result.observations], ['candidate'])
 
     def test_unrenamed_identifier_is_not_a_rule_requirement(self):
         source = wrap(
