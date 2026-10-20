@@ -273,7 +273,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.7'
+    version = '0.21.8'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -849,8 +849,8 @@ class LocalFlow:
             binding=self.property_keys.bind(n,args[2])
             if binding:
                 self.property_key_roles.add((enclosing_function(n),binding))
-                self.gaps.add('reviewed NAPI property-name argument 2 is not fetched password material: '
-                              +fn+'; bound constant '+binding)
+                self.gaps.add('reviewed NAPI property-name argument 2 is not fetched '+binding.material_kind+' material: '
+                              +fn+'; bound constant '+binding.identity)
                 # Only the exact, bound schema-key operand is excluded. Outputs,
                 # object values and any other material remain may-escape inputs.
                 flows=tuple(flow for i,arg in enumerate(args) if i!=2
@@ -859,14 +859,14 @@ class LocalFlow:
                     self.emit_unresolved_flows(fn,n,fnname,flows,
                         'other NAPI operands remain unresolved; only the bound property-name operand is excluded')
                 if fn=='napi_get_named_property':
-                    source=self.source('napi_get_named_property password-property output argument 3',n)
+                    source=self.source('napi_get_named_property '+binding.material_kind+'-property output argument 3',n)
                     destination=self.lvalue(args[3],types)
                     if (destination and args[3].type=='pointer_expression'
                             and self.text(args[3].child_by_field_name('operator'))=='&'):
                         self.store_value(env,destination,(source,))
                     else:
                         self.emit_unresolved_flows(fn,n,fnname,(source,),
-                            'password-property output destination is unresolved','destination_binding')
+                            binding.material_kind+'-property output destination is unresolved','destination_binding')
                 self.call_results[n.id]=()  # napi_status, not fetched material
                 return
         if fn=='LOGE' and not locally_defined and args:

@@ -1,12 +1,19 @@
 """Narrow syntax binding for a reviewed NAPI property-name argument.
 
 This does not classify literals or constants as public in general. The only
-accepted vocabulary item is the schema name "password", in argument 2 of the
-two exact read-property APIs. Other operands/wrappers retain normal may-flow.
+accepted vocabulary is "password" and the exact CERT_PRIVATE_KEY="key" pair
+in argument 2 of the two read-property APIs. Other operands retain may-flow.
 """
+from dataclasses import dataclass
 import re
 
 PROPERTY_READ_CALLS = frozenset({'napi_has_named_property', 'napi_get_named_property'})
+
+
+@dataclass(frozen=True)
+class PropertyKeyBinding:
+    identity: str
+    material_kind: str
 
 
 def walk(node):
@@ -76,8 +83,8 @@ class PropertyKeyBindings:
             visible.append(other)
         return visible
 
-    def global_literal(self, name, scope):
-        key = (name, scope)
+    def global_literal(self, name, scope, allow_private_key=False):
+        key = (name, scope, allow_private_key)
         if key in self.cache:
             return self.cache[key]
         self.cache[key] = None
@@ -122,11 +129,16 @@ class PropertyKeyBindings:
             literal = flow.literal(value)
         except (ValueError, SyntaxError):
             return None
-        if literal != 'password':
+        if literal == 'password':
+            material_kind = 'password'
+        elif allow_private_key and name == 'CERT_PRIVATE_KEY' and literal == 'key':
+            material_kind = 'private-key'
+        else:
             return None
-        result = (f'{flow.u.path}:{node.start_point[0]+1} '
+        identity = (f'{flow.u.path}:{node.start_point[0]+1} '
                   f'symbol={"::".join(scope + (name,))} byte={declaration.start_byte} '
                   f'sha256={flow.u.sha256}')
+        result = PropertyKeyBinding(identity, material_kind)
         self.cache[key] = result
         return result
 
@@ -159,4 +171,7 @@ class PropertyKeyBindings:
         scope = namespace(call, flow)
         if scope is None:
             return None
-        return self.global_literal(name, scope)
+        # The newly reviewed key pair is scoped to a property-read argument.
+        # It does not extend the separate D89 logging-operand proof vocabulary.
+        return self.global_literal(name, scope,
+            allow_private_key=api in PROPERTY_READ_CALLS and not allow_target_macro)
