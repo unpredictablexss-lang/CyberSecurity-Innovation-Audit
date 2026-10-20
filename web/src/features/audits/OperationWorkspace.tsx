@@ -152,6 +152,25 @@ export default function OperationWorkspace({ view = "all", operationId, context 
       {selected.error && <Alert className="section-gap" type="error" message={selected.error} />}
       {selected.kind === "agent_investigation" && !selected.result_sha256 && ["failed", "interrupted", "timed_out", "cancelled"].includes(selected.status) && <Alert className="section-gap" type="warning" showIcon message="本次调查没有可复核结果；候选仍为 unknown" description="任务结束不代表候选是误报或安全。若 Worker 在 Provider 已处理请求后、结果落盘前退出，上游调用和费用仍可能发生。重试前请核对执行事件及 Provider 账单，再重新预览并单独批准新任务。" />}
       {selected.spec?.scan_ids && <Space wrap className="section-gap">端点扫描：{selected.spec.scan_ids.map((id: string) => <Button key={id} size="small" onClick={() => go("/tasks/" + id)}>{id.slice(0, 12)}</Button>)}</Space>}
+      {Array.isArray(selected.intelligent_review_progress) && <Card size="small" className="section-gap" title="固定版本静态与智能审计进度">
+        <Alert type="info" showIcon message="端点静态对比完成不等于智能研判完成"
+          description="每个固定版本的 Agent 都独立获得源码外发授权；模型处理失败、预算不足或尚未研判不代表源码安全。" />
+        <Table<any> size="small" rowKey="scan_id" pagination={false} dataSource={selected.intelligent_review_progress}
+          columns={[
+            { title: "版本", render: (_: any, row: any) => <><Hash value={row.commit} /><div><Button size="small" onClick={() => go("/tasks/" + row.scan_id)}>查看扫描任务</Button></div></> },
+            { title: "静态扫描", dataIndex: "scan_status", render: (value: string) => <State value={value} /> },
+            { title: "智能研判", render: (_: any, row: any) => {
+              const labels: Record<string, string> = {
+                static_only: "仅静态（未请求模型）", awaiting_static: "等待静态结果", static_incomplete: "静态结果未完成",
+                awaiting_individual_consent: "未授权自动研判", authorization_revoked: "外发授权已撤销",
+                awaiting_model_schedule: "等待 Agent 排队", authorization_changed: "授权条件已变更",
+                no_eligible_candidates: "无符合条件的研判候选", completed: "已完成研判",
+                partially_completed: "部分研判完成", agent_in_progress: "智能研判中",
+              };
+              return <Tag color={row.agent_status === "completed" ? "green" : row.agent_status === "partially_completed" ? "orange" : "default"}>{labels[row.agent_status] || row.agent_status}</Tag>;
+            } },
+          ]} />
+      </Card>}
       {selected.kind === "agent_investigation" && selected.result ? <AgentAssessment result={selected.result} reviews={selected.agent_reviews || []}
         onSubmit={async (review: any) => { await api("/operations/" + selected.id + "/agent-reviews", review); await show(selected.id); }} /> : <pre className="json-view">{JSON.stringify(selected.result || selected.spec, null, 2)}</pre>}
       <Text strong>执行事件</Text><pre className="raw">{JSON.stringify(selected.events || [], null, 2)}</pre>
