@@ -312,6 +312,25 @@ flowchart TD
 - **反馈**：分别检查postlude可达性、return expression effects和caller return material。死代码被报候选或可达sink被抑制时提供精确证据并交D100修复；无法证明时要求保留unknown。
 - **固定回归**：baseline/final fresh source、data/compat、T85 direct/Runner及原始调用事实；明确T85无此feature语法时只算兼容证据。提交报告与SHA，不推送owner。
 
+### D101（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：C++ comma expression 返回值和副作用分离的有界数据流开发者。
+- **固定反例**：T99/T100发现 `return (HILOG_INFO(..., secret), 0);` 内部日志是真实sink；但caller把返回状态再记录时当前也继承secret，造成状态码过传播。
+- **目标**：仅当AST/类型证据可证明是内建逗号运算符时，对所有操作数保留effects，但表达式的返回值取最后一个operand。最后operand为literal时不带入左侧材料；最后operand确为材料时继续传播。不要按函数名、逗号语法文本或字面量全局清除污染。
+- **反控制**：用户定义 `operator,`、未知class/overload、宏改写、partial parser/类型信息、括号/条件混合、最终operand未知、左侧真实sink、单operand非comma以及材料位于最终operand，逐项核验；不能证明builtin时保留unknown。
+- **反馈/验证**：先复现T99固定状态交T100；修订版fresh-source direct/Runner、全data和compat、T85三文件回放。提交类型/AST证据、候选差异与限制；不以候选数报准确率。
+
+### T100（并行独立挑战线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立C++ comma operator语义与敏感材料流测试员。
+- **矩阵**：`(sink(secret),0)`左侧sink保留、caller状态干净；`(metadata,secret)`最终材料继续流；多operand逗号仅末项定值；内建scalar comma；class自定义`operator,`、未知类型/重载、宏替换、函数调用和partial输入。检查return expression effects与return-value summary分开。
+- **反馈**：真实左侧sink被抑制或literal最终值仍携带左侧secret，立即给D101精确构造；若重载/unknown被断言builtin要求修复。独立复测固定SHA，fresh-process direct/Runner一致。
+- **固定回归**：复跑T99源码、完整data/compat和T85 direct/Runner；记录ID/evidence、638 calls、coverage和已知缺口。不推送owner。
+
 ### T92（并行独立挑战线）
 
 **结构化 vibe coding 提示词**
