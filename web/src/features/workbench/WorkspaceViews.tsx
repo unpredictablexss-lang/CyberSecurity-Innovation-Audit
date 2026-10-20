@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Card, Col, Descriptions, Empty, Input, Pagination, Row, Select, Space, Statistic, Table, Tabs, Tag, Typography } from "antd";
+import { Alert, Button, Card, Col, Descriptions, Empty, Input, Pagination, Row, Select, Space, Statistic, Table, Tabs, Tag, Tooltip, Typography } from "antd";
 import { api, artifact, terminal } from "../../api";
 import { go, Hash, Header, State } from "../../components";
 import Repositories from "../../pages/Repositories";
@@ -12,6 +12,13 @@ import { SourceContext } from "../audits/OperationForms";
 import { jobDetailPath, retainRiskSource, riskQueuePath } from "./navigation";
 import { triageStateLabel, candidateSeverityLabel, candidateSeverityColor, candidateConfidenceLabel, candidateConfidenceColor, candidateVerificationLabel } from "./riskLabels.js";
 const { Text, Paragraph } = Typography;
+function severityBasisHint(row: any) {
+  if (row.severity_evidence === "cwe_type_heuristic_unverified")
+    return "仅按 " + (row.severity_basis || "CWE 漏洞类型") + " 的潜在危害进行初步分类；尚未证明可利用性或产品安全影响。";
+  if (row.severity_evidence === "detector_preliminary_unverified")
+    return "检测器给出的初步风险级别；并非运行时漏洞确认或正式 CVSS 评级。";
+  return "当前候选缺少足够的类型或影响信息，因此暂未分级；不代表低风险。";
+}
 export function ScanTable({ jobs, compact = false }: { jobs: any[]; compact?: boolean }) {
   return <Table<any> rowKey="id" size={compact ? "small" : "middle"} dataSource={compact ? jobs.slice(0, 4) : jobs} pagination={compact ? false : { pageSize: 10 }} scroll={{ x: 650 }} columns={[
     { title: "仓库 / 固定版本", render: (_, j) => <><a onClick={() => go("/tasks/" + j.id)}>{j.spec.repository}</a><div className="muted"><Hash value={j.spec.commit} /></div></> },
@@ -137,7 +144,9 @@ export function RiskCenter({ jobs, query = new URLSearchParams() }: { jobs: any[
           { title: "可信程度", render: (_: unknown, row: any) =>
             <Tag color={candidateConfidenceColor(row.risk_tier)}>{candidateConfidenceLabel(row.risk_tier)}</Tag> },
           { title: "危害等级（初判）", render: (_: unknown, row: any) =>
-            <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag> },
+            <Tooltip title={severityBasisHint(row)}>
+              <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag>
+            </Tooltip> },
           { title: "漏洞状态", render: (_: unknown, row: any) => candidateVerificationLabel(row.vulnerability_state) },
           { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
           { title: "检测器 / 候选位置", render: (_: unknown, row: any) => <>{row.detector_id || "未知检测器"}<div>{row.file}:{row.line}</div><div className="muted">{row.rule_id}</div></> },
@@ -218,7 +227,9 @@ export function AuditRiskOverview() {
         { title: "可信程度", render: (_: unknown, row: any) =>
           <Tag color={candidateConfidenceColor(row.risk_tier)}>{candidateConfidenceLabel(row.risk_tier)}</Tag> },
         { title: "危害等级（初判）", render: (_: unknown, row: any) =>
-          <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag> },
+          <Tooltip title={severityBasisHint(row)}>
+              <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag>
+            </Tooltip> },
         { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
         { title: "候选位置", render: (_: unknown, row: any) => <>{row.file}:{row.line}<div className="muted">{row.rule_id}</div></> },
         { title: "研判状态", dataIndex: "triage_state", render: (value: string) => triageStateLabel(value) },
