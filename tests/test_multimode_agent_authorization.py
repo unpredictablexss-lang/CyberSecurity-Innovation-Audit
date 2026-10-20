@@ -137,6 +137,14 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
                 for key, preview in zip(job_ids, previews):
                     self.assertEqual(self.store.triage_authorization(key)["consent_sha256"],
                                      preview["consent_sha256"])
+                status = client.get("/api/v1/operations/" + submitted.json()["id"])
+                self.assertEqual(status.status_code, 200, status.text)
+                phases = status.json()["intelligent_review_progress"]
+                self.assertEqual(len(phases), 2)
+                self.assertTrue(all(phase["agent_authorized"] for phase in phases))
+                self.assertTrue(all(phase["agent_status"] == "awaiting_static" for phase in phases))
+                self.assertTrue(all(not phase["model_result_is_product_vulnerability_confirmation"]
+                                    for phase in phases))
 
     def test_strict_request_budget_and_nonce_validation(self):
         base = {"repository_id": self.repo["id"], "baseline": "a" * 40,
