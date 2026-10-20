@@ -17,10 +17,12 @@ RECEIVER_TYPE_GUARD_RULE_ID = 'ark.runtime.typedarray-receiver-type-guard'
 LENGTH_NARROWING_RULE_ID = 'ark.runtime.typedarray-length-signed-to-unsigned-narrowing'
 INDEX_BOUNDS_RULE_ID = 'ark.runtime.dataview-index-width-bounds'
 NATIVE_EXCEPTION_RULE_ID = 'ark.runtime.native-inline-pending-exception-propagation'
+NEGATIVE_DOUBLE_LENGTH_RULE_ID = 'ark.runtime.float32array-negative-double-length'
 GAP_RULE_VERSIONS = {
     LENGTH_NARROWING_RULE_ID: '1.1.0',
     INDEX_BOUNDS_RULE_ID: '1.1.0',
     NATIVE_EXCEPTION_RULE_ID: '1.1.0',
+    NEGATIVE_DOUBLE_LENGTH_RULE_ID: '1.0.0',
 }
 RULE_VERSIONS = {
     RULE_ID: '1.1.0',
@@ -218,6 +220,10 @@ class RuntimeTypeModel:
          'df03fdce8a37cf2245577aec23c4c26deeebf02f',
          '6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce'),
     )
+    # Exact C1 Float32Array constructor source pair plus allocation helper.
+    # These pins authorize candidate replay only; they do not establish runtime
+    # build selection, allocation success, or an out-of-bounds access.
+    negative_double_length_bindings: tuple = ()
     exception_guard_creator: tuple = ('NewTypedArray', 4)
     exception_guard_callers: tuple = (OWNER + '::Filter', OWNER + '::Map')
     exception_guard_caller_types: tuple = ('GateRef', 'GateRef', 'GateRef', 'Variable*', 'Label*', 'Label*')
@@ -337,6 +343,7 @@ class RuntimeTypeModel:
         + tuple((revision, path, blob) for revision, path, blob, _ in self.index_bounds_bindings)
         + tuple((revision, path, blob) for revision, path, blob, _ in self.index_bounds_dependencies)
         + tuple((revision, path, blob) for revision, path, blob, _ in self.native_exception_bindings)
+        + tuple((revision, path, blob) for revision, path, blob, _ in self.negative_double_length_bindings)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.species_read_width_bindings)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.species_read_width_dependencies)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.api_overload_evidence)
@@ -362,6 +369,20 @@ def c_line_static_model():
         length_narrowing_bindings=base.length_narrowing_bindings,
         index_bounds_bindings=base.index_bounds_bindings,
         native_exception_bindings=base.native_exception_bindings,
+        negative_double_length_bindings=(
+            ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+             'ecmascript/compiler/common_stubs.cpp',
+             '6267f2f27a98a298b1190e327abbfa2bd58203f8',
+             '5a401580e666596fcf2ea89a8dc0321009b53ef5320b20edc59d37781d852212'),
+            ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+             'ecmascript/compiler/typed_hcr_lowering.cpp',
+             '1ad4e329a226fc9941db30fa7a10a6562f58f68d',
+             'acd4ed88bb4ba5d327d5628dc45b7b89685a9c425c5849891cbf2544e8534a0c'),
+            ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+             'ecmascript/compiler/new_object_stub_builder.cpp',
+             '991ac5ac034a1a027e3200787ec25c55b3f15b69',
+             '3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0'),
+        ),
         source_dependencies=(
             ('ecmascript/compiler/new_object_stub_builder.cpp',
              '991ac5ac034a1a027e3200787ec25c55b3f15b69'),
