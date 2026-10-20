@@ -1,7 +1,7 @@
 # T62 dSoftBus source-control review
 
-Date: 2026-10-20  
-Scanner baseline: PR #35 head `81dd4aea9bb51522ac912b33504ef0d2ddb79089`  
+Date: 2026-10-20
+Scanner baseline: PR #35 head `81dd4aea9bb51522ac912b33504ef0d2ddb79089`
 Disposition: **BLOCK / PARTIAL**. This adds source-bound control observations and a fresh whole-file replay; it does not close the detector's partial semantic coverage.
 
 ## Exact source and replay

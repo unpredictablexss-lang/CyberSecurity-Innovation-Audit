@@ -1,7 +1,7 @@
 # T4 source-bound rescan: curl and legacy pasteboard CVEs
 
-Date: 2026-10-20 (Asia/Shanghai)  
-Checkout: `codex/t4-d51-d52-acceptance-20261020` at `0a8e87dbf3d184f9e536c1116a80f6498b87cb50`  
+Date: 2026-10-20 (Asia/Shanghai)
+Checkout: `codex/t4-d51-d52-acceptance-20261020` at `0a8e87dbf3d184f9e536c1116a80f6498b87cb50`
 Role: independent testing/provenance follow-up; detector, tests, fixtures, and A0 queue unchanged.
 
 ## Matrix reconciliation
