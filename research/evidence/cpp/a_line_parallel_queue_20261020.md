@@ -436,3 +436,7 @@ T2 independently reconciled the 13-row historical case matrix with PR #35's incr
 ### 2026-10-20 follow-up — webview parser coverage
 
 The independent detector-gap review found no justified bounds-rule change: the D11 exact Chromium-derived Flowbuffer fragments retain the 6/0 patched-root differential with safe/unrelated controls quiet, while six ordinary-argument findings remain unresolved. The exact OpenHarmony A0 full-file pair is still partial/blocked with 0/0 diagnostics. Next action is a separate parser-owner assessment of localized recovery for the Flowbuffer region, using the exact A0 pair and D11 controls; do not change/suppress bounds candidates based on incomplete translation-unit parses. See [D15 review](d15_webview_residuals_20261020/review.md) and [exact A0 replay](webview_exact_a0_20261020/README.md).
+
+### 2026-10-20 follow-up — historical integer/bounds controls
+
+Independent test-line scans of the exact upstream `atomic_helper_test.cpp` and `js_array_test.cpp` each completed with full parsing and zero diagnostics. They are supplementary observations, not safe/unrelated controls for CVE-2025-0587 or CVE-2025-23420; both rows remain PARTIAL pending root-relevant reviewed controls and product evidence. See [source-bound test-file scans](t_source_test_file_scans_20261020/README.md).
