@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "task": "current-CLI replay for historical A matrix rows",
+  "date": "2026-10-20",
+  "scanner_head": "349d3b570eafd35f05544ee5b90d32ea377ec5ee",
+  "source_git_dir": "D:\\openHarmonyScanner\\arkruntime-holdout-history",
+  "cases": {
+    "CVE-2025-0587": {
+      "vulnerable": {
+        "identity": {
+          "commit": "cae11f121c030a90ba41d8e4d866f91292f25892",
+          "tree": "61ff01d9a06b4186125a04e2b790e07640f57198",
+          "path": "ecmascript/base/atomic_helper.cpp",
+          "blob": "7fd67717571c6d8fe7b10bf294998e952dc61e36",
+          "sha256": "f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541",
+          "bytes": 7176
+        },
+        "report": "cve2025-0587-vulnerable.json",
+        "detector": "ohscanner.cpp.integer_bounds",
+        "version": "0.2.0",
+        "count": 1,
+        "locations": [
+          [
+            "ecmascript/base/atomic_helper.cpp",
+            71,
+            "ohcpp-integer-bounds-narrow-index-candidate-003"
+          ]
+        ],
+        "parse": "complete",
+        "profile": "light-ast",
+        "snapshot_sha256": "3dbcf1026af41de48c9ed318a2fab2d1d1e3e6f30b922899bf34dbe911d9e512"
+      },
+      "fixed": {
+        "identity": {
+          "commit": "5aa9c035e98911ec7ed28065a2138c2709792a42",
+          "tree": "05ac3902979e37ae08efa2d1e3ed32472a69d0cc",
+          "path": "ecmascript/base/atomic_helper.cpp",
+          "blob": "80d7ad14e70825ef2daf7b3f2fc956a891bf8b2c",
+          "sha256": "39521f4c6fa6b4b65d8b3daacd80f6e051b5a01c5aa814c9ac2ffc432529b36b",
+          "bytes": 6995
+        },
+        "report": "cve2025-0587-fixed.json",
+        "detector": "ohscanner.cpp.integer_bounds",
+        "version": "0.2.0",
+        "count": 0,
+        "locations": [],
+        "parse": "complete",
+        "profile": "light-ast",
+        "snapshot_sha256": "b90f87a0b1a4adcface27e3178ca1920ff0a5e5c0a42b4c2cb717ddb4c0ad452"
+      }
+    },
+    "CVE-2025-23420": {
+      "vulnerable": {
+        "identity": {
+          "commit": "aeee3fd12c03193545edea4b8e0fdfa3d9a03d11",
+          "tree": "0eea26c9eb6846f4d19926be83092c06f0d98692",
+          "path": "ecmascript/js_array.cpp",
+          "blob": "2c58914ad27b6b3c5f570dbd2fe0ed02d1d9e471",
+          "sha256": "b7f28be2f63850ba1cb57a35d518930986855784d2081124e555f2a57d673e9b",
+          "bytes": 31896
+        },
+        "report": "cve2025-23420-vulnerable.json",
+        "detector": "ohscanner.cpp.bounds",
+        "version": "0.3.0",
+        "count": 5,
+        "locations": [
+          [
+            "ecmascript/js_array.cpp",
+            650,
+            "ohcpp-memory-bounds-element-access-candidate-003"
+          ],
+          [
+            "ecmascript/js_array.cpp",
+            653,
+            "ohcpp-memory-bounds-element-access-candidate-003"
+          ],
+          [
+            "ecmascript/js_array.cpp",
+            665,
+            "ohcpp-memory-bounds-element-access-candidate-003"
+          ],
+          [
+            "ecmascript/js_array.cpp",
+            666,
+            "ohcpp-memory-bounds-element-access-candidate-003"
+          ],
+          [
+            "ecmascript/js_array.cpp",
+            668,
+            "ohcpp-memory-bounds-element-access-candidate-003"
+          ]
+        ],
+        "parse": "complete",
+        "profile": "light-ast",
+        "snapshot_sha256": "ac7ff6e9a7a289e6fbcfe8c0599b15557d63ff2ce0184499dd547d1615998af8"
+      },
+      "fixed": {
+        "identity": {
+          "commit": "1b23531531e768398682582969c2a9f17e72cafe",
+          "tree": "52f27683e2f6e1ba8272aee7d5202c73059e10b4",
+          "path": "ecmascript/js_array.cpp",
+          "blob": "58266855967e3dc4af97721d3a2fc5417cb887b6",
+          "sha256": "f6325075773451b9c9a314c6fec0c0177331786f5c9e6ce3069974eb4c79b0f6",
+          "bytes": 32924
+        },
+        "report": "cve2025-23420-fixed.json",
+        "detector": "ohscanner.cpp.bounds",
+        "version": "0.3.0",
+        "count": 0,
+        "locations": [],
+        "parse": "complete",
+        "profile": "light-ast",
+        "snapshot_sha256": "11051b40a4804288b7a589d91dd7aa6a4ff158a8e9455459180ce4d48fcfca8a"
+      }
+    }
+  },
+  "errors": [],
+  "overall": "PASS_SOURCE_BOUND_STATIC_DIFFERENTIAL"
+}
