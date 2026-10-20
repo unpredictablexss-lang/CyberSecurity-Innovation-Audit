@@ -57,4 +57,3 @@ Generated reports are retained outside the repo at:
 - `D:\OpenHarmonyScanner\tmp\float32-candidate-index-baseline.md`
 - `D:\OpenHarmonyScanner\tmp\float32-candidate-run-baseline.json`
 - `D:\OpenHarmonyScanner\tmp\float32-candidate-run-baseline.md`
-
