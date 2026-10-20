@@ -1,11 +1,33 @@
 from __future__ import annotations
 import hashlib
+import json
+import subprocess
 import unittest
 from pathlib import Path
 from src.ohscanner.contracts import ScanContext, ScanRequest, SourceUnit
 from src.ohscanner.detectors.catalog import build_registry, catalog_metadata, default_detector_ids
-from src.ohscanner.detectors.known_cves import KnownDisclosedCveDetector
+from src.ohscanner.detectors.known_cves import KnownDisclosedCveDetector, _pasteboard_guard_observation
 from src.ohscanner.fixture import snapshot_digest
+
+PINNED_HEAD = "db77164fdc2af0da02e4d3efc056d84694fd68e8"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+def read_pinned_git_blob(relative_path):
+    object_id = f"{PINNED_HEAD}:{relative_path}"
+    process = subprocess.run(
+        ["git", "cat-file", "blob", object_id],
+        cwd=REPO_ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+    )
+    if process.returncode != 0:
+        raise RuntimeError(
+            f"cannot read pinned Git blob {object_id}: "
+            + process.stderr.decode("utf-8", errors="replace").strip()
+        )
+    return process.stdout
+
+def git_blob_sha1(data):
+    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+
 
 class KnownDisclosedCveTests(unittest.TestCase):
     def run_source(self, source, path="sample.c", parse_status="complete"):
@@ -28,13 +50,11 @@ class KnownDisclosedCveTests(unittest.TestCase):
         return KnownDisclosedCveDetector().detect(ScanContext(request=request, units=units), units)
 
     def test_appdomainverify_cve_2026_58313_real_lru_fix_pair(self):
-        fixture_dir = Path(__file__).resolve().parents[1] / "fixtures" / "data_sensitive"
-        vulnerable = (fixture_dir / "d39_cve_2026_58313_lru_vulnerable.h").read_bytes()
-        fixed = (fixture_dir / "d39_cve_2026_58313_lru_fixed.h").read_bytes()
+        vulnerable = read_pinned_git_blob(
+            "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_vulnerable.h")
+        fixed = read_pinned_git_blob(
+            "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_fixed.h")
         path = "frameworks/common/include/utils/lru_cache_util.h"
-
-        def git_blob_sha1(data):
-            return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
 
         self.assertEqual(git_blob_sha1(vulnerable), "7ce4262e3f1d2c0173d929318a4795ff1573c721")
         self.assertEqual(git_blob_sha1(fixed), "68114f10d83c8f0bdc46679c7efa35ed286bef8a")
@@ -370,14 +390,10 @@ class KnownDisclosedCveTests(unittest.TestCase):
         self.assertEqual((), self.run_source(safe, "decoder.c").findings)
 
     def test_libpng_neon_palette_cve_2026_33636_exact_upstream_pair(self):
-        fixture = Path(__file__).parent / "../fixtures/data_sensitive/cve_2026_33636"
-        vulnerable_path = (fixture / "libpng-1.6.55-palette_neon_intrinsics.c").resolve()
-        fixed_path = (fixture / "libpng-1.6.56-palette_neon_intrinsics.c").resolve()
-        vulnerable = vulnerable_path.read_bytes()
-        fixed = fixed_path.read_bytes()
-
-        def git_blob_sha1(blob):
-            return hashlib.sha1(b"blob " + str(len(blob)).encode() + b"\0" + blob).hexdigest()
+        vulnerable = read_pinned_git_blob(
+            "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.55-palette_neon_intrinsics.c")
+        fixed = read_pinned_git_blob(
+            "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.56-palette_neon_intrinsics.c")
 
         self.assertEqual("3068e9b6e62be16bee2a8f1ff8271a02f32be97f", git_blob_sha1(vulnerable))
         self.assertEqual("0967ea1aebd718907fda1e767957deeddbe676b3", git_blob_sha1(fixed))
@@ -429,18 +445,263 @@ class KnownDisclosedCveTests(unittest.TestCase):
         self.assertNotIn("CVE-2026-67215", {f.symbol for f in self.run_source(fixed, "cJSON_Utils.c").findings})
 
     def test_pasteboard_disclosed_cves_and_guarded_controls(self):
-        vulnerable = """void AddPasteboardChangedObserver(Observer *observer){ if(!observer)return; observers->insert(observer); }
+        vulnerable = """void AddPasteboardChangedObserver(Observer *observer) {
+            if (!observer) return;
+            auto userId = GetUserId();
+            auto it = observerMap_.find(userId);
+            std::shared_ptr<std::set<Observer *>> observers;
+            if (it != observerMap_.end()) observers = it->second;
+            else { observers = std::make_shared<std::set<Observer *>>(); observerMap_.insert({userId, observers}); }
+            observers->insert(observer); // exact repeated-growth statement; std::set only deduplicates identical handles
+        }
         PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
         int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; }
         int OnGetPasteData(){ GetPasteData(); reply.WriteParcelable(data); return 0; }"""
-        fixed = """void AddPasteboardChangedObserver(Observer *observer){ int pid=GetCallingPid(); if(observers->size() >= MAX_OBSERVERS_PER_PID)return; observers->insert(observer); }
+        fixed = """void AddPasteboardChangedObserver(Observer *observer) {
+            int pid = GetCallingPid();
+            auto it = observerMap_.find(pid);
+            std::shared_ptr<std::set<Observer *>> observers;
+            if (it != observerMap_.end()) observers = it->second;
+            else { observers = std::make_shared<std::set<Observer *>>(); observerMap_.insert({pid, observers}); }
+            if (observers->size() >= MAX_OBSERVERS_PER_PID) return;
+            observers->insert(observer);
+        }
+        bool CheckPastePermission() { if (permissionMap[PERMISSION_READ_PASTEBOARD] != PERMISSION_GRANTED) return false; return true; }
         PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
         int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; }
-        int OnGetPasteData(){ CheckPermission(); GetPasteData(); reply.WriteParcelable(data); return 0; }"""
-        findings = {f.symbol for f in self.run_source(vulnerable, "pasteboard_service.cpp").findings}
+        int OnGetPasteData(){ if (!CheckPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"""
+        vulnerable_run = self.run_source(vulnerable, "pasteboard_service.cpp")
+        findings = {f.symbol for f in vulnerable_run.findings}
         self.assertIn("CVE-2025-25212", findings)
         self.assertIn("CVE-2025-27247", findings)
-        self.assertEqual((), self.run_source(fixed, "pasteboard_service.cpp").findings)
+        observer_finding = next(f for f in vulnerable_run.findings if f.symbol == "CVE-2025-25212")
+        expected_line = vulnerable[:vulnerable.index("observers->insert(observer)")].count("\n") + 1
+        self.assertEqual(expected_line, observer_finding.line)
+        fixed_findings = self.run_source(fixed, "pasteboard_service.cpp").findings
+        self.assertEqual({"CVE-2025-27247"}, {item.symbol for item in fixed_findings})
+        permission_finding = next(item for item in fixed_findings if item.symbol == "CVE-2025-27247")
+        permission_obligation = next(item for item in permission_finding.evidence_obligations if item.kind == "permission_guard")
+        self.assertEqual("unknown", permission_obligation.status)
+
+    def test_pasteboard_permission_suppression_requires_pre_read_denial_exit(self):
+        prefix = """PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
+        int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; }
+        """
+        handler = "int OnGetPasteData(){ GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid = "int OnGetPasteData(){ if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_status = "int OnGetPasteData(){ if (CheckPermission(PERMISSION_READ_PASTEBOARD) != PERMISSION_GRANTED) { return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_throw = "int OnGetPasteData(){ if (VerifyPermission(PERMISSION_READ_PASTEBOARD) == PERMISSION_DENIED) throw NoPermission(); GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_paste_helper = "bool CheckPastePermission(){ if (permissionMap[PERMISSION_READ_PASTEBOARD] != PERMISSION_GRANTED) return false; return true; } int OnGetPasteData(){ if (!CheckPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_has_paste_helper = "bool HasPastePermission(){ if (permissionMap[SECURE_PASTE_PERMISSION] == PERMISSION_DENIED) return false; return true; } int OnGetPasteData(){ if (!HasPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        unconditional_true_helper = "bool CheckPastePermission(){ return true; } int OnGetPasteData(){ if (!CheckPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        bluetooth_helper_with_read_identity = "bool CheckPastePermission(){ if (!CheckBluetoothPermission(PERMISSION_READ_PASTEBOARD)) return false; return true; } int OnGetPasteData(){ if (!CheckPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_secure_permission = "int OnGetPasteData(){ if (VerifyPermission(SECURE_PASTE_PERMISSION) != PERMISSION_GRANTED) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_read_permission = "int OnGetPasteData(){ if (!CheckPermission(READ_PASTEBOARD_PERMISSION)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        ignored = "int OnGetPasteData(){ VerifyPermission(PERMISSION_READ_PASTEBOARD); GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        mixed_condition = "int OnGetPasteData(){ if (!VerifyPermission(PERMISSION_READ_PASTEBOARD) && caller_is_special) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        conditional_guard = "int OnGetPasteData(){ if (is_privileged) { if (!VerifyCallingPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        after_read = "int OnGetPasteData(){ GetPasteData(); if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; reply.WriteParcelable(data); return 0; }"
+        after_serialization = "int OnGetPasteData(){ GetPasteData(); reply.WriteParcelable(data); if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; return 0; }"
+        dead_nested = "int OnGetPasteData(){ if (false) { if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        bluetooth_permission = "int OnGetPasteData(){ if (!CheckBluetoothPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        bluetooth_with_read_identity = "int OnGetPasteData(){ if (!CheckBluetoothPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        unrelated_permission = "int OnGetPasteData(){ if (!VerifyCallingPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        generic_permission = "int OnGetPasteData(){ if (!CheckPermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+
+        def has_candidate(body):
+            findings = self.run_source(prefix + body, "pasteboard_service_stub.cpp").findings
+            return "CVE-2025-27247" in {item.symbol for item in findings}
+
+        untrusted_state = "int OnGetPasteData(){ if (untrustedState[READ_PASTEBOARD] != PERMISSION_GRANTED) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        bluetooth_result_state = "int OnGetPasteData(){ if (bluetoothResult[PERMISSION_READ_PASTEBOARD] != PERMISSION_GRANTED) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        for unresolved_guard in (valid_paste_helper, valid_has_paste_helper, valid, valid_status, valid_throw,
+                            valid_secure_permission, valid_read_permission, untrusted_state, bluetooth_result_state,
+                            unconditional_true_helper, bluetooth_helper_with_read_identity,
+                            handler, ignored, mixed_condition, conditional_guard,
+                            after_read, after_serialization, dead_nested, bluetooth_permission,
+                            bluetooth_with_read_identity, unrelated_permission, generic_permission):
+            with self.subTest(handler=unresolved_guard):
+                findings = self.run_source(prefix + unresolved_guard, "pasteboard_service_stub.cpp").findings
+                candidate = next(item for item in findings if item.symbol == "CVE-2025-27247")
+                obligation = next(item for item in candidate.evidence_obligations if item.kind == "permission_guard")
+                self.assertEqual("unknown", obligation.status, "unresolved guard semantics must remain explicit")
+                self.assertEqual("unknown", next(item.status for item in candidate.evidence_obligations
+                                                   if item.kind == "permission_guard_observation"))
+
+        def observation_for(body):
+            findings = self.run_source(prefix + body, "pasteboard_service_stub.cpp").findings
+            candidate = next(item for item in findings if item.symbol == "CVE-2025-27247")
+            return next(item.description for item in candidate.evidence_obligations
+                        if item.kind == "permission_guard_observation")
+
+        absent_observation = observation_for(handler)
+        self.assertEqual("absent", json.loads(absent_observation)["state"])
+        visible_observation = observation_for(bluetooth_with_read_identity)
+        self.assertEqual("observed_unresolved", json.loads(visible_observation)["state"])
+        self.assertIn("PERMISSION_READ_PASTEBOARD", visible_observation)
+        self.assertIn('"start":', visible_observation)
+        nested_observation = observation_for(conditional_guard)
+        self.assertEqual("unresolved_control_flow", json.loads(nested_observation)["state"])
+        self.assertIn("PERMISSION_READ_PASTEBOARD", nested_observation)
+
+    def test_pasteboard_guard_observation_is_bounded_and_balanced(self):
+        giant_call = "CheckPermission(" + ",".join(f"ARG{i}" for i in range(3000)) + ")"
+        giant = _pasteboard_guard_observation(f"if ({giant_call}) return denied;")
+        giant_payload = json.loads(giant.description)
+        self.assertLessEqual(len(giant.description), 4096)
+        self.assertLessEqual(len(giant_payload["observations"]), 8)
+        self.assertGreaterEqual(giant_payload["total_matches"], 1)
+        record = giant_payload["observations"][0]
+        self.assertLessEqual(len(record["tokens"]), 16)
+        self.assertLessEqual(len(record["snippet"]), 120)
+        self.assertTrue(record["tokens_truncated"])
+        self.assertGreater(record["tokens_omitted_count"], 0)
+
+        many_calls = _pasteboard_guard_observation(
+            " ".join("VerifyPermission(PERMISSION_READ_PASTEBOARD);" for _ in range(12))
+        )
+        many_payload = json.loads(many_calls.description)
+        self.assertLessEqual(len(many_calls.description), 4096)
+        self.assertEqual(12, many_payload["total_matches"])
+        self.assertEqual(8, len(many_payload["observations"]))
+        self.assertTrue(many_payload["observations_truncated"])
+        self.assertEqual(4, many_payload["observations_omitted_count"])
+
+        long_tokens = [f"ARG{i}" + "X" * 44 for i in range(16)]
+        long_call = "CheckPermission(" + ",".join(long_tokens) + ")"
+        oversized_description = _pasteboard_guard_observation(" ".join(long_call + ";" for _ in range(8))).description
+        oversized_payload = json.loads(oversized_description)
+        self.assertLessEqual(len(oversized_description), 4096)
+        self.assertTrue(oversized_payload["payload_truncated"])
+        self.assertGreater(oversized_payload["payload_over_limit_characters"], 0)
+        self.assertTrue(any(record["tokens_truncated"] for record in oversized_payload["observations"]))
+
+        nested_call = "CheckPermission(GetPermissionType(PERMISSION_READ_PASTEBOARD))"
+        nested = _pasteboard_guard_observation(f"if (!{nested_call}) return denied;")
+        nested_payload = json.loads(nested.description)
+        nested_record = nested_payload["observations"][0]
+        self.assertEqual("permission_call", nested_record["kind"])
+        self.assertEqual(nested_call, nested_record["snippet"])
+        self.assertEqual(len(nested_call), nested_record["end"] - nested_record["start"])
+
+        unbraced = _pasteboard_guard_observation(
+            "if (is_privileged) if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return denied; GetPasteData();"
+        )
+        self.assertEqual("unresolved_control_flow", json.loads(unbraced.description)["state"])
+
+    def test_pasteboard_quota_helper_and_unrelated_growth_controls(self):
+        helper_quota = """bool IsObserverQuotaExceeded(ObserverSet *observers) {
+            if (observers->size() >= MAX_OBSERVERS_PER_PID) return true;
+            return false;
+        }
+        void AddPasteboardChangedObserver(Observer *observer) {
+            auto it = observerMap_.find(GetUserId());
+            auto observers = it->second;
+            if (IsObserverQuotaExceeded(observers)) return;
+            observers->insert(observer);
+        }"""
+        ignored_helper = """bool IsObserverQuotaExceeded(ObserverSet *observers) {
+            if (observers->size() >= MAX_OBSERVERS_PER_PID) return true;
+            return false;
+        }
+        void AddPasteboardChangedObserver(Observer *observer) {
+            auto it = observerMap_.find(GetUserId());
+            auto observers = it->second;
+            IsObserverQuotaExceeded(observers);
+            observers->insert(observer);
+        }"""
+        nonblocking_guard = """void AddPasteboardChangedObserver(Observer *observer) {
+            auto it = observerMap_.find(GetUserId());
+            auto observers = it->second;
+            if (observers->size() >= MAX_OBSERVERS_PER_PID) { LogQuota(); }
+            observers->insert(observer);
+        }"""
+        insert_before_guard = """void AddPasteboardChangedObserver(Observer *observer) {
+            auto it = observerMap_.find(GetUserId());
+            auto observers = it->second;
+            observers->insert(observer);
+            if (observers->size() >= MAX_OBSERVERS_PER_PID) return;
+        }"""
+        compound_guard = """void AddPasteboardChangedObserver(Observer *observer) {
+            auto it = observerMap_.find(GetUserId());
+            auto observers = it->second;
+            if (observers->size() >= MAX_OBSERVERS_PER_PID && observer != nullptr) return;
+            observers->insert(observer);
+        }"""
+        unrelated_receiver_guard = """void AddPasteboardChangedObserver(Observer *observer) {
+            auto it = observerMap_.find(GetUserId());
+            auto observers = it->second;
+            if (history.size() >= MAX_HISTORY) return;
+            observers->insert(observer);
+        }"""
+        goto_guard = """void AddPasteboardChangedObserver(Observer *observer) {
+            auto it = observerMap_.find(GetUserId());
+            auto observers = it->second;
+            if (observers->size() >= MAX_OBSERVERS_PER_PID) goto insert_label;
+        insert_label:
+            observers->insert(observer);
+        }"""
+        unrelated = """void AddHistoryRecord(Record *record) {
+            historyMap_.find(GetUserId());
+            historyMap_.insert(record);
+        }"""
+        self.assertNotIn("CVE-2025-25212", {f.symbol for f in self.run_source(helper_quota, "pasteboard_service.cpp").findings})
+        self.assertIn("CVE-2025-25212", {f.symbol for f in self.run_source(ignored_helper, "pasteboard_service.cpp").findings})
+        self.assertIn("CVE-2025-25212", {f.symbol for f in self.run_source(nonblocking_guard, "pasteboard_service.cpp").findings})
+        self.assertIn("CVE-2025-25212", {f.symbol for f in self.run_source(insert_before_guard, "pasteboard_service.cpp").findings})
+        self.assertIn("CVE-2025-25212", {f.symbol for f in self.run_source(compound_guard, "pasteboard_service.cpp").findings})
+        self.assertIn("CVE-2025-25212", {f.symbol for f in self.run_source(unrelated_receiver_guard, "pasteboard_service.cpp").findings})
+        self.assertIn("CVE-2025-25212", {f.symbol for f in self.run_source(goto_guard, "pasteboard_service.cpp").findings})
+        self.assertNotIn("CVE-2025-25212", {f.symbol for f in self.run_source(unrelated, "other.cpp").findings})
+
+    def test_pasteboard_conditional_quota_guards_do_not_suppress_candidates(self):
+        helper = """bool IsObserverQuotaExceeded(ObserverSet *observers) {
+            if (observers->size() >= MAX_OBSERVERS_PER_PID) return true;
+            return false;
+        }"""
+        registration = """void AddPasteboardChangedObserver(Observer *observer) {
+            auto it = observerMap_.find(GetUserId());
+            auto observers = it->second;
+            %s
+            observers->insert(observer);
+        }"""
+        guards = (
+            "if (observers->size() >= MAX_OBSERVERS_PER_PID) return;",
+            "if (IsObserverQuotaExceeded(observers)) return;",
+        )
+        wrappers = ("if (is_privileged)", "while (is_privileged)", "for (; is_privileged;)",
+                    "if (is_privileged) Notify(); else", "if (is_privileged) {} else")
+        for guard in guards:
+            with self.subTest(guard=guard, control="unconditional"):
+                self.assertNotIn("CVE-2025-25212", {
+                    f.symbol for f in self.run_source(helper + registration % guard, "pasteboard_service.cpp").findings
+                })
+            for wrapper in wrappers:
+                with self.subTest(guard=guard, wrapper=wrapper):
+                    source = helper + registration % (wrapper + " " + guard)
+                    findings = self.run_source(source, "pasteboard_service.cpp").findings
+                    self.assertIn("CVE-2025-25212", {f.symbol for f in findings})
+            # A finished conditional statement before a top-level quota guard
+            # must not make the independent guard appear conditional.
+            preceding = "if (is_privileged) LogCaller(); " + guard
+            self.assertNotIn("CVE-2025-25212", {
+                f.symbol for f in self.run_source(helper + registration % preceding, "pasteboard_service.cpp").findings
+            })
+            preceding_else = "if (is_privileged) LogCaller(); else LogOther(); " + guard
+            self.assertNotIn("CVE-2025-25212", {
+                f.symbol for f in self.run_source(helper + registration % preceding_else, "pasteboard_service.cpp").findings
+            })
+
+    def test_pasteboard_partial_parse_keeps_bound_observer_candidate_blocked(self):
+        source = """void AddPasteboardChangedObserver(Observer *observer) {
+            auto it = observerMap_.find(GetUserId());
+            auto observers = it->second;
+            observers->insert(observer);
+        }"""
+        run = self.run_source(source, "services/core/src/pasteboard_service.cpp", parse_status="partial")
+        finding = next(f for f in run.findings if f.symbol == "CVE-2025-25212")
+        self.assertEqual("blocked", run.status)
+        self.assertEqual(4, finding.line)
 
     def test_partial_parse_retains_lexical_candidate_but_blocks_coverage(self):
         source="void f(png_structp p,png_infop i){png_read_info(p,i);png_read_end(p,i);}"

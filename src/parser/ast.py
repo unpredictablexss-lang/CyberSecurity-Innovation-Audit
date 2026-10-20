@@ -4,7 +4,8 @@ from typing import List, Optional
 import tree_sitter_c
 import tree_sitter_cpp
 from tree_sitter import Language, Node, Parser
-from .syntax_normalize import normalize_member_pointer_syntax
+from .cpp_assignment_comma import recover_cpp_assignment_commas
+from .syntax_normalize import normalize_empty_cpp_linkage_wrappers, normalize_member_pointer_syntax
 
 
 _C_LANG = Language(tree_sitter_c.language())
@@ -162,9 +163,14 @@ def parse_source(code: str, language: str = "c") -> AstIndex:
     # Member-pointer dispatch is a valid C++ idiom but unsupported by the
     # current grammar. Normalize only its syntax while preserving byte offsets;
     # source text and hashes below remain bound to the original bytes.
-    tree = parser.parse(normalize_member_pointer_syntax(source))
+    normalized = normalize_member_pointer_syntax(source)
+    if language == 'cpp':
+        normalized = normalize_empty_cpp_linkage_wrappers(normalized)
+    tree = parser.parse(normalized)
+    if language == "cpp":
+        tree = recover_cpp_assignment_commas(normalized, tree)
     root = tree.root_node
-    issues = []
+    issues = list(getattr(tree, "recovery_spans", ()))
     stack = [root]
     while stack:
         node = stack.pop()
