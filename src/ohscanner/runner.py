@@ -326,6 +326,7 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
                      },
                      "consequence_impact": finding.consequence_impact,
                      "consequence_cwe": finding.consequence_cwe,
+                     "risk_assessment": finding.risk_assessment,
                      "model_version": getattr(detector, "model_version", None),
                      "obligations": [
                          {"kind": obligation.kind, "description": obligation.description,

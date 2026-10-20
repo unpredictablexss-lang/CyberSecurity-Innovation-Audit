@@ -521,6 +521,17 @@ class WorkbenchTests(unittest.TestCase):
         self.assertTrue(any(item["symbol"] == "CVE-2026-46675" for item in diagnostics))
         candidate = next(item for item in diagnostics if item["symbol"] == "CVE-2026-46675")
         self.assertEqual(candidate["source_archive_binding"]["archive_path"], "vendor/sample.tar.gz")
+        api_candidate = next(item for item in service.findings(report) if item["symbol"] == "CVE-2026-46675")
+        risk = api_candidate["risk_assessment"]
+        self.assertEqual("medium", risk["severity"])
+        self.assertEqual("unknown", risk["product_applicability"])
+        self.assertIn("D30_LIBPNG_CVE_2026_46675_REPORT.md", risk["poc"]["record"])
+        self.assertEqual("B9729E5E80D0440AADF606AB29912E8E8811929E06240EDECDF3DDE40DBCDDFA",
+                         risk["poc"]["record_sha256"])
+        self.assertIn("0/3 ASan", risk["component_retest"]["fixed_poc"])
+        detail = self.client.get(f"/api/v1/scans/{job['id']}/findings/{api_candidate['id']}").json()
+        self.assertEqual(risk, detail["risk_assessment"])
+        self.assertEqual(candidate["source_sha256"], detail["source_sha256"])
         self.assertEqual(report["validated_vulnerability"], 0)
         viewed = service.source(self.settings, self.store, job, candidate["file"])
         self.assertEqual(viewed["text"], payload.decode())
