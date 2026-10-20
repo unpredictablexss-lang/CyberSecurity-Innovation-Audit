@@ -741,6 +741,21 @@ class Operations:
                            (job_id, repository_id, json.dumps(scan_spec, sort_keys=True), "queued", "source_pinned", stamp))
                 db.execute("INSERT INTO events(job_id,created_at,stage,message) VALUES(?,?,?,?)",
                            (job_id, stamp, "source_pinned", "Requested revision resolved to immutable commit/tree"))
+                authorization = scan_spec.get("triage_authorization")
+                if isinstance(authorization, dict) and authorization.get("authorized") is True:
+                    digest = authorization.get("consent_sha256")
+                    snapshot = authorization.get("snapshot")
+                    if (not isinstance(digest, str) or len(digest) != 64
+                            or not isinstance(snapshot, dict)):
+                        raise ValueError("invalid immutable endpoint model authorization")
+                    if snapshot.get("binding", {}).get("plan_sha256") != scan_spec.get("plan_sha256"):
+                        raise ValueError("endpoint model authorization is bound to another scan plan")
+                    if snapshot.get("binding", {}).get("workflow_sha256") != scan_spec.get("workflow_sha256"):
+                        raise ValueError("endpoint model authorization is bound to another workflow")
+                    db.execute(
+                        "INSERT INTO triage_authorizations(audit_id,consent_sha256,snapshot,created_at) VALUES(?,?,?,?)",
+                        (job_id, digest, json.dumps(snapshot, sort_keys=True), stamp),
+                    )
             db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
                        (key, stamp, "queued", "Operation and endpoint scans committed atomically"))
         return self.get(key)
