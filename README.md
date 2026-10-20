@@ -34,5 +34,11 @@ A/B 代码是按模块选择性迁入；五组件候选变化与 229 条 A 诊�
 候选、只读审查聚类、人工调查案例和确认漏洞分别记录；聚类不改原始身份、不推断根因，0 findings 不证明安全。
 代码与生成报告/数据库/第三方源码分开，源代码交付从验收的 Git commit 导出。
 
+当前 Catalog 已注册 C/C++ `bounds`、`integer_bounds`、`resource_lifetime` 和
+`unsafe_memory_call` 候选规则；NULL dereference 与 Contacts path traversal 也已注册，
+但普通扫描默认关闭，需显式选择。当前版本和范围见
+[C/C++ detector catalog](src/ohscanner/detectors/cpp/README.md)。Catalog 可用性和源码命中
+不代表产品可达性或漏洞影响已验证。
+
 历史路线图和阶段教程已从当前 docs 删除，历史证据通过固定 Git 提交追溯。
 项目执行约束见 [AGENTS.md](AGENTS.md)。

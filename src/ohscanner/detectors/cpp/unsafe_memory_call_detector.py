@@ -356,11 +356,9 @@ class CppUnsafeMemoryCallDetector:
             findings.extend(unit_findings)
             limitations.extend(unit_limitations)
             outcomes.append((unit.path, "complete" if unit_complete else "partial"))
-            # The runner requires every inspected per-file outcome, including
-            # partial files, to appear in analyzed_files. It keeps partial
-            # coverage unknown and does not count it as complete analysis.
-            analyzed.append(unit.path)
-            if not unit_complete:
+            if unit_complete:
+                analyzed.append(unit.path)
+            else:
                 complete = False
         return DetectorRun(
             self.detector_id,

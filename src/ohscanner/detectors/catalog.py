@@ -64,12 +64,14 @@ _APPROVED = {
     "ohscanner.cpp.bounds": {
         "factory": CppBoundsDetector,
         "kind": "research_candidate",
-        "summary": "A: bounded direct C/C++ element-access candidate; default unassessed, never safe",
+        "default_enabled": True,
+        "summary": "A: bounded C/C++ copy, element access, unsigned pointer offset, and vector index candidates; not a safety verdict",
     },
     "ohscanner.cpp.integer_bounds": {
         "factory": CppIntegerBoundsDetector,
         "kind": "research_candidate",
-        "summary": "A: bounded integer narrowing/index candidate; default unassessed, never safe",
+        "default_enabled": True,
+        "summary": "A: bounded integer range, arithmetic, truncation, and narrowing-index candidates; not a safety verdict",
     },
     "ohscanner.cpp.null_dereference": {
         "factory": NullDereferenceDetector,
@@ -88,13 +90,16 @@ _APPROVED = {
     "ohscanner.cpp.resource_lifetime": {
         "factory": CppResourceLifetimeDetector,
         "kind": "research_candidate",
-        "summary": "A: bounded resource allocation/release path candidate; default unassessed",
+        "default_enabled": True,
+        "summary": "A: bounded double-free, use-after-free, recursive cleanup, tree amplification, and recursive compare-cost candidates; not a safety verdict",
     },
     "ohscanner.cpp.unsafe_memory_call": {
         "factory": CppUnsafeMemoryCallDetector,
         "kind": "research_candidate",
+        "default_enabled": True,
         "summary": "A: reviewed unsafe memory-call candidate with explicit proof obligations",
-    },    "ohscanner.cpp.shared_ptr_race": {
+    },
+    "ohscanner.cpp.shared_ptr_race": {
         "factory": M2SharedPtrRaceDetector,
         "kind": "research_candidate",
         "summary": "A: narrow non-atomic shared_ptr member candidate (CWE-362); not confirmed",

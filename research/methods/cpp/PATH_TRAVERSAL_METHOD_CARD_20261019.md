@@ -16,4 +16,6 @@ The focused suite covers a cross-function vulnerable flow to `open` and `unlink`
 
 ## Admission
 
-The detector is intentionally not registered in shared Catalog by this lane. Production CLI selection is unavailable until Catalog ownership reviews and accepts the separate request in `research/deliveries/cpp/CONTACTS_PATH_TRAVERSAL_CATALOG_REQUEST_20261019.md`.
+`ohscanner.cpp.path_traversal` 0.3.0 is registered in `src/ohscanner/detectors/catalog.py` as a `research_candidate` and is disabled in ordinary default scans. Select it explicitly with the production CLI for a bounded source replay. Catalog registration and a successful source replay establish availability and candidate behavior only.
+
+The exact Contacts source object `b02aadfc2d801ee30573fcb2d13490298e146fea` parses completely and produces three source-to-file-sink candidates under explicit CLI selection. No trusted fixed object or root-matched upstream safe control was found. A synthetic basename/containment fixture is a detector control, not a Contacts repair. Caller reachability, path normalization, and product impact remain unknown; keep the A0 row `PARTIAL/BLOCK`.
