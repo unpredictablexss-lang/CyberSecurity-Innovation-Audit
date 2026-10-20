@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "CLOSEOUT_ROUND3_D104_T103_IN_PROGRESS",
+  "status": "CLOSEOUT_COMPLETE",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -695,25 +695,33 @@
       "id": "D104",
       "kind": "development",
       "title": "D线收尾前候选证据与限制对账",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D103", "T102"],
-      "completion": "Reconcile versioned reports/task tree, run final relevant suites and fixed replay once, list unresolved items and their status, confirm no second-layer model work was implied.",
+      "commit": "03479dc007c00d70186b528eeb6d570ecb06cae1",
+      "report_commit": "bfc60984f952e9841005669a54ba81d2c51d3cfa",
+      "integration_commit": "11ec4b4c0",
+      "completion": "Final evidence reconciliation complete: duplicate JSON keys removed, D102 compatibility count corrected, D83-D103 evidence/reports reconciled, final bounded suites and D103 replay recorded with limitations.",
+      "validation": "431/431 data; 69/69 compatibility; 51 focused checks pass; D103 replay blocked 0/0, 3 partial, 217 calls; no detector algorithm/version change.",
       "tests": ["T103"]
     },
     {
       "id": "T103",
       "kind": "testing",
       "title": "独立最终回归与交付树复核",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "depends_on": ["D103", "T102"],
+      "commit": "12e85391589abd8eb8a4688423b13a8d5de41880",
+      "reference_pin_commit": "888557246085761fb3f1c3ee5f8b647bec41df19",
+      "integration_commit": "7e6ff38f416e11adb18d2543e3857f31b9a2908a",
       "feedback_to": ["D104"],
-      "completion": "Independently reproduce final suite and exact source replay, inspect report references/hash/known gaps, then sign off only the delivered evidence scope."
+      "completion": "Independent final suite, exact source replay, report-reference/hash and task-tree review completed; no blocking regression found in delivered evidence scope.",
+      "validation": "Independent T103 agrees: 431 data, 69 compatibility, 51 focused checks pass; strict T85 direct/Runner 24 matches and 638/890/915 facts stable; D103 remains blocked/partial, not a safety result."
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
-  "completion": "当前轮代码/相关测试/真实重放/报告完成；后续队列保留，不以产品确认或真人配置为前置",
+  "completion": "D102/T101、D103/T102、D104/T103 closeout rounds complete and integrated. Final owner verification/push recorded in D_LINE_FINAL_CLOSEOUT_20261020.md; no further automatic round.",
   "first_round_findings": [
     {
       "developer": "D83",
@@ -746,14 +754,15 @@
     "ast_parser": 7,
     "assignment_comma_parser": 7,
     "total": 500,
-    "result": "PASS"
+    "focused": 51,
+    "result": "PASS (independently reproduced by T103; D103 replay separately blocked/partial as documented)"
   },
   "remote_branch": "origin/codex/d-owner-20261020-01a1571f",
-  "pushed_head": "04d06da236ed46c277fe3b756a3a42c95ce7ab98",
+  "pushed_head": "8ff44ec699a1b3e353261e73034d75959f9c54bc",
   "closeout_plan": {
-    "phase": "CLOSEOUT_IN_PROGRESS",
-    "remaining_rounds": 1,
+    "phase": "COMPLETE",
+    "remaining_rounds": 0,
     "rounds": ["D102/T101: legal comma parser coverage", "D103/T102: source-backed real-code slice", "D104/T103: final evidence/replay reconciliation"],
-    "final_action": "After D104/T103, run one bounded final verification, publish a closeout report with known gaps and pushed head, then stop this sustained goal."
+    "final_action": "Final bounded verification and delivery completed; stop sustained goal. Resume only on explicit new task or concrete new evidence."
   }
 }

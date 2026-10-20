@@ -35,3 +35,8 @@
 最新状态修正（2026-10-20）：D102/T101已完成收尾第一轮，见[D线第18轮](D_LINE_ROUND18_SUMMARY_20261020.md)。规则0.21.17恢复11类同跨度合法assignment-comma语法；owner data431/431、兼容69/69。1类合法不匹配跨度与旧summary/type gaps继续unknown。收尾第二轮D103/T102正在绑定本机OpenHarmony固定源码切片；之后只剩D104/T103和最终有界验收。
 
 D90/T89闭环见[D线第6轮报告](D_LINE_ROUND6_SUMMARY_20261020.md)：不新增清理豁免，修复两类同名callable遮蔽漏报；原三文件仍19/19、附加七文件20 direct/18 Runner不变。D91/T90闭环见[D线第7轮报告](D_LINE_ROUND7_SUMMARY_20261020.md)：API一般契约与绑定证明分开；证书构建缺跨仓库版本关联，napi_typeof及相邻查询/提取流继续unknown。D92/T91闭环见[D线第8轮报告](D_LINE_ROUND8_SUMMARY_20261020.md)：仅排除第298行精确schema-key输入，同时修复此前中性输出名漏掉的private-key-property材料流，direct/Runner由19增至26；新增8条是待后续逐案审查的unknown路径，不等同确认漏洞。本轮已完成并推送至`origin/codex/d-owner-20261020-01a1571f`，当前远端HEAD为`fc4cb8da2216002bf058aa1315c5328bebab9dc2`。D93/T92闭环见[D线第9轮报告](D_LINE_ROUND9_SUMMARY_20261020.md)：API构建身份不足时保留890长度查询和915真实字节读取候选；固定三文件26条与638调用事实不变，仍有3个partial detector。它同时记录一个未通过的scalar pointer-output缺口。D94/T93已并行启动，开发保守标记unknown material writes并传播可证alias，测试线独立挑战并在固定源码上复验。当前owner已集成D93/T92，待D94/T93闭环后提交并推送；持续目标仍执行。权威状态见任务树，结构化提示词见并行计划。
+
+
+## 最终收尾（2026-10-20）
+
+D102/T101、D103/T102、D104/T103三轮收尾完成，固定报告、代码/证据引用和任务树已集成；最终有界验证及远端交付记录见[D线最终收尾报告](D_LINE_FINAL_CLOSEOUT_20261020.md)。持续目标状态：COMPLETE；不自动创建D105或新审计。具体新缺陷或新输入可由后续明确任务重启。未解决边界仍按unknown、blocked、partial、not_run记录，不构成产品准确率或安全结论。
