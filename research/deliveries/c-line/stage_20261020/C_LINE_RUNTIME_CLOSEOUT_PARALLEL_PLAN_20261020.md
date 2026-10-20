@@ -3,11 +3,13 @@
 ## 基线与任务树复核
 
 - 已从 `origin` fetch；最新 `origin/main` 为 `0f53af62283dbd0f249280805e8286a04b2d43b9`，本地与远端 `codex/c-line-parallel-plan-20261020` 都为 `cfdbd21eac05f6b515d123a29640f5011733ab03`，未见该分支的新远端提交。
+- 本次 fetch 也核对了未合入 main 的 C topic refs：C scanner optimization `448bd1b`（相对 main 13 ahead / 128 behind）、C11 alias `3d9274b`（4/35）、C12 semantics `7bf57a8`（7/35）、C13 replay `40fd4d5`（10/35）。它们是相互分叉的独立 topic snapshots，planning task tree 没有标为进行中；本轮不整体合并这些分支，避免将 C-line 核心代码和 scope 不明的历史提交带入已选收尾线。
 - 当前静态集成阶段分支 `codex/c-line-ark-stage-20261020` HEAD `79916713cf6e4b590a588c9cd4d50e115e187436`，代码提交 `e798fa77fda843ff00f3b0ac7367f4eea02eb5ac` 基于最新 main；交付报告记录构建在 WSL NTFS/P9 参数检查阶段停滞。
 - 旧 C execution tree 含 42 个 workstream，静态候选、独立 same-SHA 测试和 source review 全部为完成状态；Float32Array/TypedArray.set 的运行环境盘点也已终结为 `runtime_not_run`。本计划只续接其明确的最小后续动作：把可复现源码/构建输入放在 Linux 原生文件系统，再执行一个现有 Ark Runtime 组件测试。它不重开静态规则、不把环境搜索写成漏洞结论。
 - 任务树新增两条互相反馈的进行中工作流，任务编号 `C-CLOSEOUT-RUNTIME-DEV-20261020` 和 `C-CLOSEOUT-RUNTIME-TEST-20261020`。开发线完成真实构建与组件运行；测试线独立固定官方测试的语义/断言及修复版本可用性，并在开发线给出精确运行工件后复验。若无匹配修复 commit，必须明确报告 comparison `not_run`，不可用 synthetic fixture 代替。
 - 测试线已提前确认：官方 `typedarrayset` target 只测常规 set 语义和 offset=2，不覆盖超大 offset/range-wrap 候选。因此它仅能作为 VM/组件 smoke；若运行条件允许，必须追加有界的候选触发/安全断言，或找到真正覆盖该边界的现有用例。不得把官方 smoke pass 写成候选运行验证。
 - `typedarrayset` 的 case BUILD label 存在，但 `test/moduletest/BUILD.gn` 的 `module_test_list` 不含它；必须直接构建并执行 `//arkcompiler/ets_runtime/test/moduletest/typedarrayset:typedarrayset`，仅运行聚合 `ark_js_moduletest` 不能作为此案例通过证据。
+- 开发线已在 Linux-native `/tmp` 从固定 Git objects 解包 Ark exact tree（116 MB，tree hash 重核吻合）及 OH build source snapshot（54 MB），并隔离安装 GN `2026 (47b40ef4)` 和 Ninja `1.13.2`。普通 `gn gen` 的第一次失败指出缺 `.gn`，拷贝/隔离诊断 probe 后再暴露 `parts_info/components.json` 与 product preloader config 缺失；还没有启动本轮 HB build，也没有 live build process。测试线独立 oracle/fix-provenance 报告提交 `61fa223fc5281793b8b7da494a05c483892f31bc`；独立 runtime replay 等待开发侧 binary/log。
 
 ## 持续目标和停止条件
 

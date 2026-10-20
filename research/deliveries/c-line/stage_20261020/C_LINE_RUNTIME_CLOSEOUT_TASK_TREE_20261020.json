@@ -3,6 +3,12 @@
   "date": "2026-10-20",
   "baseline": {
     "latest_main": "0f53af62283dbd0f249280805e8286a04b2d43b9",
+    "other_remote_topics_not_integrated": {
+      "codex/c-line-scanner-optimization-20261019": {"tip": "448bd1b14906e883199168653360df30863c095a", "ahead_behind_main": "13/128"},
+      "codex/c11-alias-cross-helper-20261020": {"tip": "3d9274ba2c3d37f1fec8f633036049a3a208922f", "ahead_behind_main": "4/35"},
+      "codex/c12-ark-deep-semantics-20261020": {"tip": "7bf57a898e0a64c83a3aa34c04e42ac98a5b6561", "ahead_behind_main": "7/35"},
+      "codex/c13-ark-real-replay-20261019": {"tip": "40fd4d53d10fe52b5d8b925126e14271d3f6cb26", "ahead_behind_main": "10/35"}
+    },
     "integrated_stage_commit": "79916713cf6e4b590a588c9cd4d50e115e187436",
     "code_commit": "e798fa77fda843ff00f3b0ac7367f4eea02eb5ac",
     "source_repository": "openharmony/arkcompiler_ets_runtime",
@@ -26,6 +32,7 @@
       "agent": "/root/c_runtime_dev",
       "feedback_from": "C-CLOSEOUT-RUNTIME-TEST-20261020",
       "current_feedback": "Official case is smoke only; a bounded offset/range-wrap test is needed to exercise the static candidate. GitCode master 25863269 is not a fixed source; its relevant implementation blobs are unchanged from a65.",
+      "current_execution": "Exact Ark tree and OH build source snapshot unpacked under Linux-native /tmp; isolated GN/Ninja available. gn gen has exposed missing .gn, then missing parts_info/components.json and product preloader config; no HB build or live process yet.",
       "deliverables": ["source/build manifest", "commands and raw logs", "actual test result or precise blocker", "fixed-source availability/result", "report commit"],
       "stop_condition": "One actual component result or one precise Linux-native build blocker; no repeated NTFS/P9 attempt."
     },
@@ -42,6 +49,7 @@
       "feedback_to": "C-CLOSEOUT-RUNTIME-DEV-20261020",
       "oracle_report_commit": "61fa223fc5281793b8b7da494a05c483892f31bc",
       "oracle_report": "research/deliveries/c-line/stage_20261020/C_RUNTIME_TEST_ORACLE_20261020.md",
+      "current_execution": "Oracle and fix provenance report committed; independent runtime replay awaits developer binary/log."
       "deliverables": ["official test assertion map", "source/fix provenance check", "independent replay or precise blocker", "discrepancy feedback", "report commit"],
       "stop_condition": "One independent replay and feedback, or one precise independent blocker; never substitute fixtures for a real fix."
     }
