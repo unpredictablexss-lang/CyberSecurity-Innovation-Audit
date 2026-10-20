@@ -8,7 +8,7 @@ all C++ conversions, range checks, macro expansion, or path feasibility.
 from dataclasses import dataclass
 import re
 
-from .analysis import AnalysisResult, Observation
+from .analysis import AnalysisResult, Observation, known_case_gap_ids
 
 
 RULE_ID = 'ark.runtime.typedarray-buffer-size-multiplication-overflow'
@@ -314,6 +314,68 @@ def analyze_size_overflow(source):
     """Return only candidate flows whose multiplication is narrower than its factors."""
     flows, limitations = analyze_size_flows(source)
     return tuple(flow for flow in flows if flow.may_overflow), limitations
+
+
+def analyze_length_index_case_gaps(source, *, functions=None, parse_complete=None):
+    """Make reviewed missing length/index models explicit without inventing CWEs.
+
+    I7W51D and IB8BCA currently have no security rule. This adapter reports an
+    unknown/limitation for the exact semantic shape and distinguishes boundary
+    repairs from a security finding.
+    """
+    if parse_complete is False:
+        return AnalysisResult("limited", "partial",
+                              limitations=("actual_parse_is_partial",))
+    if functions is None:
+        try:
+            from .syntax import parse_functions
+            tree, functions = parse_functions(source.encode("utf-8"))
+        except (ValueError, RuntimeError, UnicodeError) as error:
+            return AnalysisResult("failed", "failed",
+                                  limitations=("parser_failure:" + type(error).__name__,))
+        if tree.root_node.has_error:
+            return AnalysisResult("limited", "partial",
+                                  limitations=("runtime_translation_unit_parse_incomplete",))
+    observations, limitations = [], []
+    for fn in functions:
+        case_ids = set(known_case_gap_ids(fn))
+        text = fn.text(fn.node)
+        line = fn.node.start_point[0] + 1
+        if "I7W51D" in case_ids:
+            signed_narrowing = bool(re.search(
+                r"static_cast\s*<\s*(?:int32_t|int)\s*>|\bInt32\s*\(|\bint32_t\s+\w*"
+                r"(?:length|len|count)\w*\b", text))
+            reason = ("signed_int32_length_narrowing_to_allocation_has_no_security_rule"
+                      if signed_narrowing else
+                      "fixed_unsigned_length_boundary_semantics_are_not_a_security_finding")
+            limitation = ("known_case_gap:I7W51D:signed_int32_length_narrowing_unmodeled"
+                          if signed_narrowing else
+                          "known_case_gap:I7W51D:fixed_unsigned_length_boundary_unassessed_not_security")
+            observations.append(Observation("unknown", line, 1, reason,
+                                            symbol=fn.qualified_name,
+                                            region_start_byte=fn.node.start_byte,
+                                            region_end_byte=fn.node.end_byte))
+            limitations.append(limitation)
+        if "IB8BCA" in case_ids:
+            narrow_index = bool(re.search(
+                r"static_cast\s*<\s*(?:int32_t|int)\s*>|\bInt32\s*\(|\bint32_t\s+\w*"
+                r"(?:index|offset)\w*\b", text))
+            reason = ("data_view_atomics_index_width_and_bounds_have_no_security_rule"
+                      if narrow_index else
+                      "fixed_index_width_boundary_semantics_are_not_a_security_finding")
+            limitation = ("known_case_gap:IB8BCA:dataview_atomics_index_width_bounds_unmodeled"
+                          if narrow_index else
+                          "known_case_gap:IB8BCA:fixed_index_width_boundary_unassessed_not_security")
+            observations.append(Observation("unknown", line, 1, reason,
+                                            symbol=fn.qualified_name,
+                                            region_start_byte=fn.node.start_byte,
+                                            region_end_byte=fn.node.end_byte))
+            limitations.append(limitation)
+    if not observations:
+        return AnalysisResult("limited", "not_analyzed",
+                              limitations=("known_case_gap_length_index_selector_not_resolved",))
+    return AnalysisResult("limited", "partial", tuple(observations),
+                          tuple(sorted(set(limitations))), len(observations))
 
 
 def size_overflow_result_from_flows(unit, model_digest, flows, limitations=()):

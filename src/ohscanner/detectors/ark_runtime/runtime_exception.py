@@ -7,7 +7,7 @@ syntax based and reports candidates; it does not model all C++ effects.
 from dataclasses import dataclass
 import re
 
-from .analysis import Observation
+from .analysis import Observation, known_case_gap_ids
 from .syntax import name_node, parse_functions, walk
 
 
@@ -558,6 +558,98 @@ def analyze_runtime_exception_propagation(
     outcome = "partial" if limitations else "complete"
     return RuntimeExceptionResult("limited" if limitations else "completed", outcome,
                                   tuple(observations), tuple(sorted(set(limitations))), steps)
+
+
+def analyze_abrupt_exception_propagation(unit, *, functions=None):
+    """Conservative IAO7GO model for Reflect.apply abrupt completion propagation."""
+    if unit.parse_status not in ("complete", "partial"):
+        return RuntimeExceptionResult("limited", "not_analyzed",
+                                      limitations=("source_parse_unavailable",))
+    if functions is None:
+        try:
+            tree, functions = parse_functions(unit.text.encode("utf-8"))
+        except (ValueError, RuntimeError, UnicodeError) as error:
+            return RuntimeExceptionResult("failed", "failed",
+                                          limitations=("parser_failure:" + type(error).__name__,))
+        if tree.root_node.has_error:
+            return RuntimeExceptionResult("limited", "partial",
+                                          limitations=("runtime_translation_unit_parse_incomplete",))
+    observations, limitations = [], []
+    applicable = False
+    guarded = False
+    effect_names = {"JSFunction::Call", "CallNGCRuntime", "JSCallDispatch"}
+    guard_tokens = ("RETURN_EXCEPTION_IF_ABRUPT_COMPLETION",
+                    "RETURN_VALUE_IF_ABRUPT_COMPLETION", "HasPendingException", "IsException")
+    for fn in functions:
+        if "IAO7GO" not in known_case_gap_ids(fn):
+            continue
+        applicable = True
+        sources = []
+        for node in walk(fn.body):
+            if node.type != "call_expression":
+                continue
+            call_name = fn.call_name(node)
+            if not (call_name in effect_names
+                    or call_name.endswith(("JSFunction::Call", "JSCallDispatch"))
+                    or "ReflectApply" in fn.text(node)):
+                continue
+            parent = node.parent
+            binding = None
+            if parent is not None and parent.type == "init_declarator":
+                declarator = parent.child_by_field_name("declarator")
+                ident = name_node(declarator)
+                if ident is not None:
+                    binding = fn.resolve(fn.text(ident), ident)
+            elif parent is not None and parent.type == "assignment_expression":
+                left = parent.child_by_field_name("left")
+                if left is not None and left.type == "identifier":
+                    binding = fn.resolve(fn.text(left), left)
+            if binding is None:
+                limitations.append("IAO7GO:abrupt_result_binding_unmodeled:" + fn.qualified_name)
+                continue
+            sources.append((binding, node))
+        if not sources:
+            limitations.append("IAO7GO:abrupt_exception_effect_source_unmodeled:" + fn.qualified_name)
+        for binding, source in sources:
+            for sink in walk(fn.body):
+                if sink.type != "call_expression" or fn.call_name(sink) not in ("Return", "ReturnVoid"):
+                    continue
+                args = fn.arguments(sink)
+                if not any(arg.type == "identifier" and fn.resolve(fn.text(arg), arg) == binding
+                           for arg in args):
+                    continue
+                between = tuple(node for node in walk(fn.body)
+                                if source.end_byte <= node.start_byte <= sink.start_byte)
+                has_guard = any(node.type == "call_expression"
+                                and any(token.lower() in fn.call_name(node).lower()
+                                        for token in guard_tokens)
+                                for node in between)
+                if has_guard:
+                    guarded = True
+                    continue
+                line = sink.start_point[0] + 1
+                observations.append(Observation(
+                    "candidate", line, sink.start_point[1] + 1,
+                    "reflect_apply_abrupt_completion_reaches_return_without_pending_exception_exit",
+                    token_line=source.start_point[0] + 1,
+                    symbol=fn.qualified_name,
+                    region_start_byte=fn.node.start_byte,
+                    region_end_byte=fn.node.end_byte,
+                    target_identity=binding.name,
+                    token_origin=fn.call_name(source),
+                    path=(source.start_point[0] + 1, line),
+                ))
+    if not applicable:
+        return RuntimeExceptionResult("limited", "not_analyzed",
+                                      limitations=("IAO7GO:selector_not_resolved",))
+    if observations:
+        limitations.append("bounded_reflect_apply_abrupt_exception_model_no_cfg_or_product_proof")
+    elif not guarded and limitations:
+        limitations.append("IAO7GO:abrupt_exception_propagation_model_unknown")
+    return RuntimeExceptionResult(
+        "limited" if limitations else "completed",
+        "partial" if limitations else "complete",
+        tuple(observations), tuple(sorted(set(limitations))), len(observations))
 
 
 def _pending_exception_if_exit(fn, statement, thread_binding):

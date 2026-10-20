@@ -1,0 +1,36 @@
+usage: __main__.py [-h]
+                   {scan,baseline-clang,ohscan,ohscan-index,ohscan-run,benchmark-historical,compare-tools,compare-scanners,validate-cjson-allocator,triage,normalize-tool-output,benchmark-report}
+                   ...
+
+CyberSecurity Innovation Audit tooling
+
+positional arguments:
+  {scan,baseline-clang,ohscan,ohscan-index,ohscan-run,benchmark-historical,compare-tools,compare-scanners,validate-cjson-allocator,triage,normalize-tool-output,benchmark-report}
+    scan                Scan a source directory
+    baseline-clang      Run a reproducible clang --analyze baseline on
+                        explicit source files
+    ohscan              M0 self-built mock detector contract smoke test
+                        (synthetic fixtures only)
+    ohscan-index        M1: index pinned local Git source objects (no
+                        vulnerability scan)
+    ohscan-run          M2: run explicitly allowlisted first-party detector(s)
+                        on pinned local Git sources
+    benchmark-historical
+                        Replay one published vulnerable/fixed commit pair as
+                        historical ground truth
+    compare-tools       Compare two or more normalized static-analysis reports
+                        on the same fixed scope
+    compare-scanners    Compare text and AST candidate reports on the same
+                        target
+    validate-cjson-allocator
+                        Build and run the controlled cJSON allocator
+                        robustness harness
+    triage              Build structured review packets from a candidate scan
+                        JSON report
+    normalize-tool-output
+                        Normalize one external tool report into a
+                        ToolRunResult
+    benchmark-report    Generate the historical benchmark summary report
+
+options:
+  -h, --help            show this help message and exit

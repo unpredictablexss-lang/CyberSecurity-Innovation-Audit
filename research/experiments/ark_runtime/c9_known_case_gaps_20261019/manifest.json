@@ -1,0 +1,141 @@
+{
+  "slice": "C9-KNOWN-CASE-GAPS",
+  "generated": "2026-10-19 Asia/Shanghai",
+  "worktree": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-latest-20261019",
+  "head": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+  "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+  "parent": "73231e6a8d4ea239033dd322aae8936770438b20",
+  "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+  "pinned_report": {
+    "path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
+    "blob": "dbedeaa677c8dc70c1b0066c7bc52df27bcff06ea",
+    "sha256": "58F37A6DFE3A518DA07C813195F47E1CB3CBD7E0825B02D28CB6B3E5D0F240EA"
+  },
+  "code_write_scope": [
+    "src/ohscanner/detectors/ark_runtime/analysis.py",
+    "src/ohscanner/detectors/ark_runtime/detector.py",
+    "src/ohscanner/detectors/ark_runtime/runtime_exception.py",
+    "src/ohscanner/detectors/ark_runtime/size_overflow.py",
+    "tests/detectors/ark_runtime/test_known_case_gaps.py",
+    "tests/detectors/ark_runtime/fixtures/C9_*.cpp"
+  ],
+  "source_hashes": {
+    "src/ohscanner/detectors/ark_runtime/analysis.py": "20AE02BF51EB276631EAE06FAA792A7D6407407ABF1333FFF0A504237550A317",
+    "src/ohscanner/detectors/ark_runtime/detector.py": "00FD2291AA901533925D92C48650DBA2C6C4BCD107F38F05C61C60BED2B76F6B",
+    "src/ohscanner/detectors/ark_runtime/runtime_exception.py": "54B768AB1A31369B9BC831706AFF94EDAABEBBA93EC18BBFDE5405C9E4E039A0",
+    "src/ohscanner/detectors/ark_runtime/size_overflow.py": "9CAD0E2646913481A0C5CD59934F151E79152B6FC62572354168F88F6EED5CED",
+    "tests/detectors/ark_runtime/test_known_case_gaps.py": "ECC1366DE0C27F49A5ED0AFC7A7F60C3242025EB508CF0E831E75DDDA205508F",
+    "tests/detectors/ark_runtime/fixtures/C9_IAO7GO_parent.cpp": "2316454DA09559050B07E6EE75B55C4778986E7803370E091B9896CC99D4579E",
+    "tests/detectors/ark_runtime/fixtures/C9_IAO7GO_fixed.cpp": "DCF67AE6156C85F47731670AB9E0158B276B5975501C9E8CBC858254A85DCD12",
+    "tests/detectors/ark_runtime/fixtures/C9_IAO7GO_safe.cpp": "95606F10448BD9ACF899B95915BC954E593C9FA2E8D1D80C174963FB7FC054D5",
+    "tests/detectors/ark_runtime/fixtures/C9_I7W51D_parent.cpp": "6062FF07CD92816823D2E1F1A04CEC6FBA500135029BF7BAF6ADC516374C183C",
+    "tests/detectors/ark_runtime/fixtures/C9_I7W51D_fixed.cpp": "4A0E23B6CC5E5D44E7102F93226DC1F63071088D1FDFE78910AA6E014E822C79",
+    "tests/detectors/ark_runtime/fixtures/C9_IB8BCA_parent.cpp": "D2EFEA0B9D5F7B76EA3320ABB4D00C66BEEA65D0B59931C8BC7670E4DF207220",
+    "tests/detectors/ark_runtime/fixtures/C9_IB8BCA_fixed.cpp": "7E459AE0DBD20031464729EA5D9E5714D8B4C0BBCFC9B03E79AE2A3B35333BFE",
+    "tests/detectors/ark_runtime/fixtures/C9_unrelated.cpp": "20F6B070A3479C5A34A7EECFC6BDC12855C0663A6AF14EEC37C54F88351CA3C6"
+  },
+  "patch": {
+    "path": "research/experiments/ark_runtime/c9_known_case_gaps_20261019/patch.diff",
+    "sha256": "BD476FAE9052A74D0B05638A931DF017BE34423EE6153287A90BFA11E6CC27BB"
+  },
+  "exact_argv": [
+    "wsl.exe -d Ubuntu-22.04 -- bash -lc 'cd \"/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-latest-20261019\" && python3 -m unittest tests.detectors.ark_runtime.test_known_case_gaps tests.detectors.ark_runtime.test_size_overflow tests.detectors.ark_runtime.test_runtime_exception tests.detectors.ark_runtime.test_detector_cases tests.detectors.ark_runtime.test_unseen_detector -v'",
+    "wsl.exe -d Ubuntu-22.04 -- bash -lc 'cd \"/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-latest-20261019\" && python3 -m src.cli --help'",
+    "wsl.exe -d Ubuntu-22.04 -- bash -lc 'cd \"/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-latest-20261019\" && python3 -m src.cli ohscan-run --help'",
+    "git diff --check"
+  ],
+  "controls": [
+    {
+      "case": "IAO7GO",
+      "fixture": "C9_IAO7GO_parent.cpp",
+      "selector": "applicable",
+      "strict_adapter": "candidate/unknown",
+      "catalog_unseen": "unknown+limitation",
+      "root": "Reflect.apply abrupt completion reaches Return without pending-exception exit",
+      "security": "not established"
+    },
+    {
+      "case": "IAO7GO",
+      "fixture": "C9_IAO7GO_fixed.cpp",
+      "selector": "applicable",
+      "strict_adapter": "no same-root candidate",
+      "catalog_unseen": "no same-root candidate",
+      "root": "RETURN_VALUE_IF_ABRUPT_COMPLETION guard",
+      "security": "not a finding"
+    },
+    {
+      "case": "IAO7GO",
+      "fixture": "C9_IAO7GO_safe.cpp",
+      "selector": "applicable",
+      "strict_adapter": "no same-root candidate",
+      "catalog_unseen": "no same-root candidate",
+      "root": "HasPendingException guard",
+      "security": "not a finding"
+    },
+    {
+      "case": "I7W51D",
+      "fixture": "C9_I7W51D_parent.cpp",
+      "selector": "applicable",
+      "strict_adapter": "unknown+limitation",
+      "catalog_unseen": "unknown+limitation",
+      "root": "signed int32 length narrowing to allocation",
+      "security": "no security rule; RangeError/boundary evidence only"
+    },
+    {
+      "case": "I7W51D",
+      "fixture": "C9_I7W51D_fixed.cpp",
+      "selector": "applicable",
+      "strict_adapter": "unknown+distinct boundary limitation",
+      "catalog_unseen": "unknown+distinct boundary limitation",
+      "root": "unsigned length boundary repair",
+      "security": "not a security/product finding"
+    },
+    {
+      "case": "IB8BCA",
+      "fixture": "C9_IB8BCA_parent.cpp",
+      "selector": "applicable",
+      "strict_adapter": "unknown+limitation",
+      "catalog_unseen": "unknown+limitation",
+      "root": "DataView/Atomics index-width and bounds model absent",
+      "security": "no security rule"
+    },
+    {
+      "case": "IB8BCA",
+      "fixture": "C9_IB8BCA_fixed.cpp",
+      "selector": "applicable",
+      "strict_adapter": "unknown+distinct boundary limitation",
+      "catalog_unseen": "unknown+distinct boundary limitation",
+      "root": "index-width boundary repair",
+      "security": "not a security/product finding"
+    },
+    {
+      "case": "unrelated",
+      "fixture": "C9_unrelated.cpp",
+      "selector": "not applicable",
+      "strict_adapter": "no finding",
+      "catalog_unseen": "no finding",
+      "root": "RangeError-only unrelated control",
+      "security": "not a finding"
+    }
+  ],
+  "tests": {
+    "focused": "59 tests; OK; skipped=2 environment-dependent tests not counted as passes",
+    "new_controls": "7 tests; OK; 0 skipped",
+    "cli_smoke": "src.cli --help and src.cli ohscan-run --help; exit 0",
+    "diff_check": "git diff --check; exit 0"
+  },
+  "limitations": [
+    "Synthetic fixtures are source-bound controls, not exact upstream parent/fixed blobs; the pinned report is the permitted case source and exact upstream source objects were not read.",
+    "IAO7GO conservative candidate is emitted by strict detector.py; catalog/unseen routing remains explicit unknown with a limitation because catalog.py and unseen_detector.py are outside this slice write scope.",
+    "I7W51D and IB8BCA intentionally emit no security candidate: available pinned evidence is RangeError/index-boundary semantics without memory corruption or CIA impact.",
+    "Local syntax/IR model has no preprocessing, whole-program CFG, attacker reachability, product build or exploitability proof.",
+    "Full ark discover was not accepted as green: 6 C3 mechanism failures and 1 dependency-manifest error were observed in this checkout; no C3 files were changed. The focused command above is the accepted slice gate."
+  ],
+  "next_slice": [
+    "Bind exact upstream IAO7GO/I7W51D/IB8BCA parent/fixed blobs and source SHA-256 values.",
+    "Route ABRUPT_EXCEPTION_RULE_ID through the approved Catalog/unseen adapter without changing public contracts.",
+    "Add a reviewed DataView/Atomics index-width/bounds rule only after a concrete OOB witness and security-impact evidence.",
+    "Re-run full Ark focused suite in the project-standard Python/toolchain and resolve the unrelated C3/dependency baseline failures separately."
+  ],
+  "dirty_files": " M src/ohscanner/detectors/ark_runtime/analysis.py;  M src/ohscanner/detectors/ark_runtime/detector.py;  M src/ohscanner/detectors/ark_runtime/runtime_exception.py;  M src/ohscanner/detectors/ark_runtime/size_overflow.py; ?? research/experiments/ark_runtime/c9_known_case_gaps_20261019/; ?? tests/detectors/ark_runtime/fixtures/C9_I7W51D_fixed.cpp; ?? tests/detectors/ark_runtime/fixtures/C9_I7W51D_parent.cpp; ?? tests/detectors/ark_runtime/fixtures/C9_IAO7GO_fixed.cpp; ?? tests/detectors/ark_runtime/fixtures/C9_IAO7GO_parent.cpp; ?? tests/detectors/ark_runtime/fixtures/C9_IAO7GO_safe.cpp; ?? tests/detectors/ark_runtime/fixtures/C9_IB8BCA_fixed.cpp; ?? tests/detectors/ark_runtime/fixtures/C9_IB8BCA_parent.cpp; ?? tests/detectors/ark_runtime/fixtures/C9_unrelated.cpp; ?? tests/detectors/ark_runtime/test_known_case_gaps.py"
+}

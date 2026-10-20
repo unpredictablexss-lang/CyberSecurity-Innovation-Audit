@@ -1,0 +1,115 @@
+{
+  "algorithm": "SHA256",
+  "files": [
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/analysis.py",
+      "sha256": "20AE02BF51EB276631EAE06FAA792A7D6407407ABF1333FFF0A504237550A317",
+      "bytes": 22323
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/detector.py",
+      "sha256": "00FD2291AA901533925D92C48650DBA2C6C4BCD107F38F05C61C60BED2B76F6B",
+      "bytes": 13360
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/runtime_exception.py",
+      "sha256": "54B768AB1A31369B9BC831706AFF94EDAABEBBA93EC18BBFDE5405C9E4E039A0",
+      "bytes": 43418
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/size_overflow.py",
+      "sha256": "9CAD0E2646913481A0C5CD59934F151E79152B6FC62572354168F88F6EED5CED",
+      "bytes": 19195
+    },
+    {
+      "path": "tests/detectors/ark_runtime/test_known_case_gaps.py",
+      "sha256": "ECC1366DE0C27F49A5ED0AFC7A7F60C3242025EB508CF0E831E75DDDA205508F",
+      "bytes": 6783
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/C9_IAO7GO_parent.cpp",
+      "sha256": "2316454DA09559050B07E6EE75B55C4778986E7803370E091B9896CC99D4579E",
+      "bytes": 174
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/C9_IAO7GO_fixed.cpp",
+      "sha256": "DCF67AE6156C85F47731670AB9E0158B276B5975501C9E8CBC858254A85DCD12",
+      "bytes": 227
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/C9_IAO7GO_safe.cpp",
+      "sha256": "95606F10448BD9ACF899B95915BC954E593C9FA2E8D1D80C174963FB7FC054D5",
+      "bytes": 287
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/C9_I7W51D_parent.cpp",
+      "sha256": "6062FF07CD92816823D2E1F1A04CEC6FBA500135029BF7BAF6ADC516374C183C",
+      "bytes": 153
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/C9_I7W51D_fixed.cpp",
+      "sha256": "4A0E23B6CC5E5D44E7102F93226DC1F63071088D1FDFE78910AA6E014E822C79",
+      "bytes": 225
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/C9_IB8BCA_parent.cpp",
+      "sha256": "D2EFEA0B9D5F7B76EA3320ABB4D00C66BEEA65D0B59931C8BC7670E4DF207220",
+      "bytes": 159
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/C9_IB8BCA_fixed.cpp",
+      "sha256": "7E459AE0DBD20031464729EA5D9E5714D8B4C0BBCFC9B03E79AE2A3B35333BFE",
+      "bytes": 160
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/C9_unrelated.cpp",
+      "sha256": "20F6B070A3479C5A34A7EECFC6BDC12855C0663A6AF14EEC37C54F88351CA3C6",
+      "bytes": 55
+    },
+    {
+      "path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
+      "sha256": "58F37A6DFE3A518DA07C813195F47E1CB3CBD7E0825B02D28CB6B3E5D0F240EA",
+      "bytes": 29774
+    },
+    {
+      "path": "research/experiments/ark_runtime/c9_known_case_gaps_20261019/patch.diff",
+      "sha256": "BD476FAE9052A74D0B05638A931DF017BE34423EE6153287A90BFA11E6CC27BB",
+      "bytes": 35820
+    },
+    {
+      "path": "research/experiments/ark_runtime/c9_known_case_gaps_20261019/manifest.json",
+      "sha256": "6ADFC96D149C703B42BE913AA35D38CC3E06684395B7F88E6F5148687A65D05E",
+      "bytes": 8941
+    },
+    {
+      "path": "research/experiments/ark_runtime/c9_known_case_gaps_20261019/README.md",
+      "sha256": "619678F4A0EEC3F01AA54E477AC3B25C0ECAFBF3FE30C5427D5B5DBAAD060B99",
+      "bytes": 4927
+    },
+    {
+      "path": "research/experiments/ark_runtime/c9_known_case_gaps_20261019/focused_tests.txt",
+      "sha256": "E154DB5383E2BA1EB890C06AF9E4FD44BF364720100EBD6A8F1846904109F569",
+      "bytes": 8714
+    },
+    {
+      "path": "research/experiments/ark_runtime/c9_known_case_gaps_20261019/cli_help.txt",
+      "sha256": "224233BDFFA8EBBEBAC6FFAFD00BC4AF5F9441B5F5E19B256C2D58850E98BFF9",
+      "bytes": 1922
+    },
+    {
+      "path": "research/experiments/ark_runtime/c9_known_case_gaps_20261019/ohscan_run_help.txt",
+      "sha256": "319236098CAD7A207DD5963B3745E36246149A1A2842C94F30C613EBB1A85EE1",
+      "bytes": 994
+    },
+    {
+      "path": "research/experiments/ark_runtime/c9_known_case_gaps_20261019/full_ark_suite.txt",
+      "sha256": "02DE891705C250586B6255CD2FCC4BF7FB8F9467EB4B3B0A1A098F2AE81FAAD2",
+      "bytes": 28669
+    },
+    {
+      "path": "research/experiments/ark_runtime/c9_known_case_gaps_20261019/diff_check.txt",
+      "sha256": "06AB0B2E400A1F7FE8C164D790316DC7E73CA8EE80D7D4632F1C0369BD123251",
+      "bytes": 441
+    }
+  ]
+}

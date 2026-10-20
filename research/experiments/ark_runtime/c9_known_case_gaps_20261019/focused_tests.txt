@@ -1,0 +1,64 @@
+test_catalog_selector_exposes_gap_files_as_auditable_unknown (tests.detectors.ark_runtime.test_known_case_gaps.KnownCaseGapTests) ... ok
+test_existing_size_positive_fixed_safe_unrelated_controls (tests.detectors.ark_runtime.test_known_case_gaps.KnownCaseGapTests) ... ok
+test_i7w51d_missing_rule_is_explicit_and_distinguished_from_boundary_fix (tests.detectors.ark_runtime.test_known_case_gaps.KnownCaseGapTests) ... ok
+test_iao7go_fixed_and_safe_controls_do_not_repeat_root_cause (tests.detectors.ark_runtime.test_known_case_gaps.KnownCaseGapTests) ... ok
+test_iao7go_parent_is_applicable_and_conservatively_reported (tests.detectors.ark_runtime.test_known_case_gaps.KnownCaseGapTests) ... ok
+test_ib8bca_missing_rule_is_explicit_and_distinguished_from_boundary_fix (tests.detectors.ark_runtime.test_known_case_gaps.KnownCaseGapTests) ... ok
+test_unrelated_control_is_not_applicable (tests.detectors.ark_runtime.test_known_case_gaps.KnownCaseGapTests) ... ok
+test_cast_before_multiplication_preserves_full_operand_product (tests.detectors.ark_runtime.test_size_overflow.TypedArraySizeOverflowTests) ... ok
+test_sendable_allocator_with_pre_multiply_widening_is_safe (tests.detectors.ark_runtime.test_size_overflow.TypedArraySizeOverflowTests) ... ok
+test_unrelated_product_without_allocation_copy_flow_is_ignored (tests.detectors.ark_runtime.test_size_overflow.TypedArraySizeOverflowTests) ... ok
+test_unsigned_product_to_allocation_and_copy_loop_is_reported (tests.detectors.ark_runtime.test_size_overflow.TypedArraySizeOverflowTests) ... ok
+test_variable_renaming_does_not_change_the_result (tests.detectors.ark_runtime.test_size_overflow.TypedArraySizeOverflowTests) ... ok
+test_widening_only_the_destination_does_not_hide_narrow_multiply (tests.detectors.ark_runtime.test_size_overflow.TypedArraySizeOverflowTests) ... ok
+test_assigned_callback_result_with_same_thread_guard_is_safe (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_assigned_callback_result_without_guard_is_candidate (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_assigned_callback_wrapper_remains_partial (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_call_info_pointer_use_with_pending_exception_early_exit_is_guarded (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_call_info_pointer_use_with_value_macro_is_guarded (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_call_info_pointer_use_without_exception_guard_is_candidate (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_callback_result_conversion_before_exception_guard_is_candidate (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_compound_condition_does_not_count_as_pending_exception_guard (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_early_exit_on_exception_result_guards_conversion (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_guard_in_parent_compound_dominates_loop_pointer_use (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_loop_back_edge_remains_unknown (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_missing_macro_definition_keeps_candidate_and_records_limit (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_nested_pointer_use_without_dominating_guard_is_candidate (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_prior_use_is_not_attributed_to_later_callback_result (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_return_reject_macro_is_guarded_only_by_its_pending_branch (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_return_reject_macro_with_unrelated_return_is_not_guarded (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_rule_identifier_is_stable (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_same_thread_exception_macro_before_conversion_guards_use (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_source_derived_helper_effect_reaches_caller_and_guard_fixes_it (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_unmodeled_wrapper_stays_partial_instead_of_becoming_safe (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_unrelated_translation_unit_has_no_applicable_source (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_variable_rename_does_not_change_dataflow_result (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_wrapper_without_selected_helper_body_is_partial (tests.detectors.ark_runtime.test_runtime_exception.RuntimeExceptionPropagationTests) ... ok
+test_aggregate_limited_does_not_discard_valid_local_candidate (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_catalog_allows_explicit_selection_but_keeps_c_out_of_defaults (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_complete_fixture_produces_source_bound_v2_candidate (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_direct_adapter_rejects_mixed_source_context (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_exactly_bound_partial_fixture_preserves_candidate_and_unknown_scope (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_missing_facts_are_not_bypassed_in_direct_adapter (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_mixed_scope_retains_valid_complete_file_candidate (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_model_digest_binds_repository_revision_and_target_blob (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_same_inputs_produce_stable_ids (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_source_content_hash_tamper_is_rejected (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_target_blob_mismatch_is_rejected_before_partial_analysis (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_visible_incompatible_store_signature_is_unknown (tests.detectors.ark_runtime.test_detector_cases.ContractAdapterTests) ... ok
+test_model_digest_has_no_exact_source_identity_bindings (tests.detectors.ark_runtime.test_unseen_detector.UnseenSourceContractTests) ... ok
+test_partial_unknown_control_stays_blocked (tests.detectors.ark_runtime.test_unseen_detector.UnseenSourceContractTests) ... ok
+test_property_store_does_not_preserve_escaped_fresh_target (tests.detectors.ark_runtime.test_unseen_detector.UnseenSourceContractTests) ... ok
+test_property_store_target_escaped_through_callback_arguments_stays_unknown (tests.detectors.ark_runtime.test_unseen_detector.UnseenSourceContractTests) ... ok
+test_property_store_tracks_new_array_type_token_across_callback (tests.detectors.ark_runtime.test_unseen_detector.UnseenSourceContractTests) ... ok
+test_same_type_fixed_and_safe_controls_do_not_emit_candidates (tests.detectors.ark_runtime.test_unseen_detector.UnseenSourceContractTests) ... ok
+test_unrelated_same_language_code_is_not_selected (tests.detectors.ark_runtime.test_unseen_detector.UnseenSourceContractTests) ... ok
+test_unrelated_source_is_not_admitted_by_path_or_repository_only (tests.detectors.ark_runtime.test_unseen_detector.UnseenSourceContractTests) ... ok
+test_unseen_exception_guard_parent_and_fix_controls (tests.detectors.ark_runtime.test_unseen_detector.UnseenSourceContractTests) ... skipped 'Pinned Ark Git store not supplied; no implicit fetch'
+test_unseen_fixed_upstream_revision_is_semantically_applicable (tests.detectors.ark_runtime.test_unseen_detector.UnseenSourceContractTests) ... skipped 'Pinned Ark Git store not supplied; no implicit fetch'
+test_unseen_revision_path_and_content_are_eligible_by_semantics (tests.detectors.ark_runtime.test_unseen_detector.UnseenSourceContractTests) ... ok
+
+----------------------------------------------------------------------
+Ran 59 tests in 0.268s
+
+OK (skipped=2)

@@ -7,6 +7,7 @@ coverage and parse-contamination obligations.
 from collections import deque
 from dataclasses import asdict, dataclass, replace
 from hashlib import sha256
+import re
 from time import perf_counter
 
 from .model import AnalysisBudget, RuntimeTypeModel, OWNER
@@ -52,6 +53,8 @@ def has_type_origin_flow(function, model):
     Names here identify semantic operations for bounded analysis; the diagnostic
     still depends on resolving the destination object and type-token origins.
     """
+    if known_case_gap_ids(function):
+        return True
     if not function.qualified_name.startswith(OWNER + '::'):
         return False
     property_name, property_arity, _, _ = model.property_store
@@ -69,6 +72,79 @@ def has_type_origin_flow(function, model):
         elif name == property_name and len(args) == property_arity:
             stores_typed_array_element = True
     return creates_typed_array and stores_typed_array_element
+
+
+def known_case_gap_ids(function):
+    """Return bounded semantic selectors for reviewed C-line gap cases."""
+    text = function.text(function.node).lower()
+    name = function.qualified_name.lower()
+    ids = []
+    if ((re.search(r"reflect\s*(?:\.\s*apply|apply)", name)
+         or re.search(r"reflect\s*(?:\.\s*apply|apply)", text))
+            and re.search(r"\b(call|return|exception|abrupt)\w*\b", text)):
+        ids.append("IAO7GO")
+    allocation = re.search(r"\b(?:allocatearraybuffer|allocatesendablearraybuffer|allocatebuffer|malloc|calloc|realloc)\s*\(", text)
+    length = re.search(r"\b(?:length|len)\b", text)
+    narrowed = re.search(
+        r"(?:static_cast\s*<\s*(?:u?int32_t|int)\s*>|Int32\s*\(|\b(?:u?int32_t|int)\s+\w*"
+        r"(?:length|len)\w*\b)", text, re.IGNORECASE)
+    if allocation and length and narrowed:
+        ids.append("I7W51D")
+    if ((re.search(r"\b(?:dataview|atomics)\b", text)
+         or re.search(r"(?:dataview|atomics)", name))
+            and re.search(r"\b(?:index|offset)\b", text)
+            and re.search(r"(?:getvalueinbuffer|setvalueinbuffer|calculatepositionwithlength|bounds)", text)):
+        ids.append("IB8BCA")
+    return tuple(ids)
+
+
+def known_case_gap_ids_for_unit(unit):
+    try:
+        _, functions = parse_functions(unit.text.encode("utf-8"))
+    except (ValueError, RuntimeError, UnicodeError):
+        return ()
+    return tuple(sorted({case_id for fn in functions for case_id in known_case_gap_ids(fn)}))
+
+
+def analyze_known_case_gap_unit(unit, functions=None):
+    """Run only reviewed no-rule/abrupt-propagation models for selected gaps."""
+    if functions is None:
+        try:
+            _, functions = parse_functions(unit.text.encode("utf-8"))
+        except (ValueError, RuntimeError, UnicodeError) as error:
+            return AnalysisResult("failed", "failed",
+                                  limitations=("parser_failure:" + type(error).__name__,))
+    case_ids = {case_id for fn in functions for case_id in known_case_gap_ids(fn)}
+    results = []
+    if "IAO7GO" in case_ids:
+        from .runtime_exception import analyze_abrupt_exception_propagation
+        abrupt = analyze_abrupt_exception_propagation(unit, functions=functions)
+        if any(item.kind == "candidate" for item in abrupt.observations):
+            abrupt = AnalysisResult(
+                "limited", "partial",
+                tuple(replace(item, kind="unknown",
+                              reason=item.reason + ":candidate_rule_requires_strict_adapter")
+                      for item in abrupt.observations),
+                tuple(sorted(set(abrupt.limitations + (
+                    "IAO7GO:candidate_rule_routing_requires_strict_adapter",)))),
+                abrupt.steps, abrupt.model_digest)
+        results.append(abrupt)
+    if case_ids & {"I7W51D", "IB8BCA"}:
+        from .size_overflow import analyze_length_index_case_gaps
+        results.append(analyze_length_index_case_gaps(
+            unit.text, functions=functions, parse_complete=unit.parse_status == "complete"))
+    if not results:
+        return AnalysisResult("limited", "not_analyzed",
+                              limitations=("known_case_gap_selector_not_resolved",))
+    status_rank = {"completed": 0, "limited": 1, "timed_out": 2, "failed": 3}
+    outcome_rank = {"complete": 0, "partial": 1, "not_analyzed": 2, "failed": 3}
+    return AnalysisResult(
+        max((item.status for item in results), key=status_rank.__getitem__),
+        min((item.file_outcome for item in results), key=outcome_rank.__getitem__),
+        tuple(item for result in results for item in result.observations),
+        tuple(sorted({item for result in results for item in result.limitations})),
+        sum(item.steps for item in results),
+        next((item.model_digest for item in results if item.model_digest), ""))
 
 
 def _unique_observations(items):
@@ -103,13 +179,18 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
     actual_partial = tree.root_node.has_error
     if actual_partial and not research_partial:
         return AnalysisResult('limited', 'not_analyzed', limitations=('actual_parse_is_partial',))
-    targets = [f for f in functions if f.qualified_name in model.callers
-               or has_type_origin_flow(f, model)]
+    type_targets = [f for f in functions
+                    if (f.qualified_name in model.callers or has_type_origin_flow(f, model))
+                    and not known_case_gap_ids(f)]
+    gap_targets = [f for f in functions if known_case_gap_ids(f)]
+    targets = type_targets or gap_targets
     if not targets:
         return AnalysisResult('limited' if actual_partial else 'completed',
                               'not_analyzed' if actual_partial else 'complete',
                               limitations=('target_not_resolved_in_partial_ast',) if actual_partial else ('not_applicable_to_rule',),
                               model_digest=model.digest)
+    if not type_targets and gap_targets:
+        return analyze_known_case_gap_unit(unit, gap_targets)
     observations, limitations, total_steps = [], [], 0
     model_names = {'GetObjectType', 'LoadHClass', model.store_name, model.creator_name,
                    'NewObjectStubBuilder', 'GateRef', 'BRANCH', 'Bind', 'Jump', 'LoopBegin', 'LoopEnd',

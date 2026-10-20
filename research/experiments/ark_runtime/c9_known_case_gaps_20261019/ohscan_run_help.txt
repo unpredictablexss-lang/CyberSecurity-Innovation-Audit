@@ -1,0 +1,20 @@
+usage: __main__.py ohscan-run [-h] --repo-dir REPO_DIR --repository REPOSITORY
+                              --commit COMMIT [--include INCLUDE] --detector
+                              DETECTOR [--allow-example-detectors]
+                              [--json-out JSON_OUT] [--md-out MD_OUT]
+
+options:
+  -h, --help            show this help message and exit
+  --repo-dir REPO_DIR   Local Git repository with full pinned objects
+  --repository REPOSITORY
+                        Owner/repository declaration
+  --commit COMMIT       Complete immutable Git commit SHA
+  --include INCLUDE     Repository-relative path or prefix; repeatable
+  --detector DETECTOR   Explicit first-party detector ID (e.g.
+                        ohscanner.interface.ipc); repeatable. Not an import
+                        path.
+  --allow-example-detectors
+                        Acknowledge that 'ohscanner.example.*' is a non-
+                        security demonstration
+  --json-out JSON_OUT
+  --md-out MD_OUT

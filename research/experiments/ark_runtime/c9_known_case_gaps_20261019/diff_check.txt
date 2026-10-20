@@ -1,0 +1,4 @@
+warning: in the working copy of 'src/ohscanner/detectors/ark_runtime/analysis.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/ohscanner/detectors/ark_runtime/detector.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/ohscanner/detectors/ark_runtime/size_overflow.py', LF will be replaced by CRLF the next time Git touches it
+exit_code=0

@@ -2,11 +2,16 @@
 import json
 from hashlib import sha1
 from src.ohscanner.contracts import DetectorRun, DetectorFinding, EvidenceObligation
-from .analysis import analyze_unit
+from .analysis import analyze_unit, known_case_gap_ids_for_unit
 from .exception_guard import analyze_exception_guard
 from .receiver_guard import analyze_receiver_guard
+from .runtime_exception import analyze_abrupt_exception_propagation
+from .size_overflow import analyze_length_index_case_gaps
 from .model import (AnalysisBudget, RuntimeTypeModel, DETECTOR_ID, RULE_ID,
                     EXCEPTION_GUARD_RULE_ID, RECEIVER_TYPE_GUARD_RULE_ID, VERSION)
+
+ABRUPT_EXCEPTION_RULE_ID = 'ark.runtime.reflect-apply-abrupt-exception-propagation'
+NO_RULE_GAP_RULE_ID = 'ark.runtime.known-case-gap-no-security-rule'
 
 
 class ArkRuntimeTypeSafetyDetector:
@@ -24,7 +29,8 @@ class ArkRuntimeTypeSafetyDetector:
             return ()
         paths = {row[1] for row in (self.model.target_bindings + self.model.exception_guard_bindings
                                      + self.model.receiver_guard_bindings)}
-        return tuple(unit for unit in units if unit.path in paths)
+        return tuple(unit for unit in units
+                     if unit.path in paths or known_case_gap_ids_for_unit(unit))
 
     def __init__(self, model=None, budget=None):
         self.model = model or RuntimeTypeModel()
@@ -52,7 +58,8 @@ class ArkRuntimeTypeSafetyDetector:
                 rule_bindings.append((EXCEPTION_GUARD_RULE_ID, exception_binding))
             if receiver_binding is not None:
                 rule_bindings.append((RECEIVER_TYPE_GUARD_RULE_ID, receiver_binding))
-            if not rule_bindings:
+            gap_ids = known_case_gap_ids_for_unit(unit)
+            if not rule_bindings and not gap_ids:
                 outcomes.append((unit.path, 'not_analyzed'))
                 limitations.append(unit.path + ': exact upstream repository/commit/path is not in the reviewed model')
                 continue
@@ -66,7 +73,7 @@ class ArkRuntimeTypeSafetyDetector:
             if (unit.language not in self.supported_languages
                     or any(unit.sha256 != binding[3] or git_blob != binding[2]
                            for _, binding in rule_bindings)
-                    or blob_oids.get(unit.path) != rule_bindings[0][1][2]):
+                    or blob_oids.get(unit.path) != (rule_bindings[0][1][2] if rule_bindings else git_blob)):
                 outcomes.append((unit.path, 'not_analyzed'))
                 limitations.append(unit.path + ': target source blob/SHA-256 does not match the version-bound model')
                 continue
@@ -94,6 +101,12 @@ class ArkRuntimeTypeSafetyDetector:
                 else:
                     result = analyze_receiver_guard(unit, budget=self.budget)
                 results.append((rule_id, result))
+            if 'IAO7GO' in gap_ids:
+                results.append((ABRUPT_EXCEPTION_RULE_ID,
+                                analyze_abrupt_exception_propagation(unit)))
+            if set(gap_ids) & {'I7W51D', 'IB8BCA'}:
+                results.append((NO_RULE_GAP_RULE_ID, analyze_length_index_case_gaps(
+                    unit.text, parse_complete=unit.parse_status == 'complete')))
             file_outcome = ('complete' if all(result.file_outcome == 'complete' for _, result in results)
                             else 'partial' if any(result.file_outcome in ('complete', 'partial') for _, result in results)
                             else 'not_analyzed' if all(result.file_outcome == 'not_analyzed' for _, result in results)
@@ -113,7 +126,15 @@ class ArkRuntimeTypeSafetyDetector:
                                         'model_sha256': result.model_digest or self.model.digest,
                                         'function_region': [item.region_start_byte, item.region_end_byte],
                                         'unreviewed_effect_sites': item.effect_sites}, sort_keys=True)
-                    if rule_id == EXCEPTION_GUARD_RULE_ID:
+                    if rule_id == ABRUPT_EXCEPTION_RULE_ID:
+                        obligations = (
+                            ('abrupt_completion_semantics', 'Verify Reflect.apply can complete abruptly and the generated result reaches Return without a dominating pending-exception exit.'),
+                            ('control_flow_dominance', 'Review the complete generated lowering path and build-specific macros.'),
+                            ('runtime_impact', 'Establish concrete runtime impact; this candidate is not a RangeError or boundary-fix claim.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('isolated_validation', 'Reproduce and revalidate only in an authorized isolated environment.'),
+                        )
+                    elif rule_id == EXCEPTION_GUARD_RULE_ID:
                         obligations = (
                             ('exception_path_semantics', 'Verify the builder allocation path can leave a pending exception and the sensitive result use executes before the exception return.'),
                             ('runtime_impact', 'Establish whether the path causes a product crash, corruption or security impact under a reachable runtime condition.'),
@@ -140,6 +161,8 @@ class ArkRuntimeTypeSafetyDetector:
                     findings.append(DetectorFinding(
                         file=unit.path, line=item.line, column=item.column, rule_id=rule_id,
                         message=(
+                            'Candidate only: Reflect.apply abrupt completion may reach Return without a dominating pending-exception exit. trace=' + trace
+                            if rule_id == ABRUPT_EXCEPTION_RULE_ID else
                             'Candidate only: allocation result header is read on a path where the allocation may leave a pending exception. trace=' + trace
                             if rule_id == EXCEPTION_GUARD_RULE_ID else
                             'Candidate only: TypedArray backing-buffer access is reachable without a dominating same-receiver runtime type guard. trace=' + trace
@@ -147,7 +170,9 @@ class ArkRuntimeTypeSafetyDetector:
                             'Candidate only: TypedArray destination and type-token origin differ under '
                             'the bounded type-changing creation model; generated graph path is symbolic. trace=' + trace
                         ),
-                        evidence_type='syntax', candidate_cwe='CWE-843' if rule_id == RULE_ID else None,
+                        evidence_type='syntax',
+                        candidate_cwe=('CWE-755' if rule_id == ABRUPT_EXCEPTION_RULE_ID else
+                                       'CWE-843' if rule_id == RULE_ID else None),
                         symbol=item.symbol, source_sha256=unit.sha256,
                         evidence_obligations=tuple(EvidenceObligation(kind, description) for kind, description in obligations),
                     ))

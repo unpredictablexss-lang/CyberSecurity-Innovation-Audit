@@ -1,0 +1,646 @@
+diff --git a/src/ohscanner/detectors/ark_runtime/analysis.py b/src/ohscanner/detectors/ark_runtime/analysis.py
+index 15bfb89..f13238d 100644
+--- a/src/ohscanner/detectors/ark_runtime/analysis.py
++++ b/src/ohscanner/detectors/ark_runtime/analysis.py
+@@ -7,6 +7,7 @@ coverage and parse-contamination obligations.
+ from collections import deque
+ from dataclasses import asdict, dataclass, replace
+ from hashlib import sha256
++import re
+ from time import perf_counter
+ 
+ from .model import AnalysisBudget, RuntimeTypeModel, OWNER
+@@ -52,6 +53,8 @@ def has_type_origin_flow(function, model):
+     Names here identify semantic operations for bounded analysis; the diagnostic
+     still depends on resolving the destination object and type-token origins.
+     """
++    if known_case_gap_ids(function):
++        return True
+     if not function.qualified_name.startswith(OWNER + '::'):
+         return False
+     property_name, property_arity, _, _ = model.property_store
+@@ -71,6 +74,79 @@ def has_type_origin_flow(function, model):
+     return creates_typed_array and stores_typed_array_element
+ 
+ 
++def known_case_gap_ids(function):
++    """Return bounded semantic selectors for reviewed C-line gap cases."""
++    text = function.text(function.node).lower()
++    name = function.qualified_name.lower()
++    ids = []
++    if ((re.search(r"reflect\s*(?:\.\s*apply|apply)", name)
++         or re.search(r"reflect\s*(?:\.\s*apply|apply)", text))
++            and re.search(r"\b(call|return|exception|abrupt)\w*\b", text)):
++        ids.append("IAO7GO")
++    allocation = re.search(r"\b(?:allocatearraybuffer|allocatesendablearraybuffer|allocatebuffer|malloc|calloc|realloc)\s*\(", text)
++    length = re.search(r"\b(?:length|len)\b", text)
++    narrowed = re.search(
++        r"(?:static_cast\s*<\s*(?:u?int32_t|int)\s*>|Int32\s*\(|\b(?:u?int32_t|int)\s+\w*"
++        r"(?:length|len)\w*\b)", text, re.IGNORECASE)
++    if allocation and length and narrowed:
++        ids.append("I7W51D")
++    if ((re.search(r"\b(?:dataview|atomics)\b", text)
++         or re.search(r"(?:dataview|atomics)", name))
++            and re.search(r"\b(?:index|offset)\b", text)
++            and re.search(r"(?:getvalueinbuffer|setvalueinbuffer|calculatepositionwithlength|bounds)", text)):
++        ids.append("IB8BCA")
++    return tuple(ids)
++
++
++def known_case_gap_ids_for_unit(unit):
++    try:
++        _, functions = parse_functions(unit.text.encode("utf-8"))
++    except (ValueError, RuntimeError, UnicodeError):
++        return ()
++    return tuple(sorted({case_id for fn in functions for case_id in known_case_gap_ids(fn)}))
++
++
++def analyze_known_case_gap_unit(unit, functions=None):
++    """Run only reviewed no-rule/abrupt-propagation models for selected gaps."""
++    if functions is None:
++        try:
++            _, functions = parse_functions(unit.text.encode("utf-8"))
++        except (ValueError, RuntimeError, UnicodeError) as error:
++            return AnalysisResult("failed", "failed",
++                                  limitations=("parser_failure:" + type(error).__name__,))
++    case_ids = {case_id for fn in functions for case_id in known_case_gap_ids(fn)}
++    results = []
++    if "IAO7GO" in case_ids:
++        from .runtime_exception import analyze_abrupt_exception_propagation
++        abrupt = analyze_abrupt_exception_propagation(unit, functions=functions)
++        if any(item.kind == "candidate" for item in abrupt.observations):
++            abrupt = AnalysisResult(
++                "limited", "partial",
++                tuple(replace(item, kind="unknown",
++                              reason=item.reason + ":candidate_rule_requires_strict_adapter")
++                      for item in abrupt.observations),
++                tuple(sorted(set(abrupt.limitations + (
++                    "IAO7GO:candidate_rule_routing_requires_strict_adapter",)))),
++                abrupt.steps, abrupt.model_digest)
++        results.append(abrupt)
++    if case_ids & {"I7W51D", "IB8BCA"}:
++        from .size_overflow import analyze_length_index_case_gaps
++        results.append(analyze_length_index_case_gaps(
++            unit.text, functions=functions, parse_complete=unit.parse_status == "complete"))
++    if not results:
++        return AnalysisResult("limited", "not_analyzed",
++                              limitations=("known_case_gap_selector_not_resolved",))
++    status_rank = {"completed": 0, "limited": 1, "timed_out": 2, "failed": 3}
++    outcome_rank = {"complete": 0, "partial": 1, "not_analyzed": 2, "failed": 3}
++    return AnalysisResult(
++        max((item.status for item in results), key=status_rank.__getitem__),
++        min((item.file_outcome for item in results), key=outcome_rank.__getitem__),
++        tuple(item for result in results for item in result.observations),
++        tuple(sorted({item for result in results for item in result.limitations})),
++        sum(item.steps for item in results),
++        next((item.model_digest for item in results if item.model_digest), ""))
++
++
+ def _unique_observations(items):
+     unique = {}
+     for item in items:
+@@ -103,13 +179,18 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
+     actual_partial = tree.root_node.has_error
+     if actual_partial and not research_partial:
+         return AnalysisResult('limited', 'not_analyzed', limitations=('actual_parse_is_partial',))
+-    targets = [f for f in functions if f.qualified_name in model.callers
+-               or has_type_origin_flow(f, model)]
++    type_targets = [f for f in functions
++                    if (f.qualified_name in model.callers or has_type_origin_flow(f, model))
++                    and not known_case_gap_ids(f)]
++    gap_targets = [f for f in functions if known_case_gap_ids(f)]
++    targets = type_targets or gap_targets
+     if not targets:
+         return AnalysisResult('limited' if actual_partial else 'completed',
+                               'not_analyzed' if actual_partial else 'complete',
+                               limitations=('target_not_resolved_in_partial_ast',) if actual_partial else ('not_applicable_to_rule',),
+                               model_digest=model.digest)
++    if not type_targets and gap_targets:
++        return analyze_known_case_gap_unit(unit, gap_targets)
+     observations, limitations, total_steps = [], [], 0
+     model_names = {'GetObjectType', 'LoadHClass', model.store_name, model.creator_name,
+                    'NewObjectStubBuilder', 'GateRef', 'BRANCH', 'Bind', 'Jump', 'LoopBegin', 'LoopEnd',
+diff --git a/src/ohscanner/detectors/ark_runtime/detector.py b/src/ohscanner/detectors/ark_runtime/detector.py
+index 48a0270..5c6491e 100644
+--- a/src/ohscanner/detectors/ark_runtime/detector.py
++++ b/src/ohscanner/detectors/ark_runtime/detector.py
+@@ -2,12 +2,17 @@
+ import json
+ from hashlib import sha1
+ from src.ohscanner.contracts import DetectorRun, DetectorFinding, EvidenceObligation
+-from .analysis import analyze_unit
++from .analysis import analyze_unit, known_case_gap_ids_for_unit
+ from .exception_guard import analyze_exception_guard
+ from .receiver_guard import analyze_receiver_guard
++from .runtime_exception import analyze_abrupt_exception_propagation
++from .size_overflow import analyze_length_index_case_gaps
+ from .model import (AnalysisBudget, RuntimeTypeModel, DETECTOR_ID, RULE_ID,
+                     EXCEPTION_GUARD_RULE_ID, RECEIVER_TYPE_GUARD_RULE_ID, VERSION)
+ 
++ABRUPT_EXCEPTION_RULE_ID = 'ark.runtime.reflect-apply-abrupt-exception-propagation'
++NO_RULE_GAP_RULE_ID = 'ark.runtime.known-case-gap-no-security-rule'
++
+ 
+ class ArkRuntimeTypeSafetyDetector:
+     detector_id = DETECTOR_ID
+@@ -24,7 +29,8 @@ class ArkRuntimeTypeSafetyDetector:
+             return ()
+         paths = {row[1] for row in (self.model.target_bindings + self.model.exception_guard_bindings
+                                      + self.model.receiver_guard_bindings)}
+-        return tuple(unit for unit in units if unit.path in paths)
++        return tuple(unit for unit in units
++                     if unit.path in paths or known_case_gap_ids_for_unit(unit))
+ 
+     def __init__(self, model=None, budget=None):
+         self.model = model or RuntimeTypeModel()
+@@ -52,7 +58,8 @@ class ArkRuntimeTypeSafetyDetector:
+                 rule_bindings.append((EXCEPTION_GUARD_RULE_ID, exception_binding))
+             if receiver_binding is not None:
+                 rule_bindings.append((RECEIVER_TYPE_GUARD_RULE_ID, receiver_binding))
+-            if not rule_bindings:
++            gap_ids = known_case_gap_ids_for_unit(unit)
++            if not rule_bindings and not gap_ids:
+                 outcomes.append((unit.path, 'not_analyzed'))
+                 limitations.append(unit.path + ': exact upstream repository/commit/path is not in the reviewed model')
+                 continue
+@@ -66,7 +73,7 @@ class ArkRuntimeTypeSafetyDetector:
+             if (unit.language not in self.supported_languages
+                     or any(unit.sha256 != binding[3] or git_blob != binding[2]
+                            for _, binding in rule_bindings)
+-                    or blob_oids.get(unit.path) != rule_bindings[0][1][2]):
++                    or blob_oids.get(unit.path) != (rule_bindings[0][1][2] if rule_bindings else git_blob)):
+                 outcomes.append((unit.path, 'not_analyzed'))
+                 limitations.append(unit.path + ': target source blob/SHA-256 does not match the version-bound model')
+                 continue
+@@ -94,6 +101,12 @@ class ArkRuntimeTypeSafetyDetector:
+                 else:
+                     result = analyze_receiver_guard(unit, budget=self.budget)
+                 results.append((rule_id, result))
++            if 'IAO7GO' in gap_ids:
++                results.append((ABRUPT_EXCEPTION_RULE_ID,
++                                analyze_abrupt_exception_propagation(unit)))
++            if set(gap_ids) & {'I7W51D', 'IB8BCA'}:
++                results.append((NO_RULE_GAP_RULE_ID, analyze_length_index_case_gaps(
++                    unit.text, parse_complete=unit.parse_status == 'complete')))
+             file_outcome = ('complete' if all(result.file_outcome == 'complete' for _, result in results)
+                             else 'partial' if any(result.file_outcome in ('complete', 'partial') for _, result in results)
+                             else 'not_analyzed' if all(result.file_outcome == 'not_analyzed' for _, result in results)
+@@ -113,7 +126,15 @@ class ArkRuntimeTypeSafetyDetector:
+                                         'model_sha256': result.model_digest or self.model.digest,
+                                         'function_region': [item.region_start_byte, item.region_end_byte],
+                                         'unreviewed_effect_sites': item.effect_sites}, sort_keys=True)
+-                    if rule_id == EXCEPTION_GUARD_RULE_ID:
++                    if rule_id == ABRUPT_EXCEPTION_RULE_ID:
++                        obligations = (
++                            ('abrupt_completion_semantics', 'Verify Reflect.apply can complete abruptly and the generated result reaches Return without a dominating pending-exception exit.'),
++                            ('control_flow_dominance', 'Review the complete generated lowering path and build-specific macros.'),
++                            ('runtime_impact', 'Establish concrete runtime impact; this candidate is not a RangeError or boundary-fix claim.'),
++                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
++                            ('isolated_validation', 'Reproduce and revalidate only in an authorized isolated environment.'),
++                        )
++                    elif rule_id == EXCEPTION_GUARD_RULE_ID:
+                         obligations = (
+                             ('exception_path_semantics', 'Verify the builder allocation path can leave a pending exception and the sensitive result use executes before the exception return.'),
+                             ('runtime_impact', 'Establish whether the path causes a product crash, corruption or security impact under a reachable runtime condition.'),
+@@ -140,6 +161,8 @@ class ArkRuntimeTypeSafetyDetector:
+                     findings.append(DetectorFinding(
+                         file=unit.path, line=item.line, column=item.column, rule_id=rule_id,
+                         message=(
++                            'Candidate only: Reflect.apply abrupt completion may reach Return without a dominating pending-exception exit. trace=' + trace
++                            if rule_id == ABRUPT_EXCEPTION_RULE_ID else
+                             'Candidate only: allocation result header is read on a path where the allocation may leave a pending exception. trace=' + trace
+                             if rule_id == EXCEPTION_GUARD_RULE_ID else
+                             'Candidate only: TypedArray backing-buffer access is reachable without a dominating same-receiver runtime type guard. trace=' + trace
+@@ -147,7 +170,9 @@ class ArkRuntimeTypeSafetyDetector:
+                             'Candidate only: TypedArray destination and type-token origin differ under '
+                             'the bounded type-changing creation model; generated graph path is symbolic. trace=' + trace
+                         ),
+-                        evidence_type='syntax', candidate_cwe='CWE-843' if rule_id == RULE_ID else None,
++                        evidence_type='syntax',
++                        candidate_cwe=('CWE-755' if rule_id == ABRUPT_EXCEPTION_RULE_ID else
++                                       'CWE-843' if rule_id == RULE_ID else None),
+                         symbol=item.symbol, source_sha256=unit.sha256,
+                         evidence_obligations=tuple(EvidenceObligation(kind, description) for kind, description in obligations),
+                     ))
+diff --git a/src/ohscanner/detectors/ark_runtime/runtime_exception.py b/src/ohscanner/detectors/ark_runtime/runtime_exception.py
+index ff9ecb7..f7bb74d 100644
+--- a/src/ohscanner/detectors/ark_runtime/runtime_exception.py
++++ b/src/ohscanner/detectors/ark_runtime/runtime_exception.py
+@@ -7,7 +7,7 @@ syntax based and reports candidates; it does not model all C++ effects.
+ from dataclasses import dataclass
+ import re
+ 
+-from .analysis import Observation
++from .analysis import Observation, known_case_gap_ids
+ from .syntax import name_node, parse_functions, walk
+ 
+ 
+@@ -560,6 +560,98 @@ def analyze_runtime_exception_propagation(
+                                   tuple(observations), tuple(sorted(set(limitations))), steps)
+ 
+ 
++def analyze_abrupt_exception_propagation(unit, *, functions=None):
++    """Conservative IAO7GO model for Reflect.apply abrupt completion propagation."""
++    if unit.parse_status not in ("complete", "partial"):
++        return RuntimeExceptionResult("limited", "not_analyzed",
++                                      limitations=("source_parse_unavailable",))
++    if functions is None:
++        try:
++            tree, functions = parse_functions(unit.text.encode("utf-8"))
++        except (ValueError, RuntimeError, UnicodeError) as error:
++            return RuntimeExceptionResult("failed", "failed",
++                                          limitations=("parser_failure:" + type(error).__name__,))
++        if tree.root_node.has_error:
++            return RuntimeExceptionResult("limited", "partial",
++                                          limitations=("runtime_translation_unit_parse_incomplete",))
++    observations, limitations = [], []
++    applicable = False
++    guarded = False
++    effect_names = {"JSFunction::Call", "CallNGCRuntime", "JSCallDispatch"}
++    guard_tokens = ("RETURN_EXCEPTION_IF_ABRUPT_COMPLETION",
++                    "RETURN_VALUE_IF_ABRUPT_COMPLETION", "HasPendingException", "IsException")
++    for fn in functions:
++        if "IAO7GO" not in known_case_gap_ids(fn):
++            continue
++        applicable = True
++        sources = []
++        for node in walk(fn.body):
++            if node.type != "call_expression":
++                continue
++            call_name = fn.call_name(node)
++            if not (call_name in effect_names
++                    or call_name.endswith(("JSFunction::Call", "JSCallDispatch"))
++                    or "ReflectApply" in fn.text(node)):
++                continue
++            parent = node.parent
++            binding = None
++            if parent is not None and parent.type == "init_declarator":
++                declarator = parent.child_by_field_name("declarator")
++                ident = name_node(declarator)
++                if ident is not None:
++                    binding = fn.resolve(fn.text(ident), ident)
++            elif parent is not None and parent.type == "assignment_expression":
++                left = parent.child_by_field_name("left")
++                if left is not None and left.type == "identifier":
++                    binding = fn.resolve(fn.text(left), left)
++            if binding is None:
++                limitations.append("IAO7GO:abrupt_result_binding_unmodeled:" + fn.qualified_name)
++                continue
++            sources.append((binding, node))
++        if not sources:
++            limitations.append("IAO7GO:abrupt_exception_effect_source_unmodeled:" + fn.qualified_name)
++        for binding, source in sources:
++            for sink in walk(fn.body):
++                if sink.type != "call_expression" or fn.call_name(sink) not in ("Return", "ReturnVoid"):
++                    continue
++                args = fn.arguments(sink)
++                if not any(arg.type == "identifier" and fn.resolve(fn.text(arg), arg) == binding
++                           for arg in args):
++                    continue
++                between = tuple(node for node in walk(fn.body)
++                                if source.end_byte <= node.start_byte <= sink.start_byte)
++                has_guard = any(node.type == "call_expression"
++                                and any(token.lower() in fn.call_name(node).lower()
++                                        for token in guard_tokens)
++                                for node in between)
++                if has_guard:
++                    guarded = True
++                    continue
++                line = sink.start_point[0] + 1
++                observations.append(Observation(
++                    "candidate", line, sink.start_point[1] + 1,
++                    "reflect_apply_abrupt_completion_reaches_return_without_pending_exception_exit",
++                    token_line=source.start_point[0] + 1,
++                    symbol=fn.qualified_name,
++                    region_start_byte=fn.node.start_byte,
++                    region_end_byte=fn.node.end_byte,
++                    target_identity=binding.name,
++                    token_origin=fn.call_name(source),
++                    path=(source.start_point[0] + 1, line),
++                ))
++    if not applicable:
++        return RuntimeExceptionResult("limited", "not_analyzed",
++                                      limitations=("IAO7GO:selector_not_resolved",))
++    if observations:
++        limitations.append("bounded_reflect_apply_abrupt_exception_model_no_cfg_or_product_proof")
++    elif not guarded and limitations:
++        limitations.append("IAO7GO:abrupt_exception_propagation_model_unknown")
++    return RuntimeExceptionResult(
++        "limited" if limitations else "completed",
++        "partial" if limitations else "complete",
++        tuple(observations), tuple(sorted(set(limitations))), len(observations))
++
++
+ def _pending_exception_if_exit(fn, statement, thread_binding):
+     if statement.type != "if_statement":
+         return False
+diff --git a/src/ohscanner/detectors/ark_runtime/size_overflow.py b/src/ohscanner/detectors/ark_runtime/size_overflow.py
+index c76fbb8..5b5ec01 100644
+--- a/src/ohscanner/detectors/ark_runtime/size_overflow.py
++++ b/src/ohscanner/detectors/ark_runtime/size_overflow.py
+@@ -8,7 +8,7 @@ all C++ conversions, range checks, macro expansion, or path feasibility.
+ from dataclasses import dataclass
+ import re
+ 
+-from .analysis import AnalysisResult, Observation
++from .analysis import AnalysisResult, Observation, known_case_gap_ids
+ 
+ 
+ RULE_ID = 'ark.runtime.typedarray-buffer-size-multiplication-overflow'
+@@ -316,6 +316,68 @@ def analyze_size_overflow(source):
+     return tuple(flow for flow in flows if flow.may_overflow), limitations
+ 
+ 
++def analyze_length_index_case_gaps(source, *, functions=None, parse_complete=None):
++    """Make reviewed missing length/index models explicit without inventing CWEs.
++
++    I7W51D and IB8BCA currently have no security rule. This adapter reports an
++    unknown/limitation for the exact semantic shape and distinguishes boundary
++    repairs from a security finding.
++    """
++    if parse_complete is False:
++        return AnalysisResult("limited", "partial",
++                              limitations=("actual_parse_is_partial",))
++    if functions is None:
++        try:
++            from .syntax import parse_functions
++            tree, functions = parse_functions(source.encode("utf-8"))
++        except (ValueError, RuntimeError, UnicodeError) as error:
++            return AnalysisResult("failed", "failed",
++                                  limitations=("parser_failure:" + type(error).__name__,))
++        if tree.root_node.has_error:
++            return AnalysisResult("limited", "partial",
++                                  limitations=("runtime_translation_unit_parse_incomplete",))
++    observations, limitations = [], []
++    for fn in functions:
++        case_ids = set(known_case_gap_ids(fn))
++        text = fn.text(fn.node)
++        line = fn.node.start_point[0] + 1
++        if "I7W51D" in case_ids:
++            signed_narrowing = bool(re.search(
++                r"static_cast\s*<\s*(?:int32_t|int)\s*>|\bInt32\s*\(|\bint32_t\s+\w*"
++                r"(?:length|len|count)\w*\b", text))
++            reason = ("signed_int32_length_narrowing_to_allocation_has_no_security_rule"
++                      if signed_narrowing else
++                      "fixed_unsigned_length_boundary_semantics_are_not_a_security_finding")
++            limitation = ("known_case_gap:I7W51D:signed_int32_length_narrowing_unmodeled"
++                          if signed_narrowing else
++                          "known_case_gap:I7W51D:fixed_unsigned_length_boundary_unassessed_not_security")
++            observations.append(Observation("unknown", line, 1, reason,
++                                            symbol=fn.qualified_name,
++                                            region_start_byte=fn.node.start_byte,
++                                            region_end_byte=fn.node.end_byte))
++            limitations.append(limitation)
++        if "IB8BCA" in case_ids:
++            narrow_index = bool(re.search(
++                r"static_cast\s*<\s*(?:int32_t|int)\s*>|\bInt32\s*\(|\bint32_t\s+\w*"
++                r"(?:index|offset)\w*\b", text))
++            reason = ("data_view_atomics_index_width_and_bounds_have_no_security_rule"
++                      if narrow_index else
++                      "fixed_index_width_boundary_semantics_are_not_a_security_finding")
++            limitation = ("known_case_gap:IB8BCA:dataview_atomics_index_width_bounds_unmodeled"
++                          if narrow_index else
++                          "known_case_gap:IB8BCA:fixed_index_width_boundary_unassessed_not_security")
++            observations.append(Observation("unknown", line, 1, reason,
++                                            symbol=fn.qualified_name,
++                                            region_start_byte=fn.node.start_byte,
++                                            region_end_byte=fn.node.end_byte))
++            limitations.append(limitation)
++    if not observations:
++        return AnalysisResult("limited", "not_analyzed",
++                              limitations=("known_case_gap_length_index_selector_not_resolved",))
++    return AnalysisResult("limited", "partial", tuple(observations),
++                          tuple(sorted(set(limitations))), len(observations))
++
++
+ def size_overflow_result_from_flows(unit, model_digest, flows, limitations=()):
+     """Adapt already-parsed bounded syntax results to the Detector contract."""
+     if limitations:
+diff --git a/tests/detectors/ark_runtime/test_known_case_gaps.py b/tests/detectors/ark_runtime/test_known_case_gaps.py
+new file mode 100644
+index 0000000..98b9f0a
+--- /dev/null
++++ b/tests/detectors/ark_runtime/test_known_case_gaps.py
+@@ -0,0 +1,129 @@
++from dataclasses import replace
++from hashlib import sha1, sha256
++import unittest
++
++from src.ohscanner.detectors.ark_runtime.analysis import known_case_gap_ids_for_unit
++from src.ohscanner.detectors.ark_runtime.detector import (
++    ABRUPT_EXCEPTION_RULE_ID, ArkRuntimeTypeSafetyDetector)
++from src.ohscanner.detectors.ark_runtime.size_overflow import analyze_size_overflow
++from src.ohscanner.detectors.ark_runtime.unseen_detector import ArkRuntimeUnseenTypeSafetyDetector
++from src.ohscanner.fixture import snapshot_digest
++from src.ohscanner.runner import run_all_with_coverage
++from .support import case, context, unit
++
++
++class KnownCaseGapTests(unittest.TestCase):
++    def git_context(self, source):
++        from src.parser.ast import parse_source
++        base = context((source,))
++        raw = source.text.encode("utf-8")
++        blob = sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
++        request = replace(
++            base.request,
++            repository="openharmony/arkcompiler_ets_runtime",
++            commit="e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
++            snapshot_sha256=snapshot_digest((source,)),
++            target_id="current-component:openharmony/arkcompiler_ets_runtime",
++            profile_id="light-ast",
++            provenance="git_object",
++        )
++        return replace(base, request=request, shared_facts={
++            "ast": {source.path: parse_source(source.text, "cpp").to_dict()},
++            "source_blob_oid": {source.path: blob},
++        })
++
++    def scan(self, fixture):
++        source = case(fixture)
++        scan_context = self.git_context(source)
++        detector = ArkRuntimeTypeSafetyDetector()
++        selected = detector.select_applicable_units(scan_context, scan_context.units)
++        return source, detector.detect(scan_context, selected), selected
++
++    def test_iao7go_parent_is_applicable_and_conservatively_reported(self):
++        source, result, selected = self.scan("C9_IAO7GO_parent")
++        self.assertEqual(len(selected), 1)
++        findings = [item for item in result.findings if item.rule_id == ABRUPT_EXCEPTION_RULE_ID]
++        self.assertEqual(len(findings), 1)
++        self.assertEqual(findings[0].candidate_cwe, "CWE-755")
++        self.assertEqual(findings[0].source_sha256, source.sha256)
++        self.assertEqual(result.file_outcomes, ((source.path, "partial"),))
++
++    def test_iao7go_fixed_and_safe_controls_do_not_repeat_root_cause(self):
++        for fixture in ("C9_IAO7GO_fixed", "C9_IAO7GO_safe"):
++            with self.subTest(fixture=fixture):
++                source, result, selected = self.scan(fixture)
++                self.assertEqual(len(selected), 1)
++                self.assertFalse(any(item.rule_id == ABRUPT_EXCEPTION_RULE_ID
++                                     for item in result.findings))
++
++    def test_i7w51d_missing_rule_is_explicit_and_distinguished_from_boundary_fix(self):
++        parent, parent_result, _ = self.scan("C9_I7W51D_parent")
++        fixed, fixed_result, _ = self.scan("C9_I7W51D_fixed")
++        self.assertEqual(parent_result.findings, ())
++        self.assertEqual(fixed_result.findings, ())
++        self.assertIn(parent.path + ": known_case_gap:I7W51D:signed_int32_length_narrowing_unmodeled",
++                      parent_result.limitations)
++        self.assertIn(fixed.path + ": known_case_gap:I7W51D:fixed_unsigned_length_boundary_unassessed_not_security",
++                      fixed_result.limitations)
++
++    def test_ib8bca_missing_rule_is_explicit_and_distinguished_from_boundary_fix(self):
++        parent, parent_result, _ = self.scan("C9_IB8BCA_parent")
++        fixed, fixed_result, _ = self.scan("C9_IB8BCA_fixed")
++        self.assertEqual(parent_result.findings, ())
++        self.assertEqual(fixed_result.findings, ())
++        self.assertIn(parent.path + ": known_case_gap:IB8BCA:dataview_atomics_index_width_bounds_unmodeled",
++                      parent_result.limitations)
++        self.assertIn(fixed.path + ": known_case_gap:IB8BCA:fixed_index_width_boundary_unassessed_not_security",
++                      fixed_result.limitations)
++
++    def test_unrelated_control_is_not_applicable(self):
++        source = case("C9_unrelated")
++        self.assertEqual(known_case_gap_ids_for_unit(source), ())
++        scan_context = self.git_context(source)
++        detector = ArkRuntimeTypeSafetyDetector()
++        self.assertEqual(detector.select_applicable_units(scan_context, scan_context.units), ())
++
++    def test_catalog_selector_exposes_gap_files_as_auditable_unknown(self):
++        expectations = {
++            "C9_IAO7GO_parent": "IAO7GO:candidate_rule_routing_requires_strict_adapter",
++            "C9_I7W51D_parent": "known_case_gap:I7W51D:signed_int32_length_narrowing_unmodeled",
++            "C9_IB8BCA_parent": "known_case_gap:IB8BCA:dataview_atomics_index_width_bounds_unmodeled",
++        }
++        for fixture, limitation in expectations.items():
++            with self.subTest(fixture=fixture):
++                source = case(fixture)
++                scan_context = self.git_context(source)
++                detector = ArkRuntimeUnseenTypeSafetyDetector()
++                selected = detector.select_applicable_units(scan_context, scan_context.units)
++                self.assertEqual(len(selected), 1)
++                result = detector.detect(scan_context, selected)
++                self.assertIn(source.path + ": " + limitation, result.limitations)
++                self.assertFalse(any("RangeError" in item.message for item in result.findings))
++
++    def test_existing_size_positive_fixed_safe_unrelated_controls(self):
++        positive = unit(r'''
++void convert(uint32_t stride, uint32_t count) {
++    uint32_t byteCount = stride * count;
++    auto temporary = AllocateArrayBuffer(byteCount);
++    BufferHandle destination;
++    destination.Update(temporary);
++    for (uint32_t i = count; i > 0; --i) {
++        SetValueInBuffer(thread, destination.GetTaggedValue(), cursor, value);
++        cursor += stride;
++    }
++}
++''')
++        fixed = unit(positive.text.replace("uint32_t byteCount = stride * count",
++                                          "uint64_t byteCount = static_cast<uint64_t>(stride) * count"))
++        safe = unit(positive.text.replace("uint32_t byteCount = stride * count",
++                                         "uint64_t byteCount = static_cast<uint64_t>(stride) * count")
++                    .replace("AllocateArrayBuffer", "AllocateSendableArrayBuffer"))
++        unrelated = case("C9_unrelated")
++        self.assertEqual(len(analyze_size_overflow(positive.text)[0]), 1)
++        self.assertEqual(analyze_size_overflow(fixed.text)[0], ())
++        self.assertEqual(analyze_size_overflow(safe.text)[0], ())
++        self.assertEqual(analyze_size_overflow(unrelated.text)[0], ())
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tests/detectors/ark_runtime/fixtures/C9_IAO7GO_parent.cpp b/tests/detectors/ark_runtime/fixtures/C9_IAO7GO_parent.cpp
+new file mode 100644
+index 0000000..932324e
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/C9_IAO7GO_parent.cpp
+@@ -0,0 +1,6 @@
++namespace panda::ecmascript::kungfu {
++void NativeInlineLowering::LowerReflectApply(GateRef glue) {
++    JSTaggedValue result = JSFunction::Call(glue);
++    Return(result);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/C9_IAO7GO_fixed.cpp b/tests/detectors/ark_runtime/fixtures/C9_IAO7GO_fixed.cpp
+new file mode 100644
+index 0000000..eb30450
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/C9_IAO7GO_fixed.cpp
+@@ -0,0 +1,7 @@
++namespace panda::ecmascript::kungfu {
++void NativeInlineLowering::LowerReflectApply(GateRef glue) {
++    JSTaggedValue result = JSFunction::Call(glue);
++    RETURN_VALUE_IF_ABRUPT_COMPLETION(glue, result);
++    Return(result);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/C9_IAO7GO_safe.cpp b/tests/detectors/ark_runtime/fixtures/C9_IAO7GO_safe.cpp
+new file mode 100644
+index 0000000..2eaee14
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/C9_IAO7GO_safe.cpp
+@@ -0,0 +1,10 @@
++namespace panda::ecmascript::kungfu {
++void NativeInlineLowering::LowerReflectApply(GateRef glue, Thread *thread) {
++    JSTaggedValue result = JSFunction::Call(glue);
++    bool completed = !thread->HasPendingException();
++    if (!completed) {
++        return;
++    }
++    Return(result);
++}
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/C9_I7W51D_parent.cpp b/tests/detectors/ark_runtime/fixtures/C9_I7W51D_parent.cpp
+new file mode 100644
+index 0000000..98e20da
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/C9_I7W51D_parent.cpp
+@@ -0,0 +1,4 @@
++void *BuildTypedArray(int64_t length) {
++    int32_t allocationLength = static_cast<int32_t>(length);
++    return AllocateArrayBuffer(allocationLength);
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/C9_I7W51D_fixed.cpp b/tests/detectors/ark_runtime/fixtures/C9_I7W51D_fixed.cpp
+new file mode 100644
+index 0000000..88b8751
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/C9_I7W51D_fixed.cpp
+@@ -0,0 +1,7 @@
++void *BuildTypedArray(int64_t length) {
++    if (length > MAX_ARRAY_LENGTH) {
++        ThrowRangeError();
++    }
++    uint32_t allocationLength = static_cast<uint32_t>(length);
++    return AllocateArrayBuffer(allocationLength);
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/C9_IB8BCA_parent.cpp b/tests/detectors/ark_runtime/fixtures/C9_IB8BCA_parent.cpp
+new file mode 100644
+index 0000000..a15c67a
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/C9_IB8BCA_parent.cpp
+@@ -0,0 +1,4 @@
++GateRef DataViewGet(GateRef glue, int32_t index) {
++    GateRef offset = CalculatePositionWithLength(glue, index);
++    return GetValueInBuffer(glue, offset);
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/C9_IB8BCA_fixed.cpp b/tests/detectors/ark_runtime/fixtures/C9_IB8BCA_fixed.cpp
+new file mode 100644
+index 0000000..e471d26
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/C9_IB8BCA_fixed.cpp
+@@ -0,0 +1,4 @@
++GateRef DataViewGet(GateRef glue, uint64_t index) {
++    GateRef offset = CalculatePositionWithLength(glue, index);
++    return GetValueInBuffer(glue, offset);
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/C9_unrelated.cpp b/tests/detectors/ark_runtime/fixtures/C9_unrelated.cpp
+new file mode 100644
+index 0000000..ccf6c76
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/C9_unrelated.cpp
+@@ -0,0 +1,3 @@
++void ReportRangeErrorOnly() {
++    ThrowRangeError();
++}
