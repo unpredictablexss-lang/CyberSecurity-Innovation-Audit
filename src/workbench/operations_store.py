@@ -6,6 +6,8 @@ from pathlib import Path
 import sqlite3
 import statistics
 import uuid
+from datetime import datetime
+from decimal import Decimal, InvalidOperation
 from .store import now
 
 END = {"completed", "completed_with_limitations", "blocked", "failed", "cancelled", "timed_out", "interrupted"}
@@ -63,47 +65,154 @@ class Operations:
                       ON agent_baseline_reviews(experiment_id,repository,source_commit,candidate_id);
                     INSERT OR IGNORE INTO schema_migrations VALUES(4);
                     """)
-        with store.connect() as db:
-            current_version = db.execute("SELECT max(version) FROM schema_migrations").fetchone()[0]
-        if current_version < 5:
-            backups = store.root / "backups"
-            backups.mkdir(exist_ok=True)
-            with sqlite3.connect(store.path) as src, sqlite3.connect(backups / ("before-v5-" + uuid.uuid4().hex + ".sqlite3")) as dst:
-                src.backup(dst)
+        with (store.root / "migration.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
             with store.connect() as db:
-                db.executescript("""
-                CREATE TABLE IF NOT EXISTS agent_blind_sessions(
-                  id TEXT PRIMARY KEY,
-                  experiment_id TEXT NOT NULL,
-                  state TEXT NOT NULL,
-                  created_at TEXT NOT NULL,
-                  closed_at TEXT
-                );
-                CREATE TABLE IF NOT EXISTS agent_blind_items(
-                  id TEXT PRIMARY KEY,
-                  session_id TEXT NOT NULL REFERENCES agent_blind_sessions(id),
-                  operation_id TEXT NOT NULL REFERENCES operations(id),
-                  result_sha256 TEXT NOT NULL,
-                  item_order INTEGER NOT NULL,
-                  packet TEXT NOT NULL,
-                  packet_sha256 TEXT NOT NULL,
-                  UNIQUE(session_id, operation_id),
-                  UNIQUE(session_id, item_order)
-                );
-                CREATE TABLE IF NOT EXISTS agent_blind_reviews(
-                  id INTEGER PRIMARY KEY AUTOINCREMENT,
-                  session_id TEXT NOT NULL REFERENCES agent_blind_sessions(id),
-                  item_id TEXT NOT NULL REFERENCES agent_blind_items(id),
-                  result_sha256 TEXT NOT NULL,
-                  record TEXT NOT NULL,
-                  record_sha256 TEXT NOT NULL,
-                  created_at TEXT NOT NULL,
-                  UNIQUE(session_id, item_id)
-                );
-                CREATE INDEX IF NOT EXISTS agent_blind_item_session_order
-                  ON agent_blind_items(session_id,item_order);
-                INSERT OR IGNORE INTO schema_migrations VALUES(5);
-                """)
+                current_version = db.execute("SELECT max(version) FROM schema_migrations").fetchone()[0]
+            if current_version < 5:
+                backups = store.root / "backups"
+                backups.mkdir(exist_ok=True)
+                with sqlite3.connect(store.path) as src, sqlite3.connect(backups / ("before-v5-" + uuid.uuid4().hex + ".sqlite3")) as dst:
+                    src.backup(dst)
+                with store.connect() as db:
+                    db.executescript("""
+                    CREATE TABLE IF NOT EXISTS agent_blind_sessions(
+                      id TEXT PRIMARY KEY,
+                      experiment_id TEXT NOT NULL,
+                      state TEXT NOT NULL,
+                      created_at TEXT NOT NULL,
+                      closed_at TEXT
+                    );
+                    CREATE TABLE IF NOT EXISTS agent_blind_items(
+                      id TEXT PRIMARY KEY,
+                      session_id TEXT NOT NULL REFERENCES agent_blind_sessions(id),
+                      operation_id TEXT NOT NULL REFERENCES operations(id),
+                      result_sha256 TEXT NOT NULL,
+                      item_order INTEGER NOT NULL,
+                      packet TEXT NOT NULL,
+                      packet_sha256 TEXT NOT NULL,
+                      UNIQUE(session_id, operation_id),
+                      UNIQUE(session_id, item_order)
+                    );
+                    CREATE TABLE IF NOT EXISTS agent_blind_reviews(
+                      id INTEGER PRIMARY KEY AUTOINCREMENT,
+                      session_id TEXT NOT NULL REFERENCES agent_blind_sessions(id),
+                      item_id TEXT NOT NULL REFERENCES agent_blind_items(id),
+                      result_sha256 TEXT NOT NULL,
+                      record TEXT NOT NULL,
+                      record_sha256 TEXT NOT NULL,
+                      created_at TEXT NOT NULL,
+                      UNIQUE(session_id, item_id)
+                    );
+                    CREATE INDEX IF NOT EXISTS agent_blind_item_session_order
+                      ON agent_blind_items(session_id,item_order);
+                    INSERT OR IGNORE INTO schema_migrations VALUES(5);
+                    """)
+            with store.connect() as db:
+                current_version = db.execute("SELECT max(version) FROM schema_migrations").fetchone()[0]
+            if current_version < 6:
+                backups = store.root / "backups"
+                backups.mkdir(exist_ok=True)
+                with sqlite3.connect(store.path) as src, sqlite3.connect(backups / ("before-v6-" + uuid.uuid4().hex + ".sqlite3")) as dst:
+                    src.backup(dst)
+                with store.connect() as db:
+                    db.executescript("""
+                    CREATE TABLE IF NOT EXISTS triage_authorizations(
+                      audit_id TEXT PRIMARY KEY REFERENCES jobs(id),
+                      consent_sha256 TEXT NOT NULL,
+                      snapshot TEXT NOT NULL,
+                      created_at TEXT NOT NULL,
+                      revoked_at TEXT
+                    );
+                    CREATE TABLE IF NOT EXISTS smart_triage_batches(
+                      id TEXT PRIMARY KEY,
+                      audit_id TEXT NOT NULL REFERENCES jobs(id),
+                      report_sha256 TEXT NOT NULL,
+                      authorization_sha256 TEXT NOT NULL,
+                      batch_consent_sha256 TEXT NOT NULL,
+                      status TEXT NOT NULL,
+                      candidate_count INTEGER NOT NULL,
+                      selected_count INTEGER NOT NULL,
+                      candidate_manifest TEXT NOT NULL,
+                      operation_ids TEXT NOT NULL,
+                      created_at TEXT NOT NULL,
+                      error TEXT,
+                      UNIQUE(audit_id,report_sha256,authorization_sha256)
+                    );
+                    CREATE INDEX IF NOT EXISTS smart_triage_audit_order
+                      ON smart_triage_batches(audit_id,created_at);
+                    INSERT OR IGNORE INTO schema_migrations VALUES(6);
+                    """)
+            with store.connect() as db:
+                current_version = db.execute("SELECT max(version) FROM schema_migrations").fetchone()[0]
+            if current_version < 7:
+                backups = store.root / "backups"
+                backups.mkdir(exist_ok=True)
+                with sqlite3.connect(store.path) as src, sqlite3.connect(backups / ("before-v7-" + uuid.uuid4().hex + ".sqlite3")) as dst:
+                    src.backup(dst)
+                with store.connect() as db:
+                    db.executescript("""
+                    CREATE TABLE IF NOT EXISTS risk_snapshots(
+                      id TEXT PRIMARY KEY,
+                      audit_id TEXT NOT NULL REFERENCES jobs(id),
+                      report_sha256 TEXT NOT NULL,
+                      content_sha256 TEXT NOT NULL,
+                      policy_version TEXT NOT NULL,
+                      content TEXT NOT NULL,
+                      created_at TEXT NOT NULL,
+                      UNIQUE(audit_id,report_sha256,content_sha256)
+                    );
+                    CREATE INDEX IF NOT EXISTS risk_snapshot_audit_order
+                      ON risk_snapshots(audit_id,created_at);
+                    CREATE TABLE IF NOT EXISTS report_snapshots(
+                      id TEXT PRIMARY KEY,
+                      audit_id TEXT NOT NULL REFERENCES jobs(id),
+                      report_sha256 TEXT NOT NULL,
+                      risk_snapshot_id TEXT NOT NULL REFERENCES risk_snapshots(id),
+                      content_sha256 TEXT NOT NULL,
+                      json_sha256 TEXT NOT NULL,
+                      markdown_sha256 TEXT NOT NULL,
+                      json_content TEXT NOT NULL,
+                      markdown_content TEXT NOT NULL,
+                      created_at TEXT NOT NULL,
+                      UNIQUE(audit_id,report_sha256,content_sha256)
+                    );
+                    CREATE INDEX IF NOT EXISTS report_snapshot_audit_order
+                      ON report_snapshots(audit_id,created_at);
+                    INSERT OR IGNORE INTO schema_migrations VALUES(7);
+                    """)
+            with store.connect() as db:
+                current_version = db.execute("SELECT max(version) FROM schema_migrations").fetchone()[0]
+            if current_version < 8:
+                backups = store.root / "backups"
+                backups.mkdir(exist_ok=True)
+                with sqlite3.connect(store.path) as src, sqlite3.connect(backups / ("before-v8-" + uuid.uuid4().hex + ".sqlite3")) as dst:
+                    src.backup(dst)
+                with store.connect() as db:
+                    db.executescript("""
+                    ALTER TABLE smart_triage_batches ADD COLUMN r2_status TEXT NOT NULL DEFAULT 'not_requested';
+                    ALTER TABLE smart_triage_batches ADD COLUMN r2_operation_ids TEXT NOT NULL DEFAULT '[]';
+                    ALTER TABLE smart_triage_batches ADD COLUMN r2_candidate_manifest TEXT NOT NULL DEFAULT '[]';
+                    ALTER TABLE smart_triage_batches ADD COLUMN r2_decision_sha256 TEXT;
+                    ALTER TABLE smart_triage_batches ADD COLUMN r2_error TEXT;
+                    INSERT OR IGNORE INTO schema_migrations VALUES(8);
+                    """)
+            with store.connect() as db:
+                current_version = db.execute("SELECT max(version) FROM schema_migrations").fetchone()[0]
+            if current_version < 9:
+                backups = store.root / "backups"
+                backups.mkdir(exist_ok=True)
+                with sqlite3.connect(store.path) as src, sqlite3.connect(backups / ("before-v9-" + uuid.uuid4().hex + ".sqlite3")) as dst:
+                    src.backup(dst)
+                with store.connect() as db:
+                    db.executescript("""
+                    CREATE TABLE IF NOT EXISTS triage_cancellations(
+                      audit_id TEXT PRIMARY KEY REFERENCES jobs(id),
+                      report_sha256 TEXT,
+                      created_at TEXT NOT NULL
+                    );
+                    INSERT OR IGNORE INTO schema_migrations VALUES(9);
+                    """)
     def directory(self, key):
         if len(key) != 32 or any(c not in "0123456789abcdef" for c in key):
             raise ValueError("invalid operation ID")
@@ -193,6 +302,422 @@ class Operations:
                            (key, stamp, "queued", "Explicitly approved Agent batch item saved atomically"))
         return [self.get(key) for key in keys]
 
+    @staticmethod
+    def triage_batch_row(row):
+        if row is None:
+            raise KeyError("triage batch not found")
+        item = dict(row)
+        item["candidate_manifest"] = json.loads(item["candidate_manifest"])
+        item["operation_ids"] = json.loads(item["operation_ids"])
+        item["r2_operation_ids"] = json.loads(item.get("r2_operation_ids") or "[]")
+        item["r2_candidate_manifest"] = json.loads(item.get("r2_candidate_manifest") or "[]")
+        return item
+
+    def record_triage_batch(self, record):
+        batch_id = record.get("id")
+        if not isinstance(batch_id, str) or len(batch_id) != 32:
+            raise ValueError("invalid smart triage batch ID")
+        with self.store.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            existing = db.execute(
+                "SELECT * FROM smart_triage_batches WHERE audit_id=? AND report_sha256=? AND authorization_sha256=?",
+                (record["audit_id"], record["report_sha256"], record["authorization_sha256"]),
+            ).fetchone()
+            if existing:
+                return self.triage_batch_row(existing)
+            db.execute(
+                "INSERT INTO smart_triage_batches(id,audit_id,report_sha256,authorization_sha256,batch_consent_sha256,status,candidate_count,selected_count,candidate_manifest,operation_ids,created_at,error,r2_status,r2_candidate_manifest) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                (batch_id, record["audit_id"], record["report_sha256"],
+                 record["authorization_sha256"], record["batch_consent_sha256"],
+                 record["status"], record["candidate_count"], record["selected_count"],
+                 json.dumps(record["candidate_manifest"], sort_keys=True),
+                 json.dumps(record.get("operation_ids", []), sort_keys=True),
+                 record.get("created_at", now()), record.get("error"),
+                 record.get("r2_status", "not_requested"),
+                 json.dumps(record.get("r2_candidate_manifest", []), sort_keys=True)),
+            )
+            row = db.execute("SELECT * FROM smart_triage_batches WHERE id=?", (batch_id,)).fetchone()
+        return self.triage_batch_row(row)
+
+    def create_authorized_triage_batch(self, record, specs):
+        if not specs or len(specs) > 5:
+            raise ValueError("authorized triage batch must contain between one and five candidates")
+        if any(spec.get("triage_authorization_sha256") != record["authorization_sha256"]
+               or spec.get("smart_triage_batch_id") != record["id"] for spec in specs):
+            raise ValueError("triage operation does not match its audit authorization batch")
+        keys = [uuid.uuid4().hex for _ in specs]
+        stamp = record.get("created_at", now())
+        with self.store.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            prior = db.execute(
+                "SELECT * FROM smart_triage_batches WHERE audit_id=? AND report_sha256=? AND authorization_sha256=?",
+                (record["audit_id"], record["report_sha256"], record["authorization_sha256"]),
+            ).fetchone()
+            if prior:
+                batch = self.triage_batch_row(prior)
+                return batch, [self.row(db.execute("SELECT * FROM operations WHERE id=?", (key,)).fetchone())
+                               for key in batch["operation_ids"]]
+            cancellation = db.execute(
+                "SELECT report_sha256 FROM triage_cancellations WHERE audit_id=?",
+                (record["audit_id"],),
+            ).fetchone()
+            if cancellation and (cancellation[0] is None
+                                 or cancellation[0] == record["report_sha256"]):
+                return None, []
+            active = db.execute("SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0]
+            if active + len(specs) > 100:
+                raise ValueError("operation queue full")
+            db.execute(
+                "INSERT INTO smart_triage_batches(id,audit_id,report_sha256,authorization_sha256,batch_consent_sha256,status,candidate_count,selected_count,candidate_manifest,operation_ids,created_at,error,r2_status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                (record["id"], record["audit_id"], record["report_sha256"],
+                 record["authorization_sha256"], record["batch_consent_sha256"], "queued",
+                 record["candidate_count"], record["selected_count"],
+                 json.dumps(record["candidate_manifest"], sort_keys=True),
+                 json.dumps(keys), stamp, None,
+                 record.get("r2_status", "not_requested")),
+            )
+            for key, spec in zip(keys, specs):
+                db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
+                           (key, "agent_investigation", json.dumps(spec, sort_keys=True), "queued", stamp))
+                db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
+                           (key, stamp, "queued", "Task-level consent authorized bounded automatic single-shot triage"))
+        with self.store.connect() as db:
+            batch = self.triage_batch_row(db.execute(
+                "SELECT * FROM smart_triage_batches WHERE id=?", (record["id"],)).fetchone())
+            operations = [self.row(db.execute("SELECT * FROM operations WHERE id=?", (key,)).fetchone())
+                          for key in keys]
+        return batch, operations
+
+    def triage_cancellation(self, audit_id, report_sha256=None):
+        with self.store.connect() as db:
+            row = db.execute(
+                "SELECT * FROM triage_cancellations WHERE audit_id=?", (audit_id,)
+            ).fetchone()
+        if row is None:
+            return None
+        item = dict(row)
+        if report_sha256 is not None and item["report_sha256"] not in {None, report_sha256}:
+            return None
+        return item
+
+    def cancel_triage_for_job(self, audit_id, report_sha256=None, force=False):
+        """Persist a triage stop and cancel only Agent work bound to this scan."""
+        stamp = now()
+        cancelled_ids = []
+        stopped_running_ids = []
+        with self.store.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            job_row = db.execute("SELECT status FROM jobs WHERE id=?", (audit_id,)).fetchone()
+            if job_row is None:
+                raise KeyError("job not found")
+            batch_query = "SELECT id FROM smart_triage_batches WHERE audit_id=?"
+            batch_args = [audit_id]
+            operation_rows = db.execute(
+                "SELECT id,status,spec FROM operations WHERE kind='agent_investigation'"
+            ).fetchall()
+            matching_operations = []
+            for row in operation_rows:
+                spec = json.loads(row["spec"])
+                if spec.get("job_id") != audit_id:
+                    continue
+                if report_sha256 is not None and spec.get("report_sha256") != report_sha256:
+                    continue
+                if row["status"] in {"queued", "running"}:
+                    matching_operations.append(row)
+            if report_sha256 is not None:
+                batch_query += " AND report_sha256=?"
+                batch_args.append(report_sha256)
+            batches = db.execute(batch_query, batch_args).fetchall()
+            pending_r2 = any(
+                db.execute(
+                    "SELECT 1 FROM smart_triage_batches WHERE id=? AND r2_status='awaiting_r1'",
+                    (row["id"],),
+                ).fetchone()
+                for row in batches
+            )
+            authorization = db.execute(
+                "SELECT revoked_at FROM triage_authorizations WHERE audit_id=?", (audit_id,)
+            ).fetchone()
+            awaiting_scan_authorized_triage = bool(
+                authorization and authorization["revoked_at"] is None
+                and job_row["status"] not in {"completed", "completed_with_limitations",
+                    "failed", "cancelled", "interrupted", "timed_out"}
+            )
+            if not force and not matching_operations and not pending_r2 and not awaiting_scan_authorized_triage:
+                return {
+                    "audit_id": audit_id, "report_sha256": report_sha256,
+                    "cancelled_operation_count": 0, "stop_requested_operation_count": 0,
+                    "stopped": False,
+                }
+            db.execute(
+                "INSERT INTO triage_cancellations(audit_id,report_sha256,created_at) VALUES(?,?,?) "
+                "ON CONFLICT(audit_id) DO UPDATE SET report_sha256=COALESCE(triage_cancellations.report_sha256,excluded.report_sha256)",
+                (audit_id, report_sha256, stamp),
+            )
+            for batch_row in batches:
+                db.execute(
+                    "UPDATE smart_triage_batches SET status='cancelled', "
+                    "r2_status=CASE WHEN r2_status IN ('awaiting_r1','queued','budget_limited') "
+                    "THEN 'cancelled' ELSE r2_status END, "
+                    "r2_error=CASE WHEN r2_status IN ('awaiting_r1','queued','budget_limited') "
+                    "THEN 'triage cancelled by user' ELSE r2_error END WHERE id=?",
+                    (batch_row["id"],),
+                )
+            for row in matching_operations:
+                db.execute("UPDATE operations SET cancel_requested=1 WHERE id=?", (row["id"],))
+                if row["status"] == "queued":
+                    db.execute(
+                        "UPDATE operations SET status='cancelled',finished_at=? WHERE id=?",
+                        (stamp, row["id"]),
+                    )
+                    cancelled_ids.append(row["id"])
+                else:
+                    stopped_running_ids.append(row["id"])
+        for operation_id in cancelled_ids:
+            self.event(operation_id, "cancelled", "Queued Agent triage cancelled for this audit")
+        for operation_id in stopped_running_ids:
+            self.event(operation_id, "cancel_requested", "Agent triage stop requested for this audit")
+        return {
+            "audit_id": audit_id,
+            "report_sha256": report_sha256,
+            "cancelled_operation_count": len(cancelled_ids),
+            "stop_requested_operation_count": len(stopped_running_ids),
+            "stopped": True,
+        }
+
+    def triage_batch(self, batch_id):
+        with self.store.connect() as db:
+            row = db.execute("SELECT * FROM smart_triage_batches WHERE id=?", (batch_id,)).fetchone()
+        return self.triage_batch_row(row)
+
+    def triage_batches_pending_r2(self):
+        with self.store.connect() as db:
+            rows = db.execute(
+                "SELECT * FROM smart_triage_batches WHERE r2_status='awaiting_r1' ORDER BY created_at,id"
+            ).fetchall()
+        return [self.triage_batch_row(row) for row in rows]
+
+    def create_authorized_r2_batch(self, batch_id, decision_sha256, candidate_manifest,
+                                   specs, status, error=None):
+        allowed = {"queued", "not_needed", "budget_limited",
+                   "blocked_authorization_changed", "failed_selection"}
+        if status not in allowed or (specs and status not in {"queued", "budget_limited"}):
+            raise ValueError("invalid conditional R2 batch decision")
+        keys = [uuid.uuid4().hex for _ in specs]
+        stamp = now()
+        with self.store.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT * FROM smart_triage_batches WHERE id=?", (batch_id,)).fetchone()
+            if row is None:
+                raise KeyError("triage batch not found")
+            batch = self.triage_batch_row(row)
+            if batch["r2_status"] != "awaiting_r1":
+                existing = [self.row(db.execute("SELECT * FROM operations WHERE id=?", (key,)).fetchone())
+                            for key in batch["r2_operation_ids"]]
+                return batch, existing
+            authorization = db.execute(
+                "SELECT consent_sha256,revoked_at,snapshot FROM triage_authorizations WHERE audit_id=?",
+                (batch["audit_id"],),
+            ).fetchone()
+            if (authorization is None or authorization["revoked_at"] is not None
+                    or authorization["consent_sha256"] != batch["authorization_sha256"]):
+                status, specs, keys = "blocked_authorization_changed", [], []
+                error = "task-level source-egress authorization was revoked before R2 scheduling"
+                db.execute(
+                    "UPDATE smart_triage_batches SET r2_status=?,r2_operation_ids='[]',r2_candidate_manifest=?,r2_decision_sha256=?,r2_error=? WHERE id=? AND r2_status='awaiting_r1'",
+                    (status, json.dumps(candidate_manifest, sort_keys=True), decision_sha256, error, batch_id),
+                )
+                saved = self.triage_batch_row(db.execute(
+                    "SELECT * FROM smart_triage_batches WHERE id=?", (batch_id,)).fetchone())
+                return saved, []
+            r1_ids = batch["operation_ids"]
+            r1_rows = {}
+            if r1_ids:
+                placeholders = ",".join("?" for _ in r1_ids)
+                rows = db.execute(
+                    "SELECT id,status,spec,result_sha256 FROM operations WHERE id IN (" + placeholders + ")",
+                    r1_ids,
+                ).fetchall()
+                if len(rows) != len(r1_ids) or any(item["status"] not in END for item in rows):
+                    return batch, []
+                r1_rows = {item["id"]: item for item in rows}
+            snapshot = json.loads(authorization["snapshot"])
+            if len(specs) > int(snapshot.get("r2_candidate_limit", 0)):
+                raise ValueError("conditional R2 candidate budget exceeded")
+            selected_r1_candidates = {
+                row.get("candidate_id") for row in batch["candidate_manifest"]
+                if isinstance(row, dict) and row.get("state") == "selected"
+            }
+            r2_candidates = [spec.get("candidate_id") for spec in specs]
+            if len(r2_candidates) != len(set(r2_candidates)):
+                raise ValueError("conditional R2 batch repeats a candidate")
+            for spec in specs:
+                parent = r1_rows.get(spec.get("r1_operation_id"))
+                parent_spec = json.loads(parent["spec"]) if parent else {}
+                if (spec.get("triage_authorization_sha256") != batch["authorization_sha256"]
+                        or spec.get("smart_triage_batch_id") != batch_id
+                        or spec.get("mode") != "tool_agent"
+                        or spec.get("report_sha256") != batch["report_sha256"]
+                        or spec.get("candidate_id") not in selected_r1_candidates
+                        or parent is None
+                        or parent["status"] not in {"completed", "completed_with_limitations"}
+                        or parent["result_sha256"] != spec.get("r1_result_sha256")
+                        or parent_spec.get("mode") != "single_shot"
+                        or parent_spec.get("candidate_id") != spec.get("candidate_id")
+                        or parent_spec.get("report_sha256") != batch["report_sha256"]
+                        or parent_spec.get("candidate_source_sha256") != spec.get("candidate_source_sha256")):
+                    raise ValueError("conditional R2 operation is outside its completed fixed R1 result")
+            if specs:
+                active = db.execute("SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0]
+                if active + len(specs) > 100:
+                    raise ValueError("operation queue full")
+                for key, spec in zip(keys, specs):
+                    db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
+                               (key, "agent_investigation", json.dumps(spec, sort_keys=True), "queued", stamp))
+                    db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
+                               (key, stamp, "queued", "R1 left critical source obligations unresolved; bounded conditional R2 was authorized"))
+            db.execute(
+                "UPDATE smart_triage_batches SET r2_status=?,r2_operation_ids=?,r2_candidate_manifest=?,r2_decision_sha256=?,r2_error=? WHERE id=? AND r2_status='awaiting_r1'",
+                (status, json.dumps(keys), json.dumps(candidate_manifest, sort_keys=True),
+                 decision_sha256, error, batch_id),
+            )
+            saved = self.triage_batch_row(db.execute(
+                "SELECT * FROM smart_triage_batches WHERE id=?", (batch_id,)).fetchone())
+            operations = [self.row(db.execute("SELECT * FROM operations WHERE id=?", (key,)).fetchone())
+                          for key in keys]
+        return saved, operations
+
+    def triage_batches_for_job(self, audit_id, report_sha256=None):
+        with self.store.connect() as db:
+            query = "SELECT * FROM smart_triage_batches WHERE audit_id=?"
+            args = [audit_id]
+            if report_sha256 is not None:
+                query += " AND report_sha256=?"
+                args.append(report_sha256)
+            query += " ORDER BY created_at"
+            return [self.triage_batch_row(row) for row in db.execute(query, args)]
+
+    def create_audit_snapshots(self, risk_payload, report_payload, markdown_builder):
+        """Persist content-addressed risk and combined-report snapshots atomically."""
+        audit_id = report_payload.get("audit_id")
+        report_sha256 = report_payload.get("source_report_sha256")
+        policy_version = risk_payload.get("policy_version")
+        if (not isinstance(audit_id, str) or len(audit_id) != 32
+                or not isinstance(report_sha256, str) or len(report_sha256) != 64
+                or not isinstance(policy_version, str) or not policy_version):
+            raise ValueError("invalid audit snapshot binding")
+
+        def canonical(value):
+            return json.dumps(value, sort_keys=True, ensure_ascii=False,
+                              separators=(",", ":"))
+
+        risk_content = canonical(risk_payload)
+        risk_digest = hashlib.sha256(risk_content.encode("utf-8")).hexdigest()
+        risk_id = hashlib.sha256(
+            (audit_id + report_sha256 + risk_digest).encode("utf-8")
+        ).hexdigest()[:32]
+        report_document = {**report_payload, "risk_snapshot_id": risk_id,
+                           "risk_snapshot_sha256": risk_digest}
+        report_digest = hashlib.sha256(canonical(report_document).encode("utf-8")).hexdigest()
+        snapshot_id = hashlib.sha256(
+            (audit_id + report_sha256 + report_digest).encode("utf-8")
+        ).hexdigest()[:32]
+
+        with self.store.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            prior_risk = db.execute(
+                "SELECT * FROM risk_snapshots WHERE audit_id=? AND report_sha256=? AND content_sha256=?",
+                (audit_id, report_sha256, risk_digest),
+            ).fetchone()
+            if prior_risk:
+                risk_id = prior_risk["id"]
+                report_document["risk_snapshot_id"] = risk_id
+            else:
+                db.execute(
+                    "INSERT INTO risk_snapshots(id,audit_id,report_sha256,content_sha256,policy_version,content,created_at) VALUES(?,?,?,?,?,?,?)",
+                    (risk_id, audit_id, report_sha256, risk_digest, policy_version,
+                     risk_content, now()),
+                )
+            prior_report = db.execute(
+                "SELECT * FROM report_snapshots WHERE audit_id=? AND report_sha256=? AND content_sha256=?",
+                (audit_id, report_sha256, report_digest),
+            ).fetchone()
+            if prior_report:
+                row = dict(prior_report)
+                risk_row = db.execute("SELECT * FROM risk_snapshots WHERE id=?", (row["risk_snapshot_id"],)).fetchone()
+                return self._audit_snapshot_result(row, risk_row)
+
+            created_at = now()
+            document = {
+                **report_document,
+                "report_snapshot_id": snapshot_id,
+                "report_snapshot_sha256": report_digest,
+                "created_at": created_at,
+            }
+            json_content = json.dumps(document, sort_keys=True, ensure_ascii=False, indent=2) + "\n"
+            markdown_content = markdown_builder(document)
+            json_digest = hashlib.sha256(json_content.encode("utf-8")).hexdigest()
+            markdown_digest = hashlib.sha256(markdown_content.encode("utf-8")).hexdigest()
+            db.execute(
+                "INSERT INTO report_snapshots(id,audit_id,report_sha256,risk_snapshot_id,content_sha256,json_sha256,markdown_sha256,json_content,markdown_content,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
+                (snapshot_id, audit_id, report_sha256, risk_id, report_digest,
+                 json_digest, markdown_digest, json_content, markdown_content, created_at),
+            )
+            row = dict(db.execute("SELECT * FROM report_snapshots WHERE id=?", (snapshot_id,)).fetchone())
+            risk_row = db.execute("SELECT * FROM risk_snapshots WHERE id=?", (risk_id,)).fetchone()
+        return self._audit_snapshot_result(row, risk_row)
+
+    @staticmethod
+    def _audit_snapshot_result(report_row, risk_row):
+        if risk_row is None:
+            raise ValueError("report snapshot risk binding is missing")
+        risk_content = risk_row["content"]
+        if hashlib.sha256(risk_content.encode("utf-8")).hexdigest() != risk_row["content_sha256"]:
+            raise ValueError("risk snapshot integrity mismatch")
+        for field, digest_field in (("json_content", "json_sha256"),
+                                    ("markdown_content", "markdown_sha256")):
+            if hashlib.sha256(report_row[field].encode("utf-8")).hexdigest() != report_row[digest_field]:
+                raise ValueError("report snapshot integrity mismatch")
+        return {
+            "id": report_row["id"], "audit_id": report_row["audit_id"],
+            "report_sha256": report_row["report_sha256"],
+            "risk_snapshot_id": report_row["risk_snapshot_id"],
+            "content_sha256": report_row["content_sha256"],
+            "json_sha256": report_row["json_sha256"],
+            "markdown_sha256": report_row["markdown_sha256"],
+            "created_at": report_row["created_at"],
+            "json_content": report_row["json_content"],
+            "markdown_content": report_row["markdown_content"],
+        }
+
+    def audit_report_snapshots(self, audit_id):
+        with self.store.connect() as db:
+            rows = db.execute(
+                "SELECT id,audit_id,report_sha256,risk_snapshot_id,content_sha256,json_sha256,markdown_sha256,created_at FROM report_snapshots WHERE audit_id=? ORDER BY created_at,id",
+                (audit_id,),
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def audit_report_snapshot(self, audit_id, snapshot_id):
+        if (len(audit_id) != 32 or len(snapshot_id) != 32
+                or any(char not in "0123456789abcdef" for char in audit_id + snapshot_id)):
+            raise KeyError("report snapshot not found")
+        with self.store.connect() as db:
+            row = db.execute(
+                "SELECT * FROM report_snapshots WHERE audit_id=? AND id=?",
+                (audit_id, snapshot_id),
+            ).fetchone()
+            if row is None:
+                raise KeyError("report snapshot not found")
+            risk = db.execute("SELECT * FROM risk_snapshots WHERE id=?", (row["risk_snapshot_id"],)).fetchone()
+        return self._audit_snapshot_result(dict(row), risk)
+
+    def smart_triage_operations(self, batch_id):
+        with self.store.connect() as db:
+            rows = [self.row(row) for row in db.execute(
+                "SELECT * FROM operations WHERE kind='agent_investigation' ORDER BY created_at")]
+        return [row for row in rows if row["spec"].get("smart_triage_batch_id") == batch_id]
+
     def create_with_scans(self, kind, spec, repository_id, scan_specs):
         """Create an operation and its immutable endpoint jobs in one DB transaction."""
         if kind not in {"revision_range", "version_matrix", "branch_comparison"} or not scan_specs:
@@ -236,6 +761,30 @@ class Operations:
         with self.store.connect() as db:
             return [self.row(r) for r in db.execute("SELECT * FROM operations ORDER BY created_at DESC LIMIT 200")]
 
+    def agent_investigations_for_job(self, job_id, report_sha256=None):
+        with self.store.connect() as db:
+            rows = list(db.execute(
+                "SELECT id,status,spec,created_at,finished_at,result_sha256,cancel_requested FROM operations "
+                "WHERE kind='agent_investigation' ORDER BY created_at"))
+        items = []
+        for row in rows:
+            spec = json.loads(row["spec"])
+            if spec.get("job_id") != job_id:
+                continue
+            if report_sha256 and spec.get("report_sha256") != report_sha256:
+                continue
+            items.append({
+                "id": row["id"],
+                "status": row["status"],
+                "candidate_id": spec.get("candidate_id"),
+                "mode": spec.get("mode"),
+                "created_at": row["created_at"],
+                "finished_at": row["finished_at"],
+                "result_sha256": row["result_sha256"],
+                "cancel_requested": bool(row["cancel_requested"]),
+            })
+        return items
+
     def candidate_review_queue(self):
         with self.store.connect() as db:
             rows = list(db.execute("SELECT id,status,spec,created_at FROM operations WHERE kind='candidate_review_batch' ORDER BY created_at"))
@@ -254,9 +803,10 @@ class Operations:
                 counts["finished_batches"] += 1
         from .agent import public_status
         return {"schema_version": 1, **counts,
-                "model_provider_configured": public_status()["configured"],
+                "model_provider_configured": public_status(self.store.root)["configured"],
                 "automatic_batch_processing_enabled": False,
-                "limitations": ["Queue summary counts only static findings from completed reports.",
+                "task_authorized_auto_triage_enabled": True,
+                "limitations": ["The legacy candidate_review_batch pointer is not executed; only a separate task-level consent can queue bounded R1 work.",
                                 "Zero-candidate and partial/unanalyzed source coverage remain in scan reports and are not second-pass Agent reviews."]}
 
     def event(self, key, stage, message):
@@ -403,12 +953,14 @@ class Operations:
             spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
             exec_dimensions = {
                 "mode": result.get("mode") or spec.get("mode") or "unknown",
+                "provider": provider.get("provider") or spec.get("provider") or "unknown",
+                "endpoint_host": provider.get("endpoint_host") or spec.get("provider_host") or "unknown",
                 "model": provider.get("model") or spec.get("provider_model") or spec.get("model") or "unknown",
                 "prompt_version": result.get("prompt_version") or spec.get("prompt_version") or "unknown",
                 "tool_policy_version": result.get("tool_policy_version") or spec.get("tool_policy_version") or "unknown",
             }
             exec_key = tuple(exec_dimensions[name] or "" for name in
-                             ("mode", "model", "prompt_version", "tool_policy_version"))
+                             ("mode", "provider", "endpoint_host", "model", "prompt_version", "tool_policy_version"))
             execution = execution_groups.setdefault(exec_key, {
                 **exec_dimensions, "operation_ids": set(), "status_counts": {},
                 "result_count": 0, "schema_validation": {"accepted": 0, "rejected": 0, "unknown": 0},
@@ -416,9 +968,24 @@ class Operations:
                 "tool_calls": {"completed": 0, "rejected": 0, "unknown_status": 0},
                 "tool_trace_operation_count": 0, "model_tool_calls_skipped": 0,
                 "usage": {"complete": 0, "incomplete": 0, "unknown": 0},
+                "token_usage": {"complete_operation_count": 0, "input_tokens": 0,
+                                 "output_tokens": 0, "total_tokens": 0},
+                "cost_estimate_status_counts": {}, "cost_estimate_aggregates": {},
+                "wall_seconds": [], "child_execution_seconds": [], "process_peak_rss_bytes": [],
+                "wall_unknown": 0, "child_wall_unknown": 0, "rss_unknown": 0,
             })
             execution["operation_ids"].add(task["id"])
             state = task["status"]
+            try:
+                started_at = datetime.fromisoformat(task["started_at"]) if task.get("started_at") else None
+                finished_at = datetime.fromisoformat(task["finished_at"]) if task.get("finished_at") else None
+                wall = (finished_at - started_at).total_seconds() if started_at and finished_at else None
+                if wall is not None and wall >= 0:
+                    execution["wall_seconds"].append(wall)
+                else:
+                    execution["wall_unknown"] += 1
+            except (TypeError, ValueError):
+                execution["wall_unknown"] += 1
             execution["status_counts"][state] = execution["status_counts"].get(state, 0) + 1
             if task["result_sha256"]:
                 execution["result_count"] += 1
@@ -447,13 +1014,87 @@ class Operations:
                 if isinstance(skipped, int) and not isinstance(skipped, bool) and skipped >= 0:
                     execution["model_tool_calls_skipped"] += skipped
                 usage = result.get("model_usage")
-                if isinstance(usage, dict) and isinstance(usage.get("usage_complete"), bool):
-                    execution["usage"]["complete" if usage["usage_complete"] else "incomplete"] += 1
+                if isinstance(usage, dict) and usage.get("usage_complete") is True:
+                    input_tokens, output_tokens = usage.get("input_tokens"), usage.get("output_tokens")
+                    if all(isinstance(value, int) and not isinstance(value, bool) and value >= 0
+                           for value in (input_tokens, output_tokens)):
+                        execution["usage"]["complete"] += 1
+                        execution["token_usage"]["complete_operation_count"] += 1
+                        execution["token_usage"]["input_tokens"] += input_tokens
+                        execution["token_usage"]["output_tokens"] += output_tokens
+                        execution["token_usage"]["total_tokens"] += input_tokens + output_tokens
+                    else:
+                        execution["usage"]["incomplete"] += 1
+                elif isinstance(usage, dict) and usage.get("usage_complete") is False:
+                    execution["usage"]["incomplete"] += 1
                 else:
                     execution["usage"]["unknown"] += 1
+
+                telemetry = result.get("execution_telemetry")
+                telemetry = telemetry if isinstance(telemetry, dict) else {}
+                child_wall = telemetry.get("wall_seconds")
+                if (isinstance(child_wall, (int, float)) and not isinstance(child_wall, bool)
+                        and child_wall >= 0):
+                    execution["child_execution_seconds"].append(float(child_wall))
+                else:
+                    execution["child_wall_unknown"] += 1
+                peak_rss = telemetry.get("process_peak_rss_bytes")
+                if isinstance(peak_rss, int) and not isinstance(peak_rss, bool) and peak_rss > 0:
+                    execution["process_peak_rss_bytes"].append(peak_rss)
+                else:
+                    execution["rss_unknown"] += 1
+
+                estimate = usage.get("cost_estimate") if isinstance(usage, dict) else None
+                estimate_status = estimate.get("status") if isinstance(estimate, dict) else None
+                estimate_status = estimate_status or "unavailable"
+                execution["cost_estimate_status_counts"][estimate_status] = (
+                    execution["cost_estimate_status_counts"].get(estimate_status, 0) + 1)
+                fields = ({"estimated_amount": ("amount_usd",),
+                           "estimated_range": ("minimum_usd", "maximum_usd")}.get(estimate_status))
+                if fields and isinstance(estimate, dict):
+                    try:
+                        amounts = {name: Decimal(str(estimate[name])) for name in fields}
+                        if any(not value.is_finite() or value < 0 for value in amounts.values()):
+                            raise InvalidOperation
+                    except (KeyError, InvalidOperation, TypeError, ValueError):
+                        execution["cost_estimate_status_counts"]["malformed_estimate"] = (
+                            execution["cost_estimate_status_counts"].get("malformed_estimate", 0) + 1)
+                    else:
+                        rate_key = (estimate_status, estimate.get("rate_card_id") or "unknown",
+                                    estimate.get("currency") or "unknown",
+                                    estimate.get("alternative_currency") or "",
+                                    estimate.get("rate_source_url") or "")
+                        bucket = execution["cost_estimate_aggregates"].setdefault(rate_key, {
+                            "status": estimate_status, "rate_card_id": rate_key[1],
+                            "currency": rate_key[2], "alternative_currency": rate_key[3],
+                            "rate_source_url": rate_key[4],
+                            "operation_count": 0, "actual_charge_verified": False,
+                            "amounts": {name: Decimal(0) for name in fields},
+                            "amount_counts": {name: 0 for name in fields},
+                        })
+                        bucket["operation_count"] += 1
+                        for name, value in amounts.items():
+                            bucket["amounts"][name] += value
+                            bucket["amount_counts"][name] += 1
+                        cny_amount = estimate.get("amount_cny")
+                        if estimate_status == "estimated_amount" and cny_amount is not None:
+                            try:
+                                cny_amount = Decimal(str(cny_amount))
+                                if not cny_amount.is_finite() or cny_amount < 0:
+                                    raise InvalidOperation
+                            except (InvalidOperation, TypeError, ValueError):
+                                cny_amount = None
+                            if cny_amount is not None:
+                                if "amount_cny" not in bucket["amounts"]:
+                                    bucket["amounts"]["amount_cny"] = Decimal(0)
+                                    bucket["amount_counts"]["amount_cny"] = 0
+                                bucket["amounts"]["amount_cny"] += cny_amount
+                                bucket["amount_counts"]["amount_cny"] += 1
             else:
                 execution["schema_validation"]["unknown"] += 1
                 execution["usage"]["unknown"] += 1
+                execution["child_wall_unknown"] += 1
+                execution["rss_unknown"] += 1
 
             if not task["result_sha256"]:
                 continue
@@ -578,9 +1219,16 @@ class Operations:
         return {
             "execution_scope": "recent_200_agent_operations_execution_telemetry_only",
             "execution_accuracy_claim": False,
-            "execution_limitation": "Execution telemetry describes persisted task outcomes, schema validation, bounded repairs/tool calls, and provider-reported usage. It does not measure semantic citation support, vulnerability accuracy, precision, recall, or ground truth.",
+            "execution_limitation": "统计持久化任务状态、结构校验、受限修复与工具调用、Provider 完整返回的 Token、本地 Agent 子进程耗时和峰值 RSS。费用是已知费率下的估算，实际账单未核验；RSS 不含父 Worker、Docker 容器或 Provider 基础设施。上述执行指标和人工意见都不代表漏洞准确率、Precision、Recall 或独立真值。",
             "execution_groups": [{
-                **{name: group[name] for name in ("mode", "model", "prompt_version", "tool_policy_version")},
+                **{name: group[name] for name in ("mode", "provider", "endpoint_host", "model", "prompt_version", "tool_policy_version")},
+                "runtime_conditions": {
+                    "application_process": "local operation child process",
+                    "provider_endpoint": ("local_loopback" if group["endpoint_host"] in {"localhost", "127.0.0.1", "::1"}
+                                          else "configured_network_endpoint" if group["endpoint_host"] != "unknown" else "unknown"),
+                    "docker_container_metrics": "not_measured",
+                    "process_rss_scope": "operation child process high-water mark; excludes parent worker, Docker containers, and provider infrastructure",
+                },
                 "operation_count": len(group["operation_ids"]),
                 "status_counts": group["status_counts"],
                 "result_count": group["result_count"],
@@ -591,6 +1239,29 @@ class Operations:
                 "tool_trace_operation_count": group["tool_trace_operation_count"],
                 "model_tool_calls_skipped": group["model_tool_calls_skipped"],
                 "usage": group["usage"],
+                "token_usage": group["token_usage"],
+                "cost_estimate_status_counts": group["cost_estimate_status_counts"],
+                "cost_estimate_aggregates": [{
+                    "status": bucket["status"], "rate_card_id": bucket["rate_card_id"],
+                    "currency": bucket["currency"], "alternative_currency": bucket["alternative_currency"],
+                    "rate_source_url": bucket["rate_source_url"],
+                    "operation_count": bucket["operation_count"],
+                    "amounts": {name: format(value.quantize(Decimal("0.00000001")), "f")
+                                for name, value in bucket["amounts"].items()},
+                    "amount_counts": bucket["amount_counts"],
+                    "actual_charge_verified": False,
+                } for _, bucket in sorted(group["cost_estimate_aggregates"].items())],
+                "wall_time": {"measured_operation_count": len(group["wall_seconds"]),
+                              "unknown_operation_count": group["wall_unknown"],
+                              "median_seconds": statistics.median(group["wall_seconds"]) if group["wall_seconds"] else None,
+                              "maximum_seconds": max(group["wall_seconds"]) if group["wall_seconds"] else None},
+                "child_execution_time": {"measured_operation_count": len(group["child_execution_seconds"]),
+                                          "unknown_operation_count": group["child_wall_unknown"],
+                                          "median_seconds": statistics.median(group["child_execution_seconds"]) if group["child_execution_seconds"] else None},
+                "process_peak_rss": {"measured_operation_count": len(group["process_peak_rss_bytes"]),
+                                     "unknown_operation_count": group["rss_unknown"],
+                                     "median_bytes": statistics.median(group["process_peak_rss_bytes"]) if group["process_peak_rss_bytes"] else None,
+                                     "maximum_bytes": max(group["process_peak_rss_bytes"]) if group["process_peak_rss_bytes"] else None},
             } for _, group in sorted(execution_groups.items())],
             "scope": "operator_feedback_only",
             "accuracy_claim": False,

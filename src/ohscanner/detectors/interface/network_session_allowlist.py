@@ -285,6 +285,43 @@ def find_auth_session_allowlist_candidates(source):
     return tuple(results)
 
 
+def has_dst_bus_name_session_field_provenance(sources):
+    """Check the exact decoder call mapping DST_BUS_NAME to myData.sessionName.
+
+    This source-level fact does not establish attacker control, transport
+    reachability, or security impact.
+    """
+    definitions = []
+    parser = Parser(Language(tree_sitter_c.language()))
+    for source in sources:
+        root = parser.parse(source.encode("utf-8")).root_node
+        definitions.extend(
+            function for function in _walk(root, "function_definition")
+            if _function_name(function) == "TransAuthChannelMsgUnpack"
+        )
+    if len(definitions) != 1:
+        return False
+    body = definitions[0].child_by_field_name("body")
+    if body is None or "cJSON_Parse(msg)" not in _compact(body):
+        return False
+    for branch in _walk(body, "if_statement"):
+        condition = branch.child_by_field_name("condition")
+        consequence = branch.child_by_field_name("consequence")
+        if condition is None or consequence is None:
+            continue
+        if "returnSOFTBUS_PARSE_JSON_ERR;" not in _compact(consequence):
+            continue
+        for call, name, _ in _calls(condition):
+            if name != "GetJsonObjectStringItem":
+                continue
+            arguments = call.child_by_field_name("arguments")
+            values = [_compact(arg) for arg in arguments.named_children] if arguments else []
+            if (len(values) == 4 and values[1] == '"DST_BUS_NAME"'
+                    and values[2] == "appInfo->myData.sessionName"):
+                return True
+    return False
+
+
 def find_missing_auth_session_allowlist(source):
     """Compatibility wrapper returning locations for weakly guarded callbacks."""
     return tuple((line, symbol) for line, symbol, _ in

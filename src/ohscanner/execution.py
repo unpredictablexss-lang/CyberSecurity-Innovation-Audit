@@ -47,7 +47,11 @@ def run_reviewed_detectors(
     plan = None
     if planning_selection is not False:
         from .planning import plan_context
-        plan = plan_context(context, tree, inventory, sources, planning_selection)
+        execution_budget = expected_plan.get("execution_budget") if expected_plan is not None else None
+        plan = plan_context(
+            context, tree, inventory, sources, planning_selection,
+            execution_budget=execution_budget,
+        )
         if expected_plan is not None and plan != expected_plan:
             raise ValueError("Frozen audit plan drifted; no scan result published")
         if planning_selection is None:

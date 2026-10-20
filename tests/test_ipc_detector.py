@@ -178,6 +178,58 @@ public:
                          expected)
         self.assertIsNone(foreign_interpreter.expected_permission('GetImsConfig', method))
 
+    def test_visibility_annotations_are_blank_only_in_private_parse_copy(self):
+        import tree_sitter_cpp
+        from src.ohscanner.detectors.interface.analysis import normalize_syntax, parses_clean
+        grammar=tree_sitter_cpp.language()
+        raw=(b"EXPORT static void ThrowError(int32_t err);\n"
+             b"FFI_EXPORT int64_t FfiContactDelete(int64_t id);\n"
+             b"FFI_EXPORT OHOS::ContactsFfi::ContactData* FfiQuery();\n")
+        normalized=normalize_syntax(raw)
+        self.assertFalse(parses_raw(raw,grammar))
+        self.assertTrue(parses_clean(raw,grammar))
+        self.assertEqual(len(raw),len(normalized))
+        self.assertEqual([i for i,b in enumerate(raw) if b==10],
+                         [i for i,b in enumerate(normalized) if b==10])
+        self.assertIn(b"       static void ThrowError",normalized)
+        self.assertIn(b"          int64_t FfiContactDelete",normalized)
+        self.assertIn(b"          OHOS::ContactsFfi::ContactData* FfiQuery",normalized)
+
+    def test_visibility_annotation_normalizer_leaves_non_prefix_tokens_alone(self):
+        from src.ohscanner.detectors.interface.analysis import normalize_syntax
+        controls=(
+            b"int EXPORT = 1;\n",
+            b"void EXPORT_call();\n",
+            b"// EXPORT void hidden();\n",
+            b"#define EXPORT __attribute__((visibility(\"default\")))\n",
+        )
+        for raw in controls:
+            with self.subTest(shape=raw):
+                self.assertEqual(normalize_syntax(raw),raw)
+
+    def test_descriptor_macro_literal_is_preserved_outside_private_parse_copy(self):
+        import tree_sitter_cpp
+        from src.ohscanner.detectors.interface.analysis import normalize_syntax, parses_clean
+        grammar=tree_sitter_cpp.language()
+        raw=(b"class IFixture : public IRemoteBroker {\n"
+             b"public:\n"
+             b"    DECLARE_INTERFACE_DESCRIPTOR(u\"ohos.test.IFixture\");\n"
+             b"    virtual int Invoke() = 0;\n"
+             b"};\n")
+        normalized=normalize_syntax(raw)
+        self.assertFalse(parses_raw(raw,grammar))
+        self.assertTrue(parses_clean(raw,grammar))
+        self.assertEqual(len(raw),len(normalized))
+        self.assertEqual([i for i,b in enumerate(raw) if b==10],
+                         [i for i,b in enumerate(normalized) if b==10])
+        self.assertIn(b'DECLARE_INTERFACE_DESCRIPTOR(u\"ohos.test.IFixture\")',raw)
+        self.assertNotIn(b'DECLARE_INTERFACE_DESCRIPTOR',normalized)
+
+    def test_nonliteral_descriptor_macro_arguments_remain_unparsed(self):
+        from src.ohscanner.detectors.interface.analysis import normalize_syntax
+        raw=b'class IFixture { DECLARE_INTERFACE_DESCRIPTOR(to_utf16(DESCRIPTOR)); };\n'
+        self.assertEqual(normalize_syntax(raw),raw)
+
     def test_format_models_preserve_original_offsets(self):
         from src.ohscanner.detectors.interface.analysis import normalize_syntax
         raw=b'LOG("id=%" PRIu64 "", id); (this->*handler)(data,reply); // PRIu64\n'
@@ -274,6 +326,41 @@ public:
         self.assertTrue(any(d.rule_id=='ipc.auth.missing' for d in reports[0].diagnostics))
         # runner.py:253 turns a blocked run with inspected files into 'partial'.
         self.assertEqual(sidecar['detectors']['ohscanner.interface.ipc']['status'],'partial')
+
+    def test_ipc_adapter_recovers_only_exact_include_trailing_space(self):
+        text = '#include "contacts_common_event.h" \n' + (BASE / 'auth_positive.cpp').read_text()
+        ctx = context(text, 'dataBusiness/poster/src/poster_call_stub.cpp')
+        self.assertEqual(ctx.units[0].parse_status, 'partial')
+
+        run = M2IpcInterfaceDetector().detect(ctx, ctx.units)
+        self.assertEqual(run.file_outcomes, ((ctx.units[0].path, 'partial'),))
+        self.assertTrue(any('B IPC private syntax copy recovered one exact include-line ending' in item
+                            for item in run.limitations))
+        findings = [item for item in run.findings if item.rule_id == 'ipc.auth.missing']
+        self.assertTrue(findings, 'candidate must survive parser recovery')
+        self.assertTrue(all(any(ob.kind == 'parse_completeness_impact'
+                             for ob in finding.evidence_obligations) for finding in findings))
+
+        from src.ohscanner.detectors.interface.analysis import normalize_include_trailing_space
+        original = b'#include "x.h" \nint f() { return 0; }\n'
+        normalized = normalize_include_trailing_space(original)
+        self.assertEqual(len(normalized), len(original))
+        self.assertEqual([i for i, byte in enumerate(normalized) if byte == 10],
+                         [i for i, byte in enumerate(original) if byte == 10])
+        self.assertIn(b'#include "x.h"\r\n', normalized)
+        self.assertEqual(normalize_include_trailing_space(b'#include "x.h"  \n'),
+                         b'#include "x.h"  \n')
+
+    def test_ipc_adapter_keeps_partial_when_other_recovery_is_needed(self):
+        text = '#include "contacts_common_event.h" \n' + (BASE / 'auth_positive.cpp').read_text()
+        text += '\nuint32_t value; auto label = "n=%{public}" PRIu32;\n'
+        ctx = context(text, 'contacts/needs-another-recovery.cpp')
+        run = M2IpcInterfaceDetector().detect(ctx, ctx.units)
+        self.assertEqual(run.file_outcomes, ((ctx.units[0].path, 'partial'),))
+        self.assertTrue(any(item.rule_id == 'ipc.auth.missing' for item in run.findings))
+        self.assertTrue(any(ob.kind == 'parse_completeness_impact'
+                            for finding in run.findings if finding.rule_id == 'ipc.auth.missing'
+                            for ob in finding.evidence_obligations))
 
     def test_partial_source_candidate_keeps_its_parse_obligation_in_public_adapter(self):
         """A useful partial-tree finding must still reach review as a candidate.

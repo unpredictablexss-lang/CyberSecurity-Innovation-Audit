@@ -1,6 +1,6 @@
 # OHScanner：新 Agent 从这里开始
 
-更新：2026-10-18。负责人本轮集成验收为 http://localhost:18778；18775、原入口与未提交工作保留，详见当前状态。项目是 OpenHarmony 开源代码漏洞挖掘竞赛工具，不是通用 Web 漏扫器。
+更新：2026-10-20。实跑的 8765 服务来自 `/home/audit/ohscanner/worktrees/ohscanner-8765-integrated-20261019`，分支 `integration/ohscanner-8765-20261019`，HEAD `99556c81dbd013e981f3c472e391ce2e5902c5e5`；服务进程与 HTTP 200 已核验，原工作树仍有两处未提交侧栏 UI 修改。隔离发布分支 `integration/release-main-20261020` 基于该源码 HEAD，纳入 A 路径遍历候选、最新 B IPC 0.12.13 和前端修改，已推送并通过 PR [#36](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/36) 跟踪；远端 CI 完成和 main 合并状态应以 PR 当前记录为准。发布分支尚未合入，因此不能视为当前 8765 正在运行的代码。项目是 OpenHarmony 开源代码漏洞挖掘竞赛工具，不是通用 Web 漏扫器。
 本目录六份 Markdown 是当前权威方案；其中“目标”不是“已实现”。
 历史教程、阶段路线图和长篇状态流水已从当前目录移除，证据可按 Git 固定提交追溯。
 
@@ -50,3 +50,7 @@ Core-only / 单次 LLM review / 工具型 Agent 是另一个实验比较维度�
 保留未提交改动；不整体覆盖 runner/catalog。未知保持 unknown，规则/模型输出默认 candidate。
 本机入口 /home/audit/ohscanner/app；Windows 浏览器 http://localhost:8765。
 历史基线 143fa63 保留旧文档；缺失实验细节用固定 Git 版本查，不重新恢复一套“旧权威方案”。
+
+## 2026-10-20 隔离端到端验收补充
+
+当前工作树在隔离端口 18776 和临时数据目录完成仓库发现、固定版本扫描、候选/覆盖查看、报告快照与重复生成检查。测试发现并修复缺失哈希导致任务详情白屏的问题。完整证据和边界见 [面板功能与验收](面板功能与验收.md) 与 [智能审计差距复核](../research/deliveries/smart_audit/P0_BASELINE_AND_GAP.md)。8765 未重启，所有发现仍为 candidate/unknown。

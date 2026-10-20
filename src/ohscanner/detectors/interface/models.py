@@ -6,7 +6,7 @@ Additional components should supply reviewed exact-name models via IpcPolicy.
 from dataclasses import dataclass, field
 from typing import FrozenSet, Tuple
 
-MODEL_VERSION = "oh-ipc-2026.10-v32"
+MODEL_VERSION = "oh-ipc-2026.10-v33"
 
 # ---------------------------------------------------------------------------
 # Reviewed consequence catalogue (v1), kept separate from the mechanism rules.
@@ -51,12 +51,48 @@ IMPACT_BY_RULE = {
     "ipc.parcel.position-underflow": "out_of_bounds_read",
     "ipc.parcel.bounds": "out_of_bounds_read",
     "ipc.parcel.write-bounds": "out_of_bounds_write",
+    "ipc.parcel.array-allocation-width": "out_of_bounds_write",
     "ipc.tlv.fixed-width-length": "out_of_bounds_read",
     "ipc.parcel.lifecycle": "use_after_release",
     "ipc.auth.flow": "identity_confusion",
     "ipc.data.sensitive-flow": "information_disclosure",
     "ipc.capability.export": "capability_exposure",
 }
+
+# Semantic versions for this detector's emitted rules. These are deliberately
+# independent of detector and catalogue versions: bump a rule only when its
+# own matching/interpretation semantics change. Unknown rules remain unversioned.
+RULE_VERSION_BY_RULE = {
+    "ipc.relay.descriptor-boundary": "1.0.0",
+    "ipc.auth.missing": "1.0.0",
+    "ipc.auth.guard-coverage": "1.0.0",
+    "ipc.auth.caller-class": "1.0.0",
+    "ipc.auth.identity-domain": "1.0.0",
+    "ipc.auth.request-identity": "1.0.0",
+    "ipc.auth.service-identity": "1.0.0",
+    "ipc.auth.object-owner": "1.0.0",
+    "ipc.network.auth-session-whitelist": "1.0.0",
+    "ipc.auth.denial-transport-success": "1.0.0",
+    "ipc.parcel.copy-range": "1.0.0",
+    "ipc.parcel.position-underflow": "1.0.0",
+    "ipc.parcel.bounds": "1.0.0",
+    "ipc.parcel.write-bounds": "1.0.0",
+    "ipc.parcel.array-allocation-width": "0.1.0",
+    "ipc.tlv.fixed-width-length": "1.0.0",
+    "ipc.parcel.lifecycle": "1.0.0",
+    "ipc.auth.flow": "1.0.0",
+    "ipc.data.sensitive-flow": "1.0.0",
+    "ipc.capability.export": "1.0.0",
+    "ipc.resource.unbounded-observer-registration": "1.0.0",
+    "ipc.auth.privileged-app-bypass": "1.0.0",
+}
+_IPC_DETECTOR_ONLY_RULE_IDS = {
+    "ipc.resource.unbounded-observer-registration",
+    "ipc.auth.privileged-app-bypass",
+}
+assert set(RULE_VERSION_BY_RULE) == set(IMPACT_BY_RULE) | _IPC_DETECTOR_ONLY_RULE_IDS
+assert all(isinstance(value, str) and value.strip()
+           for value in RULE_VERSION_BY_RULE.values())
 
 # Only the consequences whose CWE the catalogue can actually justify carry one.
 # The rest are impacts whose CWE depends on what the path reaches, so asserting a

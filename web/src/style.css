@@ -247,13 +247,7 @@ textarea {
   white-space: pre-wrap;
   word-break: break-all;
 }
-.footer {
-  background: transparent !important;
-  color: #94a0af;
-  font-size: 11px;
-  text-align: center;
-  padding: 20px !important;
-}
+
 .ant-table-cell {
   overflow-wrap: anywhere;
 }
@@ -348,14 +342,21 @@ li {
 .workbench-v41 .sidebar + .ant-layout { margin-left: 228px; min-width: 0; }
 .workbench-v41 .sidebar.ant-layout-sider-collapsed + .ant-layout { margin-left: 64px; }
 .workbench-v41 .ant-layout-sider-children { display: flex; flex-direction: column; height: 100dvh; min-height: 0; }
-.workbench-v41 .brand { flex-shrink: 0; padding: 19px 20px; height: 82px; gap: 12px; color: #1e3454; text-decoration: none; font-size: 17px; letter-spacing: -.5px; }
-.workbench-v41 .brand-mark { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border-radius: 10px; background: #315fea; color: #fff; font-size: 22px; font-weight: 750; letter-spacing: -2px; }
-.workbench-v41 .brand small { font-size: 9px; color: #8190a9; letter-spacing: .1px; font-weight: 400; }
+.workbench-v41 .brand { flex-shrink: 0; display: flex; align-items: center; gap: 11px; height: 92px; padding: 14px 16px; color: #1e3454; text-decoration: none; overflow: hidden; }
+.workbench-v41 .brand-mark { position: relative; width: 40px; height: 40px; flex: none; display: grid; place-items: center; overflow: hidden; border: 1px solid rgba(255,255,255,.22); border-radius: 12px; background: linear-gradient(145deg, #172c4c, #315fea); color: #fff; box-shadow: 0 5px 12px rgba(49,95,234,.2); }
+.workbench-v41 .brand-mark > span { font-size: 12px; font-weight: 800; letter-spacing: -.5px; }
+.workbench-v41 .brand-mark i { position: absolute; width: 19px; height: 2px; right: -3px; bottom: 8px; transform: rotate(-45deg); border-radius: 2px; background: #78e1d0; }
+.workbench-v41 .brand-copy { display: block; min-width: 0; line-height: 1.15; }
+.workbench-v41 .brand-name, .workbench-v41 .brand-cn { display: block; white-space: nowrap; }
+.workbench-v41 .brand-name { color: #1d3150; font-size: 15px; font-weight: 750; letter-spacing: -.3px; }
+.workbench-v41 .brand-cn { margin-top: 2px; color: #315fea; font-size: 12px; font-weight: 650; letter-spacing: .6px; }
+.workbench-v41 .brand small { display: block; margin-top: 5px; color: #8492a8; font-size: 8px; font-weight: 550; letter-spacing: 1px; }
 .workspace-card { display: flex; gap: 9px; align-items: center; margin: 0 15px 7px; padding: 11px; min-height: 60px; border: 1px solid #e0e7f2; border-radius: 8px; flex-shrink: 0; }
 .workspace-card > span, .workspace-avatar { width: 31px; height: 31px; flex: none; display: grid; place-items: center; background: #edf2ff; border-radius: 8px; color: #315fea; font-size: 12px; font-weight: 700; }
 .workspace-card strong { display: block; font-size: 12px; color: #2b3b58; }
 .workspace-card small { display: block; color: #8a97aa; font-size: 10px; margin-top: 3px; }
-.workbench-v41 nav { padding: 0 10px 10px; flex: 1; min-height: 0; overflow-y: auto; }
+.workbench-v41 .sidebar-scroll { display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0; overflow-x: hidden; overflow-y: auto; padding: 0 10px 10px; box-sizing: border-box; scrollbar-width: thin; scrollbar-color: #d8e0ed transparent; }
+.workbench-v41 nav { flex: none; min-width: 0; overflow: visible; padding: 0; }
 .workbench-v41 .sidebar .ant-menu { border: 0; padding: 0 4px; color: #62728c; }
 .workbench-v41 .sidebar .ant-menu-item, .workbench-v41 .sidebar .ant-menu-submenu-title { height: 38px; line-height: 38px; margin: 2px 0; width: 100%; border-radius: 7px; font-size: 12.5px; }
 .workbench-v41 .sidebar .ant-menu-sub .ant-menu-item { height: 34px; line-height: 34px; font-size: 12px; }
@@ -364,11 +365,20 @@ li {
 .workbench-v41 .sidebar .ant-menu-item-divider { margin: 10px 11px; border-color: #edf1f6; }
 .workbench-v41 .sidebar .ant-menu-title-content { display: inline; }
 .workbench-v41 .sidebar .ant-menu-item-selected { background: #eaf0ff !important; color: #315fea !important; font-weight: 650; }
-.workbench-v41 .sidebar-bottom { display: flex; align-items: center; gap: 10px; flex-shrink: 0; position: static; padding: 14px 18px; color: #536173; border-top: 1px solid #edf0f6; font-size: 12px; letter-spacing: 0; }
+.workbench-v41 .sidebar-bottom { display: flex; flex-direction: column; align-items: stretch; gap: 9px; position: static; inset: auto; flex: none; width: 100%; min-width: 0; box-sizing: border-box; margin: auto 0 4px; padding: 11px 12px; overflow: hidden; border: 1px solid #e4eaf3; border-radius: 12px; background: linear-gradient(145deg, #fbfcff, #f3f6fb); color: #344762; box-shadow: 0 2px 8px rgba(35,57,93,.045); font-size: 11px; letter-spacing: 0; }
 .workbench-v41 .sidebar-bottom div { margin: 0; color: inherit; }
-.workbench-v41 .sidebar-bottom small { display: block; margin-top: 3px; color: #98a2b3; font-size: 10px; }
-.workbench-v41 .ant-layout-sider-collapsed .brand { padding: 19px 13px; }
-.workbench-v41 .ant-layout-sider-collapsed .brand div, .workbench-v41 .ant-layout-sider-collapsed .sidebar-bottom, .workbench-v41 .ant-layout-sider-collapsed .workspace-card, .workbench-v41 .ant-layout-sider-collapsed .ant-menu-item-group, .workbench-v41 .ant-layout-sider-collapsed .ant-menu-item-divider { display: none; }
+.workbench-v41 .capability-heading { display: flex; align-items: center; gap: 7px; padding-bottom: 2px; color: #7c8ba2 !important; font-size: 8px; font-weight: 700; letter-spacing: 1.15px; }
+.workbench-v41 .capability-signal { width: 6px; height: 6px; flex: none; border-radius: 50%; background: #66bda9; box-shadow: 0 0 7px rgba(102,189,169,.35); }
+.workbench-v41 .capability-version { margin-left: auto !important; padding: 2px 5px; border: 1px solid #e1e8f4; border-radius: 5px; background: #f0f4fc; color: #7184a7 !important; font-size: 8px; letter-spacing: .4px; }
+.workbench-v41 .capability-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.workbench-v41 .capability-row > div { min-width: 0; }
+.workbench-v41 .capability-icon { width: 27px; height: 27px; flex: none; display: grid; place-items: center; border: 1px solid #e3eaf6; border-radius: 8px; background: #edf2fb; color: #5873b8 !important; font-size: 8px; font-weight: 750; letter-spacing: .2px; }
+.workbench-v41 .capability-icon-ai { border-color: #dcefe9; background: #edf7f3; color: #4d9b86 !important; }
+.workbench-v41 .capability-row strong { display: block; color: #2c405e; font-size: 10.5px; font-weight: 650; white-space: nowrap; }
+.workbench-v41 .capability-row small { display: block; margin-top: 3px; color: #8795aa; font-size: 8px; letter-spacing: .1px; white-space: nowrap; }
+.workbench-v41 .capability-divider { height: 1px; margin-left: 35px !important; background: #e7ecf4; }
+.workbench-v41 .ant-layout-sider-collapsed .brand { height: 66px; padding: 13px; }
+.workbench-v41 .ant-layout-sider-collapsed .brand-copy, .workbench-v41 .ant-layout-sider-collapsed .sidebar-bottom, .workbench-v41 .ant-layout-sider-collapsed .workspace-card, .workbench-v41 .ant-layout-sider-collapsed .ant-menu-item-group, .workbench-v41 .ant-layout-sider-collapsed .ant-menu-item-divider { display: none; }
 .workbench-v41 .topbar { height: 58px; line-height: normal; flex-shrink: 0; background: #fff !important; border-bottom: 1px solid #e7edf5; padding: 0 28px !important; font-size: 12px; }
 .workspace-breadcrumb > .ant-space-item:nth-child(2) { margin: 0 7px; color: #c0c7cf; }
 .workbench-v41 .main { padding: 24px 28px 28px; max-width: 1530px; }
@@ -393,7 +403,6 @@ li {
 .coverage-note { background: #fff9e9; color: #92742c; border: 1px solid #f2d99a; border-radius: 7px; padding: 11px 12px; font-size: 11px; line-height: 1.7; margin-top: 16px; }
 .audit-shortcuts { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .workbench-v41 .workflow span { color: #658bae; }
-.workbench-v41 .footer { font-size: 10px; padding: 16px !important; }
 .scope-note { background: #f7f9fc; border: 1px solid #e7edf4; padding: 14px; border-radius: 8px; margin-bottom: 20px; color: #718096; font-size: 12px; }
 .scope-note .ant-btn-link { padding-left: 0; }
 .scope-note p { margin-bottom: 2px; line-height: 1.8; }

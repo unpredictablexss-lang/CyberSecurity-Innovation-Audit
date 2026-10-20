@@ -11,6 +11,7 @@ from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, ConfigDict, Field
 from .operations import approved_url, date_selection, enqueue_branch_comparison, enqueue_range
 from .operations_store import Operations, END
+from .operation_limits import MAX_DETECTOR_IDS
 from .store import now
 from . import service
 from .agent_guidance import recommend_investigation_route
@@ -37,13 +38,19 @@ def _aggregate_agent_budget_cost_estimates(estimates):
     sources = {item.get("rate_source_url") for item in items}
     if len(rate_cards) != 1 or len(currencies) != 1 or len(sources) != 1:
         return None
+    cny_values = [item.get("maximum_cny") for item in items]
+    if any(value is not None for value in cny_values) and any(value is None for value in cny_values):
+        return None
     try:
         total = sum((Decimal(item["maximum_usd"]) for item in items), Decimal(0))
+        cny_total = (sum((Decimal(value) for value in cny_values), Decimal(0))
+                     if all(value is not None for value in cny_values) else None)
     except (KeyError, InvalidOperation, TypeError):
         return None
-    if not total.is_finite() or total < 0:
+    if (not total.is_finite() or total < 0
+            or (cny_total is not None and (not cny_total.is_finite() or cny_total < 0))):
         return None
-    return {
+    result = {
         "status": "budget_based_upper_estimate",
         "currency": next(iter(currencies)),
         "maximum_usd": format(total.quantize(Decimal("0.00000001")), "f"),
@@ -53,6 +60,10 @@ def _aggregate_agent_budget_cost_estimates(estimates):
         "actual_charge_verified": False,
         "hard_spend_cap": False,
     }
+    if cny_total is not None:
+        result["maximum_cny"] = format(cny_total.quantize(Decimal("0.00000001")), "f")
+        result["alternative_currency"] = "CNY"
+    return result
 
 
 class Strict(BaseModel):
@@ -70,9 +81,10 @@ class RangeRequest(Strict):
     baseline: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
     endpoint: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
-    detector_ids: list[str] = Field(min_length=1, max_length=10)
+    detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
+    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
 
 
 class DateRangeRequest(Strict):
@@ -81,8 +93,9 @@ class DateRangeRequest(Strict):
     start: str = Field(min_length=10, max_length=40)
     end: str = Field(min_length=10, max_length=40)
     timezone: str = Field(min_length=1, max_length=100)
+    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
-    detector_ids: list[str] = Field(min_length=1, max_length=10)
+    detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
@@ -98,19 +111,21 @@ class DateRangePreviewRequest(Strict):
 class MatrixRequest(Strict):
     case_id: str
     repository_id: str
+    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
     commits: list[str] = Field(min_length=2, max_length=8)
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
-    detector_ids: list[str] = Field(min_length=1, max_length=10)
+    detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
 
 class BranchComparisonRequest(Strict):
     repository_id: str
+    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
     baseline_ref: str = Field(min_length=1, max_length=200)
     endpoint_ref: str = Field(min_length=1, max_length=200)
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
-    detector_ids: list[str] = Field(min_length=1, max_length=10)
+    detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
@@ -134,6 +149,10 @@ class InvestigationRequest(Strict):
 
 class CandidateReviewQueueRequest(Strict):
     job_id: str
+
+
+class TriageAuthorizationRevocationRequest(Strict):
+    consent_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
 
 
 class ProviderCheckRequest(Strict):
@@ -354,6 +373,85 @@ def _case_review_status(store, ops, case_id):
         "validated_by": validated_by,
         "assessment_count": len(assessments),
     }
+
+
+def _validated_cases_for_audit(store, ops, audit_id):
+    confirmed = []
+    for case in store.cases():
+        linked = [item for item in case.get("links", []) if item.get("job_id") == audit_id]
+        if not linked:
+            continue
+        status = _case_review_status(store, ops, case["id"])
+        if status["validated_vulnerability"]:
+            confirmed.append({
+                "case_id": case["id"],
+                "candidate_ids": sorted({item["candidate_id"] for item in linked}),
+                "validation_basis": status["validated_by"],
+            })
+    return confirmed
+
+
+def _combined_audit_report_markdown(document):
+    md = _markdown_inline_untrusted
+    scan = document["scan"]
+    risks = document["risk_snapshot"]
+    triage = document["triage"]
+    authorization = triage.get("authorization") or {}
+    cost_budget = authorization.get("cost_budget") or {}
+    rows = [
+        "# OHScanner 智能安全审计报告",
+        "",
+        "- 报告快照：`" + md(document["report_snapshot_id"]) + "`",
+        "- 快照 SHA-256：`" + md(document["report_snapshot_sha256"]) + "`",
+        "- 静态原始报告 SHA-256：`" + md(scan["report_sha256"]) + "`",
+        "- 仓库版本：" + md(scan["repository"]) + " @ `" + md(scan["commit"]) + "`",
+        "- Tree：`" + md(scan["tree"]) + "`",
+        "- 静态扫描：" + md(scan["status"]) + "；智能研判：" + md(triage["state"]),
+        "- 漏洞确认数：" + str(document["validated_vulnerability"]),
+        "- 工作台模型费用预算：" + ("USD " + md(cost_budget.get("maximum_usd"))
+            + "（费率卡估算上限 USD " + md(cost_budget.get("estimated_maximum_usd"))
+            + "；不代表 Provider 账单硬上限）" if cost_budget else "未设置任务级自动研判预算"),
+        "",
+        "## 风险分层",
+        "",
+        "| 层级 | 数量 |",
+        "|---|---:|",
+    ]
+    labels = {
+        "high_confidence_candidate": "高可信风险候选（仍为待复核候选）",
+        "further_validation": "待进一步验证",
+        "low_priority_manual": "低优先级线索（人工标记，不代表安全）",
+        "unknown_source_binding": "来源绑定未知",
+    }
+    for tier, label in labels.items():
+        rows.append("| " + md(label) + " | " + str(risks["counts"].get(tier, 0)) + " |")
+    rows.extend(["", "## 优先候选", ""])
+    selected = risks.get("items", [])[:20]
+    if not selected:
+        rows.append("当前没有静态候选；这不表示整个仓库无漏洞。")
+    for item in selected:
+        rows.extend([
+            "### " + md(item.get("risk_tier_label")) + " — "
+            + md(item.get("detector_id")) + " / " + md(item.get("rule_id")),
+            "",
+            "- 候选：`" + md(item.get("candidate_id")) + "`",
+            "- 位置：" + md(item.get("file")) + ":" + md(item.get("line")),
+            "- 源码 SHA-256：`" + md(item.get("source_sha256")) + "`",
+            "- 研判状态：" + md(item.get("triage", {}).get("state")),
+            "- 状态边界：candidate；该分层不代表 confirmed。",
+            "- 原因：" + md("；".join(item.get("reasons", []))),
+            "",
+        ])
+    rows.extend(["## 覆盖与限制", ""])
+    rows.append("静态文件解析：" + md(json.dumps(document["coverage"].get("source_parsing", {}), ensure_ascii=False, sort_keys=True)))
+    for limitation in document.get("limitations", []):
+        rows.append("- " + md(limitation))
+    rows.extend([
+        "",
+        "> 模型研判是候选调查建议。模型自报置信度和引文存在性均不构成漏洞确认；只有现有人工评估与通过的运行时可达性门才能增加已确认漏洞数。",
+        "",
+    ])
+    return "\n".join(rows)
 
 
 def _blind_packet(result):
@@ -710,8 +808,9 @@ def install_routes(app: FastAPI, settings, store):
             raise ValueError("version matrix case must already link a candidate from the selected repository")
         specs = [service.make_spec(repo, sha, body.include_paths, body.detector_ids,
                                    body.timeout_seconds, body.memory_mb) for sha in body.commits]
+        specs = [{**spec, "audit_mode": body.audit_mode} for spec in specs]
         return ops.create_with_scans("version_matrix", {"case_id": body.case_id,
-            "repository_id": repo["id"], "commits": [s["commit"] for s in specs],
+            "repository_id": repo["id"], "audit_mode": body.audit_mode, "commits": [s["commit"] for s in specs],
             "timeout_seconds": body.timeout_seconds * len(specs) + 120,
             "memory_mb": body.memory_mb}, repo["id"], specs)
 
@@ -1171,6 +1270,434 @@ def install_routes(app: FastAPI, settings, store):
         return ops.create("investigation", {**body.model_dump(), "timeout_seconds": 60,
                                              "memory_mb": 512})
 
+    @router.get("/scans/{key}/triage")
+    def scan_triage_summary(key: str):
+        job = store.job(key)
+        authorization = store.triage_authorization(key)
+        auth_view = None
+        if authorization:
+            snapshot = authorization["snapshot"]
+            auth_view = {
+                "authorized": True,
+                "revoked": authorization["revoked"],
+                "consent_sha256": authorization["consent_sha256"],
+                "created_at": authorization["created_at"],
+                "revoked_at": authorization["revoked_at"],
+                "provider": snapshot.get("provider"),
+                "candidate_limit": snapshot.get("candidate_limit"),
+                "conditional_r2_candidate_limit": snapshot.get("r2_candidate_limit", 0),
+                "budget": snapshot.get("budgets"),
+                "estimated_cost": snapshot.get("estimated_cost"),
+                "cost_budget": snapshot.get("cost_budget"),
+                "platform_cost_budget_enforced": bool(
+                    (snapshot.get("cost_budget") or {}).get("platform_enforced")),
+                "hard_spend_cap": False,
+            }
+        cancellation = ops.triage_cancellation(key, job.get("report_sha256"))
+        if not job.get("report_sha256"):
+            waiting_state = ("cancelled" if cancellation else "stopped"
+                             if authorization and authorization["revoked"] else "waiting_for_scan")
+            return {
+                "schema_version": 2,
+                "audit_id": key,
+                "job_id": key,
+                "state": waiting_state,
+                "scan_status": job["status"],
+                "triage_status": waiting_state,
+                "report_status": "not_ready",
+                "scan_progress": {"status": job["status"], "stage": job.get("stage"),
+                                  "report_ready": False},
+                "triage_progress": {"state": "cancelled" if cancellation else "stopped" if authorization and authorization["revoked"] else "waiting_for_scan",
+                                     "candidate_count": None, "planned_count": 0,
+                                     "completed_count": 0, "failed_count": 0,
+                                     "pending_count": 0, "cancelled_count": 0,
+                                     "stop_requested_count": 0, "not_triaged_count": None},
+                "report_sha256": None,
+                "counts": {},
+                "items": [],
+                "batches": [],
+                "authorization": auth_view or {"authorized": False, "revoked": False},
+                "limitation": "静态报告尚未提交，模型研判未开始。",
+            }
+        items = ops.agent_investigations_for_job(key, job["report_sha256"])
+        batches = ops.triage_batches_for_job(key, job["report_sha256"])
+        counts = {}
+        for item in items:
+            counts[item["status"]] = counts.get(item["status"], 0) + 1
+        batch_views = []
+        for batch in batches:
+            operations = ops.smart_triage_operations(batch["id"])
+            states = [item["status"] for item in operations]
+            stopping = any(item["status"] == "running" and item.get("cancel_requested") for item in operations)
+            if stopping:
+                batch_state = "stopping"
+            elif cancellation:
+                batch_state = "cancelled"
+            elif batch.get("r2_status") == "awaiting_r1" or any(state in {"queued", "running"} for state in states):
+                batch_state = "in_progress"
+            elif states:
+                batch_state = ("completed" if all(
+                    state in {"completed", "completed_with_limitations"} for state in states
+                ) else "partially_completed")
+            else:
+                batch_state = batch["status"]
+            batch_views.append({
+                "id": batch["id"], "state": batch_state,
+                "candidate_count": batch["candidate_count"],
+                "selected_count": batch["selected_count"],
+                "candidate_manifest": batch["candidate_manifest"],
+                "operation_ids": batch["operation_ids"],
+                "conditional_r2": {
+                    "state": batch.get("r2_status", "not_requested"),
+                    "operation_ids": batch.get("r2_operation_ids", []),
+                    "candidate_manifest": batch.get("r2_candidate_manifest", []),
+                    "decision_sha256": batch.get("r2_decision_sha256"),
+                    "error": batch.get("r2_error"),
+                },
+                "error": batch["error"],
+            })
+        r2_waiting = any(batch.get("r2_status") == "awaiting_r1" for batch in batches)
+        stop_requested_count = sum(
+            1 for item in items if item["status"] == "running" and item.get("cancel_requested")
+        )
+        cancelled_count = sum(1 for item in items if item["status"] == "cancelled")
+        if cancellation and stop_requested_count:
+            state = "stopping"
+        elif cancellation:
+            state = "cancelled"
+        elif authorization and authorization["revoked"] and stop_requested_count:
+            state = "stopping"
+        elif job["spec"].get("audit_mode") == "static_only":
+            state = "not_requested"
+        elif r2_waiting:
+            state = "in_progress"
+        elif items:
+            if any(item["status"] in {"queued", "running"} for item in items):
+                state = "stopped" if authorization and authorization["revoked"] else "in_progress"
+            elif all(item["status"] in END for item in items):
+                state = "completed" if all(
+                    item["status"] in {"completed", "completed_with_limitations"} for item in items
+                ) else "partially_completed"
+            else:
+                state = "in_progress"
+        elif authorization and authorization["revoked"]:
+            state = "stopped"
+        elif batch_views:
+            state = batch_views[-1]["state"]
+        elif authorization:
+            state = "queued"
+        else:
+            state = "waiting_for_authorization"
+        candidate_count = sum(batch.get("candidate_count", 0) for batch in batches) or None
+        planned_count = len(items)
+        if candidate_count is None and items:
+            candidate_count = len({item.get("candidate_id") for item in items if item.get("candidate_id")})
+        if candidate_count is None and not items:
+            try:
+                candidate_count = len(service.findings(service.read_report(settings, job)))
+            except FileNotFoundError:
+                # Some focused API tests stub a report hash without publishing an artifact.
+                # Production report-integrity errors remain visible and fail closed.
+                candidate_count = None
+        if (candidate_count == 0 and not batches and not items
+                and job["spec"].get("audit_mode") == "standard_review"):
+            state = "no_eligible_candidates"
+        completed_count = sum(1 for item in items if item["status"] in {"completed", "completed_with_limitations"})
+        failed_count = sum(1 for item in items if item["status"] in {"failed", "timed_out", "interrupted"})
+        pending_count = sum(1 for item in items if item["status"] in {"queued", "running"})
+        manifest_not_triaged = sum(
+            1 for batch in batches for row in batch.get("candidate_manifest", [])
+            if isinstance(row, dict) and row.get("state") == "not_triaged"
+        )
+        not_triaged_count = (max(candidate_count - planned_count, manifest_not_triaged)
+                             if candidate_count is not None else None)
+        return {
+            "schema_version": 2,
+            "audit_id": key,
+            "job_id": key,
+            "state": state,
+            "scan_status": job["status"],
+            "triage_status": state,
+            "report_status": ("ready_with_limitations"
+                              if job["status"] == "completed_with_limitations"
+                              else "ready" if job["status"] == "completed" else "available"),
+            "scan_progress": {"status": job["status"], "stage": job.get("stage"),
+                              "report_ready": True, "report_sha256": job["report_sha256"]},
+            "triage_progress": {
+                "state": state, "candidate_count": candidate_count,
+                "planned_count": planned_count, "completed_count": completed_count,
+                "failed_count": failed_count, "pending_count": pending_count,
+                "cancelled_count": cancelled_count,
+                "stop_requested_count": stop_requested_count,
+                "r2_waiting_count": sum(1 for batch in batches if batch.get("r2_status") == "awaiting_r1"),
+                "not_triaged_count": not_triaged_count,
+            },
+            "report_sha256": job["report_sha256"],
+            "counts": counts,
+            "items": items,
+            "batches": batch_views,
+            "authorization": auth_view or {"authorized": False, "revoked": False},
+            "authorization_required": not bool(authorization),
+            "limitation": "模型辅助研判输出仍为待复核候选或未知状态；高优先级或模型倾向不能自动确认漏洞。未入选、未授权和预算外候选仍是未研判，不代表安全。",
+        }
+
+    @router.post("/scans/{key}/triage/cancel")
+    def cancel_scan_triage(key: str):
+        job = store.job(key)
+        cancellation = ops.cancel_triage_for_job(key, job.get("report_sha256"))
+        return {**scan_triage_summary(key), "cancellation": cancellation}
+
+    @router.post("/scans/{key}/triage/revoke")
+    def revoke_scan_triage_authorization(key: str, body: TriageAuthorizationRevocationRequest):
+        job = store.job(key)
+        authorization = store.revoke_triage_authorization(key, body.consent_sha256)
+        for operation in ops.list():
+            spec = operation.get("spec", {})
+            if (spec.get("job_id") == key
+                    and spec.get("triage_authorization_sha256") == body.consent_sha256
+                    and operation["status"] in {"queued", "running"}):
+                ops.cancel(operation["id"])
+        return scan_triage_summary(job["id"])
+
+    @router.get("/scans/{key}/risks")
+    def scan_risks(key: str, offset: int = 0, limit: int = 100):
+        if offset < 0 or not 1 <= limit <= 200:
+            raise ValueError("invalid pagination")
+        job = store.job(key)
+        if not job.get("report_sha256"):
+            return {"audit_id": key, "state": "waiting_for_scan", "items": [], "counts": {}}
+        report = service.read_report(settings, job)
+        from .smart_audit import risk_snapshot as build_risk_snapshot
+        snapshot = build_risk_snapshot(settings, store, ops, job, report)
+        confirmed_cases = _validated_cases_for_audit(store, ops, key)
+        snapshot["validated_vulnerability"] = len(confirmed_cases)
+        snapshot["confirmed_cases"] = confirmed_cases
+        items = snapshot["items"]
+        return {**{name: value for name, value in snapshot.items() if name != "items"},
+                "total": len(items), "items": items[offset:offset + limit]}
+
+    @router.get("/scans/{key}/coverage")
+    def scan_coverage(key: str):
+        job = store.job(key)
+        if not job.get("report_sha256"):
+            return {"audit_id": key, "state": "waiting_for_scan", "scan_status": job["status"]}
+        report = service.read_report(settings, job)
+        from .smart_audit import coverage_snapshot
+        triage = scan_triage_summary(key)
+        return {"schema_version": 1, "audit_id": key,
+                "report_sha256": job["report_sha256"],
+                "coverage": coverage_snapshot(job, report),
+                "scan_progress": triage["scan_progress"],
+                "triage_progress": triage["triage_progress"]}
+
+    @router.get("/overview/risks")
+    def audit_risk_overview(
+        scan_limit: int = 10,
+        offset: int = 0,
+        limit: int = 12,
+        risk_tier: str | None = None,
+        triage_state: str | None = None,
+        repository: str | None = None,
+        detector_id: str | None = None,
+        q: str = "",
+    ):
+        if not 1 <= scan_limit <= 20:
+            raise ValueError("scan_limit must be between 1 and 20")
+        if offset < 0 or not 1 <= limit <= 100:
+            raise ValueError("offset must be non-negative and limit between 1 and 100")
+        tier_names = ("high_confidence_candidate", "further_validation",
+                      "low_priority_manual", "unknown_source_binding")
+        triage_states = {
+            "not_requested", "not_triaged", "waiting_for_authorization", "waiting_for_scan",
+            "not_started", "queued", "running", "in_progress", "stopping", "cancelled",
+            "completed", "completed_with_limitations", "partially_completed", "blocked",
+            "blocked_authorization_changed", "no_eligible_candidates", "stopped", "failed",
+            "timed_out", "interrupted", "awaiting_r1", "budget_limited", "not_needed",
+            "failed_selection", "selected", "not_selected", "unresolved",
+        }
+        if risk_tier is not None and risk_tier not in tier_names:
+            raise ValueError("unsupported risk_tier")
+        if triage_state is not None and triage_state not in triage_states:
+            raise ValueError("unsupported triage_state")
+        if repository is not None and (len(repository) > 200 or not repository.strip()):
+            raise ValueError("repository filter must contain 1 to 200 characters")
+        if detector_id is not None and (len(detector_id) > 200 or not detector_id.strip()):
+            raise ValueError("detector_id filter must contain 1 to 200 characters")
+        query = q.strip()
+        if len(query) > 160:
+            raise ValueError("q must be at most 160 characters")
+        jobs = [job for job in store.jobs() if job.get("report_sha256")]
+        selected = jobs[:scan_limit]
+        from .smart_audit import risk_snapshot as build_risk_snapshot
+        tier_counts = {name: 0 for name in tier_names}
+        triage_counts = {}
+        candidate_items = []
+        limitations = []
+        evaluated = 0
+        validated_count = 0
+        for job in selected:
+            try:
+                report = service.read_report(settings, job)
+                risk = build_risk_snapshot(settings, store, ops, job, report)
+                confirmed_cases = _validated_cases_for_audit(store, ops, job["id"])
+            except Exception as exc:
+                limitations.append({
+                    "audit_id": job["id"],
+                    "reason": "saved report could not be verified: " + type(exc).__name__,
+                })
+                continue
+            evaluated += 1
+            for tier in tier_names:
+                tier_counts[tier] += int(risk.get("counts", {}).get(tier, 0))
+            for state, count in risk.get("triage_counts", {}).items():
+                triage_counts[state] = triage_counts.get(state, 0) + int(count)
+            validated_count += len(confirmed_cases)
+            for item in risk.get("items", []):
+                candidate_items.append({
+                    "audit_id": job["id"],
+                    "repository": job["spec"].get("repository"),
+                    "commit": job["spec"].get("commit"),
+                    "created_at": job.get("created_at"),
+                    "candidate_id": item.get("candidate_id"),
+                    "detector_id": item.get("detector_id"),
+                    "file": item.get("file"),
+                    "line": item.get("line"),
+                    "rule_id": item.get("rule_id"),
+                    "risk_tier": item.get("risk_tier"),
+                    "risk_tier_label": item.get("risk_tier_label"),
+                    "triage_state": item.get("triage", {}).get("state"),
+                    "reason": "；".join(item.get("reasons", [])),
+                })
+        order = {"high_confidence_candidate": 0, "further_validation": 1,
+                 "unknown_source_binding": 2, "low_priority_manual": 3}
+        candidate_items.sort(key=lambda row: (
+            order.get(row["risk_tier"], 4),
+            row.get("created_at") or "", row.get("repository") or "",
+            row.get("file") or "", int(row.get("line") or 0), row.get("candidate_id") or "",
+        ))
+        repository_key = repository.casefold() if repository else None
+        query_key = query.casefold()
+        base_filtered_items = [
+            row for row in candidate_items
+            if (risk_tier is None or row.get("risk_tier") == risk_tier)
+            and (triage_state is None
+                 or (triage_state == "unresolved"
+                     and row.get("triage_state") not in {"completed", "completed_with_limitations"})
+                 or row.get("triage_state") == triage_state)
+            and (repository_key is None or str(row.get("repository") or "").casefold() == repository_key)
+            and (not query_key or any(query_key in str(row.get(field) or "").casefold()
+                                      for field in ("repository", "commit", "candidate_id", "file", "rule_id", "detector_id")))
+        ]
+        detector_counts = {}
+        for row in base_filtered_items:
+            detector = row.get("detector_id")
+            if isinstance(detector, str) and detector:
+                detector_counts[detector] = detector_counts.get(detector, 0) + 1
+        filtered_items = [
+            row for row in base_filtered_items
+            if detector_id is None or row.get("detector_id") == detector_id
+        ]
+        total = sum(tier_counts.values())
+        return {
+            "schema_version": 1,
+            "scope": "Most recent report-bearing scans, bounded to 20 and up to the latest 200 retained scan tasks.",
+            "scan_limit": scan_limit,
+            "available_report_count": len(jobs),
+            "evaluated_scan_count": evaluated,
+            "unavailable_report_count": len(limitations),
+            "candidate_observation_count": total,
+            "counts": tier_counts,
+            "triage_counts": triage_counts,
+            "detector_counts": [
+                {"detector_id": detector, "candidate_count": count}
+                for detector, count in sorted(detector_counts.items())
+            ],
+            "not_triaged_candidate_count": sum(
+                count for state, count in triage_counts.items()
+                if state not in {"completed", "completed_with_limitations"}
+            ),
+            "validated_vulnerability": validated_count,
+            "offset": offset,
+            "limit": limit,
+            "filtered_candidate_count": len(filtered_items),
+            "items": filtered_items[offset:offset + limit],
+            "limitations": limitations,
+            "semantics": "Counts are candidate observations across selected scans, not deduplicated root causes, vulnerability totals, recall, or proof that unobserved code is safe.",
+        }
+
+    @router.get("/scans/{key}/reports/snapshots")
+    def audit_report_snapshots(key: str):
+        store.job(key)
+        return {"audit_id": key, "items": ops.audit_report_snapshots(key)}
+
+    @router.post("/scans/{key}/reports/snapshots", status_code=201)
+    def create_audit_report_snapshot(key: str):
+        job = store.job(key)
+        report = service.read_report(settings, job)
+        from .smart_audit import coverage_snapshot, risk_snapshot as build_risk_snapshot
+        risk = build_risk_snapshot(settings, store, ops, job, report)
+        coverage = coverage_snapshot(job, report)
+        triage = scan_triage_summary(key)
+        confirmed_cases = _validated_cases_for_audit(store, ops, key)
+        validated_count = sum(1 for item in confirmed_cases)
+        risk["validated_vulnerability"] = validated_count
+        risk["confirmed_cases"] = confirmed_cases
+        batch_views = [{key_name: batch.get(key_name) for key_name in
+                        ("id", "state", "candidate_count", "selected_count", "operation_ids", "error")}
+                       for batch in triage.get("batches", [])]
+        operation_views = [{key_name: item.get(key_name) for key_name in
+                            ("id", "status", "candidate_id", "mode", "created_at", "finished_at", "result_sha256")}
+                           for item in triage.get("items", [])]
+        report_payload = {
+            "schema_version": 1,
+            "audit_id": key,
+            "source_report_sha256": job["report_sha256"],
+            "scan": {
+                "repository": report["repository"], "commit": report["commit"],
+                "tree": report.get("git_tree"), "include_paths": job["spec"].get("include_paths", []),
+                "status": job["status"], "stage": job.get("stage"),
+                "created_at": job.get("created_at"), "finished_at": job.get("finished_at"),
+                "report_sha256": job["report_sha256"],
+                "snapshot_sha256": report.get("snapshot_sha256"),
+                "detector_versions": job["spec"].get("detector_versions", {}),
+            },
+            "scan_progress": triage.get("scan_progress"),
+            "triage": {
+                "state": triage["state"], "progress": triage.get("triage_progress"),
+                "authorization": triage.get("authorization"),
+                "batches": batch_views, "operations": operation_views,
+            },
+            "coverage": coverage,
+            "risk_snapshot": risk,
+            "confirmed_cases": confirmed_cases,
+            "validated_vulnerability": validated_count,
+            "limitations": list(dict.fromkeys(
+                list(report.get("limitations", [])) + risk["limitations"]
+                + ([triage["limitation"]] if triage.get("limitation") else [])
+            )),
+            "evidence_boundary": "静态与模型辅助发现均保持待复核候选或未知状态。只有现行人工评估关联有效源码证据，且通过运行时验证门确认产品可达性时，才计为已验证漏洞。",
+        }
+        snapshot = ops.create_audit_snapshots(
+            risk, report_payload, _combined_audit_report_markdown,
+        )
+        return {key_name: snapshot[key_name] for key_name in
+                ("id", "audit_id", "report_sha256", "risk_snapshot_id", "content_sha256",
+                 "json_sha256", "markdown_sha256", "created_at")}
+
+    @router.get("/scans/{key}/reports/snapshots/{snapshot_id}/json")
+    def download_audit_report_json(key: str, snapshot_id: str):
+        snapshot = ops.audit_report_snapshot(key, snapshot_id)
+        return Response(snapshot["json_content"], media_type="application/json",
+                        headers={"Content-Disposition": f'attachment; filename="ohscanner-report-{snapshot_id}.json"',
+                                 "X-Content-SHA256": snapshot["json_sha256"]})
+
+    @router.get("/scans/{key}/reports/snapshots/{snapshot_id}/markdown")
+    def download_audit_report_markdown(key: str, snapshot_id: str):
+        snapshot = ops.audit_report_snapshot(key, snapshot_id)
+        return Response(snapshot["markdown_content"], media_type="text/markdown; charset=utf-8",
+                        headers={"Content-Disposition": f'attachment; filename="ohscanner-report-{snapshot_id}.md"',
+                                 "X-Content-SHA256": snapshot["markdown_sha256"]})
+
     @router.get("/operations/agent-review-queue/status")
     def agent_review_queue_status():
         return ops.candidate_review_queue()
@@ -1434,6 +1961,13 @@ def install_routes(app: FastAPI, settings, store):
                     rows += ["- 估算费用区间（非实账）：" + md(estimate.get("currency", "unknown")) + " " +
                              md(estimate.get("minimum_usd", "unknown")) + "–" +
                              md(estimate.get("maximum_usd", "unknown")) +
+                             "；费率快照 " + md(estimate.get("rate_card_id", "unknown")) +
+                             "；来源 " + md(estimate.get("rate_source_url", "unknown"))]
+                elif estimate and estimate.get("status") == "estimated_amount":
+                    amount_text = "USD " + md(estimate.get("amount_usd", "unknown"))
+                    if estimate.get("amount_cny") is not None:
+                        amount_text += " / CNY " + md(estimate["amount_cny"])
+                    rows += ["- 估算费用（非实账）：" + amount_text +
                              "；费率快照 " + md(estimate.get("rate_card_id", "unknown")) +
                              "；来源 " + md(estimate.get("rate_source_url", "unknown"))]
                 if triage.get("model_summary_unverified"):

@@ -80,6 +80,19 @@ class ProviderSettingsStoreTests(unittest.TestCase):
 
 
 class ProviderSettingsApiTests(unittest.TestCase):
+    def test_mimo_token_plan_endpoint_is_rejected_without_saving_credentials(self):
+        with tempfile.TemporaryDirectory() as temp, patch.dict(os.environ, {}, clear=True):
+            root = Path(temp)
+            app = create_app(Settings(root / "data", (root / "targets",)))
+            with TestClient(app) as client:
+                response = client.post("/api/v1/agent/provider-settings", headers=HEADERS, json={
+                    "base_url": "https://token-plan-cn.xiaomimimo.com/v1",
+                    "model": "mimo-v2.6-pro", "proxy_url": "", "api_key": "tp-test-secret"})
+            self.assertEqual(response.status_code, 409, response.text)
+            self.assertIn("not permitted", response.json()["detail"])
+            self.assertNotIn("tp-test-secret", response.text)
+            self.assertFalse((root / "data" / "agent-provider.json").exists())
+
     def test_save_status_probe_and_clear_never_return_the_key(self):
         with tempfile.TemporaryDirectory() as temp, patch.dict(os.environ, {}, clear=True):
             root = Path(temp)

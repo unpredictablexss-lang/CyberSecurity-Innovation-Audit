@@ -26,3 +26,13 @@ export function disclosureSelectionMatches(selectedKeys, previewKeys) {
   return selected.size === selectedKeys.length && preview.size === previewKeys.length
     && selected.size === preview.size && [...selected].every((key) => preview.has(key));
 }
+
+export function canApproveSourceSubmission({ ready, preview, disclosureOpened }) {
+  return ready === true && Boolean(preview) && disclosureOpened === true
+    && preview?.agent_execution?.eligible === true;
+}
+
+export function canCreateAgentInvestigation({ ready, jobId, candidateId, preview, disclosureOpened, approved }) {
+  return canApproveSourceSubmission({ ready, preview, disclosureOpened })
+    && Boolean(jobId) && Boolean(candidateId) && approved === true;
+}

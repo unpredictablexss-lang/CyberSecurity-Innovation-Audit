@@ -1,29 +1,38 @@
 import React, { useMemo, useRef, useState } from "react";
 import { Alert, Button, Card, Input, Select, Space, Table, Tag, Typography, message } from "antd";
 import { api } from "../../api";
+import { blindReviewOperationIds, blindReviewPairs } from "./blindReview.js";
 
 const { Text } = Typography;
 
 export default function AgentBlindReview({ operations }: { operations: any[] }) {
   const [experimentId, setExperimentId] = useState<string>();
-  const [operationIds, setOperationIds] = useState<string[]>([]);
+  const [pairKeys, setPairKeys] = useState<string[]>([]);
   const [sessionId, setSessionId] = useState("");
   const [session, setSession] = useState<any>(null);
   const [agreementSessionIds, setAgreementSessionIds] = useState("");
   const [agreement, setAgreement] = useState<any>(null);
   const [busy, setBusy] = useState(false);
   const importInput = useRef<HTMLInputElement>(null);
+  const sessionRequest = useRef(0);
+  const agreementRequest = useRef(0);
   const eligible = useMemo(() => operations.filter((item) => item.kind === "agent_investigation"
     && ["completed", "completed_with_limitations"].includes(item.status)
+    && item.result_sha256
     && item.spec?.experiment_id), [operations]);
   const experimentOptions = [...new Set(eligible.map((item) => item.spec.experiment_id))]
     .sort().map((value) => ({ value, label: value }));
-  const operationOptions = eligible.filter((item) => item.spec.experiment_id === experimentId)
-    .map((item) => ({ value: item.id, label: `${item.spec.mode || "unknown"} · ${item.id.slice(0, 12)} · ${item.spec.candidate_id || "candidate"}` }));
+  const pairing = useMemo(() => blindReviewPairs(operations, experimentId), [operations, experimentId]);
+  const operationOptions = pairing.pairs.map((pair) => ({ value: pair.key, label: pair.label }));
+  const operationIds = blindReviewOperationIds(pairKeys, pairing.pairs);
   const loadSession = async (id = sessionId) => {
-    const value = await api(`/agent/blind-sessions/${id}`);
-    setSession(value);
-    setSessionId(id);
+    const targetId = id.trim();
+    if (!targetId) return;
+    const request = ++sessionRequest.current;
+    setSession(null);
+    setSessionId(targetId);
+    const value = await api(`/agent/blind-sessions/${targetId}`);
+    if (sessionRequest.current === request) setSession(value);
   };
   const createSession = async () => {
     setBusy(true);
@@ -35,9 +44,11 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
     finally { setBusy(false); }
   };
   const exportPacket = async () => {
+    if (!session || session.id !== sessionId || session.state !== "open") return;
+    const targetId = session.id;
     setBusy(true);
     try {
-      const packet = await api(`/agent/blind-sessions/${sessionId}/export`);
+      const packet = await api(`/agent/blind-sessions/${targetId}/export`);
       const blob = new Blob([JSON.stringify(packet, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a"); link.href = url;
@@ -47,10 +58,10 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
     finally { setBusy(false); }
   };
   const exportEvidenceBundle = async () => {
-    if (!sessionId || session?.state !== "closed") return;
+    if (!session || session.id !== sessionId || session.state !== "closed") return;
     setBusy(true);
     try {
-      const bundle = await api(`/agent/blind-sessions/${sessionId}/evidence-bundle`);
+      const bundle = await api(`/agent/blind-sessions/${session.id}/evidence-bundle`);
       const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a"); link.href = url;
@@ -60,15 +71,16 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
     finally { setBusy(false); }
   };
   const importReviews = async (file?: File) => {
-    if (!file || !sessionId) return;
+    if (!file || !session || session.id !== sessionId) return;
+    const targetId = session.id;
     setBusy(true);
     try {
       const data = JSON.parse(await file.text());
-      if (data.schema_version !== 1 || data.blind_session_id !== sessionId || !Array.isArray(data.reviews)) {
+      if (data.schema_version !== 1 || data.blind_session_id !== targetId || !Array.isArray(data.reviews)) {
         throw new Error("评价文件版本或会话编号不匹配");
       }
-      const result = await api(`/agent/blind-sessions/${sessionId}/import`, { reviews: data.reviews });
-      await loadSession(sessionId);
+      const result = await api(`/agent/blind-sessions/${targetId}/import`, { reviews: data.reviews });
+      await loadSession(targetId);
       message.success(`已导入 ${result.imported_count} 条评价，审计记录绑定对应结果哈希`);
     } catch (error) { message.error(String(error)); }
     finally {
@@ -77,8 +89,15 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
     }
   };
   const closeSession = async () => {
+    if (!session || session.id !== sessionId) return;
+    const targetId = session.id;
+    const request = sessionRequest.current;
     setBusy(true);
-    try { const value = await api(`/agent/blind-sessions/${sessionId}/close`, {}); setSession(value); message.success("盲审完成，已揭示实验组别"); }
+    try {
+      const value = await api(`/agent/blind-sessions/${targetId}/close`, {});
+      if (sessionRequest.current === request) setSession(value);
+      message.success("盲审完成，已揭示实验组别");
+    }
     catch (error) { message.error(String(error)); }
     finally { setBusy(false); }
   };
@@ -92,10 +111,11 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
   };
   const compareReviewers = async () => {
     const sessionIds = agreementSessionIds.split(/[\s,;，；]+/).filter(Boolean);
+    const request = ++agreementRequest.current;
     setBusy(true);
     try {
       const value = await api("/agent/blind-review-agreement", { session_ids: sessionIds });
-      setAgreement(value);
+      if (agreementRequest.current === request) setAgreement(value);
       message.success("已按固定结果哈希计算复核人一致性");
     } catch (error) { message.error(String(error)); }
     finally { setBusy(false); }
@@ -106,20 +126,40 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
     <Space direction="vertical" className="section-gap" style={{ width: "100%" }}>
       <Space wrap>
         <Select style={{ minWidth: 220 }} placeholder="选择实验批次" value={experimentId} options={experimentOptions}
-          onChange={(value) => { setExperimentId(value); setOperationIds([]); }} />
-        <Select mode="multiple" style={{ minWidth: 420 }} placeholder="选择完整 R1/R2 候选配对" value={operationIds}
-          options={operationOptions} onChange={setOperationIds} maxTagCount="responsive" />
-        <Button type="primary" disabled={!experimentId || operationIds.length < 2} loading={busy} onClick={() => void createSession()}>
+          disabled={busy} onChange={(value) => { setExperimentId(value); setPairKeys([]); }} />
+        <Select mode="multiple" style={{ minWidth: 420 }} placeholder="选择完整的候选配对（R1 + R2）" value={pairKeys}
+          options={operationOptions} disabled={!experimentId || busy} onChange={(values) => {
+            if (values.length > 10) { message.warning("一次最多选择 10 组完整配对"); return; }
+            setPairKeys(values);
+          }} maxTagCount="responsive" />
+        <Button type="primary" disabled={!experimentId || pairKeys.length < 1 || operationIds.length > 20 || busy} loading={busy} onClick={() => void createSession()}>
           创建盲审会话
         </Button>
       </Space>
-      <Text type="secondary">服务端验证每个固定候选同时包含 R1 与 R2，且已有同源码哈希的 R0 静态基线。复核条目随机排序；在线会话状态接口不返回源码包或未揭盲的组别映射。</Text>
+      <Text type="secondary">选择一组就会同时加入 R1 和 R2 两条结果；最多选 10 组。创建时服务端还会核对源码绑定、实验配置和同源码 R0 静态基线。复核条目随机排序；在线会话状态接口不返回源码包或未揭盲的组别映射。</Text>
+      {experimentOptions.length === 0 && <Alert type="info" showIcon
+        message="当前没有已完成的实验批次可供盲审"
+        description="先为固定候选完成人工 R0 静态基线，再按同一源码和实验配置完成 R1/R2。此面板只读取已完成结果，不会启动扫描或模型调用。" />}
+      {experimentId && pairing.eligibleOperationCount === 0 && <Alert type="info" showIcon
+        message="这个实验批次还没有可用于盲审的已完成 R1/R2 结果"
+        description="先完成同一固定候选的 R1 单轮和 R2 工具 Agent；当前页面不会自动启动模型任务。" />}
+      {experimentId && pairing.eligibleOperationCount > 0 && pairing.pairs.length === 0 && <Alert type="warning" showIcon
+        message="暂时没有完整且唯一的 R1/R2 配对"
+        description={`已完成结果 ${pairing.eligibleOperationCount} 条；缺少一侧的配对 ${pairing.incompletePairCount} 组，重复或有歧义的配对 ${pairing.ambiguousPairCount} 组。请检查实验批次和候选绑定后刷新。`} />}
       <Space.Compact style={{ width: "100%" }}>
-        <Input aria-label="盲审会话编号" value={sessionId} onChange={(event) => setSessionId(event.target.value)} placeholder="输入已创建的盲审会话编号" />
+        <Input aria-label="盲审会话编号" value={sessionId} onChange={(event) => {
+          sessionRequest.current++;
+          setSession(null);
+          setSessionId(event.target.value);
+        }} placeholder="输入已创建的盲审会话编号" />
         <Button loading={busy} disabled={!sessionId} onClick={() => void loadSession().catch((error) => message.error(String(error)))}>查看会话状态</Button>
       </Space.Compact>
       <Space.Compact style={{ width: "100%" }}>
-        <Input aria-label="独立复核会话编号" value={agreementSessionIds} onChange={(event) => setAgreementSessionIds(event.target.value)} placeholder="输入同一批结果的 2-10 个已关闭盲审会话编号，以逗号或空格分隔" />
+        <Input aria-label="独立复核会话编号" value={agreementSessionIds} onChange={(event) => {
+          agreementRequest.current++;
+          setAgreement(null);
+          setAgreementSessionIds(event.target.value);
+        }} placeholder="输入同一批结果的 2-10 个已关闭盲审会话编号，以逗号或空格分隔" />
         <Button loading={busy} disabled={agreementSessionIds.split(/[\s,;，；]+/).filter(Boolean).length < 2} onClick={() => void compareReviewers()}>计算复核人一致性</Button>
       </Space.Compact>
       <Text type="secondary">一致性只统计同一结果哈希上各复核人标签的两两相同率，不校正偶然一致，也不能证明复核人身份独立或结论正确。</Text>
@@ -138,7 +178,7 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
             description={`引文准确性两两一致 ${percent(row.agreement.citation_accuracy.pairwise_agreement)}；人工分诊两两一致 ${percent(row.agreement.post_review_disposition.pairwise_agreement)}；义务判定 ${obligationRows} 项，支持性主张 ${claimRows} 项。`} />;
         })}
       </>}
-      {session && <>
+      {session && session.id === sessionId && <>
         <Alert type={session.state === "closed" ? "warning" : "info"} showIcon
           message={`会话 ${session.id} · ${session.state === "closed" ? "已揭盲" : "盲审中"} · ${session.items.length} 条 · ${reviewed} 条已复核`} />
         {session.state === "open" && <Space wrap>

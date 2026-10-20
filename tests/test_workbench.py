@@ -129,6 +129,7 @@ class WorkbenchTests(unittest.TestCase):
             "ohscanner.cpp.null_dereference", "ohscanner.cpp.bounds",
             "ohscanner.cpp.integer_bounds", "ohscanner.cpp.resource_lifetime",
             "ohscanner.cpp.unsafe_memory_call", "ohscanner.interface.ipc",
+            "ohscanner.cpp.path_traversal", "ohscanner.ark.runtime.type_safety",
             "ohscanner.oh.arkts_js", "ohscanner.data.sensitive_exposure",
             "ohscanner.known_disclosed_cves",
         })
@@ -540,10 +541,11 @@ class WorkbenchTests(unittest.TestCase):
     def test_agent_review_queue_binds_entire_report_and_deduplicates(self):
         job = self.completed()
         expected = service.findings(service.read_report(self.settings, job))
-        # Scanner publication automatically places the full candidate set in the queue.
+        # New scans do not create a non-executable legacy queue pointer; the
+        # compatibility endpoint remains explicit and binds the frozen report.
         queued_items = [x for x in self.app.state.operations.list()
                         if x["kind"] == "candidate_review_batch" and x["spec"].get("job_id") == job["id"]]
-        self.assertEqual(len(queued_items), 1)
+        self.assertEqual(queued_items, [])
         queued = self.client.post("/api/v1/operations/agent-review-queue",
                                   json={"job_id": job["id"]}, headers=HEADERS)
         self.assertEqual(queued.status_code, 201, queued.text)

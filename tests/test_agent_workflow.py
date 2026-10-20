@@ -366,6 +366,15 @@ class ProviderConfigTests(unittest.TestCase):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 agent.validate_base_url(value)
 
+    def test_mimo_token_plan_endpoint_is_rejected_for_application_backend(self):
+        for value in (
+                "https://token-plan-cn.xiaomimimo.com/v1",
+                "https://token-plan-sgp.xiaomimimo.com/v1",
+                "https://token-plan-ams.xiaomimimo.com/v1"):
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, "not permitted.*application backend"):
+                agent.validate_base_url(value)
+        agent.validate_base_url("https://api.xiaomimimo.com/v1")
+
     def test_stale_redaction_policy_fails_before_source_read_or_provider_call(self):
         config = agent.ProviderConfig("https://api.openai.com/v1", "review", "secret-value")
         task = {"id": "stale-redaction", "spec": {
@@ -432,7 +441,8 @@ class ProviderConfigTests(unittest.TestCase):
             client.create({"model": "review"}, timeout=1.25)
             client.create({"model": "review"}, timeout=90)
 
-        self.assertEqual(timeouts, [1.25, 45])
+        self.assertAlmostEqual(timeouts[0], 1.25, places=3)
+        self.assertAlmostEqual(timeouts[1], 45, places=3)
     def test_provider_rejects_malformed_output_items_and_usage(self):
         config = agent.ProviderConfig("https://api.openai.com/v1", "review", "secret-value")
         client = agent.ResponsesClient(config)
@@ -486,6 +496,70 @@ class ProviderConfigTests(unittest.TestCase):
             "input_tokens": 1000, "output_tokens": 200, "cached_input_tokens": 1001,
             "usage_complete": True, "cached_input_usage_complete": True}))
 
+    def test_mimo_v26_cost_estimate_uses_exact_model_and_complete_cache_usage(self):
+        config = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "unused")
+        estimate = agent._cost_estimate(config, {
+            "input_tokens": 1000, "output_tokens": 200, "cached_input_tokens": 400,
+            "usage_complete": True, "cached_input_usage_complete": True})
+        self.assertEqual(estimate["status"], "estimated_amount")
+        self.assertEqual(estimate["amount_usd"], "0.00043644")
+        self.assertEqual(estimate["amount_cny"], "0.00301000")
+        self.assertEqual(estimate["currency"], "USD")
+        self.assertEqual(estimate["rate_source_url"], agent.MIMO_RATE_SOURCE_URL)
+        self.assertFalse(estimate["actual_charge_verified"])
+        self.assertIsNone(agent._cost_estimate(config, {
+            "input_tokens": 1000, "output_tokens": 200, "cached_input_tokens": None,
+            "usage_complete": True, "cached_input_usage_complete": False}))
+        self.assertIsNone(agent._cost_estimate(
+            agent.ProviderConfig("https://api.xiaomimimo.com/v1", "unreviewed-model", "unused"), {
+                "input_tokens": 1000, "output_tokens": 200, "cached_input_tokens": 400,
+                "usage_complete": True, "cached_input_usage_complete": True}))
+        self.assertIsNone(agent._cost_estimate(
+            agent.ProviderConfig("https://token-plan-cn.xiaomimimo.com/v1", "mimo-v2.6-pro", "unused"), {
+                "input_tokens": 1000, "output_tokens": 200, "cached_input_tokens": 400,
+                "usage_complete": True, "cached_input_usage_complete": True}))
+
+    def test_mimo_budget_estimate_uses_realtime_payg_miss_and_output_rates(self):
+        config = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
+        estimate = agent._budget_cost_estimate(config, {
+            "max_total_input_tokens": 24000, "max_total_output_tokens": 4000,
+            "max_output_tokens": 1200, "max_steps": 4}, "tool_agent")
+        self.assertEqual(estimate["maximum_usd"], "0.01392000")
+        self.assertEqual(estimate["maximum_cny"], "0.09600000")
+        self.assertEqual(estimate["basis"], "realtime_payg_all_input_uncached")
+        self.assertFalse(estimate["hard_spend_cap"])
+        self.assertFalse(estimate["actual_charge_verified"])
+        self.assertEqual(estimate["rate_source_url"], agent.MIMO_RATE_SOURCE_URL)
+
+    def test_mimo_task_budget_preview_aggregates_usd_and_cny_without_r2(self):
+        config = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
+        preview = agent.audit_task_consent_preview(
+            {"plan_sha256": "a" * 64,
+             "source": {"repository": "openharmony/demo", "commit": "b" * 40, "git_tree": "c" * 40}},
+            "d" * 64, ["."], 2, "e" * 32, config,
+            max_cost_usd="0.03")
+        self.assertEqual(preview["estimated_cost"]["maximum_usd"], "0.02505600")
+        self.assertEqual(preview["estimated_cost"]["maximum_cny"], "0.17280000")
+        self.assertEqual(preview["manifest"]["estimated_cost"], preview["estimated_cost"])
+        self.assertEqual(preview["cost_budget"]["maximum_usd"], "0.03")
+        self.assertTrue(preview["platform_cost_budget_enforced"])
+        self.assertEqual(preview["manifest"]["cost_budget"], preview["cost_budget"])
+
+    def test_task_consent_rejects_budget_below_worst_case_or_unknown_rate(self):
+        plan = {"plan_sha256": "a" * 64,
+                "source": {"repository": "openharmony/demo", "commit": "b" * 40,
+                           "git_tree": "c" * 40}}
+        config = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
+        with self.assertRaisesRegex(ValueError, "高于费用预算"):
+            agent.audit_task_consent_preview(
+                plan, "d" * 64, ["."], 2, "e" * 32, config,
+                max_cost_usd="0.02")
+        unknown = agent.ProviderConfig("https://api.openai.com/v1", "unpriced-model", "secret")
+        with self.assertRaisesRegex(ValueError, "没有已复核费率卡"):
+            agent.audit_task_consent_preview(
+                plan, "d" * 64, ["."], 2, "e" * 32, unknown,
+                max_cost_usd="1.00")
+
     def test_aggregate_budget_cost_estimate_requires_matching_known_rate_cards(self):
         from src.workbench.agent import DEEPSEEK_V4_PRO_RATE_CARD
         rate = {"status": "budget_based_upper_estimate", "currency": "USD",
@@ -499,6 +573,13 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertIsNone(_aggregate_agent_budget_cost_estimates([rate, None]))
         self.assertIsNone(_aggregate_agent_budget_cost_estimates([
             rate, {**rate, "rate_card_id": "another-rate-card"}]))
+        mimo_rate = {**rate, "rate_card_id": "xiaomi-mimo-v2.6-pro-realtime-2026-10-20",
+                     "maximum_usd": "0.01000000", "maximum_cny": "0.09600000",
+                     "alternative_currency": "CNY"}
+        mimo_aggregate = _aggregate_agent_budget_cost_estimates(
+            [mimo_rate, {**mimo_rate, "maximum_usd": "0.02000000", "maximum_cny": "0.19200000"}])
+        self.assertEqual(mimo_aggregate["maximum_usd"], "0.03000000")
+        self.assertEqual(mimo_aggregate["maximum_cny"], "0.28800000")
 
     def test_provider_refusal_is_not_mistaken_for_a_triage_result(self):
         response = {"output": [{"type": "message", "content": [
@@ -515,6 +596,55 @@ class ProviderConfigTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "HTTP 429") as caught:
                 client.create({"model": "review"})
         self.assertNotIn("secret-value", str(caught.exception))
+
+    def test_provider_retries_one_explicit_transient_http_response_only(self):
+        from urllib.error import HTTPError
+        config = agent.ProviderConfig("https://api.openai.com/v1", "review", "secret-value")
+        client = agent.ResponsesClient(config, max_retries=1)
+        body = json.dumps({"output": []}).encode()
+
+        class Response:
+            status = 200
+            def __enter__(self):
+                return self
+            def __exit__(self, *_args):
+                return False
+            def read(self, _limit):
+                return body
+
+        retry = HTTPError("https://api.openai.com/v1/responses", 503, "busy", {}, io.BytesIO(b"private"))
+        with patch.object(client.opener, "open", side_effect=[retry, Response()]) as opened, patch(
+                "src.workbench.agent.time.sleep") as sleep:
+            result = client.create({"model": "review"})
+        self.assertEqual(opened.call_count, 2)
+        sleep.assert_called_once_with(0.25)
+        self.assertEqual(result["_ohscanner_transport_attempts"], 2)
+        self.assertEqual(result["output"], [])
+
+        timeout_client = agent.ResponsesClient(config, max_retries=1)
+        from urllib.error import URLError
+        with patch.object(timeout_client.opener, "open", side_effect=URLError("lost")) as opened, patch(
+                "src.workbench.agent.time.sleep") as sleep:
+            with self.assertRaisesRegex(ValueError, "unknown outcome"):
+                timeout_client.create({"model": "review"})
+        self.assertEqual(opened.call_count, 1)
+        sleep.assert_not_called()
+
+    def test_provider_request_can_suppress_optional_retry_within_authorized_ceiling(self):
+        from urllib.error import HTTPError
+        config = agent.ProviderConfig("https://api.openai.com/v1", "review", "secret-value")
+        client = agent.ResponsesClient(config, max_retries=1)
+        retry = HTTPError("https://api.openai.com/v1/responses", 503, "busy", {}, io.BytesIO(b"private"))
+        with patch.object(client.opener, "open", side_effect=retry) as opened, patch(
+                "src.workbench.agent.time.sleep") as sleep:
+            with self.assertRaisesRegex(ValueError, "HTTP 503"):
+                client.create({"model": "review"}, max_retries=0)
+        self.assertEqual(opened.call_count, 1)
+        sleep.assert_not_called()
+        with patch.object(client.opener, "open") as opened:
+            with self.assertRaisesRegex(ValueError, "authorized maximum"):
+                client.create({"model": "review"}, max_retries=2)
+        opened.assert_not_called()
 
     def test_redirect_handler_blocks_credential_forwarding(self):
         from urllib.error import URLError
@@ -589,7 +719,7 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertIn("connectivity check", body)
         request_json = json.loads(body)
         self.assertEqual(request_json["text"]["format"]["type"], "json_schema")
-        self.assertEqual(timeout, 20)
+        self.assertAlmostEqual(timeout, 20, places=3)
         self.assertTrue(result["ok"])
         self.assertFalse(result["source_sent"])
 
@@ -1393,7 +1523,7 @@ class AgentFixedCommitToolTests(unittest.TestCase):
         self.assertIn("up to 40 numbered lines per read", scope)
         self.assertIn("complete Tree-sitter syntax function", scope)
         self.assertEqual(preview["tool_policy_version"], "readonly-fixed-commit-0.6.4")
-        self.assertEqual(preview["consent_preview_version"], "agent-egress-preview-0.5.7")
+        self.assertEqual(preview["consent_preview_version"], agent.CONSENT_PREVIEW_VERSION)
         self.assertTrue(any("reasoning items" in item for item in preview["disclosure"]))
         self.assertTrue(any("one targeted correction" in item for item in preview["disclosure"]))
         self.assertEqual(preview["redaction_policy_version"], agent.REDACTION_POLICY_VERSION)
@@ -1425,9 +1555,36 @@ class AgentFixedCommitToolTests(unittest.TestCase):
             preview = agent.consent_preview(None, None, {"id": "job", "report_sha256": "b" * 64},
                 report, {"id": "candidate", "file": "src/a.cpp"}, spec, config)
         self.assertEqual(preview["budget_cost_estimate"]["maximum_usd"], "0.04752000")
-        self.assertEqual(preview["consent_preview_version"], "agent-egress-preview-0.5.7")
+        self.assertEqual(preview["consent_preview_version"], agent.CONSENT_PREVIEW_VERSION)
         self.assertEqual(preview["budget_cost_estimate"]["rate_source_url"],
                          agent.DEEPSEEK_V4_PRO_RATE_CARD["source_url"])
+
+    def test_mimo_budget_cost_estimate_is_bound_in_source_approval_preview(self):
+        config = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
+        prepared = {"source": {"sha256": "a" * 64}, "initial_context_sha256": "e" * 64,
+                    "initial_context": {"evidence_routing": {"agent_source_review_indices": [0]}},
+                    "context_text": "{}", "redaction_categories": []}
+        report = {"repository": "controlled/repo", "commit": "c" * 40, "tree": "d" * 40,
+                  "_workbench": {"source_inventory": []}}
+        spec = {"mode": "tool_agent", "max_steps": 4, "max_output_tokens": 1200,
+                "max_total_input_tokens": 24000, "max_total_output_tokens": 4000,
+                "timeout_seconds": 180}
+        with patch.object(agent, "_prepare_candidate_context", return_value=prepared):
+            preview = agent.consent_preview(None, None, {"id": "job", "report_sha256": "b" * 64},
+                report, {"id": "candidate", "file": "src/a.cpp"}, spec, config)
+        estimate = preview["budget_cost_estimate"]
+        self.assertEqual(estimate["maximum_usd"], "0.01392000")
+        self.assertEqual(estimate["rate_card_id"], agent.MIMO_REALTIME_RATE_CARDS["mimo-v2.6-pro"]["id"])
+        self.assertEqual(preview["consent_preview_version"], agent.CONSENT_PREVIEW_VERSION)
+        baseline_sha256 = preview["consent_sha256"]
+        modified_card = {**agent.MIMO_REALTIME_RATE_CARDS["mimo-v2.6-pro"],
+                         "rates_usd_per_million": {"cache_hit_input": "0.0036",
+                                                   "cache_miss_input": "0.5", "output": "1.0"}}
+        with patch.object(agent, "_prepare_candidate_context", return_value=prepared), \
+             patch.dict(agent.MIMO_REALTIME_RATE_CARDS, {"mimo-v2.6-pro": modified_card}):
+            changed_preview = agent.consent_preview(None, None, {"id": "job", "report_sha256": "b" * 64},
+                report, {"id": "candidate", "file": "src/a.cpp"}, spec, config)
+        self.assertNotEqual(baseline_sha256, changed_preview["consent_sha256"])
 
     def test_symbol_lookup_skips_context_files_over_the_size_cap(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -1477,6 +1634,52 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertFalse(confirmed.json()["source_sent"])
                 self.assertFalse(confirmed.json()["operation_created"])
                 check.assert_called_once()
+
+    def test_scan_triage_summary_is_bound_to_the_current_report(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            settings = Settings(root / "data", (root / "targets",))
+            app = create_app(settings)
+            repo = app.state.store.add_repository("openharmony/sample", str(root))
+            job = app.state.store.create_job(repo["id"], {"commit": "c" * 40})
+            current_report = "b" * 64
+            with TestClient(app) as client:
+                waiting = client.get("/api/v1/scans/" + job["id"] + "/triage")
+                self.assertEqual(waiting.status_code, 200, waiting.text)
+                self.assertEqual(waiting.json()["state"], "waiting_for_scan")
+                self.assertEqual(waiting.json()["scan_status"], "queued")
+                self.assertEqual(waiting.json()["triage_status"], "waiting_for_scan")
+                self.assertEqual(waiting.json()["report_status"], "not_ready")
+
+                with app.state.store.connect() as db:
+                    db.execute("UPDATE jobs SET status='completed', report_sha256=? WHERE id=?",
+                               (current_report, job["id"]))
+                ops = Operations(app.state.store)
+                current = ops.create("agent_investigation", {
+                    "job_id": job["id"], "report_sha256": current_report,
+                    "candidate_id": "candidate-current", "mode": "single_shot",
+                })
+                ops.create("agent_investigation", {
+                    "job_id": job["id"], "report_sha256": "a" * 64,
+                    "candidate_id": "candidate-stale", "mode": "tool_agent",
+                })
+                response = client.get("/api/v1/scans/" + job["id"] + "/triage")
+                self.assertEqual(response.status_code, 200, response.text)
+                summary = response.json()
+                self.assertEqual(summary["state"], "in_progress")
+                self.assertEqual(summary["triage_status"], "in_progress")
+                self.assertEqual(summary["report_status"], "ready")
+                self.assertEqual(summary["counts"], {"queued": 1})
+                self.assertEqual([item["id"] for item in summary["items"]], [current["id"]])
+                self.assertEqual(summary["items"][0]["candidate_id"], "candidate-current")
+                self.assertTrue(summary["authorization_required"])
+                with app.state.store.connect() as db:
+                    db.execute("UPDATE jobs SET status='completed_with_limitations' WHERE id=?",
+                               (job["id"],))
+                limited = client.get("/api/v1/scans/" + job["id"] + "/triage")
+                self.assertEqual(limited.status_code, 200, limited.text)
+                self.assertEqual(limited.json()["report_status"], "ready_with_limitations")
+
 
     def test_model_enqueue_is_rejected_when_only_human_runtime_obligations_remain(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -1945,6 +2148,13 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(len(FakeClient.timeout_values), 1)
                 self.assertGreater(FakeClient.timeout_values[0], 0)
                 self.assertLessEqual(FakeClient.timeout_values[0], task["spec"]["timeout_seconds"])
+                result["model_usage"]["cost_estimate"] = {
+                    "status": "estimated_amount", "currency": "USD", "amount_usd": "0.00043644",
+                    "amount_cny": "0.00301000", "alternative_currency": "CNY",
+                    "rate_card_id": agent.MIMO_REALTIME_RATE_CARDS["mimo-v2.6-pro"]["id"],
+                    "rate_source_url": agent.MIMO_RATE_SOURCE_URL,
+                    "actual_charge_verified": False,
+                }
                 ops.finish(operation_id, result)
                 detail = client.get("/api/v1/operations/" + operation_id)
                 self.assertEqual(detail.status_code, 200)
@@ -2040,6 +2250,7 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertIn("Agent 分诊建议（非漏洞确认）", report_md.text)
                 self.assertIn("不验证引句是否支持模型陈述", report_md.text)
                 self.assertIn("Token：输入 321 / 输出 55", report_md.text)
+                self.assertIn(r"估算费用（非实账）：USD 0\.00043644 / CNY 0\.00301000", report_md.text)
                 self.assertIn("模型原始摘要（未核验文本）", report_md.text)
                 self.assertIn("授权预览 SHA-256", report_md.text)
                 self.assertIn(consent_sha256, report_md.text)
@@ -2125,7 +2336,7 @@ class AgentRouteTests(unittest.TestCase):
                     "    return _original_job(self, key)",
                     "Store.job = _job",
                     "class _FakeResponses:",
-                    "    def __init__(self, config): pass",
+                    "    def __init__(self, config, **kwargs): pass",
                     "    def create(self, payload):",
                     "        context = json.loads(payload['input'][0]['content'][0]['text'])",
                     "        answer = {'summary': 'Synthetic child-process review.', 'assessment': 'needs_more_evidence', 'supported_claims': [{'claim': 'Candidate source was bound.', 'obligation_indices': [0], 'citations': [{'evidence_id': context['evidence_id'], 'quote': 'guarded_call();'}]}], 'obligation_reviews': [{'obligation_index': 0, 'disposition': 'unresolved', 'citations': []}], 'unsupported_claims': [], 'unknowns': ['Product reachability'], 'next_steps': ['Human review']}",
@@ -2172,6 +2383,10 @@ class AgentRouteTests(unittest.TestCase):
             self.assertEqual(result["mode"], "single_shot")
             self.assertEqual(result["binding"]["commit"], "c" * 40)
             self.assertEqual(result["model_usage"]["total_tokens"], 263)
+            telemetry = result["execution_telemetry"]
+            self.assertGreaterEqual(telemetry["wall_seconds"], 0)
+            self.assertGreater(telemetry["process_peak_rss_bytes"], 0)
+            self.assertEqual(telemetry["docker_container_metrics"], "not_measured")
             self.assertEqual(result["vulnerability_state"], "candidate")
             self.assertEqual(result["validated_vulnerability"], 0)
             self.assertTrue(any(event["stage"] == "agent_model_call" for event in ops.events(task["id"])))
@@ -2230,6 +2445,13 @@ class AgentRouteTests(unittest.TestCase):
                  patch.object(agent.service, "source", return_value=source):
                 with self.assertRaisesRegex(ValueError, "conservative input request budget"):
                     agent.execute_agent(None, Store(), Ops(), task, client=NeverCall())
+
+    def test_conservative_input_budget_uses_only_retries_that_fit(self):
+        self.assertEqual(agent._provider_retries_within_input_budget(1, 12467, 24000), 0)
+        self.assertEqual(agent._provider_retries_within_input_budget(1, 12000, 24000), 1)
+        self.assertIsNone(agent._provider_retries_within_input_budget(1, 12467, 12466))
+        with self.assertRaisesRegex(ValueError, "invalid conservative input retry budget"):
+            agent._provider_retries_within_input_budget(True, 12467, 24000)
 
 
     def test_supported_claims_must_have_a_real_evidence_id(self):
@@ -2778,8 +3000,74 @@ class AgentPairedEvaluationTests(unittest.TestCase):
             self.assertEqual(group["tool_calls"], {"completed": 0, "rejected": 1, "unknown_status": 0})
             self.assertEqual(group["model_tool_calls_skipped"], 2)
             self.assertEqual(group["usage"], {"complete": 0, "incomplete": 1, "unknown": 1})
-            self.assertIn("does not measure", summary["execution_limitation"])
+            self.assertIn("不代表漏洞准确率", summary["execution_limitation"])
 
+    def test_execution_summary_aggregates_cost_wall_rss_and_preserves_unknowns(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            app = create_app(Settings(root / "data", (root / "targets",)))
+            ops = Operations(app.state.store)
+            samples = [
+                ("api.example.invalid", {"usage_complete": True, "input_tokens": 120,
+                    "output_tokens": 30, "cost_estimate": {"status": "estimated_range",
+                    "currency": "USD", "minimum_usd": "0.01000000", "maximum_usd": "0.02000000",
+                    "rate_card_id": "fixture-card", "rate_source_url": "https://rates.example.invalid",
+                    "actual_charge_verified": False}},
+                    {"wall_seconds": 1.5, "process_peak_rss_bytes": 1048576}),
+                ("api.example.invalid", {"usage_complete": False, "input_tokens": None,
+                    "output_tokens": None, "cost_estimate": None},
+                    {"wall_seconds": 2.5, "process_peak_rss_bytes": None}),
+                ("localhost", {"usage_complete": None}, {}),
+            ]
+            for index, (endpoint, usage, telemetry) in enumerate(samples):
+                spec = {"mode": "single_shot", "provider": "fixture-provider",
+                        "provider_model": "eval-model", "provider_host": endpoint,
+                        "prompt_version": "prompt-1", "tool_policy_version": "tools-1"}
+                task = ops.create("agent_investigation", spec)
+                self.assertEqual(ops.claim()["id"], task["id"])
+                ops.finish(task["id"], result={"status": "completed_with_limitations",
+                    "mode": "single_shot", "provider": {"provider": "fixture-provider",
+                    "model": "eval-model", "endpoint_host": endpoint}, "prompt_version": "prompt-1",
+                    "tool_policy_version": "tools-1", "structured_answer_validation": "accepted",
+                    "model_usage": usage, "execution_telemetry": telemetry,
+                    "vulnerability_state": "candidate", "validated_vulnerability": 0})
+                start = f"2026-10-20T00:00:{index * 10:02d}+00:00"
+                end = f"2026-10-20T00:00:{index * 10 + (5 if index == 0 else 3):02d}+00:00"
+                with app.state.store.connect() as db:
+                    db.execute("UPDATE operations SET started_at=?,finished_at=? WHERE id=?",
+                               (start, end, task["id"]))
+
+            summary = ops.agent_evaluation_summary()
+            self.assertEqual(len(summary["execution_groups"]), 2)
+            network = next(group for group in summary["execution_groups"]
+                           if group["endpoint_host"] == "api.example.invalid")
+            self.assertEqual(network["usage"], {"complete": 1, "incomplete": 1, "unknown": 0})
+            self.assertEqual(network["token_usage"], {"complete_operation_count": 1,
+                "input_tokens": 120, "output_tokens": 30, "total_tokens": 150})
+            self.assertEqual(network["cost_estimate_status_counts"],
+                             {"estimated_range": 1, "unavailable": 1})
+            estimate = network["cost_estimate_aggregates"][0]
+            self.assertEqual(estimate["amounts"], {"minimum_usd": "0.01000000",
+                                                   "maximum_usd": "0.02000000"})
+            self.assertFalse(estimate["actual_charge_verified"])
+            self.assertEqual(network["wall_time"]["median_seconds"], 4.0)
+            self.assertEqual(network["wall_time"]["maximum_seconds"], 5.0)
+            self.assertEqual(network["child_execution_time"]["median_seconds"], 2.0)
+            self.assertEqual(network["process_peak_rss"]["measured_operation_count"], 1)
+            self.assertEqual(network["process_peak_rss"]["unknown_operation_count"], 1)
+            self.assertEqual(network["process_peak_rss"]["maximum_bytes"], 1048576)
+            self.assertEqual(network["runtime_conditions"]["docker_container_metrics"], "not_measured")
+            local = next(group for group in summary["execution_groups"]
+                         if group["endpoint_host"] == "localhost")
+            self.assertEqual(local["runtime_conditions"]["provider_endpoint"], "local_loopback")
+            self.assertEqual(local["usage"]["unknown"], 1)
+            with TestClient(app) as client:
+                response = client.get("/api/v1/agent/evaluation-summary")
+            self.assertEqual(response.status_code, 200)
+            api_groups = response.json()["execution_groups"]
+            self.assertEqual(len(api_groups), 2)
+            self.assertEqual(next(group for group in api_groups
+                                    if group["endpoint_host"] == "api.example.invalid")["token_usage"]["total_tokens"], 150)
 class AgentWorkerEnvironmentTests(unittest.TestCase):
     def test_provider_credentials_are_only_forwarded_to_agent_operation_children(self):
         from src.workbench.worker_env import worker_child_environment
