@@ -1,0 +1,76 @@
+{
+  "schema": "ohscanner.known-cve-source-identity/1",
+  "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+  "head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "fixtures": [
+    {
+      "path": "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_vulnerable.h",
+      "worktree_length": 2603,
+      "worktree_sha256": "14c978800355920d10830ffd8d3c4256fe150e854f96d7b0515a2dd59367091b",
+      "normalized_lf_sha256": "77cf22fe5fc52a1f365f556344360ba4912341c1b6875f8778e40ca80c576ad4",
+      "pinned_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "pinned_git_blob_sha1": "7ce4262e3f1d2c0173d929318a4795ff1573c721",
+      "pinned_blob_bytes_length": 2507,
+      "pinned_blob_sha256": "77cf22fe5fc52a1f365f556344360ba4912341c1b6875f8778e40ca80c576ad4",
+      "worktree_has_crlf": true,
+      "normalization_used_for_test_execution": false,
+      "source_binding_policy": "Tests execute fixed HEAD Git blob bytes. The normalized hash is diagnostic only because .gitattributes does not explicitly declare these C/C++ fixtures as normalized text."
+    },
+    {
+      "path": "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_fixed.h",
+      "worktree_length": 2815,
+      "worktree_sha256": "8db123dbc5002e29d5910fa1f35a40429faa3723f35ea1b8be8df557a9195ce7",
+      "normalized_lf_sha256": "a9bed219a9e789ff71072846d786894cee90042602ddff18f7c2b133e81947ad",
+      "pinned_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "pinned_git_blob_sha1": "68114f10d83c8f0bdc46679c7efa35ed286bef8a",
+      "pinned_blob_bytes_length": 2714,
+      "pinned_blob_sha256": "a9bed219a9e789ff71072846d786894cee90042602ddff18f7c2b133e81947ad",
+      "worktree_has_crlf": true,
+      "normalization_used_for_test_execution": false,
+      "source_binding_policy": "Tests execute fixed HEAD Git blob bytes. The normalized hash is diagnostic only because .gitattributes does not explicitly declare these C/C++ fixtures as normalized text."
+    },
+    {
+      "path": "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.55-palette_neon_intrinsics.c",
+      "worktree_length": 4854,
+      "worktree_sha256": "31b191f9cb1f82f4eb15cb8646c2441366954a9a4bcd46191d68940e6bf73adb",
+      "normalized_lf_sha256": "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41",
+      "pinned_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "pinned_git_blob_sha1": "3068e9b6e62be16bee2a8f1ff8271a02f32be97f",
+      "pinned_blob_bytes_length": 4704,
+      "pinned_blob_sha256": "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41",
+      "worktree_has_crlf": true,
+      "normalization_used_for_test_execution": false,
+      "source_binding_policy": "Tests execute fixed HEAD Git blob bytes. The normalized hash is diagnostic only because .gitattributes does not explicitly declare these C/C++ fixtures as normalized text."
+    },
+    {
+      "path": "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.56-palette_neon_intrinsics.c",
+      "worktree_length": 4812,
+      "worktree_sha256": "4d8ccdfa30d7447bbe30307c7fc677a3df502b87d1f0eb77e4dc73f564870206",
+      "normalized_lf_sha256": "a844760f611829df29ca583f1b08832cac1440c74a2a22b35bc35a464ddf6b5e",
+      "pinned_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "pinned_git_blob_sha1": "0967ea1aebd718907fda1e767957deeddbe676b3",
+      "pinned_blob_bytes_length": 4665,
+      "pinned_blob_sha256": "a844760f611829df29ca583f1b08832cac1440c74a2a22b35bc35a464ddf6b5e",
+      "worktree_has_crlf": true,
+      "normalization_used_for_test_execution": false,
+      "source_binding_policy": "Tests execute fixed HEAD Git blob bytes. The normalized hash is diagnostic only because .gitattributes does not explicitly declare these C/C++ fixtures as normalized text."
+    }
+  ],
+  "pinned_objects": {
+    "review_blob": {
+      "git_blob_sha1": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+      "length": 29553,
+      "sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240"
+    },
+    "known_cves_blob": {
+      "git_blob_sha1": "a2ddd5ff2afc2f6fb0f1677ea3ffbbfc580a195b",
+      "length": 32041,
+      "sha256": "dae78195dc44e99b8cb1bc596722cca0bd32fb74756d9d9a926e685042efbd03"
+    },
+    "test_blob_before_change": {
+      "git_blob_sha1": "e510e0bc4e5e839f5a64c6e2f6eadc729396e2c0",
+      "length": 33246,
+      "sha256": "57b5634fb4650fc64b6427ea486c0c8cfc73de6e7f1b8873c4bd0e77a79ee4e3"
+    }
+  }
+}

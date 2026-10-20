@@ -1,0 +1,91 @@
+{
+  "schema": "ohscanner.known-cve-hashes/1",
+  "hash_algorithm": "SHA-256",
+  "artifacts": [
+    {
+      "path": "tests/detectors/test_known_disclosed_cves.py",
+      "length": 34167,
+      "sha256": "00d2436b4d21f589d330fdd00ec802409d994573978b560ad62f5c17fdf72507"
+    },
+    {
+      "path": "src/ohscanner/detectors/known_cves.py",
+      "length": 32579,
+      "sha256": "cb064c2c77546f7be03ebad3457bfb16f456c88f827776881ce348a821f108d0"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/minimal.patch",
+      "length": 4033,
+      "sha256": "038f64ec354b39c64912a380e7720fb0b883949c58b4b8dc3b98b89f8a7044c3"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/control_matrix.json",
+      "length": 31870,
+      "sha256": "88cf3ccf546fe8cf408205126d3e134288da81a57343d0169cfcfcbe52252614"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/source_identity.json",
+      "length": 4519,
+      "sha256": "65bbf79d03d90e529b14f3fca7f9cf34fff9047470a8d9c9662d4a4c38ffca11"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/run_manifest.json",
+      "length": 4036,
+      "sha256": "e9689b30fc9f01d73177bc7691c66d78243406476f5abd6471498823abed64f1"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/dispositions.md",
+      "length": 8722,
+      "sha256": "414a094ae95a9805784a8dc05e80869b60cfed41e60efd1f5f5c261fbb69fb40"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/limitations.md",
+      "length": 1371,
+      "sha256": "e7e15de2c47003abd554f03d9c1a5413160a3a8fee2f5b3ff6dfdd46f8781378"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/next_minimal_slice.md",
+      "length": 763,
+      "sha256": "f18ce9fc28596615d4f00772cd1905574e55307b8f674d0eabc5b7eeb1725199"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/baseline_test_stdout.txt",
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/baseline_test_stderr.txt",
+      "length": 5837,
+      "sha256": "2be68d3b7802d5da28a0a347c6b7886ff55630b311e1701f379c198133c32811"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/known_cves_test_stdout.txt",
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/known_cves_test_stderr.txt",
+      "length": 4111,
+      "sha256": "9c5cffcdb32f6fe616eabc349bf6cdcf8f890b16ca5eea0b8374d4d79f96272d"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/compileall_stdout.txt",
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/compileall_stderr.txt",
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/git_diff_check_stdout.txt",
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/evidence/known_cve_coverage_20261019/git_diff_check_stderr.txt",
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "schema": "ohscanner.known-cve-run-manifest/1",
+  "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+  "checkout": "E:\\网安\\CyberSecurity-Innovation-Audit-main-latest-20261019",
+  "head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "head_expected": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "remote_origin": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+  "detector": {
+    "id": "ohscanner.known_disclosed_cves",
+    "version": "0.16.0",
+    "known_cves_blob": "a2ddd5ff2afc2f6fb0f1677ea3ffbbfc580a195b"
+  },
+  "review_blob": {
+    "path_label": "源码漏洞审查记录_20261018.md",
+    "git_blob_sha1": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea"
+  },
+  "environment": {
+    "python_executable": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "python_version": "3.12.14",
+    "dependencies_installed_before_validation": [
+      "tree-sitter>=0.23,<1",
+      "tree-sitter-c>=0.23,<1",
+      "tree-sitter-cpp>=0.23,<1",
+      "tree-sitter-javascript==0.25.0",
+      "tree-sitter-typescript==0.23.2"
+    ],
+    "note": "Dependencies were installed into the bundled runtime, not into Git."
+  },
+  "runs": [
+    {
+      "name": "baseline_known_cves",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.detectors.test_known_disclosed_cves"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-main-latest-20261019",
+      "exit_code": 1,
+      "stdout": "baseline_test_stdout.txt",
+      "stderr": "baseline_test_stderr.txt",
+      "result": "21 tests: 19 passed, 2 failed, 0 skipped; failures occurred at fixture Git blob identity assertions before detector execution."
+    },
+    {
+      "name": "known_cves_after_pinned_blob_fix",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.detectors.test_known_disclosed_cves"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-main-latest-20261019",
+      "exit_code": 0,
+      "stdout": "known_cves_test_stdout.txt",
+      "stderr": "known_cves_test_stderr.txt",
+      "result": "21 tests: 21 passed, 0 failed, 0 skipped."
+    },
+    {
+      "name": "compileall",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "src",
+        "tests"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-main-latest-20261019",
+      "environment": {
+        "PYTHONPYCACHEPREFIX": "E:\\网安\\CyberSecurity-Innovation-Audit-main-latest-20261019\\research\\evidence\\known_cve_coverage_20261019\\pycache"
+      },
+      "exit_code": 0,
+      "stdout": "compileall_stdout.txt",
+      "stderr": "compileall_stderr.txt"
+    },
+    {
+      "name": "git_diff_check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-main-latest-20261019",
+      "exit_code": 0,
+      "stdout": "git_diff_check_stdout.txt",
+      "stderr": "git_diff_check_stderr.txt"
+    }
+  ],
+  "write_scope": [
+    "src/ohscanner/detectors/known_cves.py (inspected only; unchanged)",
+    "tests/detectors/test_known_disclosed_cves.py (changed)",
+    "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_*.h (inspected only; unchanged)",
+    "tests/fixtures/data_sensitive/cve_2026_33636/*.c (inspected only; unchanged)",
+    "research/evidence/known_cve_coverage_20261019/ (new evidence)"
+  ],
+  "git_actions": {
+    "commit": false,
+    "push": false,
+    "merge": false,
+    "reset": false,
+    "fetch": false,
+    "checkout": false
+  }
+}
