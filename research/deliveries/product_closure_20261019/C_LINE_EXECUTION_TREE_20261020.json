@@ -4,10 +4,10 @@
   "baseline": {
     "remote": "origin/codex/c-line-parallel-plan-20261020",
     "commit": "f0ed8469e964286fe30056b59a730da3a99fbda5",
-    "refresh": "2026-10-20: fetched origin; latest origin/main is c380a474718e8ec4497aff55b18a1dd38bafa13f. Existing C source slices are closed with stated limitations. The previously validated C mainline integration is based on 4b0e16576a45a111b4fad7e8f82819a47ed472f5 and is being reconciled with latest main under C-DEV-MAINLINE-SYNC-20261020 plus independent same-code-tree replay C-TEST-MAINLINE-SYNC-20261020. See research/deliveries/c-line/C_LINE_MAINLINE_REFRESH_PARALLEL_PLAN_20261020.md. Runtime/product unknowns remain unchanged."
+    "refresh": "2026-10-20 closeout complete: origin/main c380a474718e8ec4497aff55b18a1dd38bafa13f integrated with C delta at 4e1268a980fd103326c7dbaa6ca2e78d2ba43e69 (tree 0495b0db7d05f02e2ce4e48149f7571c8bdd8023). Independent replay on the exact integration SHA passed Ark Runtime 212 tests (3 skipped) and related source-binding/Runner/Catalog/contract/audit/known-case/parser/detector 97 tests (1 skipped). Reports: research/deliveries/c-line/C_LINE_MAINLINE_REFRESH_PARALLEL_PLAN_20261020.md and C_LINE_LATEST_MAIN_CLOSEOUT_20261020.md. Runtime stays not_run; product applicability/impact stays unknown."
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
-  "status": "IN_PROGRESS_MAINLINE_REFRESH",
+  "status": "CLOSEOUT_READY_WITH_LIMITATIONS",
   "blocking_prerequisites": [],
   "workstreams": [
     {
@@ -1031,7 +1031,7 @@
     {
       "id": "C-DEV-MAINLINE-SYNC-20261020",
       "kind": "development_and_integration",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_LATEST_MAIN_INTEGRATION",
       "scope": [
         "C Ark Runtime integration delta",
         "latest-main compatibility"
@@ -1040,12 +1040,20 @@
       "worktree": "worktrees/c-mainline-dev-closeout-20261020",
       "feedback_from": "C-TEST-MAINLINE-SYNC-20261020",
       "prompt": "research/deliveries/c-line/C_LINE_MAINLINE_REFRESH_PARALLEL_PLAN_20261020.md#c-dev-mainline-sync-20261020",
-      "deliverable": "Local integration commit with full SHA, affected test output and limitations; no push or PR."
+      "deliverable": "Local integration commit with full SHA, affected test output and limitations; no push or PR.",
+      "completion": "Merged latest origin/main c380a474718e8ec4497aff55b18a1dd38bafa13f with C integration 764f7698f6babdcccb2cd68eba75ed1b0afefc9e; no conflicts, unrelated mainline D evidence blobs retained. Integration commit 4e1268a980fd103326c7dbaa6ca2e78d2ba43e69, tree 0495b0db7d05f02e2ce4e48149f7571c8bdd8023; report-only follow-up c1f34e97326a61d68bc79282d782a3df37e128c9.",
+      "evidence": {
+        "integration_commit": "4e1268a980fd103326c7dbaa6ca2e78d2ba43e69",
+        "tree": "0495b0db7d05f02e2ce4e48149f7571c8bdd8023",
+        "latest_main_parent": "c380a474718e8ec4497aff55b18a1dd38bafa13f",
+        "tests": "Ark Runtime: 212 total, 209 passed, 3 skipped; source-binding/Catalog/parser/Runner: 59 total, 58 passed, 1 skipped; available contract tests: 19 passed; git diff --check passed.",
+        "limitations": "Runtime/product validation not_run or unknown; Windows symlink denial WinError 1314; no candidate promoted."
+      }
     },
     {
       "id": "C-TEST-MAINLINE-SYNC-20261020",
       "kind": "independent_testing",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_EXACT_SHA_INDEPENDENT_REPLAY",
       "scope": [
         "Ark Runtime suite",
         "Catalog",
@@ -1056,12 +1064,21 @@
       "worktree": "worktrees/c-mainline-test-closeout-20261020",
       "feedback_to": "C-DEV-MAINLINE-SYNC-20261020",
       "prompt": "research/deliveries/c-line/C_LINE_MAINLINE_REFRESH_PARALLEL_PLAN_20261020.md#c-test-mainline-sync-20261020",
-      "deliverable": "Independent test report with exact code SHA, commands/counts, feedback, and not_run/unknown boundaries."
+      "deliverable": "Independent test report with exact code SHA, commands/counts, feedback, and not_run/unknown boundaries.",
+      "completion": "Independent isolated checkout of exact developer commit 4e1268a980fd103326c7dbaa6ca2e78d2ba43e69 (tree 0495b0db7d05f02e2ce4e48149f7571c8bdd8023); Ark Runtime 212 tests OK with 3 skipped; related 97-test suite OK with 1 skipped; git diff --check passed. No production/test failures; no code feedback required.",
+      "evidence": {
+        "tested_commit": "4e1268a980fd103326c7dbaa6ca2e78d2ba43e69",
+        "tree": "0495b0db7d05f02e2ce4e48149f7571c8bdd8023",
+        "report_commit": "0b7ab8baf1e09e151dd88a0694da62cb49e1f906",
+        "tests": "python -B -m unittest discover -s tests/detectors/ark_runtime -t . -q: 212 OK, 3 skipped; related Runner/Catalog/source-binding/contract/audit/known-case/parser/detector suite: 97 OK, 1 skipped; git diff --check passed.",
+        "skip_reasons": "Two pinned historical Ark Git stores unavailable; OHSCANNER_ARK_REPO unset for one repo-bound case.",
+        "feedback": "No reproduced production or test defect. Runtime execution and accuracy measurements not run."
+      }
     },
     {
       "id": "C-INTEGRATE-TREE-20261020",
       "kind": "coordination_and_delivery",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_CLOSEOUT_TREE_REFRESH",
       "scope": [
         "C-line execution tree",
         "quick-closeout report"
@@ -1070,7 +1087,8 @@
       "worktree": "worktrees/c-line-task-tree-20261020",
       "feedback_from": "C-DEV-MAINLINE-SYNC-20261020; C-TEST-MAINLINE-SYNC-20261020",
       "prompt": "research/deliveries/c-line/C_LINE_MAINLINE_REFRESH_PARALLEL_PLAN_20261020.md#c-integrate-tree-20261020",
-      "deliverable": "Updated execution tree and closeout evidence that agree on the exact final code SHA."
+      "deliverable": "research/deliveries/c-line/C_LINE_MAINLINE_REFRESH_PARALLEL_PLAN_20261020.md; research/deliveries/c-line/C_LINE_LATEST_MAIN_CLOSEOUT_20261020.md; this execution tree.",
+      "completion": "Execution tree, parallel plan and closeout summary now refer to the exact latest-main integration SHA and independent same-SHA replay; final state CLOSEOUT_READY_WITH_LIMITATIONS."
     }
   ],
   "feedback_loop": [
@@ -1087,7 +1105,8 @@
     "Next C1 slice launched from fc8b039: audit function-scoped completeness for the pinned runtime fallback behind the Map source-width candidate; developer and independent tester share exact positive/fail-closed matrix, while second-layer reviewer independently tests source-level candidate plausibility and counterevidence. Preserve strict file partial status and do not relax the adapter on a name/hash alone.",
     "C1 Map adapter function-scoped audit closed no-go at 874edb4; independent fail-closed replay d546f30 and second-layer conditional source review 2d5b973 preserve strict adapter unknown. New next step is a one-candidate, exact-bound scout with independent tester, excluding completed C-line slices and preferring complete helper/declaration AST evidence; second-layer review is conditional on a candidate surviving.",
     "Exact-bound scout 20261020: developer report a5c9d5e and independent tester report 14b1044 confirm a conditional Float32Array negative-TDouble candidate in CommonStub and TypedHCR. Second-layer report b264f28 finds Math.ceil(-1.1) as a source-supported TDouble(-1.0) route. Corrected arithmetic shows an empty initializer interval on 32/64-bit, a 16-byte backing allocation with large uint32 metadata on 32-bit, and a signed inline-getter guard that may block simple access. Runtime/build/accessibility remains unknown/not_run; no production change. Next independent tasks validate a safe local runtime/build and challenge arithmetic/access dispatch.",
-    "C quick-closeout 20261020: latest main verified at 0f53af62283dbd0f249280805e8286a04b2d43b9. Type_safety development replay on exact Ark Runtime source recorded no-change root cause in 6c71a7bfd: IR_IF/IR_ELSE, BRANCH and typed-array case-list macros are not preprocessed, causing Tree-sitter cascades; model binding and SHA checks pass, diagnostics remain zero, status stays blocked/partial. Independent baseline on the same main SHA preserved fail-closed behavior (fixture parsing complete but outside exact reviewed model binding; not_analyzed=1) and the partial control candidate/unknown contract. Parallel prompt and continuous-goal plan is in C_LINE_QUICK_CLOSEOUT_PARALLEL_PLAN_20261020.md; no production detector change or new vulnerability family was introduced."
+    "C quick-closeout 20261020: latest main verified at 0f53af62283dbd0f249280805e8286a04b2d43b9. Type_safety development replay on exact Ark Runtime source recorded no-change root cause in 6c71a7bfd: IR_IF/IR_ELSE, BRANCH and typed-array case-list macros are not preprocessed, causing Tree-sitter cascades; model binding and SHA checks pass, diagnostics remain zero, status stays blocked/partial. Independent baseline on the same main SHA preserved fail-closed behavior (fixture parsing complete but outside exact reviewed model binding; not_analyzed=1) and the partial control candidate/unknown contract. Parallel prompt and continuous-goal plan is in C_LINE_QUICK_CLOSEOUT_PARALLEL_PLAN_20261020.md; no production detector change or new vulnerability family was introduced.",
+    "C latest-main refresh: developer merged origin/main c380a474718e8ec4497aff55b18a1dd38bafa13f with C integration at 4e1268a980fd103326c7dbaa6ca2e78d2ba43e69; independent tester replayed the exact commit/tree and reported no code defect. Developer suite: Ark 212 (3 skipped), focused compatibility 59 (1 skipped), available contract 19 passed. Independent suite: Ark 212 (3 skipped), related regressions 97 (1 skipped). Both preserve default-off/source-bound admission and unknown/partial limits. Runtime not_run, product impact unknown."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."

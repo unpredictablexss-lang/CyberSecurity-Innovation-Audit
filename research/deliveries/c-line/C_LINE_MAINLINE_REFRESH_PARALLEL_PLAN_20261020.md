@@ -71,6 +71,12 @@ stop: 不重跑无新证据的历史审查，不等待产品或人工前置条�
 
 | 任务 | 状态 | 执行位置 | 反馈方向 |
 |---|---|---|---|
-| C-DEV-MAINLINE-SYNC-20261020 | in_progress | `worktrees/c-mainline-dev-closeout-20261020` | 接收测试反例并修复 |
-| C-TEST-MAINLINE-SYNC-20261020 | in_progress | `worktrees/c-mainline-test-closeout-20261020` | 独立复验开发最终 SHA，失败回传开发线 |
-| C-INTEGRATE-TREE-20261020 | in_progress | `worktrees/c-line-task-tree-20261020` | 汇总闭环，不提前认定通过 |
+| C-DEV-MAINLINE-SYNC-20261020 | completed | `worktrees/c-mainline-dev-closeout-20261020` | 集成 commit `4e1268a980fd103326c7dbaa6ca2e78d2ba43e69`；无冲突，完成受影响回归 |
+| C-TEST-MAINLINE-SYNC-20261020 | completed | `worktrees/c-mainline-test-closeout-20261020` | 对相同 commit/tree 独立复验通过；无需代码返修 |
+| C-INTEGRATE-TREE-20261020 | completed | `worktrees/c-line-task-tree-20261020` | 执行树与收尾报告更新为 `CLOSEOUT_READY_WITH_LIMITATIONS` |
+
+## 收尾结果
+
+- 集成代码 SHA/tree：`4e1268a980fd103326c7dbaa6ca2e78d2ba43e69` / `0495b0db7d05f02e2ce4e48149f7571c8bdd8023`。
+- 独立测试报告提交：`0b7ab8baf1e09e151dd88a0694da62cb49e1f906`；任务树收尾记录：[C_LINE_LATEST_MAIN_CLOSEOUT_20261020.md](C_LINE_LATEST_MAIN_CLOSEOUT_20261020.md)。
+- 开发线和测试线均未发现具体代码缺陷；最终无额外反馈返修。组件/产品运行时状态仍为 `not_run`/`unknown`。
