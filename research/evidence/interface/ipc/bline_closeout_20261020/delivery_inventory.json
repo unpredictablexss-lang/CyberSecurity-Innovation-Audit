@@ -12,7 +12,8 @@
     "model_version": "oh-ipc-2026.10-v33",
     "data06_rule": "ipc.parcel.array-allocation-width",
     "data06_rule_version": "0.1.0",
-    "code_commit_sha_to_be_attested_after_evidence_commit": null
+    "code_commit_sha": "dd8b12b9f0fcf3d8bc96a2d7fbb3d679809d2e35",
+    "evidence_commit_sha": "ed1be347e433f3e931f5f72b36c2e7562752798a"
   },
   "fixed_source_replays": {
     "data06": {
