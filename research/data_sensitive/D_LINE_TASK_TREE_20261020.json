@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "D92_T91_COMPLETED_PUSH_PENDING",
+  "status": "D92_T91_COMPLETED_PUSHED",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -395,5 +395,7 @@
     "parser_linkage": 16,
     "total": 187,
     "result": "PASS"
-  }
+  },
+  "remote_branch": "origin/codex/d-owner-20261020-01a1571f",
+  "pushed_head": "6631e260ec2f1e8db0cef78b1b52c390378cd8fd"
 }
