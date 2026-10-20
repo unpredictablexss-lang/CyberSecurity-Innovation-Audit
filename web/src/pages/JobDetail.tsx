@@ -316,6 +316,9 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         ([detector, c]) => ({ detector, ...(c as any) }),
       )
     : [];
+  const detailCoverage = detail
+    ? coverage.find((row: any) => row.detector === detail.detector_id)
+    : null;
   const agentProvider = health?.capabilities?.agent_provider;
   const auditMode = job.spec.audit_mode || "legacy";
   const triageProgress = triageSummary?.triage_progress || {};
@@ -954,6 +957,62 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 </div>
               </div>}
             />
+            {detail.risk_assessment && <Card
+              className="section-gap"
+              title="公开组件风险依据与修复验证"
+              extra={<Tag color="orange">组件来源等级：{detail.risk_assessment.severity_label}（{detail.risk_assessment.source_severity}）</Tag>}
+            >
+              <Descriptions size="small" column={2} bordered>
+                <Descriptions.Item label="风险身份">
+                  {detail.risk_assessment.identifier} · {(detail.risk_assessment.cwe || []).join(" / ")}
+                </Descriptions.Item>
+                <Descriptions.Item label="静态扫描严重度 / 置信度">
+                  {detail.severity || "unassessed"} / {detail.confidence || "unassessed"}（候选仍未确认）
+                </Descriptions.Item>
+                <Descriptions.Item label="CVSS">
+                  {detail.risk_assessment.cvss?.version} {detail.risk_assessment.cvss?.score} ({detail.risk_assessment.severity})
+                  <div><Text type="secondary">{detail.risk_assessment.cvss?.vector}</Text></div>
+                </Descriptions.Item>
+                <Descriptions.Item label="等级映射规则" span={2}>
+                  {detail.risk_assessment.severity_mapping}
+                </Descriptions.Item>
+                <Descriptions.Item label="影响版本 / 修复版本" span={2}>
+                  {detail.risk_assessment.affected_range} → {(detail.risk_assessment.fixed_versions || []).join(", ")}
+                </Descriptions.Item>
+                <Descriptions.Item label="固定源码绑定" span={2}>
+                  {job.spec?.repository} @ {job.spec?.commit}
+                  <div><Text type="secondary">命中文件 SHA-256：{detail.source_sha256 || "unknown"}</Text></div>
+                </Descriptions.Item>
+                <Descriptions.Item label="扫描覆盖限制" span={2}>
+                  <div>检测器状态：{detailCoverage?.status || "unknown"}；检查文件 {detailCoverage?.applicable_files ?? "unknown"}；完整 {detailCoverage?.analyzed_files?.length ?? "unknown"}；部分 {detailCoverage?.partially_inspected_files?.length ?? "unknown"}；未分析 {detailCoverage?.not_analyzed_files?.length ?? "unknown"}；失败 {detailCoverage?.failed_files?.length ?? "unknown"}。</div>
+                  <ul>{(detailCoverage?.limitations || []).map((item: string, index: number) => <li key={index}>{item}</li>)}</ul>
+                  <Text type="secondary">partial / blocked 表示未完整覆盖，不代表安全或漏洞确认。</Text>
+                </Descriptions.Item>
+                <Descriptions.Item label="触发条件" span={2}>
+                  {detail.risk_assessment.component_condition}
+                </Descriptions.Item>
+                <Descriptions.Item label="公开来源" span={2}>
+                  <a href={detail.risk_assessment.source} target="_blank" rel="noreferrer">
+                    {detail.risk_assessment.source_name}
+                  </a>
+                </Descriptions.Item>
+                <Descriptions.Item label="组件 PoC 入口" span={2}>
+                  {detail.risk_assessment.poc?.entrypoint}
+                  <div><Text type="secondary">PoC / 修复报告：{detail.risk_assessment.poc?.record}（SHA-256 {detail.risk_assessment.poc?.record_sha256}）</Text></div>
+                  <div><Text type="secondary">重放程序：{detail.risk_assessment.poc?.replay}（SHA-256 {detail.risk_assessment.poc?.replay_sha256}）</Text></div>
+                </Descriptions.Item>
+                <Descriptions.Item label="修复建议 / 上游补丁" span={2}>
+                  {detail.risk_assessment.remediation} <a href={detail.risk_assessment.upstream_fix} target="_blank" rel="noreferrer">上游修复提交</a>
+                </Descriptions.Item>
+                <Descriptions.Item label="修复后组件重验" span={2}>
+                  {detail.risk_assessment.component_retest?.fixed_source}；受影响 PoC：{detail.risk_assessment.component_retest?.affected_poc}；修复后：{detail.risk_assessment.component_retest?.fixed_poc}；安全顺序控制：{detail.risk_assessment.component_retest?.safe_order_control}。
+                  <div><Text type="secondary">{detail.risk_assessment.component_retest?.scope}</Text></div>
+                </Descriptions.Item>
+                <Descriptions.Item label="OpenHarmony 产品适用性" span={2}>
+                  <Tag>未知</Tag> {detail.risk_assessment.product_evidence}
+                </Descriptions.Item>
+              </Descriptions>
+            </Card>}
             {detail.source ? <>
               <CandidateActions job={job} candidate={detail} />
               <CodeView source={detail.source} line={detail.line} />
