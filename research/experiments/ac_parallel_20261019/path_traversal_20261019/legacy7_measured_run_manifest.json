@@ -1,0 +1,29 @@
+{
+  "schema_version": "ohscanner-test-measurement-v1",
+  "mode": "legacy7",
+  "cwd": "E:\\\u7f51\u5b89\\CyberSecurity-Innovation-Audit\\research\\experiments\\ac_parallel_20261019\\worktrees\\path-traversal",
+  "python": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+  "argv": [
+    "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_identity_and_positive_file_operation_controls",
+    "tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_fixture_manifest_hashes_and_categories",
+    "tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_containment_basename_and_allowlist_controls",
+    "tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_no_source_no_sink_and_unrelated_api_are_not_candidates",
+    "tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_unresolved_cross_function_and_partial_parse_remain_unknown",
+    "tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_candidate_requires_file_sink_not_path_concatenation_alone",
+    "tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_budget_and_unexpected_analysis_failures_fail_closed",
+    "-v"
+  ],
+  "command": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe -X utf8 -m unittest tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_identity_and_positive_file_operation_controls tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_fixture_manifest_hashes_and_categories tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_containment_basename_and_allowlist_controls tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_no_source_no_sink_and_unrelated_api_are_not_candidates tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_unresolved_cross_function_and_partial_parse_remain_unknown tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_candidate_requires_file_sink_not_path_concatenation_alone tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_budget_and_unexpected_analysis_failures_fail_closed -v",
+  "env": {
+    "PYTHONPATH": ".;E:\\\u7f51\u5b89\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps"
+  },
+  "returncode": 0,
+  "wall_seconds": 0.15885619999971823,
+  "max_rss_bytes": 27885568,
+  "output_file": "research\\experiments\\ac_parallel_20261019\\path_traversal_20261019\\legacy7_measured_unittest_stdout_stderr.txt"
+}

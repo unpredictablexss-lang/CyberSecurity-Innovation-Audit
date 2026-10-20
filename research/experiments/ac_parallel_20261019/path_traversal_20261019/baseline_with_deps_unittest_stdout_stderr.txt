@@ -1,0 +1,201 @@
+test_alias_assignment_from_owner_is_modeled (test_cpp_lifetime_detector.LifetimeDetectorTests.test_alias_assignment_from_owner_is_modeled) ... ok
+test_auto_pointer_shadowing_is_distinct_binding (test_cpp_lifetime_detector.LifetimeDetectorTests.test_auto_pointer_shadowing_is_distinct_binding) ... ok
+test_auto_shadow_after_use_does_not_suppress_earlier_candidate (test_cpp_lifetime_detector.LifetimeDetectorTests.test_auto_shadow_after_use_does_not_suppress_earlier_candidate) ... ok
+test_auto_shadow_is_scoped_to_its_block (test_cpp_lifetime_detector.LifetimeDetectorTests.test_auto_shadow_is_scoped_to_its_block) ... ok
+test_comments_and_string_literals_are_not_analyzed (test_cpp_lifetime_detector.LifetimeDetectorTests.test_comments_and_string_literals_are_not_analyzed) ... ok
+test_conditional_rebinding_is_not_suppressed_without_cfg (test_cpp_lifetime_detector.LifetimeDetectorTests.test_conditional_rebinding_is_not_suppressed_without_cfg) ... ok
+test_cooperative_timeout_fails_only_this_detector_run (test_cpp_lifetime_detector.LifetimeDetectorTests.test_cooperative_timeout_fails_only_this_detector_run) ... ok
+test_cross_function_escape_keeps_observed_candidate_and_marks_unknown (test_cpp_lifetime_detector.LifetimeDetectorTests.test_cross_function_escape_keeps_observed_candidate_and_marks_unknown) ... ok
+test_declares_exact_scope_and_required_facts (test_cpp_lifetime_detector.LifetimeDetectorTests.test_declares_exact_scope_and_required_facts) ... ok
+test_duplicate_class_declarations_are_isolated_across_source_units (test_cpp_lifetime_detector.LifetimeDetectorTests.test_duplicate_class_declarations_are_isolated_across_source_units) ... ok
+test_fixed_rebind_and_safe_control_have_no_findings (test_cpp_lifetime_detector.LifetimeDetectorTests.test_fixed_rebind_and_safe_control_have_no_findings) ... ok
+test_intra_function_alias_chain_is_modeled (test_cpp_lifetime_detector.LifetimeDetectorTests.test_intra_function_alias_chain_is_modeled) ... ok
+test_lambda_capture_escape_is_unknown_but_not_safe (test_cpp_lifetime_detector.LifetimeDetectorTests.test_lambda_capture_escape_is_unknown_but_not_safe) ... ok
+test_member_alias_only_is_unknown_and_not_a_local_binding (test_cpp_lifetime_detector.LifetimeDetectorTests.test_member_alias_only_is_unknown_and_not_a_local_binding) ... ok
+test_member_assignment_does_not_rebind_a_local_alias (test_cpp_lifetime_detector.LifetimeDetectorTests.test_member_assignment_does_not_rebind_a_local_alias) ... ok
+test_mixed_coverage_analyzes_complete_units_but_stays_blocked (test_cpp_lifetime_detector.LifetimeDetectorTests.test_mixed_coverage_analyzes_complete_units_but_stays_blocked) ... ok
+test_move_from_owner_invalidates_transferred_object_alias (test_cpp_lifetime_detector.LifetimeDetectorTests.test_move_from_owner_invalidates_transferred_object_alias) ... ok
+test_mutex_scope_is_recorded_without_suppressing_candidate (test_cpp_lifetime_detector.LifetimeDetectorTests.test_mutex_scope_is_recorded_without_suppressing_candidate) ... ok
+test_mutually_exclusive_branch_pair_is_not_reported (test_cpp_lifetime_detector.LifetimeDetectorTests.test_mutually_exclusive_branch_pair_is_not_reported) ... ok
+test_nested_use_of_outer_alias_remains_candidate (test_cpp_lifetime_detector.LifetimeDetectorTests.test_nested_use_of_outer_alias_remains_candidate) ... ok
+test_non_owner_pointer_shadowing_is_distinct_binding (test_cpp_lifetime_detector.LifetimeDetectorTests.test_non_owner_pointer_shadowing_is_distinct_binding) ... ok
+test_output_is_stable_and_input_units_are_deduplicated (test_cpp_lifetime_detector.LifetimeDetectorTests.test_output_is_stable_and_input_units_are_deduplicated) ... ok
+test_owner_null_assignment_invalidates_raw_alias (test_cpp_lifetime_detector.LifetimeDetectorTests.test_owner_null_assignment_invalidates_raw_alias) ... ok
+test_owner_replacement_invalidates_previous_object (test_cpp_lifetime_detector.LifetimeDetectorTests.test_owner_replacement_invalidates_previous_object) ... ok
+test_owner_scope_boundary_control_is_not_reported (test_cpp_lifetime_detector.LifetimeDetectorTests.test_owner_scope_boundary_control_is_not_reported) ... ok
+test_owner_scope_end_invalidates_outer_alias (test_cpp_lifetime_detector.LifetimeDetectorTests.test_owner_scope_end_invalidates_outer_alias) ... ok
+test_parenthesized_alias_dereference_is_one_candidate (test_cpp_lifetime_detector.LifetimeDetectorTests.test_parenthesized_alias_dereference_is_one_candidate) ... ok
+test_partial_and_failed_parse_are_blocked_unknown_not_completed (test_cpp_lifetime_detector.LifetimeDetectorTests.test_partial_and_failed_parse_are_blocked_unknown_not_completed) ... ok
+test_rebinding_after_use_does_not_suppress_earlier_candidate (test_cpp_lifetime_detector.LifetimeDetectorTests.test_rebinding_after_use_does_not_suppress_earlier_candidate) ... ok
+test_rebound_alias_suppression_is_explicit_ablation (test_cpp_lifetime_detector.LifetimeDetectorTests.test_rebound_alias_suppression_is_explicit_ablation) ... ok
+test_same_name_owner_and_alias_bindings_do_not_cross_functions (test_cpp_lifetime_detector.LifetimeDetectorTests.test_same_name_owner_and_alias_bindings_do_not_cross_functions) ... ok
+test_unbraced_conditional_rebinding_remains_candidate (test_cpp_lifetime_detector.LifetimeDetectorTests.test_unbraced_conditional_rebinding_remains_candidate) ... ok
+test_vulnerable_shape_emits_only_candidate_evidence (test_cpp_lifetime_detector.LifetimeDetectorTests.test_vulnerable_shape_emits_only_candidate_evidence) ... ok
+test_direct_sort_element_access_without_stability_guard_is_candidate (test_cpp_memory_safety_detectors.BoundsDetectorControlTests.test_direct_sort_element_access_without_stability_guard_is_candidate) ... ok
+test_fixed_guard_and_exact_capacity_are_quiet (test_cpp_memory_safety_detectors.BoundsDetectorControlTests.test_fixed_guard_and_exact_capacity_are_quiet) ... ok
+test_identity_and_candidate_source_binding (test_cpp_memory_safety_detectors.BoundsDetectorControlTests.test_identity_and_candidate_source_binding) ... ok
+test_output_is_deterministic (test_cpp_memory_safety_detectors.BoundsDetectorControlTests.test_output_is_deterministic) ... ok
+test_partial_parse_and_budget_fail_closed (test_cpp_memory_safety_detectors.BoundsDetectorControlTests.test_partial_parse_and_budget_fail_closed) ... ok
+test_stable_array_wrapper_and_unrelated_accessor_are_quiet (test_cpp_memory_safety_detectors.BoundsDetectorControlTests.test_stable_array_wrapper_and_unrelated_accessor_are_quiet) ... ok
+test_unrelated_dynamic_destination_is_unknown_not_candidate (test_cpp_memory_safety_detectors.BoundsDetectorControlTests.test_unrelated_dynamic_destination_is_unknown_not_candidate) ... ok
+test_checked_multiplication_and_exact_guard_are_quiet (test_cpp_memory_safety_detectors.IntegerBoundsDetectorControlTests.test_checked_multiplication_and_exact_guard_are_quiet) ... ok
+test_macro_only_allocation_size_remains_unknown_not_alert (test_cpp_memory_safety_detectors.IntegerBoundsDetectorControlTests.test_macro_only_allocation_size_remains_unknown_not_alert) ... ok
+test_narrow_integer_index_before_bounds_check_is_candidate (test_cpp_memory_safety_detectors.IntegerBoundsDetectorControlTests.test_narrow_integer_index_before_bounds_check_is_candidate) ... ok
+test_partial_parse_and_budget_fail_closed (test_cpp_memory_safety_detectors.IntegerBoundsDetectorControlTests.test_partial_parse_and_budget_fail_closed) ... ok
+test_positive_multiplication_and_truncation (test_cpp_memory_safety_detectors.IntegerBoundsDetectorControlTests.test_positive_multiplication_and_truncation) ... ok
+test_reviewed_false_positive_shapes_are_quiet (test_cpp_memory_safety_detectors.IntegerBoundsDetectorControlTests.test_reviewed_false_positive_shapes_are_quiet) ... ok
+test_subtraction_without_lower_bound_is_candidate (test_cpp_memory_safety_detectors.IntegerBoundsDetectorControlTests.test_subtraction_without_lower_bound_is_candidate) ... ok
+test_unrelated_addition_is_not_an_every_operator_alert (test_cpp_memory_safety_detectors.IntegerBoundsDetectorControlTests.test_unrelated_addition_is_not_an_every_operator_alert) ... ok
+test_fixture_matrix_matches_expected_detector_signal (test_cpp_memory_safety_detectors.MemorySafetyControlManifestTests.test_fixture_matrix_matches_expected_detector_signal) ... ok
+test_manifest_is_hash_bound_and_covers_four_control_classes (test_cpp_memory_safety_detectors.MemorySafetyControlManifestTests.test_manifest_is_hash_bound_and_covers_four_control_classes) ... FAIL
+setUpClass (test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests) ... ERROR
+setUpClass (test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ERROR
+test_bounded_analysis_has_a_meaningful_wall_time_regression (test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests.test_bounded_analysis_has_a_meaningful_wall_time_regression) ... ok
+test_combined_controls_keep_candidates_and_negative_controls_quiet (test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests.test_combined_controls_keep_candidates_and_negative_controls_quiet) ... ok
+test_control_manifest_binds_all_four_categories_and_source_hashes (test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests.test_control_manifest_binds_all_four_categories_and_source_hashes) ... FAIL
+test_duplicate_identity_is_deduplicated_without_message_forgery (test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests.test_duplicate_identity_is_deduplicated_without_message_forgery) ... ok
+test_each_control_matches_expected_signal_and_coverage (test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests.test_each_control_matches_expected_signal_and_coverage) ... ok
+test_maximum_unit_input_is_fail_closed (test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests.test_maximum_unit_input_is_fail_closed) ... ok
+test_nothrow_allocation_source_and_fixed_guard_are_modeled (test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests.test_nothrow_allocation_source_and_fixed_guard_are_modeled) ... ok
+test_output_identity_is_stable_across_replays (test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests.test_output_identity_is_stable_across_replays) ... ok
+test_partial_failed_and_not_analyzed_fail_closed_without_safety_claims (test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests.test_partial_failed_and_not_analyzed_fail_closed_without_safety_claims) ... ok
+test_total_input_budget_is_enforced_without_dropping_coverage (test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests.test_total_input_budget_is_enforced_without_dropping_coverage) ... ok
+test_deterministic_output_and_budget (test_cpp_resource_lifetime_detector.ResourceLifetimeDetectorTests.test_deterministic_output_and_budget) ... ok
+test_fixed_unrelated_and_unknown_controls (test_cpp_resource_lifetime_detector.ResourceLifetimeDetectorTests.test_fixed_unrelated_and_unknown_controls) ... ok
+test_identity_and_positive_controls (test_cpp_resource_lifetime_detector.ResourceLifetimeDetectorTests.test_identity_and_positive_controls) ... ok
+test_manifest_is_hash_bound_and_covers_control_classes (test_cpp_resource_lifetime_detector.ResourceLifetimeDetectorTests.test_manifest_is_hash_bound_and_covers_control_classes) ... FAIL
+test_cooperative_timeout_is_isolated_and_later_detector_runs (test_cpp_runner_integration.RunnerIntegrationTests.test_cooperative_timeout_is_isolated_and_later_detector_runs) ... ok
+test_crash_is_isolated_to_its_own_failed_record (test_cpp_runner_integration.RunnerIntegrationTests.test_crash_is_isolated_to_its_own_failed_record) ... ok
+test_duplicate_finding_identity_fails_only_that_detector (test_cpp_runner_integration.RunnerIntegrationTests.test_duplicate_finding_identity_fails_only_that_detector) ... ok
+test_maps_current_detector_run_to_toolrun_v1 (test_cpp_runner_integration.RunnerIntegrationTests.test_maps_current_detector_run_to_toolrun_v1) ... ok
+test_registry_order_and_result_order_are_stable (test_cpp_runner_integration.RunnerIntegrationTests.test_registry_order_and_result_order_are_stable) ... ok
+test_comments_literals_and_unrelated_object_member_are_ignored (test_cpp_shared_ptr_guard_lifetime.SharedPtrGuardLifetimeTests.test_comments_literals_and_unrelated_object_member_are_ignored) ... ok
+test_explicit_unlock_cannot_suppress_the_write (test_cpp_shared_ptr_guard_lifetime.SharedPtrGuardLifetimeTests.test_explicit_unlock_cannot_suppress_the_write) ... ok
+test_four_manifest_controls (test_cpp_shared_ptr_guard_lifetime.SharedPtrGuardLifetimeTests.test_four_manifest_controls) ... ERROR
+test_guard_escape_in_write_rhs_invalidates_the_entire_statement (test_cpp_shared_ptr_guard_lifetime.SharedPtrGuardLifetimeTests.test_guard_escape_in_write_rhs_invalidates_the_entire_statement) ... ok
+test_guard_transfer_assignment_swap_and_escape_are_unknown (test_cpp_shared_ptr_guard_lifetime.SharedPtrGuardLifetimeTests.test_guard_transfer_assignment_swap_and_escape_are_unknown) ... ok
+test_nested_guard_with_same_name_does_not_invalidate_outer_guard (test_cpp_shared_ptr_guard_lifetime.SharedPtrGuardLifetimeTests.test_nested_guard_with_same_name_does_not_invalidate_outer_guard) ... ok
+test_owned_lock_query_and_later_unlock_do_not_invalidate_earlier_access (test_cpp_shared_ptr_guard_lifetime.SharedPtrGuardLifetimeTests.test_owned_lock_query_and_later_unlock_do_not_invalidate_earlier_access) ... ok
+test_public_adapter_preserves_candidate_and_partial_file_outcome (test_cpp_shared_ptr_guard_lifetime.SharedPtrGuardLifetimeTests.test_public_adapter_preserves_candidate_and_partial_file_outcome) ... ok
+test_release_is_ownership_unknown_not_an_asserted_mutex_unlock (test_cpp_shared_ptr_guard_lifetime.SharedPtrGuardLifetimeTests.test_release_is_ownership_unknown_not_an_asserted_mutex_unlock) ... ok
+test_relocking_does_not_reestablish_a_cfg_proof (test_cpp_shared_ptr_guard_lifetime.SharedPtrGuardLifetimeTests.test_relocking_does_not_reestablish_a_cfg_proof) ... ok
+test_all_accesses_under_same_mutex_are_suppressed (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_all_accesses_under_same_mutex_are_suppressed) ... ok
+test_atomic_exchange_and_compare_exchange_are_modeled_as_atomic_writes (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_atomic_exchange_and_compare_exchange_are_modeled_as_atomic_writes) ... ok
+test_atomic_read_and_mutex_protected_write_is_candidate_unknown (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_atomic_read_and_mutex_protected_write_is_candidate_unknown) ... ok
+test_atomic_write_and_mutex_protected_read_is_candidate_unknown (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_atomic_write_and_mutex_protected_read_is_candidate_unknown) ... ok
+test_comments_and_string_literals_are_not_analyzed (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_comments_and_string_literals_are_not_analyzed) ... ok
+test_constructor_initialization_and_stable_read_are_not_race_candidates (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_constructor_initialization_and_stable_read_are_not_race_candidates) ... ok
+test_crash_is_isolated_and_this_detector_still_runs (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_crash_is_isolated_and_this_detector_still_runs) ... ok
+test_cross_file_access_pair_is_aggregated (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_cross_file_access_pair_is_aggregated) ... ok
+test_cross_file_pair_under_same_reliable_mutex_is_narrowly_suppressed (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_cross_file_pair_under_same_reliable_mutex_is_narrowly_suppressed) ... ok
+test_declares_exact_scope_and_required_facts (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_declares_exact_scope_and_required_facts) ... ok
+test_defer_lock_is_unknown_and_not_suppressed (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_defer_lock_is_unknown_and_not_suppressed) ... ok
+test_detector_returns_blocked_when_selected_scope_is_empty (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_detector_returns_blocked_when_selected_scope_is_empty) ... ok
+test_different_mutexes_do_not_get_suppressed (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_different_mutexes_do_not_get_suppressed) ... ok
+test_duplicate_class_declarations_are_not_cross_bound (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_duplicate_class_declarations_are_not_cross_bound) ... ok
+test_explicit_atomic_api_is_atomic_and_mixed_with_ordinary_write (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_explicit_atomic_api_is_atomic_and_mixed_with_ordinary_write) ... ok
+test_global_and_member_same_name_bind_only_the_member_access (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_global_and_member_same_name_bind_only_the_member_access) ... ok
+test_global_shared_ptr_is_explicitly_not_applicable (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_global_shared_ptr_is_explicitly_not_applicable) ... ok
+test_incomplete_scope_is_blocked_unknown_not_safe (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_incomplete_scope_is_blocked_unknown_not_safe) ... ok
+test_legacy_fixed_mixed_shape_is_candidate_unknown_and_atomic_only_is_safe (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_legacy_fixed_mixed_shape_is_candidate_unknown_and_atomic_only_is_safe) ... ok
+test_local_shadowing_does_not_replace_this_member_access (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_local_shadowing_does_not_replace_this_member_access) ... ok
+test_mixed_atomic_and_mutex_paths_are_candidate_unknown_not_safe (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_mixed_atomic_and_mutex_paths_are_candidate_unknown_not_safe) ... ok
+test_mixed_atomic_and_non_atomic_with_different_mutexes_is_candidate (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_mixed_atomic_and_non_atomic_with_different_mutexes_is_candidate) ... ok
+test_mixed_atomic_and_ordinary_access_under_same_reliable_mutex_is_suppressed (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_mixed_atomic_and_ordinary_access_under_same_reliable_mutex_is_suppressed) ... ok
+test_mixed_coverage_analyzes_complete_units_but_stays_blocked (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_mixed_coverage_analyzes_complete_units_but_stays_blocked) ... ok
+test_namespace_qualified_access_is_bound_to_the_class_member (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_namespace_qualified_access_is_bound_to_the_class_member) ... ok
+test_no_matching_language_is_not_applicable_not_miss (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_no_matching_language_is_not_applicable_not_miss) ... ok
+test_one_sided_mutex_reports_only_unprotected_access (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_one_sided_mutex_reports_only_unprotected_access) ... ok
+test_output_is_stable_and_duplicate_units_are_deduplicated (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_output_is_stable_and_duplicate_units_are_deduplicated) ... ok
+test_partial_failed_and_not_run_are_blocked_unknown (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_partial_failed_and_not_run_are_blocked_unknown) ... ok
+test_qualified_static_definition_is_not_a_candidate_access (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_qualified_static_definition_is_not_a_candidate_access) ... ok
+test_same_member_name_in_another_class_is_not_attributed (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_same_member_name_in_another_class_is_not_attributed) ... ok
+test_same_name_in_different_translation_units_is_not_cross_bound (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_same_name_in_different_translation_units_is_not_cross_bound) ... ok
+test_simple_intra_function_object_alias_binds_the_member (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_simple_intra_function_object_alias_binds_the_member) ... ok
+test_std_namespaced_atomic_load_and_store_are_not_findings (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_std_namespaced_atomic_load_and_store_are_not_findings) ... ok
+test_templated_class_owner_is_bound_for_out_of_line_method (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_templated_class_owner_is_bound_for_out_of_line_method) ... ok
+test_try_to_lock_is_unknown_and_not_suppressed (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_try_to_lock_is_unknown_and_not_suppressed) ... ok
+test_unrelated_shape_has_no_findings (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_unrelated_shape_has_no_findings) ... ok
+test_unresolved_object_member_access_is_unknown (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_unresolved_object_member_access_is_unknown) ... ok
+test_vulnerable_shape_emits_only_candidate_evidence (test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests.test_vulnerable_shape_emits_only_candidate_evidence) ... ok
+test_deterministic_and_budget (test_cpp_unsafe_memory_call_detector.UnsafeMemoryCallDetectorTests.test_deterministic_and_budget) ... ok
+test_fixed_safe_unrelated_and_unknown (test_cpp_unsafe_memory_call_detector.UnsafeMemoryCallDetectorTests.test_fixed_safe_unrelated_and_unknown) ... ok
+test_manifest_is_hash_bound_and_has_four_control_classes (test_cpp_unsafe_memory_call_detector.UnsafeMemoryCallDetectorTests.test_manifest_is_hash_bound_and_has_four_control_classes) ... FAIL
+test_positive_and_source_binding (test_cpp_unsafe_memory_call_detector.UnsafeMemoryCallDetectorTests.test_positive_and_source_binding) ... ok
+
+======================================================================
+ERROR: setUpClass (test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ac_parallel_20261019\worktrees\path-traversal\tests\detectors\test_cpp_null_dereference_detector.py", line 33, in setUpClass
+    cls.package = load_null_fixture_package()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ac_parallel_20261019\worktrees\path-traversal\tests\detectors\null_dereference_fixture_support.py", line 50, in load_null_fixture_package
+    raise ValueError("A-NULL-01 manifest SHA-256 mismatch")
+ValueError: A-NULL-01 manifest SHA-256 mismatch
+
+======================================================================
+ERROR: setUpClass (test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ac_parallel_20261019\worktrees\path-traversal\tests\detectors\test_cpp_null_dereference_detector.py", line 86, in setUpClass
+    cls.package = load_null_fixture_package()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ac_parallel_20261019\worktrees\path-traversal\tests\detectors\null_dereference_fixture_support.py", line 50, in load_null_fixture_package
+    raise ValueError("A-NULL-01 manifest SHA-256 mismatch")
+ValueError: A-NULL-01 manifest SHA-256 mismatch
+
+======================================================================
+ERROR: test_four_manifest_controls (test_cpp_shared_ptr_guard_lifetime.SharedPtrGuardLifetimeTests.test_four_manifest_controls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ac_parallel_20261019\worktrees\path-traversal\tests\detectors\test_cpp_shared_ptr_guard_lifetime.py", line 58, in test_four_manifest_controls
+    units = tuple(SourceUnit(path=f.name, language="cpp", text=f.read_text(),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ac_parallel_20261019\worktrees\path-traversal\tests\detectors\test_cpp_shared_ptr_guard_lifetime.py", line 58, in <genexpr>
+    units = tuple(SourceUnit(path=f.name, language="cpp", text=f.read_text(),
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 9, in __init__
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ac_parallel_20261019\worktrees\path-traversal\src\ohscanner\contracts.py", line 39, in __post_init__
+    raise ValueError("source content hash mismatch")
+ValueError: source content hash mismatch
+
+======================================================================
+FAIL: test_manifest_is_hash_bound_and_covers_four_control_classes (test_cpp_memory_safety_detectors.MemorySafetyControlManifestTests.test_manifest_is_hash_bound_and_covers_four_control_classes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ac_parallel_20261019\worktrees\path-traversal\tests\detectors\test_cpp_memory_safety_detectors.py", line 299, in test_manifest_is_hash_bound_and_covers_four_control_classes
+    self.assertEqual(path.stat().st_size, item["byte_length"])
+AssertionError: 116 != 111
+
+======================================================================
+FAIL: test_control_manifest_binds_all_four_categories_and_source_hashes (test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests.test_control_manifest_binds_all_four_categories_and_source_hashes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ac_parallel_20261019\worktrees\path-traversal\tests\detectors\test_cpp_null_dereference_signal_controls.py", line 96, in test_control_manifest_binds_all_four_categories_and_source_hashes
+    self.assertEqual(hashlib.sha256(data).hexdigest(), item["sha256"])
+AssertionError: 'f319f3368248aa52aee3658cc3c4aa738ebb30e98301869bfa2f3b8f358c9201' != '272c119cd5f831e0d28423d9d8db0561ccc1bd973a4ac6cc97ecab76ff847502'
+- f319f3368248aa52aee3658cc3c4aa738ebb30e98301869bfa2f3b8f358c9201
++ 272c119cd5f831e0d28423d9d8db0561ccc1bd973a4ac6cc97ecab76ff847502
+
+
+======================================================================
+FAIL: test_manifest_is_hash_bound_and_covers_control_classes (test_cpp_resource_lifetime_detector.ResourceLifetimeDetectorTests.test_manifest_is_hash_bound_and_covers_control_classes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ac_parallel_20261019\worktrees\path-traversal\tests\detectors\test_cpp_resource_lifetime_detector.py", line 59, in test_manifest_is_hash_bound_and_covers_control_classes
+    self.assertEqual(path.stat().st_size, item["byte_length"])
+AssertionError: 116 != 110
+
+======================================================================
+FAIL: test_manifest_is_hash_bound_and_has_four_control_classes (test_cpp_unsafe_memory_call_detector.UnsafeMemoryCallDetectorTests.test_manifest_is_hash_bound_and_has_four_control_classes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ac_parallel_20261019\worktrees\path-traversal\tests\detectors\test_cpp_unsafe_memory_call_detector.py", line 59, in test_manifest_is_hash_bound_and_has_four_control_classes
+    self.assertEqual(path.stat().st_size, item["byte_length"])
+AssertionError: 202 != 193
+
+----------------------------------------------------------------------
+Ran 122 tests in 1.059s
+
+FAILED (failures=4, errors=3)

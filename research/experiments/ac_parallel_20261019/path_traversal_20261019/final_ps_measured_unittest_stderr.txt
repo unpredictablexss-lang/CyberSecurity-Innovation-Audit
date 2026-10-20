@@ -1,0 +1,16 @@
+test_budget_and_unexpected_analysis_failures_fail_closed (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_budget_and_unexpected_analysis_failures_fail_closed) ... ok
+test_candidate_requires_file_sink_not_path_concatenation_alone (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_candidate_requires_file_sink_not_path_concatenation_alone) ... ok
+test_contacts_exact_excerpt_directly_hits_reviewed_member_delete (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_contacts_exact_excerpt_directly_hits_reviewed_member_delete) ... ok
+test_containment_basename_and_allowlist_controls (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_containment_basename_and_allowlist_controls) ... ok
+test_fixture_manifest_hashes_and_categories (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_fixture_manifest_hashes_and_categories) ... ok
+test_identity_and_positive_file_operation_controls (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_identity_and_positive_file_operation_controls) ... ok
+test_no_source_no_sink_and_unrelated_api_are_not_candidates (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_no_source_no_sink_and_unrelated_api_are_not_candidates) ... ok
+test_reviewed_member_delete_fixed_basename_canonical_and_allowlist (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_reviewed_member_delete_fixed_basename_canonical_and_allowlist) ... ok
+test_reviewed_member_delete_no_source_and_unrelated_do_not_false_positive (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_reviewed_member_delete_no_source_and_unrelated_do_not_false_positive) ... ok
+test_reviewed_member_delete_unknown_shapes_fail_closed_without_findings (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_reviewed_member_delete_unknown_shapes_fail_closed_without_findings) ... ok
+test_unresolved_cross_function_and_partial_parse_remain_unknown (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_unresolved_cross_function_and_partial_parse_remain_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.200s
+
+OK

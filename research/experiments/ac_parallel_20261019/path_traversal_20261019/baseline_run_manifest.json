@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests/detectors",
+    "-p",
+    "test_cpp_*.py",
+    "-v"
+  ],
+  "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ac_parallel_20261019\\worktrees\\path-traversal",
+  "env": {
+    "PYTHONHASHSEED": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ac_parallel_20261019\\worktrees\\path-traversal",
+    "PATH": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\.codex\\tmp\\arg0-windows\\codex-arg0GXbXRD;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\libheif\\libheif\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\jxrlib\\jxrlib\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\override;C:\\Program Files (x86)\\VMware\\VMware Workstation\\bin\\;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\WSL\\;E:\\DeepSeek Harness\\resources\\runtime\\cli\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\work_work\\.local\\bin;E:\\KimiData\\daimon-share\\daimon\\npm-global;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\fallback;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\ce4759538b7f2f1a;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\896a0166b774037a"
+  },
+  "started_before_patch": true,
+  "exit_code": 1,
+  "wall_seconds": 1.453082,
+  "result_file": "baseline_unittest_stdout_stderr.txt",
+  "observed_summary": "Ran 113 tests; 3 failures; 4 errors",
+  "exact_limitations": [
+    "ModuleNotFoundError: No module named tree_sitter_c in test_cpp_null_dereference_signal_controls.py import path; dependency limitation, not algorithm failure.",
+    "Existing fixture manifests disagree with checkout byte_length/hash in 3 tests.",
+    "One existing shared_ptr fixture helper raises source content hash mismatch.",
+    "RSS was not captured on the pre-patch baseline invocation; post-change runner records process-tree RSS when psutil is available."
+  ]
+}

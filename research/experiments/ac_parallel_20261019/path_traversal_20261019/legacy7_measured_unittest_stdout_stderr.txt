@@ -1,0 +1,12 @@
+test_identity_and_positive_file_operation_controls (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_identity_and_positive_file_operation_controls) ... ok
+test_fixture_manifest_hashes_and_categories (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_fixture_manifest_hashes_and_categories) ... ok
+test_containment_basename_and_allowlist_controls (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_containment_basename_and_allowlist_controls) ... ok
+test_no_source_no_sink_and_unrelated_api_are_not_candidates (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_no_source_no_sink_and_unrelated_api_are_not_candidates) ... ok
+test_unresolved_cross_function_and_partial_parse_remain_unknown (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_unresolved_cross_function_and_partial_parse_remain_unknown) ... ok
+test_candidate_requires_file_sink_not_path_concatenation_alone (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_candidate_requires_file_sink_not_path_concatenation_alone) ... ok
+test_budget_and_unexpected_analysis_failures_fail_closed (tests.detectors.test_cpp_path_traversal_detector.CppPathTraversalDetectorTests.test_budget_and_unexpected_analysis_failures_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.016s
+
+OK
