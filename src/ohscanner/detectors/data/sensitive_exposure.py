@@ -280,7 +280,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.13'
+    version = '0.21.14'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -1407,11 +1407,35 @@ class LocalFlow:
         self.gaps.add('exact flat switch pointer join; general case/fallthrough/control-flow proof remains unresolved')
         return self.merge(branches)
 
-    def exact_switch_void_returns(self,node,state,fnname):
-        """Every arm is exactly `return;`; preserve exits, do not revive flow."""
+    @staticmethod
+    def bounded_return_expression(node):
+        """Only expression shapes whose existing value/effect walk is bounded."""
+        if node.type in ('identifier','number_literal','string_literal','char_literal','null','true','false'):
+            return True
+        children=node.named_children
+        if node.type=='parenthesized_expression':
+            return len(children)==1 and LocalFlow.bounded_return_expression(children[0])
+        if node.type=='comma_expression':
+            return len(children)==2 and all(LocalFlow.bounded_return_expression(c) for c in children)
+        if node.type=='call_expression':
+            function=node.child_by_field_name('function');args=node.child_by_field_name('arguments')
+            return (function is not None and function.type=='identifier' and args is not None
+                    and all(LocalFlow.bounded_return_expression(c) for c in args.named_children))
+        return False
+
+    def exact_switch_returns(self,node,state,fnname):
+        """Consecutive empty labels may share the next direct bounded return."""
         arms=self.exact_switch_cases(node)
-        if arms is None or any(len(arm)!=1 or arm[0].type!='return_statement'
-                               or arm[0].named_children for arm in arms):
+        if arms is None or not arms[-1]:return None
+        returning=[]
+        for arm in arms:
+            if not arm:continue # Consecutive labels enter the next nonempty arm.
+            if len(arm)!=1 or arm[0].type!='return_statement':return None
+            values=arm[0].named_children
+            if len(values)>1 or (values and not self.bounded_return_expression(values[0])):
+                return None
+            returning.append(arm[0])
+        if not returning:
             return None
         # A goto can bypass this switch to a following label. Without a CFG,
         # reject the whole function rather than suppress such reachable code.
@@ -1419,9 +1443,9 @@ class LocalFlow:
         while function is not None and function.type!='function_definition':function=function.parent
         if function is None or any(n.type in ('goto_statement','labeled_statement') for n in walk(function)):
             return None
-        exits=tuple(exit for arm in arms
-                    for exit in self.statement(arm[0],state.clone(),fnname).exit_states)
-        self.gaps.add('exact flat all-void-return switch; general switch exits/feasibility remain unresolved')
+        exits=tuple(exit for returned in returning
+                    for exit in self.statement(returned,state.clone(),fnname).exit_states)
+        self.gaps.add('exact grouped direct-return switch; general switch exits/feasibility remain unresolved')
         return BlockResult(None,exits)
 
     @staticmethod
@@ -1487,7 +1511,7 @@ class LocalFlow:
             if cond and any(x.type=='declaration' for x in walk(cond)):
                 self.gaps.add('switch header binding only; case ordering/feasibility unresolved')
                 entry=state.clone();declared=self.header_effects(cond,state,fnname)
-                returned=self.exact_switch_void_returns(node,state,fnname)
+                returned=self.exact_switch_returns(node,state,fnname)
                 if returned is not None:
                     for exit in returned.exit_states:self.restore_scope(exit.state,entry,declared)
                     return returned
@@ -1498,7 +1522,7 @@ class LocalFlow:
                 probe=state.clone();self.effects(node.child_by_field_name('body'),probe,fnname)
                 merged=self.merge([state,probe]);self.restore_scope(merged,entry,declared)
                 return BlockResult(merged)
-            returned=self.exact_switch_void_returns(node,state,fnname)
+            returned=self.exact_switch_returns(node,state,fnname)
             if returned is not None:return returned
             joined=self.exact_switch_pointer_join(node,state,fnname)
             if joined is not None:return BlockResult(joined)
