@@ -213,6 +213,28 @@ flowchart TD
 - **固定回归**：fresh-process完整src、T85 direct/Runner以及D93/T92 890/915。逐项比24共同诊断身份/消息/证据、638原始调用位置与coverage；不把数量当准确率。
 - **交付**：独立源码测试、重放脚本、固定对象及SHA/coverage报告；不提交cache/临时records，不推送。
 
+### D96（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：C++ 控制语句声明/初始化器作用域与有界指针绑定开发者。
+- **基线**：owner 集成 HEAD `9c298fefe`，规则0.21.10，D95 已恢复 for-header 声明的循环外绑定。
+- **范围**：只检查 `if`/`while`/`switch` 的 condition declaration、init-statement 和其内层 pointer/scalar shadow 是否在控制语句结束后恢复外层状态；另检查受支持语法下 range-for 声明生命周期，不改通用C++别名模型。
+- **正反控制**：外层 `p=&outer`；控制语句内声明/重绑 `p=&inner` 并退出，后续 `*p=material` 应回到 outer。覆盖 body block shadow、分支目标不同/无效路径、break/continue/return，以及嵌套控制语句。只跟踪能由解析器证明的绑定；未知语法保留 unknown/partial。
+- **反馈**：先以最小fixture复现并交T95；有具体失败才修改。严禁把新语法解析失败当作安全，或同时污染两个不确定目标。
+- **验证和交付**：具名专项控制、完整data和兼容性测试；固定T85 direct/Runner候选身份、638调用事实、890/915及partial状态不退。提交修复/无缺陷验证、固定回放、限制和SHA。
+
+### T95（并行独立挑战线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：不依赖D96实现的独立控制语句作用域挑战员。
+- **基线**：自行冻结 owner D95/T94集成提交，独立构造编译器可接受的C++ fixture；确认工具链/解析器是否支持对应语法。
+- **挑战矩阵**：if init-statement与condition declaration；while condition declaration及循环退出/continue；switch init-statement/condition；嵌套shadow；range-for iterator；break/return后外层指针恢复。区别“控制语句声明生命周期结束”和“body块本地shadow结束”。
+- **反馈**：报告实际绑定/候选与期望语义；具体漏流或错误扩散立即交D96，并对固定修订SHA复测。不可把编译器/解析器不支持算通过；记录not_run/unknown。
+- **固定回归**：fresh-process完整src和T85 direct/Runner；比对候选ID/evidence、638 calls、coverage状态与版本字段。无缺陷时说明语法覆盖边界，不强迫改代码。
+- **交付**：独立测试、源码/工具链身份、控制矩阵结果、重放报告和commit SHA；不推送owner分支。
+
 ### T92（并行独立挑战线）
 
 **结构化 vibe coding 提示词**
