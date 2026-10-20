@@ -1,0 +1,3 @@
+commit=f032640ace5243b2372c19d9027a90e8c07d918d
+branch=codex/full-runtime-performance-audit-20261014
+base=f032640ace5243b2372c19d9027a90e8c07d918d
