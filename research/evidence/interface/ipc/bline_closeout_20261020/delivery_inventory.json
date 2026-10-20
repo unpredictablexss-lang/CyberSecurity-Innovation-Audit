@@ -594,9 +594,10 @@
   "delivery_state": {
     "engineering": "fixed-scope implementation replays completed; current report locator anomaly and Python 3.13 identity-sidecar serialization failure remain open",
     "mainline_code": "IPC 0.12.13/model v33 and DATA-06 were already integrated before this delivery; latest main SHA 4b0e16576a45a111b4fad7e8f82819a47ed472f5",
-    "delivery_package": "local branch commit pending; this evidence delta is not yet on main",
+    "delivery_package": "committed on local branch codex/b-ipc-closeout-20261020; push attempted but github.com:443 connection failed; evidence delta not on main",
     "deployment": "not_run / unknown",
     "vulnerability_validation": "not validated; validated_vulnerability=0",
-    "accuracy_evaluation": "not_run"
+    "accuracy_evaluation": "not_run",
+    "branch_push": "not completed: HTTPS connection to github.com port 443 timed out"
   }
 }

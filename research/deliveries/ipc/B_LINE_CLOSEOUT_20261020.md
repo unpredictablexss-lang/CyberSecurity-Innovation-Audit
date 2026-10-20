@@ -75,7 +75,7 @@ DATA-06 固定源码挑战经 M2 CLI 回放：两个固定 vulnerable 修订各 
 | B 线检测器工程 | DATA-06 与 IPC 0.12.13/model v33 已集成；本轮固定范围代码回放完成 |
 | 本轮证据包 | 本提交包含固定八仓、14 CVE/28 端点、DATA-06、Contacts 解析、差异索引和 SHA 清单 |
 | 主线代码合入 | 已合入；本轮新增证据包是否合入主线单独跟踪，不宣称已合入 |
-| 分支推送 | 待完成推送尝试；平台连接限制若仍阻止，会在交付状态中列明 |
+| 分支推送 | 本地 `git push origin codex/b-ipc-closeout-20261020` 已尝试；GitHub HTTPS 443 连接超时，最终提交目前未推送 |
 | 部署 | 未验证，unknown |
 | 漏洞验证 | 产品漏洞未验证；validated_vulnerability=0 |
 | 独立准确率评估 | not_run |
