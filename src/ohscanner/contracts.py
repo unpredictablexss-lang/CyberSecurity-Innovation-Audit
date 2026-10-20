@@ -114,6 +114,9 @@ class DetectorFinding:
     # ToolDiagnostic/ToolRunResult v1 remain unchanged.
     consequence_impact: Optional[str] = None
     consequence_cwe: Optional[str] = None
+    # Optional, source-attributed context for a disclosed component CVE. This
+    # is distinct from scanner severity and does not confirm product impact.
+    risk_assessment: Optional[dict] = None
     source_sha256: str = ""
     # A-CCR-03 layered identity inputs. These are optional and fail closed:
     # a missing field never falls back to message, line, or legacy ID.

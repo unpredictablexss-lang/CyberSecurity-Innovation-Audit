@@ -371,6 +371,7 @@ def findings(report):
                     "detector_id": run["tool"],
                     "detector_version": run["tool_version"],
                     "evidence": proof.get(diag["diagnostic_id"], {}),
+                    "risk_assessment": proof.get(diag["diagnostic_id"], {}).get("risk_assessment"),
                     "review_status": "unassessed",
                     "evidence_level": "candidate",
                 }

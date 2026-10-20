@@ -645,6 +645,7 @@ def install_routes(app: FastAPI, settings, store):
             "message": candidate.get("message"),
             "severity": candidate.get("severity"), "confidence": candidate.get("confidence"),
             "source_sha256": candidate.get("source_sha256"),
+            "risk_assessment": candidate_evidence.get("risk_assessment"),
             "evidence": {"obligations": obligations[:40],
                           "obligations_truncated": len(obligations) > 40},
             "source": {"sha256": source["sha256"], "blob": source.get("blob"),

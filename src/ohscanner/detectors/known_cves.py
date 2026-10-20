@@ -16,6 +16,48 @@ OBLIGATIONS = (
     EvidenceObligation("impact", "Verify product impact with controlled evidence.", "missing"),
 )
 
+LIBPNG_46675_RISK = {
+    "identifier": "CVE-2026-46675",
+    "cwe": ["CWE-416", "CWE-825"],
+    "source": "https://github.com/pnggroup/libpng/security/advisories/GHSA-qvg3-h654-xq3j",
+    "source_name": "libpng GitHub Security Advisory GHSA-qvg3-h654-xq3j",
+    "source_severity": "Moderate",
+    "cvss": {"version": "3.1", "score": 5.9,
+              "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"},
+    "severity": "medium",
+    "severity_label": "中",
+    "severity_mapping": (
+        "CVSS v3.x base score: 0.0 none, 0.1–3.9 low, 4.0–6.9 medium, 7.0–8.9 high, "
+        "9.0–10.0 critical; advisory label Moderate is normalized to medium. "
+        "This is component advisory severity, not OpenHarmony product risk."
+    ),
+    "affected_range": "libpng 1.6.0 through 1.6.58",
+    "fixed_versions": ["1.6.59", "1.8.0 (trunk)"],
+    "component_condition": (
+        "Sequential reader calls png_read_end after png_read_info before starting image-row reads; "
+        "a crafted compressed ancillary chunk is required."
+    ),
+    "poc": {
+        "kind": "local ASan component reproduction",
+        "entrypoint": "png_read_info() → png_read_end() without reading rows; crafted zTXt + longer tEXt",
+        "record": "research/data_sensitive/D30_LIBPNG_CVE_2026_46675_REPORT.md",
+        "record_sha256": "B9729E5E80D0440AADF606AB29912E8E8811929E06240EDECDF3DDE40DBCDDFA",
+        "replay": "research/data_sensitive/d30_libpng_cve_2026_46675_replay.py",
+        "replay_sha256": "34B184F51AE3A204CC25BE3493F57A32632E7CCDC0ABD958E542BEE0AB0ECEAF",
+    },
+    "remediation": "Upgrade to libpng 1.6.59 or later, or apply upstream fix aa77ef38c17ab2fc1b41bec09fb973c6a386641d.",
+    "upstream_fix": "https://github.com/pnggroup/libpng/commit/aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+    "component_retest": {
+        "fixed_source": "upstream fix aa77ef38c17ab2fc1b41bec09fb973c6a386641d applied to pinned libpng 1.6.55 archive",
+        "affected_poc": "3/3 ASan heap-use-after-free reports",
+        "fixed_poc": "0/3 ASan heap-use-after-free reports",
+        "safe_order_control": "0/3 ASan reports",
+        "scope": "Component harness only; not a full 1.6.59 release build or OpenHarmony product retest.",
+    },
+    "product_applicability": "unknown",
+    "product_evidence": "OpenHarmony final build inclusion, caller sequence, attacker reachability, and product impact have not been verified.",
+}
+
 def _body(text: str, name: str):
     # Match definitions only, not an earlier call or prototype followed by a
     # different function body.
@@ -192,6 +234,7 @@ def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: 
         message=f"Candidate component-code match for {cve}: {detail} Product reachability and vulnerability status remain unconfirmed.",
         evidence_type="syntax", candidate_cwe=cwe, symbol=cve, evidence_obligations=OBLIGATIONS,
         consequence_impact=impact, consequence_cwe=cwe,
+        risk_assessment=(dict(LIBPNG_46675_RISK) if cve == "CVE-2026-46675" else None),
         source_sha256=unit.sha256, rule_version=VERSION, rule_lineage_id=LINEAGE,
         symbol_identity=cve, identity_quality="partial")
 

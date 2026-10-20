@@ -380,7 +380,20 @@ class KnownDisclosedCveTests(unittest.TestCase):
     def test_libpng_affected_and_fixed_version_markers(self):
         affected='#define PNG_LIBPNG_VER_STRING "1.6.55"\n'
         fixed='#define PNG_LIBPNG_VER_STRING "1.6.59"\n'
-        self.assertIn("CVE-2026-46675", {f.symbol for f in self.run_source(affected, "pnglibconf.h").findings})
+        findings = self.run_source(affected, "pnglibconf.h").findings
+        self.assertIn("CVE-2026-46675", {f.symbol for f in findings})
+        finding = next(f for f in findings if f.symbol == "CVE-2026-46675")
+        risk = finding.risk_assessment
+        self.assertEqual("medium", risk["severity"])
+        self.assertEqual(5.9, risk["cvss"]["score"])
+        self.assertEqual(["CWE-416", "CWE-825"], risk["cwe"])
+        self.assertIn("0.0 none", risk["severity_mapping"])
+        self.assertIn("4.0–6.9 medium", risk["severity_mapping"])
+        self.assertEqual("unknown", risk["product_applicability"])
+        self.assertEqual("CVE-2026-46675", risk["identifier"])
+        self.assertEqual("Moderate", risk["source_severity"])
+        self.assertEqual(64, len(risk["poc"]["record_sha256"]))
+        self.assertEqual(64, len(risk["poc"]["replay_sha256"]))
         self.assertEqual((), self.run_source(fixed, "pnglibconf.h").findings)
 
     def test_libpng_sequence_requires_end_without_row_read(self):
