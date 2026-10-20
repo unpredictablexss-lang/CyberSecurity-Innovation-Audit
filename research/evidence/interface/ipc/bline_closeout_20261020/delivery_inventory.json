@@ -594,10 +594,10 @@
   "delivery_state": {
     "engineering": "IPC 0.12.13 fixed-scope replays and focused locator replay completed; original full-scope DSoftBus fixed report retains a locator anomaly and full-scope regeneration is limited by Python 3.13 Tree-sitter cleanup access violation.",
     "mainline_code": "IPC 0.12.13/model v33 and DATA-06 were already integrated before this delivery; latest main SHA 4b0e16576a45a111b4fad7e8f82819a47ed472f5",
-    "delivery_package": "Evidence package committed on local delivery branch; push attempted but github.com:443 connection failed; evidence delta is not on main.",
+    "delivery_package": "Evidence package committed and pushed to origin branch codex/b-ipc-closeout-20261020; evidence delta is not on main.",
     "deployment": "not_run / unknown",
     "vulnerability_validation": "not validated; validated_vulnerability=0",
     "accuracy_evaluation": "not_run",
-    "branch_push": "not completed: HTTPS connection to github.com port 443 timed out"
+    "branch_push": "completed: origin/codex/b-ipc-closeout-20261020 updated through closeout delivery commit."
   }
 }
