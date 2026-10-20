@@ -57,5 +57,14 @@ class D97SwitchSameTargetTests(unittest.TestCase):
         for findings in self.rows(self.source('case 0:p=&second;break;default:p=&second;break;',literal=True)):
             self.assertFalse(findings)
 
+    def test_partial_selected_header_rejects_join_in_both_pipelines(self):
+        from tests.detectors.data.test_t93_scalar_pointer_writes import T93ScalarPointerTests
+        source=self.source('case 0:p=&second;break;default:p=&second;break;')
+        for runner in (False,True):
+            rows=T93ScalarPointerTests().rows(source,runner=runner,
+                extra=(('partial.h','struct Incomplete {'),),partial=('partial.h',))
+            self.assertTrue(any('unresolved material write' in row['message'] for row in rows))
+            self.assertFalse(any('HILOG_INFO' in row['message'] for row in rows))
+
 
 if __name__=='__main__':unittest.main()
