@@ -862,6 +862,7 @@
       "objective": "Perform source-semantic second-layer review only if the scout/test loop selects a new candidate; do not reopen already completed source reviews or develop LLM features.",
       "review_prompt": "ROLE: second-layer source reviewer. After C-DEV-EXACT-BOUND-SCOUT and C-TEST-EXACT-BOUND-SCOUT identify a candidate and exact report, independently assess whether the source trigger can reach the sensitive operation and whether stated guards/counterevidence defeat it. Verify source pins, propose smallest isolated runtime test if warranted, and clearly separate source candidate from runtime/product vulnerability. If no candidate survives, record not_run and do not invent one. No detector or LLM implementation.",
       "report": "research/deliveries/c-line/c_float32array_negative_double_second_layer_review_20261020.md",
+      "report_commit": "b264f287c7f3d17cecec4e0bd8741d9e1ff8ed72",
       "completion": "Source candidate survives review. Math.ceil(-1.1) is a source-supported route to TDouble(-1.0), which can pass both missing-lower-bound fast paths. NewByteArray pointer-width effects differ by architecture; 32-bit wrap suggests a conditional overwrite concern, while 64-bit requests a very large allocation. Runtime/build/allocator behavior remains not_run; no product or confirmed memory-corruption claim.",
       "counterevidence": "Exact fast-path selection, supported build architectures, generated lowering, and allocator/OOM behavior are unverified."
     }
