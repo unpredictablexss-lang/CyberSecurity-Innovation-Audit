@@ -4,7 +4,7 @@
   "baseline": {
     "remote": "origin/codex/c-line-static-20261019",
     "commit": "d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03",
-    "refresh": "fetch_failed_github_port_443_unreachable_2026-10-20; local remote-tracking ref remains d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03"
+    "refresh": "fetched_origin_codex/c-line-static-20261019_successfully_2026-10-20; FETCH_HEAD=d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03"
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
   "status": "ACTIVE",
@@ -671,6 +671,51 @@
       "report": "research/deliveries/c-line/second_layer_dataview_api_review_20261020.md",
       "report_commit": "2f37175fdc1b49edc9157f8b079f35c8b793a873",
       "disposition": "No source-supported OOB candidate in GetViewValue/SetViewValue; possible conversion compatibility concern only; runtime/product unknown."
+    },
+    {
+      "id": "C-DEV-C1-MAP-EFFECT-20261020",
+      "kind": "development_and_precision_refinement",
+      "status": "IN_PROGRESS",
+      "worktree": "parallel development lane; planning base fbb537a39183b719bd587e0dd4a5ba83c6d85925",
+      "feedback_from": "C-TEST-C1-MAP-EFFECT-20261020",
+      "objective": "Investigate whether the exact C1 Map observation at line 2747 can be soundly refined from type_fact_invalidated_by_call, or must remain unknown, by proving or disproving escape and HClass stability across NewTypedArray and JSCallDispatch. Change code only if a concrete false unknown or candidate is proven.",
+      "input": {
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "target": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+        "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+        "planning_base": "fbb537a39183b719bd587e0dd4a5ba83c6d85925",
+        "locations": [2713, 2721, 2739, 2747]
+      },
+      "developer_prompt": "ROLE: C-line static-analysis developer. BASE: fbb537a39183b719bd587e0dd4a5ba83c6d85925. Verify exact target identity and trace Map's NewTypedArray allocation, result type sample, arbitrary callback dispatch, and FastSetPropertyByIndex sink. Trace NewTypedArray species/constructor behavior and any publication of the result; determine whether user callback code can obtain the result, mutate its prototype/HClass, or invalidate the sampled type in this exact source. Inspect the sink's required type facts and all relevant guards. Send the tester an expected boundary/control matrix before finalizing. Only make the narrowest code/model/test change if exact evidence proves the current unknown is an avoidable false unknown or the source supports a candidate. Otherwise commit a concise report stating why unknown remains. Preserve target partial/blocked status and all unsupported source unknowns. Do not claim runtime/product/safety impact, do not add LLM features, and do not wait for product profiles or human approval.",
+      "blocking_prerequisites": [],
+      "feedback_loop": "Independent tester provides the initial source/control matrix; developer responds with predicted statuses; tester replays the exact developer commit and returns discrepancies; developer addresses only concrete reproducible defects.",
+      "expected_controls": ["exact C1 Map source identity", "custom species that captures the allocated result", "callback closure that accesses captured result", "prototype/HClass mutation before indexed store", "no-escape or exact same-type local control", "unknown allocator/callback effect", "fixed/unrelated source control"],
+      "done_when": "A focused evidence report and, only if justified, a narrow regression-tested detector change are committed; independent same-commit replay preserves partial/unknown truthfully."
+    },
+    {
+      "id": "C-TEST-C1-MAP-EFFECT-20261020",
+      "kind": "independent_testing",
+      "status": "IN_PROGRESS",
+      "test_agent": "c_map_effect_test",
+      "feedback_to": "C-DEV-C1-MAP-EFFECT-20261020",
+      "objective": "Independently test the exact C1 Map escape/type-invalidation trace and adversarially replay any narrow developer change without editing production code.",
+      "input": "Same pinned source identity and planning base as C-DEV-C1-MAP-EFFECT-20261020; baseline report c1_partial_state_root_cause_20261020.md identifies the Map observation at line 2747 as unknown after JSCallDispatch at 2739.",
+      "tester_prompt": "ROLE: independent C-line tester. Verify the target and relevant NewTypedArray/helper source identities from the pinned Git object store. Reproduce analyze_unit research_partial baseline, then independently trace species construction, capture/publication, callback reachability, possible prototype/HClass mutation, and FastSetPropertyByIndex semantics. Send the developer an adversarial matrix and expected outcomes before implementation. If a code change is proposed, replay it on the exact developer SHA, test exact-source target and synthetic positive/safe/unknown/unrelated controls, and report every discrepancy. Do not edit production code; preserve partial/blocked and unknown outcomes; do not infer safety, exploitability, product impact, or formal accuracy from an empty finding list. Commit the independent report.",
+      "blocking_prerequisites": [],
+      "same_commit_replay_required": true
+    },
+    {
+      "id": "C-LLM-REVIEW-C1-MAP-EFFECT-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "IN_PROGRESS",
+      "reviewer": "c_map_effect_review",
+      "objective": "Independently decide whether C1 Map's line-2747 type invalidation is justified, reducible, or candidate-worthy based on exact source semantics, without implementing analyzer or LLM features.",
+      "second_layer_prompt": "ROLE: source reviewer only. Verify exact C1 Map source and trace NewTypedArray, custom species construction, result publication, user callback dispatch, object prototype/HClass changes, and FastSetPropertyByIndex. Give source-level evidence and counterevidence for whether the callback can affect the allocated result or the captured type token. Classify the current unknown as justified, reducible, or a source candidate; identify all unknown compiler/runtime/product behaviors. Do not edit code or assert a confirmed vulnerability.",
+      "blocking_prerequisites": [],
+      "report_required": true
     }
   ],
   "feedback_loop": [
@@ -679,9 +724,10 @@
     "The IB8BCA parent SetTypedValue candidate is plausible at source level; compiled IR, reachability, runtime effects, backing allocation feasibility, and product impact remain unknown. Fixed zero is not a safety result.",
     "The DataView GetViewValue/SetViewValue slice has completed through exact-source review, source-bound detector refinement, adversarial stale-blob mismatch repair, and same-commit independent replay. The next slice should start from current branch HEAD and select a concrete source-bound candidate; do not repeat this completed baseline work.",
     "The developer/tester loop for the DataView API slice closed: tester supplied baseline controls, developer made a narrow source-bound change, tester found a stale dependency identity bypass, developer fixed it, and tester replayed the fix on the exact commit. Separate source review assessed candidate plausibility only; no LLM feature work.",
-    "A fresh remote fetch previously failed at GitHub port 443, so remote default-branch freshness remains unverified. The requested planning branch push later succeeded; do not label it as the latest upstream source.",
+    "An earlier fetch/push attempt failed at GitHub port 443; a later fetch confirmed upstream baseline d07dc397 and the planning branch push succeeded. The pinned upstream baseline is verified at fetch time but may advance later.",
     "Second-layer API review completed at 2f37175: GetViewValue/SetViewValue uint32 wraparound-to-OOB route is not supported by source invariants; large-index conversion compatibility and unusual buffer/runtime behavior remain unknown.",
-    "DataView API width refinement completed: exact helper bytes are required to match both model-pinned SHA-256 and recomputed Git blob OID. The tester found and documented the stale-blob mismatch flaw in 40b7732; developer fixed it in 76efed37 and independent same-commit replay passed. Results remain blocked/partial with unknown runtime/product behavior; no safety or accuracy claim."
+    "DataView API width refinement completed: exact helper bytes are required to match both model-pinned SHA-256 and recomputed Git blob OID. The tester found and documented the stale-blob mismatch flaw in 40b7732; developer fixed it in 76efed37 and independent same-commit replay passed. Results remain blocked/partial with unknown runtime/product behavior; no safety or accuracy claim.",
+    "Latest upstream C-line base was fetched successfully as d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03. Planning branch closure commit fbb537a39183b719bd587e0dd4a5ba83c6d85925 was subsequently pushed successfully. Next parallel slice: exact C1 TypedArray Map line-2747 effect invalidation; development, independent testing, and source-review prompts are recorded as C-DEV-C1-MAP-EFFECT, C-TEST-C1-MAP-EFFECT, and C-LLM-REVIEW-C1-MAP-EFFECT."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
