@@ -8,10 +8,10 @@ import AgentAssessment from "./AgentAssessment";
 import AgentBlindReview from "./AgentBlindReview";
 const { Text } = Typography;
 export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "agent" | "agent_research" | "sync" | "queue";
-const kinds: Record<string, string> = { source_sync: "源码同步", revision_range: "固定区间", branch_comparison: "跨版本比较", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", candidate_review_batch: "历史候选队列（已停用）" };
+const kinds: Record<string, string> = { source_sync: "源码同步 / 自动扫描", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", candidate_review_batch: "历史候选队列（已停用）" };
 const headings: Record<OperationView, [string, string]> = {
   all: ["高级源码与验证操作", "保留既有操作入口；任务持久化，候选变化与安全影响分别记录。"],
-  date: ["时间增量扫描", "按明确时区选择提交区间，固定两个端点并比较候选观察。"],
+  date: ["时间增量扫描", "按明确时区固定时间端点；支持单一区间和 N 日 / 1 日双窗口候选对照。"],
   branches: ["跨版本安全分析", "比较同一仓库的分支、Tag 或 Commit；候选变化不等于漏洞引入或修复。"],
   matrix: ["影响与修复", "先核对多个固定版本的候选观察，再补充影响与修复证据。"],
   validation: ["PoC 验证", "围绕绑定源码和注册 Harness 申请隔离验证，保留失败与未知项。"],
@@ -61,22 +61,23 @@ export default function OperationWorkspace({ view = "all", operationId, context 
     try { const item = await api(path, payload); selectedId.current = item.id; setSelected(item); await refresh(); message.success("任务已加入持久化队列"); }
     catch (e) { setError(String(e)); } finally { setBusy(false); }
   };
-  const props = { repos, detectors, cases, busy, submit, context };
+  const props = { repos, detectors, cases, busy, agentStatus, submit, context };
   const forms = [
     { key: "sync", label: "同步源码", children: <SyncForm {...props} /> },
     { key: "range", label: "两个 SHA 区间", children: <ComparisonForm {...props} kind="range" /> },
     { key: "date", label: "提交者日期区间", children: <ComparisonForm {...props} kind="date" /> },
+    { key: "recent", label: "N 日与 1 日对照", children: <ComparisonForm {...props} kind="recent" /> },
     { key: "branches", label: "跨分支比较", children: <ComparisonForm {...props} kind="branches" /> },
     { key: "matrix", label: "版本矩阵", children: <ComparisonForm {...props} kind="matrix" /> },
     { key: "validation", label: "隔离验证", children: <ValidationForm {...props} /> },
     { key: "investigate", label: "只读调查", children: <InvestigationForm {...props} /> },
     { key: "agent", label: "模型辅助调查", children: <AgentInvestigationForm busy={busy} submit={submit} context={context} cases={cases} agentStatus={agentStatus} /> },
   ];
-  const filtered = view === "agent_research" ? [] : rows.filter((r) => r.kind !== "candidate_review_batch" && (view === "all" || view === "queue" || (view === "date" ? r.kind === "revision_range" : view === "branches" ? ["branch_comparison", "revision_range"].includes(r.kind) : r.kind === ({ matrix: "version_matrix", validation: "validation", investigate: "investigation", agent: "agent_investigation", sync: "source_sync" } as Record<string, string>)[view])));
+  const filtered = view === "agent_research" ? [] : rows.filter((r) => r.kind !== "candidate_review_batch" && (view === "all" || view === "queue" || (view === "date" ? ["revision_range", "recent_window_comparison"].includes(r.kind) : view === "branches" ? ["branch_comparison", "revision_range"].includes(r.kind) : r.kind === ({ matrix: "version_matrix", validation: "validation", investigate: "investigation", agent: "agent_investigation", sync: "source_sync" } as Record<string, string>)[view])));
   return <>
     <Header title={headings[view][0]} description={headings[view][1]} />
     {error && <Alert className="section-gap" type="error" showIcon message={error} />}
-    {view === "all" ? <Tabs items={forms} /> : view === "branches" ? <Tabs items={[forms[3], forms[4]]} /> : view === "investigate" ? <Tabs items={[forms[6], forms[7]]} /> : view === "agent_research" ? null : forms.find((f) => f.key === view)?.children}
+    {view === "all" ? <Tabs items={forms} /> : view === "date" ? <Tabs items={[forms[2], forms[3]]} /> : view === "branches" ? <Tabs items={[forms[4], forms[5]]} /> : view === "investigate" ? <Tabs items={[forms[7], forms[8]]} /> : view === "agent_research" ? null : forms.find((f) => f.key === view)?.children}
     {view === "agent_research" && agentEvaluation && <Card className="section-gap" size="small" title="模型执行与成本评估（最近 200 个任务）">
       <Alert type="info" showIcon message="Token 为 Provider 完整返回用量的合计；费用仅按已知费率估算，实际账单未核验。耗时来自任务记录和 Agent 子进程；RSS 是子进程高水位，不含 Docker 容器与 Provider 侧资源。以上不构成漏洞准确率或独立真值。" description={agentEvaluation.execution_limitation} />
       <Table<any> className="section-gap" size="small" rowKey={(row) => [row.mode, row.provider, row.endpoint_host, row.model, row.prompt_version, row.tool_policy_version].join("|")}
@@ -151,6 +152,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
         {selected.result_sha256 && <><Text>Result SHA-256</Text><Hash value={selected.result_sha256} /></>}</Space>
       {selected.error && <Alert className="section-gap" type="error" message={selected.error} />}
       {selected.kind === "agent_investigation" && !selected.result_sha256 && ["failed", "interrupted", "timed_out", "cancelled"].includes(selected.status) && <Alert className="section-gap" type="warning" showIcon message="本次调查没有可复核结果；候选仍为 unknown" description="任务结束不代表候选是误报或安全。若 Worker 在 Provider 已处理请求后、结果落盘前退出，上游调用和费用仍可能发生。重试前请核对执行事件及 Provider 账单，再重新预览并单独批准新任务。" />}
+      {selected.result?.scan_job_id && <Button className="section-gap" onClick={() => go("/tasks/" + selected.result.scan_job_id)}>打开同步后扫描任务 · {String(selected.result.scan_job_id).slice(0, 12)}</Button>}
       {selected.spec?.scan_ids && <Space wrap className="section-gap">端点扫描：{selected.spec.scan_ids.map((id: string) => <Button key={id} size="small" onClick={() => go("/tasks/" + id)}>{id.slice(0, 12)}</Button>)}</Space>}
       {selected.kind === "agent_investigation" && selected.result ? <AgentAssessment result={selected.result} reviews={selected.agent_reviews || []}
         onSubmit={async (review: any) => { await api("/operations/" + selected.id + "/agent-reviews", review); await show(selected.id); }} /> : <pre className="json-view">{JSON.stringify(selected.result || selected.spec, null, 2)}</pre>}

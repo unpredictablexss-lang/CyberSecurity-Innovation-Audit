@@ -3,10 +3,12 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
 from src.workbench.api import create_app
+from src.workbench import repository_management
 from src.workbench.settings import Settings
 
 
@@ -49,6 +51,48 @@ class RepositoryManagementTests(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 201, response.text)
         return response.json()
+
+    def test_online_catalog_discovers_only_openharmony_org_and_caches_page(self):
+        class Response:
+            headers = {"Link": '<https://api.github.com/orgs/openharmony/repos?per_page=100&page=2>; rel="next"'}
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_args):
+                return False
+
+            def read(self, _limit):
+                return json.dumps([
+                    {"name": "commonlibrary", "full_name": "openharmony/commonlibrary",
+                     "owner": {"login": "openharmony"}, "default_branch": "master",
+                     "description": "public source", "stargazers_count": 12,
+                     "updated_at": "2026-10-01T00:00:00Z", "archived": False, "fork": False},
+                    {"name": "spoof", "full_name": "attacker/spoof",
+                     "owner": {"login": "attacker"}, "default_branch": "main"},
+                    {"name": "bad/name", "full_name": "openharmony/bad/name",
+                     "owner": {"login": "openharmony"}, "default_branch": "main"},
+                ]).encode()
+
+        repository_management._ONLINE_CATALOG_CACHE.clear()
+        with patch("src.workbench.repository_management.urlopen", return_value=Response()) as open_url:
+            response = self.client.get("/api/v1/repositories/online-catalog?page=1")
+            self.assertEqual(response.status_code, 200, response.text)
+            result = response.json()
+            self.assertEqual(result["next_page"], 2)
+            self.assertFalse(result["identity_verified"])
+            self.assertEqual([row["name"] for row in result["repositories"]],
+                             ["openharmony/commonlibrary"])
+            self.assertEqual(result["repositories"][0]["url"],
+                             "https://github.com/openharmony/commonlibrary.git")
+            self.assertEqual(self.client.get("/api/v1/repositories/online-catalog?page=1").status_code, 200)
+            self.assertEqual(open_url.call_count, 1)
+
+    def test_online_catalog_rejects_out_of_bound_page(self):
+        with self.assertRaisesRegex(ValueError, "between 1 and 20"):
+            repository_management.online_repository_catalog(21)
+        response = self.client.get("/api/v1/repositories/online-catalog?page=21")
+        self.assertEqual(response.status_code, 422, response.text)
 
     def test_catalog_hides_paths_and_disambiguates_duplicate_names(self):
         first = init_repo(self.root / "first")

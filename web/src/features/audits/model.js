@@ -122,8 +122,17 @@ export function operationPayload(kind, values, detectors, explicitIds = []) {
   const payload = common(values, detectors, explicitIds);
   const auditMode = values.audit_mode || "standard_review";
   if (!["standard_review", "static_only"].includes(auditMode)) throw new Error("审计方式无效，请重新选择。");
-  const scanPayload = { ...payload, audit_mode: auditMode };
+  const scanPayload = { ...payload, audit_mode: auditMode, ...taskAuthorizationPayload(values) };
   if (kind === "date") return { ...scanPayload, ...datePreviewPayload(values) };
+  if (kind === "recent") {
+    if (!values.branch || !values.reference_time || !values.timezone)
+      throw new Error("请填写仓库、分支、对照时点和时区。");
+    const days = Number(values.lookback_days || 7);
+    if (!Number.isInteger(days) || days < 2 || days > 90)
+      throw new Error("N 日窗口需要在 2 到 90 天之间。");
+    return { ...scanPayload, branch: values.branch.trim(), lookback_days: days,
+      reference_time: values.reference_time, timezone: values.timezone };
+  }
   if (kind === "branches") {
     if (!values.baseline_ref || !values.endpoint_ref) throw new Error("请填写两个版本。");
     if (values.baseline_ref === values.endpoint_ref) throw new Error("请选择两个不同的版本。");

@@ -5,11 +5,12 @@ import json
 import re
 import uuid
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, ConfigDict, Field
-from .operations import approved_url, date_selection, enqueue_branch_comparison, enqueue_range
+from .operations import (approved_url, date_selection, enqueue_branch_comparison,
+                         enqueue_range, range_plan, recent_window_selections)
 from .operations_store import Operations, END
 from .operation_limits import MAX_DETECTOR_IDS
 from .store import now
@@ -70,13 +71,37 @@ class Strict(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class TaskTriageAuthorization(Strict):
+    plan_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    workflow_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    consent_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    consent_nonce: str = Field(pattern=r"^[0-9a-f]{32}$")
+
+
+class TaskTriageOptions(Strict):
+    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
+    auto_triage: bool = False
+    max_triage_candidates: int = Field(default=3, ge=1, le=5)
+    max_r2_candidates: int = Field(default=0, ge=0, le=5)
+    max_cost_usd: str | None = Field(default=None, min_length=1, max_length=16,
+                                     pattern=r"^\d{1,6}(?:\.\d{1,8})?$")
+    triage_authorizations: list[TaskTriageAuthorization] = Field(default_factory=list, max_length=8)
+
+
 class SyncRequest(Strict):
     repository: str = Field(pattern=r"^openharmony/[A-Za-z0-9_-]{1,100}$")
     url: str = Field(min_length=16, max_length=300)
     timeout_seconds: int = Field(default=900, ge=10, le=3600)
+    scan_after_sync: bool = False
+    revision: str = Field(default="HEAD", min_length=1, max_length=200)
+    include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
+    detector_ids: list[str] | None = Field(default=None, max_length=MAX_DETECTOR_IDS)
+    audit_mode: Literal["standard_review", "static_only"] = "static_only"
+    scan_timeout_seconds: int = Field(default=600, ge=30, le=3600)
+    memory_mb: int = Field(default=2048, ge=256, le=8192)
 
 
-class RangeRequest(Strict):
+class RangeRequest(TaskTriageOptions):
     repository_id: str
     baseline: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
     endpoint: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
@@ -84,16 +109,14 @@ class RangeRequest(Strict):
     detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
-    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
 
 
-class DateRangeRequest(Strict):
+class DateRangeRequest(TaskTriageOptions):
     repository_id: str
     branch: str = Field(min_length=1, max_length=200)
     start: str = Field(min_length=10, max_length=40)
     end: str = Field(min_length=10, max_length=40)
     timezone: str = Field(min_length=1, max_length=100)
-    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
     detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
@@ -108,10 +131,9 @@ class DateRangePreviewRequest(Strict):
     timezone: str = Field(min_length=1, max_length=100)
 
 
-class MatrixRequest(Strict):
+class MatrixRequest(TaskTriageOptions):
     case_id: str
     repository_id: str
-    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
     commits: list[str] = Field(min_length=2, max_length=8)
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
     detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
@@ -119,15 +141,31 @@ class MatrixRequest(Strict):
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
 
-class BranchComparisonRequest(Strict):
+class BranchComparisonRequest(TaskTriageOptions):
     repository_id: str
-    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
     baseline_ref: str = Field(min_length=1, max_length=200)
     endpoint_ref: str = Field(min_length=1, max_length=200)
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
     detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
+
+
+class RecentComparisonRequest(TaskTriageOptions):
+    repository_id: str
+    branch: str = Field(min_length=1, max_length=200)
+    lookback_days: int = Field(default=7, ge=2, le=90)
+    reference_time: str = Field(min_length=10, max_length=40)
+    timezone: str = Field(default="Asia/Shanghai", min_length=1, max_length=100)
+    include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
+    detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
+    timeout_seconds: int = Field(default=600, ge=30, le=3600)
+    memory_mb: int = Field(default=2048, ge=256, le=8192)
+
+
+class OperationScanPreviewRequest(Strict):
+    kind: Literal["date", "branches", "range", "matrix", "recent"]
+    payload: dict[str, Any]
 
 
 class ValidationRequest(Strict):
@@ -325,6 +363,166 @@ class AgentProposalRequest(Strict):
     input_tokens: int | None = Field(default=None, ge=0)
     output_tokens: int | None = Field(default=None, ge=0)
     duration_ms: int | None = Field(default=None, ge=0)
+
+
+def _operation_scan_plan(settings, store, kind, body):
+    """Resolve operation inputs to immutable scan plans before queue insertion."""
+    mode = body.audit_mode
+    if kind in {"range", "date"}:
+        if kind == "date":
+            selection = date_selection(settings, store, body.repository_id, body.branch,
+                                       body.start, body.end, body.timezone)
+            baseline, endpoint = selection["baseline"], selection["endpoint"]
+        else:
+            selection = None
+            baseline, endpoint = body.baseline, body.endpoint
+        repo, before, after, commits = range_plan(settings, store, body.repository_id,
+            baseline, endpoint, body.include_paths, body.detector_ids,
+            body.timeout_seconds, body.memory_mb)
+        scans = [{**before, "audit_mode": mode}, {**after, "audit_mode": mode}]
+        spec = {"repository_id": repo["id"], "baseline": before["commit"],
+            "endpoint": after["commit"], "commits": commits, "audit_mode": mode,
+            "timeout_seconds": body.timeout_seconds * 2 + 60, "memory_mb": body.memory_mb,
+            "date_selection": selection}
+        return "revision_range", repo, spec, scans
+    if kind == "branches":
+        repo = store.repository(body.repository_id)
+        service.check_repository(settings, repo["path"])
+        before = service.revision(repo, body.baseline_ref)
+        after = service.revision(repo, body.endpoint_ref)
+        if before["commit"] == after["commit"]:
+            raise ValueError("branch comparison refs must resolve to different commits")
+        scans = [service.make_spec(repo, item["commit"], body.include_paths, body.detector_ids,
+                                  body.timeout_seconds, body.memory_mb)
+                 for item in (before, after)]
+        scans = [{**scan, "audit_mode": mode} for scan in scans]
+        spec = {"repository_id": repo["id"], "audit_mode": mode,
+            "baseline_ref": body.baseline_ref, "baseline": before["commit"],
+            "endpoint_ref": body.endpoint_ref, "endpoint": after["commit"],
+            "timeout_seconds": body.timeout_seconds * 2 + 60, "memory_mb": body.memory_mb}
+        return "branch_comparison", repo, spec, scans
+    if kind == "matrix":
+        if len(set(body.commits)) != len(body.commits):
+            raise ValueError("version matrix commits must be unique")
+        if any(not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", item) for item in body.commits):
+            raise ValueError("version matrix requires complete lowercase Git object IDs")
+        with store.connect() as db:
+            if not db.execute("SELECT 1 FROM cases WHERE id=?", (body.case_id,)).fetchone():
+                raise KeyError("case not found")
+        repo = store.repository(body.repository_id)
+        service.check_repository(settings, repo["path"])
+        links = _case_links(store, body.case_id)
+        if not any(store.repository(store.job(link["job_id"])["repository_id"])["name"] == repo["name"] for link in links):
+            raise ValueError("version matrix case must already link a candidate from the selected repository")
+        scans = [service.make_spec(repo, sha, body.include_paths, body.detector_ids,
+                                   body.timeout_seconds, body.memory_mb) for sha in body.commits]
+        scans = [{**scan, "audit_mode": mode} for scan in scans]
+        spec = {"case_id": body.case_id, "repository_id": repo["id"], "audit_mode": mode,
+            "commits": [scan["commit"] for scan in scans],
+            "timeout_seconds": body.timeout_seconds * len(scans) + 120,
+            "memory_mb": body.memory_mb}
+        return "version_matrix", repo, spec, scans
+    if kind == "recent":
+        selection = recent_window_selections(settings, store, body.repository_id, body.branch,
+            body.lookback_days, body.reference_time, body.timezone)
+        repo = store.repository(body.repository_id)
+        service.check_repository(settings, repo["path"])
+        windows = (selection["long_window"], selection["one_day_window"])
+        scans = []
+        for window in windows:
+            for revision in (window["baseline"], window["endpoint"]):
+                scan = service.make_spec(repo, revision, body.include_paths, body.detector_ids,
+                                         body.timeout_seconds, body.memory_mb)
+                scans.append({**scan, "audit_mode": mode})
+        spec = {"repository_id": repo["id"], "branch": body.branch,
+            "lookback_days": body.lookback_days, "reference_time": selection["reference_time"],
+            "timezone": body.timezone, "windows": [selection["long_window"], selection["one_day_window"]],
+            "audit_mode": mode, "timeout_seconds": body.timeout_seconds * 4 + 120,
+            "memory_mb": body.memory_mb,
+            "limitations": ["Each window scans its fixed baseline and endpoint; commits inside the interval are not individually scanned.",
+                            "Candidate deltas do not establish vulnerability introduction, remediation, or affected product versions."]}
+        return "recent_window_comparison", repo, spec, scans
+    raise ValueError("unsupported scan operation preview")
+
+
+def _prepare_operation_triage(settings, body, scan_specs, *, authorization_inputs=None):
+    """Attach per-endpoint consent snapshots only after matching a fresh preview."""
+    mode = body.audit_mode
+    enabled = body.auto_triage
+    if body.max_r2_candidates > body.max_triage_candidates:
+        raise ValueError("conditional R2 candidate budget cannot exceed the R1 candidate budget")
+    if body.max_r2_candidates and not enabled:
+        raise ValueError("conditional R2 requires task-level automatic triage authorization")
+    if enabled and (mode != "standard_review" or not body.max_cost_usd):
+        raise ValueError("automatic triage requires standard review mode and a positive USD budget")
+    supplied = authorization_inputs if authorization_inputs is not None else body.triage_authorizations
+    if not enabled:
+        if supplied:
+            raise ValueError("triage authorizations cannot be submitted unless automatic triage was selected")
+        prepared = []
+        for scan in scan_specs:
+            workflow = service.audit_workflow_sha256(scan["plan_sha256"], mode)
+            prepared.append({**scan, "audit_mode": mode, "max_r2_candidates": 0,
+                "max_cost_usd": None, "workflow_sha256": workflow,
+                "workflow": service.audit_workflow_summary(mode)})
+        return prepared
+    if not isinstance(supplied, list) or len(supplied) != len(scan_specs):
+        raise ValueError("every fixed endpoint requires a separately reviewed model-egress preview")
+    from .agent import ProviderConfig, audit_task_consent_preview
+    provider = ProviderConfig.from_env(settings.data_dir)
+    prepared = []
+    for scan, raw in zip(scan_specs, supplied):
+        authorization = raw.model_dump() if isinstance(raw, TaskTriageAuthorization) else raw
+        workflow = service.audit_workflow_sha256(scan["plan_sha256"], mode, True,
+            body.max_triage_candidates, body.max_r2_candidates, body.max_cost_usd)
+        if (authorization.get("plan_sha256") != scan["plan_sha256"]
+                or authorization.get("workflow_sha256") != workflow):
+            raise ValueError("multi-endpoint model authorization no longer matches the fixed scan plan")
+        preview = audit_task_consent_preview(scan["audit_plan"], workflow,
+            scan["include_paths"], body.max_triage_candidates,
+            authorization.get("consent_nonce"), provider,
+            body.max_r2_candidates, max_cost_usd=body.max_cost_usd)
+        if (not preview.get("eligible")
+                or preview.get("consent_sha256") != authorization.get("consent_sha256")):
+            raise ValueError("model-egress preview expired or changed; review a fresh preview")
+        prepared.append({**scan, "audit_mode": mode, "max_r2_candidates": body.max_r2_candidates,
+            "max_cost_usd": body.max_cost_usd, "workflow_sha256": workflow,
+            "workflow": service.audit_workflow_summary(mode, True,
+                body.max_triage_candidates, body.max_r2_candidates, body.max_cost_usd),
+            "triage_authorization": {"authorized": True,
+                "consent_sha256": preview["consent_sha256"], "snapshot": preview["manifest"]}})
+    return prepared
+
+
+def _preview_operation_triage(settings, body, scan_specs):
+    if not body.auto_triage:
+        return {"eligible": False, "model_calls": 0,
+                "scans": [{"commit": scan["commit"], "plan_sha256": scan["plan_sha256"]}
+                          for scan in scan_specs],
+                "message": "No model source egress is authorized; endpoint scans remain static."}
+    if body.audit_mode != "standard_review":
+        raise ValueError("automatic triage is only available in standard review mode")
+    if body.max_r2_candidates > body.max_triage_candidates or not body.max_cost_usd:
+        raise ValueError("automatic triage requires valid R1/R2 budgets and a USD ceiling")
+    from .agent import ProviderConfig, audit_task_consent_preview
+    provider = ProviderConfig.from_env(settings.data_dir)
+    previews = []
+    for scan in scan_specs:
+        workflow = service.audit_workflow_sha256(scan["plan_sha256"], body.audit_mode, True,
+            body.max_triage_candidates, body.max_r2_candidates, body.max_cost_usd)
+        preview = audit_task_consent_preview(scan["audit_plan"], workflow,
+            scan["include_paths"], body.max_triage_candidates, uuid.uuid4().hex,
+            provider, body.max_r2_candidates, max_cost_usd=body.max_cost_usd)
+        if not preview.get("eligible"):
+            raise ValueError("automatic triage cannot be authorized: " + preview.get("reason", "provider unavailable"))
+        previews.append({"commit": scan["commit"], "tree": scan["git_tree"],
+            "plan_sha256": scan["plan_sha256"], "workflow_sha256": workflow,
+            **preview})
+    aggregate = _aggregate_agent_budget_cost_estimates(item.get("estimated_cost") for item in previews)
+    return {"eligible": True, "model_calls": sum(item["manifest"]["budgets"]["max_requests"] for item in previews),
+            "per_endpoint_budget": True, "aggregate_estimated_cost": aggregate,
+            "scans": previews,
+            "consent_required": "Review each source-egress manifest and submit each nonce and digest with the operation."}
 
 
 def _case_links(store, case_id):
@@ -768,51 +966,87 @@ def install_routes(app: FastAPI, settings, store):
         if urlsplit(url).path != expected:
             raise ValueError("repository URL path must match the approved repository name")
         return ops.create("source_sync", {"name": body.repository, "url": url,
-                                          "timeout_seconds": body.timeout_seconds})
+                                          **body.model_dump(exclude={"repository", "url"})})
+
+    @router.post("/operations/scan-previews")
+    def operation_scan_preview(body: OperationScanPreviewRequest):
+        request_models = {"range": RangeRequest, "date": DateRangeRequest,
+                          "branches": BranchComparisonRequest, "matrix": MatrixRequest,
+                          "recent": RecentComparisonRequest}
+        operation_body = request_models[body.kind].model_validate(body.payload)
+        if operation_body.triage_authorizations:
+            raise ValueError("preview requests must not contain prior authorization tokens")
+        operation_kind, repo, operation_spec, scans = _operation_scan_plan(
+            settings, store, body.kind, operation_body)
+        return {"operation_kind": operation_kind, "repository": repo["name"],
+            "spec": operation_spec,
+            "triage_authorization_preview": _preview_operation_triage(
+                settings, operation_body, scans)}
 
     @router.post("/operations/revision-ranges", status_code=201)
     def revision_range(body: RangeRequest):
-        return enqueue_range(settings, store, ops, body.model_dump())
+        operation_kind, repo, operation_spec, scans = _operation_scan_plan(
+            settings, store, "range", body)
+        scans = _prepare_operation_triage(settings, body, scans)
+        operation_spec.update({"auto_triage": body.auto_triage,
+            "max_triage_candidates": body.max_triage_candidates,
+            "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
+            "max_cost_usd": body.max_cost_usd if body.auto_triage else None})
+        return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
 
     @router.post("/operations/date-ranges", status_code=201)
     def date_range(body: DateRangeRequest):
-        selection = date_selection(settings, store, body.repository_id, body.branch,
-                                   body.start, body.end, body.timezone)
-        spec = body.model_dump()
-        spec.update({"baseline": selection["baseline"], "endpoint": selection["endpoint"],
-                     "date_selection": selection})
-        return enqueue_range(settings, store, ops, spec)
+        operation_kind, repo, operation_spec, scans = _operation_scan_plan(
+            settings, store, "date", body)
+        scans = _prepare_operation_triage(settings, body, scans)
+        operation_spec.update({"auto_triage": body.auto_triage,
+            "max_triage_candidates": body.max_triage_candidates,
+            "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
+            "max_cost_usd": body.max_cost_usd if body.auto_triage else None})
+        return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
 
     @router.post("/operations/date-ranges/preview")
     def date_range_preview(body: DateRangePreviewRequest):
         return date_selection(settings, store, body.repository_id, body.branch,
                               body.start, body.end, body.timezone)
 
+    @router.post("/operations/recent-comparisons/preview")
+    def recent_comparison_preview(body: RecentComparisonRequest):
+        return recent_window_selections(settings, store, body.repository_id, body.branch,
+                                        body.lookback_days, body.reference_time, body.timezone)
+
+    @router.post("/operations/recent-comparisons", status_code=201)
+    def recent_comparison(body: RecentComparisonRequest):
+        operation_kind, repo, operation_spec, scans = _operation_scan_plan(
+            settings, store, "recent", body)
+        scans = _prepare_operation_triage(settings, body, scans)
+        operation_spec.update({"auto_triage": body.auto_triage,
+            "max_triage_candidates": body.max_triage_candidates,
+            "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
+            "max_cost_usd": body.max_cost_usd if body.auto_triage else None})
+        return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
+
     @router.post("/operations/branch-comparisons", status_code=201)
     def branch_comparison(body: BranchComparisonRequest):
-        return enqueue_branch_comparison(settings, store, ops, body.model_dump())
+        operation_kind, repo, operation_spec, scans = _operation_scan_plan(
+            settings, store, "branches", body)
+        scans = _prepare_operation_triage(settings, body, scans)
+        operation_spec.update({"auto_triage": body.auto_triage,
+            "max_triage_candidates": body.max_triage_candidates,
+            "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
+            "max_cost_usd": body.max_cost_usd if body.auto_triage else None})
+        return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
 
     @router.post("/operations/version-matrices", status_code=201)
     def version_matrix(body: MatrixRequest):
-        if len(set(body.commits)) != len(body.commits):
-            raise ValueError("version matrix commits must be unique")
-        if any(not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", item) for item in body.commits):
-            raise ValueError("version matrix requires complete lowercase Git object IDs")
-        with store.connect() as db:
-            if not db.execute("SELECT 1 FROM cases WHERE id=?", (body.case_id,)).fetchone():
-                raise KeyError("case not found")
-        repo = store.repository(body.repository_id)
-        service.check_repository(settings, repo["path"])
-        links = _case_links(store, body.case_id)
-        if not any(store.repository(store.job(link["job_id"])["repository_id"])["name"] == repo["name"] for link in links):
-            raise ValueError("version matrix case must already link a candidate from the selected repository")
-        specs = [service.make_spec(repo, sha, body.include_paths, body.detector_ids,
-                                   body.timeout_seconds, body.memory_mb) for sha in body.commits]
-        specs = [{**spec, "audit_mode": body.audit_mode} for spec in specs]
-        return ops.create_with_scans("version_matrix", {"case_id": body.case_id,
-            "repository_id": repo["id"], "audit_mode": body.audit_mode, "commits": [s["commit"] for s in specs],
-            "timeout_seconds": body.timeout_seconds * len(specs) + 120,
-            "memory_mb": body.memory_mb}, repo["id"], specs)
+        operation_kind, repo, operation_spec, scans = _operation_scan_plan(
+            settings, store, "matrix", body)
+        scans = _prepare_operation_triage(settings, body, scans)
+        operation_spec.update({"auto_triage": body.auto_triage,
+            "max_triage_candidates": body.max_triage_candidates,
+            "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
+            "max_cost_usd": body.max_cost_usd if body.auto_triage else None})
+        return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
 
     def provider_settings_view():
         from .agent import ProviderConfig
@@ -1900,6 +2134,10 @@ def install_routes(app: FastAPI, settings, store):
                     "unsupported_claims": assessment.get("unsupported_claims", []),
                     "unknowns": assessment.get("unknowns", []),
                     "next_steps": assessment.get("next_steps", []),
+                    "repair_guidance": {"status": "unverified_model_suggestions",
+                        "items": assessment.get("next_steps", []),
+                        "patch_generated": False,
+                        "human_review_required": True},
                     "mode": result.get("mode"),
                     "model": (result.get("provider") or {}).get("model"),
                     "model_usage": result.get("model_usage"),
@@ -2026,6 +2264,45 @@ def install_routes(app: FastAPI, settings, store):
                     rows += ["- 源码外发目的地：" + md(consent.get("destination_host") or "unknown") +
                              "；授权预览 SHA-256 " + md(consent.get("consent_sha256") or "unknown") +
                              "；预览版本 " + md(consent.get("consent_preview_version") or "unknown")]
+        rows += ["", "## AI 修复与验证建议（未经验证）"]
+        suggestions = [(operation["id"], item)
+                       for operation in agent_ops
+                       for item in (operation["agent_triage"].get("repair_guidance", {}).get("items") or [])]
+        if suggestions:
+            for operation_id, suggestion in suggestions:
+                rows += ["- Agent 建议（操作 " + md(operation_id) + "，待人工复核）：“" + md(suggestion) + "”"]
+        else:
+            rows += ["- 当前没有绑定到本案例的 Agent 修复建议。"]
+        rows += ["- 系统未生成或应用补丁；建议文本不构成修复证明，必须单独审查补丁并在固定版本上重新扫描和验证。"]
+        validation_ops = [item for item in data["operations"] if item.get("kind") == "validation"]
+        rows += ["", "## PoC / 隔离验证记录"]
+        if validation_ops:
+            for operation in validation_ops:
+                rows += ["- 操作 " + md(operation["id"]) + "；状态 " + md(operation.get("status")) +
+                         "；验证门 " + md(operation.get("validation_gate") or "未通过/未知") +
+                         "；产品可达性 " + md(operation.get("reachability_status") or "unknown") +
+                         "；计入确认数 " + md(operation.get("validated_vulnerability", 0)) +
+                         "；结果 SHA-256 " + md(operation.get("result_sha256"))]
+                if operation.get("gate_reason"):
+                    rows += ["  - 门控说明：" + md(operation["gate_reason"])]
+            rows += ["> 固定 Harness 的组件级结果不自动证明产品受影响；只有验证门通过、产品可达性已验证且存在匹配人工评估时才计为确认。"]
+        else:
+            rows += ["- 尚无已完成的隔离验证操作；PoC / 产品影响状态保持 unknown。"]
+        rows += ["", "## Agent 实验与人工评价"]
+        if agent_ops:
+            for operation in agent_ops:
+                triage = operation["agent_triage"]
+                rows += ["- 实验 " + md(triage.get("experiment_id") or "未标记") +
+                         "；模式 " + md(triage.get("mode") or "unknown") +
+                         "；人工评价数 " + md(len(triage.get("human_reviews", []))) +
+                         "；分诊倾向 " + md(triage.get("assessment", "unknown")) +
+                         "（不是漏洞真值或准确率）"]
+                for review in triage.get("human_reviews", []):
+                    rows += ["  - " + md(review.get("reviewer")) + "：有用性 " + md(review.get("usefulness")) +
+                             "；引文准确性 " + md(review.get("citation_accuracy")) +
+                             "；处理后意见 " + md(review.get("post_review_disposition") or "未记录")]
+        else:
+            rows += ["- 尚无 Agent 调查结果；不能给出模型效能结论。"]
         human_assessments = [item for item in data["assessments"] if item.get("reviewer_kind") == "human"]
         if human_assessments:
             rows += ["", "## 人工案例复核"]

@@ -7,7 +7,7 @@ import sqlite3
 import subprocess
 import uuid
 from typing import Literal
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Query, Request
 from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
@@ -15,7 +15,8 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from .settings import Settings
 from .store import Store, TERMINAL
 from . import service
-from .repository_management import discover_repositories, repository_catalog, repository_roots
+from .repository_management import (discover_repositories, online_repository_catalog,
+                                   repository_catalog, repository_roots)
 from .source_roots import add_managed_root, record_root_check, remove_managed_root
 
 
@@ -227,6 +228,10 @@ def create_app(settings=None):
     @app.get("/api/v1/repositories/catalog")
     def repository_catalog_route():
         return repository_catalog(settings, store)
+
+    @app.get("/api/v1/repositories/online-catalog")
+    def online_repository_catalog_route(page: int = Query(default=1, ge=1, le=20)):
+        return online_repository_catalog(page)
 
     @app.get("/api/v1/repositories/roots")
     def repository_roots_route():

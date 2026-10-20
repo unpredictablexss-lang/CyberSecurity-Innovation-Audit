@@ -1,13 +1,18 @@
 """Read-only catalog checks and bounded discovery inside configured source roots."""
 
 from collections import Counter
+from datetime import datetime, timezone
 import hashlib
 from concurrent.futures import ThreadPoolExecutor, wait
+import json
 import os
 from pathlib import Path
 import re
 import subprocess
 import time
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 from . import service
 from .source_roots import load_managed_roots, managed_root_is_current, record_root_check
@@ -20,6 +25,83 @@ DISCOVERY_MAX_ENTRIES_PER_DIRECTORY = 10000
 CATALOG_TIME_BUDGET_SECONDS = 15
 CATALOG_MAX_WORKERS = 8
 DISCOVERY_TIME_BUDGET_SECONDS = 20
+ONLINE_CATALOG_PAGE_SIZE = 100
+ONLINE_CATALOG_PAGE_LIMIT = 20
+ONLINE_CATALOG_CACHE_SECONDS = 120
+_ONLINE_CATALOG_CACHE = {}
+
+
+def online_repository_catalog(page=1):
+    """Discover a bounded page from GitHub's public OpenHarmony org listing.
+
+    Discovery by organization name is not proof of upstream ownership or mirror
+    identity. Cloning still requires an explicit operator action.
+    """
+    if not isinstance(page, int) or isinstance(page, bool) or not 1 <= page <= ONLINE_CATALOG_PAGE_LIMIT:
+        raise ValueError("online catalog page must be between 1 and 20")
+    cached = _ONLINE_CATALOG_CACHE.get(page)
+    if cached and cached[0] > time.monotonic():
+        return cached[1]
+    endpoint = "https://api.github.com/orgs/openharmony/repos?" + urlencode({
+        "per_page": ONLINE_CATALOG_PAGE_SIZE, "page": page, "type": "public", "sort": "full_name"})
+    request = Request(endpoint, headers={
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "OHScanner-local-workbench",
+    })
+    try:
+        with urlopen(request, timeout=8) as response:
+            payload = response.read(2 * 1024 * 1024 + 1)
+            link_header = response.headers.get("Link", "")
+    except (HTTPError, URLError, TimeoutError, OSError) as exc:
+        raise ValueError("GitHub repository discovery is unavailable; you can still enter an approved URL manually") from exc
+    if len(payload) > 2 * 1024 * 1024:
+        raise ValueError("GitHub repository discovery page exceeds the response budget")
+    try:
+        rows = json.loads(payload)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("GitHub repository discovery returned invalid JSON") from exc
+    if not isinstance(rows, list) or len(rows) > ONLINE_CATALOG_PAGE_SIZE:
+        raise ValueError("GitHub repository discovery returned an invalid page")
+    repositories = []
+    for row in rows:
+        owner = row.get("owner") if isinstance(row, dict) else None
+        if not isinstance(owner, dict) or str(owner.get("login", "")).lower() != "openharmony":
+            continue
+        name = row.get("name")
+        full_name = row.get("full_name")
+        if (not isinstance(name, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", name)
+                or full_name != "openharmony/" + name):
+            continue
+        branch = row.get("default_branch")
+        if not isinstance(branch, str) or not re.fullmatch(r"[A-Za-z0-9._/-]{1,200}", branch):
+            branch = ""
+        description = row.get("description")
+        repositories.append({
+            "name": full_name,
+            "url": "https://github.com/openharmony/" + name + ".git",
+            "web_url": "https://github.com/openharmony/" + name,
+            "description": description[:500] if isinstance(description, str) else "",
+            "default_branch": branch,
+            "archived": bool(row.get("archived")),
+            "fork": bool(row.get("fork")),
+            "stars": row.get("stargazers_count") if isinstance(row.get("stargazers_count"), int) else None,
+            "updated_at": row.get("updated_at") if isinstance(row.get("updated_at"), str) else None,
+        })
+    result = {
+        "source": "GitHub public organization repository discovery",
+        "organization": "openharmony", "identity_verified": False,
+        "page": page, "per_page": ONLINE_CATALOG_PAGE_SIZE,
+        "next_page": page + 1 if 'rel="next"' in link_header and page < ONLINE_CATALOG_PAGE_LIMIT else None,
+        "repositories": repositories,
+        "retrieved_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "limitations": [
+            "This endpoint lists repositories under the GitHub organization name only; it does not verify upstream ownership, mirror identity, or project membership.",
+            "No repository is downloaded until the operator explicitly queues a sync operation.",
+        ],
+    }
+    _ONLINE_CATALOG_CACHE[page] = (time.monotonic() + ONLINE_CATALOG_CACHE_SECONDS, result)
+    return result
 
 
 def _safe_allowed_roots(settings):

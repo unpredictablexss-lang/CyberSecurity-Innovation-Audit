@@ -25,7 +25,10 @@ test("invalid include scopes and budgets fail before submission", () => {
 test("date preview excludes detector/scope/budget fields required only for execution", () => {
   const fields = { repository_id: "repo", branch: "refs/heads/main", start: "2026-10-15T00:00", end: "2026-10-17T00:00", timezone: "Asia/Shanghai" };
   assert.deepEqual(datePreviewPayload({ ...values, ...fields }), fields);
-  assert.deepEqual(operationPayload("date", { ...values, ...fields }, detectors), { ...fields, audit_mode: "standard_review", include_paths: ["src", "include"], detector_ids: ["test.cpp"], timeout_seconds: 60, memory_mb: 512 });
+  assert.deepEqual(operationPayload("date", { ...values, ...fields }, detectors), { ...fields,
+    audit_mode: "standard_review", auto_triage: false, max_triage_candidates: 3,
+    max_r2_candidates: 0, max_cost_usd: null,
+    include_paths: ["src", "include"], detector_ids: ["test.cpp"], timeout_seconds: 60, memory_mb: 512 });
   assert.throws(() => datePreviewPayload({ ...fields, end: fields.start }), /结束/);
 });
 test("matrix drops commits_text and uses complete distinct source IDs", () => {
@@ -34,6 +37,16 @@ test("matrix drops commits_text and uses complete distinct source IDs", () => {
   assert.deepEqual(body.commits, [a, b]); assert.equal(body.case_id, "case");
   assert.equal("commits_text" in body, false); assert.equal("revision" in body, false); assert.equal("include_text" in body, false);
   for (const text of [a, a + "," + a, "abc,def", [a,b,a,b,a,b,a,b,a].join(",")]) assert.throws(() => operationPayload("matrix", { ...values, case_id: "case", commits_text: text }, detectors));
+});
+test("recent window comparison includes fixed time, timezone, and bounded N-day selection", () => {
+  const body = operationPayload("recent", { ...values, branch: "refs/heads/main",
+    lookback_days: 7, reference_time: "2026-10-20T12:00", timezone: "Asia/Shanghai" }, detectors);
+  assert.equal(body.branch, "refs/heads/main");
+  assert.equal(body.lookback_days, 7);
+  assert.equal(body.reference_time, "2026-10-20T12:00");
+  assert.equal(body.timezone, "Asia/Shanghai");
+  assert.throws(() => operationPayload("recent", { ...values, branch: "main",
+    lookback_days: 91, reference_time: "2026-10-20T12:00", timezone: "UTC" }, detectors), /2 到 90/);
 });
 test("branch comparison permits refs and SHA but rejects identical endpoints", () => {
   const body = operationPayload("branches", { ...values, baseline_ref: "refs/tags/a", endpoint_ref: "b".repeat(40) }, detectors);

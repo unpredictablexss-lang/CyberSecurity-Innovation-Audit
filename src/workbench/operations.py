@@ -1,6 +1,6 @@
 """Bounded operation planning and read-only evidence tools shared by API/Workers."""
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 import hashlib
 import json
 import os
@@ -112,6 +112,49 @@ def date_selection(settings, store, repository_id, branch, start, end, timezone)
             "intervening_outside_date": [sha for sha, _ in rows[low:high + 1] if sha not in selected],
             "time_basis": "committer", "timezone": timezone, "start": start, "end": end,
             "topology": "first-parent", "boundary": "[start,end)"}
+
+
+def recent_window_selections(settings, store, repository_id, branch, lookback_days,
+                             reference_time, timezone):
+    """Freeze disjoint N-day and latest-one-day windows using the existing date policy."""
+    if not isinstance(lookback_days, int) or isinstance(lookback_days, bool) or not 2 <= lookback_days <= 90:
+        raise ValueError("lookback_days must be between 2 and 90")
+    zone = ZoneInfo(timezone)
+    reference = datetime.fromisoformat(reference_time)
+    reference = reference.replace(tzinfo=zone) if reference.tzinfo is None else reference.astimezone(zone)
+    one_day_ago = reference - timedelta(days=1)
+    long_start = reference - timedelta(days=lookback_days)
+    older = date_selection(settings, store, repository_id, branch,
+                           long_start.isoformat(timespec="seconds"),
+                           one_day_ago.isoformat(timespec="seconds"), timezone)
+    latest = date_selection(settings, store, repository_id, branch,
+                            one_day_ago.isoformat(timespec="seconds"),
+                            reference.isoformat(timespec="seconds"), timezone)
+    return {"lookback_days": lookback_days, "reference_time": reference.isoformat(timespec="seconds"),
+            "timezone": timezone, "long_window": older, "one_day_window": latest,
+            "windows_are_disjoint": True,
+            "interpretation": "two independent first-parent commit-time windows; not per-commit coverage or vulnerability-introduction proof"}
+
+
+def enqueue_synced_scan(settings, store, ops, task, repo):
+    """Queue an immutable scan only after an explicit sync-and-scan request."""
+    spec = task["spec"]
+    if not spec.get("scan_after_sync"):
+        return None
+    scan_spec = service.make_spec(repo, spec.get("revision", "HEAD"),
+        spec.get("include_paths", ["."]), spec.get("detector_ids"),
+        spec.get("scan_timeout_seconds", 600), spec.get("memory_mb", 2048))
+    audit_mode = spec.get("audit_mode", "static_only")
+    scan_spec["audit_mode"] = audit_mode
+    scan_spec["max_r2_candidates"] = 0
+    scan_spec["max_cost_usd"] = None
+    scan_spec["workflow_sha256"] = service.audit_workflow_sha256(
+        scan_spec["plan_sha256"], audit_mode)
+    scan_spec["workflow"] = service.audit_workflow_summary(audit_mode)
+    job = store.create_job(repo["id"], scan_spec)
+    ops.event(task["id"], "scan_enqueued",
+              "Automatic static scan queued for immutable commit " + scan_spec["commit"])
+    return job
 
 
 def changes(repo, baseline, endpoint):
@@ -240,10 +283,17 @@ def execute(settings, store, ops, task):
         existing = next((r for r in store.repositories() if r["path"] == str(target)), None)
         repo = existing or store.add_repository(spec["name"], str(target))
         remote_refs = [r for r in service.revisions(repo) if r["ref"].startswith("refs/remotes/origin/")]
+        scan_job = enqueue_synced_scan(settings, store, ops, task, repo)
         return {"status": "completed", "repository": repo, "url": url,
                 "local_head_after_sync": service.revision(repo, "HEAD")["commit"],
                 "advertised_remote_refs": remote_refs, "command": command,
-                "limitations": ["No checkout or scan was performed; choose a returned immutable commit explicitly."]}
+                "scan_job_id": scan_job["id"] if scan_job else None,
+                "scan_commit": scan_job["spec"]["commit"] if scan_job else None,
+                "scan_status": scan_job["status"] if scan_job else None,
+                "limitations": (["Repository objects were synchronized without checkout or build."]
+                    if scan_job else ["No checkout or scan was performed; choose a returned immutable commit explicitly."]) +
+                    (["The queued scan is static only; standard review does not auto-send source to a model."]
+                     if scan_job and spec.get("audit_mode", "static_only") == "standard_review" else [])}
     if kind == "investigation":
         return investigation(settings, store, spec)
     if kind == "agent_investigation":
@@ -254,6 +304,12 @@ def execute(settings, store, ops, task):
         return execute_validation(settings, store, ops, task)
     reports = wait_reports(settings, store, spec["scan_ids"])
     if any(r is None for r in reports):
+        if kind == "recent_window_comparison":
+            return {"status": "blocked", "scan_ids": spec["scan_ids"],
+                    "windows": [{"status": "unknown", "candidate_comparison": [
+                        {"status": "unknown", "vulnerability_introduced_or_fixed": "unknown"}]}],
+                    "impact": "unknown", "validated_vulnerability": 0,
+                    "reason": "A fixed endpoint scan failed or was cancelled; both time windows remain unknown."}
         if kind == "branch_comparison":
             return {"status": "blocked", "baseline_ref": spec["baseline_ref"],
                     "baseline": spec["baseline"], "endpoint_ref": spec["endpoint_ref"],
@@ -262,6 +318,31 @@ def execute(settings, store, ops, task):
                     "impact": "unknown", "validated_vulnerability": 0,
                     "reason": "An endpoint scan failed or was cancelled; branch comparison remains unknown."}
         return {"status": "blocked", "scan_ids": spec["scan_ids"], "reason": "Endpoint scan failed/cancelled; comparison unknown"}
+    if kind == "recent_window_comparison":
+        repo = store.repository(spec["repository_id"])
+        window_rows = []
+        for index, window in enumerate(spec["windows"]):
+            before, after = reports[index * 2:index * 2 + 2]
+            delta = changes(repo["path"], before["commit"], after["commit"])
+            window_rows.append({"label": str(window["start"]) + " to " + str(window["end"]),
+                "selection": window, "baseline": before["commit"], "endpoint": after["commit"],
+                "selected_commit_count": len(window.get("selected_commits", [])),
+                "changes": delta, "candidate_comparison": compare_reports(before, after, delta),
+                "validated_vulnerability": 0})
+        older_endpoint = reports[1]
+        latest_endpoint = reports[3]
+        between_delta = changes(repo["path"], older_endpoint["commit"], latest_endpoint["commit"])
+        return {"status": "completed_with_limitations", "repository_id": repo["id"],
+            "branch": spec["branch"], "lookback_days": spec["lookback_days"],
+            "reference_time": spec["reference_time"], "timezone": spec["timezone"],
+            "windows": window_rows, "between_window_endpoints": {
+                "from": older_endpoint["commit"], "to": latest_endpoint["commit"],
+                "changes": between_delta,
+                "candidate_comparison": compare_reports(older_endpoint, latest_endpoint, between_delta),
+                "impact": "unknown"},
+            "scan_ids": spec["scan_ids"], "impact": "unknown",
+            "validated_vulnerability": 0,
+            "limitations": spec.get("limitations", [])}
     if kind == "revision_range":
         repo = store.repository(spec["repository_id"])
         change = changes(repo["path"], spec["baseline"], spec["endpoint"])
