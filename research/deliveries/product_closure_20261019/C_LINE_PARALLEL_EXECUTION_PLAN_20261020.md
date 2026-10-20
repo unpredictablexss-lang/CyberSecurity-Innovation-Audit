@@ -331,3 +331,9 @@ constraints: [不改生产代码, 不以同源合成控制报正式准确率, �
 开发 scout 报告已归档为 `research/deliveries/c-line/c1_partial_state_root_cause_20261020.md`（提交 `68f9371d4e967884404cf7ed4c70805cbc517499`）。逐点查看精确 source/header commit 后发现，13 个 Tree-sitter missing/error 节点由未展开的 `IR_IF/IR_ELSE`、`BRANCH` 与 typed-array case-list 宏触发并级联；普通 `Label` 数组独立可解析。raw DSL 片段 partial、定义展开后的等价普通 C++ complete。`detector_model_incomplete` 是 runner 对 partial 文件的标签，不是模型 binding 拒绝。`Map` 2747 unknown 与前面的 `JSCallDispatch` 用户回调效应有关，缺少对象未逃逸证据，保持 unknown sound。
 
 独立测试线目前在独立 worktree 检验上述 raw/expanded controls 及头文件精确版本。若通过，这轮以无代码 root-cause 交付结束；下一候选是**精确源码宏感知解析 profile PoC**：绑定 header blobs 与显式 preprocessor/build 参数、保留源位置映射，缺资料时仍回落到 partial。禁止全局文本替换宏或把 parser 状态改善解释为安全结论。PoC 再由另一条测试线验证宏定义绑定、source map、safe/fixed 对照及未知配置时的 partial 回退。
+
+### C1 parser root cause已由独立控制确认；当前交付是“无代码修复”
+
+测试线报告 `research/deliveries/c-line/scout_20261020/independent_parser_controls.md`（提交 `3004ebf0d65166e4a0dc236d2f4fb3d7152f1f5c`）验证了 raw `IR_IF/IR_ELSE`、raw `BRANCH`（即便源中有定义但未执行宏展开）和 typed-array case-list macro 都会 partial；等价 expanded C++ complete；单独 Label 数组 complete。目标与三个 header 的 blob/SHA 全部绑定同一 C1 commit/tree。Map 2747 仍是可能受 `JSCallDispatch` 影响的 unknown。内部 synthetic label 的 byte-offset 值两次复现不同，但源身份与语义 observation 相同，原因未明，按原样保留 unknown。
+
+因此不对 detector/model 做放宽，也不把 13 个 raw-source issue 伪装成修复。本轮以具体 root-cause 和独立控制结束。开发线正在做下一候选的可行性侦察：能否在隔离 PoC 中以精确 source/header blob、明确 include/define/toolchain profile 做宏感知解析并保留源位置；缺任何必要构建输入时仍必须回到 raw partial。测试线随后独立验证 source mapping 和 fallback，再决定是否值得触碰生产 parser。

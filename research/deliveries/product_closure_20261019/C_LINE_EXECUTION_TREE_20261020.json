@@ -187,7 +187,7 @@
     {
       "id": "C-NEXT-C1-PARTIAL-20261020",
       "kind": "development_and_independent_testing",
-      "status": "DEVELOPER_ROOT_CAUSE_SCOUT_COMPLETE_INDEPENDENT_MACRO_CONTROLS_PENDING",
+      "status": "COMPLETED_NO_CODE_EXPECTED_MACRO_LIMITATION",
       "objective": "Trace C1 target partial parsing (13 concrete issue locations) and detector_model_incomplete/unknown local observation; fix only a reproducible parser or model limitation that can add accurate candidates without relaxing exact bindings.",
       "input": "openharmony/arkcompiler_ets_runtime@a65a2853ccae13da167d9aa4720ab8b11ec16656; target ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp; runner post-fix reports and source-bound model.",
       "developer_agent": "ark_static_dev",
@@ -204,25 +204,45 @@
       "developer_scout_commit": "68f9371d4e967884404cf7ed4c70805cbc517499",
       "developer_scout_report": "research/deliveries/c-line/c1_partial_state_root_cause_20261020.md",
       "root_cause": "13 Tree-sitter locations are raw-source/no-preprocessor cascades around exact pinned Ark IR_IF/IR_ELSE, BRANCH, and typed-array case-list macros; standalone Label initializer parses. Expanded equivalents parse complete. detector_model_incomplete is runner partial-state label. Map 2747 unknown follows user-JS JSCallDispatch effects and remains conservatively unknown.",
-      "next_candidate": "Prototype exact-source macro-aware parse profile with pinned header blobs, explicit build/preprocessor config, preserved source locations, and partial fallback if inputs are missing; do not globally textual-rewrite macros."
+      "next_candidate": "Prototype exact-source macro-aware parse profile with pinned header blobs, explicit build/preprocessor config, preserved source locations, and partial fallback if inputs are missing; do not globally textual-rewrite macros.",
+      "independent_control_commit": "3004ebf0d65166e4a0dc236d2f4fb3d7152f1f5c",
+      "independent_control_report": "research/deliveries/c-line/scout_20261020/independent_parser_controls.md",
+      "conclusion": "Seven raw/expanded controls support the 13 raw macro/preprocessor parse errors as expected limitations/cascades; standalone Label array parses complete. Map 2747 remains unknown after JSCallDispatch effect. Synthetic new:<byte-offset> target labels differed while source identity and semantic observation matched; discrepancy remains unexplained.",
+      "no_code_change": "No parser/detector fix justified by current evidence. Avoid global macro textual rewriting."
     },
     {
       "id": "C-TEST-C1-PARTIAL-20261020",
       "kind": "independent_testing",
-      "status": "BASELINE_COMPLETE_INDEPENDENT_MACRO_CONTROL_VALIDATION_IN_PROGRESS",
+      "status": "COMPLETED_INDEPENDENT_PARSER_CONTROLS",
       "objective": "Preserve exact-bound C1 partial baseline and independently validate any narrow parser/model change on the same source commit.",
       "worktree": "worktrees/worktrees/c-static-replay-test-20261020",
       "report_commit": "ea27fa0efe9562d16663b81f4c1d7d03ce8fd90c",
       "report": "research/deliveries/c-line/c1_partial_baseline_20261020.md",
-      "feedback_to": "C-NEXT-C1-PARTIAL-20261020"
+      "feedback_to": "C-NEXT-C1-PARTIAL-20261020",
+      "independent_control_commit": "3004ebf0d65166e4a0dc236d2f4fb3d7152f1f5c",
+      "independent_control_report": "research/deliveries/c-line/scout_20261020/independent_parser_controls.md"
+    },
+    {
+      "id": "C-NEXT-MACRO-PARSE-POC-20261020",
+      "kind": "development_feasibility_and_independent_testing",
+      "status": "FEASIBILITY_SCOUT_IN_PROGRESS",
+      "objective": "Evaluate a narrow exact-source macro-aware parse profile for Ark C++ DSL to reduce avoidable partial coverage without fabricating a compile configuration or source locations.",
+      "input": "C1 target and exact headers at a65a2853ccae13da167d9aa4720ab8b11ec16656; source/header identities in c1_partial_state_root_cause_20261020.md and independent_parser_controls.md.",
+      "developer_agent": "ark_static_dev",
+      "test_agent": "ark_static_test",
+      "developer_prompt": "Inspect existing parser/build interfaces and local preprocessing tools. Prototype only in isolated research artifacts if possible. Bind exact commit/header blobs, explicit include/define/toolchain profile, and source mapping; do not mutate raw source or production parser. If required build facts are absent, retain raw partial.",
+      "tester_prompt": "Independently validate preprocessor output source mapping, exact header binding and raw fallback for missing defines/includes; check raw and expanded positive/negative fixtures plus a safe/fixed source control.",
+      "second_layer_prompt": "Only review candidates emitted after exact-source parsing; no LLM feature development and no vulnerability claim from parse completion.",
+      "completion": "Feasibility evidence and bounded PoC or a no-go rationale; no source coverage upgrade without explicit reproducible config and accurate mapping.",
+      "blocking_prerequisites": []
     }
   ],
   "feedback_loop": [
-    "Test line independently reproduces exact C1 partial baseline and validates raw versus expanded macro controls.",
-    "Developer reports parser root cause separately from detector effect unknown; no production edits without a concrete defect.",
-    "If controls confirm expected macro limitation, close as no-code root-cause and plan an exact-source macro-aware parse prototype.",
-    "Any future preprocessing prototype retains pinned headers/config, source mapping, and partial fallback; test against safe/fixed controls.",
-    "Do not treat reduced parser issue count or zero diagnostics as a security verdict."
+    "Independent controls confirm the raw-source macro limitation and preserve the no-code parser root-cause result.",
+    "Developer feasibility scout evaluates a pinned, explicit preprocessor profile and source-location preservation in isolated artifacts.",
+    "Independent test line verifies exact header/config binding and raw partial fallback when required build inputs are missing.",
+    "Only after PoC/test proof may a production parser change be proposed; incomplete expansion remains partial/unknown.",
+    "Second-layer review applies only to actually emitted source-bound candidates; possible JS callback escape stays unknown."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
