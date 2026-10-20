@@ -5,7 +5,7 @@
   "final_patch": "03479dc007c00d70186b528eeb6d570ecb06cae1",
   "src_tree": "3cb04d7604d3cdc0aa6511b6ec27a053fd6785e7",
   "detector_version": "0.21.17",
-  "development_status": "completed; fixed independent pin and owner closeout/delivery recorded separately",
+  "development_status": "completed; independent T103 completed; owner final integration/task-tree delivery remains separate",
   "checks": {
     "strict_json": "pass",
     "duplicate_keys_before": 13,
@@ -5337,16 +5337,44 @@
     }
   },
   "independent_delivery": {
-    "status": "T103 final fixed source tests/replays confirmed; commit pending pin",
+    "status": "completed",
+    "commit": "12e85391589abd8eb8a4688423b13a8d5de41880",
+    "files": [
+      {
+        "path": "research/data_sensitive/T103_CLOSEOUT_20261020.md",
+        "blob": "b29dba8c05d9ae267bd4a8f38d53964449c76532",
+        "sha256": "1061d99144cdcfc2e2f462ab584f6e7284cff0700bf40acc729d00cd7a3e1a8e",
+        "bytes": 7745
+      },
+      {
+        "path": "research/data_sensitive/T103_FIXED_CLOSEOUT.json",
+        "blob": "4e20f4dda1ba581b3c4dd289ffd8c11141782c05",
+        "sha256": "4065ed8bb2f327e021443e8cd86cc2223466cf69796f60cf65af949d4c42b6d4",
+        "bytes": 1060228
+      },
+      {
+        "path": "research/data_sensitive/T103_verify_closeout.py",
+        "blob": "adc719fc0feb69bc79c8564b08b1321b561ba65f",
+        "sha256": "fa09926393ce9e7f6d56406ff37fa7b70aa3119fdf186f8ced1d4bee87faa4ca",
+        "bytes": 10188
+      }
+    ],
     "reported_counts": {
       "data": 431,
-      "compat": 69,
+      "compatibility": 69,
       "focused": 51,
       "T85_direct": 24,
       "T85_Runner": 24,
-      "T85_callfacts": 638
+      "T85_callfacts": 638,
+      "closeout_checks": 11
     },
-    "scope": "No independent artifacts copied into developer report; final unique commit/blob/hash references will be pinned."
+    "result": "All final source archive checks pass; no blocking report/evidence contradiction; exact limitation-only delta, diagnostic/call/coverage stability and known gaps independently confirmed. No independent files copied into developer evidence.",
+    "reviewed_development_commit": "bfc60984f952e9841005669a54ba81d2c51d3cfa",
+    "reviewed_development_hashes": {
+      "D104_CLOSEOUT_20261020.md": "4b84cad4b7fc6671ca7fdb309731266a5fcf87dd84faa2f9841a5bdaa71dec73",
+      "D104_RECONCILIATION_20261020.json": "01e769de970975f00b709c9c25c0c9a4af873b08a20ed5703e30e14856a4cad3"
+    },
+    "interpretation": "T103 reviewed the pre-pin artifacts at fixed bfc60984f. This final reference-only patch changes their hashes without altering checked algorithm/tests/conclusions. No tests rerun for mutual document references."
   },
   "stop_rule": "After D104/T103 and parent final integration/delivery, no automatic D105/research follow-up. Remaining unknowns are a finite handoff, not a new recurring audit or approval gate."
 }
