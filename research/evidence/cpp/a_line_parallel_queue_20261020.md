@@ -457,7 +457,7 @@ T62's independent test line reviewed four local guard-before-use controls in the
 
 ## Next parallel wave — started 2026-10-20
 
-### D22 — generic null guard/dominance feasibility (development)
+### D22 — generic null guard/dominance feasibility (development; completed no-change)
 
 - **Role / sustained goal:** A-line C/C++ null-dereference detector developer; improve generic local guard-before-use modeling only when evidence proves a real, reusable gap.
 - **Input:** PR #35 scanner code baseline `81dd4aea9bb51522ac912b33504ef0d2ddb79089`; exact dSoftBus vulnerable/fixed source identities and T62 source-bound controls.
@@ -465,7 +465,11 @@ T62's independent test line reviewed four local guard-before-use controls in the
 - **Completion gate:** Reusable controls preserve the vulnerable root and quiet only source-proven guarded operations; otherwise commit a no-change assessment naming the blocker. Keep CVE-2025-26690 PARTIAL/BLOCK until independent acceptance and product evidence.
 - **Boundaries:** Separate worktree; no shared parser, API, schema, Catalog, or owner-only docs edits; no PR push.
 
-### T2 — fresh replay of remaining 13-row matrix gaps (independent test)
+D22 completed a no-change review: current 5/0 exact-source replay remains blocked at 0/1 per-file semantic coverage; this is not a guard pass rate. The five candidates are distinct unguarded allocation/use sites, while reviewed safe guards are in other functions. No coverage bookkeeping or detector change is justified; keep CVE-2025-26690 PARTIAL/BLOCK. See [D22 assessment](d22_null_guard_coverage_review_20261020.md).
+
+T2 completed fresh exact-source CLI replay for the two cJSON rows on frozen scanner `81dd4aea9bb51522ac912b33504ef0d2ddb79089`: CVE-2026-67216 emitted one compare-cost candidate at `cJSON.c:3161`; CVE-2026-67215 emitted two tree-amplification candidates at `cJSON_Utils.c:932,950`. Exact repo/commit/tree/blob/SHA/scope and findings were independently rechecked, and a separate current-baseline rerun matched the package. `cJSON.c` remains parser-partial; detector coverage is partial for both files and the run is blocked; no trusted fixed source or same-scope safe/unrelated controls exist. The fresh run resolves date provenance only for these two outputs, not their technical status. See [T2 cJSON fresh replay](t2_cjson_fresh_replay_20261020/README.md).
+
+### T2 — fresh replay of remaining 13-row matrix gaps (independent test; completed)
 
 - **Role / sustained goal:** Independent A-line static regression tester; close only reproducible source-bound replay gaps and maintain explicit blockers.
 - **Input:** PR #35 scanner code baseline `81dd4aea9bb51522ac912b33504ef0d2ddb79089`, 13-row inventory, exact source objects and existing T2/T3 records.
