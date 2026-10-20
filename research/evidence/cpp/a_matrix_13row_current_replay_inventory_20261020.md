@@ -67,3 +67,7 @@ The independent test line scanned the unmodified upstream `atomic_helper_test.cp
 ## Historical integer/bounds closeout follow-up (2026-10-30)
 
 D23 replayed exact CVE-2025-0587 vulnerable/fixed sources with `integer_bounds@0.2.0` (1/0) and CVE-2025-23420 with `bounds@0.3.0` (5/0); all four selected source files parsed completely. T3 independently bound a same-commit `SortIndexedProperties` comparator-snapshot control for 23420; the file parsed completely and produced zero bounds candidates. These results support existing root-positive/fixed differentials and a narrow same-semantic control observation, but do not establish product reachability/impact or a root-specific 0587 safe control. No detector change was made; both rows remain PARTIAL/BLOCK. See [D23](d23_integer_bounds_gap_20261030/README.md) and [T3](t3_integer_source_controls_20261020/README.md).
+
+## Additional A0 fresh replay (2026-10-20)
+
+T5 independently refreshed the current-CLI replay for D51 HUKS CR-0341 and D52 global_i18n CR-0255/CR-0256. The exact queue-bound source identities were reverified; all three scopes parsed completely and `shared_ptr_race@0.5.1` returned zero findings. This does not validate or clear the original findings: retain all three A0 rows as `not_testable`, PARTIAL/BLOCK, and retain BLOCK on the earlier future-dated run artifacts. See [T5 report](t5_d51_d52_fresh_replay_20261020/README.md).
