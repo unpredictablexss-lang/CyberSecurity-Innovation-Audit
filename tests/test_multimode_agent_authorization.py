@@ -111,11 +111,11 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
                 "detector_ids": ["ohscanner.cpp.lifetime"]}
         app = create_app(self.settings)
         with patch("src.workbench.operations_api.range_plan",
-                   return_value=(self.repo, self.specs[0], self.specs[1], [])), \\
+                   return_value=(self.repo, self.specs[0], self.specs[1], [])), \
              patch("src.workbench.operations.range_plan",
-                   return_value=(self.repo, self.specs[0], self.specs[1], [])), \\
+                   return_value=(self.repo, self.specs[0], self.specs[1], [])), \
              patch("src.workbench.agent.ProviderConfig.from_env",
-                   return_value=SimpleNamespace(configured=True)), \\
+                   return_value=SimpleNamespace(configured=True)), \
              patch("src.workbench.agent.audit_task_consent_preview",
                    side_effect=self.fake_preview):
             with TestClient(app) as client:
