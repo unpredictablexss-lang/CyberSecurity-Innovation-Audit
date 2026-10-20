@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "task": "T9 exact-source build-context and preprocessed CLI audit",
-  "scanner_worktree_head": "efa09aaaac01f81084034ea0994c310007ba1dbf",
+  "scanner_worktree_head": "197be7018568c83b44a564d53c1dc114211aa406",
   "scanner_baseline": "81dd4aea9bb51522ac912b33504ef0d2ddb79089",
   "scanner_src_matches_baseline": true,
   "cases": {
