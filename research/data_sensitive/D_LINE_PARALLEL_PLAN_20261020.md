@@ -113,3 +113,25 @@ flowchart TD
 - **反馈规则**：任何反控制被压掉立即反馈 D90 并在修复 SHA 上重测；若源码无法证明纯清理，明确记录“保留候选”的证据，不为了减少候选而放宽规则。
 - **验证**：对固定 D90 SHA 独立运行测试，并用原 T85 三文件分别跑 detector 与 Runner；记录每条诊断身份、消息、覆盖、raw hashes 和 AST spans 的前后变化。不得用 direct 结果代替 Runner，也不得声称正式精确率/召回率。
 - **交付**：独立测试、复现命令和证据报告；保留工作树中的源档缓存，不推送。
+
+
+### D91（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：敏感流数据角色建模开发者。
+- **固定证据**：D89/T88/T90 handoff 指向 `napi_cert_utils.cpp:185` 的 `napi_typeof` unresolved-sink候选；同一函数的 `napi_get_value_string_utf8` 第192/208行实际提取材料，不能被连带压掉。
+- **目标**：从固定版本 N-API 声明/实现确认 `napi_typeof(env,value,&type)` 的精确输入、输出和返回角色；只有确定扫描输入中绑定到该 API 的调用，且完整声明与局部/宏身份未被遮蔽时，才能考虑把类型枚举/status与秘密字节分离。
+- **必须保留**：同名本地函数/函数指针、自定义包装、宏改写、缺失/partial头、未知版本和 `napi_get_value_string_utf8` 实际数据输出。不得按拼写全局豁免，不得把 API 知识伪装成源码绑定事实。
+- **验证**：具名元数据正例、实际材料提取正例、同名/宏/partial/unknown反例；固定T85三文件 direct 与 Runner完整诊断、coverage、call facts 前后对照，所有身份字段unknown如实记录。
+- **交付**：实现或“保留候选”的证据报告、测试、T90反馈修订闭环；如果API身份无法由静态输入证明，默认不作排除。
+
+### T90（并行独立测试切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立API契约与数据流边界测试员，不依赖D91的安全结论。
+- **输入**：固定证书版本和 T85 三文件；独立确认对应 N-API 公共契约/版本及 `napi_typeof` 的入参、输出参数、返回值。
+- **控制**：精确 type-check元数据调用；相邻真实 `napi_get_value_string_utf8` 字节提取；同名自定义函数/回调、重定义宏、未知包装、缺失或partial声明。
+- **反馈**：若同名或未知绑定被排除，立即交D91修复并在固定SHA重跑；若仅API文档证明一般契约却无法证明当前调用身份，明确报告unknown并建议保留。
+- **验证**：fresh-process D91前后完整src归档；严格固定三文件 direct/Runner诊断identity、message、coverage、原始source/call facts比较。不能用直接detector替代Runner，也不能将诊断计数当准确率。

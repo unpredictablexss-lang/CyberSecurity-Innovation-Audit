@@ -32,4 +32,4 @@
 
 截至本次更新，D89/T88闭环见[D线第5轮报告](D_LINE_ROUND5_SUMMARY_20261020.md)。D89 已集成：固定 T85 三文件 direct 与 Runner 均从20条变为19条，只移除第349行schema key诊断；剩余19条诊断身份/消息、源码快照、638个AST位置与覆盖状态保持。负责人复跑D89自有12项、data144项、兼容61项通过；T88独立报告已提交并整合，负责人复跑独立13项与数据157项均通过；固定源码replayer再次确认direct/Runner均20→19且638个调用位置不变。基于剩余 Runner trace 中多处释放/擦除函数触发 unresolved-escape，D90/T89 已并行启动，分别核实精确清理函数语义与反例边界。权威状态见任务树，结构化提示词见并行计划。
 
-当前队列：D90 精确证明 CfFree/CF_FREE_PTR/CfBlobDataFree/memset_s 的清理语义 + T89 独立挑战同名泄漏包装和固定源码 Runner 差异；只有证据支持时才减少静态候选。
+D90/T89闭环见[D线第6轮报告](D_LINE_ROUND6_SUMMARY_20261020.md)：不新增清理豁免，修复两类同名callable遮蔽漏报；原三文件仍19/19、附加七文件20 direct/18 Runner不变。当前队列：D91/T90独立核验 `napi_typeof` 的元数据角色与邻近字符串提取边界；只有固定绑定证据支持时才减少静态候选。

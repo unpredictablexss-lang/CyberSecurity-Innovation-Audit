@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "D90_T89_IN_PROGRESS",
+  "status": "D91_T90_IN_PROGRESS",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -265,26 +265,59 @@
       "id": "D90",
       "kind": "development",
       "title": "核验固定证书源码清理调用的安全角色与候选边界",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
       "input": "D89 fixed T85 Runner retains unresolved-escape candidates at CfFree/CF_FREE_PTR/CfBlobDataFree/memset_s cleanup sites (317,328,364,381,384,386,388,1880,1882); determine whether exact declarations/definitions establish deallocation or wiping without disclosure. T88 handoff adds focused evidence at FreePrivateKeyInfo lines381/384/386/388 and CMS cleanup lines1880/1882, and notes exact cleanup implementations are outside original three-file range.",
       "completion": "Source-backed narrow role proof only for exact known function identity and proven non-escape behavior; preserve unknown/same-name wrappers and real outputs; tests, fixed-source diff and honest limits; defer to T89 feedback before integration.",
       "tests": [
         "T89"
-      ]
+      ],
+      "commit": "ef7cb1c2abc8cdab6b13c3db92bd7c985ceb00cb",
+      "evidence_commit": "7e3d0cff98a3cd0d05a0b3eabff2b11bd4ba3ffe",
+      "integration_commit": "19f41c1dd",
+      "final_evidence_integration": "e1a3b45dd",
+      "validation": "0.21.7; fixed callable parameter/local alias false negatives direct+Runner 0→1; no cleanup exemption; strict T85 19/19 unchanged, expanded7-file 20 direct/18 Runner unchanged; developer6 + data163 + compatibility61 pass; D90 evidence records source/coverage/identity limits"
     },
     {
       "id": "T89",
       "kind": "testing",
       "title": "独立挑战D90清理函数身份、别名与泄漏反例",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
       "feedback_to": [
         "D90"
       ],
-      "completion": "Inspect exact upstream declarations/definitions and independently test cleanup-only, actual output, shadowed/same-name wrapper, aliases and unknown cases; replay fixed T85 direct and Runner, record identities/coverage and request repair on any unsafe suppression."
+      "completion": "Independent fixed-source archive proved both shadow omissions and confirmed conservative cleanup retention; final D90 revision tested and integrated",
+      "commit": "479e994f1c33d8af6ab45b8d95a1c3f32606b6a1",
+      "integration_commit": "2f5ef1786",
+      "validation": "Independent14 methods, baseline4 shadow failures→0; data177; strict3-file19/19 unchanged; expanded7-file20/18 unchanged; cleanup APIs and exact CfFree body stay unknown; no false accuracy claim"
+    },
+    {
+      "id": "D91",
+      "kind": "development",
+      "title": "核验napi_typeof元数据角色并保留字符串提取候选",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
+      "input": "T88/T89 exact T85 trace retains a candidate at napi_cert_utils.cpp:185 for an unresolved napi_typeof call after property output; neighboring napi_get_value_string_utf8 at 192/208 extracts actual bytes and must stay candidate.",
+      "completion": "Find exact same-version N-API declaration/implementation identity and prove only type enum/status metadata for precise bound call; any exclusion must require complete selected binding and no shadow/macro/custom wrapper; otherwise preserve candidate and report evidence gap. Keep string extraction, wrappers and unknown declarations flagged; fixed-source direct/Runner evidence and tests.",
+      "tests": [
+        "T90"
+      ]
+    },
+    {
+      "id": "T90",
+      "kind": "testing",
+      "title": "独立挑战napi_typeof元数据与真实字符串提取边界",
+      "status": "IN_PROGRESS",
+      "agent": "/root/t83_static_feedback",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
+      "feedback_to": [
+        "D91"
+      ],
+      "completion": "Independently identify versioned N-API contract; test direct metadata operation, actual string extraction, local/custom same-name calls, macro override, missing/partial binding; challenge D91 fixed SHA, report exact T85 three-file direct/Runner identities, coverage and source facts; feed any unsafe exclusion back for repair."
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
