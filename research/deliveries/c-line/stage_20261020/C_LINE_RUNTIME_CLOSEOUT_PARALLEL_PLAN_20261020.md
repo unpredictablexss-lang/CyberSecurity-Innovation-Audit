@@ -11,6 +11,7 @@
 - 测试线已提前确认：官方 `typedarrayset` target 只测常规 set 语义和 offset=2，不覆盖超大 offset/range-wrap 候选。因此它仅能作为 VM/组件 smoke；若运行条件允许，必须追加有界的候选触发/安全断言，或找到真正覆盖该边界的现有用例。不得把官方 smoke pass 写成候选运行验证。
 - `typedarrayset` 的 case BUILD label 存在，但 `test/moduletest/BUILD.gn` 的 `module_test_list` 不含它；必须直接构建并执行 `//arkcompiler/ets_runtime/test/moduletest/typedarrayset:typedarrayset`，仅运行聚合 `ark_js_moduletest` 不能作为此案例通过证据。
 - 开发线已在 Linux-native `/tmp` 从固定 Git objects 解包 Ark exact tree（116 MB，tree hash 重核吻合）及 OH build source snapshot（54 MB），并隔离安装 GN `2026 (47b40ef4)` 和 Ninja `1.13.2`。普通 `gn gen` 的第一次失败指出缺 `.gn`，拷贝/隔离诊断 probe 后再暴露 `parts_info/components.json` 与 product preloader config 缺失；还没有启动本轮 HB build，也没有 live build process。测试线独立 oracle/fix-provenance 报告提交 `61fa223fc5281793b8b7da494a05c483892f31bc`；独立 runtime replay 等待开发侧 binary/log。
+- 更新：开发线实际运行了 Linux-native HB 和 GN probes，精确报告/日志已在开发分支提交 `58bf7e58e6ff160d1dc5fea07b3defaed35366d9`。HB 在 `productdefine/common/products` 缺失处退出 255；GN 在完整组件清单/预加载产品配置缺失处停止。没有 binary 或真实 VM 测试；开发工作流以 blocker 记录结束。测试线已无 binary 可复验，当前只完成源码 oracle/fix provenance，正在独立审阅 blocker 并提交结论。
 
 ## 持续目标和停止条件
 
@@ -75,3 +76,41 @@ stop: 一次开发提交的独立复验和反馈，或一次有明确外部缺�
 2. 开发线产出固定源码和原始运行工件后，测试线只复验该提交/工件，并逐项返回差异。
 3. 开发线只处理可复现的接线/测试缺陷，随后请测试线复测；无缺陷则共同交付实际结果或精确 blocker。
 4. 测试未跑、fixed ref 不存在、产品效果未知等状态保持原样，不把未知改成通过。
+
+## 下一并行任务：选择性重放到最新 main
+
+运行线已收敛为精确 blocker，但本轮开始后最新 `origin/main` 前进到 `4b0e16576a45a111b4fad7e8f82819a47ed472f5`；静态集成 C 代码提交 `e798fa77fda843ff00f3b0ac7367f4eea02eb5ac` 的父仍是 `0f53af62283dbd0f249280805e8286a04b2d43b9`。main 新增 D104 commits 修改了共享 Catalog、source identity、parser 及相应测试。为避免 C 交付停留在旧 main，也避免覆盖 D104，本轮继续启动一组独立开发/测试线：开发者把 C 代码提交选择性重放到 `4b0e1657` 并解决真实冲突；测试者先固定 latest-main 基线，再复验确切整合 SHA 的 C Ark、Runner/Catalog/source binding 和 D104 相邻兼容回归。两线互相传递具体差异。runtime/not_run 继续作为独立限制，不阻止静态代码合并验收。
+
+### 开发线：`C-CLOSEOUT-MAINLINE-DEV-20261020`
+
+```yaml
+role: C 线最新 main 选择性整合开发者
+objective: 将 C 静态整合 commit e798fa77fda843ff00f3b0ac7367f4eea02eb5ac 的 C detector/model/tests/docs 选择性应用到 latest main 4b0e16576a45a111b4fad7e8f82819a47ed472f5，保留 main 的 D104 更改
+steps:
+  - 核对 latest main commit/tree 与目标 C 提交的完整变更路径、base 与 merge-base
+  - cherry-pick/选择性移植 C 改动；冲突时以 main 上 D104 的实现与测试为事实基线，只应用必要 C delta，不搬入其它 topic branch
+  - 对照 C 交付中的 0.6.3/0.8.14、显式选择默认关闭、精确 source binding 与 Runner applicability hook；确认 Catalog/source_identity/parser 兼容
+  - 运行受影响 Ark Runtime、Runner、Catalog、source-binding 和必要 D104 兼容测试，保存真实命令/结果
+  - 仅修复由集成引出的具体回归；提交一个最小整合 commit 和差异说明
+constraints: [不重写或移除 D104 代码/证据, 不整体合并 C9/C11/C12/C13 topic branches, 不改变 unknown/candidate 语义, 运行验证仍 not_run]
+feedback_to: C-CLOSEOUT-MAINLINE-TEST-20261020
+deliverables: [latest-main-based commit, conflict/path audit, test logs, C/D compatibility summary, report]
+stop: 一次可复验整合和相关测试，或一条具体无法兼容的回归记录
+```
+
+### 测试线：`C-CLOSEOUT-MAINLINE-TEST-20261020`
+
+```yaml
+role: C 线 latest-main 独立整合验收者
+objective: 从干净 latest main 基线独立验证选择性 C 整合的路径边界和同提交行为，重点防止损坏 D104 Catalog/source identity/parser 行为
+steps:
+  - 在独立 worktree 固定 4b0e16576a45a111b4fad7e8f82819a47ed472f5 全 SHA/tree，并先执行对应基线兼容测试
+  - 收到开发 SHA 后只引入该 commit，核对差异仅涉及 C 目标文件及必要公共兼容点
+  - 运行 C Ark Runtime suite、Runner/Catalog/contract/source-binding regressions 与 D104 受影响测试；核验 default-off/显式选择和 exact binding
+  - 比较测试前后 D104 对应 behavior 与输出；发现具体偏差先回开发线修复，再对修订 SHA 定向复测
+  - 独立提交报告，保留测试命令、实际数字和任何 fail/skip
+constraints: [独立 worktree, 不修改 production code, 不吞掉任何失败, runtime not_run 不影响静态验收但必须明示]
+feedback_to: C-CLOSEOUT-MAINLINE-DEV-20261020
+deliverables: [baseline identity, independent same-SHA test report, path/scope review, feedback and retest result]
+stop: 一次同 SHA 验收闭环或一条可复现整合回归
+```

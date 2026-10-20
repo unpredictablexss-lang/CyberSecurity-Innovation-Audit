@@ -19,13 +19,13 @@
     "source_tree": "8781f036a3e7e04d8e0b34970d5f623b42875016"
   },
   "objective": "Complete one real Ark Runtime component run if Linux-native build inputs permit, with independent test feedback; otherwise document the exact build blocker.",
-  "status": "ACTIVE",
+  "status": "ACTIVE_MAINLINE_INTEGRATION",
   "blocking_prerequisites": [],
   "workstreams": [
     {
       "id": "C-CLOSEOUT-RUNTIME-DEV-20261020",
       "kind": "development",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_NATIVE_BUILD_BLOCKER_REPORTED",
       "case": "arkcompiler/ets_runtime/test/moduletest/typedarrayset:typedarrayset",
       "goal": "Build the pinned Ark Runtime on Linux-native storage, run typedarrayset as a VM smoke, and add a bounded candidate-trigger test if the official case does not exercise offset/range-wrap; compare a true fixed source only if an exact repair revision exists.",
       "case_target": "//arkcompiler/ets_runtime/test/moduletest/typedarrayset:typedarrayset (direct label; absent from module_test_list)",
@@ -33,16 +33,18 @@
       "branch": "codex/c-runtime-dev-closeout-20261020",
       "worktree": "D:/openHarmonyScanner/worktrees/c-runtime-dev-closeout-20261020",
       "agent": "/root/c_runtime_dev",
+      "report_commit": "58bf7e58e6ff160d1dc5fea07b3defaed35366d9",
+      "report": "research/deliveries/c-line/runtime_component_20261020/ARK_TYPEDARRAYSET_NATIVE_BUILD_BLOCKER_20261020.md",
       "feedback_from": "C-CLOSEOUT-RUNTIME-TEST-20261020",
       "current_feedback": "Official case is smoke only; a bounded offset/range-wrap test is needed to exercise the static candidate. GitCode master 25863269 is not a fixed source; its relevant implementation blobs are unchanged from a65.",
-      "current_execution": "Exact Ark tree and OH build source snapshot unpacked under Linux-native /tmp; isolated GN/Ninja available. gn gen has exposed missing .gn, then missing parts_info/components.json and product preloader config; no HB build or live process yet.",
+      "current_execution": "Exact Ark tree and OH build source snapshot unpacked under Linux-native /tmp; isolated GN/Ninja available. HB exited at missing productdefine/common/products; GN probes lack parts_info/components.json and generated build_config.json. No VM/binary/live process.",
       "deliverables": ["source/build manifest", "commands and raw logs", "actual test result or precise blocker", "fixed-source availability/result", "report commit"],
       "stop_condition": "One actual component result or one precise Linux-native build blocker; no repeated NTFS/P9 attempt."
     },
     {
       "id": "C-CLOSEOUT-RUNTIME-TEST-20261020",
       "kind": "independent_testing",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INDEPENDENT_BLOCKER_REVIEW",
       "case": "arkcompiler/ets_runtime/test/moduletest/typedarrayset:typedarrayset",
       "goal": "Map official test assertions and their coverage gap for oversized offset/range-wrap, independently verify source/fix provenance, then replay the exact developer runtime artifact and send discrepancies back.",
       "baseline_commit": "79916713cf6e4b590a588c9cd4d50e115e187436",
@@ -50,11 +52,37 @@
       "worktree": "D:/openHarmonyScanner/worktrees/c-runtime-test-closeout-20261020",
       "agent": "/root/c_runtime_test",
       "feedback_to": "C-CLOSEOUT-RUNTIME-DEV-20261020",
-      "oracle_report_commit": "61fa223fc5281793b8b7da494a05c483892f31bc",
+      "oracle_report_commit": "08c2d0ab7d4b6eeee3b11d50548a70c47133c2be",
       "oracle_report": "research/deliveries/c-line/stage_20261020/C_RUNTIME_TEST_ORACLE_20261020.md",
-      "current_execution": "Oracle and fix provenance report committed; independent runtime replay awaits developer binary/log."
-      "deliverables": ["official test assertion map", "source/fix provenance check", "independent replay or precise blocker", "discrepancy feedback", "report commit"],
-      "stop_condition": "One independent replay and feedback, or one precise independent blocker; never substitute fixtures for a real fix."
+      "current_execution": "Oracle, fix provenance, exact binary64/uint64 source-derived boundary, and independent blocker review committed. Official target, candidate boundary, and same-artifact replay are not_run because no binary exists."
+    },
+    {
+      "id": "C-CLOSEOUT-MAINLINE-DEV-20261020",
+      "kind": "development",
+      "status": "IN_PROGRESS",
+      "goal": "Selectively replay C integration commit e798fa77fda843ff00f3b0ac7367f4eea02eb5ac onto latest main 4b0e16576a45a111b4fad7e8f82819a47ed472f5, preserving D104 changes and resolving only demonstrated conflicts.",
+      "baseline_commit": "4b0e16576a45a111b4fad7e8f82819a47ed472f5",
+      "source_commit": "e798fa77fda843ff00f3b0ac7367f4eea02eb5ac",
+      "branch": "codex/c-mainline-dev-closeout-20261020",
+      "worktree": "D:/openHarmonyScanner/worktrees/c-mainline-dev-closeout-20261020",
+      "agent": "/root/c_mainline_dev",
+      "feedback_from": "C-CLOSEOUT-MAINLINE-TEST-20261020",
+      "deliverables": ["latest-main-based commit", "conflict/path audit", "test logs", "C/D compatibility summary"],
+      "stop_condition": "One reproducible latest-main integration and relevant tests, or one concrete compatibility blocker."
+    },
+    {
+      "id": "C-CLOSEOUT-MAINLINE-TEST-20261020",
+      "kind": "independent_testing",
+      "status": "IN_PROGRESS",
+      "goal": "Establish latest-main baseline, independently replay the C integration commit, and test the exact developer integration SHA with D104-adjacent compatibility coverage.",
+      "baseline_commit": "4b0e16576a45a111b4fad7e8f82819a47ed472f5",
+      "source_commit": "e798fa77fda843ff00f3b0ac7367f4eea02eb5ac",
+      "branch": "codex/c-mainline-test-closeout-20261020",
+      "worktree": "D:/openHarmonyScanner/worktrees/c-mainline-test-closeout-20261020",
+      "agent": "/root/c_mainline_test",
+      "feedback_to": "C-CLOSEOUT-MAINLINE-DEV-20261020",
+      "deliverables": ["baseline identity and tests", "independent same-SHA report", "path/scope review", "feedback and retest"],
+      "stop_condition": "One same-SHA acceptance loop or one reproducible integration regression."
     }
   ],
   "feedback_loop": [
