@@ -3,8 +3,8 @@
   "date": "2026-10-20",
   "baseline": {
     "remote": "origin/codex/c-line-parallel-plan-20261020",
-    "commit": "be8a4ea06",
-    "refresh": "2026-10-20 local branch contains the Float32Array negative-double candidate and the TypedArray.set array-like cross-view write candidate. TypedArray.set implementation f0ecebbe2d8b7b5318e3258b39088e03943a32ac; independent same-SHA replay report c92433444e2dbef8e81449d8709a20a8dfbe8f5d; second-layer review be8a4ea06a52e6e71ab83405fde3cb6f2156408f. ArrayBuffer lifecycle scout no-go 38e9420babdb768071f6b1ab9615f6c7221d508d. Remote remains e2daccc5b pending retry after HTTPS timeouts. Source commit a65a2853ccae13da167d9aa4720ab8b11ec16656. Runtime/ASan and product effects remain not_run/unknown."
+    "commit": "a97be98c6",
+    "refresh": "2026-10-20 final local C-line branch tip before this task-tree refresh is a97be98c6; implementation f0ecebbe2d8b7b5318e3258b39088e03943a32ac, independent replay c92433444e2dbef8e81449d8709a20a8dfbe8f5d, and second-layer review be8a4ea06a52e6e71ab83405fde3cb6f2156408f are all committed. Final focused tests: 12 passed; Ark Runtime detector suite: 209 passed, 3 skipped; diff-check clean. Push attempts still fail on GitHub HTTPS timeout; remote branch remains e2daccc5b. Runtime/ASan/product impact remain not_run/unknown."
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
   "status": "ACTIVE",
