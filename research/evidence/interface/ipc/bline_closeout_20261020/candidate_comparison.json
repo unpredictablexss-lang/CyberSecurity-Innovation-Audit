@@ -1,0 +1,349 @@
+{
+  "schema_version": 1,
+  "purpose": "B-line fixed-source observation comparison across IPC detector 0.12.12 to 0.12.13",
+  "comparison": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+    "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d",
+    "previous_report_external_path": "D:\\openHarmonyScanner\\tmp\\b-ipc-replay-20261020\\integrated.json",
+    "previous_report_sha256": "33bec41efd974e564fcb3e0afaebbc0ca789e83da86c038f903e71d66bc273ad",
+    "previous_detector_version": "0.12.12",
+    "current_report": "communication-ipc-5903fd5-ipc-0.12.13.json",
+    "current_report_sha256": "f12ed4b595281ccd78b75508633de5bf916a4f239e9b400fb35b6978207ca470",
+    "current_detector_version": "0.12.13",
+    "current_model_version": "oh-ipc-2026.10-v33",
+    "previous_status": "completed",
+    "current_status": "completed",
+    "previous_candidate_observations": 14,
+    "current_candidate_observations": 14,
+    "retained": 14,
+    "added": 0,
+    "removed": 0,
+    "previous_distinct_file_rule_symbol_roots": 12,
+    "current_distinct_file_rule_symbol_roots": 12,
+    "source_tree_unchanged": true,
+    "snapshot_unchanged": true,
+    "coverage_previous": {
+      "complete": 442,
+      "not_run": 37,
+      "partial": 218
+    },
+    "coverage_current": {
+      "complete": 442,
+      "not_run": 37,
+      "partial": 218
+    }
+  },
+  "observations": [
+    {
+      "comparison": "retained",
+      "file": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+      "line": 168,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "DBinderServiceStub::OnRemoteRequest",
+      "source_sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:ca88225a02a0fe72",
+      "current_diagnostic_id": "ohscanner.interface.ipc:ca88225a02a0fe72",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    },
+    {
+      "comparison": "retained",
+      "file": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+      "line": 172,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "DBinderServiceStub::OnRemoteRequest",
+      "source_sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:e5c3a944e38716fd",
+      "current_diagnostic_id": "ohscanner.interface.ipc:e5c3a944e38716fd",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    },
+    {
+      "comparison": "retained",
+      "file": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+      "line": 190,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "DBinderServiceStub::ProcessDeathRecipient",
+      "source_sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:2dc3665b93253dce",
+      "current_diagnostic_id": "ohscanner.interface.ipc:2dc3665b93253dce",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    },
+    {
+      "comparison": "retained",
+      "file": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+      "line": 194,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "DBinderServiceStub::ProcessDeathRecipient",
+      "source_sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:2f37f269ff85f764",
+      "current_diagnostic_id": "ohscanner.interface.ipc:2f37f269ff85f764",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    },
+    {
+      "comparison": "retained",
+      "file": "ipc/native/src/ani/rpc/src/rpc_ani_class.cpp",
+      "line": 153,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "IPCAniStub::OnRemoteRequest",
+      "source_sha256": "ea3b46ff312b9526974c8020b26a4a030f95192ec2e914f6ec6bdd248765648a",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:1ae68a66948e0021",
+      "current_diagnostic_id": "ohscanner.interface.ipc:1ae68a66948e0021",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    },
+    {
+      "comparison": "retained",
+      "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+      "line": 118,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "DBinderCallbackStub::ProcessProto",
+      "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:769b6c1f4853e5f5",
+      "current_diagnostic_id": "ohscanner.interface.ipc:769b6c1f4853e5f5",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    },
+    {
+      "comparison": "retained",
+      "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+      "line": 139,
+      "rule_id": "ipc.auth.missing",
+      "symbol": "DBinderCallbackStub::ProcessData",
+      "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:be13fd9ad5bb5f78",
+      "current_diagnostic_id": "ohscanner.interface.ipc:be13fd9ad5bb5f78",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    },
+    {
+      "comparison": "retained",
+      "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+      "line": 139,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "DBinderCallbackStub::ProcessData",
+      "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:1c15c945a529931b",
+      "current_diagnostic_id": "ohscanner.interface.ipc:1c15c945a529931b",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    },
+    {
+      "comparison": "retained",
+      "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+      "line": 167,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "DBinderCallbackStub::OnRemoteRequest",
+      "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:037a70552f593f64",
+      "current_diagnostic_id": "ohscanner.interface.ipc:037a70552f593f64",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    },
+    {
+      "comparison": "retained",
+      "file": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+      "line": 165,
+      "rule_id": "ipc.auth.missing",
+      "symbol": "IPCObjectStub::OnRemoteDump",
+      "source_sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:5501bf2ba361596d",
+      "current_diagnostic_id": "ohscanner.interface.ipc:5501bf2ba361596d",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    },
+    {
+      "comparison": "retained",
+      "file": "ipc/native/src/napi_common/source/napi_remote_object.cpp",
+      "line": 917,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "NAPIRemoteObject::OnRemoteRequest",
+      "source_sha256": "58c3d97c393ec77a6f14e2f27255a2c6bc7fbfb6cce25d08dc0c3478a2fd1812",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:a184f5535a3ef73b",
+      "current_diagnostic_id": "ohscanner.interface.ipc:a184f5535a3ef73b",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    },
+    {
+      "comparison": "retained",
+      "file": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+      "line": 193,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "ANIRemoteObject::GetCallingInfo",
+      "source_sha256": "2527026b8a744f9bb1ae4d9af98e991386ec07887af4310f2309c57a1674ba08",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:33c80dc529b992ed",
+      "current_diagnostic_id": "ohscanner.interface.ipc:33c80dc529b992ed",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    },
+    {
+      "comparison": "retained",
+      "file": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+      "line": 210,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "ANIRemoteObject::callOnRemoteMessageRequest",
+      "source_sha256": "2527026b8a744f9bb1ae4d9af98e991386ec07887af4310f2309c57a1674ba08",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:2aea18570c3e3821",
+      "current_diagnostic_id": "ohscanner.interface.ipc:2aea18570c3e3821",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    },
+    {
+      "comparison": "retained",
+      "file": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+      "line": 231,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "ANIRemoteObject::OnRemoteRequest",
+      "source_sha256": "2527026b8a744f9bb1ae4d9af98e991386ec07887af4310f2309c57a1674ba08",
+      "previous_diagnostic_id": "ohscanner.interface.ipc:1831439990fdf6c8",
+      "current_diagnostic_id": "ohscanner.interface.ipc:1831439990fdf6c8",
+      "candidate_status": "unassessed",
+      "finding_identity": {
+        "id": null,
+        "status": "unknown",
+        "basis": null,
+        "unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ]
+      }
+    }
+  ],
+  "interpretation": "Observation identity is compared by repository-fixed file, line, rule, symbol and source SHA. Stable IDs remain unknown in these legacy reports; the comparison does not assert vulnerability truth."
+}

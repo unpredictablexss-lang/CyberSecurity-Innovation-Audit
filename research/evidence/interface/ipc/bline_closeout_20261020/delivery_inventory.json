@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "task": "B-line IPC closeout evidence inventory",
+  "code_base": {
+    "repository": "CyberSecurity-Innovation-Audit",
+    "branch": "codex/b-ipc-closeout-20261020",
+    "main_sha": "dd8b12b9f0fcf3d8bc96a2d7fbb3d679809d2e35",
+    "b_source_branch": "codex/b-ipc-integration-20261020",
+    "b_source_sha": "40e3d79f38629b273214f1efee0f22b7443849f1",
+    "detector": "ohscanner.interface.ipc",
+    "detector_version": "0.12.13",
+    "model_version": "oh-ipc-2026.10-v33",
+    "data06_rule": "ipc.parcel.array-allocation-width",
+    "data06_rule_version": "0.1.0",
+    "code_commit_sha": "dd8b12b9f0fcf3d8bc96a2d7fbb3d679809d2e35",
+    "evidence_commit_sha": "ed1be347e433f3e931f5f72b36c2e7562752798a"
+  },
+  "fixed_source_replays": {
+    "data06": {
+      "repository": "openharmony/communication_ipc",
+      "path": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+      "rule": "ipc.parcel.array-allocation-width",
+      "rule_version": "0.1.0",
+      "cases": [
+        {
+          "case_id": "old-cve-parent",
+          "commit": "84d681288793785e8f39f71c824f211edaed8f1e",
+          "source_sha256": "1f4d039b974a0021000126e61efea7eb0b8eb5f4baf756373c1b12150d0d5eec",
+          "observations": 1,
+          "run_status": "completed"
+        },
+        {
+          "case_id": "old-umbrella-issue-revision",
+          "commit": "67cd9d3e8e08971ba614a19f99b5f6b7ec4ea039",
+          "source_sha256": "98bd761fe25a16435830a8978473444a318b71a4cf4809689b4b7ffe106effa9",
+          "observations": 1,
+          "run_status": "completed"
+        },
+        {
+          "case_id": "official-security-fix",
+          "commit": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+          "source_sha256": "30ad2a9fa4f45792b83e75cef6c5106818b290ae523d9e17e48c88853854d777",
+          "observations": 0,
+          "run_status": "completed"
+        }
+      ],
+      "cve_count": 1,
+      "distinct_root_count": 1,
+      "validated_vulnerability": 0
+    },
+    "communication_ipc_same_source_comparison": {
+      "repository": "openharmony/communication_ipc",
+      "commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+      "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d",
+      "previous_detector_version": "0.12.12",
+      "current_detector_version": "0.12.13",
+      "observations": {
+        "previous": 14,
+        "current": 14,
+        "retained": 14,
+        "added": 0,
+        "removed": 0,
+        "file_rule_symbol_groups": 12
+      },
+      "scope": {
+        "files": 697,
+        "parse_status": {
+          "complete": 442,
+          "partial": 218,
+          "not_run": 37
+        }
+      },
+      "current_run_status": "completed_with_limitations",
+      "previous_report": {
+        "local_path": "D:/openHarmonyScanner/tmp/b-ipc-replay-20261020/integrated.json",
+        "sha256": "33bec41efd974e564fcb3e0afaebbc0ca789e83da86c038f903e71d66bc273ad"
+      },
+      "current_report": "communication-ipc-5903fd5-ipc-0.12.13.json"
+    }
+  },
+  "contacts_parse_replay": {
+    "repository": "openharmony/applications/standard/contacts_data",
+    "commit": "b02aadfc2d801ee30573fcb2d13490298e146fea",
+    "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+    "source_sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383",
+    "bytes": 80944,
+    "parser": "src.parser.ast.parse_source",
+    "parse_status": "complete",
+    "parse_issues": [],
+    "ipc_rule_applicability": "not_applicable"
+  },
+  "test_results": [
+    {
+      "command": "python -m pytest -q tests/test_ipc_t74_cj_array_bounds_integration_challenge.py tests/test_ipc_family_depth.py tests/test_ipc_family_matrix.py tests/test_ipc_rule_versions.py tests/test_ipc_holdout_contract.py",
+      "result": "44 passed"
+    },
+    {
+      "command": "PowerShell collect tests/test_ipc*.py and tests/detectors/test_ipc*.py, then python -m pytest -q @files",
+      "result": "377 passed, 47 skipped"
+    },
+    {
+      "command": "python -m pytest -q tests/detectors/test_known_disclosed_cves.py",
+      "result": "21 passed; 17 distinct CVE identifiers; not a substitute for 14 fixed vulnerable/fixed Git replays"
+    }
+  ],
+  "not_run_or_unknown": {
+    "eight_repository_fixed_scope": "not_run: exact repository/commit manifest and historical 30 observation export unavailable; user-provided baseline of 30 observations and 28 roots retained as reference",
+    "requested_14_disclosed_cve_exact_replays": "not_run: exact 14-case frozen list and source version pairs unavailable in current B evidence/cache",
+    "product_deployment": "unknown",
+    "product_entry_privilege_and_impact": "unknown",
+    "independent_accuracy_holdout": "not_run",
+    "platform_candidate_detail_and_report_export": "not_run",
+    "per_rule_applicable_and_evaluated_counters": "requires a cross-line shared Runner protocol; zero candidates remain coverage unknown"
+  },
+  "code_file_bindings": [
+    {
+      "path": "src/ohscanner/detectors/interface/analysis.py",
+      "git_blob": "e061522c8dd2f1f1f82aab82de97619804f8df77",
+      "sha256": "a520ba399a4a1546a4d27f9ef8b522eda670fff33363b700fe5d0e3a0e601b5b"
+    },
+    {
+      "path": "src/ohscanner/detectors/interface/detector.py",
+      "git_blob": "a4a23140e69bb95a82ad4ff6ebe4c999cd38f035",
+      "sha256": "2786338dbc87de3e6b7b77dc2f0e269981a60a2855f9d4f4358ca74011a3ec85"
+    },
+    {
+      "path": "src/ohscanner/detectors/interface/ffi_array_bounds.py",
+      "git_blob": "a2c54427a482e4d64a57e7a8e808ddcb5f0c7474",
+      "sha256": "fc44c96ac584c28d4ac0106b9a4e7125a7ab71cd0d8b280a7cc3ff75a062a173"
+    },
+    {
+      "path": "src/ohscanner/detectors/interface/families/data06.py",
+      "git_blob": "eba6e20905f7f211949b5a0ff714870dc27b9911",
+      "sha256": "a277339ae772c42a9465fc3b2063f8c80326ef770ea939598769c7ae4214074b"
+    },
+    {
+      "path": "src/ohscanner/detectors/interface/models.py",
+      "git_blob": "d45a22a828af483f44b0fddba28f65cada1c348e",
+      "sha256": "bf8dcdf22e00b721951d7f2200ac40569afdd875e11c95edf418144e957b908f"
+    },
+    {
+      "path": "tests/fixtures/ipc/data06/manifest.json",
+      "git_blob": "5a819c77937c59f42b60d4485e09df3bd974ebc7",
+      "sha256": "877895ef76fde026d1f1faa232c08092a7e6ea3001aa8fb023f5feb8b8ed41f4"
+    },
+    {
+      "path": "tests/fixtures/ipc/t74_cj_array_bounds/manifest.json",
+      "git_blob": "8f35f304f9512914ae0c12d25865bcb71a7de93e",
+      "sha256": "6fc06f0a349b26fbf2cd1d3ae2bd8c7e50f4d987088d5807c6643843dd013bf7"
+    },
+    {
+      "path": "research/evidence/interface/ipc/current_rule_measurement_20261020.json",
+      "git_blob": "e7b133f8811710534c340d3ce15b68288efe00f3",
+      "sha256": "fe53e43d79405b66aa1bc35c3cff8f64c1909c450d8d7523a689cdb582be0351"
+    },
+    {
+      "path": "research/evidence/interface/ipc/high_recall_holdout_20261018/manifest.json",
+      "git_blob": "fd82c1329352ca834d46f49f160b010418afd05f",
+      "sha256": "314c97104ba19a0f9dda06359449708728a50c9bf9c7a5f89bb7e95bb3886e0d"
+    }
+  ],
+  "report_artifact_sha256": {
+    "candidate_comparison.json": "cf0099df385b8408adf548bd6f12875eaf099718a459d84d0917ea6f0a0c0244",
+    "communication-ipc-5903fd5-ipc-0.12.13.json": "f12ed4b595281ccd78b75508633de5bf916a4f239e9b400fb35b6978207ca470",
+    "communication-ipc-5903fd5-ipc-0.12.13.md": "5d7d0f3781ebcf417bb7c27e3b625bd56def6a72e54984ce45b8cc1d577c5f17",
+    "data06-official-security-fix.json": "8937a8e9fc8eff2b3891673c8ee7ecef2df39305bdfc0f6de31110993252a283",
+    "data06-official-security-fix.md": "4147dc32760fa59e8ff0c10d7a5e75d9709d96116c1ce1f30199f5cbfd6303ce",
+    "data06-old-cve-parent.json": "96e507523f7e65e98ea2211ad2cad07d5bfa478cc67272891cf358435b916844",
+    "data06-old-cve-parent.md": "1f2d1e963e23041344b57dede21806d79e95199164eb84d44de893fe13f23e7c",
+    "data06-old-umbrella-issue-revision.json": "0677baf34755d13dafffbad71dc4b6e80246aba4f1ddc163d2df11ba3337c157",
+    "data06-old-umbrella-issue-revision.md": "ae5431abb788cba5e6f4a9082d53df606afeea07f99e6a012f83f9f5725c1ef3"
+  }
+}

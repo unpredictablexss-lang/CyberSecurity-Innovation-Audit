@@ -49,6 +49,9 @@ class SensitiveTests(unittest.TestCase):
         cases=json.loads((ROOT/'fixtures/data_sensitive/cases.json').read_text())
         d5=json.loads((ROOT/'fixtures/data_sensitive/d5_cases.json').read_text())
         overrides={case['id']:case for case in d5}
+        # D90 preserves a material escape for a callable parameter; the old
+        # zero counted only modeled log sinks and lost this unresolved target.
+        overrides['sink_parameter_partial']={'expected_candidates':1}
         for case in cases:
             with self.subTest(case=case['id']):
                 text=(ROOT/'fixtures/data_sensitive'/case['file']).read_text()
@@ -397,6 +400,119 @@ void UnreviewedName(SessionKey *maybe){ HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{publi
     def test_format_stars_and_percent(self):
         slots,count=formats('%% %{public}*.*s %{private}u')
         self.assertEqual(count,4);self.assertEqual(slots[0][1],(0,1,2))
+    def test_compound_assignment_preserves_destination_dependency(self):
+        for op in ('+=', '-=', '*=', '/=', '%=', '&=', '|=', '^=', '<<=', '>>='):
+            with self.subTest(op=op):
+                run=self.analyze(
+                    'void Callback(unsigned key) { unsigned value=key; '
+                    f'value {op} 1; HILOG_INFO(1,"%{{public}}u",value); }}')
+                self.assertEqual(len(run.findings),1)
+                self.assertIn(f'compound assign value ({op})',run.findings[0].message)
+                self.assertIn('Callback parameter 0',run.findings[0].message)
+                self.assertIn('may-flow',' '.join(run.limitations))
+
+    def test_compound_assignment_expression_reaches_outer_binding(self):
+        for statement,operand in (
+                ('auto result=(value ^= 1);','result'),
+                ('','(value ^= 1)')):
+            with self.subTest(statement=statement):
+                run=self.analyze(
+                    'void Callback(unsigned key) { unsigned value=key; '
+                    +statement+f'HILOG_INFO(1,"%{{public}}u",{operand}); }}')
+                self.assertEqual(len(run.findings),1)
+                self.assertIn('Callback parameter 0',run.findings[0].message)
+
+    def test_compound_assignment_controls_keep_plain_overwrite_and_privacy(self):
+        cases=(
+            ('unsigned value=key; value=1;', '%{public}u', 0),
+            ('unsigned value=3; value ^= 1;', '%{public}u', 0),
+            ('unsigned value=3; value ^= key;', '%{public}u', 1),
+            ('unsigned value=key; value ^= 1;', '%{private}u', 1),
+            ('unsigned value=key; value ^= 1; value=1;', '%{public}u', 0),
+        )
+        for statement,fmt,expected in cases:
+            with self.subTest(statement=statement,fmt=fmt):
+                run=self.analyze('void Callback(unsigned key) {'+statement+
+                                 f'HILOG_INFO(1,"{fmt}",value); }}')
+                self.assertEqual(len(run.findings),expected)
+                if expected and 'private' in fmt:
+                    self.assertTrue(any(o.kind=='sink_privacy'
+                                        for o in run.findings[0].evidence_obligations))
+
+    def test_compound_assignment_partial_parse_retains_uncertainty(self):
+        run=self.analyze(
+            'void Callback(unsigned key) { unsigned value=key; value ^= 1; '
+            'HILOG_INFO(1,"%{public}u",value); }',partial='partial')
+        self.assertEqual(len(run.findings),1)
+        self.assertNotEqual(dict(run.file_outcomes)['service.cpp'],'complete')
+
+    def test_compound_assignment_member_binding_preserves_source(self):
+        run=self.analyze(
+            'struct Box { unsigned value; }; '
+            'void Callback(unsigned key) { Box box; box.value=key; box.value ^= 1; '
+            'HILOG_INFO(1,"%{public}u",box.value); }')
+        self.assertEqual(len(run.findings),1)
+        self.assertIn('compound assign box.value (^=)',run.findings[0].message)
+        self.assertIn('Callback parameter 0',run.findings[0].message)
+
+    def test_compound_assignment_unknown_profile_is_still_candidate_only(self):
+        context=self.context(
+            'void f(unsigned accessToken) { unsigned value=accessToken; value ^= 1; '
+            'HILOG_INFO(1,"%{public}u",value); }')
+        run=SensitiveExposureDetector().detect(context,context.units)
+        self.assertEqual(len(run.findings),1)
+        self.assertEqual(run.status,'blocked')
+        self.assertIn('unreviewed sensitive-name heuristic',' '.join(run.limitations))
+        self.assertTrue(run.findings[0].evidence_obligations)
+
+    def test_std_string_local_c_str_preserves_receiver_dependency(self):
+        for statement,expression in (
+                ('std::string value=key;','value.c_str()'),
+                ('std::string value{key};','value.c_str()'),
+                ('std::string value=key; value += "suffix";','value.c_str()'),
+                ('std::string value="prefix"; value += key;','value.c_str()'),
+                ('std::string value=key; std::string out=(value += "suffix");','out.c_str()')):
+            with self.subTest(statement=statement):
+                run=self.analyze('void Callback(const char *key) {'+statement+
+                                 f'HILOG_INFO(1,"%{{public}}s",{expression}); }}')
+                self.assertEqual(len(run.findings),1)
+                self.assertIn('std::string receiver',run.findings[0].message)
+                self.assertIn('Callback parameter 0',run.findings[0].message)
+                self.assertIn('compiler type identity',' '.join(run.limitations))
+
+    def test_std_string_local_c_str_safe_and_same_name_controls(self):
+        cases=(
+            'std::string value="safe";',
+            'std::string value=key; value="redacted";',
+            'Fake value=key;',
+            'string value=key;',
+        )
+        for statement in cases:
+            with self.subTest(statement=statement):
+                run=self.analyze(
+                    'struct Fake { Fake(const char *); const char *c_str() { return "safe"; } }; '
+                    'struct string { string(const char *); const char *c_str() { return "safe"; } }; '
+                    'void Callback(const char *key) {'+statement+
+                                 'HILOG_INFO(1,"%{public}s",value.c_str()); }')
+                self.assertEqual(len(run.findings),0)
+
+    def test_std_string_c_str_private_and_partial_preserve_obligations(self):
+        run=self.analyze(
+            'void Callback(const char *key) { std::string value=key; '
+            'HILOG_INFO(1,"%{private}s",value.c_str()); }',partial='partial')
+        self.assertEqual(len(run.findings),1)
+        self.assertTrue(any(o.kind=='sink_privacy' for o in run.findings[0].evidence_obligations))
+        self.assertNotEqual(dict(run.file_outcomes)['service.cpp'],'complete')
+
+    def test_std_string_c_str_unknown_profile_remains_unreviewed(self):
+        context=self.context(
+            'void f(const char *sessionKey) { std::string value=sessionKey; '
+            'HILOG_INFO(1,"%{public}s",value.c_str()); }')
+        run=SensitiveExposureDetector().detect(context,context.units)
+        self.assertEqual(len(run.findings),1)
+        self.assertEqual(run.status,'blocked')
+        self.assertIn('heuristic suspected sensitive identifier sessionKey',run.findings[0].message)
+        self.assertIn('std::string receiver value.c_str()',run.findings[0].message)
     def test_format_positional_rejected(self):
         with self.assertRaises(ValueError):formats('%2$s')
     def test_default_private(self):

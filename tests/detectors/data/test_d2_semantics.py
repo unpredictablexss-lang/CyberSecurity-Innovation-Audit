@@ -15,6 +15,10 @@ class D2SemanticsTests(unittest.TestCase):
         cases=json.loads((ROOT/'tests/fixtures/data_sensitive/d2_cases.json').read_text())
         d5=json.loads((ROOT/'tests/fixtures/data_sensitive/d5_cases.json').read_text())
         overrides={case['id']:case for case in d5}
+        # D90 retains material consumed by local callable aliases as unknown
+        # escapes, without claiming that the aliased APIs log or copy it.
+        overrides.update({case:{'expected_candidates':1} for case in
+                          ('local_sink_pointer_unknown','local_copy_pointer_unknown')})
         for case in cases:
             with self.subTest(case=case['id']):
                 text=(ROOT/'tests/fixtures/data_sensitive'/case['file']).read_text()
