@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "D94_T93_IN_PROGRESS",
+  "status": "D94_T93_COMPLETED",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -399,22 +399,36 @@
       "id": "D94",
       "kind": "development",
       "title": "保留并传播无法解析别名的敏感标量指针写入",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D93", "T92"],
       "input": "D93_POINTER_OUTPUT_GAP_20261020.json records a valid custom helper whose material-derived `*length = (unsigned char)value[0]` write is not carried to a later log; the scanner returns zero findings and partial coverage because destination alias proof is missing.",
       "completion": "Unknown material-derived pointer writes retain an unresolved candidate; proven destination aliases propagate to later sinks; literal-only metadata writes remain non-material. Custom names, shadows, callback/macro, missing/partial and unknown aliases do not gain blanket proof.",
-      "tests": ["T93"]
+      "tests": ["T93"],
+      "code_commits": [
+        "5d33abf99857584a7194cb466590592e397e9339",
+        "d421c27a1a3da9254905ed6d8f4b8e2696978418",
+        "fe8080e4cd48a53422f4647981b3871575a31f01"
+      ],
+      "integration_commit": "abefb4cff",
+      "evidence_commit": "1cdbe45445930f27437e5e90e8b08cd60d212cdb",
+      "evidence_integration_commit": "5b80f6e55",
+      "completion": "Bounded pointer/pointee slots now preserve material-derived unresolved writes and propagate proven destinations; pointer-cast type names do not invent sources; input pointers/local rebinds do not masquerade as caller writes. T93 feedback closed.",
+      "validation": "Developer10/data239; independent13/data252; owner data252 and 66 AST/parser/linkage/known/corpus/adversarial tests pass. Fixed T85 direct/Runner26→24; exact removals are two unsupported cleanup-member writebacks; 24 common observations, 638 calls, 890/915, and 3-partial coverage unchanged.",
+      "fixed_source_report": "research/data_sensitive/D94_HANDOFF_20261020.md"
     },
     {
       "id": "T93",
       "kind": "testing",
       "title": "独立挑战标量指针输出、别名传播与metadata边界",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "depends_on": ["D93", "T92"],
       "feedback_to": ["D94"],
-      "completion": "Independently challenge the fixed D94 revision with material-derived scalar writes, proven/unknown aliases, literal-only metadata, shadows, same-name helpers, callbacks, macros and partial inputs; fixed-source replay must retain T85 and D93/T92 identity and coverage facts."
+      "completion": "Independent fixed-source challenge verified material writes, proven/unknown aliases, literal metadata, shadows, same-name helpers, callbacks, macros and partial input. First-pass cast false positive was reported and closed; two dropped cleanup traces were verified as input-pointer writeback pollution.",
+      "commit": "7fe1c0bf8760277707b5a111a7284bbcf3f2733c",
+      "integration_commit": "1b2d4d7a9",
+      "validation": "Independent13/13 and full data252/252; T85 direct/Runner26→24, 24 common IDs/evidence, 638 calls, 890/915 and coverage3 partial unchanged; local rebind2→0, readonly0→0, real memcpy output1→1"
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
@@ -442,14 +456,15 @@
   ],
   "candidate_policy": "Do not reduce counts by hiding independent root causes; prefer source-bound relation evidence and explicit unresolved guards.",
   "current_versions": {
-    "sensitive_exposure": "0.21.8",
+    "sensitive_exposure": "0.21.9",
     "known_disclosed_cves": "0.19.11"
   },
   "integrated_tests": {
-    "data": 229,
+    "data": 252,
     "known_and_corpus": 39,
     "parser_linkage": 16,
-    "total": 284,
+    "ast_parser": 11,
+    "total": 318,
     "result": "PASS"
   },
   "remote_branch": "origin/codex/d-owner-20261020-01a1571f",
