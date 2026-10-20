@@ -122,22 +122,27 @@
       "id": "D86",
       "kind": "development",
       "title": "定义启发式来源、显式覆盖与硬编码秘密的精度边界",
-      "status": "READY_FOR_NEXT_SLICE",
+      "status": "COMPLETED_INTEGRATED",
       "depends_on": [
         "D85",
         "T83"
       ],
-      "input": "T83 observed unknown-profile name heuristic may produce a new candidate after a plain overwrite; empty explicit taint is not proof of public data.",
-      "completion": "先建立模型语义和具名正反例，保留硬编码秘密/未绑定源；只修证据充分的误报，不一律清除候选",
+      "input": "T83 unknown-profile observations plus T85 fixed Wi-Fi/C++ replay; establish explicit name-heuristic and type-metadata semantics.",
+      "completion": "C++ alignof type metadata no longer produces sensitive-value candidates; retain hardcoded/ambiguous/unknown values and real calls; fixed real-source replay preserves unrelated candidate identity.",
       "tests": [
         "T85"
-      ]
+      ],
+      "commit": "c484e722138600198b20f94e05e0cec56ec03f71",
+      "evidence_commit": "4042510fef05d342968794a9c3d6f6f244982db4",
+      "integration_commit": "48404441ce270ddaba7389a3802bbc13c47df1e1",
+      "final_validation_commit": "7d8a25a67f76d962a0196518c394a27c0f03f841",
+      "validation": "7 focused methods; 108 data tests; 9 semantic controls; two fixed real C++ components retain 3/21 candidates with identical signatures/outcomes"
     },
     {
       "id": "T85",
       "kind": "testing",
       "title": "扩充实际包含compound/c_str结构的固定真实源码回归",
-      "status": "READY_FOR_NEXT_SLICE",
+      "status": "COMPLETED_INTEGRATED",
       "depends_on": [
         "T84",
         "D85"
@@ -145,7 +150,34 @@
       "feedback_to": [
         "D86"
       ],
-      "completion": "选择可获取且包含新增结构的源码，记录字节与身份、实际覆盖及候选差异；不把现有普通路径兼容性当新结构已实源覆盖"
+      "completion": "Wi-Fi real compound/c_str chain plus certificate property-name contrast; exact source identity and source-to-sink candidate evidence recorded; no unlabeled accuracy claims",
+      "agent": "/root/t83_static_feedback",
+      "commit": "7e729318a0a3377558769f057a4335480c1bd802",
+      "integration_commit": "5d6d0ff0323fb41ab93f366191513a0132fbb9dc",
+      "validation": "2 components, 5 fixed files, 109330 bytes; source commit/tree/blob/SHA verified; 0.21.0/0.21.1/0.21.2 replay; Wi-Fi candidate traces strengthened and certificate candidates unchanged"
+    },
+    {
+      "id": "T86",
+      "kind": "testing",
+      "title": "独立复验alignof边界并推进全局常量用途绑定",
+      "status": "IN_PROGRESS",
+      "agent": "/root/t83_static_feedback",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
+      "depends_on": ["D86", "T85"],
+      "feedback_to": ["D87"],
+      "completion": "独立正反控制已在T85完成；下一切片核验具名常量定义、参数角色与用途，区分属性键/展示文本和真实凭据值，不依据拼写直接清除候选"
+    },
+    {
+      "id": "D87",
+      "kind": "development",
+      "title": "为固定全局常量建立有界用途与参数角色证据",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
+      "depends_on": ["D86", "T85"],
+      "input": "T85 certificate framework: CERT_PASSWORD is the literal property key \"password\"; candidate arises through c_str() and unresolved escape at a property-name check/log path, not established password bytes.",
+      "completion": "Model only statically bound constant and known argument-role evidence where the AST proves property-name use; retain unknown wrappers and actual secret-value flows; demonstrate named positive, safe, ambiguous and unknown controls.",
+      "tests": ["T86"]
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
@@ -173,13 +205,13 @@
   ],
   "candidate_policy": "Do not reduce counts by hiding independent root causes; prefer source-bound relation evidence and explicit unresolved guards.",
   "current_versions": {
-    "sensitive_exposure": "0.21.2",
+    "sensitive_exposure": "0.21.3",
     "known_disclosed_cves": "0.19.11"
   },
   "integrated_tests": {
-    "data": 101,
+    "data": 108,
     "known_and_corpus": 39,
-    "total": 140,
+    "total": 147,
     "result": "PASS"
   }
 }
