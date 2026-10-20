@@ -14,7 +14,28 @@ SIZE_OVERFLOW_RULE_ID = 'ark.runtime.typedarray-buffer-size-multiplication-overf
 RUNTIME_EXCEPTION_RULE_ID = 'ark.runtime.callback-exception-before-result-conversion'
 CALL_INFO_EXCEPTION_RULE_ID = 'ark.runtime.call-info-construction-exception-guard'
 RECEIVER_TYPE_GUARD_RULE_ID = 'ark.runtime.typedarray-receiver-type-guard'
-VERSION = '0.6.2'
+LENGTH_NARROWING_RULE_ID = 'ark.runtime.typedarray-length-signed-to-unsigned-narrowing'
+INDEX_BOUNDS_RULE_ID = 'ark.runtime.dataview-index-width-bounds'
+NATIVE_EXCEPTION_RULE_ID = 'ark.runtime.native-inline-pending-exception-propagation'
+NEGATIVE_DOUBLE_LENGTH_RULE_ID = 'ark.runtime.float32array-negative-double-length'
+ARRAYLIKE_SET_BOUNDS_RULE_ID = 'ark.runtime.typedarray-arraylike-set-offset-wrap'
+GAP_RULE_VERSIONS = {
+    LENGTH_NARROWING_RULE_ID: '1.1.0',
+    INDEX_BOUNDS_RULE_ID: '1.1.0',
+    NATIVE_EXCEPTION_RULE_ID: '1.1.0',
+    NEGATIVE_DOUBLE_LENGTH_RULE_ID: '1.0.0',
+    ARRAYLIKE_SET_BOUNDS_RULE_ID: '1.0.0',
+}
+RULE_VERSIONS = {
+    RULE_ID: '1.1.0',
+    EXCEPTION_GUARD_RULE_ID: '1.1.0',
+    RECEIVER_TYPE_GUARD_RULE_ID: '1.1.0',
+    SIZE_OVERFLOW_RULE_ID: '1.1.0',
+    RUNTIME_EXCEPTION_RULE_ID: '1.1.0',
+    CALL_INFO_EXCEPTION_RULE_ID: '1.1.0',
+    **GAP_RULE_VERSIONS,
+}
+VERSION = '0.6.3'
 NAMESPACE = 'panda::ecmascript::kungfu'
 OWNER = NAMESPACE + '::BuiltinsTypedArrayStubBuilder'
 CALLER = OWNER + '::Filter'
@@ -31,6 +52,40 @@ class RuntimeTypeModel:
         ('a0e30483ab3e4aead67ecfb5c708489915e447f9', 'ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp', '95f54f2875f401afe3167c62f8c1e7799782be8c', '8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e'),
         # Exact D-drive current snapshot binding, admitted for explicit research only.
         ('a65a2853ccae13da167d9aa4720ab8b11ec16656', 'ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp', '68fb3b0adc4f9062889a861be51b7be90362e37a', '76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c'),
+    )
+    # Exact C1 source profile for the Map species-result/source-read width
+    # mismatch. The candidate is emitted only for this target blob and flow.
+    species_read_width_bindings: tuple = (
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp',
+         '68fb3b0adc4f9062889a861be51b7be90362e37a',
+         '76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c'),
+    )
+    species_read_width_dependencies: tuple = (
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/compiler/new_object_stub_builder.cpp',
+         '991ac5ac034a1a027e3200787ec25c55b3f15b69',
+         '3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0'),
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/base/typed_array_helper.cpp',
+         'bcb422fe67f4e670adcca31fffd4da7e2b3b0b21',
+         '3c42388b716e82601cee4e43aedddc8ac709fe1363b0753c7efa24745380110d'),
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/stubs/runtime_stubs.cpp',
+         '14dc06350881b1fa0fdabeeb8465ae9063224d6c',
+         '0c390fb329387ff75943089da0e7eecab4bc1df21da1be4f33db969b2bf79a46'),
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/js_typed_array.cpp',
+         '098c2a22cae3152af3a59063dda25e145f03bbd7',
+         'e67c0ce082885efb6fa5894f7a1998a41eb4cddfa2e381c8335497e10e2b9bbe'),
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/builtins/builtins_arraybuffer.cpp',
+         '2aa22c58803df690a5a2b326451e02297dc5e2f6',
+         '4d388d997313cf7c900f1f0d54fbe826266845665424e32cc9dd4cdbaa62dcc9'),
+        ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+         'ecmascript/compiler/builtins/builtins_arraybuffer_stub_builder.cpp',
+         '21d7f79fa83ffc05e7510a532f39398075aeae16',
+         '0e41c2def0393275293c3cd1df983bccec42bee7bfa6ed58567a11b00ad745d6'),
     )
     source_dependencies: tuple = (('ecmascript/compiler/new_object_stub_builder.cpp', '757b8d050d306d349822600deacb295c7a54245e'),)
     # Reviewed declarations backing the glue-aware HClass read and builder
@@ -111,6 +166,71 @@ class RuntimeTypeModel:
          '319347a5ea62df52e8427ad6822f65e70c997a11',
          'f698f40394524b5b95a1bbef4fe8b1ccef05e52226d9d1f30ef54decca711a62'),
     )
+    length_narrowing_bindings: tuple = (
+        ('3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c',
+         'ecmascript/base/typed_array_helper.cpp',
+         'c5153346369f0182e73098b8d008eca6d750b36d',
+         '4be243a68180be845defbcc01b259070db68b18da8500d245eea4929e7b9eca5'),
+        ('82c21d656880923800c94b53b035c76d219313b5',
+         'ecmascript/base/typed_array_helper.cpp',
+         '89ffed8b3ff112a271c8a074967b7b5e8ebe2f6f',
+         '373f5babdd5dd2f93d01512901d02e6b39d6b57c636e72b07b8d80d27eb509ab'),
+    )
+    index_bounds_bindings: tuple = (
+        ('d62f6de64daa7e11a7936a6153748a7c5fae9e41', 'ecmascript/base/atomic_helper.cpp',
+         '7fd67717571c6d8fe7b10bf294998e952dc61e36',
+         'f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541'),
+        ('48fcec3686e45175f95b4600b579026a65149966', 'ecmascript/base/atomic_helper.cpp',
+         '80d7ad14e70825ef2daf7b3f2fc956a891bf8b2c',
+         '39521f4c6fa6b4b65d8b3daacd80f6e051b5a01c5aa814c9ac2ffc432529b36b'),
+        ('d62f6de64daa7e11a7936a6153748a7c5fae9e41', 'ecmascript/builtins/builtins_dataview.cpp',
+         'e6bac984354292405ae62f7728170d7be5e3760e',
+         'bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c'),
+        ('48fcec3686e45175f95b4600b579026a65149966', 'ecmascript/builtins/builtins_dataview.cpp',
+         'a2376e822e995333b2400520ca5b882de9578b5e',
+         '39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b'),
+        ('d62f6de64daa7e11a7936a6153748a7c5fae9e41',
+         'ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp',
+         'aedb6d26681535371d1e9ed90b697b923b8100e6',
+         'bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548'),
+        ('48fcec3686e45175f95b4600b579026a65149966',
+         'ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp',
+         'dce9388e8b7e33c87aec33ac4d067fe40370561b',
+         '89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386'),
+    )
+    index_bounds_dependencies: tuple = (
+        ('d62f6de64daa7e11a7936a6153748a7c5fae9e41', 'ecmascript/js_dataview.cpp',
+         '5057a103a88096b5db0e39be0feca2864a2ff8eb',
+         '3782d04ee5c44504bf453b3b45f96d7431ff902fb575257c425c707890b83243'),
+        ('d62f6de64daa7e11a7936a6153748a7c5fae9e41', 'ecmascript/base/number_helper.cpp',
+         'a648bf6cf36715d57c6466f0ab4bfdc00bdc8f35',
+         '94db5ecc8ff7ea79d656950abacd9c24756ccf6aa0e3b2b895d7dc9961dbc91f'),
+        ('48fcec3686e45175f95b4600b579026a65149966', 'ecmascript/js_dataview.cpp',
+         '5057a103a88096b5db0e39be0feca2864a2ff8eb',
+         '3782d04ee5c44504bf453b3b45f96d7431ff902fb575257c425c707890b83243'),
+        ('48fcec3686e45175f95b4600b579026a65149966', 'ecmascript/base/number_helper.cpp',
+         'a648bf6cf36715d57c6466f0ab4bfdc00bdc8f35',
+         '94db5ecc8ff7ea79d656950abacd9c24756ccf6aa0e3b2b895d7dc9961dbc91f'),
+    )
+    native_exception_bindings: tuple = (
+        ('3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724',
+         'ecmascript/compiler/native_inline_lowering.cpp',
+         'bdafa81ac797501852f639575d3a30f48b6ff25a',
+         'fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463'),
+        ('18d8532a200d0c9aa64a6dfe2b146dc841b52bf8',
+         'ecmascript/compiler/native_inline_lowering.cpp',
+         'df03fdce8a37cf2245577aec23c4c26deeebf02f',
+         '6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce'),
+    )
+    # Exact C1 Float32Array constructor source pair plus allocation helper.
+    # These pins authorize candidate replay only; they do not establish runtime
+    # build selection, allocation success, or an out-of-bounds access.
+    negative_double_length_bindings: tuple = ()
+    # Exact source profile for the ordinary TypedArray.set(arrayLike, offset)
+    # range-sum / byte-index wrap candidate. The backing-store writer is pinned
+    # separately so target identity alone cannot authorize a finding.
+    arraylike_set_bounds_bindings: tuple = ()
+    arraylike_set_bounds_dependencies: tuple = ()
     exception_guard_creator: tuple = ('NewTypedArray', 4)
     exception_guard_callers: tuple = (OWNER + '::Filter', OWNER + '::Map')
     exception_guard_caller_types: tuple = ('GateRef', 'GateRef', 'GateRef', 'Variable*', 'Label*', 'Label*')
@@ -225,6 +345,16 @@ class RuntimeTypeModel:
         return (tuple((revision, path, blob) for revision, path, blob, _ in self.target_bindings)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.exception_guard_bindings)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.receiver_guard_bindings)
+        + tuple((revision, path, blob) for revision, path, blob, _ in self.size_overflow_bindings)
+        + tuple((revision, path, blob) for revision, path, blob, _ in self.length_narrowing_bindings)
+        + tuple((revision, path, blob) for revision, path, blob, _ in self.index_bounds_bindings)
+        + tuple((revision, path, blob) for revision, path, blob, _ in self.index_bounds_dependencies)
+        + tuple((revision, path, blob) for revision, path, blob, _ in self.native_exception_bindings)
+        + tuple((revision, path, blob) for revision, path, blob, _ in self.negative_double_length_bindings)
+                + tuple((revision, path, blob) for revision, path, blob, _ in self.arraylike_set_bounds_bindings)
+                + tuple((revision, path, blob) for revision, path, blob, _ in self.arraylike_set_bounds_dependencies)
+                + tuple((revision, path, blob) for revision, path, blob, _ in self.species_read_width_bindings)
+                + tuple((revision, path, blob) for revision, path, blob, _ in self.species_read_width_dependencies)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.api_overload_evidence)
                 + tuple((self.effect_summary_revision, path, blob) for path, blob in self.source_dependencies)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.exception_guard_dependencies))
@@ -237,11 +367,47 @@ def c_line_static_model():
     base = RuntimeTypeModel()
     return replace(
         base,
-        version='0.8.13',
-        effect_summary_revision='c-line-static-contract-v14',
+        version='0.8.14',
+        effect_summary_revision='c-line-static-contract-v15',
         target_bindings=(base.target_bindings[-1],),
+        species_read_width_bindings=(base.species_read_width_bindings[-1],),
+        species_read_width_dependencies=base.species_read_width_dependencies,
         exception_guard_bindings=(base.exception_guard_bindings[-1],),
         receiver_guard_bindings=(),
+        size_overflow_bindings=base.size_overflow_bindings,
+        length_narrowing_bindings=base.length_narrowing_bindings,
+        index_bounds_bindings=base.index_bounds_bindings,
+        native_exception_bindings=base.native_exception_bindings,
+        negative_double_length_bindings=(
+            ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+             'ecmascript/compiler/common_stubs.cpp',
+             '6267f2f27a98a298b1190e327abbfa2bd58203f8',
+             '5a401580e666596fcf2ea89a8dc0321009b53ef5320b20edc59d37781d852212'),
+            ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+             'ecmascript/compiler/typed_hcr_lowering.cpp',
+             '1ad4e329a226fc9941db30fa7a10a6562f58f68d',
+             'acd4ed88bb4ba5d327d5628dc45b7b89685a9c425c5849891cbf2544e8534a0c'),
+            ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+             'ecmascript/compiler/new_object_stub_builder.cpp',
+             '991ac5ac034a1a027e3200787ec25c55b3f15b69',
+             '3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0'),
+        ),
+        arraylike_set_bounds_bindings=(
+            ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+             'ecmascript/builtins/builtins_typedarray.cpp',
+             '0fc27c213e1ea80d93e1e3807eec11baf2634832',
+             '14507ac872dc34a6c20b6f448678466f119de94a4ed1de6d91e269640936c81c'),
+        ),
+        arraylike_set_bounds_dependencies=(
+            ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+             'ecmascript/builtins/builtins_arraybuffer.cpp',
+             '2aa22c58803df690a5a2b326451e02297dc5e2f6',
+             '4d388d997313cf7c900f1f0d54fbe826266845665424e32cc9dd4cdbaa62dcc9'),
+            ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+             'ecmascript/builtins/builtins_typedarray.h',
+             'b291181c949c7038b7030a216f5bdc0e7474a1c2',
+             '651d426c00c1d8bc6503c1d717decf42b28c61c57336e9418ad422604a6a1be7'),
+        ),
         source_dependencies=(
             ('ecmascript/compiler/new_object_stub_builder.cpp',
              '991ac5ac034a1a027e3200787ec25c55b3f15b69'),

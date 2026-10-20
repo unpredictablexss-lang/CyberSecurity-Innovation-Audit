@@ -3,6 +3,7 @@ from collections import deque
 from dataclasses import dataclass
 
 from .analysis import Observation
+from .cross_helper import binding_matches, build_identity_helpers, unwrap_identity_expression
 from .model import OWNER, AnalysisBudget
 from .runtime_ir import build_graph
 from .syntax import name_node, walk
@@ -50,22 +51,20 @@ def _creator_assignment(fn, instruction, creator_name, creator_arity):
             yield binding
 
 
-def _critical_use(fn, instruction, binding, sink_name, sink_arity, glue_index, object_index):
+def _critical_use(fn, instruction, binding, sink_name, sink_arity, glue_index, object_index, identity_helpers=()):
     for node in walk(instruction.node):
         if node.type != "call_expression" or fn.call_name(node) != sink_name:
             continue
         args = fn.arguments(node)
-        refers_to_object = any(
-            arg.type == "identifier" and fn.resolve(fn.text(arg), arg) == binding
-            for arg in args
-        )
+        refers_to_object = any(binding_matches(fn, arg, binding, identity_helpers)
+                               for arg in args)
         if not refers_to_object:
             continue
         valid = fn.resolve(sink_name, node) is None
         valid = valid and len(args) == sink_arity and max(glue_index, object_index) < len(args)
         if valid:
             object_arg = args[object_index]
-            valid = object_arg.type == "identifier" and fn.resolve(fn.text(object_arg), object_arg) == binding
+            valid = binding_matches(fn, object_arg, binding, identity_helpers)
             glue_arg = args[glue_index]
             if glue_arg.type != "identifier":
                 valid = False
@@ -78,10 +77,12 @@ def _critical_use(fn, instruction, binding, sink_name, sink_arity, glue_index, o
             # argument-nested call could have effects that happen in the same IR
             # instruction, so the inter-instruction effect walk cannot see it.
             calls = [child for child in walk(instruction.node) if child.type == "call_expression"]
-            wrappers = [call for call in calls if fn.call_name(call) == "GetObjectType"]
-            sinks = [call for call in calls if fn.call_name(call) == sink_name]
+            semantic_calls = [call for call in calls
+                              if not any(helper.matches(fn, call) for helper in identity_helpers)]
+            wrappers = [call for call in semantic_calls if fn.call_name(call) == "GetObjectType"]
+            sinks = [call for call in semantic_calls if fn.call_name(call) == sink_name]
             valid = (
-                len(calls) == 2 and len(wrappers) == 1 and len(sinks) == 1
+                len(semantic_calls) == 2 and len(wrappers) == 1 and len(sinks) == 1
                 and fn.arguments(wrappers[0]) == (node,)
                 and fn.resolve("GetObjectType", wrappers[0]) is None
             )
@@ -100,7 +101,7 @@ def _writes_binding(fn, instruction, binding):
     return False
 
 
-def _has_pending_exception(fn, branch):
+def _has_pending_exception(fn, branch, identity_helpers=()):
     if branch.kind != "BRANCH" or not branch.arguments:
         return False
     condition = branch.arguments[0]
@@ -109,10 +110,10 @@ def _has_pending_exception(fn, branch):
     args = fn.arguments(condition)
     if fn.resolve("HasPendingException", condition) or len(args) != 1:
         return False
-    arg = args[0]
-    if arg.type != "identifier":
+    root, _ = unwrap_identity_expression(fn, args[0], identity_helpers)
+    if root is None or root.type != "identifier":
         return False
-    binding = fn.resolve(fn.text(arg), arg)
+    binding = fn.resolve(fn.text(root), root)
     return binding is not None and binding.name == "glue" and binding.parameter and binding.type_name == "GateRef"
 
 
@@ -146,7 +147,7 @@ def _known_exception_result_write(fn, instruction):
         and binding.type_name == "Variable*"
     )
 
-def _trace_use(fn, graph, start, sink_index, budget):
+def _trace_use(fn, graph, start, sink_index, budget, identity_helpers=()):
     queue = deque()
     for target, _ in graph.instructions[start].successors:
         if target is not None and target >= 0:
@@ -176,7 +177,7 @@ def _trace_use(fn, graph, start, sink_index, budget):
         if instruction.kind == "unknown" or instruction.problem:
             unknown.append(next_path)
             continue
-        if _has_pending_exception(fn, instruction):
+        if _has_pending_exception(fn, instruction, identity_helpers):
             for target, truth in instruction.successors:
                 if target is not None and target >= 0:
                     queue.append((target, bool(truth), next_path))
@@ -214,6 +215,7 @@ def analyze_exception_guard(unit, *, creator_name="NewTypedArray", creator_arity
     except (ValueError, RuntimeError) as error:
         return ExceptionGuardResult("failed", "failed",
                                     limitations=("parser_failure:" + type(error).__name__,))
+    identity_helpers = build_identity_helpers(functions)
     owner_functions = [fn for fn in functions
                        if fn.qualified_name in caller_names]
     if not owner_functions:
@@ -253,7 +255,7 @@ def analyze_exception_guard(unit, *, creator_name="NewTypedArray", creator_arity
                 index != start and _writes_binding(fn, instruction, binding)
                 for index, instruction in enumerate(graph.instructions)
             )
-            uses = [(index, _critical_use(fn, instruction, binding, sink_name, sink_arity, sink_glue_arg, sink_object_arg))
+            uses = [(index, _critical_use(fn, instruction, binding, sink_name, sink_arity, sink_glue_arg, sink_object_arg, identity_helpers))
                     for index, instruction in enumerate(graph.instructions)
                     if index > start]
             uses = [(index, result) for index, result in uses if result is not None]
@@ -281,7 +283,7 @@ def analyze_exception_guard(unit, *, creator_name="NewTypedArray", creator_arity
                 limitations.append(limitation)
                 continue
             status, paths, limitation, used_steps = _trace_use(
-                fn, graph, start, sink_index, budget)
+                fn, graph, start, sink_index, budget, identity_helpers)
             steps += used_steps
             line = sink_node.start_point[0] + 1
             kind = status

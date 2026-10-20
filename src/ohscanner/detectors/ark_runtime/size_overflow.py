@@ -43,6 +43,8 @@ class SizeOverflowCandidate:
     start_byte: int
     end_byte: int
     may_overflow: bool
+    sign_width_loss: bool = False
+    conversion_evidence: tuple = ()
 
 
 def _width(type_text):
@@ -57,7 +59,7 @@ def _width(type_text):
     return None
 
 
-def _loop_uses_allocated_copy(source, factor_names, allocation_names, body_line):
+def _loop_uses_allocated_copy(source, factor_names, allocation_names, body_line, aliases=None):
     # Keep offsets stable while ignoring braces and parentheses in comments and
     # literals. The production AST completeness gate is checked before this
     # lexically bounded scan; this code does not claim full C++ syntax coverage.
@@ -86,8 +88,11 @@ def _loop_uses_allocated_copy(source, factor_names, allocation_names, body_line)
             break
         header = source[opening + 1:closing]
         cursor = closing + 1
+        expanded_factors = set(factor_names)
+        for name in factor_names:
+            expanded_factors |= _related_names(name, aliases or {})
         if not any(re.search(r'\b' + re.escape(name) + r'\b', header)
-                   for name in factor_names):
+                   for name in expanded_factors):
             continue
         body_open = masked.find('{', closing + 1)
         next_loop = loop_pattern.search(masked, closing + 1)
@@ -148,6 +153,95 @@ def _balanced_delimiter(source, opening, left='(', right=')'):
     return None
 
 
+def _full_parenthesized(expression):
+    if not (expression.startswith('(') and expression.endswith(')')):
+        return False
+    depth = 0
+    for index, char in enumerate(expression):
+        if char == '(':
+            depth += 1
+        elif char == ')':
+            depth -= 1
+            if depth == 0 and index != len(expression) - 1:
+                return False
+    return depth == 0
+
+
+def _strip_identity_text_layers(expression, helper_names=()):
+    """Strip only syntax-transparent casts/parentheses and exact 1:1 helpers."""
+    current = expression.strip()
+    helper_pattern = re.compile(r'(?P<name>[A-Za-z_]\w*)\s*\(\s*(?P<arg>[^;()]*)\s*\)')
+    for _ in range(16):
+        previous = current
+        while _full_parenthesized(current):
+            current = current[1:-1].strip()
+        cast = re.fullmatch(
+            r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*[^>]+\s*>\s*\(\s*(?P<arg>[^;()]*)\s*\)',
+            current)
+        if cast:
+            current = cast.group('arg').strip()
+            continue
+        c_cast = re.fullmatch(r'\(\s*[A-Za-z_:][\w:\s*]*\s*\)\s*(?P<arg>[^;()]+)', current)
+        if c_cast:
+            current = c_cast.group('arg').strip()
+            continue
+        helper = helper_pattern.fullmatch(current)
+        if helper and helper.group('name') in helper_names:
+            current = helper.group('arg').strip()
+            continue
+        if current == previous:
+            break
+    return current
+
+
+def _operand_identity_name(expression, helper_names=()):
+    normalized = _strip_identity_text_layers(expression, helper_names)
+    return normalized if re.fullmatch(r'[A-Za-z_]\w*', normalized) else None
+
+
+def _factor_identity_name(expression, helper_names=()):
+    direct = _operand_identity_name(expression, helper_names)
+    if direct:
+        return direct
+    cast = re.fullmatch(
+        r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*[^>]+\s*>\s*'
+        r'\(\s*([^;()]+)\s*\)', expression.strip())
+    c_cast = re.fullmatch(r'\(\s*[\w:]+\s*\)\s*([^;()]+)', expression.strip())
+    return _operand_identity_name(cast.group(1) if cast else c_cast.group(1) if c_cast else '',
+                                 helper_names)
+
+
+def _alias_roots(source, helper_names=()):
+    aliases = {}
+    masked = _mask_cpp_noncode(source)
+    pattern = re.compile(r'\b(?:[A-Za-z_:][\w:\s*<>]*\s+)?(?P<name>\w+)\s*=\s*(?P<expr>[^;]+);')
+    for match in pattern.finditer(masked):
+        root = _operand_identity_name(match.group('expr'), helper_names)
+        if root and root != match.group('name'):
+            aliases[match.group('name')] = root
+    changed = True
+    while changed:
+        changed = False
+        for name, root in list(aliases.items()):
+            next_root = aliases.get(root, root)
+            if next_root != root:
+                aliases[name] = next_root
+                changed = True
+    return aliases
+
+
+def _related_names(name, aliases):
+    root = aliases.get(name, name)
+    return {item for item, source in aliases.items() if source == root} | {root}
+
+
+def _expand_alias_text(source, aliases):
+    if not aliases:
+        return source
+    pattern = re.compile(r'\b(?:' + '|'.join(re.escape(item) for item in sorted(aliases)) + r')\b')
+    return pattern.sub(lambda match: aliases.get(match.group(0), match.group(0)), source)
+
+
 def _split_product(expression):
     masked = _mask_cpp_noncode(expression)
     depth = 0
@@ -161,22 +255,44 @@ def _split_product(expression):
     return None
 
 
-def _operand_width(expression, type_map):
+def _signed(type_text):
+    if isinstance(type_text, int):
+        return False
+    normalized = re.sub(r'\b(const|volatile|typename)\b', '', type_text or '')
+    normalized = re.sub(r'\s+', '', normalized).replace('&', '').replace('*', '')
+    if normalized in _INTEGER_WIDTHS:
+        return _INTEGER_WIDTHS[normalized][1]
+    if normalized in ('int', 'signed', 'signedint', 'longlong', 'longlongint'):
+        return True
+    return False
+
+
+def _operand_facts(expression, type_map, aliases=None, helper_names=(), signed_map=None):
+    aliases = aliases or {}
     expression = expression.strip()
-    cast = re.fullmatch(r'static_cast\s*<\s*([^>]+)\s*>\s*\(\s*(\w+)\s*\)', expression)
-    if cast:
-        return type_map.get(cast.group(2)), _width(cast.group(1))
-    c_cast = re.fullmatch(r'\(\s*([\w:]+)\s*\)\s*(\w+)', expression)
-    if c_cast:
-        return type_map.get(c_cast.group(2)), _width(c_cast.group(1))
-    ident = re.fullmatch(r'\w+', expression)
-    if ident:
-        width = type_map.get(expression)
-        return width, width
-    return None, None
+    cast = re.fullmatch(
+        r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*([^>]+)\s*>\s*'
+        r'\(\s*([^;()]+)\s*\)', expression)
+    c_cast = re.fullmatch(r'\(\s*([\w:]+)\s*\)\s*([^;()]+)', expression)
+    inner = cast.group(2) if cast else c_cast.group(2) if c_cast else expression
+    root = _operand_identity_name(inner, helper_names)
+    if root is None:
+        return None, None, None, None
+    resolved = type_map.get(root, type_map.get(next((k for k, v in aliases.items() if v == root), root)))
+    source_signed = (signed_map or {}).get(root, _signed(resolved))
+    if cast or c_cast:
+        target = cast.group(1) if cast else c_cast.group(1)
+        return resolved, _width(target), source_signed, _signed(target)
+    return resolved, resolved, source_signed, source_signed
 
 
-def _text_allocations(source, size_name):
+def _operand_width(expression, type_map, aliases=None, helper_names=(), signed_map=None):
+    source, operation, _, _ = _operand_facts(
+        expression, type_map, aliases, helper_names, signed_map)
+    return source, operation
+
+
+def _text_allocations(source, size_name, aliases=None):
     masked = _mask_cpp_noncode(source)
     names, sites = set(), []
     for allocator in _ALLOCATORS:
@@ -196,7 +312,9 @@ def _text_allocations(source, size_name):
             if closing is None:
                 continue
             args = source[opening + 1:closing]
-            if not re.search(r'\b' + re.escape(size_name) + r'\b', args):
+            size_names = _related_names(size_name, aliases or {})
+            if not any(re.search(r'\b' + re.escape(name) + r'\b', args)
+                       for name in size_names):
                 continue
             prefix = masked[max(masked.rfind(';', 0, match.start()),
                                 masked.rfind('{', 0, match.start()),
@@ -218,6 +336,14 @@ def _text_allocations(source, size_name):
     return names, sites
 
 
+def _index_text_identity_helpers(text):
+    pattern = re.compile(
+        r'\b(?P<type>[A-Za-z_:][\w:\s*<>]*)\s+(?P<name>[A-Za-z_]\w*)\s*'
+        r'\(\s*(?P<ptype>[A-Za-z_:][\w:\s*<>]*)\s+(?P<param>\w+)\s*\)\s*'
+        r'\{\s*return\s+(?P=param)\s*;\s*\}')
+    return {match.group('name') for match in pattern.finditer(_mask_cpp_noncode(text))}
+
+
 def analyze_size_flows(source, *, functions=None, parse_complete=None):
     """Return bounded textual flows within lexically delimited C++ functions.
 
@@ -229,12 +355,15 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
     if parse_complete is False:
         return (), ('actual_parse_is_partial',)
     text = data.decode('utf-8')
+    identity_helper_names = _index_text_identity_helpers(text)
+    aliases = _alias_roots(text, identity_helper_names)
     masked = _mask_cpp_noncode(text)
     function_pattern = re.compile(
         r'\b(?P<name>(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*)\s*'
         r'\((?P<params>[^;{}]*)\)\s*(?:const\s*)?\{')
     excluded = {'if', 'for', 'while', 'switch', 'catch', 'sizeof', 'alignof'}
     candidates = []
+    limitations = []
     cursor = 0
     while True:
         function = function_pattern.search(masked, cursor)
@@ -263,6 +392,7 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
             r'uintptr_t|intptr_t)|unsigned(?:\s+int)?|signed(?:\s+int)?|int|'
             r'(?:unsigned\s+)?long\s+long))\s+(?P<name>\w+)\s*=\s*(?P<expr>[^;]+);')
         type_map = {}
+        signed_map = {}
         type_pattern = re.compile(
             r'\b((?:(?:std::)?(?:u?int(?:8|16|32|64)_t|size_t|ssize_t|'
             r'uintptr_t|intptr_t)|unsigned(?:\s+int)?|signed(?:\s+int)?|int|'
@@ -270,27 +400,44 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
         function_region = text[function.start():closing + 1]
         for declaration in type_pattern.finditer(_mask_cpp_noncode(function_region)):
             type_map[declaration.group(2)] = _width(declaration.group(1))
+            signed_map[declaration.group(2)] = _signed(declaration.group(1))
         for declaration in declarations.finditer(body_mask):
             result_type = _width(declaration.group('type'))
             product = _split_product(body[declaration.start('expr'):declaration.end('expr')])
             if product is None or result_type is None:
                 continue
             left, right = product
-            left_source, left_op = _operand_width(left, type_map)
-            right_source, right_op = _operand_width(right, type_map)
+            left_source, left_op, left_signed, left_target_signed = _operand_facts(
+                left, type_map, aliases, identity_helper_names, signed_map)
+            right_source, right_op, right_signed, right_target_signed = _operand_facts(
+                right, type_map, aliases, identity_helper_names, signed_map)
             if None in (left_source, right_source, left_op, right_op):
+                unresolved_allocated, _ = _text_allocations(body, declaration.group('name'), aliases)
+                if unresolved_allocated:
+                    limitations.append(
+                        'numeric_conversion_semantics_unmodeled:' + declaration.group('name'))
                 continue
-            factor_names = tuple(match.group(1) for operand in (left, right)
-                                 if (match := re.search(r'(\w+)\s*\)?\s*$', operand)))
+            factor_names = tuple(name for operand in (left, right)
+                                 if (name := _factor_identity_name(operand, identity_helper_names)))
             if len(factor_names) != 2:
                 continue
             operation_width = max(32, left_op, right_op)
-            may_overflow = operation_width < left_source + right_source
+            width_loss = operation_width < left_source + right_source
+            left_sign_loss = left_signed and left_op < left_source
+            right_sign_loss = right_signed and right_op < right_source
+            sign_width_loss = left_sign_loss or right_sign_loss
+            may_overflow = width_loss or sign_width_loss
+            conversion_evidence = tuple(sorted(set(
+                (side + '_signed_source_to_' + ('signed' if target_signed else 'unsigned') + '_target')
+                for side, source_signed, target_signed in (
+                    ('left', left_signed, left_target_signed),
+                    ('right', right_signed, right_target_signed))
+                if source_signed and not target_signed)))
             result_name = declaration.group('name')
-            allocated, allocation_lines = _text_allocations(body, result_name)
+            allocated, allocation_lines = _text_allocations(body, result_name, aliases)
             if not allocated:
                 continue
-            loop_line = _loop_uses_allocated_copy(body, factor_names, allocated, body_line)
+            loop_line = _loop_uses_allocated_copy(body, factor_names, allocated, body_line, aliases)
             if loop_line is None:
                 continue
             expression_start = declaration.start('expr')
@@ -305,9 +452,9 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
             candidates.append(SizeOverflowCandidate(
                 line, column, function_name, result_name, factor_names,
                 body_line + min(allocation_lines) - 1, loop_line,
-                start_byte, end_byte, may_overflow))
+                start_byte, end_byte, may_overflow, sign_width_loss, conversion_evidence))
         cursor = closing + 1
-    return tuple(candidates), ()
+    return tuple(candidates), tuple(sorted(set(limitations)))
 
 
 def analyze_size_overflow(source):
@@ -324,12 +471,17 @@ def size_overflow_result_from_flows(unit, model_digest, flows, limitations=()):
     observations = tuple(
         Observation(
             kind='candidate', line=flow.line, column=flow.column,
-            reason='narrow_product_flows_to_allocation_and_copy_loop',
+            reason=('signed_narrowing_product_flows_to_allocation_and_copy_loop'
+                    if flow.sign_width_loss else
+                    'narrow_product_flows_to_allocation_and_copy_loop'),
             target_identity=flow.result_name,
             token_origin=' * '.join(flow.factor_names),
             token_line=flow.line, creation_line=flow.allocation_line,
             path=(flow.line, flow.allocation_line, flow.loop_line),
-            constraints=((flow.line, 'product_width_covers_factor_ranges', not flow.may_overflow),
+            constraints=((flow.line, 'product_width_covers_factor_ranges',
+                          not (flow.may_overflow and not flow.sign_width_loss)),
+                         (flow.line, 'conversion_preserves_signed_source_width',
+                          not flow.sign_width_loss),
                          (flow.loop_line, 'copy_loop_uses_factor_bound', True)),
             symbol=flow.function, region_start_byte=flow.start_byte,
             region_end_byte=flow.end_byte,
@@ -349,3 +501,243 @@ def analyze_size_overflow_unit(unit, model_digest):
     flows, limitations = analyze_size_flows(
         unit.text, parse_complete=unit.parse_status == 'complete')
     return size_overflow_result_from_flows(unit, model_digest, flows, limitations)
+
+
+
+def _bounded_function_regions(text):
+    masked = _mask_cpp_noncode(text)
+    pattern = re.compile(
+        r'\b(?P<name>(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*)\s*'
+        r'\((?P<params>[^;{}]*)\)\s*(?:const\s*)?\{')
+    excluded = {'if', 'for', 'while', 'switch', 'catch', 'sizeof', 'alignof'}
+    cursor = 0
+    while True:
+        match = pattern.search(masked, cursor)
+        if match is None:
+            return
+        cursor = match.end()
+        if match.group('name').split('::')[-1] in excluded:
+            continue
+        opening = masked.find('{', match.start(), match.end())
+        closing = _balanced_delimiter(masked, opening, '{', '}')
+        if closing is None:
+            continue
+        yield (match.group('name'), text[opening + 1:closing],
+               text.count('\n', 0, opening + 1) + 1,
+               len(text[:opening + 1].encode('utf-8')))
+        cursor = closing + 1
+
+
+def _position(text, offset, base_line, base_byte):
+    local = text[:offset]
+    return (base_line + local.count('\n'),
+            len(local[local.rfind('\n', 0, offset) + 1:offset].encode('utf-8')) + 1,
+            base_byte + len(local.encode('utf-8')))
+
+
+@dataclass(frozen=True)
+class LengthNarrowingCandidate:
+    line: int
+    column: int
+    function: str
+    result_name: str
+    conversion_line: int
+    allocation_line: int
+    start_byte: int
+    end_byte: int
+
+
+def analyze_length_narrowing_flows(source):
+    """Find signed 32-bit ToIndex results that flow into TypedArray allocation.
+
+    This is deliberately a narrow local conversion/allocation shape. It does
+    not establish that a RangeError patch is safe or that a product path has
+    memory-safety impact.
+    """
+    text = source.decode('utf-8') if isinstance(source, bytes) else source
+    identity_helper_names = _index_text_identity_helpers(text)
+    aliases = _alias_roots(text, identity_helper_names)
+    candidates, limitations, applicable = [], [], False
+    signed_types = r'(?:int32_t|std::int32_t|signed\s+int|int)'
+    for name, body, body_line, body_byte in _bounded_function_regions(text):
+        if 'ToIndex' not in body or 'AllocateTypedArray' not in body:
+            continue
+        applicable = True
+        signed_found = False
+        declarations = re.finditer(
+            r'\b(?P<type>' + signed_types + r')\s+(?P<name>\w+)\s*=\s*(?:0|-1)\s*;', body)
+        for declaration in declarations:
+            signed_found = True
+            result_name = declaration.group('name')
+            related = _related_names(result_name, aliases)
+            name_pattern = '(?:' + '|'.join(re.escape(item) for item in sorted(related)) + ')'
+            conversion = re.search(
+                r'\b(?P<name>' + name_pattern + r')\s*=\s*(?:'
+                r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*(?:std::)?int32_t\s*>\s*\([^;]+\)|'
+                r'\(\s*(?:std::)?int32_t\s*\)\s*[^;]+|'
+                r'base::NumberHelper::DoubleInRangeInt32\s*\([^;]+\))\s*;', body)
+            allocation = re.search(
+                r'\bAllocateTypedArray\s*\([^;]*\b(?:' + name_pattern + r')\b[^;]*\)', body)
+            if conversion is None or allocation is None:
+                continue
+            expression = conversion.group(0)
+            offset = conversion.start()
+            line, column, start_byte = _position(body, offset, body_line, body_byte)
+            alloc_offset = allocation.start()
+            alloc_line = body_line + body[:alloc_offset].count('\n')
+            candidates.append(LengthNarrowingCandidate(
+                line, column, name, result_name, line, alloc_line,
+                start_byte, start_byte + len(expression.encode('utf-8'))))
+        if (signed_found and not candidates and re.search(
+                r'\bAllocateTypedArray\s*\(', body) and re.search(r'\bToIndex\s*\(', body)
+                and re.search(r'(?:static_cast\s*<|DoubleInRangeInt32|\b\w+\s*=\s*[A-Za-z_]\w*\s*\()', body)):
+            limitations.append('typedarray_length_conversion_semantics_unmodeled:' + name)
+    if not applicable:
+        return (), ('not_applicable_to_typedarray_length_allocation',)
+    return tuple(candidates), tuple(sorted(set(limitations)))
+
+
+def length_narrowing_result(unit, model_digest):
+    candidates, limitations = analyze_length_narrowing_flows(unit.text)
+    observations = tuple(Observation(
+        'candidate', item.line, item.column,
+        'signed_32_bit_to_index_result_flows_to_typedarray_allocation',
+        item.result_name, 'ToIndex', item.conversion_line, item.allocation_line,
+        (item.conversion_line, item.allocation_line),
+        ((item.allocation_line, 'allocation_uses_narrowed_length', True),),
+        item.function, item.start_byte, item.end_byte)
+        for item in candidates)
+    if limitations and limitations == ('not_applicable_to_typedarray_length_allocation',):
+        return AnalysisResult('limited', 'not_analyzed', (), limitations,
+                              steps=0, model_digest=model_digest)
+    if limitations:
+        return AnalysisResult('limited', 'partial', observations, limitations,
+                              steps=len(candidates) + len(limitations), model_digest=model_digest)
+    if not candidates and unit.parse_status == 'complete':
+        return AnalysisResult('completed', 'complete', (), ('no_local_length_narrowing_candidate',),
+                              steps=0, model_digest=model_digest)
+    return AnalysisResult('limited', 'partial', observations,
+                          ('bounded_length_conversion_model_no_product_impact',),
+                          steps=len(candidates), model_digest=model_digest)
+
+
+@dataclass(frozen=True)
+class IndexBoundsCandidate:
+    line: int
+    column: int
+    function: str
+    index_expression: str
+    arithmetic_line: int
+    start_byte: int
+    end_byte: int
+
+
+def analyze_index_bounds_flows(source):
+    """Find 32-bit index arithmetic reaching DataView/Atomics buffer access."""
+    text = source.decode('utf-8') if isinstance(source, bytes) else source
+    identity_helper_names = _index_text_identity_helpers(text)
+    aliases = _alias_roots(text, identity_helper_names)
+    candidates, limitations, applicable = [], [], False
+    for name, body, body_line, body_byte in _bounded_function_regions(text):
+        body_for_aliases = _expand_alias_text(body, aliases)
+        semantic_name = any(token in name for token in ('DataView', 'Atomic', 'ValidateAtomicAccess'))
+        buffer_flow = any(token in body for token in (
+            'GetValueFromBuffer', 'SetValueInBuffer', 'GetDataPointFromBuffer', 'ValidateAtomicAccess'))
+        if not semantic_name and not buffer_flow:
+            continue
+        if (not any(token in body for token in ('ToIndex', 'requestIndex', 'accessIndex'))
+                and not re.search(r'\bindex\b', body)):
+            continue
+        applicable = True
+        narrow = re.search(
+            r'(?:DoubleInRangeInt32\s*\([^;]+\)|static_cast\s*<\s*(?:std::)?int32_t\s*>\s*\([^;]+\)|'
+            r'Int32Add\s*\([^;]+\))', body)
+        arithmetic = re.search(
+            r'(?:Int32Add\s*\([^;]+\)|static_cast\s*<\s*uint32_t\s*>\s*\([^;]+\)\s*\+\s*\w+|'
+            r'\buint32_t\s+\w+\s*=\s*[^;]*\+)', body)
+        bounds = any(token in body or token in body_for_aliases for token in (
+            'Int32GreaterThan', 'getIndex +elementSize >', 'index * elementSize + offset',
+            'index + elementSize >', 'index) + elementSize >'))
+        if narrow and arithmetic and bounds:
+            offset = arithmetic.start()
+            line, column, start_byte = _position(body, offset, body_line, body_byte)
+            candidates.append(IndexBoundsCandidate(
+                line, column, name, narrow.group(0), line,
+                start_byte, start_byte + len(arithmetic.group(0).encode('utf-8'))))
+        elif re.search(r'UnknownIndexConversion|CheckIndexBounds', body):
+            limitations.append('dataview_atomic_index_bounds_semantics_unmodeled:' + name)
+        elif (re.search(r'index\s*>\s*size\s*\|\|\s*elementSize\s*>\s*size\s*-\s*index', body)
+              or re.search(r'elementSize\s*>\s*size\s*-\s*index', body)):
+            continue
+        elif any(token in body for token in ('DoubleToUInt64', 'Int64UnsignedGreaterThan', 'uint64_t index')):
+            limitations.append('index_width_bounds_arithmetic_not_fully_proven:' + name)
+        else:
+            limitations.append('dataview_atomic_index_bounds_semantics_unmodeled:' + name)
+    if not applicable:
+        return (), ('not_applicable_to_dataview_or_atomics_index_bounds',)
+    return tuple(candidates), tuple(sorted(set(limitations)))
+
+
+def _dataview_width_evidence_is_bounded(source, evidence):
+    """Check the small helper facts needed to rule out this u32 wrap path."""
+    if not evidence:
+        return False
+    if not re.search(
+            r'uint32_t\s+JSDataView::GetElementSize\s*\([^)]*\)\s*\{[\s\S]*?'
+            r'case\s+DataViewType::INT8:[\s\S]*?size\s*=\s*1;[\s\S]*?'
+            r'size\s*=\s*2;[\s\S]*?size\s*=\s*4;[\s\S]*?size\s*=\s*8;[\s\S]*?'
+            r'return\s+size;[\s\S]*?\}', evidence):
+        return False
+    if not re.search(
+            r'int32_t\s+NumberHelper::DoubleInRangeInt32\s*\(\s*double\s+\w+\s*\)\s*\{'
+            r'[\s\S]*?return\s+INT_MAX;[\s\S]*?return\s+INT_MIN;[\s\S]*?'
+            r'return\s+base::NumberHelper::DoubleToInt\s*\(', evidence):
+        return False
+    # Only the two API functions with local negative checks and a view-end
+    # guard qualify. Do not affect Atomics or the compiler's SetTypedValue.
+    api = ('GetViewValue', 'SetViewValue')
+    return all(name in source and re.search(
+        rf'{name}[\s\S]*?if\s*\(\s*index\w*\s*<\s*0\s*\)[\s\S]*?'
+        r'if\s*\([\s\S]{0,160}elementSize\s*>\s*size\s*\)', source)
+        for name in api)
+
+
+def index_bounds_result(unit, model_digest, width_evidence=None):
+    candidates, limitations = analyze_index_bounds_flows(unit.text)
+    width_proof = _dataview_width_evidence_is_bounded(unit.text, width_evidence)
+    if width_proof:
+        suppressed = tuple(item for item in candidates
+                           if any(name in item.function for name in ('GetViewValue', 'SetViewValue')))
+        candidates = tuple(item for item in candidates if item not in suppressed)
+        limitations = tuple(limitations) + tuple(
+            'dataview_u32_index_wrap_excluded_by_exact_width_bounds:' + name
+            for name in sorted({item.function.rsplit('::', 1)[-1] for item in suppressed}))
+    observations = tuple(Observation(
+        'candidate', item.line, item.column,
+        'signed_32_bit_index_arithmetic_reaches_dataview_or_atomic_bounds_check',
+        item.function, item.index_expression, item.line, item.line,
+        (item.line,), ((item.line, 'bounds_arithmetic_width', 32),),
+        item.function, item.start_byte, item.end_byte)
+        for item in candidates)
+    if limitations and limitations == ('not_applicable_to_dataview_or_atomics_index_bounds',):
+        return AnalysisResult('limited', 'not_analyzed', (), limitations,
+                              steps=0, model_digest=model_digest)
+    if any(not item.startswith(('index_width_bounds_arithmetic_not_fully_proven:',
+                                'dataview_atomic_index_bounds_semantics_unmodeled:',
+                                'dataview_u32_index_wrap_excluded_by_exact_width_bounds:'))
+           for item in limitations):
+        return AnalysisResult('failed', 'failed', observations, limitations,
+                              steps=len(candidates), model_digest=model_digest)
+    if limitations:
+        unknown = tuple(Observation(
+            'unknown', 1, 1, item, symbol=item.rsplit(':', 1)[-1])
+            for item in limitations)
+        return AnalysisResult('limited', 'partial', observations + unknown, limitations,
+                              steps=len(candidates) + len(limitations), model_digest=model_digest)
+    if not candidates and unit.parse_status == 'complete':
+        return AnalysisResult('completed', 'complete', (),
+                              ('no_local_dataview_index_width_candidate',),
+                              steps=0, model_digest=model_digest)
+    return AnalysisResult('limited', 'partial', observations,
+                          ('bounded_index_width_model_no_general_bounds_proof',),
+                          steps=len(candidates), model_digest=model_digest)
