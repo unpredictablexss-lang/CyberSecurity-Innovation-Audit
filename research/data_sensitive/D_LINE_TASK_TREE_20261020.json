@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "D99_T98_IN_PROGRESS",
+  "status": "D101_T100_IN_PROGRESS",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -556,22 +556,82 @@
       "id": "D99",
       "kind": "development",
       "title": "評估分組case標籤及return表達式的終止證明",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D98", "T97"],
       "input": "T97 records grouped consecutive case labels and return-expression arms as known_gap_not_passed after naked-return closure.",
       "completion": "Implement only when AST structure proves grouped labels share the same direct return and every unique case/default arm terminates; preserve duplicate, fallthrough, mixed-exit, partial and unknown cases.",
-      "tests": ["T98"]
+      "tests": ["T98"],
+      "commit": "f9296a695907845e6bd32598892ff036d4ac62d1",
+      "integration_commit": "a5b8a9408",
+      "evidence_commit": "71a054eb031999751291c023c6f300141acbcacc",
+      "evidence_integration_commit": "475f9ae33",
+      "completion": "Recognize tightly bounded grouped case labels and value-return arms, while preserving return-expression effects and material return propagation to caller sinks.",
+      "validation": "0.21.14; developer8 methods baseline5 failures→0, data343; independent T98 20 methods baseline7→0, data363; owner data363 and compatibility62 pass. T85 direct/Runner24, common evidence and638 calls unchanged; no switch appears in T85, so replay is compatibility-only."
     },
     {
       "id": "T98",
       "kind": "testing",
       "title": "獨立挑战switch分组标签和return表达式终止语义",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "depends_on": ["D98", "T97"],
       "feedback_to": ["D99"],
-      "completion": "Independently validate grouped labels, return expression arms, and their fallthrough boundaries; fixed T85 and conservative negative controls."
+      "completion": "Independent 20-method grouped-label and return-value matrix closed postlude overcandidates and confirmed helper-material return reaches caller output.",
+      "commit": "687b0540610e56100a5d630089ef6d8e63208e84",
+      "integration_commit": "ad70097c0",
+      "validation": "20 methods; baseline7 failures→0; full data363/compat62 pass. T85 direct/Runner24 with common evidence and638 call facts unchanged; source has zero switch sites, compatibility evidence only."
+    },
+    {
+      "id": "D100",
+      "kind": "development",
+      "title": "评估switch arm单层if/else双return终止证明",
+      "status": "COMPLETED_INTEGRATED",
+      "agent": "/root/d84_sensitive_quality",
+      "depends_on": ["D99", "T98"],
+      "input": "D99 notes nested exits are unsupported. Test only a single if/else inside a flat switch arm where both branches directly return.",
+      "completion": "Add finite nested-return proof only when both if/else arms terminate and no fallthrough remains; missing else, live branch, nested switch/loop, goto and partial units remain conservative.",
+      "tests": ["T99"],
+      "commit": "835f02dc72ac0c1926634e0cc4a10f82a4994052",
+      "integration_commit": "2c0b3ba0b",
+      "evidence_commit": "4f1486fe73178adf11b19428a5c0cf57f85c7bef",
+      "evidence_integration_commit": "b08216b93",
+      "completion": "Single if/else in a flat switch arm now ends the arm only when both branches return; return value and material flow remain tracked. Other exits stay conservative.",
+      "validation": "0.21.15; developer8 methods baseline5 failures→0, data371; independent T99 16 methods baseline8→0, data387; owner data387 and compatibility62 pass. T85 24 findings/638 calls unchanged. Comma-expression status pollution remains known_gap_not_passed."
+    },
+    {
+      "id": "T99",
+      "kind": "testing",
+      "title": "独立挑战switch arm条件return与仍可达路径",
+      "status": "COMPLETED_INTEGRATED",
+      "agent": "/root/t83_static_feedback",
+      "depends_on": ["D99", "T98"],
+      "feedback_to": ["D100"],
+      "completion": "Independent 16-method nested-return matrix closes false postlude candidates and verifies helper material return reaches caller output.",
+      "commit": "4405bfa90f4a0ee495ecb99c47ff035889363a68",
+      "integration_commit": "d7c82d412",
+      "validation": "16 methods; baseline8 subassertion failures→0; data387/compat62 pass; T85 24/638 unchanged. Comma expression false caller flow is separately recorded as unresolved gap."
+    },
+    {
+      "id": "D101",
+      "kind": "development",
+      "title": "精确建模comma表达式末操作数返回值",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
+      "depends_on": ["D100", "T99"],
+      "input": "T99 fixed case: return (HILOG_INFO(..., value), 0) has a real internal log but its integer status is incorrectly material-tainted at the caller.",
+      "completion": "For provably built-in comma expressions, retain effects of all operands but derive return value only from the final operand; never assume user-defined operator comma or unknown types are built-in.",
+      "tests": ["T100"]
+    },
+    {
+      "id": "T100",
+      "kind": "testing",
+      "title": "独立挑战comma返回值与左侧effects边界",
+      "status": "IN_PROGRESS",
+      "agent": "/root/t83_static_feedback",
+      "depends_on": ["D100", "T99"],
+      "feedback_to": ["D101"],
+      "completion": "Independently verify built-in comma final-value semantics, left-side sink preservation, material final operand propagation, and overload/unknown-type conservatism; replay fixed source and T85."
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
@@ -603,13 +663,13 @@
     "known_disclosed_cves": "0.19.11"
   },
   "integrated_tests": {
-    "data": 335,
+    "data": 387,
     "known_and_corpus": 39,
     "parser_linkage": 16,
     "ast_parser": 7,
-    "total": 397,
+    "total": 449,
     "result": "PASS"
   },
   "remote_branch": "origin/codex/d-owner-20261020-01a1571f",
-  "pushed_head": "ad947a10289e0669225ba9461393466341d733f1"
+  "pushed_head": "d836b1c59cbe49f26fe4bdeb2ee5fb73e6a03498"
 }
