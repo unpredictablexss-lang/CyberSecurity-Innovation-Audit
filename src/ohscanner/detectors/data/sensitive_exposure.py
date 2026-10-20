@@ -349,7 +349,7 @@ class SensitiveExposureDetector:
             'Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.',
             'Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.',
             'Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.',
-            'Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.',
+            'Shared AST indexes functions/calls; bounded private expression analysis retains syntax, type and alias limitations.',
             'Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.',
         ))
         merged={}

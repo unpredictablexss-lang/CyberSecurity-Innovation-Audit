@@ -368,11 +368,9 @@
       "agent": "/root/d84_sensitive_quality",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
       "input": "D92 fixed certificate source at napi_cert_utils.cpp:890 calls napi_get_value_string_utf8(env,arg,nullptr,0,&length), while line915 writes bytes to an allocated buffer. Determine whether exact selected build binds the query call to the intended N-API API and whether length-only use merits a candidate.",
-      "completion": "Only suppress/role-classify the exact length-query invocation when source/build/declaration identity and argument binding are proven; preserve line915 byte writes and any output/log/error/custom wrapper behavior. If version binding is absent, retain candidate and deliver source-backed report. Developer tests and strict T85 direct/Runner identity/coverage replay.",
       "tests": [
         "T92"
       ],
-      "status": "COMPLETED_INTEGRATED",
       "commit": "070c2a7470c1e4ac8f9d79a484fd002651d3f4ef",
       "evidence_commit": "473757e9b5bf85c37eb50d8299651a21bf12b98b",
       "integration_test_commit": "5ed9d61c4",
@@ -403,7 +401,6 @@
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D93", "T92"],
       "input": "D93_POINTER_OUTPUT_GAP_20261020.json records a valid custom helper whose material-derived `*length = (unsigned char)value[0]` write is not carried to a later log; the scanner returns zero findings and partial coverage because destination alias proof is missing.",
-      "completion": "Unknown material-derived pointer writes retain an unresolved candidate; proven destination aliases propagate to later sinks; literal-only metadata writes remain non-material. Custom names, shadows, callback/macro, missing/partial and unknown aliases do not gain blanket proof.",
       "tests": ["T93"],
       "code_commits": [
         "5d33abf99857584a7194cb466590592e397e9339",
@@ -438,7 +435,6 @@
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D94", "T93"],
       "input": "D94's bounded PointerTarget state invalidates uncertain targets. Independently challenge same-target and divergent-target branch merges, invalid branch paths, shadow restoration and loop rebinding; implement only if a concrete failure exists.",
-      "completion": "Same-target branches preserve proven propagation; divergent/invalid/unknown branch targets retain unresolved material-write candidates without contaminating both destinations. Scope and loop changes do not leak stale targets.",
       "tests": ["T94"],
       "commit": "c4605710ac517ca5b61f48fef03b31860fb88966",
       "integration_commit": "347bfd7bc",
@@ -468,7 +464,6 @@
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D95", "T94"],
       "input": "D95 fixed for-header pointer shadow restoration. T95 independently tests whether other C++ control-statement declaration scopes restore pointer targets correctly.",
-      "completion": "Fix only a concrete scope-lifetime failure for if/while/switch/condition declarations. Proven outer target resumes after the control statement; inner target does not leak. Preserve conservative branch joins and existing material-write controls.",
       "tests": ["T95"],
       "commit": "a3d414b600d18aab886a22876669f1d043a98f2f",
       "integration_commit": "f0750e8dd",
@@ -498,7 +493,6 @@
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D96", "T95"],
       "input": "T95 found same-target multi-case switch rebinding remains unresolved because case exhaustiveness/fallthrough is not modeled.",
-      "completion": "Implement only a concrete narrow same-target merge that is safe under enumerated labels, default, fallthrough and exits; preserve unresolved candidates for incomplete or ambiguous control flow. If no safely bounded improvement exists, deliver an evidence-backed boundary report.",
       "tests": ["T96"],
       "commit": "ae71c3c8e099c42b1d5df81b1fe9c32cddd2a39a",
       "revision_commit": "4958df655f86c1199bc326138aaf3b4ecaf9587e",
@@ -530,7 +524,6 @@
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D97", "T96"],
       "input": "T96 D97_VALIDATION exhaustive_all_return_switch_revives_dead_fallthrough: all explicit case arms plus default return, yet switch-following material sink is still scanned.",
-      "completion": "Suppress only a post-switch path proven unreachable from a complete, unambiguous all-return switch. Missing default, fallthrough, mixed exits, unknown/duplicate labels, partial AST or incomplete selected units retain conservative behavior.",
       "tests": ["T97"],
       "commit": "b3dfd70894290c344017c33198b905c70eb51985",
       "integration_commit": "0334616ec",
@@ -560,7 +553,6 @@
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D98", "T97"],
       "input": "T97 records grouped consecutive case labels and return-expression arms as known_gap_not_passed after naked-return closure.",
-      "completion": "Implement only when AST structure proves grouped labels share the same direct return and every unique case/default arm terminates; preserve duplicate, fallthrough, mixed-exit, partial and unknown cases.",
       "tests": ["T98"],
       "commit": "f9296a695907845e6bd32598892ff036d4ac62d1",
       "integration_commit": "a5b8a9408",
@@ -590,7 +582,6 @@
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D99", "T98"],
       "input": "D99 notes nested exits are unsupported. Test only a single if/else inside a flat switch arm where both branches directly return.",
-      "completion": "Add finite nested-return proof only when both if/else arms terminate and no fallthrough remains; missing else, live branch, nested switch/loop, goto and partial units remain conservative.",
       "tests": ["T99"],
       "commit": "835f02dc72ac0c1926634e0cc4a10f82a4994052",
       "integration_commit": "2c0b3ba0b",
@@ -620,7 +611,6 @@
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D100", "T99"],
       "input": "T99 fixed case: return (HILOG_INFO(..., value), 0) has a real internal log but its integer status is incorrectly material-tainted at the caller.",
-      "completion": "For provably built-in comma expressions, retain effects of all operands but derive return value only from the final operand; never assume user-defined operator comma or unknown types are built-in.",
       "tests": ["T100"],
       "commit": "ecaa9b0c32df2fb1688027a1b0e2af67c79bf540",
       "integration_commit": "8d7374f64",
@@ -650,14 +640,13 @@
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D101", "T100"],
       "input": "T100 records valid return(out=key,0) as TS root ERROR, while direct can see operand effects and Runner blocks/not_analyzed.",
-      "completion": "Parse a narrowly specified valid comma expression without losing effects, precedence or byte offsets; preserve unsupported/invalid expressions as partial, never pass blocked as zero findings.",
       "tests": ["T101"],
       "commit": "604d392e56d4deb922304caa2735133282e0cbb1",
       "integration_commit": "dde92c580",
       "evidence_commit": "c0051dd43b64895ad416246c650dbf0199915698",
       "evidence_integration_commit": "1f44ac74a",
       "completion": "Recover only complete same-span common C/C++ assignment-comma subtrees, retaining original bytes/positions and rejecting unrelated C++/partial syntax.",
-      "validation": "D102 parser7 + developer data413 + compatibility62; T101 independent18, data431, compatibility69; owner data431/431, compatibility69/69. T85 remains24 findings/638 calls. Unmatched-span legal forms and const-char** summary/type proof remain unknown/blocked."
+      "validation": "D102 parser7 + developer data413 + compatibility69; T101 independent18, data431, compatibility69; owner data431/431, compatibility69/69. T85 remains24 findings/638 calls. Unmatched-span legal forms and const-char** summary/type proof remain unknown/blocked."
     },
     {
       "id": "T101",
@@ -687,7 +676,6 @@
       "completion": "Pinned three complete ArkUI NAPI files and BUILD metadata, replayed without source modification; report distinguishes complete parsing, partial analysis, blocked Runner and unknown unselected dependencies.",
       "validation": "D103/T102 independent11 cross-checks agree: 33,437 bytes, 217 calls, direct/Runner0→0 but blocked and3 analysis-partial; enum switch is preprocessed and outside optimization admission; comma/recovery absent. Zero is not a safety result.",
       "depends_on": ["D102", "T101"],
-      "completion": "Select reproducible local/public C++ source containing the supported shapes; bind exact source revision/hash/build context, replay direct/Runner, and record feature presence and evidence limits without product/accuracy claims.",
       "tests": ["T102"]
     },
     {
@@ -701,8 +689,7 @@
       "completion": "Independently verified fixed ArkUI NAPI source/build manifests and the 0/0 blocked, 3-partial result; confirmed no supported comma/recovery shapes in the selected source.",
       "validation": "11 independent cross-checks agree with D103; 217 raw call facts stable; six BUILD cpp files include only helper.cpp in scope; unselected headers/build execution remain unknown/not_run; zero findings are not a clean safety result.",
       "depends_on": ["D102", "T101"],
-      "feedback_to": ["D103"],
-      "completion": "Independently verify source identity, selected scope, feature shape, findings and parse/analysis coverage; ensure unavailable is unknown/not_run, not zero-risk."
+      "feedback_to": ["D103"]
     },
     {
       "id": "D104",
@@ -730,8 +717,7 @@
   "first_round_findings": [
     {
       "developer": "D83",
-      "issue": "conditional quota guard without braces may suppress an otherwise unprotected candidate",
-      "status": "FIXED_AND_RETESTED"
+      "issue": "conditional quota guard without braces may suppress an otherwise unprotected candidate"
     },
     {
       "developer": "D84",
