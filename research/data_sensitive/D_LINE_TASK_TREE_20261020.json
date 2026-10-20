@@ -243,21 +243,23 @@
       "evidence_commit": "68fc4b6cf1f3a1c548716b86f162c58dc48d8715",
       "integration_commit": "f30ca3cbd",
       "final_evidence_integration": "0c0a66f4d",
-      "validation": "0.21.6; exact fixed T85 three-file direct and Runner 20→19; only schema key at line349 removed; 19 remaining IDs/messages same; coverage 3 partial; 12 developer +144 data +61 compatibility tests pass; T88 13 independent methods pending final report integration"
+      "validation": "0.21.6; exact fixed T85 three-file direct and Runner 20→19; only schema key at line349 removed; 19 remaining IDs/messages same; coverage 3 partial; 12 developer +144 data +61 compatibility tests pass; T88 independently rerun 13/13; fixed-source verifier reproduced direct/Runner 20→19, positions unchanged"
     },
     {
       "id": "T88",
       "kind": "testing",
       "title": "独立验证LOGE宏属性名与真实密码值边界",
-      "status": "IN_PROGRESS_FINAL_REPORT",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
       "feedback_to": [
         "D89"
       ],
-      "completion": "Challenge D89 with exact T85 fixed source and independent safe-key, real-value, unknown/altered macro and partial-header controls; verify actual Runner diagnostic identities and coverage; feed false suppression and re-test repaired implementation",
+      "completion": "D89 fixed SHA passed independent boundary suite and frozen-source replayer; metadata override false-suppression repaired; remaining cleanup candidate family feeds D90/T89",
       "developer_input": "5c82be52e05a814e7d29a43c6627b5e53a1ad2c0",
-      "validation": "Independent 13 methods; fixed-source Runner/direct 20→19; macro metadata override controls retain 1/1; report/commit pending"
+      "validation": "Independent 13 methods (baseline 6 failures, fixed 13/13); data157/157; exact three-file direct+Runner20→19 only line349; 19 remaining IDs/messages identical; 638 call positions and 3-partial coverage unchanged; real metadata override controls preserve 1/1; owner reproduction exit0",
+      "commit": "2e84beb9e5c0dac4f317f8dd9e396138f56b26ea",
+      "integration_commit": "996eec22d"
     },
     {
       "id": "D90",
@@ -266,7 +268,7 @@
       "status": "IN_PROGRESS",
       "agent": "/root/d84_sensitive_quality",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
-      "input": "D89 fixed T85 Runner retains unresolved-escape candidates at CfFree/CF_FREE_PTR/CfBlobDataFree/memset_s cleanup sites (317,328,364,381,384,386,388,1880,1882); determine whether exact declarations/definitions establish deallocation or wiping without disclosure.",
+      "input": "D89 fixed T85 Runner retains unresolved-escape candidates at CfFree/CF_FREE_PTR/CfBlobDataFree/memset_s cleanup sites (317,328,364,381,384,386,388,1880,1882); determine whether exact declarations/definitions establish deallocation or wiping without disclosure. T88 handoff adds focused evidence at FreePrivateKeyInfo lines381/384/386/388 and CMS cleanup lines1880/1882, and notes exact cleanup implementations are outside original three-file range.",
       "completion": "Source-backed narrow role proof only for exact known function identity and proven non-escape behavior; preserve unknown/same-name wrappers and real outputs; tests, fixed-source diff and honest limits; defer to T89 feedback before integration.",
       "tests": [
         "T89"
