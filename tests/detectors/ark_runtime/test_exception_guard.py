@@ -12,7 +12,7 @@ from src.ohscanner.detectors.ark_runtime.detector import ArkRuntimeTypeSafetyDet
 from src.ohscanner.runner import DetectorRegistry, run_all_with_coverage
 from src.ohscanner.detectors.ark_runtime.exception_guard import analyze_exception_guard
 from src.ohscanner.detectors.ark_runtime.model import (
-    EXCEPTION_GUARD_RULE_ID, RuntimeTypeModel, OWNER,
+    EXCEPTION_GUARD_RULE_ID, OWNER, c_line_static_model,
 )
 from src.ohscanner.fixture import snapshot_digest
 from src.parser.ast import parse_source
@@ -145,7 +145,7 @@ class ExceptionGuardHistoricalTests(unittest.TestCase):
                 index = parse_source(text, 'cpp')
                 source = SourceUnit(self.path, 'cpp', text, source_sha, index.parse_status,
                                     tuple(json.dumps(item, sort_keys=True) for item in index.parse_issues))
-                model = RuntimeTypeModel()
+                model = c_line_static_model()
                 units = (source,)
                 request = ScanRequest(
                     'ark-runtime-historical', model.source_repository, commit,
