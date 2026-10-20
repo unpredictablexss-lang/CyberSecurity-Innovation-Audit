@@ -129,6 +129,7 @@ class WorkbenchTests(unittest.TestCase):
             "ohscanner.cpp.null_dereference", "ohscanner.cpp.bounds",
             "ohscanner.cpp.integer_bounds", "ohscanner.cpp.resource_lifetime",
             "ohscanner.cpp.unsafe_memory_call", "ohscanner.interface.ipc",
+            "ohscanner.cpp.path_traversal", "ohscanner.ark.runtime.type_safety",
             "ohscanner.oh.arkts_js", "ohscanner.data.sensitive_exposure",
             "ohscanner.known_disclosed_cves",
         })
