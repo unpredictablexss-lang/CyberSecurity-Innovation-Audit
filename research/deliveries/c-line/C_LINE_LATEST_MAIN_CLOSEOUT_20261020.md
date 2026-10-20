@@ -37,3 +37,9 @@ C 线已验收的 Ark Runtime 静态集成变更已接到本轮 fetch 的最新�
 开发报告：[C_LINE_ARK_RUNTIME_BUILD_ATTEMPT_20261020.md](../../../../c-runtime-dev-closeout-20261020/research/deliveries/c-line/stage_20261020/C_LINE_ARK_RUNTIME_BUILD_ATTEMPT_20261020.md)；独立验收补充：[typedarray_set_offset_runtime_acceptance_addendum_20261020.md](typedarray_set_offset_runtime_acceptance_addendum_20261020.md)。测试线核对了精确源码身份及隔离输出；没有 `ark_js_vm` 或 `es2abc`。候选 witness、offset 0 控制和 offset 4097 拒绝控制均为 `not_run`。源码算术候选仍是：写入 2048 字节落在非零 byteOffset 目标 view 之前，但仍在 backing ArrayBuffer 内。运行时行为、backing-store OOB、产品适用性和安全影响均未确认，分别保持 `not_run` / `unknown`；不报告漏洞确认或准确率指标。
 
 本轮以可交付源码结论、独立算术复核及明确记录的运行时构建阻塞收尾。任务树状态仍为 `CLOSEOUT_READY_SOURCE_CANDIDATE_RUNTIME_NOT_RUN`；只有出现新的可用构建条件或其他具体证据时再开下一切片。
+
+## 2026-10-21：最新 Ark 源码差异复核
+
+Gitee `openharmony/arkcompiler_ets_runtime` 的 `HEAD` 与 `master` 现为 `d1a58d59166777e16574ceed64c15f0b2f44a76c`（tree `2cd854aa7d9f987de89d31a6a512e735779e75b6`），相较此前固定的 `a65a2853ccae13da167d9aa4720ab8b11ec16656` 有新源码变化。开发与独立测试线分别绑定相关源码的 Git blob 和 SHA-256，并比较 offset 转换、uint64 长度和、byte index 缩窄及最终写入路径。测试线要求补齐两个转换 helper 的对象身份并纠正 `Set` 行号；开发已修正，测试复核通过。
+
+两线结论一致：非零 `byteOffset` view-boundary candidate 在 d1a58 中仍有源码支持。该结论只指向目标 TypedArray view 边界；本 witness 的写区间仍位于 backing ArrayBuffer 内。没有 Ark Runtime 执行或产品影响证据，backing-store OOB 未建立，runtime 保持 `not_run`，产品影响保持 `unknown`。详见开发报告 [C_LINE_ARK_SOURCE_DELTA_D1A58D5_20261020.md](../../../../c-runtime-dev-closeout-20261020/research/deliveries/c-line/stage_20261020/C_LINE_ARK_SOURCE_DELTA_D1A58D5_20261020.md) 与独立复核 [typedarray_set_offset_source_delta_independent_20261021.md](typedarray_set_offset_source_delta_independent_20261021.md)。

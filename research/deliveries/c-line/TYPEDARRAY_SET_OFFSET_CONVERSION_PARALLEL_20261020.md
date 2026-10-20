@@ -61,4 +61,6 @@ stop: 不改生产代码，不将微型计算称作 Ark Runtime 执行；runtime
 - 产物检查：没有 `ark_js_vm` 或 `es2abc`；候选 witness、offset 0 控制、offset 4097 RangeError 控制均 `not_run`
 - 收尾状态：源码级 view-boundary candidate 保留；backing-store OOB、运行时行为和产品影响未确认。不要继续重复相同构建路线；仅在出现新的可用工具链/构建环境或其他具体证据后再开任务。
 
+2026-10-21 新上游源码切片已完成：Gitee HEAD/master `d1a58d59166777e16574ceed64c15f0b2f44a76c`（tree `2cd854aa7d9f987de89d31a6a512e735779e75b6`）与旧 pin `a65a2853ccae13da167d9aa4720ab8b11ec16656` 的 `TypedArray.set(arrayLike, offset)` 路径由开发与独立测试分别核对。转换、uint64 范围和检查、uint32 index 窄化和写路径未发生修复性变化，原 view-boundary candidate 仍有源码支持。测试反馈补充了转换 helper 哈希和准确行号，开发修订、测试复核通过。报告：开发 `C_LINE_ARK_SOURCE_DELTA_D1A58D5_20261020.md`（最终提交 `f77925bfba85184b18463a4678168dcbe72849f5`）；独立测试 `typedarray_set_offset_source_delta_independent_20261021.md`（`76e5b08ee5a115ae3b385764765eaa364cf26791`）。runtime 未执行，backing-store OOB/product 仍未确认；保持 `not_run`/`unknown`。
+
 证据提交：开发 `194495c845240aab728e8480ac62c6a9dd488130`，更正 `28eb558366f8bf224ccdb593f67635e7dc07afae`，独立测试 `edf0cb0c48dce15f722b34caa167e82a88de3474`。下一切片应以新的 source/runtime/build 证据为触发点，避免重复审计已闭环的算术；当前 runtime 依赖缺失已记录，不作为本源码结论的阻塞项。

@@ -4,7 +4,7 @@
   "baseline": {
     "remote": "origin/codex/c-line-parallel-plan-20261020",
     "commit": "72b75e0b3",
-    "refresh": "2026-10-20 closeout: scanner 4e1268a980fd103326c7dbaa6ca2e78d2ba43e69; Ark source a65a2853ccae13da167d9aa4720ab8b11ec16656. TypedArray.set offset arithmetic feedback loop completed; source-level view-boundary candidate confirmed but backing-store OOB/product impact not established. Bounded isolated Ark build attempt stalled at HB argument loading over Kali/9p, before GN/Ninja/clang; developer report 5e2e92a1a and independent runtime addendum 429ee4d2a514061a36fe51a1fc296f316ae54b09. Runtime witness and controls remain not_run, product applicability/impact unknown. Closeout-ready with this limitation; see stage_20261020/C_LINE_ARK_RUNTIME_BUILD_ATTEMPT_20261020.md and TYPEDARRAY_SET_OFFSET_CONVERSION_PARALLEL_20261020.md."
+    "refresh": "2026-10-21 closeout: scanner 4e1268a980fd103326c7dbaa6ca2e78d2ba43e69. The prior source pin a65a2853ccae13da167d9aa4720ab8b11ec16656 was compared with current Gitee master/HEAD d1a58d59166777e16574ceed64c15f0b2f44a76c. Developer source-delta report f77925bfba85184b18463a4678168dcbe72849f5 and independent replay 76e5b08ee5a115ae3b385764765eaa364cf26791 agree: the TypedArray.set array-like view-boundary candidate remains source-supported. No runtime executed; backing-store OOB and product effect remain unconfirmed/unknown. Previous bounded runtime build remains blocked at HB argument loading over Kali/9p before GN/Ninja/clang; witness and controls remain not_run. Closeout-ready with these limits."
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
   "status": "CLOSEOUT_READY_SOURCE_CANDIDATE_RUNTIME_NOT_RUN",
@@ -1143,6 +1143,36 @@
       "report": "research/deliveries/c-line/typedarray_set_offset_runtime_acceptance_addendum_20261020.md (429ee4d2a514061a36fe51a1fc296f316ae54b09)",
       "result": "The retained isolated output contains no ark_js_vm or es2abc; build log ends at argument loading. Candidate witness, offset-zero control, and offset-4097 RangeError control are all not_run. Process was explicitly TERM-stopped; no natural build exit code.",
       "limitations": "Source-level view-boundary candidate remains unconfirmed in runtime; backing-store OOB and product impact are unknown."
+    },
+    {
+      "id": "C-DEV-ARK-SOURCE-DELTA-D1A58-20261021",
+      "kind": "source_delta_development",
+      "status": "COMPLETED_WITH_REPORT_CORRECTIONS",
+      "objective": "Compare the exact previously reviewed Ark source with current Gitee master for the TypedArray.set array-like offset candidate and determine whether the relevant conversion/check/write chain changed.",
+      "code_sha": "4e1268a980fd103326c7dbaa6ca2e78d2ba43e69",
+      "source_repository": "openharmony/arkcompiler_ets_runtime",
+      "prior_source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "source_commit": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+      "source_tree": "2cd854aa7d9f987de89d31a6a512e735779e75b6",
+      "source_ref_evidence": "Gitee HEAD and refs/heads/master both resolved to d1a58d59166777e16574ceed64c15f0b2f44a76c during this slice.",
+      "feedback_from": "C-TEST-ARK-SOURCE-DELTA-D1A58-20261021",
+      "report": "research/deliveries/c-line/stage_20261020/C_LINE_ARK_SOURCE_DELTA_D1A58D5_20261020.md (f77925bfba85184b18463a4678168dcbe72849f5)",
+      "result": "a65→d1 changes in helper metadata/conversion files do not alter the array-like Set offset conversion, uint64 length-sum check, uint32 byte-index narrowing, limit calculation, or backing-buffer-relative write. Source arithmetic still supports writes [2048,6144), of which [2048,4096) precedes a target view beginning at 4096 while remaining within the 8192-byte backing store.",
+      "limitations": "Static source evidence only. Runtime remains not_run; backing-store OOB and product impact are not established."
+    },
+    {
+      "id": "C-TEST-ARK-SOURCE-DELTA-D1A58-20261021",
+      "kind": "independent_source_delta_testing",
+      "status": "COMPLETED_SAME_SOURCE_REPLAY",
+      "objective": "Independently bind the d1a58 source ref/tree/blob identities, inspect the conversion helpers and Set write chain, recalculate the witness, and challenge the developer report.",
+      "code_sha": "4e1268a980fd103326c7dbaa6ca2e78d2ba43e69",
+      "source_repository": "openharmony/arkcompiler_ets_runtime",
+      "prior_source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "source_commit": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+      "feedback_to": "C-DEV-ARK-SOURCE-DELTA-D1A58-20261021",
+      "report": "research/deliveries/c-line/typedarray_set_offset_source_delta_independent_20261021.md (76e5b08ee5a115ae3b385764765eaa364cf26791)",
+      "feedback": "Requested two missing conversion-helper hash bindings and a correction to the Set line anchor. Developer added both helper blob/SHA pairs and corrected the Set anchor to line 1146; independent replay verified all six hash pairs and the corrected anchor.",
+      "result": "Developer and independent tester agree that the source-level view-boundary candidate persists at d1a58. No runtime execution or product-impact evidence was produced."
     }
   ],
   "feedback_loop": [
@@ -1161,7 +1191,7 @@
     "Exact-bound scout 20261020: developer report a5c9d5e and independent tester report 14b1044 confirm a conditional Float32Array negative-TDouble candidate in CommonStub and TypedHCR. Second-layer report b264f28 finds Math.ceil(-1.1) as a source-supported TDouble(-1.0) route. Corrected arithmetic shows an empty initializer interval on 32/64-bit, a 16-byte backing allocation with large uint32 metadata on 32-bit, and a signed inline-getter guard that may block simple access. Runtime/build/accessibility remains unknown/not_run; no production change. Next independent tasks validate a safe local runtime/build and challenge arithmetic/access dispatch.",
     "C quick-closeout 20261020: latest main verified at 0f53af62283dbd0f249280805e8286a04b2d43b9. Type_safety development replay on exact Ark Runtime source recorded no-change root cause in 6c71a7bfd: IR_IF/IR_ELSE, BRANCH and typed-array case-list macros are not preprocessed, causing Tree-sitter cascades; model binding and SHA checks pass, diagnostics remain zero, status stays blocked/partial. Independent baseline on the same main SHA preserved fail-closed behavior (fixture parsing complete but outside exact reviewed model binding; not_analyzed=1) and the partial control candidate/unknown contract. Parallel prompt and continuous-goal plan is in C_LINE_QUICK_CLOSEOUT_PARALLEL_PLAN_20261020.md; no production detector change or new vulnerability family was introduced.",
     "C latest-main refresh: developer merged origin/main c380a474718e8ec4497aff55b18a1dd38bafa13f with C integration at 4e1268a980fd103326c7dbaa6ca2e78d2ba43e69; independent tester replayed the exact commit/tree and reported no code defect. Developer suite: Ark 212 (3 skipped), focused compatibility 59 (1 skipped), available contract 19 passed. Independent suite: Ark 212 (3 skipped), related regressions 97 (1 skipped). Both preserve default-off/source-bound admission and unknown/partial limits. Runtime not_run, product impact unknown.",
-    "TypedArray.set source-reachability feedback loop closed on scanner SHA 4e1268a980fd103326c7dbaa6ca2e78d2ba43e69 and Ark source commit a65a2853ccae13da167d9aa4720ab8b11ec16656. Developer report 194495c established that 2^64-2048 is binary64-representable and reaches ToInteger→uint64_t; independent test commit edf0cb0 reviewed it and found the initial claim that all loop writes remain inside the TypedArray view was too broad. Developer correction 28eb558 added a nonzero targetByteOffset witness: srcLen=4096, view byteOffset=4096/length=4096, backing=8192 bytes; uint64 guard wraps to 2048, then the loop writes [0x800,0x1800), including 2048 bytes before the view while remaining inside the backing buffer. Independent test confirmed the correction. A bounded runtime build attempt used the exact source in a private WSL OverlayFS output with read-only source; HB remained at argument loading over 9p and did not start GN/Ninja/clang. Developer report 5e2e92a1a and independent runtime addendum 429ee4d document the stop; candidate and controls remain not_run. This remains a source-level view-boundary candidate, not backing-store OOB or product confirmation; product applicability/impact unknown. No production detector or Ark source edits."
+    "TypedArray.set source-reachability feedback loop closed on scanner SHA 4e1268a980fd103326c7dbaa6ca2e78d2ba43e69 and Ark source commit a65a2853ccae13da167d9aa4720ab8b11ec16656. Developer report 194495c established that 2^64-2048 is binary64-representable and reaches ToInteger→uint64_t; independent test commit edf0cb0 reviewed it and found the initial claim that all loop writes remain inside the TypedArray view was too broad. Developer correction 28eb558 added a nonzero targetByteOffset witness: srcLen=4096, view byteOffset=4096/length=4096, backing=8192 bytes; uint64 guard wraps to 2048, then the loop writes [0x800,0x1800), including 2048 bytes before the view while remaining inside the backing buffer. Independent test confirmed the correction. A bounded runtime build attempt used the exact source in a private WSL OverlayFS output with read-only source; HB remained at argument loading over 9p and did not start GN/Ninja/clang. Developer report 5e2e92a1a and independent runtime addendum 429ee4d document the stop; candidate and controls remain not_run. On 2026-10-21, Gitee master/HEAD moved to d1a58d59166777e16574ceed64c15f0b2f44a76c. Developer report f77925b and independent replay 76e5b08 compared it with a65a2853; the same conversion/check/narrowing/write chain and view-boundary source candidate persist. Tester requested missing conversion-helper hash bindings and a corrected Set line number; developer fixed both and tester verified all six blob/SHA pairs and exact line anchor. This remains a source-level view-boundary candidate, not backing-store OOB or product confirmation; runtime is not_run and product applicability/impact unknown. No production detector or Ark source edits."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
