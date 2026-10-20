@@ -2,9 +2,9 @@
   "schema": "ohscanner.c-line-execution-tree/v1",
   "date": "2026-10-20",
   "baseline": {
-    "remote": "origin/codex/c-line-static-20261019",
-    "commit": "d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03",
-    "refresh": "2026-10-20 pushed successfully to origin/codex/c-line-parallel-plan-20261020; local and remote planning tip 71f43986a. Implementation 46fdb5887c49a552b249fb20805025ba6316d8d0, developer report 3000142700f6f79e73472deebf963be07a2405f7, same-SHA tester report 6d41c4746b41c21af9139d2853acc1d0c9189ffa, final second-layer review 9df21f2f5833dbf7d91b289da5923dce6ad09fca. Ark Runtime source baseline remains exact a65a2853ccae13da167d9aa4720ab8b11ec16656."
+    "remote": "origin/codex/c-line-parallel-plan-20261020",
+    "commit": "e2daccc5b",
+    "refresh": "2026-10-20 fetched origin successfully; local and remote planning tip e2daccc5b. Float32 candidate implementation, same-SHA independent replay, and second-layer review are committed and pushed. Two next-slice scouts are active in parallel: ArrayBuffer lifecycle/mutation and TypedArray copy/mutation. Ark Runtime source baseline remains a65a2853ccae13da167d9aa4720ab8b11ec16656."
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
   "status": "ACTIVE",
@@ -959,6 +959,28 @@
       "report": "research/deliveries/c-line/float32array_negative_double_final_second_layer_review_20261020.md",
       "review_commit": "9df21f2f5833dbf7d91b289da5923dce6ad09fca",
       "implementation_commit": "46fdb5887c49a552b249fb20805025ba6316d8d0"
+    },
+    {
+      "id": "C-SCOUT-ARRAYBUFFER-MUTATION-NEXT",
+      "kind": "exact_bound_source_scout",
+      "status": "IN_PROGRESS_PARALLEL_SOURCE_TRIAGE",
+      "agent": "scout_arraybuffer_mutation",
+      "objective": "Select at most one high-signal, not-yet-closed ArrayBuffer lifecycle/mutation candidate at exact Ark Runtime source pins, or document a source-evidence no-go.",
+      "scope": "ArrayBuffer slice/clone/transfer/resizable/grow/detach and backing-store allocation/copy; exclude completed C-line candidates in the tree.",
+      "scout_prompt": "ROLE=exact-bound C-line source scout A. INPUT=current execution tree, detector catalog/model and exact Ark Runtime a65 source. GOAL=identify at most one precise ArrayBuffer lifecycle/mutation source candidate not already closed. STEPS=verify clean exact commit/tree/blob/SHA; trace source trigger through helpers/declarations; inspect parser status and current scanner/direct-analysis baseline; list counterevidence and source-derived controls; return zero candidate if evidence is weak; formulate structured developer/tester follow-ups with feedback. OUTPUT=committed concise report, exact pins, candidate or no-go, safe/fixed/unrelated/identity/helper controls, unknowns, and ROLE/INPUT/GOAL/STEPS/OUTPUT/STOP/NEVER prompts. STOP=one reproducible candidate or evidence-based no-go. NEVER=edit production code, duplicate closed work, infer runtime/product impact, or convert unknown/not_run into pass.",
+      "report_required": true,
+      "done_when": "Independent source triage commits exact-bound evidence selecting no more than one candidate or a defensible no-go, with reproducible developer/tester prompts."
+    },
+    {
+      "id": "C-SCOUT-TYPEDARRAY-COPY-NEXT",
+      "kind": "exact_bound_source_scout",
+      "status": "IN_PROGRESS_PARALLEL_SOURCE_TRIAGE",
+      "agent": "scout_typedarray_copy",
+      "objective": "Select at most one high-signal, not-yet-closed TypedArray copy/mutation candidate at exact Ark Runtime source pins, or document a source-evidence no-go.",
+      "scope": "TypedArray set/copyWithin/fill/reverse/sort/species-backed copy and indexed mutation; exclude closed length, Float32 negative-double, DataView/IB8BCA, receiver-guard, and C1 Map tasks.",
+      "scout_prompt": "ROLE=exact-bound C-line source scout B. INPUT=current execution tree, detector catalog/model and exact Ark Runtime a65 source. GOAL=identify at most one precise TypedArray copy/mutation source candidate not already closed. STEPS=verify clean exact commit/tree/blob/SHA; trace source trigger through helpers/declarations; inspect parser status and current scanner/direct-analysis baseline; list counterevidence and source-derived controls; return zero candidate if evidence is weak; formulate structured developer/tester follow-ups with feedback. OUTPUT=committed concise report, exact pins, candidate or no-go, safe/fixed/unrelated/identity/helper controls, unknowns, and ROLE/INPUT/GOAL/STEPS/OUTPUT/STOP/NEVER prompts. STOP=one reproducible candidate or evidence-based no-go. NEVER=edit production code, duplicate closed work, infer runtime/product impact, or convert unknown/not_run into pass.",
+      "report_required": true,
+      "done_when": "Independent source triage commits exact-bound evidence selecting no more than one candidate or a defensible no-go, with reproducible developer/tester prompts."
     }
   ],
   "feedback_loop": [
