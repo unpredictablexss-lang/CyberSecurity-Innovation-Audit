@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "CLOSEOUT_ROUND2_D103_T102_IN_PROGRESS",
+  "status": "CLOSEOUT_ROUND3_D104_T103_IN_PROGRESS",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -676,7 +676,16 @@
       "id": "D103",
       "kind": "development",
       "title": "真实源码切片核验近期switch与return-flow规则",
-      "status": "PLANNED",
+      "status": "COMPLETED_INTEGRATED",
+      "agent": "/root/d84_sensitive_quality",
+      "commit": "fb41368c949cf400434ea99f6c562638c2825708",
+      "evidence_commit": "c511a1c6654569d1c7fdd16bfb9e9a5bfadda1e2",
+      "independent_pin_commit": "adee570778e7c60285d9319f7e8b781238f3bb19",
+      "integration_script_commit": "3a1f1a9d6",
+      "integration_evidence_commit": "8ce0dd1df",
+      "integration_pin_commit": "a395fa170",
+      "completion": "Pinned three complete ArkUI NAPI files and BUILD metadata, replayed without source modification; report distinguishes complete parsing, partial analysis, blocked Runner and unknown unselected dependencies.",
+      "validation": "D103/T102 independent11 cross-checks agree: 33,437 bytes, 217 calls, direct/Runner0→0 but blocked and3 analysis-partial; enum switch is preprocessed and outside optimization admission; comma/recovery absent. Zero is not a safety result.",
       "depends_on": ["D102", "T101"],
       "completion": "Select reproducible local/public C++ source containing the supported shapes; bind exact source revision/hash/build context, replay direct/Runner, and record feature presence and evidence limits without product/accuracy claims.",
       "tests": ["T102"]
@@ -685,7 +694,12 @@
       "id": "T102",
       "kind": "testing",
       "title": "独立复核真实源码切片及覆盖解释",
-      "status": "PLANNED",
+      "status": "COMPLETED_INTEGRATED",
+      "agent": "/root/t83_static_feedback",
+      "commit": "a5ba6ab10b375d6b5565e85f2f8f456e6db38eb2",
+      "integration_commit": "a6a14355b",
+      "completion": "Independently verified fixed ArkUI NAPI source/build manifests and the 0/0 blocked, 3-partial result; confirmed no supported comma/recovery shapes in the selected source.",
+      "validation": "11 independent cross-checks agree with D103; 217 raw call facts stable; six BUILD cpp files include only helper.cpp in scope; unselected headers/build execution remain unknown/not_run; zero findings are not a clean safety result.",
       "depends_on": ["D102", "T101"],
       "feedback_to": ["D103"],
       "completion": "Independently verify source identity, selected scope, feature shape, findings and parse/analysis coverage; ensure unavailable is unknown/not_run, not zero-risk."
@@ -694,7 +708,8 @@
       "id": "D104",
       "kind": "development",
       "title": "D线收尾前候选证据与限制对账",
-      "status": "PLANNED",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D103", "T102"],
       "completion": "Reconcile versioned reports/task tree, run final relevant suites and fixed replay once, list unresolved items and their status, confirm no second-layer model work was implied.",
       "tests": ["T103"]
@@ -703,7 +718,8 @@
       "id": "T103",
       "kind": "testing",
       "title": "独立最终回归与交付树复核",
-      "status": "PLANNED",
+      "status": "IN_PROGRESS",
+      "agent": "/root/t83_static_feedback",
       "depends_on": ["D103", "T102"],
       "feedback_to": ["D104"],
       "completion": "Independently reproduce final suite and exact source replay, inspect report references/hash/known gaps, then sign off only the delivered evidence scope."
@@ -734,7 +750,7 @@
   ],
   "candidate_policy": "Do not reduce counts by hiding independent root causes; prefer source-bound relation evidence and explicit unresolved guards.",
   "current_versions": {
-    "sensitive_exposure": "0.21.10",
+    "sensitive_exposure": "0.21.17",
     "known_disclosed_cves": "0.19.11"
   },
   "integrated_tests": {
@@ -750,8 +766,8 @@
   "pushed_head": "04d06da236ed46c277fe3b756a3a42c95ce7ab98",
   "closeout_plan": {
     "phase": "CLOSEOUT_IN_PROGRESS",
-    "remaining_rounds": 2,
+    "remaining_rounds": 1,
     "rounds": ["D102/T101: legal comma parser coverage", "D103/T102: source-backed real-code slice", "D104/T103: final evidence/replay reconciliation"],
-    "final_action": "After D103/T102 and D104/T103, run one bounded final verification, publish a closeout report with known gaps and pushed head, then stop this sustained goal."
+    "final_action": "After D104/T103, run one bounded final verification, publish a closeout report with known gaps and pushed head, then stop this sustained goal."
   }
 }
