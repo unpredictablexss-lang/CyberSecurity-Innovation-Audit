@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "CLOSEOUT_ROUND1_D102_T101_IN_PROGRESS",
+  "status": "CLOSEOUT_ROUND2_D103_T102_IN_PROGRESS",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -646,22 +646,31 @@
       "id": "D102",
       "kind": "development",
       "title": "修复受限合法C++逗号表达式解析覆盖",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D101", "T100"],
       "input": "T100 records valid return(out=key,0) as TS root ERROR, while direct can see operand effects and Runner blocks/not_analyzed.",
       "completion": "Parse a narrowly specified valid comma expression without losing effects, precedence or byte offsets; preserve unsupported/invalid expressions as partial, never pass blocked as zero findings.",
-      "tests": ["T101"]
+      "tests": ["T101"],
+      "commit": "604d392e56d4deb922304caa2735133282e0cbb1",
+      "integration_commit": "dde92c580",
+      "evidence_commit": "c0051dd43b64895ad416246c650dbf0199915698",
+      "evidence_integration_commit": "1f44ac74a",
+      "completion": "Recover only complete same-span common C/C++ assignment-comma subtrees, retaining original bytes/positions and rejecting unrelated C++/partial syntax.",
+      "validation": "D102 parser7 + developer data413 + compatibility62; T101 independent18, data431, compatibility69; owner data431/431, compatibility69/69. T85 remains24 findings/638 calls. Unmatched-span legal forms and const-char** summary/type proof remain unknown/blocked."
     },
     {
       "id": "T101",
       "kind": "testing",
       "title": "独立验证C++逗号语法、优先级与解析覆盖",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "depends_on": ["D101", "T100"],
       "feedback_to": ["D102"],
-      "completion": "Test valid assignment/comma/nesting/call argument/conditional forms and invalid controls; compare direct, Runner and coverage on fixed SHAs."
+      "completion": "Independent18-method parser matrix closed 12 baseline failures while keeping11 negative/C++-only controls and unmatched-span legal form partial.",
+      "commit": "96b6455d6d0878417f5c5c2a1940abc619f0ae31",
+      "integration_commit": "b339ff312",
+      "validation": "18 methods; data431, compatibility69; T8524/24 and638 calls unchanged. Eleven legal same-span forms parse complete; unsupported forms remain Runner blocked/partial."
     },
     {
       "id": "D103",
@@ -729,19 +738,20 @@
     "known_disclosed_cves": "0.19.11"
   },
   "integrated_tests": {
-    "data": 413,
+    "data": 431,
     "known_and_corpus": 39,
     "parser_linkage": 16,
     "ast_parser": 7,
-    "total": 475,
+    "assignment_comma_parser": 7,
+    "total": 500,
     "result": "PASS"
   },
   "remote_branch": "origin/codex/d-owner-20261020-01a1571f",
   "pushed_head": "04d06da236ed46c277fe3b756a3a42c95ce7ab98",
   "closeout_plan": {
     "phase": "CLOSEOUT_IN_PROGRESS",
-    "remaining_rounds": 3,
+    "remaining_rounds": 2,
     "rounds": ["D102/T101: legal comma parser coverage", "D103/T102: source-backed real-code slice", "D104/T103: final evidence/replay reconciliation"],
-    "final_action": "After all three rounds, run one bounded final verification, publish a closeout report with known gaps and pushed head, then stop this sustained goal."
+    "final_action": "After D103/T102 and D104/T103, run one bounded final verification, publish a closeout report with known gaps and pushed head, then stop this sustained goal."
   }
 }
