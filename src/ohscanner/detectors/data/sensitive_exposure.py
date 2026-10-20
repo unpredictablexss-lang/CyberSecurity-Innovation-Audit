@@ -10,6 +10,7 @@ from dataclasses import dataclass, field, replace
 import tree_sitter_c
 import tree_sitter_cpp
 from tree_sitter import Language, Parser
+from src.parser.cpp_assignment_comma import recover_cpp_assignment_commas
 from src.parser.syntax_normalize import normalize_empty_cpp_linkage_wrappers
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation
 from .models import DEFAULT_SOURCE, SINKS, STATUS_RETURN_CALLS, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel
@@ -281,7 +282,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.16'
+    version = '0.21.17'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -384,6 +385,10 @@ class LocalFlow:
         lang = tree_sitter_c if unit.language == 'c' else tree_sitter_cpp
         parsed_bytes = normalize_empty_cpp_linkage_wrappers(self.b) if unit.language == 'cpp' else self.b
         self.tree = Parser(Language(lang.language())).parse(parsed_bytes)
+        if unit.language == "cpp":
+            self.tree = recover_cpp_assignment_commas(parsed_bytes, self.tree)
+        if getattr(self.tree, "recovery_spans", ()):
+            self.gaps.add("bounded assignment-comma syntax recovery preserves original offsets; operand types/overloads remain unproved")
         self.sinks = {s.name:s for s in SINKS if not s.files or unit.path in s.files}
         self.sinks.update({s.name:s for s in model.additional_sinks if not s.files or unit.path in s.files})
         self.output_calls = {
