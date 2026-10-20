@@ -1,0 +1,45 @@
+{
+  "experiment_kind": "C2_fixed_scope_rule_behavior_not_accuracy",
+  "detector": "ohscanner.ark.runtime.type_safety",
+  "version": "0.1.0",
+  "rule": "ark.runtime.typedarray-store-type-origin",
+  "model_sha256": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3",
+  "implementation_sha256": {
+    "src/ohscanner/detectors/ark_runtime/__init__.py": "3b3d8588d98a48ad44a9ef10cf66be74c927ed9b44c4b387b5ed3d9840db2636",
+    "src/ohscanner/detectors/ark_runtime/analysis.py": "56b622d3c9ab54a5e0b3636f3e810644d46493fe54ab7b9dcbbd3d999f785d40",
+    "src/ohscanner/detectors/ark_runtime/detector.py": "09fb9e68b227750ac237210b73ad9cd6d79075923f2b91c5dcee717acd8ac20b",
+    "src/ohscanner/detectors/ark_runtime/model.py": "a0bb794b7dca58cfb9128597ea727f0bdfda8e19a0b5a57abfdcd8682064b11a",
+    "src/ohscanner/detectors/ark_runtime/runtime_ir.py": "34852fcedb0b300928c0f93e997679d7e8801c91d6cf3f29a2d10e1c9cb333af",
+    "src/ohscanner/detectors/ark_runtime/syntax.py": "2b781276a7d66416252317a4452870b306f028c0ef608ab60130fe80fc0e6702",
+    "src/ohscanner/detectors/ark_runtime/type_origin.py": "08c81c92c209b2689a742b0d73f0c7f2c7307ac740545fe082b3de02bfa27708"
+  },
+  "python": "3.12.0",
+  "platform": "Windows",
+  "packages": {
+    "tree-sitter": "0.26.0",
+    "tree-sitter-c": "0.24.2",
+    "tree-sitter-cpp": "0.23.4"
+  },
+  "scope": [
+    "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+  ],
+  "elapsed_seconds": 37.88906220009085,
+  "memory_rss": null,
+  "memory_measurement_status": "not_measured",
+  "argv": [
+    "python",
+    "research/experiments/ark_runtime/c2_20261017/replay.py",
+    "--repo-dir",
+    "<local-pinned-git-object-store>",
+    "--output",
+    "<result-directory>"
+  ],
+  "path_redaction": "machine-specific cache/output arguments omitted; no source identities redacted",
+  "git_head_at_run": "7d5a0a7263ce7beeef185fb2418d62bce8a4f268",
+  "notes": [
+    "Independent partial research is not production Runner admission.",
+    "Generated path witnesses are symbolic, not product trigger proofs.",
+    "12 cases are development controls, not independent holdout.",
+    "No target build or PoC was executed."
+  ]
+}

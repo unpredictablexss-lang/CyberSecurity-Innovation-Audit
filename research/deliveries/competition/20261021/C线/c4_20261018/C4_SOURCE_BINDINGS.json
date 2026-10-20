@@ -1,0 +1,88 @@
+{
+  "model_version": "0.6.1",
+  "model_digest": "3069f778c0869e00b8a8a67429811c62444aa5e5025a3ffe41e792280072147c",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "effect_summary_revision": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+  "target": {
+    "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "parent": {
+      "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422"
+    },
+    "fixed": {
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e"
+    }
+  },
+  "source_dependencies": [
+    {
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "effect_summary_revision": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "blob": "757b8d050d306d349822600deacb295c7a54245e"
+    }
+  ],
+  "effect_summary_sources": "All path/blob pairs are model digest inputs; inspect RuntimeTypeModel.effect_summary_sources in model.py.",
+  "limitations": [
+    "deployed product build unverified",
+    "partial parse",
+    "behavior and impact unknown"
+  ],
+  "exception_guard": {
+    "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "creator": {
+      "owner": "panda::ecmascript::kungfu::NewObjectStubBuilder",
+      "name": "NewTypedArray",
+      "arity": 4
+    },
+    "sink": "LoadHClass",
+    "parent": {
+      "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+      "blob": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+      "sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9"
+    },
+    "fixed": {
+      "commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+      "blob": "3b9de9d915d767d7a67316145451da2446162884",
+      "sha256": "4684a1587519e7d141f181b595317db489991a3908e1f1b4ef67513c25d9efd0"
+    },
+    "helper_dependency": {
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "parent_blob": "05dda56de74949f07a241942be6465beaf94b52a",
+      "fixed_blob": "05dda56de74949f07a241942be6465beaf94b52a",
+      "sha256": "c10e934be1804fe9388d599cba54369eed4ee150b078d04924e0da68a2f43b9e"
+    },
+    "scope": "bounded generated-path check; no runtime impact or exploitability verdict",
+    "callers": [
+      {
+        "name": "Filter",
+        "parameter_types": [
+          "GateRef",
+          "GateRef",
+          "GateRef",
+          "Variable*",
+          "Label*",
+          "Label*"
+        ]
+      },
+      {
+        "name": "Map",
+        "parameter_types": [
+          "GateRef",
+          "GateRef",
+          "GateRef",
+          "Variable*",
+          "Label*",
+          "Label*"
+        ]
+      }
+    ],
+    "critical_use": {
+      "name": "LoadHClass",
+      "arity": 2,
+      "glue_argument": 0,
+      "object_argument": 1
+    }
+  }
+}

@@ -1,0 +1,493 @@
+{
+  "detector_version": "0.12.1",
+  "model_version": "oh-ipc-2026.10-v21",
+  "evidence_kind": "fixed vulnerable/fixed source regression; not precision/recall or runtime validation",
+  "runs": [
+    {
+      "cve": "CVE-2023-25176",
+      "vulnerable": {
+        "side": "vuln",
+        "commit": "693a188bb719f547724638ac39888353aca7db81",
+        "tree": "bf5bdeccc6d51972f102107c151b9fc4120d72d3",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 1,
+        "rules": {
+          "ipc.tlv.fixed-width-length": 1
+        },
+        "parse": {
+          "partial": 1
+        },
+        "validated_vulnerability": 0
+      },
+      "fixed": {
+        "side": "fixed",
+        "commit": "9408af4fe6e85f70fc46427b7ba779e683a12ec3",
+        "tree": "9c14df1ffcf0b6f89e42eec24767ed7d5dc38f31",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 0,
+        "rules": {},
+        "parse": {
+          "partial": 1
+        },
+        "validated_vulnerability": 0
+      }
+    },
+    {
+      "cve": "CVE-2022-42463",
+      "vulnerable": {
+        "side": "vuln",
+        "commit": "0db7315e38331e1f28df7ca9e1b8ad62c71c018b",
+        "tree": "1e2be1b46ad929d99ae034c82dc3db9857bc9ac2",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 1,
+        "rules": {
+          "ipc.network.auth-session-whitelist": 1
+        },
+        "parse": {
+          "partial": 1
+        },
+        "validated_vulnerability": 0
+      },
+      "fixed": {
+        "side": "fixed",
+        "commit": "07f33ab96652b06f6b84852ea59645d73ff064c7",
+        "tree": "d14c045f6454c219e489d2e59a7e7b2ad0a54d23",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 1,
+        "rules": {
+          "ipc.network.auth-session-whitelist": 1
+        },
+        "parse": {
+          "partial": 1
+        },
+        "validated_vulnerability": 0
+      }
+    },
+    {
+      "cve": "CVE-2023-0035",
+      "vulnerable": {
+        "side": "vuln",
+        "commit": "fe305c9fba103c1d5a1e2139d18c1d4d70b7e92c",
+        "tree": "68875fb53d257f13236dd6ba4b12ab0517d79dde",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 1,
+        "rules": {
+          "ipc.relay.descriptor-boundary": 1
+        },
+        "parse": {
+          "partial": 1
+        },
+        "validated_vulnerability": 0
+      },
+      "fixed": {
+        "side": "fixed",
+        "commit": "319168676be4b58127e49b38fa96703991c5a203",
+        "tree": "4a501ce0e96b8f0706bcb188c99952c34e696535",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 0,
+        "rules": {},
+        "parse": {
+          "partial": 1
+        },
+        "validated_vulnerability": 0
+      }
+    },
+    {
+      "cve": "CVE-2023-0036",
+      "vulnerable": {
+        "side": "vuln",
+        "commit": "1da19fb5651d23e5969cabe7e10cf79897961b36",
+        "tree": "5037e995cb4f3f29d54307b6e0fbf352cc9d6252",
+        "status": "completed",
+        "diagnostic_count": 1,
+        "rules": {
+          "ipc.relay.descriptor-boundary": 1
+        },
+        "parse": {
+          "complete": 1
+        },
+        "validated_vulnerability": 0
+      },
+      "fixed": {
+        "side": "fixed",
+        "commit": "540daea718730751ed21eabc6674c912c0fae5fd",
+        "tree": "42346fee0438d97a8deab64693c3ceb6d0235c2b",
+        "status": "completed",
+        "diagnostic_count": 0,
+        "rules": {},
+        "parse": {
+          "complete": 1
+        },
+        "validated_vulnerability": 0
+      }
+    },
+    {
+      "cve": "CVE-2024-39775",
+      "vulnerable": {
+        "side": "vuln",
+        "commit": "eb00c2b458c26c10ab4e7ea5f7af0c529be0f6b7",
+        "tree": "dc02218991741ea5f9a607d9e087f17b2653fba7",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 10,
+        "rules": {
+          "ipc.auth.denial-transport-success": 10
+        },
+        "parse": {
+          "complete": 1,
+          "partial": 1
+        },
+        "validated_vulnerability": 0
+      },
+      "fixed": {
+        "side": "fixed",
+        "commit": "7d0c987f0cd4134040935384d50e17f226507463",
+        "tree": "7dc6cb4c6aff224cf1990d21ef12f6db7f98f4c3",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 8,
+        "rules": {
+          "ipc.auth.denial-transport-success": 8
+        },
+        "parse": {
+          "complete": 1,
+          "partial": 1
+        },
+        "validated_vulnerability": 0
+      }
+    },
+    {
+      "cve": "CVE-2025-26691",
+      "vulnerable": {
+        "side": "vuln",
+        "commit": "c751a0dc4c67b40430291d983df60efbb68b5caa",
+        "tree": "b0f0e9b6def185b526217777ee9666fee25e111d",
+        "status": "completed",
+        "diagnostic_count": 7,
+        "rules": {
+          "ipc.auth.missing": 7
+        },
+        "parse": {
+          "complete": 1
+        },
+        "validated_vulnerability": 0
+      },
+      "fixed": {
+        "side": "fixed",
+        "commit": "911c6c99872e3a6a421747815bc8c1f6b201db26",
+        "tree": "5e3d643965a72fbf30f50e6da37936f71c9ab292",
+        "status": "completed",
+        "diagnostic_count": 0,
+        "rules": {},
+        "parse": {
+          "complete": 1
+        },
+        "validated_vulnerability": 0
+      }
+    },
+    {
+      "cve": "CVE-2025-26693",
+      "vulnerable": {
+        "side": "vuln",
+        "commit": "89953b22ba58654beda0ff3154125d6779550e2b",
+        "tree": "587259e8d5fca314e4ecc5fc461a9dbabef61a8e",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 4,
+        "rules": {
+          "ipc.relay.descriptor-boundary": 1,
+          "ipc.auth.caller-class": 1,
+          "ipc.auth.missing": 1,
+          "ipc.data.sensitive-flow": 1
+        },
+        "parse": {
+          "partial": 1
+        },
+        "validated_vulnerability": 0
+      },
+      "fixed": {
+        "side": "fixed",
+        "commit": "31ed3b9f31b029b0ae4dec48a9f95b6356f924c0",
+        "tree": "370f0dee1292da0d600814f228e30e95e8154068",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 1,
+        "rules": {
+          "ipc.relay.descriptor-boundary": 1
+        },
+        "parse": {
+          "partial": 1
+        },
+        "validated_vulnerability": 0
+      }
+    },
+    {
+      "cve": "CVE-2025-27563",
+      "vulnerable": {
+        "side": "vuln",
+        "commit": "85ead8f16d070dd66e4ea906b1246018d747ec7b",
+        "tree": "10a6185050ce6c8615bc941f8f31f38837ddc43e",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 6,
+        "rules": {
+          "ipc.relay.descriptor-boundary": 1,
+          "ipc.auth.caller-class": 3,
+          "ipc.auth.guard-coverage": 1,
+          "ipc.auth.missing": 1
+        },
+        "parse": {
+          "partial": 1
+        },
+        "validated_vulnerability": 0
+      },
+      "fixed": {
+        "side": "fixed",
+        "commit": "e232d8ed63b53ba883265972872695bb5aab756a",
+        "tree": "a737217e2472ad655ee1e6e2272ad75bfa14121f",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 3,
+        "rules": {
+          "ipc.relay.descriptor-boundary": 1,
+          "ipc.auth.guard-coverage": 1,
+          "ipc.auth.missing": 1
+        },
+        "parse": {
+          "partial": 1
+        },
+        "validated_vulnerability": 0
+      }
+    },
+    {
+      "cve": "CVE-2025-27247",
+      "vulnerable": {
+        "side": "vuln",
+        "commit": "f18fe645e7d2db1954dd0938126cf644c0811144",
+        "tree": "7c911bc17f1ab271572fc33356eee77cff9535bb",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 4,
+        "rules": {
+          "ipc.auth.privileged-app-bypass": 1,
+          "ipc.resource.unbounded-observer-registration": 1,
+          "ipc.auth.missing": 1,
+          "ipc.data.sensitive-flow": 1
+        },
+        "parse": {
+          "partial": 2
+        },
+        "validated_vulnerability": 0
+      },
+      "fixed": {
+        "side": "fixed",
+        "commit": "79e872271d39b7a7090badd3a7e3343ae447f8b8",
+        "tree": "2ef81f9b81b66cdeca2d6e6e28cf92844e499573",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 3,
+        "rules": {
+          "ipc.resource.unbounded-observer-registration": 1,
+          "ipc.auth.missing": 1,
+          "ipc.data.sensitive-flow": 1
+        },
+        "parse": {
+          "partial": 2
+        },
+        "validated_vulnerability": 0
+      }
+    },
+    {
+      "cve": "CVE-2025-25212",
+      "vulnerable": {
+        "side": "vuln",
+        "commit": "d91a9b38fc801a269dc684c0c9735dc68ddbb0b8",
+        "tree": "049d9e811ecb5c3533ab64fc66be3548e92c954f",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 3,
+        "rules": {
+          "ipc.resource.unbounded-observer-registration": 1,
+          "ipc.auth.missing": 1,
+          "ipc.data.sensitive-flow": 1
+        },
+        "parse": {
+          "partial": 2
+        },
+        "validated_vulnerability": 0
+      },
+      "fixed": {
+        "side": "fixed",
+        "commit": "836cf6990579451d6521e9177d749660b07ad34e",
+        "tree": "8db5ac5a62c018c80818c85482e4914a836a4765",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 2,
+        "rules": {
+          "ipc.auth.missing": 1,
+          "ipc.data.sensitive-flow": 1
+        },
+        "parse": {
+          "partial": 2
+        },
+        "validated_vulnerability": 0
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "cve-2023-25176-vuln.json",
+      "sha256": "c3809b727b7dc8356feffa017f1c1b95379d2bc6f05fc55d330ab34ded6379e2"
+    },
+    {
+      "path": "cve-2023-25176-vuln.md",
+      "sha256": "37fe8102784c438d45518efe77310ecbc35133c7bb47e75ef757a1a0991f83c8"
+    },
+    {
+      "path": "cve-2023-25176-fixed.json",
+      "sha256": "5a43da4ab34088c2605a9229640f4a0699bd34b9029440a90e46b621e992ef46"
+    },
+    {
+      "path": "cve-2023-25176-fixed.md",
+      "sha256": "d5316d788c88538cf99d68bfc6a9e140b93485fd4674856a3398bd92ac02505d"
+    },
+    {
+      "path": "cve-2022-42463-vuln.json",
+      "sha256": "0ff4992eb2b8dbfb67a7ad0c335dd5290421b4a113ebaede181c3f6594d2daff"
+    },
+    {
+      "path": "cve-2022-42463-vuln.md",
+      "sha256": "85b3917ebcc1e0f7bbdf515dad92a070c5251daaefb866539ebc5f5252779ecc"
+    },
+    {
+      "path": "cve-2022-42463-fixed.json",
+      "sha256": "e47c2efdb3afefcbb33da7267d8e681c62df4aad2981d38e589deef11d137a4d"
+    },
+    {
+      "path": "cve-2022-42463-fixed.md",
+      "sha256": "633834672d62dc08affbcbf36ffe2d22436f0ff47164f721f3d060577214b908"
+    },
+    {
+      "path": "cve-2023-0035-vuln.json",
+      "sha256": "35465abbe3e296e7972686bceb4a085b78176ffe18c5e74a4adf0f4a8923e7f6"
+    },
+    {
+      "path": "cve-2023-0035-vuln.md",
+      "sha256": "0217a376c8fc4f2b02a4a93ce1da10b4425f40613df617b0a2b953d75ea80e4e"
+    },
+    {
+      "path": "cve-2023-0035-fixed.json",
+      "sha256": "1143fb0b51e66b0d4584de1e0213554b2657685ab9cf234a4f9653544ed0dfb7"
+    },
+    {
+      "path": "cve-2023-0035-fixed.md",
+      "sha256": "b1002c9aa999e7d4d7756c7b44b5f58fc6b57378ecfeeb70154f0a9f1a1ae2fe"
+    },
+    {
+      "path": "cve-2023-0036-vuln.json",
+      "sha256": "fd70cf00aaccce3b69e5c3a321c0becca27487357f043399f3c1595758873026"
+    },
+    {
+      "path": "cve-2023-0036-vuln.md",
+      "sha256": "0e4a2fb9d2872e95560d79c2370ce035cb35a79e7212d4409ea5a0c317e2b4e7"
+    },
+    {
+      "path": "cve-2023-0036-fixed.json",
+      "sha256": "e1930c84fb87efe73b3142b0190636a093fecd99aa56a1ff5828065326690056"
+    },
+    {
+      "path": "cve-2023-0036-fixed.md",
+      "sha256": "b8c1e728da683f97941618011a028d43d48268a16cc7abedd35baeeeb6aef67a"
+    },
+    {
+      "path": "cve-2024-39775-vuln.json",
+      "sha256": "cc37f0052dc81ab87915ff228b6274d9eb1b503025180d7627c9999f770e6bbd"
+    },
+    {
+      "path": "cve-2024-39775-vuln.md",
+      "sha256": "ea6eb588cffd47ff16ee17721e8d20ceb4bde9aed6663ac3e0462c09a182f19a"
+    },
+    {
+      "path": "cve-2024-39775-fixed.json",
+      "sha256": "8194e6ee06c9450aa9d560c47c13040bc75adda2875eefb91cba9e887cc1dac9"
+    },
+    {
+      "path": "cve-2024-39775-fixed.md",
+      "sha256": "7fe301a1a524b3f3b2ebdd6ec63677a3e01d46b1b40af78f1d753dba62cbeb02"
+    },
+    {
+      "path": "cve-2025-26691-vuln.json",
+      "sha256": "6eef406d6e4fd6271aad20c16716c6c958581a184e6eaeb2e1a472753006d55d"
+    },
+    {
+      "path": "cve-2025-26691-vuln.md",
+      "sha256": "6fe87d586d79a8e67f7a9f19d460bfaac97eeb07eacd0afb80b981e6d4d9c708"
+    },
+    {
+      "path": "cve-2025-26691-fixed.json",
+      "sha256": "56afc616756e497879ad0d53149f5aa593bffb35910c6cdf3f2b72a7326dc788"
+    },
+    {
+      "path": "cve-2025-26691-fixed.md",
+      "sha256": "f5a0ce9a1e617d2f76e0b2f3eacd3bd26b230e8418900b573b9ab16258d4cd58"
+    },
+    {
+      "path": "cve-2025-26693-vuln.json",
+      "sha256": "d4450f1dedf8911ed6b131ebddbd0c0e99f39c5cad5aed1eaf5b41575e6f9360"
+    },
+    {
+      "path": "cve-2025-26693-vuln.md",
+      "sha256": "2d5e040b657ca919b9afb1691a8e7707c848a0d8bcfd769a067fb0ba45033ce0"
+    },
+    {
+      "path": "cve-2025-26693-fixed.json",
+      "sha256": "7a6a29fe07dddf6417d668a3050f2f63009f0546149dd1411a98b18b4f6ebd52"
+    },
+    {
+      "path": "cve-2025-26693-fixed.md",
+      "sha256": "4d247365a6f6ca916736b2093aaf9d0cb0424c6219811e5227120ee22ec7a4c4"
+    },
+    {
+      "path": "cve-2025-27563-vuln.json",
+      "sha256": "ec798e41e51afb48543bd15a58566b3b65c19aea95606ba1a8bbe579814fe860"
+    },
+    {
+      "path": "cve-2025-27563-vuln.md",
+      "sha256": "b11ca20ff1e31b03f9a281eee862ddbc1ba71390970c32bf9f6b5d9530c2c9d0"
+    },
+    {
+      "path": "cve-2025-27563-fixed.json",
+      "sha256": "fad55e51670e5f3d29dc0356f177a3f1d0f96dd8b199437f93305408b2e111ce"
+    },
+    {
+      "path": "cve-2025-27563-fixed.md",
+      "sha256": "53de016ec99360e1983ddf336db7dc1cfb3b89994dfc64b26618431a17696b5d"
+    },
+    {
+      "path": "cve-2025-27247-vuln.json",
+      "sha256": "abce1245592f4016b813f9b8fe62889e30aa7a45c8a60f8ee81558f5dcc3a521"
+    },
+    {
+      "path": "cve-2025-27247-vuln.md",
+      "sha256": "1af60da4ec9510c2fad1378c9c459d7b16c1236ee63aca3c1cf4b3f069e41e03"
+    },
+    {
+      "path": "cve-2025-27247-fixed.json",
+      "sha256": "91350e7adc56549911634f59d5f9bfa7fed836f58518165cd25729fb806fa7e2"
+    },
+    {
+      "path": "cve-2025-27247-fixed.md",
+      "sha256": "86d2fd39d591bd0d0d5588b97899b8f9539eea9363455fa2b424b560129d49d4"
+    },
+    {
+      "path": "cve-2025-25212-vuln.json",
+      "sha256": "879293fe4ecb78feb0682b7697f519eb57cc511b66fd4411e15dfba09727daa7"
+    },
+    {
+      "path": "cve-2025-25212-vuln.md",
+      "sha256": "0ba10c7f6a8e3df3651380fdfd8d22a8ca3a3509fec46ba1f70b139769dbc090"
+    },
+    {
+      "path": "cve-2025-25212-fixed.json",
+      "sha256": "fa0d43fed035cb65c0bc04e67043edea7baac19a7f8d80b3cdf6ffe5b9af0b5c"
+    },
+    {
+      "path": "cve-2025-25212-fixed.md",
+      "sha256": "b8ca564447a760e9c3008d8f7f8bc898f9a966f24beb40a0eb10e5a78ea271e4"
+    },
+    {
+      "path": "复测矩阵.md",
+      "sha256": "963d713b8c7cb62b806859f0108f6b793eb5210b95adae6d4029937ce08b1401"
+    }
+  ]
+}

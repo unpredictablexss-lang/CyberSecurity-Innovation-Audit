@@ -1,0 +1,343 @@
+{
+  "evidence_class": "real_pinned_product_source_with_fake_provider_only",
+  "repository": "openharmony/security_access_token",
+  "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+  "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+  "manifest_selected_files": 550,
+  "static_status": "completed_with_limitations",
+  "ephemeral_job_id": "1b089cffd94cc49053b4bf8137d4841b",
+  "report_sha256": "0e9f6bcbdb6ae807572d5b094d85a1bce1cbebda196a554d1d749cbfe4c55183",
+  "detector_count": 8,
+  "diagnostic_count": 16,
+  "detector_runs": [
+    {
+      "detector": "ohscanner.cpp.bounds",
+      "status": "blocked",
+      "diagnostics": 0
+    },
+    {
+      "detector": "ohscanner.cpp.integer_bounds",
+      "status": "blocked",
+      "diagnostics": 4
+    },
+    {
+      "detector": "ohscanner.cpp.lifetime",
+      "status": "blocked",
+      "diagnostics": 0
+    },
+    {
+      "detector": "ohscanner.cpp.resource_lifetime",
+      "status": "blocked",
+      "diagnostics": 0
+    },
+    {
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "status": "completed",
+      "diagnostics": 8
+    },
+    {
+      "detector": "ohscanner.cpp.unsafe_memory_call",
+      "status": "blocked",
+      "diagnostics": 0
+    },
+    {
+      "detector": "ohscanner.interface.ipc",
+      "status": "completed",
+      "diagnostics": 4
+    },
+    {
+      "detector": "ohscanner.oh.arkts_js",
+      "status": "completed",
+      "diagnostics": 0
+    }
+  ],
+  "candidate": {
+    "id": "241c4ad58689605777b6cdaadcd2089405c43d4a1a5da6403b558f0681dfc9e1",
+    "detector_id": "ohscanner.interface.ipc",
+    "detector_version": "0.9.3",
+    "rule_id": "ipc.auth.missing",
+    "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+    "line": 103,
+    "symbol": "TokenSyncCallbackStub::GetRemoteHapTokenInfoInner",
+    "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340"
+  },
+  "validated_vulnerability": 0,
+  "real_r0_human_baseline": false,
+  "network_provider_calls": 0,
+  "arms": [
+    {
+      "mode": "single_shot",
+      "fake_model_calls": 1,
+      "prompt_version": "ohscanner-agent-investigation-0.6.0",
+      "consent_preview_version": "agent-egress-preview-0.5.7",
+      "redaction_policy_version": "ohscanner-egress-redaction-0.2.8",
+      "evidence_routing": {
+        "policy_version": "static-to-agent-guidance-0.1",
+        "route": "agent_source_review_with_human_followup",
+        "agent_source_review_indices": [
+          1
+        ],
+        "human_or_runtime_review_indices": [
+          0,
+          2,
+          3
+        ],
+        "unclassified_indices": [],
+        "open_obligation_count": 4,
+        "closed_obligation_count": 0,
+        "coverage_incomplete": true,
+        "vulnerability_state": "candidate",
+        "validated_vulnerability": 0,
+        "note": "Routing is based on the recorded obligation kind and status only. Agent-source indices identify questions for bounded fixed-source context gathering; the Agent cannot close obligations or prove semantic support. Human/runtime indices remain open. Unknown kinds default to human review. Coverage warnings remain separate from candidate-level analysis."
+      },
+      "obligation_reviews": [
+        {
+          "obligation_index": 0,
+          "disposition": "unresolved",
+          "citations": []
+        },
+        {
+          "obligation_index": 1,
+          "disposition": "unresolved",
+          "citations": []
+        },
+        {
+          "obligation_index": 2,
+          "disposition": "unresolved",
+          "citations": []
+        },
+        {
+          "obligation_index": 3,
+          "disposition": "unresolved",
+          "citations": []
+        }
+      ],
+      "non_source_reviews_stayed_unresolved": true,
+      "assessment": "needs_more_evidence",
+      "agent_verdict": {
+        "status": "needs_more_evidence",
+        "confidence": "low",
+        "scope": "fixed_source_code",
+        "product_status": "unknown",
+        "product_gaps": [
+          0,
+          2,
+          3
+        ],
+        "reason": "The available fixed-source evidence does not support a stronger Agent verdict."
+      },
+      "workflow": {
+        "id": "ohscanner-security-triage-taskflow",
+        "version": "0.1.0",
+        "stages": [
+          {
+            "id": "collect_fixed_source_evidence",
+            "status": "completed",
+            "tool_calls": 0
+          },
+          {
+            "id": "audit_hypothesis_and_counterevidence",
+            "status": "completed",
+            "obligations_reviewed": 4
+          },
+          {
+            "id": "validate_report",
+            "status": "accepted",
+            "citation_count": 0
+          }
+        ]
+      },
+      "structured_answer_validation": "accepted",
+      "vulnerability_state": "candidate",
+      "validated_vulnerability": 0,
+      "tool_call_count": 0,
+      "queried_symbols": [],
+      "tool_actions": [],
+      "enclosing_function": null,
+      "source_range": null,
+      "citation_verified_by_service": false,
+      "citation_evidence_policy": "supported claims and decided evidence obligations cite direct fixed-commit source file and line ranges; the server derives exact displayed quotes; scanner metadata and history are context only",
+      "cited_evidence_ids": [],
+      "citations_source_only": false,
+      "tool_evidence_provenance": [],
+      "citation_integrity": {
+        "quote_presence": "no_citations",
+        "citation_count": 0,
+        "supported_claim_citation_count": 0,
+        "obligation_review_citation_count": 0,
+        "obligations_reviewed": 4,
+        "obligations_complete": true,
+        "semantic_support": "unverified_by_machine",
+        "unverified_narrative_fields": [
+          "model_summary_unverified",
+          "unsupported_claims",
+          "unknowns",
+          "next_steps"
+        ],
+        "server_generated_fields": [
+          "summary"
+        ],
+        "narrative_semantics": "unverified_by_machine",
+        "note": "The summary is generated from structured triage labels. The original model summary, unsupported-claim labels, unknowns, and next steps remain unverified model text. Server validation proves each quote occurs verbatim in a bound fixed-source code excerpt; it does not prove the quote supports the model claim. Scanner metadata and history are not eligible citation evidence."
+      },
+      "operation_status": "completed_with_limitations",
+      "provider_fingerprint": "cc7b0028c99bccee98d7d30640f73a44c7cd93f510a6babf29fa625aac30196d",
+      "implementation_sha256": "4ae0caf73c70bb4753a5647a626d22ac0e557e12db54cce94bbc1ad735a93d3b",
+      "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340",
+      "result_sha256": "77d632b88bd56fd0feb5b27b6673bd3c7d7a3c8f702fa72e53c16194921a7f46"
+    },
+    {
+      "mode": "tool_agent",
+      "fake_model_calls": 4,
+      "prompt_version": "ohscanner-agent-investigation-0.6.0",
+      "consent_preview_version": "agent-egress-preview-0.5.7",
+      "redaction_policy_version": "ohscanner-egress-redaction-0.2.8",
+      "evidence_routing": {
+        "policy_version": "static-to-agent-guidance-0.1",
+        "route": "agent_source_review_with_human_followup",
+        "agent_source_review_indices": [
+          1
+        ],
+        "human_or_runtime_review_indices": [
+          0,
+          2,
+          3
+        ],
+        "unclassified_indices": [],
+        "open_obligation_count": 4,
+        "closed_obligation_count": 0,
+        "coverage_incomplete": true,
+        "vulnerability_state": "candidate",
+        "validated_vulnerability": 0,
+        "note": "Routing is based on the recorded obligation kind and status only. Agent-source indices identify questions for bounded fixed-source context gathering; the Agent cannot close obligations or prove semantic support. Human/runtime indices remain open. Unknown kinds default to human review. Coverage warnings remain separate from candidate-level analysis."
+      },
+      "obligation_reviews": [
+        {
+          "obligation_index": 0,
+          "disposition": "unresolved",
+          "citations": []
+        },
+        {
+          "obligation_index": 1,
+          "disposition": "unresolved",
+          "citations": []
+        },
+        {
+          "obligation_index": 2,
+          "disposition": "unresolved",
+          "citations": []
+        },
+        {
+          "obligation_index": 3,
+          "disposition": "unresolved",
+          "citations": []
+        }
+      ],
+      "non_source_reviews_stayed_unresolved": true,
+      "assessment": "needs_more_evidence",
+      "agent_verdict": {
+        "status": "needs_more_evidence",
+        "confidence": "low",
+        "scope": "fixed_source_code",
+        "product_status": "unknown",
+        "product_gaps": [
+          0,
+          2,
+          3
+        ],
+        "reason": "The available fixed-source evidence does not support a stronger Agent verdict."
+      },
+      "workflow": {
+        "id": "ohscanner-security-triage-taskflow",
+        "version": "0.1.0",
+        "stages": [
+          {
+            "id": "collect_fixed_source_evidence",
+            "status": "completed",
+            "tool_calls": 3
+          },
+          {
+            "id": "audit_hypothesis_and_counterevidence",
+            "status": "completed",
+            "obligations_reviewed": 4
+          },
+          {
+            "id": "validate_report",
+            "status": "accepted",
+            "citation_count": 0
+          }
+        ]
+      },
+      "structured_answer_validation": "accepted",
+      "vulnerability_state": "candidate",
+      "validated_vulnerability": 0,
+      "tool_call_count": 3,
+      "queried_symbols": [
+        "TokenSyncCallbackStub::GetRemoteHapTokenInfoInner"
+      ],
+      "tool_actions": [
+        "lookup_symbol_in_fixed_commit",
+        "read_candidate_enclosing_function",
+        "read_fixed_source_range"
+      ],
+      "enclosing_function": {
+        "status": "complete_function_context",
+        "function_name": "GetRemoteHapTokenInfoInner",
+        "start_line": 92,
+        "end_line": 105,
+        "source_excerpt_bytes": 548
+      },
+      "source_range": {
+        "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+        "start_line": 137,
+        "line_count": 8
+      },
+      "citation_verified_by_service": false,
+      "citation_evidence_policy": "supported claims and decided evidence obligations cite direct fixed-commit source file and line ranges; the server derives exact displayed quotes; scanner metadata and history are context only",
+      "cited_evidence_ids": [],
+      "citations_source_only": false,
+      "tool_evidence_provenance": [
+        {
+          "tool": "lookup_symbol_in_fixed_commit",
+          "evidence_id": "ev-source-00ede0f9952e2957",
+          "evidence_kind": "source_code"
+        },
+        {
+          "tool": "read_candidate_enclosing_function",
+          "evidence_id": "ev-source-dcb1285f33a6bdad",
+          "evidence_kind": "source_code"
+        },
+        {
+          "tool": "read_fixed_source_range",
+          "evidence_id": "ev-source-7ebdf61cf3ef6426",
+          "evidence_kind": "source_code"
+        }
+      ],
+      "citation_integrity": {
+        "quote_presence": "no_citations",
+        "citation_count": 0,
+        "supported_claim_citation_count": 0,
+        "obligation_review_citation_count": 0,
+        "obligations_reviewed": 4,
+        "obligations_complete": true,
+        "semantic_support": "unverified_by_machine",
+        "unverified_narrative_fields": [
+          "model_summary_unverified",
+          "unsupported_claims",
+          "unknowns",
+          "next_steps"
+        ],
+        "server_generated_fields": [
+          "summary"
+        ],
+        "narrative_semantics": "unverified_by_machine",
+        "note": "The summary is generated from structured triage labels. The original model summary, unsupported-claim labels, unknowns, and next steps remain unverified model text. Server validation proves each quote occurs verbatim in a bound fixed-source code excerpt; it does not prove the quote supports the model claim. Scanner metadata and history are not eligible citation evidence."
+      },
+      "operation_status": "completed_with_limitations",
+      "provider_fingerprint": "cc7b0028c99bccee98d7d30640f73a44c7cd93f510a6babf29fa625aac30196d",
+      "implementation_sha256": "4ae0caf73c70bb4753a5647a626d22ac0e557e12db54cce94bbc1ad735a93d3b",
+      "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340",
+      "result_sha256": "fef028314c9e1d36268f33d84a64f5e99abf086da4d3c7d3f17c952e3e1cc2aa"
+    }
+  ]
+}
