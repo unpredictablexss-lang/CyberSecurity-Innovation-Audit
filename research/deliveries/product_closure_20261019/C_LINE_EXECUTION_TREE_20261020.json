@@ -759,7 +759,7 @@
     {
       "id": "C-NEXT-C1-MAP-ADAPTER-20261020",
       "kind": "development_and_precision_refinement",
-      "status": "IN_PROGRESS_FUNCTION_SCOPED_DEPENDENCY_AUDIT",
+      "status": "COMPLETED_NO_GO_MACRO_EXPANSION_UNBOUND",
       "base": {
         "branch": "codex/c-line-parallel-plan-20261020",
         "commit": "fc8b03905cce1accfc9e7e810a7c604328d669fe",
@@ -780,30 +780,81 @@
         "target output remains partial/limited"
       ],
       "state_at_start": "The line-2733 source candidate is emitted by direct analyze_unit with explicit bound flag; production adapter was replayed with exact target and six helpers but remained unknown because runtime_stubs.cpp AST was partial (7 issues).",
-      "done_when": "A regression-tested exact function-region gate is committed and same-commit replay passes, or a specific no-go report preserves adapter unknown with reason and next executable source candidate."
+      "done_when": "A regression-tested exact function-region gate is committed and same-commit replay passes, or a specific no-go report preserves adapter unknown with reason and next executable source candidate.",
+      "completion": "No production adapter change. The clean byte region is a function_definition whose declarator is DEF_RUNTIME_STUBS; the macro, registration, runtime-call ID, declaration and RUNTIME_TRACE/preprocessing chain are not all bound. Strict adapter remains unknown/zero finding; direct analyzer candidate remains source-level only.",
+      "developer_commit": "874edb47a89d542be682fe3de6c4df7020caa180",
+      "developer_report": "research/deliveries/c-line/c1_map_adapter_function_scope_nogo_20261020.md",
+      "additional_inputs_needed": [
+        "runtime_stub_list.h",
+        "rt_call_signature.h",
+        "runtime_stubs.h",
+        "js_typed_array.h",
+        "runtime_call_id.h",
+        "rt_call_signature.cpp",
+        "preprocessing/build configuration"
+      ]
     },
     {
       "id": "C-TEST-C1-MAP-ADAPTER-20261020",
       "kind": "independent_testing",
-      "status": "IN_PROGRESS_BASELINE_AND_MATRIX",
+      "status": "COMPLETED_INDEPENDENT_FAIL_CLOSED_REPLAY",
       "test_agent": "c_map_effect_test",
       "feedback_to": "C-NEXT-C1-MAP-ADAPTER-20261020",
       "same_commit_replay_required": true,
       "objective": "Independently determine whether exact runtime fallback function evidence can be used safely despite file-level partial parsing, and replay any narrow developer change.",
       "tester_prompt": "ROLE: independent tester on the C1 Map adapter boundary. Do not edit production code. Use exact source identities from the task tree. Reproduce strict adapter no-finding and inspect Tree-sitter error ranges versus the full GetTypedArrayPropertyByIndex definition and any relevant macro/callee declarations. Send a predicted outcome matrix to the developer before code changes. Replay the exact developer SHA and test all positive/fail-closed controls in the developer prompt. Confirm target status remains partial/limited and no rule is enabled by a partial unrelated function, wrong blob, missing dependency, or generic model. Commit a factual report with commands and limitations.",
       "blocking_prerequisites": [],
-      "report_required": true
+      "report_required": true,
+      "report": "research/deliveries/c-line/c1_map_adapter_independent_test_20261020.md",
+      "report_commit": "d546f30cac5da010c6f6f863c2c73733e6dcc61c",
+      "completion": "Exact target+six dependencies produced blocked/partial/0 findings. Missing, mutated, stale-OID dependency, wrong commit, default/unbound and unrelated controls remained fail-closed. No positive adapter activation was tested because no complete macro/dispatch proof exists."
     },
     {
       "id": "C-LLM-REVIEW-C1-MAP-WIDTH-20261020",
       "kind": "second_layer_candidate_review",
-      "status": "IN_PROGRESS_INDEPENDENT_SEMANTIC_REVIEW",
+      "status": "COMPLETED_CONDITIONAL_SOURCE_CANDIDATE_RUNTIME_UNKNOWN",
       "reviewer": "c_map_effect_review",
       "feedback_to": "C-NEXT-C1-MAP-ADAPTER-20261020",
       "objective": "Reassess the line-2733 species result/source read-width candidate independently for semantic plausibility, identify likely false-positive conditions and explain what exact runtime experiment would resolve them; do not implement detector or LLM features.",
       "review_prompt": "ROLE: second-layer source reviewer only. Independently inspect exact Ark Runtime commit a65a2853ccae13da167d9aa4720ab8b11ec16656 and the current source-level candidate/report. Trace species protector fallback, TypedArraySpeciesCreate content-type and length checks, Map source read arguments, Float32/Float64 byte offset/load, and runtime fallback. Decide whether Uint8 source plus same-Number-content Float64/Float32 species is truly candidate-worthy from source alone; distinguish overread beyond view from allocation padding/ArrayBuffer behavior and identify any guard/copy behavior that could invalidate the theory. Review the direct analyzer replay versus strict adapter result. Give counterevidence, exact source pins, and the smallest isolated runtime/ASan experiment needed. Preserve partial/unknown; do not claim exploitability/product impact and do not edit implementation.",
       "blocking_prerequisites": [],
-      "report_required": true
+      "report_required": true,
+      "report": "research/deliveries/c-line/c1_map_species_width_second_layer_review_20261020.md",
+      "report_commit": "2d5b973490da9d0a805cb170893b01ef0733307f",
+      "completion": "Conditional source-level width mismatch survives source review; no proof of concrete runtime types, native allocation OOB, exploitability or product impact. Adapter remains partial/no finding.",
+      "counterevidence": "Species path is conditional and custom; backing allocation padding, emitted machine load and observable consequence are unverified."
+    },
+    {
+      "id": "C-DEV-EXACT-BOUND-SCOUT-20261020",
+      "kind": "source_candidate_development_scout",
+      "status": "IN_PROGRESS_ONE_CANDIDATE_SHORTLIST",
+      "base": {
+        "branch": "codex/c-line-parallel-plan-20261020",
+        "commit": "d546f30cac5da010c6f6f863c2c73733e6dcc61c",
+        "upstream_source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656"
+      },
+      "objective": "Identify at most one next high-signal candidate path in exact-bound C-line Ark Runtime sources not already closed by the C-line execution tree. Prefer source-level control-flow/type/bounds defects that map to existing detector models and whose exact helper/declaration AST dependencies parse complete. Do not implement until the independent tester confirms source identity and a concrete gap.",
+      "developer_prompt": "ROLE: C-line static-candidate scout. BASE current planning branch HEAD d546f30cac5da010c6f6f863c2c73733e6dcc61c; upstream Ark Runtime source commit a65a2853ccae13da167d9aa4720ab8b11ec16656 and exact local Git object store. Review current task tree and detector models. Exclude already completed Map width, Map callback JSType, TypedArray length, IB8BCA SetTypedValue, DataView API width, receiver guards, and macro parse feasibility slices. Inspect remaining exact-source TypedArray/DataView/ArrayBuffer stub flows with precise candidate semantics. Return zero or one hypothesis only; bind source commit/tree/path/blob/SHA and all helper/declaration pins, reproduce current detector/direct-analysis baseline, state a plausible trigger and source-level sensitive operation, enumerate counterevidence, parser statuses and safe/fixed/unrelated controls. Prefer no candidate over weak volume. Send exact candidate/control matrix to C-TEST-EXACT-BOUND-SCOUT before recommending implementation. No production edits in scout stage; no runtime/product/accuracy claims.",
+      "feedback_loop": "Scout shares candidate and predicted controls with independent tester; tester verifies exact identity and challenges baseline; only a reproduced source candidate becomes a separate dev/test implementation task. L2 review follows a candidate, not an empty scan.",
+      "deliverable": "Short report naming zero or one next candidate, exact identities, reproduced output, parser/dependency status, controls and recommended next slice.",
+      "done_when": "Independent source and current-model evidence select one narrow candidate or document why no additional candidate is presently justified."
+    },
+    {
+      "id": "C-TEST-EXACT-BOUND-SCOUT-20261020",
+      "kind": "independent_candidate_testing",
+      "status": "IN_PROGRESS_INDEPENDENT_SHORTLIST_AUDIT",
+      "tester_agent": "c1_adapter_test",
+      "feedback_to": "C-DEV-EXACT-BOUND-SCOUT-20261020",
+      "objective": "Independently inspect remaining exact-bound source candidates and reproduce/challenge the developer shortlist without editing production code.",
+      "tester_prompt": "ROLE: independent C-line candidate tester. BASE d546f30cac5da010c6f6f863c2c73733e6dcc61c and exact source object store commit a65a2853ccae13da167d9aa4720ab8b11ec16656. Independently inspect detector/task-tree closed slices and remaining TypedArray/DataView/ArrayBuffer source flows. Do not edit production code. Verify exact target/helper identities and parse statuses; reproduce any candidate output and challenge its trigger with safe/fixed/unrelated/missing-evidence controls. Send findings to developer before any implementation. Accept zero candidates if evidence does not support a narrow signal. Preserve partial/unknown/not_run; no safety/product/accuracy claim. Commit a concise independent report with commands and result."
+    },
+    {
+      "id": "C-LLM-REVIEW-EXACT-BOUND-SCOUT-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "PENDING_SURVIVING_CANDIDATE",
+      "reviewer": "c1_width_review",
+      "objective": "Perform source-semantic second-layer review only if the scout/test loop selects a new candidate; do not reopen already completed source reviews or develop LLM features.",
+      "review_prompt": "ROLE: second-layer source reviewer. After C-DEV-EXACT-BOUND-SCOUT and C-TEST-EXACT-BOUND-SCOUT identify a candidate and exact report, independently assess whether the source trigger can reach the sensitive operation and whether stated guards/counterevidence defeat it. Verify source pins, propose smallest isolated runtime test if warranted, and clearly separate source candidate from runtime/product vulnerability. If no candidate survives, record not_run and do not invent one. No detector or LLM implementation."
     }
   ],
   "feedback_loop": [
@@ -817,7 +868,8 @@
     "DataView API width refinement completed: exact helper bytes are required to match both model-pinned SHA-256 and recomputed Git blob OID. The tester found and documented the stale-blob mismatch flaw in 40b7732; developer fixed it in 76efed37 and independent same-commit replay passed. Results remain blocked/partial with unknown runtime/product behavior; no safety or accuracy claim.",
     "Latest upstream C-line base was fetched successfully as d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03. Planning branch closure commit fbb537a39183b719bd587e0dd4a5ba83c6d85925 was subsequently pushed successfully. The current slice is the C1 TypedArray Map line-2733 source/destination JSType width mismatch; developer/tester/reviewer tasks are C-DEV-C1-MAP-EFFECT, C-TEST-C1-MAP-EFFECT, and C-LLM-REVIEW-C1-MAP-EFFECT. The detector currently reports unknown; source review supports a concrete width-mismatch candidate, with runtime/product impact unverified.",
     "C1 Map species-width slice: implementation fa8d165 emits a direct-analyzer source candidate at 2733; independent report 28e94ce37 confirms the pre-callback candidate while preserving later-loop and line-2747 unknowns. The strict detector adapter remains unknown/no finding because pinned runtime_stubs.cpp has partial AST; do not describe this as an integrated adapter finding. Existing ark_runtime tests pass 193, 3 skipped; compileall passes.",
-    "Next C1 slice launched from fc8b039: audit function-scoped completeness for the pinned runtime fallback behind the Map source-width candidate; developer and independent tester share exact positive/fail-closed matrix, while second-layer reviewer independently tests source-level candidate plausibility and counterevidence. Preserve strict file partial status and do not relax the adapter on a name/hash alone."
+    "Next C1 slice launched from fc8b039: audit function-scoped completeness for the pinned runtime fallback behind the Map source-width candidate; developer and independent tester share exact positive/fail-closed matrix, while second-layer reviewer independently tests source-level candidate plausibility and counterevidence. Preserve strict file partial status and do not relax the adapter on a name/hash alone.",
+    "C1 Map adapter function-scoped audit closed no-go at 874edb4; independent fail-closed replay d546f30 and second-layer conditional source review 2d5b973 preserve strict adapter unknown. New next step is a one-candidate, exact-bound scout with independent tester, excluding completed C-line slices and preferring complete helper/declaration AST evidence; second-layer review is conditional on a candidate surviving."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
