@@ -12,6 +12,7 @@ import tree_sitter_cpp
 from tree_sitter import Language, Parser
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation
 from .models import DEFAULT_SOURCE, SINKS, STATUS_RETURN_CALLS, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel
+from .property_keys import PROPERTY_READ_CALLS, PropertyKeyBindings
 
 @dataclass(frozen=True)
 class Flow:
@@ -270,7 +271,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.3'
+    version = '0.21.4'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -385,6 +386,7 @@ class LocalFlow:
         self.function_nodes = {}
         self.call_stack = resolver.call_stack if resolver is not None else []
         self.call_results = {}
+        self.property_keys = PropertyKeyBindings(self)
         self.type_conflicts = set()
         for n in walk(self.tree.root_node):
             if n.type == 'function_definition':
@@ -411,7 +413,8 @@ class LocalFlow:
         if n.type in ('identifier','field_identifier'):return self.text(n)
         child=n.child_by_field_name('declarator')
         if child:return self.name(child)
-        if n.type=='parenthesized_declarator' and len(n.named_children)==1:return self.name(n.named_children[0])
+        if n.type in ('parenthesized_declarator','reference_declarator') and len(n.named_children)==1:
+            return self.name(n.named_children[0])
         return ''
 
     def source(self,desc,n):
@@ -833,6 +836,29 @@ class LocalFlow:
             if tainted_args and self.expand_tainted_call(
                     fn,args,env,types,n.start_point[0]+1,n,fnname):
                 return
+        if fn in PROPERTY_READ_CALLS and not locally_defined and len(args)==4:
+            binding=self.property_keys.bind(n,args[2])
+            if binding:
+                self.gaps.add('reviewed NAPI property-name argument 2 is not fetched password material: '
+                              +fn+'; bound constant '+binding)
+                # Only the exact, bound schema-key operand is excluded. Outputs,
+                # object values and any other material remain may-escape inputs.
+                flows=tuple(flow for i,arg in enumerate(args) if i!=2
+                            for flow in self.expr(arg,env,types))
+                if flows:
+                    self.emit_unresolved_flows(fn,n,fnname,flows,
+                        'other NAPI operands remain unresolved; only the bound property-name operand is excluded')
+                if fn=='napi_get_named_property':
+                    source=self.source('napi_get_named_property password-property output argument 3',n)
+                    destination=self.lvalue(args[3],types)
+                    if (destination and args[3].type=='pointer_expression'
+                            and self.text(args[3].child_by_field_name('operator'))=='&'):
+                        self.store_value(env,destination,(source,))
+                    else:
+                        self.emit_unresolved_flows(fn,n,fnname,(source,),
+                            'password-property output destination is unresolved','destination_binding')
+                self.call_results[n.id]=()  # napi_status, not fetched material
+                return
         if fn in self.output_calls:
             index, arity = self.output_calls[fn]
             if len(args) != arity:
@@ -1090,7 +1116,7 @@ class LocalFlow:
         type_text=self.text(node.child_by_field_name('type'))
         declared=set()
         for d in node.named_children:
-            if d.type not in ('init_declarator','identifier','pointer_declarator','array_declarator'):continue
+            if d.type not in ('init_declarator','identifier','pointer_declarator','reference_declarator','array_declarator'):continue
             name=self.name(d)
             if not name:continue
             declared.add(name);state.types.pop(name,None);state.values[name]=();state.shadows.add(name)
