@@ -1,8 +1,8 @@
 # Ark `TypedArray.set` 源码差异独立复核：a65 → d1a58
 
-日期：2026-10-21（Asia/Shanghai）  
-OHScanner 基线：`4e1268a980fd103326c7dbaa6ca2e78d2ba43e69`，tree `764f7698f6babdcccb2cd68eba75ed1b0afefc9e`。本报告只记录该固定 scanner SHA 上的源码审计结果。  
-Ark Runtime 对照：`a65a2853ccae13da167d9aa4720ab8b11ec16656`，tree `8781f036a3e7e04d8e0b34970d5f623b42875016`。  
+日期：2026-10-21（Asia/Shanghai）
+OHScanner 基线：`4e1268a980fd103326c7dbaa6ca2e78d2ba43e69`，tree `764f7698f6babdcccb2cd68eba75ed1b0afefc9e`。本报告只记录该固定 scanner SHA 上的源码审计结果。
+Ark Runtime 对照：`a65a2853ccae13da167d9aa4720ab8b11ec16656`，tree `8781f036a3e7e04d8e0b34970d5f623b42875016`。
 Ark Runtime 新源码：`d1a58d59166777e16574ceed64c15f0b2f44a76c`，tree `2cd854aa7d9f987de89d31a6a512e735779e75b6`。
 
 ## 独立身份与文件绑定
@@ -47,3 +47,4 @@ A Python integer/binary64 check was used only to verify this arithmetic and exac
 The developer source-delta report's conclusion agrees with this independent review: the view-boundary candidate persists in d1a58 at source level. I found two concrete documentation gaps during review and requested bounded corrections: first, missing blob/SHA bindings for `js_tagged_value.cpp` and `number_helper.cpp`; second, the Set function start line was listed as 1134 instead of 1146. I independently recalculated all six file hash pairs and checked the corrected line against `git show d1:... | nl -ba`; both corrections are now accurate in developer commit `f77925bfba85184b18463a4678168dcbe72849f5`. No further source-semantic correction was needed.
 
 Classification: source conversion path `reachable`; nonzero-byteOffset target-view-boundary write `candidate`; backing-buffer OOB is not shown by this witness; Ark Runtime execution and product impact remain `not_run` / `unknown`. No production edits, builds or runtime execution were performed.
+
