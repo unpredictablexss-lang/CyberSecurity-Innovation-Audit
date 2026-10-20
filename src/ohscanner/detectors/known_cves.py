@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.16.0"
+VERSION = "0.17.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -69,6 +69,122 @@ def _curl_92392_affected(version):
         return False
     return True
 
+
+def _has_lock_near(text: str, pos: int, radius: int = 260) -> bool:
+    window = text[max(0, pos - radius):min(len(text), pos + radius)]
+    return bool(re.search(
+        r"(?:std::)?(?:lock_guard|scoped_lock|unique_lock)\s*<[^;]*>\s*\w+\s*\([^;]*mutex|"
+        r"\bmutex\w*\s*(?:\.|->)\s*lock\s*\(|atomic\s*<[^;]*>|(?:atomic_(?:load|store)|\.load)\s*\(",
+        window,
+    ))
+
+
+def _scan_review_shapes(unit: SourceUnit):
+    """Bounded source shapes imported from the 2026-10-18 source review.
+
+    These are candidate-only lexical controls. They do not infer CVE identity,
+    ownership, attacker control, concurrency feasibility, or CIA impact.
+    """
+    s = mask_comments_and_literals(unit.text)
+    source_path = unit.path.replace("\\", "/")
+    out = []
+
+    if source_path.endswith("group_manager/group_delete.cpp"):
+        fn = _body(s, "DeleteGroup")
+        if fn:
+            start, body = fn
+            sink = re.search(r"(?:DeleteGroupInfo|RemoveGroupInfo|groups_\s*\.\s*erase)\s*\(", body)
+            guarded = re.search(r"(?:Check|Verify|Is)\w*(?:Group|Membership)\w*\s*\(", body)
+            if sink and not guarded:
+                out.append(_finding(
+                    unit, start + 1 + sink.start(),
+                    "ohknownlocal-group-delete-without-membership-check",
+                    "LOCAL-GROUP-DELETE",
+                    "group deletion reaches the shared group sink without a visible Bundle Manager membership check in this source unit",
+                    "CWE-862",
+                ))
+
+    if source_path.endswith("request/request_task.cpp"):
+        fn = _body(s, "OpenUserFile")
+        if fn:
+            start, body = fn
+            nofollow = re.search(r"\bopen\s*\([^;]*O_NOFOLLOW[^;]*\)", body, re.S)
+            bounded = re.search(r"(?:canonical|realpath|IsUnderAppBase|VerifyAppBase|base::StartsWith)\s*\(", body)
+            if nofollow and not bounded:
+                out.append(_finding(
+                    unit, start + 1 + nofollow.start(),
+                    "ohknownlocal-request-path-without-canonical-base-boundary",
+                    "LOCAL-REQUEST-PATH",
+                    "user-controlled path is opened with O_NOFOLLOW but no canonical app-base containment check is visible in the source unit",
+                    "CWE-22",
+                ))
+
+        fn = _body(s, "WriteFile")
+        if fn:
+            start, body = fn
+            closes = list(re.finditer(r"\bclose\s*\(\s*(?:fd_|fd)\s*\)", body))
+            ownership = re.search(r"\b(?:dup|dup2|std::move|release|owned_fd|fd_\s*=\s*-1)\b", body)
+            if len(closes) >= 2 and not ownership:
+                out.append(_finding(
+                    unit, start + 1 + closes[1].start(),
+                    "ohknownlocal-request-raw-fd-double-close",
+                    "LOCAL-REQUEST-FD",
+                    "the same raw file descriptor is closed twice without a visible ownership transfer, duplicate, or invalidation",
+                    "CWE-415",
+                ))
+
+    if source_path.endswith("security_deviceauth/ipc_stub.cpp"):
+        fn = _body(s, "OnRemoteRequest")
+        if fn:
+            start, body = fn
+            length = re.search(r"\b(?:int32_t|int|ssize_t)\s+len\w*\s*=\s*(?:\w+\.)?(?:ReadInt32|ReadLong)\s*\(", body)
+            allocation = re.search(r"(?:malloc|calloc|new|resize|reserve)\s*\([^;]*len\w*", body, re.S)
+            guarded = re.search(r"\blen\w*\s*(?:<\s*0|>=\s*0)\b", body) or re.search(
+                r"(?:SYSTEM_CORE|CheckPermission|VerifyCallingPermission|EnforceCallingPermission)", body
+            )
+            if length and allocation and not guarded:
+                out.append(_finding(
+                    unit, start + 1 + allocation.start(),
+                    "ohknownlocal-deviceauth-negative-length-ipc",
+                    "LOCAL-DEVICEAUTH-NEGATIVE-LENGTH",
+                    "IPC-controlled signed length reaches allocation/resize without a visible negative-length or caller-permission guard in this source unit",
+                    "CWE-195",
+                ))
+
+    if source_path.endswith("frameworks/verifier/src/verify_task.cpp"):
+        schedule = _body(s, "ScheduleVerifyTasks")
+        callback = _body(s, "OnUriCallback")
+        if schedule and callback:
+            callback_start, callback_body = callback
+            shared_read = re.search(r"\bappVerifyBaseInfo_\s*\.\s*priority\b", callback_body)
+            concurrent = re.search(r"\bfor\s*\(|\b(?:PostTask|Submit|Schedule)\s*\(", schedule[1])
+            synchronized = _has_lock_near(callback_body, shared_read.start() if shared_read else 0)
+            if shared_read and concurrent and not synchronized:
+                out.append(_finding(
+                    unit, callback_start + 1 + shared_read.start(),
+                    "ohknownmanual-appdomain-shared-priority-read",
+                    "MANUAL-APPDOMAIN-PRIORITY",
+                    "concurrent URI callbacks read a shared priority field without visible synchronization in the same source unit",
+                    "CWE-362",
+                ))
+
+    if source_path.endswith("services/storage_daemon/ipc/src/storage_daemon_provider.cpp"):
+        radar = _body(s, "StorageRadarThd")
+        protected = _body(s, "GetUserStatistics")
+        if radar and protected:
+            radar_start, radar_body = radar
+            unlocked_read = re.search(r"\bopStatistics_\s*\.\s*empty\s*\(\s*\)", radar_body)
+            other_lock = re.search(r"\bmutexStats_\b", protected[1])
+            synchronized = _has_lock_near(radar_body, unlocked_read.start() if unlocked_read else 0)
+            if unlocked_read and other_lock and not synchronized:
+                out.append(_finding(
+                    unit, radar_start + 1 + unlocked_read.start(),
+                    "ohknownmanual-storage-statistics-unlocked-read",
+                    "MANUAL-STORAGE-STATISTICS",
+                    "the statistics thread reads opStatistics_ while another visible access uses mutexStats_, but this read has no visible common lock",
+                    "CWE-362",
+                ))
+    return out
 
 def _scan(unit: SourceUnit, curl_version=None):
     t = unit.text; s = mask_comments_and_literals(t); out = []
@@ -505,6 +621,7 @@ def _scan(unit: SourceUnit, curl_version=None):
                 "DmAuthManager::OnGroupCreated serializes PIN_CODE_KEY into authToken and sends the authentication response through SoftBus. This is a component-source candidate; product version, build inclusion, peer visibility, and impact are not established.",
                 "CWE-319", impact="sensitive_data_exposure",
             ))
+    out.extend(_scan_review_shapes(unit))
     return tuple(out)
 
 class KnownDisclosedCveDetector:
