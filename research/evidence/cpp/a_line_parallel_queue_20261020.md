@@ -440,3 +440,7 @@ The independent detector-gap review found no justified bounds-rule change: the D
 ### 2026-10-20 follow-up — historical integer/bounds controls
 
 Independent test-line scans of the exact upstream `atomic_helper_test.cpp` and `js_array_test.cpp` each completed with full parsing and zero diagnostics. They are supplementary observations, not safe/unrelated controls for CVE-2025-0587 or CVE-2025-23420; both rows remain PARTIAL pending root-relevant reviewed controls and product evidence. See [source-bound test-file scans](t_source_test_file_scans_20261020/README.md).
+
+## Exact A0 webview function-fragment replay (2026-10-20)
+
+A follow-up extracted both Flowbuffer functions from the exact OpenHarmony vulnerable/fixed full-file blobs, bound contiguous byte ranges and fragment hashes, and reran current CLI with controls. Patched-root candidates are 6/0; ordinary-loop residuals are 6/6; renamed positive is 1/1 each; safe/unrelated are 0/0; a partial control blocks both aggregates. The verifier confirms the D11 Chromium snapshot is byte-equivalent while keeping repository identities separate. This demonstrates function-level candidate coverage on the exact A0 source bytes only. Both full translation units remain parser-partial/blocked with 0 findings, and the CVE row stays PARTIAL/BLOCK. See `webview_exact_a0_fragments_20261020/README.md` and `verify_webview_exact_a0_fragments_20261020.py`.
