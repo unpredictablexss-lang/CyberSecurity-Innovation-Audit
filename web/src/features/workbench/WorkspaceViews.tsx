@@ -147,7 +147,13 @@ export function RiskCenter({ jobs, query = new URLSearchParams() }: { jobs: any[
             <Tooltip title={severityBasisHint(row)}>
               <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag>
             </Tooltip> },
-          { title: "漏洞状态", render: (_: unknown, row: any) => candidateVerificationLabel(row.vulnerability_state) },
+          { title: "漏洞状态", render: (_: unknown, row: any) =>
+            row.validated_case_ids?.length
+              ? <Space direction="vertical" size={0}>
+                  <Tag color="green">关联已验证案例</Tag>
+                  <Text type="secondary" style={{ fontSize: 12 }}>候选本身仍需核对</Text>
+                </Space>
+              : candidateVerificationLabel(row.vulnerability_state) },
           { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
           { title: "检测器 / 候选位置", render: (_: unknown, row: any) => <>{row.detector_id || "未知检测器"}<div>{row.file}:{row.line}</div><div className="muted">{row.rule_id}</div></> },
           { title: "研判状态", dataIndex: "triage_state", render: (value: string) => triageStateLabel(value) },
