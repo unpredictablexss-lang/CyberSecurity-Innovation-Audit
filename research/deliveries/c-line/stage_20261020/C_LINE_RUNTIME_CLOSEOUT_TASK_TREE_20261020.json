@@ -22,6 +22,7 @@
       "baseline_commit": "79916713cf6e4b590a588c9cd4d50e115e187436",
       "branch": "codex/c-runtime-dev-closeout-20261020",
       "worktree": "D:/openHarmonyScanner/worktrees/c-runtime-dev-closeout-20261020",
+      "agent": "/root/c_runtime_dev",
       "feedback_from": "C-CLOSEOUT-RUNTIME-TEST-20261020",
       "deliverables": ["source/build manifest", "commands and raw logs", "actual test result or precise blocker", "fixed-source availability/result", "report commit"],
       "stop_condition": "One actual component result or one precise Linux-native build blocker; no repeated NTFS/P9 attempt."
@@ -35,6 +36,7 @@
       "baseline_commit": "79916713cf6e4b590a588c9cd4d50e115e187436",
       "branch": "codex/c-runtime-test-closeout-20261020",
       "worktree": "D:/openHarmonyScanner/worktrees/c-runtime-test-closeout-20261020",
+      "agent": "/root/c_runtime_test",
       "feedback_to": "C-CLOSEOUT-RUNTIME-DEV-20261020",
       "deliverables": ["official test assertion map", "source/fix provenance check", "independent replay or precise blocker", "discrepancy feedback", "report commit"],
       "stop_condition": "One independent replay and feedback, or one precise independent blocker; never substitute fixtures for a real fix."
