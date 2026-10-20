@@ -16,6 +16,43 @@ class SeverityPresentationTests(unittest.TestCase):
                 self.assertNotIn("validated_vulnerability", actual)
                 self.assertNotIn("vulnerability_state", actual)
 
+    def test_unassessed_scanner_severity_uses_known_cwe_as_unverified_hint(self):
+        null_row = severity_metadata({
+            "severity": "unassessed", "candidate_cwe": "CWE-476",
+        })
+        self.assertEqual(null_row["severity"], "medium")
+        self.assertEqual(null_row["severity_label"], "中危")
+        self.assertEqual(null_row["severity_basis"], "CWE-476")
+        self.assertEqual(null_row["severity_evidence"], "cwe_type_heuristic_unverified")
+        uaf = severity_metadata({
+            "severity": "unassessed", "candidate_cwe": "CWE-416",
+        })
+        self.assertEqual(uaf["severity"], "high")
+        self.assertEqual(uaf["severity_label"], "高危")
+
+    def test_consequence_cwe_takes_precedence_without_claiming_impact(self):
+        row = severity_metadata({
+            "severity": "unassessed", "candidate_cwe": "CWE-190",
+            "consequence_cwe": "CWE-787", "consequence_impact": "potential_memory_safety",
+        })
+        self.assertEqual(row["severity"], "high")
+        self.assertEqual(row["severity_basis"], "CWE-787")
+        self.assertNotIn("vulnerability_state", row)
+
+    def test_unmapped_or_unproven_risk_remains_ungraded(self):
+        for candidate in (
+            {"severity": "unassessed"},
+            {"severity": "unassessed", "candidate_cwe": None},
+            {"severity": "unassessed", "candidate_cwe": "CWE-999999"},
+            {"severity": "unassessed", "candidate_cwe": "CWE-532", "severity": "unknown",
+             "consequence_cwe": "invalid"},
+        ):
+            actual = severity_metadata(candidate)
+            if candidate.get("candidate_cwe") == "CWE-532":
+                self.assertEqual(actual["severity"], "medium")
+            else:
+                self.assertEqual(actual["severity"], "unknown")
+
     def test_unknown_never_defaults_to_low_or_high(self):
         for value in (None, "", "not-provided", 0, "confirmed"):
             with self.subTest(value=value):
