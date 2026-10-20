@@ -3,7 +3,8 @@
   "date": "2026-10-20",
   "baseline": {
     "remote": "origin/codex/c-line-static-20261019",
-    "commit": "d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03"
+    "commit": "d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03",
+    "refresh": "fetch_failed_network_unavailable_2026-10-20; locally available remote-tracking ref remains at recorded commit"
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
   "status": "ACTIVE",
@@ -20,7 +21,7 @@
       "objective": "Fix reproduced negated/composite predicate, type-token reassignment, and receiver rebinding false-matches; only proven source-bound guards may suppress a candidate.",
       "worktree": "worktrees/c-static-dev-20261020",
       "feedback_from": "C-TEST-RG-20261020",
-      "completion": "Patch 71950e65f46e204e6aec21210c8de73fa4f2a1a9 passed the developer suite and independent replay; commits are integrated into the C execution worktree.",
+      "completion": "Patch 71950e65f46e204e6aec21210c8de73fa4f2a1a9 passed developer and independent tests; source commits remain on the dedicated code branch codex/c-static-dev-20261020 and are not merged into the planning worktree because their base differs.",
       "evidence": {
         "commits": ["ae5792f84e6b641e8857d0d58fab508f3a306af4", "71950e65f46e204e6aec21210c8de73fa4f2a1a9"],
         "tests": "python -m pytest tests/detectors/ark_runtime -q: 152 passed, 3 skipped",
@@ -46,9 +47,13 @@
     {
       "id": "C-LLM-REVIEW-20261020",
       "kind": "second_layer_candidate_review",
-      "status": "READY_AFTER_SLICE",
-      "objective": "Review source-bound static candidates against code, control/data-flow evidence, counterevidence and version context; report support, refutation or unknown per candidate.",
-      "completion": "Evidence-linked per-candidate review; no invented product impact or unlabeled accuracy metrics."
+      "status": "COMPLETED_SOURCE_REVIEW_RUNTIME_UNKNOWN",
+      "objective": "Review the exact parent/fixed TypedArray allocation-exception candidates against source and builder semantics, separating source-level missing exception handling from runtime/product impact.",
+      "worktree": "worktrees/worktrees/c-static-review-20261020",
+      "input": "commits c758818dbfd0b146a908d43d21f6ca1706c33783 and 81ca57487d04ea30cd11c271e86494a4e130f43e; exact source hashes in tests/detectors/ark_runtime/test_exception_guard.py",
+      "completion": "Independent source review committed as 95011774f; parent Filter/Map missing exception protection is supported, fixed ordering is confirmed, runtime/product impact remains unknown.",
+      "report": "research/deliveries/c-line/second_layer_exception_guard_review_20261020.md",
+      "limitations": "No shipped-product binding, runtime reproduction, exploitability or full-CI evidence; aggregate parser/detector coverage remains partial/blocked."
     },
     {
       "id": "C-NEXT-RG-BINDING-20261020",
@@ -61,18 +66,41 @@
     {
       "id": "C-NEXT-RG-ALIAS-20261020",
       "kind": "development_and_testing",
-      "status": "READY",
+      "status": "IN_PROGRESS",
       "objective": "Evaluate whether safe source-bound alias and same-origin type resampling cases can be proven without weakening rebinding protection; keep unknown when identity cannot be proven.",
+      "development_worktree": "worktrees/worktrees/c-static-alias-dev-20261020",
+      "testing_worktree": "worktrees/worktrees/c-static-alias-test-20261020",
       "evidence": "Independent test report observes alias and same-origin resampling remain unknown; rebinding after a guard can conservatively remain candidate.",
       "completion": "Only evidence-backed coverage improvements with positive/negative regression controls."
     },
     {
-      "id": "C-NEXT-REPLAY-COVERAGE-20261020",
+      "id": "C-DEV-REPLAY-20261020",
       "kind": "development_and_testing",
-      "status": "READY_AFTER_CURRENT_REPLAY",
-      "objective": "Inspect the pinned Ark Runtime source replay's blocked type_safety coverage and determine whether exact source path applicability or partial parsing prevented the detector from running; fix only a reproduced scanner-side issue.",
-      "evidence_pointer": "research/deliveries/c-line/replay_20261019/receiver-fixed.md",
-      "completion": "Source/version/path and actual scanner outcome are traceable; unknown coverage is preserved and no product-level claim is inferred."
+      "status": "DEVELOPMENT_IN_PROGRESS_TEST_BASELINE_COMPLETE",
+      "objective": "Extend the registered source-bound exception-guard research profile to already modeled parent/fixed revisions if exact source identity supports it, then run CLI parent/fixed replay; preserve partial coverage and candidate-only semantics.",
+      "worktree": "worktrees/worktrees/c-static-replay-dev-20261020",
+      "test_worktree": "worktrees/worktrees/c-static-replay-test-20261020",
+      "evidence_pointer": "research/deliveries/c-line/replay_20261019/C_LINE_KNOWN_SAMPLE_REPLAY_20261019.json",
+      "completion": "Developer has locally verified parent emits two candidates and fixed emits zero while preserving blocked/partial; independent same-commit replay remains pending.",
+      "independent_baseline_report": "research/deliveries/c-line/exception_guard_cli_replay_20261020.md",
+      "independent_baseline_commit": "532aab6d6"
+    },
+    {
+      "id": "C-TEST-EXCEPTION-CLI-20261020",
+      "kind": "independent_testing",
+      "status": "BASELINE_COMPLETE_AWAITING_DEVELOPMENT_COMMIT",
+      "worktree": "worktrees/worktrees/c-static-replay-test-20261020",
+      "objective": "Verify on the same code commit that exact-bound parent produces the registered-adapter candidate, exact fixed source produces no same-rule candidate, an unbound commit remains excluded, and CLI partial/blocked states stay explicit.",
+      "baseline_report": "research/deliveries/c-line/exception_guard_cli_replay_20261020.md",
+      "feedback_to": "C-DEV-REPLAY-20261020"
+    },
+    {
+      "id": "C-TEST-ALIAS-20261020",
+      "kind": "independent_testing",
+      "status": "IN_PROGRESS",
+      "worktree": "worktrees/worktrees/c-static-alias-test-20261020",
+      "objective": "Build a safe/unsafe source-bound matrix for immutable aliases, token resampling and receiver rebinding/restoration; replay on the developer's commit.",
+      "feedback_to": "C-NEXT-RG-ALIAS-20261020"
     }
   ],
   "feedback_loop": [

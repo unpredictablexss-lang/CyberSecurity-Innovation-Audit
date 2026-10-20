@@ -110,3 +110,108 @@ deliverables: 每条候选的支持/反证/unknown、引用位置及具体规则
 测试线复现并推动修复了三类静态误报：否定/复合 TypedArray 条件、guard 前类型 token 被改写、guard 后接收对象重新绑定。提交 `ae5792f84e6b641e8857d0d58fab508f3a306af4` 和 `71950e65f46e204e6aec21210c8de73fa4f2a1a9` 位于隔离代码分支 `codex/c-static-dev-20261020`；开发线 Ark Runtime 全套测试为 152 passed、3 skipped，独立线定向复验为 10 passed、1 skipped。反例、命令、具体输出和剩余限制记录于 `research/deliveries/c-line/receiver_guard_test_review_20261020.md`。代码分支与计划分支基于不同 C 线演进点，因此保留为独立分支，不强行覆盖集成点；测试证据和代码提交均可单独审阅。
 
 下一切片优先级：先评估 alias/同源类型重新采样及 rebinding 后恢复值时能否在不放宽安全性的前提下减少 unknown/candidate；测试线先给出可证明正反控制。随后排查 `replay_20261019` 中 Ark Runtime `type_safety` 的 blocked coverage 是路径映射还是解析局限，并针对性修复已复现的扫描问题。两项都可与逐条 source-bound 候选的第二层模型审查并行；模型只给证据支持/反证/unknown，不负责功能开发。持续目标见 `C_LINE_EXECUTION_TREE_20261020.json`。
+
+## 当前继续执行（2026-10-20 状态复核）
+
+上一轮 `receiver_guard` 修复仍在独立代码分支 `codex/c-static-dev-20261020`，开发提交为 `ae5792f84`、`71950e65f`；计划分支没有合入这些代码，因为两条分支的 C 实现基线不同。任务树已更正此状态。远端 fetch 本轮因 GitHub 443 网络连接失败；最后确认的远端跟踪基线仍为 `d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03`，没有宣称已拉取新远端。
+
+可执行的下一轮已并行启动三条线：开发线检查注册研究 profile 是否可覆盖已有 exact-bound 历史 exception guard parent/fixed 版本并跑 CLI；测试线从同一基线独立检验边界与报告状态；第二层审查线直接检查两版 Ark C++ 源码和创建器语义，判断源码候选支持度及产品影响未知项。历史本地 Git store 可用，避免了联网依赖。动态任务状态与工作树见 `C_LINE_EXECUTION_TREE_20261020.json`。
+
+### 结构化 Vibe Coding 提示词：注册 profile/重放开发线
+
+```yaml
+role: C 线 Ark Runtime source-bound profile 开发者
+objective: 让已有精确绑定的异常路径 parent/fixed 样本能通过注册 CLI 复现，并保留版本/源文件身份边界
+baseline: codex/c-static-replay-dev-20261020 at 71950e65f46e204e6aec21210c8de73fa4f2a1a9
+inputs:
+  git_store: D:/openHarmonyScanner/tmp/c-line-ark-history-full-snapshots-20261018.git
+  parent: c758818dbfd0b146a908d43d21f6ca1706c33783
+  fixed: 81ca57487d04ea30cd11c271e86494a4e130f43e
+steps:
+  - 检查 RuntimeTypeModel 中的精确绑定与 catalog 注册路径
+  - 只把已验证仓库/commit/blob/SHA 绑定纳入显式研究 profile，并更新 profile 版本和对照测试
+  - 通过 CLI 重放 parent 与 fixed，保留 parser partial、blocked 和 unknown 实情
+  - 给出最小修复、命令、实际诊断、范围限制并提交本地代码/报告
+constraints:
+  - 不放宽到无绑定 commit/path/blob
+  - 不把候选或 partial 解释为确认漏洞、无漏洞或产品影响
+  - 不新增产品、真人评审或审批前置条件
+```
+
+### 结构化 Vibe Coding 提示词：独立 profile 测试线
+
+```yaml
+role: C 线独立重放测试者
+baseline: codex/c-static-replay-test-20261020 at 71950e65f46e204e6aec21210c8de73fa4f2a1a9
+objective: 复现历史 exact-bound parent/fixed 在注册 CLI 下的阻断，并独立验证开发修复
+steps:
+  - 在变更前检查默认 C1 profile 与历史 model bindings 的差异
+  - 用固定本地 Git store 核对 full commit、blob、source SHA
+  - 开发提交后 cherry-pick 相同提交，验证 parent 有同规则 candidate、fixed 无同规则 candidate
+  - 验证非绑定版本仍被拒绝，partial coverage 始终可见且未被称作 complete/safe
+output: 独立测试报告含命令、逐案实际 CLI 状态、精确源身份和未解决限制
+constraints: 不改生产 profile 代码；没有标签时不报准确率
+```
+
+### 结构化 Vibe Coding 提示词：第二层模型审查线
+
+```yaml
+role: 第二层漏洞审查模型
+objective: 判断 exact-source candidate 的漏洞链是否被代码与运行时 helper 支持
+sources:
+  repository: openharmony/arkcompiler_ets_runtime
+  path: ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp
+  parent: c758818dbfd0b146a908d43d21f6ca1706c33783
+  fixed: 81ca57487d04ea30cd11c271e86494a4e130f43e
+steps:
+  - 定位每个候选的函数/源码行，追踪 NewTypedArray、结果 GateRef 与 LoadHClass 顺序
+  - 检查 parent 的异常分支是否先于敏感读取、fixed 的改动是否建立异常检查/提前退出
+  - 检查创建器实现是否证实 allocation 可留下 pending exception，记录调用可达性和反证
+  - 把源码规则支持、漏洞成立、可利用性、产品影响分开判断
+output: 每个候选给出 source evidence、counterevidence、confidence 和 unknown obligations
+constraints: 不把检测器结果当事实；parse partial、build profile 缺失和产品映射未知均明确保留；不开发第二层功能
+```
+
+### 第二层审查与重放基线结果
+
+第二层审查已实际完成并提交于 `research/deliveries/c-line/second_layer_exception_guard_review_20261020.md`：parent `Filter`/`Map` 在 `NewTypedArray` 之后、`LoadHClass` 之前缺少 pending-exception 退出；fixed 将读取放到异常检查的正常边之后。`NewTypedArray` 的 species/runtime slow path 可返回 Exception sentinel；但 fast path 的 `NewByteArray` 失败时 result 仍可能是已分配对象，不能混为一谈。源码级路径缺保护有依据，Map 的精确触发条件、运行时可达性和产品影响仍 unknown，未认定确认漏洞。
+
+测试线基线报告已保存于 `research/deliveries/c-line/exception_guard_cli_replay_20261020.md`。当前注册 profile 对两条历史 commit 输出 0 diagnostics / `blocked-not_analyzed`，原因是 `c_line_static_model()` 截掉了 `RuntimeTypeModel` 中已有的历史精确绑定；手动默认模型的 registered-adapter 历史测试则验证 parent 两条 candidate、fixed 无该规则 finding。开发线正在把两个已精确绑定的历史版本显式加入研究 profile，并用 CLI 重放。接受结果必须同时满足 parent 2 candidates、fixed 0 same-rule candidates、来源精确匹配、aggregate `blocked/partial` 如实保留；完整 suite 与独立同提交复验尚待完成。
+
+## 并行切片：receiver guard 的 alias 精度（已启动）
+
+开发线发现当前分析把 guard 记在参数绑定/布尔状态上，遇到 `GateRef saved = input` 或 `input=count; input=saved` 时会丢失可证明的 SSA 对象身份。测试线独立构造 immutable alias、错误 alias、重绑定后恢复与不可证明恢复的矩阵。该优化只在 CFG 路径可证明 receiver identity 不变时减少保守 candidate/unknown；无法证明的路径仍 unknown。任务树已分别登记开发与独立测试 workstream。
+
+### 结构化 Vibe Coding 提示词：Alias 开发线
+
+```yaml
+role: C 线 receiver_guard 静态分析开发者
+objective: 在不放宽 soundness 的前提下，利用可证明的 GateRef 局部别名恢复过度保守的 candidate/unknown
+baseline: codex/c-static-alias-dev-20261020 at 71950e65f46e204e6aec21210c8de73fa4f2a1a9
+cases:
+  - immutable GateRef alias=input; guard alias; sink input
+  - receiver reassigned to count then restored from a saved input alias
+  - negative controls where alias captures count or receiver cannot be resolved
+steps:
+  - read existing CFG/value transfer and adversarial report
+  - model source-bound identity only for simple identifier init/copy/assignment
+  - keep complex effects, branches with ambiguous joins and unsupported writes unknown
+  - add positive matched controls and negative candidate/unknown controls
+  - run focused tests and Ark Runtime suite; report limitations and commit
+constraints: [do not change profile or other detector, preserve rebinding invalidation, no product/accuracy claims]
+```
+
+### 结构化 Vibe Coding 提示词：Alias 独立测试线
+
+```yaml
+role: C 线独立测试者
+baseline: codex/c-static-alias-test-20261020 at 71950e65f46e204e6aec21210c8de73fa4f2a1a9
+objective: 明确每种 alias/rebinding 结构的 sound expected result，复现当前结果并在开发提交上复验
+matrix: [same-object immutable alias, alias to different object, guard then rebind then restore saved alias, restore from different object, token/receiver resampling, unresolved branch join]
+steps:
+  - run current focused suite and baseline harness
+  - record source, expected reason, actual observation kind and line
+  - cherry-pick same development commit after implementation
+  - rerun all positives/negatives and report any unsound matched or still-conservative safe path
+constraints: [no production edits, no accuracy labels, no safe conclusion from unknown]
+```
