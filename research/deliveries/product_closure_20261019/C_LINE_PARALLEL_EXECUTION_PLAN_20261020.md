@@ -267,3 +267,23 @@ output: 每条候选的支持或反证、置信边界、未知事实和建议的
 Alias 身份改进已由测试线基于开发提交 `2d79560cad45db75bb1b0c6d0677200294e17d10` 独立复验，测试提交 `cd52fc1899112ed23b82bfe168f2056a58715b95`，报告提交 `2fe2182508e88611cc0de005a8764092693291fb`。验证覆盖同源 alias、guard 后稳定恢复、自赋值、token 重采样、跨对象和 opaque/reference 写入；结果未发现异对象 guard 被复用。报告明确指出历史仓库对照因 tester 固定 Git store 不存在而跳过。Ark Runtime 161 项中 158 passed、3 skipped。该报告目前独立保存在测试 worktree，任务树记录了其路径和提交。
 
 因此下一条 type_safety 工作线已启动：测试线先固定一个 exact-bound registered CLI 基线和控制；开发线同时定位 partial/blocked 的真实阶段原因。只有能复现的规则缺陷才进入代码改动，否则交付 root-cause 报告。任务树中的机器状态现标为 `IN_PROGRESS_BASELINE_AND_ROOT_CAUSE_SCOUT`。
+
+## type_safety 后续线已具体化为 runner applicability 修复
+
+开发 scout 的精确复现和 JSON/Markdown 已归档在 `research/deliveries/c-line/scout_20261020/`。来源为 `openharmony/arkcompiler_ets_runtime@a65a2853ccae13da167d9aa4720ab8b11ec16656`；目标 TypedArray builder blob `68fb3b0adc4f9062889a861be51b7be90362e37a` / SHA-256 `76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c`；creator blob `991ac5ac034a1a027e3200787ec25c55b3f15b69` / SHA-256 `3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0`。有依赖 CLI 当前把 2 个 cpp 都算 applicable，creator 却 not_analyzed；target-only 则因 dependency outside scanned scope 阻断。target 当前 parse partial (13 issues)、detector blocked、0 CLI diagnostics，不构成安全结论。
+
+开发线已开始 narrow runner slice：调用 optional `select_applicable_units(context, units)` 定义 detector target coverage，同时让完整 source context 保留依赖文件供 adapter 精确 blob/SHA 校验；无 selector 的 detector 走原 supported-language fallback。正反验收为：target+exact creator 只把 target 计入 applicable、creator 可供依赖核验；target-only 仍因缺依赖 blocked；额外 unrelated 同语言文件不进入 target coverage；target 的 partial/blocked、候选数量和未知信息不被“修绿”。独立测试线在另一 worktree 先固定上述三种 scope 基线，随后对开发提交同提交复验。
+
+```yaml
+role: C 线 runner applicability 开发者
+objective: 修复 detector target applicability 与 dependency context 混算导致的 coverage 假象，不改变 source-binding 或将 partial 升级为 complete
+steps: [先运行三种 CLI scope 基线, 调用 optional select_applicable_units hook, 保留完整 ScanContext dependency, 为 selector/fallback/coverage 写回归, 运行 runner+Ark suite, 提交精确 SHA 交独立线]
+negative_controls: [target-only 缺 creator 仍 blocked, unrelated same-language 不计入 applicable, exact target 仍 partial/blocked]
+```
+
+```yaml
+role: C 线独立 runner 测试者
+objective: 在同一开发 commit 上复验 target/dependency 分离及旧 detector fallback
+steps: [复跑 target+creator、target-only、target+creator+unrelated, 核对 full commit/tree/blob/SHA, 核对 applicable_files 与逐文件 parse/internal/detector 状态, 复跑 runner 与 Ark 测试]
+constraints: [不修改生产代码, 不把零诊断当安全, 不把 coverage 计数变化当解析或漏洞修复]
+```
