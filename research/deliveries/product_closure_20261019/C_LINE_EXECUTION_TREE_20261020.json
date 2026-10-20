@@ -4,7 +4,7 @@
   "baseline": {
     "remote": "origin/codex/c-line-static-20261019",
     "commit": "d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03",
-    "refresh": "fetched_origin_codex/c-line-static-20261019_successfully_2026-10-20; FETCH_HEAD=d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03"
+    "refresh": "2026-10-20 narrow fetch attempts failed with GitHub 443; direct ls-remote verified origin/codex/c-line-static-20261019=d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03 and planning topic=fc8b03905cce1accfc9e7e810a7c604328d669fe; tracking refs match."
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
   "status": "ACTIVE",
@@ -740,7 +740,7 @@
       "report_commit": "28e94ce37",
       "replay_commit": "fa8d1655083a49dd3dccacded9b240f99ae0fd8d",
       "independent_replay": "Bound direct analysis: candidate at 2733 on first pass, later loop-state unknown at 2733 after callback, and 2747 type-fact unknown; unbound analysis retains helper-effect unknown at 2733. Both remain limited/partial. Direct replay did not validate adapter six-dependency gate; developer replay found adapter profile disabled because runtime_stubs.cpp dependency AST is partial (7 issues). Width controls are supported by exact source inspection, not detector fixtures.",
-      "completion": "Independent exact-target source review and direct analyzer replay completed. No runtime/product or accuracy claim."
+      "completion": "Independent report 28e94ce37 documents direct analyzer replay on source bytes, but replay used the explicit lower-level bound flag. Developer also exercised adapter with six pinned blobs; it stayed unknown because runtime_stubs.cpp AST was partial (7 parser issues). No runtime/product claim."
     },
     {
       "id": "C-LLM-REVIEW-C1-MAP-EFFECT-20261020",
@@ -755,6 +755,55 @@
       "report_commit": "081dbdee3be71e7121586a6169c66b94b73afc8a",
       "initial_report_superseded_commit": "bc321c70fa5c2043b30c225d51ddf590b9e79990",
       "completion": "Verified exact same-tree target, species helpers, runtime fallback, array-buffer loads, JSType/HClass and codegen paths. Identified line-2733 source-width candidate; runtime/product impact remains unknown. Separate line-2747 HClass hypothesis is not candidate-worthy on available evidence."
+    },
+    {
+      "id": "C-NEXT-C1-MAP-ADAPTER-20261020",
+      "kind": "development_and_precision_refinement",
+      "status": "IN_PROGRESS_FUNCTION_SCOPED_DEPENDENCY_AUDIT",
+      "base": {
+        "branch": "codex/c-line-parallel-plan-20261020",
+        "commit": "fc8b03905cce1accfc9e7e810a7c604328d669fe",
+        "upstream_source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656"
+      },
+      "objective": "Resolve whether the strict C1 Map adapter can soundly admit the exact helper evidence when runtime_stubs.cpp is file-partial but the specific runtime fallback function may parse cleanly. Do not globally waive complete-AST requirements. Either implement and test an exact pinned function-scoped completeness proof, or preserve adapter unknown and document why the needed function is contaminated.",
+      "target": "ecmascript/stubs/runtime_stubs.cpp::GetTypedArrayPropertyByIndex plus existing six-file C1 species read-width evidence set",
+      "developer_prompt": "ROLE: C-line detector developer. BASE exact local planning HEAD fc8b03905cce1accfc9e7e810a7c604328d669fe; target upstream source commit a65a2853ccae13da167d9aa4720ab8b11ec16656. Start from the existing Map line-2733 direct-analyzer candidate and current adapter no-finding result. Reproduce why the adapter refuses source-width binding: runtime_stubs.cpp is exact-blob pinned but parse_status partial with 7 issues. Inspect the parser diagnostics and the exact GetTypedArrayPropertyByIndex function AST/source span, its declarations/callees and any macro dependencies. Send the independent tester a predicted positive/missing/mutated/unrelated control matrix before coding. Only if every source fact required by the runtime fallback is in a syntactically complete, exact-blob-bound function region may you implement a narrowly scoped function-level evidence check; keep translation-unit status partial and all unrelated incomplete evidence unknown. Never relax _dependency_error globally, never treat a partial file as complete, never suppress the helper unknown on a name-only match. Add persistent tests for exact positive gate, unrelated parse errors outside the bound function if safely supported, malformed relevant function, missing/mutated helper, wrong commit, and generic/unbound control. If function-level proof is not reliable, make no production change and commit a concise no-go report. No product/runtime claim without execution evidence.",
+      "tester_prompt": "ROLE: independent C-line tester. Do not edit production code. Verify exact target and six helper blob/SHA identities from the pinned Git object store. Reproduce baseline adapter: partial target, exact source pins, no line-2733 finding because runtime_stubs.cpp has partial parse (7 issues). Independently inspect parser error locations and the AST region for GetTypedArrayPropertyByIndex. Before developer changes, send a matrix: exact relevant function parses clean, parse error outside function, parse error inside function, missing helper, mutated bytes with stale pinned blob, wrong revision, unbound generic model. On exact developer commit, run positive and fail-closed controls; verify adapter result is still partial and no unrelated file or broad dependency waiver is admitted. Report exact commands, outcomes, and any discrepancy; no product/safety/accuracy claim.",
+      "feedback_loop": "Developer sends predicted boundary matrix before implementation; independent tester returns baseline observations; tester replays exact developer commit and reports discrepancies; developer fixes concrete reproducible defects only.",
+      "expected_controls": [
+        "exact C1 target and all six same-commit pins",
+        "runtime_stubs.cpp file partial but relevant function region parse-valid",
+        "relevant runtime function parse error => remain unknown",
+        "missing or SHA/blob-mutated dependency => remain unknown",
+        "wrong target commit => remain unknown",
+        "generic model and unrelated function remain unchanged",
+        "target output remains partial/limited"
+      ],
+      "state_at_start": "The line-2733 source candidate is emitted by direct analyze_unit with explicit bound flag; production adapter was replayed with exact target and six helpers but remained unknown because runtime_stubs.cpp AST was partial (7 issues).",
+      "done_when": "A regression-tested exact function-region gate is committed and same-commit replay passes, or a specific no-go report preserves adapter unknown with reason and next executable source candidate."
+    },
+    {
+      "id": "C-TEST-C1-MAP-ADAPTER-20261020",
+      "kind": "independent_testing",
+      "status": "IN_PROGRESS_BASELINE_AND_MATRIX",
+      "test_agent": "c_map_effect_test",
+      "feedback_to": "C-NEXT-C1-MAP-ADAPTER-20261020",
+      "same_commit_replay_required": true,
+      "objective": "Independently determine whether exact runtime fallback function evidence can be used safely despite file-level partial parsing, and replay any narrow developer change.",
+      "tester_prompt": "ROLE: independent tester on the C1 Map adapter boundary. Do not edit production code. Use exact source identities from the task tree. Reproduce strict adapter no-finding and inspect Tree-sitter error ranges versus the full GetTypedArrayPropertyByIndex definition and any relevant macro/callee declarations. Send a predicted outcome matrix to the developer before code changes. Replay the exact developer SHA and test all positive/fail-closed controls in the developer prompt. Confirm target status remains partial/limited and no rule is enabled by a partial unrelated function, wrong blob, missing dependency, or generic model. Commit a factual report with commands and limitations.",
+      "blocking_prerequisites": [],
+      "report_required": true
+    },
+    {
+      "id": "C-LLM-REVIEW-C1-MAP-WIDTH-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "IN_PROGRESS_INDEPENDENT_SEMANTIC_REVIEW",
+      "reviewer": "c_map_effect_review",
+      "feedback_to": "C-NEXT-C1-MAP-ADAPTER-20261020",
+      "objective": "Reassess the line-2733 species result/source read-width candidate independently for semantic plausibility, identify likely false-positive conditions and explain what exact runtime experiment would resolve them; do not implement detector or LLM features.",
+      "review_prompt": "ROLE: second-layer source reviewer only. Independently inspect exact Ark Runtime commit a65a2853ccae13da167d9aa4720ab8b11ec16656 and the current source-level candidate/report. Trace species protector fallback, TypedArraySpeciesCreate content-type and length checks, Map source read arguments, Float32/Float64 byte offset/load, and runtime fallback. Decide whether Uint8 source plus same-Number-content Float64/Float32 species is truly candidate-worthy from source alone; distinguish overread beyond view from allocation padding/ArrayBuffer behavior and identify any guard/copy behavior that could invalidate the theory. Review the direct analyzer replay versus strict adapter result. Give counterevidence, exact source pins, and the smallest isolated runtime/ASan experiment needed. Preserve partial/unknown; do not claim exploitability/product impact and do not edit implementation.",
+      "blocking_prerequisites": [],
+      "report_required": true
     }
   ],
   "feedback_loop": [
@@ -767,7 +816,8 @@
     "Second-layer API review completed at 2f37175: GetViewValue/SetViewValue uint32 wraparound-to-OOB route is not supported by source invariants; large-index conversion compatibility and unusual buffer/runtime behavior remain unknown.",
     "DataView API width refinement completed: exact helper bytes are required to match both model-pinned SHA-256 and recomputed Git blob OID. The tester found and documented the stale-blob mismatch flaw in 40b7732; developer fixed it in 76efed37 and independent same-commit replay passed. Results remain blocked/partial with unknown runtime/product behavior; no safety or accuracy claim.",
     "Latest upstream C-line base was fetched successfully as d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03. Planning branch closure commit fbb537a39183b719bd587e0dd4a5ba83c6d85925 was subsequently pushed successfully. The current slice is the C1 TypedArray Map line-2733 source/destination JSType width mismatch; developer/tester/reviewer tasks are C-DEV-C1-MAP-EFFECT, C-TEST-C1-MAP-EFFECT, and C-LLM-REVIEW-C1-MAP-EFFECT. The detector currently reports unknown; source review supports a concrete width-mismatch candidate, with runtime/product impact unverified.",
-    "C1 Map species-width slice: implementation fa8d165 emits a direct-analyzer source candidate at 2733; independent report 28e94ce37 confirms the pre-callback candidate while preserving later-loop and line-2747 unknowns. The strict detector adapter remains unknown/no finding because pinned runtime_stubs.cpp has partial AST; do not describe this as an integrated adapter finding. Existing ark_runtime tests pass 193, 3 skipped; compileall passes."
+    "C1 Map species-width slice: implementation fa8d165 emits a direct-analyzer source candidate at 2733; independent report 28e94ce37 confirms the pre-callback candidate while preserving later-loop and line-2747 unknowns. The strict detector adapter remains unknown/no finding because pinned runtime_stubs.cpp has partial AST; do not describe this as an integrated adapter finding. Existing ark_runtime tests pass 193, 3 skipped; compileall passes.",
+    "Next C1 slice launched from fc8b039: audit function-scoped completeness for the pinned runtime fallback behind the Map source-width candidate; developer and independent tester share exact positive/fail-closed matrix, while second-layer reviewer independently tests source-level candidate plausibility and counterevidence. Preserve strict file partial status and do not relax the adapter on a name/hash alone."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
