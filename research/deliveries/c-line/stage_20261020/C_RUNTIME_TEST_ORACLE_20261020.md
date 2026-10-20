@@ -58,17 +58,48 @@ The canonical manifest remote is `https://gitcode.com/openharmony/arkcompiler_et
 
 The accessible Gitee `master` resolved to `d1a58d59166777e16574ceed64c15f0b2f44a76c`, dated 2025-09-12. It is an ancestor of `a65`, not a later fixed revision. No actual source version or repair commit changing the relevant implementation was found in these checked upstream refs. Thus fixed-version comparison is **not_run / unavailable**. No fixture or synthetic patch is treated as a real repair.
 
+## Independent boundary-input reachability review
+
+The following is an independent source-path calculation, **not** an executed Ark Runtime test. It refines the developer's proposed boundary: `targetByteOffset = 4096` is essential to make the narrowed absolute byte index land at 2048. Element type `Uint8Array` keeps `targetElementSize = 1`.
+
+```js
+const buffer = new ArrayBuffer(6145);
+const sibling = new Uint8Array(buffer, 2048, 2048);
+const target = new Uint8Array(buffer, 4096, 2049);
+const source = { length: 2049, 0: 0x5a }; // ordinary object, not a JS Array
+const offset = Math.pow(2, 64) - 2048;
+let threw = false;
+try {
+    target.set(source, offset);
+} catch (e) {
+    threw = e instanceof RangeError;
+}
+print(threw, sibling[0], target[0]);
+```
+
+| Step | Independent calculation | Source path / implication |
+|---|---|---|
+| JS Number | `Math.pow(2, 64) - 2048` is exactly `18446744073709549568`, hex `0x1.fffffffffffffp+63`; its distance below `2^64` is 2048, so it is still within `uint64_t` max (2047 below max). Binary64 spacing below `2^64` is 2048. | `JSTaggedValue::ToInteger` calls `ToNumber` then `NumberHelper::TruncateDouble` (`ecmascript/js_tagged_value.cpp:204`); this finite integer is unchanged. `builtins_typedarray.cpp:1166-1178` takes this non-small-int path and casts the nonnegative finite result to `uint64_t` without a `SAFE_NUMBER` or `uint32_t` clamp. |
+| Array-like dispatch | `source` is a plain object and `length` is 2049. `ToLength` keeps 2049; it is below `SAFE_NUMBER`. It is not a stable JS Array, so the fast Array copy branch is not selected. | `builtins_typedarray.cpp:1200-1226` enters the ordinary array-like branch. Missing indexed properties read as `undefined`, then the integer typed-array conversion writes zero for those entries. |
+| Range sum | `(2^64 - 2048) + 2049 = 2^64 + 1`; `uint64_t` addition wraps to `1`, which is not greater than target length `2049`. | `builtins_typedarray.cpp:1226-1229` fails to reject the enormous logical offset on this wrap. This needs both large offset and source length; merely exceeding `UINT32_MAX` is not enough. |
+| Initial absolute byte index | `((2^64 - 2048) * 1 + 4096) mod 2^64 = 2048`; narrowing to `uint32_t` remains `2048`. The debug assertion uses the already wrapped unsigned expression, so it also sees a small value. | `builtins_typedarray.cpp:1232-1235`. `targetByteOffset=4096` is essential; with a zero-offset target the start would be near `UINT32_MAX` and this exact loop condition would not run. |
+| Loop endpoint | `limit = 2048 + (1 * 2049) = 4097`; `uint32_t` loop condition writes byte indices `[2048, 4097)`, 2049 iterations. | `builtins_typedarray.cpp:1237-1241, 1250-1271`. Target logical view occupies absolute bytes `[4096,6145)`, so the first 2048 writes `[2048,4096)` lie before the target view and within the sibling view; all remain inside the 6145-byte backing buffer. |
+| Sink | `SetValueInBuffer` receives the target's raw buffer and absolute `uint32_t byteIndex`; its non-BigInt branch obtains the backing data pointer and calls the raw-block setter. | `builtins_arraybuffer.cpp:380-406, 722+`; no typed-view byte-offset/length validation occurs at this sink. This is source evidence only; memory mutation has not been observed in a running VM. |
+
+For a focused runtime discriminator, a spec-conforming outcome should reject this offset before mutation (RangeError, `sibling[0]` unchanged). The reviewed source path predicts a non-throwing array-like loop and a write of `0x5a` to `sibling[0]`; all remaining missing properties convert to zero. These are competing test expectations, not observed results. Actual dispatch, exception behavior, loop execution, and bytes written remain **unknown until executed**. This test is materially closer to the candidate than the official smoke case, but it must not be represented as runtime evidence before running on a pinned VM.
+
 ## Independent runtime replay status
 
-At this report snapshot, no developer-provided immutable binary, test output directory, build manifest, or raw log had been received. The existing product build attempt in the static-stage report stopped before GN/Ninja and created no Ark VM binary, so there is no output artifact to replay independently. This worktree did not run the official test and reports it as **not_run**, not passed.
+The developer supplied an exact native blocker report and raw logs, but no immutable binary or test output directory was produced. Independent spot checks confirmed the Linux-native staging target JS/BUILD/expect SHA-256 values match the pinned Git blobs, `hb-native-target.log` exits before preload/GN with `Invalid built-in product path: /tmp/ohscanner-oh-src/productdefine/common/products`, both GN probes stop on missing `parts_info/components.json` or generated `build_config.json`, and the staged `out/host` has only `args.gn`; `ark_js_vm` is absent. The source and build repositories alone are incomplete OpenHarmony product inputs. Thus there is no developer artifact for same-build replay. This worktree did not run the official test or the focused boundary discriminator and reports both as **not_run**, not passed.
 
 To complete the independent leg, development must provide:
 
-1. Immutable Ark source revision/tree and Linux-native source/build paths; binary hash and build configuration for host `ark_js_vm` plus compiler/frontend dependencies.
-2. Exact generated output directory and target invocation/build log demonstrating GN target `//arkcompiler/ets_runtime/test/moduletest/typedarrayset:typedarrayset` ran, including `run_ark_executable.py` result and expected-output comparison.
-3. The untouched test input/oracle hashes above, or an explicit explanation if the build used another source revision. A repair comparison still requires a real commit whose relevant implementation blob changes.
+1. Complete, manifest-matched Linux-native OpenHarmony product/build inputs, including product definitions, `parts_info/components.json`, matching device/vendor and Ark dependencies, toolchain inputs, and per-product preloader output.
+2. Immutable Ark source revision/tree and Linux-native source/build paths; binary hashes and build configuration for host `ark_js_vm` and `es2abc`.
+3. Exact generated output directory and target invocation/build log demonstrating direct GN target `//arkcompiler/ets_runtime/test/moduletest/typedarrayset:typedarrayset` ran, including `run_ark_executable.py` result and expected-output comparison. Also run the focused boundary discriminator above and preserve stdout/exit status.
+4. Keep the untouched official test input/oracle hashes above, or explain any alternate revision. A repair comparison still requires a real commit whose relevant implementation blob changes and a matching built binary.
 
-When these artifacts are available, this lane will verify their provenance and rerun the same official target in an isolated output directory; a binary alone is insufficient if it cannot be tied to the exact build/source inputs and test harness.
+At the developer report SHA `58bf7e58e6ff160d1dc5fea07b3defaed35366d9`, the blocker is established and no artifact exists. Independent same-artifact replay is therefore **not_run / unavailable**; it is not an assertion that the official case failed or passed. If a later build artifact appears, this lane must verify its provenance and rerun the same official target in an isolated output directory; a binary alone is insufficient if it cannot be tied to exact build/source inputs and test harness.
 
 ## 当前结论
 
@@ -76,4 +107,5 @@ When these artifacts are available, this lane will verify their provenance and r
 - Case target is standalone and not included in `ark_js_moduletest` group; direct target invocation is required.
 - Current canonical and alternate accessible upstream refs: no matching fixed source found.
 - Static candidate trigger in this case: not covered directly.
-- Runtime execution and independent same-build replay: **not_run** pending immutable developer artifact.
+- Exact Number→uint64 input and sibling-view boundary are source-reachable by arithmetic; actual execution and write remain unknown.
+- Official test, focused boundary test, and independent same-build replay: **not_run**; dev SHA `58bf7e58e6ff160d1dc5fea07b3defaed35366d9` has no `ark_js_vm` artifact and its native build stops before GN product generation.
