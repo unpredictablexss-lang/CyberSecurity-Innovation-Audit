@@ -288,7 +288,7 @@
         "fixed": "82c21d656880923800c94b53b035c76d219313b5",
         "path": "ecmascript/base/typed_array_helper.cpp"
       },
-      "status": "IN_PROGRESS_PARALLEL",
+      "status": "COMPLETED_NO_ADDITIONAL_CANDIDATE",
       "feedback_loop": "Developer sends exact test matrix and expected candidate behavior to independent tester; tester replays same developer commit and returns discrepancies; developer responds/fixes only concrete defects; second-layer review follows only if a candidate survives.",
       "blocking_prerequisites": [],
       "id": "C-DEV-U32-LENGTH-20261020",
@@ -300,7 +300,7 @@
         "narrow detector/test patch only if concrete defect",
         "report and commit SHA"
       ],
-      "completion": "Pending parallel execution and independent tester feedback.",
+      "completion": "Source review, focused regression suite, and independent tester review complete; no additional boundary candidate or code change justified.",
       "checkpoint": {
         "worktree": "D:\\openHarmonyScanner\\worktrees\\worktrees\\c-static-alias-dev-20261020",
         "branch": "codex/c-static-alias-dev-20261020",
@@ -318,7 +318,20 @@
         ],
         "caveat": "Out-of-range floating-to-integer conversion is unknown; do not assume modulo/wrap semantics.",
         "next": "Trace ToIndex/MAX_ARRAY_INDEX/allocation semantics and detector coverage; patch only on concrete defect."
-      }
+      },
+      "tester_feedback_commit": "6ca5574c104d3902c7684c3df541871b24350284",
+      "next": "Reconcile direct detector invocation results; document source-only no-change finding and exact not_run boundary; then obtain tester review.",
+      "developer_report": "research/deliveries/c-line/typedarray_u32_length_boundary_20261020.md",
+      "developer_report_commit": "6d97874a3639f60a4c2b17c3c30643d0b5987218",
+      "validation": "python -m pytest tests/detectors/ark_runtime tests/detectors/test_cpp_memory_safety_detectors.py -q: 179 passed, 3 skipped",
+      "result": "No justified >UINT32_MAX production/test patch. Out-of-range double-to-uint32 result remains unknown. Fixed representable INT32_MAX+1..UINT32_MAX reaches later byteLength>INT_MAX rejection. Generic direct detector complete parse 0 findings is narrow only; registered Ark Runtime exact replay is not_run; effective coverage remains unknown.",
+      "independent_review_commit": "420a71eefab561c9e67cbe07249cecc63deb4cd4",
+      "independent_review": "research/deliveries/c-line/u32_length_developer_report_review_20261020.md",
+      "limitations": [
+        "No runtime/compiler/product validation",
+        "No exact-bound registered Ark Runtime detector rule/binding on this base",
+        "No inference from generic detector 0 findings to safety or coverage"
+      ]
     },
     {
       "objective": "Investigate the adjacent >UINT32_MAX TypedArray length boundary against exact parent/fixed source and downstream range checks; keep or improve a narrow candidate only if source evidence warrants it.",
@@ -328,7 +341,7 @@
         "fixed": "82c21d656880923800c94b53b035c76d219313b5",
         "path": "ecmascript/base/typed_array_helper.cpp"
       },
-      "status": "IN_PROGRESS_PARALLEL",
+      "status": "COMPLETED_INDEPENDENT_SOURCE_AND_DETECTOR_REVIEW",
       "feedback_loop": "Developer sends exact test matrix and expected candidate behavior to independent tester; tester replays same developer commit and returns discrepancies; developer responds/fixes only concrete defects; second-layer review follows only if a candidate survives.",
       "blocking_prerequisites": [],
       "id": "C-TEST-U32-LENGTH-20261020",
@@ -341,7 +354,7 @@
         "same-commit replay or precise discrepancy",
         "report and commit SHA"
       ],
-      "completion": "Pending developer baseline and independent replay.",
+      "completion": "Independent source baseline, generic detector complete/not_run controls, and developer report review completed; no discrepancy; no product/runtime inference.",
       "independent_baseline": {
         "worktree_base": "24412cc6083b3b8cad9b611a2b0303fd71eeceeb",
         "source_store": "D:\\openHarmonyScanner\\tmp\\c8-i9k03b-baseline-source-20261019",
@@ -354,15 +367,22 @@
       "replay_gate": "Independent same-commit replay begins only after developer shares any code/test commit; source baseline work proceeds meanwhile.",
       "independent_report": "research/deliveries/c-line/u32_length_independent_baseline_20261020.md",
       "independent_report_commit": "58792ad3f266a8e25e66a24469f81548d138bafd",
-      "same_commit_replay": "pending developer conclusion/commit; no detector claim yet"
+      "same_commit_replay": "pending developer conclusion/commit; no detector claim yet",
+      "generic_detector_report": "research/deliveries/c-line/u32_length_generic_detector_control_20261020.md",
+      "generic_detector_report_commit": "6ca5574c104d3902c7684c3df541871b24350284",
+      "independent_validation": "Both exact blobs tree-sitter parse complete; generic CppIntegerBoundsDetector direct API completes/analyzes target/0 findings. not_run inputs block with no analyzed files. No registered Ark Runtime rule/binding/replay claim.",
+      "tests": "python -m unittest tests.detectors.test_cpp_memory_safety_detectors: 17 passed",
+      "feedback_to_developer": "Treat generic direct result as a narrow detector control only; do not use not_run zero as a negative or imply registered Ark Runtime coverage.",
+      "independent_report_review_commit": "420a71eefab561c9e67cbe07249cecc63deb4cd4",
+      "independent_report_review": "research/deliveries/c-line/u32_length_developer_report_review_20261020.md"
     }
   ],
   "feedback_loop": [
-    "Completed source review records a credible signed-narrowing candidate but does not prove successful allocation, runtime impact, or product impact.",
-    "Developer investigates the adjacent >UINT32_MAX boundary with exact source identities and every downstream check; send a proposed case matrix to the tester.",
-    "Independent tester replays the same developer commit with positive, fixed, safe, and out-of-range cases; developer addresses concrete discrepancies before closeout.",
-    "If a narrow candidate survives, send it to second-layer source review; if downstream checks eliminate it, report no candidate without claiming safety beyond the checked path.",
-    "Missing product/build/reviewer/holdout prerequisites remain non-blocking; unknown and not_run remain explicit."
+    "The I7W51D second-layer review remains a credible signed-narrowing source candidate, with runtime/product impact unknown.",
+    "The adjacent >UINT32_MAX slice closed without a new finding: source conversion semantics are unknown; fixed representable values above INT32_MAX reach downstream byteLength rejection.",
+    "The generic CppIntegerBoundsDetector direct control completed on syntax-complete exact blobs with zero findings, but is not a length-specific Ark Runtime rule or safety verdict; registered Ark Runtime replay is not_run and effective coverage remains unknown.",
+    "Next select the exact-bound IB8BCA DataView SetTypedValue candidate (parent and fixed source blobs already pinned) for parallel developer/source-analysis and independent adversarial test; if it survives, send only the narrow candidate to second-layer review. Do not build LLM review features.",
+    "Missing product/build/reviewer/holdout prerequisites remain non-blocking; unknown and not_run stay explicit."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
