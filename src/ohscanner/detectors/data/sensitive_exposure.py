@@ -310,6 +310,12 @@ class SensitiveExposureDetector:
             units, model, heuristic_sources,
             flow_factory=lambda unit, active_resolver: self.make_flow(
                 unit, model, heuristic_sources, active_resolver))
+        # Runner can omit parser-ineligible units from `units`. This local
+        # precision proof still requires the entire selected input to be known.
+        outlines=context.shared_facts.get('ast',{})
+        resolver.switch_join_scope_complete=all(
+            u.parse_status=='complete' and outlines.get(u.path,{}).get('parse_status')=='complete'
+            and not re.search(r'^\s*#',u.text,re.M) for u in context.units)
         if heuristic_sources:
             limits.add('No reviewed sensitive-source model for this repository/commit; heuristic candidates are incomplete and the scan is blocked.')
         for u in units:
@@ -1343,7 +1349,8 @@ class LocalFlow:
     def exact_switch_pointer_join(self,node,state,fnname):
         """Only exhaustive flat arms: one identical raw-pointer retarget + break."""
         units=self.resolver.units if self.resolver is not None else (self.u,)
-        if (self.tree.root_node.has_error or any(u.parse_status!='complete'
+        if ((self.resolver is not None and not getattr(self.resolver,'switch_join_scope_complete',False))
+                or self.tree.root_node.has_error or any(u.parse_status!='complete'
                 or re.search(r'^\s*#',u.text,re.M) for u in units)):
             return None
         condition=node.child_by_field_name('condition')
