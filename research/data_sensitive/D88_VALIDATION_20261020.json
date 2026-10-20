@@ -1,0 +1,1628 @@
+{
+  "schema": 1,
+  "study": "D88 fixed entire-src pipeline summary",
+  "full_evidence": {
+    "path": "D:\\openHarmonyScanner\\outputs\\D88_FULL_PIPELINE_20261020.json",
+    "sha256": "c56489d3e9fe2a388df7d2457a84007640c4f71f0a10e91c652229633efe856f",
+    "producer": "T87_verify_linkage.py",
+    "producer_sha256": "99e0252a85423d9cc94ad675c9a6596240c6693a6e62ca7371191ab753444f79"
+  },
+  "source": {
+    "key": "cert",
+    "repository": "openharmony/security_certificate_framework",
+    "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+    "tree": "e69153afa89928e1318d8b36cf37c65386465fe7",
+    "files": [
+      {
+        "path": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+        "blob": "fb0f6cdbf2e151a933ce718a0f95e7ab8e449c28",
+        "bytes": 67298,
+        "sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+        "commit_tree_blob_verified": true
+      },
+      {
+        "path": "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+        "blob": "59985f31f7a7a2a18e4ce4c40345636321ddefef",
+        "bytes": 11206,
+        "sha256": "32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80",
+        "commit_tree_blob_verified": true
+      },
+      {
+        "path": "frameworks/common/v1.0/inc/cf_log.h",
+        "blob": "6eaa53317a8494baecc743b80043d400c316edee",
+        "bytes": 3266,
+        "sha256": "489ea3537091147d5bec365471698f3d5d177dbc86473beb25fd7bc906beccb9",
+        "commit_tree_blob_verified": true
+      }
+    ]
+  },
+  "runs": [
+    {
+      "revision": "23abc16652866edf06f6d86d8c11ec5deb5be784",
+      "version": "0.21.4",
+      "implementation_sha256": {
+        "src/parser/ast.py": "82d1fb9e3e4ee048aed1d26ce91d99b1d3c7a9f7a638fda85df39ddf3125f3e2",
+        "src/parser/syntax_normalize.py": "d71473f35e63ae6529c3ad8556f8216b4421ef25918f482d3d2dd3f5985fc8ea",
+        "src/ohscanner/detectors/data/sensitive_exposure.py": "bbd5881c5c11ca1cfea38596d9033a7681aa76f0c1acad3b908d8c37f2670e28",
+        "src/ohscanner/detectors/data/property_keys.py": "6de0d8c692af2ef9177bea54c97f333168cf55498d0548e13848a4c1eb5e63e5"
+      },
+      "src_archive_sha256": "b422288e340995808d28b75cb95af895ee566f4ccab31d363d841172638fdb35",
+      "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+      "parse_status": {
+        "frameworks/common/v1.0/inc/cf_log.h": "partial",
+        "frameworks/js/napi/certificate/inc/napi_cert_defines.h": "complete",
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp": "complete"
+      },
+      "private_ast": {
+        "frameworks/common/v1.0/inc/cf_log.h": {
+          "root_has_error": true,
+          "root_end_byte": 3266,
+          "raw_source_sha256": "489ea3537091147d5bec365471698f3d5d177dbc86473beb25fd7bc906beccb9"
+        },
+        "frameworks/js/napi/certificate/inc/napi_cert_defines.h": {
+          "root_has_error": false,
+          "root_end_byte": 11206,
+          "raw_source_sha256": "32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80"
+        },
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp": {
+          "root_has_error": false,
+          "root_end_byte": 67298,
+          "raw_source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+        }
+      },
+      "independent_tests": {
+        "count": 11,
+        "failures": 4,
+        "errors": 0
+      },
+      "direct": {
+        "candidate_count": 21,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "frameworks/common/v1.0/inc/cf_log.h",
+            "partial"
+          ],
+          [
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "partial"
+          ],
+          [
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "partial"
+          ]
+        ]
+      },
+      "runner": {
+        "candidate_count": 20,
+        "parsing": [
+          {
+            "file": "frameworks/common/v1.0/inc/cf_log.h",
+            "status": "partial",
+            "issues": [
+              "{\"end_line\": 114, \"kind\": \"error\", \"start_line\": 16}",
+              "{\"end_line\": 29, \"kind\": \"error\", \"start_line\": 29}"
+            ],
+            "analysis_status": "not_analyzed",
+            "analysis_reason": "incomplete_ast:partial"
+          },
+          {
+            "file": "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "status": "complete",
+            "issues": [],
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete"
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "status": "complete",
+            "issues": [],
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete"
+          }
+        ],
+        "candidate_identities": [
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 185,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+            "message_sha256": "9a48a16e316900a8bbe09c27c1c31ccf16ea02f988db9a2ce204fdc6476858da",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 192,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+            "message_sha256": "262e2a63a48551a3ce42bda2a7510b331210b46ad9b5bef92acd70ad82c63af2",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 208,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+            "message_sha256": "bace78490d2574920dbdbac336bbfb370a44fe1b9360c8e566ffbaae3c231d4f",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 298,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+            "message_sha256": "c45dd482add5c6c676452372404f38bc17bfbf1c6d43c9419d294ce6ea62361a",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 310,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+            "message_sha256": "5250af4815fdfec5c576917aeeea64a5a6c52c886875ac981fce37e4307c133c",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 317,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e93b12f78e4df683",
+            "message_sha256": "8218ebdde8ae80c3028d08f441f3670a8f9539e366f89993a52d35a9cc74fa33",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 324,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+            "message_sha256": "8d7dc2fb66ad4de9feaa7d5bef29b11f26107d079023e7166017da0b88aef9d2",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 328,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:22cde2151aec3df3",
+            "message_sha256": "383af8a67f0e981dba3e8531a892b63da36dc9591d5964bb4a78348a380bfd2b",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 347,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+            "message_sha256": "2e8c20e80c3e491077442e350a0e79961c22f89670e81a835486c1f44903544b",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 349,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:844d3a7e3ca54295",
+            "message_sha256": "1c64ac7d0e02ead2c33c51ad6e8cf93d96de14fb35f7f688a889c16ec765a78a",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 352,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+            "message_sha256": "257a165bd978749c87ef90e9a91b451cd5c3da26196ef6fbb10405774dae7514",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 364,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0",
+            "message_sha256": "38068d107409f0a3653ad59034fa4c44c21208025f1e8743c400f05e15b608f6",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 381,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+            "message_sha256": "42a7c9a6a214ac07d10701c4b657607ab02b1438e1b2ee566019090b5b3bed8a",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 384,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+            "message_sha256": "5257498992975bcc87f0a22de5f96b73c9aa9b3a01c4ac48e9361e88d03e68de",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 386,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+            "message_sha256": "9ea62909c89038e9f002039ae77572256676112638ea3586c7e860225a5f7348",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 388,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+            "message_sha256": "16e9988001a52a4a64cc292c90d6c1cf6e2ea35a35f64a395092b24939b0c2f5",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1825,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+            "message_sha256": "424f5ffff9885a632a7033ec4a8de860d4e4343f19a0ebbda09b08f3b189ee62",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1832,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+            "message_sha256": "6a8b2d8ad67bf2e6f17edc3946a48d85888afd283ab666cccf26074b206a64ab",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1880,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039",
+            "message_sha256": "6e53195c5ce320f2a0e23bf961ad7f6330fa3499b42ea3afee7cafbc76f60116",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1882,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+            "message_sha256": "4070d46779354ad855e4baac314846c8b8014c22745a10817fa7ef91b4c10bac",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          }
+        ],
+        "coverage": {
+          "status": "partial",
+          "applicable_files": 3,
+          "analyzed_files": [],
+          "partially_inspected_files": [
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp"
+          ],
+          "inspected_files": [
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp"
+          ],
+          "not_analyzed_files": [
+            "frameworks/common/v1.0/inc/cf_log.h"
+          ],
+          "coverage_counts": {
+            "complete": 0,
+            "partial": 2,
+            "not_analyzed": 1,
+            "failed": 0
+          }
+        }
+      }
+    },
+    {
+      "revision": "47bef6404919bc78121fae5fea8aa7408910b0e4",
+      "version": "0.21.5",
+      "implementation_sha256": {
+        "src/parser/ast.py": "a5bea3b01ae29eb66cb2ce2c639eea980dc5402e0e73c181d7fb5dc7e7e37438",
+        "src/parser/syntax_normalize.py": "1736982261ace36f5118fa91505c2f0ceab9a99969f6594ab4b1f8385f9d4c4c",
+        "src/ohscanner/detectors/data/sensitive_exposure.py": "f549adf0009d912672565e7d96ee57c6b65a369a9d27138e667fecbfb39d61a9",
+        "src/ohscanner/detectors/data/property_keys.py": "6de0d8c692af2ef9177bea54c97f333168cf55498d0548e13848a4c1eb5e63e5"
+      },
+      "src_archive_sha256": "318418394ca9ece429072fb01c349d3e3d8132cc60a8d5e64416beb359317b61",
+      "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+      "parse_status": {
+        "frameworks/common/v1.0/inc/cf_log.h": "complete",
+        "frameworks/js/napi/certificate/inc/napi_cert_defines.h": "complete",
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp": "complete"
+      },
+      "private_ast": {
+        "frameworks/common/v1.0/inc/cf_log.h": {
+          "root_has_error": false,
+          "root_end_byte": 3266,
+          "raw_source_sha256": "489ea3537091147d5bec365471698f3d5d177dbc86473beb25fd7bc906beccb9"
+        },
+        "frameworks/js/napi/certificate/inc/napi_cert_defines.h": {
+          "root_has_error": false,
+          "root_end_byte": 11206,
+          "raw_source_sha256": "32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80"
+        },
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp": {
+          "root_has_error": false,
+          "root_end_byte": 67298,
+          "raw_source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+        }
+      },
+      "independent_tests": {
+        "count": 11,
+        "failures": 0,
+        "errors": 0
+      },
+      "direct": {
+        "candidate_count": 20,
+        "status": "blocked",
+        "file_outcomes": [
+          [
+            "frameworks/common/v1.0/inc/cf_log.h",
+            "partial"
+          ],
+          [
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "partial"
+          ],
+          [
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "partial"
+          ]
+        ]
+      },
+      "runner": {
+        "candidate_count": 20,
+        "parsing": [
+          {
+            "file": "frameworks/common/v1.0/inc/cf_log.h",
+            "status": "complete",
+            "issues": [],
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete"
+          },
+          {
+            "file": "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "status": "complete",
+            "issues": [],
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete"
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "status": "complete",
+            "issues": [],
+            "analysis_status": "partial",
+            "analysis_reason": "detector_model_incomplete"
+          }
+        ],
+        "candidate_identities": [
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 185,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+            "message_sha256": "9a48a16e316900a8bbe09c27c1c31ccf16ea02f988db9a2ce204fdc6476858da",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 192,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+            "message_sha256": "262e2a63a48551a3ce42bda2a7510b331210b46ad9b5bef92acd70ad82c63af2",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 208,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+            "message_sha256": "bace78490d2574920dbdbac336bbfb370a44fe1b9360c8e566ffbaae3c231d4f",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 298,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+            "message_sha256": "c45dd482add5c6c676452372404f38bc17bfbf1c6d43c9419d294ce6ea62361a",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 310,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+            "message_sha256": "5250af4815fdfec5c576917aeeea64a5a6c52c886875ac981fce37e4307c133c",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 317,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e93b12f78e4df683",
+            "message_sha256": "8218ebdde8ae80c3028d08f441f3670a8f9539e366f89993a52d35a9cc74fa33",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 324,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+            "message_sha256": "8d7dc2fb66ad4de9feaa7d5bef29b11f26107d079023e7166017da0b88aef9d2",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 328,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:22cde2151aec3df3",
+            "message_sha256": "383af8a67f0e981dba3e8531a892b63da36dc9591d5964bb4a78348a380bfd2b",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 347,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+            "message_sha256": "2e8c20e80c3e491077442e350a0e79961c22f89670e81a835486c1f44903544b",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 349,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:844d3a7e3ca54295",
+            "message_sha256": "1c64ac7d0e02ead2c33c51ad6e8cf93d96de14fb35f7f688a889c16ec765a78a",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 352,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+            "message_sha256": "257a165bd978749c87ef90e9a91b451cd5c3da26196ef6fbb10405774dae7514",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 364,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0",
+            "message_sha256": "38068d107409f0a3653ad59034fa4c44c21208025f1e8743c400f05e15b608f6",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 381,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+            "message_sha256": "42a7c9a6a214ac07d10701c4b657607ab02b1438e1b2ee566019090b5b3bed8a",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 384,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+            "message_sha256": "5257498992975bcc87f0a22de5f96b73c9aa9b3a01c4ac48e9361e88d03e68de",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 386,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+            "message_sha256": "9ea62909c89038e9f002039ae77572256676112638ea3586c7e860225a5f7348",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 388,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+            "message_sha256": "16e9988001a52a4a64cc292c90d6c1cf6e2ea35a35f64a395092b24939b0c2f5",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1825,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+            "message_sha256": "424f5ffff9885a632a7033ec4a8de860d4e4343f19a0ebbda09b08f3b189ee62",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1832,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+            "message_sha256": "6a8b2d8ad67bf2e6f17edc3946a48d85888afd283ab666cccf26074b206a64ab",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1880,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039",
+            "message_sha256": "6e53195c5ce320f2a0e23bf961ad7f6330fa3499b42ea3afee7cafbc76f60116",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          },
+          {
+            "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+            "line": 1882,
+            "rule": "data.sensitive.unresolved-escape",
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+            "message_sha256": "4070d46779354ad855e4baac314846c8b8014c22745a10817fa7ef91b4c10bac",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version",
+                "missing:source_blob_oid"
+              ]
+            }
+          }
+        ],
+        "coverage": {
+          "status": "partial",
+          "applicable_files": 3,
+          "analyzed_files": [],
+          "partially_inspected_files": [
+            "frameworks/common/v1.0/inc/cf_log.h",
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp"
+          ],
+          "inspected_files": [
+            "frameworks/common/v1.0/inc/cf_log.h",
+            "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+            "frameworks/js/napi/certificate/src/napi_cert_utils.cpp"
+          ],
+          "not_analyzed_files": [],
+          "coverage_counts": {
+            "complete": 0,
+            "partial": 3,
+            "not_analyzed": 0,
+            "failed": 0
+          }
+        }
+      }
+    }
+  ],
+  "difference": {
+    "direct_added_sites": [],
+    "direct_removed_sites": [
+      [
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+        342,
+        "data.sensitive.unresolved-escape",
+        "GetPrivateKeyPasswordFromValue"
+      ]
+    ],
+    "direct_changed_evidence_sites": [
+      [
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+        185,
+        "data.sensitive.unresolved-escape",
+        "CertGetStringFromValue"
+      ],
+      [
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+        192,
+        "data.sensitive.unresolved-escape",
+        "CertGetStringFromValue"
+      ],
+      [
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+        208,
+        "data.sensitive.unresolved-escape",
+        "CertGetStringFromValue"
+      ],
+      [
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+        347,
+        "data.sensitive.unresolved-escape",
+        "GetPrivateKeyPasswordFromValue"
+      ],
+      [
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+        352,
+        "data.sensitive.unresolved-escape",
+        "GetPrivateKeyPasswordFromValue"
+      ]
+    ],
+    "runner_added_sites": [],
+    "runner_removed_sites": [],
+    "same_site_runner_identities": [
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          185,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          192,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          208,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          298,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          310,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          317,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:e93b12f78e4df683",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:e93b12f78e4df683",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          324,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          328,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:22cde2151aec3df3",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:22cde2151aec3df3",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          347,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          349,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:844d3a7e3ca54295",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:844d3a7e3ca54295",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          352,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          364,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          381,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          384,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          386,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          388,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          1825,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          1832,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          1880,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      },
+      {
+        "site": [
+          "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          1882,
+          "data.sensitive.unresolved-escape"
+        ],
+        "diagnostic_id_before": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+        "diagnostic_id_after": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+        "occurrence_id_before": null,
+        "occurrence_id_after": null
+      }
+    ],
+    "all_original_call_positions_unchanged": true
+  },
+  "runner_legacy_diagnostic_ids_unchanged": true,
+  "runner_messages_unchanged": true,
+  "original_snapshot_unchanged": true,
+  "verification": {
+    "developer_shared_tests": 5,
+    "ast_basic_tests": 6,
+    "data_tests": 132,
+    "known_and_corpus_tests": 39,
+    "ast_discovery": {
+      "total": 23,
+      "passed": 22,
+      "inherited_windows_error": "test_ast_coverage_mapping.SnapshotMappingTests.test_static_replay_creates_reusable_revision_evidence",
+      "baseline_owner_parser_reproduced": true
+    }
+  },
+  "interpretation": [
+    "Direct 21 to 20 is not a Runner warning-count improvement; Runner stays 20.",
+    "cf_log syntax completeness improves eligibility from two to three inspected files; model coverage remains partial for all three.",
+    "Legacy diagnostic IDs remain identical. Stable/occurrence identities remain unknown because required facts are missing; unknown IDs do not establish correspondence.",
+    "LOGE at 349 and password result at 347 remain candidate-only, with unchanged Runner messages.",
+    "Only exact empty linkage wrappers are projected; declarations, conditional alternatives, lexical/scope lookalikes and C remain unchanged."
+  ]
+}
