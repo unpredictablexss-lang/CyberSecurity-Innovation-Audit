@@ -18,11 +18,13 @@ LENGTH_NARROWING_RULE_ID = 'ark.runtime.typedarray-length-signed-to-unsigned-nar
 INDEX_BOUNDS_RULE_ID = 'ark.runtime.dataview-index-width-bounds'
 NATIVE_EXCEPTION_RULE_ID = 'ark.runtime.native-inline-pending-exception-propagation'
 NEGATIVE_DOUBLE_LENGTH_RULE_ID = 'ark.runtime.float32array-negative-double-length'
+ARRAYLIKE_SET_BOUNDS_RULE_ID = 'ark.runtime.typedarray-arraylike-set-offset-wrap'
 GAP_RULE_VERSIONS = {
     LENGTH_NARROWING_RULE_ID: '1.1.0',
     INDEX_BOUNDS_RULE_ID: '1.1.0',
     NATIVE_EXCEPTION_RULE_ID: '1.1.0',
     NEGATIVE_DOUBLE_LENGTH_RULE_ID: '1.0.0',
+    ARRAYLIKE_SET_BOUNDS_RULE_ID: '1.0.0',
 }
 RULE_VERSIONS = {
     RULE_ID: '1.1.0',
@@ -33,7 +35,7 @@ RULE_VERSIONS = {
     CALL_INFO_EXCEPTION_RULE_ID: '1.1.0',
     **GAP_RULE_VERSIONS,
 }
-VERSION = '0.6.2'
+VERSION = '0.6.3'
 NAMESPACE = 'panda::ecmascript::kungfu'
 OWNER = NAMESPACE + '::BuiltinsTypedArrayStubBuilder'
 CALLER = OWNER + '::Filter'
@@ -224,6 +226,11 @@ class RuntimeTypeModel:
     # These pins authorize candidate replay only; they do not establish runtime
     # build selection, allocation success, or an out-of-bounds access.
     negative_double_length_bindings: tuple = ()
+    # Exact source profile for the ordinary TypedArray.set(arrayLike, offset)
+    # range-sum / byte-index wrap candidate. The backing-store writer is pinned
+    # separately so target identity alone cannot authorize a finding.
+    arraylike_set_bounds_bindings: tuple = ()
+    arraylike_set_bounds_dependencies: tuple = ()
     exception_guard_creator: tuple = ('NewTypedArray', 4)
     exception_guard_callers: tuple = (OWNER + '::Filter', OWNER + '::Map')
     exception_guard_caller_types: tuple = ('GateRef', 'GateRef', 'GateRef', 'Variable*', 'Label*', 'Label*')
@@ -344,6 +351,8 @@ class RuntimeTypeModel:
         + tuple((revision, path, blob) for revision, path, blob, _ in self.index_bounds_dependencies)
         + tuple((revision, path, blob) for revision, path, blob, _ in self.native_exception_bindings)
         + tuple((revision, path, blob) for revision, path, blob, _ in self.negative_double_length_bindings)
+                + tuple((revision, path, blob) for revision, path, blob, _ in self.arraylike_set_bounds_bindings)
+                + tuple((revision, path, blob) for revision, path, blob, _ in self.arraylike_set_bounds_dependencies)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.species_read_width_bindings)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.species_read_width_dependencies)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.api_overload_evidence)
@@ -358,8 +367,8 @@ def c_line_static_model():
     base = RuntimeTypeModel()
     return replace(
         base,
-        version='0.8.13',
-        effect_summary_revision='c-line-static-contract-v14',
+        version='0.8.14',
+        effect_summary_revision='c-line-static-contract-v15',
         target_bindings=(base.target_bindings[-1],),
         species_read_width_bindings=(base.species_read_width_bindings[-1],),
         species_read_width_dependencies=base.species_read_width_dependencies,
@@ -382,6 +391,22 @@ def c_line_static_model():
              'ecmascript/compiler/new_object_stub_builder.cpp',
              '991ac5ac034a1a027e3200787ec25c55b3f15b69',
              '3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0'),
+        ),
+        arraylike_set_bounds_bindings=(
+            ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+             'ecmascript/builtins/builtins_typedarray.cpp',
+             '0fc27c213e1ea80d93e1e3807eec11baf2634832',
+             '14507ac872dc34a6c20b6f448678466f119de94a4ed1de6d91e269640936c81c'),
+        ),
+        arraylike_set_bounds_dependencies=(
+            ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+             'ecmascript/builtins/builtins_arraybuffer.cpp',
+             '2aa22c58803df690a5a2b326451e02297dc5e2f6',
+             '4d388d997313cf7c900f1f0d54fbe826266845665424e32cc9dd4cdbaa62dcc9'),
+            ('a65a2853ccae13da167d9aa4720ab8b11ec16656',
+             'ecmascript/builtins/builtins_typedarray.h',
+             'b291181c949c7038b7030a216f5bdc0e7474a1c2',
+             '651d426c00c1d8bc6503c1d717decf42b28c61c57336e9418ad422604a6a1be7'),
         ),
         source_dependencies=(
             ('ecmascript/compiler/new_object_stub_builder.cpp',

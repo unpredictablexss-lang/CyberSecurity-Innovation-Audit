@@ -7,13 +7,14 @@ from .exception_guard import analyze_exception_guard
 from .receiver_guard import analyze_receiver_guard
 from .runtime_exception import analyze_native_inline_exception_propagation
 from .negative_double_length import analyze_negative_double_length
+from .arraylike_set_bounds import analyze_arraylike_set_bounds
 from .size_overflow import (analyze_size_overflow_unit, index_bounds_result,
                             length_narrowing_result)
 from .model import (AnalysisBudget, RuntimeTypeModel, DETECTOR_ID, RULE_ID,
                     EXCEPTION_GUARD_RULE_ID, RECEIVER_TYPE_GUARD_RULE_ID,
                     SIZE_OVERFLOW_RULE_ID, LENGTH_NARROWING_RULE_ID,
                     INDEX_BOUNDS_RULE_ID, NATIVE_EXCEPTION_RULE_ID,
-                    NEGATIVE_DOUBLE_LENGTH_RULE_ID,
+                    NEGATIVE_DOUBLE_LENGTH_RULE_ID, ARRAYLIKE_SET_BOUNDS_RULE_ID,
                     RULE_VERSIONS, VERSION)
 
 
@@ -38,7 +39,9 @@ class ArkRuntimeTypeSafetyDetector:
             + self.model.length_narrowing_bindings + self.model.index_bounds_bindings
             + self.model.native_exception_bindings + self.model.species_read_width_bindings
             + tuple(row for row in self.model.negative_double_length_bindings
-                    if row[1] == 'ecmascript/compiler/common_stubs.cpp'))}
+                    if row[1] == 'ecmascript/compiler/common_stubs.cpp')
+            + tuple(self.model.arraylike_set_bounds_bindings)
+            + tuple(self.model.arraylike_set_bounds_dependencies))}
         selected = tuple(unit for unit in units if unit.path in paths)
         # Preserve legacy language-scoped coverage when no modeled target is
         # present; helper-only scans must not silently become not_applicable.
@@ -97,6 +100,8 @@ class ArkRuntimeTypeSafetyDetector:
                                             and row[1] == 'ecmascript/compiler/common_stubs.cpp'), None)
             species_binding = next((row for row in self.model.species_read_width_bindings
                                     if row[0] == context.request.commit and row[1] == unit.path), None)
+            arraylike_set_binding = next((row for row in self.model.arraylike_set_bounds_bindings
+                                          if row[0] == context.request.commit and row[1] == unit.path), None)
             if type_binding is not None:
                 rule_bindings.append((RULE_ID, type_binding))
             if exception_binding is not None:
@@ -113,6 +118,8 @@ class ArkRuntimeTypeSafetyDetector:
                 rule_bindings.append((NATIVE_EXCEPTION_RULE_ID, native_binding))
             if negative_double_binding is not None:
                 rule_bindings.append((NEGATIVE_DOUBLE_LENGTH_RULE_ID, negative_double_binding))
+            if arraylike_set_binding is not None:
+                rule_bindings.append((ARRAYLIKE_SET_BOUNDS_RULE_ID, arraylike_set_binding))
             if not rule_bindings:
                 outcomes.append((unit.path, 'not_analyzed'))
                 limitations.append(unit.path + ': exact upstream repository/commit/path is not in the reviewed model')
@@ -197,6 +204,8 @@ class ArkRuntimeTypeSafetyDetector:
                     result = analyze_native_inline_exception_propagation(unit)
                 elif rule_id == NEGATIVE_DOUBLE_LENGTH_RULE_ID:
                     result = analyze_negative_double_length(context, self.model)
+                elif rule_id == ARRAYLIKE_SET_BOUNDS_RULE_ID:
+                    result = analyze_arraylike_set_bounds(context, self.model)
                 elif rule_id == EXCEPTION_GUARD_RULE_ID:
                     result = analyze_exception_guard(
                         unit, creator_name=self.model.exception_guard_creator[0],
@@ -245,6 +254,14 @@ class ArkRuntimeTypeSafetyDetector:
                             ('indexed_access', 'Verify the exact compiled indexed-read and indexed-write dispatch before asserting any out-of-bounds consequence; the 32-bit later-read hypothesis is second-layer/source-review information only.'),
                             ('runtime_build_selection', 'Bind CommonStub/TypedHCR selection and architecture to an exact local runtime build.'),
                             ('security_impact', 'Establish a concrete runtime impact; this source-bound rule emits only a candidate.'),
+                        )
+                    elif rule_id == ARRAYLIKE_SET_BOUNDS_RULE_ID:
+                        obligations = (
+                            ('integer_wrap_dispatch', 'Confirm the exact runtime conversion of array-like length and offset, including the selected ordinary-object branch.'),
+                            ('cross_view_write', 'Reproduce the calculated indices against a nonzero-offset view and verify whether bytes before that view change; this source candidate does not claim an allocation-boundary out-of-bounds access.'),
+                            ('source_side_effects', 'Challenge array-like length/index/value getters, detachment checks, and any reentrant behavior that could change the source-level path.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected product before making product claims.'),
+                            ('isolated_runtime_validation', 'Run a local isolated reproducer and a corrected-check control; runtime and ASan status remain not_run until executed.'),
                         )
                     elif rule_id == LENGTH_NARROWING_RULE_ID:
                         obligations = (
@@ -298,6 +315,8 @@ class ArkRuntimeTypeSafetyDetector:
                             if rule_id == NATIVE_EXCEPTION_RULE_ID else
                             'Candidate only: exact C1 CommonStub and TypedHCR Float32Array double-length branches lack a nonnegative guard before the allocation helper; runtime behavior and memory impact are unverified. trace=' + trace
                             if rule_id == NEGATIVE_DOUBLE_LENGTH_RULE_ID else
+                            'Candidate only: unchecked array-like TypedArray.set length/offset sum can wrap before byte-index narrowing. trace=' + trace
+                            if rule_id == ARRAYLIKE_SET_BOUNDS_RULE_ID else
                             'Candidate only: signed 32-bit ToIndex result narrows a TypedArray allocation length. trace=' + trace
                             if rule_id == LENGTH_NARROWING_RULE_ID else
                             'Candidate only: 32-bit DataView/Atomics index arithmetic reaches a local bounds check. trace=' + trace
