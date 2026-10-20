@@ -19,7 +19,7 @@
     "source_tree": "8781f036a3e7e04d8e0b34970d5f623b42875016"
   },
   "objective": "Complete one real Ark Runtime component run if Linux-native build inputs permit, with independent test feedback; otherwise document the exact build blocker.",
-  "status": "ACTIVE_MAINLINE_INTEGRATION",
+  "status": "STATIC_DELIVERY_COMPLETE_RUNTIME_NOT_RUN",
   "blocking_prerequisites": [],
   "workstreams": [
     {
@@ -59,13 +59,15 @@
     {
       "id": "C-CLOSEOUT-MAINLINE-DEV-20261020",
       "kind": "development",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_LATEST_MAIN_INTEGRATION",
       "goal": "Selectively replay C integration commit e798fa77fda843ff00f3b0ac7367f4eea02eb5ac onto latest main 4b0e16576a45a111b4fad7e8f82819a47ed472f5, preserving D104 changes and resolving only demonstrated conflicts.",
       "baseline_commit": "4b0e16576a45a111b4fad7e8f82819a47ed472f5",
       "source_commit": "e798fa77fda843ff00f3b0ac7367f4eea02eb5ac",
       "branch": "codex/c-mainline-dev-closeout-20261020",
       "worktree": "D:/openHarmonyScanner/worktrees/c-mainline-dev-closeout-20261020",
       "agent": "/root/c_mainline_dev",
+      "final_commit": "764f7698f6babdcccb2cd68eba75ed1b0afefc9e",
+      "report": "research/deliveries/c-line/C_LINE_MAINLINE_INTEGRATION_20261020.md",
       "feedback_from": "C-CLOSEOUT-MAINLINE-TEST-20261020",
       "deliverables": ["latest-main-based commit", "conflict/path audit", "test logs", "C/D compatibility summary"],
       "stop_condition": "One reproducible latest-main integration and relevant tests, or one concrete compatibility blocker."
@@ -73,13 +75,17 @@
     {
       "id": "C-CLOSEOUT-MAINLINE-TEST-20261020",
       "kind": "independent_testing",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INDEPENDENT_FINAL_SHA_REPLAY",
       "goal": "Establish latest-main baseline, independently replay the C integration commit, and test the exact developer integration SHA with D104-adjacent compatibility coverage.",
       "baseline_commit": "4b0e16576a45a111b4fad7e8f82819a47ed472f5",
       "source_commit": "e798fa77fda843ff00f3b0ac7367f4eea02eb5ac",
       "branch": "codex/c-mainline-test-closeout-20261020",
       "worktree": "D:/openHarmonyScanner/worktrees/c-mainline-test-closeout-20261020",
       "agent": "/root/c_mainline_test",
+      "final_tested_code_commit": "4f01d4336",
+      "final_tested_tree": "d424746401212024b3fd3dcc0b25b05d87095bba",
+      "report_commit": "1314902796d4a9f50347a36563281de989eb333a",
+      "report": "research/deliveries/c-line/C_LINE_MAINLINE_TEST_20261020.md",
       "feedback_to": "C-CLOSEOUT-MAINLINE-DEV-20261020",
       "deliverables": ["baseline identity and tests", "independent same-SHA report", "path/scope review", "feedback and retest"],
       "stop_condition": "One same-SHA acceptance loop or one reproducible integration regression."
