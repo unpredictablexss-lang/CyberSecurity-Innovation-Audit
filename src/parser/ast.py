@@ -4,6 +4,7 @@ from typing import List, Optional
 import tree_sitter_c
 import tree_sitter_cpp
 from tree_sitter import Language, Node, Parser
+from .syntax_normalize import normalize_member_pointer_syntax
 
 
 _C_LANG = Language(tree_sitter_c.language())
@@ -158,7 +159,10 @@ def parse_source(code: str, language: str = "c") -> AstIndex:
         raise ValueError(f"unsupported language: {language}")
     source = code.encode("utf-8")
     parser = _C_PARSER if language == "c" else _CPP_PARSER
-    tree = parser.parse(source)
+    # Member-pointer dispatch is a valid C++ idiom but unsupported by the
+    # current grammar. Normalize only its syntax while preserving byte offsets;
+    # source text and hashes below remain bound to the original bytes.
+    tree = parser.parse(normalize_member_pointer_syntax(source))
     root = tree.root_node
     issues = []
     stack = [root]
