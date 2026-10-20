@@ -1,0 +1,233 @@
+{
+  "schema": 1,
+  "study": "D93 exact null-buffer length query; no binding exemption",
+  "source_before": "0420a3905b1558e1d1251ac11e5e2034e6c3e45d",
+  "source_after": "070c2a7470c1e4ac8f9d79a484fd002651d3f4ef",
+  "version": "0.21.8",
+  "src_tree_before": "93bf1df89d9e616ee816e7dc7528312cfed82bcd",
+  "src_tree_after": "93bf1df89d9e616ee816e7dc7528312cfed82bcd",
+  "verification": {
+    "dedicated_methods": 7,
+    "data_methods": 171,
+    "status": "passed"
+  },
+  "no_runtime_source_change": true,
+  "candidate_decision": "Original890 and915 retained; no API/status/length whitelist",
+  "caller": {
+    "repository": "openharmony/security_certificate_framework",
+    "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+    "tree": "e69153afa89928e1318d8b36cf37c65386465fe7",
+    "files": [
+      {
+        "path": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+        "blob": "fb0f6cdbf2e151a933ce718a0f95e7ab8e449c28",
+        "bytes": 67298,
+        "sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+        "parse_status": "complete",
+        "api_include_context": [
+          {
+            "line": 30,
+            "text": "#include \"napi/native_api.h\""
+          }
+        ],
+        "role_region": {
+          "start_line": 880,
+          "end_line": 924,
+          "text": "CfBlob *CertGetBlobFromStringJSParams(napi_env env, napi_value arg)\n{\n    napi_valuetype valueType;\n    napi_typeof(env, arg, &valueType);\n    if (valueType != napi_string) {\n        NAPI_LOG_THROW(env, CF_INVALID_PARAMS, \"param type is not string\");\n        return nullptr;\n    }\n\n    size_t length = 0;\n    if (napi_get_value_string_utf8(env, arg, nullptr, 0, &length) != napi_ok) {\n        NAPI_LOG_THROW(env, CF_INVALID_PARAMS, \"can not get string length!\");\n        return nullptr;\n    }\n\n    if (length == 0) {\n        NAPI_LOG_THROW(env, CF_INVALID_PARAMS, \"string length is 0!\");\n        return nullptr;\n    }\n\n    CfBlob *newBlob = static_cast<CfBlob *>(CfMalloc(sizeof(CfBlob), 0));\n    if (newBlob == nullptr) {\n        NAPI_LOG_THROW(env, CF_ERR_MALLOC, \"malloc failed!\");\n        return nullptr;\n    }\n\n    newBlob->size = length + 1;\n    newBlob->data = static_cast<uint8_t *>(CfMalloc(newBlob->size, 0));\n    if (newBlob->data == nullptr) {\n        NAPI_LOG_THROW(env, CF_ERR_MALLOC, \"malloc failed\");\n        CfFree(newBlob);\n        newBlob = nullptr;\n        return nullptr;\n    }\n\n    if (napi_get_value_string_utf8(env, arg, reinterpret_cast<char *>(newBlob->data), newBlob->size, &length) !=\n        napi_ok) {\n        NAPI_LOG_THROW(env, CF_INVALID_PARAMS, \"get string failed\");\n        CfFree(newBlob->data);\n        newBlob->data = nullptr;\n        CfFree(newBlob);\n        newBlob = nullptr;\n        return nullptr;\n    }\n    return newBlob;"
+        },
+        "calls": [
+          {
+            "name": "napi_get_value_string_utf8",
+            "arguments": [
+              "env",
+              "arg",
+              "nullptr",
+              "0",
+              "&length"
+            ],
+            "line": 890,
+            "start_byte": 32305,
+            "end_byte": 32362,
+            "raw_span_sha256": "efc7c6eec9ea6189bb878e3818abc43e05444775bae60aa2c6483b617fb02ee2"
+          },
+          {
+            "name": "napi_get_value_string_utf8",
+            "arguments": [
+              "env",
+              "arg",
+              "reinterpret_cast<char *>(newBlob->data)",
+              "newBlob->size",
+              "&length"
+            ],
+            "line": 915,
+            "start_byte": 33125,
+            "end_byte": 33226,
+            "raw_span_sha256": "b22c0e27b49aeb7fbd274591db7dabd1b2c0ad1dbf7779e3a4cad99fc30fa01d"
+          },
+          {
+            "name": "reinterpret_cast<char *>",
+            "arguments": [
+              "newBlob->data"
+            ],
+            "line": 915,
+            "start_byte": 33162,
+            "end_byte": 33201,
+            "raw_span_sha256": "b75b8d17daba8b4bc48ff8d072df139eb0f239928f96cce6286ba5b07e343c3c"
+          }
+        ]
+      },
+      {
+        "path": "frameworks/js/napi/certificate/inc/napi_cert_utils.h",
+        "blob": "1ed8854bebe1bf0406cd93ea286cb2b477e58bfc",
+        "bytes": 5411,
+        "sha256": "f41171cf41f7f6a3bef4f6d7249fd409a7826c470acff07bd90732032252cf87",
+        "parse_status": "complete",
+        "api_include_context": [
+          {
+            "line": 24,
+            "text": "#include \"napi/native_api.h\""
+          }
+        ]
+      }
+    ]
+  },
+  "fixed_api_reference": {
+    "commit": "86ba349249e02320c92805da27d9962eeead8d21",
+    "path": "research/data_sensitive/D91_API_ROLE_EVIDENCE_20261020.json",
+    "blob": "cff945649b7acde449264b7a55fbfbb88a43dc03",
+    "sha256": "a3bd7309af0092772abae5663346016cfcc5a8e87de5ab964eff45da11b3d749",
+    "components": [
+      {
+        "repository": "openharmony/arkui_napi",
+        "commit": "bfe8fad581ca6112e7d55c38ca60150753f4af35",
+        "tree": "941f9a6bf1e0b5af2366f119c5876caa801eda20",
+        "files": [
+          {
+            "path": "native_engine/native_api.cpp",
+            "blob": "aa8bd54b4cc5f60b686c889acb58d5a4a7d2c66a",
+            "bytes": 188318,
+            "sha256": "913b9f357493296ff3c4823c1d8daf0b0aba2e077bc887313f5a96082ec14f9e",
+            "parse_status": "partial",
+            "issues": [],
+            "role_regions": [
+              {
+                "name": "napi_typeof",
+                "start_line": 677,
+                "end_line": 713,
+                "text_sha256_lf": "1160c0cea11fe9746e96902088f288445eb97f8ae5ec604a71c7c28341396e37",
+                "text": "NAPI_EXTERN napi_status napi_typeof(napi_env env, napi_value value, napi_valuetype* result)\n{\n    CHECK_ENV(env);\n    CHECK_ARG(env, value);\n    CHECK_ARG(env, result);\n\n    auto valueObj = LocalValueFromJsValue(value);\n    napi_valuetype resultType;\n    auto vm = reinterpret_cast<NativeEngine*>(env)->GetEcmaVm();\n    panda::JsiFastNativeScope fastNativeScope(vm);\n\n    if (valueObj->IsNumber()) {\n        resultType = napi_number;\n    } else if (valueObj->IsString(vm)) {\n        resultType = napi_string;\n    } else if (valueObj->IsFunction(vm)) {\n        resultType = napi_function;\n    } else if (valueObj->IsNativePointer(vm)) {\n        resultType = napi_external;\n    } else if (valueObj->IsNull()) {\n        resultType = napi_null;\n    } else if (valueObj->IsBoolean()) {\n        resultType = napi_boolean;\n    } else if (valueObj->IsUndefined()) {\n        resultType = napi_undefined;\n    } else if (valueObj->IsSymbol(vm)) {\n        resultType = napi_symbol;\n    } else if (valueObj->IsBigInt(vm)) {\n        resultType = napi_bigint;\n    } else if (valueObj->IsObject(vm)) {\n        resultType = napi_object;\n    } else {\n        resultType = napi_undefined;\n    }\n    *result = resultType;\n    return napi_clear_last_error(env);\n}"
+              },
+              {
+                "name": "napi_get_value_string_utf8",
+                "start_line": 819,
+                "end_line": 848,
+                "text_sha256_lf": "b094677da8aeb647192c6170923ad83886d206101fed092e56c14aa33c2baead",
+                "text": "NAPI_EXTERN napi_status napi_get_value_string_utf8(napi_env env,\n                                                   napi_value value,\n                                                   char* buf,\n                                                   size_t bufsize,\n                                                   size_t* result)\n{\n    CHECK_ENV(env);\n    CHECK_ARG(env, value);\n\n    auto nativeValue = LocalValueFromJsValue(value);\n    auto vm = reinterpret_cast<NativeEngine*>(env)->GetEcmaVm();\n    panda::JsiFastNativeScope fastNativeScope(vm);\n\n    RETURN_STATUS_IF_FALSE(env, nativeValue->IsStringWithoutSwitchState(vm), napi_string_expected);\n    Local<panda::StringRef> stringVal(nativeValue);\n    if (buf == nullptr) {\n        CHECK_ARG(env, result);\n        *result = stringVal->Utf8Length(vm, true) - 1;\n    } else if (LIKELY(bufsize != 0)) {\n        uint32_t copied = stringVal->WriteUtf8(vm, buf, bufsize - 1, true) - 1;\n        buf[copied] = '\\0';\n        if (result != nullptr) {\n            *result = copied;\n        }\n    } else if (result != nullptr) {\n        *result = 0;\n    }\n\n    return napi_clear_last_error(env);\n}"
+              }
+            ]
+          },
+          {
+            "path": "native_engine/native_api_internal.h",
+            "blob": "98fdd71989fbff237e460f0eec66a7a56e9a2509",
+            "bytes": 9516,
+            "sha256": "95e1f1c352b8b95a0f30c268b8f5068cb074008d6e9310c2664b257f5b912454",
+            "parse_status": "complete",
+            "issues": [],
+            "role_regions": [
+              {
+                "start_line": 25,
+                "end_line": 53,
+                "text": "static inline napi_status napi_clear_last_error(napi_env env)\n{\n    ((NativeEngine*)env)->ClearLastError();\n    return napi_ok;\n}\n\nstatic inline napi_status napi_set_last_error(napi_env env,\n                                              napi_status error_code,\n                                              uint32_t engine_error_code = 0,\n                                              void* engine_reserved = nullptr)\n{\n    ((NativeEngine*)env)->SetLastError(error_code, engine_error_code, engine_reserved);\n    return error_code;\n}\n\n#define RETURN_STATUS_IF_FALSE(env, condition, status) \\\n    if (!(condition)) {                                \\\n        return napi_set_last_error((env), (status));   \\\n    }\n\n#define CHECK_ENV(env)           \\\n    if ((env) == nullptr) {      \\\n        return napi_invalid_arg; \\\n    }\n\n#define CHECK_ARG(env, arg) RETURN_STATUS_IF_FALSE((env), ((arg) != nullptr), napi_invalid_arg)\n\n#define NAPI_PREAMBLE(env)                                                     \\\n    CHECK_ENV((env));                                                          \\"
+              }
+            ]
+          },
+          {
+            "path": "interfaces/kits/napi/native_api.h",
+            "blob": "c78cd3b511997ba3ec6978aedfcf6c035a577311",
+            "bytes": 17678,
+            "sha256": "135eaaea8a5eefa20000c70545d8e37fd2aa047ee9c0c33ce306548692728300",
+            "parse_status": "partial",
+            "issues": []
+          }
+        ]
+      },
+      {
+        "repository": "openharmony/third_party_node",
+        "commit": "d6bfaf5c015d29fee58e3c94f01d463fb87a9497",
+        "tree": "15c96bac208e49fff566342812dbb0dd0e4c4ea4",
+        "files": [
+          {
+            "path": "src/node_api.h",
+            "blob": "1772c67c15afb2d2712b1900a584f627852e3d7e",
+            "bytes": 11692,
+            "sha256": "24bdd7597c72fde524440f41b40dd4be7d151c40d3565cf555ca0208db3d95f7",
+            "parse_status": "partial",
+            "issues": []
+          },
+          {
+            "path": "src/js_native_api.h",
+            "blob": "e804d1d45d236519d248e3d40fa0a6c2a6d378ec",
+            "bytes": 28805,
+            "sha256": "d47a6f979387d00f603cf1193eeb4d4e3164307123a33891590fe6601fed95b4",
+            "parse_status": "partial",
+            "issues": [],
+            "role_regions": [
+              {
+                "start_line": 116,
+                "end_line": 118,
+                "text": "NAPI_EXTERN napi_status napi_typeof(napi_env env,\n                                    napi_value value,\n                                    napi_valuetype* result);"
+              },
+              {
+                "start_line": 143,
+                "end_line": 147,
+                "text": "NAPI_EXTERN napi_status napi_get_value_string_utf8(napi_env env,\n                                                   napi_value value,\n                                                   char* buf,\n                                                   size_t bufsize,\n                                                   size_t* result);"
+              }
+            ]
+          },
+          {
+            "path": "src/js_native_api_types.h",
+            "blob": "464d4983245acc2945f5bdff8ea9552a476c001f",
+            "bytes": 4543,
+            "sha256": "0823951156077b35c7a2759b83e30bad3a82a8ee934f44eaa75e9ccd364e63a5",
+            "parse_status": "complete",
+            "issues": []
+          }
+        ]
+      }
+    ],
+    "roles": {
+      "null_buffer": "buf==nullptr branch checks result and writes Utf8Length(vm,true)-1",
+      "non_null_buffer": "nonzero buffer branch WriteUtf8 writes bytes plus terminator",
+      "return": "napi_status success/error; exact original implementation only"
+    },
+    "binding": "e270 caller to bfe8 API commit unknown; references are separate source observations, not linked build proof"
+  },
+  "independent_feedback": {
+    "commit": "6fcf3c048eb01c28aa7236497aae0af4272bf881",
+    "path": "research/data_sensitive/T92_FIXED_LENGTH_REPLAY.json",
+    "blob": "753073ee25cbedd259e9256d635a169b47bb05c4",
+    "bytes": 1103439,
+    "sha256": "4616cfecd680a6d8ac7c94127ae06d15a775ed0a6b59af8010611fe4d4ed867f",
+    "independent_methods": 9,
+    "data_methods": 229,
+    "status": "passed",
+    "strict_direct_before_after": [
+      26,
+      26
+    ],
+    "strict_runner_before_after": [
+      26,
+      26
+    ],
+    "legacy_observations_equal": 26,
+    "calls_equal": 638,
+    "coverage": "0 complete,3 partial,0 not_analyzed; full source/coverage observation unchanged"
+  },
+  "additional_negative": {
+    "path": "D93_POINTER_OUTPUT_GAP_20261020.json",
+    "sha256": "12dab736ba0e70b75b231cdeec988326db8a094e751a10ca6af073e03c1ad4a0",
+    "status": "known_gap_not_passed",
+    "finding_count": 0,
+    "follow_up": "Unknown sensitive pointer-output assignment must retain a write/call candidate; separate alias/output slice"
+  }
+}
