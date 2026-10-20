@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "case": "web_webview-CVE-2026-27648-exact-A0-function-fragments",
+  "source_repository": "openharmony/web_webview",
+  "source_path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+  "function_names": [
+    "FlowbufStrAtIndex",
+    "ProcessNativeProxyResultNewFlowbuf"
+  ],
+  "source_identity_is_not_snapshot_identity": true,
+  "snapshots": {
+    "vulnerable": {
+      "commit": "a15cbf4ef20673cfcf1856bf40a723b3ce026564",
+      "tree": "03e16f6f4f2c33c2cd08e31c14e00be689230c39",
+      "blob": "78e83fea67a2db3297cc59f07566a0c0b6153e7a",
+      "sha256": "aa401c305ed30b70007917d97b726986a26aff2d00fb49649466533f4a48a920",
+      "bytes": 185698,
+      "function_ranges": [
+        {
+          "name": "FlowbufStrAtIndex",
+          "start_line": 4428,
+          "end_line": 4458,
+          "start_byte": 155734,
+          "end_byte_exclusive": 156659,
+          "byte_length": 925,
+          "sha256": "298e09c490c2662ef76cdf5bce487d9b4bde2f996f30947b2856d3d6db434ede"
+        },
+        {
+          "name": "ProcessNativeProxyResultNewFlowbuf",
+          "start_line": 4460,
+          "end_line": 4586,
+          "start_byte": 156660,
+          "end_byte_exclusive": 160418,
+          "byte_length": 3758,
+          "sha256": "dc078d0206bd82caa61598a1a148887cf6b0c3b0a5c6fd35ccf0318c22e0b215"
+        }
+      ],
+      "combined_fragment_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973",
+      "combined_fragment_bytes": 4684,
+      "fragment_parse_status": "complete",
+      "fragment_parse_issues": [],
+      "synthetic_snapshot_commit": "87a7f7442c548ec8b46db6f73338e28983af9996",
+      "synthetic_snapshot_tree": "e1f6be0ebadba17b3cf94fb5b4202498e0c41a03",
+      "synthetic_snapshot_file": "vulnerable_flowbuffer_functions.cc",
+      "control_sha256": {
+        "safe.cpp": "b263a1892dda40b543652ff2f5848acc552dceaecbc63b012faaf46f6ef5fab8",
+        "unrelated.cpp": "29dd47c106b5b7e761a545add945a9ce64a5fd736933da58cfc058de1799f29a",
+        "renamed.cpp": "ecdb5a977f92cae786120a60d24d6bb5a6731dc2df9deb20a015b24d9c4d45da",
+        "partial.cpp": "2287e3ea272a222ec2486987b06c7c2b1631bdb6dca78b120165f22a1b123577"
+      }
+    },
+    "fixed": {
+      "commit": "fa0d92ccbf47b7cdc7efb727c79cbdfc168469eb",
+      "tree": "9873e4146e4a521b80f05a61c24d9c6047f696a7",
+      "blob": "27e93e338ced03aeed6e7d892e29d4d0740f3653",
+      "sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483",
+      "bytes": 185982,
+      "function_ranges": [
+        {
+          "name": "FlowbufStrAtIndex",
+          "start_line": 4428,
+          "end_line": 4463,
+          "start_byte": 155734,
+          "end_byte_exclusive": 156817,
+          "byte_length": 1083,
+          "sha256": "c8307e9460aacf20e4506ba32a507d6915dc00e7bc72d9bda9959cb788408497"
+        },
+        {
+          "name": "ProcessNativeProxyResultNewFlowbuf",
+          "start_line": 4465,
+          "end_line": 4592,
+          "start_byte": 156818,
+          "end_byte_exclusive": 160702,
+          "byte_length": 3884,
+          "sha256": "927e40f8930a9c29fda871848f56a8ffb6fafa295845b4f2954650a3a276c310"
+        }
+      ],
+      "combined_fragment_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74",
+      "combined_fragment_bytes": 4968,
+      "fragment_parse_status": "complete",
+      "fragment_parse_issues": [],
+      "synthetic_snapshot_commit": "43406588f1ea2d67282fe3920411adcfc4a5c219",
+      "synthetic_snapshot_tree": "b0c6630f8998fa014dfc3c8af67edc2526a1a1f1",
+      "synthetic_snapshot_file": "fixed_flowbuffer_functions.cc",
+      "control_sha256": {
+        "safe.cpp": "b263a1892dda40b543652ff2f5848acc552dceaecbc63b012faaf46f6ef5fab8",
+        "unrelated.cpp": "29dd47c106b5b7e761a545add945a9ce64a5fd736933da58cfc058de1799f29a",
+        "renamed.cpp": "ecdb5a977f92cae786120a60d24d6bb5a6731dc2df9deb20a015b24d9c4d45da",
+        "partial.cpp": "2287e3ea272a222ec2486987b06c7c2b1631bdb6dca78b120165f22a1b123577"
+      }
+    }
+  }
+}
