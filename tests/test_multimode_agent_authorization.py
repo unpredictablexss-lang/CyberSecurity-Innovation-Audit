@@ -5,6 +5,8 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
+from fastapi.testclient import TestClient
+from src.workbench.api import create_app
 
 from src.workbench import operations, service
 from src.workbench.operations_api import BranchComparisonRequest, RangeRequest
@@ -102,6 +104,37 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
             self.assertEqual(db.execute("SELECT count(*) FROM jobs").fetchone()[0], 0)
             self.assertEqual(db.execute("SELECT count(*) FROM operations").fetchone()[0], 0)
             self.assertEqual(db.execute("SELECT count(*) FROM triage_authorizations").fetchone()[0], 0)
+
+    def test_http_preview_then_submit_builds_real_operation_and_endpoint_auth_rows(self):
+        body = {**self.body, "repository_id": self.repo["id"],
+                "baseline": "a" * 40, "endpoint": "b" * 40,
+                "detector_ids": ["ohscanner.cpp.lifetime"]}
+        app = create_app(self.settings)
+        with patch("src.workbench.operations_api.range_plan",
+                   return_value=(self.repo, self.specs[0], self.specs[1], [])), \\
+             patch("src.workbench.operations.range_plan",
+                   return_value=(self.repo, self.specs[0], self.specs[1], [])), \\
+             patch("src.workbench.agent.ProviderConfig.from_env",
+                   return_value=SimpleNamespace(configured=True)), \\
+             patch("src.workbench.agent.audit_task_consent_preview",
+                   side_effect=self.fake_preview):
+            with TestClient(app) as client:
+                resp = client.post("/api/v1/operations/intelligent-previews",
+                                   json={"kind": "range", "payload": body})
+                self.assertEqual(resp.status_code, 200, resp.text)
+                previews = resp.json()["endpoints"]
+                self.assertEqual(len(previews), 2)
+                approvals = [{"consent_nonce": preview["consent_nonce"],
+                              "consent_sha256": preview["consent_sha256"]}
+                             for preview in previews]
+                submitted = client.post("/api/v1/operations/revision-ranges",
+                                        json={**body, "triage_approvals": approvals})
+                self.assertEqual(submitted.status_code, 201, submitted.text)
+                job_ids = submitted.json()["spec"]["scan_ids"]
+                self.assertEqual(len(job_ids), 2)
+                for key, preview in zip(job_ids, previews):
+                    self.assertEqual(self.store.triage_authorization(key)["consent_sha256"],
+                                     preview["consent_sha256"])
 
     def test_strict_request_budget_and_nonce_validation(self):
         base = {"repository_id": self.repo["id"], "baseline": "a" * 40,
