@@ -1565,6 +1565,11 @@ def install_routes(app: FastAPI, settings, store):
                     "rule_id": item.get("rule_id"),
                     "risk_tier": item.get("risk_tier"),
                     "risk_tier_label": item.get("risk_tier_label"),
+                    "severity": item.get("severity", "unknown"),
+                    "severity_label": item.get("severity_label", "未分级"),
+                    "severity_evidence": item.get("severity_evidence", "detector_preliminary_unverified"),
+                    "vulnerability_state": item.get("vulnerability_state", "candidate"),
+                    "human_review_status": item.get("human_review_status", "unassessed"),
                     "triage_state": item.get("triage", {}).get("state"),
                     "reason": "；".join(item.get("reasons", [])),
                 })
