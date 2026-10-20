@@ -1,0 +1,185 @@
+{
+  "schema": "ohscanner.d-line-task-tree/v1",
+  "date": "2026-10-20",
+  "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
+  "status": "MILESTONE_COMPLETED_NEXT_QUEUE_READY",
+  "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
+  "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
+  "local_known_cve_reference": "3da049887999bd3cacb3d48da9ffa7baefa18ac5",
+  "standing_authorization": "config/collaboration/standing_authorization.json",
+  "second_layer_implementation": "OUT_OF_SCOPE",
+  "tasks": [
+    {
+      "id": "D83",
+      "kind": "development",
+      "agent": "/root/d83_known_cve_quality",
+      "title": "整合已测 Pasteboard 规则并修候选质量问题",
+      "scope": [
+        "src/ohscanner/detectors/known_cves.py",
+        "tests/detectors/test_known_disclosed_cves.py",
+        "tests/detectors/test_known_case_corpus.py",
+        "research/data_sensitive/D83_*"
+      ],
+      "tests": [
+        "T83"
+      ],
+      "status": "COMPLETED_INTEGRATED",
+      "completion": "历史正反控制保持；误抑制反例通过；真实源码重放与证据绑定可用",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\d83-known-cve-quality-20261020",
+      "branch": "codex/d83-known-cve-quality-20261020",
+      "base": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
+      "commit": "e0873d7d4b1ac1c56a62e0393f2c21f5aab846af",
+      "integration_commit": "6f4f203ba4ab4dc811eb918a96bdd97531fddd08",
+      "validation": "35 focused tests; 10 concrete guard counterexamples; fixed real-source 67 C/C++ replay preserves 2 candidates and improves quota anchor"
+    },
+    {
+      "id": "D84",
+      "kind": "development",
+      "agent": "/root/d84_sensitive_quality",
+      "title": "敏感流日志/值绑定精度改进",
+      "scope": [
+        "src/ohscanner/detectors/data/**",
+        "tests/detectors/data/test_sensitive_exposure.py",
+        "research/data_sensitive/D84_*"
+      ],
+      "tests": [
+        "T83"
+      ],
+      "status": "COMPLETED_INTEGRATED",
+      "completion": "一个具体修复前失败关闭；正例保留；安全/无关/未知控制合理；相关回归通过",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
+      "branch": "codex/d84-sensitive-quality-20261020",
+      "base": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
+      "commit": "e72855e970405bb8043cf4bb961207848c957a97",
+      "integration_commit": "6ab24e0029c1dc9b4fd7d212e26e1841a9fb7cd2",
+      "validation": "47 focused tests; 4 upstream DSoftBus files byte-verified; 5 candidates before and after"
+    },
+    {
+      "id": "T83",
+      "kind": "testing",
+      "agent": "/root/t83_static_feedback",
+      "title": "独立反例与固定源码重放反馈",
+      "scope": [
+        "tests/detectors/test_d83_adversarial.py",
+        "tests/detectors/data/test_d84_adversarial.py",
+        "research/data_sensitive/T83_*"
+      ],
+      "feedback_to": [
+        "D83",
+        "D84"
+      ],
+      "status": "COMPLETED_INTEGRATED",
+      "completion": "对实际开发提交复测；失败反馈并关闭或准确记录；至少一个固定真实源码重放",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
+      "branch": "codex/t83-d-static-feedback-20261020",
+      "base": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
+      "commit": "30baf4c5dd3bf64f4b476e803b470409e0faeb66",
+      "integration_commit": "6bde33ce4295069bfce1da01ce07924a9c6fc482",
+      "validation": "101 data tests and39 known/corpus tests passed; else and c_str feedback closed; 5-file byte/commit/tree verified replay retains1candidate",
+      "first_test_commit": "0083fcbce39af50f734da427adde58a64adfc74b"
+    },
+    {
+      "id": "D85",
+      "kind": "development",
+      "title": "std::string值经c_str()输出的有界传播修复",
+      "status": "COMPLETED_INTEGRATED",
+      "depends_on": [
+        "D84",
+        "T83"
+      ],
+      "completion": "有效std::string路径保留候选，同名自定义方法不被无依据认定为已知API；与T83反例互馈",
+      "input": "T83 independently observed a valid std::string value=key; value += suffix; public log(value.c_str()) path loses flow; handle proven string receivers only.",
+      "agent": "/root/d84_sensitive_quality",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
+      "commit": "6131e8c26d2b29dc45022be982effb1c1e1d317e",
+      "integration_commit": "427206993dfa2d4ea80579e166ca372578d2f68d",
+      "validation": "51 developer methods; independent valid string controls; final integrated data suite101/101; original real-source paths preserved"
+    },
+    {
+      "id": "T84",
+      "kind": "testing",
+      "title": "跨组件回归与候选差异审查",
+      "status": "COMPLETED_INTEGRATED",
+      "depends_on": [
+        "D83",
+        "D84",
+        "T83"
+      ],
+      "feedback_to": [
+        "D85"
+      ],
+      "completion": "同源同范围比较source/sink/guard与候选身份；解释差异；不报告无标签准确率",
+      "agent": "/root/d83_known_cve_quality",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\t84-cross-component-20261020",
+      "branch": "codex/t84-cross-component-20261020",
+      "base": "6f4f203ba4ab4dc811eb918a96bdd97531fddd08",
+      "commit": "ddda953d64f3c1ecf2ae5b6f60e5e82a7a53b544",
+      "integration_commit": "c45740fc2553b0e4aacd66d10844bc7b69c2af6f",
+      "validation": "Wi-Fi/IoT one-file samples across3versions×2repetitions=12executions; each preserves1candidate; tampered bytes rejected"
+    },
+    {
+      "id": "D86",
+      "kind": "development",
+      "title": "定义启发式来源、显式覆盖与硬编码秘密的精度边界",
+      "status": "READY_FOR_NEXT_SLICE",
+      "depends_on": [
+        "D85",
+        "T83"
+      ],
+      "input": "T83 observed unknown-profile name heuristic may produce a new candidate after a plain overwrite; empty explicit taint is not proof of public data.",
+      "completion": "先建立模型语义和具名正反例，保留硬编码秘密/未绑定源；只修证据充分的误报，不一律清除候选",
+      "tests": [
+        "T85"
+      ]
+    },
+    {
+      "id": "T85",
+      "kind": "testing",
+      "title": "扩充实际包含compound/c_str结构的固定真实源码回归",
+      "status": "READY_FOR_NEXT_SLICE",
+      "depends_on": [
+        "T84",
+        "D85"
+      ],
+      "feedback_to": [
+        "D86"
+      ],
+      "completion": "选择可获取且包含新增结构的源码，记录字节与身份、实际覆盖及候选差异；不把现有普通路径兼容性当新结构已实源覆盖"
+    }
+  ],
+  "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
+  "completion": "当前轮代码/相关测试/真实重放/报告完成；后续队列保留，不以产品确认或真人配置为前置",
+  "first_round_findings": [
+    {
+      "developer": "D83",
+      "issue": "conditional quota guard without braces may suppress an otherwise unprotected candidate",
+      "status": "FIXED_AND_RETESTED"
+    },
+    {
+      "developer": "D84",
+      "issue": "compound assignment may erase existing sensitive flow and hide log candidate",
+      "status": "FIXED_AND_RETESTED"
+    }
+  ],
+  "owner_fixes": [
+    {
+      "id": "OWNER-WIN",
+      "commit": "634d20ccee25e4e7a9c4dc5f0984df7e1a992dfd",
+      "status": "COMMITTED_TESTED",
+      "issue": "Windows resource/SIGALRM failure prevented blocked offline replay result",
+      "validation": "4 targeted tests passed; actual child timeout produces blocked output; unavailable RSS remains null"
+    }
+  ],
+  "candidate_policy": "Do not reduce counts by hiding independent root causes; prefer source-bound relation evidence and explicit unresolved guards.",
+  "current_versions": {
+    "sensitive_exposure": "0.21.2",
+    "known_disclosed_cves": "0.19.11"
+  },
+  "integrated_tests": {
+    "data": 101,
+    "known_and_corpus": 39,
+    "total": 140,
+    "result": "PASS"
+  }
+}

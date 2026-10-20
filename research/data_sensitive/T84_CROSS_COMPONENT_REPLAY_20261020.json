@@ -1,0 +1,1175 @@
+{
+  "experiment": "T84 fixed two-component single-file regression",
+  "scope": "one selected source file per component; not whole-component coverage",
+  "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
+  "revisions": {
+    "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f": {
+      "version": "0.21.0",
+      "implementation_sha256": "62fcbca2b58e2d527e78c9d6827aa114b83bf1c818dfe9993e1c050a9dcb8f46"
+    },
+    "6f4f203ba4ab4dc811eb918a96bdd97531fddd08": {
+      "version": "0.21.1",
+      "implementation_sha256": "226dea48361bb8e18583d87fce56b28fe37e7175a0412cc9135b25dcdbc4258f"
+    },
+    "6131e8c26d2b29dc45022be982effb1c1e1d317e": {
+      "version": "0.21.2",
+      "implementation_sha256": "0f8c401e15d9f487a30a94b1a2dcf57ad0ad879f63c1dc53d633461afbd06468"
+    }
+  },
+  "environment": {
+    "python": "3.13.9",
+    "git": "git version 2.46.2.windows.1",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4",
+      "tree-sitter-javascript": "0.25.0",
+      "tree-sitter-typescript": "0.23.2"
+    },
+    "parse_profile": "light-ast",
+    "build_profile": "none",
+    "macro_expansion": false,
+    "product_manifest_locked": false
+  },
+  "samples": [
+    {
+      "identity": {
+        "repository": "openharmony/communication_wifi",
+        "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+        "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+        "path": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+        "blob": "d1c56613712e4703765ce09084a12641dce5c4b0",
+        "sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+        "bytes": 5160,
+        "local_path": "D:\\openHarmonyScanner\\tmp\\t53-wifi-source-20261028\\wifi\\services\\wifi_standard\\wifi_framework\\wifi_toolkit\\utils\\softap_parser.cpp",
+        "manifest": "research/data_sensitive/D40_WIFI_PRESHAREDKEY_PANEL_REPLAY.json",
+        "manifest_sha256": "19a11ba50811848af85d1fc98eeb7ff1ddeb897574130edef7156932714f626d",
+        "byte_verification": "SHA-256 and Git blob SHA-1 match existing pinned manifest",
+        "commit_tree_verification": "inherited from existing manifest; not reverified from local commit/tree objects"
+      },
+      "snapshot_sha256": "0842e07c7f08365f6f8eb83e01d15e0acd9b883b77e988c2e8b83548d810016a",
+      "indexed_file_count": 1,
+      "parsing": {
+        "parsing_status": {
+          "complete": 1
+        },
+        "languages": {
+          "cpp": 1
+        }
+      },
+      "runs": {
+        "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f": [
+          {
+            "candidate_count": 1,
+            "status": "blocked",
+            "seconds": 0.005757500002800953,
+            "file_outcomes": [
+              [
+                "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+                "partial"
+              ]
+            ],
+            "coverage_counts": {
+              "partial": 1
+            },
+            "findings": [
+              {
+                "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+                "line": 93,
+                "rule_id": "data.log.sensitive-value",
+                "message": "Candidate local sensitive-material dependency: wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                "evidence_type": "syntax",
+                "column": null,
+                "candidate_cwe": "CWE-532",
+                "symbol": "SoftapXmlParser::ParseSoftap",
+                "evidence_obligations": [
+                  {
+                    "kind": "local_flow",
+                    "description": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "source_semantics",
+                    "description": "Unreviewed sensitive-name heuristic only; type, content and secret semantics are unknown. Candidate triage required.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "type_identity",
+                    "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "execution_and_identity",
+                    "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                    "status": "unknown"
+                  }
+                ],
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+                "rule_version": null,
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null,
+                "identity_quality": "unknown"
+              }
+            ],
+            "limitations": [
+              "Candidate only: runtime log readers, production enablement and impact require independent review.",
+              "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+              "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+              "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+              "No reviewed sensitive-source model for this repository/commit; heuristic candidates are incomplete and the scan is blocked.",
+              "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+              "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: bounded same-file helper expansion; compiler type identity remains unknown",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: branch merge is may-flow; no path feasibility proof",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 123; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 136; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 60; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 74; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: preprocessor/build context not expanded",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: short-circuit effects are may-flow; no path feasibility proof",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unknown field/alias propagation; aggregate object taint is propagated as a may-flow",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unreviewed sensitive-API-name heuristic source; return semantics unknown",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unsupported statement switch_statement at line 75; nested call effects inspected as may-flow"
+            ]
+          },
+          {
+            "candidate_count": 1,
+            "status": "blocked",
+            "seconds": 0.005085500000859611,
+            "file_outcomes": [
+              [
+                "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+                "partial"
+              ]
+            ],
+            "coverage_counts": {
+              "partial": 1
+            },
+            "findings": [
+              {
+                "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+                "line": 93,
+                "rule_id": "data.log.sensitive-value",
+                "message": "Candidate local sensitive-material dependency: wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                "evidence_type": "syntax",
+                "column": null,
+                "candidate_cwe": "CWE-532",
+                "symbol": "SoftapXmlParser::ParseSoftap",
+                "evidence_obligations": [
+                  {
+                    "kind": "local_flow",
+                    "description": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "source_semantics",
+                    "description": "Unreviewed sensitive-name heuristic only; type, content and secret semantics are unknown. Candidate triage required.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "type_identity",
+                    "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "execution_and_identity",
+                    "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                    "status": "unknown"
+                  }
+                ],
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+                "rule_version": null,
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null,
+                "identity_quality": "unknown"
+              }
+            ],
+            "limitations": [
+              "Candidate only: runtime log readers, production enablement and impact require independent review.",
+              "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+              "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+              "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+              "No reviewed sensitive-source model for this repository/commit; heuristic candidates are incomplete and the scan is blocked.",
+              "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+              "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: bounded same-file helper expansion; compiler type identity remains unknown",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: branch merge is may-flow; no path feasibility proof",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 123; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 136; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 60; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 74; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: preprocessor/build context not expanded",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: short-circuit effects are may-flow; no path feasibility proof",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unknown field/alias propagation; aggregate object taint is propagated as a may-flow",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unreviewed sensitive-API-name heuristic source; return semantics unknown",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unsupported statement switch_statement at line 75; nested call effects inspected as may-flow"
+            ]
+          }
+        ],
+        "6f4f203ba4ab4dc811eb918a96bdd97531fddd08": [
+          {
+            "candidate_count": 1,
+            "status": "blocked",
+            "seconds": 0.005441699999209959,
+            "file_outcomes": [
+              [
+                "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+                "partial"
+              ]
+            ],
+            "coverage_counts": {
+              "partial": 1
+            },
+            "findings": [
+              {
+                "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+                "line": 93,
+                "rule_id": "data.log.sensitive-value",
+                "message": "Candidate local sensitive-material dependency: wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                "evidence_type": "syntax",
+                "column": null,
+                "candidate_cwe": "CWE-532",
+                "symbol": "SoftapXmlParser::ParseSoftap",
+                "evidence_obligations": [
+                  {
+                    "kind": "local_flow",
+                    "description": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "source_semantics",
+                    "description": "Unreviewed sensitive-name heuristic only; type, content and secret semantics are unknown. Candidate triage required.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "type_identity",
+                    "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "execution_and_identity",
+                    "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                    "status": "unknown"
+                  }
+                ],
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+                "rule_version": null,
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null,
+                "identity_quality": "unknown"
+              }
+            ],
+            "limitations": [
+              "Candidate only: runtime log readers, production enablement and impact require independent review.",
+              "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+              "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+              "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+              "No reviewed sensitive-source model for this repository/commit; heuristic candidates are incomplete and the scan is blocked.",
+              "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+              "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: bounded same-file helper expansion; compiler type identity remains unknown",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: branch merge is may-flow; no path feasibility proof",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 123; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 136; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 60; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 74; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: preprocessor/build context not expanded",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: short-circuit effects are may-flow; no path feasibility proof",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unknown field/alias propagation; aggregate object taint is propagated as a may-flow",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unreviewed sensitive-API-name heuristic source; return semantics unknown",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unsupported statement switch_statement at line 75; nested call effects inspected as may-flow"
+            ]
+          },
+          {
+            "candidate_count": 1,
+            "status": "blocked",
+            "seconds": 0.004694499999459367,
+            "file_outcomes": [
+              [
+                "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+                "partial"
+              ]
+            ],
+            "coverage_counts": {
+              "partial": 1
+            },
+            "findings": [
+              {
+                "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+                "line": 93,
+                "rule_id": "data.log.sensitive-value",
+                "message": "Candidate local sensitive-material dependency: wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                "evidence_type": "syntax",
+                "column": null,
+                "candidate_cwe": "CWE-532",
+                "symbol": "SoftapXmlParser::ParseSoftap",
+                "evidence_obligations": [
+                  {
+                    "kind": "local_flow",
+                    "description": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "source_semantics",
+                    "description": "Unreviewed sensitive-name heuristic only; type, content and secret semantics are unknown. Candidate triage required.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "type_identity",
+                    "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "execution_and_identity",
+                    "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                    "status": "unknown"
+                  }
+                ],
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+                "rule_version": null,
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null,
+                "identity_quality": "unknown"
+              }
+            ],
+            "limitations": [
+              "Candidate only: runtime log readers, production enablement and impact require independent review.",
+              "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+              "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+              "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+              "No reviewed sensitive-source model for this repository/commit; heuristic candidates are incomplete and the scan is blocked.",
+              "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+              "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: bounded same-file helper expansion; compiler type identity remains unknown",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: branch merge is may-flow; no path feasibility proof",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 123; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 136; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 60; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 74; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: preprocessor/build context not expanded",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: short-circuit effects are may-flow; no path feasibility proof",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unknown field/alias propagation; aggregate object taint is propagated as a may-flow",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unreviewed sensitive-API-name heuristic source; return semantics unknown",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unsupported statement switch_statement at line 75; nested call effects inspected as may-flow"
+            ]
+          }
+        ],
+        "6131e8c26d2b29dc45022be982effb1c1e1d317e": [
+          {
+            "candidate_count": 1,
+            "status": "blocked",
+            "seconds": 0.0049662000019452535,
+            "file_outcomes": [
+              [
+                "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+                "partial"
+              ]
+            ],
+            "coverage_counts": {
+              "partial": 1
+            },
+            "findings": [
+              {
+                "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+                "line": 93,
+                "rule_id": "data.log.sensitive-value",
+                "message": "Candidate local sensitive-material dependency: wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                "evidence_type": "syntax",
+                "column": null,
+                "candidate_cwe": "CWE-532",
+                "symbol": "SoftapXmlParser::ParseSoftap",
+                "evidence_obligations": [
+                  {
+                    "kind": "local_flow",
+                    "description": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "source_semantics",
+                    "description": "Unreviewed sensitive-name heuristic only; type, content and secret semantics are unknown. Candidate triage required.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "type_identity",
+                    "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "execution_and_identity",
+                    "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                    "status": "unknown"
+                  }
+                ],
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+                "rule_version": null,
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null,
+                "identity_quality": "unknown"
+              }
+            ],
+            "limitations": [
+              "Candidate only: runtime log readers, production enablement and impact require independent review.",
+              "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+              "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+              "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+              "No reviewed sensitive-source model for this repository/commit; heuristic candidates are incomplete and the scan is blocked.",
+              "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+              "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: bounded same-file helper expansion; compiler type identity remains unknown",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: branch merge is may-flow; no path feasibility proof",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 123; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 136; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 60; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 74; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: preprocessor/build context not expanded",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: short-circuit effects are may-flow; no path feasibility proof",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unknown field/alias propagation; aggregate object taint is propagated as a may-flow",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unreviewed sensitive-API-name heuristic source; return semantics unknown",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unsupported statement switch_statement at line 75; nested call effects inspected as may-flow"
+            ]
+          },
+          {
+            "candidate_count": 1,
+            "status": "blocked",
+            "seconds": 0.004523900002823211,
+            "file_outcomes": [
+              [
+                "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+                "partial"
+              ]
+            ],
+            "coverage_counts": {
+              "partial": 1
+            },
+            "findings": [
+              {
+                "file": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp",
+                "line": 93,
+                "rule_id": "data.log.sensitive-value",
+                "message": "Candidate local sensitive-material dependency: wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                "evidence_type": "syntax",
+                "column": null,
+                "candidate_cwe": "CWE-532",
+                "symbol": "SoftapXmlParser::ParseSoftap",
+                "evidence_obligations": [
+                  {
+                    "kind": "local_flow",
+                    "description": "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp:93 source heuristic suspected sensitive-return API PassWordAnonymize(hotspotConfig.GetPreSharedKey()).c_str -> 93 WIFI_LOGI public operand 0",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "source_semantics",
+                    "description": "Unreviewed sensitive-name heuristic only; type, content and secret semantics are unknown. Candidate triage required.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "type_identity",
+                    "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "execution_and_identity",
+                    "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                    "status": "unknown"
+                  }
+                ],
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "source_sha256": "8f4e84d7eb5f86d892b15a2c1423db3260713ae0cf31a36621869321f9eb2388",
+                "rule_version": null,
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null,
+                "identity_quality": "unknown"
+              }
+            ],
+            "limitations": [
+              "Candidate only: runtime log readers, production enablement and impact require independent review.",
+              "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+              "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+              "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+              "No reviewed sensitive-source model for this repository/commit; heuristic candidates are incomplete and the scan is blocked.",
+              "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+              "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: bounded same-file helper expansion; compiler type identity remains unknown",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: branch merge is may-flow; no path feasibility proof",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 123; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 136; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 60; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: loop body analyzed for may-flow only at line 74; iteration count/path feasibility unresolved",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: preprocessor/build context not expanded",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: short-circuit effects are may-flow; no path feasibility proof",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unknown field/alias propagation; aggregate object taint is propagated as a may-flow",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unreviewed sensitive-API-name heuristic source; return semantics unknown",
+              "wifi/services/wifi_standard/wifi_framework/wifi_toolkit/utils/softap_parser.cpp: unsupported statement switch_statement at line 75; nested call effects inspected as may-flow"
+            ]
+          }
+        ]
+      },
+      "repeat_signatures_equal": true,
+      "delta": {
+        "6f4f203ba4ab4dc811eb918a96bdd97531fddd08": {
+          "added": [],
+          "removed": [],
+          "same_source_and_parser": true,
+          "delta_attribution": "detector implementation only; dependencies verified unchanged"
+        },
+        "6131e8c26d2b29dc45022be982effb1c1e1d317e": {
+          "added": [],
+          "removed": [],
+          "same_source_and_parser": true,
+          "delta_attribution": "detector implementation only; dependencies verified unchanged"
+        }
+      }
+    },
+    {
+      "identity": {
+        "repository": "openharmony/communication_iot_connect",
+        "commit": "d8c0aef305601770c912dbdedc58a3f1e6efd30c",
+        "tree": "78db4611e16df5ee92328ceecf6c14baef8cb1a3",
+        "path": "core/wifi/application/local_control/local_ctl_coap_api.c",
+        "sha256": "a3787e925f011e33c1c7f5458c536dd36920f6f1e708ae98cc47f21a6cd897de",
+        "blob": "5b4a715c7ce7906460d2f1d0e089082cd7a92315",
+        "bytes": 21202,
+        "local_path": "D:\\openHarmonyScanner\\tmp\\t84-cross-component-source-20261020\\communication_iot_connect\\core\\wifi\\application\\local_control\\local_ctl_coap_api.c",
+        "manifest": "research/data_sensitive/D27_IOTC_PANEL_REPLAY.json",
+        "manifest_sha256": "c2bba3a043f0f1d1f8416a52101bf11bb44ca2a753ab12ccb0b5cbaaf10d3d00",
+        "byte_verification": "SHA-256 and Git blob SHA-1 match existing pinned manifest",
+        "commit_tree_verification": "verified local commit/tree/path/blob objects with network disabled",
+        "git_dir": "D:\\openHarmonyScanner\\tmp\\t84-cross-component-source-20261020\\communication_iot_connect.git"
+      },
+      "snapshot_sha256": "52f792293dfb8bc6dfe7bc326440d75509719df27c5a1175dc3ba6ea08309c9b",
+      "indexed_file_count": 1,
+      "parsing": {
+        "parsing_status": {
+          "complete": 1
+        },
+        "languages": {
+          "c": 1
+        }
+      },
+      "runs": {
+        "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f": [
+          {
+            "candidate_count": 1,
+            "status": "blocked",
+            "seconds": 0.016011300001991913,
+            "file_outcomes": [
+              [
+                "core/wifi/application/local_control/local_ctl_coap_api.c",
+                "partial"
+              ]
+            ],
+            "coverage_counts": {
+              "partial": 1
+            },
+            "findings": [
+              {
+                "file": "core/wifi/application/local_control/local_ctl_coap_api.c",
+                "line": 602,
+                "rule_id": "data.log.sensitive-value",
+                "message": "Candidate local sensitive-material dependency: core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+                "evidence_type": "syntax",
+                "column": null,
+                "candidate_cwe": "CWE-532",
+                "symbol": "localCtlSessKeyGen",
+                "evidence_obligations": [
+                  {
+                    "kind": "local_flow",
+                    "description": "core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "source_semantics",
+                    "description": "Pinned communication_iot_connect source at d8c0aef3: the reviewed PBKDF2 API writes derived key bytes to argument 1, UtilsHexify copies those bytes as hex to argument 2, and IOTC_LOGI routes its format to a public HiLog string sink. The component authCode identity and product log visibility/impact remain unknown.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "type_identity",
+                    "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "execution_and_identity",
+                    "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                    "status": "unknown"
+                  }
+                ],
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "source_sha256": "a3787e925f011e33c1c7f5458c536dd36920f6f1e708ae98cc47f21a6cd897de",
+                "rule_version": null,
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null,
+                "identity_quality": "unknown"
+              }
+            ],
+            "limitations": [
+              "Candidate only: runtime log readers, production enablement and impact require independent review.",
+              "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+              "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+              "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+              "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+              "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: bounded same-file helper expansion; compiler type identity remains unknown",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: branch merge is may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: conditional effects are may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: conditional value is may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 169; iteration count/path feasibility unresolved",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 396; iteration count/path feasibility unresolved",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: member/pointer output copy unsupported",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: pointer/member assignment requires alias proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: preprocessor/build context not expanded",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: short-circuit effects are may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: unknown field/alias propagation; aggregate object taint is propagated as a may-flow"
+            ]
+          },
+          {
+            "candidate_count": 1,
+            "status": "blocked",
+            "seconds": 0.01522790000308305,
+            "file_outcomes": [
+              [
+                "core/wifi/application/local_control/local_ctl_coap_api.c",
+                "partial"
+              ]
+            ],
+            "coverage_counts": {
+              "partial": 1
+            },
+            "findings": [
+              {
+                "file": "core/wifi/application/local_control/local_ctl_coap_api.c",
+                "line": 602,
+                "rule_id": "data.log.sensitive-value",
+                "message": "Candidate local sensitive-material dependency: core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+                "evidence_type": "syntax",
+                "column": null,
+                "candidate_cwe": "CWE-532",
+                "symbol": "localCtlSessKeyGen",
+                "evidence_obligations": [
+                  {
+                    "kind": "local_flow",
+                    "description": "core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "source_semantics",
+                    "description": "Pinned communication_iot_connect source at d8c0aef3: the reviewed PBKDF2 API writes derived key bytes to argument 1, UtilsHexify copies those bytes as hex to argument 2, and IOTC_LOGI routes its format to a public HiLog string sink. The component authCode identity and product log visibility/impact remain unknown.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "type_identity",
+                    "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "execution_and_identity",
+                    "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                    "status": "unknown"
+                  }
+                ],
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "source_sha256": "a3787e925f011e33c1c7f5458c536dd36920f6f1e708ae98cc47f21a6cd897de",
+                "rule_version": null,
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null,
+                "identity_quality": "unknown"
+              }
+            ],
+            "limitations": [
+              "Candidate only: runtime log readers, production enablement and impact require independent review.",
+              "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+              "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+              "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+              "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+              "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: bounded same-file helper expansion; compiler type identity remains unknown",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: branch merge is may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: conditional effects are may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: conditional value is may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 169; iteration count/path feasibility unresolved",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 396; iteration count/path feasibility unresolved",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: member/pointer output copy unsupported",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: pointer/member assignment requires alias proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: preprocessor/build context not expanded",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: short-circuit effects are may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: unknown field/alias propagation; aggregate object taint is propagated as a may-flow"
+            ]
+          }
+        ],
+        "6f4f203ba4ab4dc811eb918a96bdd97531fddd08": [
+          {
+            "candidate_count": 1,
+            "status": "blocked",
+            "seconds": 0.01497189999645343,
+            "file_outcomes": [
+              [
+                "core/wifi/application/local_control/local_ctl_coap_api.c",
+                "partial"
+              ]
+            ],
+            "coverage_counts": {
+              "partial": 1
+            },
+            "findings": [
+              {
+                "file": "core/wifi/application/local_control/local_ctl_coap_api.c",
+                "line": 602,
+                "rule_id": "data.log.sensitive-value",
+                "message": "Candidate local sensitive-material dependency: core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+                "evidence_type": "syntax",
+                "column": null,
+                "candidate_cwe": "CWE-532",
+                "symbol": "localCtlSessKeyGen",
+                "evidence_obligations": [
+                  {
+                    "kind": "local_flow",
+                    "description": "core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "source_semantics",
+                    "description": "Pinned communication_iot_connect source at d8c0aef3: the reviewed PBKDF2 API writes derived key bytes to argument 1, UtilsHexify copies those bytes as hex to argument 2, and IOTC_LOGI routes its format to a public HiLog string sink. The component authCode identity and product log visibility/impact remain unknown.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "type_identity",
+                    "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "execution_and_identity",
+                    "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                    "status": "unknown"
+                  }
+                ],
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "source_sha256": "a3787e925f011e33c1c7f5458c536dd36920f6f1e708ae98cc47f21a6cd897de",
+                "rule_version": null,
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null,
+                "identity_quality": "unknown"
+              }
+            ],
+            "limitations": [
+              "Candidate only: runtime log readers, production enablement and impact require independent review.",
+              "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+              "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+              "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+              "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+              "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: bounded same-file helper expansion; compiler type identity remains unknown",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: branch merge is may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: conditional effects are may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: conditional value is may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 169; iteration count/path feasibility unresolved",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 396; iteration count/path feasibility unresolved",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: member/pointer output copy unsupported",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: pointer/member assignment requires alias proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: preprocessor/build context not expanded",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: short-circuit effects are may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: unknown field/alias propagation; aggregate object taint is propagated as a may-flow"
+            ]
+          },
+          {
+            "candidate_count": 1,
+            "status": "blocked",
+            "seconds": 0.015290600000298582,
+            "file_outcomes": [
+              [
+                "core/wifi/application/local_control/local_ctl_coap_api.c",
+                "partial"
+              ]
+            ],
+            "coverage_counts": {
+              "partial": 1
+            },
+            "findings": [
+              {
+                "file": "core/wifi/application/local_control/local_ctl_coap_api.c",
+                "line": 602,
+                "rule_id": "data.log.sensitive-value",
+                "message": "Candidate local sensitive-material dependency: core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+                "evidence_type": "syntax",
+                "column": null,
+                "candidate_cwe": "CWE-532",
+                "symbol": "localCtlSessKeyGen",
+                "evidence_obligations": [
+                  {
+                    "kind": "local_flow",
+                    "description": "core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "source_semantics",
+                    "description": "Pinned communication_iot_connect source at d8c0aef3: the reviewed PBKDF2 API writes derived key bytes to argument 1, UtilsHexify copies those bytes as hex to argument 2, and IOTC_LOGI routes its format to a public HiLog string sink. The component authCode identity and product log visibility/impact remain unknown.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "type_identity",
+                    "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "execution_and_identity",
+                    "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                    "status": "unknown"
+                  }
+                ],
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "source_sha256": "a3787e925f011e33c1c7f5458c536dd36920f6f1e708ae98cc47f21a6cd897de",
+                "rule_version": null,
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null,
+                "identity_quality": "unknown"
+              }
+            ],
+            "limitations": [
+              "Candidate only: runtime log readers, production enablement and impact require independent review.",
+              "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+              "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+              "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+              "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+              "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: bounded same-file helper expansion; compiler type identity remains unknown",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: branch merge is may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: conditional effects are may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: conditional value is may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 169; iteration count/path feasibility unresolved",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 396; iteration count/path feasibility unresolved",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: member/pointer output copy unsupported",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: pointer/member assignment requires alias proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: preprocessor/build context not expanded",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: short-circuit effects are may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: unknown field/alias propagation; aggregate object taint is propagated as a may-flow"
+            ]
+          }
+        ],
+        "6131e8c26d2b29dc45022be982effb1c1e1d317e": [
+          {
+            "candidate_count": 1,
+            "status": "blocked",
+            "seconds": 0.01575060000322992,
+            "file_outcomes": [
+              [
+                "core/wifi/application/local_control/local_ctl_coap_api.c",
+                "partial"
+              ]
+            ],
+            "coverage_counts": {
+              "partial": 1
+            },
+            "findings": [
+              {
+                "file": "core/wifi/application/local_control/local_ctl_coap_api.c",
+                "line": 602,
+                "rule_id": "data.log.sensitive-value",
+                "message": "Candidate local sensitive-material dependency: core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+                "evidence_type": "syntax",
+                "column": null,
+                "candidate_cwe": "CWE-532",
+                "symbol": "localCtlSessKeyGen",
+                "evidence_obligations": [
+                  {
+                    "kind": "local_flow",
+                    "description": "core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "source_semantics",
+                    "description": "Pinned communication_iot_connect source at d8c0aef3: the reviewed PBKDF2 API writes derived key bytes to argument 1, UtilsHexify copies those bytes as hex to argument 2, and IOTC_LOGI routes its format to a public HiLog string sink. The component authCode identity and product log visibility/impact remain unknown.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "type_identity",
+                    "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "execution_and_identity",
+                    "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                    "status": "unknown"
+                  }
+                ],
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "source_sha256": "a3787e925f011e33c1c7f5458c536dd36920f6f1e708ae98cc47f21a6cd897de",
+                "rule_version": null,
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null,
+                "identity_quality": "unknown"
+              }
+            ],
+            "limitations": [
+              "Candidate only: runtime log readers, production enablement and impact require independent review.",
+              "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+              "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+              "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+              "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+              "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: bounded same-file helper expansion; compiler type identity remains unknown",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: branch merge is may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: conditional effects are may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: conditional value is may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 169; iteration count/path feasibility unresolved",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 396; iteration count/path feasibility unresolved",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: member/pointer output copy unsupported",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: pointer/member assignment requires alias proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: preprocessor/build context not expanded",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: short-circuit effects are may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: unknown field/alias propagation; aggregate object taint is propagated as a may-flow"
+            ]
+          },
+          {
+            "candidate_count": 1,
+            "status": "blocked",
+            "seconds": 0.014461799997661728,
+            "file_outcomes": [
+              [
+                "core/wifi/application/local_control/local_ctl_coap_api.c",
+                "partial"
+              ]
+            ],
+            "coverage_counts": {
+              "partial": 1
+            },
+            "findings": [
+              {
+                "file": "core/wifi/application/local_control/local_ctl_coap_api.c",
+                "line": 602,
+                "rule_id": "data.log.sensitive-value",
+                "message": "Candidate local sensitive-material dependency: core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+                "evidence_type": "syntax",
+                "column": null,
+                "candidate_cwe": "CWE-532",
+                "symbol": "localCtlSessKeyGen",
+                "evidence_obligations": [
+                  {
+                    "kind": "local_flow",
+                    "description": "core/wifi/application/local_control/local_ctl_coap_api.c:599 source IotcPkcs5Pbkdf2Hmac output argument 1 -> 601 UtilsHexify -> localCtlKeyStr -> 602 IOTC_LOGI public operand 1",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "source_semantics",
+                    "description": "Pinned communication_iot_connect source at d8c0aef3: the reviewed PBKDF2 API writes derived key bytes to argument 1, UtilsHexify copies those bytes as hex to argument 2, and IOTC_LOGI routes its format to a public HiLog string sink. The component authCode identity and product log visibility/impact remain unknown.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "type_identity",
+                    "description": "Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "execution_and_identity",
+                    "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+                    "status": "unknown"
+                  }
+                ],
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "source_sha256": "a3787e925f011e33c1c7f5458c536dd36920f6f1e708ae98cc47f21a6cd897de",
+                "rule_version": null,
+                "rule_lineage_id": null,
+                "symbol_identity": null,
+                "ast_fingerprint": null,
+                "identity_quality": "unknown"
+              }
+            ],
+            "limitations": [
+              "Candidate only: runtime log readers, production enablement and impact require independent review.",
+              "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+              "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+              "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+              "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+              "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: bounded same-file helper expansion; compiler type identity remains unknown",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: branch merge is may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: conditional effects are may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: conditional value is may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 169; iteration count/path feasibility unresolved",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: loop body analyzed for may-flow only at line 396; iteration count/path feasibility unresolved",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: member/pointer output copy unsupported",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: pointer/member assignment requires alias proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: preprocessor/build context not expanded",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: short-circuit effects are may-flow; no path feasibility proof",
+              "core/wifi/application/local_control/local_ctl_coap_api.c: unknown field/alias propagation; aggregate object taint is propagated as a may-flow"
+            ]
+          }
+        ]
+      },
+      "repeat_signatures_equal": true,
+      "delta": {
+        "6f4f203ba4ab4dc811eb918a96bdd97531fddd08": {
+          "added": [],
+          "removed": [],
+          "same_source_and_parser": true,
+          "delta_attribution": "detector implementation only; dependencies verified unchanged"
+        },
+        "6131e8c26d2b29dc45022be982effb1c1e1d317e": {
+          "added": [],
+          "removed": [],
+          "same_source_and_parser": true,
+          "delta_attribution": "detector implementation only; dependencies verified unchanged"
+        }
+      }
+    }
+  ],
+  "validated_vulnerability": 0,
+  "limitations": [
+    "Previously used development samples, not independent accuracy labels.",
+    "Candidate changes measure behavior; they are not TP/FP/FN or precision/recall.",
+    "Commit/tree objects are locally verified only when an explicit git-dir is supplied; otherwise manifest binding is inherited.",
+    "No target execution, product inclusion, runtime visibility, or impact verification.",
+    "One file from each repository; omitted component files remain unexamined."
+  ]
+}
