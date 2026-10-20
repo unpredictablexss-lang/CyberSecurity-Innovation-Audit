@@ -25,9 +25,15 @@ python research/evidence/cpp/t_source_test_file_scans_20261020/verify.py --sourc
 | CVE-2025-0587 | `ecmascript/base/tests/atomic_helper_test.cpp` | `cae11f121c030a90ba41d8e4d866f91292f25892` | `61ff01d9a06b4186125a04e2b790e07640f57198` | `ca2806418b4189d0ccc4a7b55f7b8cc9291abb1f` | `a15f57aa48e3d2256713fdd0db959dbe7fd79538d83b4ed4686949b219ddb630` | complete; `integer_bounds` 0.2.0 | completed, 0 diagnostics |
 | CVE-2025-23420 | `ecmascript/tests/js_array_test.cpp` | `aeee3fd12c03193545edea4b8e0fdfa3d9a03d11` | `0eea26c9eb6846f4d19926be83092c06f0d98692` | `a9a35d082d05b8dbd5ed1b40c8154394fefa2567` | `cf4c6eb657953e5c25ac2ec3d75d89ae521e40935e7f542d65f9e4e8fce56241` | complete; `bounds` 0.3.0 | completed, 0 diagnostics |
 
-## Remaining evidence gap
+## Remaining evidence gap: root-specific controls and fixed evidence are missing
 
-The production-source observations below provide reviewed adjacent controls but not a trusted fixed-source pair for these cases. The CVE-2025-23420 control is method-local because the CLI scans whole files; its parent file correctly still contains five findings in the vulnerable method. The reports do not establish product reachability or impact. Keep both matrix rows `PARTIAL` until those obligations have evidence.
+The two production-source observations below are retained as narrowly interpreted adjacent controls; they do not satisfy root-specific control or fixed-source evidence:
+
+- CVE-2025-0587 still lacks a source-bound negative/large-index control exercising the same `ValidateAtomicAccess` typed-array atomic path, plus a trusted fixed source for that function.
+- CVE-2025-23420 still lacks a source-bound control that exercises comparator-driven mutation against the dynamic `JSObject` access path, plus a trusted fixed source for `SortElementsByObject`.
+- The CVE-2025-23420 `SortElementsByInsertionSort` observation remains method-local because the CLI scans whole files; its parent file correctly reports five candidates in the vulnerable method.
+
+Neither adjacent control supplies a vulnerable/fixed root-cause differential. Product reachability and impact are also unproven. Keep both matrix rows `PARTIAL` until the missing root-specific and product evidence is resolved.
 
 ## Production-source control review
 
