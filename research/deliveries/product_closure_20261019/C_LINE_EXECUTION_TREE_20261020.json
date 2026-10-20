@@ -4,7 +4,7 @@
   "baseline": {
     "remote": "origin/codex/c-line-static-20261019",
     "commit": "d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03",
-    "refresh": "2026-10-20 narrow fetch attempts failed with GitHub 443; direct ls-remote verified origin/codex/c-line-static-20261019=d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03 and planning topic=fc8b03905cce1accfc9e7e810a7c604328d669fe; tracking refs match."
+    "refresh": "2026-10-20 fetched origin successfully from the planning worktree; current branch HEAD and remote topic ref both equal 0d06ef0c8083438a962229a03be2c2572c92a917. Source baseline Ark Runtime remains exact commit a65a2853ccae13da167d9aa4720ab8b11ec16656."
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
   "status": "ACTIVE",
@@ -863,8 +863,38 @@
       "review_prompt": "ROLE: second-layer source reviewer. After C-DEV-EXACT-BOUND-SCOUT and C-TEST-EXACT-BOUND-SCOUT identify a candidate and exact report, independently assess whether the source trigger can reach the sensitive operation and whether stated guards/counterevidence defeat it. Verify source pins, propose smallest isolated runtime test if warranted, and clearly separate source candidate from runtime/product vulnerability. If no candidate survives, record not_run and do not invent one. No detector or LLM implementation.",
       "report": "research/deliveries/c-line/c_float32array_negative_double_second_layer_review_20261020.md",
       "report_commit": "b264f287c7f3d17cecec4e0bd8741d9e1ff8ed72",
-      "completion": "Source candidate survives review. Math.ceil(-1.1) is a source-supported route to TDouble(-1.0), which can pass both missing-lower-bound fast paths. NewByteArray pointer-width effects differ by architecture; 32-bit wrap suggests a conditional overwrite concern, while 64-bit requests a very large allocation. Runtime/build/allocator behavior remains not_run; no product or confirmed memory-corruption claim.",
-      "counterevidence": "Exact fast-path selection, supported build architectures, generated lowering, and allocator/OOM behavior are unverified."
+      "completion": "Source candidate survives review. Math.ceil(-1.1) is a source-supported route to TDouble(-1.0), which can pass both missing-lower-bound fast paths. NewByteArray yields a very large 64-bit allocation request and a 16-byte 32-bit allocation with large uint32 length/byteLength metadata; the initializer interval is empty on both widths, refuting the earlier immediate-overwrite concern. A later indexed-read concern is conditional and competes with the signed inline fast-getter guard. Runtime/build/allocator behavior remains not_run; no product or confirmed memory-safety claim.",
+      "counterevidence": "Exact fast-path selection, supported build architectures, generated lowering, allocator/OOM behavior, later getter dispatch, and whether any malformed object is observable are unverified."
+    },
+    {
+      "id": "C-DEV-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020",
+      "kind": "isolated_component_runtime_development",
+      "status": "IN_PROGRESS_RUNTIME_FEASIBILITY_AND_REPRODUCTION",
+      "base": {
+        "planning_branch": "codex/c-line-parallel-plan-20261020",
+        "planning_commit": "0d06ef0c8083438a962229a03be2c2572c92a917",
+        "source_repository": "openharmony/arkcompiler_ets_runtime",
+        "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656"
+      },
+      "developer_agent": "float32_runtime_dev",
+      "objective": "Determine whether a safe isolated Ark Runtime build or existing executable can validate the source-level negative-TDouble Float32Array constructor candidate; if runnable, execute the narrow source-pinned control matrix and record allocation, metadata, and getter behavior. Do not modify production source or detector logic.",
+      "developer_prompt": "ROLE=isolated component runtime investigator. INPUT=exact source pins in c_exact_bound_scout_20261020.md and c_float32array_negative_double_second_layer_review_20261020.md. GOAL=distinguish source hypothesis from compiled runtime. STEPS=inventory binaries/build inputs; pin source/config/architecture; run in an isolated temporary process the Math.ceil(-1.1), tagged-int -1, positive integral TDouble, and negative-zero controls; capture constructor path, pointer-width allocation size, InitializeWithSpecialValue(start,end), stored metadata, and subsequent access behavior. OUTPUT=reproducible report/logs or evidenced not_run feasibility note. STOP=one definitive executed result or precise blocker after inventory. NEVER=run product/shared service, edit production code, claim confirmed exploitability without evidence, or treat empty initializer interval as overwrite.",
+      "feedback_to": "C-TEST-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020",
+      "report_required": true,
+      "report": "research/deliveries/c-line/float32array_runtime_development_20261020.md",
+      "done_when": "A narrowly scoped component runtime result is captured with exact source/config/arch and controls, or local build/execution impossibility is supported by inspected evidence and a bounded next step."
+    },
+    {
+      "id": "C-TEST-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020",
+      "kind": "independent_component_runtime_testing",
+      "status": "IN_PROGRESS_INDEPENDENT_RUNTIME_AND_ARITHMETIC_CHALLENGE",
+      "tester_agent": "float32_runtime_test",
+      "feedback_to": "C-DEV-FLOAT32-NEGATIVE-DOUBLE-RUNTIME-20261020",
+      "objective": "Independently challenge the exact source arithmetic and any available runtime reproduction, especially init interval, 32/64-bit metadata/backing mismatch, and signed fast-getter guard; do not accept source-derived controls as executed tests.",
+      "tester_prompt": "ROLE=independent adversarial runtime tester. INPUT=exact source pins and developer candidate. GOAL=try to falsify reachability, allocation arithmetic, or later-access concern. STEPS=independently reread the pinned source; recompute ZExt/size/alignment and initializer [start,end) semantics; inspect signed inline and uint32 runtime getter paths; locate an executable/build independently; if available, run isolated controls and compare behavior. OUTPUT=separate report with exact commands/source/architecture/results and explicit not_run fields. STOP=one independent determination. NEVER=accept developer claims without replay, change production code, or report static predictions as passing tests.",
+      "report_required": true,
+      "report": "research/deliveries/c-line/float32array_runtime_independent_test_20261020.md",
+      "done_when": "Independent arithmetic and runtime evidence either corroborates or narrows the candidate, with architecture and unexecuted paths stated explicitly."
     }
   ],
   "feedback_loop": [
@@ -880,7 +910,7 @@
     "C1 Map species-width slice: implementation fa8d165 emits a direct-analyzer source candidate at 2733; independent report 28e94ce37 confirms the pre-callback candidate while preserving later-loop and line-2747 unknowns. The strict detector adapter remains unknown/no finding because pinned runtime_stubs.cpp has partial AST; do not describe this as an integrated adapter finding. Existing ark_runtime tests pass 193, 3 skipped; compileall passes.",
     "Next C1 slice launched from fc8b039: audit function-scoped completeness for the pinned runtime fallback behind the Map source-width candidate; developer and independent tester share exact positive/fail-closed matrix, while second-layer reviewer independently tests source-level candidate plausibility and counterevidence. Preserve strict file partial status and do not relax the adapter on a name/hash alone.",
     "C1 Map adapter function-scoped audit closed no-go at 874edb4; independent fail-closed replay d546f30 and second-layer conditional source review 2d5b973 preserve strict adapter unknown. New next step is a one-candidate, exact-bound scout with independent tester, excluding completed C-line slices and preferring complete helper/declaration AST evidence; second-layer review is conditional on a candidate surviving.",
-    "Exact-bound scout 20261020: developer report a5c9d5e and independent tester report 14b1044 confirm a conditional Float32Array negative-TDouble candidate in CommonStub and TypedHCR. Second-layer source report finds Math.ceil(-1.1) as a plausible TDouble(-1.0) route and architecture-dependent NewByteArray size effects. This remains source-only; compiled behavior, allocation result, and product impact are unknown/not_run. No production change."
+    "Exact-bound scout 20261020: developer report a5c9d5e and independent tester report 14b1044 confirm a conditional Float32Array negative-TDouble candidate in CommonStub and TypedHCR. Second-layer report b264f28 finds Math.ceil(-1.1) as a source-supported TDouble(-1.0) route. Corrected arithmetic shows an empty initializer interval on 32/64-bit, a 16-byte backing allocation with large uint32 metadata on 32-bit, and a signed inline-getter guard that may block simple access. Runtime/build/accessibility remains unknown/not_run; no production change. Next independent tasks validate a safe local runtime/build and challenge arithmetic/access dispatch."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
