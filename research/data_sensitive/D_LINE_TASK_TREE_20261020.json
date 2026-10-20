@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "D96_T95_IN_PROGRESS",
+  "status": "D97_T96_IN_PROGRESS",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -364,7 +364,7 @@
       "id": "D93",
       "kind": "development",
       "title": "核实UTF-8字符串长度查询的API身份与元数据角色",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
       "input": "D92 fixed certificate source at napi_cert_utils.cpp:890 calls napi_get_value_string_utf8(env,arg,nullptr,0,&length), while line915 writes bytes to an allocated buffer. Determine whether exact selected build binds the query call to the intended N-API API and whether length-only use merits a candidate.",
@@ -464,22 +464,52 @@
       "id": "D96",
       "kind": "development",
       "title": "核验if/while/switch初始化器指针作用域恢复",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D95", "T94"],
       "input": "D95 fixed for-header pointer shadow restoration. T95 independently tests whether other C++ control-statement declaration scopes restore pointer targets correctly.",
       "completion": "Fix only a concrete scope-lifetime failure for if/while/switch/condition declarations. Proven outer target resumes after the control statement; inner target does not leak. Preserve conservative branch joins and existing material-write controls.",
-      "tests": ["T95"]
+      "tests": ["T95"],
+      "commit": "a3d414b600d18aab886a22876669f1d043a98f2f",
+      "integration_commit": "f0750e8dd",
+      "evidence_commit": "7fa77860e99c9a555bbd4fd58b360dd3d6de7480",
+      "evidence_integration_commit": "73b9a761e",
+      "completion": "Condition/init declarations in if/while/switch bind to their declared target and restore outer bindings at statement exit; complex case/loop CFG remains conservative.",
+      "validation": "0.21.11; developer7 methods with 8 baseline subassertion failures→0; independent T95 15 methods/11 failures→0; full data291 and compatibility66 pass. T85 direct/Runner24, 24 common evidence and638 call facts unchanged; 890/915 retained; 3 analysis-partial files unchanged. Coverage metadata delta is detector-version-only."
     },
     {
       "id": "T95",
       "kind": "testing",
       "title": "独立挑战控制语句初始化器与pointer shadow寿命",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "depends_on": ["D95", "T94"],
       "feedback_to": ["D96"],
-      "completion": "Independently test if/while/switch declaration or initializer scope, nested shadow, loop condition, and range-for lifetime where supported; report concrete failures and fixed-source compatibility."
+      "completion": "Independent 15-method condition/init scope matrix found 11 baseline subassertion failures, all closed on fixed D96; T85 and full data replay passed.",
+      "commit": "8a40b217c74b371d224a3153fa26543699f9c493",
+      "integration_commit": "290b92173",
+      "validation": "15 methods; baseline11 failures→0; full data291; T85 direct/Runner24→24 with findings/evidence and638 raw calls identical; 890/915 unchanged; coverage state remains3 partial, version-only metadata difference."
+    },
+    {
+      "id": "D97",
+      "kind": "development",
+      "title": "评估switch case pointer目标的可证明合流",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
+      "depends_on": ["D96", "T95"],
+      "input": "T95 found same-target multi-case switch rebinding remains unresolved because case exhaustiveness/fallthrough is not modeled.",
+      "completion": "Implement only a concrete narrow same-target merge that is safe under enumerated labels, default, fallthrough and exits; preserve unresolved candidates for incomplete or ambiguous control flow. If no safely bounded improvement exists, deliver an evidence-backed boundary report.",
+      "tests": ["T96"]
+    },
+    {
+      "id": "T96",
+      "kind": "testing",
+      "title": "独立挑战switch case汇合与fallthrough候选边界",
+      "status": "IN_PROGRESS",
+      "agent": "/root/t83_static_feedback",
+      "depends_on": ["D96", "T95"],
+      "feedback_to": ["D97"],
+      "completion": "Independently map same/different-target cases, exhaustive/default behavior, break/fallthrough/return and unknown targets; replay the fixed T85 source and report candidate deltas without treating counts as labels."
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
@@ -511,13 +541,13 @@
     "known_disclosed_cves": "0.19.11"
   },
   "integrated_tests": {
-    "data": 269,
+    "data": 291,
     "known_and_corpus": 39,
     "parser_linkage": 16,
     "ast_parser": 11,
-    "total": 335,
+    "total": 357,
     "result": "PASS"
   },
   "remote_branch": "origin/codex/d-owner-20261020-01a1571f",
-  "pushed_head": "f5e13209cef2096c823556f77173bd294f1e004e"
+  "pushed_head": "a3955703c3a0681d788da563a34cee81e52f953a"
 }

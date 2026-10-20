@@ -235,6 +235,26 @@ flowchart TD
 - **固定回归**：fresh-process完整src和T85 direct/Runner；比对候选ID/evidence、638 calls、coverage状态与版本字段。无缺陷时说明语法覆盖边界，不强迫改代码。
 - **交付**：独立测试、源码/工具链身份、控制矩阵结果、重放报告和commit SHA；不推送owner分支。
 
+### D97（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：C++ switch case 目标合流与敏感流候选精度开发者。
+- **基线**：D96/T95 owner 集成，规则0.21.11。T95已确认：switch header pointer 声明可绑定，但case内部对外部指针的多路径重绑，即使目标相同也仍被保守标成 unresolved，因为尚未证明case覆盖和fallthrough。
+- **目标**：只评估能否对显式、有限且无歧义的 case/default 控制流证明所有到达写入点的指针目标相同，从而减少 unresolved 候选；不可证明则保持现状并交付边界报告。不得用候选数当标签。
+- **矩阵**：穷尽与非穷尽标签；有/无default；case break；自然fallthrough；return；重复/冲突标签；未知selector；不同目标/无效目标；内层shadow和switch后外层绑定。
+- **护栏**：任何可到达路径目标分歧、缺失default、unknown selector相关状态不明或case语法不支持时，必须保留 unresolved，不把多个目标都定为命中。不能扩展为通用CFG。
+- **反馈/验证**：先冻结小型reproducer并交T96；有严格可证明安全的静态反例才改动。跑独立矩阵、data和兼容性、T85 direct/Runner并比较finding identity/evidence、638 call facts、coverage；提交限制、SHA和复放。
+
+### T96（并行独立挑战线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立 switch 分支语义挑战者；先独立建立C++控制流期望，不复用D97的分类作为oracle。
+- **矩阵**：switch每个case指向相同/不同标量；有无default；break/fallthrough/return混合；case间重绑定；selector unknown与literal；嵌套shadow；结束后外层指针恢复。区分仅语法可枚举与运行时确实可达。
+- **反馈**：发现实际material sink静默漏报或不确定路径被定为exact时立即给D97最小片段和证据；对D97修订SHA fresh-process复测。若目前只能保持unresolved，明确这属于候选精度限制，不宣称已验证安全。
+- **固定回归**：完整src固定归档与T85三文件direct/Runner；记录identity/evidence、638 call facts、890/915和coverage。输出测试代码、数据、固定源身份与报告；不推送owner。
+
 ### T92（并行独立挑战线）
 
 **结构化 vibe coding 提示词**
