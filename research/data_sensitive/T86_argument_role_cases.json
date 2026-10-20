@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "interpretation": "Synthetic role controls derived from the fixed T85 API shape; expectations concern static evidence roles, not vulnerability labels.",
+  "cases": [
+    {
+      "id": "constant-property-key-has",
+      "argument_role": "property_name at argument 2 (zero based)",
+      "semantics": "Public literal names a NAPI property; does not contain the retrieved password value.",
+      "source": "const std::string CERT_PASSWORD = \"password\";\nvoid sample(napi_env env, napi_value obj) {\n bool present=false;\n napi_has_named_property(env,obj,CERT_PASSWORD.c_str(),&present);\n}\n"
+    },
+    {
+      "id": "constant-property-key-get-output",
+      "argument_role": "property_name at 2; output_handle at 3",
+      "semantics": "Property-name text and the output handle are distinct operands.",
+      "source": "const std::string CERT_PASSWORD = \"password\";\nvoid sample(napi_env env, napi_value obj) {\n napi_value password=nullptr;\n napi_get_named_property(env,obj,CERT_PASSWORD.c_str(),&password);\n}\n"
+    },
+    {
+      "id": "actual-password-log",
+      "argument_role": "actual log material at argument 2",
+      "semantics": "A named input value reaches an explicitly public modeled log; candidate-only source heuristic.",
+      "source": "void sample(const char *password) {\n HILOG_INFO(1,\"%{public}s\",password);\n}\n"
+    },
+    {
+      "id": "actual-password-property-value",
+      "argument_role": "property_name at 2; actual property value at 3",
+      "semantics": "Password handle is assigned as the property value, not the public property name.",
+      "source": "void sample(napi_env env,napi_value obj,napi_value password) {\n napi_set_named_property(env,obj,\"password\",password);\n}\n"
+    },
+    {
+      "id": "same-name-unrelated-property-key",
+      "argument_role": "property_name at 2",
+      "semantics": "A variable named passwordText holds an explanatory property-name label; a suggestive name is not a secret-content label.",
+      "source": "void sample(napi_env env,napi_value obj) {\n const char *passwordText=\"password field is missing\";\n bool present=false;\n napi_has_named_property(env,obj,passwordText,&present);\n}\n"
+    },
+    {
+      "id": "unknown-helper-property-key",
+      "argument_role": "unknown helper role; must not borrow NAPI signature",
+      "semantics": "Unknown helper may have different meaning even when the operand is a familiar property-key constant.",
+      "source": "const std::string CERT_PASSWORD = \"password\";\nvoid sample(napi_env env,napi_value obj) {\n UnknownPropertyHelper(env,obj,CERT_PASSWORD.c_str());\n}\n"
+    },
+    {
+      "id": "unknown-helper-actual-password",
+      "argument_role": "unknown helper role; actual named input retained",
+      "semantics": "No helper body or argument role is established.",
+      "source": "void sample(const char *password) {\n UnknownRelay(password);\n}\n"
+    },
+    {
+      "id": "nonliteral-dynamic-property-name",
+      "argument_role": "property_name at 2, contents unverified",
+      "semantics": "API argument role alone must not prove that dynamically supplied name bytes are public.",
+      "source": "void sample(napi_env env,napi_value obj,const char *password) {\n bool present=false;\n napi_has_named_property(env,obj,password,&present);\n}\n"
+    },
+    {
+      "id": "same-name-local-api-definition",
+      "argument_role": "local function body, external API identity unresolved",
+      "semantics": "A same-spelled local function explicitly logs its value parameter; external signature assumptions cannot erase the path.",
+      "source": "int napi_set_named_property(int env,int obj,const char *name,const char *value) {\n HILOG_INFO(1,\"%{public}s\",value); return 0;\n}\nvoid sample(const char *password) {\n napi_set_named_property(0,0,\"password\",password);\n}\n"
+    },
+    {
+      "id": "get-material-unrelated-output-name",
+      "argument_role": "property_name at 2; output handle at 3, then converted material reaches modeled log",
+      "semantics": "Removing a key-name heuristic must preserve returned-value source dependency even with an ordinary output variable name.",
+      "source": "const std::string CERT_PASSWORD=\"password\";\nvoid sample(napi_env env,napi_value obj){\n napi_value ordinaryOutput=nullptr;\n napi_get_named_property(env,obj,CERT_PASSWORD.c_str(),&ordinaryOutput);\n const char *text=ReadStringValue(env,ordinaryOutput);\n HILOG_INFO(1,\"%{public}s\",text);\n}\n"
+    },
+    {
+      "id": "get-status-log-control",
+      "argument_role": "API return status logged; property value remains in separate output",
+      "semantics": "A status code is not the retrieved password material.",
+      "source": "const std::string CERT_PASSWORD=\"password\";\nvoid sample(napi_env env,napi_value obj){\n napi_value ordinaryOutput=nullptr;\n int status=napi_get_named_property(env,obj,CERT_PASSWORD.c_str(),&ordinaryOutput);\n HILOG_INFO(1,\"%{public}d\",status);\n}\n"
+    },
+    {
+      "id": "has-boolean-log-control",
+      "argument_role": "presence boolean logged; no property content read",
+      "semantics": "Property existence does not supply password content.",
+      "source": "const std::string CERT_PASSWORD=\"password\";\nvoid sample(napi_env env,napi_value obj){\n bool present=false;\n napi_has_named_property(env,obj,CERT_PASSWORD.c_str(),&present);\n HILOG_INFO(1,\"%{public}d\",present);\n}\n"
+    }
+  ]
+}
