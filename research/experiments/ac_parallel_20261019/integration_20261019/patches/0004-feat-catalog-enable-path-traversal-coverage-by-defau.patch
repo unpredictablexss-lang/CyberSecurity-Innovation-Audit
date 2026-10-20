@@ -1,0 +1,53 @@
+From 2e515c61669486396c5cf5740cbec24dabaa3454 Mon Sep 17 00:00:00 2001
+From: baldnotstronger <17770177822@163.com>
+Date: Mon, 19 Oct 2026 13:23:57 +0800
+Subject: [PATCH 4/4] feat(catalog): enable path traversal coverage by default
+
+---
+ src/ohscanner/detectors/catalog.py               | 7 +------
+ tests/test_catalog_path_traversal_integration.py | 7 +++----
+ 2 files changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/src/ohscanner/detectors/catalog.py b/src/ohscanner/detectors/catalog.py
+index 6a1465d..b319125 100644
+--- a/src/ohscanner/detectors/catalog.py
++++ b/src/ohscanner/detectors/catalog.py
+@@ -61,14 +61,9 @@ _APPROVED = {
+     "ohscanner.cpp.path_traversal": {
+         "factory": CppPathTraversalDetector,
+         "kind": "research_candidate",
+-        "default_enabled": False,
+-        "admission_reason": (
+-            "explicit_selection_required: bounded same-file research source-to-file-sink "
+-            "candidate; product entry/privilege/impact and wrapper/cross-file semantics remain unknown"
+-        ),
+         "summary": (
+             "A: bounded C/C++ path composition to direct file sink candidate; "
+-            "candidate/unassessed only, never a safe verdict"
++            "enabled for ordinary coverage, candidate/unassessed only, never a safe verdict"
+         ),
+     },
+     "ohscanner.cpp.unsafe_memory_call": {
+diff --git a/tests/test_catalog_path_traversal_integration.py b/tests/test_catalog_path_traversal_integration.py
+index e238280..ce23bed 100644
+--- a/tests/test_catalog_path_traversal_integration.py
++++ b/tests/test_catalog_path_traversal_integration.py
+@@ -61,12 +61,11 @@ def scan_context(*units: SourceUnit) -> ScanContext:
+ 
+ 
+ class CatalogPathTraversalIntegrationTests(unittest.TestCase):
+-    def test_research_candidate_is_explicit_and_conservatively_not_default(self) -> None:
++    def test_research_candidate_is_enabled_for_default_coverage(self) -> None:
+         metadata = catalog_metadata()[DETECTOR_ID]
+         self.assertEqual(metadata["kind"], "research_candidate")
+-        self.assertFalse(metadata["default_enabled"])
+-        self.assertTrue(metadata["admission_reason"].startswith("explicit_selection_required:"))
+-        self.assertNotIn(DETECTOR_ID, default_detector_ids())
++        self.assertNotIn("default_enabled", metadata)
++        self.assertIn(DETECTOR_ID, default_detector_ids())
+         self.assertEqual(resolve_detector_ids([DETECTOR_ID]), (DETECTOR_ID,))
+ 
+     def test_explicit_selection_builds_registry_and_metadata_is_detached(self) -> None:
+-- 
+2.55.0.windows.5
+

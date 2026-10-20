@@ -1,0 +1,21 @@
+From 271565810d489e934fc426b357431158d4609f03 Mon Sep 17 00:00:00 2001
+From: baldnotstronger <17770177822@163.com>
+Date: Mon, 19 Oct 2026 13:17:41 +0800
+Subject: [PATCH 3/4] style(cpp): normalize path detector EOF
+
+---
+ src/ohscanner/detectors/cpp/path_traversal_detector.py | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/ohscanner/detectors/cpp/path_traversal_detector.py b/src/ohscanner/detectors/cpp/path_traversal_detector.py
+index 2593666..bffaf2a 100644
+--- a/src/ohscanner/detectors/cpp/path_traversal_detector.py
++++ b/src/ohscanner/detectors/cpp/path_traversal_detector.py
+@@ -621,4 +621,3 @@ class CppPathTraversalDetector:
+             analyzed_files=tuple(analyzed), findings=_stable_findings(findings),
+             limitations=tuple(sorted(set(limitations))),
+         )
+-
+-- 
+2.55.0.windows.5
+
