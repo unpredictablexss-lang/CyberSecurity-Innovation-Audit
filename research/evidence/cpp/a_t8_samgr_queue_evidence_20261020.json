@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "audit": "T8 current-base replay delta for Samgr A0 CR-0219–CR-0223",
+  "scanner_base": "73d5c356b1b1dbc081727948d89d6502c862f3af",
+  "source": {
+    "repository": "openharmony/systemabilitymgr_samgr",
+    "commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff",
+    "tree": "b7a89e95be788f2f2372258e341f7be842c7826d",
+    "path": "services/samgr/native/source/system_ability_manager_stub.cpp",
+    "blob": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
+    "bytes": 78212,
+    "sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433",
+    "provenance": "local Repo project-object mirror"
+  },
+  "execution": {
+    "detector": "ohscanner.interface.ipc",
+    "detector_version": "0.12.12",
+    "rule": "ipc.capability.export",
+    "rule_version": null,
+    "profile": "light-ast",
+    "diagnostics_total": 10,
+    "parse_status": "partial",
+    "analysis_status": "partial",
+    "command": "python -m src.cli.main ohscan-run --repo-dir research/evidence/cpp/.t8_samgr_repo --repository openharmony/systemabilitymgr_samgr --commit 08e2a552b839ea7727251cb9b749a5c1dd9cfeff --include services/samgr/native/source/system_ability_manager_stub.cpp --detector ohscanner.interface.ipc --json-out research/evidence/cpp/a_t8_samgr_cli_20261020.json --md-out research/evidence/cpp/a_t8_samgr_cli_20261020.md",
+    "raw_cli_json": "a_t8_samgr_cli_20261020.json",
+    "raw_cli_markdown": "a_t8_samgr_cli_20261020.md"
+  },
+  "records": [
+    {"queue_id":"CR-0219","original_status":"not_reproduced","queue_status":"queued_not_reproduced","line":464,"current_cli_id":"ohscanner.interface.ipc:2af8fbf91642cbbf"},
+    {"queue_id":"CR-0220","original_status":"not_reproduced","queue_status":"queued_not_reproduced","line":551,"current_cli_id":"ohscanner.interface.ipc:e6305216fc6e7a94"},
+    {"queue_id":"CR-0221","original_status":"not_reproduced","queue_status":"queued_not_reproduced","line":668,"current_cli_id":"ohscanner.interface.ipc:b810e0670174d80e"},
+    {"queue_id":"CR-0222","original_status":"not_reproduced","queue_status":"queued_not_reproduced","line":706,"current_cli_id":"ohscanner.interface.ipc:c50c9e08852ab64f"},
+    {"queue_id":"CR-0223","original_status":"not_reproduced","queue_status":"queued_not_reproduced","line":1485,"current_cli_id":"ohscanner.interface.ipc:d21108b21819c7b8"}
+  ],
+  "result": {
+    "source_identity": "verified",
+    "finding_replay": "consistent with T30: 5/5 assigned queue locations reproduced",
+    "a0_statuses_changed": false,
+    "security_disposition": "partial",
+    "limitations": ["partial parser and detector analysis", "product build and caller policy unknown", "no trusted fixed-source comparison"]
+  }
+}
