@@ -3,7 +3,7 @@
 ## 快照与范围
 
 - 最终代码快照：`3ec1139e5990b9a706975e876d9b53a1a6f1c14d`（基于当前可用 `origin/main` `0f53af62283dbd0f249280805e8286a04b2d43b9`）；后续提交仅补入本验收表与重放/保全报告。
-- 分支：`codex/a-line-final-closeout-20261020`。本轮不推送，远端访问在核验期间超时；本地交付提交已授权。
+- 分支：`codex/a-line-final-closeout-20261020`。已推送并核实远端分支指向交付提交 `fb6e31a397c34f5ebb768c834f62fb0a5111c0dd`；尚未创建/合入 PR。
 - A 分支比较基线：`f193636e7b1384f0ca2e360b4ec3b0b0348d9340`。只选入有测试/来源支撑的 bounds 规则、resource lifetime 精化和 unsafe memory call 的 partial 文件状态修复。`integer_bounds` 与 main 无有效代码差异；`memory_safety.py` 无有效差异。
 - 实际 Catalog：bounds 0.3.0、integer_bounds 0.2.1、resource_lifetime 0.4.2、unsafe_memory_call 0.5.0 默认启用；null_dereference 0.6.0 与 path_traversal 0.3.0 默认关闭，显式选择才运行。没有依赖升级。
 - 13 案历史静态口径为 2 PASS / 9 PARTIAL / 2 N/A；产品级为 0 PASS / 11 PARTIAL-BLOCK / 2 N/A。此处只对四项进行最终快照的真实源 CLI 回放，其余保留历史证据并明确本快照未重放。
