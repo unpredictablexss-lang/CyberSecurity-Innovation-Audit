@@ -65,6 +65,40 @@ class D84AdversarialTests(unittest.TestCase):
         self.assertTrue(any(o.kind == 'format_resolution' for f in run.findings
                             for o in f.evidence_obligations))
 
+    def test_explicit_string_c_str_keeps_receiver_dependency(self):
+        for body in (
+            'std::string value=key;',
+            'const std::string value=key;',
+            'std::string value{key};',
+            'std::string value=key; value += "suffix";',
+            'std::string value="prefix"; value += key;',
+            'std::string value=key; std::string copy=value; value=copy;',
+        ):
+            with self.subTest(body=body):
+                run = self.scan(body + 'HILOG_INFO(1,"%{public}s",value.c_str());')
+                self.assertTrue(run.findings)
+                self.assertTrue(any('std::string' in f.message for f in run.findings))
+
+    def test_string_c_str_literal_overwrite_and_unrelated_receiver_controls(self):
+        for body in (
+            'std::string value="public";',
+            'std::string value=key; value="public";',
+            'std::string value=key; value += "suffix"; value="public";',
+            'struct Fake { const char *c_str(){return "public";} }; Fake value;',
+        ):
+            with self.subTest(body=body):
+                self.assertEqual((), self.scan(body + 'HILOG_INFO(1,"%{public}s",value.c_str());').findings)
+        shadowed = ('struct Fake { const char *c_str(){return "public";} }; '
+                    'std::string value=key; {Fake value; '
+                    'HILOG_INFO(1,"%{public}s",value.c_str());}')
+        self.assertEqual((), self.scan(shadowed).findings)
+
+    def test_string_private_c_str_remains_conditional(self):
+        run = self.scan('std::string value=key; HILOG_INFO(1,"%{private}s",value.c_str());')
+        self.assertTrue(run.findings)
+        self.assertTrue(all(any(o.kind == 'sink_privacy' for o in f.evidence_obligations)
+                            for f in run.findings))
+
 
 if __name__ == '__main__':
     unittest.main()
