@@ -299,3 +299,23 @@ constraints: [不修改生产代码, 不把零诊断当安全, 不把 coverage �
 开发线已提交 `85a1f1e6f91247e5fbad39fb6bd03f64201700bb`。Runner 现在调用 optional `select_applicable_units(context, language_units)`，校验选择结果必须来自当前上下文、语言受支持且没有重复；无此 hook 的 detectors 保持原语言筛选。选出的目标集合用于 normalized report 与 coverage，完整 `ScanContext` 仍保留依赖供 Ark adapter 验证 exact blob/SHA。
 
 开发线验证：Ark Runtime 162 passed、3 skipped；runner/source-binding 34 passed。C1 修复后真实 CLI 为 `scope_files=1 / applicable_files=1`，target 仍有 13 个 parser issue、`partial / blocked`、0 diagnostics。修复后证据在 `research/deliveries/c-line/scout_20261020/c1_post_fix.md/.json`。测试线已取得 exact developer commit，正在复验 target+dependency、target-only、unrelated same-language、selector 越界与 fallback；在复验返回前不关闭该 slice。
+
+### runner applicability slice 已完成；下一步聚焦 C1 parser/model partial
+
+独立复验报告 `research/deliveries/c-line/runner_applicability_replay_20261020.md`（提交 `84e73672bc95fde70070e8f5369f712911a923dd`）确认开发 patch 与测试 cherry-pick patch-id 相同，改变范围仅 runner 与对应测试。target+creator 时 `applicable_files=1` 且 creator 留在完整 context 并成功校验；target-only 仍 blocked；加入 unrelated C++ 不扩大 target；非法 selector 失败且无 findings；无 hook detector 仍走 language fallback。C1 target 保持 13 个 parser issues、partial/blocked、0 diagnostics。核心 runner/source-binding 测试 34 passed。Ark Runtime 测试开发侧 162、测试侧 159（各 3 skipped），报告无法由 revision 清单解释差异；更宽套件 4 个具体失败及证据已逐项记录，不影响本 slice 核心结论。
+
+下一条并行线针对 C1 本身的 partial 状态，而不是继续调 coverage 数字：一线逐项定位 13 个 parse issue 与 `detector_model_incomplete` / `type_fact_invalidated_by_call` 的阶段原因；另一线固定同一 exact-bound baseline 和适用 controls。只有能证明是 parser/model 的具体错误才进入窄修复，否则交付 unsupported syntax/effect 边界报告，随后将资源转向其他已有 exact-bound source sample。
+
+```yaml
+role: C 线 C1 parser/model 开发调查者
+objective: 将 13 个 parser issue 和 detector internal unknown 映射到具体分析阶段，找出一个有最小反例支撑的精度/覆盖缺陷
+steps: [重跑注册 CLI并核对精确 source identity, 为每个 issue定位parser阶段/AST缺口, 独立解释 detector_model_incomplete 与 type_fact_invalidated_by_call, 仅对可复现缺陷做窄修复并加入safe/fixed控制, 运行相关套件]
+constraints: [不扩宽来源绑定, 不将partial转complete, 不把0诊断当安全, 不凭空提升漏洞结论]
+```
+
+```yaml
+role: C 线独立 C1 测试者
+objective: 保存 exact-bound parser/internal baseline，并在开发提交上重放定位结果和任何窄修复
+steps: [固定 commit/tree/blob/SHA与13 issue行, 选择附近 fixed/safe/unbound控制, 开发提交后复跑同一CLI/测试, 对比候选位置与partial/blocked状态, 回传具体偏差]
+constraints: [不改生产代码, 不以同源合成控制报正式准确率, 未知保留unknown]
+```
