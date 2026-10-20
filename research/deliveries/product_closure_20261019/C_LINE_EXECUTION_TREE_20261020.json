@@ -3,11 +3,11 @@
   "date": "2026-10-20",
   "baseline": {
     "remote": "origin/codex/c-line-parallel-plan-20261020",
-    "commit": "462ddfb4f1ffb9a607d091ae0c5048d70b1b644d",
-    "refresh": "2026-10-20 quick-closeout audit: latest origin/main is 0f53af62283dbd0f249280805e8286a04b2d43b9. Existing C-line slices remain source-bound with runtime/product unknowns preserved. Type_safety development and independent baseline replay are complete with no production change; the macro/preprocessing and exact-model-binding limitations are recorded in the C-line closeout plan and root-cause report. Parallel prompts, feedback links, and continuous-goal conditions are recorded in C_LINE_QUICK_CLOSEOUT_PARALLEL_PLAN_20261020.md. Final local status is closeout-ready with limitations; future work is conditional on new source/preprocessor evidence."
+    "commit": "f0ed8469e964286fe30056b59a730da3a99fbda5",
+    "refresh": "2026-10-20: fetched origin; latest origin/main is c380a474718e8ec4497aff55b18a1dd38bafa13f. Existing C source slices are closed with stated limitations. The previously validated C mainline integration is based on 4b0e16576a45a111b4fad7e8f82819a47ed472f5 and is being reconciled with latest main under C-DEV-MAINLINE-SYNC-20261020 plus independent same-code-tree replay C-TEST-MAINLINE-SYNC-20261020. See research/deliveries/c-line/C_LINE_MAINLINE_REFRESH_PARALLEL_PLAN_20261020.md. Runtime/product unknowns remain unchanged."
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
-  "status": "CLOSEOUT_READY_WITH_LIMITATIONS",
+  "status": "IN_PROGRESS_MAINLINE_REFRESH",
   "blocking_prerequisites": [],
   "workstreams": [
     {
@@ -1027,6 +1027,50 @@
       "report": "research/deliveries/c-line/typedarray_set_arraylike_final_review_20261020.md",
       "review_commit": "be8a4ea06a52e6e71ab83405fde3cb6f2156408f",
       "implementation_commit": "f0ecebbe2d8b7b5318e3258b39088e03943a32ac"
+    },
+    {
+      "id": "C-DEV-MAINLINE-SYNC-20261020",
+      "kind": "development_and_integration",
+      "status": "IN_PROGRESS",
+      "scope": [
+        "C Ark Runtime integration delta",
+        "latest-main compatibility"
+      ],
+      "objective": "Integrate the previously tested C-line mainline delta onto fetched origin/main c380a474718e8ec4497aff55b18a1dd38bafa13f, preserve exact-source/default-off admission, and repair only reproduced integration regressions.",
+      "worktree": "worktrees/c-mainline-dev-closeout-20261020",
+      "feedback_from": "C-TEST-MAINLINE-SYNC-20261020",
+      "prompt": "research/deliveries/c-line/C_LINE_MAINLINE_REFRESH_PARALLEL_PLAN_20261020.md#c-dev-mainline-sync-20261020",
+      "deliverable": "Local integration commit with full SHA, affected test output and limitations; no push or PR."
+    },
+    {
+      "id": "C-TEST-MAINLINE-SYNC-20261020",
+      "kind": "independent_testing",
+      "status": "IN_PROGRESS",
+      "scope": [
+        "Ark Runtime suite",
+        "Catalog",
+        "Runner applicability",
+        "source binding"
+      ],
+      "objective": "Independently replay the development line final full SHA on a separate checkout, challenge admission/source identity/fixed and partial controls, and return concrete failures for repair.",
+      "worktree": "worktrees/c-mainline-test-closeout-20261020",
+      "feedback_to": "C-DEV-MAINLINE-SYNC-20261020",
+      "prompt": "research/deliveries/c-line/C_LINE_MAINLINE_REFRESH_PARALLEL_PLAN_20261020.md#c-test-mainline-sync-20261020",
+      "deliverable": "Independent test report with exact code SHA, commands/counts, feedback, and not_run/unknown boundaries."
+    },
+    {
+      "id": "C-INTEGRATE-TREE-20261020",
+      "kind": "coordination_and_delivery",
+      "status": "IN_PROGRESS",
+      "scope": [
+        "C-line execution tree",
+        "quick-closeout report"
+      ],
+      "objective": "Reconcile task-tree statuses and evidence links after the development/test feedback loop completes.",
+      "worktree": "worktrees/c-line-task-tree-20261020",
+      "feedback_from": "C-DEV-MAINLINE-SYNC-20261020; C-TEST-MAINLINE-SYNC-20261020",
+      "prompt": "research/deliveries/c-line/C_LINE_MAINLINE_REFRESH_PARALLEL_PLAN_20261020.md#c-integrate-tree-20261020",
+      "deliverable": "Updated execution tree and closeout evidence that agree on the exact final code SHA."
     }
   ],
   "feedback_loop": [
