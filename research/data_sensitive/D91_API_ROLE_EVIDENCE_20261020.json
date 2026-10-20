@@ -1,0 +1,209 @@
+{
+  "schema": 1,
+  "study": "D91 N-API role source evidence; no linked version claim",
+  "scanner_revision": "085542b7fbd0a3f64f12212c30539c481a74e9bf",
+  "scanner_version": "0.21.7",
+  "code_change": "none; no new exemption or status-return model",
+  "components": [
+    {
+      "repository": "openharmony/arkui_napi",
+      "commit": "bfe8fad581ca6112e7d55c38ca60150753f4af35",
+      "tree": "941f9a6bf1e0b5af2366f119c5876caa801eda20",
+      "files": [
+        {
+          "path": "native_engine/native_api.cpp",
+          "blob": "aa8bd54b4cc5f60b686c889acb58d5a4a7d2c66a",
+          "bytes": 188318,
+          "sha256": "913b9f357493296ff3c4823c1d8daf0b0aba2e077bc887313f5a96082ec14f9e",
+          "parse_status": "partial",
+          "issues": [],
+          "role_regions": [
+            {
+              "name": "napi_typeof",
+              "start_line": 677,
+              "end_line": 713,
+              "text_sha256_lf": "1160c0cea11fe9746e96902088f288445eb97f8ae5ec604a71c7c28341396e37",
+              "text": "NAPI_EXTERN napi_status napi_typeof(napi_env env, napi_value value, napi_valuetype* result)\n{\n    CHECK_ENV(env);\n    CHECK_ARG(env, value);\n    CHECK_ARG(env, result);\n\n    auto valueObj = LocalValueFromJsValue(value);\n    napi_valuetype resultType;\n    auto vm = reinterpret_cast<NativeEngine*>(env)->GetEcmaVm();\n    panda::JsiFastNativeScope fastNativeScope(vm);\n\n    if (valueObj->IsNumber()) {\n        resultType = napi_number;\n    } else if (valueObj->IsString(vm)) {\n        resultType = napi_string;\n    } else if (valueObj->IsFunction(vm)) {\n        resultType = napi_function;\n    } else if (valueObj->IsNativePointer(vm)) {\n        resultType = napi_external;\n    } else if (valueObj->IsNull()) {\n        resultType = napi_null;\n    } else if (valueObj->IsBoolean()) {\n        resultType = napi_boolean;\n    } else if (valueObj->IsUndefined()) {\n        resultType = napi_undefined;\n    } else if (valueObj->IsSymbol(vm)) {\n        resultType = napi_symbol;\n    } else if (valueObj->IsBigInt(vm)) {\n        resultType = napi_bigint;\n    } else if (valueObj->IsObject(vm)) {\n        resultType = napi_object;\n    } else {\n        resultType = napi_undefined;\n    }\n    *result = resultType;\n    return napi_clear_last_error(env);\n}"
+            },
+            {
+              "name": "napi_get_value_string_utf8",
+              "start_line": 819,
+              "end_line": 848,
+              "text_sha256_lf": "b094677da8aeb647192c6170923ad83886d206101fed092e56c14aa33c2baead",
+              "text": "NAPI_EXTERN napi_status napi_get_value_string_utf8(napi_env env,\n                                                   napi_value value,\n                                                   char* buf,\n                                                   size_t bufsize,\n                                                   size_t* result)\n{\n    CHECK_ENV(env);\n    CHECK_ARG(env, value);\n\n    auto nativeValue = LocalValueFromJsValue(value);\n    auto vm = reinterpret_cast<NativeEngine*>(env)->GetEcmaVm();\n    panda::JsiFastNativeScope fastNativeScope(vm);\n\n    RETURN_STATUS_IF_FALSE(env, nativeValue->IsStringWithoutSwitchState(vm), napi_string_expected);\n    Local<panda::StringRef> stringVal(nativeValue);\n    if (buf == nullptr) {\n        CHECK_ARG(env, result);\n        *result = stringVal->Utf8Length(vm, true) - 1;\n    } else if (LIKELY(bufsize != 0)) {\n        uint32_t copied = stringVal->WriteUtf8(vm, buf, bufsize - 1, true) - 1;\n        buf[copied] = '\\0';\n        if (result != nullptr) {\n            *result = copied;\n        }\n    } else if (result != nullptr) {\n        *result = 0;\n    }\n\n    return napi_clear_last_error(env);\n}"
+            }
+          ]
+        },
+        {
+          "path": "native_engine/native_api_internal.h",
+          "blob": "98fdd71989fbff237e460f0eec66a7a56e9a2509",
+          "bytes": 9516,
+          "sha256": "95e1f1c352b8b95a0f30c268b8f5068cb074008d6e9310c2664b257f5b912454",
+          "parse_status": "complete",
+          "issues": [],
+          "role_regions": [
+            {
+              "start_line": 25,
+              "end_line": 53,
+              "text": "static inline napi_status napi_clear_last_error(napi_env env)\n{\n    ((NativeEngine*)env)->ClearLastError();\n    return napi_ok;\n}\n\nstatic inline napi_status napi_set_last_error(napi_env env,\n                                              napi_status error_code,\n                                              uint32_t engine_error_code = 0,\n                                              void* engine_reserved = nullptr)\n{\n    ((NativeEngine*)env)->SetLastError(error_code, engine_error_code, engine_reserved);\n    return error_code;\n}\n\n#define RETURN_STATUS_IF_FALSE(env, condition, status) \\\n    if (!(condition)) {                                \\\n        return napi_set_last_error((env), (status));   \\\n    }\n\n#define CHECK_ENV(env)           \\\n    if ((env) == nullptr) {      \\\n        return napi_invalid_arg; \\\n    }\n\n#define CHECK_ARG(env, arg) RETURN_STATUS_IF_FALSE((env), ((arg) != nullptr), napi_invalid_arg)\n\n#define NAPI_PREAMBLE(env)                                                     \\\n    CHECK_ENV((env));                                                          \\"
+            }
+          ]
+        },
+        {
+          "path": "interfaces/kits/napi/native_api.h",
+          "blob": "c78cd3b511997ba3ec6978aedfcf6c035a577311",
+          "bytes": 17678,
+          "sha256": "135eaaea8a5eefa20000c70545d8e37fd2aa047ee9c0c33ce306548692728300",
+          "parse_status": "partial",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "repository": "openharmony/third_party_node",
+      "commit": "d6bfaf5c015d29fee58e3c94f01d463fb87a9497",
+      "tree": "15c96bac208e49fff566342812dbb0dd0e4c4ea4",
+      "files": [
+        {
+          "path": "src/node_api.h",
+          "blob": "1772c67c15afb2d2712b1900a584f627852e3d7e",
+          "bytes": 11692,
+          "sha256": "24bdd7597c72fde524440f41b40dd4be7d151c40d3565cf555ca0208db3d95f7",
+          "parse_status": "partial",
+          "issues": []
+        },
+        {
+          "path": "src/js_native_api.h",
+          "blob": "e804d1d45d236519d248e3d40fa0a6c2a6d378ec",
+          "bytes": 28805,
+          "sha256": "d47a6f979387d00f603cf1193eeb4d4e3164307123a33891590fe6601fed95b4",
+          "parse_status": "partial",
+          "issues": [],
+          "role_regions": [
+            {
+              "start_line": 116,
+              "end_line": 118,
+              "text": "NAPI_EXTERN napi_status napi_typeof(napi_env env,\n                                    napi_value value,\n                                    napi_valuetype* result);"
+            },
+            {
+              "start_line": 143,
+              "end_line": 147,
+              "text": "NAPI_EXTERN napi_status napi_get_value_string_utf8(napi_env env,\n                                                   napi_value value,\n                                                   char* buf,\n                                                   size_t bufsize,\n                                                   size_t* result);"
+            }
+          ]
+        },
+        {
+          "path": "src/js_native_api_types.h",
+          "blob": "464d4983245acc2945f5bdff8ea9552a476c001f",
+          "bytes": 4543,
+          "sha256": "0823951156077b35c7a2759b83e30bad3a82a8ee934f44eaa75e9ccd364e63a5",
+          "parse_status": "complete",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "repository": "openharmony/security_certificate_framework",
+      "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+      "tree": "e69153afa89928e1318d8b36cf37c65386465fe7",
+      "files": [
+        {
+          "path": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "blob": "fb0f6cdbf2e151a933ce718a0f95e7ab8e449c28",
+          "bytes": 67298,
+          "sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+          "parse_status": "complete",
+          "issues": [],
+          "role_regions": [
+            {
+              "start_line": 180,
+              "end_line": 212,
+              "text": "}\n\nstatic char *CertGetStringFromValue(napi_env env, napi_value arg)\n{\n    napi_valuetype valueType;\n    napi_typeof(env, arg, &valueType);\n    if (valueType != napi_string) {\n        NAPI_LOG_THROW(env, CF_INVALID_PARAMS, \"param type is not string\");\n        return nullptr;\n    }\n\n    size_t length = 0;\n    if (napi_get_value_string_utf8(env, arg, nullptr, 0, &length) != napi_ok) {\n        NAPI_LOG_THROW(env, CF_INVALID_PARAMS, \"can not get string length!\");\n        return nullptr;\n    }\n\n    if (length == 0) {\n        LOGE(\"string length is 0\");\n        return nullptr;\n    }\n\n    char *value = static_cast<char *>(CfMalloc(length + 1, 0));\n    if (value == nullptr) {\n        NAPI_LOG_THROW(env, CF_ERR_MALLOC, \"malloc failed!\");\n        return nullptr;\n    }\n\n    if (napi_get_value_string_utf8(env, arg, value, length + 1, &length) != napi_ok) {\n        NAPI_LOG_THROW(env, CF_INVALID_PARAMS, \"get value failed\");\n        (void)memset_s(value, length + 1, 0, length + 1);\n        CfFree(value);\n        value = nullptr;"
+            }
+          ]
+        },
+        {
+          "path": "frameworks/js/napi/certificate/BUILD.gn",
+          "blob": "2704e74e4448d6741046f26620f6b8bf32211cc2",
+          "bytes": 2484,
+          "sha256": "0a6105367f678cd6ca63654259da9f529f4c3b16b81e28ed59a9abd7029b1a52",
+          "api_dependency_lines": [
+            {
+              "line": 73,
+              "text": "    \"napi:ace_napi\","
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "dedicated_methods": 6,
+    "data_methods": 156,
+    "status": "passed"
+  },
+  "binding": {
+    "certificate_to_api_commit": "unknown",
+    "reason": "local manifest uses master revisions; original T85 selected scope has no API declaration or implementation",
+    "component_linkage": "not established",
+    "product_impact": "unknown"
+  },
+  "roles": {
+    "napi_typeof": {
+      "input_roles": {
+        "0": "runtime environment",
+        "1": "opaque JS value handle inspected for kind"
+      },
+      "output_role": "argument2 points to napi_valuetype enum; exact implementation writes resultType classified by predicates",
+      "return_role": "napi_status error/success via CHECK_ENV/CHECK_ARG/napi_clear_last_error",
+      "source_implementation_span": [
+        677,
+        713
+      ],
+      "scope_of_claim": "role observation at fixed arkui source only; transitive engine behavior/build/caller binding not established"
+    },
+    "napi_get_value_string_utf8": {
+      "source_implementation_span": [
+        819,
+        848
+      ],
+      "null_buffer_role": "writes Utf8Length(vm,true)-1 to length result",
+      "non_null_nonzero_buffer_role": "WriteUtf8 material bytes into buf then terminates buffer and reports copied length",
+      "return_role": "napi_status; material is written through buf, not status result"
+    },
+    "fixed_certificate_calls": {
+      "185": "napi_typeof(env,arg,&valueType), enum gate",
+      "192": "napi_get_value_string_utf8(env,arg,nullptr,0,&length), length query",
+      "208": "napi_get_value_string_utf8(env,arg,value,length+1,&length), actual byte extraction"
+    },
+    "model_decision": "Keep all three original unbound call candidates. No name-only exemption and no length-query suppression."
+  },
+  "reproduction": {
+    "upstream_read": "git --git-dir <project-object-store> rev-parse <revision>:<path>; git --git-dir <store> cat-file blob <oid>",
+    "parse": "index_sources(GitSource(original path, cpp, blob_oid, raw_bytes))",
+    "no_target_execution": true,
+    "repository_checkout_mutation": "none"
+  },
+  "independent_feedback": {
+    "fixed_revision": "085542b7fbd0a3f64f12212c30539c481a74e9bf",
+    "path": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020\\research\\data_sensitive\\T90_FIXED_NAPI_REPLAY.json",
+    "sha256": "23910225a09124e71904b20e951a8b0c0237202297c5ff9aaff4071cf3789e58",
+    "independent_methods": 10,
+    "data_methods": 193,
+    "status": "passed",
+    "strict_original_scope": {
+      "direct": 19,
+      "runner": 19
+    },
+    "mixed_nine_scope": {
+      "direct": 21,
+      "runner": 19,
+      "provenance": "fixture/t90-collection, unbound-multiple-git-origins"
+    },
+    "scanner_version_before_after": [
+      "0.21.7",
+      "0.21.7"
+    ],
+    "no_test_line_files_copied": true
+  }
+}

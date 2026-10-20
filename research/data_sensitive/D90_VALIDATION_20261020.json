@@ -1,0 +1,2168 @@
+{
+  "schema": 1,
+  "study": "D90 retain callable escapes; no cleanup exemption",
+  "implementation_revision": "ef7cb1c2abc8cdab6b13c3db92bd7c985ceb00cb",
+  "baseline_revision": "5c82be52e05a814e7d29a43c6627b5e53a1ad2c0",
+  "versions": [
+    "0.21.6",
+    "0.21.7"
+  ],
+  "full_evidence": {
+    "path": "D:\\openHarmonyScanner\\outputs\\D90_DEVELOPER_PROBES_20261020.json",
+    "sha256": "9230bca87a539a42ccce647fd5b82cce3ee46a95577a6aae454d9129e4c06ece",
+    "producer": "D90_probe_cleanup.py"
+  },
+  "source": {
+    "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+    "tree": "e69153afa89928e1318d8b36cf37c65386465fe7",
+    "files": [
+      {
+        "path": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+        "blob": "fb0f6cdbf2e151a933ce718a0f95e7ab8e449c28",
+        "bytes": 67298,
+        "sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+      },
+      {
+        "path": "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+        "blob": "59985f31f7a7a2a18e4ce4c40345636321ddefef",
+        "bytes": 11206,
+        "sha256": "32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80"
+      },
+      {
+        "path": "frameworks/common/v1.0/inc/cf_log.h",
+        "blob": "6eaa53317a8494baecc743b80043d400c316edee",
+        "bytes": 3266,
+        "sha256": "489ea3537091147d5bec365471698f3d5d177dbc86473beb25fd7bc906beccb9"
+      },
+      {
+        "path": "frameworks/common/v1.0/src/cf_memory.c",
+        "blob": "33490ff1dfffcd8db443d587fe0f6b8c02754451",
+        "bytes": 1288,
+        "sha256": "4131e686fa0109661f63553b26a51440b6355e98b3f03b544b6cf7cff04d14d0"
+      },
+      {
+        "path": "frameworks/common/v1.0/inc/cf_memory.h",
+        "blob": "e8dfc3de20a95ae77f5103e414ba3e281abc5762",
+        "bytes": 1242,
+        "sha256": "fed837ef85895bc5dac87fc187207d7724449461e6b7b8d0a0c0460cfafedfec"
+      },
+      {
+        "path": "frameworks/common/v1.0/src/cf_blob.c",
+        "blob": "2bd1cb5379b5e363ae6b6d5f2ba387debcf91c8b",
+        "bytes": 3288,
+        "sha256": "0847908f4b7a2b9e0a98d7582676cd4734f58df562289251ef8491e8586d51ae"
+      },
+      {
+        "path": "interfaces/inner_api/common/cf_blob.h",
+        "blob": "779975a5b483288dc96ffcbe02cfa35dd3271424",
+        "bytes": 1822,
+        "sha256": "35155f13aca9fc14293fa38cfcf3edf256e795132ba6083ab5be2d8cdeb1382e"
+      }
+    ]
+  },
+  "supplementary_memset_dependency": {
+    "repository": "openharmony/third_party_bounds_checking_function",
+    "commit": "2ae82839ecaaa7d031e66ccbd2076d671acfd615",
+    "tree": "99609d60f58d96a846104652d5f03201b20460bc",
+    "files": [
+      {
+        "path": "include/securec.h",
+        "blob": "b1dea967d8f5a6a14010ebf706fa5082fb229b4f",
+        "bytes": 28069,
+        "sha256": "20b4879509191f5e5d37334fa7f881499d8d856e19ed535677a83e08ff152461"
+      },
+      {
+        "path": "src/memset_s.c",
+        "blob": "d9a657fd326af60ec1195b226aa762855042299b",
+        "bytes": 18706,
+        "sha256": "121f7105f3e274eafa5ba392cabd40fba3b595877bd159a35627647793ba4a3d"
+      }
+    ],
+    "scope": "Research only, not asserted as certificate linked build or scanner input"
+  },
+  "controls": {
+    "callable_parameter": {
+      "direct": {
+        "before": 0,
+        "after": 1
+      },
+      "runner": {
+        "before": 0,
+        "after": 1
+      }
+    },
+    "local_alias": {
+      "direct": {
+        "before": 0,
+        "after": 1
+      },
+      "runner": {
+        "before": 0,
+        "after": 1
+      }
+    },
+    "ordinary_argument": {
+      "direct": {
+        "before": 0,
+        "after": 0
+      },
+      "runner": {
+        "before": 0,
+        "after": 0
+      }
+    },
+    "visible_wrapper_unproved_free": {
+      "direct": {
+        "before": 1,
+        "after": 1
+      },
+      "runner": {
+        "before": 1,
+        "after": 1
+      }
+    }
+  },
+  "scopes": {
+    "strict_t85_three": {
+      "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+      "parse_status": {
+        "frameworks/common/v1.0/inc/cf_log.h": "complete",
+        "frameworks/js/napi/certificate/inc/napi_cert_defines.h": "complete",
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp": "complete"
+      },
+      "direct_counts": [
+        19,
+        19
+      ],
+      "runner_counts": [
+        19,
+        19
+      ],
+      "direct_full_findings_equal": true,
+      "runner_full_diagnostics_equal": false,
+      "runner_diagnostics_equal_ignoring_detector_version": true,
+      "coverage_equal": false,
+      "coverage": {
+        "schema_version": 1,
+        "detectors": {
+          "ohscanner.data.sensitive_exposure": {
+            "scope_mode": "per_file",
+            "status": "partial",
+            "applicable_files": 3,
+            "analyzed_files": [],
+            "partially_inspected_files": [
+              "frameworks/common/v1.0/inc/cf_log.h",
+              "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+              "frameworks/js/napi/certificate/src/napi_cert_utils.cpp"
+            ],
+            "source_sha256": {
+              "frameworks/common/v1.0/inc/cf_log.h": "489ea3537091147d5bec365471698f3d5d177dbc86473beb25fd7bc906beccb9",
+              "frameworks/js/napi/certificate/inc/napi_cert_defines.h": "32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80",
+              "frameworks/js/napi/certificate/src/napi_cert_utils.cpp": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+            },
+            "unexamined": [
+              {
+                "file": "frameworks/common/v1.0/inc/cf_log.h",
+                "parse_status": "complete",
+                "reason": "detector_model_incomplete",
+                "analysis_status": "partial"
+              },
+              {
+                "file": "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+                "parse_status": "complete",
+                "reason": "detector_model_incomplete",
+                "analysis_status": "partial"
+              },
+              {
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "parse_status": "complete",
+                "reason": "detector_model_incomplete",
+                "analysis_status": "partial"
+              }
+            ],
+            "inspected_files": [
+              "frameworks/common/v1.0/inc/cf_log.h",
+              "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+              "frameworks/js/napi/certificate/src/napi_cert_utils.cpp"
+            ],
+            "not_analyzed_files": [],
+            "coverage_counts": {
+              "complete": 0,
+              "partial": 3,
+              "not_analyzed": 0,
+              "failed": 0
+            },
+            "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+            "evidence_obligations": [
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_typeof.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_get_value_string_utf8.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_get_value_string_utf8.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_get_named_property.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for AllocatePrivateKey.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:e93b12f78e4df683",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CfFree.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CopyBlobDataToPrivateKey.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:22cde2151aec3df3",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CfFree.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_get_named_property.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CertGetStringFromValue.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CfFree.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CF_FREE_PTR.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for memset_s.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CF_FREE_PTR.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CF_FREE_PTR.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_has_named_property.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_get_named_property.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CfBlobDataFree.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CF_FREE_PTR.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "legacy_observations": [
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 185,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 call CertGetStringFromValue argument 1 -> 185 unresolved call napi_typeof"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 192,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 call CertGetStringFromValue argument 1 -> 192 unresolved call napi_get_value_string_utf8"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 208,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 call CertGetStringFromValue argument 1 -> 208 unresolved call napi_get_value_string_utf8"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 298,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:298 source heuristic suspected sensitive-return API CERT_PRIVATE_KEY.c_str -> 298 unresolved call napi_get_named_property"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 310,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1900 source heuristic suspected sensitive field privateKey -> 1900 call GetKeyInfoFromValue argument 2 -> 1838 call GetPrivateKeyInfoFromValue argument 2 -> 363 call GetPrivateKeyFromValue argument 2 -> 310 unresolved call AllocatePrivateKey"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:e93b12f78e4df683",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 317,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:317 source heuristic suspected sensitive field privateKey -> 317 unresolved call CfFree"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 324,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:324 source heuristic suspected sensitive field privateKey -> 324 unresolved call CopyBlobDataToPrivateKey"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:22cde2151aec3df3",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 328,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:328 source heuristic suspected sensitive field privateKey -> 328 unresolved call CfFree"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 347,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: other NAPI operands remain unresolved; only the bound property-name operand is excluded; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source heuristic suspected sensitive identifier password -> 347 unresolved call napi_get_named_property"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 352,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 unresolved call CertGetStringFromValue"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:8dfe0b65e1d01ac0",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 364,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:364 source heuristic suspected sensitive identifier privateKey -> 364 unresolved call CfFree | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1900 source heuristic suspected sensitive field privateKey -> 1900 call GetKeyInfoFromValue argument 2 -> 1838 call GetPrivateKeyInfoFromValue argument 2 -> 364 unresolved call CfFree"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 381,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:381 source heuristic suspected sensitive field privateKey -> 381 unresolved call CF_FREE_PTR"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 384,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:384 source heuristic suspected sensitive field privateKeyPassword -> 384 unresolved call memset_s"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 386,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:386 source heuristic suspected sensitive field privateKeyPassword -> 386 unresolved call CF_FREE_PTR"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 388,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:369 source heuristic suspected sensitive identifier privateKey -> 369 call FreePrivateKeyInfo argument 0 -> 388 unresolved call CF_FREE_PTR | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:388 source heuristic suspected sensitive identifier privateKey -> 388 unresolved call CF_FREE_PTR | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1878 source heuristic suspected sensitive field privateKey -> 1878 call FreePrivateKeyInfo argument 0 -> 388 unresolved call CF_FREE_PTR | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1900 source heuristic suspected sensitive field privateKey -> 1900 call GetKeyInfoFromValue argument 2 -> 1838 call GetPrivateKeyInfoFromValue argument 2 -> 369 call FreePrivateKeyInfo argument 0 -> 388 unresolved call CF_FREE_PTR"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1825,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1825 source heuristic suspected sensitive-return API CMS_PARSER_PRIVATE_KEY.c_str -> 1825 unresolved call napi_has_named_property"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1832,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1832 source heuristic suspected sensitive-return API CMS_PARSER_PRIVATE_KEY.c_str -> 1832 unresolved call napi_get_named_property"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:d88c98b9bb5ef039",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1880,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1878 source heuristic suspected sensitive field privateKey -> 1878 call FreePrivateKeyInfo argument 0 -> 1878 FreePrivateKeyInfo may write through argument 0 -> 1880 unresolved call CfBlobDataFree"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1882,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1878 source heuristic suspected sensitive field privateKey -> 1878 call FreePrivateKeyInfo argument 0 -> 1878 FreePrivateKeyInfo may write through argument 0 -> 1882 unresolved call CF_FREE_PTR"
+        }
+      ],
+      "identity_status": {
+        "stable": [
+          "unknown"
+        ],
+        "occurrence": [
+          "unknown"
+        ]
+      },
+      "coverage_equal_ignoring_detector_version": true
+    },
+    "extended_seven": {
+      "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+      "parse_status": {
+        "frameworks/common/v1.0/inc/cf_log.h": "complete",
+        "frameworks/common/v1.0/inc/cf_memory.h": "partial",
+        "frameworks/common/v1.0/src/cf_blob.c": "complete",
+        "frameworks/common/v1.0/src/cf_memory.c": "complete",
+        "frameworks/js/napi/certificate/inc/napi_cert_defines.h": "complete",
+        "frameworks/js/napi/certificate/src/napi_cert_utils.cpp": "complete",
+        "interfaces/inner_api/common/cf_blob.h": "partial"
+      },
+      "direct_counts": [
+        20,
+        20
+      ],
+      "runner_counts": [
+        18,
+        18
+      ],
+      "direct_full_findings_equal": true,
+      "runner_full_diagnostics_equal": false,
+      "runner_diagnostics_equal_ignoring_detector_version": true,
+      "coverage_equal": false,
+      "coverage": {
+        "schema_version": 1,
+        "detectors": {
+          "ohscanner.data.sensitive_exposure": {
+            "scope_mode": "per_file",
+            "status": "partial",
+            "applicable_files": 7,
+            "analyzed_files": [],
+            "partially_inspected_files": [
+              "frameworks/common/v1.0/inc/cf_log.h",
+              "frameworks/common/v1.0/src/cf_blob.c",
+              "frameworks/common/v1.0/src/cf_memory.c",
+              "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+              "frameworks/js/napi/certificate/src/napi_cert_utils.cpp"
+            ],
+            "source_sha256": {
+              "frameworks/common/v1.0/inc/cf_log.h": "489ea3537091147d5bec365471698f3d5d177dbc86473beb25fd7bc906beccb9",
+              "frameworks/common/v1.0/inc/cf_memory.h": "fed837ef85895bc5dac87fc187207d7724449461e6b7b8d0a0c0460cfafedfec",
+              "frameworks/common/v1.0/src/cf_blob.c": "0847908f4b7a2b9e0a98d7582676cd4734f58df562289251ef8491e8586d51ae",
+              "frameworks/common/v1.0/src/cf_memory.c": "4131e686fa0109661f63553b26a51440b6355e98b3f03b544b6cf7cff04d14d0",
+              "frameworks/js/napi/certificate/inc/napi_cert_defines.h": "32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80",
+              "frameworks/js/napi/certificate/src/napi_cert_utils.cpp": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+              "interfaces/inner_api/common/cf_blob.h": "35155f13aca9fc14293fa38cfcf3edf256e795132ba6083ab5be2d8cdeb1382e"
+            },
+            "unexamined": [
+              {
+                "file": "frameworks/common/v1.0/inc/cf_log.h",
+                "parse_status": "complete",
+                "reason": "detector_model_incomplete",
+                "analysis_status": "partial"
+              },
+              {
+                "file": "frameworks/common/v1.0/inc/cf_memory.h",
+                "parse_status": "partial",
+                "reason": "incomplete_ast:partial",
+                "analysis_status": "not_analyzed"
+              },
+              {
+                "file": "frameworks/common/v1.0/src/cf_blob.c",
+                "parse_status": "complete",
+                "reason": "detector_model_incomplete",
+                "analysis_status": "partial"
+              },
+              {
+                "file": "frameworks/common/v1.0/src/cf_memory.c",
+                "parse_status": "complete",
+                "reason": "detector_model_incomplete",
+                "analysis_status": "partial"
+              },
+              {
+                "file": "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+                "parse_status": "complete",
+                "reason": "detector_model_incomplete",
+                "analysis_status": "partial"
+              },
+              {
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "parse_status": "complete",
+                "reason": "detector_model_incomplete",
+                "analysis_status": "partial"
+              },
+              {
+                "file": "interfaces/inner_api/common/cf_blob.h",
+                "parse_status": "partial",
+                "reason": "incomplete_ast:partial",
+                "analysis_status": "not_analyzed"
+              }
+            ],
+            "inspected_files": [
+              "frameworks/common/v1.0/inc/cf_log.h",
+              "frameworks/common/v1.0/src/cf_blob.c",
+              "frameworks/common/v1.0/src/cf_memory.c",
+              "frameworks/js/napi/certificate/inc/napi_cert_defines.h",
+              "frameworks/js/napi/certificate/src/napi_cert_utils.cpp"
+            ],
+            "not_analyzed_files": [
+              "frameworks/common/v1.0/inc/cf_memory.h",
+              "interfaces/inner_api/common/cf_blob.h"
+            ],
+            "coverage_counts": {
+              "complete": 0,
+              "partial": 5,
+              "not_analyzed": 2,
+              "failed": 0
+            },
+            "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+            "evidence_obligations": [
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:69a2bdb187dc02c1",
+                "file": "frameworks/common/v1.0/src/cf_memory.c",
+                "source_sha256": "4131e686fa0109661f63553b26a51440b6355e98b3f03b544b6cf7cff04d14d0",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/common/v1.0/src/cf_memory.c",
+                  "source_sha256": "4131e686fa0109661f63553b26a51440b6355e98b3f03b544b6cf7cff04d14d0"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for free.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_typeof.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_get_value_string_utf8.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_get_value_string_utf8.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_get_named_property.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for AllocatePrivateKey.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:e9e3d88a7fadafc7",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CfFree.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CopyBlobDataToPrivateKey.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:249019213716c2d0",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CfFree.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_get_named_property.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CertGetStringFromValue.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CF_FREE_PTR.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for memset_s.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CF_FREE_PTR.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CF_FREE_PTR.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_has_named_property.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for napi_get_named_property.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              },
+              {
+                "diagnostic_id": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+                "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3",
+                "analysis_status": "partial",
+                "source_binding": {
+                  "repository": "openharmony/security_certificate_framework",
+                  "commit": "e270363a042bf8f0126881c76d1341ad457cc187",
+                  "snapshot_sha256": "68d17de53af7b4db3c94f0b65c6712c75c1fb2026052de45cad6a6ce76f977dd",
+                  "profile_id": "m0-synthetic",
+                  "detector_id": "ohscanner.data.sensitive_exposure",
+                  "detector_version": "0.21.7",
+                  "rule_id": "data.sensitive.unresolved-escape",
+                  "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+                  "source_sha256": "5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3"
+                },
+                "consequence_impact": null,
+                "consequence_cwe": null,
+                "model_version": null,
+                "obligations": [
+                  {
+                    "kind": "callee_binding",
+                    "description": "Resolve the exact overload, receiver, and implementation for CF_FREE_PTR.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "sink_behavior",
+                    "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "runtime_log_visibility",
+                    "description": "No log exposure or reader reachability is established by this call alone.",
+                    "status": "unknown"
+                  },
+                  {
+                    "kind": "security_impact",
+                    "description": "Establish recoverable sensitive material and concrete impact independently.",
+                    "status": "unknown"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "legacy_observations": [
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:69a2bdb187dc02c1",
+          "file": "frameworks/common/v1.0/src/cf_memory.c",
+          "line": 50,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:317 source heuristic suspected sensitive field privateKey -> 317 call CfFree argument 0 -> 50 unresolved call free | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:328 source heuristic suspected sensitive field privateKey -> 328 call CfFree argument 0 -> 50 unresolved call free | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:364 source heuristic suspected sensitive identifier privateKey -> 364 call CfFree argument 0 -> 50 unresolved call free | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1878 source heuristic suspected sensitive field privateKey -> 1878 call FreePrivateKeyInfo argument 0 -> 1878 FreePrivateKeyInfo may write through argument 0 -> 1880 call CfBlobDataFree argument 0 -> 48 call CfFree argument 0 -> 50 unresolved call free | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1900 source heuristic suspected sensitive field privateKey -> 1900 call GetKeyInfoFromValue argument 2 -> 1838 call GetPrivateKeyInfoFromValue argument 2 -> 364 call CfFree argument 0 -> 50 unresolved call free"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:cd47bb210c0bcea8",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 185,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 call CertGetStringFromValue argument 1 -> 185 unresolved call napi_typeof"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:e5b51b525803481f",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 192,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 call CertGetStringFromValue argument 1 -> 192 unresolved call napi_get_value_string_utf8"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:42ab7a9a343f45f8",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 208,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 call CertGetStringFromValue argument 1 -> 208 unresolved call napi_get_value_string_utf8"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:2f0640d7cb1b4a35",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 298,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:298 source heuristic suspected sensitive-return API CERT_PRIVATE_KEY.c_str -> 298 unresolved call napi_get_named_property"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:364ac023d3546cf9",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 310,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1900 source heuristic suspected sensitive field privateKey -> 1900 call GetKeyInfoFromValue argument 2 -> 1838 call GetPrivateKeyInfoFromValue argument 2 -> 363 call GetPrivateKeyFromValue argument 2 -> 310 unresolved call AllocatePrivateKey"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:e9e3d88a7fadafc7",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 317,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:317 source heuristic suspected sensitive field privateKey -> 317 unresolved call CfFree"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:03797152f3f0281e",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 324,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:324 source heuristic suspected sensitive field privateKey -> 324 unresolved call CopyBlobDataToPrivateKey"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:249019213716c2d0",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 328,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:328 source heuristic suspected sensitive field privateKey -> 328 unresolved call CfFree"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:e93ad875588b206e",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 347,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: other NAPI operands remain unresolved; only the bound property-name operand is excluded; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source heuristic suspected sensitive identifier password -> 347 unresolved call napi_get_named_property"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:a671d81d320f1188",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 352,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: recursion/depth limit stopped body analysis; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:347 source napi_get_named_property password-property output argument 3 -> 352 unresolved call CertGetStringFromValue"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:2c0065e2b01ee93d",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 381,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:381 source heuristic suspected sensitive field privateKey -> 381 unresolved call CF_FREE_PTR"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:8696221a7f8aac44",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 384,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:384 source heuristic suspected sensitive field privateKeyPassword -> 384 unresolved call memset_s"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:dd8c7c7cec3b2438",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 386,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:386 source heuristic suspected sensitive field privateKeyPassword -> 386 unresolved call CF_FREE_PTR"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:82792263021a6b6e",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 388,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:369 source heuristic suspected sensitive identifier privateKey -> 369 call FreePrivateKeyInfo argument 0 -> 388 unresolved call CF_FREE_PTR | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:388 source heuristic suspected sensitive identifier privateKey -> 388 unresolved call CF_FREE_PTR | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1878 source heuristic suspected sensitive field privateKey -> 1878 call FreePrivateKeyInfo argument 0 -> 388 unresolved call CF_FREE_PTR | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1900 source heuristic suspected sensitive field privateKey -> 1900 call GetKeyInfoFromValue argument 2 -> 1838 call GetPrivateKeyInfoFromValue argument 2 -> 369 call FreePrivateKeyInfo argument 0 -> 388 unresolved call CF_FREE_PTR"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:b2a270198971ce7a",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1825,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1825 source heuristic suspected sensitive-return API CMS_PARSER_PRIVATE_KEY.c_str -> 1825 unresolved call napi_has_named_property"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:e94acdb4bc5ff77b",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1832,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1832 source heuristic suspected sensitive-return API CMS_PARSER_PRIVATE_KEY.c_str -> 1832 unresolved call napi_get_named_property"
+        },
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:eaba53a60f1f66da",
+          "file": "frameworks/js/napi/certificate/src/napi_cert_utils.cpp",
+          "line": 1882,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=frameworks/js/napi/certificate/src/napi_cert_utils.cpp:1878 source heuristic suspected sensitive field privateKey -> 1878 call FreePrivateKeyInfo argument 0 -> 1878 FreePrivateKeyInfo may write through argument 0 -> 1882 unresolved call CF_FREE_PTR"
+        }
+      ],
+      "identity_status": {
+        "stable": [
+          "unknown"
+        ],
+        "occurrence": [
+          "unknown"
+        ]
+      },
+      "coverage_equal_ignoring_detector_version": true
+    }
+  },
+  "verification": {
+    "own_methods": 6,
+    "data_suite_methods": 150,
+    "parser_known_corpus_methods": 57,
+    "all_passed": true
+  },
+  "independent_feedback": {
+    "commit": "479e994f1c33d8af6ab45b8d95a1c3f32606b6a1",
+    "path": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020\\research\\data_sensitive\\T89_FIXED_CLEANUP_REPLAY.json",
+    "sha256": "1b370ea9c3533bc367e29dd376d73cff2608724b5968fc0ba13084bfa91067fb",
+    "methods": 14,
+    "data_methods": 177,
+    "status": "passed",
+    "producer": "T89 independent test line, not cherry-picked into development tree"
+  }
+}
