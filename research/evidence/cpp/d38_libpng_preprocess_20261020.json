@@ -1,0 +1,377 @@
+{
+  "schema_version": 1,
+  "task": "D38 exact-pinned libpng preprocessor probe",
+  "scanner_head": "efa09aaaac01f81084034ea0994c310007ba1dbf",
+  "compiler": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1)",
+  "build_configuration": {
+    "makefile_values": {
+      "CC": "gcc",
+      "CPP": "gcc -E",
+      "DEFS": "-DHAVE_CONFIG_H",
+      "DEFAULT_INCLUDES": "-I.",
+      "CFLAGS": "-g -O1 -fsanitize=address -fno-omit-frame-pointer"
+    },
+    "preprocessor_flags": [
+      "-DHAVE_CONFIG_H",
+      "-I<snapshot-root>",
+      "-g",
+      "-O1",
+      "-fsanitize=address",
+      "-fno-omit-frame-pointer",
+      "-E"
+    ],
+    "configuration_method": "pinned commit archive; ./configure with CC=gcc and the recorded CFLAGS; make pnglibconf.h pngprefix.h"
+  },
+  "result": "ALL_PREPROCESSED_INPUTS_PARTIAL_NO_CANDIDATES",
+  "runs": [
+    {
+      "case": "CVE-2026-33416",
+      "variant": "vulnerable",
+      "file": "pngset.c",
+      "source_commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+      "source_tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
+      "source_blob": "3e63c2724ec8737482d1746a790cfe0840c3a83e",
+      "source_sha256": "9bd59a79669db37b2ecc481439481eb5f49bf77bee0de4b1aba649915609b3d0",
+      "source_bytes": 57534,
+      "preprocessed_sha256": "9fcb32bf70e966c1fb6b6c8b3f578156f48e421778c76b333bb4c32ed4030955",
+      "preprocessed_bytes": 284239,
+      "line_marker_count": 249,
+      "parse_status": "partial",
+      "parse_issue_count": 294,
+      "detector_status": "blocked",
+      "finding_count": 0,
+      "findings": [],
+      "target_function_locations": [
+        {
+          "function": "png_set_PLTE",
+          "preprocessed_line": 7469,
+          "mapped_location": {
+            "file": "/mnt/d/openHarmonyScanner/tmp/d38-libpng-preprocess-20261020/33416-vuln/pngset.c",
+            "line": 740
+          }
+        }
+      ]
+    },
+    {
+      "case": "CVE-2026-33416",
+      "variant": "vulnerable",
+      "file": "png.c",
+      "source_commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+      "source_tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
+      "source_blob": "a0cad0197e760013abf67eb5c23ce5e4055cdb4d",
+      "source_sha256": "0d8e45e9039cf04088764a09dcda7b24695f199288a44e11dba54ebfaca1c730",
+      "source_bytes": 135426,
+      "preprocessed_sha256": "848907033208a070c7e93f0be3d4ab911b6567c1513fd02abfac0e7093833f45",
+      "preprocessed_bytes": 301892,
+      "line_marker_count": 240,
+      "parse_status": "partial",
+      "parse_issue_count": 255,
+      "detector_status": "blocked",
+      "finding_count": 0,
+      "findings": [],
+      "target_function_locations": [
+        {
+          "function": "png_free_data",
+          "preprocessed_line": 7066,
+          "mapped_location": {
+            "file": "/mnt/d/openHarmonyScanner/tmp/d38-libpng-preprocess-20261020/33416-vuln/png.c",
+            "line": 482
+          }
+        }
+      ]
+    },
+    {
+      "case": "CVE-2026-33416",
+      "variant": "vulnerable",
+      "file": "pngread.c",
+      "source_commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+      "source_tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
+      "source_blob": "af2f44c9ca8eaa40177b2ae5612c0eccc0f625a5",
+      "source_sha256": "feee8bdd4c553cc4f01bb288a868d4b83e1ce0f75014a96163a49eb32119cba6",
+      "source_bytes": 143336,
+      "preprocessed_sha256": "03ab8cbe05100a0a0cec44d0e5dba1c2f4ee49719e369c7d17090eedc49eeb42",
+      "preprocessed_bytes": 327327,
+      "line_marker_count": 235,
+      "parse_status": "partial",
+      "parse_issue_count": 314,
+      "detector_status": "blocked",
+      "finding_count": 0,
+      "findings": [],
+      "target_function_locations": []
+    },
+    {
+      "case": "CVE-2026-33416",
+      "variant": "vulnerable",
+      "file": "pngrtran.c",
+      "source_commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+      "source_tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
+      "source_blob": "1fce9af121d1073d465e5d57a4278a67c522db69",
+      "source_sha256": "4df05c2e5db00911817d7f125c862524205895f34a65106e016d351f7e6edb53",
+      "source_bytes": 171647,
+      "preprocessed_sha256": "88851b0a84fa5054589a9ca03ea4822e4c940ae4bae5289ee3c73ecd63c81baf",
+      "preprocessed_bytes": 350873,
+      "line_marker_count": 145,
+      "parse_status": "partial",
+      "parse_issue_count": 174,
+      "detector_status": "blocked",
+      "finding_count": 0,
+      "findings": [],
+      "target_function_locations": [
+        {
+          "function": "png_do_expand_palette",
+          "preprocessed_line": 10523,
+          "mapped_location": {
+            "file": "/mnt/d/openHarmonyScanner/tmp/d38-libpng-preprocess-20261020/33416-vuln/pngrtran.c",
+            "line": 4328
+          }
+        }
+      ]
+    },
+    {
+      "case": "CVE-2026-33416",
+      "variant": "fixed",
+      "file": "pngset.c",
+      "source_commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+      "source_tree": "a28bb962645843af84063c77f574f6d88da79f76",
+      "source_blob": "b9ccb7fb156d134265133541209be1ab12034366",
+      "source_sha256": "d3a203e40b6a6000a7cb78a61e0fd9664b0c39a65d82260efedb0f0184a8bc19",
+      "source_bytes": 58711,
+      "preprocessed_sha256": "8d7ae98aeb380bca41b442422fec1dfab02aa895a337d33bf254db118b5fa5da",
+      "preprocessed_bytes": 286103,
+      "line_marker_count": 255,
+      "parse_status": "partial",
+      "parse_issue_count": 299,
+      "detector_status": "blocked",
+      "finding_count": 0,
+      "findings": [],
+      "target_function_locations": [
+        {
+          "function": "png_set_PLTE",
+          "preprocessed_line": 7478,
+          "mapped_location": {
+            "file": "/mnt/d/openHarmonyScanner/tmp/d38-libpng-preprocess-20261020/33416-fixed/pngset.c",
+            "line": 741
+          }
+        }
+      ]
+    },
+    {
+      "case": "CVE-2026-33416",
+      "variant": "fixed",
+      "file": "png.c",
+      "source_commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+      "source_tree": "a28bb962645843af84063c77f574f6d88da79f76",
+      "source_blob": "fda0a8e6ae06b42c672d9e5ae476a4259a29e357",
+      "source_sha256": "29a37cedb5be5597aafa3cab62a223c0accbd6016edfff97386471a6e118100c",
+      "source_bytes": 135428,
+      "preprocessed_sha256": "1ab2caaa400b165c3ea7ae99466fc3fb31477a673762c3097dc75a054cabed14",
+      "preprocessed_bytes": 302263,
+      "line_marker_count": 240,
+      "parse_status": "partial",
+      "parse_issue_count": 255,
+      "detector_status": "blocked",
+      "finding_count": 0,
+      "findings": [],
+      "target_function_locations": [
+        {
+          "function": "png_free_data",
+          "preprocessed_line": 7066,
+          "mapped_location": {
+            "file": "/mnt/d/openHarmonyScanner/tmp/d38-libpng-preprocess-20261020/33416-fixed/png.c",
+            "line": 482
+          }
+        }
+      ]
+    },
+    {
+      "case": "CVE-2026-33416",
+      "variant": "fixed",
+      "file": "pngread.c",
+      "source_commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+      "source_tree": "a28bb962645843af84063c77f574f6d88da79f76",
+      "source_blob": "24199689a76b2cac8e75ca8bb37fd67e62d9f53b",
+      "source_sha256": "2a2c02673c7dcd6853f3efe8cc16c893df3f7bdffe7b53abde835e7c6e4c6fc3",
+      "source_bytes": 143404,
+      "preprocessed_sha256": "2503b697c3cdf0cec0f2c1ceb7c6ebf0945e5e99721c3b32739c9ac16d97329f",
+      "preprocessed_bytes": 327502,
+      "line_marker_count": 235,
+      "parse_status": "partial",
+      "parse_issue_count": 314,
+      "detector_status": "blocked",
+      "finding_count": 0,
+      "findings": [],
+      "target_function_locations": []
+    },
+    {
+      "case": "CVE-2026-33416",
+      "variant": "fixed",
+      "file": "pngrtran.c",
+      "source_commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+      "source_tree": "a28bb962645843af84063c77f574f6d88da79f76",
+      "source_blob": "978dac588801a111ebd9917a74179e081ea39290",
+      "source_sha256": "6b724ff0047cced71884176296aac10a6fc1d2592477034bbd622222ded3373f",
+      "source_bytes": 172600,
+      "preprocessed_sha256": "d4364cf6fbcf75dcefdcd0862344a57ac25875818e8d9800c30a7845b92f8ee4",
+      "preprocessed_bytes": 352485,
+      "line_marker_count": 151,
+      "parse_status": "partial",
+      "parse_issue_count": 181,
+      "detector_status": "blocked",
+      "finding_count": 0,
+      "findings": [],
+      "target_function_locations": [
+        {
+          "function": "png_do_expand_palette",
+          "preprocessed_line": 10559,
+          "mapped_location": {
+            "file": "/mnt/d/openHarmonyScanner/tmp/d38-libpng-preprocess-20261020/33416-fixed/pngrtran.c",
+            "line": 4352
+          }
+        }
+      ]
+    },
+    {
+      "case": "CVE-2026-46675",
+      "variant": "vulnerable",
+      "file": "pngrutil.c",
+      "source_commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+      "source_tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
+      "source_blob": "a4eda54c8cb3d36cf1651dba159067b65030e3aa",
+      "source_sha256": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e",
+      "source_bytes": 153112,
+      "preprocessed_sha256": "d7ef2e2351c3974ef8ee8a58e8a211ad1f92ec043685e9bee1412b1be5738688",
+      "preprocessed_bytes": 426273,
+      "line_marker_count": 260,
+      "parse_status": "partial",
+      "parse_issue_count": 401,
+      "detector_status": "blocked",
+      "finding_count": 0,
+      "findings": [],
+      "target_function_locations": [
+        {
+          "function": "png_decompress_chunk",
+          "preprocessed_line": 7213,
+          "mapped_location": {
+            "file": "/mnt/d/openHarmonyScanner/tmp/d38-libpng-preprocess-20261020/46675-vuln/pngrutil.c",
+            "line": 680
+          }
+        },
+        {
+          "function": "png_handle_iCCP",
+          "preprocessed_line": 7924,
+          "mapped_location": {
+            "file": "/mnt/d/openHarmonyScanner/tmp/d38-libpng-preprocess-20261020/46675-vuln/pngrutil.c",
+            "line": 1339
+          }
+        },
+        {
+          "function": "png_read_IDAT_data",
+          "preprocessed_line": 10614,
+          "mapped_location": {
+            "file": "/mnt/d/openHarmonyScanner/tmp/d38-libpng-preprocess-20261020/46675-vuln/pngrutil.c",
+            "line": 4183
+          }
+        }
+      ]
+    },
+    {
+      "case": "CVE-2026-46675",
+      "variant": "fixed",
+      "file": "pngrutil.c",
+      "source_commit": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+      "source_tree": "4c64b5f18cef7d129adee3b403fc4be93f82e30d",
+      "source_blob": "482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a",
+      "source_sha256": "a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e",
+      "source_bytes": 152477,
+      "preprocessed_sha256": "45b93420fc2703f97413c81d8b3825c6f4ee6f629c93f4f87510a1f088460cd6",
+      "preprocessed_bytes": 426931,
+      "line_marker_count": 259,
+      "parse_status": "partial",
+      "parse_issue_count": 401,
+      "detector_status": "blocked",
+      "finding_count": 0,
+      "findings": [],
+      "target_function_locations": [
+        {
+          "function": "png_decompress_chunk",
+          "preprocessed_line": 7219,
+          "mapped_location": {
+            "file": "/mnt/d/openHarmonyScanner/tmp/d38-libpng-preprocess-20261020/46675-fixed/pngrutil.c",
+            "line": 686
+          }
+        },
+        {
+          "function": "png_handle_iCCP",
+          "preprocessed_line": 7931,
+          "mapped_location": {
+            "file": "/mnt/d/openHarmonyScanner/tmp/d38-libpng-preprocess-20261020/46675-fixed/pngrutil.c",
+            "line": 1333
+          }
+        },
+        {
+          "function": "png_read_IDAT_data",
+          "preprocessed_line": 10624,
+          "mapped_location": {
+            "file": "/mnt/d/openHarmonyScanner/tmp/d38-libpng-preprocess-20261020/46675-fixed/pngrutil.c",
+            "line": 4180
+          }
+        }
+      ]
+    }
+  ],
+  "production_cli": [
+    {
+      "variant": "33416-vuln",
+      "synthetic_input_commit": "cd473933fc23c2bd24af06c36376fc8cd344bf9d",
+      "synthetic_input_tree": "7dd67b0d7214c6bb457508dba396326a1ffb0850",
+      "cli_artifact_sha256": "63f18005ad133cac3ecb76a6d030cae93d39e6732200062e7a9e0038c339aa8b",
+      "selected_source_files": 4,
+      "parse_summary": {
+        "partial": 4
+      },
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "parse_limitations": []
+    },
+    {
+      "variant": "33416-fixed",
+      "synthetic_input_commit": "d8da0218b8906b88920ae2e41f8c417368d0d4cb",
+      "synthetic_input_tree": "beb990c4bd10bb22ef1eeecec93363fe2a35fd9d",
+      "cli_artifact_sha256": "dd27bef430677f4c8c160f2543d96c1fa15ff4b7679616175859f48c093952a1",
+      "selected_source_files": 4,
+      "parse_summary": {
+        "partial": 4
+      },
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "parse_limitations": []
+    },
+    {
+      "variant": "46675-vuln",
+      "synthetic_input_commit": "ff2de4f57ace1d2d7f77c2e5ddd89e40add78726",
+      "synthetic_input_tree": "a6256d0615e6ccce1fc931663cf9980ccf5147fb",
+      "cli_artifact_sha256": "91220e0ed7e7413b1b1b5ef2640c27fc049e0cd5b3846bf4410dc76f54f9c717",
+      "selected_source_files": 1,
+      "parse_summary": {
+        "partial": 1
+      },
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "parse_limitations": []
+    },
+    {
+      "variant": "46675-fixed",
+      "synthetic_input_commit": "ae2a5d44497f510a1c4e53aaf4decd3f21924bb3",
+      "synthetic_input_tree": "04942dd43c3bd9e22b1de231d299f197a43547ea",
+      "cli_artifact_sha256": "c6144c9ff04df78bd59595f6f00b959408dc46a140d46cbe9c9700f1f697dad9",
+      "selected_source_files": 1,
+      "parse_summary": {
+        "partial": 1
+      },
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "parse_limitations": []
+    }
+  ],
+  "conclusion": "Line markers map target function starts back to the pinned original files, but the current parser reports every preprocessed translation unit partial (174-401 issues) and the lifecycle detector returns blocked with zero findings. Preprocessed .i is not a valid completeness or detection fix."
+}
