@@ -83,6 +83,23 @@ class D94PointerOutputTests(unittest.TestCase):
                                  'HILOG_INFO(1,"%{public}s",out);}').findings)
         self.assertTrue(analyze('#define static_cast UnknownCast\n'+source).findings)
 
+    def test_input_pointer_and_local_rebind_are_not_pointee_output_writes(self):
+        readonly=('void Read(char *value){}void Callback(char *key){Read(key);'
+                  'HILOG_INFO(1,"%{public}s",key);}')
+        found=self.scan(readonly).findings
+        self.assertEqual(len(found),1)
+        self.assertNotIn('Read may write',found[0].message)
+        for body in ('', 'value=(char*)secret;'):
+            with self.subTest(body=body):
+                source=('void Inspect(const char *secret,char *value){'+body+'}'
+                        'void Callback(const char *key){char buffer[32]={0};Inspect(key,buffer);'
+                        'HILOG_INFO(1,"%{public}s",buffer);}')
+                self.assertEqual(len(self.scan(source).findings),0)
+        source=('void Copy(const char *secret,char *out){memcpy_s(out,32,secret,31);}'
+                'void Callback(const char *key){char buffer[32]={0};Copy(key,buffer);'
+                'HILOG_INFO(1,"%{public}s",buffer);}')
+        self.assertTrue(any(f.rule_id=='data.log.sensitive-value' for f in self.scan(source).findings))
+
 
 if __name__=='__main__':
     unittest.main()
