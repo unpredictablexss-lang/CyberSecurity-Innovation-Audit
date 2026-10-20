@@ -1,7 +1,7 @@
 # T matrix follow-up: web_webview and libtiff
 
-Date: 2026-10-30 (Asia/Shanghai)
-Independent checkout: `codex/t-matrix-webview-libtiff-20261030`, based on integrated PR #35 head `0e5a899043804fae5024ca315e4a6d441030fbb5`.
+Execution date: 2026-10-20 (Asia/Shanghai).
+Independent checkout: based on integrated PR #35 head `0e5a899043804fae5024ca315e4a6d441030fbb5`. The source object dates and upstream commits in this report are distinct from the execution date.
 Disposition: both named cases remain **PARTIAL/BLOCK**. This replay did not change detectors, tests, fixtures, or A0.
 
 ## Current CLI replay
@@ -46,7 +46,7 @@ python -m src.cli ohscan-run --repo-dir D:/openHarmonyScanner/tmp/libtiff-cve-20
 python research/evidence/cpp/d21_libtiff_9900_20261020/replay.py --repo-dir D:/openHarmonyScanner/tmp/libtiff-cve-2025-9900-upstream --output-dir <tmp>/libtiff-fragment
 python -m src.cli ohscan-run --repo-dir D:/openHarmonyScanner/tmp/d11-webview-flowbuffer-fragments-20261020-v2 --repository OpenHarmony-TPC/chromium_src --commit 769110ddf1c14355c89f34b974ab9e6cf58c0c6c --include flowbuffer_functions.cc --include safe.cpp --include unrelated.cpp --include renamed.cpp --include partial.cpp --detector ohscanner.cpp.bounds --json-out <tmp>/webview-vuln.json --md-out <tmp>/webview-vuln.md
 python -m src.cli ohscan-run --repo-dir D:/openHarmonyScanner/tmp/d11-webview-flowbuffer-fragments-20261020-v2 --repository OpenHarmony-TPC/chromium_src --commit f550e8e59c57afe4e02b130ec3373b1011843617 --include flowbuffer_functions.cc --include safe.cpp --include unrelated.cpp --include renamed.cpp --include partial.cpp --detector ohscanner.cpp.bounds --json-out <tmp>/webview-fixed.json --md-out <tmp>/webview-fixed.md
-python research/evidence/cpp/verify_t_matrix_webview_libtiff_20261030.py
+python research/evidence/cpp/verify_t_matrix_webview_libtiff_20261020.py
 ```
 
-Verification: run `python research/evidence/cpp/verify_t_matrix_webview_libtiff_20261030.py`. It checks the committed raw replay projections, pinned source identities, detector versions, expected locations/counts, partial coverage and unchanged matrix disposition. It does not authenticate upstream repository ownership or establish product impact.
+Verification: run `python research/evidence/cpp/verify_t_matrix_webview_libtiff_20261020.py`. It checks the committed raw replay projections, pinned source identities, detector versions, expected locations/counts, partial coverage and unchanged matrix disposition. It does not authenticate upstream repository ownership or establish product impact.
