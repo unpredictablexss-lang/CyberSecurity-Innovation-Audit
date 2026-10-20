@@ -319,3 +319,9 @@ objective: 保存 exact-bound parser/internal baseline，并在开发提交上�
 steps: [固定 commit/tree/blob/SHA与13 issue行, 选择附近 fixed/safe/unbound控制, 开发提交后复跑同一CLI/测试, 对比候选位置与partial/blocked状态, 回传具体偏差]
 constraints: [不改生产代码, 不以同源合成控制报正式准确率, 未知保留unknown]
 ```
+
+### C1 partial 独立基线已固定；开发 scout 正在区分合法宏与真实解析缺陷
+
+独立报告 `research/deliveries/c-line/c1_partial_baseline_20261020.md`（提交 `ea27fa0efe9562d16663b81f4c1d7d03ce8fd90c`）在 runner 修复后的测试线上重放了 exact-bound C1 target+creator：source commit/tree/blob/SHA 全部匹配，creator parse complete、依赖已验证；目标仍有 13 个 parser issue、analysis partial / `detector_model_incomplete`、coverage partial、detector blocked、0 diagnostics。fixed exception-guard revision 只是相关控制，不是对 C1 规则安全性的结论。
+
+开发 scout 初步将 issue 指向未展开的 Ark IR DSL：合法 `IR_IF/IR_ELSE`、`BRANCH` 和 typed-array 类型宏，Tree-sitter 看到 raw source 后产生 missing/error 节点；`Map` line 2747 的 `type_fact_invalidated_by_call` 来自可能执行用户 JS 的 `JSCallDispatch()`，对象逃逸未证明前保持 unknown 是合理的保守处理。2952 Label 数组等级联点与 macro parsing 的关系、以及可否做窄 preprocessing/容错改进，仍待最小正负控制确认。当前不动规则或把 partial 转 complete。
