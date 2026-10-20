@@ -1,0 +1,27 @@
+[93m[OHOS WARNING][0m  compile option "disable_package_image" will be deprecated,                             please consider use other options
+
+[91m[OHOS ERROR][0m  Traceback (most recent call last):
+[91m[OHOS ERROR][0m    File "/tmp/ohscanner-oh-src/build/hb/containers/status.py", line 47, in wrapper
+[91m[OHOS ERROR][0m      return func(*args, **kwargs)
+[91m[OHOS ERROR][0m             ^^^^^^^^^^^^^^^^^^^^^
+[91m[OHOS ERROR][0m    File "/tmp/ohscanner-oh-src/build/hb/util/product_util.py", line 341, in get_product_info
+[91m[OHOS ERROR][0m      for product_info in ProductUtil.get_products():
+[91m[OHOS ERROR][0m                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[91m[OHOS ERROR][0m    File "/tmp/ohscanner-oh-src/build/hb/util/product_util.py", line 127, in get_products
+[91m[OHOS ERROR][0m      bip_path = config.built_in_product_path
+[91m[OHOS ERROR][0m                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[91m[OHOS ERROR][0m    File "/tmp/ohscanner-oh-src/build/hb/resources/config.py", line 317, in built_in_product_path
+[91m[OHOS ERROR][0m      raise OHOSException(
+[91m[OHOS ERROR][0m  exceptions.ohos_exception.OHOSException: Invalid built-in product path: /tmp/ohscanner-oh-src/productdefine/common/products
+[91m[OHOS ERROR][0m  
+
+[91m[OHOS ERROR][0m  Code:        0
+[91m[OHOS ERROR][0m  
+[91m[OHOS ERROR][0m  Reason:      Invalid built-in product path: /tmp/ohscanner-oh-src/productdefine/common/products
+[91m[OHOS ERROR][0m  
+[91m[OHOS ERROR][0m  Error Type:  UNKNOWN ERROR TYPE
+[91m[OHOS ERROR][0m  
+[91m[OHOS ERROR][0m  Description: NO DESCRIPTION
+[91m[OHOS ERROR][0m  
+[91m[OHOS ERROR][0m  Solution:    UNKNOWN REASON
+[91m[OHOS ERROR][0m  

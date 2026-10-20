@@ -1,0 +1,9 @@
+ERROR at //build/config/BUILDCONFIG.gn:129:15: Could not read file.
+    read_file("${preloader_output_dir}/build_config.json", "json")
+              ^------------------------------------------
+I resolved this to "/tmp/ohscanner-oh-src/out/preloader/build_config.json".
+root_out_dir=//out/host
+root_build_dir=//out/host
+root_gen_dir=//out/host/gen
+current_toolchain=
+EXIT=1

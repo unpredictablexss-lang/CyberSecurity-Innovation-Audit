@@ -1,0 +1,5 @@
+ERROR at //.gn:28:27: Your .gn file has enabled "ohos_components_support", but OpenHarmony build config file (parts_info/components.json) does not exists.
+
+ohos_components_support = true
+                          ^---
+EXIT=1
