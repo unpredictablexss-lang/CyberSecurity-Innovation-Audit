@@ -1,0 +1,297 @@
+# OHScanner M2 reviewed-detector execution
+
+> Detection candidates and coverage limitations, NOT validated vulnerabilities.
+
+- Source repository (declared): `openharmony/communication_netmanager_ext`
+- Pinned commit: `8c35917b7e2f152813b13a20530a8452cf73d938`
+- Git tree: `e26372f6cd65be928b9c1cf4a96d3c7dd5ece804`
+- Snapshot SHA-256: `d3c302ffe06ab7e1e002b92c4eba224fdcc1600c2de7b2eb65d9d49a932872f1`
+- Source files indexed: 654
+- Parsing coverage: `{"complete": 434, "not_run": 22, "partial": 198}`
+- Detector runs: 1
+- Total unverified diagnostics: 0
+- Validated vulnerabilities: **0** (no runtime verification performed)
+
+## Per-detector results
+
+| Detector | Execution | Inspected files | Complete | Partial | Not analyzed | Diagnostics | Coverage |
+|---|---|---:|---:|---:|---:|---:|---|
+| `ohscanner.interface.ipc` | completed | 632 | 434 | 198 | 0 | 0 | partial |
+
+## Candidate evidence and missing proof
+
+| Detector | Candidate ID | File:line | Rule | Unverified proof obligations |
+|---|---|---|---|---|
+| — | — | — | — | No reported candidate; NOT proof of safety |
+
+## Coverage gaps
+
+Scope counts source inspection, not complete semantic coverage; partial remains unknown.
+Files without a claiming detector: 22
+- `frameworks/ets/ani/eap/ets/@ohos.net.eap.ets`
+- `frameworks/ets/ani/ethernet/ets/@ohos.net.ethernet.ets`
+- `frameworks/ets/ani/mdns/ets/@ohos.net.mdns.ets`
+- `frameworks/ets/ani/netFirewall/ets/@ohos.net.netFirewall.ets`
+- `frameworks/ets/ani/sharing/ets/@ohos.net.sharing.ets`
+- `frameworks/ets/ani/vpn/ets/@ohos.net.vpn.ets`
+- `frameworks/ets/ani/vpnextension/ets/@ohos.net.vpnExtension.ets`
+- `frameworks/ets/ani/vpnextension/ets/application/VpnExtensionContext.ets`
+- `frameworks/ets/ani/vpnextensionability/ets/@ohos.app.ability.VpnExtensionAbility.ets`
+- `frameworks/js/napi/extensionability/vpn_extension_ability.js`
+- `frameworks/js/napi/extensioncontext/vpn_extension_context.js`
+- `frameworks/vpn_dialog/dialog_ui/vpn_dialog/hvigorfile.js`
+- `frameworks/vpn_dialog/dialog_ui/vpn_dialog/src/main/ets/Application/MyAbilityStage.ts`
+- `frameworks/vpn_dialog/dialog_ui/vpn_dialog/src/main/ets/MainAbility/GlobalContext.ts`
+- `frameworks/vpn_dialog/dialog_ui/vpn_dialog/src/main/ets/MainAbility/MainAbility.ts`
+- `frameworks/vpn_dialog/dialog_ui/vpn_dialog/src/main/ets/ServiceExtAbility/VpnDialogAbility.ts`
+- `frameworks/vpn_dialog/dialog_ui/vpn_dialog/src/main/ets/pages/VpnDialog.ets`
+- `interfaces/kits/js/@ohos.net.eap.d.ts`
+- `interfaces/kits/js/@ohos.net.ethernet.d.ts`
+- `interfaces/kits/js/@ohos.net.mdns.d.ts`
+- `interfaces/kits/js/@ohos.net.sharing.d.ts`
+- `interfaces/kits/js/basic.d.ts`
+- `ohscanner.interface.ipc`: partial, 434/632 applicable files examined; unexamined=198
+
+## Limitations
+
+- Diagnostics are candidates/evidence only, not proof of security impact.
+- Zero diagnostics does NOT mean the component is free of vulnerabilities.
+- Git origin name is user declared; source is pinned local objects, not an OH product build.
+- No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.
+- Some indexed source files have no claiming detector; their security analysis is unknown.
+- `ohscanner.interface.ipc`: Model=oh-ipc-2026.10-v32; first-party bounded structured syntax interpretation, no external scanner execution.
+- `ohscanner.interface.ipc`: Private branch pass reconstructs Tree-sitter nodes; public shared facts/schema are unchanged.
+- `ohscanner.interface.ipc`: No compiler CFG, arbitrary virtual dispatch, alias analysis or full-program authorization proof. Macros are expanded only from the scan's own sources and only when unambiguous; the catalogue is never an #include resolution, and what the expander refused is counted in the macro-expansion limitation rather than assumed away.
+- `ohscanner.interface.ipc`: Unmodeled callees/authorization remain evidence obligations; no findings does not establish safety.
+- `ohscanner.interface.ipc`: Interface-descriptor identity is read from the class's own base clause: a comparison is counted as this transaction's guard only when the source names the interface the class implements. A comparison against another interface, or one whose identity the analysed sources do not state, is reported with that reason instead of counting as a guard or as a proven mismatch.
+- `ohscanner.interface.ipc`: Descriptor consistency is separate from caller authorization; relay candidates are not exploit proofs.
+- `ohscanner.interface.ipc`: IPC roots require a source-indexed class dispatcher with code, request Parcel and reply Parcel; explicit service/transport roots and Stub inner helpers are separate allowlisted entry kinds. Test/fuzz/mock path roots are excluded from product candidate analysis and counted in limitations. Entry discovery is not reachability: dispatcher-level guards and macro-conditional reachability remain obligations, not conclusions.
+- `ohscanner.interface.ipc`: Entry-coverage measurements are published in the interface research report, not in this result.
+- `ohscanner.interface.ipc`: Cross-service boundary coverage: 0 call(s) on a handle built by iface_cast<> in the scanned sources, 0 carrying the original caller's identity (SetCallingIdentity with a calling-token value active), 0 executing as the service. Each boundary is recorded with the identity that crossed it; no candidate is emitted from the boundary itself, and a downstream service's own guards are not read from this corpus.
+- `ohscanner.interface.ipc`: Entry/dispatch coverage: 10 dispatcher(s) (8 in stub classes, 0 with a recognizable guard before dispatch), 149 binding(s) by grade {'source_dispatch': 148, 'unresolved_handler': 1}, transactions {'dynamic': 108, 'enum': 40, 'unresolved': 1}, unresolved dispatch {'map_found_but_never_dispatched': 1}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe.
+- `ohscanner.interface.ipc`: Excluded 1 test/fuzz/mock entry root(s) from product candidate analysis; the source paths are retained in scope, but test-target findings are not mixed into product candidates.
+- `ohscanner.interface.ipc`: Loops are conservatively explored zero/one iterations; no induction or termination proof.
+- `ohscanner.interface.ipc`: Macro catalogue truncated at 400 source(s): a macro defined only in a file that was not catalogued stays unexpanded, and a guard inside it is not seen.
+- `ohscanner.interface.ipc`: Macro expansion: 103 invocation(s) expanded in 11 file(s), 0 of them carrying control flow; 20 file(s) left unexpanded (conditional_definition_requires_build_profile=268,raw_string_tokenization_not_supported=7,source_local_undef_not_supported=13,variadic_stringify_or_token_paste=4661). The catalogue is the scan's own sources, never #include; where a macro was expanded, quoted conditions come from the expanded form while a finding's line is mapped back to the original file.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for InterfaceStateCallbackStub::OnInterfaceAdded; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for InterfaceStateCallbackStub::OnInterfaceChanged; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for InterfaceStateCallbackStub::OnInterfaceRemoved; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (7 definitions) for SharingEventCallbackStub::OnInterfaceSharingStateChanged; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (7 definitions) for SharingEventCallbackStub::OnSharingStateChanged; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (7 definitions) for SharingEventCallbackStub::OnSharingUpstreamChanged; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/c/net_trafficfilter/src/net_trafficfilter_adapter.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/ethernet/customeap/eap_event_mgr.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/ethernet/ethernet_module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/vpn/src/vpn_module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/js/napi/vpnext/src/vpn_module_ext.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/native/netvpnclient/src/networkvpn_client.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ethernetclient/include/ethernet_client.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ethernetclient/include/proxy/inet_eap_postback_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ethernetclient/include/proxy/inet_register_eap_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ethernetclient/include/proxy/interface_state_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ethernetclient/include/proxy/net_eap_callback_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/include/netmanager_ext_log.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/netfirewallclient/include/i_net_intercept_record_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/netfirewallclient/include/i_netfirewall_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/netfirewallclient/include/netfirewall_intercept_record_callback_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/netshareclient/include/networkshare_client.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/netshareclient/include/proxy/ipccallback/isharing_event_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/netvpnclient/include/vpn_state.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/networksliceclient/include/i_networkslice_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/networksliceclient/include/networkslice_client.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/c/include/net_ethernet.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/c/include/net_ethernet_type.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/c/net_trafficfilter/net_trafficfilter.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/c/net_trafficfilter/net_trafficfilter_type.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/ethernetmanager/include/ethernet_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/mdnsmanager/include/mdns_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/netfirewallmanager/include/netfirewall_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/netfirewallmanager/include/netfirewall_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/netfirewallmanager/src/netfirewall_db_helper.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/networksharemanager/include/networkshare_main_statemachine.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/networksharemanager/include/networkshare_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/networksharemanager/include/networkshare_sub_statemachine.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/networksharemanager/src/networkshare_service.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/networkslicemanager/include/broadcast_proxy.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/networkslicemanager/include/networkslice_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/networkslicemanager/include/networkslice_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/vpnmanager/include/networkvpn_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/vpnmanager/src/net_vpn_impl.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/wearabledistributednetmanager/include/wearable_distributed_net_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/dev_interface_state_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/eap_hdi_wpa_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/eth_eap_profile_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/ethernet_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/ethernet_configuration_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/ethernet_device_info_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/ethernet_exec_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/ethernet_lan_management_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/ethernet_mac_ip_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/ethernet_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/ethernet_service_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/ethernet_service_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/ethernet_service_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/mac_address_info_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/net_eap_callback_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/ethernetmanager/unittest/ethernet_manager_test/net_eap_handler_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/mdnsmanager/unittest/mdns_manager_test/mdns_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/mdnsmanager/unittest/mdns_protocol_test/mdns_protocol_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/netfirewall_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/netfirewall_common_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/netfirewall_default_rule_parser_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/netfirewall_hisysevent_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/netfirewall_rule_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/netfirewall_rule_native_helper_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/netfirewall_service_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/netfirewall_service_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/netfirewall_service_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/netfirewall_uid_rule_generator_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/nettrafficfilter_iptables_command_builder_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/nettrafficfilter_nfqueue_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/nettrafficfilter_packetrule_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/nettrafficfilter_redirect_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netfirewallmanager/unittest/netfirewallmanager_test/nettrafficfilter_redirector_context_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netmanager_ext_mock_test/mock_i_net_conn_base_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netmanager_ext_mock_test/mock_i_network_conn_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/netmanager_ext_mock_test/mock_i_network_vpn_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/netshare_core_test/NetShareCallbackTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/netshare_core_test/NetShareErrorTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/netshare_core_test/NetShareRequestTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/netshare_core_test/NetShareResponseTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/netshare_core_test/NetShareSSLTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/netshare_core_test/NetShareServerTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/netshare_core_test/NetShareTaskTaskTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/edm_parameter_utils_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/interface_configuration_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/net_event_report_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/netshare_result_callback_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/netshare_result_callback_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/networkshare_hisysevent_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/networkshare_main_statemachine_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/networkshare_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/networkshare_manager_usb_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/networkshare_notification_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/networkshare_request_parcel_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/networkshare_service_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/networkshare_service_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/networkshare_sub_statemachine_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/networkshare_tracker_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/networkshare_upstreammonitor_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/router_advertisement_daemon_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/sharing_event_callback_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/sharing_event_callback_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/static_configuration_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networksharemanager/unittest/networkshare_manager_test/sys_timer_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networkslicemanager/unittest/networkslice_manager_test/allowednssaiconfig_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networkslicemanager/unittest/networkslice_manager_test/broadcast_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networkslicemanager/unittest/networkslice_manager_test/dns_result_callback_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networkslicemanager/unittest/networkslice_manager_test/hwnetworkslicemanager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networkslicemanager/unittest/networkslice_manager_test/networkslice_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networkslicemanager/unittest/networkslice_manager_test/networkslice_kernel_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networkslicemanager/unittest/networkslice_manager_test/networkslice_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networkslicemanager/unittest/networkslice_manager_test/networkslice_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networkslicemanager/unittest/networkslice_manager_test/networkslice_service_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networkslicemanager/unittest/networkslice_manager_test/networkslice_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networkslicemanager/unittest/networkslice_manager_test/nrunsolicitedmsgparser_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networkslicemanager/unittest/networkslice_manager_test/state_utils_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/networkslicemanager/unittest/networkslice_manager_test/urspconfig_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/data_flow_statistics_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/native_net_conn_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_activate_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_conn_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_conn_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_conn_service_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_datashare_utils_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_policy_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_push_stats_info_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_stats_cached_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_stats_callback_interface_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_stats_callback_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_stats_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_stats_data_handler_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_stats_database_helper_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_stats_history_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_stats_info_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_stats_listener_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_stats_service_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_stats_service_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/net_stats_service_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/netmanager_data_share_utils_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/route_utils_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/ut_firewall_rule.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/ut_net_policy_callback.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/ut_net_policy_core.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/ut_net_policy_service.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/ut_net_policy_traffic.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/ut_net_quota_policy.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/conn_vpn_manager_test/ut_netmanager_base_common.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/extended_vpn_ctl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/ipsec_vpn_config_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/ipsec_vpn_ctl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/l2tp_vpn_config_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/l2tp_vpn_ctl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/multi_vpn_helper_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/net_vpn_impl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/networkvpn_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/networkvpn_service_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/open_vpn_ctl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/openvpn_config_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/sysvpn_config_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/virtual_vpn_ctl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/vpn_data_bean_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/vpn_database_helper_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/vpn_template_processor_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/vpn_ut_config_raw_data_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/sys_vpn_manager_test/vpn_ut_config_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_core_test/VpnCallbackTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_core_test/VpnErrorTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_core_test/VpnRequestTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_core_test/VpnResponseTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_core_test/VpnSSLTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_core_test/VpnServerTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_core_test/VpnTaskTaskTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_core_test/VpnTest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_manager_ext_test/networkvpn_service_ext_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_manager_test/extended_vpn_ctl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_manager_test/net_vpn_impl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_manager_test/networkvpn_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_manager_test/networkvpn_service_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/vpnmanager/unittest/vpn_manager_test/networkvpn_service_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/wearabledistributednetmanager/unittest/wearable_distributed_net_manager_test/wearable_distributed_net_agent_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/wearabledistributednetmanager/unittest/wearable_distributed_net_manager_test/wearable_distributed_net_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/wearabledistributednetmanager/unittest/wearable_distributed_net_manager_test/wearable_distributed_net_config_forward_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/wearabledistributednetmanager/unittest/wearable_distributed_net_manager_test/wearable_distributed_net_link_info_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/wearabledistributednetmanager/unittest/wearable_distributed_net_manager_test/wearable_distributed_net_management_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/wearabledistributednetmanager/unittest/wearable_distributed_net_manager_test/wearable_distributed_net_service_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/wearabledistributednetmanager/unittest/wearable_distributed_net_manager_test/wearable_distributed_net_static_configuration_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/wearabledistributednetmanager/unittest/wearable_distributed_net_manager_test/wearable_distributed_net_supplier_info_test.cpp
+- `ohscanner.interface.ipc`: Path budget exceeded: conservative state join; path precision reduced.
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/c/net_trafficfilter/src/net_trafficfilter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/c/net_trafficfilter/src/net_trafficfilter_adapter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/js/napi/ethernet/customeap/eap_event_mgr.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/js/napi/ethernet/customeap/eap_napi_event.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/native/ethernetclient/src/proxy/net_eap_callback_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/native/netfirewallclient/src/netfirewall_intercept_record_callback_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/native/vpnextension/src/js_vpn_extension.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ethernetclient/include/eap_data.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/c/include/net_ethernet_type.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/c/net_trafficfilter/net_trafficfilter_type.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/c/src/net_ethernet.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/netfirewallmanager/src/netfirewall_database.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/netfirewallmanager/src/netfirewall_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/networksharemanager/src/networkshare_main_statemachine.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/networksharemanager/src/networkshare_sub_statemachine.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/networksharemanager/src/networkshare_tracker.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/networksharemanager/src/networkshare_trafficlimit.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/networkslicemanager/src/broadcast_proxy.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/networkslicemanager/src/networkslice_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/vpnmanager/include/ipsec_vpn_ctl.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/vpnmanager/include/open_vpn_ctl.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/vpnmanager/src/open_vpn_ctl.cpp
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: EapData::Unmarshalling
+- `ohscanner.interface.ipc`: Owner M2 adapter: single interpretation pass; partial source inspection is not full analysis.
+- `ohscanner.interface.ipc`: Unavailable AST units: 0; cross-file context from these units is unknown.
+- `ohscanner.interface.ipc`: M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.
+- `ohscanner.interface.ipc`: Execution is synchronous; hard timeout/memory isolation is not yet implemented.
+- `ohscanner.interface.ipc`: Diagnostic does not establish vulnerability, reachability or security impact.
+- `ohscanner.interface.ipc`: INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.

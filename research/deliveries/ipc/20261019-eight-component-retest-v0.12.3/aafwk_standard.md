@@ -1,0 +1,1342 @@
+# OHScanner M2 reviewed-detector execution
+
+> Detection candidates and coverage limitations, NOT validated vulnerabilities.
+
+- Source repository (declared): `openharmony/aafwk_standard`
+- Pinned commit: `834a566b1372268c7bbb0c40362322f812ca6efc`
+- Git tree: `c3744c8c230573a4bcdb76bf49493a1ea61c72d1`
+- Snapshot SHA-256: `13aead400f536e53d1aa39c6c70d4bb48d70045ef25e88efbf633deee660deb6`
+- Source files indexed: 1771
+- Parsing coverage: `{"complete": 1222, "not_run": 18, "partial": 531}`
+- Detector runs: 1
+- Total unverified diagnostics: 15
+- Validated vulnerabilities: **0** (no runtime verification performed)
+
+## Per-detector results
+
+| Detector | Execution | Inspected files | Complete | Partial | Not analyzed | Diagnostics | Coverage |
+|---|---|---:|---:|---:|---:|---:|---|
+| `ohscanner.interface.ipc` | completed | 1753 | 1222 | 531 | 0 | 15 | partial |
+
+## Candidate evidence and missing proof
+
+| Detector | Candidate ID | File:line | Rule | Unverified proof obligations |
+|---|---|---|---|---|
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:25748db3a6521194` | `frameworks/kits/ability/native/src/continuation/distributed/reverse_continuation_scheduler_primary_stub.cpp:63` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; descriptor_identity_mismatch=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:f304e4a1b7b7f11d` | `interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp:168` | `ipc.capability.export` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; dispatch_binding=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:9a9a863804e301ba` | `interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp:359` | `ipc.capability.export` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; dispatch_binding=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:74031b465b2868c6` | `services/abilitymgr/src/ability_manager_stub.cpp:294` | `ipc.capability.export` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:506ab858f654d401` | `services/abilitymgr/src/ability_manager_stub.cpp:354` | `ipc.auth.missing` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:5e0a6768c74cd6b7` | `services/abilitymgr/src/ability_manager_stub.cpp:415` | `ipc.auth.missing` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:8d457e4d6aaaf682` | `services/abilitymgr/src/ability_manager_stub.cpp:437` | `ipc.auth.missing` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:01ec02560f47d14c` | `services/abilitymgr/src/ability_manager_stub.cpp:523` | `ipc.auth.missing` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:c9ee75d832067c43` | `services/abilitymgr/src/ability_manager_stub.cpp:549` | `ipc.auth.missing` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:778b7b650a4d9ea4` | `services/abilitymgr/src/ability_manager_stub.cpp:583` | `ipc.capability.export` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:b98007fd996de438` | `services/abilitymgr/src/ability_manager_stub.cpp:1008` | `ipc.auth.missing` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:737f8115e5a95d64` | `services/abilitymgr/src/ability_manager_stub.cpp:1260` | `ipc.capability.export` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:51ae6188769452a5` | `services/abilitymgr/src/ability_scheduler_stub.cpp:208` | `ipc.auth.missing` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:e13e83ec32804c75` | `services/abilitymgr/src/ability_scheduler_stub.cpp:213` | `ipc.capability.export` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:e3b279699b3f42cb` | `services/abilitymgr/src/ability_scheduler_stub.cpp:628` | `ipc.capability.export` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+
+## Coverage gaps
+
+Scope counts source inspection, not complete semantic coverage; partial remains unknown.
+Files without a claiming detector: 18
+- `form_runtime/frameworks/js/napi/form_binding_data/form_binding_data.js`
+- `form_runtime/frameworks/js/napi/form_extension/form_extension.js`
+- `form_runtime/frameworks/js/napi/form_extension_context/form_extension_context.js`
+- `frameworks/kits/appkit/native/ability_delegator/src/runner_runtime/delegator_mgmt.js`
+- `interfaces/kits/napi/aafwk/ability/ability.js`
+- `interfaces/kits/napi/aafwk/ability_context/ability_context.js`
+- `interfaces/kits/napi/aafwk/app/ability_stage/ability_stage.js`
+- `interfaces/kits/napi/aafwk/app/ability_stage_context/ability_stage_context.js`
+- `interfaces/kits/napi/aafwk/app/application_context/application_context.js`
+- `interfaces/kits/napi/aafwk/app/context/context.js`
+- `interfaces/kits/napi/aafwk/app/test_runner/test_runner.js`
+- `interfaces/kits/napi/aafwk/callee/callee.js`
+- `interfaces/kits/napi/aafwk/caller/caller.js`
+- `interfaces/kits/napi/aafwk/extensioncontext/extension_context.js`
+- `interfaces/kits/napi/aafwk/service_extension_ability/service_extension_ability.js`
+- `interfaces/kits/napi/aafwk/service_extension_context/service_extension_context.js`
+- `interfaces/kits/napi/aafwk/static_subscriber_extension/static_subscriber_extension_ability.js`
+- `interfaces/kits/napi/aafwk/static_subscriber_extension_context/static_subscriber_extension_context.js`
+- `ohscanner.interface.ipc`: partial, 1222/1753 applicable files examined; unexamined=531
+
+## Limitations
+
+- Diagnostics are candidates/evidence only, not proof of security impact.
+- Zero diagnostics does NOT mean the component is free of vulnerabilities.
+- Git origin name is user declared; source is pinned local objects, not an OH product build.
+- No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.
+- Some indexed source files have no claiming detector; their security analysis is unknown.
+- `ohscanner.interface.ipc`: Model=oh-ipc-2026.10-v23; first-party bounded structured syntax interpretation, no external scanner execution.
+- `ohscanner.interface.ipc`: Private branch pass reconstructs Tree-sitter nodes; public shared facts/schema are unchanged.
+- `ohscanner.interface.ipc`: No compiler CFG, arbitrary virtual dispatch, alias analysis or full-program authorization proof. Macros are expanded only from the scan's own sources and only when unambiguous; the catalogue is never an #include resolution, and what the expander refused is counted in the macro-expansion limitation rather than assumed away.
+- `ohscanner.interface.ipc`: Unmodeled callees/authorization remain evidence obligations; no findings does not establish safety.
+- `ohscanner.interface.ipc`: Interface-descriptor identity is read from the class's own base clause: a comparison is counted as this transaction's guard only when the source names the interface the class implements. A comparison against another interface, or one whose identity the analysed sources do not state, is reported with that reason instead of counting as a guard or as a proven mismatch.
+- `ohscanner.interface.ipc`: Descriptor consistency is separate from caller authorization; relay candidates are not exploit proofs.
+- `ohscanner.interface.ipc`: IPC roots require a source-indexed class dispatcher with code, request Parcel and reply Parcel; explicit service/transport roots and Stub inner helpers are separate allowlisted entry kinds. Test/fuzz/mock path roots are excluded from product candidate analysis and counted in limitations. Entry discovery is not reachability: dispatcher-level guards and macro-conditional reachability remain obligations, not conclusions.
+- `ohscanner.interface.ipc`: Entry-coverage measurements are published in the interface research report, not in this result.
+- `ohscanner.interface.ipc`: Cross-service boundary coverage: 0 call(s) on a handle built by iface_cast<> in the scanned sources, 0 carrying the original caller's identity (SetCallingIdentity with a calling-token value active), 0 executing as the service. Each boundary is recorded with the identity that crossed it; no candidate is emitted from the boundary itself, and a downstream service's own guards are not read from this corpus.
+- `ohscanner.interface.ipc`: Entry/dispatch coverage: 76 dispatcher(s) (68 in stub classes, 0 with a recognizable guard before dispatch), 512 binding(s) by grade {'source_dispatch': 512}, transactions {'dynamic': 278, 'enum': 234}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe.
+- `ohscanner.interface.ipc`: Excluded 157 test/fuzz/mock entry root(s) from product candidate analysis; the source paths are retained in scope, but test-target findings are not mixed into product candidates.
+- `ohscanner.interface.ipc`: Loops are conservatively explored zero/one iterations; no induction or termination proof.
+- `ohscanner.interface.ipc`: Macro catalogue truncated at 400 source(s): a macro defined only in a file that was not catalogued stays unexpanded, and a guard inside it is not seen.
+- `ohscanner.interface.ipc`: Macro expansion: 900 invocation(s) expanded in 550 file(s), 24 of them carrying control flow; 137 file(s) left unexpanded (ambiguous_definition_variants=2,expansion_worsened_the_parse=2,raw_string_tokenization_not_supported=2,source_local_undef_not_supported=133,variadic_stringify_or_token_paste=304). The catalogue is the scan's own sources, never #include; where a macro was expanded, quoted conditions come from the expanded form while a finding's line is mapped back to the original file.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::CloseAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::CompleteFirstFrameDrawing; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::DelegatorDoAbilityBackground; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::DelegatorDoAbilityForeground; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::DumpState; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::FinishUserTest; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::GetMissionSnapshot; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::GetTopAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::MinimizeAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::RegisterSnapshotHandler; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::RegisterWindowManagerServiceHandler; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::ReleaseAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::SendANRProcessID; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::StartSyncRemoteMissions; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::StartUser; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::StartUserTest; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::StopSyncRemoteMissions; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (10 definitions) for AbilityManagerStub::StopUser; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (11 definitions) for AbilityManagerStub::ForceTimeoutForTest; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (11 definitions) for AbilityManagerStub::IsRunningInStabilityTest; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (11 definitions) for AbilityManagerStub::RegisterMissionListener; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (11 definitions) for AbilityManagerStub::SetAbilityController; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (11 definitions) for AbilityManagerStub::UnRegisterMissionListener; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilityManagerStub::CleanAllMissions; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilityManagerStub::CleanMission; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilityManagerStub::ContinueAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilityManagerStub::ContinueMission; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilityManagerStub::GetAbilityRunningInfos; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilityManagerStub::GetExtensionRunningInfos; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilityManagerStub::GetMissionInfo; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilityManagerStub::GetMissionInfos; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilityManagerStub::GetProcessRunningInfos; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilityManagerStub::LockMissionForCleanup; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilityManagerStub::NotifyCompleteContinuation; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilityManagerStub::SetMissionLabel; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilityManagerStub::UnlockMissionForCleanup; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilitySchedulerStub::ContinueAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilitySchedulerStub::DumpAbilityInfo; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AbilitySchedulerStub::NotifyContinuationResult; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AmsMgrStub::RegisterAppStateCallback; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AppMgrStub::AbilityCleaned; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AppMgrStub::ApplicationBackgrounded; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AppMgrStub::ApplicationForegrounded; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AppMgrStub::ApplicationTerminated; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AppMgrStub::AttachApplication; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AppMgrStub::ClearUpApplicationData; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AppMgrStub::FinishUserTest; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AppMgrStub::GetAllRunningProcesses; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AppMgrStub::GetAmsMgr; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for AppMgrStub::StartUserTestProcess; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for DataObsManagerStub::NotifyChange; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for DataObsManagerStub::RegisterObserver; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for DataObsManagerStub::UnregisterObserver; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for FormHostStub::OnAcquireState; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for FormHostStub::OnAcquired; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for FormHostStub::OnUninstall; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for FormHostStub::OnUpdate; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for FormSupplyStub::OnAcquire; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for FormSupplyStub::OnAcquireStateResult; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for FormSupplyStub::OnEventHandle; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for MissionListenerStub::OnMissionCreated; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for MissionListenerStub::OnMissionDestroyed; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for MissionListenerStub::OnMissionIconUpdated; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for MissionListenerStub::OnMissionMovedToFront; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for MissionListenerStub::OnMissionSnapshotChanged; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for TestObserverStub::ExecuteShellCommand; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for TestObserverStub::TestFinished; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (2 definitions) for TestObserverStub::TestStatus; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (26 definitions) for AbilityManagerStub::StartAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AbilityManagerStub::KillProcess; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AbilityManagerStub::UninstallApp; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AbilitySchedulerStub::ScheduleAbilityTransaction; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AbilitySchedulerStub::ScheduleCommandAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AbilitySchedulerStub::ScheduleConnectAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AbilitySchedulerStub::ScheduleDisconnectAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AbilitySchedulerStub::ScheduleRestoreAbilityState; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AbilitySchedulerStub::ScheduleSaveAbilityState; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AbilitySchedulerStub::ScheduleUpdateConfiguration; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AbilitySchedulerStub::SendResult; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AppSchedulerHost::ScheduleAbilityStage; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AppSchedulerHost::ScheduleAcceptWant; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AppSchedulerHost::ScheduleBackgroundApplication; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AppSchedulerHost::ScheduleCleanAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AppSchedulerHost::ScheduleConfigurationUpdated; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AppSchedulerHost::ScheduleForegroundApplication; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AppSchedulerHost::ScheduleLaunchAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AppSchedulerHost::ScheduleLaunchApplication; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AppSchedulerHost::ScheduleLowMemory; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AppSchedulerHost::ScheduleProcessSecurityExit; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AppSchedulerHost::ScheduleProfileChanged; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AppSchedulerHost::ScheduleShrinkMemory; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for AppSchedulerHost::ScheduleTerminateApplication; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for FormProviderStub::AcquireProviderFormInfo; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for FormProviderStub::AcquireState; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for FormProviderStub::EventNotify; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for FormProviderStub::FireFormEvent; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for FormProviderStub::NotifyFormCastTempForm; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for FormProviderStub::NotifyFormDelete; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for FormProviderStub::NotifyFormUpdate; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (3 definitions) for FormProviderStub::NotifyFormsDelete; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (39 definitions) for AbilityConnectionStub::OnAbilityConnectDone; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (39 definitions) for AbilityConnectionStub::OnAbilityDisconnectDone; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilityManagerStub::BlockAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilityManagerStub::BlockAmsService; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilityManagerStub::BlockAppService; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilityManagerStub::GetMissionIdByToken; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilityManagerStub::MoveMissionToFront; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilityManagerStub::SetMissionIcon; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::BatchInsert; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::Call; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::Delete; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::DenormalizeUri; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::ExecuteBatch; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::GetFileTypes; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::GetType; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::Insert; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::NormalizeUri; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::OpenFile; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::OpenRawFile; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::Query; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::Reload; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::ScheduleNotifyChange; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::ScheduleRegisterObserver; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::ScheduleUnregisterObserver; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (4 definitions) for AbilitySchedulerStub::Update; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (5 definitions) for AbilityManagerStub::StartAbilityByCall; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (5 definitions) for AbilityManagerStub::TerminateAbilityByCaller; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilityManagerStub::AbilityTransitionDone; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilityManagerStub::AcquireDataAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilityManagerStub::AttachAbilityThread; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilityManagerStub::ClearUpApplicationData; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilityManagerStub::ConnectAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilityManagerStub::DisconnectAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilityManagerStub::ReleaseDataAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilityManagerStub::ScheduleCommandAbilityDone; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilityManagerStub::ScheduleConnectAbilityDone; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilityManagerStub::ScheduleDisconnectAbilityDone; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilityManagerStub::TerminateAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilityManagerStub::TerminateAbilityResult; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilityManagerStub::UpdateConfiguration; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (6 definitions) for AbilitySchedulerStub::BlockAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (7 definitions) for AbilitySchedulerStub::CallRequest; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (7 definitions) for WantReceiverStub::PerformReceive; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (7 definitions) for WantReceiverStub::Send; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (9 definitions) for AbilityManagerStub::DumpSysState; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (9 definitions) for AbilityManagerStub::StopServiceAbility; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (9 definitions) for ProviderConnectStub::OnAbilityConnectDone; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ability_base/frameworks/native/want/src/pac_map.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ability_base/interfaces/inner_api/base/include/base_interfaces.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ability_base/interfaces/inner_api/base/include/base_object.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ability_base/interfaces/inner_api/want/include/want_params_wrapper.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ability_base/test/unittest/base/base_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ability_base/test/unittest/want/operation_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ability_base/test/unittest/want/patterns_matcher_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ability_base/test/unittest/want/skills_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ability_base/test/unittest/want/want_params_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ability_base/test/unittest/want/want_params_wrapper_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in ability_base/test/unittest/want/want_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/frameworks/js/napi/formHost/native_module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/frameworks/js/napi/formManager/native_module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/frameworks/js/napi/formProvider/native_module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/interfaces/inner_api/include/form_host_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/interfaces/inner_api/include/form_host_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/interfaces/inner_api/include/form_mgr_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/interfaces/inner_api/include/form_mgr_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/interfaces/inner_api/include/form_provider_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/interfaces/inner_api/include/form_provider_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/interfaces/inner_api/include/form_supply_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/interfaces/inner_api/include/form_supply_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/interfaces/kits/native/include/form_errors.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/interfaces/kits/native/include/form_mgr.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/services/include/form_ams_helper.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/services/include/form_bms_helper.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/services/include/form_cache_mgr.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/services/include/form_data_mgr.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/services/include/form_db_cache.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/services/include/form_dump_mgr.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/services/include/form_info_mgr.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/services/include/form_info_storage_mgr.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/services/include/form_mgr_adapter.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/services/include/form_provider_mgr.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/services/include/form_task_mgr.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/services/include/form_timer_mgr.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/mock/include/mock_form_token.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/mock/include/mock_form_user_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemPerformance/include/form_ability_performance.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemPerformance/src/form_ability_performance.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemStress/include/form_ability_stress.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemStress/src/form_ability_stress.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostCommonA/include/form_ability_commona.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostCommonA/src/form_ability_commona.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostCommonB/include/form_ability_commonb.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostCommonB/src/form_ability_commonb.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNoPerm/include/form_ability_no_perm.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNoPerm/src/form_ability_no_perm.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormal/include/form_ability_a.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormal/include/form_ability_deleteform.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormal/include/form_ability_releaseform.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormal/src/form_ability_a.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormal/src/form_ability_deleteform.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormal/src/form_ability_releaseform.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormalB/include/form_ability_b.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormalB/src/form_ability_b.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormalC/include/form_ability_c.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormalC/src/form_ability_c.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNotSys/include/form_ability_not_sys.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNotSys/src/form_ability_not_sys.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestSelfStarting/selfStartingTestHostA/include/form_ability_self_starting_a.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestSelfStarting/selfStartingTestHostA/src/form_ability_self_starting_a.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestSelfStarting/selfStartingTestHostB/include/form_ability_self_starting_b.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/fmsSystemTestSelfStarting/selfStartingTestHostB/src/form_ability_self_starting_b.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/formSystemTestServiceA/include/form_st_service_ability_A.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/formSystemTestServiceA/src/form_st_service_ability_A.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/formSystemTestServiceB/include/form_st_service_ability_B.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/formSystemTestServiceB/src/form_st_service_ability_B.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/formSystemTestServiceC/include/form_st_service_ability_C.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/formSystemTestServiceC/src/form_st_service_ability_C.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/formSystemTestServiceD/include/form_st_service_ability_D.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/formSystemTestServiceD/src/form_st_service_ability_D.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/formSystemTestServiceE/include/form_st_service_ability_E.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/resource/formsystemtestability/formSystemTestServiceE/src/form_st_service_ability_E.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/systemtest/common/include/system_test_form_util.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/systemtest/fms_acquire_form_test/fms_acquire_form_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/systemtest/fms_acquire_form_test_max/fms_acquire_form_test_batch.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/systemtest/fms_acquire_form_test_max/fms_acquire_form_test_max.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/systemtest/fms_delete_form_test/fms_delete_form_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/systemtest/fms_fuzz_test/include/fuzz_test_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/systemtest/fms_fuzz_test/src/fms_fuzz_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/systemtest/fms_performance_test/fms_performance_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/systemtest/fms_release_form_test/fms_release_form_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/systemtest/fms_self_starting_test/fms_self_starting_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/systemtest/fms_stress_test/fms_stress_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_cache_mgr_test/fms_form_cache_mgr_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_data_mgr_test/fms_form_data_mgr_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_db_record_test/fms_form_db_record_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_host_record_test/fms_form_host_record_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_info_mgr_test/fms_form_info_mgr_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_mgr_add_form_test/fms_form_mgr_add_form_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_mgr_cast_temp_form_test/fms_form_mgr_cast_temp_form_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_mgr_death_callback_test/fms_form_mgr_death_callback_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_mgr_delete_form_test/fms_form_mgr_delete_form_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_mgr_lifecycle_update_test/fms_form_mgr_lifecycle_update_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_mgr_message_event_test/fms_form_mgr_message_event_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_mgr_notify_invisible_forms_test/fms_form_mgr_notify_invisible_forms_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_mgr_notify_visible_forms_test/fms_form_mgr_notify_visible_forms_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_mgr_release_form_test/fms_form_mgr_release_form_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_mgr_request_form_test/fms_form_mgr_request_form_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_mgr_update_form_test/fms_form_mgr_update_form_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_provider_data_test/fms_form_provider_data_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_provider_mgr_test/fms_form_provider_mgr_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_set_next_refresh_test/fms_form_set_next_refresh_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_sys_event_receiver_test/fms_form_sys_event_receiver_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in form_runtime/test/unittest/fms_form_timer_mgr_test/fms_form_timer_mgr_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/ability_runtime/include/local_call_record.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/ability_runtime/test/moduletest/ability_caller_fw_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/ability_runtime/test/unittest/ability_context_impl_ut_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/ability_runtime/test/unittest/caller_call_back_ut_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/ability_runtime/test/unittest/local_call_container_ut_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/ability_runtime/test/unittest/local_call_record_ut_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/include/ability.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/include/ability_impl_factory.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/include/ability_loader.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/include/continuation/distributed/reverse_continuation_scheduler_primary_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/include/continuation/distributed/reverse_continuation_scheduler_primary_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/include/continuation/distributed/reverse_continuation_scheduler_replica_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/include/continuation/distributed/reverse_continuation_scheduler_replica_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/include/continuation/remote_register_service/connect_callback_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/include/continuation/remote_register_service/remote_register_service_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/include/istatic_subscriber.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/src/ability_impl.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/src/ability_thread.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/mock/include/mock_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/mock/include/mock_ability_manager_client_interface1.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/mock/include/mock_ability_token.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/ability_context_interface1_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/ability_context_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/ability_impl_active_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/ability_impl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/ability_lifecycle_executor_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/ability_lifecycle_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/ability_permission_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/ability_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/ability_thread_call_request_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/ability_thread_dataability_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/ability_thread_for_ability_on_configuration_update.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/ability_thread_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/continuation_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/data_ability_helper_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/data_ability_impl_file_secondpart_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/data_ability_impl_file_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/data_ability_impl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/data_ability_operation_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/data_ability_result_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/data_uri_utils_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/form_ability_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/form_host_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/form_provider_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/pac_map_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/page_ability_impl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/scene_created_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/service_ability_impl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/ability/native/test/unittest/task_handler_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/app/include/application_env.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/app/include/sys_mgr_client.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/app/src/application_env.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/app/src/ohos_application.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/moduletest/ability_delegator/ability_delegator_args_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/moduletest/ability_delegator/ability_delegator_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/moduletest/ability_delegator/ability_delegator_registry_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/moduletest/ability_delegator/delegator_thread_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/moduletest/ability_delegator/iability_monitor_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/moduletest/ability_delegator/js_test_runner_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/moduletest/ability_delegator/shell_cmd_result_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/ability_delegator/ability_delegator_args_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/ability_delegator/ability_delegator_registry_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/ability_delegator/ability_delegator_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/ability_delegator/delegator_thread_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/ability_delegator/iability_monitor_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/ability_delegator/js_test_runner_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/ability_delegator/shell_cmd_result_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/ability_stage_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/ability_start_setting_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/application_impl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/application_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/context_container_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/context_deal_interface1_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/context_deal_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/context_impl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/native/test/unittest/watchdog_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/test/Mock/include/mock_ability_token.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/test/Mock/include/mock_application.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/test/moduletest/appexecfwk_appkit_native_app_module_test_first.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/test/moduletest/appexecfwk_appkit_native_app_module_test_fourth.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/test/moduletest/appexecfwk_appkit_native_app_module_test_second.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/appkit/test/moduletest/appexecfwk_appkit_native_app_module_test_third.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/test/mock/DemoAbility/demo_ability_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/test/moduletest/cpp/abilitytest/ability_context_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/test/moduletest/cpp/abilitytest/ability_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/test/moduletest/cpp/abilitytest/ability_thread_call_request_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/test/moduletest/cpp/abilitytest/data_ability_helper_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/test/moduletest/cpp/abilitytest/data_ability_operation_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/wantagent/test/unittest/completed_dispatcher_test/completed_dispatcher_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/wantagent/test/unittest/pending_want_test/pending_want_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/wantagent/test/unittest/trigger_Info_test/trigger_Info_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/wantagent/test/unittest/want_agent_helper_test/want_agent_helper_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/wantagent/test/unittest/want_agent_info_test/want_agent_info_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/kits/wantagent/test/unittest/want_agent_test/want_agent_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in idl/codegen/code_generator.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in idl/test/native/include/iidl_test_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in idl/test/ts/common/idl_common.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in idl/test/ts/common/idl_file.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in idl/test/ts/moduletest/ts_code_emitter_test/ts_code_emitter_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in idl/test/ts/unittest/ts_code_emitter_interface_test/ts_code_emitter_interface_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in idl/test/ts/unittest/ts_code_emitter_proxy_test/ts_code_emitter_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in idl/test/ts/unittest/ts_code_emitter_stub_test/ts_code_emitter_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/ability_connect_callback_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/ability_manager_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/ability_scheduler_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/atomic_service_status_callback_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/atomic_service_status_callback_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/continuation/connect_callback_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/continuation/remote_register_service_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/mission_listener_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/mission_listener_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/remote_mission_listener_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/snapshot.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/stop_user_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/stop_user_callback_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/want_receiver_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/want_sender_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/window_manager_service_handler.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/ability_manager/include/window_manager_service_handler_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/ability_controller_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/ams_mgr_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/ams_mgr_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/app_mgr_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/app_mgr_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/app_scheduler_host.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/app_scheduler_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/app_state_callback_host.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/application_state_observer_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/iability_controller.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/iapp_state_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/iapplication_state_observer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/irender_scheduler.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/istart_specified_ability_response.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/include/appmgr/render_scheduler_host.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/app_manager/src/appmgr/application_state_observer_stub.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/dataobs_manager/include/data_ability_observer_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/dataobs_manager/include/data_ability_observer_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/dataobs_manager/include/dataobs_mgr_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/innerkits/uri_permission/include/uri_permission_manager_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/abilityManager/napi_ability_manager.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/abilityManager/native_module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/app/appMgr/native_module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/dataUriUtils/native_module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/featureAbility/feature_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/featureAbility/feature_ability.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/featureAbility/napi_context.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/featureAbility/napi_context.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/featureAbility/native_module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/inner/napi_common/napi_common_configuration.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/inner/napi_common/napi_common_configuration.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/inner/napi_common/napi_common_start_options.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/inner/napi_common/napi_common_start_options.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/inner/napi_common/napi_common_want.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/inner/napi_common/napi_common_want.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/mission_manager/mission_continue_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/particleAbility/native_module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/wantConstant/native_module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/aafwk/wantagent/native_module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/include/ability_manager_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/include/ability_manager_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/include/ability_scheduler_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/include/ability_token_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/include/app_scheduler.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/include/call_record.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/include/mission_info_mgr.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/include/mission_listener_controller.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/include/sa_mgr_client.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/include/task_data_persistence_mgr.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/include/want_receiver_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/include/want_sender_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/src/ability_connect_callback_stub.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/src/ability_manager_service.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/src/ability_token_stub.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/mock/appmgr_test_service/include/appmgr_test_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/mock/libs/aakit/src/mock_ability_connect_callback.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/mock/libs/appexecfwk_core/include/appmgr/app_mgr_interface.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/mock/libs/appexecfwk_core/include/appmgr/app_state_callback_host.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/mock/libs/appexecfwk_core/include/appmgr/iapp_state_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/mock/libs/appexecfwk_core/src/bundlemgr/mock_bundle_manager.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_connect_callback_proxy_test/ability_connect_callback_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_connect_callback_stub_test/ability_connect_callback_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_connect_manage_test/ability_connect_manage_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_manager_client_test/ability_manager_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_manager_client_test/ability_manager_stub_mock_test.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_manager_proxy_test/ability_manager_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_manager_proxy_test/ability_manager_stub_mock.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_manager_service_account_test/ability_manager_service_account_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_manager_stub_test/ability_manager_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_manager_test/ability_manager_stub_mock.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_record_dump_test/ability_record_dump_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_record_test/ability_record_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_record_test/ability_record_test_call.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_scheduler_proxy_test/ability_scheduler_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_scheduler_stub_test/ability_scheduler_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_service_start_test/ability_service_start_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_timeout_test/ability_timeout_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_token_proxy_test/ability_token_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/ability_token_stub_test/ability_token_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/app_scheduler_test/app_scheduler_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/call_container_test/call_container_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/configuration_test/configuration_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/connection_record_test/connection_record_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/data_ability_manager_test/data_ability_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/data_ability_record_test/data_ability_record_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/lifecycle_deal_test/lifecycle_deal_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/lifecycle_test/lifecycle_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/mission_list_dump_test/mission_list_dump_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/mission_list_manager_dump_test/mission_list_manager_dump_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/mission_list_manager_test/mission_list_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/mission_list_manager_ut_test/mission_list_manager_ut_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/mission_list_test/mission_list_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/mission_list_test/mission_list_test_call.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/mission_test/mission_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/pending_want_key_test/pending_want_key_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/pending_want_manager_dump_test/pending_want_manager_dump_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/pending_want_manager_test/pending_want_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/pending_want_record_test/pending_want_record_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/running_infos_test/running_infos_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/screenshot_handler_test/screenshot_handler_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/sender_info_test/sender_info_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/specified_mission_list_test/specified_mission_list_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/start_option_display_id_test/start_option_display_id_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/want_receiver_proxy_test/want_receiver_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/want_receiver_proxy_test/want_receiver_stub_mock.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/want_receiver_stub_test/want_receiver_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/want_sender_info_test/want_sender_info_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/want_sender_proxy_test/want_sender_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/want_sender_proxy_test/want_sender_stub_mock.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/want_sender_stub_test/want_sender_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/abilitymgr/test/unittest/phone/wants_info_test/wants_info_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/include/app_state_observer_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/src/app_running_manager.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/mock/include/mock_ability_token.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/mock/include/sys_mgr_client.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_ability_running_record_test/ams_ability_running_record_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_app_death_recipient_test/ams_app_death_recipient_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_app_life_cycle_test/ams_app_life_cycle_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_app_mgr_client_test/ams_app_mgr_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_app_running_record_test/ams_app_running_record_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_app_state_callback_test/ams_app_state_callback_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_app_workflow_test/ams_workflow_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_ipc_interface_test/ams_ipc_appmgr_interface_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_ipc_interface_test/ams_ipc_appscheduler_interface_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_mgr_kill_process_test/ams_mgr_kill_process_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_mgr_proxy_test/ams_mgr_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_mgr_scheduler_dump_test/ams_mgr_scheduler_dump_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_mgr_scheduler_test/ams_mgr_scheduler_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_mgr_stub_test/ams_mgr_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_recent_app_list_test/ams_recent_app_list_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_service_app_spawn_client_test/ams_service_app_spawn_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_service_app_spawn_msg_wrapper_test/ams_service_app_spawn_msg_wrapper_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_service_app_spawn_socket_test/ams_service_app_spawn_socket_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_service_event_drive_test/ams_service_event_drive_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_service_load_ability_process_test/ams_service_load_ability_process_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/ams_service_startup_test/ams_service_startup_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/app_mgr_proxy_test/app_mgr_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/app_mgr_service_dump_test/app_mgr_service_dump_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/app_mgr_service_event_handler_test/app_mgr_service_event_handler_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/app_mgr_stub_test/app_mgr_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/appmgr/test/unittest/app_running_processes_info_test/app_running_processes_info_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/dataobsmgr/include/dataobs_mgr_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/dataobsmgr/include/dataobs_mgr_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/dataobsmgr/test/unittest/phone/data_ability_observer_proxy_test/data_ability_observer_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/dataobsmgr/test/unittest/phone/data_ability_observer_stub_test/data_ability_observer_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/dataobsmgr/test/unittest/phone/dataobs_mgr_client_test/dataobs_mgr_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/dataobsmgr/test/unittest/phone/dataobs_mgr_inner_test/dataobs_mgr_inner_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/dataobsmgr/test/unittest/phone/dataobs_mgr_proxy_test/dataobs_mgr_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/dataobsmgr/test/unittest/phone/dataobs_mgr_service_test/dataobs_mgr_service_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/dataobsmgr/test/unittest/phone/dataobs_mgr_stub_test/dataobs_mgr_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/mock/include/mock_context.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/mock/src/mock_bundle_mgr.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/ability_manager_client_test/ability_manager_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/ability_manager_service_dump_test/ability_manager_service_dump_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/ability_record_test/ability_record_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/ability_timeout_module_test/ability_timeout_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/app_mgr_client_test/app_mgr_client_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/call_module_test/call_ability_service_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/ability_running_record_test/ams_ability_running_record_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/app_life_cycle_test/ams_app_life_cycle_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/app_mgr_service_test/ams_app_mgr_service_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/app_recent_list_test/ams_app_recent_list_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/app_running_processes_info_module_test/app_running_processes_info_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/app_running_record_test/ams_app_running_record_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/app_service_flow_test/ams_app_service_flow_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/ipc_ams_mgr_test/ams_ipc_ams_mgr_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/ipc_app_mgr_test/ams_ipc_app_mgr_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/ipc_app_scheduler_test/ams_ipc_app_scheduler_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/service_app_spawn_client_test/ams_service_app_spawn_client_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/service_event_drive_test/ams_service_event_drive_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/service_start_process_test/ams_service_start_process_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/common/ams/specified_ability_service_test/specified_ability_service_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/ipc_ability_connect_test/ipc_ability_connect_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/ipc_ability_mgr_test/ipc_ability_mgr_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/ipc_ability_scheduler_test/ipc_ability_scheduler_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/mission_dump_test/mission_dump_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/on_new_want_module_test/on_new_want_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/panding_want_manager_test/panding_want_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/running_infos_module_test/running_infos_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in services/test/moduletest/start_option_display_id_test/start_option_display_id_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsAbilityAppendTestA/src/main_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsAbilityAppendTestA/src/second_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsAbilityAppendTestB/src/main_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsConfigurationUpdatedSingletonTest/src/main_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsConfigurationUpdatedTest/src/main_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsConfigurationUpdatedTest/src/second_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestA/src/main_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestA/src/second_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestB/src/main_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestPageA/src/ability_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestPageA/src/ability_context_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestPageA/src/ability_life_cycle_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestPageA/src/life_cycle_call_backs_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestPageA/src/life_cycle_observer_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestService/src/ability_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestService/src/ability_connection_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestService/src/ability_context_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestService/src/ability_life_cycle_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestService/src/life_cycle_call_backs_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsKitSystemTestService/src/life_cycle_observer_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsStDataAbility/src/verify_act_page_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestB/src/amsstabilityb1.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceA/include/ams_st_service_ability_a1.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceA/src/ams_st_service_ability_a1.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceB/include/ams_st_service_ability_b2.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceB/include/ams_st_service_ability_b3.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceB/src/ams_st_service_ability_b2.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceB/src/ams_st_service_ability_b3.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceC/include/ams_st_service_ability_c4.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceC/src/ams_st_service_ability_c4.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceD/include/ams_st_service_ability_d1.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceD/src/ams_st_service_ability_d1.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceE/include/ams_st_service_ability_e2.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceE/src/ams_st_service_ability_e2.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceG/include/ams_st_service_ability_g1.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceG/src/ams_st_service_ability_g1.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceH/include/ams_st_service_ability_h1.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceH/src/ams_st_service_ability_h1.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/serviceAbilityA/include/service_ability_a.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/resource/amssystemtestability/abilitySrc/serviceAbilityA/src/verify_act_first_ability.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/systemtest/common/ams/ams_aa_command_test/ams_aa_command_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/systemtest/common/ams/ams_ability_append_test/ams_ability_append_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/systemtest/common/ams/ams_ability_state_age_manual_test/ams_ability_state_age_manual_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/systemtest/common/ams/ams_ability_state_test/ams_ability_state_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/systemtest/common/ams/ams_ability_visible_test/ams_ability_visible_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/systemtest/common/ams/ams_app_process_manage_test/ams_app_process_manage_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/systemtest/common/ams/ams_check_service/access_control_check.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/systemtest/common/ams/ams_configuration_updated_test/ams_configuration_updated_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/systemtest/common/ams/ams_data_ability_test/ams_data_ability_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/systemtest/common/ams/ams_dfx_test/ams_dfx_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/systemtest/common/ams/ams_service_ability_test/ams_service_ability_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/systemtest/common/ams/tool/include/st_ability_util.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/aa/include/itest_observer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/aa/src/ability_command.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/moduletest/aa/aa_command_dump_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/moduletest/aa/aa_command_dumpsys_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/moduletest/aa/aa_command_start_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/moduletest/aa/aa_command_stop_service_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/moduletest/ability_delegator/ability_command_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/moduletest/ability_delegator/shell_command_result_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/moduletest/ability_delegator/test_observer_module_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/systemtest/aa/aa_command_dump_system_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/systemtest/aa/aa_command_start_system_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/systemtest/aa/aa_command_stop_service_system_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/unittest/aa/aa_command_dump_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/unittest/aa/aa_command_dumpsys_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/unittest/aa/aa_command_screen_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/unittest/aa/aa_command_start_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/unittest/aa/aa_command_stop_service_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/unittest/aa/aa_command_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/unittest/ability_delegator/ability_command_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/unittest/ability_delegator/shell_command_result_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/unittest/ability_delegator/test_observer_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in tools/test/unittest/ability_tool/ability_tool_test.cpp
+- `ohscanner.interface.ipc`: Preprocessor conditional inside a function body: arms are explored as alternatives because the build variant is unknown. A guard written inside an arm is credited only on that arm's paths, the no-arm-taken path is kept when the chain has no #else, and facts proved before the conditional still hold in every arm.
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/frameworks/native/base/src/base_object.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/frameworks/native/base/src/bool_wrapper.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/frameworks/native/base/src/byte_wrapper.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/frameworks/native/base/src/double_wrapper.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/frameworks/native/base/src/float_wrapper.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/frameworks/native/base/src/int_wrapper.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/frameworks/native/base/src/long_wrapper.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/frameworks/native/base/src/short_wrapper.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/frameworks/native/base/src/string_wrapper.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/frameworks/native/base/src/zchar_wrapper.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/frameworks/native/want/src/array_wrapper.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/frameworks/native/want/src/pac_map.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/base_def.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/base_interfaces.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/bool_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/byte_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/double_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/float_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/int_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/ipc_singleton.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/light_refbase.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/long_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/remote_object_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/short_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/string_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/user_object_base.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/user_object_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/base/include/zchar_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/configuration/include/configuration.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/uri/include/uri.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/want/include/array_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/want/include/element_name.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/want/include/extra_params.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/want/include/operation.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/want/include/operation_builder.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/want/include/pac_map.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/want/include/patterns_matcher.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/want/include/skills.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/want/include/want.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/want/include/want_params.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/interfaces/inner_api/want/include/want_params_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability_base/test/unittest/base/base_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/frameworks/js/napi/formHost/napi_form_host.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/frameworks/js/napi/form_binding_data/form_binding_data.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/include/form_ashmem.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/include/form_host_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/include/form_host_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/include/form_mgr_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/include/form_mgr_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/include/form_provider_data.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/include/form_provider_info.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/include/form_provider_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/include/form_provider_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/include/form_supply_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/include/form_supply_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/include/provider_connect_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/include/provider_connect_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/src/form_host_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/src/form_mgr_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/src/form_provider_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/inner_api/src/form_supply_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/kits/native/include/form_errors.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/kits/native/include/form_host_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/kits/native/include/form_mgr.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/interfaces/kits/native/src/form_host_client.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_ability_connection.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_acquire_connection.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_acquire_state_connection.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_ams_helper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_batch_delete_connection.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_bms_helper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_cache_mgr.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_cast_temp_connection.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_data_mgr.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_db_cache.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_db_info.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_delete_connection.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_event_notify_connection.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_host_record.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_info_mgr.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_info_storage_mgr.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_item_info.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_mgr_adapter.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_mgr_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_msg_event_connection.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_provider_mgr.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_refresh_connection.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_refresh_limiter.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_storage_mgr.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_supply_callback.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_sys_event_receiver.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_task_mgr.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_timer_mgr.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/include/form_timer_option.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_ability_connection.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_acquire_connection.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_cast_temp_connection.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_data_mgr.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_db_cache.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_delete_connection.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_host_callback.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_host_record.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_mgr_adapter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_msg_event_connection.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_provider_mgr.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_refresh_connection.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_refresh_limiter.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_storage_mgr.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_supply_callback.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_sys_event_receiver.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_task_mgr.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_timer_mgr.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/services/src/form_util.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/benchmarktest/form_manager_test/form_manager_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/mock/include/mock_ability_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/mock/include/mock_form_host_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/mock/include/mock_form_provider_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/mock/include/mock_form_token.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/mock/include/mock_form_user_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemPerformance/include/form_ability_performance.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemPerformance/src/form_ability_performance.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemStress/include/form_ability_stress.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemStress/src/form_ability_stress.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostCommonA/include/form_ability_commona.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostCommonA/src/form_ability_commona.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostCommonB/include/form_ability_commonb.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostCommonB/src/form_ability_commonb.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNoPerm/include/form_ability_no_perm.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNoPerm/src/form_ability_no_perm.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormal/include/form_ability_a.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormal/include/form_ability_deleteform.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormal/include/form_ability_releaseform.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormal/src/form_ability_a.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormal/src/form_ability_deleteform.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormal/src/form_ability_releaseform.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormalB/include/form_ability_b.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormalB/src/form_ability_b.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormalC/include/form_ability_c.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNormalC/src/form_ability_c.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNotSys/include/form_ability_not_sys.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestHostNotSys/src/form_ability_not_sys.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestSelfStarting/selfStartingTestHostA/include/form_ability_self_starting_a.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestSelfStarting/selfStartingTestHostA/src/form_ability_self_starting_a.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestSelfStarting/selfStartingTestHostB/include/form_ability_self_starting_b.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/fmsSystemTestSelfStarting/selfStartingTestHostB/src/form_ability_self_starting_b.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/formSystemTestServiceA/include/form_st_service_ability_A.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/formSystemTestServiceB/include/form_st_service_ability_B.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/formSystemTestServiceC/include/form_st_service_ability_C.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/formSystemTestServiceD/include/form_st_service_ability_D.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/resource/formsystemtestability/formSystemTestServiceE/include/form_st_service_ability_E.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/systemtest/common/include/form_event.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/systemtest/common/include/install_tool_status_receiver.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/systemtest/common/include/system_test_form_util.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/systemtest/fms_fuzz_test/include/fuzz_test_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: form_runtime/test/unittest/fms_form_timer_mgr_test/fms_form_timer_mgr_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/ability_runtime/include/ability_connection.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/ability_runtime/include/ability_context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/ability_runtime/include/ability_context_impl.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/ability_runtime/include/caller_callback.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/ability_runtime/include/connection_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/ability_runtime/include/js_extension_context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/ability_runtime/include/local_call_container.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/ability_runtime/include/local_call_record.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability_context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability_handler.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability_impl.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability_lifecycle.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability_lifecycle_executor.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability_loader.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability_local_record.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability_post_event_timeout.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability_process.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability_runtime/js_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability_runtime/js_ability_context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability_thread.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ability_window.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/distributed/continuation_handler.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/distributed/continuation_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/distributed/reverse_continuation_scheduler_primary.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/distributed/reverse_continuation_scheduler_primary_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/distributed/reverse_continuation_scheduler_recipient.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/distributed/reverse_continuation_scheduler_replica.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/distributed/reverse_continuation_scheduler_replica_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/remote_register_service/connect_callback_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/remote_register_service/connect_callback_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/remote_register_service/continuation_connector.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/remote_register_service/continuation_device_callback_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/remote_register_service/continuation_register_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/remote_register_service/continuation_register_manager_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/continuation/remote_register_service/remote_register_service_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/data_ability_helper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/data_ability_operation.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/data_ability_operation_builder.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/data_ability_result.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/data_uri_utils.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/distributed_ability_runtime/distributed_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/dummy_values_bucket.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/extension.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/extension_base.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/extension_impl.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/form_js_event_handler.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/form_provider_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/form_runtime/form_extension_provider_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/form_runtime/js_form_extension.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/ipc_singleton.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/js_service_extension.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/js_service_extension_context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/js_static_subscriber_extension.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/static_subscriber_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/static_subscriber_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/include/static_subscriber_stub_imp.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/src/ability.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/src/ability_runtime/js_caller_complex.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/src/continuation/distributed/reverse_continuation_scheduler_primary_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/src/continuation/distributed/reverse_continuation_scheduler_replica_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/src/continuation/remote_register_service/connect_callback_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/src/continuation/remote_register_service/remote_register_service_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/src/distributed_ability_runtime/distributed_client.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/src/form_provider_client.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/src/form_runtime/js_form_extension_context.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/src/js_service_extension_context.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/src/js_static_subscriber_extension_context.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/test/mock/include/mock_ability_impl.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/test/mock/include/mock_ability_manager_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/test/mock/include/mock_ability_manager_client_for_data_ability_observer.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/test/mock/include/mock_ability_manager_client_interface1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/test/mock/include/mock_ability_thread.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/test/mock/include/mock_ability_token.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/test/mock/include/mock_form_supply_callback.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/test/unittest/ability_impl_active_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/ability/native/test/unittest/pac_map_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_delegator/include/ability_delegator.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_delegator/include/ability_delegator_args.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_delegator/include/ability_delegator_registry.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_delegator/include/delegator_thread.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_delegator/include/iability_monitor.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_delegator/include/runner_runtime/js_test_runner.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_delegator/include/shell_cmd_result.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_delegator/src/ability_delegator.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/app/ability_stage.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/app/js_ability_stage.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/app/js_ability_stage_context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/context/ability_lifecycle_callback.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/context/application_context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/context/bindable.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/context/context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/context/context_impl.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/context/js_application_context_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/context/js_context_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/extension_context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/form_extension_context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/service_extension_context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/ability_runtime/static_subscriber_extension_context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/app/include/ability_record_mgr.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/app/include/app_context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/app/include/app_loader.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/app/include/application_env_impl.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/app/include/application_impl.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/app/include/context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/app/include/context_container.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/app/include/context_deal.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/app/include/hdc_register.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/app/include/main_thread.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/app/include/ohos_application.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/app/include/sys_mgr_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/app/include/watchdog.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/native/test/mock/include/mock_ability_manager_client_interface1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/test/Mock/include/mock_ability_mgr_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/test/Mock/include/mock_ability_token.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/test/Mock/include/mock_app_mgr_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/test/Mock/include/mock_application.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/appkit/test/Mock/include/mock_bundle_mgr_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/runtime/native/js_runtime.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/test/mock/DemoAbility/demo_ability_test.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/kits/test/mock/DemoAbility/mock_ability_test.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/ast/ast_array_type.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/ast/ast_interface_type.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/ast/ast_list_type.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/ast/ast_map_type.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/ast/ast_method.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/ast/ast_module.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/ast/ast_namespace.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/ast/ast_parameter.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/ast/ast_type.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/codegen/code_emitter.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/codegen/code_generator.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/codegen/cpp_code_emitter.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/codegen/ts_code_emitter.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/metadata/metadata_builder.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/metadata/metadata_dumper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/metadata/metadata_reader.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/metadata/metadata_serializer.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/parser/lexer.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/parser/parser.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/test/native/include/idl_test_service_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/test/native/include/idl_test_service_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/test/native/include/test_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/test/native/include/test_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/util/autoptr.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/util/file.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/util/light_refcount_base.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/util/logger.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/util/options.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/util/string.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/util/string_builder.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: idl/util/string_pool.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/ability_connect_callback_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/ability_manager_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/ability_start_setting.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/atomic_service_status_callback_interface.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/atomic_service_status_callback_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/atomic_service_status_callback_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/mission_listener_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/mission_listener_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/remote_mission_listener_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/remote_mission_listener_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/snapshot.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/start_options.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/stop_user_callback_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/stop_user_callback_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/task_handler_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/window_manager_service_handler_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/include/window_manager_service_handler_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/ability_manager/src/window_manager_service_handler_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/ability_controller_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/ability_controller_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/ams_mgr_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/ams_mgr_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/app_launch_data.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/app_mgr_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/app_mgr_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/app_mgr_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/app_scheduler_host.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/app_scheduler_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/app_state_callback_host.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/app_state_callback_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/app_task_info.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/application_state_observer_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/application_state_observer_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/priority_object.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/process_info.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/profile.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/render_scheduler_host.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/render_scheduler_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/start_specified_ability_response_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/include/appmgr/start_specified_ability_response_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/src/appmgr/ability_controller_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/src/appmgr/ams_mgr_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/src/appmgr/app_mgr_client.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/src/appmgr/app_scheduler_host.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/src/appmgr/app_state_callback_host.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/src/appmgr/application_state_observer_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/app_manager/src/appmgr/render_scheduler_host.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/dataobs_manager/include/data_ability_observer_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/dataobs_manager/include/dataobs_mgr_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/runtime/include/js_runtime.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/runtime/include/js_runtime_utils.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/runtime/include/js_utils.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/uri_permission/include/uri_permission_manager_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/uri_permission/include/uri_permission_manager_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/uri_permission/include/uri_permission_manager_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/wantagent/include/completed_dispatcher.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/wantagent/include/pending_want.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/wantagent/include/trigger_info.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/wantagent/include/want_agent.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/wantagent/include/want_agent_constant.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/wantagent/include/want_agent_helper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/wantagent/include/want_agent_info.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/innerkits/wantagent/include/want_agent_log_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/ability_manager/js_ability_manager.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/app/ability_delegator/ability_monitor.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/app/ability_delegator/js_ability_delegator.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/app/ability_delegator/js_ability_delegator_registry.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/app/ability_delegator/js_ability_monitor.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/app/app_manager/js_app_manager.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/app/app_manager/js_app_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/dataUriUtils/napi_data_uri_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_helper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/feature_ability/distribute_req_param.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/feature_ability/js_feature_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/inner/napi_common/napi_common_ability.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/inner/napi_common/napi_common_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/mission_manager/distributed_mission_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/mission_manager/js_mission_listener.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/mission_manager/mission_continue_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/mission_manager/mission_manager.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/uri_permission/js_uri_perm_mgr.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/kits/napi/aafwk/wantagent/napi_want_agent.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/ability_connect_callback_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/ability_connect_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/ability_event_handler.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/ability_manager_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/ability_manager_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/ability_manager_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/ability_record.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/ability_scheduler_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/ability_scheduler_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/ability_token_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/ams_configuration_parameter.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/app_scheduler.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/atomic_service_status_callback.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/call_container.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/call_record.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/connection_record.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/data_ability_caller_recipient.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/data_ability_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/data_ability_record.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/free_install_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/lifecycle_deal.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/mission.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/mission_data_storage.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/mission_info_mgr.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/mission_list.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/mission_list_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/mission_listener_controller.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/pending_want_common_event.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/pending_want_key.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/pending_want_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/pending_want_record.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/sa_mgr_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/screenshot_handler.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/screenshot_response.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/task_data_persistence_mgr.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/user_controller.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/user_event_handler.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/want_receiver_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/want_receiver_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/want_sender_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/include/want_sender_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/src/ability_manager_service.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/src/ability_manager_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/src/ability_scheduler_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/src/atomic_service_status_callback_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/src/mission_listener_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/src/stop_user_callback_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/src/want_receiver_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/src/want_sender_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/test/mock/appmgr_test_service/include/appmgr_test_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/test/mock/include/mock_app_mgr_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/test/mock/libs/aakit/include/ability_scheduler.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/test/mock/libs/appexecfwk_core/include/appmgr/app_mgr_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/test/mock/libs/appexecfwk_core/include/appmgr/app_state_callback_host.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/test/mock/libs/system_ability_mock/system_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/test/unittest/phone/ability_connect_callback_proxy_test/mock_ability_connect_callback_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/abilitymgr/test/unittest/phone/ability_connect_callback_stub_test/mock_ability_connect_callback_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/ability_running_record.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/ams_mgr_scheduler.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/app_death_recipient.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/app_lifecycle_deal.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/app_mgr_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/app_mgr_service_event_handler.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/app_mgr_service_inner.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/app_process_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/app_running_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/app_running_record.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/app_spawn_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/app_spawn_msg_wrapper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/app_spawn_socket.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/app_state_observer_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/kernel_system_memory_info.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/module_running_record.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/include/remote_client_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/test/mock/include/mock_ability_token.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/test/mock/include/mock_app_mgr_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/test/mock/include/mock_app_mgr_service_inner.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/test/mock/include/mock_app_spawn_socket.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/test/mock/include/mock_application.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/test/mock/include/mock_bundle_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/test/mock/include/sys_mgr_client.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/test/mock/include/system_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/test/unittest/ams_ability_running_record_test/ams_ability_running_record_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/appmgr/test/unittest/ams_ipc_interface_test/ams_ipc_appscheduler_interface_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/common/include/permission_verification.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/dataobsmgr/include/data_ability_observer_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/dataobsmgr/include/dataobs_mgr_inner.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/dataobsmgr/include/dataobs_mgr_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/dataobsmgr/include/dataobs_mgr_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/dataobsmgr/include/dataobs_mgr_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/dataobsmgr/src/data_ability_observer_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/dataobsmgr/src/dataobs_mgr_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/dataobsmgr/test/mock/libs/system_ability_mock/system_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/dataobsmgr/test/unittest/phone/data_ability_observer_proxy_test/mock_data_obs_manager_onchange_callback.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/dataobsmgr/test/unittest/phone/data_ability_observer_stub_test/mock_data_obs_manager_onchange_callback.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/dataobsmgr/test/unittest/phone/dataobs_mgr_client_test/mock_data_obs_manager_onchange_callback.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/dataobsmgr/test/unittest/phone/dataobs_mgr_client_test/mock_dataobs_mgr_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/dataobsmgr/test/unittest/phone/dataobs_mgr_inner_test/mock_data_ability_observer_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/test/mock/include/appmgr/mock_status_receiver.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/test/mock/include/mock_ability_connect_callback_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/test/mock/include/mock_ability_mgr_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/test/mock/include/mock_context.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/test/mock/include/system_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/test/moduletest/common/ams/ability_running_record_test/ams_ability_running_record_module_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/test/moduletest/common/ams/ipc_app_scheduler_test/ams_ipc_app_scheduler_module_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/test/moduletest/module_test_dump_util/module_test_dump_util.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/uripermmgr/include/uri_permission_manager_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/uripermmgr/include/uri_permission_manager_stub_impl.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/benchmarktest/ability_context_test/ability_context_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/benchmarktest/ability_manager_test/ability_manager_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/benchmarktest/mission_manager_test/mission_manager_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsAbilityAppendTestA/include/main_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsAbilityAppendTestA/include/second_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsAbilityAppendTestB/include/main_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsAbilityVisibleTestPageA/include/amsabilityvisibletestpagea1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsAbilityVisibleTestPageA/include/amsabilityvisibletestpagea2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsAbilityVisibleTestPageA/include/amsabilityvisibletestpagea3.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsAbilityVisibleTestPageA/include/amsabilityvisibletestpagea4.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsAbilityVisibleTestServiceB/include/amsabilityvisibletestdata.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsAbilityVisibleTestServiceB/include/amsabilityvisibletestpageb1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsAbilityVisibleTestServiceB/include/amsabilityvisibletestpageb2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsAbilityVisibleTestServiceB/include/amsabilityvisibletestservice.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsAbilityVisibleTestServiceB/include/amsabilityvisibletestservicea1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsConfigurationUpdatedSingletonTest/include/main_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsConfigurationUpdatedTest/include/main_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsConfigurationUpdatedTest/include/second_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsDataSystemTestA/include/ams_st_data_ability_data_a.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsDataSystemTestA/include/ams_st_data_ability_page_a.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsDataSystemTestB/include/ams_st_data_ability_data_b.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsDataSystemTestB/include/ams_st_data_ability_page_b.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsDataSystemTestC/include/ams_st_data_ability_data_c1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsDataSystemTestC/include/ams_st_data_ability_data_c2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestA/include/main_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestA/include/second_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestB/include/main_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestDataA/include/ams_st_kit_data_ability_data_a1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestDataA/include/ams_st_kit_data_ability_data_a2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestDataA/include/ams_st_kit_data_ability_data_a3.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestDataA/include/ams_st_kit_data_ability_page_a.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestDataA/include/ams_st_kit_data_ability_service_a.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestDataB/include/ams_st_kit_data_ability_data_b.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestDataB/include/ams_st_kit_data_ability_page_b.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestDataB/include/ams_st_kit_data_ability_service_b.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestPageA/include/ability_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestPageA/include/ability_context_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestPageA/include/ability_life_cycle_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestPageA/include/base_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestPageA/include/life_cycle_call_backs_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestPageA/include/life_cycle_observer_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestService/include/ability_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestService/include/ability_connection_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestService/include/ability_context_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestService/include/ability_life_cycle_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestService/include/base_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestService/include/life_cycle_call_backs_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsKitSystemTestService/include/life_cycle_observer_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsStDataAbility/src/verify_act_page_ability.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestA/include/amsstabilitya1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestA/include/amsstabilitya2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestB/include/amsstabilityb1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestC/include/amsstabilityc1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestC/include/amsstabilityc2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestC/include/amsstabilityc3.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestD/include/amsstabilityd1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestD/include/amsstabilityd2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestDFX/include/ams_dfx_st_service_ability_a1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestDFX/include/ams_dfx_st_service_ability_a2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestE/include/amsstabilitye1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestErrorK/include/amsstabilityerrork1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestErrorL/include/amsstabilityerrorl1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestF/include/amsstabilityf1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestF/include/amsstabilityf2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestF/include/amsstabilityf3.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestG/include/amsstabilityg1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestG/include/amsstabilityg2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestH/include/amsstabilityh1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestI/include/amsstabilityi1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestI/include/amsstabilityi2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestI/include/amsstabilityi3.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestI/include/amsstabilityi4.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestM/include/amsstabilitym1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestN/include/amsstabilityn1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestN/include/amsstabilityn2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestN/include/amsstabilityn3.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestN/include/amsstabilityn4.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestO/include/amsstabilityo1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestP/include/amsstabilityp1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestQ/include/amsstabilityq1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestQ/include/amsstabilityq2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestQ/include/amsstabilityq3.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestQ/include/amsstabilityq4.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestR/include/amsstabilityr1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestR/include/amsstabilityr2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestR/include/amsstabilityr3.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestR/include/amsstabilityr4.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceA/include/ams_st_service_ability_a1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceB/include/ams_st_service_ability_b2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceB/include/ams_st_service_ability_b3.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceC/include/ams_st_service_ability_c4.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceD/include/ams_st_service_ability_d1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceE/include/ams_st_service_ability_e2.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceF/include/ams_st_service_ability_f3.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceG/include/ams_st_service_ability_g1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/amsSystemTestServiceH/include/ams_st_service_ability_h1.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/fwkAbilityState/include/ability_state_main.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/fwkAbilityState/include/ability_state_second.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/serviceAbilityA/include/service_ability_a.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/serviceAbilityA/include/test_ability_connect_callback_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/serviceAbilityA/include/test_ability_connect_callback_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/tools/include/event.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/tools/include/stoperator.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/resource/amssystemtestability/abilitySrc/tools/include/stpageabilityevent.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/systemtest/common/ams/tool/include/event.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/systemtest/common/ams/tool/include/module_test_dump_util.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/systemtest/common/ams/tool/include/st_ability_util.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: test/systemtest/common/ams/tool/include/stoperator.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: tools/aa/include/ability_command.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: tools/aa/include/ability_tool_command.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: tools/aa/include/shell_command.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: tools/aa/include/shell_command_executor.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: tools/aa/include/test_observer.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: tools/aa/include/test_observer_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: tools/aa/src/shell_command_executor.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: tools/aa/src/test_observer.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: tools/fm/include/fms_command.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: tools/fm/src/fms_command.cpp
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: AmsMgrStub::UpdateExtensionState
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: ApplicationStateObserverStub::OnAbilityStateChanged
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: ApplicationStateObserverStub::OnApplicationStateChanged
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: ApplicationStateObserverStub::OnExtensionStateChanged
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: ApplicationStateObserverStub::OnForegroundApplicationChanged
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: ApplicationStateObserverStub::OnProcessCreated
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: ApplicationStateObserverStub::OnProcessDied
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: FormMgrStub::WriteParcelableVector
+- `ohscanner.interface.ipc`: Owner M2 adapter: single interpretation pass; partial source inspection is not full analysis.
+- `ohscanner.interface.ipc`: Unavailable AST units: 0; cross-file context from these units is unknown.
+- `ohscanner.interface.ipc`: M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.
+- `ohscanner.interface.ipc`: Execution is synchronous; hard timeout/memory isolation is not yet implemented.
+- `ohscanner.interface.ipc`: Diagnostic does not establish vulnerability, reachability or security impact.
+- `ohscanner.interface.ipc`: INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.

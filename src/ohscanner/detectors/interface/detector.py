@@ -8,6 +8,7 @@ from .tlv_fixed_width import find_fixed_width_tlv_overreads
 from .network_session_allowlist import (
     find_auth_session_allowlist_candidates,
     has_exact_registered_session_resolution,
+    has_dst_bus_name_session_field_provenance,
 )
 from .auth_transport_status import find_permission_denial_transport_success
 
@@ -92,7 +93,7 @@ class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
     # Incremented when detector logic or its repository-bound policy changes;
     # report identities must distinguish the resulting interpretation.
-    version = "0.12.11"
+    version = "0.12.12"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -236,9 +237,15 @@ class IpcInterfaceDetector:
         # OnRemoteRequest root. Keep this source-only check separate and attach
         # explicit reachability/policy obligations to its candidate.
         network_auth_findings = []
-        exact_registered_session_resolution = has_exact_registered_session_resolution(
+        analyzable_sources = tuple(
             unit.text for unit in applicable
             if unit.parse_status not in ("failed", "not_run")
+        )
+        exact_registered_session_resolution = has_exact_registered_session_resolution(
+            analyzable_sources
+        )
+        dst_bus_name_provenance = has_dst_bus_name_session_field_provenance(
+            analyzable_sources
         )
         for unit in applicable:
             if unit.parse_status in ("failed", "not_run"):
@@ -264,6 +271,11 @@ class IpcInterfaceDetector:
                                    "names are valid and whether this changes downstream authorization "
                                    "remain unknown.")
                     consequence = "unknown"
+                if dst_bus_name_provenance:
+                    message += (" Source provenance: the unique indexed decoder passes the JSON key "
+                                "DST_BUS_NAME to GetJsonObjectStringItem for AppInfo.myData.sessionName; "
+                                "this identifies the compared field's decoder, not attacker control, "
+                                "transport reachability, or impact.")
                 network_auth_findings.append(DetectorFinding(
                     file=unit.path,
                     line=line,

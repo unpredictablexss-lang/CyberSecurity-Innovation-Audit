@@ -214,10 +214,18 @@ class FamilyFixtureMatrixTests(unittest.TestCase):
                 run = IpcInterfaceDetector().detect(ctx, ctx.units)
                 self.assertEqual(run.status, 'completed')
                 rules = {f.rule_id for f in run.findings}
+                family_rules = next(f.rules for f in families.registry()
+                                    if f.family_id == item['family'])
+                controls = set(item.get('control_rules', ()))
+                self.assertLessEqual(controls, set(family_rules),
+                                     'control_rules must be owned by the declared family')
                 if item['expected_rule']:
                     self.assertIn(item['expected_rule'], rules)
                 else:
                     self.assertEqual(rules, set())
+                if item.get('variant') in ('fixed', 'safe'):
+                    self.assertFalse(rules & controls,
+                                     'fixed/safe fixture still emits a rule it declares controlling')
 
     def test_the_shared_manifest_names_registered_families(self):
         """Shared IPC-entry fixtures belong to registered families; reusable parser-helper families have dedicated tests."""

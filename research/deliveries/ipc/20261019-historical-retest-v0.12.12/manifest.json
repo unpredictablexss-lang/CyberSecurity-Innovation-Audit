@@ -1,0 +1,341 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-19",
+  "code": {
+    "repository": "unpredictablexss-lang/CyberSecurity-Innovation-Audit",
+    "branch": "work/ipc-20261017",
+    "baseline_head": "2fee193dd2d8a1849ac31e0683baef8c9a59d9c3",
+    "detector": "ohscanner.interface.ipc",
+    "detector_version": "0.12.12",
+    "model_version": "oh-ipc-2026.10-v32"
+  },
+  "replays": [
+    {
+      "cve": "CVE-2023-0035",
+      "repository": "openharmony/communication_dsoftbus",
+      "vulnerable": {
+        "commit": "fe305c9fba103c1d5a1e2139d18c1d4d70b7e92c",
+        "tree": "68875fb53d257f13236dd6ba4b12ab0517d79dde",
+        "snapshot_sha256": "4c89e0ee79dfba3a41860220f247c27f4d779c173024d2f845943783eddfedfc",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 1,
+        "parsing": {
+          "parsing_status": {
+            "partial": 1
+          },
+          "languages": {
+            "cpp": 1
+          }
+        }
+      },
+      "fixed": {
+        "commit": "319168676be4b58127e49b38fa96703991c5a203",
+        "tree": "4a501ce0e96b8f0706bcb188c99952c34e696535",
+        "snapshot_sha256": "6e9e548a5ee0d6ff00be8eabe785b3b6b05464f961c3b146dc92ebae9504d5a2",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 0,
+        "parsing": {
+          "parsing_status": {
+            "partial": 1
+          },
+          "languages": {
+            "cpp": 1
+          }
+        }
+      },
+      "scope_files": [
+        "sdk/frame/standard/src/softbus_client_stub.cpp"
+      ],
+      "target_diagnostics_removed": [
+        {
+          "rule": "ipc.relay.descriptor-boundary",
+          "symbol": "SoftBusClientStub::OnRemoteRequest",
+          "file": "sdk/frame/standard/src/softbus_client_stub.cpp",
+          "line": 71
+        }
+      ],
+      "fixed_side_diagnostics_retained": [],
+      "validated_vulnerability": {
+        "vulnerable": 0,
+        "fixed": 0
+      }
+    },
+    {
+      "cve": "CVE-2023-0036",
+      "repository": "openharmony/inputmethod_imf",
+      "vulnerable": {
+        "commit": "1da19fb5651d23e5969cabe7e10cf79897961b36",
+        "tree": "5037e995cb4f3f29d54307b6e0fbf352cc9d6252",
+        "snapshot_sha256": "c0dcc7a3311f02ef226e8adc4ffa872943cfab7c4d0c8c0187b30bb6f8228373",
+        "status": "completed",
+        "diagnostic_count": 1,
+        "parsing": {
+          "parsing_status": {
+            "complete": 1
+          },
+          "languages": {
+            "cpp": 1
+          }
+        }
+      },
+      "fixed": {
+        "commit": "540daea718730751ed21eabc6674c912c0fae5fd",
+        "tree": "42346fee0438d97a8deab64693c3ceb6d0235c2b",
+        "snapshot_sha256": "3b8b34ec6e946b021df336eb8deb43bdc2b2709b0899c3a55fc25a168b6de15d",
+        "status": "completed",
+        "diagnostic_count": 0,
+        "parsing": {
+          "parsing_status": {
+            "complete": 1
+          },
+          "languages": {
+            "cpp": 1
+          }
+        }
+      },
+      "scope_files": [
+        "services/src/platform_callback_stub.cpp"
+      ],
+      "target_diagnostics_removed": [
+        {
+          "rule": "ipc.relay.descriptor-boundary",
+          "symbol": "PlatformCallbackStub::OnRemoteRequest",
+          "file": "services/src/platform_callback_stub.cpp",
+          "line": 46
+        }
+      ],
+      "fixed_side_diagnostics_retained": [],
+      "validated_vulnerability": {
+        "vulnerable": 0,
+        "fixed": 0
+      }
+    },
+    {
+      "cve": "CVE-2024-39612",
+      "repository": "openharmony/resourceschedule_background_task_mgr",
+      "vulnerable": {
+        "commit": "4a0b86b5506c103406cad2d81aefad634dbdcdeb",
+        "tree": "1dba2f8c644f83cd56cb142c16eecfe700f53e96",
+        "snapshot_sha256": "21a1e832107e1f6f0aeecccc0e43fe026afa0989be635fc0be178536e0276aac",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 2,
+        "parsing": {
+          "parsing_status": {
+            "partial": 1
+          },
+          "languages": {
+            "cpp": 1
+          }
+        }
+      },
+      "fixed": {
+        "commit": "0a6e90e327d1f0d22addd1dad468125edec7c830",
+        "tree": "aae4cf509b10315c90c593f3d24e335f6cc0bf0e",
+        "snapshot_sha256": "f689c1e545b6c6173465292d69b080ebbf11b2008b12eadc4c6c10742962e27f",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 0,
+        "parsing": {
+          "parsing_status": {
+            "partial": 1
+          },
+          "languages": {
+            "cpp": 1
+          }
+        }
+      },
+      "scope_files": [
+        "services/continuous_task/src/bg_continuous_task_mgr.cpp"
+      ],
+      "target_diagnostics_removed": [
+        {
+          "rule": "ipc.auth.object-owner",
+          "symbol": "BgContinuousTaskMgr::RequestBackgroundRunningForInner",
+          "file": "services/continuous_task/src/bg_continuous_task_mgr.cpp",
+          "line": 532
+        }
+      ],
+      "fixed_side_diagnostics_retained": [],
+      "validated_vulnerability": {
+        "vulnerable": 0,
+        "fixed": 0
+      }
+    },
+    {
+      "cve": "CVE-2025-26691",
+      "repository": "openharmony/telephony_call_manager",
+      "vulnerable": {
+        "commit": "911c6c99872e3a6a421747815bc8c1f6b201db26",
+        "tree": "5e3d643965a72fbf30f50e6da37936f71c9ab292",
+        "snapshot_sha256": "c18d1fa8d8a1db3e612ae0f62ce71a4041cca7b4db3390207630a17213e4fe0c",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 9,
+        "parsing": {
+          "parsing_status": {
+            "complete": 1,
+            "partial": 1
+          },
+          "languages": {
+            "cpp": 2
+          }
+        }
+      },
+      "fixed": {
+        "commit": "6018446d576b84d8893f8f7ad5d46353236fb8e0",
+        "tree": "238af1dc99fa7ad11f4734f9746a2fecd23729c8",
+        "snapshot_sha256": "5aaaab7094d2889ef03157ca19b8f563f7476b922423974f9e88295565dd92db",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 0,
+        "parsing": {
+          "parsing_status": {
+            "complete": 1,
+            "partial": 1
+          },
+          "languages": {
+            "cpp": 2
+          }
+        }
+      },
+      "scope_files": [
+        "services/call_manager_service/include/call_manager_service.h",
+        "services/call_manager_service/src/call_manager_service.cpp"
+      ],
+      "target_diagnostics_removed": [
+        {
+          "rule": "ipc.auth.missing",
+          "symbol": "CallManagerService::RegisterVoipCallManagerCallback",
+          "file": "services/call_manager_service/src/call_manager_service.cpp",
+          "line": 479
+        },
+        {
+          "rule": "ipc.auth.missing",
+          "symbol": "CallManagerService::UnRegisterVoipCallManagerCallback",
+          "file": "services/call_manager_service/src/call_manager_service.cpp",
+          "line": 500
+        },
+        {
+          "rule": "ipc.auth.missing",
+          "symbol": "CallManagerService::SetCameraZoom",
+          "file": "services/call_manager_service/src/call_manager_service.cpp",
+          "line": 979
+        },
+        {
+          "rule": "ipc.auth.missing",
+          "symbol": "CallManagerService::GetImsConfig",
+          "file": "services/call_manager_service/src/call_manager_service.cpp",
+          "line": 1119
+        },
+        {
+          "rule": "ipc.auth.missing",
+          "symbol": "CallManagerService::SetImsConfig",
+          "file": "services/call_manager_service/src/call_manager_service.cpp",
+          "line": 1137
+        },
+        {
+          "rule": "ipc.auth.missing",
+          "symbol": "CallManagerService::GetImsFeatureValue",
+          "file": "services/call_manager_service/src/call_manager_service.cpp",
+          "line": 1155
+        },
+        {
+          "rule": "ipc.auth.missing",
+          "symbol": "CallManagerService::SetImsFeatureValue",
+          "file": "services/call_manager_service/src/call_manager_service.cpp",
+          "line": 1173
+        },
+        {
+          "rule": "ipc.auth.missing",
+          "symbol": "CallManagerService::ReportOttCallDetailsInfo",
+          "file": "services/call_manager_service/src/call_manager_service.cpp",
+          "line": 1313
+        },
+        {
+          "rule": "ipc.auth.missing",
+          "symbol": "CallManagerService::ReportOttCallEventInfo",
+          "file": "services/call_manager_service/src/call_manager_service.cpp",
+          "line": 1352
+        }
+      ],
+      "fixed_side_diagnostics_retained": [],
+      "validated_vulnerability": {
+        "vulnerable": 0,
+        "fixed": 0
+      }
+    },
+    {
+      "cve": "CVE-2025-26693",
+      "repository": "openharmony/security_access_token",
+      "vulnerable": {
+        "commit": "89953b22ba58654beda0ff3154125d6779550e2b",
+        "tree": "587259e8d5fca314e4ecc5fc461a9dbabef61a8e",
+        "snapshot_sha256": "08df62bd3b197a063055d0aa1b5eb650488ade3a15557f76cd8660cc5c602ea9",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 4,
+        "parsing": {
+          "parsing_status": {
+            "partial": 1
+          },
+          "languages": {
+            "cpp": 1
+          }
+        }
+      },
+      "fixed": {
+        "commit": "31ed3b9f31b029b0ae4dec48a9f95b6356f924c0",
+        "tree": "370f0dee1292da0d600814f228e30e95e8154068",
+        "snapshot_sha256": "41bbb443eb159fdb33af778aa7e513b6891ff836e0a6a83445c7df2fb8415cd8",
+        "status": "completed_with_limitations",
+        "diagnostic_count": 1,
+        "parsing": {
+          "parsing_status": {
+            "partial": 1
+          },
+          "languages": {
+            "cpp": 1
+          }
+        }
+      },
+      "scope_files": [
+        "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_stub.cpp"
+      ],
+      "target_diagnostics_removed": [
+        {
+          "rule": "ipc.auth.caller-class",
+          "symbol": "AccessTokenManagerStub::GetReqPermissionsInner",
+          "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_stub.cpp",
+          "line": 172
+        },
+        {
+          "rule": "ipc.auth.missing",
+          "symbol": "AccessTokenManagerStub::GetReqPermissionsInner",
+          "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_stub.cpp",
+          "line": 172
+        },
+        {
+          "rule": "ipc.data.sensitive-flow",
+          "symbol": "AccessTokenManagerStub::GetReqPermissionsInner",
+          "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_stub.cpp",
+          "line": 173
+        }
+      ],
+      "fixed_side_diagnostics_retained": [
+        {
+          "rule": "ipc.relay.descriptor-boundary",
+          "symbol": "AccessTokenManagerStub::OnRemoteRequest",
+          "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_stub.cpp",
+          "line": 72
+        }
+      ],
+      "validated_vulnerability": {
+        "vulnerable": 0,
+        "fixed": 0
+      }
+    }
+  ],
+  "interpretation": {
+    "fixed_disclosure_pairs_are_regression_samples_not_holdout": true,
+    "finding_status": "candidate/unassessed",
+    "validated_vulnerability_all_zero": true,
+    "precision_recall_claim": false,
+    "runtime_or_product_validation": false
+  }
+}

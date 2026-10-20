@@ -15,7 +15,10 @@
     "expected_rule": null,
     "file": "denial_transport_success_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.auth.denial-transport-success"
+    ]
   },
   {
     "sample_id": "auth07_unrelated_safe",
@@ -24,6 +27,9 @@
     "expected_rule": null,
     "file": "unrelated_safe.cpp",
     "split": "design",
-    "variant": "safe"
+    "variant": "safe",
+    "control_rules": [
+      "ipc.auth.denial-transport-success"
+    ]
   }
 ]

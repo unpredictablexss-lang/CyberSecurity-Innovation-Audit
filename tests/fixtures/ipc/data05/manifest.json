@@ -15,7 +15,10 @@
     "expected_rule": null,
     "file": "tlv_fixed_width_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.tlv.fixed-width-length"
+    ]
   },
   {
     "sample_id": "tlv_fixed_width_safe",
@@ -24,6 +27,9 @@
     "expected_rule": null,
     "file": "tlv_fixed_width_safe.cpp",
     "split": "design",
-    "variant": "safe"
+    "variant": "safe",
+    "control_rules": [
+      "ipc.tlv.fixed-width-length"
+    ]
   }
 ]

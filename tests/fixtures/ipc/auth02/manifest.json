@@ -17,7 +17,10 @@
     "file": "caller_role_shadowed_fixed.cpp",
     "split": "design",
     "variant": "fixed",
-    "notes": "caller_role_shadowed_positive with one line changed: the shadowing body ends in a comparison against a reviewed service-account value instead of 4096, so the body read under the reviewed name derives the fact and the call site is no longer a candidate. The pair differs in exactly that line (budget 1, measured), so the suppression is attributable to the derived caller-role fact and not to a widened guard set or service-account set. The shadowing limitation is still recorded: the reviewed name was still not credited -- the body's own account-model line was."
+    "notes": "caller_role_shadowed_positive with one line changed: the shadowing body ends in a comparison against a reviewed service-account value instead of 4096, so the body read under the reviewed name derives the fact and the call site is no longer a candidate. The pair differs in exactly that line (budget 1, measured), so the suppression is attributable to the derived caller-role fact and not to a widened guard set or service-account set. The shadowing limitation is still recorded: the reviewed name was still not credited -- the body's own account-model line was.",
+    "control_rules": [
+      "ipc.auth.missing"
+    ]
   },
   {
     "sample_id": "caller_role_shadowed_unmodelled_safe",
@@ -27,7 +30,10 @@
     "file": "caller_role_shadowed_unmodelled_safe.cpp",
     "split": "design",
     "variant": "safe",
-    "notes": "The same shadowing body and the same caller-role call, with the operation swapped for one that is not on the reviewed sensitive set (budget 1). Nothing is left for the caller-role fact to authorize, so nothing is raised. This separates \"this predicate does not establish the fact\" from \"this entry is not sensitive\", which the positive alone cannot: it is the unrelated control for this pair."
+    "notes": "The same shadowing body and the same caller-role call, with the operation swapped for one that is not on the reviewed sensitive set (budget 1). Nothing is left for the caller-role fact to authorize, so nothing is raised. This separates \"this predicate does not establish the fact\" from \"this entry is not sensitive\", which the positive alone cannot: it is the unrelated control for this pair.",
+    "control_rules": [
+      "ipc.auth.missing"
+    ]
   },
   {
     "sample_id": "entry_const_reference_positive",

@@ -1,0 +1,274 @@
+# OHScanner M2 reviewed-detector execution
+
+> Detection candidates and coverage limitations, NOT validated vulnerabilities.
+
+- Source repository (declared): `openharmony/applications_contacts_data`
+- Pinned commit: `341cc3bf41b48e9a5f278dd088f40a2041d2f1c9`
+- Git tree: `2054824c04bb403eeea128a9262edfb3001efa4f`
+- Snapshot SHA-256: `375f9962e275d88a2ea3e1915ddea3a48f8f06008e96509b7e432324f4ba3afc`
+- Source files indexed: 360
+- Parsing coverage: `{"complete": 199, "not_run": 142, "partial": 19}`
+- Detector runs: 1
+- Total unverified diagnostics: 4
+- Validated vulnerabilities: **0** (no runtime verification performed)
+
+## Per-detector results
+
+| Detector | Execution | Inspected files | Complete | Partial | Not analyzed | Diagnostics | Coverage |
+|---|---|---:|---:|---:|---:|---:|---|
+| `ohscanner.interface.ipc` | completed | 218 | 199 | 19 | 0 | 4 | partial |
+
+## Candidate evidence and missing proof
+
+| Detector | Candidate ID | File:line | Rule | Unverified proof obligations |
+|---|---|---|---|---|
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:4f96141eec5e2f8a` | `ability/common/utils/src/contacts_common_event.cpp:45` | `ipc.auth.missing` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:c670e7397905eb36` | `ability/common/utils/src/contacts_common_event.cpp:67` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:693de5141c2fd9e2` | `dataBusiness/poster/src/poster_call_stub.cpp:44` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:6c1bf24d7aa4cde0` | `dataBusiness/poster/src/poster_call_stub.cpp:46` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown; parse_completeness_impact=unknown |
+
+## Coverage gaps
+
+Scope counts source inspection, not complete semantic coverage; partial remains unknown.
+Files without a claiming detector: 142
+- `contacts/src/contact.js`
+- `dataBusiness/calllog/src/types/libcontactsdataability/index.d.ts`
+- `entry/hvigorfile.ts`
+- `entry/src/main/ets/Application/ContactsDataAbilityStage.ets`
+- `entry/src/main/ets/DataShareExtAbility/DataShareExtAbility.ts`
+- `entry/src/main/ets/ServiceAbility/HandleContactEventsServiceAbility.ets`
+- `entry/src/main/ets/ServiceAbility/ServiceAbility.ets`
+- `entry/src/main/ets/WorkScheduler/Common.ets`
+- `entry/src/main/ets/aggregation/AggregatorRawContact.ets`
+- `entry/src/main/ets/aggregation/ContactAggregator.ets`
+- `entry/src/main/ets/common/DbConstants.ets`
+- `entry/src/main/ets/common/SqlConstants.ets`
+- `entry/src/main/ets/common/contract/Account.ets`
+- `entry/src/main/ets/common/contract/BaseColumns.ets`
+- `entry/src/main/ets/common/contract/BlockListDoubleConstant.ets`
+- `entry/src/main/ets/common/contract/BlockListSingleConstant.ets`
+- `entry/src/main/ets/common/contract/CallLogArdConstant.ets`
+- `entry/src/main/ets/common/contract/CallLogDoubleConstant.ets`
+- `entry/src/main/ets/common/contract/CallLogSingleConstant.ets`
+- `entry/src/main/ets/common/contract/CloneDbColumns.ets`
+- `entry/src/main/ets/common/contract/ContactBigPhotoConstant.ets`
+- `entry/src/main/ets/common/contract/Contacts.ets`
+- `entry/src/main/ets/common/contract/ContactsColumns.ets`
+- `entry/src/main/ets/common/contract/Data.ets`
+- `entry/src/main/ets/common/contract/DataColumns.ets`
+- `entry/src/main/ets/common/contract/DeleteRawContact.ets`
+- `entry/src/main/ets/common/contract/DoubleAccountBean.ets`
+- `entry/src/main/ets/common/contract/DoubleContactBean.ets`
+- `entry/src/main/ets/common/contract/Group.ets`
+- `entry/src/main/ets/common/contract/GroupColumns.ets`
+- `entry/src/main/ets/common/contract/Mimetype.ets`
+- `entry/src/main/ets/common/contract/RawContacts.ets`
+- `entry/src/main/ets/common/contract/RawContactsColumns.ets`
+- `entry/src/main/ets/common/contract/SearchContact.ets`
+- `entry/src/main/ets/common/contract/SearchContactColumns.ets`
+- `entry/src/main/ets/common/data/ContactInfo.ets`
+- `entry/src/main/ets/common/data/Contacts.ets`
+- `entry/src/main/ets/common/data/Data.ets`
+- `entry/src/main/ets/common/data/DataBaseMode.ets`
+- `entry/src/main/ets/common/data/DataColumns.ets`
+- `entry/src/main/ets/common/data/FullContactData.ets`
+- `entry/src/main/ets/common/data/GroupFileInfo.ets`
+- `entry/src/main/ets/common/data/MasterContact.ets`
+- `entry/src/main/ets/common/data/MergeRawContact.ets`
+- `entry/src/main/ets/common/data/RawContactsColumns.ets`
+- `entry/src/main/ets/common/data/SettingsColumns.ets`
+- `entry/src/main/ets/common/data/SimpleContact.ets`
+- `entry/src/main/ets/common/data/SimpleContactData.ets`
+- `entry/src/main/ets/common/data/SimpleRawContact.ets`
+- `entry/src/main/ets/common/data/vo/DataItemType.ets`
+- `entry/src/main/ets/common/data/vo/MeeTimeAbilityInfoModel.ets`
+- `entry/src/main/ets/common/data/vo/RawContact.ets`
+- `entry/src/main/ets/common/helperBase/BaseDbHelper.ets`
+- `entry/src/main/ets/common/helperBase/BaseRdbHelperForCloudSync.ets`
+- `entry/src/main/ets/common/helperBase/BaseSingleRdbInsertHelper.ets`
+- `entry/src/main/ets/common/helperUtils/CallLogRdbHelperForCloudSync.ets`
+- `entry/src/main/ets/common/helperUtils/ContactsRdbHelperForCloudSync.ets`
+- `entry/src/main/ets/common/helperUtils/ContactsSingleInsertHelper.ets`
+- `entry/src/main/ets/common/model/MigrateProgressInfo.ets`
+- `entry/src/main/ets/common/model/bean/ContactEventDataItem.ets`
+- `entry/src/main/ets/common/model/bean/ContactItem.ets`
+- `entry/src/main/ets/common/model/bean/DataItem.ets`
+- `entry/src/main/ets/common/model/bean/DataItemFactory.ets`
+- `entry/src/main/ets/common/model/bean/EmailDataItem.ets`
+- `entry/src/main/ets/common/model/bean/GroupDataItem.ets`
+- `entry/src/main/ets/common/model/bean/GroupItem.ets`
+- `entry/src/main/ets/common/model/bean/ImDataItem.ets`
+- `entry/src/main/ets/common/model/bean/NameDataItem.ets`
+- `entry/src/main/ets/common/model/bean/OrganizationDataItem.ets`
+- `entry/src/main/ets/common/model/bean/PhoneDataItem.ets`
+- `entry/src/main/ets/common/model/bean/PhotoDataItem.ets`
+- `entry/src/main/ets/common/model/bean/PostalAddressDataItem.ets`
+- `entry/src/main/ets/common/model/bean/RawContactItem.ets`
+- `entry/src/main/ets/common/model/bean/RelationDataItem.ets`
+- `entry/src/main/ets/common/utils/ArrayUtil.ets`
+- `entry/src/main/ets/common/utils/ChineseCharacterUtils.ets`
+- `entry/src/main/ets/common/utils/ContactStatisticsCount.ets`
+- `entry/src/main/ets/common/utils/DatabaseUtils.ets`
+- `entry/src/main/ets/common/utils/GroupIdUtil.ets`
+- `entry/src/main/ets/common/utils/HashUtils.ets`
+- `entry/src/main/ets/common/utils/HmsAuthentication.ets`
+- `entry/src/main/ets/common/utils/LogUtils.ets`
+- `entry/src/main/ets/common/utils/LogUtils.ts`
+- `entry/src/main/ets/common/utils/NumberFormatUtil.ets`
+- `entry/src/main/ets/common/utils/NumberLocationUtil.ets`
+- `entry/src/main/ets/common/utils/ObjectUtil.ts`
+- `entry/src/main/ets/common/utils/PreferenceMigrateDataToClkvUtil.ets`
+- `entry/src/main/ets/common/utils/PreferenceUtil.ets`
+- `entry/src/main/ets/common/utils/PreferenceUtilAbstract.ets`
+- `entry/src/main/ets/common/utils/PreferenceUtilClkv.ets`
+- `entry/src/main/ets/common/utils/PreferenceUtilXml.ets`
+- `entry/src/main/ets/common/utils/StringUtil.ets`
+- `entry/src/main/ets/common/utils/SystemModeController.ets`
+- `entry/src/main/ets/common/utils/TaskUtil.ets`
+- `entry/src/main/ets/components/Log.ets`
+- `entry/src/main/ets/components/PlatformInterface/Base64Interface.ets`
+- `entry/src/main/ets/components/PlatformInterface/Contact.ets`
+- `entry/src/main/ets/components/PlatformInterface/HOSBase64.ets`
+- `entry/src/main/ets/components/PlatformInterface/HOSLineReader.ets`
+- `entry/src/main/ets/components/PlatformInterface/LineReaderInterface.ets`
+- `entry/src/main/ets/components/PlatformInterface/PlatformFactory.ets`
+- `entry/src/main/ets/components/utils/ContainerUtils.ets`
+- `entry/src/main/ets/components/utils/HOSStringBuilder.ets`
+- `entry/src/main/ets/components/utils/LineReader.ets`
+- `entry/src/main/ets/components/utils/PhoneNumberUtils.ets`
+- `entry/src/main/ets/components/utils/TextUtils.ets`
+- `entry/src/main/ets/components/utils/Utf.ets`
+- `entry/src/main/ets/pages/Index.ets`
+- `entry/src/main/ets/pages/PermissionDialog.ets`
+- `entry/src/main/ets/serivce/BirthdayManager.ets`
+- `entry/src/main/ets/serivce/BoardHiSysEventUtil.ets`
+- `entry/src/main/ets/serivce/ContactsDataService.ets`
+- `entry/src/main/ets/serivce/DirtyDataClearServiceUpdate.ets`
+- `entry/src/main/ets/serivce/HandleUniqueKeyService.ets`
+- `entry/src/main/ets/serivce/RepeatContactHandleService.ets`
+- `entry/src/main/ets/uiExtensionAbility/PermissionExtAbility.ets`
+- `entry/src/ohosTest/ets/application/TestApplication.ts`
+- `entry/src/ohosTest/ets/application/TestApplication2.ts`
+- `entry/src/ohosTest/ets/test/Ability.test.ets`
+- `entry/src/ohosTest/ets/test/CloneUtil.test.ets`
+- `entry/src/ohosTest/ets/test/List.test.ets`
+- `entry/src/ohosTest/ets/test/PreferenceUtil.test.ets`
+- `entry/src/ohosTest/ets/test/SystemModeController.test.ets`
+- `entry/src/ohosTest/ets/testability/TestAbility.ets`
+- `entry/src/ohosTest/ets/testability/pages/Index.ets`
+- `entry/src/ohosTest/ets/testrunner/OpenHarmonyTestRunner.ets`
+- `hvigor/@ohos.data.preferences.d.ts`
+- `hvigor/@ohos.data.relationalStore.d.ts`
+- `hvigorfile.ts`
+- `jstest/Calllog_test.js`
+- `jstest/ContactCard_test.js`
+- `jstest/ContactMerge_test.js`
+- `jstest/Contacts_test.js`
+- `jstest/Groups_test.js`
+- `jstest/List.test.js`
+- `jstest/ObjectCallback.js`
+- `jstest/ObjectInterface_test.js`
+- `jstest/Performance_test.js`
+- `jstest/Stability_test.js`
+- `jstest/Voicemail_test.js`
+- `jstest/common.js`
+- `jstest/recovery_test.js`
+- `ohscanner.interface.ipc`: partial, 199/218 applicable files examined; unexamined=19
+
+## Limitations
+
+- Diagnostics are candidates/evidence only, not proof of security impact.
+- Zero diagnostics does NOT mean the component is free of vulnerabilities.
+- Git origin name is user declared; source is pinned local objects, not an OH product build.
+- No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.
+- Some indexed source files have no claiming detector; their security analysis is unknown.
+- `ohscanner.interface.ipc`: Model=oh-ipc-2026.10-v32; first-party bounded structured syntax interpretation, no external scanner execution.
+- `ohscanner.interface.ipc`: Private branch pass reconstructs Tree-sitter nodes; public shared facts/schema are unchanged.
+- `ohscanner.interface.ipc`: No compiler CFG, arbitrary virtual dispatch, alias analysis or full-program authorization proof. Macros are expanded only from the scan's own sources and only when unambiguous; the catalogue is never an #include resolution, and what the expander refused is counted in the macro-expansion limitation rather than assumed away.
+- `ohscanner.interface.ipc`: Unmodeled callees/authorization remain evidence obligations; no findings does not establish safety.
+- `ohscanner.interface.ipc`: Interface-descriptor identity is read from the class's own base clause: a comparison is counted as this transaction's guard only when the source names the interface the class implements. A comparison against another interface, or one whose identity the analysed sources do not state, is reported with that reason instead of counting as a guard or as a proven mismatch.
+- `ohscanner.interface.ipc`: Descriptor consistency is separate from caller authorization; relay candidates are not exploit proofs.
+- `ohscanner.interface.ipc`: IPC roots require a source-indexed class dispatcher with code, request Parcel and reply Parcel; explicit service/transport roots and Stub inner helpers are separate allowlisted entry kinds. Test/fuzz/mock path roots are excluded from product candidate analysis and counted in limitations. Entry discovery is not reachability: dispatcher-level guards and macro-conditional reachability remain obligations, not conclusions.
+- `ohscanner.interface.ipc`: Entry-coverage measurements are published in the interface research report, not in this result.
+- `ohscanner.interface.ipc`: Cross-service boundary coverage: 0 call(s) on a handle built by iface_cast<> in the scanned sources, 0 carrying the original caller's identity (SetCallingIdentity with a calling-token value active), 0 executing as the service. Each boundary is recorded with the identity that crossed it; no candidate is emitted from the boundary itself, and a downstream service's own guards are not read from this corpus.
+- `ohscanner.interface.ipc`: Entry/dispatch coverage: 2 dispatcher(s) (2 in stub classes, 0 with a recognizable guard before dispatch), 1 binding(s) by grade {'virtual_override': 1}, transactions {'dynamic': 1}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe.
+- `ohscanner.interface.ipc`: Loops are conservatively explored zero/one iterations; no induction or termination proof.
+- `ohscanner.interface.ipc`: Macro expansion: 130 invocation(s) expanded in 53 file(s), 41 of them carrying control flow; 9 file(s) left unexpanded (conditional_definition_requires_build_profile=2390,raw_string_tokenization_not_supported=2,source_local_undef_not_supported=7,variadic_stringify_or_token_paste=4). The catalogue is the scan's own sources, never #include; where a macro was expanded, quoted conditions come from the expanded form while a finding's line is mapped back to the original file.
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in contactsCJ/include/contacts_ffi.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in dataBusiness/poster/include/i_poster_call.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in dataBusiness/poster/include/poster_call_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in dataBusiness/poster/src/poster_call_stub.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in dataBusiness/spam_call/include/i_spam_call.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in dataBusiness/spam_call/include/spam_call_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/src/calllogability_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/src/calllogfuzzyquery_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/src/contactability_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/src/contactgroup_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/src/contactpinyin_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/src/contactprofile_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/src/contactquery_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/src/mergecontact_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/src/performance_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/src/recovery_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/src/stability_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in test/unittest/src/voicemailability_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/account/include/account_change_event.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/account/include/account_data_collection.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/account/include/account_sync.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/common/utils/include/async_task.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/common/utils/include/delay_async_task.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/common/utils/include/hi_audit.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/common/utils/include/phone_number_utils.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/common/utils/include/sql_analyzer.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/common/utils/include/telephony_permission.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/common/utils/include/zip_util.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/datadisasterrecovery/include/database_disaster_recovery.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/merge/include/candidate_status.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/merge/include/match_candidate.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/merge/include/merger_contacts.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: ability/sinicization/include/character_transliterate.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: contacts/include/contacts_build.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: contacts/include/contacts_napi_utils.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: contacts/include/result_convert.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: contacts/src/contacts_api.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: contacts/src/contacts_napi_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: contacts/src/result_convert.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: contactsCJ/src/contacts_picker.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/calllog/include/calllog_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/calllog/include/calllog_backup_napi.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/calllog/include/calllog_database.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/calllog/include/calllog_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/calllog/include/calllogcheck_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/calllog/src/calllog_backup_napi.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/auto_sync_detail_progress_observer.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/blocklist_database.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/cloud_contacts_observer.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/contact_connect_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/contacts.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/contacts_account.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/contacts_data_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/contacts_database.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/contacts_datashare_stub_impl.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/contacts_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/contacts_update_helper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/number_identity_helper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/privacy_contacts_manager.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/contacts/include/profile_database.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/poster/include/poster_call_adapter.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/poster/include/poster_call_connection.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/poster/include/poster_call_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/poster/include/poster_callback_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/spam_call/include/callback_stub_helper.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/spam_call/include/spam_call_adapter.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/spam_call/include/spam_call_connection.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/spam_call/include/spam_call_proxy.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/spam_call/include/spam_call_stub.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/voicemail/include/voicemail_ability.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: dataBusiness/voicemail/include/voicemail_database.h
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: ContactsCommonEvent::SendPosterEvent
+- `ohscanner.interface.ipc`: Owner M2 adapter: single interpretation pass; partial source inspection is not full analysis.
+- `ohscanner.interface.ipc`: Unavailable AST units: 0; cross-file context from these units is unknown.
+- `ohscanner.interface.ipc`: M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.
+- `ohscanner.interface.ipc`: Execution is synchronous; hard timeout/memory isolation is not yet implemented.
+- `ohscanner.interface.ipc`: Diagnostic does not establish vulnerability, reachability or security impact.
+- `ohscanner.interface.ipc`: INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.

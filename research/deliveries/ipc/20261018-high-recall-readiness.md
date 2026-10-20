@@ -13,7 +13,7 @@
 
 ## Agent/平台接口复核
 
-负责人共享工作区 `/home/audit/ohscanner/worktrees/b-high-recall-review-20261018` 有未提交的 owner-owned 文件改动，本轮只读检查，没有改写或提交这些改动。该差异当前将扫描报告的全部 Candidate ID（按报告顺序）与 report SHA-256 写入追加式 `candidate_review_batch`；批次幂等，不按 Top-K 截断；旧的 count-only 批次保留为身份未知。零候选不会触发第二遍 LLM 扫描。批次消费保持关闭，等待批次范围的源码披露授权；单候选仍须走现有预览/授权。Agent 复核使用追加记录和固定源码引用，不能写入 `confirmed/reportable`。
+负责人共享工作区 `/home/audit/ohscanner/worktrees/b-high-recall-review-20261018` 有未提交的 owner-owned 文件改动，本轮只读检查，没有改写或提交这些改动。该差异将扫描报告的全部唯一 Candidate ID 与 report SHA-256 写入追加式 `candidate_review_batch`；批次幂等，不按 Top-K 截断；旧的 count-only 批次保留为身份未知。零候选不会触发第二遍 LLM 扫描。批次消费保持关闭，等待批次范围的源码披露授权；单候选仍须走现有预览/授权。Agent 复核使用追加记录和固定源码引用，不能写入 `confirmed/reportable`。
 
 在共享工作区所用隔离依赖环境中，Agent workflow、队列、零候选、固定引用、不可自我确认与取消保留测试共 51 项通过。这只验证了当前未提交改动的测试表现，不代表其已提交、已集成或面板浏览器验收通过。
 
@@ -33,3 +33,10 @@
 5. 新规则须继续按独立根因加入正例、修复、安全和无关控制；当前回归数不能用作准确率或召回率。
 
 本记录与实现仍只在本地 IPC 工作线；未推送、未合并、未更改 Draft 状态。
+
+## 2026-10-18 复验补记
+
+- 执行测试时 IPC 工作树 `work/ipc-20261017@1ff4cc09e415534959a1aaa5e20f3a8898601859` 干净；本补记是当前唯一未提交文件。IPC 全量定向测试 `224` 项通过、`32` 项跳过，仓库根测试 `649` 项通过、`36` 项跳过。
+- 以共同基线 `6a41dc9b1aa030158e09be6241e2b14341f9256d` 执行 lane `ipc` 变更范围检查，`violations=[]`。`git diff --check` 对整条历史差异返回非零，定位到既有动态 Harness/精度探针/copy-range 证据文件的行尾空白；本轮未改这些历史产物。
+- 另一个平台工作树 `/home/audit/ohscanner/worktrees/high-recall-platform-implementation-20261018` 位于 `work/high-recall-agent-queue-20261018@53db1f0e83d5c97bc7a84ce1f331324ae59e3421`，有 5 个 owner-owned 文件未提交。其队列/API/Worker 差异测试 `tests.test_workbench_operations` 与 `tests.test_workbench` 共 `64` 项通过。变更把全部唯一 ID 按字典序写入批次（不是按报告顺序），并暴露排队/运行 ID；这只是该未提交快照的测试结果，没有消费真实模型，也没有 API→Worker→报告→面板浏览器验收。本线未修改该工作树。
+- 本次没有推送或合并。holdout 仍是 `not_established`，所有规则家族均为 `unmeasured`；Agent 仍未实际消费候选，漏洞确认数量仍为 `0`。

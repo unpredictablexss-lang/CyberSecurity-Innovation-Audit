@@ -20,6 +20,7 @@ from .cpp_macros import Expansion, catalog_for_units, expand_with_catalog
 from .entry_index import EntryIndex
 from .families import merge_policy
 from .models import DISCLOSURE_CALLS, IpcPolicy, consequence_for
+from src.parser.syntax_normalize import normalize_member_pointer_syntax
 
 _TEST_ONLY_PATH_SEGMENTS = frozenset({
     "test", "tests", "unittest", "unittests", "fuzz", "fuzztest",
@@ -231,9 +232,58 @@ class Observation:
     descriptor_identity: str = ""
 
 
+def normalize_include_trailing_space(source):
+    """Recover one valid include-line ending rejected by the current grammar.
+
+    For a quoted or angled #include followed by exactly one ASCII space and LF,
+    replace that space with CR. Length and LF offsets stay unchanged. This is a
+    parser-only copy; evidence and source hashes always use the original bytes.
+    """
+    include_line = re.compile(
+        rb'(?m)^(?P<directive>[ \t]*#[ \t]*include[ \t]+'
+        rb'(?:"[^"\r\n]*"|<[^>\r\n]*>))[ ]\n'
+    )
+    return include_line.sub(lambda match: match.group("directive") + b"\r\n", source)
+
+
+def _blank_interface_descriptor_macro(source):
+    """Blank only the literal form of OH IPC descriptor declarations in the parse copy.
+
+    The original SourceUnit remains intact and descriptor_symbol_expectation reads
+    its literal directly. Non-literal arguments are left untouched and stay partial.
+    """
+    pattern = re.compile(
+        rb'(?<![A-Za-z0-9_])DECLARE_INTERFACE_DESCRIPTOR\s*'
+        rb'\(\s*(?:u|U|L)?"[^"\\\r\n]*"\s*\)'
+    )
+    return pattern.sub(lambda match: b" " * len(match.group(0)), source)
+
+
+def _blank_visibility_annotations(source):
+    """Blank narrow line-leading export annotations in the private parse copy.
+
+    EXPORT and FFI_EXPORT are build-visibility annotations, not C++ syntax or
+    authorization checks. Only blank them when they occupy a declaration line
+    and are followed by a type-like token; preserve bytes and line positions.
+    """
+    pattern = re.compile(
+        rb"(?m)^(?P<indent>[ \t]*)(?P<macro>EXPORT|FFI_EXPORT)"
+        rb"(?=[ \t]+(?:(?:static|const|extern|inline|virtual|void|bool|char|"
+        rb"short|int|long|float|double|auto|size_t|ssize_t|wchar_t|"
+        rb"u?int[0-9]+_t|napi_[A-Za-z0-9_]+)\b|"
+        rb"[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)+(?:[*&])?)"
+        rb"[ \t*&])"
+    )
+    return pattern.sub(
+        lambda match: match.group("indent") + b" " * len(match.group("macro")),
+        source,
+    )
+
+
 def normalize_syntax(source):
-    """Model only known format-string tokens, statement-carrying macro arguments
-    and unresolved member dispatch.
+    """Model known format-string tokens, statement-carrying macro arguments,
+    unresolved member dispatch, exact include endings, declaration visibility
+    annotations and literal OH IPC descriptor declaration macros.
 
     Byte lengths/newlines remain unchanged. Original source is retained for
     evidence. This is not macro expansion or resolution of member pointers.
@@ -261,15 +311,10 @@ def normalize_syntax(source):
             return match.group(0)
         return b'""'+b' '*(len(token)-2)
     normalized=re.sub(pattern,fmt,source,flags=re.S)
-    # `(this->*Ident)(args)` parses once the member-pointer operator is read as a
-    # plain member access, which keeps the receiver visible.
-    normalized=re.sub(rb'\(this\s*->\s*\*\s*[A-Za-z_]\w*\)(?=\s*\()',
-                      lambda m:m.group(0).replace(b'*',b' ',1),normalized)
-    # `(this->*(iter->second))(args)`, `(this->*(funcIter->second))(parcel)`: the
-    # target is itself an expression, so there is nothing to keep. Blanking the
-    # operator preserves every byte offset and leaves a plain call. The target is
-    # unresolved here, which is exactly what the dispatch index resolves instead.
-    normalized=re.sub(rb'this\s*->\s*\*\s*(?=\()',lambda m:b' '*len(m.group(0)),normalized)
+    normalized = normalize_member_pointer_syntax(normalized)
+    normalized = normalize_include_trailing_space(normalized)
+    normalized = _blank_visibility_annotations(normalized)
+    normalized = _blank_interface_descriptor_macro(normalized)
     normalized=_blank_macro_statement_arguments(normalized)
     return normalized
 
@@ -508,7 +553,7 @@ class Interpreter:
                 self._record_expansion(unit,expansion)
             normalized=normalize_syntax(source)
             if normalized!=raw:
-                self.limitations.add("Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: "+unit.path)
+                self.limitations.add("Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: "+unit.path)
             tree = Parser(Language(grammar)).parse(normalized)
             if tree.root_node.has_error:
                 self.limitations.add("Partial source: only error-free functions can be inspected in " + unit.path)
@@ -1012,15 +1057,15 @@ class Interpreter:
         because it is source-derived and independent of which root is being walked.
         """
         if self.index is None or not name:
-            return None, None
+            return None, None, None
         if "::" in callee or "." in callee or "->" in callee:
-            return None, None
+            return None, None, None
         key = (fn.owner, name)
         if key not in self.hop_cache:
             self.hop_cache[key] = self.index.one_hop_definition(fn.owner, name)
         entry = self.hop_cache[key]
         if entry is None:
-            return None, None
+            return None, None, None
         # Read the implementer through the same frame type the rest of the walk
         # uses, so one body-walking implementation covers both. A body written
         # inside the class carries only its own name, so the owner is put back:
@@ -1037,23 +1082,30 @@ class Interpreter:
         arguments = node.child_by_field_name("arguments")
         supplied = list(arguments.named_children) if arguments is not None else []
         bindings = {}
-        for position, name in enumerate(implementation.params):
+        for position, param_name in enumerate(implementation.params):
             if position >= len(supplied):
                 break
-            if not name:
+            if not param_name:
                 continue
             decided = self._decisive(fn, supplied[position])
             if decided is not None:
-                bindings[name] = decided
+                bindings[param_name] = decided
         # Reading the implementer's body must not report into this walk: it starts
         # from that body's own guards, not from this path's.
         with self.lookahead():
             gate = self.dispatch_guard(implementation, bindings)
-        # What the call hands back comes from the body this hop reached, so a later
-        # `WriteRemoteObject` of one of those values exports *that* call's product.
+            contract = self.caller_class_contract_through(implementation)
+        required_role = contract[0] if contract else None
+        role_guarded = bool(gate and (required_role is None or required_role in gate[2]))
+        # Bind only contract-reviewed reference outputs. A role gate only protects
+        # those results when it proves the exact role required by the API contract.
+        output_positions = (dict(self.policy.disclosure_output_calls).get(name, ())
+                            if required_role is not None else ())
         self.bind_result(state, implementation, args,
                          Value("call_result", implementation.qualified,
-                               "guarded" if gate else "unguarded"))
+                               "guarded" if role_guarded else "unguarded"),
+                         disclosure_positions=output_positions,
+                         disclosure_guarded=role_guarded)
         if gate is not None:
             gate_function, gate_node, gate_roles = gate
             self.hop_notes.add(
@@ -1065,7 +1117,7 @@ class Interpreter:
                 + self._where(gate_function.file, gate_function, gate_node)
                 + " in " + gate_function.qualified + ", whose caller-role gate admits "
                 + ", ".join(gate_roles) + ".")
-        return implementation, gate
+        return implementation, gate, required_role
 
     def _where(self, file, fn, node):
         """`file:line` for a node, read back through the macro line map."""
@@ -1091,8 +1143,9 @@ class Interpreter:
         self.proxy_notes.add((self._where(fn.file, fn, node), method,
                               "caller" if state.forwarded else "service"))
 
-    def bind_result(self, state, implementation, args, produced):
-        """Bind what a dispatched call hands back, so a later export can be traced.
+    def bind_result(self, state, implementation, args, produced,
+                    disclosure_positions=(), disclosure_guarded=False):
+        """Bind reviewed result outputs and reference results from a dispatch."
 
         A stub receives the remote object from the implementation it dispatches to
         and then writes it into the reply. Which caller variable holds it is a
@@ -1104,10 +1157,18 @@ class Interpreter:
         """
         params = implementation.params
         for position in range(min(len(params), len(args))):
-            if params[position] not in implementation.ref_params:
+            # A repository-scoped disclosure contract may supply exact output
+            # positions when a partial header/index did not recover the declaration.
+            if (position not in disclosure_positions
+                    and params[position] not in implementation.ref_params):
                 continue
             if args[position].key:
-                state.env[args[position].key] = produced
+                if position in disclosure_positions:
+                    kind = "sensitive_result_guarded" if disclosure_guarded else "sensitive_result"
+                    state.env[args[position].key] = Value(kind, implementation.qualified,
+                                                          implementation.name)
+                else:
+                    state.env[args[position].key] = produced
 
     @staticmethod
     def _leaves(branch):
@@ -1127,6 +1188,9 @@ class Interpreter:
                     | self.policy.boolean_permissions | self.policy.result_permissions
                     | frozenset({"ResetCallingIdentity", "SetCallingIdentity"}))
         outputs = set(implementation.ref_params)
+        contract = self.repository_caller_class_contract(implementation.qualified)
+        if contract:
+            modelled = modelled | frozenset(contract[1])
         for statement in statements:
             for item in walk(statement):
                 if item.type in ("assignment_expression", "update_expression"):
@@ -1264,6 +1328,43 @@ class Interpreter:
             if inner is not None and fn.text(inner).strip() not in ("nullptr", "NULL", "0", "null"):
                 return Value("constant", "1")
         return None
+
+    def repository_caller_class_contract(self, qualified):
+        repository = self.request.repository if self.request is not None else None
+        for owner, method, role, effects in self.policy.repository_caller_class_contracts:
+            if owner == repository and method == qualified:
+                return role, tuple(effects)
+        return None
+
+    def caller_class_contract_through(self, implementation, depth=0, visited=()):
+        """Resolve an exact repository contract through a short direct-return chain.
+
+        Only a unique terminal member call with a source-resolved receiver is
+        followed. This deliberately does not guess based on a method's short name.
+        """
+        contract = self.repository_caller_class_contract(implementation.qualified)
+        if contract:
+            return contract
+        key = (implementation.file, implementation.qualified, implementation.line)
+        if depth >= 2 or key in visited or implementation.body is None:
+            return None
+        statements = list(implementation.body.named_children)
+        returns = [(i, item) for i, item in enumerate(statements)
+                   if item.type == "return_statement"]
+        if len(returns) != 1:
+            return None
+        position, returned = returns[0]
+        expression = returned.named_children[0] if returned.named_children else None
+        if (position != len(statements) - 1 or expression is None
+                or expression.type != "call_expression"
+                or self._modelled_before(implementation, statements[:position])):
+            return None
+        callee = implementation.text(expression.child_by_field_name("function"))
+        helper = self.delegated(implementation, callee)
+        if helper is None:
+            return None
+        return self.caller_class_contract_through(helper, depth + 1,
+                                                   tuple(visited) + (key,))
 
     def expected_permission(self, name, qualified=""):
         repository = self.request.repository if self.request is not None else None
@@ -1408,7 +1509,8 @@ class Interpreter:
             "a comparison it makes against a reviewed service account is recorded on its "
             "own account-model line when the source resolves it.")
 
-    def action(self, fn, node, state, name, args, depth=0, guard=None):
+    def action(self, fn, node, state, name, args, depth=0, guard=None,
+               required_role=None):
         """Report the candidate a modelled call is, unless `guard` explains it.
 
         `guard` is what `dispatch_guard` read one class hop away, when this call is
@@ -1422,7 +1524,9 @@ class Interpreter:
         if self.root is None:
             return
         root_key = (self.root.file, self.root.qualified)
-        sensitive = name in self.policy.sensitive_calls or name in self.policy.object_sensitive_calls
+        sensitive = (name in self.policy.sensitive_calls
+                     or name in self.policy.object_sensitive_calls
+                     or required_role is not None)
         expected_contract = (self.expected_permission(fn.name, fn.qualified)
                              or self.expected_permission(self.root.name, self.root.qualified))
         if name in self.policy.boolean_permissions | self.policy.result_permissions and expected_contract:
@@ -1440,6 +1544,11 @@ class Interpreter:
         if sensitive:
             for issue_fn,issue_node,issue_rule,issue_message in state.identity_issues:
                 self.emit("AUTH-03",issue_rule,issue_fn,issue_node,state,issue_message,call=name)
+        if required_role is not None and (guard is None or required_role not in guard[2]):
+            self.emit("AUTH-03", "ipc.auth.caller-class", fn, node, state,
+                      "Repository-reviewed operation " + name + " requires caller role "
+                      + required_role + ", but no matching dominating role gate was established.",
+                      call=name)
         expected_permission = self.expected_permission(name, fn.qualified)
         permission_mismatch = (expected_permission and state.auth
                                and expected_permission not in state.auth)
@@ -1451,7 +1560,8 @@ class Interpreter:
                           "reviewed contract requires " + expected_permission + ", but this "
                           "path checks " + observed + "."
                           + self.auth_note(state), call=name)
-        elif sensitive and not self.authorized(state, name, fn.qualified) and guard is None:
+        elif (sensitive and required_role is None
+              and not self.authorized(state, name, fn.qualified) and guard is None):
             if self.root_grade == "dispatch" and "dispatcher-guard-observed" in self.root_note:
                 # A guard runs before dispatch, so this is a guard-coverage question
                 # (does it dominate this transaction?), not an absent-authorization
@@ -1910,7 +2020,8 @@ class Interpreter:
                 self.note_shadowed_role_predicate(helper)
             implementation = guard = None
             if helper is None:
-                implementation, guard = self.one_hop_dispatch(fn, node, callee, name, args, state)
+                implementation, guard, required_role = self.one_hop_dispatch(
+                    fn, node, callee, name, args, state)
                 if implementation is None:
                     # Reviewed caller-role predicates, by exact name, and only for a
                     # call this file does not itself define: a local function of the
@@ -1931,7 +2042,8 @@ class Interpreter:
                                              + "; reviewed-name credit refused; caller authorization remains unknown.")
                     elif role is not None and not args:
                         return Value("predicate", predicate=(role[0], role[1], True))
-            self.action(fn, node, state, name, args, depth, guard=guard)
+            self.action(fn, node, state, name, args, depth, guard=guard,
+                        required_role=required_role if implementation is not None else None)
             if name in self.policy.reply_write_calls:
                 rv = state.env.get(receiver, UNKNOWN)
                 if rv.kind == "reply_parcel":

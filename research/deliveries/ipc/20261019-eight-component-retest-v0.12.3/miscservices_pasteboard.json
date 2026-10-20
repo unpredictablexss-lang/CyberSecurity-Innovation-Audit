@@ -1,0 +1,1046 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "first_party_detector_execution",
+  "status": "completed_with_limitations",
+  "repository": "openharmony/miscservices_pasteboard",
+  "target_id": "current-component:openharmony/miscservices_pasteboard",
+  "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+  "git_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+  "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+  "provenance": "local_git_objects",
+  "profile_id": "light-ast",
+  "environment": {
+    "python": "3.10.12",
+    "git": "git version 2.34.1",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4"
+    },
+    "parse_profile": "light-ast",
+    "build_profile": "none",
+    "macro_expansion": false,
+    "product_manifest_locked": false
+  },
+  "scope": {
+    "tracked_entries": 94,
+    "out_of_scope": 0,
+    "non_source": 26,
+    "symlinks": 0,
+    "submodules": 0,
+    "oversize": 0,
+    "binary_or_non_utf8": 0,
+    "selected_source_files": 68,
+    "selected_source_bytes": 263975,
+    "skipped": [],
+    "git_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "declared_scope": [
+      "."
+    ]
+  },
+  "source_parsing": {
+    "parsing_status": {
+      "complete": 57,
+      "not_run": 1,
+      "partial": 10
+    },
+    "languages": {
+      "cpp": 67,
+      "ts": 1
+    }
+  },
+  "detector_count": 1,
+  "diagnostic_count": 2,
+  "validated_vulnerability": 0,
+  "detector_runs": [
+    {
+      "schema_version": 2,
+      "run_id": "git-index:dd22c7cb5e5f:b1a29ee4fbd6:ohscanner.interface.ipc",
+      "tool": "ohscanner.interface.ipc",
+      "tool_version": "0.12.3",
+      "target_id": "current-component:openharmony/miscservices_pasteboard",
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "scope_files": 67,
+      "scope_loc": 7104,
+      "status": "completed",
+      "elapsed_seconds": 0.32716188600170426,
+      "peak_memory_mb": null,
+      "diagnostic_count": 2,
+      "diagnostics": [
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:5b54938c4ec4d184",
+          "provider": "ohscanner.interface.ipc",
+          "evidence_type": "syntax",
+          "file": "services/zidl/src/pasteboard_service_stub.cpp",
+          "line": 77,
+          "column": null,
+          "rule_id": "ipc.auth.missing",
+          "severity": "unassessed",
+          "message": "AUTH-02 candidate: Sensitive modeled call GetPasteData has a structured path without a recognized caller authorization. Entry=PasteboardServiceStub::OnGetPasteData [entry-source=services/zidl/src/pasteboard_service_stub.cpp] [dispatch=map_member_ptr codes=static_cast<uint32_t>(GET_PASTE_DATA)]; possible consequence (not established): data the caller is not entitled to read may be returned to it [information_disclosure CWE-200] driven by modelled call GetPasteData; path=()",
+          "candidate_cwe": "CWE-862",
+          "confidence": "unassessed",
+          "symbol": "PasteboardServiceStub::OnGetPasteData",
+          "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+          "consequence_impact": "information_disclosure",
+          "consequence_cwe": "CWE-200",
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:0fc129db7dc16ae6",
+          "provider": "ohscanner.interface.ipc",
+          "evidence_type": "syntax",
+          "file": "services/zidl/src/pasteboard_service_stub.cpp",
+          "line": 107,
+          "column": null,
+          "rule_id": "ipc.auth.missing",
+          "severity": "unassessed",
+          "message": "AUTH-02 candidate: Sensitive modeled call SetPasteData has a structured path without a recognized caller authorization. Entry=PasteboardServiceStub::OnSetPasteData [entry-source=services/zidl/src/pasteboard_service_stub.cpp] [dispatch=map_member_ptr codes=static_cast<uint32_t>(SET_PASTE_DATA)]; possible consequence (not established): an operation intended to require authorization may run without it [unauthorized_effect]; path=((102, 'pasteData => True'),)",
+          "candidate_cwe": "CWE-862",
+          "confidence": "unassessed",
+          "symbol": "PasteboardServiceStub::OnSetPasteData",
+          "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+          "consequence_impact": "unauthorized_effect",
+          "consequence_cwe": null,
+          "source_binding": "bound"
+        }
+      ],
+      "limitations": [
+        "Model=oh-ipc-2026.10-v23; first-party bounded structured syntax interpretation, no external scanner execution.",
+        "Private branch pass reconstructs Tree-sitter nodes; public shared facts/schema are unchanged.",
+        "No compiler CFG, arbitrary virtual dispatch, alias analysis or full-program authorization proof. Macros are expanded only from the scan's own sources and only when unambiguous; the catalogue is never an #include resolution, and what the expander refused is counted in the macro-expansion limitation rather than assumed away.",
+        "Unmodeled callees/authorization remain evidence obligations; no findings does not establish safety.",
+        "Interface-descriptor identity is read from the class's own base clause: a comparison is counted as this transaction's guard only when the source names the interface the class implements. A comparison against another interface, or one whose identity the analysed sources do not state, is reported with that reason instead of counting as a guard or as a proven mismatch.",
+        "Descriptor consistency is separate from caller authorization; relay candidates are not exploit proofs.",
+        "IPC roots require a source-indexed class dispatcher with code, request Parcel and reply Parcel; explicit service/transport roots and Stub inner helpers are separate allowlisted entry kinds. Test/fuzz/mock path roots are excluded from product candidate analysis and counted in limitations. Entry discovery is not reachability: dispatcher-level guards and macro-conditional reachability remain obligations, not conclusions.",
+        "Entry-coverage measurements are published in the interface research report, not in this result.",
+        "Cross-service boundary coverage: 0 call(s) on a handle built by iface_cast<> in the scanned sources, 0 carrying the original caller's identity (SetCallingIdentity with a calling-token value active), 0 executing as the service. Each boundary is recorded with the identity that crossed it; no candidate is emitted from the boundary itself, and a downstream service's own guards are not read from this corpus.",
+        "Entry/dispatch coverage: 2 dispatcher(s) (2 in stub classes, 0 with a recognizable guard before dispatch), 16 binding(s) by grade {'source_dispatch': 16}, transactions {'dynamic': 16}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe.",
+        "Macro expansion: 0 invocation(s) expanded in 0 file(s), 0 of them carrying control flow; 0 file(s) left unexpanded (variadic_stringify_or_token_paste=363). The catalogue is the scan's own sources, never #include; where a macro was expanded, quoted conditions come from the expanded form while a finding's line is mapped back to the original file.",
+        "One-hop callee is not unique (3 definitions) for PasteboardObserverStub::OnPasteboardChanged; the callee body was not read. The call site therefore stays a candidate.",
+        "Partial source: only error-free functions can be inspected in interfaces/kits/napi/src/napi_init.cpp",
+        "Partial source: only error-free functions can be inspected in services/core/include/i_pasteboard_observer.h",
+        "Partial source: only error-free functions can be inspected in services/core/include/i_pasteboard_service.h",
+        "Partial source: only error-free functions can be inspected in services/core/include/pasteboard_service.h",
+        "Partial source: only error-free functions can be inspected in services/core/src/pasteboard_storage.cpp",
+        "Partial source: only error-free functions can be inspected in services/test/unittest/src/paste_service_test.cpp",
+        "Partial source: only error-free functions can be inspected in services/zidl/include/pasteboard_observer_stub.h",
+        "Partial source: only error-free functions can be inspected in services/zidl/include/pasteboard_service_stub.h",
+        "Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/zidl/src/pasteboard_observer_stub.cpp",
+        "Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: services/zidl/src/pasteboard_service_stub.cpp",
+        "Owner M2 adapter: single interpretation pass; partial source inspection is not full analysis.",
+        "Unavailable AST units: 0; cross-file context from these units is unknown.",
+        "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+        "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+        "Diagnostic does not establish vulnerability, reachability or security impact.",
+        "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar."
+      ],
+      "parsing": [
+        {
+          "file": "framework/innerkits/include/paste_data.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "framework/innerkits/include/paste_data_record.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "framework/innerkits/include/pasteboard_client.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "framework/innerkits/include/pasteboard_observer.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "framework/innerkits/src/paste_data.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "framework/innerkits/src/paste_data_record.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "framework/innerkits/src/pasteboard_client.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "framework/innerkits/src/pasteboard_observer.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "interfaces/kits/napi/include/napi_init.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "interfaces/kits/napi/include/pasteboard_common.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "interfaces/kits/napi/include/pastedata_napi.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "interfaces/kits/napi/include/pastedata_record_napi.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "interfaces/kits/napi/include/systempasteboard_napi.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "interfaces/kits/napi/src/napi_init.cpp",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 26, \"kind\": \"error\", \"start_line\": 26}",
+            "{\"end_line\": 42, \"kind\": \"error\", \"start_line\": 42}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "interfaces/kits/napi/src/napi_pasteboard.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "interfaces/kits/napi/src/napi_pastedata.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "interfaces/kits/napi/src/napi_pastedata_record.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "interfaces/kits/napi/src/pasteboard_common.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/core/include/i_pasteboard_observer.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 30, \"kind\": \"error\", \"start_line\": 30}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/core/include/i_pasteboard_service.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 43, \"kind\": \"error\", \"start_line\": 43}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/core/include/i_pasteboard_storage.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/core/include/pasteboard_service.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 52, \"kind\": \"missing\", \"start_line\": 52}",
+            "{\"end_line\": 53, \"kind\": \"missing\", \"start_line\": 53}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/core/include/pasteboard_storage.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/core/src/pasteboard_service.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/core/src/pasteboard_storage.cpp",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 88, \"kind\": \"error\", \"start_line\": 88}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/dfx/src/behaviour/behaviour_reporter.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/behaviour/pasteboard_behaviour_reporter_impl.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/behaviour/pasteboard_behaviour_reporter_impl.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/calculate_time_consuming.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/calculate_time_consuming.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/command.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/command.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/dfx_code_constant.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/dfx_types.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/fault/fault_reporter.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/fault/initialization_fault_impl.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/fault/initialization_fault_impl.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/hiview_adapter.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/hiview_adapter.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/pasteboard_dump_helper.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/pasteboard_dump_helper.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/pasteboard_trace.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/pasteboard_trace.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/reporter.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/reporter.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/statistic/statistic_reporter.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/statistic/time_consuming_statistic_impl.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/dfx/src/statistic/time_consuming_statistic_impl.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/test/unittest/include/pasteboard_observer_callback.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/test/unittest/src/paste_service_test.cpp",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 60, \"kind\": \"missing\", \"start_line\": 60}",
+            "{\"end_line\": 83, \"kind\": \"missing\", \"start_line\": 83}",
+            "{\"end_line\": 94, \"kind\": \"missing\", \"start_line\": 94}",
+            "{\"end_line\": 105, \"kind\": \"missing\", \"start_line\": 105}",
+            "{\"end_line\": 117, \"kind\": \"missing\", \"start_line\": 117}",
+            "{\"end_line\": 130, \"kind\": \"missing\", \"start_line\": 130}",
+            "{\"end_line\": 152, \"kind\": \"missing\", \"start_line\": 152}",
+            "{\"end_line\": 175, \"kind\": \"missing\", \"start_line\": 175}",
+            "{\"end_line\": 198, \"kind\": \"missing\", \"start_line\": 198}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/zidl/include/pasteboard_observer_proxy.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/zidl/include/pasteboard_observer_stub.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 34, \"kind\": \"missing\", \"start_line\": 34}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/zidl/include/pasteboard_service_proxy.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/zidl/include/pasteboard_service_stub.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 35, \"kind\": \"missing\", \"start_line\": 35}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/zidl/src/pasteboard_observer_proxy.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/zidl/src/pasteboard_observer_stub.cpp",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 46, \"kind\": \"error\", \"start_line\": 46}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/zidl/src/pasteboard_service_proxy.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/zidl/src/pasteboard_service_stub.cpp",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 58, \"kind\": \"error\", \"start_line\": 58}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "test/fuzztest/pasteboardservice_fuzzer/pasteboardservice_fuzzer.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "test/fuzztest/pasteboardservice_fuzzer/pasteboardservice_fuzzer.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "utils/mock/include/mock_permission.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "utils/mock/src/mock_permission.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "utils/native/include/pasteboard_common.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "utils/native/include/pasteboard_hilog_wreapper.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "utils/native/include/pasteboard_permission.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "utils/native/include/pasteboard_sp_singleton.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "utils/native/src/pasteboard_permission.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        }
+      ],
+      "interpretation": "Descriptive scanner evidence only. Diagnostics are candidates/evidence, not validated vulnerabilities; an empty diagnostic list is not proof of safety."
+    }
+  ],
+  "detector_coverage": {
+    "schema_version": 1,
+    "detectors": {
+      "ohscanner.interface.ipc": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 67,
+        "analyzed_files": [
+          "framework/innerkits/include/paste_data.h",
+          "framework/innerkits/include/paste_data_record.h",
+          "framework/innerkits/include/pasteboard_client.h",
+          "framework/innerkits/include/pasteboard_observer.h",
+          "framework/innerkits/src/paste_data.cpp",
+          "framework/innerkits/src/paste_data_record.cpp",
+          "framework/innerkits/src/pasteboard_client.cpp",
+          "framework/innerkits/src/pasteboard_observer.cpp",
+          "interfaces/kits/napi/include/napi_init.h",
+          "interfaces/kits/napi/include/pasteboard_common.h",
+          "interfaces/kits/napi/include/pastedata_napi.h",
+          "interfaces/kits/napi/include/pastedata_record_napi.h",
+          "interfaces/kits/napi/include/systempasteboard_napi.h",
+          "interfaces/kits/napi/src/napi_pasteboard.cpp",
+          "interfaces/kits/napi/src/napi_pastedata.cpp",
+          "interfaces/kits/napi/src/napi_pastedata_record.cpp",
+          "interfaces/kits/napi/src/pasteboard_common.cpp",
+          "services/core/include/i_pasteboard_storage.h",
+          "services/core/include/pasteboard_storage.h",
+          "services/core/src/pasteboard_service.cpp",
+          "services/dfx/src/behaviour/behaviour_reporter.h",
+          "services/dfx/src/behaviour/pasteboard_behaviour_reporter_impl.cpp",
+          "services/dfx/src/behaviour/pasteboard_behaviour_reporter_impl.h",
+          "services/dfx/src/calculate_time_consuming.cpp",
+          "services/dfx/src/calculate_time_consuming.h",
+          "services/dfx/src/command.cpp",
+          "services/dfx/src/command.h",
+          "services/dfx/src/dfx_code_constant.h",
+          "services/dfx/src/dfx_types.h",
+          "services/dfx/src/fault/fault_reporter.h",
+          "services/dfx/src/fault/initialization_fault_impl.cpp",
+          "services/dfx/src/fault/initialization_fault_impl.h",
+          "services/dfx/src/hiview_adapter.cpp",
+          "services/dfx/src/hiview_adapter.h",
+          "services/dfx/src/pasteboard_dump_helper.cpp",
+          "services/dfx/src/pasteboard_dump_helper.h",
+          "services/dfx/src/pasteboard_trace.cpp",
+          "services/dfx/src/pasteboard_trace.h",
+          "services/dfx/src/reporter.cpp",
+          "services/dfx/src/reporter.h",
+          "services/dfx/src/statistic/statistic_reporter.h",
+          "services/dfx/src/statistic/time_consuming_statistic_impl.cpp",
+          "services/dfx/src/statistic/time_consuming_statistic_impl.h",
+          "services/test/unittest/include/pasteboard_observer_callback.h",
+          "services/zidl/include/pasteboard_observer_proxy.h",
+          "services/zidl/include/pasteboard_service_proxy.h",
+          "services/zidl/src/pasteboard_observer_proxy.cpp",
+          "services/zidl/src/pasteboard_service_proxy.cpp",
+          "test/fuzztest/pasteboardservice_fuzzer/pasteboardservice_fuzzer.cpp",
+          "test/fuzztest/pasteboardservice_fuzzer/pasteboardservice_fuzzer.h",
+          "utils/mock/include/mock_permission.h",
+          "utils/mock/src/mock_permission.cpp",
+          "utils/native/include/pasteboard_common.h",
+          "utils/native/include/pasteboard_hilog_wreapper.h",
+          "utils/native/include/pasteboard_permission.h",
+          "utils/native/include/pasteboard_sp_singleton.h",
+          "utils/native/src/pasteboard_permission.cpp"
+        ],
+        "partially_inspected_files": [
+          "interfaces/kits/napi/src/napi_init.cpp",
+          "services/core/include/i_pasteboard_observer.h",
+          "services/core/include/i_pasteboard_service.h",
+          "services/core/include/pasteboard_service.h",
+          "services/core/src/pasteboard_storage.cpp",
+          "services/test/unittest/src/paste_service_test.cpp",
+          "services/zidl/include/pasteboard_observer_stub.h",
+          "services/zidl/include/pasteboard_service_stub.h",
+          "services/zidl/src/pasteboard_observer_stub.cpp",
+          "services/zidl/src/pasteboard_service_stub.cpp"
+        ],
+        "source_sha256": {
+          "framework/innerkits/include/paste_data.h": "c23671ecb174d294c0c7d95c2b08c7cda4dade7e8a899a296d45a2ab96ea2f1d",
+          "framework/innerkits/include/paste_data_record.h": "76f0b50e7c3cc266687521b1a815ec178bce0074d9147037c3c9368aba040830",
+          "framework/innerkits/include/pasteboard_client.h": "520cb1e1cc94fde7394646835b0a05e8ab9f7d71139754081ade6f76fd890616",
+          "framework/innerkits/include/pasteboard_observer.h": "4ccf81a9f36c6ef75b73f19300287e81b33f02c96b7c04aef48e1815aeb27409",
+          "framework/innerkits/src/paste_data.cpp": "e312e725516149040339f2a36a4643fd14cf18012513eb2752a7ef59a7e12e9e",
+          "framework/innerkits/src/paste_data_record.cpp": "0d43c249a9c09f57a94e680eadee3df0480dfdc20a6d801bc0a9b060ca88f29e",
+          "framework/innerkits/src/pasteboard_client.cpp": "ace24f733b0f0590c8a3d2b723dc41fda8ea80dfd9cfdf99bcb7d9699c20598a",
+          "framework/innerkits/src/pasteboard_observer.cpp": "a7cdc46b8c436854472b42bd77d64d8dd8558c56d07d17e6be2a53e7ea186e18",
+          "interfaces/kits/napi/include/napi_init.h": "663f859e7cb69bf386019075080d9fb8ba83cad9a37c03edae3ac18df4a4f9aa",
+          "interfaces/kits/napi/include/pasteboard_common.h": "76bab6db8877cd864a39eb33c85a1c0c3e72d42f6fcc8810b761f83964ec3c67",
+          "interfaces/kits/napi/include/pastedata_napi.h": "34ec102dc289d11224298356c24c918ec9be4bae532ea36bcb668b52f76104cf",
+          "interfaces/kits/napi/include/pastedata_record_napi.h": "30be9fbb22386cbc1b928b7414452dd54d03f3d0cc3c0684c157745f573a88d1",
+          "interfaces/kits/napi/include/systempasteboard_napi.h": "84d1cca95d4af0138323f3e28cfea22020bc61add4a237709a8e7c422fcee327",
+          "interfaces/kits/napi/src/napi_init.cpp": "42a7115f82f1f3b61a7063b122b1960e5aeede2f5e121a9a3faf9570eb73d139",
+          "interfaces/kits/napi/src/napi_pasteboard.cpp": "279d80bea2171bb9daa10ed96a6f918c5aaec40fb9f85b587dc1ced22218a55c",
+          "interfaces/kits/napi/src/napi_pastedata.cpp": "90114123458bedb9c74f860153714c4e699e270716f10ce4386421870e8ae3e1",
+          "interfaces/kits/napi/src/napi_pastedata_record.cpp": "2c63928307a52e470d776d655b1c636fb7304ed38daa2895dbc2b15d94ae8a19",
+          "interfaces/kits/napi/src/pasteboard_common.cpp": "00352eb3520a8c8d7155a740915a8a737ba26d9efd9a58a4f371aec399ac2162",
+          "services/core/include/i_pasteboard_observer.h": "dfc8962712d9d7ec4b832d75786e969c0728198d02e1ee6575e1cd6fcd0a82e2",
+          "services/core/include/i_pasteboard_service.h": "ffef3626d4dcd2d0757381e64e652a8a023d352dd59bc9afa20deafb2fd8e3fc",
+          "services/core/include/i_pasteboard_storage.h": "8eecf2c3e3aa4608b8c8de2754e8963f360744f68cb6252ec6c992266e09dde5",
+          "services/core/include/pasteboard_service.h": "9870b7e2fc5cfca2306c3c142ab4404d34b89e3d59880dccb5d00d0c929f91b1",
+          "services/core/include/pasteboard_storage.h": "bda9d8cfb61a68a387fb2c3893019d66e5d5d9e433e796a536d7f366c744b954",
+          "services/core/src/pasteboard_service.cpp": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+          "services/core/src/pasteboard_storage.cpp": "2a61f67e4e87569c45d423c91ff3b6dfc4ac01fb9ace6fd7487c0b6bac799e3b",
+          "services/dfx/src/behaviour/behaviour_reporter.h": "588bbbc8d143d963dd88d46d654e23d78d2443eb14d0215ffc905bb4711c42dd",
+          "services/dfx/src/behaviour/pasteboard_behaviour_reporter_impl.cpp": "f6f45c7911d605c331499e636f6869f85ab93984cda5431dfec65262f55e7c53",
+          "services/dfx/src/behaviour/pasteboard_behaviour_reporter_impl.h": "40e818f056491900b3005c5d3ea63cabb01c28ff5f07a1ba13fee1771a8c44cc",
+          "services/dfx/src/calculate_time_consuming.cpp": "9108c84a1bbef00537444c45e062e54e47f335b524131b7b98e5412847f2d2ea",
+          "services/dfx/src/calculate_time_consuming.h": "9d8b8e93a7cfc95f1b46e29351752c83ad259f3763b836a367b6533ba8738e13",
+          "services/dfx/src/command.cpp": "92246907da9f6fa2e19321519543c8c2aa2a9780ef75c4e9243194ec962a4faa",
+          "services/dfx/src/command.h": "6627ccc123474ba4f20f4554fbd11f160207dfecf2a57f0a95a8a85eeb30fd53",
+          "services/dfx/src/dfx_code_constant.h": "7a1737634f86a0d73ebae436c12d237f1e73925d005d7ec79d49b06b6a4fd9bb",
+          "services/dfx/src/dfx_types.h": "8f4290ca4b9da8efd99116b10f85ce0519c2e27417501174f905a8297d5fbac4",
+          "services/dfx/src/fault/fault_reporter.h": "e6f8f9ca2188cd55cb9a31f6212229a5c30762198a00381644fd039cb07a11ac",
+          "services/dfx/src/fault/initialization_fault_impl.cpp": "9abd72ca95be77f1999e05161b516cb1ac3472fea3aeb83bb0cb493221706a37",
+          "services/dfx/src/fault/initialization_fault_impl.h": "18f6a03b290941c08f23021482a01168f6133a6efb7f147adf502f15906408c5",
+          "services/dfx/src/hiview_adapter.cpp": "5d17cf508ceb2599ac7fcca0a74c0ed5e8b36dbc91c1eb4ef567715331462be1",
+          "services/dfx/src/hiview_adapter.h": "dab37cd6d32c581f44e3fd19e40d802c1cef21fd0168840ca33e3f98bbd36fba",
+          "services/dfx/src/pasteboard_dump_helper.cpp": "2721dfe76ef0c747b9de0feca3e74064942225b77ad398d0a96904bb7ed384f1",
+          "services/dfx/src/pasteboard_dump_helper.h": "0c150dd667d16cfaf7d26c9bf5aa256f0d49b377b0c5055ad05fdf2bce9698ec",
+          "services/dfx/src/pasteboard_trace.cpp": "36287c2b83c84482f57991ed5cad70886a7f89019096ec67094c543a151b03f2",
+          "services/dfx/src/pasteboard_trace.h": "dae3b81eb0e1fad36e73ef6ce5392c635b9d6f714f884b5a75d61d85d60a5423",
+          "services/dfx/src/reporter.cpp": "60a6bba75561fd6f036fb33887b29ab2f5209feeb86595e15b4774a89c4bd8e0",
+          "services/dfx/src/reporter.h": "992b3bd51c336db746850e215995982f013a0571d17acef69d597486d71bddab",
+          "services/dfx/src/statistic/statistic_reporter.h": "5b28b9647165ec0d8f6e76bc5b1f99a32c84b1ff512a2d70420011e315f5214b",
+          "services/dfx/src/statistic/time_consuming_statistic_impl.cpp": "f288ae640051fcb11b4e20eb174e1d4053692acf0c2833194268c2726f288a5d",
+          "services/dfx/src/statistic/time_consuming_statistic_impl.h": "1cbd211a96cdfd9b930bcaf0b51fafe7a456774ce172d3a22ff93841760dc7a4",
+          "services/test/unittest/include/pasteboard_observer_callback.h": "804d6ead559fe4ca48b20d9cb2bbe7c8aaa3586cddf38a6db6e1eda6d8789a95",
+          "services/test/unittest/src/paste_service_test.cpp": "14a33acddbcdfd66a9e2771091ea0428843abd62809a7da5b55598e284f34cd3",
+          "services/zidl/include/pasteboard_observer_proxy.h": "9ec4807ce1bfd2263c4eff9fd1731ea80783a54ded5eda1ededa4c88d912d630",
+          "services/zidl/include/pasteboard_observer_stub.h": "709a56ea65a107b3733125ff00d60e69de4c908287bed4053a40b58d3a75ffc2",
+          "services/zidl/include/pasteboard_service_proxy.h": "5eb7d7b9b18ed5d957c83bf3d3914bb64b2564bdd9e02b0e203ef2251264dc23",
+          "services/zidl/include/pasteboard_service_stub.h": "d949deeb769a8b96b88d0548b665039c6c3ec9c30d9dc6ff43eefec7ebc256ec",
+          "services/zidl/src/pasteboard_observer_proxy.cpp": "2c9041f0b068cb915bf63cdf088ac74e6cbac24711f785d1c75af2e53ed31bc2",
+          "services/zidl/src/pasteboard_observer_stub.cpp": "079b2533a3824e63b8d45983b596b303fb12b92779ababf9e83cd0fa2de80cf3",
+          "services/zidl/src/pasteboard_service_proxy.cpp": "61f66fbbe53a1190ec31a8ff34b41a0d6b3ea28cdea72df8f0d3bc921d21f600",
+          "services/zidl/src/pasteboard_service_stub.cpp": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+          "test/fuzztest/pasteboardservice_fuzzer/pasteboardservice_fuzzer.cpp": "384914b8dac66d02adea0d3fec16d254e2cce7cc76a87fe0f519d937c2b61561",
+          "test/fuzztest/pasteboardservice_fuzzer/pasteboardservice_fuzzer.h": "74c9fda1b6adce8f6ee437d4ed927e8752ec058864f005ab96eb3aba9324f7fc",
+          "utils/mock/include/mock_permission.h": "890b7d9d76acd775c365cf0efb9fe477f04baa5abb70c1ca0cc6cdfbcf76f50e",
+          "utils/mock/src/mock_permission.cpp": "e21db508f8b5c0646f7b1fe5665dd9befe0584096386cce7ea5c6bda1206ec3e",
+          "utils/native/include/pasteboard_common.h": "6ec7dc54a43b8f54d1cec6afdec938f47dfc931d386db53185ec0a55f3caf7e9",
+          "utils/native/include/pasteboard_hilog_wreapper.h": "738a51e7525c85c909307de9f8ac374e4751b1ca5f6a0d0093695418012b3405",
+          "utils/native/include/pasteboard_permission.h": "46ed862a3b8c8a864d27d2c146638dbb255518f910265ec27f587bd337916374",
+          "utils/native/include/pasteboard_sp_singleton.h": "6c51f71758e32b9d5e252e965392e6f94b890c8c1ef1580bf938abb7ff3d762c",
+          "utils/native/src/pasteboard_permission.cpp": "b1241967b47b12ffbcc980c4f9514e32406d04b0652ff66fa7f88e4bd29f5761"
+        },
+        "unexamined": [
+          {
+            "file": "interfaces/kits/napi/src/napi_init.cpp",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/core/include/i_pasteboard_observer.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/core/include/i_pasteboard_service.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/core/include/pasteboard_service.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/core/src/pasteboard_storage.cpp",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/test/unittest/src/paste_service_test.cpp",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/zidl/include/pasteboard_observer_stub.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/zidl/include/pasteboard_service_stub.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/zidl/src/pasteboard_observer_stub.cpp",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/zidl/src/pasteboard_service_stub.cpp",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          }
+        ],
+        "inspected_files": [
+          "framework/innerkits/include/paste_data.h",
+          "framework/innerkits/include/paste_data_record.h",
+          "framework/innerkits/include/pasteboard_client.h",
+          "framework/innerkits/include/pasteboard_observer.h",
+          "framework/innerkits/src/paste_data.cpp",
+          "framework/innerkits/src/paste_data_record.cpp",
+          "framework/innerkits/src/pasteboard_client.cpp",
+          "framework/innerkits/src/pasteboard_observer.cpp",
+          "interfaces/kits/napi/include/napi_init.h",
+          "interfaces/kits/napi/include/pasteboard_common.h",
+          "interfaces/kits/napi/include/pastedata_napi.h",
+          "interfaces/kits/napi/include/pastedata_record_napi.h",
+          "interfaces/kits/napi/include/systempasteboard_napi.h",
+          "interfaces/kits/napi/src/napi_init.cpp",
+          "interfaces/kits/napi/src/napi_pasteboard.cpp",
+          "interfaces/kits/napi/src/napi_pastedata.cpp",
+          "interfaces/kits/napi/src/napi_pastedata_record.cpp",
+          "interfaces/kits/napi/src/pasteboard_common.cpp",
+          "services/core/include/i_pasteboard_observer.h",
+          "services/core/include/i_pasteboard_service.h",
+          "services/core/include/i_pasteboard_storage.h",
+          "services/core/include/pasteboard_service.h",
+          "services/core/include/pasteboard_storage.h",
+          "services/core/src/pasteboard_service.cpp",
+          "services/core/src/pasteboard_storage.cpp",
+          "services/dfx/src/behaviour/behaviour_reporter.h",
+          "services/dfx/src/behaviour/pasteboard_behaviour_reporter_impl.cpp",
+          "services/dfx/src/behaviour/pasteboard_behaviour_reporter_impl.h",
+          "services/dfx/src/calculate_time_consuming.cpp",
+          "services/dfx/src/calculate_time_consuming.h",
+          "services/dfx/src/command.cpp",
+          "services/dfx/src/command.h",
+          "services/dfx/src/dfx_code_constant.h",
+          "services/dfx/src/dfx_types.h",
+          "services/dfx/src/fault/fault_reporter.h",
+          "services/dfx/src/fault/initialization_fault_impl.cpp",
+          "services/dfx/src/fault/initialization_fault_impl.h",
+          "services/dfx/src/hiview_adapter.cpp",
+          "services/dfx/src/hiview_adapter.h",
+          "services/dfx/src/pasteboard_dump_helper.cpp",
+          "services/dfx/src/pasteboard_dump_helper.h",
+          "services/dfx/src/pasteboard_trace.cpp",
+          "services/dfx/src/pasteboard_trace.h",
+          "services/dfx/src/reporter.cpp",
+          "services/dfx/src/reporter.h",
+          "services/dfx/src/statistic/statistic_reporter.h",
+          "services/dfx/src/statistic/time_consuming_statistic_impl.cpp",
+          "services/dfx/src/statistic/time_consuming_statistic_impl.h",
+          "services/test/unittest/include/pasteboard_observer_callback.h",
+          "services/test/unittest/src/paste_service_test.cpp",
+          "services/zidl/include/pasteboard_observer_proxy.h",
+          "services/zidl/include/pasteboard_observer_stub.h",
+          "services/zidl/include/pasteboard_service_proxy.h",
+          "services/zidl/include/pasteboard_service_stub.h",
+          "services/zidl/src/pasteboard_observer_proxy.cpp",
+          "services/zidl/src/pasteboard_observer_stub.cpp",
+          "services/zidl/src/pasteboard_service_proxy.cpp",
+          "services/zidl/src/pasteboard_service_stub.cpp",
+          "test/fuzztest/pasteboardservice_fuzzer/pasteboardservice_fuzzer.cpp",
+          "test/fuzztest/pasteboardservice_fuzzer/pasteboardservice_fuzzer.h",
+          "utils/mock/include/mock_permission.h",
+          "utils/mock/src/mock_permission.cpp",
+          "utils/native/include/pasteboard_common.h",
+          "utils/native/include/pasteboard_hilog_wreapper.h",
+          "utils/native/include/pasteboard_permission.h",
+          "utils/native/include/pasteboard_sp_singleton.h",
+          "utils/native/src/pasteboard_permission.cpp"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 57,
+          "partial": 10,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.interface.ipc:5b54938c4ec4d184",
+            "file": "services/zidl/src/pasteboard_service_stub.cpp",
+            "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "openharmony/miscservices_pasteboard",
+              "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+              "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.interface.ipc",
+              "detector_version": "0.12.3",
+              "rule_id": "ipc.auth.missing",
+              "file": "services/zidl/src/pasteboard_service_stub.cpp",
+              "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+            },
+            "consequence_impact": "information_disclosure",
+            "consequence_cwe": "CWE-200",
+            "model_version": "oh-ipc-2026.10-v23",
+            "obligations": [
+              {
+                "kind": "entry_reachability",
+                "description": "Verify actual caller reachability and product build/macro conditions.",
+                "status": "unknown"
+              },
+              {
+                "kind": "callee_and_policy",
+                "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Independently review attacker control, trust boundary and concrete effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "dispatch_binding",
+                "description": "Handler was admitted as an entry from a source-derived dispatch binding. Verify dispatcher-level guards (e.g. IsCallerValid/IsPermissionGranted), their dominance over this transaction code, and the overload/receiver binding.",
+                "status": "unknown"
+              },
+              {
+                "kind": "consequence",
+                "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "parse_completeness_impact",
+                "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.interface.ipc:0fc129db7dc16ae6",
+            "file": "services/zidl/src/pasteboard_service_stub.cpp",
+            "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "openharmony/miscservices_pasteboard",
+              "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+              "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.interface.ipc",
+              "detector_version": "0.12.3",
+              "rule_id": "ipc.auth.missing",
+              "file": "services/zidl/src/pasteboard_service_stub.cpp",
+              "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+            },
+            "consequence_impact": "unauthorized_effect",
+            "consequence_cwe": null,
+            "model_version": "oh-ipc-2026.10-v23",
+            "obligations": [
+              {
+                "kind": "entry_reachability",
+                "description": "Verify actual caller reachability and product build/macro conditions.",
+                "status": "unknown"
+              },
+              {
+                "kind": "callee_and_policy",
+                "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Independently review attacker control, trust boundary and concrete effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "dispatch_binding",
+                "description": "Handler was admitted as an entry from a source-derived dispatch binding. Verify dispatcher-level guards (e.g. IsCallerValid/IsPermissionGranted), their dominance over this transaction code, and the overload/receiver binding.",
+                "status": "unknown"
+              },
+              {
+                "kind": "consequence",
+                "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "parse_completeness_impact",
+                "description": "Review parser errors and surrounding control/call dependencies; a partial tree may hide guards or paths even when errors are distant from this candidate.",
+                "status": "unknown"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "files_in_scope_without_a_claiming_detector": [
+    "interfaces/declaration/api/@ohos.pasteboard.d.ts"
+  ],
+  "limitations": [
+    "Diagnostics are candidates/evidence only, not proof of security impact.",
+    "Zero diagnostics does NOT mean the component is free of vulnerabilities.",
+    "Git origin name is user declared; source is pinned local objects, not an OH product build.",
+    "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.",
+    "Some indexed source files have no claiming detector; their security analysis is unknown."
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "experiment": "current B IPC detector replay of the fixed eight-repository corpus",
+  "date": "2026-10-19",
+  "branch": "work/ipc-20261017",
+  "detector_version": "0.12.3",
+  "model_version": "oh-ipc-2026.10-v23",
+  "common_base": "6a41dc9b1aa030158e09be6241e2b14341f9256d",
+  "repository_count": 8,
+  "diagnostics": 30,
+  "validated_vulnerability": 0,
+  "rule_counts": {
+    "ipc.relay.descriptor-boundary": 7,
+    "ipc.capability.export": 11,
+    "ipc.auth.missing": 12
+  },
+  "components": [
+    {
+      "repository": "openharmony/aafwk_standard",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "git_tree": "c3744c8c230573a4bcdb76bf49493a1ea61c72d1",
+      "snapshot_sha256": "13aead400f536e53d1aa39c6c70d4bb48d70045ef25e88efbf633deee660deb6",
+      "selected_source_files": 1771,
+      "scope_loc": 398751,
+      "complete": 1222,
+      "partial": 531,
+      "not_run": 18,
+      "diagnostics": 15,
+      "status": "completed"
+    },
+    {
+      "repository": "openharmony/applications_contacts_data",
+      "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "git_tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "snapshot_sha256": "375f9962e275d88a2ea3e1915ddea3a48f8f06008e96509b7e432324f4ba3afc",
+      "selected_source_files": 360,
+      "scope_loc": 61024,
+      "complete": 199,
+      "partial": 19,
+      "not_run": 142,
+      "diagnostics": 4,
+      "status": "completed"
+    },
+    {
+      "repository": "openharmony/communication_netmanager_ext",
+      "commit": "8c35917b7e2f152813b13a20530a8452cf73d938",
+      "git_tree": "e26372f6cd65be928b9c1cf4a96d3c7dd5ece804",
+      "snapshot_sha256": "d3c302ffe06ab7e1e002b92c4eba224fdcc1600c2de7b2eb65d9d49a932872f1",
+      "selected_source_files": 654,
+      "scope_loc": 152107,
+      "complete": 434,
+      "partial": 198,
+      "not_run": 22,
+      "diagnostics": 0,
+      "status": "completed"
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_relational_store",
+      "commit": "42f13ea84e2f90ed511a2bd4aa5be14c5996eba8",
+      "git_tree": "f4698163f10e769c9014daa6e65856b12def8fdf",
+      "snapshot_sha256": "69074839144fa0495b0c1d92aef80fca93730158c19a38b0e7ba61834a2932ec",
+      "selected_source_files": 1350,
+      "scope_loc": 285468,
+      "complete": 789,
+      "partial": 376,
+      "not_run": 185,
+      "diagnostics": 0,
+      "status": "completed"
+    },
+    {
+      "repository": "openharmony/graphic_standard",
+      "commit": "a73af6bd3bac599b9359cba10ca7b5f82a02d5d9",
+      "git_tree": "d5446eefcd0dc9478a0da65c76fafc9f62f973ad",
+      "snapshot_sha256": "502a6dec2bff6c8811d7c878bc23220e4d480535361f53c80e42f0f9ce900fa1",
+      "selected_source_files": 1192,
+      "scope_loc": 166232,
+      "complete": 965,
+      "partial": 223,
+      "not_run": 4,
+      "diagnostics": 8,
+      "status": "completed"
+    },
+    {
+      "repository": "openharmony/miscservices_pasteboard",
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "git_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+      "selected_source_files": 68,
+      "scope_loc": 7104,
+      "complete": 57,
+      "partial": 10,
+      "not_run": 1,
+      "diagnostics": 2,
+      "status": "completed"
+    },
+    {
+      "repository": "openharmony/multimedia_histreamer",
+      "commit": "847aafa3dc32bcf92eb8a2d2277b8d34bff98362",
+      "git_tree": "6b0d47808cbb711a343c8817f262ec7cde87bf0b",
+      "snapshot_sha256": "9583e43690522343d20bdd130e13ed6bcc05e0c752bad51ae37a35a90df982e7",
+      "selected_source_files": 576,
+      "scope_loc": 93453,
+      "complete": 345,
+      "partial": 231,
+      "not_run": 0,
+      "diagnostics": 0,
+      "status": "completed"
+    },
+    {
+      "repository": "openharmony/security_deviceauth",
+      "commit": "2cf21e46f43c63857c40a79b004eda14f79b04c2",
+      "git_tree": "cfbe02de9d5f4720dc4aa19f5a8d83afa6cabaf8",
+      "snapshot_sha256": "fde064a622d247a71173f072f08313ff28820cd3c192ce3693312b44aba7a5ff",
+      "selected_source_files": 436,
+      "scope_loc": 69106,
+      "complete": 291,
+      "partial": 145,
+      "not_run": 0,
+      "diagnostics": 1,
+      "status": "completed"
+    }
+  ],
+  "candidate_path_coverage": {
+    "complete": 9,
+    "partial": 21,
+    "unknown": 0
+  }
+}

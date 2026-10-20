@@ -6,7 +6,7 @@ Additional components should supply reviewed exact-name models via IpcPolicy.
 from dataclasses import dataclass, field
 from typing import FrozenSet, Tuple
 
-MODEL_VERSION = "oh-ipc-2026.10-v31"
+MODEL_VERSION = "oh-ipc-2026.10-v32"
 
 # ---------------------------------------------------------------------------
 # Reviewed consequence catalogue (v1), kept separate from the mechanism rules.
@@ -267,6 +267,12 @@ class IpcPolicy:
         ("openharmony/telephony_call_manager", "CallManagerService::ReportOttCallDetailsInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
         ("openharmony/telephony_call_manager", "CallManagerService::ReportOttCallEventInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
     )
+    # Exact repository/method caller-class contracts. Effect names are operations
+    # that must not precede the required caller-role gate.
+    repository_caller_class_contracts: Tuple[Tuple[str, str, str, Tuple[str, ...]], ...] = ()
+    # Reviewed APIs whose reference parameters carry caller-visible data. This is
+    # deliberately not a general out-parameter taint model.
+    disclosure_output_calls: Tuple[Tuple[str, Tuple[int, ...]], ...] = ()
     # Generic, locally supplied policy overrides used by test harnesses or a
     # future reviewed profile. Empty by default; disclosed API facts above use
     # repository_expected_permissions instead.

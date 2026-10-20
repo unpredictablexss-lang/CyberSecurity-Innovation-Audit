@@ -4,6 +4,7 @@ from src.ohscanner.detectors.interface.network_session_allowlist import (
     find_auth_session_allowlist_candidates,
     find_missing_auth_session_allowlist,
     has_exact_registered_session_resolution,
+    has_dst_bus_name_session_field_provenance,
 )
 from src.ohscanner.detectors.interface.detector import IpcInterfaceDetector
 from tests.test_ipc_detector import context
@@ -106,11 +107,38 @@ int32_t OnRequsetUpdateAuthChannel(int64_t authId, AppInfo *appInfo)
 }
 """
 
+
+DST_BUS_NAME_DECODER = r"""
+int32_t TransAuthChannelMsgUnpack(const char *msg, AppInfo *appInfo)
+{
+    cJSON *obj = cJSON_Parse(msg);
+    if (!GetJsonObjectStringItem(obj, "DST_BUS_NAME", appInfo->myData.sessionName,
+                                 SESSION_NAME_SIZE_MAX)) {
+        return SOFTBUS_PARSE_JSON_ERR;
+    }
+    return SOFTBUS_OK;
+}
+"""
+
 class NetworkAuthSessionAllowlistTests(unittest.TestCase):
     def test_unvalidated_peer_identity_before_state_update_is_candidate(self):
         findings = find_missing_auth_session_allowlist(VULNERABLE)
         self.assertEqual(len(findings), 1)
         self.assertEqual(findings[0][1], "OnRecvAuthChannelRequest")
+
+    def test_exact_decoder_field_provenance_is_exposed_without_claiming_reachability(self):
+        self.assertTrue(has_dst_bus_name_session_field_provenance((DST_BUS_NAME_DECODER,)))
+        ctx = context(VULNERABLE + DST_BUS_NAME_DECODER)
+        finding = next(item for item in IpcInterfaceDetector().detect(ctx, ctx.units).findings
+                       if item.rule_id == "ipc.network.auth-session-whitelist")
+        self.assertIn("DST_BUS_NAME", finding.message)
+        self.assertIn("not attacker control", finding.message)
+
+    def test_decoder_provenance_rejects_other_key_and_ambiguous_definitions(self):
+        wrong_key = DST_BUS_NAME_DECODER.replace("DST_BUS_NAME", "SRC_BUS_NAME")
+        self.assertFalse(has_dst_bus_name_session_field_provenance((wrong_key,)))
+        self.assertFalse(has_dst_bus_name_session_field_provenance(
+            (DST_BUS_NAME_DECODER, DST_BUS_NAME_DECODER)))
 
     def test_source_derived_rejecting_whitelist_guard_suppresses_candidate(self):
         self.assertEqual(find_missing_auth_session_allowlist(FIXED), ())
