@@ -1,0 +1,35 @@
+# Reproducible commands for G12-PC product admission closure
+# Worktree: E:\网安\CyberSecurity-Innovation-Audit-c12-product-admission-20261019
+# Python: C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe
+
+# 1. Compile research scripts only.
+python -m py_compile research\methods\ark_runtime\build_profile_20261019\build_profile_manifest.py research\evaluation\ark_runtime_holdout_20261019\holdout_pipeline.py research\deliveries\product_closure_20261019\generate_product_closure.py
+
+# 2. Recompute and verify the Ark build/preprocess manifest.
+python research\methods\ark_runtime\build_profile_20261019\build_profile_manifest.py --repo-root E:\网安\CyberSecurity-Innovation-Audit-c12-product-admission-20261019
+python research\methods\ark_runtime\build_profile_20261019\build_profile_manifest.py --repo-root E:\网安\CyberSecurity-Innovation-Audit-c12-product-admission-20261019 --verify-only
+
+# 3. Exercise the holdout freeze/review/adjudication pipeline on synthetic data only.
+python research\evaluation\ark_runtime_holdout_20261019\holdout_pipeline.py self-test --work-dir research\evaluation\ark_runtime_holdout_20261019\selftest
+
+# 4. Confirm that synthetic truth cannot produce metrics.
+python research\evaluation\ark_runtime_holdout_20261019\holdout_pipeline.py score --truth research\evaluation\ark_runtime_holdout_20261019\selftest\truth.json --final-labels research\evaluation\ark_runtime_holdout_20261019\selftest\frozen\final_labels.json --secret-file research\evaluation\ark_runtime_holdout_20261019\selftest\selftest-secret.txt --output research\evaluation\ark_runtime_holdout_20261019\selftest\score-attempt.json
+# Expected exit code: 3; expected status: NOT_RUN.
+
+# 5. Recompute product closure/task tree.
+python research\deliveries\product_closure_20261019\generate_product_closure.py --profile-manifest research\methods\ark_runtime\build_profile_20261019\ark_parent_fix_build_profile_manifest.v1.json --output-dir research\deliveries\product_closure_20261019
+
+# 6. Repository hygiene.
+git diff --check
+git status --short
+# 7. Verify a real external product profile bundle when supplied.
+python research\methods\ark_runtime\build_profile_20261019\verify_profile_bundle.py --base-manifest research\methods\ark_runtime\build_profile_20261019\ark_parent_fix_build_profile_manifest.v1.json --bundle research\methods\ark_runtime\build_profile_20261019\product_profile_bundle.template.json --repo-root E:\网安\CyberSecurity-Innovation-Audit-c12-product-admission-20261019 --output research\methods\ark_runtime\build_profile_20261019\product_profile_bundle_verification.json
+# Expected template exit code: 2.
+
+# 8. Preflight real holdout governance before freeze.
+python research\evaluation\ark_runtime_holdout_20261019\holdout_preflight.py --preregistration research\evaluation\ark_runtime_holdout_20261019\preregistration.template.json --leakage-ledger research\evaluation\ark_runtime_holdout_20261019\leakage_ledger.template.json --intake research\evaluation\ark_runtime_holdout_20261019\real_holdout_intake.template.json --governance research\evaluation\ark_runtime_holdout_20261019\governance.template.json --output research\evaluation\ark_runtime_holdout_20261019\preflight_result.json
+# Expected template exit code: 2.
+
+# 9. Gate PoC/fix/admission before any dynamic execution.
+python research\deliveries\product_closure_20261019\evidence_gate.py --closure-matrix research\deliveries\product_closure_20261019\product_closure_matrix.json --evidence-bundle research\deliveries\product_closure_20261019\case_evidence_bundle.template.json --output research\deliveries\product_closure_20261019\evidence_gate_result.json
+# Expected template exit code: 2 and NOT_ADMITTED.

@@ -1,0 +1,24 @@
+{
+  "freeze_payload_sha256": "9ea45a815ea77d8c9da902ccc9195f05e4dd3f68a9f7c819941b2a4bc4f80f2b",
+  "labels": [
+    {
+      "case_pseudonym": "90aa750768218a45",
+      "label": "vulnerable_shape",
+      "rationale": "self-test reviewer A"
+    },
+    {
+      "case_pseudonym": "a71cb7487685b0c6",
+      "label": "not_vulnerable_shape",
+      "rationale": "self-test reviewer A"
+    },
+    {
+      "case_pseudonym": "c8b770fdd617c03b",
+      "label": "not_vulnerable_shape",
+      "rationale": "self-test reviewer A"
+    }
+  ],
+  "payload_sha256": "0c451dd31305a56f52fdaa48a9526db3426809f8481e9e5c6981567c3f46fc34",
+  "reviewer": "A",
+  "schema": "ohscanner.ark-holdout-review-lock/v1",
+  "submission_payload_sha256": "cfb3e4a4e4b52a16fbceb37a688213ed830334396ef5705033a0f40b57fa74a8"
+}

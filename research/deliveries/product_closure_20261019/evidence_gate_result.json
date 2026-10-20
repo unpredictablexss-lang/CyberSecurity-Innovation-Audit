@@ -1,0 +1,462 @@
+{
+  "admission_eligible_count": 0,
+  "cases": [
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-ARRAY-CALLBACK-ABRUPT-COMPLETION-HISTORY-VARIANT",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-ARRAY-EVERY-WRAPPED-CALLBACK-EXCEPTION-I5XZRO",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-ARRAY-FINDINDEX-STABLE-ABRUPT-RETURN-C333",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-COMPILER-REFLECT-APPLY-PENDING-EXCEPTION-IAO7GO",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-RUNTIME-CALLINFO-CONSTRUCTION-PENDING-EXCEPTION-I7K7L6",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-RUNTIME-INSTANCEOF-EXCEPTION-RETURN-VALUE-I7SDBG",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-RUNTIME-NEWCALLINFO-EXCEPTION-GUARD-IB40SU",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-SHAREDARRAY-FINDINDEX-EXCEPTION-PROPAGATION-PARTIAL-2A9BCFB",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-TYPEDARRAY-FILTER-RECEIVER-TYPE-GUARD-IAO7E8",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-TYPEDARRAY-MAP-NEWARRAY-PENDING-EXCEPTION-IC7B8Q",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    },
+    {
+      "admission_status": "NOT_ADMITTED",
+      "case_id": "OH-I7E0FM-TYPEDARRAY-FILTER-ABRUPT-COMPLETION",
+      "fix_revalidation_status": "BLOCKED",
+      "missing_admission_evidence": [
+        "fixed_product_revalidation",
+        "independent_holdout_reliable",
+        "performance_innovation_complete",
+        "final_machine_bundle_complete"
+      ],
+      "missing_fix_evidence": [
+        "authorized_poc_completed",
+        "patch_identity",
+        "fixed_product_build_profile"
+      ],
+      "missing_poc_evidence": [
+        "product_build_and_version",
+        "real_entry_point",
+        "permission_or_trust_boundary",
+        "attacker_control",
+        "trigger_conditions",
+        "reachable_sensitive_operation",
+        "concrete_cia_impact",
+        "authorization",
+        "isolation"
+      ],
+      "poc_authorization_status": "BLOCKED"
+    }
+  ],
+  "decision": "NOT_ADMITTED",
+  "errors": [
+    "template_is_not_evidence"
+  ],
+  "fix_revalidation_eligible_count": 0,
+  "payload_sha256": "489dd8a8783e42c34a7f255ff38c070579b1ba30a82111141b4e7dc971bf6a3d",
+  "poc_eligible_count": 0,
+  "schema": "ohscanner.g12-pc-evidence-gate/v1",
+  "status": "COMPLETE"
+}

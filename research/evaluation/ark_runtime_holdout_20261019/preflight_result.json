@@ -1,0 +1,20 @@
+{
+  "case_count": 0,
+  "decision": "DO_NOT_FREEZE_OR_LABEL",
+  "development_artifact_count": 0,
+  "errors": [
+    "preregistration_not_frozen",
+    "leakage_ledger_not_frozen",
+    "governance_not_signed",
+    "invalid_prereg_hash:sampling_frame_sha256",
+    "invalid_prereg_hash:family_split_sha256",
+    "invalid_prereg_hash:development_exclusion_sha256",
+    "sample_size_mismatch_or_empty",
+    "intake_preregistration_hash_mismatch",
+    "intake_leakage_hash_mismatch"
+  ],
+  "payload_sha256": "a351292f33596af8222a4744f356ce1775a7f257e8fd7a31e1b916c07e30f0db",
+  "reviewer_count": 2,
+  "schema": "ohscanner.ark-holdout-preflight/v1",
+  "status": "BLOCKED"
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "ohscanner.ark-build-preprocess-profile-spec/v1",
+  "profile_id": "light-ast",
+  "required_identity_fields": [
+    "commit",
+    "tree",
+    "blob",
+    "source_sha256",
+    "detector_rule_version",
+    "scope",
+    "profile",
+    "config_hash",
+    "parser_identity",
+    "toolchain_identity"
+  ],
+  "required_build_inputs": [
+    "product_manifest",
+    "exact_args_gn",
+    "gn_target",
+    "compile_commands_json",
+    "actual_include_closure",
+    "compiler_identity",
+    "linker_identity",
+    "sysroot_identity",
+    "preprocessed_translation_units",
+    "macro_expansion_log"
+  ],
+  "promotion_rule": "Any missing required build/preprocess/product binding keeps status BLOCKED and decision NOT_ADMITTED."
+}

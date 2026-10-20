@@ -1,0 +1,549 @@
+{
+  "cases": {
+    "ARK-ARRAY-CALLBACK-ABRUPT-COMPLETION-HISTORY-VARIANT": {
+      "fixed": {
+        "commit": null,
+        "files": [],
+        "tree": null
+      },
+      "parent": {
+        "commit": null,
+        "files": [],
+        "tree": null
+      },
+      "preprocessed_units": []
+    },
+    "ARK-ARRAY-EVERY-WRAPPED-CALLBACK-EXCEPTION-I5XZRO": {
+      "fixed": {
+        "commit": "7fb7ec3107e5117c8c00c66fca64d02eea087d38",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "43427fd60bab017dbca3312e8c2a1e2794edf251",
+            "recorded_source_sha256": "b8a45acbbfa7c198d06c5f324be826956334a7beffb615b7c7056dd9949ae210",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "9b6b0e392cbb05d455657b1210426a4b25515962",
+            "recorded_source_sha256": "4b1e6b6675fdfa1e409345d9410bb95752700f00514e0e756f576ec09e56f7d6",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.h",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "e36fff930c34aa8d30eddc34361d9821373c79ce",
+            "recorded_source_sha256": "ddccb14a23e9186bf45a77aafa465444a251db5e44cb0e5c172ae5bc66d83e9a",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/ecma_macros.h",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "fbfbd2b8b986f4c9cdc6626d0d62209497a78740",
+            "recorded_source_sha256": "f9685fef22df50d266e54a53e114488bab6d9c5962b66be9e761ca26093b18aa",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "dd3a4d1d12c46266d4644ae7d91d54dc1d1cf075"
+      },
+      "parent": {
+        "commit": "493a73ba63c4a74ce1c67122e55e2a4f1e0d383b",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "a4c56e3895bb225c3d8f1b57558e46e7db95ff8e",
+            "recorded_source_sha256": "a8fabb941c60a10557ae3ae665d1f24db2dcb6b585d80015492dc1e6523018bb",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "de93eb8533c32dc12e39e56c0fd4e6ac09f5d14c",
+            "recorded_source_sha256": "dad8b9438f0bd5dfb5a0893f845b2450c62dc4afafa6c3a5395e79721e7a3326",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.h",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "e36fff930c34aa8d30eddc34361d9821373c79ce",
+            "recorded_source_sha256": "ddccb14a23e9186bf45a77aafa465444a251db5e44cb0e5c172ae5bc66d83e9a",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/ecma_macros.h",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "fbfbd2b8b986f4c9cdc6626d0d62209497a78740",
+            "recorded_source_sha256": "f9685fef22df50d266e54a53e114488bab6d9c5962b66be9e761ca26093b18aa",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "94feee5b5439029a9194cecc53fe953e9eb452a2"
+      },
+      "preprocessed_units": []
+    },
+    "ARK-ARRAY-FINDINDEX-STABLE-ABRUPT-RETURN-C333": {
+      "fixed": {
+        "commit": "c333bfc148f0ecc2e0db8c84c821a7560f904906",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "recorded_bytes": 151356,
+            "recorded_git_blob_oid": "e9e3c9aaeee63bcbf8e060232b4a044550d55120",
+            "recorded_source_sha256": "9c21cb837b8b6844e50de334dd446a547952c776b44710070655ee3ec5766c0a",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.cpp",
+            "recorded_bytes": 45153,
+            "recorded_git_blob_oid": "e8fbb74b0f112762c7ea4af8b16d9260103791fd",
+            "recorded_source_sha256": "3d6fab882b08749e49ce2c641bdc32c3b298a6d5f262c89519e8c847261dbd52",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.h",
+            "recorded_bytes": 6508,
+            "recorded_git_blob_oid": "adf8464ab36eafafdda193d51196c7322bcef6e5",
+            "recorded_source_sha256": "f93b5ecde741a118f10742081f3dac23c9a0d84a2e54d6ee8f83b4760b1a0814",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/ecma_macros.h",
+            "recorded_bytes": 38487,
+            "recorded_git_blob_oid": "53e552027e86f7d72802170f66acec3e7aa4c4ba",
+            "recorded_source_sha256": "30677741255a50c47eae10c147734203293e0e972b816c0fd27032f2f77bd14c",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "a2f5ca235eb7da24897bd4e477f4361e4b4da0d5"
+      },
+      "parent": {
+        "commit": "9824afc4c09441f4e504b679c70d9876ba90607c",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "recorded_bytes": 151301,
+            "recorded_git_blob_oid": "8749c9de8ad6cfc0a967efbd0d9275b8894d74f9",
+            "recorded_source_sha256": "7f11e788354f81cee4b4eabbc8302954881ba2fffc44e99281f4f16c2b1faf4a",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.cpp",
+            "recorded_bytes": 45153,
+            "recorded_git_blob_oid": "e8fbb74b0f112762c7ea4af8b16d9260103791fd",
+            "recorded_source_sha256": "3d6fab882b08749e49ce2c641bdc32c3b298a6d5f262c89519e8c847261dbd52",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.h",
+            "recorded_bytes": 6508,
+            "recorded_git_blob_oid": "adf8464ab36eafafdda193d51196c7322bcef6e5",
+            "recorded_source_sha256": "f93b5ecde741a118f10742081f3dac23c9a0d84a2e54d6ee8f83b4760b1a0814",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/ecma_macros.h",
+            "recorded_bytes": 38487,
+            "recorded_git_blob_oid": "53e552027e86f7d72802170f66acec3e7aa4c4ba",
+            "recorded_source_sha256": "30677741255a50c47eae10c147734203293e0e972b816c0fd27032f2f77bd14c",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "6b4323d58cfa7128ee10a7e7257b9480caad5604"
+      },
+      "preprocessed_units": []
+    },
+    "ARK-COMPILER-REFLECT-APPLY-PENDING-EXCEPTION-IAO7GO": {
+      "fixed": {
+        "commit": "18d8532a200d0c9aa64a6dfe2b146dc841b52bf8",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/native_inline_lowering.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "df03fdce8a37cf2245577aec23c4c26deeebf02f",
+            "recorded_source_sha256": "6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "372e6906218c245e59643a7437f2d92e435401d6"
+      },
+      "parent": {
+        "commit": "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/native_inline_lowering.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+            "recorded_source_sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "0c8d65e759bf96b4632573561748a180a93cf413"
+      },
+      "preprocessed_units": []
+    },
+    "ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA": {
+      "fixed": {
+        "commit": null,
+        "files": [],
+        "tree": null
+      },
+      "parent": {
+        "commit": null,
+        "files": [],
+        "tree": null
+      },
+      "preprocessed_units": []
+    },
+    "ARK-RUNTIME-CALLINFO-CONSTRUCTION-PENDING-EXCEPTION-I7K7L6": {
+      "fixed": {
+        "commit": "f596e410db3ab90a4706a248cf935b135a62490a",
+        "files": [],
+        "tree": "9bcf5a2aaaa2fcdf35719d4641ed7e3bfde8400c"
+      },
+      "parent": {
+        "commit": "11c5ad59240da5603504821d674c499e3cbff75a",
+        "files": [],
+        "tree": "2614d90ed3924631ed455a302093a0a5d5a668da"
+      },
+      "preprocessed_units": []
+    },
+    "ARK-RUNTIME-INSTANCEOF-EXCEPTION-RETURN-VALUE-I7SDBG": {
+      "fixed": {
+        "commit": "c73261dd8452524fa707c0b3c768e899786d22f2",
+        "files": [],
+        "tree": null
+      },
+      "parent": {
+        "commit": "905f840797ff27839d9d984aee36c0f8a773adb2",
+        "files": [],
+        "tree": null
+      },
+      "preprocessed_units": []
+    },
+    "ARK-RUNTIME-NEWCALLINFO-EXCEPTION-GUARD-IB40SU": {
+      "fixed": {
+        "commit": "3bf1a3cee91252507d02ebcd0ef332d61bbad342",
+        "files": [],
+        "tree": null
+      },
+      "parent": {
+        "commit": "811daec3dc48a2ba4426b9c6eea7bcc1ee7ab315",
+        "files": [],
+        "tree": null
+      },
+      "preprocessed_units": []
+    },
+    "ARK-SHAREDARRAY-FINDINDEX-EXCEPTION-PROPAGATION-PARTIAL-2A9BCFB": {
+      "fixed": {
+        "commit": "2a9bcfb6082a25ebd0b35ab4a31202ce062aae6d",
+        "files": [],
+        "tree": null
+      },
+      "parent": {
+        "commit": "4972b782328d8d3587dded347b0a7f3158120b1d",
+        "files": [],
+        "tree": null
+      },
+      "preprocessed_units": []
+    },
+    "ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D": {
+      "fixed": {
+        "commit": null,
+        "files": [],
+        "tree": null
+      },
+      "parent": {
+        "commit": null,
+        "files": [],
+        "tree": null
+      },
+      "preprocessed_units": []
+    },
+    "ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7": {
+      "fixed": {
+        "commit": "1b0ac0aa076b91d92b5d5aba91e92bc6c2a06c50",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "recorded_bytes": 35080,
+            "recorded_git_blob_oid": "319347a5ea62df52e8427ad6822f65e70c997a11",
+            "recorded_source_sha256": "f698f40394524b5b95a1bbef4fe8b1ccef05e52226d9d1f30ef54decca711a62",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "48ac0d65b920c7401055fcfae68d538e03a25e6c"
+      },
+      "parent": {
+        "commit": "087449d3d657d081611cf1bf4c731ff048748812",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "recorded_bytes": 34880,
+            "recorded_git_blob_oid": "caa5467917bbd9079a4d72cdfb419266e315a624",
+            "recorded_source_sha256": "170660d6f15ad88ddee04db4ded3e76932832631d0613e78318edf2b0ad6fc85",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "cc51f309bf6446ae401597235fe5ebd3477ec63e"
+      },
+      "preprocessed_units": []
+    },
+    "ARK-TYPEDARRAY-FILTER-RECEIVER-TYPE-GUARD-IAO7E8": {
+      "fixed": {
+        "commit": "2a70904be0e21a37a666eb00cab49d02068260ea",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": 125744,
+            "recorded_git_blob_oid": "df765b9c212dc2e55c38dc385f85f183ce6606da",
+            "recorded_source_sha256": "b51826a74a89d6ee105c4087b4260363a7abfd632bb2c68d43c0ee9b17c883c5",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": false,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "test/moduletest/typedarrayfilter/typedarrayfilter.js",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "c0e05428adb80360d355e17bb87c8db16d46f04b",
+            "recorded_source_sha256": null,
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "8e5503ee7eebbb8e72bc6d5ca0cb88d5775301ef"
+      },
+      "parent": {
+        "commit": "c4c52fb57b6e204128e1520340c8e66c8e708981",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": 125744,
+            "recorded_git_blob_oid": "e1e4f6411df4733b8f1ba5b679189e29d904a63f",
+            "recorded_source_sha256": "f1cdd8d0707cab2ac9bb9e024383151435bfc279c6815c5eceb98925974ff1a4",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "7e1498c2be74908365e2a984e0c5edd5f639fc2f"
+      },
+      "preprocessed_units": []
+    },
+    "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG": {
+      "fixed": {
+        "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": 150509,
+            "recorded_git_blob_oid": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+            "recorded_source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "82af11ced4297818410ccf61906b703d25b69165"
+      },
+      "parent": {
+        "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": 150433,
+            "recorded_git_blob_oid": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+            "recorded_source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4"
+      },
+      "preprocessed_units": []
+    },
+    "ARK-TYPEDARRAY-MAP-NEWARRAY-PENDING-EXCEPTION-IC7B8Q": {
+      "fixed": {
+        "commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+        "files": [
+          {
+            "identity_schema_valid": false,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": null,
+            "recorded_source_sha256": null,
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": false,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "test/moduletest/typedarraymapoverflow/typedarraymapoverflow.js",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": null,
+            "recorded_source_sha256": null,
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "identity manifest"
+      },
+      "parent": {
+        "commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+        "files": [
+          {
+            "identity_schema_valid": false,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": null,
+            "recorded_source_sha256": null,
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "27ec52bd443ccd4e45b472731114e8547df71ea2"
+      },
+      "preprocessed_units": []
+    },
+    "ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304": {
+      "fixed": {
+        "commit": "6627179cbf6f8d40d1adfcf5c3c686b902f42419",
+        "files": [
+          {
+            "identity_schema_valid": false,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "1818dd72f5ac68aa7f8ee7a38a59b923f4ab5476",
+            "recorded_source_sha256": null,
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "fa482a14984ee8cd8f424131cb5179ba7a6a9422"
+      },
+      "parent": {
+        "commit": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "2aae41b75a5ffd1441309439ff3834d959f71b79",
+            "recorded_source_sha256": "6133af44de48ec3ff00fdc7b06597fbef1c9a270cc04ba48d09b4475976c2381",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "454e898b43b55950b104053cf42d32645474ef8f"
+      },
+      "preprocessed_units": []
+    },
+    "OH-I7E0FM-TYPEDARRAY-FILTER-ABRUPT-COMPLETION": {
+      "fixed": {
+        "commit": "30571a40879bb2092dcb9ae994d6970c1dfd5fc1",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/builtins/builtins_typedarray.cpp",
+            "recorded_bytes": 79277,
+            "recorded_git_blob_oid": "6d90d4ad72893f5868922b77ecae4ab3f6a52366",
+            "recorded_source_sha256": "74ef900791fd859c45909dc840ab02f898df90584b3a400daed0640625c0579c",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/ecma_macros.h",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "2a8554b7221e645ecaa8c3f2e9a73f872d0af08a",
+            "recorded_source_sha256": "6f945253749f671ee94637065186ad6c68c0eff917926076d30bdd8b83352a3f",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "4bd116e73eb8acf94d6471427d86f837964bb998"
+      },
+      "parent": {
+        "commit": "d6d18548750373cd4e93e9af24eda3e84f6f1b8e",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/builtins/builtins_typedarray.cpp",
+            "recorded_bytes": 79222,
+            "recorded_git_blob_oid": "f8e21e95919b5607fc167962d390995f4a031f14",
+            "recorded_source_sha256": "057f0d43d1f2ed7b2a915025f8030259d711793846bd0273fb007e94e1546a5b",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/ecma_macros.h",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "2a8554b7221e645ecaa8c3f2e9a73f872d0af08a",
+            "recorded_source_sha256": "6f945253749f671ee94637065186ad6c68c0eff917926076d30bdd8b83352a3f",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "0eb7add76ad0766233c53bea41e2db334e441406"
+      },
+      "preprocessed_units": []
+    }
+  },
+  "official_git_dir": null,
+  "product_profile": {
+    "args_gn": null,
+    "compile_commands_json": null,
+    "gn_target": null,
+    "include_closure": null,
+    "macro_expansion_log": null,
+    "product_manifest": null,
+    "sysroot_identity": null,
+    "toolchain_identity": null
+  },
+  "schema": "ohscanner.ark-parent-fix-product-profile-bundle/v1",
+  "status": "TEMPLATE_NOT_EVIDENCE"
+}

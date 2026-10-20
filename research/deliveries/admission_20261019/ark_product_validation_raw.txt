@@ -1,0 +1,132 @@
+G12-PC validation 2026-10-19 Asia/Shanghai
+
+
+== py_compile ==
+py_compile_exit=0
+
+== build profile verify-only ==
+{
+  "case_count": 16,
+  "errors": [],
+  "expected_payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
+  "recomputed_payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
+  "schema": "ohscanner.ark-parent-fix-build-preprocess-verification/v1",
+  "status": "verified_blocked_manifest"
+}
+build_profile_verify_exit=0
+
+== holdout self-test ==
+{
+  "status": "FROZEN_PIPELINE_ONLY",
+  "case_count": 3,
+  "truth_status": "pipeline_self_test_not_reliable"
+}
+{
+  "status": "LOCKED",
+  "reviewer": "A",
+  "payload_sha256": "0c451dd31305a56f52fdaa48a9526db3426809f8481e9e5c6981567c3f46fc34"
+}
+{
+  "status": "LOCKED",
+  "reviewer": "B",
+  "payload_sha256": "0d29393db74d1e3f5d5f6bec35f1817a222aceffcfed1381a5f6ed82f4a3b998"
+}
+{
+  "status": "THIRD_REVIEW_REQUIRED",
+  "agreements": 2,
+  "disagreements": 1
+}
+{
+  "status": "FINAL_LABELS_AVAILABLE",
+  "label_count": 3
+}
+{
+  "schema": "ohscanner.ark-holdout-selftest/v1",
+  "status": "PASS",
+  "metrics_computed": false,
+  "reason": "synthetic self-test truth is not reliable independent human truth"
+}
+holdout_selftest_exit=0
+
+== holdout score refusal ==
+{
+  "status": "NOT_RUN",
+  "reason": "truth is not reliable independent human adjudicated"
+}
+score_expected_nonzero_exit=3
+
+== product closure regenerate ==
+{
+  "status": "BLOCKED",
+  "case_count": 16,
+  "decision": "NOT_ADMITTED"
+}
+product_closure_exit=0
+
+== JSON parse ==
+json_count=25
+json_errors=0
+
+== git diff check ==
+git_diff_check_exit=0
+
+== git status ==
+?? research/deliveries/admission_20261019/ARK_PRODUCT_ADMISSION_20261019.md
+?? research/deliveries/admission_20261019/ark_product_validation_raw.txt
+?? research/deliveries/product_closure_20261019/
+?? research/evaluation/
+?? research/methods/ark_runtime/
+
+== post-hardening revalidation ==
+py_compile_exit=0
+{
+  "case_count": 16,
+  "errors": [],
+  "expected_payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
+  "recomputed_payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
+  "schema": "ohscanner.ark-parent-fix-build-preprocess-verification/v1",
+  "status": "verified_blocked_manifest"
+}
+build_profile_verify_exit=0
+{
+  "status": "FROZEN_PIPELINE_ONLY",
+  "case_count": 3,
+  "truth_status": "pipeline_self_test_not_reliable"
+}
+{
+  "status": "LOCKED",
+  "reviewer": "A",
+  "payload_sha256": "0c451dd31305a56f52fdaa48a9526db3426809f8481e9e5c6981567c3f46fc34"
+}
+{
+  "status": "LOCKED",
+  "reviewer": "B",
+  "payload_sha256": "0d29393db74d1e3f5d5f6bec35f1817a222aceffcfed1381a5f6ed82f4a3b998"
+}
+{
+  "status": "THIRD_REVIEW_REQUIRED",
+  "agreements": 2,
+  "disagreements": 1
+}
+{
+  "status": "FINAL_LABELS_AVAILABLE",
+  "label_count": 3
+}
+{
+  "schema": "ohscanner.ark-holdout-selftest/v1",
+  "status": "PASS",
+  "metrics_computed": false,
+  "reason": "synthetic self-test truth is not reliable independent human truth"
+}
+holdout_selftest_exit=0
+{
+  "status": "NOT_RUN",
+  "reason": "truth is not reliable independent human adjudicated"
+}
+score_expected_nonzero_exit=3
+{
+  "status": "BLOCKED",
+  "case_count": 16,
+  "decision": "NOT_ADMITTED"
+}
+product_closure_exit=0

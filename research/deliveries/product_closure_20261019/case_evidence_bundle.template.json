@@ -1,0 +1,1830 @@
+{
+  "cases": {
+    "ARK-ARRAY-CALLBACK-ABRUPT-COMPLETION-HISTORY-VARIANT": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-ARRAY-EVERY-WRAPPED-CALLBACK-EXCEPTION-I5XZRO": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-ARRAY-FINDINDEX-STABLE-ABRUPT-RETURN-C333": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-COMPILER-REFLECT-APPLY-PENDING-EXCEPTION-IAO7GO": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-RUNTIME-CALLINFO-CONSTRUCTION-PENDING-EXCEPTION-I7K7L6": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-RUNTIME-INSTANCEOF-EXCEPTION-RETURN-VALUE-I7SDBG": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-RUNTIME-NEWCALLINFO-EXCEPTION-GUARD-IB40SU": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-SHAREDARRAY-FINDINDEX-EXCEPTION-PROPAGATION-PARTIAL-2A9BCFB": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-TYPEDARRAY-FILTER-RECEIVER-TYPE-GUARD-IAO7E8": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-TYPEDARRAY-MAP-NEWARRAY-PENDING-EXCEPTION-IC7B8Q": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    },
+    "OH-I7E0FM-TYPEDARRAY-FILTER-ABRUPT-COMPLETION": {
+      "attacker_control": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorization": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "authorized_poc_completed": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "concrete_cia_impact": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "final_machine_bundle_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_build_profile": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "fixed_product_revalidation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "independent_holdout_reliable": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "isolation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "patch_identity": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "performance_innovation_complete": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "permission_or_trust_boundary": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "product_build_and_version": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "reachable_sensitive_operation": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "real_entry_point": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      },
+      "trigger_conditions": {
+        "evidence": [],
+        "limitations": [
+          "evidence not supplied"
+        ],
+        "status": "unknown"
+      }
+    }
+  },
+  "schema": "ohscanner.g12-pc-case-evidence-bundle/v1",
+  "status": "TEMPLATE_NOT_EVIDENCE"
+}

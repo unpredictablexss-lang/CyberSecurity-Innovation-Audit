@@ -1,0 +1,1382 @@
+{
+  "cases": [
+    {
+      "blockers": [
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "OH-I7E0FM-TYPEDARRAY-FILTER-ABRUPT-COMPLETION",
+      "component": "Ark Runtime BuiltinsTypedArray::Filter",
+      "cve_or_advisory": "OpenHarmony arkcompiler_ets_runtime issue I7E0FM; no CVE association verified",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": "30571a40879bb2092dcb9ae994d6970c1dfd5fc1",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/builtins/builtins_typedarray.cpp",
+            "recorded_bytes": 79277,
+            "recorded_git_blob_oid": "6d90d4ad72893f5868922b77ecae4ab3f6a52366",
+            "recorded_source_sha256": "74ef900791fd859c45909dc840ab02f898df90584b3a400daed0640625c0579c",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/ecma_macros.h",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "2a8554b7221e645ecaa8c3f2e9a73f872d0af08a",
+            "recorded_source_sha256": "6f945253749f671ee94637065186ad6c68c0eff917926076d30bdd8b83352a3f",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "4bd116e73eb8acf94d6471427d86f837964bb998"
+      },
+      "parent": {
+        "commit": "d6d18548750373cd4e93e9af24eda3e84f6f1b8e",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/builtins/builtins_typedarray.cpp",
+            "recorded_bytes": 79222,
+            "recorded_git_blob_oid": "f8e21e95919b5607fc167962d390995f4a031f14",
+            "recorded_source_sha256": "057f0d43d1f2ed7b2a915025f8030259d711793846bd0273fb007e94e1546a5b",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/ecma_macros.h",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "2a8554b7221e645ecaa8c3f2e9a73f872d0af08a",
+            "recorded_source_sha256": "6f945253749f671ee94637065186ad6c68c0eff917926076d30bdd8b83352a3f",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "0eb7add76ad0766233c53bea41e2db334e441406"
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown; selected hihope/rk3568 source/config context has no successful exact args.gn, GN target generation, compile database, or product build binding",
+      "scan_scope": [
+        "ecmascript/builtins/builtins_typedarray.cpp",
+        "ecmascript/ecma_macros.h"
+      ],
+      "source_identity_status": "recorded_complete"
+    },
+    {
+      "blockers": [
+        "one or more parent/fixed commit/tree/blob/source identities are incomplete",
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-ARRAY-CALLBACK-ABRUPT-COMPLETION-HISTORY-VARIANT",
+      "component": "Ark Runtime BuiltinsArray::Filter / Find / Some / FindIndex",
+      "cve_or_advisory": "No CVE/advisory association verified; upstream code-history commits f536dc733883b40d9bce1639356bd9253c1c2b27 and b48718a73a2b99f14e1c170f2e1d48d35ed1bdf0 relate to exception handling changes.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": null,
+        "files": [],
+        "tree": null
+      },
+      "parent": {
+        "commit": null,
+        "files": [],
+        "tree": null
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown",
+      "scan_scope": null,
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "blockers": [
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-ARRAY-EVERY-WRAPPED-CALLBACK-EXCEPTION-I5XZRO",
+      "component": "Ark Runtime BuiltinsArray::Every and JSStableArray::HandleEveryOfStable",
+      "cve_or_advisory": "No CVE verified. Upstream commit message identifies issue I5XZRO and says “Fix crash caused by uncaught exception”; public issue page could not be independently read in this turn.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": "7fb7ec3107e5117c8c00c66fca64d02eea087d38",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "43427fd60bab017dbca3312e8c2a1e2794edf251",
+            "recorded_source_sha256": "b8a45acbbfa7c198d06c5f324be826956334a7beffb615b7c7056dd9949ae210",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "9b6b0e392cbb05d455657b1210426a4b25515962",
+            "recorded_source_sha256": "4b1e6b6675fdfa1e409345d9410bb95752700f00514e0e756f576ec09e56f7d6",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.h",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "e36fff930c34aa8d30eddc34361d9821373c79ce",
+            "recorded_source_sha256": "ddccb14a23e9186bf45a77aafa465444a251db5e44cb0e5c172ae5bc66d83e9a",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/ecma_macros.h",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "fbfbd2b8b986f4c9cdc6626d0d62209497a78740",
+            "recorded_source_sha256": "f9685fef22df50d266e54a53e114488bab6d9c5962b66be9e761ca26093b18aa",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "dd3a4d1d12c46266d4644ae7d91d54dc1d1cf075"
+      },
+      "parent": {
+        "commit": "493a73ba63c4a74ce1c67122e55e2a4f1e0d383b",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "a4c56e3895bb225c3d8f1b57558e46e7db95ff8e",
+            "recorded_source_sha256": "a8fabb941c60a10557ae3ae665d1f24db2dcb6b585d80015492dc1e6523018bb",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "de93eb8533c32dc12e39e56c0fd4e6ac09f5d14c",
+            "recorded_source_sha256": "dad8b9438f0bd5dfb5a0893f845b2450c62dc4afafa6c3a5395e79721e7a3326",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.h",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "e36fff930c34aa8d30eddc34361d9821373c79ce",
+            "recorded_source_sha256": "ddccb14a23e9186bf45a77aafa465444a251db5e44cb0e5c172ae5bc66d83e9a",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/ecma_macros.h",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "fbfbd2b8b986f4c9cdc6626d0d62209497a78740",
+            "recorded_source_sha256": "f9685fef22df50d266e54a53e114488bab6d9c5962b66be9e761ca26093b18aa",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "94feee5b5439029a9194cecc53fe953e9eb452a2"
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown",
+      "scan_scope": null,
+      "source_identity_status": "recorded_complete"
+    },
+    {
+      "blockers": [
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-ARRAY-FINDINDEX-STABLE-ABRUPT-RETURN-C333",
+      "component": "Ark Runtime BuiltinsArray::FindIndex / JSStableArray::HandleFindIndexOfStable",
+      "cve_or_advisory": "No CVE or security advisory verified. Commit c333bfc148f0ecc2e0db8c84c821a7560f904906 is titled “bugfix of jsproxy” and references issue I7ZZHM; the issue-to-FindIndex-hunk association is unverified and the Gitee issue page was inaccessible.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": "c333bfc148f0ecc2e0db8c84c821a7560f904906",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "recorded_bytes": 151356,
+            "recorded_git_blob_oid": "e9e3c9aaeee63bcbf8e060232b4a044550d55120",
+            "recorded_source_sha256": "9c21cb837b8b6844e50de334dd446a547952c776b44710070655ee3ec5766c0a",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.cpp",
+            "recorded_bytes": 45153,
+            "recorded_git_blob_oid": "e8fbb74b0f112762c7ea4af8b16d9260103791fd",
+            "recorded_source_sha256": "3d6fab882b08749e49ce2c641bdc32c3b298a6d5f262c89519e8c847261dbd52",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.h",
+            "recorded_bytes": 6508,
+            "recorded_git_blob_oid": "adf8464ab36eafafdda193d51196c7322bcef6e5",
+            "recorded_source_sha256": "f93b5ecde741a118f10742081f3dac23c9a0d84a2e54d6ee8f83b4760b1a0814",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/ecma_macros.h",
+            "recorded_bytes": 38487,
+            "recorded_git_blob_oid": "53e552027e86f7d72802170f66acec3e7aa4c4ba",
+            "recorded_source_sha256": "30677741255a50c47eae10c147734203293e0e972b816c0fd27032f2f77bd14c",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "a2f5ca235eb7da24897bd4e477f4361e4b4da0d5"
+      },
+      "parent": {
+        "commit": "9824afc4c09441f4e504b679c70d9876ba90607c",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "recorded_bytes": 151301,
+            "recorded_git_blob_oid": "8749c9de8ad6cfc0a967efbd0d9275b8894d74f9",
+            "recorded_source_sha256": "7f11e788354f81cee4b4eabbc8302954881ba2fffc44e99281f4f16c2b1faf4a",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.cpp",
+            "recorded_bytes": 45153,
+            "recorded_git_blob_oid": "e8fbb74b0f112762c7ea4af8b16d9260103791fd",
+            "recorded_source_sha256": "3d6fab882b08749e49ce2c641bdc32c3b298a6d5f262c89519e8c847261dbd52",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/js_stable_array.h",
+            "recorded_bytes": 6508,
+            "recorded_git_blob_oid": "adf8464ab36eafafdda193d51196c7322bcef6e5",
+            "recorded_source_sha256": "f93b5ecde741a118f10742081f3dac23c9a0d84a2e54d6ee8f83b4760b1a0814",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/ecma_macros.h",
+            "recorded_bytes": 38487,
+            "recorded_git_blob_oid": "53e552027e86f7d72802170f66acec3e7aa4c4ba",
+            "recorded_source_sha256": "30677741255a50c47eae10c147734203293e0e972b816c0fd27032f2f77bd14c",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "6b4323d58cfa7128ee10a7e7257b9480caad5604"
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown; exact product args.gn, target build, binary, and source-to-product binding are absent",
+      "scan_scope": [
+        "ecmascript/builtins/builtins_array.cpp",
+        "ecmascript/js_stable_array.cpp",
+        "ecmascript/js_stable_array.h",
+        "ecmascript/ecma_macros.h"
+      ],
+      "source_identity_status": "recorded_complete"
+    },
+    {
+      "blockers": [
+        "one or more parent/fixed commit/tree/blob/source identities are incomplete",
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-RUNTIME-CALLINFO-CONSTRUCTION-PENDING-EXCEPTION-I7K7L6",
+      "component": "Ark Runtime JSIterator::IteratorNext / EcmaInterpreter::NewRuntimeCallInfo",
+      "cve_or_advisory": "No CVE or security advisory verified. Fix commit references issue I7K7L6; public issue contents and security classification were not independently verified.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": "f596e410db3ab90a4706a248cf935b135a62490a",
+        "files": [],
+        "tree": "9bcf5a2aaaa2fcdf35719d4641ed7e3bfde8400c"
+      },
+      "parent": {
+        "commit": "11c5ad59240da5603504821d674c499e3cbff75a",
+        "files": [],
+        "tree": "2614d90ed3924631ed455a302093a0a5d5a668da"
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown",
+      "scan_scope": [
+        "ecmascript/js_iterator.cpp",
+        "ecmascript/ecma_macros.h"
+      ],
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "blockers": [
+        "one or more parent/fixed commit/tree/blob/source identities are incomplete",
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-RUNTIME-NEWCALLINFO-EXCEPTION-GUARD-IB40SU",
+      "component": "Ark Runtime BuiltinsAsyncFromSyncIterator::Throw/Return and JSAsyncGeneratorObject::AsyncGeneratorResolve",
+      "cve_or_advisory": "No CVE/security advisory verified. Upstream change commit references Gitee issue IB40SU; issue body/security classification were not independently accessible.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": "3bf1a3cee91252507d02ebcd0ef332d61bbad342",
+        "files": [],
+        "tree": null
+      },
+      "parent": {
+        "commit": "811daec3dc48a2ba4426b9c6eea7bcc1ee7ab315",
+        "files": [],
+        "tree": null
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown",
+      "scan_scope": [
+        "ecmascript/builtins/builtins_async_from_sync_iterator.cpp",
+        "ecmascript/ecma_macros.h"
+      ],
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "blockers": [
+        "one or more parent/fixed commit/tree/blob/source identities are incomplete",
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-RUNTIME-INSTANCEOF-EXCEPTION-RETURN-VALUE-I7SDBG",
+      "component": "Ark Runtime RuntimeStubs::RuntimeInstanceofByHandler",
+      "cve_or_advisory": "No CVE/security advisory verified. Fix commit references issue I7SDBG; issue content unavailable.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": "c73261dd8452524fa707c0b3c768e899786d22f2",
+        "files": [],
+        "tree": null
+      },
+      "parent": {
+        "commit": "905f840797ff27839d9d984aee36c0f8a773adb2",
+        "files": [],
+        "tree": null
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown",
+      "scan_scope": [
+        "ecmascript/stubs/runtime_stubs-inl.h",
+        "ecmascript/ecma_macros.h"
+      ],
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "blockers": [
+        "one or more parent/fixed commit/tree/blob/source identities are incomplete",
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-SHAREDARRAY-FINDINDEX-EXCEPTION-PROPAGATION-PARTIAL-2A9BCFB",
+      "component": "Ark Runtime BuiltinsSharedArray::FindIndex",
+      "cve_or_advisory": "No CVE/security advisory verified; commit appears to be a SendableArray API integration change.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": "2a9bcfb6082a25ebd0b35ab4a31202ce062aae6d",
+        "files": [],
+        "tree": null
+      },
+      "parent": {
+        "commit": "4972b782328d8d3587dded347b0a7f3158120b1d",
+        "files": [],
+        "tree": null
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown",
+      "scan_scope": [
+        "ecmascript/builtins/builtins_shared_array.cpp",
+        "ecmascript/ecma_macros.h"
+      ],
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "blockers": [
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-COMPILER-REFLECT-APPLY-PENDING-EXCEPTION-IAO7GO",
+      "component": "Ark Runtime compiler, NativeInlineLowering exception lowering for Reflect.apply",
+      "cve_or_advisory": "Official upstream issue IAO7GO [Bug]; no CVE or security advisory classification verified.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": "18d8532a200d0c9aa64a6dfe2b146dc841b52bf8",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/native_inline_lowering.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "df03fdce8a37cf2245577aec23c4c26deeebf02f",
+            "recorded_source_sha256": "6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "372e6906218c245e59643a7437f2d92e435401d6"
+      },
+      "parent": {
+        "commit": "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/native_inline_lowering.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+            "recorded_source_sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "0c8d65e759bf96b4632573561748a180a93cf413"
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown; issue describes an AOT/inlining reproducer and required build/run flags, but no local matching product artifacts or build profile were available.",
+      "scan_scope": null,
+      "source_identity_status": "recorded_complete"
+    },
+    {
+      "blockers": [
+        "one or more parent/fixed commit/tree/blob/source identities are incomplete",
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304",
+      "component": "Ark Runtime compiler TypedArray Map stub",
+      "cve_or_advisory": "CVE-2025-24304; official April bulletin identifies Ark Runtime out-of-bounds write, CVSS 3.3, affected OpenHarmony 4.1 and 5.0.2. Official PR !11279 calls !11130 one of two vulnerability fixes cherry-picked into 5.0.3; the likely mapping to CVE-2025-24304 is inferred from mechanism/category, not directly stated by source.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": "6627179cbf6f8d40d1adfcf5c3c686b902f42419",
+        "files": [
+          {
+            "identity_schema_valid": false,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "1818dd72f5ac68aa7f8ee7a38a59b923f4ab5476",
+            "recorded_source_sha256": null,
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "fa482a14984ee8cd8f424131cb5179ba7a6a9422"
+      },
+      "parent": {
+        "commit": "c4623e514d5648aa0f7fe33631c8379b31cba7c4",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "2aae41b75a5ffd1441309439ff3834d959f71b79",
+            "recorded_source_sha256": "6133af44de48ec3ff00fdc7b06597fbef1c9a270cc04ba48d09b4475976c2381",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "454e898b43b55950b104053cf42d32645474ef8f"
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown; no exact product source manifest/build association found.",
+      "scan_scope": null,
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "blockers": [
+        "one or more parent/fixed commit/tree/blob/source identities are incomplete",
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-TYPEDARRAY-MAP-NEWARRAY-PENDING-EXCEPTION-IC7B8Q",
+      "component": "Ark Runtime compiler TypedArray Map / NewTypedArray result handling",
+      "cve_or_advisory": "No CVE or security advisory verified. Upstream Ark Runtime bug issue IC7B8Q and merged PR !11684; test stresses recursive stack exhaustion and catches the thrown failure. Treat as a runtime exception-propagation bug, not a confirmed security vulnerability.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": "b362fab4f80c7466b1a33d882fa65b828d952712",
+        "files": [
+          {
+            "identity_schema_valid": false,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": null,
+            "recorded_source_sha256": null,
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": false,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "test/moduletest/typedarraymapoverflow/typedarraymapoverflow.js",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": null,
+            "recorded_source_sha256": null,
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "identity manifest"
+      },
+      "parent": {
+        "commit": "bcf67a5df41bcf37b94d848812e54884f6bedb95",
+        "files": [
+          {
+            "identity_schema_valid": false,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": null,
+            "recorded_source_sha256": null,
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "27ec52bd443ccd4e45b472731114e8547df71ea2"
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown; no product manifest/build association.",
+      "scan_scope": null,
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "blockers": [
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7",
+      "component": "Ark Runtime TypedArrayHelper::CreateFromTypedArray",
+      "cve_or_advisory": "No CVE/security advisory verified. Upstream patch commit message references issue I7KZJ7 (“CreateFromTypedArray byteLength data overflow”); direct issue page was inaccessible in this verification pass.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": "1b0ac0aa076b91d92b5d5aba91e92bc6c2a06c50",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "recorded_bytes": 35080,
+            "recorded_git_blob_oid": "319347a5ea62df52e8427ad6822f65e70c997a11",
+            "recorded_source_sha256": "f698f40394524b5b95a1bbef4fe8b1ccef05e52226d9d1f30ef54decca711a62",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "48ac0d65b920c7401055fcfae68d538e03a25e6c"
+      },
+      "parent": {
+        "commit": "087449d3d657d081611cf1bf4c731ff048748812",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/base/typed_array_helper.cpp",
+            "recorded_bytes": 34880,
+            "recorded_git_blob_oid": "caa5467917bbd9079a4d72cdfb419266e315a624",
+            "recorded_source_sha256": "170660d6f15ad88ddee04db4ded3e76932832631d0613e78318edf2b0ad6fc85",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "cc51f309bf6446ae401597235fe5ebd3477ec63e"
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown; no product manifest, build configuration, or shipped binary tied to either source revision.",
+      "scan_scope": null,
+      "source_identity_status": "recorded_complete"
+    },
+    {
+      "blockers": [
+        "one or more parent/fixed commit/tree/blob/source identities are incomplete",
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D",
+      "component": "Ark Runtime TypedArrayHelper::TypedArrayConstructor / AllocateTypedArray",
+      "cve_or_advisory": "No CVE or security advisory verified; upstream source references issue I7W51D and PR !4688.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": null,
+        "files": [],
+        "tree": null
+      },
+      "parent": {
+        "commit": null,
+        "files": [],
+        "tree": null
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown; no product manifest or shipped binary associated.",
+      "scan_scope": null,
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "blockers": [
+        "one or more parent/fixed commit/tree/blob/source identities are incomplete",
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA",
+      "component": "Ark Runtime DataView GetViewValue/SetViewValue and AtomicHelper::ValidateAtomicAccess",
+      "cve_or_advisory": "No CVE or security advisory verified; upstream source references issue IB8BCA and PR !10468.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": null,
+        "files": [],
+        "tree": null
+      },
+      "parent": {
+        "commit": null,
+        "files": [],
+        "tree": null
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown; no product manifest or shipped binary associated.",
+      "scan_scope": null,
+      "source_identity_status": "recorded_incomplete"
+    },
+    {
+      "blockers": [
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG",
+      "component": "Ark Runtime BuiltinsTypedArrayStubBuilder::Filter",
+      "cve_or_advisory": "No CVE or security advisory verified. Upstream issue IBS5YG and PR !11196 describe TypedArray Filter out-of-bounds behavior.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": 150509,
+            "recorded_git_blob_oid": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+            "recorded_source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "82af11ced4297818410ccf61906b703d25b69165"
+      },
+      "parent": {
+        "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": 150433,
+            "recorded_git_blob_oid": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+            "recorded_source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4"
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "No product build association for the exact vulnerable/fixed commits. C1 has a partial hihope/rk3568 profile for Ark Runtime a65a2853ccae13da167d9aa4720ab8b11ec16656; its target source SHA-256 is 76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c, different from both !11196 pair blobs. Two ARM actions were preprocessed for that other source, and isolated Ninja target 1 failed at a Musl notice write before compiling the object; it cannot establish !11196 macros/build behavior.",
+      "scan_scope": null,
+      "source_identity_status": "recorded_complete"
+    },
+    {
+      "blockers": [
+        "one or more parent/fixed commit/tree/blob/source identities are incomplete",
+        "official Ark Git object store is not bound by OHSCANNER_ARK_OFFICIAL_GIT",
+        "exact product args.gn / GN target / product manifest is absent",
+        "compiler and preprocessor toolchain identity is absent",
+        "compile_commands.json and exact include closure are absent",
+        "preprocessed translation-unit outputs and macro expansion log are absent",
+        "source-to-shipped-product binary/version/branch binding is absent"
+      ],
+      "build_profile": {
+        "args_gn": null,
+        "compile_commands_json": null,
+        "include_closure": null,
+        "preprocessor": {
+          "macro_expansion_log": null,
+          "outputs": [],
+          "status": "NOT_RUN"
+        },
+        "product_manifest_locked": false,
+        "product_target": null,
+        "status": "BLOCKED",
+        "toolchain": {
+          "product_compiler": null,
+          "product_linker": null,
+          "sysroot": null
+        }
+      },
+      "case_id": "ARK-TYPEDARRAY-FILTER-RECEIVER-TYPE-GUARD-IAO7E8",
+      "component": "Ark Runtime BuiltinsTypedArrayStubBuilder::Filter",
+      "cve_or_advisory": "No CVE/security advisory verified. Upstream Ark Runtime PR !9063 and regression issue key IAO7E8 are the source evidence; public pages were not accessible to the browser in this verification pass.",
+      "evidence_class": "development_case_not_independent_holdout",
+      "fixed": {
+        "commit": "2a70904be0e21a37a666eb00cab49d02068260ea",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": 125744,
+            "recorded_git_blob_oid": "df765b9c212dc2e55c38dc385f85f183ce6606da",
+            "recorded_source_sha256": "b51826a74a89d6ee105c4087b4260363a7abfd632bb2c68d43c0ee9b17c883c5",
+            "source_bytes_available_in_this_checkout": false
+          },
+          {
+            "identity_schema_valid": false,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "test/moduletest/typedarrayfilter/typedarrayfilter.js",
+            "recorded_bytes": null,
+            "recorded_git_blob_oid": "c0e05428adb80360d355e17bb87c8db16d46f04b",
+            "recorded_source_sha256": null,
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "8e5503ee7eebbb8e72bc6d5ca0cb88d5775301ef"
+      },
+      "parent": {
+        "commit": "c4c52fb57b6e204128e1520340c8e66c8e708981",
+        "files": [
+          {
+            "identity_schema_valid": true,
+            "local_git_object_verification": "not_verified_official_ark_store_unavailable",
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "recorded_bytes": 125744,
+            "recorded_git_blob_oid": "e1e4f6411df4733b8f1ba5b679189e29d904a63f",
+            "recorded_source_sha256": "f1cdd8d0707cab2ac9bb9e024383151435bfc279c6815c5eceb98925974ff1a4",
+            "source_bytes_available_in_this_checkout": false
+          }
+        ],
+        "tree": "7e1498c2be74908365e2a984e0c5edd5f639fc2f"
+      },
+      "preprocess_profile": {
+        "actual_include_closure": null,
+        "declared_scan_profile": "light-ast",
+        "macro_expansion": false,
+        "status": "BLOCKED",
+        "translation_unit": null
+      },
+      "product_association": "unknown; no product manifest/build profile bound to either source commit.",
+      "scan_scope": null,
+      "source_identity_status": "recorded_incomplete"
+    }
+  ],
+  "config_identity": {
+    "preprocessing_enabled": false,
+    "profile_id": "light-ast",
+    "profile_spec": {
+      "bytes": 729,
+      "git_blob_sha1_recomputed": "e037afb26be0a1e5310881afc0f583b4e61c9034",
+      "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c12-product-admission-20261019\\research\\methods\\ark_runtime\\build_profile_20261019\\profile-spec.json",
+      "sha256": "3e65da9ac5119708d5c081d5550f4d1f3753ea834f54cc163fa7e1c7362ddb03"
+    }
+  },
+  "decision": "NOT_ADMITTED",
+  "detector_identity": {
+    "detector_id": "ohscanner.ark.runtime.type_safety",
+    "detector_version": "0.6.2",
+    "source_hashes_manifest": {
+      "bytes": 10012,
+      "git_blob_sha1_recomputed": "a0c375dfa14ea05065524916f181698b7521f837",
+      "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c12-product-admission-20261019\\research\\experiments\\ark_runtime\\c11_alias_cross_helper_20261019\\source-hashes.json",
+      "sha256": "8b3d6266ec17056781ab6107770ff5cf550f7807f472509f840ea32f5c10ec08",
+      "tracked_git_blob_oid": "73b42869f27dc11833d8aa10a74965e0a854625e",
+      "workspace_path": "research/experiments/ark_runtime/c11_alias_cross_helper_20261019/source-hashes.json"
+    }
+  },
+  "generated_from": {
+    "ledger_blob_oid": "babb26d6cd86438f5ffa86046fa7e86bdc15bf70",
+    "ledger_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "ledger_path": "research/deliveries/c-line/ark-runtime-coverage-ledger-20261019.json",
+    "ledger_sha256": "a92dcfede52a0e74fbc0cac7ccfb6a4600ccf4af87a6e7f0c81f3fd0ba388bad",
+    "ohscanner_head": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+    "ohscanner_repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "ohscanner_tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71"
+  },
+  "global_blockers": [
+    "No product build/profile manifest is locked.",
+    "No product preprocessed translation units or complete include closure are available.",
+    "No shipped product binary/version/branch/source association is established.",
+    "No product entry/privilege/trigger/CIA/PoC/fix revalidation closure is established."
+  ],
+  "host_toolchain_probe": {
+    "note": "Host probes are not the target product toolchain.",
+    "python": {
+      "executable": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "executable_sha256": "31073dad142bc7f3374e3122aa668270052c9ad37d0aaab803ae73f184c3a43b",
+      "implementation": "CPython",
+      "parser_modules": {
+        "tree_sitter": {
+          "module_path": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\site-packages\\tree_sitter\\__init__.py",
+          "module_sha256": "edf67e1ccbe921e10379de11e563b7b808f40439a18c9a19b8c81db49bd2dbc4",
+          "version": "0.26.0"
+        },
+        "tree_sitter_c": {
+          "module_path": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\site-packages\\tree_sitter_c\\__init__.py",
+          "module_sha256": "a4ca57275e51373f822a5d483710512c7694d47ead83fd4794351e710bf1f19c",
+          "version": null
+        },
+        "tree_sitter_cpp": {
+          "module_path": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\site-packages\\tree_sitter_cpp\\__init__.py",
+          "module_sha256": "64400285f8ebb84d8acd90205abc20cd7c97a3f5c20c3c1835f701e0b345aaaa",
+          "version": null
+        }
+      },
+      "version": "3.12.14"
+    },
+    "tools": [
+      {
+        "name": "git",
+        "path": "C:\\Program Files\\Git\\cmd\\git.EXE",
+        "sha256": "78211c7ed73988da93a6d8a33d47ec6187f464d7ea2a9a00c182bbd7a1ecf30f",
+        "status": "host_tool_observed_not_product_toolchain",
+        "version": "git version 2.55.0.windows.5"
+      },
+      {
+        "name": "clang",
+        "path": null,
+        "sha256": null,
+        "status": "unavailable_on_host_path",
+        "version": null
+      },
+      {
+        "name": "clang++",
+        "path": null,
+        "sha256": null,
+        "status": "unavailable_on_host_path",
+        "version": null
+      },
+      {
+        "name": "cmake",
+        "path": null,
+        "sha256": null,
+        "status": "unavailable_on_host_path",
+        "version": null
+      },
+      {
+        "name": "ninja",
+        "path": null,
+        "sha256": null,
+        "status": "unavailable_on_host_path",
+        "version": null
+      },
+      {
+        "name": "gn",
+        "path": null,
+        "sha256": null,
+        "status": "unavailable_on_host_path",
+        "version": null
+      }
+    ]
+  },
+  "identity_coverage": {
+    "all_required_present_for_product_build": false,
+    "missing_for_product_build": [
+      "product commit/tree/blob/source mapping",
+      "Detector/rule version bound to exact product source",
+      "scope/profile tied to product target",
+      "config_hash",
+      "parser binary identity",
+      "product toolchain identity"
+    ]
+  },
+  "metrics": {
+    "case_count": 16,
+    "precision": null,
+    "product_build_profile_complete_count": 0,
+    "reason_no_metrics": "No independent reliable labelled holdout exists.",
+    "recall": null,
+    "recorded_complete_source_identity_count": 6
+  },
+  "parser_identity": {
+    "binary_identity_complete": false,
+    "implementation_source": {
+      "bytes": 8283,
+      "git_blob_sha1_recomputed": "3cfece5bc4613b6fec924890fa877300e22bbafa",
+      "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c12-product-admission-20261019\\src\\ohscanner\\detectors\\ark_runtime\\syntax.py",
+      "sha256": "b1dd8d2e5b9a4e0f30cd39f77e9a86ff5c42345066b21858e19f0b191b78245d",
+      "tracked_git_blob_oid": "8507a127856d22af01a6eaa64738c8030ed414af",
+      "workspace_path": "src/ohscanner/detectors/ark_runtime/syntax.py"
+    },
+    "model_source": {
+      "bytes": 20542,
+      "git_blob_sha1_recomputed": "64550956721464ee7d370b84e19b5b1a2cde2596",
+      "path": "E:\\网安\\CyberSecurity-Innovation-Audit-c12-product-admission-20261019\\src\\ohscanner\\detectors\\ark_runtime\\model.py",
+      "sha256": "449fdc167a803e6205326d716302557c695a54e075fff932e8cc9f37badf9135",
+      "tracked_git_blob_oid": "ecdd988952182a8f34b89e4828d8f50aa77f0415",
+      "workspace_path": "src/ohscanner/detectors/ark_runtime/model.py"
+    },
+    "runtime": {
+      "executable": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "executable_sha256": "31073dad142bc7f3374e3122aa668270052c9ad37d0aaab803ae73f184c3a43b",
+      "implementation": "CPython",
+      "parser_modules": {
+        "tree_sitter": {
+          "module_path": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\site-packages\\tree_sitter\\__init__.py",
+          "module_sha256": "edf67e1ccbe921e10379de11e563b7b808f40439a18c9a19b8c81db49bd2dbc4",
+          "version": "0.26.0"
+        },
+        "tree_sitter_c": {
+          "module_path": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\site-packages\\tree_sitter_c\\__init__.py",
+          "module_sha256": "a4ca57275e51373f822a5d483710512c7694d47ead83fd4794351e710bf1f19c",
+          "version": null
+        },
+        "tree_sitter_cpp": {
+          "module_path": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\site-packages\\tree_sitter_cpp\\__init__.py",
+          "module_sha256": "64400285f8ebb84d8acd90205abc20cd7c97a3f5c20c3c1835f701e0b345aaaa",
+          "version": null
+        }
+      },
+      "version": "3.12.14"
+    }
+  },
+  "payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
+  "required_identity_fields": [
+    "commit",
+    "tree",
+    "blob",
+    "source_sha256",
+    "detector_rule_version",
+    "scope",
+    "profile",
+    "config_hash",
+    "parser_identity",
+    "toolchain_identity"
+  ],
+  "schema": "ohscanner.ark-parent-fix-build-preprocess-profile/v1",
+  "source_audit_identity": {
+    "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+    "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "local_pinned_object_verified": true,
+    "path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
+    "sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+    "tree": "307ac8237263db793028e0bf34a82a85f60821a5"
+  },
+  "status": "BLOCKED"
+}

@@ -1,0 +1,135 @@
+{
+  "cases": [
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-ARRAY-CALLBACK-ABRUPT-COMPLETION-HISTORY-VARIANT",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-ARRAY-EVERY-WRAPPED-CALLBACK-EXCEPTION-I5XZRO",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-ARRAY-FINDINDEX-STABLE-ABRUPT-RETURN-C333",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-COMPILER-REFLECT-APPLY-PENDING-EXCEPTION-IAO7GO",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-RUNTIME-CALLINFO-CONSTRUCTION-PENDING-EXCEPTION-I7K7L6",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-RUNTIME-INSTANCEOF-EXCEPTION-RETURN-VALUE-I7SDBG",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-RUNTIME-NEWCALLINFO-EXCEPTION-GUARD-IB40SU",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-SHAREDARRAY-FINDINDEX-EXCEPTION-PROPAGATION-PARTIAL-2A9BCFB",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-TYPEDARRAY-FILTER-RECEIVER-TYPE-GUARD-IAO7E8",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-TYPEDARRAY-MAP-NEWARRAY-PENDING-EXCEPTION-IC7B8Q",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    },
+    {
+      "build_preprocess_status": "blocked",
+      "case_id": "OH-I7E0FM-TYPEDARRAY-FILTER-ABRUPT-COMPLETION",
+      "preprocessed_units": [],
+      "source_identity_status": "blocked"
+    }
+  ],
+  "decision": "NOT_ADMITTED",
+  "errors": [
+    "template_is_not_evidence",
+    "official_git_dir_missing",
+    "missing_product_profile:product_manifest",
+    "missing_product_profile:args_gn",
+    "missing_product_profile:compile_commands_json",
+    "missing_product_profile:include_closure",
+    "missing_product_profile:toolchain_identity",
+    "missing_product_profile:sysroot_identity",
+    "missing_product_profile:macro_expansion_log",
+    "missing_product_profile:gn_target",
+    "missing_preprocessed_units:ARK-ARRAY-CALLBACK-ABRUPT-COMPLETION-HISTORY-VARIANT",
+    "missing_preprocessed_units:ARK-ARRAY-EVERY-WRAPPED-CALLBACK-EXCEPTION-I5XZRO",
+    "missing_preprocessed_units:ARK-ARRAY-FINDINDEX-STABLE-ABRUPT-RETURN-C333",
+    "missing_preprocessed_units:ARK-COMPILER-REFLECT-APPLY-PENDING-EXCEPTION-IAO7GO",
+    "missing_preprocessed_units:ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA",
+    "missing_preprocessed_units:ARK-RUNTIME-CALLINFO-CONSTRUCTION-PENDING-EXCEPTION-I7K7L6",
+    "missing_preprocessed_units:ARK-RUNTIME-INSTANCEOF-EXCEPTION-RETURN-VALUE-I7SDBG",
+    "missing_preprocessed_units:ARK-RUNTIME-NEWCALLINFO-EXCEPTION-GUARD-IB40SU",
+    "missing_preprocessed_units:ARK-SHAREDARRAY-FINDINDEX-EXCEPTION-PROPAGATION-PARTIAL-2A9BCFB",
+    "missing_preprocessed_units:ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D",
+    "missing_preprocessed_units:ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7",
+    "missing_preprocessed_units:ARK-TYPEDARRAY-FILTER-RECEIVER-TYPE-GUARD-IAO7E8",
+    "missing_preprocessed_units:ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG",
+    "missing_preprocessed_units:ARK-TYPEDARRAY-MAP-NEWARRAY-PENDING-EXCEPTION-IC7B8Q",
+    "missing_preprocessed_units:ARK-TYPEDARRAY-MAP-STORE-TYPE-ORIGIN-CVE-2025-24304",
+    "missing_preprocessed_units:OH-I7E0FM-TYPEDARRAY-FILTER-ABRUPT-COMPLETION"
+  ],
+  "gn_target": null,
+  "official_git_dir": null,
+  "payload_sha256": "54137dfc07c9f75d88356f0442f3c4217428cea17934f5554e22a9a72a93b7ea",
+  "product_artifacts": [],
+  "schema": "ohscanner.ark-parent-fix-product-profile-verification/v1",
+  "status": "BLOCKED"
+}

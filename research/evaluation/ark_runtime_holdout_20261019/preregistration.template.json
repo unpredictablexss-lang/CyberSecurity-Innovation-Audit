@@ -1,0 +1,22 @@
+{
+  "development_exclusion_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "family_split_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "labels": [
+    "vulnerable_shape",
+    "not_vulnerable_shape",
+    "unknown"
+  ],
+  "metrics": [
+    "family_level_TP",
+    "FP",
+    "FN",
+    "TN",
+    "unknown"
+  ],
+  "precision_recall_rule": "only after reliable independent human adjudicated truth",
+  "sample_size": 0,
+  "sampling_frame_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "schema": "ohscanner.ark-holdout-preregistration/v1",
+  "split_unit": "root_cause_or_patch_family",
+  "status": "TEMPLATE_NOT_FROZEN"
+}

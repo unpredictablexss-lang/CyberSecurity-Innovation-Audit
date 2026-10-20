@@ -1,0 +1,56 @@
+{
+  "case_count": 3,
+  "case_pseudonyms": [
+    "90aa750768218a45",
+    "a71cb7487685b0c6",
+    "c8b770fdd617c03b"
+  ],
+  "packet_payload_sha256": {
+    "A": "cbdbc17be7a08611009d400c39dca267701dde7ea7ab36250a7dcd4887d973ef",
+    "B": "20618f6c46589ee16d7146d522453fdafd05f5bd140360ff46090e8cac756ff0"
+  },
+  "payload_sha256": "9ea45a815ea77d8c9da902ccc9195f05e4dd3f68a9f7c819941b2a4bc4f80f2b",
+  "public_case_rows": [
+    {
+      "case_pseudonym": "90aa750768218a45",
+      "development_overlap": false,
+      "sampling_frame_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "selection_rule_id": "selftest-synthetic",
+      "source_bytes": 53,
+      "source_sha256": "07de2edca07f6fb3d4fba8c36da37aa82257c56d31e2bd0725d897ae7e509248"
+    },
+    {
+      "case_pseudonym": "a71cb7487685b0c6",
+      "development_overlap": false,
+      "sampling_frame_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "selection_rule_id": "selftest-synthetic",
+      "source_bytes": 53,
+      "source_sha256": "d4597ac6fbf397e66600622acfb7e5f6abd7bd1b91d22ba886ee46148fc57890"
+    },
+    {
+      "case_pseudonym": "c8b770fdd617c03b",
+      "development_overlap": false,
+      "sampling_frame_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "selection_rule_id": "selftest-synthetic",
+      "source_bytes": 53,
+      "source_sha256": "6b0ec7bfdfc642b96a8232287acdfeeda1e91278c8be55915d911bd9dfc84494"
+    }
+  ],
+  "review_protocol": {
+    "adjudicator": 1,
+    "agreement_rule": "matching labels are accepted; disagreements require a third blind adjudication decision",
+    "labels": [
+      "not_vulnerable_shape",
+      "unknown",
+      "vulnerable_shape"
+    ],
+    "metrics_rule": "Precision/Recall is refused unless truth_status == reliable_independent_human_adjudicated",
+    "model_generated_truth_forbidden": true,
+    "reviewer_independence_required": true,
+    "reviewers": 2
+  },
+  "schema": "ohscanner.ark-holdout-freeze/v1",
+  "status": "FROZEN_PIPELINE_ONLY",
+  "truth_commitment_sha256": "daa7de1e679259595349e3ab79608c4936583917a6427f852adf81e6030e4413",
+  "truth_status": "pipeline_self_test_not_reliable"
+}

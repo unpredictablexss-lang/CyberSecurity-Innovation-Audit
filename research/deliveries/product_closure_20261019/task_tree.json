@@ -1,0 +1,44 @@
+{
+  "nodes": [
+    {
+      "id": "G12-PC-1",
+      "next": "Populate product_profile_bundle and pass verify_profile_bundle against an official read-only Ark Git store.",
+      "status": "IN_PROGRESS_BLOCKED_EXTERNAL_INPUT",
+      "title": "Ark parent/fix build and preprocess profile"
+    },
+    {
+      "id": "G12-PC-2",
+      "next": "Freeze preregistration/leakage/intake/governance and pass holdout_preflight before labels.",
+      "status": "PIPELINE_AND_PREFLIGHT_IMPLEMENTED_NOT_EXECUTED",
+      "title": "Independent holdout freeze and double-blind adjudication"
+    },
+    {
+      "id": "G12-PC-3",
+      "next": "Close entry, permission, trigger, attacker control and CIA impact per case.",
+      "status": "BLOCKED",
+      "title": "Candidate product applicability closure"
+    },
+    {
+      "id": "G12-PC-4",
+      "next": "Pass evidence_gate and obtain explicit isolated-environment authorization before execution.",
+      "status": "GATE_IMPLEMENTED_NOT_AUTHORIZED",
+      "title": "Authorized isolated PoC"
+    },
+    {
+      "id": "G12-PC-5",
+      "next": "Patch, rebuild same profile, replay PoC and controls.",
+      "status": "NOT_RUN",
+      "title": "Fix and fixed-product revalidation"
+    },
+    {
+      "id": "G12-PC-6",
+      "next": "Re-evaluate only after all mandatory evidence gates close.",
+      "status": "NOT_ADMITTED",
+      "title": "Competition admission"
+    }
+  ],
+  "payload_sha256": "cccebac2cc424621822cc23b93b545a6f149fcf819d4ed6273f6186f27b7c1b1",
+  "root": "G12-PC-PRODUCT-ADMISSION-CLOSURE",
+  "schema": "ohscanner.g12-pc-task-tree/v1",
+  "status": "ACTIVE_NOT_ADMITTED"
+}

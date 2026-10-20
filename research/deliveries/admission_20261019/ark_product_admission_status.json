@@ -1,0 +1,61 @@
+{
+  "admission_items": {
+    "accurate_complete_analysis": "BLOCKED",
+    "affected_modules_versions_branches": "PARTIAL",
+    "complete_report": "PARTIAL",
+    "cwe_cve_support": "PARTIAL",
+    "fix_and_revalidation": "BLOCKED",
+    "performance_and_innovation": "PARTIAL",
+    "reproducible_poc": "BLOCKED"
+  },
+  "baseline_commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+  "baseline_tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+  "blockers": [
+    "official Ark Git object store and local parent/fix source verification are not bound",
+    "product manifest/version/branch/binary mapping is absent",
+    "product args.gn/GN target/compile database/include closure/preprocessed TU/toolchain are absent",
+    "real independent holdout and independent human truth are absent",
+    "real product entry/permission/attacker-control/trigger/CIA evidence is absent",
+    "authorized isolated product PoC is absent",
+    "fixed product build and post-fix product revalidation are absent"
+  ],
+  "date": "2026-10-19",
+  "decision": "NOT_ADMITTED",
+  "draft_ready": false,
+  "holdout": {
+    "metrics_computed": false,
+    "pipeline_status": "IMPLEMENTED",
+    "real_holdout_status": "NOT_RUN",
+    "selftest_status": "PASS",
+    "truth_status": "pipeline_self_test_not_reliable"
+  },
+  "metrics": {
+    "precision": null,
+    "reason": "No independent reliable labelled holdout exists.",
+    "recall": null
+  },
+  "product_closure": {
+    "authorized_poc_completed_count": 0,
+    "case_count": 16,
+    "entry_permission_trigger_cia_closed_count": 0,
+    "fixed_product_revalidation_completed_count": 0,
+    "status": "BLOCKED"
+  },
+  "profile": {
+    "case_count": 16,
+    "manifest_payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
+    "product_build_profile_complete_count": 0,
+    "recorded_complete_source_identity_count": 6,
+    "status": "BLOCKED",
+    "verification_status": "verified_blocked_manifest"
+  },
+  "readiness_tools": {
+    "evidence_gate": "POC_0_FIX_0_ADMISSION_0_NOT_ADMITTED",
+    "holdout_preflight": "BLOCKED_TEMPLATE_9_ERRORS",
+    "profile_bundle_verifier": "BLOCKED_TEMPLATE_26_ERRORS"
+  },
+  "schema": "ohscanner.g12-pc-product-admission-status/v1",
+  "timezone": "Asia/Shanghai",
+  "validated_vulnerability": 0,
+  "worktree": "E:\\网安\\CyberSecurity-Innovation-Audit-c12-product-admission-20261019"
+}

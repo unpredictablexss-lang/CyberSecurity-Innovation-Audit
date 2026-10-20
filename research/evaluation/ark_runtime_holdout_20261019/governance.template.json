@@ -1,0 +1,31 @@
+{
+  "adjudicator": {
+    "independent_human": true,
+    "model_generated": false,
+    "reviewer_id": "adjudicator",
+    "rule_author": false
+  },
+  "reviewers": [
+    {
+      "independent_human": true,
+      "model_generated": false,
+      "reviewer_id": "reviewer-a",
+      "rule_author": false
+    },
+    {
+      "independent_human": true,
+      "model_generated": false,
+      "reviewer_id": "reviewer-b",
+      "rule_author": false
+    }
+  ],
+  "schema": "ohscanner.ark-holdout-governance/v1",
+  "status": "TEMPLATE_NOT_SIGNED",
+  "truth_custodian": {
+    "independent_human": true,
+    "model_generated": false,
+    "reviewer_id": "truth-custodian",
+    "rule_author": false
+  },
+  "truth_state": "sealed_not_opened_by_reviewers"
+}
