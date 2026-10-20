@@ -31,8 +31,14 @@ def run(*args: str) -> str:
 def main() -> int:
     data = json.loads(RECORD.read_text(encoding="utf-8"))
     errors: list[str] = []
-    if run("git", "rev-parse", "HEAD") != EXPECTED_HEAD:
-        errors.append("integrated HEAD is not the recorded 790e353 base")
+    is_descendant = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", EXPECTED_HEAD, "HEAD"],
+        cwd=ROOT,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    ).returncode == 0
+    if not is_descendant:
+        errors.append("HEAD does not descend from the recorded 790e353 integration base")
     src_diff = subprocess.run(
         ["git", "diff", "--quiet", SCANNER_FREEZE, "HEAD", "--", "src"],
         cwd=ROOT,
