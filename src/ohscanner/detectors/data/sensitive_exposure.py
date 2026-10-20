@@ -10,6 +10,7 @@ from dataclasses import dataclass, replace
 import tree_sitter_c
 import tree_sitter_cpp
 from tree_sitter import Language, Parser
+from src.parser.syntax_normalize import normalize_empty_cpp_linkage_wrappers
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation
 from .models import DEFAULT_SOURCE, SINKS, STATUS_RETURN_CALLS, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel
 from .property_keys import PROPERTY_READ_CALLS, PropertyKeyBindings
@@ -271,7 +272,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.4'
+    version = '0.21.5'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -366,7 +367,8 @@ class LocalFlow:
         self.external_gaps = set()
         self.source_sites, self.sink_sites = [], []
         lang = tree_sitter_c if unit.language == 'c' else tree_sitter_cpp
-        self.tree = Parser(Language(lang.language())).parse(self.b)
+        parsed_bytes = normalize_empty_cpp_linkage_wrappers(self.b) if unit.language == 'cpp' else self.b
+        self.tree = Parser(Language(lang.language())).parse(parsed_bytes)
         self.sinks = {s.name:s for s in SINKS if not s.files or unit.path in s.files}
         self.sinks.update({s.name:s for s in model.additional_sinks if not s.files or unit.path in s.files})
         self.output_calls = {
