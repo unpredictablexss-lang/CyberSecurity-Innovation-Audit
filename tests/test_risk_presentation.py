@@ -1,7 +1,7 @@
 """User-facing risk presentation must not turn candidate severity into product confirmation."""
 import unittest
 
-from src.workbench.smart_audit import severity_metadata
+from src.workbench.smart_audit import severity_metadata, _severity
 
 
 class SeverityPresentationTests(unittest.TestCase):
@@ -38,6 +38,16 @@ class SeverityPresentationTests(unittest.TestCase):
         self.assertEqual(row["severity"], "high")
         self.assertEqual(row["severity_basis"], "CWE-787")
         self.assertNotIn("vulnerability_state", row)
+
+    def test_agent_router_uses_same_tentative_tier_as_risk_badge(self):
+        # Real ToolDiagnostic entries are currently always unassessed.
+        self.assertEqual(_severity({"severity": "unassessed", "candidate_cwe": "CWE-416"}), 4)
+        self.assertEqual(_severity({"severity": "unassessed", "candidate_cwe": "CWE-476"}), 3)
+        self.assertEqual(_severity({"severity": "unassessed", "candidate_cwe": "CWE-999999"}), 0)
+        self.assertEqual(_severity({"severity": "high", "candidate_cwe": "CWE-476"}), 4)
+        self.assertEqual(_severity({"severity": "unassessed",
+                                    "candidate_cwe": "CWE-190",
+                                    "consequence_cwe": "CWE-787"}), 4)
 
     def test_unmapped_or_unproven_risk_remains_ungraded(self):
         for candidate in (
