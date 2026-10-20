@@ -55,6 +55,23 @@ int AccessTokenManagerStub::OnRemoteRequest(unsigned code, MessageParcel &data,
 }}
 """
 
+def dispatcher_compare(descriptor):
+    """Use the compare() spelling present in ConnectCallbackStub in AAFWK."""
+    return f"""
+int AccessTokenManagerStub::OnRemoteRequest(unsigned code, MessageParcel &data,
+    MessageParcel &reply, MessageOption &option)
+{{
+    auto token = data.ReadInterfaceToken();
+    if (token.compare({descriptor}::GetDescriptor()) != 0) return -1;
+    auto requestFunc = this->requestFunc;
+    if (requestFunc != nullptr) {{
+        (this->*requestFunc)(data, reply);
+        return 0;
+    }}
+    return -1;
+}}
+"""
+
 def run_sources(sources):
     units = []
     ast = {}
@@ -100,6 +117,23 @@ class CrossFileDescriptorIdentityTests(unittest.TestCase):
         findings = auth01(run)
         self.assertEqual(len(findings), 1, [finding.message for finding in findings])
         self.assertIn("descriptor_identity_unresolved",
+                      {obligation.kind for obligation in findings[0].evidence_obligations})
+    def test_compare_style_interface_guard_matches_real_connect_callback(self):
+        safe = run_sources({
+            "interfaces/i_access_token_manager.h": INTERFACE,
+            "service/access_token_manager_stub.h": STUB,
+            "service/access_token_manager_stub.cpp": dispatcher_compare("IAccessTokenManager"),
+        })
+        self.assertEqual(auth01(safe), [])
+
+        wrong = run_sources({
+            "interfaces/i_access_token_manager.h": INTERFACE,
+            "service/access_token_manager_stub.h": STUB,
+            "service/access_token_manager_stub.cpp": dispatcher_compare("IWrongInterface"),
+        })
+        findings = auth01(wrong)
+        self.assertEqual(len(findings), 1, [finding.message for finding in findings])
+        self.assertIn("descriptor_identity_mismatch",
                       {obligation.kind for obligation in findings[0].evidence_obligations})
 
 if __name__ == "__main__":

@@ -34,5 +34,18 @@
     "control_rules": [
       "ipc.parcel.position-underflow"
     ]
+  },
+  {
+    "sample_id": "copy_range_safe",
+    "data_origin": "synthetic",
+    "family": "DATA-01",
+    "expected_rule": null,
+    "file": "copy_range_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.parcel.copy-range"
+    ],
+    "notes": "The copy length equals the fixed destination capacity and is not derived from a request field; this is an explicit bounded copy, not a Parcel-controlled copy size."
   }
 ]

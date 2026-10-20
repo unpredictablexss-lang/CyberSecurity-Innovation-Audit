@@ -70,5 +70,57 @@
       "ipc.auth.request-identity"
     ],
     "notes": "request_identity_positive with the principal changed from a Parcel-supplied token to the IPC caller TokenID; the candidate rule must be suppressed."
+  },
+  {
+    "sample_id": "identity_domain_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "identity_domain_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.auth.identity-domain"
+    ],
+    "notes": "A caller TokenID is passed to VerifyAccessToken, so the identity domain matches the predicate; this checks the rule does not report the correctly typed caller identity."
+  },
+  {
+    "sample_id": "service_identity_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "service_identity_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.auth.service-identity"
+    ],
+    "notes": "The sensitive operation is authorized against the original IPC caller TokenID, not a service/self token."
+  },
+  {
+    "sample_id": "request_identity_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "request_identity_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.auth.request-identity"
+    ],
+    "notes": "A request-supplied token is used only as a lookup argument; the authorization predicate is bound to the IPC caller TokenID."
+  },
+  {
+    "sample_id": "object_owner_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "object_owner_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.auth.object-owner"
+    ],
+    "notes": "The owner UID is first materialized from the requested target, compared against the calling UID, and only then passed to the sensitive background-task operation."
   }
 ]

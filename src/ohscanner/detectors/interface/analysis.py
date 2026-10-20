@@ -232,9 +232,58 @@ class Observation:
     descriptor_identity: str = ""
 
 
+def normalize_include_trailing_space(source):
+    """Recover one valid include-line ending rejected by the current grammar.
+
+    For a quoted or angled #include followed by exactly one ASCII space and LF,
+    replace that space with CR. Length and LF offsets stay unchanged. This is a
+    parser-only copy; evidence and source hashes always use the original bytes.
+    """
+    include_line = re.compile(
+        rb'(?m)^(?P<directive>[ \t]*#[ \t]*include[ \t]+'
+        rb'(?:"[^"\r\n]*"|<[^>\r\n]*>))[ ]\n'
+    )
+    return include_line.sub(lambda match: match.group("directive") + b"\r\n", source)
+
+
+def _blank_interface_descriptor_macro(source):
+    """Blank only the literal form of OH IPC descriptor declarations in the parse copy.
+
+    The original SourceUnit remains intact and descriptor_symbol_expectation reads
+    its literal directly. Non-literal arguments are left untouched and stay partial.
+    """
+    pattern = re.compile(
+        rb'(?<![A-Za-z0-9_])DECLARE_INTERFACE_DESCRIPTOR\s*'
+        rb'\(\s*(?:u|U|L)?"[^"\\\r\n]*"\s*\)'
+    )
+    return pattern.sub(lambda match: b" " * len(match.group(0)), source)
+
+
+def _blank_visibility_annotations(source):
+    """Blank narrow line-leading export annotations in the private parse copy.
+
+    EXPORT and FFI_EXPORT are build-visibility annotations, not C++ syntax or
+    authorization checks. Only blank them when they occupy a declaration line
+    and are followed by a type-like token; preserve bytes and line positions.
+    """
+    pattern = re.compile(
+        rb"(?m)^(?P<indent>[ \t]*)(?P<macro>EXPORT|FFI_EXPORT)"
+        rb"(?=[ \t]+(?:(?:static|const|extern|inline|virtual|void|bool|char|"
+        rb"short|int|long|float|double|auto|size_t|ssize_t|wchar_t|"
+        rb"u?int[0-9]+_t|napi_[A-Za-z0-9_]+)\b|"
+        rb"[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)+(?:[*&])?)"
+        rb"[ \t*&])"
+    )
+    return pattern.sub(
+        lambda match: match.group("indent") + b" " * len(match.group("macro")),
+        source,
+    )
+
+
 def normalize_syntax(source):
-    """Model only known format-string tokens, statement-carrying macro arguments
-    and unresolved member dispatch.
+    """Model known format-string tokens, statement-carrying macro arguments,
+    unresolved member dispatch, exact include endings, declaration visibility
+    annotations and literal OH IPC descriptor declaration macros.
 
     Byte lengths/newlines remain unchanged. Original source is retained for
     evidence. This is not macro expansion or resolution of member pointers.
@@ -263,6 +312,9 @@ def normalize_syntax(source):
         return b'""'+b' '*(len(token)-2)
     normalized=re.sub(pattern,fmt,source,flags=re.S)
     normalized = normalize_member_pointer_syntax(normalized)
+    normalized = normalize_include_trailing_space(normalized)
+    normalized = _blank_visibility_annotations(normalized)
+    normalized = _blank_interface_descriptor_macro(normalized)
     normalized=_blank_macro_statement_arguments(normalized)
     return normalized
 
@@ -501,7 +553,7 @@ class Interpreter:
                 self._record_expansion(unit,expansion)
             normalized=normalize_syntax(source)
             if normalized!=raw:
-                self.limitations.add("Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: "+unit.path)
+                self.limitations.add("Private syntax normalizes reviewed format tokens, member-pointer syntax, include endings, statement macros and declaration visibility annotations; original public parse status retained: "+unit.path)
             tree = Parser(Language(grammar)).parse(normalized)
             if tree.root_node.has_error:
                 self.limitations.add("Partial source: only error-free functions can be inspected in " + unit.path)
