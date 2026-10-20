@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "C:\\Program Files\\Git\\cmd\\git.exe",
+    "-C",
+    "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019",
+    "diff",
+    "--check"
+  ],
+  "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019",
+  "exit_code": 0,
+  "status": "pass",
+  "wall_seconds": 0.1066232,
+  "process_peak_rss_bytes": null,
+  "stdout_bytes": 0,
+  "stderr_bytes": 0
+}

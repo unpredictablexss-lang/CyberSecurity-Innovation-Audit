@@ -1,0 +1,139 @@
+{
+  "schema": "c9-latest-static-repair-checks/v1",
+  "generated_at": "2026-10-19T07:50:33.394635+00:00",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "executable": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+  "checkout": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+  "checks": [
+    {
+      "name": "known_disclosed_cves",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.detectors.test_known_disclosed_cves"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+      "env": {
+        "PATH": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\.codex\\tmp\\arg0-windows\\codex-arg0GXbXRD;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\libheif\\libheif\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\jxrlib\\jxrlib\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\override;C:\\Program Files (x86)\\VMware\\VMware Workstation\\bin\\;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\WSL\\;E:\\DeepSeek Harness\\resources\\runtime\\cli\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\work_work\\.local\\bin;E:\\KimiData\\daimon-share\\daimon\\npm-global;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\fallback;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\ce4759538b7f2f1a;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\896a0166b774037a",
+        "SYSTEMROOT": "C:\\WINDOWS",
+        "TEMP": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\.tmp",
+        "TMP": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\.tmp",
+        "HOME": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\.home",
+        "PYTHONPATH": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+        "PYTHONPYCACHEPREFIX": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\.pycache",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0",
+        "TZ": "Asia/Shanghai"
+      },
+      "exit_code": 1,
+      "status": "fail",
+      "started_at": "2026-10-19T07:50:32.010368+00:00",
+      "wall_seconds": 0.3803034000011394,
+      "log": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\logs\\known_disclosed_cves.log",
+      "stdout_bytes": 0,
+      "stderr_bytes": 1991,
+      "stdout_tail": [],
+      "stderr_tail": [
+        "    from tree_sitter import Language, Parser",
+        "ModuleNotFoundError: No module named 'tree_sitter'",
+        "",
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 1 test in 0.000s",
+        "",
+        "FAILED (errors=1)"
+      ]
+    },
+    {
+      "name": "ark_discover",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/detectors/ark_runtime",
+        "-t",
+        ".",
+        "-v"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+      "env": {
+        "PATH": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\.codex\\tmp\\arg0-windows\\codex-arg0GXbXRD;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\libheif\\libheif\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\jxrlib\\jxrlib\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\override;C:\\Program Files (x86)\\VMware\\VMware Workstation\\bin\\;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\WSL\\;E:\\DeepSeek Harness\\resources\\runtime\\cli\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\work_work\\.local\\bin;E:\\KimiData\\daimon-share\\daimon\\npm-global;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\fallback;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\ce4759538b7f2f1a;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\896a0166b774037a",
+        "SYSTEMROOT": "C:\\WINDOWS",
+        "TEMP": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\.tmp",
+        "TMP": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\.tmp",
+        "HOME": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\.home",
+        "PYTHONPATH": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+        "PYTHONPYCACHEPREFIX": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\.pycache",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0",
+        "TZ": "Asia/Shanghai"
+      },
+      "exit_code": 1,
+      "status": "fail",
+      "started_at": "2026-10-19T07:50:32.393373+00:00",
+      "wall_seconds": 0.45514299999922514,
+      "log": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\logs\\ark_discover.log",
+      "stdout_bytes": 0,
+      "stderr_bytes": 18558,
+      "stdout_tail": [],
+      "stderr_tail": [
+        "    from tree_sitter import Language, Parser",
+        "ModuleNotFoundError: No module named 'tree_sitter'",
+        "",
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 10 tests in 0.001s",
+        "",
+        "FAILED (errors=10)"
+      ]
+    },
+    {
+      "name": "owner_cd_admission",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.test_owner_cd_admission"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+      "env": {
+        "PATH": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\.codex\\tmp\\arg0-windows\\codex-arg0GXbXRD;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\libheif\\libheif\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\jxrlib\\jxrlib\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\override;C:\\Program Files (x86)\\VMware\\VMware Workstation\\bin\\;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\WSL\\;E:\\DeepSeek Harness\\resources\\runtime\\cli\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\work_work\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\work_work\\.local\\bin;E:\\KimiData\\daimon-share\\daimon\\npm-global;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\fallback;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin;C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\ce4759538b7f2f1a;C:\\Users\\work_work\\AppData\\Local\\OpenAI\\Codex\\bin\\896a0166b774037a",
+        "SYSTEMROOT": "C:\\WINDOWS",
+        "TEMP": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\.tmp",
+        "TMP": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\.tmp",
+        "HOME": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\.home",
+        "PYTHONPATH": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+        "PYTHONPYCACHEPREFIX": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\.pycache",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0",
+        "TZ": "Asia/Shanghai"
+      },
+      "exit_code": 1,
+      "status": "fail",
+      "started_at": "2026-10-19T07:50:32.849631+00:00",
+      "wall_seconds": 0.5420149999990826,
+      "log": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019\\latest_static_repair_20261019\\logs\\owner_cd_admission.log",
+      "stdout_bytes": 0,
+      "stderr_bytes": 1969,
+      "stdout_tail": [],
+      "stderr_tail": [
+        "    from tree_sitter import Language, Parser",
+        "ModuleNotFoundError: No module named 'tree_sitter'",
+        "",
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 1 test in 0.000s",
+        "",
+        "FAILED (errors=1)"
+      ]
+    }
+  ]
+}

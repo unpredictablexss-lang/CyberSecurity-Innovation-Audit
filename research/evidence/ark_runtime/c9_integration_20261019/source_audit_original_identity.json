@@ -1,0 +1,14 @@
+{
+  "schema": "c9-source-audit-original-identity/v1",
+  "remote_ref": "refs/remotes/origin/codex/c-line-ark-runtime-20261018",
+  "remote_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+  "remote_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+  "path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
+  "git_blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+  "blob_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+  "line_count": 154,
+  "status": "present_in_remote_e4e_read_via_git_show",
+  "strict_reconciliation_input_path": "源码漏洞审查记录_20261018.md",
+  "strict_reconciliation_status": "blocked_missing_input",
+  "note": "The remote C-line file is the original audit record named in the fact update, but it is not the root input path hard-coded by the local reconciliation scaffold; no substitute promotion was performed."
+}

@@ -1,0 +1,60 @@
+{
+  "schema": "c9-latest-static-repair-source-manifest/v1",
+  "generated_at": "2026-10-19T07:49:25.7748459Z",
+  "files": [
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/runtime_ir.py",
+      "source_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+      "source_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+      "source_blob": "e68e3191deef7a7825fe5ce9ab083e16d9ef7368",
+      "raw_blob_verified": true,
+      "sha256": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+      "bytes": 7468
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/syntax.py",
+      "source_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+      "source_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+      "source_blob": "8507a127856d22af01a6eaa64738c8030ed414af",
+      "raw_blob_verified": true,
+      "sha256": "c3616ad6404967927d1a4a98c46257f8df19c3c36990efbae82c859f5108bcf9",
+      "bytes": 8088
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/type_origin.py",
+      "source_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+      "source_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+      "source_blob": "e2c8712bfb98d7fee7cd02e518e4ce12eb2ab7d5",
+      "raw_blob_verified": true,
+      "sha256": "a5ca62d12988de3ee8019b02ca146d3a333b96c56021e2b7239a0e6f587bfd29",
+      "bytes": 29358
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/runtime_exception.py",
+      "source_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+      "source_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+      "source_blob": "ff9ecb72ed099745f9f20b04d2b14fedb761230d",
+      "raw_blob_verified": true,
+      "sha256": "c253edcb7716b4f785ab132bbc7b519aabaf9b736280bcc631a37f96306385ac",
+      "bytes": 38510
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/size_overflow.py",
+      "source_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+      "source_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+      "source_blob": "c76fbb814091060c458ee2b38ba62bc5c14ab47a",
+      "raw_blob_verified": true,
+      "sha256": "6d2bab177c9525ddd68d3ff345480765f4d922b76b85918b02234c79f0b1282f",
+      "bytes": 15518
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/receiver_guard.py",
+      "source_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+      "source_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+      "source_blob": "abd68c990a60fe82eb9f0546b6bb9878e19a84c2",
+      "raw_blob_verified": true,
+      "sha256": "80cb6c3239cfc18be3ef3c47e26a10ac44084ff671df828dd88a70dbe0833461",
+      "bytes": 10535
+    }
+  ]
+}

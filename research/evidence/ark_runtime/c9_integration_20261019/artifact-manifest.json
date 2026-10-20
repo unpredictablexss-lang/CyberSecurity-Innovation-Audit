@@ -1,0 +1,108 @@
+{
+  "schema": "c9-integration-artifact-manifest/v1",
+  "generated_at": "2026-10-19T06:44:35.5874703Z",
+  "root": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-opt-20261019\\research\\evidence\\ark_runtime\\c9_integration_20261019",
+  "note": "Self-hash excluded. All generated outputs are confined to this directory.",
+  "files": [
+    {
+      "path": "check_docs_context_budget_from_blob_3aab566.py",
+      "bytes": 8243,
+      "sha256": "91e3ce8153717abf9b784cc66aaa1b16c7c42a6da1be9db70f7bfd83f00a7ba8"
+    },
+    {
+      "path": "docs_validator_blob_identity.json",
+      "bytes": 139,
+      "sha256": "f41b0c135df5df31bd920f96ed2e8e3a4a173fc39ad7f8adb3bc7d73495489f7"
+    },
+    {
+      "path": "e4e_ark_runtime_coverage_ledger.json",
+      "bytes": 181867,
+      "sha256": "a92dcfede52a0e74fbc0cac7ccfb6a4600ccf4af87a6e7f0c81f3fd0ba388bad"
+    },
+    {
+      "path": "e4e_source_audit_original.md",
+      "bytes": 29774,
+      "sha256": "58f37a6dfe3a518da07c813195f47e1cb3cbd7e0825b02d28cb6b3e5d0f240ea"
+    },
+    {
+      "path": "exact-verification-summary.json",
+      "bytes": 3843,
+      "sha256": "1c8931d277de21705b74ab3ec1d729c4ea176f4e9b5c9787d9532109e01138c9"
+    },
+    {
+      "path": "exact-verification-summary.md",
+      "bytes": 6901,
+      "sha256": "8f5a7584110cedceeb4c08aab9354c2d584e3744721cc8cbac979eb8fdae34a9"
+    },
+    {
+      "path": "generate_git_diff_matrix.py",
+      "bytes": 4023,
+      "sha256": "b7604dc3012f7fe4be99e15e774d7c7f3262ba88e24961e9976b3bd3b02c6c7e"
+    },
+    {
+      "path": "git_readonly_diff_matrix.json",
+      "bytes": 81926,
+      "sha256": "fb9794fa097ae49a952880704ea1b5d9b35753bd122a1435d0676f2a635636ec"
+    },
+    {
+      "path": "integration-readiness.json",
+      "bytes": 1354,
+      "sha256": "8d5d9c0a1347da53683ee1143090c4195cba6e4679038123dc0b0ef490ee5449"
+    },
+    {
+      "path": "integration-readiness.md",
+      "bytes": 4428,
+      "sha256": "34139755bfb3d309d55efe4cf8ef8d3a76f806962a693e2c0c1d189b95be9b34"
+    },
+    {
+      "path": "json_validation.json",
+      "bytes": 13619,
+      "sha256": "12be9c4f39f3252ff6d09039190fc77030103d64316c1b6468a0ba56a1e41456"
+    },
+    {
+      "path": "known-case-coverage-matrix.json",
+      "bytes": 2249,
+      "sha256": "e13673ed3583b0c7557aaf59a091c0956a0560712c461bc8c13ab35684b2b8ae"
+    },
+    {
+      "path": "known-case-coverage-matrix.md",
+      "bytes": 4305,
+      "sha256": "f07a6eea516441b4e2c950dd4a7c241755d04638ee67520c871a6f5c8f207b6d"
+    },
+    {
+      "path": "minimal-merge-gate.md",
+      "bytes": 3468,
+      "sha256": "a05a4371989de3af12a2d7421b888f41ed960732169dcfc84f1fcb62eefb8f64"
+    },
+    {
+      "path": "run_integration_checks.py",
+      "bytes": 5458,
+      "sha256": "fc61a65b29179dbe91c20a0a64d478402db2f8938f5e3c7d61c377d94d3030b0"
+    },
+    {
+      "path": "source_audit_original_identity.json",
+      "bytes": 926,
+      "sha256": "8d6068b3bcdc400d577f1ee5d21c5be6167a31fcc50981518d73a8d052a5b656"
+    },
+    {
+      "path": "tracked_json_files.txt",
+      "bytes": 6043,
+      "sha256": "5bc25e18ffd4a7e0fec8ed7fc291ac831b3352ccc1bdd0ee7599eb22ab2b45b3"
+    },
+    {
+      "path": "tracked_python_files.txt",
+      "bytes": 10023,
+      "sha256": "76c033ae8ff1bbfca4605f31ffa52d7b855062c6d0b720fa66419110556e41fd"
+    },
+    {
+      "path": "validate_json.py",
+      "bytes": 1622,
+      "sha256": "1142f9e18ffe3af39751bc0c2231bc34440e7b5c61b864d05c4be1d150f73cca"
+    },
+    {
+      "path": "windows_git_diff_check.json",
+      "bytes": 404,
+      "sha256": "3c40f5d53dda3e5696725ee12bf4db1dfbe227ed4b59202b9aba0864898db107"
+    }
+  ]
+}

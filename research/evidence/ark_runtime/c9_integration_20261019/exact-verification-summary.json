@@ -1,0 +1,39 @@
+{
+  "schema": "c9-exact-verification-summary/v1",
+  "local_execution": {
+    "head": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "algorithm_commit": "715e29884a845a2daa80016f332c70b3db84ca45",
+    "environment": {"os": "Ubuntu 22.04 WSL2", "kernel": "6.18.54.1-microsoft-standard-WSL2", "python": "3.10.12", "tree_sitter": "0.26.0", "windows_git": "2.55.0.windows.5"},
+    "checks": [
+      {"name": "ark_runtime_full", "exit": 0, "status": "pass_with_skips", "tests": 116, "failed": 0, "skipped": 8, "wall_seconds": 1.91},
+      {"name": "runner_catalog_contract_compat", "exit": 0, "status": "pass", "tests": 64, "failed": 0, "skipped": 0, "wall_seconds": 49.53},
+      {"name": "cpp_runner_integration", "exit": 0, "status": "pass", "tests": 5, "failed": 0, "skipped": 0, "wall_seconds": 2.17},
+      {"name": "python_py_compile", "exit": 0, "status": "pass", "files": 272, "wall_seconds": 10.64},
+      {"name": "tracked_json_parse", "exit": 0, "status": "pass", "files": 99, "failed": 0, "wall_seconds": 0.49},
+      {"name": "docs_budget_current_checkout", "exit": 2, "status": "fail_missing_tool", "reason": "scripts/check_docs_context_budget.py absent from 7af tree"},
+      {"name": "docs_budget_canonical_blob_replay", "exit": 0, "status": "pass_with_substitute_tool", "blob": "3aab566516d5504ac37f650ca9f2b7dbc5718b81", "wall_seconds": 0.26, "max_rss_kib": 19788},
+      {"name": "windows_git_diff_check", "exit": 0, "status": "pass", "wall_seconds": 0.1066232},
+      {"name": "strict_reconciliation_default", "exit": 0, "status": "expected_blocked_missing_input", "extracted_entries": 0},
+      {"name": "strict_reconciliation_strict", "exit": 3, "status": "expected_blocked_missing_input"}
+    ],
+    "rss_limit": "Per-command RSS from RUSAGE_CHILDREN is cumulative, not isolated; not used for pass/fail."
+  },
+  "e4e_required_result": {
+    "execution_in_c9": false,
+    "reason": "read-only git show/diff constraint; no remote checkout",
+    "focused_ark": {"collected": 156, "executed": 152, "passed": 146, "failed": 6, "skipped": 4},
+    "type_origin_failures": [
+      "tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_glue_aware_hclass_read_and_env_builder_overload_keep_origin",
+      "tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_glue_aware_hclass_read_preserves_real_type_origin_mismatch",
+      "tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_reviewed_glue_aware_graph_queries_keep_source_binding",
+      "tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_reviewed_call_builder_constructor_arity_is_supported",
+      "tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_result_type_sample_survives_unrelated_callback_while_result_is_local",
+      "tests.detectors.ark_runtime.test_type_origin.TypeOriginTests.test_result_type_sample_is_invalidated_when_result_escapes_to_callback"
+    ],
+    "committed_full_suite_manifest": {"reported": "127 passed, 1 failed, 10 skipped in 54.03s", "failure": "ExactSnapshotDependencyManifestTests.test_recomputation_is_stable_and_incomplete_profile_blocks", "expected": "unresolved_dependency:ACTUAL_INCLUDE_CLOSURE", "actual": ["C1_PRODUCT_BUILD_PROFILE", "C2_CASE_MATRIX", "GENERATED_BUILD_INPUTS", "PARSER_BINARY_IDENTITY"]},
+    "environment_deviation": "e4e reports Python 3.13.9/git 2.46.2.windows.1/tree-sitter 0.26.0; C9 WSL Python 3.10.12/Windows Git 2.55.0; exact broad-suite argv/env not frozen in e4e committed evidence",
+    "version_deviation": "e4e detector VERSION=0.6.2 vs RuntimeTypeModel.version=0.8.10; local 7af both 0.7.0",
+    "catalog_deviation": "e4e swaps ArkRuntimeTypeSafetyDetector for ArkRuntimeUnseenTypeSafetyDetector; public Catalog diff 4+/4-"
+  },
+  "reconciliation": {"default": "blocked_missing_input", "strict_exit": 3, "substitute_promotion": false}
+}

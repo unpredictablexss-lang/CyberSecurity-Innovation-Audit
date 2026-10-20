@@ -1,0 +1,2697 @@
+diff --git a/src/ohscanner/detectors/ark_runtime/runtime_ir.py b/src/ohscanner/detectors/ark_runtime/runtime_ir.py
+new file mode 100644
+--- /dev/null
++++ b/src/ohscanner/detectors/ark_runtime/runtime_ir.py
+--- /dev/null
++++ b/src/ohscanner/detectors/ark_runtime/runtime_ir.py
+@@ -0,0 +1,173 @@
++"""Bounded generated-code graph. C++ nesting is not generated control flow."""
++from dataclasses import dataclass, field
++from .syntax import walk
++
++CONTROL = {'BRANCH', 'Bind', 'Jump', 'LoopBegin', 'LoopEnd'}
++
++
++@dataclass
++class Instruction:
++    node: object
++    kind: str
++    arguments: tuple = ()
++    successors: list = field(default_factory=list)
++    problem: str = ''
++
++
++@dataclass
++class GeneratedGraph:
++    instructions: list
++    entry: int
++    external_labels: frozenset
++    limitations: tuple
++    cyclic_nodes: frozenset = frozenset()
++
++
++def cyclic_nodes(instructions):
++    """Iterative SCC pass: allocation-site identity is unsafe inside a cycle."""
++    edges = {i: [t for t, _ in inst.successors if t is not None and t >= 0]
++             for i, inst in enumerate(instructions)}
++    reverse = {i: [] for i in edges}
++    for src, targets in edges.items():
++        for target in targets:
++            reverse[target].append(src)
++    visited, order = set(), []
++    for entry in edges:
++        stack = [(entry, False)]
++        while stack:
++            current, finish = stack.pop()
++            if finish:
++                order.append(current)
++            elif current not in visited:
++                visited.add(current)
++                stack.append((current, True))
++                stack.extend((child, False) for child in edges[current] if child not in visited)
++    visited, cyclic = set(), set()
++    for entry in reversed(order):
++        if entry in visited:
++            continue
++        group, stack = set(), [entry]
++        while stack:
++            current = stack.pop()
++            if current not in visited:
++                visited.add(current)
++                group.add(current)
++                stack.extend(reverse[current])
++        if len(group) > 1 or entry in edges[entry]:
++            cyclic.update(group)
++    return frozenset(cyclic)
++
++
++def label_identity(fn, node):
++    while node is not None and node.type in ('pointer_expression', 'parenthesized_expression'):
++        node = node.named_children[-1] if node.named_children else None
++    if node is None or node.type != 'identifier':
++        return None
++    binding = fn.resolve(fn.text(node), node)
++    return binding.identity if binding and binding.type_name in ('Label', 'Label*') else None
++
++
++def build_graph(fn, budget):
++    instructions = []
++    limitations = []
++
++    def append(node, kind, arguments=(), problem=''):
++        instructions.append(Instruction(node, kind, arguments, problem=problem))
++
++    def visit(node, depth=0):
++        if depth > budget.max_scope_depth:
++            raise ValueError('scope_depth_budget_exhausted')
++        if len(instructions) >= budget.max_instructions:
++            raise ValueError('instruction_budget_exhausted')
++        if node.type == 'compound_statement':
++            for child in node.named_children:
++                if visit(child, depth + 1):
++                    return True
++        elif node.type in ('if_statement', 'switch_statement', 'for_statement', 'while_statement',
++                           'do_statement', 'try_statement', 'preproc_if', 'preproc_ifdef'):
++            append(node, 'unknown', problem='unsupported_host_control_or_macro')
++        elif node.type == 'return_statement':
++            if any(child.type != 'comment' for child in node.named_children):
++                append(node, 'unknown', problem='unmodeled_host_return_expression')
++            else:
++                append(node, 'return')
++            # An unconditional host return prevents later graph emission,
++            # including labels to which previously emitted branches refer.
++            return True
++        elif node.type == 'declaration':
++            if any(n.type == 'lambda_expression' for n in walk(node)):
++                append(node, 'unknown', problem='unmodeled_lambda_or_escape')
++            else:
++                append(node, 'declaration')
++        elif node.type == 'expression_statement':
++            expression = node.named_children[0] if node.named_children else None
++            if expression is None:
++                return
++            if expression.type == 'call_expression':
++                name = fn.call_name(expression)
++                args = fn.arguments(expression)
++                shadowed = fn.resolve(name, expression)
++                if name in ('Return', 'ReturnVoid', 'Throw'):
++                    append(expression, 'unknown', problem='unmodeled_generated_termination:' + name)
++                elif name in CONTROL and shadowed is None:
++                    count = 3 if name == 'BRANCH' else 1
++                    if len(args) != count:
++                        append(expression, 'unknown', problem='invalid_control_signature:' + name)
++                    else:
++                        append(expression, name, args)
++                elif name != 'DEFVARIABLE' and (
++                    name.isupper() or any(label_identity(fn, a) for a in args)
++                ):
++                    append(expression, 'unknown', problem='unmodeled_control:' + name)
++                elif shadowed and name in CONTROL:
++                    append(expression, 'unknown', problem='shadowed_control:' + name)
++                else:
++                    append(expression, 'expression')
++            else:
++                append(expression, 'expression')
++        elif node.type not in ('comment', 'empty_statement'):
++            append(node, 'unknown', problem='unsupported_statement:' + node.type)
++
++    visit(fn.body)
++    labels, duplicated = {}, set()
++    external = frozenset(b.identity for b in fn.bindings if b.parameter and b.type_name == 'Label*')
++    for index, inst in enumerate(instructions):
++        if inst.kind in ('Bind', 'LoopBegin'):
++            label = label_identity(fn, inst.arguments[0])
++            if label is None:
++                inst.problem = 'unresolved_label_binding'
++            elif label in external:
++                inst.problem = 'unsupported_binding_of_external_label'
++            elif label in labels:
++                duplicated.add(label)
++            else:
++                labels[label] = index
++
++    def destination(arg):
++        label = label_identity(fn, arg)
++        if label in duplicated:
++            return None
++        if label in external:
++            return -1
++        return labels.get(label)
++
++    for index, inst in enumerate(instructions):
++        if inst.problem:
++            limitations.append(inst.problem + ':' + str(inst.node.start_point[0] + 1))
++            continue
++        if inst.kind == 'BRANCH':
++            for truth, arg in ((True, inst.arguments[1]), (False, inst.arguments[2])):
++                target = destination(arg)
++                if target is None:
++                    limitations.append('unresolved_label_target:' + str(inst.node.start_point[0] + 1))
++                inst.successors.append((target, truth))
++        elif inst.kind in ('Jump', 'LoopEnd'):
++            target = destination(inst.arguments[0])
++            if target is None:
++                limitations.append('unresolved_label_target:' + str(inst.node.start_point[0] + 1))
++            inst.successors.append((target, None))
++        elif inst.kind not in ('unknown', 'return') and index + 1 < len(instructions):
++            # Bind does not reconnect a previously terminated block. Only a
++            # predecessor edge from a branch/jump reaches a detached label.
++            inst.successors.append((index + 1, None))
++    return GeneratedGraph(instructions, 0, external, tuple(sorted(set(limitations))), cyclic_nodes(instructions))
+diff --git a/src/ohscanner/detectors/ark_runtime/syntax.py b/src/ohscanner/detectors/ark_runtime/syntax.py
+new file mode 100644
+--- /dev/null
++++ b/src/ohscanner/detectors/ark_runtime/syntax.py
+--- /dev/null
++++ b/src/ohscanner/detectors/ark_runtime/syntax.py
+@@ -0,0 +1,195 @@
++"""Immutable local syntax facts using the existing Tree-sitter dependency.
++
++No preprocessing, full C++ type resolution, or modification of shared parsing.
++"""
++from dataclasses import dataclass
++import re
++from tree_sitter import Language, Parser
++import tree_sitter_cpp
++
++
++def walk(node):
++    pending = [node]
++    while pending:
++        item = pending.pop()
++        yield item
++        pending.extend(reversed(item.named_children))
++
++
++def compact(text):
++    return re.sub(r'\s+', '', text)
++
++
++def name_node(node):
++    while node is not None:
++        child = node.child_by_field_name('declarator')
++        if child is None:
++            return node
++        node = child
++
++
++_CPP_NON_CODE = re.compile(
++    rb'R"([^\s()\\]{0,16})\(.*?\)\1"'
++    rb'|"(?:\\.|[^"\\])*"'
++    rb"|'(?:\\.|[^'\\])*'"
++    rb'|//[^\n]*'
++    rb'|/\*.*?\*/'
++    rb'|^[ \t]*\#(?:[^\n]|\\\n)*',
++    re.MULTILINE | re.DOTALL,
++)
++_NAMESPACE_PREFIX = re.compile(rb'\bnamespace\s+([A-Za-z_]\w*(?:::\s*[A-Za-z_]\w*)*)\s*$')
++_CONDITIONAL_DIRECTIVE = re.compile(rb'^[ \t]*\#[ \t]*(?:if|ifdef|ifndef|elif|else|endif)\b', re.MULTILINE)
++
++
++def _lexical_namespace_ranges(data):
++    """Return namespace byte ranges only when lexical scope is unambiguous.
++
++    This deliberately recovers declaration ownership only. It does not expand
++    macros or resolve declarations, and refuses conditional-compilation input.
++    """
++    if _CONDITIONAL_DIRECTIVE.search(data):
++        return None
++
++    def blank(match):
++        return re.sub(rb'[^\r\n]', b' ', match.group(0))
++
++    masked = _CPP_NON_CODE.sub(blank, data)
++    braces = []
++    ranges = []
++    for index, char in enumerate(masked):
++        if char == ord('{'):
++            line_start = masked.rfind(b'\n', 0, index) + 1
++            prefix = masked[line_start:index]
++            found = _NAMESPACE_PREFIX.search(prefix)
++            namespace = re.sub(rb'\s+', b'', found.group(1)).decode('ascii') if found else ''
++            braces.append((namespace, index))
++        elif char == ord('}'):
++            if not braces:
++                return None
++            namespace, start = braces.pop()
++            if namespace:
++                ranges.append((start, index + 1, namespace))
++    if braces:
++        return None
++    return tuple(ranges)
++
++
++def _lexical_namespace_at(ranges, position):
++    matches = [(start, end, name) for start, end, name in ranges
++               if start < position < end]
++    matches.sort()
++    return '::'.join(name for _, _, name in matches)
++
++
++@dataclass(frozen=True)
++class Binding:
++    name: str
++    identity: str
++    type_name: str
++    position: int
++    scope: tuple
++    parameter: bool = False
++
++
++class FunctionSyntax:
++    def __init__(self, data, node, lexical_namespace=None, partial=False):
++        self.data, self.node = data, node
++        self.body = node.child_by_field_name('body')
++        declarator = node.child_by_field_name('declarator')
++        self.declarator = declarator
++        written_name = self.text(name_node(declarator))
++        ancestors, class_ancestors, parent = [], [], node.parent
++        while parent is not None:
++            if parent.type in ('namespace_definition', 'class_specifier', 'struct_specifier'):
++                name = self.text(parent.child_by_field_name('name'))
++                ancestors.append(name)
++                if parent.type in ('class_specifier', 'struct_specifier'):
++                    class_ancestors.append(name)
++            parent = parent.parent
++        if partial:
++            prefix_parts = [part for part in (lexical_namespace or '').split('::') if part]
++            prefix_parts.extend(reversed([a for a in class_ancestors if a]))
++            prefix = '::'.join(prefix_parts)
++            owner_source = 'lexical_scope' if prefix else 'unknown'
++        else:
++            prefix = '::'.join(reversed([a for a in ancestors if a]))
++            owner_source = 'ast' if ancestors else 'unknown'
++        self.qualified_name = compact((prefix + '::' if prefix else '') + written_name).lstrip(':')
++        self.owner_source = owner_source
++        # Tree-sitter parses syntax only; external macro/type declarations and
++        # compiler flags are never inferred from this local owner recovery.
++        self.external_context_status = 'unknown'
++        self.bindings = []
++        parameters = declarator.child_by_field_name('parameters')
++        self.parameter_types = []
++        for param in parameters.named_children if parameters else ():
++            if param.type not in ('parameter_declaration', 'optional_parameter_declaration'):
++                continue
++            dec = param.child_by_field_name('declarator')
++            name = self.text(name_node(dec))
++            typ = self.text(param.child_by_field_name('type'))
++            pointers = self.text(dec).count('*') if dec else 0
++            typ = compact(typ) + '*' * pointers
++            self.parameter_types.append(typ)
++            if name:
++                self.add_binding(name, typ, param.start_byte, (self.body.start_byte,), True)
++        for item in walk(self.body):
++            if item.type == 'declaration':
++                typ = compact(self.text(item.child_by_field_name('type')))
++                for child in item.named_children:
++                    if child.type in ('init_declarator', 'function_declarator', 'identifier', 'pointer_declarator'):
++                        dec = child.child_by_field_name('declarator') if child.type == 'init_declarator' else child
++                        ident = name_node(dec)
++                        if ident and ident.type in ('identifier', 'field_identifier'):
++                            self.add_binding(self.text(ident), typ, ident.start_byte, self.scope(item))
++            elif item.type == 'call_expression' and self.call_name(item) == 'DEFVARIABLE':
++                args = self.arguments(item)
++                if args and args[0].type == 'identifier':
++                    self.add_binding(self.text(args[0]), 'Variable', item.start_byte, self.scope(item))
++
++    def text(self, node):
++        return self.data[node.start_byte:node.end_byte].decode('utf-8') if node else ''
++
++    def scope(self, node):
++        result = []
++        while node is not None:
++            if node.type == 'compound_statement':
++                result.append(node.start_byte)
++            if node == self.body:
++                break
++            node = node.parent
++        return tuple(reversed(result))
++
++    def add_binding(self, name, typ, position, scope, parameter=False):
++        ident = f'{self.qualified_name}:{position}:{name}'
++        self.bindings.append(Binding(name, ident, typ, position, scope, parameter))
++
++    def resolve(self, name, node):
++        scope = self.scope(node)
++        matches = [b for b in self.bindings if b.name == name and b.position <= node.start_byte
++                   and scope[:len(b.scope)] == b.scope]
++        return max(matches, key=lambda b: (len(b.scope), b.position), default=None)
++
++    def arguments(self, node):
++        args = node.child_by_field_name('arguments')
++        return tuple(args.named_children) if args else ()
++
++    def call_name(self, node):
++        return compact(self.text(node.child_by_field_name('function')))
++
++
++def parse_functions(data):
++    tree = Parser(Language(tree_sitter_cpp.language())).parse(data)
++    namespace_ranges = _lexical_namespace_ranges(data)
++    # Tree-sitter also calls defaulted/deleted special members function_definition;
++    # they have no emitted body to analyse and must not crash an unrelated caller.
++    partial = tree.root_node.has_error
++    functions = [FunctionSyntax(data, n,
++                                _lexical_namespace_at(namespace_ranges, n.start_byte)
++                                if namespace_ranges is not None else None,
++                                partial=partial) for n in walk(tree.root_node)
++                 if n.type == 'function_definition' and n.child_by_field_name('body') is not None
++                 and n.child_by_field_name('declarator') is not None]
++    for function in functions:
++        function.translation_unit_status = 'partial' if tree.root_node.has_error else 'complete'
++    return tree, functions
+diff --git a/src/ohscanner/detectors/ark_runtime/type_origin.py b/src/ohscanner/detectors/ark_runtime/type_origin.py
+new file mode 100644
+--- /dev/null
++++ b/src/ohscanner/detectors/ark_runtime/type_origin.py
+--- /dev/null
++++ b/src/ohscanner/detectors/ark_runtime/type_origin.py
+@@ -0,0 +1,518 @@
++"""Local definition identities and provenance, evaluated on generated paths."""
++from dataclasses import dataclass
++from .syntax import compact, name_node, walk
++from .model import NAMESPACE, OWNER
++
++
++@dataclass(frozen=True)
++class Value:
++    kind: str = 'unknown'
++    identity: str = ''
++    origin: str = ''
++    origin_line: int = 0
++    creation_line: int = 0
++    may_differ: bool = False
++    detail: str = ''
++    valid: bool = True
++
++
++UNKNOWN = Value()
++
++
++class OriginState:
++    def __init__(self, values=None, equivalent=(), invalidated=(), predicates=(), effects=(), escaped=()):
++        self.values = dict(values or {})
++        self.equivalent = frozenset(equivalent)
++        self.invalidated = frozenset(invalidated)
++        self.predicates = frozenset(predicates)
++        self.effects = frozenset(effects)
++        self.escaped = frozenset(escaped)
++
++    def copy(self):
++        return OriginState(self.values, self.equivalent, self.invalidated, self.predicates,
++                           self.effects, self.escaped)
++
++    def key(self):
++        return (tuple(sorted(self.values.items())), tuple(sorted(self.equivalent)),
++                tuple(sorted(self.invalidated)), tuple(sorted(self.predicates)), tuple(sorted(self.effects)),
++                tuple(sorted(self.escaped)))
++
++
++class OriginEvaluator:
++    def __init__(self, fn, model, cyclic_ranges=()):
++        self.fn, self.model = fn, model
++        self.cyclic_ranges = tuple(cyclic_ranges)
++
++    @staticmethod
++    def token_key(value):
++        return value.identity + (':live' if value.valid else ':stale')
++
++    def creation_call(self, node, state):
++        if node.type != 'call_expression':
++            return False
++        callee = node.child_by_field_name('function')
++        if not callee or callee.type != 'field_expression':
++            return False
++        builder = self.value(callee.child_by_field_name('argument'), state)
++        return (builder.kind == 'builder' and builder.detail == self.model.creator_owner
++                and self.fn.text(callee.child_by_field_name('field')) == self.model.creator_name
++                and len(self.fn.arguments(node)) == self.model.creator_arguments)
++
++    def same_type_creation_call(self, node, state):
++        if node.type != 'call_expression':
++            return False
++        callee = node.child_by_field_name('function')
++        if not callee or callee.type != 'field_expression':
++            return False
++        owner, name, arity, source_index, type_index = self.model.same_type_creator
++        builder = self.value(callee.child_by_field_name('argument'), state)
++        args = self.fn.arguments(node)
++        if not (builder.kind == 'builder' and builder.detail == owner
++                and self.fn.text(callee.child_by_field_name('field')) == name
++                and len(args) == arity):
++            return False
++        source = self.value(args[source_index], state)
++        token = self.value(args[type_index], state)
++        return (source.kind == 'object' and token.kind == 'type' and token.valid
++                and token.origin == source.identity)
++
++    def _logic_and_chain(self, node):
++        if node is None or node.type != 'call_expression':
++            return False
++        callee = node.child_by_field_name('function')
++        args = self.fn.arguments(node)
++        if callee and callee.type == 'identifier':
++            return (self.fn.text(callee) == 'LogicAndBuilder' and len(args) == 1
++                    and self.fn.resolve('LogicAndBuilder', node) is None)
++        if callee and callee.type == 'field_expression':
++            field = self.fn.text(callee.child_by_field_name('field'))
++            receiver = callee.child_by_field_name('argument')
++            if field == 'And' and len(args) == 1:
++                return self._logic_and_chain(receiver)
++            if field == 'Done' and not args:
++                return self._logic_and_chain(receiver)
++        return False
++
++    def _copy_buffer_runtime_call(self, node):
++        if node.type != 'call_expression' or self.fn.call_name(node) != self.model.copy_buffer_runtime[0]:
++            return False
++        _, runtime_name, arity, buffer_arity = self.model.copy_buffer_runtime
++        args = self.fn.arguments(node)
++        if len(args) != arity or self.fn.text(args[1]).replace(' ', '') != f'RTSTUB_ID({runtime_name})':
++            return False
++        buffer_args = args[2]
++        return buffer_args.type == 'initializer_list' and len(buffer_args.named_children) == buffer_arity
++
++    def _copy_buffer_runtime_id(self, node):
++        args = self.fn.arguments(node)
++        if self.fn.call_name(node) != 'RTSTUB_ID' or len(args) != 1 or self.fn.text(args[0]) != self.model.copy_buffer_runtime[1]:
++            return False
++        parent = node.parent
++        while parent is not None and parent.type != 'call_expression':
++            parent = parent.parent
++        return parent is not None and self._copy_buffer_runtime_call(parent)
++
++    def unsupported_cpp_effect(self, instruction):
++        """Keep unmodelled host writes from masquerading as graph value copies.
++
++        Ordinary GateRef assignments, calls and reviewed DSL declarations have
++        separate handling. We do not guess C++ evaluation order, writable
++        pointer/reference aliasing, implicit constructors or destructors.
++        """
++        if instruction.kind not in ('BRANCH', 'declaration', 'expression'):
++            return ''
++        fn, root = self.fn, instruction.node
++        for node in walk(root):
++            if node.type in ('new_expression', 'delete_expression', 'update_expression'):
++                return 'unmodeled_cpp_lifetime_or_update_expression'
++            if node.type == 'assignment_expression':
++                if instruction.kind != 'expression' or node != root:
++                    return 'unmodeled_nested_cpp_assignment'
++                left = node.child_by_field_name('left')
++                if left and left.type == 'identifier':
++                    continue
++                if left and left.type == 'field_expression':
++                    receiver = left.child_by_field_name('argument')
++                    binding = fn.resolve(fn.text(receiver), receiver) if receiver else None
++                    if (binding and binding.type_name in ('JSCallArgs', NAMESPACE + '::JSCallArgs')
++                            and fn.text(left.child_by_field_name('field')) == 'callThisArg3WithReturnArgs'):
++                        continue
++                return 'unmodeled_cpp_indirect_assignment'
++        if instruction.kind == 'declaration':
++            if any(n.type in ('reference_declarator', 'pointer_declarator') for n in walk(root)):
++                return 'unmodeled_cpp_writable_alias'
++            typ = compact(fn.text(root.child_by_field_name('type')))
++            host = {name for name, _ in self.model.host_constructors}
++            plain = {'GateRef', 'auto', 'bool', 'int', 'size_t', 'int32_t', 'int64_t'}
++            short = typ.removeprefix(NAMESPACE + '::')
++            if short not in host | plain:
++                return 'unreviewed_cpp_constructor_or_destructor'
++            if short in host:
++                for child in root.named_children:
++                    if child.type == 'init_declarator':
++                        initializer = child.child_by_field_name('value')
++                        if initializer is None or initializer.type != 'argument_list':
++                            return 'unreviewed_host_constructor_form'
++                        count = len(initializer.named_children)
++                        if count not in dict(self.model.host_constructors)[short]:
++                            return 'unreviewed_host_constructor_arity'
++                    elif child.type == 'function_declarator':
++                        parameters = child.child_by_field_name('parameters')
++                        if parameters is None or len(parameters.named_children) not in dict(self.model.host_constructors)[short]:
++                            return 'unreviewed_host_constructor_arity'
++                    elif child.type == 'identifier' and 0 not in dict(self.model.host_constructors)[short]:
++                        return 'unreviewed_host_constructor_arity'
++        return ''
++
++    def initial(self):
++        return OriginState({b.identity: Value('object', b.identity, origin_line=self.fn.node.start_point[0] + 1)
++                            for b in self.fn.bindings if b.parameter and b.type_name == 'GateRef'})
++
++    def invalidate(self, state, call, may_rebind=True):
++        """Forget sampled facts; preserve only local fresh results proven unescaped.
++
++        An unmodelled call invalidates source-object observations and aliases.
++        A fresh result cannot be mutated by a call until it escapes; direct and
++        nested call arguments plus the modeled JSCallArgs initializer record
++        those escapes. Other unsupported host writes block function analysis.
++        This finite abstraction converges in loops and never revalidates a copy
++        of an old token when a later read observes the same object.
++        """
++        from dataclasses import replace
++        invalidated = set(state.invalidated)
++        passed_objects = set()
++        if may_rebind:
++            # A target can escape through a nested expression as well as a
++            # direct identifier argument. Resolve every identifier in each
++            # argument using the current local provenance state.
++            for argument in self.fn.arguments(call):
++                for node in walk(argument):
++                    if node.type == 'identifier':
++                        value = self.value(node, state)
++                        if value.kind == 'object':
++                            passed_objects.add(value.identity)
++        for value in state.values.values():
++            if value.kind != 'object':
++                continue
++            if (value.detail == 'fresh_local_typed_array'
++                    and value.identity not in passed_objects
++                    and value.identity not in state.escaped):
++                continue
++            invalidated.add(value.identity)
++        state.invalidated = frozenset(invalidated)
++        # A sampled HClass/type for a fresh local allocation remains tied to
++        # that object while the object has not escaped. A callback cannot
++        # mutate an object it cannot reach; source-object samples still die.
++        stable_fresh = {
++            value.identity for value in state.values.values()
++            if value.kind == 'object' and value.detail == 'fresh_local_typed_array'
++            and value.identity not in passed_objects and value.identity not in state.escaped
++        }
++        state.values = {
++            key: (replace(value, valid=False)
++                  if value.kind in ('type', 'hclass')
++                  and (not value.valid or value.origin not in stable_fresh)
++                  else value)
++            for key, value in state.values.items()
++        }
++        state.equivalent = frozenset()
++        state.predicates = frozenset()
++        state.effects |= frozenset(((call.start_point[0] + 1, self.fn.call_name(call)),))
++        # Without the C++ callee declaration, GateRef arguments could be bound
++        # by non-const reference. Retain aliases of the old object but forget
++        # the passed lvalue's current binding; a later read cannot silently
++        # equate it to a pre-call alias.
++        arguments = list(self.fn.arguments(call)) if may_rebind else []
++        callee = call.child_by_field_name('function')
++        if may_rebind and callee and callee.type == 'field_expression':
++            arguments.append(callee.child_by_field_name('argument'))
++        for argument in arguments:
++            while argument and argument.type in ('pointer_expression', 'parenthesized_expression'):
++                argument = argument.named_children[-1] if argument.named_children else None
++            if argument and argument.type == 'identifier':
++                binding = self.fn.resolve(self.fn.text(argument), argument)
++                if binding and state.values.get(binding.identity, UNKNOWN).kind in ('object', 'type', 'hclass'):
++                    state.values[binding.identity] = UNKNOWN
++
++    def bound_call(self, node, state):
++        """Only the existing reviewed origin/creator model and scalar graph ops.
++
++        No unknown-call purity is inferred from spelling prefixes. These scalar
++        operations construct graph values, not runtime callbacks; applicability
++        remains a model obligation, including macro and local shadow checks.
++        """
++        fn = self.fn
++        name, args = fn.call_name(node), fn.arguments(node)
++        base = name.removeprefix('this->')
++        if self._logic_and_chain(node) or self._copy_buffer_runtime_call(node) or self._copy_buffer_runtime_id(node):
++            return True
++        if fn.resolve(base, node):
++            return False
++        if (base in dict(self.model.reviewed_graph_read_overloads)
++                and len(args) == dict(self.model.reviewed_graph_read_overloads)[base]):
++            return True
++        if base in dict(self.model.type_stable_operations) and len(args) == dict(self.model.type_stable_operations)[base]:
++            return True
++        same_owner, same_name, same_arity, _, _ = self.model.same_type_creator
++        if (name == same_name and len(args) == same_arity
++                and not fn.resolve(same_name, node)):
++            callee = node.child_by_field_name('function')
++            if callee and callee.type == 'field_expression':
++                builder = self.value(callee.child_by_field_name('argument'), state)
++                if builder.kind == 'builder' and builder.detail == same_owner:
++                    return self.same_type_creation_call(node, state)
++        scalar_arity = dict(self.model.scalar_operations)
++        if base in scalar_arity and len(args) == scalar_arity[base]:
++            return True
++        if (self.model.build_profile.startswith('assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;')
++                and base in dict(self.model.readonly_operations)
++                and len(args) == dict(self.model.readonly_operations)[base]):
++            return True
++        if base == 'GetObjectType' and len(args) == 1:
++            return True
++        # Newer StubBuilder sources carry the runtime glue explicitly when
++        # reading an object's HClass. In that reviewed overload the object is
++        # the second argument; the operation still only emits a graph read.
++        if base == 'LoadHClass' and len(args) in (1, 2):
++            return True
++        if name == 'DEFVARIABLE' and len(args) == 3:
++            return True
++        property_name, property_arity, _, _ = self.model.property_store
++        if (name in (self.model.store_name, 'this->' + self.model.store_name,
++                     OWNER + '::' + self.model.store_name)
++                and len(args) == len(self.model.store_types)):
++            return not fn.resolve(self.model.store_name, node)
++        if name in (property_name, 'this->' + property_name, OWNER + '::' + property_name):
++            return len(args) == property_arity and not fn.resolve(property_name, node)
++        callee = node.child_by_field_name('function')
++        if callee and callee.type == 'field_expression':
++            field = fn.text(callee.child_by_field_name('field'))
++            builder = self.value(callee.child_by_field_name('argument'), state)
++            if (builder.kind == 'builder' and builder.detail == self.model.creator_owner
++                    and field == 'SetParameters' and len(args) == 2):
++                return True
++            if (builder.kind == 'builder' and builder.detail == NAMESPACE + '::BuiltinsArrayStubBuilder'
++                    and field == 'GetTaggedValueWithElementsKind' and len(args) == 3
++                    and self.model.build_profile.startswith('assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;')):
++                return True
++            return (field == self.model.creator_name and builder.kind == 'builder'
++                    and builder.detail == self.model.creator_owner and len(args) == self.model.creator_arguments)
++        return False
++
++    def passes_by_value(self, node, state):
++        name = self.fn.call_name(node).removeprefix('this->')
++        if self.fn.resolve(name, node):
++            return False
++        arity = dict(self.model.by_value_operations).get(name)
++        if arity is not None and len(self.fn.arguments(node)) == arity:
++            return True
++        reviewed_arity = dict(self.model.reviewed_graph_read_overloads).get(name)
++        if reviewed_arity is not None and len(self.fn.arguments(node)) == reviewed_arity:
++            return True
++        callee = node.child_by_field_name('function')
++        if callee and callee.type == 'field_expression':
++            builder = self.value(callee.child_by_field_name('argument'), state)
++            return (builder.kind == 'builder' and builder.detail == NAMESPACE + '::BuiltinsArrayStubBuilder'
++                    and self.fn.text(callee.child_by_field_name('field')) == 'NewArray'
++                    and len(self.fn.arguments(node)) == 2)
++        return False
++
++    def prepare(self, instruction, state):
++        """Apply nested effects before sink inspection, guards or assignment.
++
++        All expression locations cross this same internal seam. Unknown C++
++        argument evaluation order cannot restore an old fact: invalidate first.
++        """
++        if instruction.kind not in ('BRANCH', 'declaration', 'expression'):
++            return
++        node = instruction.arguments[0] if instruction.kind == 'BRANCH' else instruction.node
++        if node.type == 'assignment_expression':
++            left, right = node.child_by_field_name('left'), node.child_by_field_name('right')
++            if (left and left.type == 'field_expression'
++                    and self.fn.text(left.child_by_field_name('field')) == 'callThisArg3WithReturnArgs'
++                    and right and right.type == 'initializer_list'):
++                escaped = set(state.escaped)
++                for item in right.named_children:
++                    value = self.value(item, state)
++                    if value.kind == 'object' and value.detail == 'fresh_local_typed_array':
++                        escaped.add(value.identity)
++                state.escaped = frozenset(escaped)
++        for call in walk(node):
++            if call.type == 'call_expression':
++                if self.creation_call(call, state):
++                    # NewTypedArray may dispatch species code. Its four GateRef
++                    # parameters are passed by value, but old runtime type
++                    # observations and guards cannot survive that dispatch.
++                    self.invalidate(state, call, may_rebind=False)
++                elif self.same_type_creation_call(call, state):
++                    # This exact helper maps the exemplar's JSType to its
++                    # intrinsic constructor; it does not use species dispatch.
++                    pass
++                elif not self.bound_call(call, state):
++                    self.invalidate(state, call, may_rebind=not self.passes_by_value(call, state))
++
++    def value(self, node, state):
++        if node is None:
++            return UNKNOWN
++        fn = self.fn
++        if node.type in ('parenthesized_expression', 'pointer_expression'):
++            return self.value(node.named_children[-1], state) if node.named_children else UNKNOWN
++        if node.type == 'identifier':
++            binding = fn.resolve(fn.text(node), node)
++            return state.values.get(binding.identity, UNKNOWN) if binding else UNKNOWN
++        if node.type != 'call_expression':
++            return UNKNOWN
++        name, args = fn.call_name(node), fn.arguments(node)
++        if fn.resolve(name, node):
++            return UNKNOWN
++        if name in ('GetObjectType', 'this->GetObjectType') and len(args) == 1:
++            hclass = self.value(args[0], state)
++            if hclass.kind == 'hclass':
++                cyclic = any(start <= node.start_byte < end for start, end in self.cyclic_ranges)
++                return Value('type', identity=f'token:{node.start_byte}', origin=hclass.origin,
++                             origin_line=node.start_point[0] + 1, valid=hclass.valid,
++                             detail='cyclic_sample' if cyclic else '')
++        if name in ('LoadHClass', 'this->LoadHClass') and len(args) in (1, 2):
++            obj = self.value(args[-1], state)
++            if obj.kind == 'object':
++                return Value('hclass', origin=obj.identity, origin_line=node.start_point[0] + 1)
++        receiver = node.child_by_field_name('function')
++        if receiver and receiver.type == 'field_expression':
++            field = fn.text(receiver.child_by_field_name('field'))
++            base = receiver.child_by_field_name('argument')
++            builder = self.value(base, state)
++            if (field == self.model.creator_name and builder.kind == 'builder'
++                    and builder.detail == self.model.creator_owner and len(args) == self.model.creator_arguments):
++                source = self.value(args[1], state)
++                if source.kind == 'object':
++                    return Value('object', f'new:{node.start_byte}', origin=source.identity,
++                                 origin_line=source.origin_line, creation_line=node.start_point[0] + 1,
++                                 may_differ=self.model.creation_may_change_runtime_type,
++                                 detail='fresh_local_typed_array')
++            owner, name, arity, source_index, type_index = self.model.same_type_creator
++            if field == name and builder.kind == 'builder' and builder.detail == owner and len(args) == arity:
++                source = self.value(args[source_index], state)
++                token = self.value(args[type_index], state)
++                if (source.kind == 'object' and token.kind == 'type' and token.valid
++                        and token.origin == source.identity):
++                    return Value('object', f'same-type:{node.start_byte}', origin=source.identity,
++                                 origin_line=source.origin_line, creation_line=node.start_point[0] + 1,
++                                 may_differ=False)
++        return Value('unknown', identity=f'expr:{node.start_byte}')
++
++    def update(self, instruction, state):
++        fn, node = self.fn, instruction.node
++        if instruction.kind not in ('declaration', 'expression'):
++            return
++        if instruction.kind == 'declaration':
++            typ = compact(fn.text(node.child_by_field_name('type')))
++            for child in node.named_children:
++                if child.type not in ('init_declarator', 'function_declarator', 'identifier', 'pointer_declarator'):
++                    continue
++                dec = child.child_by_field_name('declarator') if child.type == 'init_declarator' else child
++                ident = name_node(dec)
++                if ident is None or ident.type != 'identifier':
++                    continue
++                binding = fn.resolve(fn.text(ident), ident)
++                if binding is None:
++                    continue
++                if typ in ('NewObjectStubBuilder', NAMESPACE + '::NewObjectStubBuilder',
++                           'BuiltinsArrayStubBuilder', NAMESPACE + '::BuiltinsArrayStubBuilder'):
++                    val = Value('builder', binding.identity, detail=(typ if '::' in typ else NAMESPACE + '::' + typ))
++                else:
++                    val = self.value(child.child_by_field_name('value'), state)
++                state.values[binding.identity] = val
++        elif node.type == 'assignment_expression':
++            # A graph expression at one lexical site can produce a different
++            # predicate after a loop assignment; do not reuse its old truth.
++            state.predicates = frozenset()
++            left = node.child_by_field_name('left')
++            if left and left.type == 'identifier':
++                binding = fn.resolve(fn.text(left), left)
++                if binding:
++                    operator = node.child_by_field_name('operator')
++                    state.values[binding.identity] = (self.value(node.child_by_field_name('right'), state)
++                                                      if fn.text(operator) == '=' else UNKNOWN)
++
++    def store_arguments(self, node, state):
++        fn, model = self.fn, self.model
++        if node.type != 'call_expression':
++            return None
++        name = fn.call_name(node)
++        property_name, property_arity, property_target_index, property_token_index = model.property_store
++        is_element_store = name in (model.store_name, 'this->' + model.store_name,
++                                    OWNER + '::' + model.store_name)
++        is_property_store = name in (property_name, 'this->' + property_name,
++                                     OWNER + '::' + property_name)
++        if not is_element_store and not is_property_store:
++            callee = node.child_by_field_name('function')
++            if (callee and callee.type == 'field_expression'
++                    and fn.text(callee.child_by_field_name('field')) in (model.store_name, property_name)):
++                return ('unknown', UNKNOWN, UNKNOWN, 'unresolved_sink_receiver')
++            return None
++        sink_name = property_name if is_property_store else model.store_name
++        if fn.resolve(sink_name, node):
++            return ('unknown', UNKNOWN, UNKNOWN, 'shadowed_sink')
++        args = fn.arguments(node)
++        expected_arity = property_arity if is_property_store else len(model.store_types)
++        if len(args) != expected_arity:
++            return ('unknown', UNKNOWN, UNKNOWN, 'sink_signature_mismatch')
++        target_index = property_target_index if is_property_store else model.target_argument
++        token_index = property_token_index if is_property_store else model.token_argument
++        target = self.value(args[target_index], state)
++        token = self.value(args[token_index], state)
++        if target.kind != 'object' or token.kind != 'type':
++            return ('unknown', target, token, 'unresolved_target_or_type_origin')
++        guarantee = (self.token_key(token), target.identity)
++        same_type_origin = (target.origin == token.origin and not target.may_differ
++                            and target.origin not in state.invalidated)
++        if guarantee in state.equivalent or (token.origin == target.identity and token.valid) or same_type_origin:
++            return ('matched', target, token, 'target_origin_or_proved_type_equality')
++        if target.identity in state.invalidated:
++            return ('unknown', target, token, 'creation_relationship_invalidated_by_call')
++        if target.may_differ and target.creation_line and token.origin != target.identity:
++            # The captured SSA token's origin remains known even if it no
++            # longer describes its source object's current type. This is only
++            # a distinct-origin candidate, not a proved numeric type mismatch.
++            return ('candidate', target, token, 'distinct_origin_with_type_changing_creation')
++        if not token.valid:
++            return ('unknown', target, token, 'type_fact_invalidated_by_call')
++        return ('unknown', target, token, 'unproved_object_relationship')
++
++    def refine(self, condition, truth, state):
++        fn = self.fn
++        written = compact(fn.text(condition))
++        if written in ('true', 'True()', 'Boolean(true)'):
++            return state if truth else None
++        if written in ('false', 'False()', 'Boolean(false)'):
++            return state if not truth else None
++        if condition.type == 'identifier':
++            value = self.value(condition, state)
++            if value.identity:
++                if (value.identity, not truth) in state.predicates:
++                    return None
++                state.predicates |= frozenset(((value.identity, truth),))
++        if (condition.type == 'call_expression' and fn.call_name(condition) in ('Int32Equal', 'Equal')
++                and self.bound_call(condition, state)):
++            args = fn.arguments(condition)
++            if len(args) == 2:
++                left, right = (self.value(a, state) for a in args)
++                if left.kind == right.kind == 'type':
++                    if 'cyclic_sample' in (left.detail, right.detail):
++                        # Repeated sampling sites need iteration-sensitive
++                        # token identities before they can justify guards.
++                        return state
++                    known_equal = (self.token_key(left) == self.token_key(right)
++                        or (left.valid and right.valid and left.origin == right.origin)
++                        or (right.valid and (self.token_key(left), right.origin) in state.equivalent)
++                        or (left.valid and (self.token_key(right), left.origin) in state.equivalent))
++                    if known_equal and not truth:
++                        return None
++                    if truth:
++                        guarantees = []
++                        if right.valid:
++                            guarantees.append((self.token_key(left), right.origin))
++                        if left.valid:
++                            guarantees.append((self.token_key(right), left.origin))
++                        state.equivalent |= frozenset(guarantees)
++        return state
+diff --git a/src/ohscanner/detectors/ark_runtime/runtime_exception.py b/src/ohscanner/detectors/ark_runtime/runtime_exception.py
+new file mode 100644
+--- /dev/null
++++ b/src/ohscanner/detectors/ark_runtime/runtime_exception.py
+--- /dev/null
++++ b/src/ohscanner/detectors/ark_runtime/runtime_exception.py
+@@ -0,0 +1,821 @@
++"""Bounded exception propagation checks for Ark Runtime callback results.
++
++This models the completion value from a callback call and asks whether a
++pending-exception early exit dominates a configured result conversion. It is
++syntax based and reports candidates; it does not model all C++ effects.
++"""
++from dataclasses import dataclass
++import re
++
++from .analysis import Observation
++from .syntax import name_node, parse_functions, walk
++
++
++@dataclass(frozen=True)
++class RuntimeExceptionResult:
++    status: str
++    file_outcome: str
++    observations: tuple = ()
++    limitations: tuple = ()
++    steps: int = 0
++    model_digest: str = ""
++
++
++def _macro_contract(source_units, macro_name, arity, pending_test, exception_return):
++    definitions = []
++    pattern = re.compile(
++        r"^\s*#\s*define\s+" + re.escape(macro_name)
++        + r"\s*\(([^)]*)\)(.*)$"
++    )
++    for unit in source_units:
++        lines = unit.text.splitlines()
++        index = 0
++        while index < len(lines):
++            match = pattern.match(lines[index])
++            if not match:
++                index += 1
++                continue
++            params = tuple(part.strip() for part in match.group(1).split(",") if part.strip())
++            body = [match.group(2)]
++            while body[-1].rstrip().endswith("\\") and index + 1 < len(lines):
++                body[-1] = body[-1].rstrip()[:-1]
++                index += 1
++                body.append(lines[index])
++            definitions.append((params, " ".join(body)))
++            index += 1
++    if len(definitions) != 1:
++        return None
++    params, body = definitions[0]
++    if (len(params) != arity or pending_test not in body
++            or exception_return not in body):
++        return None
++    return params[0]
++
++
++def _macro_returns_on_pending(source_units, macro_name, arity, pending_test, return_statement):
++    """Prove a simple macro exits from the same-thread pending-exception branch."""
++    pattern = re.compile(
++        r"^\s*#\s*define\s+" + re.escape(macro_name)
++        + r"\s*\(([^)]*)\)(.*)$"
++    )
++    definitions = []
++    for unit in source_units:
++        lines = unit.text.splitlines()
++        index = 0
++        while index < len(lines):
++            match = pattern.match(lines[index])
++            if not match:
++                index += 1
++                continue
++            params = tuple(part.strip() for part in match.group(1).split(",") if part.strip())
++            body = [match.group(2)]
++            while body[-1].rstrip().endswith("\\") and index + 1 < len(lines):
++                body[-1] = body[-1].rstrip()[:-1]
++                index += 1
++                body.append(lines[index])
++            definitions.append((params, " ".join(body)))
++            index += 1
++    if len(definitions) != 1:
++        return None
++    params, body = definitions[0]
++    if len(params) != arity:
++        return None
++    thread = re.escape(params[0])
++    condition = re.compile(
++        r"if\s*\(\s*\(\s*" + thread
++        + r"\s*\)\s*->\s*" + re.escape(pending_test)
++        + r"\s*\(\s*\)\s*\)\s*\{"
++    )
++    match = condition.search(body)
++    if match is None:
++        return None
++    depth = 1
++    cursor = match.end()
++    while cursor < len(body) and depth:
++        if body[cursor] == "{":
++            depth += 1
++        elif body[cursor] == "}":
++            depth -= 1
++        cursor += 1
++    if depth != 0:
++        return None
++    branch = body[match.end():cursor - 1]
++    normalized = re.sub(r"\s+", " ", branch)
++    expected = re.sub(r"\s+", " ", return_statement.format(**{
++        "thread": params[0], "value": params[1], "capability": params[2]
++    }))
++    if expected not in normalized:
++        return None
++    return params[0]
++
++
++def _top_statement(compound, node):
++    current = node
++    while current is not None and current.parent != compound:
++        current = current.parent
++    return current if current is not None and current.parent == compound else None
++
++
++def _direct_compound_pair(fn, left, right):
++    left_parent = left.parent
++    while left_parent is not None and left_parent.type != "compound_statement":
++        left_parent = left_parent.parent
++    right_parent = right.parent
++    while right_parent is not None and right_parent.type != "compound_statement":
++        right_parent = right_parent.parent
++    if left_parent is None or left_parent != right_parent:
++        return None
++    left_statement = _top_statement(left_parent, left)
++    right_statement = _top_statement(left_parent, right)
++    if left_statement is None or right_statement is None:
++        return None
++    children = left_parent.named_children
++    return left_parent, left_statement, right_statement, children.index(left_statement), children.index(right_statement)
++
++
++def _ordered_ancestor_compound_pair(fn, left, right):
++    """Find a shared compound where a straight-line statement precedes both nodes."""
++    left_compounds = []
++    current = left.parent
++    while current is not None:
++        if current.type == "compound_statement":
++            left_compounds.append(current)
++        current = current.parent
++    right_compounds = set()
++    current = right.parent
++    while current is not None:
++        if current.type == "compound_statement":
++            right_compounds.add(current)
++        current = current.parent
++
++    for compound in left_compounds:
++        if compound not in right_compounds:
++            continue
++        left_statement = _top_statement(compound, left)
++        right_statement = _top_statement(compound, right)
++        if left_statement is None or right_statement is None:
++            return None
++        children = compound.named_children
++        left_index = children.index(left_statement)
++        right_index = children.index(right_statement)
++        if left_index >= right_index:
++            return None
++        return compound, left_statement, right_statement, left_index, right_index
++    return None
++
++
++def _shares_loop(left, right):
++    loop_types = {"for_statement", "while_statement", "do_statement", "for_range_loop"}
++
++    def enclosing_loops(node):
++        loops = set()
++        current = node.parent
++        while current is not None:
++            if current.type in loop_types:
++                loops.add(current.id)
++            current = current.parent
++        return loops
++
++    return bool(enclosing_loops(left) & enclosing_loops(right))
++
++
++def _context_thread(fn, source_call):
++    """Resolve the JS call-info object to the thread used to create it."""
++    args = fn.arguments(source_call)
++    if not args or args[0].type != "identifier":
++        return None
++    info = fn.resolve(fn.text(args[0]), args[0])
++    if info is None:
++        return None
++    if info.type_name.replace(" ", "") in ("JSThread*", "JSThread"):
++        return info
++    if len(args) != 1:
++        return None
++    for node in walk(fn.body):
++        if node.type != "init_declarator":
++            continue
++        declarator = node.child_by_field_name("declarator")
++        ident = name_node(declarator)
++        value = node.child_by_field_name("value")
++        if ident is None or value is None or value.type != "call_expression":
++            continue
++        binding = fn.resolve(fn.text(ident), ident)
++        if binding != info or fn.call_name(value) != "EcmaInterpreter::NewRuntimeCallInfo":
++            continue
++        call_args = fn.arguments(value)
++        if not call_args or call_args[0].type != "identifier":
++            return None
++        thread = fn.resolve(fn.text(call_args[0]), call_args[0])
++        return thread
++    return None
++
++
++def _callback_result_source(fn, node, effect_calls):
++    """Return (binding, value, direct_spec, nested_source) for bounded flows."""
++    if node.type == "init_declarator":
++        declarator = node.child_by_field_name("declarator")
++        value = node.child_by_field_name("value")
++        ident = name_node(declarator)
++    elif node.type == "assignment_expression":
++        left = node.child_by_field_name("left")
++        value = node.child_by_field_name("right")
++        operator = node.child_by_field_name("operator")
++        if (left is None or value is None or left.type != "identifier"
++                or (operator is not None and fn.text(operator) != "=")):
++            return None
++        ident = left
++    else:
++        return None
++    if ident is None or ident.type != "identifier" or value is None:
++        return None
++
++    source_calls = [item for item in walk(value)
++                    if item.type == "call_expression"
++                    and any(fn.call_name(item) == spec[0]
++                            and len(fn.arguments(item)) == spec[1]
++                            for spec in effect_calls)]
++    direct_spec = next((spec for spec in effect_calls
++                        if value.type == "call_expression"
++                        and fn.call_name(value) == spec[0]
++                        and len(fn.arguments(value)) == spec[1]), None)
++    binding = fn.resolve(fn.text(ident), ident)
++    return ident, binding, value, direct_spec, bool(source_calls)
++
++
++def _derived_exception_effect_calls(source_units, effect_calls, guards, macro_contracts,
++                                    parsed_functions=(), parsed_path=None):
++    """Infer wrapper effects from selected source bodies, never from API names alone."""
++    base = tuple(effect_calls)
++    parsed = list(parsed_functions)
++    for unit in source_units:
++        if unit.language != "cpp" or unit.parse_status not in ("complete", "partial"):
++            continue
++        if parsed_path is not None and unit.path == parsed_path:
++            continue
++        try:
++            tree, functions = parse_functions(unit.text.encode("utf-8"))
++        except (ValueError, RuntimeError, UnicodeError):
++            continue
++        if tree.root_node.has_error:
++            continue
++        parsed.extend(functions)
++
++    aliases = {}
++    for function in parsed:
++        parts = function.qualified_name.split("::")
++        if len(parts) >= 2:
++            aliases.setdefault("::".join(parts[-2:]), []).append(function)
++    unique_aliases = {name: values[0] for name, values in aliases.items() if len(values) == 1}
++
++    current = base
++    propagated = set()
++    for _ in range(len(parsed) + 1):
++        newly_propagated = set()
++        for fn in parsed:
++            if fn.qualified_name in propagated:
++                continue
++            return_type = fn.text(fn.node.child_by_field_name("type"))
++            if re.sub(r"\s+", "", return_type) != "JSTaggedValue":
++                continue
++            for node in walk(fn.body):
++                source = _callback_result_source(fn, node, current)
++                if source is None:
++                    continue
++                _, binding, value, source_spec, _ = source
++                if (source_spec is None or binding is None
++                        or binding.type_name != source_spec[2]):
++                    continue
++                context_thread = _context_thread(fn, value)
++                if context_thread is None:
++                    continue
++                for macro in walk(fn.body):
++                    if macro.type != "call_expression":
++                        continue
++                    macro_name = fn.call_name(macro)
++                    parameter_name = macro_contracts.get(macro_name)
++                    if parameter_name is None:
++                        continue
++                    guard_arity = next(spec[1] for spec in guards if spec[0] == macro_name)
++                    args = fn.arguments(macro)
++                    if (len(args) != guard_arity or args[0].type != "identifier"
++                            or fn.resolve(fn.text(args[0]), args[0]) != context_thread):
++                        continue
++                    relation = _direct_compound_pair(fn, value, macro)
++                    if relation is not None and relation[3] < relation[4]:
++                        newly_propagated.add(fn.qualified_name)
++                        break
++                if fn.qualified_name in newly_propagated:
++                    break
++        if not newly_propagated:
++            break
++        propagated.update(newly_propagated)
++        effect_aliases = {
++            alias for alias, function in unique_aliases.items()
++            if function.qualified_name in propagated
++        }
++        derived = []
++        for fn in parsed:
++            for node in walk(fn.body):
++                if node.type != "call_expression":
++                    continue
++                name = fn.call_name(node)
++                if name in effect_aliases:
++                    derived.append((name, len(fn.arguments(node)), "JSTaggedValue"))
++        current = tuple(dict.fromkeys(base + tuple(derived)))
++    return current
++
++
++def _include_unit(source_units, unit):
++    units = tuple(source_units)
++    return units if any(item.path == unit.path and item.sha256 == unit.sha256
++                        for item in units) else units + (unit,)
++
++
++def _unknown_result_wrapper_sources(fn, function_nodes, effect_calls, sensitive_methods):
++    sensitive_bindings = set()
++    for call in function_nodes:
++        if call.type != "call_expression":
++            continue
++        callee = call.child_by_field_name("function")
++        if callee is None or callee.type != "field_expression":
++            continue
++        field = callee.child_by_field_name("field")
++        receiver = callee.child_by_field_name("argument")
++        if (field is not None and fn.text(field) in sensitive_methods
++                and receiver is not None and receiver.type == "identifier"):
++            binding = fn.resolve(fn.text(receiver), receiver)
++            if binding is not None:
++                sensitive_bindings.add(binding)
++
++    unknown = []
++    for node in function_nodes:
++        if node.type not in ("init_declarator", "assignment_expression"):
++            continue
++        source = _callback_result_source(fn, node, effect_calls)
++        if source is None:
++            continue
++        ident, binding, value, direct_spec, source_present = source
++        if (binding is None or binding.type_name != "JSTaggedValue"
++                or binding not in sensitive_bindings or value.type != "call_expression"
++                or direct_spec is not None or source_present):
++            continue
++        args = fn.arguments(value)
++        if not args or args[0].type != "identifier":
++            continue
++        first_arg = fn.resolve(fn.text(args[0]), args[0])
++        if first_arg is None or first_arg.type_name.replace(" ", "") not in ("JSThread*", "JSThread"):
++            continue
++        unknown.append((ident, binding, value))
++    return tuple(unknown)
++
++
++def _guarded_by_exception_result(fn, compound, source_index, sink_index, result_binding):
++    for statement in compound.named_children[source_index + 1:sink_index]:
++        if statement.type != "if_statement":
++            continue
++        condition = statement.child_by_field_name("condition")
++        consequence = statement.child_by_field_name("consequence")
++        if condition is None or consequence is None:
++            continue
++        has_return = any(node.type == "return_statement" for node in walk(consequence))
++        if not has_return:
++            continue
++        for node in walk(condition):
++            if node.type != "call_expression":
++                continue
++            callee = node.child_by_field_name("function")
++            if callee is None or callee.type != "field_expression":
++                continue
++            field = callee.child_by_field_name("field")
++            receiver = callee.child_by_field_name("argument")
++            if (field is not None and fn.text(field) == "IsException"
++                    and receiver is not None and receiver.type == "identifier"
++                    and fn.resolve(fn.text(receiver), receiver) == result_binding):
++                return True
++    return False
++
++
++def analyze_runtime_exception_propagation(
++    unit, *, source_units=(), effect_calls=(("JSFunction::Call", 1, "JSTaggedValue"),),
++    sensitive_methods=("ToBoolean",),
++    guards=(("RETURN_EXCEPTION_IF_ABRUPT_COMPLETION", 1,
++             "HasPendingException", "JSTaggedValue::Exception"),),
++    max_instructions=4096, functions=None,
++):
++    if unit.parse_status not in ("complete", "partial"):
++        return RuntimeExceptionResult("limited", "not_analyzed",
++                                      limitations=("source_parse_unavailable",))
++    if functions is None:
++        try:
++            tree, functions = parse_functions(unit.text.encode("utf-8"))
++        except (ValueError, RuntimeError, UnicodeError) as error:
++            return RuntimeExceptionResult("failed", "failed",
++                                          limitations=("parser_failure:" + type(error).__name__,))
++        if tree.root_node.has_error:
++            return RuntimeExceptionResult("limited", "partial",
++                                          limitations=("runtime_translation_unit_parse_incomplete",))
++    elif any(fn.translation_unit_status != "complete" for fn in functions):
++        return RuntimeExceptionResult("limited", "partial",
++                                      limitations=("runtime_translation_unit_parse_incomplete",))
++
++    macro_contracts = {}
++    for macro_name, arity, pending_test, exception_return in guards:
++        macro_contracts[macro_name] = _macro_contract(
++            source_units, macro_name, arity, pending_test, exception_return)
++    effective_calls = _derived_exception_effect_calls(
++        _include_unit(source_units, unit), effect_calls, guards, macro_contracts,
++        parsed_functions=functions, parsed_path=unit.path)
++
++    observations, limitations = [], []
++    steps = 0
++    applicable = False
++    for fn in functions:
++        if fn.node.has_error:
++            continue
++        function_nodes = tuple(walk(fn.body))
++        has_source = any(
++            (source := _callback_result_source(fn, node, effective_calls)) is not None
++            and source[4]
++            for node in function_nodes
++        )
++        unknown_wrappers = _unknown_result_wrapper_sources(
++            fn, function_nodes, effective_calls, sensitive_methods)
++        if not has_source and not unknown_wrappers:
++            continue
++        if unknown_wrappers:
++            applicable = True
++            limitations.append("callback_result_wrapper_summary_missing:" + fn.qualified_name)
++        steps += len(function_nodes)
++        if steps > max_instructions:
++            return RuntimeExceptionResult("limited", "partial", tuple(observations),
++                                          tuple(sorted(set(limitations + ["instruction_budget_exhausted"]))), steps)
++        for node in function_nodes:
++            source = _callback_result_source(fn, node, effective_calls)
++            if source is None:
++                continue
++            ident, binding, value, source_spec, nested_source = source
++            if nested_source and source_spec is None:
++                if binding is not None and binding.type_name == "JSTaggedValue":
++                    applicable = True
++                    limitations.append("callback_result_wrapper_semantics_unmodeled:" + fn.qualified_name)
++                continue
++            if source_spec is None:
++                continue
++            if binding is None or binding.type_name != source_spec[2]:
++                continue
++            applicable = True
++            context_thread = _context_thread(fn, value)
++            uses = []
++            for call in walk(fn.body):
++                if call.type != "call_expression":
++                    continue
++                callee = call.child_by_field_name("function")
++                if callee is None or callee.type != "field_expression":
++                    continue
++                field = callee.child_by_field_name("field")
++                receiver = callee.child_by_field_name("argument")
++                if (field is not None and fn.text(field) in sensitive_methods
++                        and receiver is not None and receiver.type == "identifier"
++                        and fn.resolve(fn.text(receiver), receiver) == binding):
++                    uses.append(call)
++            if not uses:
++                continue
++
++            source_line = value.start_point[0] + 1
++            for sink in uses:
++                # A source definition cannot reach an earlier use in the same
++                # straight-line invocation. A shared loop can revisit that use
++                # on a later iteration, so keep that case unknown until a CFG
++                # models the back edge.
++                if value.start_byte > sink.start_byte:
++                    if _shares_loop(value, sink):
++                        limitations.append("callback_result_loop_backedge_unmodeled:" + fn.qualified_name)
++                    continue
++                relation = _direct_compound_pair(fn, value, sink)
++                if relation is None:
++                    limitations.append("callback_result_path_not_in_one_basic_compound:" + fn.qualified_name)
++                    continue
++                compound, source_statement, sink_statement, source_index, sink_index = relation
++                if source_index >= sink_index:
++                    limitations.append("callback_result_use_order_unresolved:" + fn.qualified_name)
++                    continue
++                if any(statement.type == "return_statement"
++                       for statement in compound.named_children[source_index + 1:sink_index]):
++                    continue
++                reassigned = False
++                for sibling in compound.named_children[source_index + 1:sink_index]:
++                    for child in walk(sibling):
++                        if child.type != "assignment_expression":
++                            continue
++                        lhs = child.child_by_field_name("left")
++                        if (lhs is not None and lhs.type == "identifier"
++                                and fn.resolve(fn.text(lhs), lhs) == binding):
++                            reassigned = True
++                if reassigned:
++                    limitations.append("callback_result_reassigned_before_sensitive_use:" + fn.qualified_name)
++                    continue
++
++                protected = _guarded_by_exception_result(
++                    fn, compound, source_index, sink_index, binding)
++                if not protected and context_thread is not None:
++                    for statement in compound.named_children[source_index + 1:sink_index]:
++                        macro = next((call for call in walk(statement)
++                                      if call.type == "call_expression"
++                                      and fn.call_name(call) in macro_contracts), None)
++                        if macro is None:
++                            continue
++                        macro_name = fn.call_name(macro)
++                        parameter_name = macro_contracts[macro_name]
++                        guard_arity = next(spec[1] for spec in guards if spec[0] == macro_name)
++                        args = fn.arguments(macro)
++                        if (parameter_name is not None and len(args) == guard_arity
++                                and args[0].type == "identifier"
++                                and fn.resolve(fn.text(args[0]), args[0]) == context_thread):
++                            intervening_calls = [item for item in walk(statement)
++                                                 if item.type == "call_expression"
++                                                 and item != macro]
++                            if not intervening_calls:
++                                protected = True
++                                break
++
++                if protected:
++                    continue
++                sink_line = sink.start_point[0] + 1
++                reason = "callback_completion_may_reach_result_conversion_without_dominating_exception_exit"
++                observations.append(Observation(
++                    "candidate", sink_line, sink.start_point[1] + 1, reason,
++                    token_line=source_line, symbol=fn.qualified_name,
++                    region_start_byte=fn.node.start_byte,
++                    region_end_byte=fn.node.end_byte,
++                    target_identity=fn.text(ident),
++                    token_origin=fn.call_name(value),
++                    path=(source_line, sink_line),
++                ))
++
++    if not applicable:
++        return RuntimeExceptionResult("limited", "not_analyzed",
++                                      limitations=("no_modeled_exception_result_source",), steps=steps)
++    outcome = "partial" if limitations else "complete"
++    return RuntimeExceptionResult("limited" if limitations else "completed", outcome,
++                                  tuple(observations), tuple(sorted(set(limitations))), steps)
++
++
++def _pending_exception_if_exit(fn, statement, thread_binding):
++    if statement.type != "if_statement":
++        return False
++    condition = statement.child_by_field_name("condition")
++    consequence = statement.child_by_field_name("consequence")
++    if condition is None or consequence is None:
++        return False
++    exits = any(node.type == "return_statement" for node in walk(consequence))
++    if not exits:
++        return False
++    condition_node = condition
++    while condition_node.type in ("condition_clause", "parenthesized_expression") and condition_node.named_children:
++        condition_node = condition_node.named_children[0]
++    if condition_node.type != "call_expression":
++        return False
++    callee = condition_node.child_by_field_name("function")
++    field = callee.child_by_field_name("field") if callee is not None else None
++    receiver = callee.child_by_field_name("argument") if callee is not None else None
++    if (field is None or fn.text(field) != "HasPendingException"
++            or receiver is None or receiver.type != "identifier"
++            or fn.resolve(fn.text(receiver), receiver) != thread_binding):
++        return False
++    for node in walk(condition):
++        if node.type != "call_expression":
++            continue
++        callee = node.child_by_field_name("function")
++        field = callee.child_by_field_name("field") if callee is not None else None
++        receiver = callee.child_by_field_name("argument") if callee is not None else None
++        if (field is not None and fn.text(field) == "HasPendingException"
++                and receiver is not None and receiver.type == "identifier"
++                and fn.resolve(fn.text(receiver), receiver) == thread_binding):
++            return True
++    return False
++
++
++def analyze_call_info_construction_guard(
++    unit, *, source_units=(),
++    creators=(("EcmaInterpreter::NewRuntimeCallInfo", 5, "EcmaRuntimeCallInfo*"),),
++    sensitive_methods=("SetCallArg",),
++    guards=(("RETURN_EXCEPTION_IF_ABRUPT_COMPLETION", 1,
++             "HasPendingException", "JSTaggedValue::Exception"),
++            ("RETURN_VALUE_IF_ABRUPT_COMPLETION", 2,
++             "HasPendingException", "return (value)"),
++            ("RETURN_REJECT_PROMISE_IF_ABRUPT", 3,
++             "HasPendingException", "return (capability)->GetPromise()")),
++    max_instructions=4096, functions=None,
++):
++    """Check call-info pointer uses against the pending exception from construction."""
++    if unit.parse_status not in ("complete", "partial"):
++        return RuntimeExceptionResult("limited", "not_analyzed",
++                                      limitations=("source_parse_unavailable",))
++    if functions is None:
++        try:
++            tree, functions = parse_functions(unit.text.encode("utf-8"))
++        except (ValueError, RuntimeError, UnicodeError) as error:
++            return RuntimeExceptionResult("failed", "failed",
++                                          limitations=("parser_failure:" + type(error).__name__,))
++        if tree.root_node.has_error:
++            return RuntimeExceptionResult("limited", "partial",
++                                          limitations=("runtime_translation_unit_parse_incomplete",))
++    elif any(fn.translation_unit_status != "complete" for fn in functions):
++        return RuntimeExceptionResult("limited", "partial",
++                                      limitations=("runtime_translation_unit_parse_incomplete",))
++
++    macro_contracts = {}
++    for name, arity, pending, exception in guards:
++        if name == "RETURN_REJECT_PROMISE_IF_ABRUPT":
++            macro_contracts[name] = _macro_returns_on_pending(
++                source_units, name, arity, pending, exception)
++        else:
++            macro_contracts[name] = _macro_contract(
++                source_units, name, arity, pending, exception)
++    observations, limitations = [], []
++    applicable = False
++    steps = 0
++    for fn in functions:
++        if fn.node.has_error:
++            continue
++        nodes = tuple(walk(fn.body))
++        creations = []
++        for node in nodes:
++            if node.type != "init_declarator":
++                continue
++            declaration = node.parent
++            declarator = node.child_by_field_name("declarator")
++            value = node.child_by_field_name("value")
++            ident = name_node(declarator)
++            if ident is None or value is None or value.type != "call_expression":
++                continue
++            spec = next((item for item in creators
++                         if fn.call_name(value) == item[0]
++                         and len(fn.arguments(value)) == item[1]), None)
++            binding = fn.resolve(fn.text(ident), ident)
++            if (spec is None or binding is None
++                    or re.sub(r"[\s*]+", "", binding.type_name)
++                    != re.sub(r"[\s*]+", "", spec[2])):
++                continue
++            creations.append((ident, binding, value, declaration))
++        if not creations:
++            continue
++
++        applicable = True
++        steps += len(nodes)
++        if steps > max_instructions:
++            return RuntimeExceptionResult("limited", "partial", tuple(observations),
++                                          tuple(sorted(set(limitations + ["instruction_budget_exhausted"]))), steps)
++
++        for ident, binding, value, _ in creations:
++            context_thread = _context_thread(fn, value)
++            uses = []
++            for call in nodes:
++                if call.type != "call_expression":
++                    continue
++                callee = call.child_by_field_name("function")
++                if callee is None or callee.type != "field_expression":
++                    continue
++                field = callee.child_by_field_name("field")
++                receiver = callee.child_by_field_name("argument")
++                if (field is not None and fn.text(field) in sensitive_methods
++                        and receiver is not None and receiver.type == "identifier"
++                        and fn.resolve(fn.text(receiver), receiver) == binding):
++                    uses.append(call)
++            if not uses:
++                continue
++
++            for sink in uses:
++                if value.start_byte > sink.start_byte:
++                    if _shares_loop(value, sink):
++                        limitations.append("call_info_pointer_loop_backedge_unmodeled:" + fn.qualified_name)
++                    continue
++                relation = _ordered_ancestor_compound_pair(fn, value, sink)
++                if relation is None:
++                    limitations.append("call_info_pointer_path_not_in_one_basic_compound:" + fn.qualified_name)
++                    continue
++                compound, _, _, source_index, sink_index = relation
++                if source_index >= sink_index:
++                    limitations.append("call_info_pointer_use_order_unresolved:" + fn.qualified_name)
++                    continue
++                between = compound.named_children[source_index + 1:sink_index]
++                if any(statement.type == "return_statement" for statement in between):
++                    continue
++                reassigned = any(
++                    child.type == "assignment_expression"
++                    and (lhs := child.child_by_field_name("left")) is not None
++                    and lhs.type == "identifier"
++                    and fn.resolve(fn.text(lhs), lhs) == binding
++                    for statement in between for child in walk(statement)
++                )
++                if reassigned:
++                    limitations.append("call_info_pointer_reassigned_before_use:" + fn.qualified_name)
++                    continue
++
++                protected = False
++                unknown_guard = False
++                for statement in between:
++                    if _pending_exception_if_exit(fn, statement, context_thread):
++                        protected = True
++                        break
++                    if statement.type != "expression_statement":
++                        continue
++                    for macro in walk(statement):
++                        if macro.type != "call_expression":
++                            continue
++                        macro_name = fn.call_name(macro)
++                        if macro_name not in macro_contracts:
++                            continue
++                        contract = macro_contracts[macro_name]
++                        args = fn.arguments(macro)
++                        arity = next(item[1] for item in guards if item[0] == macro_name)
++                        if (contract is None or context_thread is None or len(args) != arity
++                                or not args or args[0].type != "identifier"
++                                or fn.resolve(fn.text(args[0]), args[0]) != context_thread):
++                            unknown_guard = True
++                            continue
++                        protected = True
++                        break
++                    if protected:
++                        break
++                if protected:
++                    continue
++                if unknown_guard:
++                    limitations.append("call_info_exception_guard_contract_unverified:" + fn.qualified_name)
++                    continue
++                if context_thread is None:
++                    limitations.append("call_info_constructor_thread_unresolved:" + fn.qualified_name)
++                    continue
++
++                observations.append(Observation(
++                    "candidate", sink.start_point[0] + 1, sink.start_point[1] + 1,
++                    "call_info_construction_may_leave_pending_exception_before_pointer_use",
++                    token_line=value.start_point[0] + 1,
++                    symbol=fn.qualified_name,
++                    region_start_byte=fn.node.start_byte,
++                    region_end_byte=fn.node.end_byte,
++                    target_identity=fn.text(ident),
++                    token_origin=fn.call_name(value),
++                    path=(value.start_point[0] + 1, sink.start_point[0] + 1),
++                ))
++
++    if not applicable:
++        return RuntimeExceptionResult("limited", "not_analyzed",
++                                      limitations=("no_modeled_call_info_constructor",), steps=steps)
++    outcome = "partial" if limitations else "complete"
++    return RuntimeExceptionResult("limited" if limitations else "completed", outcome,
++                                  tuple(observations), tuple(sorted(set(limitations))), steps)
++
++
++def has_call_info_constructor(unit, creators=(("EcmaInterpreter::NewRuntimeCallInfo", 5,
++                                               "EcmaRuntimeCallInfo*"),), functions=None):
++    if unit.language != "cpp" or unit.parse_status not in ("complete", "partial"):
++        return False
++    if functions is None:
++        try:
++            _, functions = parse_functions(unit.text.encode("utf-8"))
++        except (ValueError, RuntimeError, UnicodeError):
++            return False
++    for fn in functions:
++        for node in walk(fn.body):
++            if node.type != "init_declarator":
++                continue
++            declarator = node.child_by_field_name("declarator")
++            value = node.child_by_field_name("value")
++            ident = name_node(declarator)
++            if ident is None or value is None or value.type != "call_expression":
++                continue
++            if any(fn.call_name(value) == spec[0]
++                   and len(fn.arguments(value)) == spec[1]
++                   for spec in creators):
++                return True
++    return False
++
++
++def has_runtime_exception_source(unit, effect_calls=(("JSFunction::Call", 1, "JSTaggedValue"),),
++                                 source_units=(), guards=(("RETURN_EXCEPTION_IF_ABRUPT_COMPLETION", 1,
++                                 "HasPendingException", "JSTaggedValue::Exception"),), functions=None):
++    if unit.language != "cpp" or unit.parse_status not in ("complete", "partial"):
++        return False
++    if functions is None:
++        try:
++            _, functions = parse_functions(unit.text.encode("utf-8"))
++        except (ValueError, RuntimeError, UnicodeError):
++            return False
++    contracts = {name: _macro_contract(source_units, name, arity, pending, exception)
++                 for name, arity, pending, exception in guards}
++    effects = _derived_exception_effect_calls(
++        _include_unit(source_units, unit), effect_calls, guards, contracts,
++        parsed_functions=functions, parsed_path=unit.path)
++    for fn in functions:
++        for node in walk(fn.body):
++            source = _callback_result_source(fn, node, effects)
++            if source is None:
++                continue
++            _, binding, _, _, source_present = source
++            if source_present and binding is not None and binding.type_name == "JSTaggedValue":
++                return True
++        if _unknown_result_wrapper_sources(fn, tuple(walk(fn.body)), effects,
++                                           ("ToBoolean",)):
++            return True
++    return False
+diff --git a/src/ohscanner/detectors/ark_runtime/size_overflow.py b/src/ohscanner/detectors/ark_runtime/size_overflow.py
+new file mode 100644
+--- /dev/null
++++ b/src/ohscanner/detectors/ark_runtime/size_overflow.py
+--- /dev/null
++++ b/src/ohscanner/detectors/ark_runtime/size_overflow.py
+@@ -0,0 +1,351 @@
++"""Bounded detection of narrowed size products that feed a copy allocation.
++
++This is a local C++ syntax/dataflow candidate rule. It requires a typed
++multiplication, a buffer allocation using that result, and a later copy loop
++whose iteration bound still uses a multiplication operand. It does not prove
++all C++ conversions, range checks, macro expansion, or path feasibility.
++"""
++from dataclasses import dataclass
++import re
++
++from .analysis import AnalysisResult, Observation
++
++
++RULE_ID = 'ark.runtime.typedarray-buffer-size-multiplication-overflow'
++
++_INTEGER_WIDTHS = {
++    'uint8_t': (8, False), 'int8_t': (8, True),
++    'uint16_t': (16, False), 'int16_t': (16, True),
++    'uint32_t': (32, False), 'int32_t': (32, True),
++    'uint64_t': (64, False), 'int64_t': (64, True),
++    'std::uint8_t': (8, False), 'std::int8_t': (8, True),
++    'std::uint16_t': (16, False), 'std::int16_t': (16, True),
++    'std::uint32_t': (32, False), 'std::int32_t': (32, True),
++    'std::uint64_t': (64, False), 'std::int64_t': (64, True),
++    'size_t': (None, False), 'std::size_t': (None, False),
++    'ssize_t': (None, True), 'uintptr_t': (None, False),
++    'intptr_t': (None, True),
++}
++_ALLOCATORS = {'AllocateArrayBuffer', 'AllocateSendableArrayBuffer', 'AllocateBuffer',
++               'malloc', 'calloc', 'realloc'}
++_WRITERS = {'SetValueInBuffer', 'FastSetValueInBuffer', 'memcpy', 'memmove'}
++
++
++@dataclass(frozen=True)
++class SizeOverflowCandidate:
++    line: int
++    column: int
++    function: str
++    result_name: str
++    factor_names: tuple
++    allocation_line: int
++    loop_line: int
++    start_byte: int
++    end_byte: int
++    may_overflow: bool
++
++
++def _width(type_text):
++    normalized = re.sub(r'\b(const|volatile|typename)\b', '', type_text)
++    normalized = re.sub(r'\s+', '', normalized).replace('&', '').replace('*', '')
++    if normalized in _INTEGER_WIDTHS:
++        return _INTEGER_WIDTHS[normalized][0]
++    if normalized in ('unsigned', 'unsignedint', 'int', 'signed', 'signedint'):
++        return 32
++    if normalized in ('unsignedlonglong', 'longlong', 'longlongint', 'unsignedlonglongint'):
++        return 64
++    return None
++
++
++def _loop_uses_allocated_copy(source, factor_names, allocation_names, body_line):
++    # Keep offsets stable while ignoring braces and parentheses in comments and
++    # literals. The production AST completeness gate is checked before this
++    # lexically bounded scan; this code does not claim full C++ syntax coverage.
++    masked = _mask_cpp_noncode(source)
++
++    def matching(text, opening, left='(', right=')'):
++        depth = 0
++        for index in range(opening, len(text)):
++            if text[index] == left:
++                depth += 1
++            elif text[index] == right:
++                depth -= 1
++                if depth == 0:
++                    return index
++        return None
++
++    loop_pattern = re.compile(r'\b(?:for|while)\s*\(')
++    cursor = 0
++    while True:
++        match = loop_pattern.search(masked, cursor)
++        if match is None:
++            break
++        opening = masked.find('(', match.start(), match.end())
++        closing = matching(masked, opening)
++        if closing is None:
++            break
++        header = source[opening + 1:closing]
++        cursor = closing + 1
++        if not any(re.search(r'\b' + re.escape(name) + r'\b', header)
++                   for name in factor_names):
++            continue
++        body_open = masked.find('{', closing + 1)
++        next_loop = loop_pattern.search(masked, closing + 1)
++        if body_open < 0 or (next_loop is not None and next_loop.start() < body_open):
++            continue
++        body_close = matching(masked, body_open, '{', '}')
++        if body_close is None:
++            continue
++        body_mask = masked[body_open + 1:body_close]
++        body_source = source[body_open + 1:body_close]
++        writer_pattern = re.compile(r'\b(' + '|'.join(map(re.escape, sorted(_WRITERS))) + r')\s*\(')
++        for writer in writer_pattern.finditer(body_mask):
++            call_open = body_mask.find('(', writer.start(), writer.end())
++            call_close = matching(body_mask, call_open)
++            if call_close is None:
++                continue
++            args_mask = body_mask[call_open + 1:call_close]
++            args_source = body_source[call_open + 1:call_close]
++            arg_starts = [0]
++            depth = 0
++            for index, char in enumerate(args_mask):
++                if char == '(':
++                    depth += 1
++                elif char == ')':
++                    depth -= 1
++                elif char == ',' and depth == 0:
++                    arg_starts.append(index + 1)
++            arg_ends = arg_starts[1:] + [len(args_source)]
++            args = [args_source[start:end].strip()
++                    for start, end in zip(arg_starts, arg_ends)]
++            dst_index = 1 if writer.group(1) in ('SetValueInBuffer', 'FastSetValueInBuffer') else 0
++            if dst_index < len(args) and any(
++                    re.search(r'\b' + re.escape(name) + r'\b', args[dst_index])
++                    for name in allocation_names):
++                return body_line + source[:match.start()].count('\n')
++    return None
++
++
++def _mask_cpp_noncode(source):
++    return re.sub(
++        r'R"([^\s()\\]{0,16})\(.*?\)\1"|"(?:\\.|[^"\\])*"|'
++        r"'(?:\\.|[^'\\])*'|//[^\n]*|/\*.*?\*/",
++        lambda match: re.sub(r'[^\n]', ' ', match.group(0)),
++        source, flags=re.DOTALL)
++
++
++def _balanced_delimiter(source, opening, left='(', right=')'):
++    if opening < 0:
++        return None
++    depth = 0
++    for index in range(opening, len(source)):
++        if source[index] == left:
++            depth += 1
++        elif source[index] == right:
++            depth -= 1
++            if depth == 0:
++                return index
++    return None
++
++
++def _split_product(expression):
++    masked = _mask_cpp_noncode(expression)
++    depth = 0
++    for index, char in enumerate(masked):
++        if char == '(':
++            depth += 1
++        elif char == ')':
++            depth -= 1
++        elif char == '*' and depth == 0:
++            return expression[:index].strip(), expression[index + 1:].strip()
++    return None
++
++
++def _operand_width(expression, type_map):
++    expression = expression.strip()
++    cast = re.fullmatch(r'static_cast\s*<\s*([^>]+)\s*>\s*\(\s*(\w+)\s*\)', expression)
++    if cast:
++        return type_map.get(cast.group(2)), _width(cast.group(1))
++    c_cast = re.fullmatch(r'\(\s*([\w:]+)\s*\)\s*(\w+)', expression)
++    if c_cast:
++        return type_map.get(c_cast.group(2)), _width(c_cast.group(1))
++    ident = re.fullmatch(r'\w+', expression)
++    if ident:
++        width = type_map.get(expression)
++        return width, width
++    return None, None
++
++
++def _text_allocations(source, size_name):
++    masked = _mask_cpp_noncode(source)
++    names, sites = set(), []
++    for allocator in _ALLOCATORS:
++        pattern = re.compile(r'\b' + re.escape(allocator) + r'\s*\(')
++        for match in pattern.finditer(masked):
++            opening = masked.find('(', match.start(), match.end())
++            depth = 0
++            closing = None
++            for index in range(opening, len(masked)):
++                if masked[index] == '(':
++                    depth += 1
++                elif masked[index] == ')':
++                    depth -= 1
++                    if depth == 0:
++                        closing = index
++                        break
++            if closing is None:
++                continue
++            args = source[opening + 1:closing]
++            if not re.search(r'\b' + re.escape(size_name) + r'\b', args):
++                continue
++            prefix = masked[max(masked.rfind(';', 0, match.start()),
++                                masked.rfind('{', 0, match.start()),
++                                masked.rfind('}', 0, match.start())) + 1:match.start()]
++            assignment = re.search(r'\b(\w+)\s*=\s*[\w:]*\s*$', prefix)
++            if assignment:
++                names.add(assignment.group(1))
++                sites.append(source.count('\n', 0, match.start()) + 1)
++    changed = True
++    while changed:
++        changed = False
++        pattern = re.compile(r'\b(\w+)\s*\.\s*(?:Update|Set)\s*\(\s*([^;()]*)\s*\)')
++        for match in pattern.finditer(masked):
++            receiver, args = match.group(1), source[match.start(2):match.end(2)]
++            if receiver not in names and any(re.search(r'\b' + re.escape(name) + r'\b', args)
++                                             for name in names):
++                names.add(receiver)
++                changed = True
++    return names, sites
++
++
++def analyze_size_flows(source, *, functions=None, parse_complete=None):
++    """Return bounded textual flows within lexically delimited C++ functions.
++
++    The production source index supplies the AST completeness gate. This rule
++    uses a local token scan so its candidate pass does not retain or revisit
++    Tree-sitter Node wrappers after the shared parser has completed.
++    """
++    data = source.encode('utf-8') if isinstance(source, str) else source
++    if parse_complete is False:
++        return (), ('actual_parse_is_partial',)
++    text = data.decode('utf-8')
++    masked = _mask_cpp_noncode(text)
++    function_pattern = re.compile(
++        r'\b(?P<name>(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*)\s*'
++        r'\((?P<params>[^;{}]*)\)\s*(?:const\s*)?\{')
++    excluded = {'if', 'for', 'while', 'switch', 'catch', 'sizeof', 'alignof'}
++    candidates = []
++    cursor = 0
++    while True:
++        function = function_pattern.search(masked, cursor)
++        if function is None:
++            break
++        cursor = function.end()
++        if function.group('name').split('::')[-1] in excluded:
++            continue
++        function_name = function.group('name')
++        if functions is not None:
++            matches = [item.qualified_name for item in functions
++                       if item.qualified_name.endswith('::' + function_name)]
++            if len(matches) == 1:
++                function_name = matches[0]
++        opening = masked.find('{', function.start(), function.end())
++        closing = _balanced_delimiter(masked, opening, '{', '}')
++        if closing is None:
++            continue
++        body_start_char, body_end_char = opening + 1, closing
++        body = text[body_start_char:body_end_char]
++        body_mask = masked[body_start_char:body_end_char]
++        body_line = text.count('\n', 0, body_start_char) + 1
++        body_start_byte = len(text[:body_start_char].encode('utf-8'))
++        declarations = re.compile(
++            r'(?P<type>(?:(?:std::)?(?:u?int(?:8|16|32|64)_t|size_t|ssize_t|'
++            r'uintptr_t|intptr_t)|unsigned(?:\s+int)?|signed(?:\s+int)?|int|'
++            r'(?:unsigned\s+)?long\s+long))\s+(?P<name>\w+)\s*=\s*(?P<expr>[^;]+);')
++        type_map = {}
++        type_pattern = re.compile(
++            r'\b((?:(?:std::)?(?:u?int(?:8|16|32|64)_t|size_t|ssize_t|'
++            r'uintptr_t|intptr_t)|unsigned(?:\s+int)?|signed(?:\s+int)?|int|'
++            r'(?:unsigned\s+)?long\s+long))\s+\*?\s*(\w+)\b')
++        function_region = text[function.start():closing + 1]
++        for declaration in type_pattern.finditer(_mask_cpp_noncode(function_region)):
++            type_map[declaration.group(2)] = _width(declaration.group(1))
++        for declaration in declarations.finditer(body_mask):
++            result_type = _width(declaration.group('type'))
++            product = _split_product(body[declaration.start('expr'):declaration.end('expr')])
++            if product is None or result_type is None:
++                continue
++            left, right = product
++            left_source, left_op = _operand_width(left, type_map)
++            right_source, right_op = _operand_width(right, type_map)
++            if None in (left_source, right_source, left_op, right_op):
++                continue
++            factor_names = tuple(match.group(1) for operand in (left, right)
++                                 if (match := re.search(r'(\w+)\s*\)?\s*$', operand)))
++            if len(factor_names) != 2:
++                continue
++            operation_width = max(32, left_op, right_op)
++            may_overflow = operation_width < left_source + right_source
++            result_name = declaration.group('name')
++            allocated, allocation_lines = _text_allocations(body, result_name)
++            if not allocated:
++                continue
++            loop_line = _loop_uses_allocated_copy(body, factor_names, allocated, body_line)
++            if loop_line is None:
++                continue
++            expression_start = declaration.start('expr')
++            expression_end = declaration.end('expr')
++            expression = body[expression_start:expression_end].strip()
++            expression_offset = body.find(expression, expression_start, expression_end)
++            line = body_line + body[:expression_offset].count('\n')
++            column = (len(body[body.rfind('\n', 0, expression_offset) + 1:expression_offset].encode('utf-8')) + 1)
++            local_start = len(body[:expression_offset].encode('utf-8'))
++            start_byte = body_start_byte + local_start
++            end_byte = start_byte + len(expression.encode('utf-8'))
++            candidates.append(SizeOverflowCandidate(
++                line, column, function_name, result_name, factor_names,
++                body_line + min(allocation_lines) - 1, loop_line,
++                start_byte, end_byte, may_overflow))
++        cursor = closing + 1
++    return tuple(candidates), ()
++
++
++def analyze_size_overflow(source):
++    """Return only candidate flows whose multiplication is narrower than its factors."""
++    flows, limitations = analyze_size_flows(source)
++    return tuple(flow for flow in flows if flow.may_overflow), limitations
++
++
++def size_overflow_result_from_flows(unit, model_digest, flows, limitations=()):
++    """Adapt already-parsed bounded syntax results to the Detector contract."""
++    if limitations:
++        return AnalysisResult('limited', 'not_analyzed', limitations=limitations,
++                              model_digest=model_digest)
++    observations = tuple(
++        Observation(
++            kind='candidate', line=flow.line, column=flow.column,
++            reason='narrow_product_flows_to_allocation_and_copy_loop',
++            target_identity=flow.result_name,
++            token_origin=' * '.join(flow.factor_names),
++            token_line=flow.line, creation_line=flow.allocation_line,
++            path=(flow.line, flow.allocation_line, flow.loop_line),
++            constraints=((flow.line, 'product_width_covers_factor_ranges', not flow.may_overflow),
++                         (flow.loop_line, 'copy_loop_uses_factor_bound', True)),
++            symbol=flow.function, region_start_byte=flow.start_byte,
++            region_end_byte=flow.end_byte,
++            effect_sites=(flow.loop_line,))
++        for flow in flows if flow.may_overflow)
++    # The local model recognizes only direct integer products and a bounded set
++    # of allocation/copy operations. Keep file coverage partial even with a
++    # complete syntax tree until general C++ range and CFG reasoning exists.
++    return AnalysisResult(
++        'limited', 'partial', observations,
++        ('bounded_size_product_model_no_general_cpp_ranges_or_cfg',),
++        steps=len(flows), model_digest=model_digest)
++
++
++def analyze_size_overflow_unit(unit, model_digest):
++    """Standalone adapter for a source unit; production reuses parsed flows."""
++    flows, limitations = analyze_size_flows(
++        unit.text, parse_complete=unit.parse_status == 'complete')
++    return size_overflow_result_from_flows(unit, model_digest, flows, limitations)
+diff --git a/src/ohscanner/detectors/ark_runtime/receiver_guard.py b/src/ohscanner/detectors/ark_runtime/receiver_guard.py
+--- a/src/ohscanner/detectors/ark_runtime/receiver_guard.py
++++ b/src/ohscanner/detectors/ark_runtime/receiver_guard.py
+--- a/src/ohscanner/detectors/ark_runtime/receiver_guard.py
++++ b/src/ohscanner/detectors/ark_runtime/receiver_guard.py
+@@ -134,524 +134,78 @@
+         applicable = [fn.qualified_name for fn in functions
+                       if fn.qualified_name.startswith(OWNER + '::')
+                       and any(node.type == 'call_expression' and fn.call_name(node) == sink_name
+-                              for node in wawÓ¾ü¶‰-žËkºwµçivalent=(), invalidated=(), predicates=(), effects=(), escaped=()):
+-        self.values = dict(values or {})
+-        self.equivalent = frozenset(equivalent)
+-        self.invalidated = frozenset(invalidated)
+-        self.predicates = frozenset(predicates)
+-        self.effects = frozenset(effects)
+-        self.escaped = frozenset(escaped)
+-
+-    def copy(self):
+-        return OriginState(self.values, self.equivalent, self.invalidated, self.predicates,
+-                           self.effects, self.escaped)
+-
+-    def key(self):
+-        return (tuple(sorted(self.values.items())), tuple(sorted(self.equivalent)),
+-                tuple(sorted(self.invalidated)), tuple(sorted(self.predicates)), tuple(sorted(self.effects)),
+-                tuple(sorted(self.escaped)))
+-
+-
+-class OriginEvaluator:
+-    def __init__(self, fn, model, cyclic_ranges=()):
+-        self.fn, self.model = fn, model
+-        self.cyclic_ranges = tuple(cyclic_ranges)
+-
+-    @staticmethod
+-    def token_key(value):
+-        return value.identity + (':live' if value.valid else ':stale')
+-
+-    def creation_call(self, node, state):
+-        if node.type != 'call_expression':
+-            return False
+-        callee = node.child_by_field_name('function')
+-        if not callee or callee.type != 'field_expression':
+-            return False
+-        builder = self.value(callee.child_by_field_name('argument'), state)
+-        return (builder.kind == 'builder' and builder.detail == self.model.creator_owner
+-                and self.fn.text(callee.child_by_field_name('field')) == self.model.creator_name
+-                and len(self.fn.arguments(node)) == self.model.creator_arguments)
+-
+-    def same_type_creation_call(self, node, state):
+-        if node.type != 'call_expression':
+-            return False
+-        callee = node.child_by_field_name('function')
+-        if not callee or callee.type != 'field_expression':
+-            return False
+-        owner, name, arity, source_index, type_index = self.model.same_type_creator
+-        builder = self.value(callee.child_by_field_name('argument'), state)
+-        args = self.fn.arguments(node)
+-        if not (builder.kind == 'builder' and builder.detail == owner
+-                and self.fn.text(callee.child_by_field_name('field')) == name
+-                and len(args) == arity):
+-            return False
+-        source = self.value(args[source_index], state)
+-        token = self.value(args[type_index], state)
+-        return (source.kind == 'object' and token.kind == 'type' and token.valid
+-                and token.origin == source.identity)
+-
+-    def _logic_and_chain(self, node):
+-        if node is None or node.type != 'call_expression':
+-            return False
+-        callee = node.child_by_field_name('function')
+-        args = self.fn.arguments(node)
+-        if callee and callee.type == 'identifier':
+-            return (self.fn.text(callee) == 'LogicAndBuilder' and len(args) == 1
+-                    and self.fn.resolve('LogicAndBuilder', node) is None)
+-        if callee and callee.type == 'field_expression':
+-            field = self.fn.text(callee.child_by_field_name('field'))
+-            receiver = callee.child_by_field_name('argument')
+-            if field == 'And' and len(args) == 1:
+-                return self._logic_and_chain(receiver)
+-            if field == 'Done' and not args:
+-                return self._logic_and_chain(receiver)
+-        return False
+-
+-    def _copy_buffer_runtime_call(self, node):
+-        if node.type != 'call_expression' or self.fn.call_name(node) != self.model.copy_buffer_runtime[0]:
+-            return False
+-        _, runtime_name, arity, buffer_arity = self.model.copy_buffer_runtime
+-        args = self.fn.arguments(node)
+-        if len(args) != arity or self.fn.text(args[1]).replace(' ', '') != f'RTSTUB_ID({runtime_name})':
+-            return False
+-        buffer_args = args[2]
+-        return buffer_args.type == 'initializer_list' and len(buffer_args.named_children) == buffer_arity
+-
+-    def _copy_buffer_runtime_id(self, node):
+-        args = self.fn.arguments(node)
+-        if self.fn.call_name(node) != 'RTSTUB_ID' or len(args) != 1 or self.fn.text(args[0]) != self.model.copy_buffer_runtime[1]:
+-            return False
+-        parent = node.parent
+-        while parent is not None and parent.type != 'call_expression':
+-            parent = parent.parent
+-        return parent is not None and self._copy_buffer_runtime_call(parent)
+-
+-    def unsupported_cpp_effect(self, instruction):
+-        """Keep unmodelled host writes from masquerading as graph value copies.
+-
+-        Ordinary GateRef assignments, calls and reviewed DSL declarations have
+-        separate handling. We do not guess C++ evaluation order, writable
+-        pointer/reference aliasing, implicit constructors or destructors.
+-        """
+-        if instruction.kind not in ('BRANCH', 'declaration', 'expression'):
+-            return ''
+-        fn, root = self.fn, instruction.node
+-        for node in walk(root):
+-            if node.type in ('new_expression', 'delete_expression', 'update_expression'):
+-                return 'unmodeled_cpp_lifetime_or_update_expression'
+-            if node.type == 'assignment_expression':
+-                if instruction.kind != 'expression' or node != root:
+-                    return 'unmodeled_nested_cpp_assignment'
+-                left = node.child_by_field_name('left')
+-                if left and left.type == 'identifier':
+-                    continue
+-                if left and left.type == 'field_expression':
+-                    receiver = left.child_by_field_name('argument')
+-                    binding = fn.resolve(fn.text(receiver), receiver) if receiver else None
+-                    if (binding and binding.type_name in ('JSCallArgs', NAMESPACE + '::JSCallArgs')
+-                            and fn.text(left.child_by_field_name('field')) == 'callThisArg3WithReturnArgs'):
+-                        continue
+-                return 'unmodeled_cpp_indirect_assignment'
+-        if instruction.kind == 'declaration':
+-            if any(n.type in ('reference_declarator', 'pointer_declarator') for n in walk(root)):
+-                return 'unmodeled_cpp_writable_alias'
+-            typ = compact(fn.text(root.child_by_field_name('type')))
+-            host = {name for name, _ in self.model.host_constructors}
+-            plain = {'GateRef', 'auto', 'bool', 'int', 'size_t', 'int32_t', 'int64_t'}
+-            short = typ.removeprefix(NAMESPACE + '::')
+-            if short not in host | plain:
+-                return 'unreviewed_cpp_constructor_or_destructor'
+-            if short in host:
+-                for child in root.named_children:
+-                    if child.type == 'init_declarator':
+-                        initializer = child.child_by_field_name('value')
+-                        if initializer is None or initializer.type != 'argument_list':
+-                            return 'unreviewed_host_constructor_form'
+-                        count = len(initializer.named_children)
+-                        if count not in dict(self.model.host_constructors)[short]:
+-                            return 'unreviewed_host_constructor_arity'
+-                    elif child.type == 'function_declarator':
+-                        parameters = child.child_by_field_name('parameters')
+-                        if parameters is None or len(parameters.named_children) not in dict(self.model.host_constructors)[short]:
+-                            return 'unreviewed_host_constructor_arity'
+-                    elif child.type == 'identifier' and 0 not in dict(self.model.host_constructors)[short]:
+-                        return 'unreviewed_host_constructor_arity'
+-        return ''
+-
+-    def initial(self):
+-        return OriginState({b.identity: Value('object', b.identity, origin_line=self.fn.node.start_point[0] + 1)
+-                            for b in self.fn.bindings if b.parameter and b.type_name == 'GateRef'})
+-
+-    def invalidate(self, state, call, may_rebind=True, preserve_unescaped=True,
+-                   preserve_fresh_type=False):
+-        """Forget sampled facts; preserve only local fresh results proven unescaped.
+-
+-        An unmodelled call invalidates source-object observations and aliases.
+-        A fresh result cannot be mutated by a call until it escapes; direct and
+-        nested call arguments plus the modeled JSCallArgs initializer record
+-        those escapes. Other unsupported host writes block function analysis.
+-        This finite abstraction converges in loops and never revalidates a copy
+-        of an old token when a later read observes the same object.
+-        """
+-        from dataclasses import replace
+-        invalidated = set(state.invalidated)
+-        passed_objects = set()
+-        # Passing GateRef by value preserves the local variable binding, but
+-        # still exposes the referenced object to the call. Track those object
+-        # identities even when the callee cannot rebind the C++ parameter.
+-        for argument in self.fn.arguments(call):
+-            for node in walk(argument):
+-                if node.type == 'identifier':
+-                    value = self.value(node, state)
+-                    if value.kind == 'object':
+-                        passed_objects.add(value.identity)
+-        for value in state.values.values():
+-            if value.kind != 'object':
+-                continue
+-            if (preserve_unescaped and value.detail == 'fresh_local_typed_array'
+-                    and value.identity not in passed_objects
+-                    and value.identity not in state.escaped):
+-                continue
+-            invalidated.add(value.identity)
+-        state.invalidated = frozenset(invalidated)
+-        # Keep the identity of an unescaped local allocation so a distinct
+-        # origin can remain a candidate, but an unknown call cannot preserve
+-        # any sampled type fact. This avoids treating local non-escape as a
+-        # proof that every callback or host effect is type-stable.
+-        stable_fresh = {
+-            value.identity for value in state.values.values()
+-            if preserve_fresh_type and value.kind == 'object'
+-            and value.detail == 'fresh_local_typed_array'
+-            and value.identity not in passed_objects and value.identity not in state.escaped
+-        }
+-        state.values = {
+-            key: (replace(value, valid=False)
+-                  if value.kind in ('type', 'hclass')
+-                  and (not value.valid or value.origin not in stable_fresh)
+-                  else value)
+-            for key, value in state.values.items()
+-        }
+-        state.equivalent = frozenset()
+-        state.predicates = frozenset()
+-        state.effects |= frozenset(((call.start_point[0] + 1, self.fn.call_name(call)),))
+-        # Without the C++ callee declaration, GateRef arguments could be bound
+-        # by non-const reference. Retain aliases of the old object but forget
+-        # the passed lvalue's current binding; a later read cannot silently
+-        # equate it to a pre-call alias.
+-        arguments = list(self.fn.arguments(call)) if may_rebind else []
+-        callee = call.child_by_field_name('function')
+-        if may_rebind and callee and callee.type == 'field_expression':
+-            arguments.append(callee.child_by_field_name('argument'))
+-        for argument in arguments:
+-            while argument and argument.type in ('pointer_expression', 'parenthesized_expression'):
+-                argument = argument.named_children[-1] if argument.named_children else None
+-            if argument and argument.type == 'identifier':
+-                binding = self.fn.resolve(self.fn.text(argument), argument)
+-                if binding and state.values.get(binding.identity, UNKNOWN).kind in ('object', 'type', 'hclass'):
+-                    state.values[binding.identity] = UNKNOWN
+-
+-    def bound_call(self, node, state):
+-        """Only the existing reviewed origin/creator model and scalar graph ops.
+-
+-        No unknown-call purity is inferred from spelling prefixes. These scalar
+-        operations construct graph values, not runtime callbacks; applicability
+-        remains a model obligation, including macro and local shadow checks.
+-        """
+-        fn = self.fn
+-        name, args = fn.call_name(node), fn.arguments(node)
+-        base = name.removeprefix('this->')
+-        if self._logic_and_chain(node) or self._copy_buffer_runtime_call(node) or self._copy_buffer_runtime_id(node):
+-            return True
+-        if fn.resolve(base, node):
+-            return False
+-        callee = node.child_by_field_name('function')
+-        if callee and callee.type == 'field_expression':
+-            receiver = callee.child_by_field_name('argument')
+-            receiver_text = fn.text(receiver).replace(' ', '') if receiver else ''
+-            member = fn.text(callee.child_by_field_name('field'))
+-            if receiver_text not in ('this', 'this->'):
+-                builder = self.value(receiver, state)
+-                if (builder.kind == 'builder' and builder.detail == self.model.creator_owner
+-                        and member == 'SetParameters' and len(args) == 2):
+-                    return True
+-                if (builder.kind == 'builder' and builder.detail == NAMESPACE + '::BuiltinsArrayStubBuilder'
+-                        and member == 'GetTaggedValueWithElementsKind' and len(args) == 3
+-                        and self.model.build_profile.startswith('assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;')):
+-                    return True
+-                if (builder.kind == 'builder' and builder.detail == self.model.creator_owner
+-                        and member == self.model.creator_name and len(args) == self.model.creator_arguments):
+-                    return True
+-                return False
+-        if (base in dict(self.model.reviewed_graph_read_overloads)
+-                and len(args) == dict(self.model.reviewed_graph_read_overloads)[base]):
+-            return True
+-        if base in dict(self.model.type_stable_operations) and len(args) == dict(self.model.type_stable_operations)[base]:
+-            return True
+-        same_owner, same_name, same_arity, _, _ = self.model.same_type_creator
+-        if (name == same_name and len(args) == same_arity
+-                and not fn.resolve(same_name, node)):
+-            callee = node.child_by_field_name('function')
+-            if callee and callee.type == 'field_expression':
+-                builder = self.value(callee.child_by_field_name('argument'), state)
+-                if builder.kind == 'builder' and builder.detail == same_owner:
+-                    return self.same_type_creation_call(node, state)
+-        scalar_arity = dict(self.model.scalar_operations)
+-        if base in scalar_arity and len(args) == scalar_arity[base]:
+-            return True
+-        if (self.model.build_profile.startswith('assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;')
+-                and base in dict(self.model.readonly_operations)
+-                and len(args) == dict(self.model.readonly_operations)[base]):
+-            return True
+-        if base == 'GetObjectType' and len(args) == 1:
+-            return True
+-        # Newer StubBuilder sources carry the runtime glue explicitly when
+-        # reading an object's HClass. In that reviewed overload the object is
+-        # the second argument; the operation still only emits a graph read.
+-        if base == 'LoadHClass' and len(args) in (1, 2):
+-            return True
+-        if name == 'DEFVARIABLE' and len(args) == 3:
+-            return True
+-        property_name, property_arity, _, _ = self.model.property_store
+-        if (name in (self.model.store_name, 'this->' + self.model.store_name,
+-                     OWNER + '::' + self.model.store_name)
+-                and len(args) == len(self.model.store_types)):
+-            return not fn.resolve(self.model.store_name, node)
+-        if name in (property_name, 'this->' + property_name, OWNER + '::' + property_name):
+-            return len(args) == property_arity and not fn.resolve(property_name, node)
+-        if callee and callee.type == 'field_expression':
+-            field = fn.text(callee.child_by_field_name('field'))
+-            builder = self.value(callee.child_by_field_name('argument'), state)
+-            if (builder.kind == 'builder' and builder.detail == self.model.creator_owner
+-                    and field == 'SetParameters' and len(args) == 2):
+-                return True
+-            if (builder.kind == 'builder' and builder.detail == NAMESPACE + '::BuiltinsArrayStubBuilder'
+-                    and field == 'GetTaggedValueWithElementsKind' and len(args) == 3
+-                    and self.model.build_profile.startswith('assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;')):
+-                return True
+-            return (field == self.model.creator_name and builder.kind == 'builder'
+-                    and builder.detail == self.model.creator_owner and len(args) == self.model.creator_arguments)
+-        return False
+-
+-    def passes_by_value(self, node, state):
+-        name = self.fn.call_name(node).removeprefix('this->')
+-        if self.fn.resolve(name, node):
+-            return False
+-        arity = dict(self.model.by_value_operations).get(name)
+-        if arity is not None and len(self.fn.arguments(node)) == arity:
+-            return True
+-        reviewed_arity = dict(self.model.reviewed_graph_read_overloads).get(name)
+-        if reviewed_arity is not None and len(self.fn.arguments(node)) == reviewed_arity:
+-            return True
+-        callee = node.child_by_field_name('function')
+-        if callee and callee.type == 'field_expression':
+-            builder = self.value(callee.child_by_field_name('argument'), state)
+-            return (builder.kind == 'builder' and builder.detail == NAMESPACE + '::BuiltinsArrayStubBuilder'
+-                    and self.fn.text(callee.child_by_field_name('field')) == 'NewArray'
+-                    and len(self.fn.arguments(node)) == 2)
+-        return False
+-
+-    def prepare(self, instruction, state):
+-        """Apply nested effects before sink inspection, guards or assignment.
+-
+-        All expression locations cross this same internal seam. Unknown C++
+-        argument evaluation order cannot restore an old fact: invalidate first.
+-        """
+-        if instruction.kind not in ('BRANCH', 'declaration', 'expression'):
+-            return
+-        node = instruction.arguments[0] if instruction.kind == 'BRANCH' else instruction.node
+-        if node.type == 'assignment_expression':
+-            left, right = node.child_by_field_name('left'), node.child_by_field_name('right')
+-            if (left and left.type == 'field_expression'
+-                    and self.fn.text(left.child_by_field_name('field')) == 'callThisArg3WithReturnArgs'
+-                    and right and right.type == 'initializer_list'):
+-                escaped = set(state.escaped)
+-                for item in right.named_children:
+-                    value = self.value(item, state)
+-                    if value.kind == 'object' and value.detail == 'fresh_local_typed_array':
+-                        escaped.add(value.identity)
+-                state.escaped = frozenset(escaped)
+-        for call in walk(node):
+-            if call.type == 'call_expression':
+-                if self.creation_call(call, state):
+-                    # NewTypedArray may dispatch species code. Its four GateRef
+-                    # parameters are passed by value, but old runtime type
+-                    # observations and guards cannot survive that dispatch.
+-                    self.invalidate(state, call, may_rebind=False)
+-                elif self.same_type_creation_call(call, state):
+-                    # This exact helper maps the exemplar's JSType to its
+-                    # intrinsic constructor; it does not use species dispatch.
+-                    pass
+-                elif not self.bound_call(call, state):
+-                    callee = call.child_by_field_name('function')
+-                    unknown_member = callee is not None and callee.type == 'field_expression'
+-                    preserve_fresh_type = bool(self.fn.arguments(call)) and not unknown_member
+-                    self.invalidate(state, call, may_rebind=not self.passes_by_value(call, state),
+-                                    preserve_unescaped=True,
+-                                    preserve_fresh_type=preserve_fresh_type)
+-
+-    def value(self, node, state):
+-        if node is None:
+-            return UNKNOWN
+-        fn = self.fn
+-        if node.type in ('parenthesized_expression', 'pointer_expression'):
+-            return self.value(node.named_children[-1], state) if node.named_children else UNKNOWN
+-        if node.type == 'identifier':
+-            binding = fn.resolve(fn.text(node), node)
+-            return state.values.get(binding.identity, UNKNOWN) if binding else UNKNOWN
+-        if node.type != 'call_expression':
+-            return UNKNOWN
+-        name, args = fn.call_name(node), fn.arguments(node)
+-        if fn.resolve(name, node):
+-            return UNKNOWN
+-        if name in ('GetObjectType', 'this->GetObjectType') and len(args) == 1:
+-            hclass = self.value(args[0], state)
+-            if hclass.kind == 'hclass':
+-                cyclic = any(start <= node.start_byte < end for start, end in self.cyclic_ranges)
+-                return Value('type', identity=f'token:{node.start_byte}', origin=hclass.origin,
+-                             origin_line=node.start_point[0] + 1, valid=hclass.valid,
+-                             detail='cyclic_sample' if cyclic else '')
+-        if name in ('LoadHClass', 'this->LoadHClass') and len(args) in (1, 2):
+-            obj = self.value(args[-1], state)
+-            if obj.kind == 'object':
+-                return Value('hclass', origin=obj.identity, origin_line=node.start_point[0] + 1)
+-        receiver = node.child_by_field_name('function')
+-        if receiver and receiver.type == 'field_expression':
+-            field = fn.text(receiver.child_by_field_name('field'))
+-            base = receiver.child_by_field_name('argument')
+-            builder = self.value(base, state)
+-            if (field == self.model.creator_name and builder.kind == 'builder'
+-                    and builder.detail == self.model.creator_owner and len(args) == self.model.creator_arguments):
+-                source = self.value(args[1], state)
+-                if source.kind == 'object':
+-                    return Value('object', f'new:{node.start_byte}', origin=source.identity,
+-                                 origin_line=source.origin_line, creation_line=node.start_point[0] + 1,
+-                                 may_differ=self.model.creation_may_change_runtime_type,
+-                                 detail='fresh_local_typed_array')
+-            owner, name, arity, source_index, type_index = self.model.same_type_creator
+-            if field == name and builder.kind == 'builder' and builder.detail == owner and len(args) == arity:
+-                source = self.value(args[source_index], state)
+-                token = self.value(args[type_index], state)
+-                if (source.kind == 'object' and token.kind == 'type' and token.valid
+-                        and token.origin == source.identity):
+-                    return Value('object', f'same-type:{node.start_byte}', origin=source.identity,
+-                                 origin_line=source.origin_line, creation_line=node.start_point[0] + 1,
+-                                 may_differ=False)
+-        return Value('unknown', identity=f'expr:{node.start_byte}')
+-
+-    def update(self, instruction, state):
+-        fn, node = self.fn, instruction.node
+-        if instruction.kind not in ('declaration', 'expression'):
+-            return
+-        if instruction.kind == 'declaration':
+-            typ = compact(fn.text(node.child_by_field_name('type')))
+-            for child in node.named_children:
+-                if child.type not in ('init_declarator', 'function_declarator', 'identifier', 'pointer_declarator'):
+-                    continue
+-                dec = child.child_by_field_name('declarator') if child.type == 'init_declarator' else child
+-                ident = name_node(dec)
+-                if ident is None or ident.type != 'identifier':
+-                    continue
+-                binding = fn.resolve(fn.text(ident), ident)
+-                if binding is None:
+-                    continue
+-                if typ in ('NewObjectStubBuilder', NAMESPACE + '::NewObjectStubBuilder',
+-                           'BuiltinsArrayStubBuilder', NAMESPACE + '::BuiltinsArrayStubBuilder'):
+-                    val = Value('builder', binding.identity, detail=(typ if '::' in typ else NAMESPACE + '::' + typ))
+-                else:
+-                    val = self.value(child.child_by_field_name('value'), state)
+-                state.values[binding.identity] = val
+-        elif node.type == 'assignment_expression':
+-            # A graph expression at one lexical site can produce a different
+-            # predicate after a loop assignment; do not reuse its old truth.
+-            state.predicates = frozenset()
+-            left = node.child_by_field_name('left')
+-            if left and left.type == 'identifier':
+-                binding = fn.resolve(fn.text(left), left)
+-                if binding:
+-                    operator = node.child_by_field_name('operator')
+-                    state.values[binding.identity] = (self.value(node.child_by_field_name('right'), state)
+-                                                      if fn.text(operator) == '=' else UNKNOWN)
+-
+-    def store_arguments(self, node, state):
+-        fn, model = self.fn, self.model
+-        if node.type != 'call_expression':
+-            return None
+-        name = fn.call_name(node)
+-        property_name, property_arity, property_target_index, property_token_index = model.property_store
+-        is_element_store = name in (model.store_name, 'this->' + model.store_name,
+-                                    OWNER + '::' + model.store_name)
+-        is_property_store = name in (property_name, 'this->' + property_name,
+-                                     OWNER + '::' + property_name)
+-        if not is_element_store and not is_property_store:
+-            callee = node.child_by_field_name('function')
+-            if (callee and callee.type == 'field_expression'
+-                    and fn.text(callee.child_by_field_name('field')) in (model.store_name, property_name)):
+-                return ('unknown', UNKNOWN, UNKNOWN, 'unresolved_sink_receiver')
+-            return None
+-        sink_name = property_name if is_property_store else model.store_name
+-        if fn.resolve(sink_name, node):
+-            return ('unknown', UNKNOWN, UNKNOWN, 'shadowed_sink')
+-        args = fn.arguments(node)
+-        expected_arity = property_arity if is_property_store else len(model.store_types)
+-        if len(args) != expected_arity:
+-            return ('unknown', UNKNOWN, UNKNOWN, 'sink_signature_mismatch')
+-        target_index = property_target_index if is_property_store else model.target_argument
+-        token_index = property_token_index if is_property_store else model.token_argument
+-        target = self.value(args[target_index], state)
+-        token = self.value(args[token_index], state)
+-        if target.kind != 'object' or token.kind != 'type':
+-            return ('unknown', target, token, 'unresolved_target_or_type_origin')
+-        guarantee = (self.token_key(token), target.identity)
+-        same_type_origin = (target.origin == token.origin and not target.may_differ
+-                            and target.origin not in state.invalidated)
+-        if guarantee in state.equivalent or (token.origin == target.identity and token.valid) or same_type_origin:
+-            return ('matched', target, token, 'target_origin_or_proved_type_equality')
+-        if target.identity in state.invalidated:
+-            return ('unknown', target, token, 'creation_relationship_invalidated_by_call')
+-        if target.may_differ and target.creation_line and token.origin != target.identity:
+-            # The captured SSA token's origin remains known even if it no
+-            # longer describes its source object's current type. This is only
+-            # a distinct-origin candidate, not a proved numeric type mismatch.
+-            return ('candidate', target, token, 'distinct_origin_with_type_changing_creation')
+-        if not token.valid:
+-            return ('unknown', target, token, 'type_fact_invalidated_by_call')
+-        return ('unknown', target, token, 'unproved_object_relationship')
+-
+-    def refine(self, condition, truth, state):
+-        fn = self.fn
+-        written = compact(fn.text(condition))
+-        if written in ('true', 'True()', 'Boolean(true)'):
+-            return state if truth else None
+-        if written in ('false', 'False()', 'Boolean(false)'):
+-            return state if not truth else None
+-        if condition.type == 'identifier':
+-            value = self.value(condition, state)
+-            if value.identity:
+-                if (value.identity, not truth) in state.predicates:
+-                    return None
+-                state.predicates |= frozenset(((value.identity, truth),))
+-        if (condition.type == 'call_expression' and fn.call_name(condition) in ('Int32Equal', 'Equal')
+-                and self.bound_call(condition, state)):
+-            args = fn.arguments(condition)
+-            if len(args) == 2:
+-                left, right = (self.value(a, state) for a in args)
+-                if left.kind == right.kind == 'type':
+-                    if 'cyclic_sample' in (left.detail, right.detail):
+-                        # Repeated sampling sites need iteration-sensitive
+-                        # token identities before they can justify guards.
+-                        return state
+-                    known_equal = (self.token_key(left) == self.token_key(right)
+-                        or (left.valid and right.valid and left.origin == right.origin)
+-                        or (right.valid and (self.token_key(left), right.origin) in state.equivalent)
+-                        or (left.valid and (self.token_key(right), left.origin) in state.equivalent))
+-                    if known_equal and not truth:
+-                        return None
+-                    if truth:
+-                        guarantees = []
+-                        if right.valid:
+-                            guarantees.append((self.token_key(left), right.origin))
+-                        if left.valid:
+-                            guarantees.append((self.token_key(right), left.origin))
+-                        state.equivalent |= frozenset(guarantees)
+-        return state
++                              for node in walk(fn.body))]
++        if not applicable:
++            return ReceiverGuardResult('completed', 'complete')
++        results = [analyze_receiver_guard(unit, caller_name=name, caller_types=caller_types,
++                                          sink_name=sink_name, budget=budget) for name in applicable]
++        observations = tuple(item for result in results for item in result.observations)
++        limitations = tuple(sorted({item for result in results for item in result.limitations}))
++        steps = sum(result.steps for result in results)
++        outcome = ('partial' if limitations or unit.parse_status != 'complete'
++                   or any(result.file_outcome == 'partial' for result in results) else 'complete')
++        status = 'limited' if outcome != 'complete' else 'completed'
++        return ReceiverGuardResult(status, outcome, observations, limitations, steps)
++    functions = [fn for fn in functions if fn.qualified_name == caller_name]
++    if len(functions) != 1:
++        return ReceiverGuardResult('limited', 'not_analyzed',
++                                   limitations=('receiver_guard_caller_unresolved',))
++    fn = functions[0]
++    if fn.node.has_error or tuple(fn.parameter_types) != caller_types:
++        return ReceiverGuardResult('limited', 'not_analyzed',
++                                   limitations=('receiver_guard_caller_parse_or_signature_unknown',))
++    # Parameter positions are declaration offsets; evaluate each GateRef
++    # parameter binding and associate only same-binding queries/accessors.
++    candidates = [binding for binding in fn.bindings if binding.parameter and binding.type_name == 'GateRef']
++    if not candidates:
++        return ReceiverGuardResult('limited', 'not_analyzed',
++                                   limitations=('receiver_parameter_unresolved',))
++    try:
++        graph = build_graph(fn, budget)
++    except ValueError as error:
++        return ReceiverGuardResult('limited', 'not_analyzed', limitations=(str(error),))
++    observations, limitations, total_steps = [], [], 0
++    for receiver in candidates:
++        sinks = [(index, node) for index, instruction in enumerate(graph.instructions)
++                 for node in _sink_receiver(fn, instruction, sink_name, receiver)]
++        if not sinks:
++            continue
++        guards = {index for index, instruction in enumerate(graph.instructions)
++                  if instruction.kind == 'BRANCH'
++                  and _typed_array_guard(fn, instruction, receiver)}
++        if not guards:
++            for index, node in sinks:
++                observations.append(Observation('unknown', node.start_point[0] + 1,
++                                                node.start_point[1] + 1,
++                                                'receiver_type_guard_not_resolved',
++                                                symbol=fn.qualified_name,
++                                                region_start_byte=fn.node.start_byte,
++                                                region_end_byte=fn.node.end_byte))
++                limitations.append('receiver_type_guard_not_resolved')
++            continue
++        for sink_index, node in sinks:
++            unsafe, steps = _reachable_without_successful_guard(graph, sink_index, guards, budget)
++            total_steps += steps
++            if unsafe is None:
++                kind, reason = 'unknown', 'receiver_guard_path_unresolved'
++                limitations.append(reason)
++            elif unsafe:
++                kind, reason = 'candidate', 'backing_buffer_read_not_dominated_by_receiver_type_guard'
++            else:
++                kind, reason = 'matched', 'receiver_type_guard_dominates_backing_buffer_read'
++            observations.append(Observation(kind, node.start_point[0] + 1,
++                                            node.start_point[1] + 1, reason,
++                                            symbol=fn.qualified_name,
++                                            path=(fn.node.start_point[0] + 1,
++                                                  node.start_point[0] + 1),
++                                            region_start_byte=fn.node.start_byte,
++                                            region_end_byte=fn.node.end_byte))
++    if not observations:
++        outcome = 'partial' if graph.limitations else 'complete'
++        return ReceiverGuardResult('limited' if graph.limitations else 'completed', outcome,
++                                   limitations=tuple(graph.limitations), steps=total_steps)
++    if graph.limitations:
++        limitations.extend(graph.limitations)
++    outcome = 'partial' if limitations or unit.parse_status != 'complete' else 'complete'
++    return ReceiverGuardResult('limited' if outcome != 'complete' else 'completed', outcome,
++                               tuple(observations), tuple(sorted(set(limitations))), total_steps)

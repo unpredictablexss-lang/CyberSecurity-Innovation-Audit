@@ -1,0 +1,25 @@
+{
+  "schema": "c9-latest-static-repair-baseline/v1",
+  "generated_at": "2026-10-19T07:47:23.9690506Z",
+  "checkout": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+  "head": "09ba5aba03c7c7d6787bace349b8fc0a6b0a5457",
+  "head_tree": "d15b91627c94d9c3043d7d58d47fcf9af7e42454",
+  "head_dirty": [],
+  "source_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+  "source_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+  "observed_missing": [
+    "src/ohscanner/detectors/ark_runtime/runtime_ir.py",
+    "src/ohscanner/detectors/ark_runtime/syntax.py",
+    "src/ohscanner/detectors/ark_runtime/type_origin.py",
+    "src/ohscanner/detectors/ark_runtime/runtime_exception.py",
+    "src/ohscanner/detectors/ark_runtime/size_overflow.py"
+  ],
+  "requested_missing": [
+    "src/ohscanner/detectors/ark_runtime/runtime_ir.py",
+    "src/ohscanner/detectors/ark_runtime/syntax.py",
+    "src/ohscanner/detectors/ark_runtime/runtime_exception.py",
+    "src/ohscanner/detectors/ark_runtime/size_overflow.py"
+  ],
+  "corruption": "src/ohscanner/detectors/ark_runtime/receiver_guard.py line 137 invalid UTF-8-visible bytes and spliced OriginState/OriginEvaluator tail",
+  "policy": "minimal import-completeness repair only; no contracts/Runner/Catalog or test edits"
+}

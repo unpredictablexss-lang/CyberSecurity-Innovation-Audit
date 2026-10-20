@@ -1,0 +1,505 @@
+{
+  "schema": "c9-tracked-json-validation/v1",
+  "generated_at": "2026-10-19T06:14:32.693026+00:00",
+  "root": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-opt-20261019",
+  "file_count": 99,
+  "passed": 99,
+  "failed": 0,
+  "results": [
+    {
+      "path": "benchmarks/historical/arkcompiler_ets_runtime_jsarray_sort_oob.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "benchmarks/historical/c_utils_singleton_uaf.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "benchmarks/historical/communication_dsoftbus_null_deref.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "benchmarks/historical/kernel_liteos_a_getgroups_oob.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "benchmarks/perf_scale_corpus_2026-10-10.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "benchmarks/性能规模复测数据_2026-10-14.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "config/collaboration/ownership.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "config/workspace.local.example.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "docs/integration/ipc_source_import_20261011.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "outputs/unified-development/algorithm-integration-summary.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "outputs/unified-development/v1-history-verification.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/contracts/a_ccr_04/owner_approval.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/coordination/parallel-20261017/acceptance.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/corpus/interface/ipc/model_sources.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/deliveries/cpp/A_MEMORY_SAFETY_SOURCE_HASHES_20261017.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/deliveries/integration/20261017/admission.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/deliveries/integration/20261017/fixture-lf-provenance.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/deliveries/integration/20261017/real-acceptance.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/deliveries/integration/20261017/source-inventory.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/deliveries/integration/20261018-main/acceptance.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/deliveries/integration/20261018-main/code-inventory.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/deliveries/integration/20261018-main/pr10-evidence-gate-review.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/deliveries/integration/20261018-main/protection.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/deliveries/integration/20261018-main/sources.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/deliveries/integration/20261018-main/validation.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/deliveries/platform/acceptance.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/deliveries/ui/20261017-v41/acceptance.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/evidence/ark_runtime/c8_scanner_optimization_20261019/verification.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/evidence/cpp/a_shared_ptr_229_erratum_2026-10-14.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/evidence/cpp/component_scans/communication_dsoftbus.manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/evidence/cpp/component_scans/distributeddatamgr_kv_store.manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/evidence/cpp/component_scans/index.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/evidence/cpp/component_scans/security_access_token.manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/evidence/cpp/component_scans/update_updateservice.manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/evidence/cpp/component_scans/window_window_manager.manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/evidence/cpp/cpp_same_scope_replay_2026-10-14.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/evidence/cpp/lifetime_unique_ptr_alias/run-004/poc.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/evidence/cpp/shared_ptr_delayed_singleton/run-002/poc.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/evidence/cpp/source_sync_20261014.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/evidence/interface/ipc/fd_backing_fix_pair_20261017/pair.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/case_matrix.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/parser_probe_result.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/source_evidence.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c2_20261017/artifact_hashes.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c2_20261017/historical_results.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c2_20261017/run_manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c2_20261017/source_evidence.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c2_20261017/test_results.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c2_20261017/verification_summary.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261017/C3_ARTIFACT_HASHES.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261017/C3_BASELINE.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261017/C3_CENSUS.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261017/C3_HISTORY.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261017/C3_HOLDOUT_LABELS.template.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261017/C3_HOLDOUT_MANIFEST.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261017/C3_LEGACY_CASES.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261017/C3_MECHANISMS.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261017/C3_RUN_MANIFEST.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261017/C3_SOURCE_EVIDENCE.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261017/C3_VALIDATION.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261018/artifact_hashes.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261018/current-run.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261018/model_dependency_comparison.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c3_20261018/unbound-parent-run.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c4_20261018/C4_PERFORMANCE.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c4_20261018/C4_SOURCE_BINDINGS.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c4_20261018/C4_VALIDATION.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c4_20261018/independent_review_packet/labels.template.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/audit-schema.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/expected-regressions.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/input-manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/known-source-findings.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/run-manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/experiments/interface/ipc/tool_source_manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/methods/ark_runtime/admission_20261019/compatibility-matrix.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/product/20261017/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/status/2026-10-16/archive-manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/tests/a_null_01/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/tests/a_null_01/regression_matrix.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "research/tests/a_null_02_controls/control_manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_memory_safety/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_resource_lifetime/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_unsafe_calls/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "tests/fixtures/ipc/auth01/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "tests/fixtures/ipc/auth02/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "tests/fixtures/ipc/auth03/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "tests/fixtures/ipc/auth04/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "tests/fixtures/ipc/cap01/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "tests/fixtures/ipc/data01/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "tests/fixtures/ipc/manifest.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "web/package-lock.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "web/package.json",
+      "status": "pass",
+      "error": null
+    },
+    {
+      "path": "web/tsconfig.json",
+      "status": "pass",
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "schema": "c9-integration-readiness/v1",
+  "status": "blocked_for_three_line_merge",
+  "baseline": {
+    "local_head": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "algorithm_commit": "715e29884a845a2daa80016f332c70b3db84ca45",
+    "remote_e4e": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "local_algorithm_delta_715_to_7af": "none"
+  },
+  "passed": [
+    "local_ark_runtime_116_tests_0_failed_8_skipped",
+    "runner_catalog_contract_64_tests_0_failed",
+    "cpp_runner_integration_5_tests_0_failed",
+    "python_py_compile_272_files",
+    "tracked_json_99_files",
+    "windows_git_diff_check",
+    "strict_reconciliation_fail_closed"
+  ],
+  "blockers": [
+    "e4e_focused_ark_152_executed_6_type_origin_failures",
+    "e4e_full_suite_environment_and_manifest_not_same_reproducible_universe",
+    "public_catalog_factory_swap_4_plus_4_minus_must_be_separate",
+    "detector_model_version_identity_conflict_0.7.0_vs_0.6.2_0.8.10",
+    "strict_input_root_file_missing",
+    "eight_historical_or_current_component_tests_skipped",
+    "IAO7GO_I7W51D_IB8BCA_uncovered"
+  ],
+  "known_case_coverage": {
+    "covered_candidate_partial": ["CVE-2025-24304-MAP-TYPE-ORIGIN", "IBS5YG", "I7KZJ7", "IC7B8Q", "IAO7E8"],
+    "missing_uncovered": ["IAO7GO", "I7W51D", "IB8BCA"]
+  },
+  "security_status": "candidate/unassessed",
+  "metrics_computed": false
+}

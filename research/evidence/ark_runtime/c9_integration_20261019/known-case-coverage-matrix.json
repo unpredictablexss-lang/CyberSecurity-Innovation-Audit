@@ -1,0 +1,24 @@
+{
+  "schema": "c9-known-case-coverage-matrix/v1",
+  "status": "candidate/unassessed",
+  "source": {
+    "remote_ref": "refs/remotes/origin/codex/c-line-ark-runtime-20261018",
+    "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+    "path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
+    "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+    "sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240"
+  },
+  "cases": [
+    {"line": 202, "id": "CVE-2025-24304-TYPEDARRAY-MAP-TYPE-ORIGIN", "local_7af": "partial_type_origin_without_map_selector", "remote_e4e": "map_root_candidate_1_to_0_with_fixed_family_residuals", "coverage": "covered_candidate_partial"},
+    {"line": 203, "id": "IBS5YG-FILTER-RESULT-TYPE-ORIGIN", "local_7af": "type_origin_with_c3_hardening_without_e4e_api_extensions", "remote_e4e": "exact_pair_1_to_0_but_a65_master_unknown_partial", "coverage": "covered_candidate_partial"},
+    {"line": 204, "id": "I7KZJ7-BYTE-LENGTH-MULTIPLICATION", "local_7af": "missing", "remote_e4e": "size_overflow_rule_candidate_partial", "coverage": "covered_candidate_partial"},
+    {"line": 205, "id": "IC7B8Q-MAP-ALLOCATION-EXCEPTION", "local_7af": "allocation_exception_guard_with_historical_tests_skipped", "remote_e4e": "parent_2_to_fix_0_partial", "coverage": "covered_candidate_partial"},
+    {"line": 206, "id": "IAO7GO-REFLECT-APPLY-EXCEPTION", "local_7af": "missing", "remote_e4e": "compiler_ir_lowering_not_selected_zero_applicable", "coverage": "missing_uncovered"},
+    {"line": 207, "id": "I7W51D-LENGTH-NARROWING", "local_7af": "missing", "remote_e4e": "multiplication_rule_does_not_cover_narrowing", "coverage": "missing_uncovered"},
+    {"line": 208, "id": "IB8BCA-DATAVIEW-INDEX-BOUNDS", "local_7af": "missing", "remote_e4e": "missing", "coverage": "missing_uncovered"},
+    {"line": 209, "id": "IAO7E8-FILTER-RECEIVER-TYPE-GUARD", "local_7af": "missing", "remote_e4e": "receiver_guard_candidate_pair_1_to_0_partial", "coverage": "covered_candidate_partial"}
+  ],
+  "required_gaps": ["IAO7GO", "I7W51D", "IB8BCA"],
+  "strict_reconciliation": {"status": "blocked_missing_input", "substitute_promotion": false}
+}

@@ -1,0 +1,148 @@
+{
+  "schema": "c9-latest-static-repair-checks-wsl/v1",
+  "generated_at": "2026-10-19T07:52:05.896735+00:00",
+  "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "executable": "/usr/bin/python3",
+  "checkout": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019",
+  "checks": [
+    {
+      "name": "known_disclosed_cves",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.detectors.test_known_disclosed_cves"
+      ],
+      "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019",
+      "env": {
+        "PATH": "/usr/bin:/bin",
+        "HOME": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-opt-20261019/research/evidence/ark_runtime/c9_integration_20261019/latest_static_repair_20261019/.home-wsl",
+        "TMPDIR": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-opt-20261019/research/evidence/ark_runtime/c9_integration_20261019/latest_static_repair_20261019/.tmp-wsl",
+        "PYTHONPATH": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019",
+        "PYTHONPYCACHEPREFIX": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-opt-20261019/research/evidence/ark_runtime/c9_integration_20261019/latest_static_repair_20261019/.pycache-wsl",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0",
+        "LC_ALL": "C.UTF-8",
+        "LANG": "C.UTF-8",
+        "TZ": "Asia/Shanghai",
+        "SOURCE_DATE_EPOCH": "0"
+      },
+      "exit_code": 1,
+      "status": "fail",
+      "started_at": "2026-10-19T07:51:59.304622+00:00",
+      "wall_seconds": 1.7149894249999988,
+      "log": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-opt-20261019/research/evidence/ark_runtime/c9_integration_20261019/latest_static_repair_20261019/logs-wsl/known_disclosed_cves.log",
+      "stdout_bytes": 0,
+      "stderr_bytes": 4459,
+      "stdout_tail": [],
+      "stderr_tail": [
+        "    self.assertEqual(\"3068e9b6e62be16bee2a8f1ff8271a02f32be97f\", git_blob_sha1(vulnerable))",
+        "AssertionError: '3068e9b6e62be16bee2a8f1ff8271a02f32be97f' != 'ece9d46f2f611aff8cdb1c21a1bf0d9a7bf44131'",
+        "- 3068e9b6e62be16bee2a8f1ff8271a02f32be97f",
+        "+ ece9d46f2f611aff8cdb1c21a1bf0d9a7bf44131",
+        "",
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 21 tests in 0.234s",
+        "",
+        "FAILED (failures=2)"
+      ]
+    },
+    {
+      "name": "ark_discover",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/detectors/ark_runtime",
+        "-t",
+        ".",
+        "-v"
+      ],
+      "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019",
+      "env": {
+        "PATH": "/usr/bin:/bin",
+        "HOME": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-opt-20261019/research/evidence/ark_runtime/c9_integration_20261019/latest_static_repair_20261019/.home-wsl",
+        "TMPDIR": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-opt-20261019/research/evidence/ark_runtime/c9_integration_20261019/latest_static_repair_20261019/.tmp-wsl",
+        "PYTHONPATH": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019",
+        "PYTHONPYCACHEPREFIX": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-opt-20261019/research/evidence/ark_runtime/c9_integration_20261019/latest_static_repair_20261019/.pycache-wsl",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0",
+        "LC_ALL": "C.UTF-8",
+        "LANG": "C.UTF-8",
+        "TZ": "Asia/Shanghai",
+        "SOURCE_DATE_EPOCH": "0"
+      },
+      "exit_code": 1,
+      "status": "fail",
+      "started_at": "2026-10-19T07:52:01.027476+00:00",
+      "wall_seconds": 2.2211283209999806,
+      "log": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-opt-20261019/research/evidence/ark_runtime/c9_integration_20261019/latest_static_repair_20261019/logs-wsl/ark_discover.log",
+      "stdout_bytes": 0,
+      "stderr_bytes": 20986,
+      "stdout_tail": [],
+      "stderr_tail": [
+        "'matched'",
+        "'unknown'",
+        "",
+        "- ['matched', 'matched']",
+        "+ ['unknown', 'matched']",
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 115 tests in 0.362s",
+        "",
+        "FAILED (failures=6, errors=1, skipped=3)"
+      ]
+    },
+    {
+      "name": "owner_cd_admission",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.test_owner_cd_admission"
+      ],
+      "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019",
+      "env": {
+        "PATH": "/usr/bin:/bin",
+        "HOME": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-opt-20261019/research/evidence/ark_runtime/c9_integration_20261019/latest_static_repair_20261019/.home-wsl",
+        "TMPDIR": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-opt-20261019/research/evidence/ark_runtime/c9_integration_20261019/latest_static_repair_20261019/.tmp-wsl",
+        "PYTHONPATH": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019",
+        "PYTHONPYCACHEPREFIX": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-opt-20261019/research/evidence/ark_runtime/c9_integration_20261019/latest_static_repair_20261019/.pycache-wsl",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0",
+        "LC_ALL": "C.UTF-8",
+        "LANG": "C.UTF-8",
+        "TZ": "Asia/Shanghai",
+        "SOURCE_DATE_EPOCH": "0"
+      },
+      "exit_code": 0,
+      "status": "pass",
+      "started_at": "2026-10-19T07:52:03.258662+00:00",
+      "wall_seconds": 2.630394572,
+      "log": "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-opt-20261019/research/evidence/ark_runtime/c9_integration_20261019/latest_static_repair_20261019/logs-wsl/owner_cd_admission.log",
+      "stdout_bytes": 0,
+      "stderr_bytes": 1047,
+      "stdout_tail": [],
+      "stderr_tail": [
+        "test_candidate_metadata_cannot_change_the_default_selection_gate (tests.test_owner_cd_admission.AdmissionBoundaryTests) ... ok",
+        "test_complete_syntax_and_explicit_selection_do_not_bypass_review (tests.test_owner_cd_admission.AdmissionBoundaryTests) ... ok",
+        "test_d_is_available_only_by_explicit_research_selection (tests.test_owner_cd_admission.AdmissionBoundaryTests) ... ok",
+        "test_model_bytes_frozen_and_missing_artifact_fails_closed (tests.test_owner_cd_admission.AdmissionBoundaryTests) ... ok",
+        "test_selection_rejects_pending_without_instantiation (tests.test_owner_cd_admission.AdmissionBoundaryTests) ... ok",
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 7 tests in 0.453s",
+        "",
+        "OK (skipped=2)"
+      ]
+    }
+  ]
+}

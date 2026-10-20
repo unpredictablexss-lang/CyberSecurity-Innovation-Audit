@@ -1,0 +1,51 @@
+{
+  "schema": "c9-latest-static-repair-summary/v1",
+  "generated_at": "2026-10-19T07:58:06.678831+00:00",
+  "checkout": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+  "head": "09ba5aba03c7c7d6787bace349b8fc0a6b0a5457",
+  "source_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+  "source_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+  "repair_diff": {
+    "path": "repair.diff",
+    "sha256": "a35c9d0482da41aeac4b6e26c6647bb6f8ddaad4ba92d9928a44be385f8cda94",
+    "bytes": 139240
+  },
+  "files": [
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/runtime_ir.py",
+      "sha256": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+      "bytes": 7468
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/syntax.py",
+      "sha256": "c3616ad6404967927d1a4a98c46257f8df19c3c36990efbae82c859f5108bcf9",
+      "bytes": 8088
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/type_origin.py",
+      "sha256": "a5ca62d12988de3ee8019b02ca146d3a333b96c56021e2b7239a0e6f587bfd29",
+      "bytes": 29358
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/runtime_exception.py",
+      "sha256": "c253edcb7716b4f785ab132bbc7b519aabaf9b736280bcc631a37f96306385ac",
+      "bytes": 38510
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/size_overflow.py",
+      "sha256": "6d2bab177c9525ddd68d3ff345480765f4d922b76b85918b02234c79f0b1282f",
+      "bytes": 15518
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/receiver_guard.py",
+      "sha256": "80cb6c3239cfc18be3ef3c47e26a10ac44084ff671df828dd88a70dbe0833461",
+      "bytes": 10535
+    }
+  ],
+  "scope": "Only src/ohscanner/detectors/ark_runtime and tests/detectors/ark_runtime were eligible; actual edits are source modules only.",
+  "semantics": {
+    "detector_version": "0.6.2",
+    "static_model_version": "0.8.13",
+    "policy": "pinned-source import-completeness only; no contracts/Runner/Catalog/test edits"
+  }
+}
