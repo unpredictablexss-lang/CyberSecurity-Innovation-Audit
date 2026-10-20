@@ -9,7 +9,8 @@ from typing import Literal
 from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, ConfigDict, Field
-from .operations import approved_url, date_selection, enqueue_branch_comparison, enqueue_range
+from .operations import (approved_url, date_selection, enqueue_branch_comparison, enqueue_range,
+                         range_plan, multimode_triage_preview, bind_multimode_triage)
 from .operations_store import Operations, END
 from .operation_limits import MAX_DETECTOR_IDS
 from .store import now
@@ -76,7 +77,25 @@ class SyncRequest(Strict):
     timeout_seconds: int = Field(default=900, ge=10, le=3600)
 
 
-class RangeRequest(Strict):
+class EndpointTriageApproval(Strict):
+    consent_nonce: str = Field(pattern=r"^[0-9a-f]{32}$")
+    consent_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class AuthorizedOperationRequest(Strict):
+    auto_triage: bool = False
+    max_triage_candidates: int = Field(default=3, ge=1, le=5)
+    max_r2_candidates: int = Field(default=0, ge=0, le=5)
+    max_cost_usd: str | None = Field(default=None, pattern=r"^\\d{1,6}(?:\\.\\d{1,8})?$")
+    triage_approvals: list[EndpointTriageApproval] = Field(default_factory=list, max_length=8)
+
+
+class IntelligentOperationPreviewRequest(Strict):
+    kind: Literal["range", "date", "branches", "matrix"]
+    payload: dict
+
+
+class RangeRequest(AuthorizedOperationRequest):
     repository_id: str
     baseline: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
     endpoint: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
@@ -87,7 +106,7 @@ class RangeRequest(Strict):
     audit_mode: Literal["standard_review", "static_only"] = "standard_review"
 
 
-class DateRangeRequest(Strict):
+class DateRangeRequest(AuthorizedOperationRequest):
     repository_id: str
     branch: str = Field(min_length=1, max_length=200)
     start: str = Field(min_length=10, max_length=40)
@@ -108,7 +127,7 @@ class DateRangePreviewRequest(Strict):
     timezone: str = Field(min_length=1, max_length=100)
 
 
-class MatrixRequest(Strict):
+class MatrixRequest(AuthorizedOperationRequest):
     case_id: str
     repository_id: str
     audit_mode: Literal["standard_review", "static_only"] = "standard_review"
@@ -119,7 +138,7 @@ class MatrixRequest(Strict):
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
 
-class BranchComparisonRequest(Strict):
+class BranchComparisonRequest(AuthorizedOperationRequest):
     repository_id: str
     audit_mode: Literal["standard_review", "static_only"] = "standard_review"
     baseline_ref: str = Field(min_length=1, max_length=200)
@@ -770,6 +789,69 @@ def install_routes(app: FastAPI, settings, store):
         return ops.create("source_sync", {"name": body.repository, "url": url,
                                           "timeout_seconds": body.timeout_seconds})
 
+    @router.post("/operations/intelligent-previews")
+    def intelligent_operation_preview(body: IntelligentOperationPreviewRequest):
+        """Only preview source egress, never queue scans or invoke a provider."""
+        from .agent import ProviderConfig
+        schemas = {"range": RangeRequest, "date": DateRangeRequest,
+                   "branches": BranchComparisonRequest, "matrix": MatrixRequest}
+        request = schemas[body.kind].model_validate(body.payload)
+        if not request.auto_triage or request.audit_mode != "standard_review":
+            raise ValueError("select intelligent review before previewing model source disclosure")
+        if request.max_r2_candidates > request.max_triage_candidates:
+            raise ValueError("deep research limit cannot exceed candidate limit")
+        if request.triage_approvals:
+            raise ValueError("preview does not accept previously approved source consent")
+        if request.max_cost_usd is None:
+            raise ValueError("automatic model triage requires a USD budget")
+        payload = request.model_dump()
+        if body.kind == "date":
+            selection = date_selection(settings, store, request.repository_id, request.branch,
+                                       request.start, request.end, request.timezone)
+            payload.update({"baseline": selection["baseline"], "endpoint": selection["endpoint"]})
+        if body.kind in {"date", "range"}:
+            _, left, right, _ = range_plan(
+                settings, store, payload["repository_id"], payload["baseline"], payload["endpoint"],
+                payload["include_paths"], payload["detector_ids"], payload["timeout_seconds"],
+                payload["memory_mb"])
+            specs = [left, right]
+        elif body.kind == "branches":
+            repo = store.repository(request.repository_id)
+            service.check_repository(settings, repo["path"])
+            commits = [service.revision(repo, ref)["commit"] for ref in
+                       (request.baseline_ref, request.endpoint_ref)]
+            if commits[0] == commits[1]:
+                raise ValueError("comparison refs resolve to the same commit")
+            specs = [service.make_spec(repo, ref, request.include_paths, request.detector_ids,
+                                      request.timeout_seconds, request.memory_mb) for ref in commits]
+        else:
+            if len(set(request.commits)) != len(request.commits):
+                raise ValueError("version matrix commits must be distinct")
+            if any(not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", sha)
+                   for sha in request.commits):
+                raise ValueError("version matrix requires complete Git commit hashes")
+            repo = store.repository(request.repository_id)
+            service.check_repository(settings, repo["path"])
+            if not any(case["id"] == request.case_id for case in store.cases()):
+                raise ValueError("matrix investigation case not found")
+            links = _case_links(store, request.case_id)
+            if not any(store.repository(store.job(link["job_id"])["repository_id"])["name"] == repo["name"]
+                       for link in links):
+                raise ValueError("matrix case must link a candidate from this repository")
+            specs = [service.make_spec(repo, sha, request.include_paths, request.detector_ids,
+                                      request.timeout_seconds, request.memory_mb) for sha in request.commits]
+        provider = ProviderConfig.from_env(settings.data_dir)
+        previews = multimode_triage_preview(specs, payload, provider,
+                                           [uuid.uuid4().hex for _ in specs])
+        return {
+            "kind": body.kind, "endpoint_count": len(previews),
+            "endpoints": previews,
+            "aggregate_estimated_cost": _aggregate_agent_budget_cost_estimates(
+                item.get("estimated_cost") for item in previews),
+            "note": ("Each endpoint has a separate fixed-commit model disclosure consent. "
+                     "This preview does not send source; approval binds exact source and provider."),
+        }
+
     @router.post("/operations/revision-ranges", status_code=201)
     def revision_range(body: RangeRequest):
         return enqueue_range(settings, store, ops, body.model_dump())
@@ -808,7 +890,9 @@ def install_routes(app: FastAPI, settings, store):
             raise ValueError("version matrix case must already link a candidate from the selected repository")
         specs = [service.make_spec(repo, sha, body.include_paths, body.detector_ids,
                                    body.timeout_seconds, body.memory_mb) for sha in body.commits]
-        specs = [{**spec, "audit_mode": body.audit_mode} for spec in specs]
+        specs = bind_multimode_triage(
+            settings, [{**spec, "audit_mode": body.audit_mode} for spec in specs],
+            body.model_dump())
         return ops.create_with_scans("version_matrix", {"case_id": body.case_id,
             "repository_id": repo["id"], "audit_mode": body.audit_mode, "commits": [s["commit"] for s in specs],
             "timeout_seconds": body.timeout_seconds * len(specs) + 120,
