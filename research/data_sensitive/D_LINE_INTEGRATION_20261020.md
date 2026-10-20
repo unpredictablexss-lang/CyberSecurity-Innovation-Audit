@@ -8,7 +8,7 @@
 |---|---|
 | D 研发分支 | 已完成 D104／T103 收尾；`origin/codex/d-owner-20261020-01a1571f` = `d39685ba504d9bd31978107fce7e19f803cf1353`。检测器版本为 `sensitive_exposure 0.21.17`、`known_disclosed_cves 0.19.11`。 |
 | 本次集成分支 | `codex/d-integration-20261020`；代码验收快照 `f076b8c667b619c1454b03da3e5ef4e0e8a23611`，基于最新核实的 `origin/main 0f53af62283dbd0f249280805e8286a04b2d43b9`。 |
-| main | 截至本报告编写时远端 `main` 为 `0f53af62283dbd0f249280805e8286a04b2d43b9`；本 D 集成尚未计入 main。 |
+| main | 已 fast-forward 至 `4b0e16576a45a111b4fad7e8f82819a47ed472f5`；推送回执确认从 `0f53af62283dbd0f249280805e8286a04b2d43b9` 更新成功。 |
 | 运行服务 | 未在本次可确认授权的运行环境内检查或重启；不能声称服务运行了本 D 版本。 |
 
 原项目 checkout `D:\openHarmonyScanner\CyberSecurity-Innovation-Audit` 是 A 线工作树，存在 723 项未提交修改；全程保留。集成工作只在独立 worktree `D:\openHarmonyScanner\worktrees\d-integration-20261020` 完成。启动时重新 fetch 后确认远端 main 从历史线索 `dd8b12b9f` 前进到 `0f53af622`（两条 IPC closeout 提交），集成提交已 rebase 到该最新基线。
@@ -47,7 +47,7 @@
 - 固定源码 snapshot SHA-256：`9894780c6bf1ac9ddcfc78defb41fce95402a936b240e1375a13fe4aa7842eb7`
 - Worker 报告 SHA-256：`59535facac4bb5c50feef299ef7487068405280f56fe33a1c0d5775686bdae54`
 - 验证摘要 SHA-256：`8e6077281b3e1de66986a1aac9d7ee05ba09301d2df3428e6026750029c26322`
-- 集成 JSON SHA-256（本文件快照）：`87b5a2ec457dd633171ef6c49a8266fdc6daf4200d3827aa94eb65cb180fc876`
+- 集成 JSON SHA-256：`58b74c831358e919fd6a5a943dbf7fd372f4b039e73afc6d7aa7df3925726a97`
 - 本地 data-dir：`D:\openHarmonyScanner\tmp\d-cert-scan-data-20261020b`；未提交数据库/运行缓存。报告和 artifacts 保留于该目录，summary JSON 保存各文件名、大小和 SHA-256。
 
 历史 D103 arkui_napi 回放仍是 0 diagnostics 且 `blocked`，分析 3 项 partial；零候选不是安全结论。T103 的历史 24 条 certificate diagnostics 与本轮接线中 D 24 条一致，当前 job 额外运行其他显式 detector，故总数 126 不与历史 24 混为同一统计口径。
@@ -58,6 +58,6 @@
 
 ## 发布动作
 
-本报告快照创建时，必要代码已在集成分支并通过 D/data/compat 验收，但尚未进入 `main`。发布时应先核对远端 `main` 未再次前进，再将集成提交 fast-forward 到 `main`（若保护规则要求 PR，则按仓库规则经 PR/CI 集成），记录实际 main SHA。服务重启仅能在其已授权的部署环境完成并核对运行版本；本次没有声称已重启或已部署。
+集成分支与报告已推送到远端；`git push origin HEAD:refs/heads/main` 成功将 main 从 `0f53af62283dbd0f249280805e8286a04b2d43b9` fast-forward 至 `4b0e16576a45a111b4fad7e8f82819a47ed472f5`。后续一次 fetch 因 GitHub HTTPS 暂时不可达而失败；推送成功回执和本地更新后的 origin/main/ref 均记录相同 SHA。服务重启仅能在其已授权的部署环境完成并核对运行版本；本次没有声称已重启或已部署。
 
 没有自动开启 D105 或第二层模型研发。
