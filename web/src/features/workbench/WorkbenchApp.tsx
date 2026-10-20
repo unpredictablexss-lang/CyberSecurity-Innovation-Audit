@@ -9,7 +9,7 @@ import { go, Header, useRoute } from "../../components";
 import RepositoryAudit from "../audits/RepositoryAudit";
 import OperationWorkspace from "../audits/OperationWorkspace";
 import JobDetail from "../../pages/JobDetail";
-import { Investigations, ReportCenter, RiskCenter, ScanTable, SettingsView, TaskCenter } from "./WorkspaceViews";
+import { AuditRiskOverview, Investigations, ReportCenter, RiskCenter, ScanTable, SettingsView, TaskCenter } from "./WorkspaceViews";
 import { auditLinks, detailTab, resolveRoute } from "./navigation";
 const { Text, Paragraph } = Typography;
 function Workspace() {
@@ -20,7 +20,7 @@ function Workspace() {
   const refresh = useCallback(async () => {
     const ticket = ++sequence.current;
     try {
-      const [r, d, j, h, c] = await Promise.all([api("/repositories"), api("/detectors"), api("/scans"), api("/health"), api("/cases")]);
+      const [r, d, j, h, c] = await Promise.all([api("/repositories/list"), api("/detectors"), api("/scans"), api("/health"), api("/cases")]);
       if (!live.current || ticket !== sequence.current) return;
       setRepos(r); setDetectors(d); setJobs(j); setHealth(h); setCases(c); setError("");
     } catch (e) { if (live.current && ticket === sequence.current) setError(String(e)); }
@@ -40,12 +40,12 @@ function Workspace() {
   const operationMatch = path.match(/^\/tasks\/operations\/([A-Za-z0-9_-]+)$/);
   const taskMatch = path.match(/^\/tasks\/([A-Za-z0-9_-]+)$/);
   if (operationMatch) content = <OperationWorkspace key={path} view="queue" operationId={operationMatch[1]} />;
-  else if (taskMatch) content = <JobDetail key={path + route.query.get("tab")} id={taskMatch[1]} initialTab={detailTab(route.query.get("tab"))} candidateId={route.query.get("candidate_id") || undefined} sourceFile={route.query.get("source_file") || undefined} sourceLine={Number(route.query.get("source_line")) || undefined} />;
-  else if (path === "/audits/repository") content = <RepositoryAudit repos={repos} detectors={detectors} refresh={refresh} />;
+  else if (taskMatch) content = <JobDetail key={path + route.query.get("tab")} id={taskMatch[1]} health={health} initialTab={detailTab(route.query.get("tab"))} candidateId={route.query.get("candidate_id") || undefined} sourceFile={route.query.get("source_file") || undefined} sourceLine={Number(route.query.get("source_line")) || undefined} />;
+  else if (path === "/audits/repository") content = <RepositoryAudit repos={repos} detectors={detectors} health={health} refresh={refresh} />;
   else if (path === "/audits/time") content = <OperationWorkspace key={path} view="date" />;
   else if (path === "/audits/versions") content = <OperationWorkspace key={route.canonical} view="branches" context={context} />;
   else if (path === "/tasks") content = <TaskCenter jobs={jobs} />;
-  else if (path === "/risks") content = <RiskCenter jobs={jobs} />;
+  else if (path === "/risks") content = <RiskCenter key={route.canonical} jobs={jobs} query={route.query} />;
   else if (path === "/investigations") content = <Investigations key={route.canonical} context={context} />;
   else if (path === "/poc") content = <OperationWorkspace key={route.canonical} view="validation" context={context} />;
   else if (path === "/impact") content = <OperationWorkspace key={path} view="matrix" />;
@@ -60,7 +60,10 @@ function Workspace() {
       { label: "已保存扫描", value: jobs.filter((j) => j.report_sha256).length, note: "当前列表 · 绑定固定源码" },
       { label: "调查案例", value: cases.length, note: "人工关联，不代表已确认漏洞" },
     ].map((item) => <Col xs={24} sm={12} lg={6} key={item.label}><Card className="stat-card"><Statistic title={item.label} value={item.value} /><div className="muted">{item.note}</div></Card></Col>)}</Row>
-    <Alert className="section-gap" type="info" showIcon message="候选、组件复现与产品漏洞分别记录" description="0 条候选不是安全证明。真实模型未连接；组件 Harness 通过也需要产品入口、权限和 CIA 证据才能支持漏洞确认。" />
+    <Alert className="section-gap" type="info" showIcon
+      message={provider?.configured ? "模型服务已配置；每次任务仍须明确授权源码外发" : "模型服务尚未配置"}
+      description={(provider?.configured ? provider.provider + " · " + provider.model + " · " + provider.endpoint_host : "静态扫描、人工复核和证据查看仍可使用") + "。配置状态不代表最近连通性探测通过或研判效果已验收；组件 Harness 通过也需要产品入口、权限和 CIA 证据才能支持漏洞确认。"} />
+    <AuditRiskOverview />
     <Row gutter={[18, 18]} className="section-gap overview-details"><Col xs={24} xl={16}><Card className="recent-tasks" title="最近审计任务" extra={<Button type="link" onClick={() => go("/tasks")}>查看全部 →</Button>}><ScanTable jobs={jobs} compact /></Card></Col>
       <Col xs={24} xl={8}><Card title="能力与覆盖" extra={<Button type="link" onClick={() => go("/settings/capabilities")}>能力详情</Button>}><div className="capability-summary">
         <div><span>C/C++ 自研检测</span><Text strong>{detectors.filter((d) => d.kind === "research_candidate" && d.supported_languages?.some((l: string) => ["c", "cpp", "c++"].includes(l.toLowerCase()))).length ? "已接入研究规则" : "以规则清单为准"}</Text></div>
@@ -81,7 +84,7 @@ function Workspace() {
         { key: "workspace-label", type: "group", label: "工作区", children: [] },
         { key: "/overview", icon: <AppstoreOutlined />, label: "总览" },
         { key: "new-audit", icon: <PlusOutlined />, label: "新建审计", children: [
-          { key: "/audits/repository", icon: <FolderOutlined />, label: "仓库安全扫描" },
+          { key: "/audits/repository", icon: <FolderOutlined />, label: auditLinks.find((item) => item.path === "/audits/repository")?.title || "仓库审计" },
           { key: "/audits/time", icon: <CalendarOutlined />, label: "时间增量扫描" },
           { key: "/audits/versions", icon: <BranchesOutlined />, label: "跨版本安全分析" },
         ] },

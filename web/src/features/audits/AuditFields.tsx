@@ -7,18 +7,19 @@ const { Text } = Typography;
 export type AuditProps = { repos: any[]; detectors: any[]; refresh: () => Promise<void> };
 export function useRepositoryRefs(repositoryId?: string) {
   const [refs, setRefs] = useState<any[]>([]);
+  const [loadedFor, setLoadedFor] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const gate = useRef(requestGate());
   useEffect(() => {
-    const ticket = gate.current.next(); setRefs([]); setError(""); setLoading(Boolean(repositoryId));
+    const ticket = gate.current.next(); setRefs([]); setLoadedFor(null); setError(""); setLoading(Boolean(repositoryId));
     if (repositoryId) void api("/repositories/" + repositoryId + "/revisions")
-      .then((items) => { if (gate.current.current(ticket)) setRefs(items); })
+      .then((items) => { if (gate.current.current(ticket)) { setRefs(items); setLoadedFor(repositoryId); } })
       .catch((e) => { if (gate.current.current(ticket)) setError(String(e)); })
       .finally(() => { if (gate.current.current(ticket)) setLoading(false); });
     return () => gate.current.invalidate();
   }, [repositoryId]);
-  return { refs, error, loading };
+  return { refs: loadedFor === (repositoryId || null) ? refs : [], error, loading, loadedFor };
 }
 export function RepositoryField({ repos, onChange, refresh }: { repos: any[]; onChange: () => void; refresh?: () => Promise<void> }) {
   const [catalog, setCatalog] = useState<any[] | null>(null);
@@ -41,6 +42,7 @@ export function RepositoryField({ repos, onChange, refresh }: { repos: any[]; on
   };
   useEffect(() => { void loadCatalog(); }, []);
   const available = (catalog || []).filter((item) => item.status === "available");
+  const unavailable = (catalog || []).filter((item) => item.status !== "available");
   const options = available.map((item) => ({ value: item.id, label: item.display_name || item.name }));
   return <>
     <Form.Item name="repository_id" label="审计仓库" rules={[{ required: true, message: "请选择通过目录和 Git 校验的仓库" }]}>
@@ -66,14 +68,20 @@ export function RepositoryField({ repos, onChange, refresh }: { repos: any[]; on
     {!catalogLoading && catalog !== null && !catalogError && available.length === 0 && <Alert className="section-gap" type="warning" showIcon
       message="尚无通过安全校验的可审计仓库" description="请前往“系统设置 → 仓库与源码管理”，在服务端已批准的源码根目录中发现并登记 Git 仓库。"
       action={<Button size="small" type="link" onClick={() => go("/settings/sources")}>前往设置</Button>} />}
-    {!catalogLoading && catalog !== null && !catalogError && available.length > 0 && <Text type="secondary">
-      已核验 {available.length} 个可用仓库；选择器仅显示名称，不显示服务器物理路径。当前登记总数 {repos.length}。
-    </Text>}
+    {!catalogLoading && catalog !== null && !catalogError && available.length > 0 && <Space className="section-gap" direction="vertical" align="start">
+      <Text type="secondary">
+        已核验 {available.length} 个可用仓库；选择器仅显示名称，不显示服务器物理路径。当前登记总数 {catalog.length}。
+      </Text>
+      {unavailable.length > 0 && <Alert showIcon type="warning"
+        message={`另有 ${unavailable.length} 个已登记仓库当前无法用于审计`}
+        description="仓库路径、Git 对象或源码根目录授权可能已变化。前往仓库与源码管理查看具体原因；本次只能选择通过校验的仓库。"
+        action={<Button size="small" type="link" onClick={() => go("/settings/sources")}>检查设置</Button>} />}
+    </Space>}
   </>;
 }
 export function RefField({ name, label, refs, required = true }: { name: string; label: string; refs: any[]; required?: boolean }) {
   return <Form.Item name={name} label={label} rules={[{ required, message: "请选择或填写版本" }]}>
-    <AutoComplete allowClear options={refs.map((r) => ({ value: r.ref }))} placeholder="分支、Tag 或完整 Commit SHA"
+    <AutoComplete allowClear options={refs.map((r) => ({ value: r.ref, label: r.is_default ? r.ref + "（默认分支）" : r.ref }))} placeholder="分支、Tag 或完整 Commit SHA"
       filterOption={(input, option) => String(option?.value).toLowerCase().includes(input.toLowerCase())} />
   </Form.Item>;
 }
@@ -104,9 +112,8 @@ export function RuleNotice({ detectors }: { detectors: any[] }) {
   </div>;
 }
 export function ScopeAvailability() {
-  return <div className="scope-note"><Space wrap><Text strong>审计范围</Text><Text>单个已登记仓库</Text>
-    <Button size="small" disabled>多仓</Button><Button size="small" disabled>全部官方活跃仓库</Button></Space>
-    <p>官方仓库目录、归档选择与多仓编排尚未接入；当前只读已登记的本地 Git 对象。</p>
+  return <div className="scope-note"><Space wrap><Text strong>审计范围</Text><Text>单仓库 · 固定版本快照</Text></Space>
+    <p>每个任务固定一个已登记仓库和版本。官方仓库目录与多仓批量审计尚未开放；请先在设置中登记本地仓库，再按仓库分别创建任务。</p>
     <Button type="link" onClick={() => go("/settings/sources")}>登记仓库或显式同步源码 →</Button></div>;
 }
-export const auditDefaults = { include_text: ".", timeout_seconds: 600, memory_mb: 2048, full_rules_research: false };
+export const auditDefaults = { include_text: ".", timeout_seconds: 600, memory_mb: 2048, full_rules_research: false, audit_mode: "standard_review" };

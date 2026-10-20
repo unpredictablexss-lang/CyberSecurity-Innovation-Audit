@@ -4,6 +4,7 @@ import { api } from "../../api";
 
 export default function AgentProviderSettings() {
   const [form] = Form.useForm();
+  const [modal, contextHolder] = Modal.useModal();
   const [settings, setSettings] = useState<any>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -26,7 +27,7 @@ export default function AgentProviderSettings() {
     } catch (e) { setError(String(e)); }
     finally { setBusy(false); }
   };
-  const test = () => Modal.confirm({
+  const test = () => modal.confirm({
     title: "测试模型 API 连通性？",
     content: "将向已配置端点发送一条固定的无源码请求，验证 API 连通性和调查所用的 JSON Schema 结构化输出（最多输出 32 tokens），可能产生少量 API 费用；不会创建调查任务或发送候选源码。该检查不验证工具调用、代码分析、引用正确性或模型质量。",
     okText: "发送无源码测试", cancelText: "取消",
@@ -37,9 +38,9 @@ export default function AgentProviderSettings() {
       finally { setBusy(false); }
     },
   });
-  const clear = () => Modal.confirm({
+  const clear = () => modal.confirm({
     title: "移除已保存的 API Key？",
-    content: "移除后真实模型调查将不可用，已有 R0 记录和扫描数据不会受影响。",
+    content: "移除后真实模型调查将不可用，已有人工静态复核记录和扫描数据不会受影响。",
     okText: "移除 Key", cancelText: "保留",
     onOk: async () => {
       setBusy(true); setError(""); setProbe(null);
@@ -49,9 +50,12 @@ export default function AgentProviderSettings() {
     },
   });
   return <Card title="Agent / LLM 模型服务" extra={<Button onClick={() => void refresh()} disabled={busy}>刷新状态</Button>}>
+    {contextHolder}
     <Alert className="section-gap" type="info" showIcon message="凭据由本地服务保存；面板不会回显 API Key，保存也不会发送源码。"
       description="单机模式将 Key 存在 OHSCANNER_DATA 下独立且仅当前系统用户可读写的文件，不写入 Git、SQLite 或任务记录。共享/托管部署应接入系统密钥库或外部 Secret Manager。候选源码外发仍需逐次预览并批准。" />
     {settings && !settings.editable && <Alert className="section-gap" type="warning" showIcon message="配置由服务环境变量管理，面板只读。" />}
+    <Alert className="section-gap" type="info" showIcon message="小米 MiMo 后端接入方式"
+      description="本地 Agent 后端仅支持 MiMo 按量 API（https://api.xiaomimimo.com/v1，普通 API Key）。Token Plan 专用端点和 tp-/ttp- 密钥的条款只允许受支持的编程工具，不允许接入自建应用后端；服务端会拒绝 token-plan-*.xiaomimimo.com 地址。" />
     {settings?.base_url && (() => {
       try {
         const endpoint = new URL(settings.base_url);

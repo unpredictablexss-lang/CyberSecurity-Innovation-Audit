@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import json
 import os
 from pathlib import Path
@@ -7,7 +7,30 @@ from pathlib import Path
 @dataclass(frozen=True)
 class Settings:
     data_dir: Path
-    target_roots: tuple[Path, ...]
+    _configured_target_roots: tuple[Path, ...] = field(repr=False)
+
+    def __init__(self, data_dir, target_roots):
+        object.__setattr__(self, "data_dir", Path(data_dir))
+        object.__setattr__(self, "_configured_target_roots", tuple(Path(root) for root in target_roots))
+
+    @property
+    def target_roots(self):
+        """Configured roots plus operator-managed roots, reloaded for each use."""
+        from .source_roots import load_managed_roots, managed_root_is_current
+
+        roots = list(self._configured_target_roots)
+        roots.extend(
+            Path(row["path"]) for row in load_managed_roots(self.data_dir)
+            if managed_root_is_current(row)
+        )
+        unique = []
+        seen = set()
+        for root in roots:
+            normalized = Path(root)
+            if normalized not in seen:
+                seen.add(normalized)
+                unique.append(normalized)
+        return tuple(unique)
 
     @classmethod
     def from_env(cls):

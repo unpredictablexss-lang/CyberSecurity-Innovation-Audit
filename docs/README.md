@@ -1,6 +1,6 @@
 # OHScanner：新 Agent 从这里开始
 
-更新：2026-10-18。负责人本轮集成验收为 http://localhost:18778；18775、原入口与未提交工作保留，详见当前状态。项目是 OpenHarmony 开源代码漏洞挖掘竞赛工具，不是通用 Web 漏扫器。
+更新：2026-10-20。当前 8765 本地集成验收基线为 `integration/ohscanner-8765-20261019`，HEAD `631901a90513748d7d72e8c15fa9f9f131132259`，工作树含未提交集成改动；详见[当前状态](项目现状与下一步.md)和[智能审计差距复核](../research/deliveries/smart_audit/P0_BASELINE_AND_GAP.md)。项目是 OpenHarmony 开源代码漏洞挖掘竞赛工具，不是通用 Web 漏扫器。
 本目录六份 Markdown 是当前权威方案；其中“目标”不是“已实现”。
 历史教程、阶段路线图和长篇状态流水已从当前目录移除，证据可按 Git 固定提交追溯。
 
@@ -50,3 +50,7 @@ Core-only / 单次 LLM review / 工具型 Agent 是另一个实验比较维度�
 保留未提交改动；不整体覆盖 runner/catalog。未知保持 unknown，规则/模型输出默认 candidate。
 本机入口 /home/audit/ohscanner/app；Windows 浏览器 http://localhost:8765。
 历史基线 143fa63 保留旧文档；缺失实验细节用固定 Git 版本查，不重新恢复一套“旧权威方案”。
+
+## 2026-10-20 隔离端到端验收补充
+
+当前工作树在隔离端口 18776 和临时数据目录完成仓库发现、固定版本扫描、候选/覆盖查看、报告快照与重复生成检查。测试发现并修复缺失哈希导致任务详情白屏的问题。完整证据和边界见 [面板功能与验收](面板功能与验收.md) 与 [智能审计差距复核](../research/deliveries/smart_audit/P0_BASELINE_AND_GAP.md)。8765 未重启，所有发现仍为 candidate/unknown。

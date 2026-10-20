@@ -7,6 +7,7 @@ import {
   Form,
   Input,
   Modal,
+  Popconfirm,
   Row,
   Space,
   Table,
@@ -14,8 +15,9 @@ import {
   Typography,
   message,
 } from "antd";
-import { api } from "../api";
+import { api, apiDelete } from "../api";
 import { Hash, Header } from "../components";
+import { canUseCatalog, canUseVerifiedRepository, filterManagedRepositories } from "../features/workbench/repositoryState.js";
 const { Text } = Typography;
 
 export default function Repositories({
@@ -30,21 +32,34 @@ export default function Repositories({
   embedded?: boolean;
 }) {
   const [form] = Form.useForm();
+  const [rootForm] = Form.useForm();
   const [error, setError] = useState("");
+  const [rootError, setRootError] = useState("");
   const [refs, setRefs] = useState<any[] | null>(null);
   const [catalog, setCatalog] = useState<any[]>([]);
+  const [managedRepos, setManagedRepos] = useState<any[]>([]);
+  const [rootCatalog, setRootCatalog] = useState<any[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
   const [catalogError, setCatalogError] = useState("");
   const [discovery, setDiscovery] = useState<any>(null);
   const [discoveryBusy, setDiscoveryBusy] = useState<number | null>(null);
   const [registering, setRegistering] = useState(false);
+  const [addingRoot, setAddingRoot] = useState(false);
+  const [removingRoot, setRemovingRoot] = useState<string | null>(null);
+  const [repositorySearch, setRepositorySearch] = useState("");
 
   const loadCatalog = async () => {
     setCatalogLoading(true);
     setCatalogError("");
     try {
-      const result = await api("/repositories/catalog");
+      const [result, managed, sourceRoots] = await Promise.all([
+        api("/repositories/catalog"),
+        api("/repositories/managed"),
+        api("/repositories/roots"),
+      ]);
       setCatalog(Array.isArray(result) ? result : []);
+      setManagedRepos(Array.isArray(managed) ? managed : []);
+      setRootCatalog(Array.isArray(sourceRoots) ? sourceRoots : []);
     } catch (reason) {
       setCatalogError(String(reason));
     } finally {
@@ -54,22 +69,55 @@ export default function Repositories({
   useEffect(() => { void loadCatalog(); }, []);
 
   const catalogById = new Map(catalog.map((item) => [item.id, item]));
-  const rootRows = roots.map((path, index) => {
+  const visibleRepositories = filterManagedRepositories(managedRepos, catalog, repositorySearch);
+  const rootRows = rootCatalog.length ? rootCatalog.map((root: any) => ({
+    key: root.id, id: root.id, index: root.index, path: root.path, label: root.alias,
+    count: root.repository_count, status: root.status, managed: root.managed,
+  })) : roots.map((path, index) => {
     const normalized = String(path).replace(/\/+$/, "");
     const count = repos.filter((repo) => String(repo.path || "").startsWith(normalized + "/")).length;
-    return { key: index, index, path, label: "源码根目录 " + (index + 1) + " · " + (normalized.split("/").pop() || normalized), count };
+    return { key: index, index, path, label: "源码根目录 " + (index + 1) + " · " + (normalized.split("/").pop() || normalized), count, status: "unknown", managed: false };
   });
-  const discover = async (rootIndex: number) => {
-    setDiscoveryBusy(rootIndex);
+  const discover = async (rootId: string) => {
+    setDiscoveryBusy(rootRows.find((root: any) => root.id === rootId)?.index ?? null);
     setDiscovery(null);
-    setError("");
+    setRootError("");
     try {
-      const result = await api("/repositories/discover?root_index=" + rootIndex);
+      const result = await api("/repositories/discover?root_id=" + encodeURIComponent(rootId));
       setDiscovery(result);
     } catch (reason) {
-      setError(String(reason));
+      setRootError(String(reason));
     } finally {
       setDiscoveryBusy(null);
+    }
+  };
+  const addRoot = async (values: { alias?: string; path: string }) => {
+    setAddingRoot(true);
+    setRootError("");
+    try {
+      await api("/repositories/roots", values);
+      rootForm.resetFields();
+      await loadCatalog();
+      await refresh();
+      message.success("受控源码根目录已添加；可立即发现并登记其中的 Git 仓库");
+    } catch (reason) {
+      setRootError(String(reason));
+    } finally {
+      setAddingRoot(false);
+    }
+  };
+  const removeRoot = async (rootId: string) => {
+    setRemovingRoot(rootId);
+    setRootError("");
+    try {
+      await apiDelete("/repositories/roots/" + encodeURIComponent(rootId));
+      await loadCatalog();
+      await refresh();
+      message.success("源码根目录已移除；该目录下登记的仓库会变为不可用，历史任务快照保留");
+    } catch (reason) {
+      setRootError(String(reason));
+    } finally {
+      setRemovingRoot(null);
     }
   };
   const useDiscovered = (item: any) => {
@@ -84,20 +132,42 @@ export default function Repositories({
         title="仓库与源码管理"
         description="从服务端已批准的源码根目录发现仓库；审计流程只选择仓库名称。"
       />}
-      <Card className="section-gap" title="已批准的本地源码根目录" extra={<Text type="secondary">服务端安全配置 · 只读</Text>}>
-        <Alert type="info" showIcon
-          message="网页不会自动扩大服务端目录访问范围"
-          description="下表来自 OHSCANNER_TARGET_ROOTS 与本地仓库缓存。新增或移除根目录须由部署管理员修改服务端配置并重启；每次发现都会限制遍历深度、目录数、仓库数和时间预算，不跟随符号链接。"
+      <Card className="section-gap" title="受控本地源码根目录">
+        <Alert type="warning" showIcon
+          message="添加目录会允许 OHScanner 读取其中的本地 Git 仓库"
+          description="只登记你明确授权的源码目录。服务端会拒绝符号链接路径、磁盘挂载点、工作台数据目录、组/所有人可写目录和重叠路径；仓库发现有固定深度、数量和时间预算，不执行仓库钩子或网络同步。"
         />
+        {rootError && <Alert className="section-gap" type="error" showIcon message="源码管理操作失败" description={rootError} />}
+        {catalogError && <Alert className="section-gap" type="error" showIcon message="读取仓库与源码根目录失败" description={catalogError} />}
         <Table className="section-gap" size="small" pagination={false} rowKey="key" dataSource={rootRows}
-          locale={{ emptyText: "服务端尚未配置可用源码根目录" }}
+          loading={catalogLoading}
+          locale={{ emptyText: catalogLoading ? "正在读取服务端已批准的源码根目录…" : catalogError ? "读取失败，请检查上方错误信息后重试" : "服务端尚未配置可用源码根目录" }}
           columns={[
-            { title: "根目录", dataIndex: "label" },
-            { title: "服务器路径", dataIndex: "path", render: (value) => <Text code>{value}</Text> },
+            { title: "根目录别名", dataIndex: "label" },
+            { title: "服务端路径", dataIndex: "path", render: (value) => <Text code>{value}</Text> },
+            { title: "状态", dataIndex: "status", render: (value) => value === "available" ? <Tag color="green">可用</Tag> : value === "unavailable" ? <Tag color="red">不可用</Tag> : <Tag>未知</Tag> },
             { title: "已登记仓库", dataIndex: "count" },
-            { title: "操作", render: (_, row) => <Button loading={discoveryBusy === row.index} disabled={discoveryBusy !== null} onClick={() => void discover(row.index)}>发现 Git 仓库</Button> },
+            { title: "最近校验", dataIndex: "last_checked_at", render: (value) => value ? new Date(value).toLocaleString() : "部署配置" },
+            { title: "操作", render: (_: unknown, row: any) => <Space>
+              <Button loading={discoveryBusy === row.index} disabled={discoveryBusy !== null || !canUseVerifiedRepository({ loading: catalogLoading, error: catalogError, status: row.status })} onClick={() => void discover(row.id)}>发现 Git 仓库</Button>
+              {row.managed && <Popconfirm
+                title="移除这个源码根目录？"
+                description="其中登记的仓库将无法用于新审计，历史任务和快照仍保留。"
+                okText="移除" cancelText="取消"
+                onConfirm={() => void removeRoot(row.id)}
+              ><Button danger loading={removingRoot === row.id} disabled={!canUseCatalog({ loading: catalogLoading, error: catalogError }) || removingRoot !== null}>移除</Button></Popconfirm>}
+            </Space> },
           ]}
         />
+        <Form className="section-gap" form={rootForm} layout="inline" onFinish={addRoot}>
+          <Form.Item name="alias" label="目录别名" rules={[{ max: 80 }]}>
+            <Input placeholder="例如：G盘 OpenHarmony 镜像" />
+          </Form.Item>
+          <Form.Item name="path" label="服务器绝对路径" rules={[{ required: true, message: "请输入服务器上的目录绝对路径" }]}>
+            <Input style={{ width: 360 }} placeholder="/mnt/g/OpenHarmony-GitCode-Mirror/repos" />
+          </Form.Item>
+          <Button type="primary" htmlType="submit" loading={addingRoot}>校验并添加目录</Button>
+        </Form>
       </Card>
 
       {discovery && <Card className="section-gap" title={"发现结果 · " + discovery.root_name}>
@@ -119,13 +189,19 @@ export default function Repositories({
       <Row className="section-gap" gutter={20}>
         <Col span={16}>
           <Card title="已登记仓库与可用状态" extra={<Button onClick={() => void loadCatalog()} loading={catalogLoading}>重新核验</Button>}>
-            {catalogError && <Alert className="section-gap" type="error" showIcon message="仓库状态核验失败" description={catalogError} />}
+            <Space className="section-gap" wrap>
+              <Input.Search allowClear value={repositorySearch} onChange={(event) => setRepositorySearch(event.target.value)}
+                placeholder="搜索仓库名、来源、路径或状态" style={{ width: 360, maxWidth: "100%" }} />
+              <Text type="secondary">显示 {visibleRepositories.length} / {managedRepos.length} 个仓库</Text>
+            </Space>
             <Table
               loading={catalogLoading}
               rowKey="id"
-              dataSource={repos}
+              dataSource={visibleRepositories}
+              locale={{ emptyText: repositorySearch ? "没有匹配的仓库，请修改关键词或清空搜索。" : "尚未登记仓库" }}
               columns={[
                 { title: "仓库名称", dataIndex: "id", render: (_: string, repo: any) => <Text>{catalogById.get(repo.id)?.display_name || repo.name}</Text> },
+                { title: "来源根目录", render: (_: unknown, repo: any) => catalogById.get(repo.id)?.root_alias || "未知来源" },
                 {
                   title: "管理员可见的服务器路径",
                   dataIndex: "path",
@@ -144,7 +220,7 @@ export default function Repositories({
                   title: "操作",
                   render: (_: unknown, repo: any) => (
                     <Button
-                      disabled={catalogById.get(repo.id)?.status !== "available"}
+                      disabled={!canUseVerifiedRepository({ loading: catalogLoading, error: catalogError, status: catalogById.get(repo.id)?.status })}
                       onClick={() =>
                         api("/repositories/" + repo.id + "/revisions")
                           .then(setRefs)
@@ -174,6 +250,7 @@ export default function Repositories({
                   form.resetFields();
                   await refresh();
                   await loadCatalog();
+                  setDiscovery(null);
                   message.success("仓库已登记并重新核验");
                 } catch (reason) {
                   setError(String(reason));

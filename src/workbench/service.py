@@ -17,6 +17,58 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def audit_workflow_sha256(plan_sha256, audit_mode, auto_triage=False,
+                          max_triage_candidates=3, max_r2_candidates=0,
+                          max_cost_usd=None):
+    if audit_mode not in {"standard_review", "static_only"}:
+        raise ValueError("unsupported audit workflow mode")
+    if (not isinstance(auto_triage, bool)
+            or not isinstance(max_triage_candidates, int)
+            or isinstance(max_triage_candidates, bool)
+            or not 1 <= max_triage_candidates <= 5
+            or not isinstance(max_r2_candidates, int)
+            or isinstance(max_r2_candidates, bool)
+            or not 0 <= max_r2_candidates <= max_triage_candidates):
+        raise ValueError("invalid triage workflow budget")
+    payload = {
+        "version": 4, "plan_sha256": plan_sha256, "audit_mode": audit_mode,
+        "auto_triage": auto_triage if audit_mode == "standard_review" else False,
+        "max_triage_candidates": max_triage_candidates if auto_triage and audit_mode == "standard_review" else 0,
+        "max_r2_candidates": (max_r2_candidates
+                              if auto_triage and audit_mode == "standard_review" else 0),
+        "max_cost_usd": (max_cost_usd
+                         if auto_triage and audit_mode == "standard_review" else None),
+    }
+    return sha(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode())
+
+
+def audit_workflow_summary(audit_mode, auto_triage=False,
+                           max_triage_candidates=3, max_r2_candidates=0,
+                           max_cost_usd=None):
+    if audit_mode == "standard_review":
+        return {
+            "scan_stage": "fixed_static_scan",
+            "triage_stage": ("task_authorized_bounded_r1_conditional_r2"
+                             if auto_triage and max_r2_candidates
+                             else "task_authorized_bounded_r1" if auto_triage
+                             else "user_authorized_candidate_batch"),
+            "automatic_model_calls": bool(auto_triage),
+            "candidate_limit_per_authorized_batch": max_triage_candidates if auto_triage else 5,
+            "conditional_r2_candidate_limit": max_r2_candidates if auto_triage else 0,
+            "platform_cost_budget_usd": (max_cost_usd if auto_triage else None),
+            "source_consent_required": True,
+        }
+    if audit_mode == "static_only":
+        return {
+            "scan_stage": "fixed_static_scan",
+            "triage_stage": "not_requested",
+            "automatic_model_calls": False,
+            "candidate_limit_per_authorized_batch": 0,
+            "source_consent_required": False,
+        }
+    raise ValueError("unsupported audit workflow mode")
+
+
 ENGINE_MODEL_FILES = (
     "src/ohscanner/detectors/data/historical_profiles.json",
 )  # Freeze D exact-revision profile data with the engine identity.
@@ -117,7 +169,22 @@ def check_repository(settings, path, timeout=30):
     if raw.is_symlink():
         raise ValueError("repository cannot be a symlink")
     resolved = raw.resolve(strict=True)
-    roots = tuple(Path(root).resolve(strict=False) for root in settings.target_roots)
+    from .source_roots import load_managed_roots, managed_root_is_current
+
+    roots = []
+    managed = {row["path"]: row for row in load_managed_roots(settings.data_dir)}
+    for configured in settings.target_roots:
+        candidate = Path(configured)
+        try:
+            if candidate.resolve(strict=False) != candidate:
+                continue
+            root_record = managed.get(str(candidate))
+            if root_record is not None and not managed_root_is_current(root_record):
+                continue
+            roots.append(candidate)
+        except (OSError, RuntimeError):
+            continue
+    roots = tuple(roots)
     if not any(
         resolved.is_relative_to(root) and resolved != root
         for root in roots
@@ -165,10 +232,26 @@ def revisions(repo, timeout=30):
         "refs/remotes",
         timeout=timeout,
     ).decode()
-    return [
+    rows = [
         {"ref": r.split(" ", 1)[0], "object": r.split(" ", 1)[1]}
         for r in text.splitlines()
     ][:2000]
+    available = {row["ref"] for row in rows}
+    default_ref = None
+    # Prefer the repository's advertised default branch. For local mirrors
+    # without origin/HEAD, use the branch currently checked out at HEAD.
+    for symbolic_ref in ("refs/remotes/origin/HEAD", "HEAD"):
+        try:
+            candidate = _git(
+                Path(repo["path"]), "symbolic-ref", "--quiet", symbolic_ref,
+                timeout=timeout,
+            ).decode().strip()
+        except (OSError, ValueError, subprocess.TimeoutExpired):
+            continue
+        if candidate in available:
+            default_ref = candidate
+            break
+    return [dict(row, is_default=row["ref"] == default_ref) for row in rows]
 
 
 def detector_metadata():

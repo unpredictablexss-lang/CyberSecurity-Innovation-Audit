@@ -45,6 +45,7 @@ import "monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution"
 import "monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution";
 import "antd/dist/reset.css";
 import { api, artifact, terminal } from "./api";
+import { hashPresentation } from "./hash.js";
 (window as any).MonacoEnvironment = {
   getWorker: () => new Worker("/assets/editor.worker.js"),
 };
@@ -54,6 +55,9 @@ export const labels: Record<string, string> = {
   running: "运行中",
   completed: "执行完成",
   completed_with_limitations: "完成 · 存在覆盖限制",
+  analyzed: "完整分析",
+  not_analyzed: "未分析",
+  unknown: "未知（待核实）",
   failed: "执行失败",
   cancelled: "已取消",
   interrupted: "执行中断",
@@ -88,10 +92,11 @@ export function State({ value }: { value: string }) {
     </Tag>
   );
 }
-export function Hash({ value }: { value: string }) {
+export function Hash({ value }: { value?: string | null }) {
+  const presentation = hashPresentation(value);
   return (
-    <Text className="hash" copyable={{ text: value }}>
-      {value.slice(0, 12)}
+    <Text className="hash" copyable={presentation.copyable}>
+      {presentation.text}
     </Text>
   );
 }

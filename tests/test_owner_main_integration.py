@@ -72,7 +72,8 @@ class OwnerMainIntegrationTests(unittest.TestCase):
             status = self.client.get("/api/v1/operations/agent-review-queue/status").json()
         self.assertTrue(status["model_provider_configured"])
         self.assertFalse(status["automatic_batch_processing_enabled"])
-        self.assertGreater(status["queued_candidates"], 0)
+        self.assertEqual(status["queued_batches"], 0)
+        self.assertEqual(status["queued_candidates"], 0)
         self.assertIsNone(ops.claim())
 
     def test_v4_schema_migration_is_recorded_and_backup_preserved(self):

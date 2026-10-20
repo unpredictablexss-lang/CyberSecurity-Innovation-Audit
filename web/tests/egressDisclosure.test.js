@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { disclosureReviewed, disclosureSelectionMatches, redactionNotice } from "../src/features/audits/egressDisclosure.js";
+import { canApproveSourceSubmission, canCreateAgentInvestigation, disclosureReviewed, disclosureSelectionMatches, redactionNotice } from "../src/features/audits/egressDisclosure.js";
 
 test("no recognized secret formats still warns that source may contain secrets", () => {
   const message = redactionNotice({ sensitive_redactions: [], redaction_policy_version: "policy-1" });
@@ -36,4 +36,23 @@ test("preview disclosure must cover exactly the selected candidate or experiment
   assert.equal(disclosureSelectionMatches(["a"], ["a", "extra"]), false);
   assert.equal(disclosureSelectionMatches(["a", "a"], ["a", "b"]), false);
   assert.equal(disclosureSelectionMatches([], []), false);
+});
+
+test("source export consent stays disabled until the eligible preview is expanded", () => {
+  const eligible = { agent_execution: { eligible: true } };
+  assert.equal(canApproveSourceSubmission({ ready: false, preview: eligible, disclosureOpened: true }), false);
+  assert.equal(canApproveSourceSubmission({ ready: true, preview: null, disclosureOpened: true }), false);
+  assert.equal(canApproveSourceSubmission({ ready: true, preview: eligible, disclosureOpened: false }), false);
+  assert.equal(canApproveSourceSubmission({ ready: true, preview: { agent_execution: { eligible: false } }, disclosureOpened: true }), false);
+  assert.equal(canApproveSourceSubmission({ ready: true, preview: eligible, disclosureOpened: true }), true);
+});
+
+test("model investigation creation requires the reviewed preview, bound candidate, and explicit consent", () => {
+  const eligible = { agent_execution: { eligible: true } };
+  const reviewed = { ready: true, jobId: "job-1", candidateId: "candidate-1", preview: eligible, disclosureOpened: true };
+  assert.equal(canCreateAgentInvestigation({ ...reviewed, approved: false }), false);
+  assert.equal(canCreateAgentInvestigation({ ...reviewed, jobId: undefined, approved: true }), false);
+  assert.equal(canCreateAgentInvestigation({ ...reviewed, candidateId: undefined, approved: true }), false);
+  assert.equal(canCreateAgentInvestigation({ ...reviewed, disclosureOpened: false, approved: true }), false);
+  assert.equal(canCreateAgentInvestigation({ ...reviewed, approved: true }), true);
 });

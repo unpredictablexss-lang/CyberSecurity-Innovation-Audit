@@ -1,3 +1,30 @@
+// Render a task's frozen workflow using its task-level mode when the nested plan predates that field.
+export function auditWorkflowLabel(plan, auditMode = plan?.audit_mode) {
+  const mode = auditMode ?? plan?.audit_mode;
+  const workflow = plan?.workflow || {};
+  if (mode === "static_only") return "仅静态扫描";
+  const limit = Number.isInteger(workflow.candidate_limit_per_authorized_batch)
+    ? "最多 " + workflow.candidate_limit_per_authorized_batch + " 条候选"
+    : "候选";
+  if (workflow.triage_stage === "task_authorized_bounded_r1_conditional_r2") {
+    const r2Limit = Number.isInteger(workflow.conditional_r2_candidate_limit)
+      ? "最多补充核查 " + workflow.conditional_r2_candidate_limit + " 条"
+      : "有限数量的补充核查";
+    return "标准研判：静态扫描后，" + limit + "单轮研判；高/严重且仍有源码义务未解决时，" + r2Limit;
+  }
+  if (workflow.automatic_model_calls) {
+    return "标准研判：静态扫描后，" + limit + "单轮模型辅助研判";
+  }
+  if (mode === "standard_review") {
+    return "标准研判：静态扫描后，候选需逐批预览并授权模型调用";
+  }
+  return "历史扫描任务：未记录审计方式";
+}
+export function defaultRepositoryRevision(refs) {
+  if (!Array.isArray(refs)) return "";
+  const row = refs.find((item) => item && item.is_default === true && typeof item.ref === "string");
+  return row?.ref || "";
+}
 // Request builders match the existing strict /api/v1 request schemas.
 export function approvedDetectorIds(detectors, explicitIds = []) {
   const approved = detectors.filter((d) => d.kind === "research_candidate" && d.default_enabled !== false &&
@@ -46,10 +73,42 @@ function common(values, detectors, explicitIds = []) {
 export function snapshotPayload(values, detectors, explicitIds = []) {
   if (!values.revision?.trim()) throw new Error("请选择或填写分支、Tag 或完整 Commit。");
   const { detector_ids, ...payload } = common(values, detectors, explicitIds);
-  return { ...payload, ...(explicitIds.length || values.full_rules_research ? { detector_ids } : {}), revision: values.revision.trim() };
+  const auditMode = values.audit_mode || "standard_review";
+  if (!["standard_review", "static_only"].includes(auditMode))
+    throw new Error("审计方式无效，请重新选择。");
+  return { ...payload, audit_mode: auditMode,
+    ...(explicitIds.length || values.full_rules_research ? { detector_ids } : {}), revision: values.revision.trim() };
 }
 export function planPayload(values, detectors, explicitIds = []) {
   return snapshotPayload(values, detectors, explicitIds);
+}
+export function isValidTaskCostBudget(value) {
+  const text = typeof value === "string" || typeof value === "number" ? String(value).trim() : "";
+  if (!/^\d{1,6}(?:\.\d{1,8})?$/.test(text)) return false;
+  const amount = Number(text);
+  return Number.isFinite(amount) && amount > 0;
+}
+export function taskAuthorizationPayload(values) {
+  const enabled = values?.audit_mode === "standard_review" && values?.auto_triage === true;
+  const maxCandidates = Number(values?.max_triage_candidates || 3);
+  const maxR2 = enabled && values?.auto_r2 === true
+    ? Math.min(Number(values?.max_r2_candidates ?? 2), maxCandidates) : 0;
+  return {
+    auto_triage: enabled,
+    max_triage_candidates: maxCandidates,
+    max_r2_candidates: maxR2,
+    max_cost_usd: enabled ? String(values?.max_cost_usd || "").trim() : null,
+  };
+}
+export function auditErrorMessage(error) {
+  const fieldMessages = Array.isArray(error?.errorFields)
+    ? error.errorFields.flatMap((field) => Array.isArray(field?.errors) ? field.errors : [])
+      .filter((message) => typeof message === "string" && message.trim())
+    : [];
+  if (fieldMessages.length) return `请先修正表单：${fieldMessages[0]}`;
+  if (typeof error?.message === "string" && error.message.trim()) return error.message;
+  if (typeof error === "string" && error.trim()) return error;
+  return "审计计划预览失败，请检查必填项和扫描范围后重试。";
 }
 export function datePreviewPayload(values) {
   const { repository_id, branch, start, end, timezone } = values;
@@ -61,20 +120,23 @@ export function datePreviewPayload(values) {
 }
 export function operationPayload(kind, values, detectors, explicitIds = []) {
   const payload = common(values, detectors, explicitIds);
-  if (kind === "date") return { ...payload, ...datePreviewPayload(values) };
+  const auditMode = values.audit_mode || "standard_review";
+  if (!["standard_review", "static_only"].includes(auditMode)) throw new Error("审计方式无效，请重新选择。");
+  const scanPayload = { ...payload, audit_mode: auditMode };
+  if (kind === "date") return { ...scanPayload, ...datePreviewPayload(values) };
   if (kind === "branches") {
     if (!values.baseline_ref || !values.endpoint_ref) throw new Error("请填写两个版本。");
     if (values.baseline_ref === values.endpoint_ref) throw new Error("请选择两个不同的版本。");
-    return { ...payload, baseline_ref: values.baseline_ref.trim(), endpoint_ref: values.endpoint_ref.trim() };
+    return { ...scanPayload, baseline_ref: values.baseline_ref.trim(), endpoint_ref: values.endpoint_ref.trim() };
   }
-  if (kind === "range") return { ...payload, baseline: values.baseline.trim(), endpoint: values.endpoint.trim() };
+  if (kind === "range") return { ...scanPayload, baseline: values.baseline.trim(), endpoint: values.endpoint.trim() };
   if (kind === "matrix") {
     const commits = String(values.commits_text || "").split(/[\n,]/).map((s) => s.trim()).filter(Boolean);
     if (commits.length < 2 || commits.length > 8 || new Set(commits).size !== commits.length ||
         commits.some((s) => !/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/.test(s)))
       throw new Error("版本矩阵需要 2–8 个不同的完整小写 SHA。");
     if (!values.case_id) throw new Error("版本矩阵需先关联调查案例。");
-    return { ...payload, case_id: values.case_id, commits };
+    return { ...scanPayload, case_id: values.case_id, commits };
   }
   throw new Error("未知审计类型。");
 }

@@ -1,8 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { auditLinks, detailTab, jobDetailPath, resolveRoute, retainRiskSource } from "../src/features/workbench/navigation.js";
+import { auditLinks, detailTab, jobDetailPath, resolveRoute, retainRiskSource, riskQueuePath } from "../src/features/workbench/navigation.js";
 test("three audit entries are distinct forms, with no intermediate new-audit page", () => {
   assert.equal(auditLinks.length, 3);
+  assert.equal(auditLinks[0].title, "仓库审计");
   assert.deepEqual(auditLinks.map((link) => link.path), ["/audits/repository", "/audits/time", "/audits/versions"]);
 });
 test("legacy links retain their destination and task identity", () => {
@@ -34,4 +35,29 @@ test("new reports cannot steal the risk source currently under review", () => {
   assert.equal(retainRiskSource(selected, [{ id: "new", report_sha256: "new-hash" }, ...initial]), "old");
   assert.equal(retainRiskSource(selected, []), "old");
   assert.equal(retainRiskSource(undefined, []), undefined);
+});
+
+test("risk filter changes produce shareable, encoded URLs and defaults reset cleanly", () => {
+  assert.equal(riskQueuePath({
+    scan_limit: "10",
+    risk_tier: "further_validation",
+    triage_state: "",
+    repository: "openharmony/sample",
+    detector_id: "ohscanner.cpp.null_dereference",
+    q: "ipc path",
+  }), "/risks?scan_limit=10&risk_tier=further_validation&repository=openharmony%2Fsample&detector_id=ohscanner.cpp.null_dereference&q=ipc+path");
+  assert.equal(riskQueuePath({
+    scan_limit: "20", risk_tier: "", triage_state: "", repository: "", detector_id: "", q: "",
+  }), "/risks");
+});
+
+test("risk queue deep links preserve dashboard filters", () => {
+  const route = resolveRoute("/risks?scan_limit=10&risk_tier=further_validation&repository=openharmony%2Fsample&detector_id=ohscanner.cpp.null_dereference&q=ipc");
+  assert.equal(route.path, "/risks");
+  assert.equal(route.section, "/risks");
+  assert.equal(route.query.get("scan_limit"), "10");
+  assert.equal(route.query.get("risk_tier"), "further_validation");
+  assert.equal(route.query.get("repository"), "openharmony/sample");
+  assert.equal(route.query.get("detector_id"), "ohscanner.cpp.null_dereference");
+  assert.equal(route.query.get("q"), "ipc");
 });

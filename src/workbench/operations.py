@@ -53,11 +53,13 @@ def enqueue_range(settings, store, ops, body):
     repo, a, b, commits = range_plan(settings, store, body["repository_id"], body["baseline"],
                                     body["endpoint"], body["include_paths"], body["detector_ids"],
                                     body["timeout_seconds"], body["memory_mb"])
+    audit_mode = body.get("audit_mode", "standard_review")
+    scans = [{**a, "audit_mode": audit_mode}, {**b, "audit_mode": audit_mode}]
     return ops.create_with_scans("revision_range", {"repository_id": repo["id"], "baseline": a["commit"],
-        "endpoint": b["commit"], "commits": commits,
+        "endpoint": b["commit"], "commits": commits, "audit_mode": audit_mode,
         "timeout_seconds": body["timeout_seconds"] * 2 + 60,
         "memory_mb": body["memory_mb"], "date_selection": body.get("date_selection")},
-        repo["id"], (a, b))
+        repo["id"], scans)
 
 
 def enqueue_branch_comparison(settings, store, ops, body):
@@ -70,8 +72,10 @@ def enqueue_branch_comparison(settings, store, ops, body):
     specs = [service.make_spec(repo, item["commit"], body["include_paths"], body["detector_ids"],
                                body["timeout_seconds"], body["memory_mb"])
              for item in (before, after)]
+    audit_mode = body.get("audit_mode", "standard_review")
+    specs = [{**spec, "audit_mode": audit_mode} for spec in specs]
     return ops.create_with_scans("branch_comparison", {
-        "repository_id": repo["id"],
+        "repository_id": repo["id"], "audit_mode": audit_mode,
         "baseline_ref": body["baseline_ref"], "baseline": before["commit"],
         "endpoint_ref": body["endpoint_ref"], "endpoint": after["commit"],
         "timeout_seconds": body["timeout_seconds"] * 2 + 60,

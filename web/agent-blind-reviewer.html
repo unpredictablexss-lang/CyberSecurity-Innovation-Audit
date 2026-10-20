@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-bzGcxdQwT1p3lLRLoIZenGutkAOEFKoB2I9UHgrSAUg='; style-src 'unsafe-inline'; connect-src 'none'; img-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-k2RFTlF8TVkVpjVJX+d6EIP2eGWV9ClU/W2P3y61xH8='; style-src 'unsafe-inline'; connect-src 'none'; img-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>OHScanner 离线盲审</title>
   <style>
     :root { color-scheme: light; font: 15px/1.55 system-ui, sans-serif; color: #17212b; background: #f4f6f8; }
@@ -43,6 +43,7 @@
     const progressNode = document.querySelector("#progress");
     let session = null;
     let startedAt = 0;
+    let loadSequence = 0;
     const reviews = new Map();
     const choices = {
       usefulness: [["useful", "有用"], ["partially_useful", "部分有用"], ["not_useful", "无用"], ["unsafe", "有误导风险"]],
@@ -146,8 +147,9 @@
       selectField(grid, "post_review_disposition", "人工分诊（不是漏洞真值）", choices.post_review_disposition, "");
       selectField(grid, "guessed_arm", "你认为它来自哪种 Agent？", choices.guessed_arm, "unknown");
       const confidence = textField(grid, "guess_confidence", "组别猜测置信度（0-100，可留空）", false, 3);
-      confidence.type = "number"; confidence.min = "0"; confidence.max = "100";
-      textField(grid, "elapsed_seconds", "复核耗时秒（可留空）", false, 6).type = "number";
+      confidence.type = "number"; confidence.min = "0"; confidence.max = "100"; confidence.step = "1";
+      const elapsed = textField(grid, "elapsed_seconds", "复核耗时秒（可留空）", false, 6);
+      elapsed.type = "number"; elapsed.min = "0"; elapsed.max = "7200"; elapsed.step = "1";
       form.append(grid);
       textField(form, "claims_to_correct", "需更正陈述", true, 1200);
       textField(form, "missed_evidence", "遗漏证据", true, 1200);
@@ -176,12 +178,23 @@
         if (record.elapsed_seconds === null) record.elapsed_seconds = Math.round((Date.now() - startedAt) / 1000);
         reviews.set(item.blind_item_id, { blind_item_id: item.blind_item_id,
           packet_sha256: item.packet_sha256, ...record });
-        form.querySelector("button").disabled = true;
-        form.querySelector("button").textContent = "已保存到本页";
-        notes.readOnly = true;
+        setSaved(true);
         updateProgress();
       });
       const submit = node("button", "保存此条评价"); submit.type = "submit"; form.append(submit);
+      const revise = node("button", "修改此条评价"); revise.type = "button"; revise.hidden = true;
+      revise.addEventListener("click", () => {
+        reviews.delete(item.blind_item_id);
+        setSaved(false);
+        updateProgress();
+      });
+      form.append(revise);
+      function setSaved(saved) {
+        for (const field of form.querySelectorAll("input, select, textarea")) field.disabled = saved;
+        submit.disabled = saved;
+        submit.textContent = saved ? "已保存到本页" : "保存此条评价";
+        revise.hidden = !saved;
+      }
       if (reviews.has(item.blind_item_id)) {
         const previous = reviews.get(item.blind_item_id);
         for (const key of ["reviewer", "usefulness", "citation_accuracy", "post_review_disposition",
@@ -197,7 +210,7 @@
           const field = claimAdjudicationFields.find((item) => item.claim_index === adjudication.claim_index);
           if (field) field.select.value = adjudication.disposition;
         }
-        submit.disabled = true; submit.textContent = "已保存到本页";
+        setSaved(true);
       }
       card.append(form);
       return card;
@@ -207,16 +220,32 @@
       progressNode.textContent = `${reviews.size} / ${total} 条已评价`;
       downloadButton.disabled = reviews.size === 0;
     }
+    function clearSessionState(status) {
+      session = null; startedAt = 0; reviews.clear(); itemsNode.replaceChildren();
+      progressNode.textContent = "尚无评价"; downloadButton.disabled = true;
+      statusNode.textContent = status;
+    }
     async function parseFile(file) { return JSON.parse(await file.text()); }
     async function loadFiles() {
+      const request = ++loadSequence;
+      clearSessionState("正在读取所选文件…");
       try {
-        if (!packetInput.files?.[0]) return;
+        if (!packetInput.files?.[0]) {
+          clearSessionState("请先由创建者导出匿名盲审包。文件在本页内处理，不会上传。");
+          return;
+        }
         const value = await parseFile(packetInput.files[0]);
-        if (value.schema_version !== 1 || !Array.isArray(value.items) || !value.blind_session_id) throw new Error("不是 OHScanner blind-session v1 文件");
-        session = value; reviews.clear();
+        if (request !== loadSequence) return;
+        if (value.schema_version !== 1 || !Array.isArray(value.items) || !value.items.length
+            || value.items.length > 20 || !value.blind_session_id
+            || value.items.some((item) => !item?.blind_item_id || !item.packet_sha256 || !item.packet)) {
+          throw new Error("不是有效的 OHScanner blind-session v1 文件");
+        }
+        session = value;
         let skippedOldReviews = 0;
         if (priorInput.files?.[0]) {
           const prior = await parseFile(priorInput.files[0]);
+          if (request !== loadSequence) return;
           if (prior.blind_session_id !== session.blind_session_id || !Array.isArray(prior.reviews)) throw new Error("评价文件与盲审会话不匹配");
           const known = new Map(session.items.map((item) => [item.blind_item_id, item]));
           for (const review of prior.reviews) {
@@ -237,7 +266,7 @@
         startedAt = Date.now(); itemsNode.replaceChildren(...session.items.map(renderItem));
         statusNode.textContent = `已加载 ${session.items.length} 条匿名条目；session ${session.blind_session_id}。${skippedOldReviews ? `有 ${skippedOldReviews} 条旧评价缺少完整的逐项证据义务或支持性主张判定，已保留为待复核。` : ""}请勿查询实验组别。`;
         updateProgress();
-      } catch (error) { statusNode.textContent = String(error); }
+      } catch (error) { if (request === loadSequence) clearSessionState(String(error)); }
     }
     packetInput.addEventListener("change", () => void loadFiles());
     priorInput.addEventListener("change", () => void loadFiles());
