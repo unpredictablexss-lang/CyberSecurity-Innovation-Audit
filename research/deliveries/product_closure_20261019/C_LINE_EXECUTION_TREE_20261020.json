@@ -4,7 +4,7 @@
   "baseline": {
     "remote": "origin/codex/c-line-static-20261019",
     "commit": "d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03",
-    "refresh": "fetch_failed_network_unavailable_2026-10-20; locally available remote-tracking ref remains at recorded commit"
+    "refresh": "fetch_failed_github_port_443_unreachable_2026-10-20; local remote-tracking ref remains d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03"
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
   "status": "ACTIVE",
@@ -14,10 +14,7 @@
       "id": "C-DEV-RG-20261020",
       "kind": "development",
       "status": "COMPLETED",
-      "scope": [
-        "src/ohscanner/detectors/ark_runtime/receiver_guard.py",
-        "tests/detectors/ark_runtime/"
-      ],
+      "scope": ["src/ohscanner/detectors/ark_runtime/receiver_guard.py", "tests/detectors/ark_runtime/"],
       "objective": "Fix reproduced negated/composite predicate, type-token reassignment, and receiver rebinding false-matches; only proven source-bound guards may suppress a candidate.",
       "worktree": "worktrees/c-static-dev-20261020",
       "feedback_from": "C-TEST-RG-20261020",
@@ -39,10 +36,7 @@
       "worktree": "worktrees/c-static-test-20261020",
       "feedback_to": "C-DEV-RG-20261020",
       "completion": "Independent baseline, first-patch replay and final replay are documented in research/deliveries/c-line/receiver_guard_test_review_20261020.md (latest report commit 36bf6c5ff).",
-      "confirmed_baseline_findings": [
-        "Negated IsTypedArray condition on the true edge was reported matched.",
-        "IsTypedArray(receiver) || other condition was reported matched although the guard may be false."
-      ]
+      "confirmed_baseline_findings": ["Negated IsTypedArray condition on the true edge was reported matched.", "IsTypedArray(receiver) || other condition was reported matched although the guard may be false."]
     },
     {
       "id": "C-LLM-REVIEW-20261020",
@@ -66,49 +60,80 @@
     {
       "id": "C-NEXT-RG-ALIAS-20261020",
       "kind": "development_and_testing",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_SAME_COMMIT_INDEPENDENT_REPLAY",
       "objective": "Evaluate whether safe source-bound alias and same-origin type resampling cases can be proven without weakening rebinding protection; keep unknown when identity cannot be proven.",
       "development_worktree": "worktrees/worktrees/c-static-alias-dev-20261020",
       "testing_worktree": "worktrees/worktrees/c-static-alias-test-20261020",
       "evidence": "Independent test report observes alias and same-origin resampling remain unknown; rebinding after a guard can conservatively remain candidate.",
-      "completion": "Only evidence-backed coverage improvements with positive/negative regression controls."
+      "completion": "Developer commit 2d79560cad45db75bb1b0c6d0677200294e17d10 independently replayed on tester commit cd52fc1899112ed23b82bfe168f2056a58715b95. No cross-object guard leak observed.",
+      "developer_commit": "2d79560cad45db75bb1b0c6d0677200294e17d10",
+      "developer_report": "research/deliveries/c-line/receiver_guard_alias_identity_20261020.md",
+      "developer_validation": "16 passed, 1 skipped focused; 158 passed, 3 skipped Ark Runtime; git diff --check passed",
+      "prior_independent_baseline_report": "research/deliveries/c-line/receiver_guard_alias_test_review_20261020.md",
+      "prior_independent_baseline_commit": "5d2ada9a77d710412c700446ae5d02f3b3bed98a",
+      "prior_feedback": "Baseline found saved=input rebind/restore and immutable alias remained candidate/unknown; cross-object guard was not incorrectly reused. Exact developer commit replay is active.",
+      "independent_report_commit": "2fe2182508e88611cc0de005a8764092693291fb",
+      "independent_report": "research/deliveries/c-line/receiver_guard_alias_identity_validation_20261020.md",
+      "independent_tests": "receiver_guard: 16 passed, 1 skipped; Ark Runtime: 158 passed, 3 skipped (161 collected)",
+      "matrix_result": "same-origin alias/restore/self-assignment/post-guard token resampling matched; cross-object and saved=count negative controls candidate; opaque/reference alias writes unknown; no unsafe cross-object match",
+      "limitations": "Historical repository comparison skipped because pinned Git store absent in tester environment. This validates source-level rule behavior, not product security or formal precision/recall."
     },
     {
       "id": "C-DEV-REPLAY-20261020",
       "kind": "development_and_testing",
-      "status": "DEVELOPMENT_IN_PROGRESS_TEST_BASELINE_COMPLETE",
+      "status": "COMPLETED_INDEPENDENT_REPLAY",
       "objective": "Extend the registered source-bound exception-guard research profile to already modeled parent/fixed revisions if exact source identity supports it, then run CLI parent/fixed replay; preserve partial coverage and candidate-only semantics.",
       "worktree": "worktrees/worktrees/c-static-replay-dev-20261020",
       "test_worktree": "worktrees/worktrees/c-static-replay-test-20261020",
       "evidence_pointer": "research/deliveries/c-line/replay_20261019/C_LINE_KNOWN_SAMPLE_REPLAY_20261019.json",
-      "completion": "Developer has locally verified parent emits two candidates and fixed emits zero while preserving blocked/partial; independent same-commit replay remains pending.",
+      "completion": "Developer commit a6b1cf699781c6c74ff3fca4559a1b7c9a9cb501 independently replayed: exact-bound parent emits two exception-guard candidates; fixed emits zero; source identity and unbound revision boundary checked. Both remain partial/blocked.",
       "independent_baseline_report": "research/deliveries/c-line/exception_guard_cli_replay_20261020.md",
-      "independent_baseline_commit": "532aab6d6"
+      "independent_baseline_commit": "532aab6d6",
+      "independent_report_commit": "39afcc6fa",
+      "independent_report": "research/deliveries/c-line/exception_guard_cli_replay_20261020.md",
+      "independent_tests": "Ark Runtime suite: 155 passed, 3 skipped; adapter identity test 1 passed. Unbound control was source-equivalent Gitee mirror because original parent object could not be fetched."
     },
     {
       "id": "C-TEST-EXCEPTION-CLI-20261020",
       "kind": "independent_testing",
-      "status": "BASELINE_COMPLETE_AWAITING_DEVELOPMENT_COMMIT",
+      "status": "COMPLETED_SAME_COMMIT_PARTIAL_BLOCKED_PRESERVED",
       "worktree": "worktrees/worktrees/c-static-replay-test-20261020",
       "objective": "Verify on the same code commit that exact-bound parent produces the registered-adapter candidate, exact fixed source produces no same-rule candidate, an unbound commit remains excluded, and CLI partial/blocked states stay explicit.",
       "baseline_report": "research/deliveries/c-line/exception_guard_cli_replay_20261020.md",
-      "feedback_to": "C-DEV-REPLAY-20261020"
+      "feedback_to": "C-DEV-REPLAY-20261020",
+      "developer_commit": "a6b1cf699781c6c74ff3fca4559a1b7c9a9cb501",
+      "report_commit": "39afcc6fa",
+      "result": "parent=2 candidates, fixed=0 same-rule candidates; both parser/internal partial and detector blocked; source-equivalent mirror neighbor rejected because commit is not model-bound",
+      "limitations": "Original parent^1 full object absent from pinned store; GitHub port 443 unreachable and Gitee rejected unadvertised SHA, so mirror neighbor is not claimed as the exact parent control."
     },
     {
       "id": "C-TEST-ALIAS-20261020",
       "kind": "independent_testing",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_SAME_COMMIT_REPLAY",
       "worktree": "worktrees/worktrees/c-static-alias-test-20261020",
-      "objective": "Build a safe/unsafe source-bound matrix for immutable aliases, token resampling and receiver rebinding/restoration; replay on the developer's commit.",
-      "feedback_to": "C-NEXT-RG-ALIAS-20261020"
+      "objective": "Independently replay alias-identity implementation on exact developer SHA; verify safe aliases reduce candidate/unknown without cross-object unsound matches.",
+      "feedback_to": "C-NEXT-RG-ALIAS-20261020",
+      "developer_commit": "2d79560cad45db75bb1b0c6d0677200294e17d10",
+      "tester_commit": "cd52fc1899112ed23b82bfe168f2056a58715b95",
+      "report_commit": "2fe2182508e88611cc0de005a8764092693291fb",
+      "report": "research/deliveries/c-line/receiver_guard_alias_identity_validation_20261020.md",
+      "result": "No cross-object guard misuse; proven same-object alias/restoration matched; unsupported alias forms remained candidate or unknown."
+    },
+    {
+      "id": "C-NEXT-TYPE-SAFETY-20261020",
+      "kind": "development_and_independent_testing",
+      "status": "IN_PROGRESS_BASELINE_AND_ROOT_CAUSE_SCOUT",
+      "objective": "Trace one existing Ark Runtime type_safety partial/blocked replay to a concrete, reproducible parser, path mapping, or detector cause; improve only if a minimal source-bound counterexample proves a precision or soundness defect.",
+      "input": "research/experiments/ark_runtime/c10_ark_gap_rules_20261019/production-adapter-replay.json and registered CLI outputs",
+      "developer_prompt": "In an isolated C worktree, reproduce one blocked/partial source replay using the registered CLI; bind exact repo/commit/tree/blob/SHA and identify the stage responsible. If a detector defect is reproducible, implement one minimal fix with positive/fixed/safe/unrelated controls; otherwise deliver a no-change cause report. Preserve partial/blocked and candidate-only semantics.",
+      "tester_prompt": "Independently run the same exact-bound CLI case before and after the developer commit; verify candidate location/count, source identity, parser and internal coverage states, and a nearby unbound/safe control. Return only concrete discrepancies with reproduction.",
+      "second_layer_prompt": "Review only source-bound candidates emitted by this slice; distinguish code-supported issue, counterevidence, runtime/product unknown, and detector artifact. Do not develop second-layer functionality.",
+      "completion": "Concrete root cause plus same-commit independent replay, or evidence-backed no-change report; no human, holdout, product-profile, or all-case gate.",
+      "developer_agent": "ark_static_dev",
+      "test_agent": "ark_static_test"
     }
   ],
-  "feedback_loop": [
-    "Test line records baseline and independent counterexamples.",
-    "Development line fixes only concrete reproducible defects and commits its slice.",
-    "Test line validates the same commit; a concrete failure returns to development for repair.",
-    "Deliver the supported source/component result and limitations; select the next concrete slice."
-  ],
+  "feedback_loop": ["Tester establishes an exact-bound registered CLI baseline and safe/fixed/unbound controls.", "Developer traces a concrete partial/blocked source replay to model binding, path mapping, parser, internal coverage, or detector logic.", "A detector change is permitted only for a reproducible precision/soundness defect with positive/fixed/safe/unrelated controls.", "Tester independently replays the same commit; concrete regressions return to development.", "Second-layer model reviews only the resulting small source-bound candidate set and records evidence/unknowns."],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
 }

@@ -215,3 +215,55 @@ steps:
   - rerun all positives/negatives and report any unsound matched or still-conservative safe path
 constraints: [no production edits, no accuracy labels, no safe conclusion from unknown]
 ```
+
+## 最新执行状态与下一并行切片（2026-10-20 续）
+
+本轮从任务树核实出的状态：exception-guard 注册 profile 已完成同提交独立复验；开发提交 `a6b1cf699781c6c74ff3fca4559a1b7c9a9cb501` 的 CLI 对 exact-bound parent 产生 2 条候选、fixed 产生 0 条同规则候选，二者仍为 `partial/blocked`。独立报告 `research/deliveries/c-line/exception_guard_cli_replay_20261020.md` 记录了候选行、source identity 和未绑定版本控制。原始 parent^1 对象缺失，GitHub 443 不通、Gitee 拒绝 unadvertised SHA；使用的源码等价 mirror neighbor 只证明“未绑定 commit 会被拒绝”，不能冒充原始 parent 的精确控制。测试为 Ark Runtime 155 passed、3 skipped。
+
+Alias 开发提交的**实际** HEAD 已从开发 worktree 核验为 `2d79560cad45db75bb1b0c6d0677200294e17d10`（此前消息中有一字符笔误，以该 worktree 的 `git rev-parse HEAD` 为准）。提交让简单 `GateRef` 标识符副本按对象身份恢复 guard；开发侧定向测试 16 passed、1 skipped，Ark Runtime 158 passed、3 skipped。测试线正基于该确切 SHA 复验 safe alias、cross-object、restore、resampling、opaque/complex alias 反例；结果未回来前不关闭该任务。
+
+远端 refresh 再次尝试失败：GitHub HTTPS 443 不可达。当前可复现基线仍是 `origin/codex/c-line-static-20261019@d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03`；不宣称已拉到更新。已有固定源码对象和本地快照允许上述开发/测试继续。
+
+### 下一条并行线：type_safety partial/blocked 成因与候选质量
+
+Alias 同提交复验关闭后，选择一个 `type_safety` replay case，先确定 blocked/partial 出自来源映射、解析、模型注册还是规则逻辑。静态目标是减少无支撑的候选、保留有源码依据的候选，并为第二层审查提供精确位置；不是为了把 aggregate status 改绿。开发与测试使用独立 worktree，测试复跑开发提交的同一输入，发现具体回归则返回修复。
+
+```yaml
+role: C 线 Ark Runtime type_safety 开发者
+objective: 对一个可重放 partial/blocked 案例定位具体阶段性原因；仅在最小 source-bound 反例证明规则缺陷时修改检测器
+inputs:
+  replay: research/experiments/ark_runtime/c10_ark_gap_rules_20261019/production-adapter-replay.json
+  model: 注册的 RuntimeTypeModel 与对应固定 Ark Git 对象
+steps:
+  - 从当前 worktree/HEAD 实际运行 registered CLI，固定 commit/tree/blob/SHA 与命令输出
+  - 拆分并报告 model binding、source mapping、parser outcome、internal coverage、detector outcome
+  - 若为具体规则缺陷，加入 positive/fixed/safe/unrelated 控制并作最小补丁；否则提交有证据的 no-change root-cause 报告
+  - 把候选、未触发、partial 与 blocked 分别记录，不改写为漏洞或安全结论
+constraints: [不为变绿而放宽绑定或覆盖语义, 无证据不扩展候选, 未知保持 unknown, 不等待产品画像/真人/holdout]
+deliverables: [可复现命令与精确源码身份, 具体原因或最小修复, 开发测试结果, 已知局限]
+```
+
+```yaml
+role: C 线独立 type_safety 测试者
+objective: 在开发提交前后独立重放同一 exact-bound 案例并寻找最小误报/漏报反例
+steps:
+  - 先运行当前注册 CLI 并保存逐阶段状态与候选行
+  - 选 nearby safe/fixed/unbound control，验证规则身份及版本边界
+  - 开发提交后只复验同一 commit，比较诊断、source hashes、parse/internal coverage 和 aggregate status
+  - 将具体失败交回开发线；无缺陷时报告覆盖边界
+constraints: [独立 worktree, 不修改生产代码, 不以 control matrix 声称正式准确率, 不把 partial/blocked 当 pass]
+```
+
+```yaml
+role: 第二层漏洞候选复核模型
+objective: 对开发与测试确认的少量 source-bound 候选逐条判断源码支持度
+steps: [检查真实源码位置与数据/控制关系, 给出支持/反证/unknown及可核验引用, 区分源码缺陷与 runtime/product impact]
+constraints: [只做候选审查, 不开发第二层功能, 不把静态候选当漏洞事实, 无产品证据则影响保持 unknown]
+output: 每条候选的支持或反证、置信边界、未知事实和建议的最小验证
+```
+
+持续目标：每轮只关闭有实现和同提交测试证据的具体 slice；如果发现新的可复现缺陷则继续下一轮，否则交付根因/边界报告并选下一个输入。产品资料、准确率标签或人类评审只影响对应的产品级结论，不阻塞源码级进度。
+
+Alias 身份改进已由测试线基于开发提交 `2d79560cad45db75bb1b0c6d0677200294e17d10` 独立复验，测试提交 `cd52fc1899112ed23b82bfe168f2056a58715b95`，报告提交 `2fe2182508e88611cc0de005a8764092693291fb`。验证覆盖同源 alias、guard 后稳定恢复、自赋值、token 重采样、跨对象和 opaque/reference 写入；结果未发现异对象 guard 被复用。报告明确指出历史仓库对照因 tester 固定 Git store 不存在而跳过。Ark Runtime 161 项中 158 passed、3 skipped。该报告目前独立保存在测试 worktree，任务树记录了其路径和提交。
+
+因此下一条 type_safety 工作线已启动：测试线先固定一个 exact-bound registered CLI 基线和控制；开发线同时定位 partial/blocked 的真实阶段原因。只有能复现的规则缺陷才进入代码改动，否则交付 root-cause 报告。任务树中的机器状态现标为 `IN_PROGRESS_BASELINE_AND_ROOT_CAUSE_SCOUT`。
