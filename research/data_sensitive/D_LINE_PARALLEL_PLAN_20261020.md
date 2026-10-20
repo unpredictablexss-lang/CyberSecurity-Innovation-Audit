@@ -255,6 +255,25 @@ flowchart TD
 - **反馈**：发现实际material sink静默漏报或不确定路径被定为exact时立即给D97最小片段和证据；对D97修订SHA fresh-process复测。若目前只能保持unresolved，明确这属于候选精度限制，不宣称已验证安全。
 - **固定回归**：完整src固定归档与T85三文件direct/Runner；记录identity/evidence、638 call facts、890/915和coverage。输出测试代码、数据、固定源身份与报告；不推送owner。
 
+### D98（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：有界 C++ switch 退出活性/不可达语句候选精度开发者。
+- **固定失败**：D97/T96 validation 中 `exhaustive_all_return_switch_revives_dead_fallthrough`。显式 case 与 default 全部 return 后，switch 后的 `*p=material` / sink 仍被扫描并形成过候选。
+- **目标**：只在解析器证明标签唯一、default存在、所有switch arms无fallthrough且终止于return时，标记 switch 后语句不可达；若 AST 结构无法证明，不改变既有分析。不得扩大为通用C++活性/CFG。
+- **反控制**：缺default、unknown/重复标签、fallthrough、任一break/continue/normal exit、case内部嵌套退出、partial AST/selected units及宏预处理影响，一律保留候选或unknown；不得抑制switch内部真实sink。
+- **反馈/验证**：先提交最小失败给T97，修订后按固定SHA双向复测；跑data/兼容性与T85 direct/Runner，比较finding identity/evidence、638 call facts、coverage。把支持边界与任何not_run写入报告。
+
+### T97（并行独立挑战线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立 C++ 可达性挑战者；先按语言控制语义建立矩阵，不以D98实现推导期望。
+- **矩阵**：所有case与default显式return；缺default；case fallthrough；一个break/continue/正常出口；嵌套if return；嵌套switch；重复/非数值case；unknown selector；header partial；switch内真实sink；switch后sink与指针重绑。
+- **反馈**：任一仍可达分支被当作死代码抑制，或all-return死代码保留成材料候选，都报告精确源片段、direct/Runner与期望并交D98修复/复测。分歧时固定selected scope和AST证据。
+- **固定回归**：fresh-source baseline/final、完整data、T85 direct/Runner；记录IDs/evidence、638 calls、890/915、coverage和工具版本。报告边界，不报无标签准确率，不推送owner。
+
 ### T92（并行独立挑战线）
 
 **结构化 vibe coding 提示词**

@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "D97_T96_IN_PROGRESS",
+  "status": "D98_T97_IN_PROGRESS",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -494,22 +494,54 @@
       "id": "D97",
       "kind": "development",
       "title": "评估switch case pointer目标的可证明合流",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D96", "T95"],
       "input": "T95 found same-target multi-case switch rebinding remains unresolved because case exhaustiveness/fallthrough is not modeled.",
       "completion": "Implement only a concrete narrow same-target merge that is safe under enumerated labels, default, fallthrough and exits; preserve unresolved candidates for incomplete or ambiguous control flow. If no safely bounded improvement exists, deliver an evidence-backed boundary report.",
-      "tests": ["T96"]
+      "tests": ["T96"],
+      "commit": "ae71c3c8e099c42b1d5df81b1fe9c32cddd2a39a",
+      "revision_commit": "4958df655f86c1199bc326138aaf3b4ecaf9587e",
+      "integration_commit": "cd243c91c",
+      "revision_integration_commit": "414093c80",
+      "evidence_commit": "eafc9b4c799d371205afe54828a9d95568c4f835",
+      "evidence_integration_commit": "43cdf2eb0",
+      "completion": "Only complete AST/no-preprocessor flat switches with explicit default, identical single pointer assignment in every arm and direct break receive exact same-target merge. Full selected-scope guard keeps direct and Runner conservative on partial units.",
+      "validation": "0.21.12; developer7 methods/full data298 and compatibility62; independent T96 14 methods/data312. A first-version partial selected-scope discrepancy was reproduced and fixed. T85 direct/Runner24, 24 common IDs/messages/evidence and638 calls unchanged; 890/915 retained; 3 files remain partial. All-return dead-code overcandidate is recorded known_gap_not_passed."
     },
     {
       "id": "T96",
       "kind": "testing",
       "title": "独立挑战switch case汇合与fallthrough候选边界",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "depends_on": ["D96", "T95"],
       "feedback_to": ["D97"],
-      "completion": "Independently map same/different-target cases, exhaustive/default behavior, break/fallthrough/return and unknown targets; replay the fixed T85 source and report candidate deltas without treating counts as labels."
+      "completion": "Independent 14-method switch matrix found 3 same-target exact-merge cases unresolved; fixed D97 closes them and partial-scope Runner discrepancy. All-return unreachable statement remains an explicit known gap.",
+      "commit": "f0afee276b1330a94c222bfc3e8e0e136b021598",
+      "integration_commit": "27301e6d8",
+      "validation": "14 methods; initial3 precision failures resolved on final SHA; full data312; T85 direct/Runner24→24, common evidence and638 calls unchanged; all-return overcandidate documented separately as not passed."
+    },
+    {
+      "id": "D98",
+      "kind": "development",
+      "title": "收窄修复all-return switch后的不可达语句误候选",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
+      "depends_on": ["D97", "T96"],
+      "input": "T96 D97_VALIDATION exhaustive_all_return_switch_revives_dead_fallthrough: all explicit case arms plus default return, yet switch-following material sink is still scanned.",
+      "completion": "Suppress only a post-switch path proven unreachable from a complete, unambiguous all-return switch. Missing default, fallthrough, mixed exits, unknown/duplicate labels, partial AST or incomplete selected units retain conservative behavior.",
+      "tests": ["T97"]
+    },
+    {
+      "id": "T97",
+      "kind": "testing",
+      "title": "独立挑战switch全return可达性与保守反控制",
+      "status": "IN_PROGRESS",
+      "agent": "/root/t83_static_feedback",
+      "depends_on": ["D97", "T96"],
+      "feedback_to": ["D98"],
+      "completion": "Independently verify complete all-return switch postlude reachability, while checking missing default, fallthrough, mixed exits and partial input remain conservative; fixed T85 replay."
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
@@ -541,13 +573,13 @@
     "known_disclosed_cves": "0.19.11"
   },
   "integrated_tests": {
-    "data": 291,
+    "data": 312,
     "known_and_corpus": 39,
     "parser_linkage": 16,
-    "ast_parser": 11,
-    "total": 357,
+    "ast_parser": 7,
+    "total": 374,
     "result": "PASS"
   },
   "remote_branch": "origin/codex/d-owner-20261020-01a1571f",
-  "pushed_head": "a3955703c3a0681d788da563a34cee81e52f953a"
+  "pushed_head": "8f6841ef997d5ce8e0aaf3de925b59061bee3fa8"
 }
