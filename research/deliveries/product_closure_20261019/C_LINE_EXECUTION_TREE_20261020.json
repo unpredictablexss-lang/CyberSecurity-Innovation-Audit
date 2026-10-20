@@ -249,7 +249,7 @@
     {
       "id": "C-LLM-REVIEW-TYPEDARRAY-LENGTH-20261020",
       "kind": "second_layer_candidate_review",
-      "status": "IN_PROGRESS_SOURCE_REVIEW",
+      "status": "COMPLETED_SOURCE_CANDIDATE_RUNTIME_UNKNOWN",
       "objective": "Review the exact-bound signed ToIndex to TypedArray allocation-length candidate and fixed revision using source evidence only.",
       "candidate": "I7W51D / ark.runtime.typedarray-length-signed-to-unsigned-narrowing",
       "parent": {
@@ -265,15 +265,73 @@
         "sha256": "373f5babdd5dd2f93d01512901d02e6b39d6b57c636e72b07b8d80d27eb509ab"
       },
       "reviewer": "typedarray_length_review",
-      "prompt": "Verify exact source identities, trace ToIndex and allocation length plus all range checks on parent/fixed, assess source-level support and counterevidence, separate trigger reachability and runtime/product unknowns. Do not change detector or claim vulnerability from role labels."
+      "prompt": "Verify exact source identities, trace ToIndex and allocation length plus all range checks on parent/fixed, assess source-level support and counterevidence, separate trigger reachability and runtime/product unknowns. Do not change detector or claim vulnerability from role labels.",
+      "completion": "Independent second-layer reviewer verified both source identities and traced the downstream range checks. Parent signed narrowing is supported as a source pattern; successful allocation/security/product impact is not established.",
+      "report": "research/deliveries/c-line/typedarray_length_candidate_review_20261020.md",
+      "reviewer_assessment": {
+        "source_candidate": "credible signed int32 narrowing in parent; fixed changes to uint32_t and allocator signature",
+        "counterevidence": "downstream MAX_TYPED_ARRAY_INDEX and INT_MAX byte-length checks prevent inferring successful allocation from the cast change alone",
+        "adjacent_boundary": "both versions narrow to 32 bits; values above UINT32_MAX need separate analysis",
+        "unknown": [
+          "runtime trigger and observable boundary behavior",
+          "shipped-product/runtime impact",
+          "whether uint32 truncation is observable or blocked downstream"
+        ],
+        "runtime_reproduction": "not_run"
+      }
+    },
+    {
+      "objective": "Investigate the adjacent >UINT32_MAX TypedArray length boundary against exact parent/fixed source and downstream range checks; keep or improve a narrow candidate only if source evidence warrants it.",
+      "candidate": "Adjacent to I7W51D; not presumed vulnerable",
+      "input": {
+        "parent": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+        "fixed": "82c21d656880923800c94b53b035c76d219313b5",
+        "path": "ecmascript/base/typed_array_helper.cpp"
+      },
+      "status": "READY_FOR_PARALLEL_EXECUTION",
+      "feedback_loop": "Developer sends exact test matrix and expected candidate behavior to independent tester; tester replays same developer commit and returns discrepancies; developer responds/fixes only concrete defects; second-layer review follows only if a candidate survives.",
+      "blocking_prerequisites": [],
+      "id": "C-DEV-U32-LENGTH-20261020",
+      "kind": "development_and_candidate_analysis",
+      "developer_agent": "ark_static_dev",
+      "developer_prompt": "ROLE: C-line static-analysis developer. OBJECTIVE: determine whether the exact-bound TypedArray path has a narrow, source-supported candidate at ToIndex values above UINT32_MAX, and improve the candidate only if repository evidence demonstrates a concrete detector defect. INPUTS: Ark Runtime parent 3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c and fixed 82c21d656880923800c94b53b035c76d219313b5; path ecmascript/base/typed_array_helper.cpp; review research/deliveries/c-line/typedarray_length_candidate_review_20261020.md. TASKS: verify exact commit/tree/blob/SHA; trace ToIndex, conversion, allocation and every downstream bound check for values around INT32_MAX, UINT32_MAX and SAFE_NUMBER; compare source-equivalent positive and safe/fixed controls; inspect the detector/replay output for this exact source pair. If the path is fully rejected downstream, report no candidate. If a concrete source-level defect exists, implement the smallest candidate/test change, retaining exact source binding and candidate-only wording. Do not claim runtime exploitability or product impact. CONSTRAINTS: preserve teammate state; isolate target execution; no fabricated labels/metrics; unknown and not_run stay explicit; do not develop the second-layer LLM reviewer. DELIVERABLES: structured report with source hashes, conversion table, checks and counterevidence; if code changes, focused tests and commit SHA. FEEDBACK: provide the exact baseline/candidate cases and proposed test expectations to C-TEST-U32-LENGTH-20261020 before finalizing.",
+      "deliverables": [
+        "exact-bound source analysis",
+        "narrow detector/test patch only if concrete defect",
+        "report and commit SHA"
+      ],
+      "completion": "Pending parallel execution and independent tester feedback."
+    },
+    {
+      "objective": "Investigate the adjacent >UINT32_MAX TypedArray length boundary against exact parent/fixed source and downstream range checks; keep or improve a narrow candidate only if source evidence warrants it.",
+      "candidate": "Adjacent to I7W51D; not presumed vulnerable",
+      "input": {
+        "parent": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+        "fixed": "82c21d656880923800c94b53b035c76d219313b5",
+        "path": "ecmascript/base/typed_array_helper.cpp"
+      },
+      "status": "READY_FOR_PARALLEL_EXECUTION",
+      "feedback_loop": "Developer sends exact test matrix and expected candidate behavior to independent tester; tester replays same developer commit and returns discrepancies; developer responds/fixes only concrete defects; second-layer review follows only if a candidate survives.",
+      "blocking_prerequisites": [],
+      "id": "C-TEST-U32-LENGTH-20261020",
+      "kind": "independent_testing",
+      "test_agent": "ark_static_test",
+      "tester_prompt": "ROLE: independent C-line tester. OBJECTIVE: adversarially test the developer's exact-bound analysis of TypedArray length values above UINT32_MAX and report whether the candidate survives downstream checks. INPUTS: parent 3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c and fixed 82c21d656880923800c94b53b035c76d219313b5; exact path/hash binding and developer report/commit supplied by C-DEV-U32-LENGTH-20261020. TASKS: independently verify object identities; construct source-level boundary cases around INT32_MAX, UINT32_MAX and SAFE_NUMBER, with negative/fixed/safe controls; replay any developer patch on the exact commit; verify no cross-file/source-binding leakage and that blocked/partial status remains accurate. Give adversarial feedback to developer and require a response to each discrepancy. Do not infer runtime/product impact from static output. CONSTRAINTS: no production edits except isolated test changes; do not overwrite shared work; no accuracy claims from this small source-bound set. DELIVERABLES: test report with exact SHAs, command/results, case matrix, discrepancies and unresolved unknowns; commit report/test changes. DONE WHEN: same-commit replay is independently reproduced or a concrete mismatch is documented with feedback returned to developer.",
+      "feedback_to": "C-DEV-U32-LENGTH-20261020",
+      "deliverables": [
+        "independent boundary matrix",
+        "same-commit replay or precise discrepancy",
+        "report and commit SHA"
+      ],
+      "completion": "Pending developer baseline and independent replay."
     }
   ],
   "feedback_loop": [
-    "C1 macro feasibility is delivered as a bounded no-go for production integration under missing toolchain/build profile; unsupported expansion still falls back to raw partial.",
-    "Second-layer reviewer inspects the next source-bound TypedArray length candidate against exact parent/fixed source without developing model behavior.",
-    "A candidate review yields evidence, counterevidence and unknown obligations; only a concrete detector defect goes back to development.",
-    "Select another exact-bound candidate or macro profile work only when required configuration/source-map proof is available.",
-    "Project goal remains active and future slices continue without human/holdout/product prerequisite gates."
+    "Completed source review records a credible signed-narrowing candidate but does not prove successful allocation, runtime impact, or product impact.",
+    "Developer investigates the adjacent >UINT32_MAX boundary with exact source identities and every downstream check; send a proposed case matrix to the tester.",
+    "Independent tester replays the same developer commit with positive, fixed, safe, and out-of-range cases; developer addresses concrete discrepancies before closeout.",
+    "If a narrow candidate survives, send it to second-layer source review; if downstream checks eliminate it, report no candidate without claiming safety beyond the checked path.",
+    "Missing product/build/reviewer/holdout prerequisites remain non-blocking; unknown and not_run remain explicit."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
