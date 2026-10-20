@@ -160,24 +160,51 @@
       "id": "T86",
       "kind": "testing",
       "title": "独立复验alignof边界并推进全局常量用途绑定",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
+      "commit": "32818bd8fff4bcc96b686bb903b136dd022d3fd9",
+      "developer_input": "23abc16652866edf06f6d86d8c11ec5deb5be784",
+      "integration_commit": "2dd69e99e8038c905d1e81250207365aa911906f",
       "depends_on": ["D86", "T85"],
       "feedback_to": ["D87"],
-      "completion": "独立正反控制已在T85完成；下一切片核验具名常量定义、参数角色与用途，区分属性键/展示文本和真实凭据值，不依据拼写直接清除候选"
+      "completion": "发现三类reference shadow误抑制并反馈修复；独立13项及data132项通过；固定证书三文件范围候选21→21且明细/覆盖一致",
+      "validation": "13 independent methods pass against D87 fixed SHA; 132 data tests pass; 3 shadow counterexamples closed; strict 3-file certificate replay unchanged"
     },
     {
       "id": "D87",
       "kind": "development",
       "title": "为固定全局常量建立有界用途与参数角色证据",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
+      "commit": "23abc16652866edf06f6d86d8c11ec5deb5be784",
+      "evidence_commit": "86a264a1701aeff1fdf0350b06d09f2821349917",
+      "integration_commit": "68f9c3aeb4e582f68c9c02a862f6864ad2cfae54",
       "depends_on": ["D86", "T85"],
       "input": "T85 certificate framework: CERT_PASSWORD is the literal property key \"password\"; candidate arises through c_str() and unresolved escape at a property-name check/log path, not established password bytes.",
       "completion": "Model only statically bound constant and known argument-role evidence where the AST proves property-name use; retain unknown wrappers and actual secret-value flows; demonstrate named positive, safe, ambiguous and unknown controls.",
-      "tests": ["T86"]
+      "tests": ["T86"],
+      "validation": "0.21.4; exact schema-key binding; fetched material preserved; 11 developer methods and119 data tests passed; strict fixed scope 3/21 unchanged, two-file diagnostic 21→20 only"
+    },
+    {
+      "id": "D88",
+      "kind": "development",
+      "title": "窄范围支持C++分支式extern C链接声明",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
+      "input": "T85 cf_log.h becomes partial at paired #ifdef __cplusplus / extern \"C\" { / #endif and matching independently guarded close brace; exact fixed source parses complete if only this matched linkage idiom is normalized.",
+      "completion": "Only an unambiguous paired C++ linkage wrapper is normalized with byte/line offsets preserved; unmatched, alternate-branch or ambiguous constructs remain partial. Exact T85 three-file replay and parser positive/negative tests feed back from T87.",
+      "tests": ["T87"]
+    },
+    {
+      "id": "T87",
+      "kind": "testing",
+      "title": "独立验证分支式extern C解析和固定证书源码覆盖",
+      "status": "IN_PROGRESS",
+      "agent": "/root/t83_static_feedback",
+      "feedback_to": ["D88"],
+      "completion": "Independent valid paired-linkage control and malformed/unmatched/alternate-branch controls; exact fixed cf_log.h parser status, source offsets, D87 same-scope candidate identities, and full relevant regressions; failures feed back to D88"
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
@@ -205,13 +232,13 @@
   ],
   "candidate_policy": "Do not reduce counts by hiding independent root causes; prefer source-bound relation evidence and explicit unresolved guards.",
   "current_versions": {
-    "sensitive_exposure": "0.21.3",
+    "sensitive_exposure": "0.21.4",
     "known_disclosed_cves": "0.19.11"
   },
   "integrated_tests": {
-    "data": 108,
+    "data": 132,
     "known_and_corpus": 39,
-    "total": 147,
+    "total": 171,
     "result": "PASS"
   }
 }
