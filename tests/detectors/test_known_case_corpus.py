@@ -51,7 +51,7 @@ class KnownCaseCorpusTests(unittest.TestCase):
         )
 
     def test_manifest_is_28_way_source_bound_disposition_corpus(self):
-        self.assertEqual("0.18.0", VERSION)
+        self.assertEqual("0.19.11", VERSION)
         self.assertEqual(28, len(MANIFEST["cases"]))
         self.assertEqual(
             {"public_cve": 17, "local_dangerous_shape": 5, "manual_candidate": 4, "exclusion": 2},
@@ -106,7 +106,14 @@ class KnownCaseCorpusTests(unittest.TestCase):
                 for control in ("fixed", "safe", "unrelated"):
                     run = self.run_fixture(directory, control)
                     self.assertEqual("completed", run.status)
-                    self.assertTrue(symbols.isdisjoint({f.symbol for f in run.findings}))
+                    control_symbols = {f.symbol for f in run.findings}
+                    if directory == "local-pasteboard-historical-read" and control in ("fixed", "safe"):
+                        self.assertIn("CVE-2025-27247", control_symbols)
+                        finding = next(f for f in run.findings if f.symbol == "CVE-2025-27247")
+                        self.assertIn("permission_guard", {o.kind for o in finding.evidence_obligations})
+                        self.assertTrue(all(o.status == "unknown" for o in finding.evidence_obligations if o.kind == "permission_guard"))
+                    else:
+                        self.assertTrue(symbols.isdisjoint(control_symbols))
 
                 unknown = self.run_fixture(directory, "unknown")
                 self.assertEqual("blocked", unknown.status)
@@ -131,6 +138,26 @@ class KnownCaseCorpusTests(unittest.TestCase):
         self.assertIn("bounded-language-rust", rows["MANUAL-SECURITY-ASSET-CROSS-ACCOUNT"]["c12_disposition"])
         for row in rows.values():
             self.assertEqual("unknown", row["product_vulnerability"])
+
+    def test_pasteboard_manifest_matches_current_control_bytes_and_results(self):
+        case = next(row for row in MANIFEST["cases"]
+                    if row["identity"] == "LOCAL-PASTEBOARD-HISTORICAL-READ")
+        replay = case["repository_control_replay"]
+        for control, expected_count in (("positive", 2), ("fixed", 1), ("safe", 1),
+                                        ("unrelated", 0), ("unknown", 2)):
+            with self.subTest(control=control):
+                entry = replay["controls"][control + ".cpp"]
+                data = (ROOT / entry["path"]).read_bytes()
+                self.assertEqual(len(data), entry["bytes"])
+                self.assertEqual(hashlib.sha256(data).hexdigest(), entry["source_sha256"])
+                self.assertEqual(hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest(),
+                                 entry["blob"])
+                run = self.run_fixture("local-pasteboard-historical-read", control)
+                self.assertEqual(expected_count, len(run.findings))
+                result_key = "parent" if control == "positive" else control
+                expected_result = (f"{expected_count} candidate(s) + blocked/partial" if control == "unknown"
+                                   else f"{expected_count} candidate(s)" if control == "positive" else expected_count)
+                self.assertEqual(expected_result, replay["result"][result_key])
 
     def test_exclusions_are_not_applicable_and_never_product_safe(self):
         rows = [c for c in MANIFEST["cases"] if c["bucket"] == "exclusion"]

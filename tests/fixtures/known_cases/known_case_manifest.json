@@ -3,7 +3,7 @@
   "corpus_id": "C11-KNOWN-CASE-CORPUS-20261019",
   "baseline_commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
   "detector_id": "ohscanner.known_disclosed_cves",
-  "detector_version": "0.18.0",
+  "detector_version": "0.19.11",
   "source_audit": {
     "path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
     "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
@@ -898,9 +898,9 @@
             "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
             "commit": null,
             "tree": null,
-            "blob": "954282144218b844bce9ca836a4bb6a2cb9f12af",
-            "source_sha256": "f513d6d1a35e3d047e6c2b31b518e574da92e7b48347de0ecf4e5bca84d62d39",
-            "bytes": 447,
+            "blob": "35c64c733ae764bdd6df11930a98b08e0066bb78",
+            "source_sha256": "25959048f5f05860eefffaf4ce165a593c32b7a1dd669010d974841b2e00ae69",
+            "bytes": 722,
             "path": "tests/fixtures/known_cases/local-pasteboard-historical-read/positive.cpp",
             "status": "explicit-unknown",
             "reason": "uncommitted C12 control fixture; no baseline commit/tree binding and no target-source claim"
@@ -909,9 +909,9 @@
             "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
             "commit": null,
             "tree": null,
-            "blob": "79be73932fc3f754cd3d8eba320a938d074c2369",
-            "source_sha256": "e4fbb3cd79cac977feeae7c04f4be07a0023a1df0733833effd9dd1db4ac1689",
-            "bytes": 524,
+            "blob": "55be72c53db9b08b980bdcc1e4062751fded66b0",
+            "source_sha256": "99884b9519840dc4f3e86f5ccea424c6cf9e38ac1c9524af1a12a204969abc5b",
+            "bytes": 958,
             "path": "tests/fixtures/known_cases/local-pasteboard-historical-read/fixed.cpp",
             "status": "explicit-unknown",
             "reason": "uncommitted C12 control fixture; no baseline commit/tree binding and no target-source claim"
@@ -920,9 +920,9 @@
             "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
             "commit": null,
             "tree": null,
-            "blob": "72c21898456bf73c0831f2ec0906bb1c510878d9",
-            "source_sha256": "dec904f7bdb984753f1a3d31d8eef921c8fae1e5a0809e1610129a4d71afa8da",
-            "bytes": 559,
+            "blob": "bb4a644bc05ca6b19143a8804b02e3bab0827090",
+            "source_sha256": "cf7734732b5e9fadc641dba1b8dccbf8fe3ce7ee0462f15de1451662a165ab56",
+            "bytes": 964,
             "path": "tests/fixtures/known_cases/local-pasteboard-historical-read/safe.cpp",
             "status": "explicit-unknown",
             "reason": "uncommitted C12 control fixture; no baseline commit/tree binding and no target-source claim"
@@ -932,8 +932,8 @@
             "commit": null,
             "tree": null,
             "blob": "ce467cbf0de08b6c99d0a5b6c58d4102edd07d90",
-            "source_sha256": "40ac466a0fd701853ce3d844b5afc59e5f2652c85f0ed4e7573759b069ce0ffa",
-            "bytes": 436,
+            "source_sha256": "8778ce28300667a99d8b93030bea70f1f686f719402bd7147513f410f03fdf34",
+            "bytes": 435,
             "path": "tests/fixtures/known_cases/local-pasteboard-historical-read/unrelated.cpp",
             "status": "explicit-unknown",
             "reason": "uncommitted C12 control fixture; no baseline commit/tree binding and no target-source claim"
@@ -942,9 +942,9 @@
             "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
             "commit": null,
             "tree": null,
-            "blob": "954282144218b844bce9ca836a4bb6a2cb9f12af",
-            "source_sha256": "f513d6d1a35e3d047e6c2b31b518e574da92e7b48347de0ecf4e5bca84d62d39",
-            "bytes": 447,
+            "blob": "35c64c733ae764bdd6df11930a98b08e0066bb78",
+            "source_sha256": "25959048f5f05860eefffaf4ce165a593c32b7a1dd669010d974841b2e00ae69",
+            "bytes": 722,
             "path": "tests/fixtures/known_cases/local-pasteboard-historical-read/unknown.cpp",
             "status": "explicit-unknown",
             "reason": "uncommitted C12 control fixture; no baseline commit/tree binding and no target-source claim"
@@ -952,12 +952,12 @@
         },
         "result": {
           "parent": "2 candidate(s)",
-          "fixed": 0,
-          "safe": 0,
+          "fixed": 1,
+          "safe": 1,
           "unrelated": 0,
           "unknown": "2 candidate(s) + blocked/partial"
         },
-        "boundary": "synthetic/reconstructed controls; target source identity remains explicit-unknown"
+        "boundary": "synthetic/reconstructed controls; permission_guard remains unknown even in fixed/safe controls; target source identity remains explicit-unknown"
       }
     },
     {
