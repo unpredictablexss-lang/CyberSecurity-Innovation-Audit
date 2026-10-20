@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "D92_T91_COMPLETED_PUSHED",
+  "status": "D93_T92_IN_PROGRESS",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -359,6 +359,31 @@
       "commit": "55df3dbaf821a38813d1e40c6efcfd262655e395",
       "integration_commit": "e65d43a72",
       "validation": "Independent12/12, baseline8 direct/Runner subfailures→0; data213; fixed T85 direct/Runner19→26; only298 input removed, eight output descendants added; common18 evidence and638 calls unchanged; coverage3 partial"
+    },
+    {
+      "id": "D93",
+      "kind": "development",
+      "title": "核实UTF-8字符串长度查询的API身份与元数据角色",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
+      "input": "D92 fixed certificate source at napi_cert_utils.cpp:890 calls napi_get_value_string_utf8(env,arg,nullptr,0,&length), while line915 writes bytes to an allocated buffer. Determine whether exact selected build binds the query call to the intended N-API API and whether length-only use merits a candidate.",
+      "completion": "Only suppress/role-classify the exact length-query invocation when source/build/declaration identity and argument binding are proven; preserve line915 byte writes and any output/log/error/custom wrapper behavior. If version binding is absent, retain candidate and deliver source-backed report. Developer tests and strict T85 direct/Runner identity/coverage replay.",
+      "tests": [
+        "T92"
+      ]
+    },
+    {
+      "id": "T92",
+      "kind": "testing",
+      "title": "独立挑战N-API长度查询与真实字节写入边界",
+      "status": "IN_PROGRESS",
+      "agent": "/root/t83_static_feedback",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
+      "feedback_to": [
+        "D93"
+      ],
+      "completion": "Independently pin N-API source/declaration identities and verify certificate build linkage; challenge length query, use/log of length, custom same-name body/callback, macro override, missing/partial API and actual buffer write. Fixed-src baseline and D93 replay; feed any unsafe reduction back."
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
@@ -397,5 +422,5 @@
     "result": "PASS"
   },
   "remote_branch": "origin/codex/d-owner-20261020-01a1571f",
-  "pushed_head": "6631e260ec2f1e8db0cef78b1b52c390378cd8fd"
+  "pushed_head": "fc4cb8da2216002bf058aa1315c5328bebab9dc2"
 }

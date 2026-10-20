@@ -157,3 +157,25 @@ flowchart TD
 - **矩阵**：arg2 精确property key；arg3输出引用；不同key常量/同名字面量；参数/局部遮蔽；错位实参；未知包装/同名函数；partial/missing defines；实值流至日志/复制/返回。
 - **反馈规则**：若输出实值、错位参数或未知调用被压掉，立即交D92修复并固定SHA复测。
 - **验证**：对D92完整`src/` Git archive在新进程运行独立控制与T85原三文件direct/Runner；报告所有finding变化、identity字段未知、coverage与raw source/call spans。不能凭count宣称准确率。
+
+
+### D93（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：N-API 字符串访问语义与敏感流候选开发者。
+- **固定输入**：D92/T91 的原证书三文件和完整身份重放。`napi_cert_utils.cpp:890` 使用 `napi_get_value_string_utf8(env,arg,nullptr,0,&length)`查询长度；第915行才把真实字节写入 `newBlob->data`。
+- **目标**：确认空缓冲区/零容量调用的精确API角色、length输出如何流动，以及证书组件的BUILD/include是否绑定到某个具体声明和实现版本。只有调用身份与参数角色可由当前选定输入证明时，才处理第890行的候选。
+- **必须保留**：第915行字节复制、length进入日志/分支等实际依赖、同名自定义函数/函数指针、宏改写、未知wrapper、缺失或partial声明。不能仅凭函数名全局豁免。
+- **验证**：最小query、实际buffer write、length日志和输出、same-name body/callback、宏重定义和partial/missing API控制；固定T85三文件 direct/Runner诊断身份/coverage/原始跨度前后比对。
+- **交付**：若版本绑定无法证明，报告保留candidate的证据，不为减少数量编造安全结论；提交报告、控制测试、完整源档replay及对T92反馈修复。
+
+### T92（并行独立挑战线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立实现身份和数据流边界测试员。
+- **输入**：从固定upstream对象独立检查e270证书utils、BUILD.gn/include和D91/T90记录的arkui_napi/third_party_node对象。不要把同名函数或“master”分支视为版本绑定。
+- **挑战矩阵**：line890标准query、length值后续日志/返回/条件、line915真实buffer写入、同名自定义函数/函数指针、宏覆盖、缺失/partial声明与未知wrapper。
+- **反馈**：若仅名称/空指针形状就抑制自定义或未绑定调用，反馈D93修复；若证据不够，要求原范围保留候选。
+- **验证**：fresh-process完整src档案对照，T85严格三文件direct和Runner逐项记录findings、legacy ID/message、identity unknown、coverage和source/call spans；不把数量变化当准确率。
