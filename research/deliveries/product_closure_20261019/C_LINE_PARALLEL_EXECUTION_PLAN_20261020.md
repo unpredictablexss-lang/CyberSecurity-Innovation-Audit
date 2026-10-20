@@ -325,3 +325,9 @@ constraints: [不改生产代码, 不以同源合成控制报正式准确率, �
 独立报告 `research/deliveries/c-line/c1_partial_baseline_20261020.md`（提交 `ea27fa0efe9562d16663b81f4c1d7d03ce8fd90c`）在 runner 修复后的测试线上重放了 exact-bound C1 target+creator：source commit/tree/blob/SHA 全部匹配，creator parse complete、依赖已验证；目标仍有 13 个 parser issue、analysis partial / `detector_model_incomplete`、coverage partial、detector blocked、0 diagnostics。fixed exception-guard revision 只是相关控制，不是对 C1 规则安全性的结论。
 
 开发 scout 初步将 issue 指向未展开的 Ark IR DSL：合法 `IR_IF/IR_ELSE`、`BRANCH` 和 typed-array 类型宏，Tree-sitter 看到 raw source 后产生 missing/error 节点；`Map` line 2747 的 `type_fact_invalidated_by_call` 来自可能执行用户 JS 的 `JSCallDispatch()`，对象逃逸未证明前保持 unknown 是合理的保守处理。2952 Label 数组等级联点与 macro parsing 的关系、以及可否做窄 preprocessing/容错改进，仍待最小正负控制确认。当前不动规则或把 partial 转 complete。
+
+### C1 parser/model scout 结论与下一候选
+
+开发 scout 报告已归档为 `research/deliveries/c-line/c1_partial_state_root_cause_20261020.md`（提交 `68f9371d4e967884404cf7ed4c70805cbc517499`）。逐点查看精确 source/header commit 后发现，13 个 Tree-sitter missing/error 节点由未展开的 `IR_IF/IR_ELSE`、`BRANCH` 与 typed-array case-list 宏触发并级联；普通 `Label` 数组独立可解析。raw DSL 片段 partial、定义展开后的等价普通 C++ complete。`detector_model_incomplete` 是 runner 对 partial 文件的标签，不是模型 binding 拒绝。`Map` 2747 unknown 与前面的 `JSCallDispatch` 用户回调效应有关，缺少对象未逃逸证据，保持 unknown sound。
+
+独立测试线目前在独立 worktree 检验上述 raw/expanded controls 及头文件精确版本。若通过，这轮以无代码 root-cause 交付结束；下一候选是**精确源码宏感知解析 profile PoC**：绑定 header blobs 与显式 preprocessor/build 参数、保留源位置映射，缺资料时仍回落到 partial。禁止全局文本替换宏或把 parser 状态改善解释为安全结论。PoC 再由另一条测试线验证宏定义绑定、source map、safe/fixed 对照及未知配置时的 partial 回退。

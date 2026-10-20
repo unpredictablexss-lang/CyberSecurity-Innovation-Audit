@@ -187,7 +187,7 @@
     {
       "id": "C-NEXT-C1-PARTIAL-20261020",
       "kind": "development_and_independent_testing",
-      "status": "DEVELOPER_ROOT_CAUSE_SCOUT_IN_PROGRESS_TEST_BASELINE_COMPLETE",
+      "status": "DEVELOPER_ROOT_CAUSE_SCOUT_COMPLETE_INDEPENDENT_MACRO_CONTROLS_PENDING",
       "objective": "Trace C1 target partial parsing (13 concrete issue locations) and detector_model_incomplete/unknown local observation; fix only a reproducible parser or model limitation that can add accurate candidates without relaxing exact bindings.",
       "input": "openharmony/arkcompiler_ets_runtime@a65a2853ccae13da167d9aa4720ab8b11ec16656; target ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp; runner post-fix reports and source-bound model.",
       "developer_agent": "ark_static_dev",
@@ -200,12 +200,16 @@
       "independent_baseline_report": "research/deliveries/c-line/c1_partial_baseline_20261020.md",
       "baseline": "Exact-bound C1 with creator: applicable_files=1; target parse partial (13 issues), analysis partial/detector_model_incomplete, detector blocked, 0 diagnostics; creator parse complete and verified.",
       "baseline_test_commit": "starting runner replay branch at 84e73672bc95fde70070e8f5369f712911a923dd; report-only commit ea27fa0efe9562d16663b81f4c1d7d03ce8fd90c",
-      "preliminary_scout": "13 raw Tree-sitter C++ errors/holes cluster around legal unexpanded IR_IF/IR_ELSE, BRANCH and typed-array macros; Map 2747 unknown follows user-JS JSCallDispatch effect and appears conservatively expected. Precise macro/parser controls and report still pending."
+      "preliminary_scout": "13 raw Tree-sitter C++ errors/holes cluster around legal unexpanded IR_IF/IR_ELSE, BRANCH and typed-array macros; Map 2747 unknown follows user-JS JSCallDispatch effect and appears conservatively expected. Precise macro/parser controls and report still pending.",
+      "developer_scout_commit": "68f9371d4e967884404cf7ed4c70805cbc517499",
+      "developer_scout_report": "research/deliveries/c-line/c1_partial_state_root_cause_20261020.md",
+      "root_cause": "13 Tree-sitter locations are raw-source/no-preprocessor cascades around exact pinned Ark IR_IF/IR_ELSE, BRANCH, and typed-array case-list macros; standalone Label initializer parses. Expanded equivalents parse complete. detector_model_incomplete is runner partial-state label. Map 2747 unknown follows user-JS JSCallDispatch effects and remains conservatively unknown.",
+      "next_candidate": "Prototype exact-source macro-aware parse profile with pinned header blobs, explicit build/preprocessor config, preserved source locations, and partial fallback if inputs are missing; do not globally textual-rewrite macros."
     },
     {
       "id": "C-TEST-C1-PARTIAL-20261020",
       "kind": "independent_testing",
-      "status": "BASELINE_COMPLETE_AWAITING_SCOUT_RESULT",
+      "status": "BASELINE_COMPLETE_INDEPENDENT_MACRO_CONTROL_VALIDATION_IN_PROGRESS",
       "objective": "Preserve exact-bound C1 partial baseline and independently validate any narrow parser/model change on the same source commit.",
       "worktree": "worktrees/worktrees/c-static-replay-test-20261020",
       "report_commit": "ea27fa0efe9562d16663b81f4c1d7d03ce8fd90c",
@@ -214,11 +218,11 @@
     }
   ],
   "feedback_loop": [
-    "Independent tester fixes the exact-bound C1 baseline and control scope.",
-    "Developer maps raw parser holes to source DSL/macro definitions and separately classifies detector unknown/effects.",
-    "Only a minimal parser defect proven by positive and negative controls enters implementation; expected user-JS escape unknown remains conservative.",
-    "Independent tester replays the same source and developer commit; verify issue reduction does not alter safe/fixed/unbound boundaries.",
-    "Update the candidate review queue only when a source-bound diagnostic is actually emitted."
+    "Test line independently reproduces exact C1 partial baseline and validates raw versus expanded macro controls.",
+    "Developer reports parser root cause separately from detector effect unknown; no production edits without a concrete defect.",
+    "If controls confirm expected macro limitation, close as no-code root-cause and plan an exact-source macro-aware parse prototype.",
+    "Any future preprocessing prototype retains pinned headers/config, source mapping, and partial fallback; test against safe/fixed controls.",
+    "Do not treat reduced parser issue count or zero diagnostics as a security verdict."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
