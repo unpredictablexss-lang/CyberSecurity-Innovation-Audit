@@ -1811,6 +1811,46 @@ def install_routes(app: FastAPI, settings, store):
         if item["result_sha256"]:
             item["result"] = ops.result(key)
         item["agent_reviews"] = ops.agent_reviews(key) if item["kind"] == "agent_investigation" else []
+        if item["kind"] in {"revision_range", "branch_comparison", "version_matrix"}:
+            endpoint_progress = []
+            for job_id in item["spec"].get("scan_ids", []):
+                job = store.job(job_id)
+                authorized = store.triage_authorization(job_id)
+                batches = (ops.triage_batches_for_job(job_id, job.get("report_sha256"))
+                           if job.get("report_sha256") else [])
+                if job["spec"].get("audit_mode") == "static_only":
+                    state = "static_only"
+                elif job["status"] not in {"completed", "completed_with_limitations"}:
+                    state = ("awaiting_static" if job["status"] in {"queued", "running"}
+                             else "static_incomplete")
+                elif authorized is None:
+                    state = "awaiting_individual_consent"
+                elif authorized["revoked"]:
+                    state = "authorization_revoked"
+                elif not batches:
+                    state = "awaiting_model_schedule"
+                else:
+                    batch = batches[-1]
+                    ids = batch["operation_ids"] + batch["r2_operation_ids"]
+                    statuses = [ops.get(operation_id)["status"] for operation_id in ids]
+                    if batch["status"] == "blocked_authorization_changed":
+                        state = "authorization_changed"
+                    elif batch["status"] == "no_eligible_candidates":
+                        state = "no_eligible_candidates"
+                    elif (statuses and all(status in END for status in statuses)
+                          and batch["r2_status"] != "awaiting_r1"):
+                        state = ("completed" if all(status in {"completed", "completed_with_limitations"}
+                                                  for status in statuses) else "partially_completed")
+                    else:
+                        state = "agent_in_progress"
+                endpoint_progress.append({
+                    "scan_id": job_id, "commit": job["spec"].get("commit"),
+                    "scan_status": job["status"], "agent_status": state,
+                    "agent_authorized": bool(authorized and not authorized["revoked"]),
+                    "report_available": bool(job.get("report_sha256")),
+                    "model_result_is_product_vulnerability_confirmation": False,
+                })
+            item["intelligent_review_progress"] = endpoint_progress
         return item
 
     @router.post("/operations/{key}/agent-reviews", status_code=201)
