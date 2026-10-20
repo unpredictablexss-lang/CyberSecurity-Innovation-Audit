@@ -273,7 +273,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.6'
+    version = '0.21.7'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -780,6 +780,10 @@ class LocalFlow:
         args=list(a.named_children) if a else []
         if fn in self.shadows:
             self.gaps.add('call target is shadowed by a local value: '+fn)
+            # A callable parameter/local alias is not the reviewed API with the
+            # same spelling. Its unresolved target can still consume material.
+            self.emit_unresolved_escape(fn,args,env,types,n,fnname,
+                                        'local callable target shadows the named API; implementation is unknown')
             return
         callee=fn
         locally_defined=fn in self.function_definitions

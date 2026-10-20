@@ -49,6 +49,9 @@ class SensitiveTests(unittest.TestCase):
         cases=json.loads((ROOT/'fixtures/data_sensitive/cases.json').read_text())
         d5=json.loads((ROOT/'fixtures/data_sensitive/d5_cases.json').read_text())
         overrides={case['id']:case for case in d5}
+        # D90 preserves a material escape for a callable parameter; the old
+        # zero counted only modeled log sinks and lost this unresolved target.
+        overrides['sink_parameter_partial']={'expected_candidates':1}
         for case in cases:
             with self.subTest(case=case['id']):
                 text=(ROOT/'fixtures/data_sensitive'/case['file']).read_text()
