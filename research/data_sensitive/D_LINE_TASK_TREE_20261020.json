@@ -191,20 +191,48 @@
       "id": "D88",
       "kind": "development",
       "title": "窄范围支持C++分支式extern C链接声明",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "input": "T85 cf_log.h becomes partial at paired #ifdef __cplusplus / extern \"C\" { / #endif and matching independently guarded close brace; exact fixed source parses complete if only this matched linkage idiom is normalized.",
       "completion": "Only an unambiguous paired C++ linkage wrapper is normalized with byte/line offsets preserved; unmatched, alternate-branch or ambiguous constructs remain partial. Exact T85 three-file replay and parser positive/negative tests feed back from T87.",
-      "tests": ["T87"]
+      "tests": ["T87"],
+      "commit": "47bef6404919bc78121fae5fea8aa7408910b0e4",
+      "evidence_commit": "c9f2a8bceaec48d8376fae66708ed9c1af55b4da",
+      "integration_commit": "062e9d9fed4b2509698a6dbb637d1a7f06f7eef6",
+      "validation": "0.21.5; 5 developer parser tests; data132/132; known+corpus39/39; exact fixed-source pipeline and byte/offset evidence"
     },
     {
       "id": "T87",
       "kind": "testing",
       "title": "独立验证分支式extern C解析和固定证书源码覆盖",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "feedback_to": ["D88"],
-      "completion": "Independent valid paired-linkage control and malformed/unmatched/alternate-branch controls; exact fixed cf_log.h parser status, source offsets, D87 same-scope candidate identities, and full relevant regressions; failures feed back to D88"
+      "completion": "Independent 11-method boundary suite; exact raw hashes and 638 AST call positions preserved; Runner diagnostics unchanged and parser eligibility improved on fixed T85 scope.",
+      "commit": "d5d02b83758927e4ec0288e554135a30d13d04fe",
+      "integration_commit": "6aa4a5937547fea123f4a3114e7d133430955118",
+      "validation": "11 independent methods; 22 parser/linkage tests; data132; known/corpus35; D87-vs-D88 fixed replay direct21→20, Runner20→20"
+    },
+    {
+      "id": "D89",
+      "kind": "development",
+      "title": "为固定日志宏中的schema属性名绑定材料语义",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
+      "input": "D88/T87 confirm certificate utils line349 unresolved-escape candidate passes CERT_PASSWORD.c_str() through LOGE; exact included cf_log.h maps LOGE to CF_LOG_E logging wrappers; this is a constant property-name string, while actual password output flows must remain candidates.",
+      "completion": "Only when complete AST and exact unambiguous local macro chain plus bound schema-key constant and logging argument role are proven may the static property-name origin be excluded; retain real password value, unknown macros, altered definitions and incomplete headers.",
+      "tests": ["T88"]
+    },
+    {
+      "id": "T88",
+      "kind": "testing",
+      "title": "独立验证LOGE宏属性名与真实密码值边界",
+      "status": "IN_PROGRESS",
+      "agent": "/root/t83_static_feedback",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
+      "feedback_to": ["D89"],
+      "completion": "Challenge D89 with exact T85 fixed source and independent safe-key, real-value, unknown/altered macro and partial-header controls; verify actual Runner diagnostic identities and coverage; feed false suppression and re-test repaired implementation"
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
@@ -232,13 +260,14 @@
   ],
   "candidate_policy": "Do not reduce counts by hiding independent root causes; prefer source-bound relation evidence and explicit unresolved guards.",
   "current_versions": {
-    "sensitive_exposure": "0.21.4",
+    "sensitive_exposure": "0.21.5",
     "known_disclosed_cves": "0.19.11"
   },
   "integrated_tests": {
     "data": 132,
     "known_and_corpus": 39,
-    "total": 171,
+    "parser_linkage": 16,
+    "total": 187,
     "result": "PASS"
   }
 }

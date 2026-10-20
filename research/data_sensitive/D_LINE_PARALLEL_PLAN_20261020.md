@@ -4,7 +4,7 @@
 
 本轮结果：D83/D84/D85、T83/T84已完成并集成，140项相关测试通过。详见 [交付报告](D_LINE_ROUND_SUMMARY_20261020.md)。以下提示词保留本轮角色和接续设计；实际状态以任务树为准。
 
-接续轮已执行 D86/T85 与 D87/T86：敏感流到0.21.4；T86独立发现并关闭三类引用遮蔽误抑制。负责人当前复验为132项data + 39项known/corpus，共171项通过。第二层模型仍未实现。
+接续轮已执行 D86/T85、D87/T86 与 D88/T87：敏感流到0.21.5；T86独立发现并关闭三类引用遮蔽误抑制，T87独立验证成对空C++ linkage投影。负责人当前复验为132项data + 39项known/corpus + 16项新解析控制，共187项通过。第二层模型仍未实现。
 
 ## 基线情况与本轮取舍
 
@@ -81,3 +81,11 @@ flowchart TD
 ### T87（下一测试切片）
 
 角色：独立前端边界测试。目标：固定复现 `cf_log.h` 的成对跨条件extern C；独立构造完全匹配、未配对、顺序歧义、分支有实际声明、普通extern等控制。检验解析状态、函数/宏体保留、源码行列/字节映射不变；用原T85三文件和D87固定版本跑候选/coverage同源对照。任何未配对变complete或真实路径/行偏移改变即反馈D88，修订后复测。交付独立用例、固定源差异、partial限制和完整命令，不报无标签准确率。
+
+### D89（下一开发切片）
+
+角色：敏感流候选语义开发。输入：T87固定源码显示，证书框架 `utils.cpp:349` 的 unresolved-escape候选把 `CERT_PASSWORD.c_str()` 传入 `LOGE`；完整固定 `cf_log.h` 中 `LOGE→CF_LOG_E→CfPrintLog/HILOG_ERROR` 是有据可查的日志宏链，来源则是值为 `"password"` 的schema属性名。目标：证明精确局部宏定义链、绑定属性常量和该日志参数的数据角色后，消除纯属性名材料候选；真实密码内容仍可达同类日志/输出时必须继续报警。只认完整解析、无宏重定义/歧义的同一固定源码；altered macro、unknown wrapper、partial header及实际密码值保留。先对T88最小失败，交付源码前后Runner诊断/identity/coverage及正反控制。
+
+### T88（下一测试切片）
+
+角色：D89独立日志宏/材料边界挑战。对固定证书真实源码以及具名最小控制测试：schema-key常量经准确`LOGE`宏链、同名但真实password参数、用户值进入format operand、unknown wrapper、重定义/别名宏、partial header。先对D89提交独立跑测，逐案记录候选source、sink、宏链与运行器诊断身份；任何实际secret漏检立即反馈并复测。固定T85三文件比较Runner完整finding identity和覆盖；不能把直接detector结果代替Runner，不能仅凭候选数判断准确度。
