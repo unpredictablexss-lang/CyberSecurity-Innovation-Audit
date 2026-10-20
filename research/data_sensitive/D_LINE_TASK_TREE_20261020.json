@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "MILESTONE_COMPLETED_NEXT_QUEUE_READY",
+  "status": "D90_T89_IN_PROGRESS",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -166,8 +166,13 @@
       "commit": "32818bd8fff4bcc96b686bb903b136dd022d3fd9",
       "developer_input": "23abc16652866edf06f6d86d8c11ec5deb5be784",
       "integration_commit": "2dd69e99e8038c905d1e81250207365aa911906f",
-      "depends_on": ["D86", "T85"],
-      "feedback_to": ["D87"],
+      "depends_on": [
+        "D86",
+        "T85"
+      ],
+      "feedback_to": [
+        "D87"
+      ],
       "completion": "发现三类reference shadow误抑制并反馈修复；独立13项及data132项通过；固定证书三文件范围候选21→21且明细/覆盖一致",
       "validation": "13 independent methods pass against D87 fixed SHA; 132 data tests pass; 3 shadow counterexamples closed; strict 3-file certificate replay unchanged"
     },
@@ -181,10 +186,15 @@
       "commit": "23abc16652866edf06f6d86d8c11ec5deb5be784",
       "evidence_commit": "86a264a1701aeff1fdf0350b06d09f2821349917",
       "integration_commit": "68f9c3aeb4e582f68c9c02a862f6864ad2cfae54",
-      "depends_on": ["D86", "T85"],
+      "depends_on": [
+        "D86",
+        "T85"
+      ],
       "input": "T85 certificate framework: CERT_PASSWORD is the literal property key \"password\"; candidate arises through c_str() and unresolved escape at a property-name check/log path, not established password bytes.",
       "completion": "Model only statically bound constant and known argument-role evidence where the AST proves property-name use; retain unknown wrappers and actual secret-value flows; demonstrate named positive, safe, ambiguous and unknown controls.",
-      "tests": ["T86"],
+      "tests": [
+        "T86"
+      ],
       "validation": "0.21.4; exact schema-key binding; fetched material preserved; 11 developer methods and119 data tests passed; strict fixed scope 3/21 unchanged, two-file diagnostic 21→20 only"
     },
     {
@@ -195,7 +205,9 @@
       "agent": "/root/d84_sensitive_quality",
       "input": "T85 cf_log.h becomes partial at paired #ifdef __cplusplus / extern \"C\" { / #endif and matching independently guarded close brace; exact fixed source parses complete if only this matched linkage idiom is normalized.",
       "completion": "Only an unambiguous paired C++ linkage wrapper is normalized with byte/line offsets preserved; unmatched, alternate-branch or ambiguous constructs remain partial. Exact T85 three-file replay and parser positive/negative tests feed back from T87.",
-      "tests": ["T87"],
+      "tests": [
+        "T87"
+      ],
       "commit": "47bef6404919bc78121fae5fea8aa7408910b0e4",
       "evidence_commit": "c9f2a8bceaec48d8376fae66708ed9c1af55b4da",
       "integration_commit": "062e9d9fed4b2509698a6dbb637d1a7f06f7eef6",
@@ -207,7 +219,9 @@
       "title": "独立验证分支式extern C解析和固定证书源码覆盖",
       "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
-      "feedback_to": ["D88"],
+      "feedback_to": [
+        "D88"
+      ],
       "completion": "Independent 11-method boundary suite; exact raw hashes and 638 AST call positions preserved; Runner diagnostics unchanged and parser eligibility improved on fixed T85 scope.",
       "commit": "d5d02b83758927e4ec0288e554135a30d13d04fe",
       "integration_commit": "6aa4a5937547fea123f4a3114e7d133430955118",
@@ -217,22 +231,58 @@
       "id": "D89",
       "kind": "development",
       "title": "为固定日志宏中的schema属性名绑定材料语义",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
       "input": "D88/T87 confirm certificate utils line349 unresolved-escape candidate passes CERT_PASSWORD.c_str() through LOGE; exact included cf_log.h maps LOGE to CF_LOG_E logging wrappers; this is a constant property-name string, while actual password output flows must remain candidates.",
       "completion": "Only when complete AST and exact unambiguous local macro chain plus bound schema-key constant and logging argument role are proven may the static property-name origin be excluded; retain real password value, unknown macros, altered definitions and incomplete headers.",
-      "tests": ["T88"]
+      "tests": [
+        "T88"
+      ],
+      "commit": "5c82be52e05a814e7d29a43c6627b5e53a1ad2c0",
+      "evidence_commit": "68fc4b6cf1f3a1c548716b86f162c58dc48d8715",
+      "integration_commit": "f30ca3cbd",
+      "final_evidence_integration": "0c0a66f4d",
+      "validation": "0.21.6; exact fixed T85 three-file direct and Runner 20→19; only schema key at line349 removed; 19 remaining IDs/messages same; coverage 3 partial; 12 developer +144 data +61 compatibility tests pass; T88 13 independent methods pending final report integration"
     },
     {
       "id": "T88",
       "kind": "testing",
       "title": "独立验证LOGE宏属性名与真实密码值边界",
+      "status": "IN_PROGRESS_FINAL_REPORT",
+      "agent": "/root/t83_static_feedback",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
+      "feedback_to": [
+        "D89"
+      ],
+      "completion": "Challenge D89 with exact T85 fixed source and independent safe-key, real-value, unknown/altered macro and partial-header controls; verify actual Runner diagnostic identities and coverage; feed false suppression and re-test repaired implementation",
+      "developer_input": "5c82be52e05a814e7d29a43c6627b5e53a1ad2c0",
+      "validation": "Independent 13 methods; fixed-source Runner/direct 20→19; macro metadata override controls retain 1/1; report/commit pending"
+    },
+    {
+      "id": "D90",
+      "kind": "development",
+      "title": "核验固定证书源码清理调用的安全角色与候选边界",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
+      "input": "D89 fixed T85 Runner retains unresolved-escape candidates at CfFree/CF_FREE_PTR/CfBlobDataFree/memset_s cleanup sites (317,328,364,381,384,386,388,1880,1882); determine whether exact declarations/definitions establish deallocation or wiping without disclosure.",
+      "completion": "Source-backed narrow role proof only for exact known function identity and proven non-escape behavior; preserve unknown/same-name wrappers and real outputs; tests, fixed-source diff and honest limits; defer to T89 feedback before integration.",
+      "tests": [
+        "T89"
+      ]
+    },
+    {
+      "id": "T89",
+      "kind": "testing",
+      "title": "独立挑战D90清理函数身份、别名与泄漏反例",
       "status": "IN_PROGRESS",
       "agent": "/root/t83_static_feedback",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
-      "feedback_to": ["D89"],
-      "completion": "Challenge D89 with exact T85 fixed source and independent safe-key, real-value, unknown/altered macro and partial-header controls; verify actual Runner diagnostic identities and coverage; feed false suppression and re-test repaired implementation"
+      "feedback_to": [
+        "D90"
+      ],
+      "completion": "Inspect exact upstream declarations/definitions and independently test cleanup-only, actual output, shadowed/same-name wrapper, aliases and unknown cases; replay fixed T85 direct and Runner, record identities/coverage and request repair on any unsafe suppression."
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
