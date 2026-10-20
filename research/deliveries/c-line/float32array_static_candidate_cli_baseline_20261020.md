@@ -86,3 +86,19 @@ The implementation was committed as OHScanner SHA `929904ab522d855be32c6c58a0704
 The output tree for the positive and missing-helper cases is the exact Ark Runtime tree `8781f036a3e7e04d8e0b34970d5f623b42875016`. The wrong-commit control uses local source commit/tree `830e85b40240677039719fcbf14f721ad3b19050` / `579712c1ebbb703d17cea422b1572023bed5d8a4`. The implementation's candidate remains one diagnostic, at the same single location, and its exact bound target retains partial coverage; no runtime or vulnerability conclusion is added.
 
 The post-commit replay did not execute a fixed-byte mutated target, a mutated-helper Git object, or a separate helper-SHA mismatch case. The pre-commit unit tests' fixed-predicate fixture is developer-authored and has not been independently rerun here. Those controls remain pending rather than passed.
+
+## Hardened profile same-commit replay
+
+The developer subsequently added an immutable exact three-row source-pin whitelist and a model-pin tamper assertion in implementation commit `46fdb5887c49a552b249fb20805025ba6316d8d0`. I verified this exact SHA was `HEAD` and the worktree was clean before running the cases below. This hardening commit is the latest implementation SHA covered by this report.
+
+| Case | Result on `46fdb5887c49a552b249fb20805025ba6316d8d0` |
+|---|---|
+| Exact a65 source + all three exact files | 1 candidate at `common_stubs.cpp:228`; detector blocked; coverage partial 1, no complete or not-analyzed files. |
+| Wrong source commit `830e85b40240677039719fcbf14f721ad3b19050` | 0 candidate; detector blocked; common stub not analyzed because the exact repository/commit/path is not in the reviewed model. |
+| Exact a65 with creator helper omitted | 0 candidate; detector blocked; common stub not analyzed with `negative_double_length_missing_source:...new_object_stub_builder.cpp`. |
+
+These three runs were independent CLI executions with output files `D:\OpenHarmonyScanner\tmp\float32-candidate-run-46fdb588-{positive,wrong-commit,missing-helper}.{json,md}`. The exact source tree remained `8781f036a3e7e04d8e0b34970d5f623b42875016` for positive and missing-helper cases. Candidate count stayed at one and did not spread to helper files.
+
+I also independently reran the detector-specific tests and complete Ark Runtime detector test directory against this implementation SHA. `D:\anaconda3\python.exe -m pytest -q tests/detectors/ark_runtime/test_negative_double_length.py` passed (5 passed); `D:\anaconda3\python.exe -m pytest -q tests/detectors/ark_runtime` passed (198 passed, 3 skipped). The `D:\OpenHarmonyScanner\.venv-c-line` environment does not contain pytest, so the test command was run using the already available Anaconda pytest installation. These tests do not execute Ark Runtime or prove runtime impact.
+
+Still not executed independently: fixed-byte target under a separately bound fixed commit, mutated-helper Git blob/hash, wrong helper SHA with the exact profile, wrong target blob/SHA, TaggedInt runtime behavior, positive TDouble runtime behavior, or Ark Runtime/ASan. The code has a predicate-level fixed guard unit fixture, but that does not replace an exact-source fixed CLI control. Keep these statuses as not run.
