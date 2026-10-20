@@ -293,6 +293,25 @@ flowchart TD
 - **反馈**：若D99将任何仍可达路径判死并压掉真实候选，立即提供最小代码和direct/Runner证据；若当前解析器无法区分组标签或return expression，要求保持known/partial并明确报告，而不强迫实现。
 - **固定回归**：fresh-process固定src、data和T85 direct/Runner；记录身份、evidence、638调用事实及coverage。不得把候选数当标签，不推送owner。
 
+### D100（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：C++ switch arm 内有限if/else退出证明开发者。
+- **基线**：D99/T98集成规则0.21.14；D99支持连续case标签和受限return表达式，明确 nested exits 未支持。
+- **目标**：仅评估flat switch arm里的一个直接if/else，当then/else两支均由裸return或已支持return表达式终止时，能否标记后续switch语句不可达。先验证AST parent/child形状、branch effects和return value传播是否可共用既有模型。
+- **反控制**：缺else、任一支break/continue/throw/normal exit、嵌套switch/loop、label/goto、partial AST/selected units、macro替换及return前实际sink，都不能误抑制。unknown path保持candidate/unknown。
+- **反馈/验证**：先交最小反例给T99；有证据才实现。修订SHA上跑独立反控、完整data/compat、T85 direct/Runner；报告返回值流和scope限制，不扩通用CFG。
+
+### T99（并行独立挑战线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立C++ switch arm终止语义挑战者。
+- **矩阵**：then与else均裸return；一个return expr；含helper返回材料；真实sink位于return expression；缺else；一支break/continue/normal completion；嵌套switch/loop；goto/label跳入后续；partial header；case fallthrough；共享return后语句。
+- **反馈**：分别检查postlude可达性、return expression effects和caller return material。死代码被报候选或可达sink被抑制时提供精确证据并交D100修复；无法证明时要求保留unknown。
+- **固定回归**：baseline/final fresh source、data/compat、T85 direct/Runner及原始调用事实；明确T85无此feature语法时只算兼容证据。提交报告与SHA，不推送owner。
+
 ### T92（并行独立挑战线）
 
 **结构化 vibe coding 提示词**
