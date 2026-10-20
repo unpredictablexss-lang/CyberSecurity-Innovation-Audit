@@ -1,44 +1,57 @@
 {
+  "authorization": "config/collaboration/standing_authorization.json",
+  "blocking_prerequisites": [],
+  "completion_rule": "Deliver a concrete change, relevant tests and available evidence; optional product/evaluation work does not block completion.",
   "nodes": [
     {
+      "blocks_development": false,
       "id": "G12-PC-1",
-      "next": "Bind official Ark Git store and exact product build/preprocess artifacts.",
-      "status": "IN_PROGRESS_BLOCKED",
-      "title": "Ark parent/fix build and preprocess profile"
+      "next": "Find available public/local source and build inputs autonomously; record missing product fields as unknown and continue source/component work.",
+      "status": "OPTIONAL_AVAILABLE_INPUTS",
+      "title": "Available source/build profile investigation"
     },
     {
+      "blocks_development": false,
+      "evidence_status": "NOT_RUN",
       "id": "G12-PC-2",
-      "next": "Owner waived the human-review prerequisite for this decision; do not claim evaluation pass or compute metrics without reliable independent human labels.",
-      "status": "WAIVED_BY_OWNER_NOT_EXECUTED",
-      "title": "Independent holdout freeze and double-blind adjudication"
+      "next": "Use existing cases for development regression now. Formal holdout and human staffing are optional; do not invent labels or accuracy metrics.",
+      "status": "OPTIONAL_NOT_RUN",
+      "title": "Optional formal evaluation"
     },
     {
+      "blocks_development": false,
+      "evidence_status": "UNKNOWN",
       "id": "G12-PC-3",
-      "next": "Close entry, permission, trigger, attacker control and CIA impact per case.",
-      "status": "BLOCKED",
-      "title": "Candidate product applicability closure"
+      "next": "Report source/component findings now; investigate actual products only when suitable inputs exist.",
+      "status": "OPTIONAL_AVAILABLE_INPUTS",
+      "title": "Optional product applicability"
     },
     {
+      "blocks_development": false,
+      "evidence_status": "NOT_RUN",
       "id": "G12-PC-4",
-      "next": "Execute only after product build and authorization gates are locked.",
-      "status": "NOT_RUN",
-      "title": "Authorized isolated PoC"
+      "next": "Standing authorization applies. Select a reproducible component/version and isolated environment; build and test without waiting for product proof or another approval.",
+      "status": "READY_WITH_AVAILABLE_ENVIRONMENT",
+      "title": "Local isolated component PoC"
     },
     {
+      "blocks_development": false,
+      "evidence_status": "NOT_RUN",
       "id": "G12-PC-5",
-      "next": "Patch, rebuild same profile, replay PoC and controls.",
-      "status": "NOT_RUN",
-      "title": "Fix and fixed-product revalidation"
+      "next": "Test the affected/fixed component pair when available; no portfolio-wide or shipped-product prerequisite.",
+      "status": "READY_PER_CASE",
+      "title": "Per-case fix and regression"
     },
     {
+      "blocks_development": false,
       "id": "G12-PC-6",
-      "next": "Re-evaluate only after all mandatory evidence gates close.",
-      "status": "NOT_ADMITTED",
-      "title": "Competition admission"
+      "next": "Deliver supported source/component results and limitations now; no all-case, staffing or product-admission gate.",
+      "status": "READY_FOR_EVIDENCE_REPORT",
+      "title": "Incremental evidence report"
     }
   ],
+  "payload_sha256": "59041286da2acf039744db4bd1d32e62f5f23897e050c3cad8fe89c42688b343",
   "root": "G12-PC-PRODUCT-ADMISSION-CLOSURE",
   "schema": "ohscanner.g12-pc-task-tree/v1",
-  "status": "ACTIVE_NOT_ADMITTED",
-  "payload_sha256": "d4a057d65a48f5b45e157795c6ca0840509347dcf654de7f3a792a725f64c877"
+  "status": "ACTIVE_DEVELOPMENT"
 }

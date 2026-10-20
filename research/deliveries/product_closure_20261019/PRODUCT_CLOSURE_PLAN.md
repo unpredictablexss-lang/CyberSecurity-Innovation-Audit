@@ -1,37 +1,18 @@
-# G12-PC product closure plan
+# 源码/组件交付与可选产品调查
 
-日期：2026-10-19（Asia/Shanghai）。基线 `ddd8556768d679fcc09f1fcb37d10730f49b2c6c`，tree `7d102eb9d2f0c2149fe978bb350129b7cf2fac71`。本轮未执行 fetch、checkout、commit、push、merge、reset，未修改生产 Detector、contracts、Runner 或 Catalog。
+组长于 2026-10-20 授权取消项目自设的逐次审批、真人评测、产品确认和全部案例准入前置条件。授权持续有效直到用户撤销，见根 `AGENTS.md` 与 `config/collaboration/standing_authorization.json`。缺项记 unknown/not_run，继续可执行工作；豁免不代表测试通过。
 
-## 任务树状态
+当前任务树以 ACTIVE_DEVELOPMENT 推进。产品资料是证据库存，不是开发许可。
 
-| 节点 | 状态 | 正在做什么 | 最小下一步 |
-|---|---|---|---|
-| G12-PC-1 build/preprocess profile | IN_PROGRESS_BLOCKED | 可复算 manifest 已落地，16 个 Ark 开发案例 | 绑定 official Ark Git store 与真实产品构建/预处理输入 |
-| G12-PC-2 independent holdout | PIPELINE_IMPLEMENTED_NOT_RUN | freeze/双盲/裁决机制已自测 | 建立无泄漏独立抽样框和三方人工流程 |
-| G12-PC-3 product applicability | BLOCKED | 每案例义务矩阵已建立 | 补入口、权限、攻击者控制、触发和 CIA 影响 |
-| G12-PC-4 authorized isolated PoC | NOT_RUN | 已定义准入门槛和记录要求 | 只对满足静态证据门且获授权的候选执行 |
-| G12-PC-5 fix/revalidation | NOT_RUN | 已定义 parent/fix/product rebuild 流程 | 固定 patch、同 profile 重建、PoC 和控制回归 |
-| G12-PC-6 admission | NOT_ADMITTED | 维护可审计否决结论 | 所有强制项闭环后重审，不自动 Ready |
+| 事项 | 用途 | 是否阻塞开发 |
+|---|---|---|
+| PC-1 source/build 资料 | 利用可获取的固定源码和构建信息，缺产品字段保留 unknown | 否 |
+| PC-2 正式评测 | 需要独立准确率时选择适合标签和方法；不再强制真人双盲团队 | 否 |
+| PC-3 产品关联 | 有具体产品资料时调查，组件结果可先交付 | 否 |
+| PC-4 隔离组件 PoC | 现有授权下直接设计/构建/运行 | 否 |
+| PC-5 修复复验 | 对可执行案例逐案比较，不等其他案例 | 否 |
+| PC-6 成果报告 | 输出已有源码/组件证据、未执行和未知项 | 否 |
 
-## Ark 案例处理顺序
+Agent 可自行获取公开源码、选择可复现版本和合适的本地隔离环境；不必先证明已知产品影响才设计 PoC 去调查影响。记录 actual build、命令和结果，不把临时组件构建冒称 shipped product。保留未提交工作；不向线上服务发送攻击流量。
 
-1. 先选 source identity 与 parent/fix 关系最完整的 6 个案例做产品适用性调查；不是因为它们最危险，而是证据身份最可复算。
-2. 第二批处理已有 detector parent-only candidate、但产品 build/profile 缺失的案例。
-3. I7W51D、IB8BCA、历史 variant 等 source identity 或语义覆盖不完整案例继续显式 unknown，不用 0 findings 当 safe。
-4. CVE-2025-24304 不把 CVE 与具体 patch 的强推断升级为一对一事实；先闭合产品版本和公告映射。
-
-## 动态验证授权门
-
-只有同时满足以下条件才进入隔离 PoC：
-
-- 固定产品 build manifest、版本/分支/二进制/source hash；
-- 真实入口、权限边界、攻击者输入和触发条件；
-- 可达敏感操作与具体 CIA 影响假设；
-- 明确的隔离环境、资源上限、网络禁用、快照恢复和授权记录；
-- vulnerable/fixed 对照、重复次数、stdout/stderr、sanitizer/crash/signals、patch 和 artifact hash。
-
-静态 Python 子进程、单元 fixture、组件 Harness 不是不可信构建或产品 PoC 沙箱。禁止攻击线上服务。
-
-## 当前结论
-
-`NOT_ADMITTED`。缺产品 build、入口/权限、触发、CIA、授权 PoC、修复后产品重验；独立 holdout 也未真实启动。0 findings、partial、failed、not run 均不解释为 safe。
+`product_closure_matrix.json` 保留每案例的产品未知事实；不将未知转成 PASS，也不将它转成开发禁令。生成器可重复生成相同的非阻塞任务树。历史准入协议只作历史研究记录。

@@ -1,7 +1,8 @@
-"""Check committed, staged, unstaged and untracked paths against baseline ownership.
+"""Report changed paths against baseline responsibilities (advisory by default).
 
-This is a delivery check, not a security boundary. The integrator must provide a
-trusted full base SHA; policy is read from that commit, never from the worktree.
+This is a coordination helper, not a write-permission gate. --strict opts into
+the historical blocking behavior for an explicitly requested scope audit.
+The reference policy still comes from the selected commit for reproducibility.
 """
 import argparse
 from fnmatch import fnmatchcase
@@ -50,16 +51,25 @@ def check(repo, base, lane):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--base", required=True)
-    parser.add_argument("--lane", required=True)
+    parser.add_argument("--base", help="reference commit; defaults to current HEAD")
+    parser.add_argument("--lane", default="project")
+    parser.add_argument("--strict", action="store_true", help="fail on scope differences")
     parser.add_argument("--repo", type=Path, default=Path.cwd())
     args = parser.parse_args()
     try:
-        result = check(args.repo.resolve(), args.base, args.lane)
+        repo = args.repo.resolve()
+        base = args.base or git(repo, "rev-parse", "HEAD").decode().strip()
+        result = check(repo, base, args.lane)
     except (ValueError, KeyError, subprocess.CalledProcessError) as exc:
-        parser.exit(2, "scope check failed: " + str(exc) + "\n")
+        if args.strict:
+            parser.exit(2, "scope check failed: " + str(exc) + "\n")
+        print(json.dumps({"mode": "advisory", "blocking": False,
+                          "warning": str(exc)}, indent=2))
+        return 0
+    result["mode"] = "strict" if args.strict else "advisory"
+    result["blocking"] = bool(args.strict and result["violations"])
     print(json.dumps(result, indent=2, ensure_ascii=False))
-    return int(bool(result["violations"]))
+    return int(result["blocking"])
 
 
 if __name__ == "__main__":

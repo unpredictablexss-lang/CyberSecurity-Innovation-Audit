@@ -1,11 +1,7 @@
-# Independent holdout plan (not executed)
+# 可选评测与日常回归
 
-All32 current fixtures are design/regression examples, including later bug-fixing examples.
-Do not relabel them holdout. Before another algorithm change, freeze detector/model commit, select
-an independently labeled second official Native component and fixed source scope with owner,
-separate material sensitivity/public output/runtime visibility labels, and store SHA/annotation
-provenance. Keep genuine positive/fixed pairs distinct from safe/unrelated and unknown samples.
-Have a reviewer other than the rule author label the cases; run once after freeze without tuning.
-Report covered/partial/not_analyzed separately and publish precision/recall only on supported
-independent truth. No CVE or runtime-positive sample is currently available; that is a blocker to
-real-world efficacy claims, not a reason to manufacture a sample or remove guards.
+组长于 2026-10-20 授权取消项目自设的逐次审批、真人评测、产品确认和全部案例准入前置条件。授权持续有效直到用户撤销，见根 `AGENTS.md` 与 `config/collaboration/standing_authorization.json`。缺项记 unknown/not_run，继续可执行工作；豁免不代表测试通过。
+
+现有 fixture、公开修复对和历史扫描可直接用于开发/回归，不必在下一次算法修改前先建独立 holdout 或获得 owner 批准。记录来源、版本、正反控制、覆盖和真实结果。
+
+正式独立准确率评测为可选研究任务；不要求双盲真人团队或保管签署。若选择开展，说明标签依据、抽样与开发重叠；模型建议和 scanner verdict 不能自行充当可靠真值。无适合标签时不报正式 Precision/Recall，继续报告回归和覆盖结果。

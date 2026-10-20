@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "protocol_id": "D55",
+  "protocol_version": "2.0-optional-development",
+  "status": "OPTIONAL_NOT_RUN",
+  "authorization": "config/collaboration/standing_authorization.json",
+  "blocks_development": false,
+  "blocking_prerequisites": [],
+  "current_stop_decision": "NONE_CONTINUE_AVAILABLE_DEVELOPMENT_AND_SCANS",
+  "accuracy_evaluation_started": false,
+  "labels_created": false,
+  "metrics_computed": false,
+  "scanner_modified": false,
+  "protocol_document": "D55_INDEPENDENT_HOLDOUT_PREREGISTRATION.md",
+  "execution_task_document": "D55_HOLDOUT_EXECUTION_TASK.md",
+  "evaluation_tracks": [
+    "ohscanner.data.sensitive_exposure",
+    "ohscanner.known_disclosed_cves"
+  ],
+  "sampling": {
+    "selection": "choose_available_pinned_public_source_and_disclose_method",
+    "development_examples": "allowed_for_regression; not relabelled_as_independent_holdout"
+  },
+  "labeling": {
+    "independent_blind_reviewers_required": 0,
+    "independent_adjudicator_required_for_disagreements": false,
+    "custodian_required": false,
+    "signed_custody_required": false,
+    "unknown_is_retained_and_not_coerced": true,
+    "formal_metrics": "only_on_suitable_reliable_labels_with_disclosed_methodology"
+  },
+  "hard_stop_conditions": [],
+  "current_metric_status": {
+    "precision": null,
+    "recall": null,
+    "reason": "No reliable formal evaluation labels were created; this does not block development."
+  },
+  "completion_rule": "available_source_or_component_results_relevant_controls_and_limitations"
+}

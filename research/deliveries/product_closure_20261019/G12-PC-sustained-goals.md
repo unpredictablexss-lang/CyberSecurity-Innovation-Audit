@@ -1,58 +1,15 @@
-# G12-PC sustained goals
+# C 线持续开发目标
 
-持续原则：每轮只闭合一个可审计缺口；缺输入就保持 blocked/unknown，不以规则数量、0 findings、模型意见或组件 Harness 代替产品证据。目标状态为 active，直到产品闭环与准入重审完成。
+组长于 2026-10-20 授权取消项目自设的逐次审批、真人评测、产品确认和全部案例准入前置条件。授权持续有效直到用户撤销，见根 `AGENTS.md` 与 `config/collaboration/standing_authorization.json`。缺项记 unknown/not_run，继续可执行工作；豁免不代表测试通过。
 
-## G12-PC-1 Build/preprocess profile
+当前目标是持续产出可用的规则/覆盖改进、相关回归、本地隔离组件验证和源码/组件报告；不再以 G12-PC 产品准入全部闭合作为每轮完成条件。
 
-- 本轮：已生成 16 个 Ark parent/fix 案例的可复算 manifest；6 个 source identity 字段完整，0 个产品 profile 完整。
-- 当前 IBS5YG 单案例 intake 与 16 案例 portfolio 必须分别记账：D5/T5 通过最多闭合 IBS5YG 的 case profile，不能把 G12-PC-1 从 `IN_PROGRESS_BLOCKED` 更新为完成。单案必须核对 locked manifest digest、Ark Runtime component revision、同一 build 的 GN/config/toolchain/include/generated-input closure、preprocessed TU/macro log 和 shipped binary/image 映射。
-- 下一轮：只绑定 official Ark Git object store，逐项本地核对 commit/tree/blob/source SHA；收到 IBS5YG 六项最小目标标识后执行单案画像 D5/T5。
-- 后续：依次锁产品 manifest/branch/version、GN target/args.gn、compile database、include closure、compiler/linker/sysroot、preprocessed TU/macro log。
-- 完成条件：同一输入重算 payload hash 一致，所有 required identity/build inputs 非 unknown。
+1. 自行核对当前代码和已有失败，选择一项能实际执行的改进。
+2. 实现后做相关正反控制与必要真实组件重放；出现具体失败才修复重测。
+3. 已有候选可直接进入源码审查；本地组件 PoC 不等待产品 profile、16 案全闭合或新的授权。
+4. 记录代码、执行结果与未知项，完成本切片，再推进下一项。
+5. 不为同一缺失资料反复新建审计或请求用户配置团队角色。
 
-## G12-PC-2 Independent holdout
+PC-1/3 是可选资料调查，PC-2 是可选正式评测；PC-4/5 为按可用环境逐案执行的组件 PoC/修复，PC-6 为按现有证据输出报告。任务树根状态为 ACTIVE_DEVELOPMENT，产品未知不等于开发 blocked。
 
-- 本轮：freeze、双盲 packet、review lock、分歧裁决、final labels 和 score gate 已实现并完成合成自测；未使用开发控制作真值。
-- owner 于 2026-10-20 指示不再要求提供独立 source set、两名 reviewer 和 adjudicator，并要求默认审查通过；按此授权将 PC-2 流程前置条件记为 `WAIVED_BY_OWNER_NOT_EXECUTED`。这不是一次实际 review，也不构成 PASS。
-- 当前事实：真实 source set 和人工评审记录不存在，holdout 未运行；`metrics_computed=false`，Precision/Recall 继续为 null。用户豁免不伪造独立真值，也不改变证据要求。
-- 若后续需要模型质量指标，必须重新启用真实抽样框、custodian、两名独立人工评审和 adjudicator；保留泄漏账本、盲审、分歧裁决与 unknown。
-- 在取得 `truth_status=reliable_independent_human_adjudicated`、`model_generated=false`、评审/裁决 hash 完整之前，禁止计算或报告 family confusion matrix。
-
-## G12-PC-3 Product applicability
-
-- 本轮：16 个案例均输出 entry/permission/trigger/attacker/CIA/product build/PoC/fix-retest 义务矩阵，全部缺项显式 unknown。
-- 当前可先做的准备：按每个候选列出源码入口、调用链、权限边界、attacker-controlled input、trigger 和 CIA 证据定位点；尚无产品构建绑定的字段一律 `unknown`，不得把上游 JS API 可达性当作产品攻击面。
-- 下一轮：目标产品输入到位后，按 source identity 完整度选 6 个案例调查同一产品 manifest、版本/分支、入口和调用链，不先执行 PoC。
-- 完成条件：每案例有真实入口/权限边界、攻击者控制、触发条件、可达敏感操作和具体 CIA 影响证据。
-
-## G12-PC-4 Authorized isolated PoC
-
-- 本轮：未执行。定义了授权、隔离、资源、网络、快照和证据记录门。
-- 测试矩阵和受控 harness 设计可提前完成；运行目标产品 PoC 仅对满足对应 case 的 PC-1 profile、PC-3 入口/影响证据并取得 PC-4 明确授权后进行。
-- 下一轮：仅对满足 G12-PC-1+3 的候选申请隔离授权。
-- 完成条件：vulnerable build 可重复触发、fixed build 同环境拒绝/不触发，保留命令、环境、patch、artifact hash 和完整输出。
-
-## G12-PC-5 Fix/revalidation
-
-- 本轮：未执行。
-- 下一轮：对已通过 PoC 的案例绑定精确 patch、fixed source/tree/blob、产品 rebuild profile。
-- 完成条件：同 profile 修复构建、PoC 重放、回归控制和副作用检查全部通过。
-
-## G12-PC-6 Admission
-
-- 本轮：NOT_ADMITTED。
-- 重审触发：上述 1-5 全部闭环，且竞赛交付的准确分析、CWE/CVE、PoC、受影响版本/分支、修复重验、性能/创新和完整报告均支持。
-- 禁止：未获用户授权标 Draft Ready、merge 或把模型自评/历史 verdict 当真值。
-
-## 本轮持续目标检查点（2026-10-20）
-
-D3/T2/T6 并行交付已完成：D3 完成 source-side PC-3 定位但产品入口/权限/CIA 仍未知；T2 保留反例优先的窄候选；T6 仅完成运行时验证设计。下一轮优先级仍由准入门决定：先取得六项 IBS5YG 目标身份并绑定同一 build profile，再补产品入口/攻击面证据；随后才考虑 PC-4 授权执行。没有目标身份时，保持 G12-PC-1/3 blocked，允许继续做受限的源码证据整理与治理模板审查。
-
-## 本轮增量（2026-10-20）
-
-- **PC-1:** D2 对 7 个仍有提交锚点的案例补充本地 Gitee bare-store 身份复算（14 commit/tree、24 个存在的 path blob、7/7 parent→fix ancestry）；3 个无可靠锚点案例仍 `UNKNOWN`。T4 已独立复算并指出 verifier 对缺失/错误类型对象和 ancestry 异常的 gate 缺口；D2 按反馈修复，T4 对修复后的同一 commit 注入负例复核通过（报告 commit `a297e791908be725abfb39be75991d3813911dae`，SHA-256 `1e73b08d00d1a447157048fc9cde1c11e44f452847351f80b8054cb51e119939`）。上述内容不证明 acquisition custody、产品关联或产品构建画像；PC-1 portfolio 仍 0/16。
-- **PC-2:** T2 将非合成 leakage evidence 绑定到 evidence-root 下的安全相对路径及原始字节 SHA；22 项合成单测和 pipeline self-test 通过，`metrics_computed=false`。owner 豁免真实人工评审的前置要求，因此任务树标为 `WAIVED_BY_OWNER_NOT_EXECUTED`；真实 holdout 未运行，不存在可靠 truth 或可报告指标。
-- **持续反馈:** 每个 D2 source verifier 更新由 T4 复算对象统计和错误门；每个 T2 pipeline 更新先用合成负例验证，再由 owner/T2 独立复跑。获得产品 owner 或独立 holdout owner 的真实材料前，维持所有对应 blocked/unknown 状态。
-
-- D2 按 T4 反馈把缺失/错误类型 commit、缺 tree、expected-path blocker 和 ancestry 非 PASS 纳入 verifier failure gate；owner 重跑 self-test 和 build-profile 16 项 suite 通过。T4 独立验收通过；接下来仍须保持未记录字段和无锚点案例 UNKNOWN，等待 source owner 提供三案锚点。
-- **D5/T5 intake gate:** T5 在 D5 初版发现 manifest URI 摘要未绑定证据字节，D5 修复后 T5 对精确新 SHA 的 21 项黑盒复测通过；正例仍返回 `admission_ready=false`。此 gate 只校验结构和本地字节摘要，不验证 issuer、证据内容、URL 可达、custody 或产品构建关系。六项产品身份仍全为 null，PC-1 维持 0/16 blocked；真实 build profile 收集等待产品 owner 提供唯一目标身份。
+本次未执行新的 holdout 或产品验证。真实指标、产品影响继续按实际证据说明；不得把长期授权或流程豁免改写成 PASS。历史任务结果可从固定 Git 提交和本机备份追溯。

@@ -3,6 +3,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+import sys
 
 from scripts.check_change_scope import check
 
@@ -71,3 +72,25 @@ class ChangeScopeTests(unittest.TestCase):
         self.git("commit", "-qm", "unrelated root")
         with self.assertRaises(subprocess.CalledProcessError):
             check(self.repo, self.base, "cpp")
+
+    def test_cli_reports_shared_change_without_blocking_default_delivery(self):
+        self.write("core/runner.py", "changed")
+        command = [sys.executable, "-m", "scripts.check_change_scope", "--repo",
+                   str(self.repo), "--base", self.base, "--lane", "cpp"]
+        result = subprocess.run(command, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = json.loads(result.stdout)
+        self.assertIn("core/runner.py", report["violations"])
+        self.assertFalse(report["blocking"])
+        strict = subprocess.run(command + ["--strict"], capture_output=True, text=True)
+        self.assertEqual(strict.returncode, 1, strict.stderr)
+        self.assertTrue(json.loads(strict.stdout)["blocking"])
+
+    def test_cli_missing_lane_and_no_owner_supplied_base_are_advisory(self):
+        result = subprocess.run(
+            [sys.executable, "-m", "scripts.check_change_scope", "--repo", str(self.repo)],
+            capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = json.loads(result.stdout)
+        self.assertFalse(report["blocking"])
+        self.assertIn("unknown lane", report["warning"])

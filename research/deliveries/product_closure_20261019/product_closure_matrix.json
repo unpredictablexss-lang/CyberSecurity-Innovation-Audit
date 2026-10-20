@@ -1,10 +1,12 @@
 {
+  "blocks_development": false,
   "case_count": 16,
   "cases": [
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -36,8 +38,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -69,8 +72,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -102,8 +106,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -135,8 +140,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -168,8 +174,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -201,8 +208,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -234,8 +242,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -267,8 +276,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -300,8 +310,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -333,8 +344,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -366,8 +378,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -399,8 +412,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -432,8 +446,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -465,8 +480,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -498,8 +514,9 @@
     },
     {
       "admission": {
-        "decision": "NOT_ADMITTED",
-        "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+        "blocks_development": false,
+        "decision": "PRODUCT_NOT_ASSESSED",
+        "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
         "validated_vulnerability": false
       },
       "build_profile_status": "BLOCKED",
@@ -530,14 +547,14 @@
       "source_identity_status": "recorded_incomplete"
     }
   ],
-  "decision": "NOT_ADMITTED",
+  "decision": "REPORT_AVAILABLE_EVIDENCE",
   "metrics": {
     "precision": null,
     "reason": "no independent reliable labelled holdout",
     "recall": null
   },
-  "payload_sha256": "6b286ce0133f1656accf14a3dbc17e884f45b9c7e1960d5614da6077a62145d7",
+  "payload_sha256": "d927ac43e533374c0156f390f4719c01a87e060d845afffbf6d93f9d5141a6d4",
   "profile_payload_sha256": "a33c893cce5ba4bd2dbc80e7f94b3ce47a5c6c0ed8b62f5157fb7db8aeb7c214",
   "schema": "ohscanner.ark-product-closure-matrix/v1",
-  "status": "BLOCKED"
+  "status": "EVIDENCE_INVENTORY"
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate Ark product-closure status from the fail-closed profile manifest."""
+"""Generate non-blocking development tasks and an honest product-evidence inventory."""
 from __future__ import annotations
 
 import argparse
@@ -12,6 +12,28 @@ def canonical_hash_payload(value: Any) -> str:
     import hashlib
     raw = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode("utf-8")
     return hashlib.sha256(raw).hexdigest()
+
+
+def development_task_tree() -> dict[str, Any]:
+    """Keep optional product/evaluation work out of development dependencies."""
+    tree = {
+        "schema": "ohscanner.g12-pc-task-tree/v1",
+        "root": "G12-PC-PRODUCT-ADMISSION-CLOSURE",
+        "status": "ACTIVE_DEVELOPMENT",
+        "authorization": "config/collaboration/standing_authorization.json",
+        "blocking_prerequisites": [],
+        "completion_rule": "Deliver a concrete change, relevant tests and available evidence; optional product/evaluation work does not block completion.",
+        "nodes": [
+            {"id": "G12-PC-1", "title": "Available source/build profile investigation", "status": "OPTIONAL_AVAILABLE_INPUTS", "blocks_development": False, "next": "Find available public/local source and build inputs autonomously; record missing product fields as unknown and continue source/component work."},
+            {"id": "G12-PC-2", "title": "Optional formal evaluation", "status": "OPTIONAL_NOT_RUN", "blocks_development": False, "evidence_status": "NOT_RUN", "next": "Use existing cases for development regression now. Formal holdout and human staffing are optional; do not invent labels or accuracy metrics."},
+            {"id": "G12-PC-3", "title": "Optional product applicability", "status": "OPTIONAL_AVAILABLE_INPUTS", "blocks_development": False, "evidence_status": "UNKNOWN", "next": "Report source/component findings now; investigate actual products only when suitable inputs exist."},
+            {"id": "G12-PC-4", "title": "Local isolated component PoC", "status": "READY_WITH_AVAILABLE_ENVIRONMENT", "blocks_development": False, "evidence_status": "NOT_RUN", "next": "Standing authorization applies. Select a reproducible component/version and isolated environment; build and test without waiting for product proof or another approval."},
+            {"id": "G12-PC-5", "title": "Per-case fix and regression", "status": "READY_PER_CASE", "blocks_development": False, "evidence_status": "NOT_RUN", "next": "Test the affected/fixed component pair when available; no portfolio-wide or shipped-product prerequisite."},
+            {"id": "G12-PC-6", "title": "Incremental evidence report", "status": "READY_FOR_EVIDENCE_REPORT", "blocks_development": False, "next": "Deliver supported source/component results and limitations now; no all-case, staffing or product-admission gate."},
+        ],
+    }
+    tree["payload_sha256"] = canonical_hash_payload(tree)
+    return tree
 
 
 def main() -> int:
@@ -43,9 +65,10 @@ def main() -> int:
                 "fixed_product_revalidation": "not_run",
             },
             "admission": {
-                "decision": "NOT_ADMITTED",
+                "decision": "PRODUCT_NOT_ASSESSED",
                 "validated_vulnerability": False,
-                "reason": "At least product build/entry/permission/trigger/CIA/PoC/fixed-product revalidation remains missing.",
+                "blocks_development": False,
+                "reason": "Product evidence remains unknown; source/component development, PoCs and reports are authorized independently.",
             },
             "minimal_remediation": [
                 "Lock exact product manifest, version, branch and shipped binary/source mapping.",
@@ -57,32 +80,20 @@ def main() -> int:
         })
     matrix = {
         "schema": "ohscanner.ark-product-closure-matrix/v1",
-        "status": "BLOCKED",
-        "decision": "NOT_ADMITTED",
+        "status": "EVIDENCE_INVENTORY",
+        "decision": "REPORT_AVAILABLE_EVIDENCE",
+        "blocks_development": False,
         "profile_payload_sha256": profile.get("payload_sha256"),
         "case_count": len(cases),
         "cases": cases,
-        "metrics": {"precision": None, "recall": None, "reason": "no independent reliable labelled holdout; owner waived reviewer staffing prerequisite, but no review ran and no metrics are available"},
+        "metrics": {"precision": None, "recall": None, "reason": "no independent reliable labelled holdout"},
     }
     matrix["payload_sha256"] = canonical_hash_payload(matrix)
-    task_tree = {
-        "schema": "ohscanner.g12-pc-task-tree/v1",
-        "root": "G12-PC-PRODUCT-ADMISSION-CLOSURE",
-        "status": "ACTIVE_NOT_ADMITTED",
-        "nodes": [
-            {"id": "G12-PC-1", "title": "Ark parent/fix build and preprocess profile", "status": "IN_PROGRESS_BLOCKED", "next": "Bind official Ark Git store and exact product build/preprocess artifacts."},
-            {"id": "G12-PC-2", "title": "Independent holdout freeze and double-blind adjudication", "status": "WAIVED_BY_OWNER_NOT_EXECUTED", "next": "Owner waived the human-review prerequisite for this decision; do not claim evaluation pass or compute metrics without reliable independent human labels."},
-            {"id": "G12-PC-3", "title": "Candidate product applicability closure", "status": "BLOCKED", "next": "Close entry, permission, trigger, attacker control and CIA impact per case."},
-            {"id": "G12-PC-4", "title": "Authorized isolated PoC", "status": "NOT_RUN", "next": "Execute only after product build and authorization gates are locked."},
-            {"id": "G12-PC-5", "title": "Fix and fixed-product revalidation", "status": "NOT_RUN", "next": "Patch, rebuild same profile, replay PoC and controls."},
-            {"id": "G12-PC-6", "title": "Competition admission", "status": "NOT_ADMITTED", "next": "Re-evaluate only after all mandatory evidence gates close."},
-        ],
-    }
-    task_tree["payload_sha256"] = canonical_hash_payload(task_tree)
+    task_tree = development_task_tree()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     (args.output_dir / "product_closure_matrix.json").write_text(json.dumps(matrix, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
     (args.output_dir / "task_tree.json").write_text(json.dumps(task_tree, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({"status": "BLOCKED", "case_count": len(cases), "decision": "NOT_ADMITTED"}, indent=2))
+    print(json.dumps({"status": task_tree["status"], "case_count": len(cases), "decision": matrix["decision"]}, indent=2))
     return 0
 
 

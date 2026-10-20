@@ -1,6 +1,10 @@
 # D5 readiness re-evaluation (2026-10-19)
 
-This refresh separates the D sensitive-data-flow detector from the newer disclosed-CVE detector. The original M0-M3 gates remain in force; mainline registration and a green CI run are not evidence of commercial readiness or a confirmed product vulnerability.
+组长于 2026-10-20 授权取消项目自设的逐次审批、真人评测、产品确认和全部案例准入前置条件。授权持续有效直到用户撤销，见根 `AGENTS.md` 与 `config/collaboration/standing_authorization.json`。缺项记 unknown/not_run，继续可执行工作；豁免不代表测试通过。
+
+## 历史证据库存（不是开发门槛）
+
+This refresh separates the D sensitive-data-flow detector from the newer disclosed-CVE detector. The former M0-M3 gates are now optional evidence categories, not development prerequisites. Mainline registration and CI results are engineering evidence; product claims still require product evidence.
 
 | Gate | Status | Current evidence and remaining conditions |
 |---|---|---|
@@ -15,7 +19,7 @@ The scanner can be selected from the repository audit page and preserves candida
 
 D32's libpng archive replay also emits two distinct CVE-2026-33636 function findings even though the mirror build metadata lists a patch. Since D32 scans the archived upstream source, patch application and product inclusion remain unknown; this is a candidate requiring build-manifest review, not a false-negative/false-positive verdict.
 
-The original D4/D5 holdout requirement remains open: freeze detector/model hashes before collecting a separately labeled real-source set, record unknown labels honestly, then measure TP/FP/FN/unknown and runtime/RSS. D38 now has a preregistered two-version source check against the curl advisory, but independent human labeling and the broader multi-family/multi-component evaluation are still open. Until M2 and M3 evidence exists, D is suitable for opt-in research triage only, not a commercial-readiness claim.
+Formal holdout is optional; if independently measured accuracy is later requested, freeze detector/model hashes before collecting a separately labeled real-source set, record unknown labels honestly, then measure TP/FP/FN/unknown and runtime/RSS. D38 now has a preregistered two-version source check against the curl advisory, but independent human labeling and the broader multi-family/multi-component evaluation are still open. Missing M2/M3 evidence does not block source/component development, validation or reports. It does not establish commercial readiness.
 
 ## D46 refresh (2026-10-19)
 
