@@ -10,6 +10,14 @@ _COMMIT = 'a65a2853ccae13da167d9aa4720ab8b11ec16656'
 _COMMON = 'ecmascript/compiler/common_stubs.cpp'
 _HCR = 'ecmascript/compiler/typed_hcr_lowering.cpp'
 _HELPER = 'ecmascript/compiler/new_object_stub_builder.cpp'
+_PINNED_ROWS = (
+    (_COMMIT, _COMMON, '6267f2f27a98a298b1190e327abbfa2bd58203f8',
+     '5a401580e666596fcf2ea89a8dc0321009b53ef5320b20edc59d37781d852212'),
+    (_COMMIT, _HCR, '1ad4e329a226fc9941db30fa7a10a6562f58f68d',
+     'acd4ed88bb4ba5d327d5628dc45b7b89685a9c425c5849891cbf2544e8534a0c'),
+    (_COMMIT, _HELPER, '991ac5ac034a1a027e3200787ec25c55b3f15b69',
+     '3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0'),
+)
 
 
 def _line_slice(text, first, last):
@@ -54,8 +62,7 @@ def analyze_negative_double_length(context, model):
     expected = tuple(model.negative_double_length_bindings)
     expected_by_path = {row[1]: row for row in expected}
     required = {_COMMON, _HCR, _HELPER}
-    if (len(expected) != len(required) or set(expected_by_path) != required
-            or any(row[0] != _COMMIT for row in expected)):
+    if expected != _PINNED_ROWS or len(expected_by_path) != len(required):
         return AnalysisResult('limited', 'not_analyzed',
                               limitations=('negative_double_length_profile_incomplete',),
                               model_digest=digest)
