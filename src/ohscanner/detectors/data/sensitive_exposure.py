@@ -6,12 +6,17 @@ because shared outlines expose no expression/binding facts. No global IR changes
 import ast
 import re
 from collections import OrderedDict
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 import tree_sitter_c
 import tree_sitter_cpp
 from tree_sitter import Language, Parser
+from src.parser.cpp_assignment_comma import recover_cpp_assignment_commas
+from src.parser.syntax_normalize import normalize_empty_cpp_linkage_wrappers
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation
 from .models import DEFAULT_SOURCE, SINKS, STATUS_RETURN_CALLS, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel
+from .property_keys import PROPERTY_READ_CALLS, PropertyKeyBindings
+from .log_macro_roles import LogMacroRoles, enclosing_function
+from .comma_values import BuiltinCommaProof
 
 @dataclass(frozen=True)
 class Flow:
@@ -23,9 +28,16 @@ class LocalState:
     values: dict
     types: dict
     shadows: set
+    pointers: dict = field(default_factory=dict)
 
     def clone(self):
-        return LocalState(dict(self.values), dict(self.types), set(self.shadows))
+        return LocalState(dict(self.values), dict(self.types), set(self.shadows),dict(self.pointers))
+
+
+@dataclass(frozen=True)
+class PointerTarget:
+    slot: object = None
+    bound: bool = False
 
 
 @dataclass(frozen=True)
@@ -270,7 +282,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.0'
+    version = '0.21.17'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -300,6 +312,12 @@ class SensitiveExposureDetector:
             units, model, heuristic_sources,
             flow_factory=lambda unit, active_resolver: self.make_flow(
                 unit, model, heuristic_sources, active_resolver))
+        # Runner can omit parser-ineligible units from `units`. This local
+        # precision proof still requires the entire selected input to be known.
+        outlines=context.shared_facts.get('ast',{})
+        resolver.switch_join_scope_complete=all(
+            u.parse_status=='complete' and outlines.get(u.path,{}).get('parse_status')=='complete'
+            and not re.search(r'^\s*#',u.text,re.M) for u in context.units)
         if heuristic_sources:
             limits.add('No reviewed sensitive-source model for this repository/commit; heuristic candidates are incomplete and the scan is blocked.')
         for u in units:
@@ -331,7 +349,7 @@ class SensitiveExposureDetector:
             'Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.',
             'Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.',
             'Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.',
-            'Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.',
+            'Shared AST indexes functions/calls; bounded private expression analysis retains syntax, type and alias limitations.',
             'Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.',
         ))
         merged={}
@@ -365,7 +383,12 @@ class LocalFlow:
         self.external_gaps = set()
         self.source_sites, self.sink_sites = [], []
         lang = tree_sitter_c if unit.language == 'c' else tree_sitter_cpp
-        self.tree = Parser(Language(lang.language())).parse(self.b)
+        parsed_bytes = normalize_empty_cpp_linkage_wrappers(self.b) if unit.language == 'cpp' else self.b
+        self.tree = Parser(Language(lang.language())).parse(parsed_bytes)
+        if unit.language == "cpp":
+            self.tree = recover_cpp_assignment_commas(parsed_bytes, self.tree)
+        if getattr(self.tree, "recovery_spans", ()):
+            self.gaps.add("bounded assignment-comma syntax recovery preserves original offsets; operand types/overloads remain unproved")
         self.sinks = {s.name:s for s in SINKS if not s.files or unit.path in s.files}
         self.sinks.update({s.name:s for s in model.additional_sinks if not s.files or unit.path in s.files})
         self.output_calls = {
@@ -380,11 +403,16 @@ class LocalFlow:
         self.fields = dict(model.fields)
         self.non_sensitive_fields = dict(model.non_sensitive_fields)
         self.shadows = set()
+        self.pointers = {}
         self.function_definitions = set()
         self.function_bodies = {}
         self.function_nodes = {}
         self.call_stack = resolver.call_stack if resolver is not None else []
         self.call_results = {}
+        self.comma_values = BuiltinCommaProof(self)
+        self.property_keys = PropertyKeyBindings(self)
+        self.property_key_roles = set()
+        self.log_macro_roles = LogMacroRoles(self, formats)
         self.type_conflicts = set()
         for n in walk(self.tree.root_node):
             if n.type == 'function_definition':
@@ -411,7 +439,8 @@ class LocalFlow:
         if n.type in ('identifier','field_identifier'):return self.text(n)
         child=n.child_by_field_name('declarator')
         if child:return self.name(child)
-        if n.type=='parenthesized_declarator' and len(n.named_children)==1:return self.name(n.named_children[0])
+        if n.type in ('parenthesized_declarator','reference_declarator') and len(n.named_children)==1:
+            return self.name(n.named_children[0])
         return ''
 
     def source(self,desc,n):
@@ -420,15 +449,31 @@ class LocalFlow:
 
     def expr(self,n,env,types):
         if n is None:return ()
+        if n.type=='pointer_expression' and self.text(n.child_by_field_name('operator'))=='*':
+            target=self.pointer_target(n.child_by_field_name('argument'))
+            if target.slot is not None and target.slot in env:
+                return env[target.slot]
         if n.type=='identifier':
             ident=self.text(n)
             known=env.get(ident,())
+            target=self.pointers.get(ident)
+            if target and target.slot:
+                known=tuple(dict.fromkeys(known+tuple(env.get(target.slot,()))))
             if known:return known
             if self.heuristic_sources and looks_sensitive_name(ident):
                 self.gaps.add('unreviewed sensitive-name heuristic source; semantics unknown')
                 return (self.source('heuristic suspected sensitive identifier '+ident,n),)
             return ()
         if n.type in ('string_literal','char_literal','number_literal','sizeof_expression','null','true','false'):return ()
+        if n.type=='alignof_expression' and self.u.language=='cpp':
+            # C++ alignof describes a type's alignment, not the operand's bytes.
+            # In particular, a sensitive name inside decltype is not read here.
+            return ()
+        if n.type=='comma_expression':
+            if self.comma_values.is_builtin(n):
+                return self.addstep(self.expr(n.child_by_field_name('right'),env,types),
+                    f'{n.start_point[0]+1} builtin comma final operand')
+            self.gaps.add('comma operand type/binding unresolved; dependencies retained as may-flow')
         if n.type=='field_expression':
             obj=n.child_by_field_name('argument'); field=self.text(n.child_by_field_name('field'))
             root=self.text(obj)
@@ -465,7 +510,13 @@ class LocalFlow:
             return tuple(v for field in branches for v in self.expr(n.child_by_field_name(field),env,types))
         if n.type=='lambda_expression':
             self.gaps.add('lambda body/capture value not analyzed');return ()
-        if n.type=='assignment_expression':return self.expr(n.child_by_field_name('right'),env,types)
+        if n.type=='assignment_expression':
+            right=self.expr(n.child_by_field_name('right'),env,types)
+            if self.text(n.child_by_field_name('operator'))=='=':return right
+            # Compound assignment reads the old destination as well as the RHS.
+            # Its value can feed another assignment or a log argument directly.
+            left=self.expr(n.child_by_field_name('left'),env,types)
+            return tuple(dict.fromkeys(left+right))
         if n.type=='binary_expression':
             op=self.text(n.child_by_field_name('operator'))
             if op in ('==','!=','<','>','<=','>=','&&','||'):return ()
@@ -473,7 +524,27 @@ class LocalFlow:
         if n.type=='call_expression':
             if n.id in self.call_results:
                 return self.call_results[n.id]
-            fn=self.text(n.child_by_field_name('function'))
+            if self.cpp_pointer_cast(n):
+                return tuple(flow for arg in n.child_by_field_name('arguments').named_children
+                             for flow in self.expr(arg,env,types))
+            function=n.child_by_field_name('function')
+            fn=self.text(function)
+            args=n.child_by_field_name('arguments')
+            # Only a directly declared std::string local value is modeled.
+            # Pointer/reference aliases, arbitrary same-name methods and inferred
+            # receiver types need separate binding evidence.
+            if (function is not None and function.type=='field_expression'
+                    and self.text(function.child_by_field_name('operator'))=='.'
+                    and self.text(function.child_by_field_name('field'))=='c_str'
+                    and args is not None and not args.named_children):
+                receiver=function.child_by_field_name('argument')
+                if (receiver is not None and receiver.type=='identifier'
+                        and types.get(self.text(receiver))=='std::string'):
+                    flows=self.expr(receiver,env,types)
+                    if flows:
+                        self.gaps.add('std::string c_str receiver dependency is syntax-bound; compiler type identity remains unresolved')
+                    return self.addstep(flows,
+                        f'{n.start_point[0]+1} std::string receiver {self.text(receiver)}.c_str()')
             if (fn in STATUS_RETURN_CALLS and fn not in self.shadows
                     and fn not in self.function_definitions):
                 self.gaps.add('modeled status-return API; argument escape remains a candidate: '+fn)
@@ -483,7 +554,6 @@ class LocalFlow:
                 return (self.source('heuristic suspected sensitive-return API '+fn,n),)
             if fn in ('strlen','strnlen','strnlen_s','wcslen') and fn not in self.function_definitions and fn not in self.shadows:
                 return () # A scalar length is not the sensitive material itself.
-            args=n.child_by_field_name('arguments')
             if fn not in self.shadows and fn not in self.function_definitions and (fn in self.output_calls or fn in self.copy_calls or fn in ('memcpy_s','strcpy_s','snprintf','snprintf_s')):
                 return () # modeled return is a status/count, not the output buffer
             vals=tuple(v for a in (args.named_children if args else []) for v in self.expr(a,env,types))
@@ -517,10 +587,10 @@ class LocalFlow:
         if not flows:return
         self.emit_unresolved_flows(fn,node,fnname,flows,reason)
 
-    def emit_unresolved_flows(self,fn,node,fnname,flows,reason,binding_kind='callee_binding'):
+    def emit_unresolved_flows(self,fn,node,fnname,flows,reason,binding_kind='callee_binding',event='call'):
         if not flows:return
         line=node.start_point[0]+1
-        traces=sorted(set(' -> '.join(flow.steps+(f'{line} unresolved call {fn}',))
+        traces=sorted(set(' -> '.join(flow.steps+(f'{line} unresolved {event} {fn}',))
                           for flow in flows))
         binding_question=(
             'Resolve the exact overload, receiver, and implementation for '+fn+'.'
@@ -536,7 +606,9 @@ class LocalFlow:
                     +reason+'; path='+' | '.join(traces),
             evidence_obligations=(
                 EvidenceObligation(binding_kind,binding_question),
-                EvidenceObligation('sink_behavior','Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.'),
+                EvidenceObligation('sink_behavior',
+                    'Determine whether the unresolved destination exposes or forwards material.' if event=='material write' else
+                    'Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.'),
                 EvidenceObligation('runtime_log_visibility','No log exposure or reader reachability is established by this call alone.'),
                 EvidenceObligation('security_impact','Establish recoverable sensitive material and concrete impact independently.'),
             )))
@@ -588,6 +660,16 @@ class LocalFlow:
                                             'same-file helper definition is ambiguous')
             return True
 
+        units=self.resolver.units if self.resolver is not None else (self.u,)
+        if (re.fullmatch(r'\w+',fn) and any(re.search(
+                r'^\s*#\s*(?:define|undef)\s+'+re.escape(fn)+r'\b',u.text,re.M) for u in units)):
+            self.gaps.add('visible helper body cannot bind a macro-overridden call: '+fn)
+            if call_node is not None:
+                self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
+                    'helper spelling is macro-overridden; visible body is not the call target proof')
+            # Keep inspecting the visible body for positive evidence, but its
+            # apparently clean summary cannot erase this unresolved call.
+
         callee_flow,definition,parameters,callee_name=matches[0]
         if cross_file and self.resolver is not None:
             self.resolver.partial_paths.update((self.u.path,callee_flow.u.path))
@@ -609,7 +691,7 @@ class LocalFlow:
                                             'helper body is incomplete')
             return True
 
-        local_values={};local_types={};local_shadows=set();bound=[]
+        local_values={};local_types={};local_shadows=set();bound=[];local_pointers={}
         for index,param in enumerate(parameters):
             ident=callee_flow.name(param.child_by_field_name('declarator'))
             bound.append(ident)
@@ -622,6 +704,12 @@ class LocalFlow:
             typ=callee_flow.text(param.child_by_field_name('type'))
             if typ in callee_flow.fields:
                 local_types[ident]=typ
+            if callee_flow.raw_pointer(param.child_by_field_name('declarator')):
+                actual_target=self.pointer_target(args[index])
+                local_pointers[ident]=PointerTarget('*'+ident,
+                    actual_target.bound and callee_flow.u.parse_status=='complete'
+                    and not callee_flow.tree.root_node.has_error
+                    and CrossFileResolver.writable_parameter(param,callee_flow))
 
         callee_flow.call_stack.append(call_key)
         try:
@@ -633,7 +721,7 @@ class LocalFlow:
             if cross_file:
                 callee_flow.external_gaps.add(summary_note)
             result=callee_flow.block(
-                body,LocalState(local_values,local_types,local_shadows),callee_name)
+                body,LocalState(local_values,local_types,local_shadows,local_pointers),callee_name)
         finally:
             callee_flow.call_stack.pop()
 
@@ -655,19 +743,33 @@ class LocalFlow:
         for index,(param,ident) in enumerate(zip(parameters,bound)):
             if not ident or not CrossFileResolver.writable_parameter(param,callee_flow):
                 continue
-            actual=self.lvalue(args[index],types)
+            actual_target=self.pointer_target(args[index])
+            actual=actual_target.slot or self.lvalue(args[index],types)
             if not actual:
                 continue
+            raw=callee_flow.raw_pointer(param.child_by_field_name('declarator'))
+            slots=('*'+ident,) if raw else (ident,)
             writes = tuple(dict.fromkeys(
                 flow for state in states
-                for flow in state.values.get(ident, ())))
-            if cross_file:
-                original = set(initial_values.get(ident, ()))
-                writes = tuple(flow for flow in writes if flow not in original)
+                for slot in slots
+                for flow in state.values.get(slot, ())))
+            original = set(initial_values.get(ident, ()))
+            writes = tuple(flow for flow in writes if flow not in original)
             if writes:
                 outputs.setdefault(actual,[]).extend(
                     self.addstep(writes,
                                  f'{call_line} {callee_name} may write through argument {index}'))
+            # Preserve a single visible member slot through a writable object
+            # parameter as well as a scalar pointee. No arbitrary alias walk.
+            for prefix in (('*'+ident+'.',) if raw else (ident+'.',)):
+                slots={slot for state in states for slot in state.values if slot.startswith(prefix)}
+                for slot in slots:
+                    member_writes=tuple(dict.fromkeys(flow for state in states
+                        for flow in state.values.get(slot,())))
+                    if member_writes:
+                        destination=actual+'.'+slot[len(prefix):]
+                        outputs.setdefault(destination,[]).extend(self.addstep(member_writes,
+                            f'{call_line} {callee_name} may write member through argument {index}'))
         for actual,flows in outputs.items():
             self.store_value(env,actual,tuple(env.get(actual,()))+tuple(flows))
         call_flows=self.addstep(tuple(dict.fromkeys(returned)),
@@ -712,6 +814,10 @@ class LocalFlow:
             if (operator in ('.','->') and base is not None
                     and base.type=='identifier' and field):
                 root=self.text(base)
+                if operator=='->':
+                    target=self.pointers.get(root)
+                    if target and target.slot:
+                        return target.slot+'.'+field
                 if (operator=='.' and types and types.get(root) in self.fields
                         and self.fields.get(types[root])!=field
                         and types[root] not in self.type_conflicts):
@@ -723,6 +829,80 @@ class LocalFlow:
             if op=='&':
                 return self.lvalue(node.child_by_field_name('argument'),types)
         return ''
+
+    @staticmethod
+    def raw_pointer(declarator):
+        if declarator is None:return False
+        nodes=list(walk(declarator))
+        return (sum(n.type=='pointer_declarator' for n in nodes)==1
+                and not any(n.type in ('function_declarator','reference_declarator','array_declarator') for n in nodes))
+
+    def cpp_pointer_cast(self,node):
+        if self.u.language!='cpp':return False
+        function=node.child_by_field_name('function')
+        args=node.child_by_field_name('arguments')
+        if (function is None or function.type!='template_function' or args is None
+                or len(args.named_children)!=1 or len(function.named_children)!=2):
+            return False
+        keyword,template=function.named_children
+        if self.text(keyword) not in ('static_cast','reinterpret_cast','const_cast','dynamic_cast'):
+            return False
+        if (template.type!='template_argument_list' or len(template.named_children)!=1
+                or template.named_children[0].type!='type_descriptor'
+                or not any(x.type=='abstract_pointer_declarator' for x in walk(template))):
+            return False
+        units=self.resolver.units if self.resolver is not None else (self.u,)
+        tokens=re.escape(self.text(keyword))+'|nullptr'
+        return not any(re.search(r'^\s*#\s*(?:define|undef)\s+(?:'+tokens+r')\b',u.text,re.M) for u in units)
+
+    def pointer_target(self,node,pointers=None,shadows=None):
+        """Only direct address syntax and already tracked raw-pointer copies."""
+        pointers=self.pointers if pointers is None else pointers
+        shadows=self.shadows if shadows is None else shadows
+        if node is None:return PointerTarget()
+        if node.type=='parenthesized_expression' and len(node.named_children)==1:
+            return self.pointer_target(node.named_children[0],pointers,shadows)
+        if node.type=='identifier':return pointers.get(self.text(node),PointerTarget())
+        if node.type!='pointer_expression' or self.text(node.child_by_field_name('operator'))!='&':
+            return PointerTarget()
+        operand=node.child_by_field_name('argument')
+        if operand is None:return PointerTarget()
+        if operand.type=='identifier':
+            slot=self.text(operand);root=slot
+        elif (operand.type=='field_expression'
+                and self.text(operand.child_by_field_name('operator'))=='.'
+                and operand.child_by_field_name('argument') is not None
+                and operand.child_by_field_name('argument').type=='identifier'):
+            root=self.text(operand.child_by_field_name('argument'))
+            slot=root+'.'+self.text(operand.child_by_field_name('field'))
+        else:return PointerTarget()
+        if root not in shadows:return PointerTarget()
+        units=self.resolver.units if self.resolver is not None else (self.u,)
+        names=slot.split('.')
+        macro=r'^\s*#\s*(?:define|undef)\s+(?:'+'|'.join(re.escape(x) for x in names)+r')\b'
+        bound=(self.u.parse_status=='complete' and not self.tree.root_node.has_error
+               and not any(re.search(macro,u.text,re.M) or re.search(r'\boperator\s*&(?!&)',u.text) for u in units))
+        return PointerTarget(slot,bound)
+
+    def write_destination(self,node,state):
+        before=self.pointers;self.pointers=state.pointers
+        try:
+            if node.type=='pointer_expression' and self.text(node.child_by_field_name('operator'))=='*':
+                target=self.pointer_target(node.child_by_field_name('argument'),state.pointers,state.shadows)
+                return target.slot,target.bound
+            destination=self.lvalue(node,state.types)
+            if node.type=='field_expression' and self.text(node.child_by_field_name('operator'))=='->':
+                base=node.child_by_field_name('argument')
+                target=state.pointers.get(self.text(base),PointerTarget())
+                return destination,bool(target.slot and target.bound)
+            return destination,bool(destination)
+        finally:self.pointers=before
+
+    def output_destination(self,node,types):
+        # Call models write through their destination, not to the local pointer
+        # variable itself. Keep this slot distinct from an input pointer value.
+        target=self.pointer_target(node)
+        return target.slot or self.lvalue(node,types)
 
     def emit_log_candidate(self,fn,fnname,node,flows,message,extra_obligation,operand_status='unresolved operand-privacy status'):
         line=node.start_point[0]+1
@@ -744,8 +924,16 @@ class LocalFlow:
     def call(self,n,env,types,fnname):
         fn=self.text(n.child_by_field_name('function')); a=n.child_by_field_name('arguments')
         args=list(a.named_children) if a else []
+        # A reserved C++ pointer-cast expression is not a sensitive-return API.
+        # Operand call effects were inspected by effects(); its value may-flow
+        # is retained by expr(). Visible keyword overrides keep normal unknowns.
+        if self.cpp_pointer_cast(n):return
         if fn in self.shadows:
             self.gaps.add('call target is shadowed by a local value: '+fn)
+            # A callable parameter/local alias is not the reviewed API with the
+            # same spelling. Its unresolved target can still consume material.
+            self.emit_unresolved_escape(fn,args,env,types,n,fnname,
+                                        'local callable target shadows the named API; implementation is unknown')
             return
         callee=fn
         locally_defined=fn in self.function_definitions
@@ -771,7 +959,7 @@ class LocalFlow:
         if locally_defined and fn in ('memcpy_s','strcpy_s'):
             self.gaps.add('same-file copy-like definition has unresolved write semantics: '+fn)
             if len(args) >= 2:
-                dst=self.lvalue(args[0],types)
+                dst=self.output_destination(args[0],types)
                 if dst:
                     source=args[2] if len(args)>2 else args[-1]
                     self.store_value(env,dst,self.addstep(self.expr(source,env,types),f'{n.start_point[0]+1} unresolved {fn} may write {dst}'))
@@ -782,7 +970,7 @@ class LocalFlow:
         if locally_defined and fn in ('snprintf','snprintf_s'):
             self.gaps.add('same-file formatting name has unresolved write semantics: '+fn)
             if len(args) >= 2:
-                dst=self.lvalue(args[0],types)
+                dst=self.output_destination(args[0],types)
                 if dst:
                     flows=tuple(flow for arg in args[1:] for flow in self.expr(arg,env,types))
                     self.store_value(env,dst,self.addstep(flows,f'{n.start_point[0]+1} unresolved {fn} may write {dst}'))
@@ -807,12 +995,59 @@ class LocalFlow:
             if tainted_args and self.expand_tainted_call(
                     fn,args,env,types,n.start_point[0]+1,n,fnname):
                 return
+        if fn in PROPERTY_READ_CALLS and not locally_defined and len(args)==4:
+            binding=self.property_keys.bind(n,args[2])
+            if binding:
+                self.property_key_roles.add((enclosing_function(n),binding))
+                self.gaps.add('reviewed NAPI property-name argument 2 is not fetched '+binding.material_kind+' material: '
+                              +fn+'; bound constant '+binding.identity)
+                # Only the exact, bound schema-key operand is excluded. Outputs,
+                # object values and any other material remain may-escape inputs.
+                flows=tuple(flow for i,arg in enumerate(args) if i!=2
+                            for flow in self.expr(arg,env,types))
+                if flows:
+                    self.emit_unresolved_flows(fn,n,fnname,flows,
+                        'other NAPI operands remain unresolved; only the bound property-name operand is excluded')
+                if fn=='napi_get_named_property':
+                    source=self.source('napi_get_named_property '+binding.material_kind+'-property output argument 3',n)
+                    destination=self.lvalue(args[3],types)
+                    if (destination and args[3].type=='pointer_expression'
+                            and self.text(args[3].child_by_field_name('operator'))=='&'):
+                        self.store_value(env,destination,(source,))
+                    else:
+                        self.emit_unresolved_flows(fn,n,fnname,(source,),
+                            binding.material_kind+'-property output destination is unresolved','destination_binding')
+                self.call_results[n.id]=()  # napi_status, not fetched material
+                return
+        if fn=='LOGE' and not locally_defined and args:
+            macro_binding=self.log_macro_roles.resolve()
+            scope=enclosing_function(n)
+            if macro_binding and scope is not None:
+                try:
+                    slots,count=formats(self.literal(args[0]))
+                    if count!=len(args)-1:raise ValueError('log macro format arity')
+                except (ValueError,SyntaxError):
+                    slots=()
+                excluded=set()
+                for _,indexes,conversion in slots:
+                    if conversion!='s':continue
+                    index=indexes[-1]+1
+                    binding=self.property_keys.bind(n,args[index],allow_target_macro=True)
+                    if binding and (scope,binding) in self.property_key_roles:
+                        excluded.add(index)
+                if excluded:
+                    self.gaps.add('bound schema-key log operand excluded through complete LOGE macro roles: '+macro_binding)
+                    flows=tuple(flow for index,arg in enumerate(args) if index not in excluded
+                                for flow in self.expr(arg,env,types))
+                    self.emit_unresolved_flows(fn,n,fnname,flows,
+                        'other logging operands remain candidates; only prior-bound schema-name string operands are excluded')
+                    return
         if fn in self.output_calls:
             index, arity = self.output_calls[fn]
             if len(args) != arity:
                 self.gaps.add('source API argument count unresolved');return
             if index<len(args):
-                dst=self.lvalue(args[index],types)
+                dst=self.output_destination(args[index],types)
                 if dst:
                     source=self.source(fn+' output argument '+str(index),n)
                     self.store_value(env,dst,(source,))
@@ -830,7 +1065,7 @@ class LocalFlow:
         if fn in ('memcpy_s','strcpy_s'):
             if len(args)!=(4 if fn=='memcpy_s' else 3):
                 self.gaps.add('copy API argument count unresolved');return
-            dst=self.lvalue(args[0],types)
+            dst=self.output_destination(args[0],types)
             if dst:
                 flows=self.addstep(self.expr(args[2],env,types),f'{n.start_point[0]+1} {fn} -> {dst}')
                 self.store_value(env,dst,flows)
@@ -855,7 +1090,7 @@ class LocalFlow:
                 operands=args[fi+1:]
                 if count!=len(operands):raise ValueError('format arity')
                 vals=tuple(v for _,ids,_ in slots for i in ids for v in self.expr(operands[i],env,types))
-                dst=self.lvalue(args[0],types)
+                dst=self.output_destination(args[0],types)
                 if dst:
                     flows=self.addstep(vals,f'{n.start_point[0]+1} {fn} -> {dst}')
                     self.store_value(env,dst,flows)
@@ -884,7 +1119,7 @@ class LocalFlow:
             if len(args) != arity:
                 self.gaps.add('modeled copy API argument count unresolved: '+fn)
                 return
-            destination = self.lvalue(args[destination_index], types)
+            destination = self.output_destination(args[destination_index], types)
             flows = self.expr(args[source_index], env, types)
             if destination:
                 written=self.addstep(
@@ -992,22 +1227,33 @@ class LocalFlow:
             if len(kinds)==1 and None not in kinds:out.types[key]=next(iter(kinds))
             else:out.types.pop(key,None)
         out.shadows=set().union(*(s.shadows for s in live))
+        for key in set().union(*(set(s.pointers) for s in live)):
+            targets={s.pointers.get(key,PointerTarget()) for s in live}
+            out.pointers[key]=next(iter(targets)) if len(targets)==1 else PointerTarget()
         return out
 
     def replace_state(self,state,new):
         state.values,state.types,state.shadows=new.values,new.types,new.shadows
+        state.pointers=new.pointers
 
     def apply_call(self,node,state,fnname):
-        before=self.shadows
-        self.shadows=state.shadows
+        before=self.shadows,self.pointers
+        self.shadows,self.pointers=state.shadows,state.pointers
         try:self.call(node,state.values,state.types,fnname)
-        finally:self.shadows=before
+        finally:self.shadows,self.pointers=before
+        # Passing the pointer variable's address can rebind it. Do not retain a
+        # previous pointee claim across an unsupported pointer-to-pointer write.
+        args=node.child_by_field_name('arguments')
+        for arg in args.named_children if args else ():
+            if arg.type=='pointer_expression' and self.text(arg.child_by_field_name('operator'))=='&':
+                name=self.text(arg.child_by_field_name('argument'))
+                if name in state.pointers:state.pointers[name]=PointerTarget()
 
     def value(self,node,state):
-        before=self.shadows
-        self.shadows=state.shadows
+        before=self.shadows,self.pointers
+        self.shadows,self.pointers=state.shadows,state.pointers
         try:return self.expr(node,state.values,state.types)
-        finally:self.shadows=before
+        finally:self.shadows,self.pointers=before
 
     def effects(self,node,state,fnname):
         """Bounded evaluation effects; short circuit/?: merge possible live states."""
@@ -1017,13 +1263,26 @@ class LocalFlow:
         if node.type=='assignment_expression':
             right=node.child_by_field_name('right');left=node.child_by_field_name('left')
             self.effects(right,state,fnname)
-            destination=self.lvalue(left,state.types)
+            destination,target_bound=self.write_destination(left,state)
+            flows=self.value(right,state)
+            op=self.text(node.child_by_field_name('operator'))
+            if op!='=':
+                flows=tuple(dict.fromkeys(self.value(left,state)+flows))
             if destination:
-                op=self.text(node.child_by_field_name('operator'))
-                if op!='=':self.gaps.add('compound assignment semantics incomplete')
+                step=f'{node.start_point[0]+1} assign {destination}'
+                if op!='=':
+                    self.gaps.add('compound assignment semantics incomplete; destination dependency retained as may-flow')
+                    step=f'{node.start_point[0]+1} compound assign {destination} ({op})'
                 self.store_value(state.values,destination,
-                    self.addstep(self.value(right,state),f'{node.start_point[0]+1} assign {destination}'))
-            else:self.gaps.add('pointer/member assignment requires alias proof')
+                    self.addstep(flows,step))
+                if left.type=='identifier' and destination in state.pointers:
+                    state.pointers[destination]=(self.pointer_target(right,state.pointers,state.shadows)
+                                                 if op=='=' else PointerTarget())
+            if not target_bound:
+                self.gaps.add('pointer/member assignment requires alias proof')
+                self.emit_unresolved_flows(self.text(left),node,fnname,flows,
+                    'material assignment has unresolved pointer/member destination',
+                    'destination_binding',event='material write')
             return
         if node.type=='binary_expression' and self.text(node.child_by_field_name('operator')) in ('&&','||'):
             left=node.child_by_field_name('left');right=node.child_by_field_name('right')
@@ -1052,26 +1311,184 @@ class LocalFlow:
                 for arg in args.named_children:self.effects(arg,state,fnname)
             self.apply_call(node,state,fnname);return
         if node.type in ('string_literal','char_literal','number_literal','identifier','sizeof_expression'):return
+        if node.type=='alignof_expression' and self.u.language=='cpp':return
         for child in node.named_children:self.effects(child,state,fnname)
 
     def declaration(self,node,state,fnname):
         type_text=self.text(node.child_by_field_name('type'))
         declared=set()
-        for d in node.named_children:
-            if d.type not in ('init_declarator','identifier','pointer_declarator','array_declarator'):continue
+        for d in node.children_by_field_name('declarator'):
             name=self.name(d)
             if not name:continue
+            for pointer,target in list(state.pointers.items()):
+                if target.slot and target.slot.split('.')[0]==name:
+                    state.pointers[pointer]=PointerTarget()
+            state.pointers.pop(name,None)
             declared.add(name);state.types.pop(name,None);state.values[name]=();state.shadows.add(name)
             if type_text in self.fields:state.types[name]=type_text
-            value=d.child_by_field_name('value')
+            declarator=d.child_by_field_name('declarator') if d.type=='init_declarator' else d
+            if (type_text=='std::string' and declarator is not None
+                    and declarator.type=='identifier'):
+                state.types[name]=type_text
+            # A condition declaration puts its initializer on the declaration,
+            # unlike the init_declarator used by ordinary declarations.
+            value=(d.child_by_field_name('value') if d.type=='init_declarator'
+                   else node.child_by_field_name('value'))
             if value:
                 self.effects(value,state,fnname)
                 state.values[name]=self.addstep(self.value(value,state),f'{node.start_point[0]+1} assign {name}')
+            target=self.pointer_target(value,state.pointers,state.shadows)
+            if (self.raw_pointer(declarator)
+                    or (type_text=='auto' and declarator is not None
+                        and declarator.type=='identifier' and target.slot is not None)):
+                state.pointers[name]=target
+                if re.search(r'\bconst\b',self.text(node)):
+                    state.pointers[name]=PointerTarget(target.slot,False)
         return declared
+
+    def header_effects(self,node,state,fnname):
+        """Bind only the explicit header declaration shapes, in source order."""
+        if node is None:return set()
+        if node.type=='declaration':return self.declaration(node,state,fnname)
+        if node.type in ('condition_clause','init_statement'):
+            declared=set()
+            for child in node.named_children:
+                declared.update(self.header_effects(child,state,fnname))
+            return declared
+        self.effects(node,state,fnname)
+        return set()
+
+    def exact_switch_cases(self,node):
+        """Shared bounded dispatch proof; no general label evaluation or CFG."""
+        units=self.resolver.units if self.resolver is not None else (self.u,)
+        if ((self.resolver is not None and not getattr(self.resolver,'switch_join_scope_complete',False))
+                or self.tree.root_node.has_error or any(u.parse_status!='complete'
+                or re.search(r'^\s*#',u.text,re.M) for u in units)):
+            return None
+        condition=node.child_by_field_name('condition')
+        value=condition.child_by_field_name('value') if condition else None
+        body=node.child_by_field_name('body')
+        if (value is None or value.type!='identifier' or body is None
+                or body.type!='compound_statement'):
+            return None
+        cases=[c for c in body.named_children if c.type!='comment']
+        if len(cases)<2 or any(c.type!='case_statement' for c in cases):return None
+        labels=set();defaults=0;arms=[]
+        for case in cases:
+            label=case.child_by_field_name('value')
+            if label is None:
+                defaults+=1
+            else:
+                text=self.text(label)
+                if (label.type!='number_literal' or not re.fullmatch(r'0|[1-9][0-9]*',text)
+                        or int(text)>2147483647 or text in labels):
+                    return None
+                labels.add(text)
+            statements=[c for c in case.named_children
+                        if c.type!='comment' and (label is None or c.id!=label.id)]
+            arms.append(statements)
+        return arms if defaults==1 else None
+
+    def exact_switch_pointer_join(self,node,state,fnname):
+        """Only exhaustive flat arms: one identical raw-pointer retarget + break."""
+        arms=self.exact_switch_cases(node)
+        if arms is None:return None
+        assignments=[];binding=None
+        for statements in arms:
+            if (len(statements)!=2 or statements[0].type!='expression_statement'
+                    or statements[1].type!='break_statement'
+                    or len(statements[0].named_children)!=1):
+                return None
+            assignment=statements[0].named_children[0]
+            left=assignment.child_by_field_name('left');right=assignment.child_by_field_name('right')
+            if (assignment.type!='assignment_expression' or self.text(assignment.child_by_field_name('operator'))!='='
+                    or left is None or left.type!='identifier' or self.text(left) not in state.pointers
+                    or right is None or right.type!='pointer_expression'
+                    or self.text(right.child_by_field_name('operator'))!='&'):
+                return None
+            operand=right.child_by_field_name('argument')
+            if operand is None or operand.type!='identifier':return None
+            target=self.pointer_target(right,state.pointers,state.shadows)
+            if not target.bound or target.slot in state.pointers:return None
+            current=(self.text(left),target)
+            if binding is not None and binding!=current:return None
+            binding=current;assignments.append(assignment)
+        branches=[]
+        for assignment in assignments:
+            branch=state.clone();self.effects(assignment,branch,fnname);branches.append(branch)
+        self.gaps.add('exact flat switch pointer join; general case/fallthrough/control-flow proof remains unresolved')
+        return self.merge(branches)
+
+    @staticmethod
+    def bounded_return_expression(node):
+        """Only expression shapes whose existing value/effect walk is bounded."""
+        if node.type in ('identifier','number_literal','string_literal','char_literal','null','true','false'):
+            return True
+        children=node.named_children
+        if node.type=='parenthesized_expression':
+            return len(children)==1 and LocalFlow.bounded_return_expression(children[0])
+        if node.type=='comma_expression':
+            return len(children)==2 and all(LocalFlow.bounded_return_expression(c) for c in children)
+        if node.type=='call_expression':
+            function=node.child_by_field_name('function');args=node.child_by_field_name('arguments')
+            return (function is not None and function.type=='identifier' and args is not None
+                    and all(LocalFlow.bounded_return_expression(c) for c in args.named_children))
+        return False
+
+    def direct_bounded_return(self,node):
+        if node is None or node.type!='return_statement':return False
+        values=node.named_children
+        return len(values)<=1 and (not values or self.bounded_return_expression(values[0]))
+
+    def bounded_switch_return_arm(self,node):
+        """One return, or one if/else with a direct return in each branch."""
+        if self.direct_bounded_return(node):return True
+        if node.type!='if_statement':return False
+        condition=node.child_by_field_name('condition')
+        value=condition.child_by_field_name('value') if condition else None
+        if (value is None or len(condition.named_children)!=1
+                or not self.bounded_return_expression(value)):
+            return False
+        for field in ('consequence','alternative'):
+            branch=node.child_by_field_name(field)
+            if branch is not None and branch.type=='else_clause':
+                children=[c for c in branch.named_children if c.type!='comment']
+                branch=children[0] if len(children)==1 else None
+            if branch is not None and branch.type=='compound_statement':
+                children=[c for c in branch.named_children if c.type!='comment']
+                branch=children[0] if len(children)==1 else None
+            if not self.direct_bounded_return(branch):return False
+        return True
+
+    def exact_switch_returns(self,node,state,fnname):
+        """Consecutive empty labels may share the next direct bounded return."""
+        arms=self.exact_switch_cases(node)
+        if arms is None or not arms[-1]:return None
+        returning=[]
+        for arm in arms:
+            if not arm:continue # Consecutive labels enter the next nonempty arm.
+            if len(arm)!=1 or not self.bounded_switch_return_arm(arm[0]):return None
+            returning.append(arm[0])
+        if not returning:
+            return None
+        # A goto can bypass this switch to a following label. Without a CFG,
+        # reject the whole function rather than suppress such reachable code.
+        function=node.parent
+        while function is not None and function.type!='function_definition':function=function.parent
+        if function is None or any(n.type in ('goto_statement','labeled_statement') for n in walk(function)):
+            return None
+        results=[self.statement(returned,state.clone(),fnname) for returned in returning]
+        if any(result.fallthrough_state is not None for result in results):return None
+        exits=tuple(exit for result in results for exit in result.exit_states)
+        self.gaps.add('exact grouped return/if-else-return switch; general switch exits/feasibility remain unresolved')
+        return BlockResult(None,exits)
 
     @staticmethod
     def restore_scope(state,entry,declared):
         if state is None:return
+        for pointer,target in list(state.pointers.items()):
+            if target.slot and target.slot.split('.')[0] in declared:
+                state.pointers[pointer]=PointerTarget()
         for name in declared:
             if name in entry.values:state.values[name]=entry.values[name]
             else:state.values.pop(name,None)
@@ -1079,6 +1496,8 @@ class LocalFlow:
             else:state.types.pop(name,None)
             if name in entry.shadows:state.shadows.add(name)
             else:state.shadows.discard(name)
+            if name in entry.pointers:state.pointers[name]=entry.pointers[name]
+            else:state.pointers.pop(name,None)
 
     def statement(self,node,state,fnname):
         kind=node.type
@@ -1104,9 +1523,8 @@ class LocalFlow:
             return BlockResult(state)
         if kind=='if_statement':
             self.gaps.add('branch merge is may-flow; no path feasibility proof')
-            cond=node.child_by_field_name('condition');self.effects(cond,state,fnname)
-            if cond and any(x.type=='declaration' for x in walk(cond)):
-                self.gaps.add('if initializer binding not analyzed')
+            entry=state.clone();cond=node.child_by_field_name('condition')
+            declared=self.header_effects(cond,state,fnname)
             known=self.truth(cond);results=[]
             fields=('consequence',) if known is True else ('alternative',) if known is False else ('consequence','alternative')
             for field in fields:
@@ -1114,12 +1532,35 @@ class LocalFlow:
                 if child is None:result=BlockResult(branch)
                 elif child.type=='declaration':
                     # Implicit branch scope: names do not escape the branch.
-                    entry=branch.clone();names=self.declaration(child,branch,fnname)
-                    self.restore_scope(branch,entry,names);result=BlockResult(branch)
+                    branch_entry=branch.clone();names=self.declaration(child,branch,fnname)
+                    self.restore_scope(branch,branch_entry,names);result=BlockResult(branch)
                 else:result=self.statement(child,branch,fnname)
                 results.append(result)
-            return BlockResult(self.merge([r.fallthrough_state for r in results]),
-                               tuple(exit for result in results for exit in result.exit_states))
+            merged=self.merge([r.fallthrough_state for r in results])
+            exits=tuple(exit for result in results for exit in result.exit_states)
+            self.restore_scope(merged,entry,declared)
+            for exit in exits:self.restore_scope(exit.state,entry,declared)
+            return BlockResult(merged,exits)
+        if kind=='switch_statement':
+            cond=node.child_by_field_name('condition')
+            if cond and any(x.type=='declaration' for x in walk(cond)):
+                self.gaps.add('switch header binding only; case ordering/feasibility unresolved')
+                entry=state.clone();declared=self.header_effects(cond,state,fnname)
+                returned=self.exact_switch_returns(node,state,fnname)
+                if returned is not None:
+                    for exit in returned.exit_states:self.restore_scope(exit.state,entry,declared)
+                    return returned
+                joined=self.exact_switch_pointer_join(node,state,fnname)
+                if joined is not None:
+                    self.restore_scope(joined,entry,declared)
+                    return BlockResult(joined)
+                probe=state.clone();self.effects(node.child_by_field_name('body'),probe,fnname)
+                merged=self.merge([state,probe]);self.restore_scope(merged,entry,declared)
+                return BlockResult(merged)
+            returned=self.exact_switch_returns(node,state,fnname)
+            if returned is not None:return returned
+            joined=self.exact_switch_pointer_join(node,state,fnname)
+            if joined is not None:return BlockResult(joined)
         if kind in ('comment','empty_statement'):return BlockResult(state)
         if kind in ('while_statement','do_statement','for_statement','range_based_for_statement'):
             self.gaps.add(f'loop body analyzed for may-flow only at line {node.start_point[0]+1}; iteration count/path feasibility unresolved')
@@ -1130,15 +1571,19 @@ class LocalFlow:
             # Evaluate the bounded loop header too: a for initializer or range
             # expression can carry the modeled value into the body. Treat all
             # header effects as possible and retain a partial-flow obligation.
+            loop_entry=state.clone();header_declared=set()
             for header in node.named_children:
                 if header.id == body.id:
                     continue
-                if header.type=='declaration':self.declaration(header,state,fnname)
-                else:self.effects(header,state,fnname)
+                header_declared.update(self.header_effects(header,state,fnname))
             branch=state.clone()
             result=self.statement(body,branch,fnname)
-            return BlockResult(self.merge([state,result.fallthrough_state,
-                                           *(e.state for e in result.exit_states)]))
+            merged=self.merge([state,result.fallthrough_state,
+                               *(e.state for e in result.exit_states)])
+            # A for-header declaration has loop scope, including when it shadows
+            # an outer raw pointer. Body retargets of other names remain merged.
+            self.restore_scope(merged,loop_entry,header_declared)
+            return BlockResult(merged)
         # Preserve direct source/sink and unresolved-call candidates nested in
         # unsupported constructs such as switch/try. Scan on a clone so this
         # bounded may-flow pass cannot erase facts from the surrounding block.
@@ -1169,7 +1614,7 @@ class LocalFlow:
             body=fn.child_by_field_name('body');d=fn.child_by_field_name('declarator')
             fd=next((x for x in walk(d) if x.type=='function_declarator'),None) if d else None
             if not body or not fd:continue
-            name=self.text(fd.child_by_field_name('declarator'));env={};types={}
+            name=self.text(fd.child_by_field_name('declarator'));env={};types={};pointers={}
             params=fd.child_by_field_name('parameters')
             original_shadows=set(self.shadows)
             for index,p in enumerate(params.named_children if params else []):
@@ -1177,9 +1622,11 @@ class LocalFlow:
                 typ=self.text(p.child_by_field_name('type'))
                 self.shadows.add(ident)
                 if typ in self.fields:types[ident]=typ
+                if self.raw_pointer(p.child_by_field_name('declarator')):
+                    pointers[ident]=PointerTarget('*'+ident,False)
                 if (self.u.path,name,index) in self.model.parameters:
                     env[ident]=(self.source(name+' parameter '+str(index),p),)
-            result=self.block(body,LocalState(env,types,set(self.shadows)),name)
+            result=self.block(body,LocalState(env,types,set(self.shadows),pointers),name)
             self.function_audits.append({'symbol':name,'start_line':fn.start_point[0]+1,'end_line':fn.end_point[0]+1,
                 'fallthrough':result.fallthrough_state is not None,
                 'exits':[{'kind':e.kind,'line':e.line} for e in result.exit_states],
