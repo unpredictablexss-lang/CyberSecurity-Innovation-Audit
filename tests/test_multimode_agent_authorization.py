@@ -120,7 +120,8 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
                    side_effect=self.fake_preview):
             with TestClient(app) as client:
                 resp = client.post("/api/v1/operations/intelligent-previews",
-                                   json={"kind": "range", "payload": body})
+                                   json={"kind": "range", "payload": body},
+                                   headers={"x-ohscanner-client": "workbench-v1"})
                 self.assertEqual(resp.status_code, 200, resp.text)
                 previews = resp.json()["endpoints"]
                 self.assertEqual(len(previews), 2)
@@ -128,7 +129,8 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
                               "consent_sha256": preview["consent_sha256"]}
                              for preview in previews]
                 submitted = client.post("/api/v1/operations/revision-ranges",
-                                        json={**body, "triage_approvals": approvals})
+                                        json={**body, "triage_approvals": approvals},
+                                        headers={"x-ohscanner-client": "workbench-v1"})
                 self.assertEqual(submitted.status_code, 201, submitted.text)
                 job_ids = submitted.json()["spec"]["scan_ids"]
                 self.assertEqual(len(job_ids), 2)
