@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "D101_T100_IN_PROGRESS",
+  "status": "CLOSEOUT_ROUND1_D102_T101_IN_PROGRESS",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -616,22 +616,88 @@
       "id": "D101",
       "kind": "development",
       "title": "精确建模comma表达式末操作数返回值",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "depends_on": ["D100", "T99"],
       "input": "T99 fixed case: return (HILOG_INFO(..., value), 0) has a real internal log but its integer status is incorrectly material-tainted at the caller.",
       "completion": "For provably built-in comma expressions, retain effects of all operands but derive return value only from the final operand; never assume user-defined operator comma or unknown types are built-in.",
-      "tests": ["T100"]
+      "tests": ["T100"],
+      "commit": "ecaa9b0c32df2fb1688027a1b0e2af67c79bf540",
+      "integration_commit": "8d7374f64",
+      "evidence_commit": "b977bd56bae0c5fd4e375800e0dae7c68e9feffd",
+      "evidence_integration_commit": "442790f3c",
+      "completion": "For proven built-in comma expressions, retain effects of all operands but use only the final operand value; overloads/unknown types remain conservative.",
+      "validation": "0.21.16; developer7/data394 and T100 independent19/data413/compat62 pass; owner data413/compat62 pass. T85 remains24/638 unchanged. Legal bare assignment-comma parser shape remains blocked/partial and is queued for D102, not recorded as passing."
     },
     {
       "id": "T100",
       "kind": "testing",
       "title": "独立挑战comma返回值与左侧effects边界",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "depends_on": ["D100", "T99"],
       "feedback_to": ["D101"],
-      "completion": "Independently verify built-in comma final-value semantics, left-side sink preservation, material final operand propagation, and overload/unknown-type conservatism; replay fixed source and T85."
+      "completion": "Independent 19-method comma value/effects matrix passed; left sinks and overload/material controls preserved; bare assignment-comma parser partial gap reported separately.",
+      "commit": "29d8c84f243b55963e6d7431fa466ac52cb2d8f8",
+      "integration_commit": "9b77ae434",
+      "validation": "19 methods; baseline10 failures→0; data413/compat62; T85 common evidence and638 calls unchanged; valid bare assignment-comma parser shape remains blocked, not a clean result."
+    },
+    {
+      "id": "D102",
+      "kind": "development",
+      "title": "修复受限合法C++逗号表达式解析覆盖",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
+      "depends_on": ["D101", "T100"],
+      "input": "T100 records valid return(out=key,0) as TS root ERROR, while direct can see operand effects and Runner blocks/not_analyzed.",
+      "completion": "Parse a narrowly specified valid comma expression without losing effects, precedence or byte offsets; preserve unsupported/invalid expressions as partial, never pass blocked as zero findings.",
+      "tests": ["T101"]
+    },
+    {
+      "id": "T101",
+      "kind": "testing",
+      "title": "独立验证C++逗号语法、优先级与解析覆盖",
+      "status": "IN_PROGRESS",
+      "agent": "/root/t83_static_feedback",
+      "depends_on": ["D101", "T100"],
+      "feedback_to": ["D102"],
+      "completion": "Test valid assignment/comma/nesting/call argument/conditional forms and invalid controls; compare direct, Runner and coverage on fixed SHAs."
+    },
+    {
+      "id": "D103",
+      "kind": "development",
+      "title": "真实源码切片核验近期switch与return-flow规则",
+      "status": "PLANNED",
+      "depends_on": ["D102", "T101"],
+      "completion": "Select reproducible local/public C++ source containing the supported shapes; bind exact source revision/hash/build context, replay direct/Runner, and record feature presence and evidence limits without product/accuracy claims.",
+      "tests": ["T102"]
+    },
+    {
+      "id": "T102",
+      "kind": "testing",
+      "title": "独立复核真实源码切片及覆盖解释",
+      "status": "PLANNED",
+      "depends_on": ["D102", "T101"],
+      "feedback_to": ["D103"],
+      "completion": "Independently verify source identity, selected scope, feature shape, findings and parse/analysis coverage; ensure unavailable is unknown/not_run, not zero-risk."
+    },
+    {
+      "id": "D104",
+      "kind": "development",
+      "title": "D线收尾前候选证据与限制对账",
+      "status": "PLANNED",
+      "depends_on": ["D103", "T102"],
+      "completion": "Reconcile versioned reports/task tree, run final relevant suites and fixed replay once, list unresolved items and their status, confirm no second-layer model work was implied.",
+      "tests": ["T103"]
+    },
+    {
+      "id": "T103",
+      "kind": "testing",
+      "title": "独立最终回归与交付树复核",
+      "status": "PLANNED",
+      "depends_on": ["D103", "T102"],
+      "feedback_to": ["D104"],
+      "completion": "Independently reproduce final suite and exact source replay, inspect report references/hash/known gaps, then sign off only the delivered evidence scope."
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",
@@ -663,13 +729,19 @@
     "known_disclosed_cves": "0.19.11"
   },
   "integrated_tests": {
-    "data": 387,
+    "data": 413,
     "known_and_corpus": 39,
     "parser_linkage": 16,
     "ast_parser": 7,
-    "total": 449,
+    "total": 475,
     "result": "PASS"
   },
   "remote_branch": "origin/codex/d-owner-20261020-01a1571f",
-  "pushed_head": "d836b1c59cbe49f26fe4bdeb2ee5fb73e6a03498"
+  "pushed_head": "04d06da236ed46c277fe3b756a3a42c95ce7ab98",
+  "closeout_plan": {
+    "phase": "CLOSEOUT_IN_PROGRESS",
+    "remaining_rounds": 3,
+    "rounds": ["D102/T101: legal comma parser coverage", "D103/T102: source-backed real-code slice", "D104/T103: final evidence/replay reconciliation"],
+    "final_action": "After all three rounds, run one bounded final verification, publish a closeout report with known gaps and pushed head, then stop this sustained goal."
+  }
 }

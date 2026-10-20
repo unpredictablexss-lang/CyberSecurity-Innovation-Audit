@@ -331,6 +331,54 @@ flowchart TD
 - **反馈**：真实左侧sink被抑制或literal最终值仍携带左侧secret，立即给D101精确构造；若重载/unknown被断言builtin要求修复。独立复测固定SHA，fresh-process direct/Runner一致。
 - **固定回归**：复跑T99源码、完整data/compat和T85 direct/Runner；记录ID/evidence、638 calls、coverage和已知缺口。不推送owner。
 
+### D102（收尾轮1/3）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：C++ comma expression 解析覆盖开发者；只修复具体合法语法在当前C++前端中的parse/coverage缺口。
+- **固定输入**：T100记录的 `return (out=key,0);` 合法构造，当前TS root ERROR、Runner blocked/not_analyzed，而direct路径能看到operand effects。另一个真实语法 `(out=key,0)` 因缺双括号而不可被Runner建模。
+- **矩阵**：return括号逗号、括号内赋值comma、嵌套comma、函数调用实参中的comma、条件运算与赋值优先级、assignment effects、line/byte offsets，以及相邻非法形态。
+- **护栏**：不得把comma视为参数分隔符；不改变C++优先级；未知/非法保持partial；Runner blocked绝不可记为干净零候选。解析完成不等于语义证明，D101内建/重载类型条件继续有效。
+- **交付**：parser fixture、精确AST与offset验证、data/compat、T101 fixed-source复测、T85 direct/Runner兼容比较和限制报告。
+
+### T101（收尾轮1/3并行独立挑战线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立C++表达式语法/优先级测试者，不复用D102断言作为oracle。
+- **控制**：在已知C++语法下确认return `(out=key,0)`、嵌套comma、call argument comma与condition operator层次；加非法comma位置、赋值结合性和字节span控制。
+- **反馈**：比对TS parse tree root/error nodes、source bytes、Runner分析覆盖、direct/Runner候选。任何代码被截断、位置漂移或blocked被计零，立即反馈D102。
+- **固定验证**：冻结before/final commit，fresh process和完整suite/T85回放；结果记录为语法覆盖/控制，不声称安全准确率。
+
+### D103/T102（收尾轮2/3）
+
+**D103 结构化 vibe coding 提示词**
+
+- 在可复现的本地或公开C/C++源码中，选择包含近期受支持的分支/return/comma形状的有限源码切片。先固定仓库revision、tree/blob、byte hashes、可用BUILD上下文和选中文件集合；不得为得到正结论猜组件版本。
+- 运行实际静态pipeline及Runner，说明特性是否真实出现、source/sink证据链、parse/analysis coverage、候选身份及unknown；没出现记absent，无法拿到记not_run。
+- 不执行目标代码，不报告无标签precision/recall，不把synthetic结果说成产品漏洞。交可复放脚本与source-level报告。
+
+**T102 独立挑战提示词**
+
+- 自行抽取与D103相同的固定git对象，核验identity、build boundary、selected files和哈希；独立重跑direct/Runner。
+- 对source/sink、候选evidence、coverage和D103报告逐项挑战，尤其查隐含文件漏选、macros/partial header及把blocked当clean。
+- 发现具体问题反馈D103；否则报告哪些结论能由固定材料复现，哪些仍unknown/not_run。不给准确率标签。
+
+### D104/T103（收尾轮3/3）
+
+**D104 结构化 vibe coding 提示词**
+
+- 对D83至D103最终集成状态做一次有边界的交付对账：任务树commit/status、版本、回归计数、固定重放、源对象hash和报告内路径必须相互一致。
+- 运行最终data与兼容性测试、最相关的D101/D102 focused tests和最后一个固定source replay；不重复已通过且无改动的昂贵矩阵。
+- 把每项遗留标为fixed/known_gap/blocked/not_run，并给具体证据。不得把standing authorization、partial coverage或synthetic pass提升为产品确认/准确率。
+- 输出最终closeout report与远端push verification；清楚停止后续轮次，不自动再开审计循环。
+
+**T103 独立最终验证提示词**
+
+- 从冻结最终owner commit独立checkout或source archive，fresh process执行指定最终测试和关键replay。
+- 核验报告引用commit/blob/SHA、测试计数与task tree一致；复查已知gap不被标成通过，未知/blocked/not_run状态诚实。
+- 只对交付证据范围签出结论；发现blocking regression才反馈D104修复，否则给出独立closeout验证与明确剩余限制。
+
 ### T92（并行独立挑战线）
 
 **结构化 vibe coding 提示词**
