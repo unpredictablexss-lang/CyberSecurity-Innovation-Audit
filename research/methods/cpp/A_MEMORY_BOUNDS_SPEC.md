@@ -1,13 +1,13 @@
 # A-BOF-01 / A-INT-01 memory-safety detector specification
 
-更新：2026-10-17。本文是队友 A 的研究规格和注册建议，不是公共 Catalog 变更。结果默认 `candidate/unassessed`，`validated_vulnerability=0`。
+更新：2026-10-20。`ohscanner.cpp.bounds` 0.3.0 与 `ohscanner.cpp.integer_bounds` 0.2.1 已在生产 Catalog 注册，均作为候选规则运行。结果保持 `candidate/unassessed`；本地 CLI 回归不会设置 `validated_vulnerability`。
 
 ## Identity
 
 | Detector | Version | Languages | Rules | Candidate CWE |
 |---|---|---|---|---|
-| `ohscanner.cpp.bounds` | `0.2.0` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
-| `ohscanner.cpp.integer_bounds` | `0.2.0` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002`, `ohcpp-integer-bounds-narrow-index-candidate-003` | CWE-190/191/681/680 |
+| `ohscanner.cpp.bounds` | `0.3.0` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003`, `ohcpp-memory-bounds-pointer-offset-candidate-004`, `ohcpp-memory-bounds-vector-index-candidate-005` | CWE-119/125/787 |
+| `ohscanner.cpp.integer_bounds` | `0.2.1` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002`, `ohcpp-integer-bounds-narrow-index-candidate-003` | CWE-190/191/681/680 |
 
 实现入口：
 
@@ -15,7 +15,7 @@
 - `src/ohscanner/detectors/cpp/bounds_detector.py`
 - `src/ohscanner/detectors/cpp/integer_bounds_detector.py`
 
-源码绑定字段包括 `source_sha256`、`rule_version`、`rule_lineage_id` 和 `identity_quality=partial`。公共契约没有改变；Catalog 注册由公共负责人审查后另行提交。
+源码绑定字段包括 `source_sha256`、`rule_version`、`rule_lineage_id` 和 `identity_quality=partial`。公共契约没有改变。两项 Detector 在 Catalog 的普通默认集合中启用，仍只产生候选。
 
 ## A-BOF-01 触发和排除
 
@@ -25,7 +25,7 @@
 2. 固定数组索引，包含常量越界和未证明上界的符号索引。
 3. 识别 `if (n >= cap) return`、`if (n > cap) return`、`if (n < 0) return` 等单函数分支收窄。`SortElements*` 中未被 stable-array/index guard 保护的直接 `ElementAccessor::Get/Set` 作为历史 OOB 候选。
 
-候选只在目的地容量可归属、常量越界或复制/索引上界未证明时产生。`sizeof(destination)` 精确容量、完整上界守卫、动态目的地、宏/别名未知和 `partial/failed/not_run` 不产生强结论。字节/元素单位、指针别名、包装函数、跨函数参数、模板和完整 CFG dominance 仍是 unknown。
+候选只在目的地容量可归属、常量越界或复制/索引上界未证明时产生。0.3.0 增加两种窄形状：无支配式尺寸守卫的 `std::vector` 下标，以及 unsigned 尺寸相减进入指针偏移；识别到直接前置下溢守卫或精确容量时保持安静。`sizeof(destination)` 精确容量、完整上界守卫、动态目的地、宏/别名未知和 `partial/failed/not_run` 不产生强结论。字节/元素单位、指针别名、包装函数、跨函数参数、模板和完整 CFG dominance 仍是 unknown。
 
 ## A-INT-01 触发和排除
 
@@ -64,24 +64,9 @@
 - 输出和 source binding 稳定；
 - 已审阅误报形状（placement new、`strnlen` guard、窄整数提升）不再告警。
 
-## Catalog registration suggestion
+## Production Catalog
 
-建议公共负责人在独立兼容性提交中注册：
-
-```python
-"ohscanner.cpp.bounds": {
-    "factory": M2BoundsDetector,
-    "kind": "research_candidate",
-    "summary": "A: bounded local array/copy length candidates; no exploitability proof",
-},
-"ohscanner.cpp.integer_bounds": {
-    "factory": M2IntegerBoundsDetector,
-    "kind": "research_candidate",
-    "summary": "A: bounded size arithmetic and truncation candidates; no product impact proof",
-},
-```
-
-未注册前不改变当前生产 Catalog；研究脚本直接调用 Detector。示例 Detector 永不作为漏洞能力启用。
+`src/ohscanner/detectors/catalog.py` 注册两个 Detector，普通扫描默认选择它们；Catalog 的 `kind` 为 `research_candidate`。版本和规则身份以实现文件及本次生产 CLI 输出为准。示例 Detector 永不作为漏洞能力启用。
 
 
 ## Historical replay

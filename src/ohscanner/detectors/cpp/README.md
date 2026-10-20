@@ -1,56 +1,29 @@
-# C/C++ detectors
+# C/C++ detector catalog
 
-## A-NULL-01 v0.2.0
+`src/ohscanner/detectors/catalog.py` is the executable registry and source of default selection. Every detector below emits research candidates; a zero-result scan is not a safe verdict.
 
-`ohscanner.cpp.null_dereference` v0.2.0 recognizes a narrow same-function C/C++
-null-source and pointer-dereference shape. It records local, parameter, member and
-function-return pointer roles, `new (std::nothrow)` allocation results, pointer/reference aliases, bounded guard/error-path
-relations and source-bound candidate evidence. It handles multi-statement terminal
-error paths, local non-null rebinding, nothrow allocation guards and narrow short-circuit guards. It is not a
-complete CFG, type, alias, macro, template, exception, destructor or build-context
-analysis. Candidate results require the A-NULL-01 EvidenceObligation gate; zero
-findings are not a safe verdict. The detector enforces 1 MiB per unit and 32 MiB per
-run limits and keeps partial/failed/not-analyzed coverage fail-closed.
+| Detector | Current version | Ordinary default | Scope |
+|---|---:|---|---|
+| `ohscanner.cpp.bounds` | 0.3.0 | enabled | Bounded copy sizes, element access, unsigned dimension pointer offsets, and `std::vector` indexes |
+| `ohscanner.cpp.integer_bounds` | 0.2.1 | enabled | Bounded integer arithmetic, truncation, and narrowing indexes |
+| `ohscanner.cpp.lifetime` | 0.4.0 | enabled | `unique_ptr` reset and raw-alias lifetime candidates |
+| `ohscanner.cpp.resource_lifetime` | 0.4.2 | enabled | Double-free, use-after-free, recursive cleanup, recursive tree amplification, and recursive compare-cost candidates |
+| `ohscanner.cpp.shared_ptr_race` | 0.5.1 | enabled | Narrow conflicting non-atomic `shared_ptr` member access candidates |
+| `ohscanner.cpp.unsafe_memory_call` | 0.5.0 | enabled | Unbounded memory and non-literal format-call candidates |
+| `ohscanner.cpp.null_dereference` | 0.6.0 | disabled; explicit selection required | Bounded same-function NULL source/sink observations; unknown-return observations remain weak and separate |
+| `ohscanner.cpp.path_traversal` | 0.3.0 | disabled; explicit selection required | Bounded lexical source-to-file-sink candidates |
 
-Owner approval is recorded in
-`research/contracts/a_ccr_04/owner_approval.json`; catalog registration remains a
-separate change from this detector implementation.
+The versions above were read from the detector implementations and confirmed in Catalog metadata. `research_candidate` is a candidate status, not a product acceptance level. Source binding, parser completeness, semantic coverage, candidate signal, and runtime reachability must be reported separately.
 
-Current method card: `research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD_V2.md`.
+## Method cards
 
-## C/C++ shared_ptr race detector v0.5.0
+- Bounds and integer ranges: `research/methods/cpp/A_MEMORY_BOUNDS_SPEC.md`
+- Resource lifetime: `research/methods/cpp/A_RESOURCE_LIFETIME_SPEC.md`
+- Unsafe calls: `research/methods/cpp/A_UNSAFE_CALL_SPEC.md`
+- NULL dereference: `research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD_V2.md`
+- Path traversal: `research/methods/cpp/PATH_TRAVERSAL_METHOD_CARD_20261019.md`
+- Shared pointer races and `unique_ptr` lifetime: see the corresponding cards under `research/methods/cpp/`.
 
-Detector `ohscanner.cpp.shared_ptr_race`, version `0.5.0`, emits source-bound
-`candidate/unassessed` syntax evidence for modeled class/static `std::shared_ptr`
-members. It records read/write, atomic/non-atomic, lock identity and function/location
-facts, then evaluates every potential conflicting access pair independently.
+## Regression and evidence
 
-Mixed atomic/non-atomic paths are not suppressed by a mutex unless a common synchronization
-protocol is proven. Uncertain synchronization emits
-`EvidenceObligation("synchronization_proof", status="unknown")`; `try_to_lock`,
-`defer_lock`, unresolved lock identity and incomplete lexical scope retain blocked/unknown
-coverage. Only atomic-only access sets and all-ordinary conflicting pairs covered by
-reliable shared lexical mutexes receive narrow suppression.
-
-This is not a whole-program race proof. Cross-function protocols, lock aliases, templates,
-macros, CFG/happens-before facts and real product builds remain unknown. Zero findings
-under the narrow scope is not a safe verdict. See the
-[method card](../../../../research/methods/cpp/SHARED_PTR_RACE_METHOD_CARD.md) for the
-pairwise model, regression record and evidence gate.
-
-C/C++ family PoCs:
-
-- DelayedSingleton shared_ptr: `src/ohscanner/poc/cpp_shared_ptr_race.py`
-- unique_ptr raw-alias lifetime: `src/ohscanner/poc/cpp_lifetime_uaf.py`
-
-Both record controlled dynamic evidence without upgrading candidates to product
-vulnerabilities. The lifetime detector is version `0.4.0` and covers reset, owner
-assignment and scope-bounded move transfer invalidations. See
-`research/methods/cpp/DETECTOR_POC_MATRIX.md`.
-
-Targeted regression:
-
-```bash
-python3 -m unittest tests.detectors.test_cpp_shared_ptr_race_detector -v
-python3 -m unittest discover -s tests/detectors -q
-```
+Detector fixtures and unit regressions live under `tests/detectors/`. The A-line closeout report and source-bound CLI outputs live under `research/evidence/cpp/a_final_closeout_20261020/` and `research/deliveries/cpp/`. Those reports retain product-level blockers and do not promote source candidates to confirmed vulnerabilities.
