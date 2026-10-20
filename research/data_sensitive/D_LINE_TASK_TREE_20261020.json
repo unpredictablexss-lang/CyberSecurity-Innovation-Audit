@@ -2,7 +2,7 @@
   "schema": "ohscanner.d-line-task-tree/v1",
   "date": "2026-10-20",
   "goal": "少而有依据的静态候选、相关测试、可供后续模型审查的源码证据",
-  "status": "D91_T90_IN_PROGRESS",
+  "status": "D92_T91_IN_PROGRESS",
   "baseline": "6cbec8428a5c6c1ca86aa27b62ddc4ff2d06159f",
   "remote_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
   "remote_d_next": "0f4560c4712dbf914d762948e2220942f16324ad",
@@ -298,26 +298,59 @@
       "id": "D91",
       "kind": "development",
       "title": "核验napi_typeof元数据角色并保留字符串提取候选",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/d84_sensitive_quality",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
       "input": "T88/T89 exact T85 trace retains a candidate at napi_cert_utils.cpp:185 for an unresolved napi_typeof call after property output; neighboring napi_get_value_string_utf8 at 192/208 extracts actual bytes and must stay candidate.",
-      "completion": "Find exact same-version N-API declaration/implementation identity and prove only type enum/status metadata for precise bound call; any exclusion must require complete selected binding and no shadow/macro/custom wrapper; otherwise preserve candidate and report evidence gap. Keep string extraction, wrappers and unknown declarations flagged; fixed-source direct/Runner evidence and tests.",
+      "completion": "No API-name exemption was justified; exact type/length/byte roles documented with cross-repository version binding unknown, and visible-bound positive/custom-body negative controls passed.",
       "tests": [
         "T90"
-      ]
+      ],
+      "commit": "085542b7fbd0a3f64f12212c30539c481a74e9bf",
+      "evidence_commit": "86ba349249e02320c92805da27d9962eeead8d21",
+      "integration_commit": "a7fac6339",
+      "evidence_integration": "d7091d63b",
+      "validation": "No source change and no whitelist; exact API objects pinned but parser partial/unbound to certificate build; 6 developer controls, T90 10 independent controls; strict T85 19/19 unchanged; owner data193/193"
     },
     {
       "id": "T90",
       "kind": "testing",
       "title": "独立挑战napi_typeof元数据与真实字符串提取边界",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_INTEGRATED",
       "agent": "/root/t83_static_feedback",
       "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
       "feedback_to": [
         "D91"
       ],
-      "completion": "Independently identify versioned N-API contract; test direct metadata operation, actual string extraction, local/custom same-name calls, macro override, missing/partial binding; challenge D91 fixed SHA, report exact T85 three-file direct/Runner identities, coverage and source facts; feed any unsafe exclusion back for repair."
+      "completion": "Independently proved general API roles but could not bind the implementation to the fixed certificate build; correctly recommends retaining candidates in original scope.",
+      "commit": "59a788c595d2992e6232f73c5d3458254fd6f51d",
+      "integration_commit": "59cf964e8",
+      "validation": "Independent10/10, data193/193; exact strict three-file19 direct/Runner unchanged; explicit mixed-source 9-file collection21 direct/19 Runner unchanged; N-API implementation/declaration partial, no linked SDK version"
+    },
+    {
+      "id": "D92",
+      "kind": "development",
+      "title": "绑定CERT_PRIVATE_KEY的key属性名而保留取值路径",
+      "status": "IN_PROGRESS",
+      "agent": "/root/d84_sensitive_quality",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\d84-sensitive-quality-20261020",
+      "input": "D90/T89 exact certificate source shows CERT_PRIVATE_KEY.c_str() at napi_cert_utils.cpp:298 in argument 2 of napi_get_named_property; fixed header declares CERT_PRIVATE_KEY=\"key\". Current property key proof explicitly accepts only CERT_PASSWORD=\"password\", leaving line298 as heuristic source.",
+      "completion": "Narrowly prove the exact immutable CERT_PRIVATE_KEY literal is a property-name operand at the exact API argument position; actual napi_get_named_property output and subsequent private-key material stay candidates. Do not generalize all constant strings; same-name shadow, changed value, altered call position, wrapper and missing/partial-header controls retain candidates. Replay exact T85 direct/Runner and full IDs/coverage/source positions.",
+      "tests": [
+        "T91"
+      ]
+    },
+    {
+      "id": "T91",
+      "kind": "testing",
+      "title": "独立挑战private-key schema键与真实密钥材料边界",
+      "status": "IN_PROGRESS",
+      "agent": "/root/t83_static_feedback",
+      "worktree": "D:\\openHarmonyScanner\\worktrees\\t83-d-static-feedback-20261020",
+      "feedback_to": [
+        "D92"
+      ],
+      "completion": "Independently verify fixed source and declaration identity at e270; challenge exact argument-2 schema-key exclusion versus output argument/source extraction, renamed/same-name value/shadow, altered constant, custom wrapper, partial header; direct/Runner fixed-src replayer and repair feedback."
     }
   ],
   "loop": "具体失败 -> 开发修复 -> 测试复验 -> 集成与报告 -> 下一项可执行切片；没有新信息时不重复审计",

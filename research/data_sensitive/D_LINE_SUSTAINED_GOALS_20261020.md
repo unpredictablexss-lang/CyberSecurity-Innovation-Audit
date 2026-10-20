@@ -30,6 +30,6 @@
 
 ## 当前状态
 
-截至本次更新，D89/T88与D90/T89均已完成并集成。D89在固定三文件direct/Runner只移除第349行schema-key诊断（20→19）；T88独立13项和数据157项、负责人复放均通过。D90没有放宽清理候选，而是修复同名函数指针与局部callable遮蔽导致的漏报；T89独立14项、数据177项通过，两个反例在direct/Runner从0恢复为1，原三文件19/19和扩展七文件20 direct/18 Runner均不变。负责人当前已开始D91/T90，调查固定源码第185行`napi_typeof`的元数据/状态角色，同时保护第192/208行实际字符串提取候选。权威状态见任务树，结构化提示词见并行计划。
+截至本次更新，D89/T88、D90/T89、D91/T90均已完成并集成。D89固定三文件direct/Runner仅移除第349行schema-key候选；D90修复函数指针/局部callable遮蔽漏报而不放宽cleanup候选；D91/T90核验N-API一般语义但确认无法证明与证书构建绑定，185类型查询、192长度查询及208字节提取仍保留unknown。D91/T90合并16项和负责人完整data193项通过，严格三文件仍19 direct/19 Runner。当前D92/T91围绕CERT_PRIVATE_KEY="key"的精确property-name参数绑定与真实key输出边界并行执行。权威状态见任务树，结构化提示词见并行计划。
 
-D90/T89闭环见[D线第6轮报告](D_LINE_ROUND6_SUMMARY_20261020.md)：不新增清理豁免，修复两类同名callable遮蔽漏报；原三文件仍19/19、附加七文件20 direct/18 Runner不变。当前队列：D91/T90独立核验 `napi_typeof` 的元数据角色与邻近字符串提取边界；只有固定绑定证据支持时才减少静态候选。
+D90/T89闭环见[D线第6轮报告](D_LINE_ROUND6_SUMMARY_20261020.md)：不新增清理豁免，修复两类同名callable遮蔽漏报；原三文件仍19/19、附加七文件20 direct/18 Runner不变。D91/T90闭环见[D线第7轮报告](D_LINE_ROUND7_SUMMARY_20261020.md)：API一般契约与绑定证明分开；证书构建缺跨仓库版本关联，napi_typeof及相邻查询/提取流继续unknown。当前队列：D92/T91仅审查第298行 `CERT_PRIVATE_KEY="key"` 在精确NAPI property-read参数角色中的候选误报，实际输出材料必须保留。

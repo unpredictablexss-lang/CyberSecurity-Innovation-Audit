@@ -135,3 +135,25 @@ flowchart TD
 - **控制**：精确 type-check元数据调用；相邻真实 `napi_get_value_string_utf8` 字节提取；同名自定义函数/回调、重定义宏、未知包装、缺失或partial声明。
 - **反馈**：若同名或未知绑定被排除，立即交D91修复并在固定SHA重跑；若仅API文档证明一般契约却无法证明当前调用身份，明确报告unknown并建议保留。
 - **验证**：fresh-process D91前后完整src归档；严格固定三文件 direct/Runner诊断identity、message、coverage、原始source/call facts比较。不能用直接detector替代Runner，也不能将诊断计数当准确率。
+
+
+### D92（当前开发切片）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：NAPI schema-key 数据角色开发者。
+- **固定证据**：T85 certificate commit `e270363a042bf8f0126881c76d1341ad457cc187`，源文件 SHA-256 `5b5e868bb0b11d8b5172a46c4de49a4fd1548f0a8c261c3c1f141eb033f72bc3`；`napi_cert_utils.cpp:298` 把 `CERT_PRIVATE_KEY.c_str()` 放在 `napi_get_named_property` 第三实参（0基 arg2），同一固定 `napi_cert_defines.h` SHA-256 `32280166d5a19a2dc4a9709458bcb878d28ef13f2ca06b488d6222d310e2ec80` 定义该不可变字符串为 `"key"`。当前只识别 `CERT_PASSWORD="password"`，因此产生名称启发式候选。
+- **目标**：精确绑定常量符号和值及 property-read API 的名称参数角色，只排除这个 schema key 的值来源；不抑制 NAPI 输出参数取出的 private-key 内容及后续 sinks。
+- **反控制**：同名局部变量/参数、不同字面量、常量出现在输出位置、未知 wrapper、API 同名自定义实现、缺少/partial头、实际材料输出都保留候选。不得放宽成“所有 const string 都是安全key”。
+- **验证**：固定 T85 三文件 direct 与 Runner重放；完整诊断ID/message/identity status、coverage、source byte/hash与AST位置比较；只在确凿角色证据下减少候选。
+- **交付**：开发代码、具名正反控制和限制报告，收到T91挑战后修复复测。
+
+### T91（并行独立挑战线）
+
+**结构化 vibe coding 提示词**
+
+- **角色**：独立源码/语义挑战者；不复用D92测试作为独立基线。
+- **输入**：从固定 upstream Git objects 自行提取e270的utils和defines文件，复核commit/tree/blob/bytes/SHA，以及第298行参数索引和 `CERT_PRIVATE_KEY="key"` 声明。
+- **矩阵**：arg2 精确property key；arg3输出引用；不同key常量/同名字面量；参数/局部遮蔽；错位实参；未知包装/同名函数；partial/missing defines；实值流至日志/复制/返回。
+- **反馈规则**：若输出实值、错位参数或未知调用被压掉，立即交D92修复并固定SHA复测。
+- **验证**：对D92完整`src/` Git archive在新进程运行独立控制与T85原三文件direct/Runner；报告所有finding变化、identity字段未知、coverage与raw source/call spans。不能凭count宣称准确率。
