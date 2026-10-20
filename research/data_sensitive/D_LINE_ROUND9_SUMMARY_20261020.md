@@ -6,7 +6,7 @@ D93/T92 已完成负责人集成。开发和独立测试均未证明固定证书
 
 负责人验证：D93/T92专项控制16/16、data全套229/229、known/corpus/adversarial 39/39、parser/linkage 16/16（合计284项），`git diff --check`通过。T92固定T85三文件direct与Runner均26项；26条共同诊断、coverage和638个调用事实不变；3个detector仍partial。固定结果不证明准确率或产品影响。另发现完整自定义helper通过未解析指针写入材料后再日志时，当前扫描可能为0候选且partial；它作为 `known_gap_not_passed` 记录于 `D93_POINTER_OUTPUT_GAP_20261020.json`，不是安全正控或通过项。
 
-本地远端抓取因GitHub HTTPS 443连接超时失败；本地记录的origin分支仍停在 `fc4cb8da2216002bf058aa1315c5328bebab9dc2`。本轮集成提交尚未推送，待完成D94/T93后按持续交付授权一起推送并核对远端ref。
+首次抓取与两次推送因GitHub HTTPS 443连接超时失败；连接恢复后已成功推送，`git ls-remote`确认 `origin/codex/d-owner-20261020-01a1571f=f5e13209cef2096c823556f77173bd294f1e004e`。D94/T93继续并行推进。
 
 ## 下一轮并行切片 D94/T93
 
