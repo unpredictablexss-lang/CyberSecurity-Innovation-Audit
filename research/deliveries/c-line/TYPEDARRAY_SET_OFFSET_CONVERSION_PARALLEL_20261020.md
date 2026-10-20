@@ -20,9 +20,9 @@ steps:
   - 跟踪负数、+Infinity、2^64 和邻近可表示值等边界控制
   - 用最小隔离计算复核 unsigned addition、byte index narrowing 和 range check
   - 写 source-only 报告，明确不等同于 Ark VM 执行
-deliverable: research/deliveries/c-line/typedarray_set_offset_conversion_developer_20261020.md 和本地提交 SHA
-feedback: 独立测试线挑战转换、舍入和边界结论；具体矛盾回到开发线更正报告
-stop: 不修改生产 detector，不称为 runtime PoC 或产品影响
+deliverable: research/deliveries/c-line/typedarray_set_offset_conversion_developer_20261020.md (194495c845240aab728e8480ac62c6a9dd488130); correction research/deliveries/c-line/typedarray_set_offset_conversion_correction_20261020.md (28eb558366f8bf224ccdb593f67635e7dc07afae)
+feedback: 独立测试线发现初版对循环写入仍在 TypedArray view 内的推论不成立；开发线用非零 targetByteOffset 反例更正，反馈已由测试线复核
+stop: 不修改生产 detector，不称为 runtime PoC 或产品影响；runtime/build 未执行时保持 not_run/unknown
 ```
 
 ## C-TEST-SET-OFFSET-CONVERSION-20261020
@@ -37,17 +37,19 @@ steps:
   - 在独立 temp 中用 Python/C++ 计算可复现的正例与边界控制
   - 审阅开发报告，逐项回传源码行、身份或算术差异
   - 若发现反例，要求开发线修订后再复核报告
-deliverable: research/deliveries/c-line/typedarray_set_offset_conversion_independent_20261020.md 和本地提交 SHA
+deliverable: research/deliveries/c-line/typedarray_set_offset_conversion_independent_20261020.md (edf0cb0c48dce15f722b34caa167e82a88de3474)
 stop: 不改生产代码，不将微型计算称作 Ark Runtime 执行；runtime 保持 not_run，product 保持 unknown
 ```
 
 ## 持续目标
 
-本切片仅回答 offset 转换可达性与源代码算术链。开发线先提交证据，独立测试线在同一 scanner/source SHA 上挑战；矛盾经开发修订后由测试线复查。只有新证据能够证明实际执行时才更新 runtime 状态。即使转换成立，候选仍是 source-level conditional candidate；组件写入、可观察性、产品纳入和安全影响分别保留为 `not_run`/`unknown`。
+本切片仅回答 offset 转换可达性与源代码算术链。开发线先提交证据，独立测试线在同一 scanner/source SHA 上挑战；矛盾经开发修订后由测试线复查。反馈闭环现已完成：`2^64-2048` 可达；array-like 路径存在一个可复算的源码级 view-boundary candidate：offset=`2^64-2048`、srcLen=4096、目标 Uint8Array byteOffset=4096/length=4096 时，长度检查回绕后通过，循环写 `[0x800,0x1800)`，其中 2048 字节在目标 view 前，但全在 8 KiB backing ArrayBuffer 内。开发初版的“循环写入仍在 view 内”结论已更正并经独立测试复核。Ark Runtime/JS PoC/build/profile 未执行，保持 `not_run`；产品适用性及影响保持 `unknown`。不把该源码候选升级为 backing-store OOB 或产品确认。
 
 ## 当前状态
 
 | 任务 | 状态 | 结果 |
 |---|---|---|
-| C-DEV-SET-OFFSET-CONVERSION-20261020 | in_progress | 等待 exact-source 转换报告 |
-| C-TEST-SET-OFFSET-CONVERSION-20261020 | in_progress | 等待独立复算并审阅开发报告 |
+| C-DEV-SET-OFFSET-CONVERSION-20261020 | completed_with_correction | 初版转换结论成立；view 范围推论经 correction commit `28eb558` 更正 |
+| C-TEST-SET-OFFSET-CONVERSION-20261020 | completed | 同一 scanner SHA/tree 独立复算确认 correction 算术；未运行 Ark Runtime |
+
+证据提交：开发 `194495c845240aab728e8480ac62c6a9dd488130`，更正 `28eb558366f8bf224ccdb593f67635e7dc07afae`，独立测试 `edf0cb0c48dce15f722b34caa167e82a88de3474`。下一切片应以新的 source/runtime/build 证据为触发点，避免重复审计已闭环的算术；当前 runtime 依赖缺失已记录，不作为本源码结论的阻塞项。

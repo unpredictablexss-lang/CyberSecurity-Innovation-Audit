@@ -4,10 +4,10 @@
   "baseline": {
     "remote": "origin/codex/c-line-parallel-plan-20261020",
     "commit": "72b75e0b3",
-    "refresh": "2026-10-20 continuation: re-fetched origin; origin/main remains c380a474718e8ec4497aff55b18a1dd38bafa13f. C code integration 4e1268a980fd103326c7dbaa6ca2e78d2ba43e69 independently passed prior closeout replay. New source-level follow-up checks whether candidate TypedArray.set offset 2^64-2048 reaches the exact ToInteger/double-to-uint64 path in Ark source a65a2853ccae13da167d9aa4720ab8b11ec16656. Runtime build attempt did not pass prerequisite checks (Node 14.21.1, Linux Python prebuilt, Hvigor absent); no runtime result. See TYPEDARRAY_SET_OFFSET_CONVERSION_PARALLEL_20261020.md."
+    "refresh": "2026-10-20 continuation: origin/main c380a474718e8ec4497aff55b18a1dd38bafa13f; C integration 4e1268a980fd103326c7dbaa6ca2e78d2ba43e69. TypedArray.set source-reachability feedback loop completed: developer 194495c845240aab728e8480ac62c6a9dd488130, correction 28eb558366f8bf224ccdb593f67635e7dc07afae, independent test edf0cb0c48dce15f722b34caa167e82a88de3474. Source-level view-boundary candidate confirmed by arithmetic review; backing-store OOB/product impact not established. Runtime build preflight lacks Node 14.21.1, Linux Python prebuilt, and Hvigor; runtime remains not_run, product applicability unknown. See TYPEDARRAY_SET_OFFSET_CONVERSION_PARALLEL_20261020.md."
   },
   "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
-  "status": "IN_PROGRESS_SOURCE_OFFSET_REACHABILITY",
+  "status": "CLOSEOUT_READY_SOURCE_CANDIDATE_RUNTIME_NOT_RUN",
   "blocking_prerequisites": [],
   "workstreams": [
     {
@@ -1093,28 +1093,28 @@
     {
       "id": "C-DEV-SET-OFFSET-CONVERSION-20261020",
       "kind": "source_reachability_development",
-      "status": "IN_PROGRESS",
-      "objective": "Prove or refute whether the candidate TypedArray.set offset 2^64-2048 is reachable through the exact JavaScript Number, ToInteger, double-to-uint64 conversion path, then verify the source arithmetic and boundary controls.",
+      "status": "COMPLETED_WITH_CORRECTION",
+      "objective": "Prove whether the candidate TypedArray.set offset 2^64-2048 is reachable through the exact JavaScript Number, ToInteger, double-to-uint64 path, and verify source arithmetic and boundary controls.",
       "code_sha": "4e1268a980fd103326c7dbaa6ca2e78d2ba43e69",
       "source_repository": "openharmony/arkcompiler_ets_runtime",
       "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
       "worktree": "worktrees/c-mainline-dev-closeout-20261020",
       "feedback_from": "C-TEST-SET-OFFSET-CONVERSION-20261020",
       "prompt": "research/deliveries/c-line/TYPEDARRAY_SET_OFFSET_CONVERSION_PARALLEL_20261020.md#c-dev-set-offset-conversion-20261020",
-      "deliverable": "Source-only reachability report with exact blobs/SHA256, positive and boundary controls, command output, runtime limits; no production edits."
+      "deliverable": "research/deliveries/c-line/typedarray_set_offset_conversion_developer_20261020.md (194495c845240aab728e8480ac62c6a9dd488130) plus correction research/deliveries/c-line/typedarray_set_offset_conversion_correction_20261020.md (28eb558366f8bf224ccdb593f67635e7dc07afae). Initial view-boundary inference was corrected after reviewer feedback; source-only, no production edits."
     },
     {
       "id": "C-TEST-SET-OFFSET-CONVERSION-20261020",
       "kind": "independent_source_reachability_testing",
-      "status": "IN_PROGRESS",
-      "objective": "Independently challenge exact-source ToInteger and IEEE-754 reachability of the TypedArray.set candidate offset, recalculate cast/arithmetic boundaries, and report discrepancies to development.",
+      "status": "COMPLETED",
+      "objective": "Independently challenge exact-source ToInteger and IEEE-754 reachability of the TypedArray.set candidate offset, recalculate cast/arithmetic boundaries, review the development correction, and report discrepancies.",
       "code_sha": "4e1268a980fd103326c7dbaa6ca2e78d2ba43e69",
       "source_repository": "openharmony/arkcompiler_ets_runtime",
       "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
       "worktree": "worktrees/c-mainline-test-closeout-20261020",
       "feedback_to": "C-DEV-SET-OFFSET-CONVERSION-20261020",
       "prompt": "research/deliveries/c-line/TYPEDARRAY_SET_OFFSET_CONVERSION_PARALLEL_20261020.md#c-test-set-offset-conversion-20261020",
-      "deliverable": "Independent report and reproducible Python/C++ micro-checks clearly separated from Ark Runtime execution."
+      "deliverable": "research/deliveries/c-line/typedarray_set_offset_conversion_independent_20261020.md (edf0cb0c48dce15f722b34caa167e82a88de3474); independent arithmetic review confirmed the corrected source-level view-boundary candidate. Ark Runtime remains not_run."
     }
   ],
   "feedback_loop": [
@@ -1133,7 +1133,7 @@
     "Exact-bound scout 20261020: developer report a5c9d5e and independent tester report 14b1044 confirm a conditional Float32Array negative-TDouble candidate in CommonStub and TypedHCR. Second-layer report b264f28 finds Math.ceil(-1.1) as a source-supported TDouble(-1.0) route. Corrected arithmetic shows an empty initializer interval on 32/64-bit, a 16-byte backing allocation with large uint32 metadata on 32-bit, and a signed inline-getter guard that may block simple access. Runtime/build/accessibility remains unknown/not_run; no production change. Next independent tasks validate a safe local runtime/build and challenge arithmetic/access dispatch.",
     "C quick-closeout 20261020: latest main verified at 0f53af62283dbd0f249280805e8286a04b2d43b9. Type_safety development replay on exact Ark Runtime source recorded no-change root cause in 6c71a7bfd: IR_IF/IR_ELSE, BRANCH and typed-array case-list macros are not preprocessed, causing Tree-sitter cascades; model binding and SHA checks pass, diagnostics remain zero, status stays blocked/partial. Independent baseline on the same main SHA preserved fail-closed behavior (fixture parsing complete but outside exact reviewed model binding; not_analyzed=1) and the partial control candidate/unknown contract. Parallel prompt and continuous-goal plan is in C_LINE_QUICK_CLOSEOUT_PARALLEL_PLAN_20261020.md; no production detector change or new vulnerability family was introduced.",
     "C latest-main refresh: developer merged origin/main c380a474718e8ec4497aff55b18a1dd38bafa13f with C integration at 4e1268a980fd103326c7dbaa6ca2e78d2ba43e69; independent tester replayed the exact commit/tree and reported no code defect. Developer suite: Ark 212 (3 skipped), focused compatibility 59 (1 skipped), available contract 19 passed. Independent suite: Ark 212 (3 skipped), related regressions 97 (1 skipped). Both preserve default-off/source-bound admission and unknown/partial limits. Runtime not_run, product impact unknown.",
-    "TypedArray.set offset reachability follow-up opened after confirming exact Ark source a65a2853... and discovering available GN/Ninja. The Ark build entry now stops on missing Node 14.21.1/Linux Python/Hvigor prerequisites, so runtime remains not_run. Developer and independent tester are checking whether 2^64-2048 is representable and safely converted through the actual ToInteger path; no detector or Ark source changes are authorized in this slice."
+    "TypedArray.set source-reachability feedback loop closed on scanner SHA 4e1268a980fd103326c7dbaa6ca2e78d2ba43e69 and Ark source commit a65a2853ccae13da167d9aa4720ab8b11ec16656. Developer report 194495c established that 2^64-2048 is binary64-representable and reaches ToInteger→uint64_t; independent test commit edf0cb0 reviewed it and found the initial claim that all loop writes remain inside the TypedArray view was too broad. Developer correction 28eb558 added a nonzero targetByteOffset witness: srcLen=4096, view byteOffset=4096/length=4096, backing=8192 bytes; uint64 guard wraps to 2048, then the loop writes [0x800,0x1800), including 2048 bytes before the view while remaining inside the backing buffer. Independent test confirmed the correction. This is a source-level view-boundary candidate, not backing-store OOB or product confirmation. Ark Runtime/JS PoC/build remain not_run; product applicability/impact unknown. Prior build preflight lacked Node 14.21.1, Linux Python prebuilt, and Hvigor. No production detector or Ark source edits."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
