@@ -14,6 +14,7 @@ from src.parser.syntax_normalize import normalize_empty_cpp_linkage_wrappers
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation
 from .models import DEFAULT_SOURCE, SINKS, STATUS_RETURN_CALLS, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel
 from .property_keys import PROPERTY_READ_CALLS, PropertyKeyBindings
+from .log_macro_roles import LogMacroRoles, enclosing_function
 
 @dataclass(frozen=True)
 class Flow:
@@ -272,7 +273,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.5'
+    version = '0.21.6'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -389,6 +390,8 @@ class LocalFlow:
         self.call_stack = resolver.call_stack if resolver is not None else []
         self.call_results = {}
         self.property_keys = PropertyKeyBindings(self)
+        self.property_key_roles = set()
+        self.log_macro_roles = LogMacroRoles(self, formats)
         self.type_conflicts = set()
         for n in walk(self.tree.root_node):
             if n.type == 'function_definition':
@@ -841,6 +844,7 @@ class LocalFlow:
         if fn in PROPERTY_READ_CALLS and not locally_defined and len(args)==4:
             binding=self.property_keys.bind(n,args[2])
             if binding:
+                self.property_key_roles.add((enclosing_function(n),binding))
                 self.gaps.add('reviewed NAPI property-name argument 2 is not fetched password material: '
                               +fn+'; bound constant '+binding)
                 # Only the exact, bound schema-key operand is excluded. Outputs,
@@ -861,6 +865,29 @@ class LocalFlow:
                             'password-property output destination is unresolved','destination_binding')
                 self.call_results[n.id]=()  # napi_status, not fetched material
                 return
+        if fn=='LOGE' and not locally_defined and args:
+            macro_binding=self.log_macro_roles.resolve()
+            scope=enclosing_function(n)
+            if macro_binding and scope is not None:
+                try:
+                    slots,count=formats(self.literal(args[0]))
+                    if count!=len(args)-1:raise ValueError('log macro format arity')
+                except (ValueError,SyntaxError):
+                    slots=()
+                excluded=set()
+                for _,indexes,conversion in slots:
+                    if conversion!='s':continue
+                    index=indexes[-1]+1
+                    binding=self.property_keys.bind(n,args[index],allow_target_macro=True)
+                    if binding and (scope,binding) in self.property_key_roles:
+                        excluded.add(index)
+                if excluded:
+                    self.gaps.add('bound schema-key log operand excluded through complete LOGE macro roles: '+macro_binding)
+                    flows=tuple(flow for index,arg in enumerate(args) if index not in excluded
+                                for flow in self.expr(arg,env,types))
+                    self.emit_unresolved_flows(fn,n,fnname,flows,
+                        'other logging operands remain candidates; only prior-bound schema-name string operands are excluded')
+                    return
         if fn in self.output_calls:
             index, arity = self.output_calls[fn]
             if len(args) != arity:
