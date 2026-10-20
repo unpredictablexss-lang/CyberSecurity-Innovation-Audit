@@ -51,6 +51,34 @@ class ReceiverGuardTests(unittest.TestCase):
         result = analyze_receiver_guard(unit(wrap(body)))
         self.assertEqual([item.kind for item in result.observations], ['unknown'])
 
+    def test_reassigned_type_token_does_not_keep_original_receiver_origin(self):
+        body = ("Label typed(GetEnvironment());\n"
+                "GateRef inputTag = GetObjectType(LoadHClass(input));\n"
+                "inputTag = GetObjectType(LoadHClass(count));\n"
+                "BRANCH(IsFastTypeArray(inputTag), &typed, slowPath); Bind(&typed);\n"
+                "GateRef buffer = GetViewedArrayBuffer(input);")
+        result = analyze_receiver_guard(unit(wrap(body)))
+        self.assertEqual([item.kind for item in result.observations], ['unknown'])
+        self.assertIn('receiver_type_guard_not_resolved', result.limitations)
+
+    def test_receiver_reassignment_after_guard_invalidates_protection(self):
+        body = ("Label typed(GetEnvironment());\n"
+                "GateRef inputTag = GetObjectType(LoadHClass(input));\n"
+                "BRANCH(IsFastTypeArray(inputTag), &typed, slowPath); Bind(&typed);\n"
+                "input = count;\n"
+                "GateRef buffer = GetViewedArrayBuffer(input);")
+        result = analyze_receiver_guard(unit(wrap(body)))
+        self.assertEqual([item.kind for item in result.observations], ['candidate'])
+
+    def test_reassigned_receiver_before_fresh_type_query_remains_supported(self):
+        body = ("Label typed(GetEnvironment());\n"
+                "input = count;\n"
+                "GateRef inputTag = GetObjectType(LoadHClass(input));\n"
+                "BRANCH(IsFastTypeArray(inputTag), &typed, slowPath); Bind(&typed);\n"
+                "GateRef buffer = GetViewedArrayBuffer(input);")
+        result = analyze_receiver_guard(unit(wrap(body)))
+        self.assertEqual([item.kind for item in result.observations], ['matched'])
+
     def test_other_object_guard_does_not_protect_receiver(self):
         body = ("Label typed(GetEnvironment());\n"
                 "GateRef inputTag = GetObjectType(LoadHClass(input));\n"

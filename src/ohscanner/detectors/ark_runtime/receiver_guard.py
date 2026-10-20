@@ -29,6 +29,16 @@ def _same_binding(fn, expression, binding):
             and fn.resolve(fn.text(expression), expression) == binding)
 
 
+def _binding_assigned_between(fn, binding, start, end):
+    for node in walk(fn.body):
+        if (node.type != 'assignment_expression' or not start < node.start_byte < end):
+            continue
+        left = node.child_by_field_name('left')
+        if _same_binding(fn, left, binding):
+            return True
+    return False
+
+
 def _typed_array_guard(fn, instruction, receiver):
     if instruction.kind != 'BRANCH' or not instruction.arguments:
         return False
@@ -64,6 +74,14 @@ def _typed_array_guard(fn, instruction, receiver):
         load_args = fn.arguments(load)
         if (len(load_args) == 1 and _same_binding(fn, load_args[0], receiver)
                 and type_binding.name):
+            # A cached type token no longer proves the receiver's current
+            # type after either binding is assigned again.
+            if _binding_assigned_between(fn, type_binding, node.end_byte,
+                                         instruction.node.start_byte):
+                continue
+            if _binding_assigned_between(fn, receiver, node.end_byte,
+                                         instruction.node.start_byte):
+                continue
             parent = node.parent
             while parent is not None and parent.type not in ('init_declarator', 'assignment_expression'):
                 parent = parent.parent
@@ -89,7 +107,7 @@ def _sink_receiver(fn, instruction, sink_name, receiver):
     return found
 
 
-def _reachable_without_successful_guard(graph, sink_index, matching_guards, budget):
+def _reachable_without_successful_guard(fn, graph, sink_index, matching_guards, receiver, budget):
     queue = deque([(graph.entry, False)])
     seen, steps = set(), 0
     while queue:
@@ -110,6 +128,10 @@ def _reachable_without_successful_guard(graph, sink_index, matching_guards, budg
         instruction = graph.instructions[index]
         if instruction.problem or instruction.kind == 'unknown':
             return None, steps
+        if instruction.node.type == 'assignment_expression':
+            left = instruction.node.child_by_field_name('left')
+            if _same_binding(fn, left, receiver):
+                guarded = False
         for target, truth in instruction.successors:
             if target is None or target < 0:
                 continue
@@ -189,7 +211,8 @@ def analyze_receiver_guard(unit, *, caller_name=None,
                 limitations.append('receiver_type_guard_not_resolved')
             continue
         for sink_index, node in sinks:
-            unsafe, steps = _reachable_without_successful_guard(graph, sink_index, guards, budget)
+            unsafe, steps = _reachable_without_successful_guard(
+                fn, graph, sink_index, guards, receiver, budget)
             total_steps += steps
             if unsafe is None:
                 kind, reason = 'unknown', 'receiver_guard_path_unresolved'
