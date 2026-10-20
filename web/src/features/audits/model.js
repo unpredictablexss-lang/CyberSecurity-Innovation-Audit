@@ -124,8 +124,9 @@ export function operationPayload(kind, values, detectors, explicitIds = []) {
   if (!["standard_review", "static_only"].includes(auditMode)) throw new Error("审计方式无效，请重新选择。");
   const authorized = auditMode === "standard_review" && values.auto_triage === true;
   const scanPayload = {
-    ...payload, audit_mode: auditMode, auto_triage: authorized,
+    ...payload, audit_mode: auditMode,
     ...(authorized ? {
+      auto_triage: true,
       max_triage_candidates: Number(values.max_triage_candidates ?? 5),
       max_r2_candidates: Number(values.max_r2_candidates ?? 2),
       max_cost_usd: String(values.max_cost_usd ?? "5.00"),
