@@ -67,8 +67,18 @@ def main() -> None:
     parser.add_argument("--scanner-git-dir", type=Path, required=True)
     args = parser.parse_args()
 
-    if git(args.scanner_git_dir, "rev-parse", "HEAD") != SCANNER_BASE:
-        fail("scanner checkout is not the required 81dd baseline")
+    ancestor = subprocess.run(
+        ["git", "-C", str(args.scanner_git_dir), "merge-base", "--is-ancestor", SCANNER_BASE, "HEAD"],
+        check=False,
+    )
+    if ancestor.returncode != 0:
+        fail("required scanner baseline is not an ancestor of this evidence checkout")
+    changed_code = subprocess.run(
+        ["git", "-C", str(args.scanner_git_dir), "diff", "--quiet", SCANNER_BASE, "HEAD", "--", "src", "tests"],
+        check=False,
+    )
+    if changed_code.returncode != 0:
+        fail("scanner source/tests differ from the required baseline")
 
     for label, (commit, tree, path, blob, sha256) in BOUND_SOURCE.items():
         actual_tree = git(args.source_git_dir, "rev-parse", f"{commit}^{{tree}}")
