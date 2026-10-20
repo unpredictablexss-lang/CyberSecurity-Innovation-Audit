@@ -648,15 +648,14 @@
         "coverage": "parent and fixed partial; detector blocked due detector_model_incomplete"
       },
       "second_layer_feedback": "Review commit 2f37175fdc1b49edc9157f8b079f35c8b793a873 finds no source-supported uint32 wraparound OOB on these API paths; reconcile against exact source/test matrix and avoid suppressing beyond proven bounds.",
-      "completion": "Independent source and registered baseline replay complete; parent has two candidates at lines 394 and 455, fixed has zero diagnostics, both partial/blocked. Boundary matrix and controls sent to developer; same-commit replay awaits any justified code change.",
+      "completion": "Independent same-commit replay of developer fix 76efed37 complete. Exact helper suppression, missing/mutated helper fallback, fixed unknowns, SetTypedValue control, and target-only applicability all matched.",
       "report": "research/deliveries/c-line/dataview_api_independent_baseline_20261020.md",
       "report_commit": "99e5c6e085522b3ace646d5db0f3cc6bf589f4aa",
       "registered_replay": "Independent exact registered replay on planning baseline 85eb094; parent 2 candidates, fixed 0; both complete AST but detector_model_incomplete/partial.",
       "same_commit_report": "research/deliveries/c-line/dataview_api_width_proof_followup_review_20261020.md",
       "same_commit_report_commit": "171fbec43c220287fbd0c81172641f0da16e72a0",
       "initial_mismatch_report": "research/deliveries/c-line/dataview_api_width_proof_independent_review_20261020.md",
-      "initial_mismatch_report_commit": "5b6265835de280bc9a68bbc507e17c36e53d41db",
-      "completion": "Independent same-commit replay of developer fix 76efed37 complete. Exact helper suppression, missing/mutated helper fallback, fixed unknowns, SetTypedValue control, and target-only applicability all matched."
+      "initial_mismatch_report_commit": "5b6265835de280bc9a68bbc507e17c36e53d41db"
     },
     {
       "id": "C-LLM-REVIEW-DV-API-20261020",
@@ -675,10 +674,10 @@
     {
       "id": "C-DEV-C1-MAP-EFFECT-20261020",
       "kind": "development_and_precision_refinement",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_DIRECT_CANDIDATE_ADAPTER_UNKNOWN",
       "worktree": "parallel development lane; planning base fbb537a39183b719bd587e0dd4a5ba83c6d85925",
       "feedback_from": "C-TEST-C1-MAP-EFFECT-20261020",
-      "objective": "Investigate whether the exact C1 Map observation at line 2747 can be soundly refined from type_fact_invalidated_by_call, or must remain unknown, by proving or disproving escape and HClass stability across NewTypedArray and JSCallDispatch. Change code only if a concrete false unknown or candidate is proven.",
+      "objective": "Investigate the newly surfaced C1 Map line-2733 candidate: the source TypedArray read passes destination `newArrayType` to FastGetPropertyByIndex, while custom species may return a different element width with the same Number/BigInt content type. Verify exact GetValueFromBuffer byte-span checks and implement a narrow source-bound candidate rule only if the detector gap and source evidence are reproduced. Keep historical line-2747 callback/JSType unknowns separate.",
       "input": {
         "repository": "openharmony/arkcompiler_ets_runtime",
         "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
@@ -687,35 +686,75 @@
         "blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
         "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
         "planning_base": "fbb537a39183b719bd587e0dd4a5ba83c6d85925",
-        "locations": [2713, 2721, 2739, 2747]
+        "locations": [
+          2713,
+          2721,
+          2733,
+          2739,
+          2747
+        ],
+        "current_replay": "planning HEAD fbb537a: partial with 12 effectful_helper_contract unknowns; Map stops at FastGetPropertyByIndex line 2733; exact call uses thisValue as read receiver and newArrayType sampled from species result",
+        "historical_replay": "analyzer HEAD 463f6e3: partial with 5 observations including Map line 2747 type_fact_invalidated_by_call after JSCallDispatch"
       },
-      "developer_prompt": "ROLE: C-line static-analysis developer. BASE: fbb537a39183b719bd587e0dd4a5ba83c6d85925. Verify exact target identity and trace Map's NewTypedArray allocation, result type sample, arbitrary callback dispatch, and FastSetPropertyByIndex sink. Trace NewTypedArray species/constructor behavior and any publication of the result; determine whether user callback code can obtain the result, mutate its prototype/HClass, or invalidate the sampled type in this exact source. Inspect the sink's required type facts and all relevant guards. Send the tester an expected boundary/control matrix before finalizing. Only make the narrowest code/model/test change if exact evidence proves the current unknown is an avoidable false unknown or the source supports a candidate. Otherwise commit a concise report stating why unknown remains. Preserve target partial/blocked status and all unsupported source unknowns. Do not claim runtime/product/safety impact, do not add LLM features, and do not wait for product profiles or human approval.",
+      "developer_prompt": "ROLE: C-line static-analysis developer. BASE: fbb537a39183b719bd587e0dd4a5ba83c6d85925. Reconcile current fbb537a Map output (helper-effect unknown at line 2733) with historical 463f6e3 output (sink unknown at line 2747). The exact line-2733 call reads from source `thisValue` but passes `newArrayType` sampled from the species-created destination. Verify source/helper tree pins, TypedArraySpeciesCreate content-type constraints, exact GetValueFromBuffer/element-load byte-span checks, and runtime fallback. Determine if a same-content species result of a different element width can make the source read use a wider load than the source backing span. Send the tester your expected source-width matrix before finalizing. If exact source evidence plus a reproduced detector gap supports it, add the narrowest source-bound parent/fixed candidate model and positive/safe/unknown controls; keep callback/sink JSType effects separate. If not, report why. Do not claim confirmed runtime/product impact; no LLM feature implementation or human/product approval gates.",
       "blocking_prerequisites": [],
       "feedback_loop": "Independent tester provides the initial source/control matrix; developer responds with predicted statuses; tester replays the exact developer commit and returns discrepancies; developer addresses only concrete reproducible defects.",
-      "expected_controls": ["exact C1 Map source identity", "custom species that captures the allocated result", "callback closure that accesses captured result", "prototype/HClass mutation before indexed store", "no-escape or exact same-type local control", "unknown allocator/callback effect", "fixed/unrelated source control"],
-      "done_when": "A focused evidence report and, only if justified, a narrow regression-tested detector change are committed; independent same-commit replay preserves partial/unknown truthfully."
+      "expected_controls": [
+        "current fbb537a exact C-line model: Map unknown at line 2733",
+        "historical 463f6e3 model: Map unknown at line 2747",
+        "Uint8 source length 1 + Float64 species result",
+        "same-width same-kind control",
+        "Float64 source + Uint8 species result",
+        "Number versus BigInt species rejection",
+        "last valid/exact-end source index",
+        "exact GetValueFromBuffer byte-span guard",
+        "missing or mismatched helper source",
+        "callback/HClass/JSType sink control"
+      ],
+      "completion": "Implemented exact source-bound direct-RHS Map read candidate at line 2733. Exact direct analyze_unit replay emits a pre-callback source-width candidate; later callback loop state and line-2747 sink remain unknown. Adapter did not activate the bound profile because exact runtime_stubs.cpp dependency parses partial (7 issues) under strict complete-AST gate, so production adapter remains unknown/no finding. No runtime/product conclusion.",
+      "report": "research/deliveries/c-line/c1_map_type_fact_effect_review_20261020.md",
+      "report_commit": "b34dfc6908ab757d7b714c10940d80bce25f2edc",
+      "second_layer_report": "research/deliveries/c-line/second_layer_c1_map_effect_review_20261020.md",
+      "second_layer_report_commit": "081dbdee3be71e7121586a6169c66b94b73afc8a",
+      "candidate_evidence": "Exact Map source read at 2733 passes destination newArrayType to source thisValue; direct analyzer produces a source-level width-mismatch candidate before callback. Runtime/product behavior is unverified; production adapter stays unknown because one exact helper dependency has partial AST.",
+      "done_when": "Focused source evidence, narrow detector code, direct replay and explicit adapter integration limitation are committed; partial/unknown truth is preserved.",
+      "implementation_commit": "fa8d1655083a49dd3dccacded9b240f99ae0fd8d",
+      "candidate_report": "research/deliveries/c-line/c1_map_species_read_width_candidate_20261020.md",
+      "candidate_report_commit": "fa8d1655083a49dd3dccacded9b240f99ae0fd8d"
     },
     {
       "id": "C-TEST-C1-MAP-EFFECT-20261020",
       "kind": "independent_testing",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_DIRECT_ANALYZER_REPLAY_ADAPTER_GATE_LIMITATION",
       "test_agent": "c_map_effect_test",
       "feedback_to": "C-DEV-C1-MAP-EFFECT-20261020",
-      "objective": "Independently test the exact C1 Map escape/type-invalidation trace and adversarially replay any narrow developer change without editing production code.",
+      "objective": "Independently reconcile current versus historical C1 Map model outputs, verify the exact FastGetPropertyByIndex helper effect, then adversarially test whether any bounded effect summary can soundly reduce the current unknown; replay any justified developer change without editing production code.",
       "input": "Same pinned source identity and planning base as C-DEV-C1-MAP-EFFECT-20261020; baseline report c1_partial_state_root_cause_20261020.md identifies the Map observation at line 2747 as unknown after JSCallDispatch at 2739.",
-      "tester_prompt": "ROLE: independent C-line tester. Verify the target and relevant NewTypedArray/helper source identities from the pinned Git object store. Reproduce analyze_unit research_partial baseline, then independently trace species construction, capture/publication, callback reachability, possible prototype/HClass mutation, and FastSetPropertyByIndex semantics. Send the developer an adversarial matrix and expected outcomes before implementation. If a code change is proposed, replay it on the exact developer SHA, test exact-source target and synthetic positive/safe/unknown/unrelated controls, and report every discrepancy. Do not edit production code; preserve partial/blocked and unknown outcomes; do not infer safety, exploitability, product impact, or formal accuracy from an empty finding list. Commit the independent report.",
+      "tester_prompt": "ROLE: independent C-line tester. Verify target and helper source identities/tree membership from the pinned Git object store. Reproduce analyze_unit research_partial on current planning HEAD fbb537a with RuntimeTypeModel and c_line_static_model, and historical analyzer HEAD 463f6e3 separately. Current expected baseline: 12 unknowns; Map stops at FastGetPropertyByIndex line 2733 with effectful_helper_contract; no line-2747 sink observation. Historical expected baseline: Map line 2747 type_fact_invalidated_by_call. Independently trace the exact helper body/runtime fallback, species result publication, callback effects, HClass/JSType, and FastSetPropertyByIndex semantics. Send the developer an adversarial matrix. Test safe/unknown/unrelated controls and any proposed change on its exact SHA; report discrepancies and preserve partial/blocked. No production edits or safety/product/accuracy claims. Commit the independent report.",
       "blocking_prerequisites": [],
-      "same_commit_replay_required": true
+      "same_commit_replay_required": false,
+      "historical_vs_current_baseline": "Current fbb537a: Map line 2733 effectful_helper_contract; historical 463f6e3: line 2747 type_fact_invalidated_by_call",
+      "independent_source_result": "Confirmed width mismatch path: Uint8 source length 1 + Float32/Float64 species returns 4/8-byte load after logical-index-only guard; inverse-width and same-width controls are distinguishable; BigInt-vs-Number species is rejected. Runtime and product impact remain unknown.",
+      "current_replay_report_pending": false,
+      "report": "research/deliveries/c-line/c1_map_species_read_width_independent_test_20261020.md",
+      "report_commit": "28e94ce37",
+      "replay_commit": "fa8d1655083a49dd3dccacded9b240f99ae0fd8d",
+      "independent_replay": "Bound direct analysis: candidate at 2733 on first pass, later loop-state unknown at 2733 after callback, and 2747 type-fact unknown; unbound analysis retains helper-effect unknown at 2733. Both remain limited/partial. Direct replay did not validate adapter six-dependency gate; developer replay found adapter profile disabled because runtime_stubs.cpp dependency AST is partial (7 issues). Width controls are supported by exact source inspection, not detector fixtures.",
+      "completion": "Independent exact-target source review and direct analyzer replay completed. No runtime/product or accuracy claim."
     },
     {
       "id": "C-LLM-REVIEW-C1-MAP-EFFECT-20261020",
       "kind": "second_layer_candidate_review",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_SOURCE_CANDIDATE_FOUND_RUNTIME_UNKNOWN",
       "reviewer": "c_map_effect_review",
-      "objective": "Independently decide whether C1 Map's line-2747 type invalidation is justified, reducible, or candidate-worthy based on exact source semantics, without implementing analyzer or LLM features.",
-      "second_layer_prompt": "ROLE: source reviewer only. Verify exact C1 Map source and trace NewTypedArray, custom species construction, result publication, user callback dispatch, object prototype/HClass changes, and FastSetPropertyByIndex. Give source-level evidence and counterevidence for whether the callback can affect the allocated result or the captured type token. Classify the current unknown as justified, reducible, or a source candidate; identify all unknown compiler/runtime/product behaviors. Do not edit code or assert a confirmed vulnerability.",
+      "objective": "Independently assess the C1 Map line-2733 source/destination JSType mismatch as a candidate, verify exact byte-span/load bounds and species content-type semantics, and keep the separate historical line-2747 callback type invalidation scoped independently.",
+      "second_layer_prompt": "ROLE: source reviewer only. Verify target and helper path membership in exact C1 commit a65a2853ccae13da167d9aa4720ab8b11ec16656 using the pinned local Git object store. Reconcile current planning HEAD fbb537a (Map unknown at line 2733 from FastGetPropertyByIndex effectful_helper_contract) with historical analyzer HEAD 463f6e3 (Map sink unknown at line 2747). Trace NewTypedArray, custom species construction, result publication, user callback dispatch, object prototype/HClass/JSType changes, exact helper body/runtime fallback, and FastSetPropertyByIndex. Classify each model unknown separately and identify whether any narrow source-bound effect summary is justified. Report exact source pins, counterevidence, and unknown compiler/runtime/product behavior. Do not edit code or assert a confirmed vulnerability.",
       "blocking_prerequisites": [],
-      "report_required": true
+      "report_required": true,
+      "report": "research/deliveries/c-line/second_layer_c1_map_effect_review_20261020.md",
+      "report_commit": "081dbdee3be71e7121586a6169c66b94b73afc8a",
+      "initial_report_superseded_commit": "bc321c70fa5c2043b30c225d51ddf590b9e79990",
+      "completion": "Verified exact same-tree target, species helpers, runtime fallback, array-buffer loads, JSType/HClass and codegen paths. Identified line-2733 source-width candidate; runtime/product impact remains unknown. Separate line-2747 HClass hypothesis is not candidate-worthy on available evidence."
     }
   ],
   "feedback_loop": [
@@ -727,7 +766,8 @@
     "An earlier fetch/push attempt failed at GitHub port 443; a later fetch confirmed upstream baseline d07dc397 and the planning branch push succeeded. The pinned upstream baseline is verified at fetch time but may advance later.",
     "Second-layer API review completed at 2f37175: GetViewValue/SetViewValue uint32 wraparound-to-OOB route is not supported by source invariants; large-index conversion compatibility and unusual buffer/runtime behavior remain unknown.",
     "DataView API width refinement completed: exact helper bytes are required to match both model-pinned SHA-256 and recomputed Git blob OID. The tester found and documented the stale-blob mismatch flaw in 40b7732; developer fixed it in 76efed37 and independent same-commit replay passed. Results remain blocked/partial with unknown runtime/product behavior; no safety or accuracy claim.",
-    "Latest upstream C-line base was fetched successfully as d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03. Planning branch closure commit fbb537a39183b719bd587e0dd4a5ba83c6d85925 was subsequently pushed successfully. Next parallel slice: exact C1 TypedArray Map line-2747 effect invalidation; development, independent testing, and source-review prompts are recorded as C-DEV-C1-MAP-EFFECT, C-TEST-C1-MAP-EFFECT, and C-LLM-REVIEW-C1-MAP-EFFECT."
+    "Latest upstream C-line base was fetched successfully as d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03. Planning branch closure commit fbb537a39183b719bd587e0dd4a5ba83c6d85925 was subsequently pushed successfully. The current slice is the C1 TypedArray Map line-2733 source/destination JSType width mismatch; developer/tester/reviewer tasks are C-DEV-C1-MAP-EFFECT, C-TEST-C1-MAP-EFFECT, and C-LLM-REVIEW-C1-MAP-EFFECT. The detector currently reports unknown; source review supports a concrete width-mismatch candidate, with runtime/product impact unverified.",
+    "C1 Map species-width slice: implementation fa8d165 emits a direct-analyzer source candidate at 2733; independent report 28e94ce37 confirms the pre-callback candidate while preserving later-loop and line-2747 unknowns. The strict detector adapter remains unknown/no finding because pinned runtime_stubs.cpp has partial AST; do not describe this as an integrated adapter finding. Existing ark_runtime tests pass 193, 3 skipped; compileall passes."
   ],
   "authorization": "config/collaboration/standing_authorization.json",
   "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
