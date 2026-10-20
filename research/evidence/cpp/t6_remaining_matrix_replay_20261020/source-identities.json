@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "scanner_commit": "81dd4aea9bb51522ac912b33504ef0d2ddb79089",
+  "libtiff": {
+    "repository": "libtiff/libtiff",
+    "scope": ["libtiff/tif_getimage.c", "libtiff/tiffio.h"],
+    "vulnerable": {
+      "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+      "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a",
+      "files": {
+        "libtiff/tif_getimage.c": {"blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e", "sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3"},
+        "libtiff/tiffio.h": {"blob": "225f3c1bfeabae2b31a5f35fbfd12d14b570dcd8", "sha256": "70119b9db897a364821a108ff0adc09f26c20ad9b6d9e943eb376ee3edb6166f"}
+      }
+    },
+    "fixed": {
+      "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+      "tree": "77361ef7262189e16a2010b5c333f6b275d17f09",
+      "files": {
+        "libtiff/tif_getimage.c": {"blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db", "sha256": "de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8"},
+        "libtiff/tiffio.h": {"blob": "6a7ab2f5b7f6697020dfbcac57f8c2617c4b1074", "sha256": "7923903a85c15c047a22bfe52ef1901939d6a7e656c75b814fcb86c6179b120c"}
+      }
+    }
+  },
+  "webview": {
+    "repository": "OpenHarmony-TPC/chromium_src",
+    "source_path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+    "scope": ["flowbuffer_functions.cc", "safe.cpp", "unrelated.cpp", "renamed.cpp", "partial.cpp"],
+    "vulnerable": {
+      "source_commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+      "source_tree": "4ed3b46721fbfe04059af4ddb18bcd5272ce4762",
+      "source_blob": "78e83fea67a2db3297cc59f07566a0c0b6153e7a",
+      "source_sha256": "aa401c305ed30b70007917d97b726986a26aff2d00fb49649466533f4a48a920",
+      "fragment_commit": "769110ddf1c14355c89f34b974ab9e6cf58c0c6c",
+      "fragment_tree": "a8d7d7f9fd5d81a7cc37128ab59ce88118397890",
+      "fragment_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+    },
+    "fixed": {
+      "source_commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+      "source_tree": "a7769bf612be457e6e368f14ee355f3ea8ed2935",
+      "source_blob": "27e93e338ced03aeed6e7d892e29d4d0740f3653",
+      "source_sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483",
+      "fragment_commit": "f550e8e59c57afe4e02b130ec3373b1011843617",
+      "fragment_tree": "ec7324dc445a30d96db9e9d0f753a12eef3bec12",
+      "fragment_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74"
+    },
+    "controls_sha256": {
+      "safe.cpp": "b263a1892dda40b543652ff2f5848acc552dceaecbc63b012faaf46f6ef5fab8",
+      "unrelated.cpp": "29dd47c106b5b7e761a545add945a9ce64a5fd736933da58cfc058de1799f29a",
+      "renamed.cpp": "ecdb5a977f92cae786120a60d24d6bb5a6731dc2df9deb20a015b24d9c4d45da",
+      "partial.cpp": "2287e3ea272a222ec2486987b06c7c2b1631bdb6dca78b120165f22a1b123577"
+    }
+  }
+}

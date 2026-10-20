@@ -48,6 +48,10 @@ Result: completed; `ohscanner.cpp.bounds` 0.3.0; one selected source file; parse
 
 The existing T2 source pair scans remain the current vulnerable/fixed differentials: 0587 integer_bounds 1/0 and 23420 bounds 5/0. Existing T2 DataView and InsertionSort controls are referenced only as adjacent/method-local observations. They are not repeated as root-specific controls here.
 
+## Primary independent rerun
+
+The integration owner independently reran the exact control CLI from a separate clean scanner checkout at `81dd4aea9bb51522ac912b33504ef0d2ddb79089` using the reproduction command above and the exact source commit. The rerun again completed full-file parsing, selected `bounds@0.3.0`, and emitted zero diagnostics. Raw output is preserved as [`primary-independent-rerun.json`](primary-independent-rerun.json); this confirms reproducibility of the scanner observation but does not upgrade the semantic or product-safety limits above.
+
 ## Reproduction and verification
 
 ```powershell
