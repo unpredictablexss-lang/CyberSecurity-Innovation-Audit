@@ -1,0 +1,86 @@
+{
+  "schema": "ohscanner.c-line-execution-tree/v1",
+  "date": "2026-10-20",
+  "baseline": {
+    "remote": "origin/codex/c-line-static-20261019",
+    "commit": "d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03"
+  },
+  "objective": "Improve Ark Runtime static candidate precision while preserving soundness; validate each concrete slice with independent adversarial feedback.",
+  "status": "ACTIVE",
+  "blocking_prerequisites": [],
+  "workstreams": [
+    {
+      "id": "C-DEV-RG-20261020",
+      "kind": "development",
+      "status": "COMPLETED",
+      "scope": [
+        "src/ohscanner/detectors/ark_runtime/receiver_guard.py",
+        "tests/detectors/ark_runtime/"
+      ],
+      "objective": "Fix reproduced negated/composite predicate, type-token reassignment, and receiver rebinding false-matches; only proven source-bound guards may suppress a candidate.",
+      "worktree": "worktrees/c-static-dev-20261020",
+      "feedback_from": "C-TEST-RG-20261020",
+      "completion": "Patch 71950e65f46e204e6aec21210c8de73fa4f2a1a9 passed the developer suite and independent replay; commits are integrated into the C execution worktree.",
+      "evidence": {
+        "commits": ["ae5792f84e6b641e8857d0d58fab508f3a306af4", "71950e65f46e204e6aec21210c8de73fa4f2a1a9"],
+        "tests": "python -m pytest tests/detectors/ark_runtime -q: 152 passed, 3 skipped",
+        "limitations": "Unsupported composite/negated predicates and unresolved alias relationships remain unknown; rebinding and same-origin resampling may be conservative. Controls are not product evidence or formal accuracy metrics.",
+        "independent_report_commit": "36bf6c5ff",
+        "independent_tests": "python -m unittest tests.detectors.ark_runtime.test_receiver_guard -v: 10 passed, 1 skipped"
+      }
+    },
+    {
+      "id": "C-TEST-RG-20261020",
+      "kind": "testing",
+      "status": "COMPLETED",
+      "scope": ["tests/detectors/ark_runtime/test_receiver_guard.py", "receiver_guard source controls"],
+      "objective": "Independently reproduce the negated/composite predicate false-match and adversarially replay fix ae5792f84e6b641e8857d0d58fab508f3a306af4.",
+      "worktree": "worktrees/c-static-test-20261020",
+      "feedback_to": "C-DEV-RG-20261020",
+      "completion": "Independent baseline, first-patch replay and final replay are documented in research/deliveries/c-line/receiver_guard_test_review_20261020.md (latest report commit 36bf6c5ff).",
+      "confirmed_baseline_findings": [
+        "Negated IsTypedArray condition on the true edge was reported matched.",
+        "IsTypedArray(receiver) || other condition was reported matched although the guard may be false."
+      ]
+    },
+    {
+      "id": "C-LLM-REVIEW-20261020",
+      "kind": "second_layer_candidate_review",
+      "status": "READY_AFTER_SLICE",
+      "objective": "Review source-bound static candidates against code, control/data-flow evidence, counterevidence and version context; report support, refutation or unknown per candidate.",
+      "completion": "Evidence-linked per-candidate review; no invented product impact or unlabeled accuracy metrics."
+    },
+    {
+      "id": "C-NEXT-RG-BINDING-20261020",
+      "kind": "development_and_testing",
+      "status": "COMPLETED_WITH_CONSERVATIVE_LIMITATIONS",
+      "objective": "Check that IsFastTypeArray(typeOfSameReceiver) remains source-bound if the type variable is reassigned, aliased, shadowed, or joined across control flow; add only evidence-backed fixes and controls.",
+      "trigger": "Independent tester reproduced type-token reassignment and receiver rebinding false-matches; these are now part of the current fix and replay loop.",
+      "completion": "Concrete behavior and matching tests documented; unsupported data flow remains unknown."
+    },
+    {
+      "id": "C-NEXT-RG-ALIAS-20261020",
+      "kind": "development_and_testing",
+      "status": "READY",
+      "objective": "Evaluate whether safe source-bound alias and same-origin type resampling cases can be proven without weakening rebinding protection; keep unknown when identity cannot be proven.",
+      "evidence": "Independent test report observes alias and same-origin resampling remain unknown; rebinding after a guard can conservatively remain candidate.",
+      "completion": "Only evidence-backed coverage improvements with positive/negative regression controls."
+    },
+    {
+      "id": "C-NEXT-REPLAY-COVERAGE-20261020",
+      "kind": "development_and_testing",
+      "status": "READY_AFTER_CURRENT_REPLAY",
+      "objective": "Inspect the pinned Ark Runtime source replay's blocked type_safety coverage and determine whether exact source path applicability or partial parsing prevented the detector from running; fix only a reproduced scanner-side issue.",
+      "evidence_pointer": "research/deliveries/c-line/replay_20261019/receiver-fixed.md",
+      "completion": "Source/version/path and actual scanner outcome are traceable; unknown coverage is preserved and no product-level claim is inferred."
+    }
+  ],
+  "feedback_loop": [
+    "Test line records baseline and independent counterexamples.",
+    "Development line fixes only concrete reproducible defects and commits its slice.",
+    "Test line validates the same commit; a concrete failure returns to development for repair.",
+    "Deliver the supported source/component result and limitations; select the next concrete slice."
+  ],
+  "authorization": "config/collaboration/standing_authorization.json",
+  "evidence_policy": "Unknown remains unknown; not-run remains not-run; controls are not formal accuracy metrics."
+}
