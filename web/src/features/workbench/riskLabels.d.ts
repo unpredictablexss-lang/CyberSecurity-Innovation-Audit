@@ -1,3 +1,8 @@
+export function candidateSeverityLabel(severity: string | null | undefined): string;
+export function candidateSeverityColor(severity: string | null | undefined): string;
+export function candidateConfidenceLabel(tier: string | null | undefined): string;
+export function candidateConfidenceColor(tier: string | null | undefined): string;
+export function candidateVerificationLabel(state: string | null | undefined): string;
 export const triageStateLabels: Readonly<Record<string, string>>;
 export function triageStateLabel(state: string | null | undefined): string;
 export function taskReportStatusLabel(summary: Record<string, any> | null | undefined, job: Record<string, any> | null | undefined): string;
