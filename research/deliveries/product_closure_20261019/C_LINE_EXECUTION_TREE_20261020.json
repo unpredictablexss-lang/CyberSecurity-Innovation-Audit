@@ -599,12 +599,14 @@
         "fixed_candidates": 0,
         "coverage": "parent and fixed partial; detector blocked due detector_model_incomplete"
       },
-      "second_layer_feedback": "Review commit 2f37175fdc1b49edc9157f8b079f35c8b793a873 finds no source-supported uint32 wraparound OOB on these API paths; reconcile against exact source/test matrix and avoid suppressing beyond proven bounds."
+      "second_layer_feedback": "Review commit 2f37175fdc1b49edc9157f8b079f35c8b793a873 finds no source-supported uint32 wraparound OOB on these API paths; reconcile against exact source/test matrix and avoid suppressing beyond proven bounds.",
+      "tester_baseline_report": "research/deliveries/c-line/dataview_api_independent_baseline_20261020.md",
+      "tester_baseline_commit": "99e5c6e085522b3ace646d5db0f3cc6bf589f4aa"
     },
     {
       "id": "C-TEST-DV-API-20261020",
       "kind": "independent_testing",
-      "status": "IN_PROGRESS_BASELINE_THEN_SAME_COMMIT_REPLAY",
+      "status": "COMPLETED_INDEPENDENT_BASELINE_AWAITING_DEVELOPER_REPLAY",
       "test_agent": "ark_static_test",
       "feedback_to": "C-DEV-DV-API-20261020",
       "objective": "Independently verify the exact source semantics and detector behavior for DataView GetViewValue/SetViewValue candidates, provide adversarial controls before developer changes, then replay any developer commit and return concrete discrepancies.",
@@ -628,7 +630,11 @@
         "fixed_candidates": 0,
         "coverage": "parent and fixed partial; detector blocked due detector_model_incomplete"
       },
-      "second_layer_feedback": "Review commit 2f37175fdc1b49edc9157f8b079f35c8b793a873 finds no source-supported uint32 wraparound OOB on these API paths; reconcile against exact source/test matrix and avoid suppressing beyond proven bounds."
+      "second_layer_feedback": "Review commit 2f37175fdc1b49edc9157f8b079f35c8b793a873 finds no source-supported uint32 wraparound OOB on these API paths; reconcile against exact source/test matrix and avoid suppressing beyond proven bounds.",
+      "completion": "Independent source and registered baseline replay complete; parent has two candidates at lines 394 and 455, fixed has zero diagnostics, both partial/blocked. Boundary matrix and controls sent to developer; same-commit replay awaits any justified code change.",
+      "report": "research/deliveries/c-line/dataview_api_independent_baseline_20261020.md",
+      "report_commit": "99e5c6e085522b3ace646d5db0f3cc6bf589f4aa",
+      "registered_replay": "Independent exact registered replay on planning baseline 85eb094; parent 2 candidates, fixed 0; both complete AST but detector_model_incomplete/partial."
     },
     {
       "id": "C-LLM-REVIEW-DV-API-20261020",
