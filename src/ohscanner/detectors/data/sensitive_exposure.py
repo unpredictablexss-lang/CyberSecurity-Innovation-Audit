@@ -280,7 +280,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.21.9'
+    version = '0.21.10'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -1392,15 +1392,20 @@ class LocalFlow:
             # Evaluate the bounded loop header too: a for initializer or range
             # expression can carry the modeled value into the body. Treat all
             # header effects as possible and retain a partial-flow obligation.
+            loop_entry=state.clone();header_declared=set()
             for header in node.named_children:
                 if header.id == body.id:
                     continue
-                if header.type=='declaration':self.declaration(header,state,fnname)
+                if header.type=='declaration':header_declared.update(self.declaration(header,state,fnname))
                 else:self.effects(header,state,fnname)
             branch=state.clone()
             result=self.statement(body,branch,fnname)
-            return BlockResult(self.merge([state,result.fallthrough_state,
-                                           *(e.state for e in result.exit_states)]))
+            merged=self.merge([state,result.fallthrough_state,
+                               *(e.state for e in result.exit_states)])
+            # A for-header declaration has loop scope, including when it shadows
+            # an outer raw pointer. Body retargets of other names remain merged.
+            self.restore_scope(merged,loop_entry,header_declared)
+            return BlockResult(merged)
         # Preserve direct source/sink and unresolved-call candidates nested in
         # unsupported constructs such as switch/try. Scan on a clone so this
         # bounded may-flow pass cannot erase facts from the surrounding block.
