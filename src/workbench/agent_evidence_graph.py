@@ -29,6 +29,19 @@ def _source_ranges(result):
             if not isinstance(match, dict) or not isinstance(match.get("file"), str):
                 continue
             row = {"file": match["file"]}
+            explicit_ranges = match.get("ranges")
+            if isinstance(explicit_ranges, list) and explicit_ranges:
+                for line_range in explicit_ranges:
+                    if not isinstance(line_range, dict):
+                        continue
+                    first = line_range.get("start_line")
+                    last = line_range.get("end_line", first)
+                    if isinstance(first, int) and not isinstance(first, bool):
+                        scoped = {"file": match["file"], "line_start": first}
+                        if isinstance(last, int) and not isinstance(last, bool):
+                            scoped["line_end"] = last
+                        ranges.append(scoped)
+                continue
             first = match.get("start_line", match.get("line"))
             last = match.get("end_line", first)
             if isinstance(first, int) and not isinstance(first, bool):
@@ -113,6 +126,7 @@ def build_evidence_graph(binding, initial_evidence, tool_calls, model_calls,
                       "relation": "fixed_source_context"})
 
     source_tool_evidence = []
+    caller_site_evidence = []
     contrary_count = 0
     unresolved_count = 0
     for call in tool_calls:
@@ -136,8 +150,12 @@ def build_evidence_graph(binding, initial_evidence, tool_calls, model_calls,
                         else "只读工具元数据；不作为源码证明。"),
         }, "evidence:" + evidence_id)
         source_tool_evidence.append(evidence_node)
+        if call.get("tool") == "trace_fixed_caller_sites":
+            caller_site_evidence.append(evidence_node)
         edges.append({"from": candidate_node, "to": evidence_node,
-                      "relation": "fixed_commit_lookup"})
+                      "relation": ("syntax_caller_site_search"
+                                   if call.get("tool") == "trace_fixed_caller_sites"
+                                   else "fixed_commit_lookup")})
     model_node_ids = []
     for index, call in enumerate(model_calls, start=1):
         if not isinstance(call, dict):
@@ -201,6 +219,31 @@ def build_evidence_graph(binding, initial_evidence, tool_calls, model_calls,
             edges.append({"from": obligation_id, "to": "evidence:" + cited_id,
                           "relation": "model_cites_unverified"})
 
+    trace_calls = [call for call in tool_calls
+                   if isinstance(call, dict) and call.get("tool") == "trace_fixed_caller_sites"]
+    trace_results = [call.get("result") for call in trace_calls if isinstance(call.get("result"), dict)]
+    trace_has_sites = any(isinstance(result.get("matches"), list) and result["matches"]
+                          for result in trace_results)
+    trace_partial = any(result.get("status") == "partial_parse_only"
+                        or result.get("partial_parse_files") for result in trace_results)
+    trace_incomplete = any(result.get("truncated") or result.get("files_skipped_oversize")
+                           or result.get("status") == "result_too_large" for result in trace_results)
+    if not trace_calls:
+        trace_status = "not_performed"
+    elif trace_has_sites and not trace_incomplete:
+        trace_status = "evidence_collected"
+    elif trace_partial or trace_incomplete:
+        trace_status = "partial_parse"
+    else:
+        trace_status = "search_completed_no_callsite"
+    followup_source_search = any(
+        isinstance(call, dict) and call.get("status") == "completed"
+        and call.get("evidence_kind") == "source_code"
+        and call.get("tool") != "read_candidate_source"
+        for call in tool_calls)
+    counterevidence_status = (
+        "review_recorded" if validation_status == "accepted" and followup_source_search
+        else "not_performed" if validation_status == "accepted" else "incomplete")
     stages = [
         ("candidate_routing", "completed", "静态候选与固定源码身份已绑定。", [], []),
         ("root_cause_hypothesis",
@@ -208,12 +251,12 @@ def build_evidence_graph(binding, initial_evidence, tool_calls, model_calls,
          "结构化模型假设已记录；解释仍需人工判断。",
          model_node_ids, claim_nodes),
         ("bounded_cross_file_trace",
-         "evidence_collected" if source_tool_evidence else "not_performed",
-         "仅使用固定提交只读工具；符号命中本身不证明调用可达。",
-         model_node_ids, source_tool_evidence),
+         trace_status,
+         "只记录固定清单中解析完整的 C/C++ 语法调用点；未解析调度目标与运行可达性。",
+         model_node_ids, caller_site_evidence),
         ("counterevidence_search",
-         "review_recorded" if validation_status == "accepted" else "incomplete",
-         "结构化结果记录支持、反证与未决义务；不验证搜索是否穷尽。",
+         counterevidence_status,
+         "结果可记录支持、反证与未决项；系统不证明反证搜索已穷尽。",
          model_node_ids, obligation_nodes),
         ("official_patch_version_comparison", "not_available",
          "本次操作没有绑定官方公告、受影响版本与修复补丁证据。",
@@ -248,15 +291,15 @@ def build_evidence_graph(binding, initial_evidence, tool_calls, model_calls,
                       "relation": "records_unverified_review"})
         edges.append({"from": "stage:evidence_arbitration", "to": obligation_node,
                       "relation": "arbitrates_structure_only"})
-    for evidence_node in source_tool_evidence:
+    for evidence_node in caller_site_evidence:
         edges.append({"from": "stage:bounded_cross_file_trace", "to": evidence_node,
-                      "relation": "records_lookup"})
+                      "relation": "records_syntactic_call_sites"})
     for model_node in model_node_ids:
         edges.append({"from": "stage:root_cause_hypothesis", "to": model_node,
                       "relation": "uses_model_step"})
 
     core = {
-        "schema_version": "ohscanner-evidence-graph-0.1.0",
+        "schema_version": "ohscanner-evidence-graph-0.2.0",
         "binding": scope_base,
         "binding_sha256": binding_sha256,
         "root_node_id": candidate_node,

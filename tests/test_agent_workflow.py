@@ -49,6 +49,7 @@ class EvidenceGraphTests(unittest.TestCase):
                  "citations": [{"evidence_id": "ev-source-456"}]},
                 {"obligation_index": 1, "disposition": "unresolved", "citations": []}]}
         graph = build_evidence_graph(binding, initial, tools, models, assessment, "accepted")
+        self.assertEqual(graph["schema_version"], "ohscanner-evidence-graph-0.2.0")
         self.assertEqual(graph["summary"]["nday_1day_classification"], "unknown")
         self.assertEqual(graph["summary"]["official_patch_evidence"], "not_collected")
         self.assertEqual(graph["summary"]["semantic_support"], "unverified_by_machine")
@@ -61,6 +62,25 @@ class EvidenceGraphTests(unittest.TestCase):
         stage = next(node for node in graph["nodes"]
                      if node.get("stage") == "official_patch_version_comparison")
         self.assertEqual(stage["status"], "not_available")
+        trace_stage = next(node for node in graph["nodes"]
+                           if node.get("stage") == "bounded_cross_file_trace")
+        self.assertEqual(trace_stage["status"], "not_performed")
+        counter_stage = next(node for node in graph["nodes"]
+                             if node.get("stage") == "counterevidence_search")
+        self.assertEqual(counter_stage["status"], "review_recorded")
+        traced_tools = [{"step": 1, "tool": "trace_fixed_caller_sites", "status": "completed",
+                         "evidence_id": "ev-callsite-1", "evidence_kind": "source_code",
+                         "result_sha256": "7" * 64,
+                         "result": {"status": "syntactic_call_sites_found",
+                                    "matches": [{"file": "src/helper.cpp",
+                                                 "ranges": [{"start_line": 20, "end_line": 24}]}]}}]
+        traced_graph = build_evidence_graph(binding, initial, traced_tools, models, assessment, "accepted")
+        traced_stage = next(node for node in traced_graph["nodes"]
+                            if node.get("stage") == "bounded_cross_file_trace")
+        self.assertEqual(traced_stage["status"], "evidence_collected")
+        self.assertEqual(traced_stage["evidence_node_ids"], ["evidence:ev-callsite-1"])
+        self.assertTrue(any(edge["relation"] == "records_syntactic_call_sites"
+                            for edge in traced_graph["edges"]))
         self.assertTrue(all(len(node["record_sha256"]) == 64 for node in graph["nodes"]))
         self.assertEqual(graph, build_evidence_graph(binding, initial, tools, models,
                                                      assessment, "accepted"))
@@ -126,7 +146,7 @@ class AgentTaskflowVerdictTests(unittest.TestCase):
 
     def test_taskflow_has_explicit_versioned_stages(self):
         self.assertEqual(agent.WORKFLOW_ID, "ohscanner-security-triage-taskflow")
-        self.assertEqual(agent.WORKFLOW_VERSION, "0.1.0")
+        self.assertEqual(agent.WORKFLOW_VERSION, "0.2.0")
         self.assertIn("actively search for contrary evidence", agent._INSTRUCTIONS)
 
 class SensitiveDataRedactionTests(unittest.TestCase):
@@ -1553,6 +1573,71 @@ class AgentFixedCommitToolTests(unittest.TestCase):
                 "read_candidate_enclosing_function", bounded), [])
 
 
+    def test_fixed_caller_trace_uses_complete_ast_and_only_commit_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo = root / "repo"
+            source_dir = repo / "src"
+            source_dir.mkdir(parents=True)
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "OHScanner test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            sources = {
+                "dispatch.cpp": "bool enabled() { return true; }\nvoid dispatch() {\n  if (!enabled()) return;\n  handle();\n}\n",
+                "helper.cpp": "namespace core {\nvoid helper() {\n  handle();\n}\n}\n",
+                "partial.cpp": "void broken() {\n  handle();\n  broken( ;\n}\n",
+                "comment.cpp": "// handle();\nvoid unrelated() {}\n",
+            }
+            for name, text in sources.items():
+                (source_dir / name).write_text(text, encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "fixed caller fixture"], check=True)
+            commit = subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+            inventory = []
+            for name in sources:
+                file = "src/" + name
+                data = subprocess.check_output(["git", "-C", str(repo), "show", f"{commit}:{file}"])
+                blob = subprocess.check_output(["git", "-C", str(repo), "rev-parse", f"{commit}:{file}"], text=True).strip()
+                inventory.append({"file": file, "blob": blob, "sha256": hashlib.sha256(data).hexdigest()})
+            app = create_app(Settings(root / "data", (root,)))
+            repository = app.state.store.add_repository("controlled/caller-sites", str(repo))
+            candidate = {"file": "src/dispatch.cpp", "line": 4}
+            fixed_source = subprocess.check_output(
+                ["git", "-C", str(repo), "show", f"{commit}:src/dispatch.cpp"], text=True)
+            tools = agent._tool_specs(
+                None, app.state.store, {"repository_id": repository["id"]},
+                {"commit": commit, "_workbench": {"source_inventory": inventory}},
+                candidate, {"text": fixed_source, "sha256": inventory[0]["sha256"], "blob": inventory[0]["blob"]},
+                "", (1, 4))
+            (source_dir / "dispatch.cpp").write_text(
+                fixed_source + "void worktree_only() { handle(); }\n", encoding="utf-8")
+
+            result = tools["trace_fixed_caller_sites"]({"symbol": "handle"})
+            self.assertEqual(result["status"], "syntactic_call_sites_found")
+            self.assertFalse(result["semantic_relationship_confirmed"])
+            self.assertEqual(result["dispatch_resolution"], "unresolved")
+            self.assertEqual({row["file"] for row in result["matches"]},
+                             {"src/dispatch.cpp", "src/helper.cpp"})
+            self.assertEqual({row["caller_name"] for row in result["matches"]},
+                             {"dispatch", "helper"})
+            self.assertTrue(all(row["caller_resolution"] == "syntax_span_only"
+                                and row["parse_status"] == "complete"
+                                and "handle();" in row["text"] for row in result["matches"]))
+            self.assertIn("src/partial.cpp", result["partial_parse_files"])
+            self.assertNotIn("comment.cpp", {row["file"] for row in result["matches"]})
+            self.assertNotIn("worktree_only", json.dumps(result))
+            excerpts = agent._source_evidence_texts("trace_fixed_caller_sites", result)
+            self.assertEqual(len(excerpts), 2)
+            evidence_lines = agent._source_evidence_lines("trace_fixed_caller_sites", result)
+            self.assertIn(4, evidence_lines["src/dispatch.cpp"])
+            self.assertEqual(evidence_lines["src/dispatch.cpp"][4].strip(), "handle();")
+            from src.workbench.agent_evidence_graph import _source_ranges
+            graph_ranges = _source_ranges(result)
+            self.assertTrue(any(row["file"] == "src/dispatch.cpp" and row["line_start"] <= 4 <= row["line_end"]
+                                for row in graph_ranges))
+            with self.assertRaisesRegex(ValueError, "unsupported characters"):
+                tools["trace_fixed_caller_sites"]({"symbol": "handle;system"})
+
     def test_consent_preview_binds_symbol_search_to_the_selected_inventory(self):
         inventory = [{"file": "src/caller.cpp"}, {"file": "src/helper.cpp"}]
         report = {"repository": "controlled/repo", "commit": "c" * 40, "tree": "d" * 40,
@@ -1573,7 +1658,9 @@ class AgentFixedCommitToolTests(unittest.TestCase):
                          agent._hash(["src/caller.cpp", "src/helper.cpp"]))
         self.assertIn("up to 40 numbered lines per read", scope)
         self.assertIn("complete Tree-sitter syntax function", scope)
-        self.assertEqual(preview["tool_policy_version"], "readonly-fixed-commit-0.6.4")
+        self.assertIn("caller-site query", scope)
+        self.assertIn("trace_fixed_caller_sites", preview["allowed_tools"])
+        self.assertEqual(preview["tool_policy_version"], "readonly-fixed-commit-0.6.5")
         self.assertEqual(preview["consent_preview_version"], agent.CONSENT_PREVIEW_VERSION)
         self.assertTrue(any("reasoning items" in item for item in preview["disclosure"]))
         self.assertTrue(any("one targeted correction" in item for item in preview["disclosure"]))

@@ -714,6 +714,9 @@ class OwnerIntegrationTests(unittest.TestCase):
         citation_quote = source["text"].splitlines()[candidate["line"] - 1].strip()
         self.assertGreaterEqual(len(citation_quote), 8)
 
+        self.assertGreaterEqual(len(candidate["evidence"]["obligations"]), 2,
+                                "the relaxed-confidence control needs one supported and one unresolved obligation")
+
         def create_result(assessment, *, positive):
             operation = ops.create("agent_investigation", {
                 "job_id": job["id"], "candidate_id": candidate["id"],
@@ -731,6 +734,8 @@ class OwnerIntegrationTests(unittest.TestCase):
                                if positive and index == 0 else [])}
                 for index in range(len(obligations))
             ]
+            if positive:
+                self.assertTrue(any(row["disposition"] == "unresolved" for row in review_rows))
             supported_claims = ([{
                 "claim": "固定源码中的候选路径到达了需要复核的敏感操作。",
                 "obligation_indices": [0],
@@ -758,7 +763,8 @@ class OwnerIntegrationTests(unittest.TestCase):
                     "scope": "fixed_source_code", "product_status": "unknown",
                 },
                 "initial_evidence": {"context": {
-                    "evidence_routing": {"agent_source_review_indices": [0]},
+                    "evidence_routing": {
+                        "agent_source_review_indices": list(range(len(candidate["evidence"]["obligations"])))},
                 }},
                 "vulnerability_state": "candidate", "validated_vulnerability": 0,
             }

@@ -37,6 +37,8 @@ const evidenceGraphStatusLabels: Record<string, string> = {
   recorded: "已记录",
   evidence_collected: "已收集源码",
   not_performed: "未执行",
+  search_completed_no_callsite: "已搜索，未找到语法调用点",
+  partial_parse: "解析不完整，结果有限",
   review_recorded: "已记录，待人工核对",
   not_available: "本次未收集",
   structure_validated_semantics_unverified: "结构通过，语义未确认",
