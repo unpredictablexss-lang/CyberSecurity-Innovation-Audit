@@ -10,7 +10,7 @@ import shutil
 import signal
 import subprocess
 import time
-from urllib.parse import urlsplit
+from urllib.parse import quote, unquote, urlsplit
 from zoneinfo import ZoneInfo
 from . import service
 from .store import TERMINAL
@@ -30,10 +30,24 @@ def git(repo, *args):
 
 def approved_url(value):
     url = urlsplit(value)
-    if (any(ord(ch) < 33 or ord(ch) == 127 for ch in value)
-            or url.scheme != "https" or url.hostname not in {"github.com", "gitee.com", "gitcode.com"}
-            or url.username or url.password or url.port or url.query or url.fragment
-            or not re.fullmatch(r"/openharmony/[A-Za-z0-9_-]+(?:\.git)?", url.path)):
+    valid = (isinstance(value, str)
+             and not any(ord(ch) < 33 or ord(ch) == 127 for ch in value)
+             and url.scheme == "https"
+             and url.hostname in {"github.com", "gitee.com", "gitcode.com"}
+             and not (url.username or url.password or url.port or url.query or url.fragment))
+    prefix = "/openharmony/"
+    path = url.path
+    suffix = path.endswith(".git")
+    encoded_slug = path[len(prefix):-4] if suffix and path.startswith(prefix) else (
+        path[len(prefix):] if path.startswith(prefix) else "")
+    try:
+        slug = unquote(encoded_slug, encoding="utf-8", errors="strict")
+        from .source_catalog import validate_repository_slug
+        validate_repository_slug(slug)
+    except (UnicodeDecodeError, ValueError):
+        valid = False
+        slug = ""
+    if not valid or encoded_slug != quote(slug, safe=""):
         raise ValueError("only explicit HTTPS OpenHarmony repositories on approved hosts are allowed")
     return value
 
@@ -98,7 +112,7 @@ def bind_multimode_triage(settings, scan_specs, body):
     enriched = []
     for spec, approval, preview in zip(scan_specs, approvals, previews):
         if approval.get("consent_sha256") != preview["consent_sha256"]:
-            raise ValueError("endpoint consent expired: source, model, policy or budget changed")
+            raise ValueError("endpoint consent expired: source, model, policy or provider changed")
         enriched.append({
             **spec, "audit_mode": "standard_review",
             "workflow_sha256": preview["workflow_sha256"],
@@ -738,6 +752,26 @@ def execute_source_sync_batch(settings, store, ops, task):
 
 def execute(settings, store, ops, task):
     spec, kind = task["spec"], task["kind"]
+    if kind == "repository_import_scan":
+        from .repository_import import import_and_queue_scan
+        ops.event(task["id"], "repository_import", "Importing the catalog-selected immutable revision and queueing a static scan")
+        def report_import_progress(progress):
+            try:
+                ops.event(task["id"], "repository_import_progress",
+                          json.dumps(progress, sort_keys=True, ensure_ascii=False,
+                                     separators=(",", ":")))
+            except Exception as exc:
+                # Progress is best-effort: a telemetry write must not orphan a running
+                # Git process or change the outcome of fixed-source validation.
+                print("repository import progress event unavailable: " + type(exc).__name__,
+                      flush=True)
+        try:
+            return import_and_queue_scan(settings, store, spec,
+                                         progress=report_import_progress)
+        except Exception:
+            report_import_progress({"state": "failed", "phase": "failed",
+                                    "message": "固定版本导入失败；请查看错误详情后重试"})
+            raise
     if kind == "source_sync_batch":
         return execute_source_sync_batch(settings, store, ops, task)
     if kind == "source_sync":

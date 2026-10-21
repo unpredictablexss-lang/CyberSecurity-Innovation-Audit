@@ -193,6 +193,8 @@ def create_app(settings=None):
                 "detector_admission": True,
                 "operations_framework": True,
                 "source_sync": True,
+                "online_repository_catalog": True,
+                "repository_import_scan": True,
                 "revision_range": True,
                 "read_only_investigation": True,
                 "manual_review": True,
@@ -358,7 +360,7 @@ def create_app(settings=None):
                 body.max_r2_candidates,
             )
             if preview["consent_sha256"] != body.expected_triage_consent_sha256:
-                raise ValueError("task-level source egress preview expired; provider, source, scope, policy or budget changed")
+                raise ValueError("task-level source egress preview expired; provider, source, scope, policy or provider changed")
             spec["triage_authorization"] = {
                 "authorized": True,
                 "consent_sha256": preview["consent_sha256"],

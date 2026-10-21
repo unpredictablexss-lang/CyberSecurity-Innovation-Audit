@@ -73,12 +73,12 @@ export default function Capabilities({ detectors, embedded = false }: { detector
                 {
                   color: "blue",
                   children:
-                    "只读调查：固定源码摘录、证据义务、Git 历史与有限符号事实已接入；不调用模型、不执行任意命令、不升级结论。",
+                    "只读调查：扫描时使用的源码片段、证据义务、Git 历史与有限符号事实已接入；不调用模型、不执行任意命令、不升级结论。",
                 },
                 {
                   color: "orange",
                   children:
-                    "动态验证：AUTH-01 已接入固定 Docker Harness 与独立 Worker；缺少 Docker daemon 或固定镜像时返回 blocked。A 线 PoC 尚未接入此 Worker。",
+                    "动态验证：AUTH-01 已接入 AUTH-01 专用 Docker Harness 与独立 Worker；缺少 Docker daemon 或指定镜像时返回 blocked。A 线 PoC 尚未接入此 Worker。",
                 },
                 {
                   color: "blue",

@@ -13,13 +13,14 @@ export function auditWorkflowLabel(plan, auditMode = plan?.audit_mode) {
     return "标准研判：静态扫描后，" + limit + "初步研判；高/严重且仍有源码义务未解决时，" + r2Limit + "持续追查";
   }
   if (workflow.automatic_model_calls) {
-    return "标准研判：静态扫描后，" + limit + "单轮模型辅助研判";
+    return "智能审计：对本次扫描范围内所有满足证据条件的候选逐项调查；高/严重且仍缺源码证据的候选继续追查。按服务商按量计费，可随时取消。";
   }
   if (mode === "standard_review") {
-    return "标准研判：静态扫描后，候选需逐批预览并授权模型调用";
+    return "智能审计：静态扫描后，对本次扫描范围内满足证据条件的候选逐项预览并授权模型调查。";
   }
   return "历史扫描任务：未记录审计方式";
 }
+
 export function defaultRepositoryRevision(refs) {
   if (!Array.isArray(refs)) return "";
   const row = refs.find((item) => item && item.is_default === true && typeof item.ref === "string");

@@ -126,8 +126,9 @@ def _root_records(settings):
     managed_paths = {row["path"] for row in managed}
     configured = [Path(path) for path in settings._configured_target_roots]
     # The internal repo cache is configured but not an operator-facing source root.
-    cache = (Path(settings.data_dir) / "repo-cache").resolve(strict=False)
-    configured = [path for path in configured if path != cache and str(path) not in managed_paths]
+    cache_roots = {Path(path).resolve(strict=False) for path in settings.repository_cache_roots}
+    configured = [path for path in configured if path.resolve(strict=False) not in cache_roots
+                  and str(path) not in managed_paths]
     rows = []
     for path in configured:
         rows.append({
@@ -205,6 +206,7 @@ def repository_catalog(settings, store):
         for row in root_entries
         if Path(row["path"]) in roots
     }
+    cache_roots = tuple(Path(path).resolve(strict=False) for path in settings.repository_cache_roots)
     name_counts = Counter(item["name"] for item in records)
     seen_names = Counter()
     labels = []
@@ -212,9 +214,12 @@ def repository_catalog(settings, store):
         seen_names[repo["name"]] += 1
         try:
             path = Path(repo["path"]).resolve(strict=False)
-            matching_roots = [root for root in roots if path.is_relative_to(root)]
-            matched = max(matching_roots, key=lambda root: len(root.parts)) if matching_roots else None
-            root_alias = root_aliases.get(matched, "未知来源")
+            if any(path.is_relative_to(cache_root) for cache_root in cache_roots):
+                root_alias = "在线仓库缓存"
+            else:
+                matching_roots = [root for root in roots if path.is_relative_to(root)]
+                matched = max(matching_roots, key=lambda root: len(root.parts)) if matching_roots else None
+                root_alias = root_aliases.get(matched, "未知来源")
         except (OSError, ValueError):
             root_alias = "未知来源"
         display_name = repo["name"]
@@ -294,6 +299,8 @@ def repository_roots(settings, store):
         count = sum(
             1 for repo in repositories
             if os.path.normcase(os.path.normpath(repo["path"])).startswith(root_prefix)
+            and not any(Path(repo["path"]).resolve(strict=False).is_relative_to(
+                Path(cache_root).resolve(strict=False)) for cache_root in settings.repository_cache_roots)
         )
         result.append({
             "index": root["index"],
@@ -387,6 +394,12 @@ def discover_repositories(settings, store, root_index=None, root_id=None):
             truncated = True
             break
         current, depth = pending.pop()
+        try:
+            if any(current.resolve(strict=False).is_relative_to(Path(cache_root).resolve(strict=False))
+                   for cache_root in settings.repository_cache_roots):
+                continue
+        except OSError:
+            continue
         visited += 1
         try:
             entries = []

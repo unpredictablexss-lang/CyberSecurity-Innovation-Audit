@@ -12,6 +12,7 @@ export function taskTriageStatusLabel(summary: Record<string, any> | null | unde
 export function scanStageLabel(stage: string | null | undefined): string;
 export function riskReasonLabel(reason: string | null | undefined): string;
 export function riskReasonsLabel(reasons: string[] | null | undefined): string;
+export function highConfidenceAiSummary(summary: string | null | undefined): { state: "available" | "unknown"; text: string };
 export function agentVerdictLabel(status: string | null | undefined): string;
 export function agentConfidenceLabel(confidence: string | null | undefined): string;
 export function agentScopeLabel(scope: string | null | undefined): string;

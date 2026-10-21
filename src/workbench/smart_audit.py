@@ -188,8 +188,125 @@ def _r0_gate(records, candidate, report, obligation_count):
     return None
 
 
+def _agent_source_evidence(ops, job, report, candidate, operations):
+    """Return source-bound Agent rationale suitable for a human-review priority tier."""
+    workbench = report.get("_workbench")
+    inventory = workbench.get("source_inventory", []) if isinstance(workbench, dict) else []
+    inventory_files = {row.get("file") for row in inventory if isinstance(row, dict)}
+    completed = [item for item in operations
+                 if item.get("candidate_id") == candidate.get("id")
+                 and item.get("status") in {"completed", "completed_with_limitations"}
+                 and item.get("result_sha256")]
+    # The latest completed review wins; a newer inconclusive result cannot be hidden
+    # by an older positive result.
+    for operation in reversed(completed):
+        try:
+            result = ops.result(operation["id"])
+        except Exception:
+            return None
+        binding = result.get("binding") if isinstance(result, dict) else None
+        if not isinstance(binding, dict) or any((
+            binding.get("job_id") != job.get("id"),
+            binding.get("candidate_id") != candidate.get("id"),
+            binding.get("report_sha256") != job.get("report_sha256"),
+            binding.get("source_sha256") != candidate.get("source_sha256"),
+            binding.get("commit") != report.get("commit"),
+        )):
+            return None
+        if (result.get("status") not in {"completed", "completed_with_limitations"}
+                or result.get("structured_answer_validation") != "accepted"
+                or result.get("summary_provenance") != "server_generated_from_structured_triage"):
+            return None
+        integrity = result.get("citation_integrity")
+        if (not isinstance(integrity, dict)
+                or integrity.get("quote_presence") != "verified_for_all_citations"):
+            return None
+        assessment = result.get("agent_assessment")
+        verdict = result.get("agent_verdict")
+        if (not isinstance(assessment, dict)
+                or assessment.get("assessment") != "likely_true_positive"
+                or not isinstance(verdict, dict)
+                or verdict.get("status") not in {"likely_true_positive", "confirmed"}
+                or verdict.get("scope") != "fixed_source_code"
+                or verdict.get("product_status") != "unknown"
+                or assessment.get("unsupported_claims")):
+            return None
+        initial = result.get("initial_evidence")
+        context = initial.get("context", {}) if isinstance(initial, dict) else {}
+        routing = context.get("evidence_routing", {}) if isinstance(context, dict) else {}
+        source_indices = routing.get("agent_source_review_indices", [])
+        reviews = assessment.get("obligation_reviews", [])
+        if (not isinstance(source_indices, list) or not source_indices
+                or any(not isinstance(index, int) or isinstance(index, bool) or index < 0
+                       for index in source_indices)
+                or len(source_indices) != len(set(source_indices))
+                or not isinstance(reviews, list)):
+            return None
+        review_by_index = {
+            row.get("obligation_index"): row.get("disposition")
+            for row in reviews if isinstance(row, dict)
+        }
+        if any(review_by_index.get(index) not in {"evidence_found", "contrary_evidence", "unresolved"}
+               for index in source_indices):
+            return None
+        if any(review_by_index.get(index) == "contrary_evidence" for index in source_indices):
+            return None
+        claims = assessment.get("supported_claims")
+        if not isinstance(claims, list):
+            return None
+        selected_claim = None
+        selected_citations = []
+        for claim in claims:
+            if not isinstance(claim, dict) or not isinstance(claim.get("claim"), str):
+                continue
+            indices = claim.get("obligation_indices")
+            if (not isinstance(indices, list)
+                    or any(not isinstance(index, int) or isinstance(index, bool) for index in indices)
+                    or not any(index in source_indices and review_by_index.get(index) == "evidence_found"
+                               for index in indices)):
+                continue
+            valid = []
+            for citation in claim.get("citations", []):
+                if not isinstance(citation, dict):
+                    continue
+                file = citation.get("file")
+                start, end = citation.get("line_start"), citation.get("line_end")
+                if (not isinstance(citation.get("evidence_id"), str) or not citation.get("evidence_id")
+                        or not isinstance(file, str) or file not in inventory_files
+                        or not isinstance(start, int) or isinstance(start, bool)
+                        or not isinstance(end, int) or isinstance(end, bool)
+                        or start < 1 or end < start or end - start > 7
+                        or not isinstance(citation.get("quote"), str)
+                        or len(citation["quote"]) < 8):
+                    continue
+                valid.append({"evidence_id": citation.get("evidence_id"), "file": file,
+                              "line_start": start, "line_end": end,
+                              "quote": citation["quote"][:500]})
+            if valid:
+                selected_claim = claim["claim"].strip().splitlines()[0]
+                for separator in ("。", "！", "？", "!", "?"):
+                    if separator in selected_claim:
+                        selected_claim = selected_claim.split(separator, 1)[0] + separator
+                        break
+                selected_claim = selected_claim[:320]
+                selected_citations = valid[:4]
+                break
+        if not selected_claim or not selected_citations:
+            return None
+        return {
+            "summary": selected_claim,
+            "assessment": assessment.get("assessment"),
+            "operation_id": operation.get("id"),
+            "result_sha256": operation.get("result_sha256"),
+            "citations": selected_citations,
+            "limitations": ["引句来源和逐字匹配已核对；引句语义是否支持模型主张仍需人工复核。",
+                            "产品入口、触发条件和实际影响仍未由本条 AI 源码调查确认。"],
+        }
+    return None
+
+
 def risk_snapshot(settings, store, ops, job, report):
-    """Build a deterministic evidence tier view; Agent confidence never sets a tier."""
+    """Build deterministic severity and review-priority tiers from bound evidence."""
     candidates = service.findings(report)
     candidate_by_id = {item["id"]: item for item in candidates}
     manual_reviews = {}
@@ -215,7 +332,8 @@ def risk_snapshot(settings, store, ops, job, report):
                     "reason": row.get("reason"),
                     "batch_id": batch["id"],
                 }
-    for operation in ops.agent_investigations_for_job(job["id"], job.get("report_sha256")):
+    job_agent_operations = ops.agent_investigations_for_job(job["id"], job.get("report_sha256"))
+    for operation in job_agent_operations:
         candidate_id = operation.get("candidate_id")
         if candidate_id:
             candidate = candidate_by_id.get(candidate_id)
@@ -272,6 +390,9 @@ def risk_snapshot(settings, store, ops, job, report):
         elif manual_status in {"likely_false_positive", "refuted"} or contrary_reviewed:
             tier = "low_priority_manual"
             reasons = ["a human marked this item as refuted or low-priority; this is not a safety verdict"]
+        elif ai_evidence:
+            tier = "high_confidence_candidate"
+            reasons = ["AI 在固定源码中给出带可定位引文的支持性判断；仍需人工复核"]
         elif gate_complete:
             tier = "high_confidence_candidate"
             confidence_basis = "human_r0"
@@ -339,6 +460,7 @@ def risk_snapshot(settings, store, ops, job, report):
             "rule_id": original.get("rule_id"), "detector_id": original.get("detector_id"),
             "detector_version": original.get("detector_version"),
             "source_sha256": original.get("source_sha256"),
+            "severity": original.get("severity", "unknown"),
             "evidence_level": "candidate", "vulnerability_state": "candidate",
             "risk_tier": tier, "risk_tier_label": tier_labels[tier],
             "confidence_basis": confidence_basis,
@@ -786,7 +908,7 @@ def enqueue_authorized_triage(settings, store, ops, job):
         "candidate_count": len(candidates), "selected_count": len(selected),
         "candidate_manifest": candidate_manifest, "operation_ids": [],
         "created_at": now(), "error": None,
-        "r2_status": "awaiting_r1" if selected and snapshot.get("r2_candidate_limit", 0) else "not_requested",
+        "r2_status": "awaiting_r1" if selected else "not_needed",
     }
     if not selected:
         return ops.record_triage_batch(record)
@@ -944,8 +1066,7 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
         -len(item[3]), -_severity(item[0]), item[0].get("file", ""),
         int(item[0].get("line") or 0), item[0]["id"],
     ))
-    limit = int(authorization["snapshot"].get("r2_candidate_limit", 0))
-    selected = eligible[:limit] if not auth_error else []
+    selected = eligible if not auth_error else []
     selected_ids = {item[0]["id"] for item in selected}
     r2_preview_spec = {
         "mode": "tool_agent", "max_output_tokens": None,

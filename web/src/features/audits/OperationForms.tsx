@@ -348,27 +348,27 @@ export function InvestigationForm({ busy, submit, context = {} }: Pick<Operation
     <Form.Item name="job_id" label="已完成扫描任务 ID" rules={[{ required: true }]}><Input /></Form.Item>
     <Form.Item name="candidate_id" label="候选 ID" rules={[{ required: true }]}><Input /></Form.Item>
     <Form.Item name="max_output_bytes" label="最大输出字节数"><InputNumber min={1024} max={262144} /></Form.Item>
-    <Alert type="info" message="只读调查不调用模型" description="当前只读取固定源码摘录、证据义务、Git 历史和符号；如需真实模型辅助，请切换到 LLM Agent 并逐次预览、授权源码外发。该只读步骤不执行任意命令，也不自动确认漏洞。" />
-    <Button className="section-gap" type="primary" htmlType="submit" loading={busy}>创建只读调查</Button>
+    <Alert type="info" message="只读调查不调用模型" description="当前只读取扫描时使用的源码片段、证据义务、Git 历史和符号；如需真实模型辅助，请切换到 LLM Agent 并逐次预览、授权源码外发。该只读步骤不执行任意命令，也不自动确认漏洞。" />
+    <Button className="section-gap" type="primary" htmlType="submit" loading={busy}>开始源码调查</Button>
   </Form></Card>;
 }
 export function ValidationForm({ repos, cases, busy, submit, context = {} }: Omit<OperationFormProps, "detectors">) {
   const target = repos.filter((r) => r.name === "openharmony/inputmethod_imf");
   const support = repos.filter((r) => r.name === "openharmony/commonlibrary_c_utils");
-  return <Card title="受控 AUTH-01 验证计划">{context.candidate_id && <Alert className="section-gap" type="info" message={"来源候选 " + context.candidate_id} description="须先关联适用案例。当前仅有固定 AUTH-01 Harness，其他家族尚未接入此验证入口。" action={<Button onClick={() => go("/tasks/" + context.job_id)}>返回来源任务</Button>} />}<Alert type="warning" showIcon message="仅限注册的 Docker Harness；组件复现不等于产品漏洞确认。" description="缺少 Docker daemon 或固定镜像时 Worker 会返回 blocked。当前未提供通用 PoC 上传、任意命令执行或产品确认能力。" />
+  return <Card title="受控 AUTH-01 验证计划">{context.candidate_id && <Alert className="section-gap" type="info" message={"来源候选 " + context.candidate_id} description="须先关联适用案例。当前仅有已登记的 AUTH-01 Harness，其他家族尚未接入此验证入口。" action={<Button onClick={() => go("/tasks/" + context.job_id)}>返回来源任务</Button>} />}<Alert type="warning" showIcon message="仅限注册的 Docker Harness；组件复现不等于产品漏洞确认。" description="缺少 Docker daemon 或指定镜像时 Worker 会返回 blocked。当前未提供通用 PoC 上传、任意命令执行或产品确认能力。" />
     <Form name="validation-plan" className="section-gap" layout="vertical" initialValues={{ harness_id: "auth01_descriptor_bypass", repeats: 3 }} onFinish={({ approval, ...payload }) => void submit("/operations/validations", payload)}>
       <Form.Item name="case_id" label="调查案例" rules={[{ required: true }]}><Select options={cases.map((c) => ({ value: c.id, label: c.title }))} /></Form.Item>
       <Form.Item name="harness_id" label="已注册 Harness"><Select options={[{ value: "auth01_descriptor_bypass", label: "AUTH-01 描述符边界" }]} /></Form.Item>
       <Form.Item name="target_repository_id" label="inputmethod_imf 仓库" rules={[{ required: true }]}><Select options={target.map((r) => ({ value: r.id, label: r.path }))} /></Form.Item>
-      <Form.Item name="target_commit" label="Harness 固定目标 SHA" rules={[{ required: true }]}><Input /></Form.Item>
+      <Form.Item name="target_commit" label="Harness 目标版本 SHA" rules={[{ required: true }]}><Input /></Form.Item>
       <Form.Item name="cutils_repository_id" label="commonlibrary_c_utils 仓库" rules={[{ required: true }]}><Select options={support.map((r) => ({ value: r.id, label: r.path }))} /></Form.Item>
       <Form.Item name="cutils_commit" label="支持源码完整 SHA" rules={[{ required: true }]}><Input /></Form.Item>
       <Form.Item name="repeats" label="每个攻击/控制用例重复次数"><InputNumber min={3} max={3} /></Form.Item>
       <Form.Item name="approval" valuePropName="checked" rules={[{ validator: (_, v) => v ? Promise.resolve() : Promise.reject(new Error("请确认审阅验证对象和环境限制")) }]}>
         <Radio>已审阅所选来源与注册 Harness，仅申请受控组件验证</Radio>
       </Form.Item>
-      {(!target.length || !support.length || !cases.length) && <Alert type="info" message="需先登记固定目标/支持源码，并关联满足 Harness 要求的案例。" />}
-      <Button className="section-gap" type="primary" htmlType="submit" loading={busy} disabled={!target.length || !support.length || !cases.length}>提交隔离验证任务</Button>
+      {(!target.length || !support.length || !cases.length) && <Alert type="info" message="需先登记目标版本/支持源码，并关联满足 Harness 要求的案例。" />}
+      <Button className="section-gap" type="primary" htmlType="submit" loading={busy} disabled={!target.length || !support.length || !cases.length}>提交验证任务</Button>
     </Form>
   </Card>;
 }
@@ -423,8 +423,8 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
   const agentSourceActionable = Array.isArray(evidenceRouting?.agent_source_review_indices)
     && evidenceRouting.agent_source_review_indices.length > 0;
   const routingLabels: Record<string, string> = {
-    agent_source_review_with_human_followup: "Agent 可协助固定源码调查，但仍需人工或动态验证",
-    agent_source_review: "可用只读 Agent 收集固定源码线索；仍需人工复核",
+    agent_source_review_with_human_followup: "Agent 可协助本次扫描源码调查，但仍需人工或动态验证",
+    agent_source_review: "可用只读 Agent 收集本次扫描源码线索；仍需人工复核",
     human_or_runtime_validation: "当前未决项应交人工或动态验证",
     human_review: "没有待 Agent 补充的已分类源码义务；交人工复核",
   };
@@ -464,7 +464,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
   }, [context.job_id, context.candidate_id]);
   const checkProvider = () => modal.confirm({
     title: "发送无源码连通性请求？",
-    content: "将向已配置的模型服务发送一条固定测试文本；请求正文不含仓库、候选或源码，但认证头会携带该服务的 API key。服务商仍可能按其规则计费。",
+    content: "将向已配置的模型服务发送一条预设测试文本；请求正文不含仓库、候选或源码，但认证头会携带该服务的 API key。服务商仍可能按其规则计费。",
     okText: "发送测试请求", cancelText: "取消",
     onOk: async () => {
       setProviderCheckBusy(true); setProviderCheckError(""); setProviderCheckResult(null);
@@ -511,7 +511,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
       if (result.source_sha256 !== staticCandidate.source_sha256
           || result.report_sha256 !== staticCandidate.binding?.report_sha256
           || result.file !== staticCandidate.file) {
-        throw new Error("补读源码与当前候选的固定报告/源码身份不匹配");
+        throw new Error("补读源码与当前候选的扫描报告/源码身份不匹配");
       }
       setR0SourceRanges((current) => [...current.filter((item) =>
         item.start_line !== result.start_line || item.end_line !== result.end_line), result]);
@@ -601,7 +601,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
     {!ready ? <Alert type="warning" showIcon message="模型服务尚未配置" description={(agentStatus?.missing?.length ? "Worker 环境缺少：" + agentStatus.missing.join(", ") : "请由服务管理员配置 OHSCANNER_LLM_MODEL 和 OHSCANNER_LLM_API_KEY") + "；密钥不在浏览器或数据库保存。"} /> :
       <Alert type="info" showIcon message={"目的地：" + agentStatus.endpoint_host + " · 模型：" + agentStatus.model} description="先生成本次外发预览；模型、方式、单次输出上限或固定候选变化后，预览与授权都会失效。" />}
     {ready && <Space className="section-gap" wrap>
-      <Button loading={providerCheckBusy} onClick={checkProvider}>测试模型服务连通性（无源码）</Button>
+      <Button loading={providerCheckBusy} onClick={checkProvider}>测试模型服务</Button>
       {providerCheckResult && <Text type="secondary">最近通过：{providerCheckResult.endpoint_host} · {providerCheckResult.model} · {providerCheckResult.duration_ms} ms · 输入/输出 Token {providerCheckResult.usage?.input_tokens ?? "未知"}/{providerCheckResult.usage?.output_tokens ?? "未知"}</Text>}
     </Space>}
     {providerCheckError && <Alert className="section-gap" type="error" showIcon message={providerCheckError} />}
@@ -630,14 +630,14 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
           message="留空即可进行普通单次调查。填写实验批次后，需先记录人工静态基线才能创建配对实验。" />}
         {experimentId && <Alert className="section-gap" type="info" showIcon
           message={"人工基线将绑定到实验批次：" + experimentId}
-          description="请先完成并保存这条固定候选的静态人工审阅，再为同一批次创建模型对照；基线保存后不能补写或改写。" />}
+          description="请先完成并保存该候选的静态人工审阅，再为同一批次创建模型对照；保存后不能补写或修改。" />}
       </> }]} />
-      <Card size="small" title="固定扫描候选证据">
+      <Card size="small" title="本次扫描候选证据">
         <Alert type="info" showIcon message="这里展示扫描报告、候选信息和绑定源码，供你判断是否需要继续调查；不会展示模型结论。" />
-        {staticPreviewBusy && <Text type="secondary">正在读取固定扫描证据……</Text>}
+        {staticPreviewBusy && <Text type="secondary">正在读取本次扫描证据……</Text>}
         {staticPreviewError && <Alert className="section-gap" type="error" showIcon message={"静态审阅材料加载失败：" + staticPreviewError} />}
         {staticCandidate && <Descriptions className="section-gap" bordered size="small" column={2}>
-          <Descriptions.Item label="仓库 / 固定提交">{staticCandidate.binding?.repository || "未知"} @ {staticCandidate.binding?.commit || "未知"}</Descriptions.Item>
+          <Descriptions.Item label="仓库 / 扫描代码版本">{staticCandidate.binding?.repository || "未知"} @ {staticCandidate.binding?.commit || "未知"}</Descriptions.Item>
           <Descriptions.Item label="报告 SHA-256">{staticCandidate.binding?.report_sha256 || "未知"}</Descriptions.Item>
           <Descriptions.Item label="规则 / 版本">{staticCandidate.detector_id || "未知"} · {staticCandidate.detector_version || "未知"} · {staticCandidate.rule_id || "未知"}</Descriptions.Item>
           <Descriptions.Item label="源码 SHA-256">{staticCandidate.source_sha256 || "未知"}</Descriptions.Item>
@@ -655,7 +655,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
         {evidenceRouting && <Alert className="section-gap" type={agentSourceActionable ? "info" : "warning"} showIcon
           message={"建议下一步：" + (routingLabels[evidenceRouting.route] || "保持未知并交人工复核")}
           description={<Space direction="vertical" size={2}>
-            <Text>Agent 可协助的固定源码义务（只收集线索，不作语义判定）：</Text>
+            <Text>Agent 可协助的本次源码核查事项（只收集线索，不作语义判定）：</Text>
             {formatObligationDetails(evidenceRouting.agent_source_review_indices).map((item: string, index: number) => <Text key={index}>{item}</Text>)}
             <Text>必须由人工或动态验证的义务：</Text>
             {formatObligationDetails(evidenceRouting.human_or_runtime_review_indices).map((item: string, index: number) => <Text key={index}>{item}</Text>)}
@@ -667,10 +667,10 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
           <pre className="raw">{staticCandidate.message || "扫描报告未提供诊断文本。"}</pre>
           <Text strong>静态扫描证据义务（不是漏洞结论）</Text>
           <pre className="raw">{JSON.stringify(staticCandidate.evidence?.obligations || [], null, 2)}</pre>
-          <Text strong>固定提交源码片段（第 {staticCandidate.source?.start_line}–{staticCandidate.source?.end_line} 行）</Text>
+          <Text strong>本次扫描源码片段（第 {staticCandidate.source?.start_line}–{staticCandidate.source?.end_line} 行）</Text>
           {staticReviewReady ? <pre className="raw">{staticExcerpt}</pre> :
             <Alert className="section-gap" type="error" showIcon message="源码 SHA-256 与候选记录不匹配；无法完成可信的人工静态复核。" />}
-          {staticCandidate.source?.truncated && <Alert className="section-gap" type="warning" showIcon message="源码预览达到 32 KiB 上限；只显示固定片段的一部分，继续前请在扫描源码页面核对完整上下文。" />}
+          {staticCandidate.source?.truncated && <Alert className="section-gap" type="warning" showIcon message="源码预览达到 32 KiB 上限；只显示源码片段的一部分，继续前请在扫描源码页面核对完整上下文。" />}
         </>}
       </Card>
       <Collapse className="section-gap" items={[{ key: "research-baseline", label: "人工静态基线与模型对照（高级研究）", children: <Card size="small" title="人工静态基线">
@@ -692,19 +692,19 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
           {staticCandidate.evidence.obligations_truncated && <Alert className="section-gap" type="warning" showIcon
             message="静态义务超过 40 项；人工基线与自动调查本轮都只处理预览中的前 40 项。" />}
           <Alert className="section-gap" type="warning" showIcon
-            message="每条义务必须单独判断；有证据或反向证据时必须引用已展示的固定源码行。无法仅凭现有片段判断时先补读同一文件的固定行范围；仍无法判断就选 unresolved，不要猜测。" />
+            message="每条义务必须单独判断；有证据或反向证据时必须引用已展示的本次扫描源码行。无法仅凭现有片段判断时先补读同一文件的行范围；仍无法判断就选 unresolved，不要猜测。" />
           <Space wrap className="section-gap" align="end">
-            <Form.Item label="补读固定源码起始行"><InputNumber min={1} max={staticCandidate?.source_line_count || 1}
+            <Form.Item label="补读源码的起始行"><InputNumber min={1} max={staticCandidate?.source_line_count || 1}
               value={r0SourceStart} onChange={(value) => setR0SourceStart(typeof value === "number" ? value : null)} /></Form.Item>
             <Form.Item label="行数（最多 40）"><InputNumber min={1} max={40}
               value={r0SourceCount} onChange={(value) => setR0SourceCount(typeof value === "number" ? value : 20)} /></Form.Item>
             <Button loading={r0SourceBusy} disabled={!staticReviewReady || !staticCandidate?.source_line_count}
-              onClick={() => void loadR0SourceRange()}>读取该固定文件行范围</Button>
+              onClick={() => void loadR0SourceRange()}>读取该扫描版本中的文件行范围</Button>
           </Space>
           <Text type="secondary">补读只访问扫描报告绑定的同一文件与源码 SHA，不调用 Provider。服务端保存 R0 时会再次核对每条引文的原文和行号。</Text>
           {r0SourceError && <Alert className="section-gap" type="error" showIcon message={r0SourceError} />}
           {r0SourceRanges.map((item) => <Card key={item.start_line + ":" + item.end_line} className="section-gap" size="small"
-            title={"已补读固定源码 " + item.file + ":" + item.start_line + "–" + item.end_line}>
+            title={"已读取源码范围 " + item.file + ":" + item.start_line + "–" + item.end_line}>
             <pre className="raw">{item.text}</pre>
           </Card>)}
           <Form.List name="r0_obligation_reviews">
@@ -718,8 +718,8 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
                   <Form.Item name={[field.name, "obligation_index"]} hidden><InputNumber /></Form.Item>
                   <Form.Item name={[field.name, "disposition"]} label="人工静态判断" rules={[{ required: true }]}>
                     <Select options={[
-                      { value: "evidence_found", label: "在固定源码中找到支持证据" },
-                      { value: "contrary_evidence", label: "在固定源码中找到反向证据" },
+                      { value: "evidence_found", label: "在本次扫描源码中找到支持证据" },
+                      { value: "contrary_evidence", label: "在本次扫描源码中找到反向证据" },
                       { value: "unresolved", label: "当前源码片段无法判断，保持未知" },
                     ]} />
                   </Form.Item>
@@ -729,7 +729,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
                       rules={[{ validator: (_, value) => {
                         const disposition = form.getFieldValue(["r0_obligation_reviews", field.name, "disposition"]);
                         return disposition !== "unresolved" && !Number.isInteger(value)
-                          ? Promise.reject(new Error("请填写固定源码行号")) : Promise.resolve();
+                          ? Promise.reject(new Error("请填写本次扫描源码行号")) : Promise.resolve();
                       }}]}>
                       <InputNumber min={1} max={staticCandidate.source_line_count || 1} />
                     </Form.Item>
@@ -750,7 +750,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
           </Form.List>
           <Form.Item name="r0_obligations_acknowledged" valuePropName="checked"
             rules={[{ validator: (_, value) => value ? Promise.resolve() : Promise.reject(new Error("请确认已逐项查看义务")) }]}>
-            <Checkbox>我已逐条查看上面的固定源码义务，并独立记录判断；无法由当前源码片段判断的项目保留 unresolved。</Checkbox>
+            <Checkbox>我已逐条查看上面的本次源码核查事项，并独立记录判断；无法由当前源码片段判断的项目保留 unresolved。</Checkbox>
           </Form.Item>
         </>}
         {baselineError && <Alert type="error" showIcon message={baselineError} />}
@@ -808,7 +808,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
       <Text type="secondary">平台不设调查累计 Token、费用、模型/工具调用次数或总时长上限；服务商账户计费和额度适用。单次请求最多输出此处设置的 Token，45 秒无响应会结束该次请求。工具只读并限定在本次固定候选及扫描源码范围；连续 3 轮没有新增源码证据时会请求总结，用户也可随时取消。</Text>
       <Button className="section-gap" loading={previewBusy} disabled={!ready || !context.job_id || !context.candidate_id}
         onClick={() => void requestPreview()}>预览本次将发送的数据</Button>
-      {preview && <Card className="section-gap" size="small" title="外发预览：仅限本次固定候选">
+      {preview && <Card className="section-gap" size="small" title="外发预览：仅限本次扫描候选">
         <Space direction="vertical" style={{ width: "100%" }}>
           <Descriptions bordered size="small" column={{ xs: 1, md: 2 }}>
             <Descriptions.Item label="目的地">{preview.provider.endpoint_host} · {preview.provider.model}</Descriptions.Item>
@@ -821,7 +821,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
               : preview.budget_cost_estimate?.status === "budget_based_upper_estimate"
               ? <Space wrap><Text>≤ USD {preview.budget_cost_estimate.maximum_usd}{preview.budget_cost_estimate.maximum_cny ? " / CNY " + preview.budget_cost_estimate.maximum_cny : ""}；{preview.budget_cost_estimate.maximum_cny ? "USD/CNY 为独立官方价目参考；" : ""}按{preview.budget_cost_estimate.basis === "realtime_payg_all_input_uncached" ? "实时按量费率、输入全部按缓存未命中" : "峰值费率、输入全部按缓存未命中"}估算；费率快照 {preview.budget_cost_estimate.rate_card_id}</Text><a href={preview.budget_cost_estimate.rate_source_url} target="_blank" rel="noreferrer">费率来源</a></Space>
               : "费用未知（该 Provider / 模型没有匹配的已知费率）"}</Descriptions.Item>
-            <Descriptions.Item label="固定来源">{preview.binding.repository} @ {preview.binding.commit}</Descriptions.Item>
+            <Descriptions.Item label="本次扫描来源">{preview.binding.repository} @ {preview.binding.commit}</Descriptions.Item>
             <Descriptions.Item label="候选">{preview.binding.candidate_id}</Descriptions.Item>
             <Descriptions.Item label="文件">{preview.binding.file}</Descriptions.Item>
             <Descriptions.Item label="初始上下文字节">{preview.initial_context_utf8_bytes}</Descriptions.Item>
@@ -845,14 +845,14 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
               children: <pre className="raw">{JSON.stringify(preview.initial_context, null, 2)}</pre> }]} />
           {preview.additional_tool_data_scope?.length > 0 && <Alert type="warning" showIcon message="只读调查可能追加发送的数据范围"
             description={<ul>{preview.additional_tool_data_scope.map((item: string) => <li key={item}>{item}</li>)}</ul>} />}
-          <Text type="secondary">单轮研判只发送上方初始上下文；工具增强调查的源码或历史输出取决于模型实际请求，并限制在预览列出的固定提交范围内。案例 ID 和 API Key 不发送给模型。</Text>
+          <Text type="secondary">单轮研判只发送上方初始上下文；工具增强调查的源码或历史输出取决于模型实际请求，并限制在预览列出的提交范围内。案例 ID 和 API Key 不发送给模型。</Text>
         </Space>
       </Card>}
       <Form.Item name="source_submission_approved" valuePropName="checked" rules={[{ validator: (_, value) => value ? Promise.resolve() : Promise.reject(new Error("请检查预览并确认本次源码外发")) }]}>
         <Checkbox disabled={!canApproveSourceSubmission({ ready, preview, disclosureOpened: previewDisclosureOpened })}>我已检查上方预览，并允许本次调查按列出的范围向该模型服务发送数据</Checkbox>
       </Form.Item>
       {preview && !previewDisclosureOpened && <Text type="secondary">请先展开并检查实际发送的完整上下文，授权选项才会启用。</Text>}
-      <Alert className="section-gap" type="warning" showIcon message="模型仅给出分诊倾向，不会改变漏洞状态" description="模型可判断倾向真阳性、倾向误报、需更多证据或未知；系统漏洞状态仍保持 candidate。工具只读固定扫描 SHA，不执行任意命令、不跑 PoC、不改案例结论。人工审核仍是必需步骤。" />
+      <Alert className="section-gap" type="warning" showIcon message="模型仅给出分诊倾向，不会改变漏洞状态" description="模型可判断倾向真阳性、倾向误报、需更多证据或未知；系统漏洞状态仍保持 candidate。工具只读本次扫描 SHA，不执行任意命令、不跑 PoC、不改案例结论。人工审核仍是必需步骤。" />
       <Button className="section-gap" type="primary" htmlType="submit" loading={busy}
         disabled={!canCreateAgentInvestigation({ ready, jobId: context.job_id, candidateId: context.candidate_id, preview, disclosureOpened: previewDisclosureOpened, approved: sourceSubmissionApproved })}>创建模型调查</Button>
     </Form>
