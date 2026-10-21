@@ -40,7 +40,7 @@ def _is_continuous_tool_agent(task):
 
 
 def _hard_deadline_seconds(task):
-    """Authorized Agent tasks rely on cancellation and per-request timeouts."""
+    """Bound Agent runtime, allowing ten seconds for child cleanup."""
     spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
     if task.get("kind") == "agent_investigation":
         from .agent import bounded_agent_spec
@@ -80,6 +80,7 @@ class OperationWorker:
         folder.mkdir(parents=True, exist_ok=True)
         proc = None
         start = time.monotonic()
+        spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
         uncapped_smart = _authorized_smart_batch(self.store, self.ops, task)
         try:
             with (folder / "worker.log").open("wb") as log:
