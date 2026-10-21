@@ -1,0 +1,12 @@
+{
+  "harness": "isolated source-semantic C++ model; not the OpenHarmony component binary",
+  "compiler": "Debian clang version 21.1.8 (10)",
+  "sanitizer": "AddressSanitizer",
+  "raw_vulnerable_stderr": {"path": "vulnerable.stderr.raw.b64", "encoding": "base64", "sha256_of_decoded_bytes": "b27931bbf0ae57391ae40046f5a8c0899a8f49f357a5caeecd9e35630fd6747b", "decoded_bytes": 3609},
+  "cases": {
+    "vulnerable_count_4": {"expected": "heap-buffer-overflow", "exit": 1, "observed": "==513==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x741eebfe0030 at pc 0x60101a56d3f8 bp 0x7fff2dd5b2b0 sp 0x7fff2dd5b2a8"},
+    "fixed_count_4": {"expected": "clean return", "exit": 0},
+    "vulnerable_count_0": {"expected": "clean early return", "exit": 0},
+    "vulnerable_count_4_remaining_2": {"expected": "read-length rejection, no overflow", "exit": 2}
+  }
+}

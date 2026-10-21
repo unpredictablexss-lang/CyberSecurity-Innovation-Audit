@@ -87,6 +87,16 @@ class T74CjArrayBoundsOverlayChallenge(unittest.TestCase):
                 self.assertEqual(finding.candidate_cwe, "CWE-131")
                 self.assertEqual(finding.consequence_cwe, "CWE-787")
                 self.assertEqual(finding.rule_version, "0.1.0")
+                risk = finding.risk_assessment
+                self.assertEqual(risk["identifier"], "CVE-2025-26474 (候选映射；非根因证明)")
+                self.assertIn("provenance only", risk["mapping_basis"])
+                self.assertEqual(risk["source_location"]["file"], SOURCE)
+                self.assertEqual(risk["source_location"]["symbol"], RULE_ROOT)
+                self.assertIn("data06_runtime_poc_20261021/run.sh", risk["poc"]["replay"])
+                self.assertIn("vulnerable.stderr.raw.b64", risk["poc"]["raw_output"])
+                self.assertEqual(64, len(risk["poc"]["raw_output_sha256"]))
+                self.assertIn("de3a68cc8b7d6f18017fd261060def0e38dce54a", risk["fixed_versions"][0])
+                self.assertIn("no OpenHarmony binary", risk["component_retest"]["scope"])
                 roots.add(("CVE-2025-26474", finding.file, finding.symbol))
         self.assertEqual(len(roots), 1, "two vulnerable revisions are replays of one CVE/function root")
 
