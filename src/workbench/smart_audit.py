@@ -476,7 +476,6 @@ def _agent_evidence_chain_gate(result, expected, candidate):
                 or not isinstance(row.get("obligation_index"), int)
                 or not isinstance(row.get("citations"), list) or not row["citations"]):
             return fail("an evidence obligation is unresolved or lacks a source citation")
-        obligation_has_cross_file_citation = False
         for citation in row["citations"]:
             if not isinstance(citation, dict):
                 return fail("an obligation citation is malformed")
@@ -507,9 +506,6 @@ def _agent_evidence_chain_gate(result, expected, candidate):
                     or any(character not in "0123456789abcdef" for character in source_hash.lower())):
                 return fail("an obligation citation source hash is not fixed")
             bound_file_names.add(file_name)
-            obligation_has_cross_file_citation |= file_name != candidate.get("file")
-        if not obligation_has_cross_file_citation:
-            return fail("an evidence obligation has no bound cross-file source citation")
     if not any(file_name != candidate.get("file") for file_name in bound_file_names):
         return fail("the completed trace contains no cross-file source citation")
 

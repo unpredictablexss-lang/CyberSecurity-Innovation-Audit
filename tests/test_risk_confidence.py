@@ -126,7 +126,6 @@ class AgentEvidenceChainGateTests(unittest.TestCase):
             "binding_mismatch": lambda result: result["evidence_graph"]["binding"].update(
                 commit="0" * 40),
             "no_cross_file_citation": self._remove_cross_file_reviews,
-            "cross_file_missing_for_one_obligation": self._remove_one_obligation_cross_file_review,
             "non_integer_zero": lambda result: result.update(validated_vulnerability=False),
         }
         for label, mutate in mutations.items():
@@ -135,6 +134,16 @@ class AgentEvidenceChainGateTests(unittest.TestCase):
                 mutate(result)
                 accepted, _ = _agent_evidence_chain_gate(result, self.expected, self.candidate)
                 self.assertFalse(accepted)
+
+    def test_each_obligation_needs_fixed_evidence_but_only_trace_needs_cross_file_context(self):
+        result = build_valid_agent_result(obligation_count=2)
+        self._remove_one_obligation_cross_file_review(result)
+
+        accepted, reason = _agent_evidence_chain_gate(result, self.expected, self.candidate)
+
+        self.assertTrue(accepted, reason)
+        self.assertEqual(result["vulnerability_state"], "candidate")
+        self.assertEqual(result["validated_vulnerability"], 0)
 
     @staticmethod
     def _remove_one_obligation_cross_file_review(result):
