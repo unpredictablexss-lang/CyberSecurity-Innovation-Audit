@@ -1113,8 +1113,8 @@ class AgentExecutionTests(unittest.TestCase):
         self.assertEqual(graph["product_state"], "candidate")
         self.assertTrue(any(node["id"] == "evidence:" + result["initial_evidence"]["evidence_id"]
                             for node in graph["nodes"]))
-        self.assertTrue(any(edge["type"] == "depends_on"
-                            and edge["source"] == "stage:validate_report"
+        self.assertTrue(any(edge["relation"] == "depends_on"
+                            and edge["to"] == "stage:evidence_arbitration"
                             for edge in graph["edges"]))
         self.assertEqual(result["tool_calls"][0]["evidence_kind"], "source_code")
         self.assertEqual(result["tool_calls"][0]["status"], "completed")
@@ -2095,7 +2095,7 @@ class IndependentSkepticStageTests(unittest.TestCase):
         self.assertNotIn("shared_auxiliary_call_reserve", preview["budgets"])
         self.assertEqual(preview["budgets"]["local_cumulative_token_budget"], "bounded")
         self.assertEqual(preview["budgets"]["provider_request_timeout_seconds"], 45)
-        self.assertIn(agent.CONTINUOUS_INVESTIGATION_DISCLOSURE, preview["stage_disclosure"])
+        self.assertIn(agent.SKEPTIC_CONSENT_DISCLOSURE, preview["stage_disclosure"])
         self.assertEqual(task_auth_sha(result), preview["consent_sha256"])
 
     def test_independent_skeptic_runs_after_both_structured_repairs(self):
@@ -3288,12 +3288,12 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual({item["spec"]["pair_id"] for item in items}, {queued.json()["pair_id"]})
                 self.assertEqual({item["spec"]["candidate_id"] for item in items}, {"candidate-pair"})
                 for item in items:
-                    self.assertTrue(item["spec"]["continuous_investigation"])
+                    self.assertFalse(item["spec"]["continuous_investigation"])
                     self.assertEqual(item["spec"]["provider_request_timeout_seconds"], 45)
-                    self.assertNotIn("max_steps", item["spec"])
-                    self.assertNotIn("max_total_input_tokens", item["spec"])
-                    self.assertNotIn("max_total_output_tokens", item["spec"])
-                    self.assertNotIn("timeout_seconds", item["spec"])
+                    self.assertGreater(item["spec"]["max_steps"], 0)
+                    self.assertGreater(item["spec"]["max_total_input_tokens"], 0)
+                    self.assertGreater(item["spec"]["max_total_output_tokens"], 0)
+                    self.assertGreater(item["spec"]["timeout_seconds"], 0)
                 self.assertEqual(len(client.get("/api/v1/operations").json()), 2)
                 ops = Operations(app.state.store)
                 running = ops.claim()

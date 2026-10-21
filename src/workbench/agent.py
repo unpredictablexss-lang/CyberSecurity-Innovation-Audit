@@ -1475,6 +1475,7 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
          if mode == "tool_agent" else 0)
         if mode == "tool_agent" else 1)
     budgets["consecutive_no_progress_guard"] = 3
+    budgets["provider_request_timeout_seconds"] = MAX_PROVIDER_REQUEST_SECONDS
     stage_disclosure = (SKEPTIC_CONSENT_DISCLOSURE + " " + ARTIFACT_GENERATION_DISCLOSURE
                         if mode == "tool_agent" and artifact_stage_enabled
                         else SKEPTIC_CONSENT_DISCLOSURE if mode == "tool_agent"
@@ -4891,6 +4892,8 @@ def execute_agent(settings, store, ops, task, client=None):
     if model_tool_calls_skipped:
         result["limitations"].append(
             "The provider requested more read-only tool calls than the remaining fixed budget; excess calls were not executed.")
+    if any(item.get("error_code") == "tool_result_too_large" for item in tool_trace):
+        result["limitations"].append("An oversized tool response was rejected; the model could continue with narrower fixed-source queries.")
     from .agent_evidence_graph import build_evidence_graph
     if provider_incomplete_reason == "repeated_tool_result_limit":
         result["limitations"].append("A tool exceeded the 24 KiB single-response limit; repeated oversized tool query stopped further model requests.")

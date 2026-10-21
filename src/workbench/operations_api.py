@@ -2095,7 +2095,9 @@ def install_routes(app: FastAPI, settings, store):
         for candidate_id in body.candidate_ids:
             child = AgentInvestigationRequest(job_id=body.job_id, candidate_id=candidate_id,
                 consent_nonce=body.consent_nonce, mode=body.mode,
-                max_output_tokens=body.max_output_tokens)
+                max_output_tokens=body.max_output_tokens, max_steps=body.max_steps,
+                max_total_input_tokens=body.max_total_input_tokens, max_total_output_tokens=body.max_total_output_tokens,
+                timeout_seconds=body.timeout_seconds)
             _, _, candidate, preview = _agent_consent_preview(child, provider)
             children.append({"candidate_id": candidate_id, "file": candidate["file"],
                              "line": candidate.get("line"), "preview": preview})
@@ -2107,11 +2109,11 @@ def install_routes(app: FastAPI, settings, store):
                                     "consent_sha256": item["preview"]["consent_sha256"]} for item in children],
                     "mode": body.mode,
                     "continuous_investigation": tool_agent,
-                    "local_cumulative_token_budget": "none",
-                    "local_cumulative_usd_budget": "none",
-                    "local_total_model_call_budget": "none",
-                    "local_total_tool_call_budget": "none",
-                    "local_total_wall_time_budget": "none",
+                    "local_cumulative_token_budget": "bounded",
+                    "local_cumulative_usd_budget": "bounded",
+                    "local_total_model_call_budget": "bounded",
+                    "local_total_tool_call_budget": "bounded",
+                    "local_total_wall_time_budget": "bounded",
                     "max_output_tokens_per_request": body.max_output_tokens,
                     "provider_request_timeout_seconds": 45,
                     "max_validation_repairs_per_tool_agent": 2 if tool_agent else 0,
@@ -2129,17 +2131,17 @@ def install_routes(app: FastAPI, settings, store):
             item["preview"].get("budget_cost_estimate") for item in children)
         aggregate_budget = {
             "authorized_candidate_count": len(children),
-            "max_total_model_calls": None,
+            "max_total_model_calls": sum(item["preview"]["budgets"]["max_total_model_calls"] for item in children),
             "single_shot_candidate_request_count": len(children) if body.mode == "single_shot" else 0,
             "requests_per_candidate": 1 if body.mode == "single_shot" else None,
             "continuous_until_terminal_condition": body.mode == "tool_agent",
             "max_output_tokens_per_provider_request": body.max_output_tokens,
             "provider_request_timeout_seconds": 45,
-            "local_cumulative_token_budget": "none",
-            "local_cumulative_cost_budget": "none",
-            "local_total_model_call_budget": "none",
-            "local_total_tool_call_budget": "none",
-            "local_total_wall_time_budget": "none",
+            "local_cumulative_token_budget": "bounded",
+            "local_cumulative_cost_budget": "bounded",
+            "local_total_model_call_budget": "bounded",
+            "local_total_tool_call_budget": "bounded",
+            "local_total_wall_time_budget": "bounded",
             "max_validation_repair_attempts_per_candidate": max_repairs_per_candidate,
             "max_skeptic_requests_per_candidate": max_skeptic_per_candidate,
             "tool_agent_continuous": tool_agent,
@@ -2195,6 +2197,10 @@ def install_routes(app: FastAPI, settings, store):
                 "job_id": body.job_id, "candidate_id": item["candidate_id"], "case_id": None,
                 "experiment_id": None, "mode": body.mode,
                 "max_output_tokens": body.max_output_tokens,
+
+                "max_steps": body.max_steps, "max_total_input_tokens": body.max_total_input_tokens,
+
+                "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
                 "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
                 "continuous_investigation": False,
                 "source_submission_approved": True, "source_submission_approved_at": now(),
@@ -2246,12 +2252,12 @@ def install_routes(app: FastAPI, settings, store):
             item["preview"].get("budget_cost_estimate") for item in previews)
         aggregate_budget = {
             "single_shot_model_calls": 1,
-            "tool_agent_max_total_model_calls": None,
+            "tool_agent_max_total_model_calls": previews[1]["preview"]["budgets"]["max_total_model_calls"],
             "tool_agent_max_output_tokens_per_request": body.max_output_tokens,
             "provider_request_timeout_seconds": 45,
-            "tool_agent_local_cumulative_token_budget": "none",
-            "tool_agent_local_cumulative_cost_budget": "none",
-            "tool_agent_local_total_wall_time_budget": "none",
+            "tool_agent_local_cumulative_token_budget": "bounded",
+            "tool_agent_local_cumulative_cost_budget": "bounded",
+            "tool_agent_local_total_wall_time_budget": "bounded",
             "tool_agent_max_validation_repair_attempts": r2_repair_limit,
             "tool_agent_max_skeptic_requests": r2_skeptic_limit,
         }
@@ -2309,6 +2315,10 @@ def install_routes(app: FastAPI, settings, store):
                 "job_id": body.job_id, "candidate_id": body.candidate_id, "case_id": body.case_id,
                 "experiment_id": body.experiment_id, "mode": arm["mode"],
                 "max_output_tokens": body.max_output_tokens,
+
+                "max_steps": body.max_steps, "max_total_input_tokens": body.max_total_input_tokens,
+
+                "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
                 "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
                 "continuous_investigation": False,
                 "source_submission_approved": True, "source_submission_approved_at": now(),
@@ -3619,11 +3629,13 @@ def install_routes(app: FastAPI, settings, store):
                  "（候选数不计入；模型建议不能单独确认）。"]
         scope = data.get("operation_summaries") or {}
         rows += ["", "## 操作范围", "展示 " + str(scope.get("included", len(data.get("operations", [])))) + " / " + str(scope.get("total", len(data.get("operations", [])))) + " 条", "经门控确认的漏洞数：" + str(data.get("validated_vulnerability", 0))]
+        if scope.get("truncated"):
+            rows.append("未展开的 " + str(scope["total"] - scope["included"]) + " 条操作仍存在；可在任务中心查看。")
         rows += ["", "## 人工登记源码证据"]
         for record in data.get("candidates", []):
             for evidence in record.get("source_evidence", []):
                 rows.append("- " + md(evidence.get("file")) + ": " + md(evidence.get("note")))
-        rows += ["", "## Agent 建议", "## AI 修复与验证建议（未经验证）", "## AI 漏洞报告草案与 PoC 计划", "## PoC 验证计划（AI 草案，未执行）", "未执行、未验证；candidate / unknown", "## PoC / 隔离验证记录", "最近 20 条结果；完整范围见操作计数。", "AI 草案不是已验证补丁，PoC 草案未执行。"]
+        rows += ["", "## Agent 建议", "## AI 修复与验证建议（未经验证）", "## AI 漏洞报告草案与 PoC 计划", "## PoC 验证计划（AI 草案，未执行）", "未执行、未验证；candidate / unknown", "## PoC / 隔离验证记录", "固定 Harness 结果另列；AI 草案不代替已执行的验证。", "## Agent 实验与人工评价", "最近 20 条结果；完整范围见操作计数。", "AI 草案不是已验证补丁，PoC 草案未执行。"]
         for operation in data.get("operations", []):
             triage = operation.get("agent_triage") or {}
             for advice in triage.get("model_suggestions", []):
