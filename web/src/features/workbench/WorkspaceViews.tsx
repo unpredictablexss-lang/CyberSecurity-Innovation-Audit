@@ -12,6 +12,12 @@ import { SourceContext } from "../audits/OperationForms";
 import { jobDetailPath, retainRiskSource, riskQueuePath } from "./navigation";
 import { triageStateLabel } from "./riskLabels.js";
 const { Text, Paragraph } = Typography;
+function riskDetailsAction(row: any) {
+  if (row.risk_tier === "high_confidence_candidate") {
+    return row.confidence_basis === "ai_source_evidence" ? "查看 AI 理由与证据" : "查看复核依据";
+  }
+  return "查看证据与下一步";
+}
 export function ScanTable({ jobs, compact = false }: { jobs: any[]; compact?: boolean }) {
   return <Table<any> rowKey="id" size={compact ? "small" : "middle"} dataSource={compact ? jobs.slice(0, 4) : jobs} pagination={compact ? false : { pageSize: 10 }} scroll={{ x: 650 }} columns={[
     { title: "仓库 / 固定版本", render: (_, j) => <><a onClick={() => go("/tasks/" + j.id)}>{j.spec.repository}</a><div className="muted"><Hash value={j.spec.commit} /></div></> },
@@ -148,7 +154,7 @@ export function RiskCenter({ jobs, query = new URLSearchParams() }: { jobs: any[
           { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
           { title: "检测器 / 候选位置", render: (_: unknown, row: any) => <>{row.detector_id || "未知检测器"}<div>{row.file}:{row.line}</div><div className="muted">{row.rule_id}</div></> },
           { title: "研判状态", dataIndex: "triage_state", render: (value: string) => triageStateLabel(value) },
-          { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>证据与下一步</Button> },
+          { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>{riskDetailsAction(row)}</Button> },
         ]}
         locale={{ emptyText: <Empty description={loading ? "正在读取候选队列…" :
           summary?.evaluated_scan_count ? "当前筛选没有候选；这不代表仓库不存在漏洞。" : "暂无可校验的扫描报告。"} /> }} />
@@ -235,7 +241,7 @@ export function AuditRiskOverview() {
           { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
         { title: "候选位置", render: (_: unknown, row: any) => <>{row.file}:{row.line}<div className="muted">{row.rule_id}</div></> },
         { title: "研判状态", dataIndex: "triage_state", render: (value: string) => triageStateLabel(value) },
-        { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>证据与下一步</Button> },
+        { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>{riskDetailsAction(row)}</Button> },
       ]}
       locale={{ emptyText: <Empty description={summary?.available_report_count ? "最近报告没有候选观测；这不代表仓库不存在漏洞。" : "完成一次扫描后，这里会显示近期风险优先队列。"} /> }} />
     <Text type="secondary">统计范围：已检查 {summary?.evaluated_scan_count ?? 0} / 最多 {summary?.scan_limit ?? 10} 份报告；模型状态 {Object.entries(triage).map(([state, count]) => triageStateLabel(state) + " " + count).join(" · ") || "暂无记录"}。点击候选可打开固定源码和证据义务。</Text>
