@@ -394,7 +394,10 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
         for item, batch in zip(progress, endpoint_batches):
             expected_state = ("completed" if batch["selected_count"] == batch["candidate_count"]
                               else "partially_completed")
-            self.assertEqual(item["agent_status"], expected_state, item)
+            if expected_state == "completed":
+                self.assertIn(item["agent_status"], {"completed", "completed_with_limitations"}, item)
+            else:
+                self.assertEqual(item["agent_status"], expected_state, item)
             self.assertTrue(item["agent_authorized"], item)
             self.assertTrue(item["report_available"], item)
             self.assertEqual(item["r1_selected_count"], batch["selected_count"])

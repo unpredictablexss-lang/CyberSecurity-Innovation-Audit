@@ -1474,8 +1474,7 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
         (MAX_SKEPTIC_CALLS + (MAX_ARTIFACT_GENERATION_CALLS if artifact_stage_enabled else 0)
          if mode == "tool_agent" else 0)
         if mode == "tool_agent" else 1)
-    if continuous:
-        budgets["consecutive_no_progress_guard"] = 3
+    budgets["consecutive_no_progress_guard"] = 3
     stage_disclosure = (SKEPTIC_CONSENT_DISCLOSURE + " " + ARTIFACT_GENERATION_DISCLOSURE
                         if mode == "tool_agent" and artifact_stage_enabled
                         else SKEPTIC_CONSENT_DISCLOSURE if mode == "tool_agent"
@@ -4893,6 +4892,8 @@ def execute_agent(settings, store, ops, task, client=None):
         result["limitations"].append(
             "The provider requested more read-only tool calls than the remaining fixed budget; excess calls were not executed.")
     from .agent_evidence_graph import build_evidence_graph
+    if provider_incomplete_reason == "repeated_tool_result_limit":
+        result["limitations"].append("A tool exceeded the 24 KiB single-response limit; repeated oversized tool query stopped further model requests.")
     result["evidence_graph"] = build_evidence_graph(
         result["binding"], result["initial_evidence"], tool_trace, model_trace,
         result["agent_assessment"], result["structured_answer_validation"])

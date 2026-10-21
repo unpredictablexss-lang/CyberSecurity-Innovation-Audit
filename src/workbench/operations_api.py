@@ -3343,6 +3343,10 @@ def install_routes(app: FastAPI, settings, store):
                     if advice_verified_for_display and isinstance(step, str) and step.strip()]
                 summary["agent_triage"] = {
                     "triage_only": True,
+                    "vulnerability_report": assessment.get("vulnerability_report"),
+                    "poc_draft": assessment.get("poc_draft"),
+                    "artifact_generation": result.get("artifact_generation"),
+                    "artifact_origin": "preserved_unverified_model_draft",
                     "repair_guidance": {"status": "unverified_model_suggestions", "patch_generated": False, "items": model_suggestions},
                     "assessment": assessment.get("assessment", "unknown") if advice_verified_for_display else "unknown",
                     "summary": assessment.get("summary", "") if advice_verified_for_display else "",
@@ -3619,7 +3623,7 @@ def install_routes(app: FastAPI, settings, store):
         for record in data.get("candidates", []):
             for evidence in record.get("source_evidence", []):
                 rows.append("- " + md(evidence.get("file")) + ": " + md(evidence.get("note")))
-        rows += ["", "## Agent 建议", "## AI 修复与验证建议（未经验证）", "## AI 漏洞报告草案与 PoC 计划", "AI 草案不是已验证补丁，PoC 草案未执行。"]
+        rows += ["", "## Agent 建议", "## AI 修复与验证建议（未经验证）", "## AI 漏洞报告草案与 PoC 计划", "## PoC 验证计划（AI 草案，未执行）", "未执行、未验证；candidate / unknown", "## PoC / 隔离验证记录", "最近 20 条结果；完整范围见操作计数。", "AI 草案不是已验证补丁，PoC 草案未执行。"]
         for operation in data.get("operations", []):
             triage = operation.get("agent_triage") or {}
             for advice in triage.get("model_suggestions", []):
@@ -3627,7 +3631,7 @@ def install_routes(app: FastAPI, settings, store):
             for key in ("vulnerability_report", "poc_draft"):
                 draft = triage.get(key) or {}
                 rows.append("- " + md(key) + "：" + md(draft.get("status", "unknown")))
-                for field in ("title", "summary", "root_cause", "code"):
+                for field in ("title", "summary", "root_cause", "code", "remediation", "description"):
                     if draft.get(field): rows.append(md(draft[field]))
             evidence = operation.get("validation_evidence") or {}
             if evidence:

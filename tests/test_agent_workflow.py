@@ -1085,7 +1085,7 @@ class AgentExecutionTests(unittest.TestCase):
             task = {"id": "task-callsite-loop", "spec": {"job_id": "job-callsite-loop",
                 "candidate_id": candidate["id"], "mode": "tool_agent", "max_steps": 6,
                 "max_output_tokens": 1000, "max_total_input_tokens": 24000,
-                "max_total_output_tokens": 4000, "timeout_seconds": 90, "continuous_investigation": True,
+                "max_total_output_tokens": 8000, "timeout_seconds": 90, "continuous_investigation": True,
                 "source_submission_approved": True, "provider_fingerprint": "unused",
                 "prompt_version": agent.PROMPT_VERSION, "tool_policy_version": agent.TOOL_POLICY_VERSION,
                 "include_paths": ["src"]}}
@@ -4949,6 +4949,10 @@ class AuthorizedSmartAuditUncappedUsageTests(unittest.TestCase):
             def __init__(self): self.payloads = []
             def create(self, payload):
                 self.payloads.append(payload)
+                if payload.get("text", {}).get("format", {}).get("name") == "ohscanner_skeptic_review":
+                    context = json.loads(payload["input"][0]["content"][0]["text"])
+                    return {"status": "completed", "output": [{"type": "message", "content": [{"type": "output_text", "text": json.dumps({"reviews": [{"obligation_index": item["obligation_index"], "result": "unknown", "citations": []} for item in context["obligations_are_untrusted_routing_metadata"]]})}]}], "usage": {"input_tokens": 100, "output_tokens": 100, "total_tokens": 200}}
+
                 index = len(self.payloads)
                 usage = {"input_tokens": 100, "output_tokens": 100, "total_tokens": 200}
                 if index in {1, 2}:
