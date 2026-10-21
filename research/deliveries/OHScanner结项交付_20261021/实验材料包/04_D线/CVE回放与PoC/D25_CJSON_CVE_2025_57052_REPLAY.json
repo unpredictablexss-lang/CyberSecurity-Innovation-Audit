@@ -1,0 +1,129 @@
+{
+  "schema": 1,
+  "experiment": "D25 cJSON CVE-2025-57052 source and component reproduction",
+  "repository": "DaveGamble/cJSON",
+  "detector": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.6.0",
+  "before": {
+    "commit": "8f2beb57ddad1f94bed899790b00f46df893ccac",
+    "files": {
+      "cJSON_Utils.c": {
+        "blob": "63651dfbb842ca980b881a6a27abff8c0aaff028",
+        "sha256": "c405ae37f92d738796badefd9692d081a3564d3d7cc5a856278bf471067267c6",
+        "size": 40729
+      },
+      "cJSON.c": {
+        "blob": "ca824f0e7fbf7075a9ff9635e40c65591e402beb",
+        "sha256": "f892717f26cf3d21b7108de50cea95b6e48092950427615fe1d8d9c46ea09cca",
+        "size": 80399
+      },
+      "cJSON.h": {
+        "blob": "37520bbcf87988b013dd6656983caf55f4e8a19d",
+        "sha256": "fda63720ffad1d007802f62204831018d167084c26e2ce08ad36f11529a90682",
+        "size": 16394
+      },
+      "cJSON_Utils.h": {
+        "blob": "a970c65046740dbea82d694ba0f5cd0a5e3ab074",
+        "sha256": "1050a7cce8ffe352c509e0c1faad505b9b8a09cac3a1c45c544447868e05f3b5",
+        "size": 3938
+      }
+    },
+    "cve_candidates": [
+      {
+        "file": "cJSON_Utils.c",
+        "line": 285,
+        "symbol": "CVE-2025-57052",
+        "rule_id": "ohknowncve-cjson-cve-2025-57052",
+        "source_sha256": "c405ae37f92d738796badefd9692d081a3564d3d7cc5a856278bf471067267c6",
+        "message": "Candidate component-code match for CVE-2025-57052: decode_array_index_from_pointer checks pointer[0] for every loop iteration, allowing a digit-leading JSON Pointer array index to consume non-digit bytes. Product reachability and vulnerability status remain unconfirmed."
+      }
+    ],
+    "component_poc": {
+      "compiler": "gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "compile_command": [
+        "gcc",
+        "-std=c99",
+        "-O0",
+        "-static",
+        "-I",
+        "/tmp/d25-cjson/old",
+        "/tmp/d25-cjson/old/cJSON.c",
+        "/tmp/d25-cjson/old/cJSON_Utils.c",
+        "/home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/research/data_sensitive/D25_CJSON_CVE_2025_57052_POC.c",
+        "-o",
+        "/tmp/ohscanner-d25-cjson-o6sqr4zh/before-poc"
+      ],
+      "binary_sha256": "331dd8b7cee79f9a1878707a7947c4db8b5f81b46c8766f08ab7d938159f7bc3",
+      "execution": "rootless_user_mount_network_namespace",
+      "stdout": "resolved=1 synthetic_secret=1 value=\"D_SYNTHETIC_SECRET\"",
+      "observed": {
+        "resolved": "1",
+        "synthetic_secret": "1",
+        "value": "\"D_SYNTHETIC_SECRET\""
+      }
+    }
+  },
+  "after": {
+    "commit": "74e1ff4994aa4139126967f6d289b675b4b36fef",
+    "files": {
+      "cJSON_Utils.c": {
+        "blob": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+        "sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+        "size": 40736
+      },
+      "cJSON.c": {
+        "blob": "ca824f0e7fbf7075a9ff9635e40c65591e402beb",
+        "sha256": "f892717f26cf3d21b7108de50cea95b6e48092950427615fe1d8d9c46ea09cca",
+        "size": 80399
+      },
+      "cJSON.h": {
+        "blob": "37520bbcf87988b013dd6656983caf55f4e8a19d",
+        "sha256": "fda63720ffad1d007802f62204831018d167084c26e2ce08ad36f11529a90682",
+        "size": 16394
+      },
+      "cJSON_Utils.h": {
+        "blob": "a970c65046740dbea82d694ba0f5cd0a5e3ab074",
+        "sha256": "1050a7cce8ffe352c509e0c1faad505b9b8a09cac3a1c45c544447868e05f3b5",
+        "size": 3938
+      }
+    },
+    "cve_candidates": [],
+    "component_poc": {
+      "compiler": "gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "compile_command": [
+        "gcc",
+        "-std=c99",
+        "-O0",
+        "-static",
+        "-I",
+        "/tmp/d25-cjson/fixed",
+        "/tmp/d25-cjson/fixed/cJSON.c",
+        "/tmp/d25-cjson/fixed/cJSON_Utils.c",
+        "/home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/research/data_sensitive/D25_CJSON_CVE_2025_57052_POC.c",
+        "-o",
+        "/tmp/ohscanner-d25-cjson-o6sqr4zh/after-poc"
+      ],
+      "binary_sha256": "8a3e36496063dac38cf1339192c87fec381857391509184eeac4f23b1feabddb",
+      "execution": "rootless_user_mount_network_namespace",
+      "stdout": "resolved=0 synthetic_secret=0 value=<null>",
+      "observed": {
+        "resolved": "0",
+        "synthetic_secret": "0",
+        "value": "<null>"
+      }
+    }
+  },
+  "expected": {
+    "before_candidate": true,
+    "after_candidate": false,
+    "before_secret_resolution": true,
+    "after_secret_resolution": false
+  },
+  "validated_vulnerability": 0,
+  "product_status": "unknown",
+  "limitations": [
+    "This proves behavior of the pinned upstream cJSON component only, with synthetic JSON and no product caller.",
+    "The detector input is one source file bound by upstream Git blob and SHA-256; this is a direct detector call, not a whole-repository Runner scan.",
+    "No OpenHarmony product build inclusion, attacker path, impact, affected release, or remediation build is established."
+  ]
+}
