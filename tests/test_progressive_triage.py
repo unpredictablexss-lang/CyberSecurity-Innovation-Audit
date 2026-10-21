@@ -1222,6 +1222,7 @@ class BudgetLedgerTests(unittest.TestCase):
                           output_tokens=10, quick_assessment="investigate")
             ledger.dispatch_group("audit-phases", "group-1", "endpoint-1",
                                   "deep_agent", evidence_gate="quick_screen_investigate")
+            ledger.claim_deep_operation("audit-phases", "group-1", "endpoint-1", "deep-operation")
             for index, phase in enumerate(("deep_agent", "structured_repair", "skeptic", "report")):
                 reservation = ledger.reserve(
                     "audit-phases", "deep-" + str(index), "endpoint-1", "group-1",
@@ -1239,7 +1240,8 @@ class BudgetLedgerTests(unittest.TestCase):
                     dispatch.close()
                 self.assertEqual(state, "running")
 
-            ledger.finish_group("audit-phases", "group-1", "endpoint-1", "deep_agent", status="completed")
+            ledger.finish_deep_group("audit-phases", "group-1", "endpoint-1",
+                                     "deep-operation", success=True)
             usage = ledger.get("audit-phases")["usage"]
             self.assertEqual(usage["model_calls_allocated"], 5)
             self.assertEqual(set(usage["by_phase"]), {"quick_screen", "deep_agent", "structured_repair", "skeptic", "report"})

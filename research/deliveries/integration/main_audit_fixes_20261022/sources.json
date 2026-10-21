@@ -1,0 +1,27 @@
+{
+  "audit_archive": "OHScanner_main_audit.zip",
+  "archive_sha256": "11380e3937832f5e74f0f1cb8ff3ded6d4ef5a4c1a408b63a63eb45efe2481c3",
+  "audited_base": "3069f49a29f31c76aa88de0e9d26f81d9c6fe262",
+  "implementation_base": "13daca3feb0c6ae5ed6f45b41069e400eef3b146",
+  "verified_target_files": "All six original patch files are byte-identical between audited base and implementation base. Original SHA gate was honored while generating patch; patch applied cleanly to latest main.",
+  "confirmed": [
+    "L3 first successful request prematurely sets group completed; second reserve fails.",
+    "Worker gives explicit uncapped ordinary Agent old timeout_seconds+10 deadline.",
+    "Partial recursive cleanup uses CWE-416 memory_safety instead of CWE-674 availability."
+  ],
+  "additional_repairs": [
+    "Check operation/parent cancellation before every Provider dispatch.",
+    "Clamp deep request timeout to shared remaining wall budget.",
+    "Serialize concurrent schema migration and first ledger creation.",
+    "Keep progressive Worker hard deadline even if uncapped flag appears.",
+    "Bump resource lifecycle detector/rule version to 0.4.3."
+  ],
+  "validation": {
+    "targeted_regressions": 25,
+    "broader_agent_operations_previous_run": 67,
+    "full_python": "pending",
+    "real_provider": "not_run",
+    "browser": "not_run",
+    "existing_service": "unchanged"
+  }
+}

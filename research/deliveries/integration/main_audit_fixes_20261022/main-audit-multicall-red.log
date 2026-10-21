@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/audit/ohscanner/worktrees/latest-refresh-20261021/src/workbench/progressive_triage/deep_agent_operation.py", line 88, in create_with_timeout
+    reservation = self.ledger.reserve(
+  File "/home/audit/ohscanner/worktrees/latest-refresh-20261021/src/workbench/progressive_triage/ledger.py", line 243, in reserve
+    raise BudgetError("group is not queued for this model stage")
+src.workbench.progressive_triage.ledger.BudgetError: group is not queued for this model stage
+after first request: completed

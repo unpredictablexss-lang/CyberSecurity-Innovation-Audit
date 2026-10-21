@@ -1,0 +1,30 @@
+test_cancelled_dispatch_never_sends_or_spends_reserved_call (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ok
+test_complete_agent_workflow_finishes_only_after_two_requests (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ok
+test_concurrent_workers_can_create_one_new_ledger (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ok
+test_existing_sqlite_ledger_is_migrated (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ok
+test_group_claim_is_atomic_between_operations (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ok
+test_legacy_schema_migration_is_serialized (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ok
+test_other_operation_cannot_double_run_one_group (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ok
+test_request_timeout_is_clamped_to_shared_remaining_time (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ok
+test_second_model_request_succeeds_before_group_completion (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ok
+test_unknown_second_response_fails_closed (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ok
+test_bounded_progressive_agent_keeps_its_parent_deadline (tests.test_main_closeout_regressions.WorkerDeadlineContractTests) ... ok
+test_uncapped_ordinary_agent_has_no_legacy_parent_deadline (tests.test_main_closeout_regressions.WorkerDeadlineContractTests) ... ok
+test_fixed_iterative_detach_and_unrelated_recursion_quiet (tests.detectors.test_cpp_recursive_cleanup_regression.RecursiveCleanupRegressionTests) ... ok
+test_partial_callback_cycle_uses_recursive_cwe_not_uaf (tests.detectors.test_cpp_recursive_cleanup_regression.RecursiveCleanupRegressionTests) ... ok
+test_partial_candidate_is_kept_but_unknown (tests.detectors.test_cpp_recursive_cleanup_regression.RecursiveCleanupRegressionTests) ... ok
+test_partial_without_candidate_stays_unknown (tests.detectors.test_cpp_recursive_cleanup_regression.RecursiveCleanupRegressionTests) ... ok
+test_vulnerable_callback_cleanup_cycle_candidate (tests.detectors.test_cpp_recursive_cleanup_regression.RecursiveCleanupRegressionTests) ... ok
+test_deterministic_output_and_budget (tests.detectors.test_cpp_resource_lifetime_detector.ResourceLifetimeDetectorTests) ... ok
+test_fixed_unrelated_and_unknown_controls (tests.detectors.test_cpp_resource_lifetime_detector.ResourceLifetimeDetectorTests) ... ok
+test_identity_and_positive_controls (tests.detectors.test_cpp_resource_lifetime_detector.ResourceLifetimeDetectorTests) ... ok
+test_manifest_is_hash_bound_and_covers_control_classes (tests.detectors.test_cpp_resource_lifetime_detector.ResourceLifetimeDetectorTests) ... ok
+test_recursive_cleanup_callback_cycle_candidate (tests.detectors.test_cpp_resource_lifetime_detector.ResourceLifetimeDetectorTests) ... ok
+test_recursive_compare_cost_candidate_preserves_partial_status (tests.detectors.test_cpp_resource_lifetime_detector.ResourceLifetimeDetectorTests) ... ok
+test_recursive_tree_amplification_candidate_is_separate (tests.detectors.test_cpp_resource_lifetime_detector.ResourceLifetimeDetectorTests) ... ok
+test_tree_amplification_and_compare_keep_distinct_rules (tests.detectors.test_cpp_resource_lifetime_detector.ResourceLifetimeDetectorTests) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 1.081s
+
+OK

@@ -1,0 +1,69 @@
+test_existing_sqlite_ledger_is_migrated (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ERROR
+test_other_operation_cannot_double_run_one_group (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ERROR
+test_second_model_request_succeeds_before_group_completion (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ERROR
+test_unknown_second_response_fails_closed (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests) ... ERROR
+test_bounded_progressive_agent_keeps_its_parent_deadline (tests.test_main_closeout_regressions.WorkerDeadlineContractTests) ... ok
+test_uncapped_ordinary_agent_has_no_legacy_parent_deadline (tests.test_main_closeout_regressions.WorkerDeadlineContractTests) ... FAIL
+test_fixed_iterative_detach_and_unrelated_recursion_quiet (tests.detectors.test_cpp_recursive_cleanup_regression.RecursiveCleanupRegressionTests) ... ok
+test_partial_callback_cycle_uses_recursive_cwe_not_uaf (tests.detectors.test_cpp_recursive_cleanup_regression.RecursiveCleanupRegressionTests) ... FAIL
+test_partial_candidate_is_kept_but_unknown (tests.detectors.test_cpp_recursive_cleanup_regression.RecursiveCleanupRegressionTests) ... ok
+test_partial_without_candidate_stays_unknown (tests.detectors.test_cpp_recursive_cleanup_regression.RecursiveCleanupRegressionTests) ... ok
+test_vulnerable_callback_cleanup_cycle_candidate (tests.detectors.test_cpp_recursive_cleanup_regression.RecursiveCleanupRegressionTests) ... ok
+
+======================================================================
+ERROR: test_existing_sqlite_ledger_is_migrated (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/audit/ohscanner/worktrees/latest-refresh-20261021/tests/test_main_closeout_regressions.py", line 121, in test_existing_sqlite_ledger_is_migrated
+    db.execute("ALTER TABLE triage_dispatch DROP COLUMN deep_operation_id")
+sqlite3.OperationalError: no such column: "deep_operation_id"
+
+======================================================================
+ERROR: test_other_operation_cannot_double_run_one_group (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/audit/ohscanner/worktrees/latest-refresh-20261021/tests/test_main_closeout_regressions.py", line 79, in test_other_operation_cannot_double_run_one_group
+    ledger.claim_deep_operation("audit", "group", "scan", "operation-1")
+AttributeError: 'BudgetLedger' object has no attribute 'claim_deep_operation'
+
+======================================================================
+ERROR: test_second_model_request_succeeds_before_group_completion (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/audit/ohscanner/worktrees/latest-refresh-20261021/tests/test_main_closeout_regressions.py", line 60, in test_second_model_request_succeeds_before_group_completion
+    ledger.claim_deep_operation("audit", "group", "scan", "operation")
+AttributeError: 'BudgetLedger' object has no attribute 'claim_deep_operation'
+
+======================================================================
+ERROR: test_unknown_second_response_fails_closed (tests.test_main_closeout_regressions.MultiRequestDeepGroupTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/audit/ohscanner/worktrees/latest-refresh-20261021/tests/test_main_closeout_regressions.py", line 101, in test_unknown_second_response_fails_closed
+    ledger.claim_deep_operation("audit", "group", "scan", "operation")
+AttributeError: 'BudgetLedger' object has no attribute 'claim_deep_operation'
+
+======================================================================
+FAIL: test_uncapped_ordinary_agent_has_no_legacy_parent_deadline (tests.test_main_closeout_regressions.WorkerDeadlineContractTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/audit/ohscanner/worktrees/latest-refresh-20261021/tests/test_main_closeout_regressions.py", line 18, in test_uncapped_ordinary_agent_has_no_legacy_parent_deadline
+    self.assertIsNone(_hard_deadline_seconds({"kind": "agent_investigation", "spec": spec}))
+AssertionError: 130 is not None
+
+======================================================================
+FAIL: test_partial_callback_cycle_uses_recursive_cwe_not_uaf (tests.detectors.test_cpp_recursive_cleanup_regression.RecursiveCleanupRegressionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/audit/ohscanner/worktrees/latest-refresh-20261021/tests/detectors/test_cpp_recursive_cleanup_regression.py", line 42, in test_partial_callback_cycle_uses_recursive_cwe_not_uaf
+    self.assertEqual(candidate.candidate_cwe, "CWE-674")
+AssertionError: 'CWE-416' != 'CWE-674'
+- CWE-416
+?      --
++ CWE-674
+?     ++
+
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.227s
+
+FAILED (failures=2, errors=4)

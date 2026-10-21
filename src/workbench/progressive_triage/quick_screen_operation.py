@@ -479,6 +479,6 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         "limitations": [
             "L2 quick screen is model triage only; source reachability and vulnerability validity remain unconfirmed.",
             "USD remains advisory because no verified Provider-side hard cap is configured.",
-            "The ledger shares task-level token, call, concurrency and time budgets across fixed endpoints when they belong to a supported parent audit; deep Agent stages are not connected yet.",
+            "The ledger shares task-level budgets across fixed endpoints; L3 requires a separate, explicit consent and is not auto-scheduled.",
         ],
     }

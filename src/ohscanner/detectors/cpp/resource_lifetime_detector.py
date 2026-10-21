@@ -30,7 +30,7 @@ RULE_USE_AFTER_FREE = "ohcpp-resource-lifetime-use-after-free-candidate-002"
 RULE_RECURSIVE_CLEANUP = "ohcpp-resource-lifetime-recursive-cleanup-candidate-003"
 RULE_RECURSIVE_TREE_AMPLIFICATION = "ohcpp-resource-exhaustion-tree-amplification-candidate-004"
 RULE_RECURSIVE_COMPARE_COST = "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005"
-RULE_VERSION = "0.4.2"
+RULE_VERSION = "0.4.3"
 RULE_LINEAGE_ID = "A-RES-01:ohcpp-resource-lifetime-candidate"
 
 _ALLOC_RE = re.compile(
@@ -140,14 +140,16 @@ def _finding(
     )
 
 
-def _recursive_cleanup_finding(unit: SourceUnit, position: int, symbol: str) -> DetectorFinding:
+def _recursive_cleanup_finding(
+    unit: SourceUnit, position: int, symbol: str, *, message: str | None = None
+) -> DetectorFinding:
     line, column = line_column(unit.text, position)
     return DetectorFinding(
         file=unit.path,
         line=line,
         column=column,
         rule_id=RULE_RECURSIVE_CLEANUP,
-        message=(
+        message=message or (
             f"Candidate only: `{symbol}` reaches resource cleanup again through a registered callback cycle; "
             "attacker-controlled nesting and a safe recursion bound are not proven."
         ),
@@ -1001,16 +1003,17 @@ def _partial_recursive_cleanup_candidates(units: Sequence[SourceUnit]) -> Tuple[
                 relevant_nodes = reachable | {setter_index}
                 if any(_DEPTH_LIMIT_RE.search(bodies[node]) for node in relevant_nodes):
                     continue
-                findings.append(_finding(
+                findings.append(_recursive_cleanup_finding(
                     unit,
                     functions[setter_index].body_start + assignment_pos,
-                    RULE_RECURSIVE_CLEANUP,
                     f"member {field} callback {callback}",
-                    "Recursive cleanup candidate: nested pointer data is stored alongside a cleanup callback; "
-                    f"callback `{callback}` reaches cleanup/release code that dispatches member `{field}` back "
-                    "into the callback cycle. No explicit depth bound was found in the modeled cycle. Actual "
-                    "object graph, path feasibility, externally controllable nesting, stack limit, and impact "
-                    "remain unknown.",
+                    message=(
+                        "Recursive cleanup candidate: nested pointer data is stored alongside a cleanup callback; "
+                        f"callback `{callback}` reaches cleanup/release code that dispatches member `{field}` back "
+                        "into the callback cycle. No explicit depth bound was found in the modeled cycle. Actual "
+                        "object graph, path feasibility, externally controllable nesting, stack limit, and impact "
+                        "remain unknown."
+                    ),
                 ))
     return _stable_unique(findings)
 
