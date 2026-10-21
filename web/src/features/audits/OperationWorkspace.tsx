@@ -14,6 +14,13 @@ import ProgressiveQuickScreenBatchAction from "./ProgressiveQuickScreenBatchActi
 import VersionCandidateComparison from "./VersionCandidateComparison";
 import { buildIntelligentReviewView } from "./operationProgressModel.js";
 const { Text } = Typography;
+function budgetPhaseSummary(usage: any) {
+  const labels: Record<string, string> = { quick_screen: "L2", deep_agent: "L3", structured_repair: "结构修复", skeptic: "Skeptic", report: "报告草案" };
+  const rows = Object.entries(usage?.by_phase || {}) as [string, any][];
+  const summary = rows.filter(([, value]) => value.model_calls_allocated > 0)
+    .map(([phase, value]) => `${labels[phase] || phase} ${value.model_calls_allocated}`).join(" · ");
+  return summary || "尚无模型请求";
+}
 const importProgressLabels: Record<string,string> = {queued:"等待导入", cloning:"下载源码", fetching:"同步源码", verifying:"核验固定版本", scanning:"静态扫描", completed:"已完成", failed:"失败"};
 export function buildRecentWindowSummary(result: any) {
   if (!result || typeof result !== "object") return null;
@@ -350,6 +357,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
               <Descriptions.Item label="L2 完成 / L3 完成">{activeStatus ? `${activeStatus.phase_counts.quick_screen_completed} / ${activeStatus.phase_counts.deep_agent_completed}` : "0 / 0"}</Descriptions.Item>
               <Descriptions.Item label="未完成快筛的组成员">{activeStatus?.phase_counts.unassessed_group_members ?? plan.original_observation_count ?? "未知"}</Descriptions.Item>
               <Descriptions.Item label="模型请求 / 在途">{budget.usage ? `${budget.usage.model_calls_allocated} / ${budget.usage.model_calls_in_flight}` : "尚未开始"}</Descriptions.Item>
+              <Descriptions.Item label="按阶段调用数">{budgetPhaseSummary(budget.usage)}</Descriptions.Item>
               <Descriptions.Item label="输入 / 输出 Token">{budget.usage ? `${budget.usage.input_tokens_allocated} / ${budget.usage.output_tokens_allocated}` : "尚未开始"}</Descriptions.Item>
               <Descriptions.Item label="停止原因">{activeStatus?.stop_reason || budget.stop_reason || "无"}</Descriptions.Item>
               <Descriptions.Item label="确认漏洞数">{plan.validated_vulnerability ?? 0}</Descriptions.Item>

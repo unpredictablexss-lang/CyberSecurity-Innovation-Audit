@@ -1442,6 +1442,9 @@ class AgentExecutionTests(unittest.TestCase):
             def __init__(self):
                 self.payloads = []
                 self.tool_call_sent = False
+                self.budget_phases = []
+            def set_budget_phase(self, phase):
+                self.budget_phases.append(phase)
             @staticmethod
             def answer(value):
                 return {"status": "completed", "output": [{"type": "message", "content": [
@@ -1525,6 +1528,8 @@ class AgentExecutionTests(unittest.TestCase):
         self.assertEqual([call["request_phase"] for call in result["model_calls"]],
             ["tool_call", "tool_call", "structured_output", "structured_repair",
              "structured_targeted_repair", "skeptic_review"])
+        self.assertEqual(fake.budget_phases,
+            [None, None, None, "structured_repair", "structured_targeted_repair", "skeptic_review"])
         targeted_prompts = [item["content"][0]["text"] for item in fake.payloads[-2]["input"]
                             if item.get("role") == "user" and item.get("content")
                             and isinstance(item["content"][0], dict)
@@ -1913,6 +1918,9 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
             def __init__(self):
                 self.payloads = []
                 self.tool_call_sent = False
+                self.budget_phases = []
+            def set_budget_phase(self, phase):
+                self.budget_phases.append(phase)
             @staticmethod
             def response(value):
                 return {"status": "completed", "output": [{"type": "message", "content": [
@@ -2024,6 +2032,7 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
         request_phases = [row["request_phase"] for row in result["model_calls"]]
         self.assertEqual(request_phases[-3:],
                          ["structured_output", "skeptic_review", "artifact_generation"])
+        self.assertEqual(client.budget_phases[-3:], [None, "skeptic_review", "artifact_generation"])
         self.assertGreaterEqual(request_phases.count("tool_call"), 1)
         self.assertLessEqual(max(row["usage"]["output_tokens"] for row in result["model_calls"]), 1200)
         self.assertEqual(result["model_usage"]["per_request_output_limit_tokens"], 1200)
@@ -2095,6 +2104,9 @@ class IndependentSkepticStageTests(unittest.TestCase):
             def __init__(self):
                 self.payloads = []
                 self.tool_call_sent = False
+                self.budget_phases = []
+            def set_budget_phase(self, phase):
+                self.budget_phases.append(phase)
             @staticmethod
             def _response(value):
                 return {"status": "completed", "output": [{"type": "message", "content": [
@@ -2180,6 +2192,7 @@ class IndependentSkepticStageTests(unittest.TestCase):
         self.assertEqual(len(fake.payloads), 3)
         self.assertEqual([call["request_phase"] for call in result["model_calls"]],
                          ["tool_call", "structured_output", "skeptic_review"])
+        self.assertEqual(fake.budget_phases, [None, None, "skeptic_review"])
         self.assertEqual(result["skeptic_review"]["status"], "completed")
         self.assertEqual(result["skeptic_review"]["calls_used"], 1)
         review = result["skeptic_review"]["reviews"][0]

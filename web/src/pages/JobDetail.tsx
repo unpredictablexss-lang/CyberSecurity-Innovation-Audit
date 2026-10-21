@@ -52,6 +52,13 @@ import { requestGate } from "../features/audits/model";
 import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
 import { candidateConfidenceColor, candidateConfidenceLabel, candidateSeverityColor, candidateSeverityLabel, analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
 const { Text, Title, Paragraph } = Typography;
+function budgetPhaseSummary(usage: any) {
+  const labels: Record<string, string> = { quick_screen: "L2", deep_agent: "L3", structured_repair: "结构修复", skeptic: "Skeptic", report: "报告草案" };
+  const rows = Object.entries(usage?.by_phase || {}) as [string, any][];
+  const summary = rows.filter(([, value]) => value.model_calls_allocated > 0)
+    .map(([phase, value]) => `${labels[phase] || phase} ${value.model_calls_allocated}`).join(" · ");
+  return summary || "尚无模型请求";
+}
 function HighConfidenceCandidateReason({ risk, jobId }: { risk: any; jobId: string }) {
   if (risk?.risk_tier !== "high_confidence_candidate") return null;
   const signal = risk.agent_signal || {};
@@ -529,6 +536,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           <Descriptions.Item label="当前阶段">{progressiveStatus.phase}</Descriptions.Item>
           <Descriptions.Item label="L2 完成 / L3 完成">{progressiveStatus.phase_counts?.quick_screen_completed ?? 0} / {progressiveStatus.phase_counts?.deep_agent_completed ?? 0}</Descriptions.Item>
           <Descriptions.Item label="模型请求 / 在途">{progressiveStatus.budget?.usage ? `${progressiveStatus.budget.usage.model_calls_allocated} / ${progressiveStatus.budget.usage.model_calls_in_flight}` : "尚未开始"}</Descriptions.Item>
+          <Descriptions.Item label="按阶段调用数">{budgetPhaseSummary(progressiveStatus.budget?.usage)}</Descriptions.Item>
           <Descriptions.Item label="输入 / 输出 Token">{progressiveStatus.budget?.usage ? `${progressiveStatus.budget.usage.input_tokens_allocated} / ${progressiveStatus.budget.usage.output_tokens_allocated}` : "尚未开始"}</Descriptions.Item>
           <Descriptions.Item label="停止原因">{progressiveStatus.stop_reason || "无"}</Descriptions.Item>
           <Descriptions.Item label="确认漏洞数">{progressiveStatus.validated_vulnerability ?? 0}</Descriptions.Item>

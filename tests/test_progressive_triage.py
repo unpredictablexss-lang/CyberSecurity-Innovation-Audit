@@ -1177,12 +1177,14 @@ class BudgetLedgerTests(unittest.TestCase):
             client = FakeClient({"usage": {"input_tokens": 80, "output_tokens": 40}})
             wrapped = BudgetedAgentClient(client, ledger, audit_id="audit-client", operation_id="op-client",
                                           endpoint_id="endpoint-client", group_id="group-client")
+            wrapped.set_budget_phase("skeptic_review")
             wrapped.create_with_timeout({"max_output_tokens": 128}, 10)
             self.assertEqual(client.calls, 1)
             usage = ledger.get("audit-client")["usage"]
             self.assertEqual(usage["model_calls_allocated"], 2)
             self.assertEqual(usage["input_tokens_allocated"], 100)
             self.assertEqual(usage["output_tokens_allocated"], 50)
+            self.assertEqual(usage["by_phase"]["skeptic"]["model_calls_completed"], 1)
 
         with tempfile.TemporaryDirectory() as directory:
             ledger, policy, sha = self.create(directory)
@@ -1206,6 +1208,71 @@ class BudgetLedgerTests(unittest.TestCase):
             usage = ledger.get("audit-unknown")["usage"]
             self.assertEqual(usage["model_calls_allocated"], 2)
             self.assertEqual(usage["model_calls_in_flight"], 0)
+            self.assertEqual(usage["by_phase"]["deep_agent"]["model_calls_unknown"], 1)
+
+    def test_deep_dispatch_stays_open_across_all_agent_model_phases(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger, policy, sha = self.create(directory)
+            ledger.create_audit("audit-phases", policy, sha)
+            ledger.dispatch_group("audit-phases", "group-1", "endpoint-1",
+                                  "quick_screen", evidence_gate="ranked_and_selected")
+            quick = ledger.reserve("audit-phases", "quick", "endpoint-1", "group-1",
+                                   "quick_screen", max_input_tokens=100, max_output_tokens=50)
+            ledger.settle(quick["reservation_id"], outcome="completed", input_tokens=20,
+                          output_tokens=10, quick_assessment="investigate")
+            ledger.dispatch_group("audit-phases", "group-1", "endpoint-1",
+                                  "deep_agent", evidence_gate="quick_screen_investigate")
+            for index, phase in enumerate(("deep_agent", "structured_repair", "skeptic", "report")):
+                reservation = ledger.reserve(
+                    "audit-phases", "deep-" + str(index), "endpoint-1", "group-1",
+                    "deep_agent", phase=phase, max_input_tokens=100, max_output_tokens=50,
+                )
+                ledger.settle(reservation["reservation_id"], outcome="completed",
+                              input_tokens=20, output_tokens=10)
+                dispatch = ledger._connect()
+                try:
+                    state = dispatch.execute(
+                        "SELECT status FROM triage_dispatch WHERE audit_id=? AND group_id=? AND stage='deep_agent'",
+                        ("audit-phases", "group-1"),
+                    ).fetchone()[0]
+                finally:
+                    dispatch.close()
+                self.assertEqual(state, "running")
+
+            ledger.finish_group("audit-phases", "group-1", "endpoint-1", "deep_agent", status="completed")
+            usage = ledger.get("audit-phases")["usage"]
+            self.assertEqual(usage["model_calls_allocated"], 5)
+            self.assertEqual(set(usage["by_phase"]), {"quick_screen", "deep_agent", "structured_repair", "skeptic", "report"})
+            self.assertEqual(usage["by_phase"]["report"]["model_calls_completed"], 1)
+
+    def test_existing_budget_ledger_migrates_phase_labels_and_preserves_quick_usage(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger, policy, sha = self.create(directory)
+            ledger.create_audit("audit-legacy-phase", policy, sha)
+            ledger.dispatch_group("audit-legacy-phase", "group-1", "endpoint-1",
+                                  "quick_screen", evidence_gate="ranked_and_selected")
+            reservation = ledger.reserve("audit-legacy-phase", "quick", "endpoint-1", "group-1",
+                                         "quick_screen", max_input_tokens=100, max_output_tokens=50)
+            ledger.settle(reservation["reservation_id"], outcome="completed",
+                          input_tokens=20, output_tokens=10, quick_assessment="investigate")
+            db = ledger._connect()
+            try:
+                db.execute("ALTER TABLE budget_reservation DROP COLUMN phase")
+            finally:
+                db.close()
+
+            migrated = self.BudgetLedger(Path(directory) / "triage-budget.sqlite")
+            db = migrated._connect()
+            try:
+                columns = {row[1] for row in db.execute("PRAGMA table_info(budget_reservation)")}
+                saved_phase = db.execute(
+                    "SELECT phase FROM budget_reservation WHERE audit_id=?", ("audit-legacy-phase",),
+                ).fetchone()[0]
+            finally:
+                db.close()
+            self.assertIn("phase", columns)
+            self.assertEqual(saved_phase, "quick_screen")
+            self.assertEqual(migrated.get("audit-legacy-phase")["usage"]["by_phase"]["quick_screen"]["model_calls_completed"], 1)
 
     def test_strict_cost_fails_closed_without_provider_cap_and_known_not_sent_releases(self):
         from src.workbench.progressive_triage.ledger import BudgetError

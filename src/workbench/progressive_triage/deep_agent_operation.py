@@ -94,6 +94,17 @@ class BudgetedAgentClient:
         self.group_id = group_id
         self.timeout = getattr(client, "timeout", 45)
         self._call_index = 0
+        self._budget_phase = "deep_agent"
+
+    def set_budget_phase(self, request_phase=None):
+        if request_phase in {"structured_repair", "structured_targeted_repair"}:
+            self._budget_phase = "structured_repair"
+        elif request_phase == "skeptic_review":
+            self._budget_phase = "skeptic"
+        elif request_phase == "artifact_generation":
+            self._budget_phase = "report"
+        else:
+            self._budget_phase = "deep_agent"
 
     def create_with_timeout(self, payload, timeout, max_retries=None):
         from ..agent import _usage
@@ -110,6 +121,7 @@ class BudgetedAgentClient:
             self.endpoint_id, self.group_id, "deep_agent",
             max_input_tokens=input_reservation,
             max_output_tokens=output_cap,
+            phase=self._budget_phase,
         )
         if reservation.get("idempotent_replay"):
             raise BudgetError("prior deep Agent request outcome is unknown; request was not replayed")
@@ -141,16 +153,21 @@ def execute_progressive_deep_agent(settings, store, ops, task):
     policy = spec["progressive_policy"]["policy"]
     ledger.dispatch_group(audit_id, group_id, endpoint_id, "deep_agent",
                           evidence_gate="quick_screen_investigate")
-    from ..agent import ProviderConfig, ResponsesClient, execute_agent
-    provider = ProviderConfig.from_env(settings.data_dir)
-    if not provider.configured or provider.fingerprint != spec.get("provider_fingerprint"):
-        raise ValueError("Provider changed after progressive deep-investigation consent")
-    # Opaque retries would spend unreserved Provider calls inside one ledger slot.
-    base = ResponsesClient(provider, max_retries=0)
-    client = BudgetedAgentClient(base, ledger, audit_id=audit_id,
-                                 operation_id=task["id"], endpoint_id=endpoint_id,
-                                 group_id=group_id)
-    result = execute_agent(settings, store, ops, task, client=client)
+    try:
+        from ..agent import ProviderConfig, ResponsesClient, execute_agent
+        provider = ProviderConfig.from_env(settings.data_dir)
+        if not provider.configured or provider.fingerprint != spec.get("provider_fingerprint"):
+            raise ValueError("Provider changed after progressive deep-investigation consent")
+        # Opaque retries would spend unreserved Provider calls inside one ledger slot.
+        base = ResponsesClient(provider, max_retries=0)
+        client = BudgetedAgentClient(base, ledger, audit_id=audit_id,
+                                     operation_id=task["id"], endpoint_id=endpoint_id,
+                                     group_id=group_id)
+        result = execute_agent(settings, store, ops, task, client=client)
+    except Exception:
+        ledger.finish_group(audit_id, group_id, endpoint_id, "deep_agent", status="partial")
+        raise
+    ledger.finish_group(audit_id, group_id, endpoint_id, "deep_agent", status="completed")
     result["progressive_triage"] = {
         "stage": "L3_deep_agent",
         "audit_operation_id": audit_id,

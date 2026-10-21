@@ -114,8 +114,8 @@ export default function IntelligentAuditPolicySettings() {
 
   if (loading) return <Card><Spin /></Card>;
   return <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-    <Alert type="warning" showIcon message="已接入多端点任务的 L0 归并与 L1 排序；模型调度仍未接入"
-      description={`运行状态：${String(integration.grouping_and_ranking || "unknown")}；Worker 额度强制：${String(integration.worker_enforcement || "unknown")}；L2 快速研判：${String(integration.quick_screen_executor || "unknown")}；任务账本：${String(integration.task_budget_ledger || "unknown")}。静态审计仍不调用模型；L2/L3 源码外发须独立预览和授权。美元数值是策略建议，不是 Provider 账单硬封顶。`} />
+    <Alert type="info" showIcon message="L0–L3 渐进式审计策略已接入"
+      description={`运行状态：L0/L1 ${String(integration.grouping_and_ranking || "unknown")}；Worker 门禁 ${String(integration.worker_enforcement || "unknown")}；L2 ${String(integration.quick_screen_executor || "unknown")}；L3 ${String(integration.deep_agent_executor || "unknown")}；任务账本 ${String(integration.task_budget_ledger || "unknown")}。静态审计仍只做本地分析；L2/L3 必须先预览固定源码范围并取得任务级授权。美元预算用于调度参考，Provider 账单没有硬封顶。`} />
     {error && <Alert type="error" showIcon message="策略读取或保存失败" description={error} />}
     <Card title="选择策略" extra={<Tag color={updatedAt ? "green" : "blue"}>{updatedAt ? `已保存 · 修订 ${revision}` : "使用默认标准策略"}</Tag>}>
       <Radio.Group value={profile} onChange={(event) => selectProfile(event.target.value)}>
@@ -153,8 +153,7 @@ export default function IntelligentAuditPolicySettings() {
         <Text>启用漏洞家族覆盖配额</Text>
       </Space>
       <Paragraph type="secondary" style={{ marginTop: 12 }}>
-        日期、区间、分支和矩阵操作结果会按任务冻结的策略分组和排序；当前组数只形成快筛待授权队列，任务账本还没有限制真实 Provider 调用。
-        未选入模型预算的静态候选仍保留供人工查看，不会变成误报或安全结论。
+        日期、区间、分支和矩阵操作结果会按任务冻结的策略分组和排序；L2 快筛与 L3 深度调查使用任务共享账本限制模型调用和 Token 额度。未进入模型预算的静态候选仍保留供人工查看，不会变成误报或安全结论。
       </Paragraph>
       <Space>
         <Button type="primary" onClick={() => void save()} loading={saving} disabled={saving || (isCustom && !changedLimitsValid)}>保存策略</Button>

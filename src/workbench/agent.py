@@ -4219,6 +4219,9 @@ def execute_agent(settings, store, ops, task, client=None):
             request_timeout = min(request_timeout, remaining_seconds)
         call_started = time.monotonic()
         try:
+            set_budget_phase = getattr(client, "set_budget_phase", None)
+            if callable(set_budget_phase):
+                set_budget_phase(request_phase)
             create_with_timeout = getattr(client, "create_with_timeout", None)
             if getattr(client, "supports_per_request_retry_budget", False):
                 response = client.create_with_timeout(
