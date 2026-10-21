@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, Button, Card, Descriptions, Space, Spin, Tag, Typography } from "antd";
 import { api } from "../../api";
 import { go, Hash, State } from "../../components";
-import { sourceSyncSummary } from "./sourceSyncProgress";
+import { sourceSyncRetryAction, sourceSyncSummary } from "./sourceSyncProgress";
 import SourceSyncBatchDetails from "./SourceSyncBatchDetails";
 
 const { Text } = Typography;
@@ -23,6 +23,8 @@ function SingleSourceSyncDetails({ operation }: { operation: OperationRecord }) 
   const [scanState, setScanState] = useState<{ id: string; job: any; loading: boolean; error: string }>({
     id: "", job: null, loading: false, error: "",
   });
+  const [retrying, setRetrying] = useState(false);
+  const [retryError, setRetryError] = useState("");
 
   useEffect(() => {
     if (!scanId) {
@@ -63,6 +65,24 @@ function SingleSourceSyncDetails({ operation }: { operation: OperationRecord }) 
   const scanJob = scanState.id === scanId ? scanState.job : null;
   const scanLoad = scanState.id === scanId ? scanState : { loading: Boolean(scanId), error: "" };
   const summary = sourceSyncSummary(operation, scanJob, scanLoad);
+  const retryAction = sourceSyncRetryAction(operation, scanJob);
+  const retry = async () => {
+    const spec = operation?.spec || {};
+    if (!spec.name || !spec.url) return;
+    setRetrying(true);
+    setRetryError("");
+    try {
+      const created = await api("/operations/source-sync", {
+        repository: spec.name, url: spec.url,
+        timeout_seconds: spec.timeout_seconds, scan_after_sync: spec.scan_after_sync,
+        revision: spec.revision, include_paths: spec.include_paths,
+        detector_ids: spec.detector_ids, audit_mode: spec.audit_mode || "static_only",
+        scan_timeout_seconds: spec.scan_timeout_seconds, memory_mb: spec.memory_mb,
+      });
+      go("/tasks/operations/" + created.id);
+    } catch (error) { setRetryError(String(error)); }
+    finally { setRetrying(false); }
+  };
 
   return <Card size="small" className="section-gap" title="源码同步与扫描进度">
     <Descriptions bordered size="small" column={{ xs: 1, sm: 1, md: 2 }}>
@@ -89,8 +109,15 @@ function SingleSourceSyncDetails({ operation }: { operation: OperationRecord }) 
     </Descriptions>
     {summary.syncError && <Alert className="section-gap" type="error" showIcon
       message="源码同步失败" description={summary.syncError} />}
+    {summary.scanQueueError && <Alert className="section-gap" type="warning" showIcon
+      message="源码已同步，静态扫描未能排队" description={summary.scanQueueError} />}
     {summary.scanError && <Alert className="section-gap" type="warning" showIcon
       message="暂时无法读取静态扫描状态" description="同步结果仍已保存；可刷新页面或打开扫描任务查看最新状态。" />}
+    {retryError && <Alert className="section-gap" type="error" showIcon message="重试任务未创建" description={retryError} />}
+    {retryAction && operation?.spec?.name && operation?.spec?.url && <Button className="section-gap"
+      loading={retrying} disabled={retrying} onClick={() => void retry()}>
+        {retryAction === "sync" ? "重试同步" : "重新同步并扫描"}
+      </Button>}
     {summary.scanId
       ? <Button className="section-gap" type="primary" onClick={() => go("/tasks/" + summary.scanId)}>
           {summary.scanReportAvailable ? "查看静态扫描结果" : "查看静态扫描进度"}

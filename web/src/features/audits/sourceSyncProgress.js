@@ -39,10 +39,29 @@ export function sourceSyncSummary(operation, scanJob = null, scanState = {}) {
     scanCommit: scanJob?.spec?.commit || result.scan_commit || null,
     scanReportAvailable: Boolean(scanJob?.report_sha256),
     scanError: scanState.error || "",
-    syncError: (typeof result.error === "string" && result.error)
-      || (typeof operation?.error === "string" && operation.error) || "",
+    syncError: result.status === "failed" || status === "failed"
+      ? (typeof result.error === "string" && result.error)
+        || (typeof operation?.error === "string" && operation.error) || "源码同步失败"
+      : (typeof operation?.error === "string" && operation.error) || "",
+    scanQueueError: result.status === "completed_with_limitations" && !scanId
+      ? (typeof result.error === "string" && result.error) || "静态扫描未能排队"
+      : (typeof result.scan_error === "string" && result.scan_error) || "",
     limitations: Array.isArray(result.limitations) ? result.limitations : [],
   };
+}
+
+const retryableSyncStatuses = new Set(["failed", "timed_out", "interrupted", "cancelled"]);
+const retryableScanStatuses = new Set(["failed", "timed_out", "interrupted", "cancelled"]);
+
+export function sourceSyncRetryAction(operation, scanJob = null) {
+  const result = operation?.result || {};
+  const syncStatus = typeof result.status === "string" ? result.status : operation?.status;
+  if (retryableSyncStatuses.has(syncStatus)) return "sync";
+  const scanStatus = typeof scanJob?.status === "string" ? scanJob.status : result.scan_status;
+  if (result.scan_job_id && retryableScanStatuses.has(scanStatus)) return "scan";
+  if (result.status === "completed_with_limitations" && !result.scan_job_id
+      && (result.scan_error || result.error)) return "scan";
+  return null;
 }
 
 /**

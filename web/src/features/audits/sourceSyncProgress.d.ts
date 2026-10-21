@@ -1,7 +1,12 @@
 export type SourceSyncOperation = {
   status?: string;
-  spec?: { name?: string };
+  error?: string;
+  spec?: { name?: string; url?: string };
   result?: {
+    status?: string;
+    error?: string;
+    scan_error?: string;
+    scan_status?: string;
     repository?: { name?: string };
     local_head_after_sync?: string;
     advertised_remote_refs?: unknown[];
@@ -39,8 +44,13 @@ export function sourceSyncSummary(
   scanReportAvailable: boolean;
   scanError: string;
   syncError: string;
+  scanQueueError: string;
   limitations: string[];
 };
+export function sourceSyncRetryAction(
+  operation: SourceSyncOperation | null | undefined,
+  scanJob?: SourceSyncScanJob,
+): "sync" | "scan" | null;
 export function sourceSyncBatchRows(
   operation: Record<string, any> | null | undefined,
   scanJobs?: Record<string, any>,

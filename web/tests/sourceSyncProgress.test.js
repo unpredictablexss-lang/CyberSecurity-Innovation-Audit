@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { sourceSyncSummary } from "../src/features/audits/sourceSyncProgress.js";
+import { sourceSyncRetryAction, sourceSyncSummary } from "../src/features/audits/sourceSyncProgress.js";
 
 test("source sync shows queued state without claiming a scan was requested", () => {
   const summary = sourceSyncSummary({
@@ -75,4 +75,23 @@ test("source sync shows a sanitized failure reason from the operation result", (
 
   assert.equal(summary.syncError, "Git clone failed with exit status 128");
   assert.equal(summary.scanStatus, "not_requested");
+});
+
+
+test("single-source retry distinguishes transfer failures from scan failures", () => {
+  assert.equal(sourceSyncRetryAction({ status: "failed", result: { status: "failed" } }), "sync");
+  assert.equal(sourceSyncRetryAction({ status: "completed", result: { scan_job_id: "scan-1" } }, { status: "timed_out" }), "scan");
+  assert.equal(sourceSyncRetryAction({ status: "completed_with_limitations", result: {
+    status: "completed_with_limitations", scan_error: "scan plan unavailable",
+  } }), "scan");
+  assert.equal(sourceSyncRetryAction({ status: "completed", result: { status: "completed", scan_job_id: "scan-1" } }, { status: "completed" }), null);
+});
+
+test("single-source scan enqueue failures are not labeled as Git sync failures", () => {
+  const summary = sourceSyncSummary({ status: "completed_with_limitations", result: {
+    status: "completed_with_limitations", error: "revision unavailable",
+  } });
+
+  assert.equal(summary.syncError, "");
+  assert.equal(summary.scanQueueError, "revision unavailable");
 });
