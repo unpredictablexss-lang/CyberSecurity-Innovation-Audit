@@ -1,3 +1,4 @@
+import { highConfidenceAiSummary } from "../src/features/workbench/riskLabels.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { agentConfidenceLabel, agentScopeLabel, agentVerdictLabel, agentVerdictReasonLabel, analysisStatusLabel, coverageStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, humanReviewStatusColor, humanReviewStatusLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, productStatusLabel, reportLimitationLabel, riskReasonLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../src/features/workbench/riskLabels.js";

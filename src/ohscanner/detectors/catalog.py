@@ -35,8 +35,8 @@ _APPROVED = {
         "factory": lambda: ArkRuntimeTypeSafetyDetector(model=c_line_static_model()),
         "kind": "research_candidate",
         "default_enabled": False,
-        "admission_reason": "research_only_explicit_selection; explicit_selection_required: exact C1 repository/commit/target/creator blob profile only; partial or unsupported source remains unknown",
-        "summary": "C: source-bound Ark Runtime TypedArray static candidates; product impact is unverified",
+        "admission_reason": "research_only_explicit_selection; explicit_selection_required: exact repository/commit/blob/source hash profiles only; partial or unsupported source remains unknown; product impact and independent holdout remain unverified",
+        "summary": "C: source-bound Ark Runtime candidates include Float32Array length and conditional TypedArray.set cross-view writes; product impact is unverified",
     },
     "ohscanner.data.sensitive_exposure": {
         "factory": SensitiveExposureDetector,

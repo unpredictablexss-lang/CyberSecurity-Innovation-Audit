@@ -1,3 +1,4 @@
+import { experimentHoldoutPresentation, validationScopePresentation } from "./experimentEvidence.js";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, Button, Card, Collapse, Descriptions, Empty, List, Progress, Space, Table, Tabs, Tag, Typography, message } from "antd";
 import { api, terminal } from "../../api";
@@ -10,6 +11,7 @@ import SourceSyncDetails from "./SourceSyncDetails";
 import VersionCandidateComparison from "./VersionCandidateComparison";
 import { buildIntelligentReviewView } from "./operationProgressModel.js";
 const { Text } = Typography;
+const importProgressLabels: Record<string,string> = {queued:"等待导入", cloning:"下载源码", fetching:"同步源码", verifying:"核验固定版本", scanning:"静态扫描", completed:"已完成", failed:"失败"};
 export function buildRecentWindowSummary(result: any) {
   if (!result || typeof result !== "object") return null;
   const sourceWindows = Array.isArray(result.windows) ? result.windows.slice(0, 2) : [];
@@ -114,6 +116,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
   const [reviewQueue, setReviewQueue] = useState<any>({ queued_batches: 0, running_batches: 0, queued_candidates: 0, running_candidates: 0 });
   const [error, setError] = useState(""), [busy, setBusy] = useState(false), [agentStatus, setAgentStatus] = useState<any>(null);
   const [agentEvaluation, setAgentEvaluation] = useState<any>(null);
+  const holdoutView = experimentHoldoutPresentation(agentEvaluation?.evidence_evaluation?.holdout);
   const selectedId = useRef<string | null>(operationId || null), live = useRef(true);
   const refresh = useCallback(async () => {
     const [r, d, c, o, a, q] = await Promise.all([api("/repositories/list"), api("/detectors"), api("/cases"), api("/operations"), api("/agent/status"), api("/operations/agent-review-queue/status")]);

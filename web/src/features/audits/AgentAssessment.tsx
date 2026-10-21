@@ -137,9 +137,9 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
     result.structured_answer_validation, result.structured_answer_validation_error_code);
   const obligationReviews = Array.isArray(assessment.obligation_reviews) ? assessment.obligation_reviews : [];
   const toolIssues = agentToolIssues(result.tool_calls);
-  const evidenceGraph = result.evidence_graph || {};
-  const evidenceGraphStages = Array.isArray(evidenceGraph.nodes)
-    ? evidenceGraph.nodes.filter((node: any) => node.kind === "workflow_stage") : [];
+  const rawEvidenceGraph = result.evidence_graph || {};
+  const evidenceGraphStages = Array.isArray(rawEvidenceGraph.nodes)
+    ? rawEvidenceGraph.nodes.filter((node: any) => node.kind === "workflow_stage") : [];
   const obligationByIndex = new Map(obligationReviews.map((item: any) => [item.obligation_index, item]));
   const renderReportedList = (value: any, emptyLabel: string) => {
     if (!Array.isArray(value)) return <Text type="secondary">结果未记录</Text>;

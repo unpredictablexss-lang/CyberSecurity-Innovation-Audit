@@ -1,3 +1,4 @@
+import IntelligentAuditPolicySettings from "./IntelligentAuditPolicySettings";
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Card, Col, Descriptions, Empty, Input, Pagination, Row, Select, Space, Statistic, Table, Tabs, Tag, Tooltip, Typography } from "antd";
 import { api, artifact, terminal } from "../../api";
@@ -338,13 +339,14 @@ export function SettingsView({ repos, detectors, health, refresh, tab }: { repos
         <Repositories repos={repos} roots={health?.target_roots || []} refresh={refresh} embedded />
         <OperationWorkspace view="sync" /></> },
       { key: "capabilities", label: "语言与规则", children: <Capabilities detectors={detectors} embedded /> },
+      { key: "policy", label: "智能审计策略与资源预算", children: <IntelligentAuditPolicySettings /> },
       { key: "agent", label: "Agent / LLM", children: <AgentProviderSettings /> },
       { key: "runtime", label: "Worker 状态", children: <Card title="当前服务状态">
         <Descriptions column={1} items={[
           { key: "health", label: "API", children: health?.status || "未知" },
           { key: "worker", label: "扫描 Worker", children: health ? health.worker_running ? "运行中" : "未运行" : "未知" },
           { key: "concurrency", label: "扫描并发上限", children: health?.limits?.concurrent_scans ?? "未知" },
-          { key: "agent", label: "真实模型", children: health?.capabilities?.agent ? "服务宣告可用，需专项验收" : "未连接；只读调查可单独使用" },
+                { key: "agent", label: "真实模型", children: health?.capabilities?.agent ? "服务宣告可用，需专项验收" : "未连接；只读调查可单独使用" },
           { key: "validation", label: "产品运行时验证", children: health?.capabilities?.runtime_validation ? "服务宣告可用，需核对证据" : "未验收；组件 Harness 单独记录" },
         ]} /><Paragraph type="secondary">模型服务凭据和连接测试位于“Agent / LLM”设置页；此处仅展示 Worker 运行状态。</Paragraph>
         <Button onClick={() => go("/operations")}>更多操作</Button>

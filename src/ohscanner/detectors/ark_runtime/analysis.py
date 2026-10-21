@@ -9,6 +9,7 @@ from dataclasses import asdict, dataclass, replace
 from hashlib import sha256
 from time import perf_counter
 
+from .cross_helper import build_helper_contracts, build_identity_helpers
 from .model import AnalysisBudget, RuntimeTypeModel, OWNER
 from .runtime_ir import build_graph
 from .syntax import parse_functions, walk
@@ -66,7 +67,12 @@ def has_type_origin_flow(function, model):
             callee = node.child_by_field_name('function')
             if callee and callee.type == 'field_expression':
                 creates_typed_array = True
-        elif name == property_name and len(args) == property_arity:
+        elif name == model.same_type_creator[1] and len(args) == model.same_type_creator[2]:
+            callee = node.child_by_field_name('function')
+            if callee and callee.type == 'field_expression':
+                creates_typed_array = True
+        elif ((name == model.store_name and len(args) == len(model.store_types))
+              or (name == property_name and len(args) == property_arity)):
             stores_typed_array_element = True
     return creates_typed_array and stores_typed_array_element
 
@@ -79,7 +85,8 @@ def _unique_observations(items):
     return tuple(unique[key] for key in sorted(unique))
 
 
-def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
+def analyze_unit(unit, *, model=None, budget=None, research_partial=False,
+                 species_read_width_bound=False):
     model, budget = model or RuntimeTypeModel(), budget or AnalysisBudget()
     if model.build_profile != 'assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified':
         return AnalysisResult('limited', 'not_analyzed', limitations=('model_build_profile_unresolved',),
@@ -103,6 +110,8 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
     actual_partial = tree.root_node.has_error
     if actual_partial and not research_partial:
         return AnalysisResult('limited', 'not_analyzed', limitations=('actual_parse_is_partial',))
+    helper_contracts = build_helper_contracts(functions)
+    identity_helpers = build_identity_helpers(functions)
     targets = [f for f in functions if f.qualified_name in model.callers
                or has_type_origin_flow(f, model)]
     if not targets:
@@ -208,7 +217,9 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
                                   tuple(sorted(set(limitations + [str(error)]))), total_steps, model.digest)
         limitations.extend(graph.limitations)
         evaluator = OriginEvaluator(fn, model,
-            ((graph.instructions[i].node.start_byte, graph.instructions[i].node.end_byte) for i in graph.cyclic_nodes))
+            ((graph.instructions[i].node.start_byte, graph.instructions[i].node.end_byte) for i in graph.cyclic_nodes),
+            identity_helpers, helper_contracts,
+            species_read_width_bound=species_read_width_bound)
         host_problems = [(inst, evaluator.unsupported_cpp_effect(inst)) for inst in graph.instructions]
         host_problems = [(inst, problem) for inst, problem in host_problems if problem]
         generated_control = False

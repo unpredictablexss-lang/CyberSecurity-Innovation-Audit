@@ -768,6 +768,12 @@ class SyncRequest(Strict):
     repository: str = Field(pattern=r"^openharmony/[A-Za-z0-9_.-]{1,100}$")
     url: str = Field(min_length=16, max_length=300)
     timeout_seconds: int = Field(default=900, ge=10, le=3600)
+    @field_validator("repository")
+    @classmethod
+    def validate_source_slug(cls, value):
+        validate_repository_slug(value.removeprefix("openharmony/"))
+        return value
+
     scan_after_sync: bool = False
     revision: str = Field(default="HEAD", min_length=1, max_length=200)
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
@@ -1515,7 +1521,7 @@ def _combined_audit_report_markdown(document):
         "- Tree：`" + md(scan["tree"]) + "`",
         "- 静态扫描：" + md(scan["status"]) + "；智能研判：" + md(triage["state"]),
         "- 漏洞确认数：" + str(document["validated_vulnerability"]),
-        "- 模型费用：" + ("平台不设累计 USD 上限；实际计费与配额由 Provider 账户决定" if cost_budget else "未授权自动模型研判"),
+        "- 模型费用：实际计费与配额由 Provider 账户决定；静态模式无模型请求。",
         "",
         "## 风险分层",
         "",
@@ -3709,6 +3715,7 @@ def install_routes(app: FastAPI, settings, store):
                 operations.append(operation)
             elif case_bound:
                 operations.append(operation)
+        operation_page = {"total": len(operations), "truncated": len(operations) > 20}
         operations = operations[:20]
         operation_summaries = []
         for x in operations:
