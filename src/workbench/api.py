@@ -506,7 +506,7 @@ def create_app(settings=None):
             spec["progressive_triage_policy"] = old_policy
         spec["workflow_sha256"] = service.audit_workflow_sha256(
             spec["plan_sha256"], audit_mode,
-            old.get("max_cost_usd"),
+            max_cost_usd=old.get("max_cost_usd"),
             progressive_policy_sha256=(old_policy.get("policy_sha256")
                                        if isinstance(old_policy, dict) else None),
             base_commit=spec.get("base_commit"))
