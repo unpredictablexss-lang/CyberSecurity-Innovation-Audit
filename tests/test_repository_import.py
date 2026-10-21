@@ -19,6 +19,14 @@ from src.workbench.store import Store
 
 
 HEADERS = {"x-ohscanner-client": "workbench-v1"}
+DOTTED_GITCODE_REPOSITORIES = (
+    "kernel_linux_4.19",
+    "kernel_linux_5.10",
+    "third_party_rust_lazy-static.rs",
+    "kernel_linux_6.6",
+    "third_party_decimal.js",
+    ".gitcode",
+)
 
 
 def git(path, *args):
@@ -222,6 +230,82 @@ class RepositoryImportTests(unittest.TestCase):
                 repository_import.subprocess, "Popen", side_effect=clone_local):
             with self.assertRaisesRegex(ValueError, "submodules"):
                 repository_import._fetch_to_stage(stage, "fixture", branch, commit, 30)
+
+    def test_real_dotted_names_are_valid_import_cache_paths_and_reuse(self):
+        for slug in DOTTED_GITCODE_REPOSITORIES:
+            with self.subTest(slug=slug):
+                spec = {**self.spec, "slug": slug, "name": "openharmony/" + slug,
+                        "clone_url": repository_import.approved_clone_url(slug)}
+                with patch.object(repository_import.service, "make_spec", return_value={
+                        "commit": self.commit, "git_tree": self.tree, "timeout_seconds": 30}), patch.object(
+                        repository_import, "_fetch_to_stage", side_effect=self.fake_fetch) as fetch:
+                    first = repository_import.import_and_queue_scan(self.settings, self.store, spec)
+                target = self.cache / "openharmony" / slug / self.commit
+                self.assertTrue(target.is_dir())
+                self.assertEqual(first["cache"], "downloaded")
+                self.assertEqual(fetch.call_count, 1)
+                with patch.object(repository_import.service, "make_spec", return_value={
+                        "commit": self.commit, "git_tree": self.tree, "timeout_seconds": 30}), patch.object(
+                        repository_import, "_fetch_to_stage",
+                        side_effect=AssertionError("cache hit must not fetch")):
+                    second = repository_import.import_and_queue_scan(self.settings, self.store, spec)
+                self.assertEqual(second["cache"], "hit")
+                self.assertNotEqual(first["scan_job"]["id"], second["scan_job"]["id"])
+
+    def test_api_accepts_real_dotted_names_and_returns_422_for_unsafe_slugs(self):
+        from src.workbench.operations import approved_url
+        from src.workbench.source_catalog import approved_clone_url
+        for unsafe_url in (
+            "https://gitcode.com/openharmony/bad%2Fslug.git",
+            "https://gitcode.com/openharmony/%2E%2E.git",
+            "https://gitcode.com/openharmony/bad%5Cslug.git",
+            "https://gitcode.com/openharmony/bad%0Aslug.git",
+        ):
+            with self.subTest(unsafe_url=unsafe_url), self.assertRaises(ValueError):
+                approved_url(unsafe_url)
+        client = TestClient(create_app(self.settings))
+        self.addCleanup(client.close)
+        commit = "1" * 40
+        preview_hash = "2" * 64
+        for slug in DOTTED_GITCODE_REPOSITORIES:
+            with self.subTest(slug=slug), patch(
+                    "src.workbench.operations_api.repository_preview", return_value={"slug": slug}):
+                response = client.post("/api/v1/repositories/official-catalog/preview",
+                                       headers=HEADERS, json={"slug": slug})
+            self.assertEqual(response.status_code, 200, response.text)
+            self.assertEqual(response.json()["slug"], slug)
+            fixed_preview = {"name": "openharmony/" + slug, "catalog_sha256": "3" * 64, "size_kib": 64}
+            with self.subTest(import_slug=slug), patch(
+                    "src.workbench.operations_api.validate_preview", return_value=fixed_preview):
+                imported = client.post("/api/v1/operations/repository-import-scans", headers=HEADERS,
+                                       json={"slug": slug, "branch": "master", "commit": commit,
+                                             "preview_sha256": preview_hash})
+            self.assertEqual(imported.status_code, 201, imported.text)
+            self.assertEqual(Operations(self.store).get(imported.json()["id"])["spec"]["clone_url"],
+                             approved_clone_url(slug))
+            legacy = client.post("/api/v1/operations/source-sync", headers=HEADERS,
+                                 json={"repository": "openharmony/" + slug,
+                                       "url": approved_clone_url(slug)})
+            self.assertEqual(legacy.status_code, 201, legacy.text)
+
+        invalid = ("", ".", "..", "../escape", "nested/repo", "bad" + chr(10) + "slug")
+        for slug in invalid:
+            with self.subTest(unsafe_preview=slug):
+                rejected_preview = client.post("/api/v1/repositories/official-catalog/preview",
+                                               headers=HEADERS, json={"slug": slug})
+            self.assertEqual(rejected_preview.status_code, 422)
+            with self.subTest(unsafe_import=slug):
+                rejected_import = client.post(
+                    "/api/v1/operations/repository-import-scans", headers=HEADERS,
+                    json={"slug": slug, "branch": "master", "commit": commit,
+                          "preview_sha256": preview_hash})
+            self.assertEqual(rejected_import.status_code, 422)
+            with self.subTest(unsafe_legacy=slug):
+                rejected_legacy = client.post(
+                    "/api/v1/operations/source-sync", headers=HEADERS,
+                    json={"repository": "openharmony/" + slug,
+                          "url": "https://gitcode.com/openharmony/" + slug + ".git"})
+            self.assertEqual(rejected_legacy.status_code, 422)
 
     def test_durable_operation_worker_dispatches_repository_import_scan(self):
         ops = Operations(self.store)

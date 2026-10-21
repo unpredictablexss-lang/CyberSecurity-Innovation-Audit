@@ -1,13 +1,22 @@
 const FULL_COMMIT = /^[0-9a-f]{40}$/;
 const SHA256 = /^[0-9a-f]{64}$/;
-const SLUG = /^[A-Za-z0-9_-]{1,100}$/;
+function isSafeRepositorySlug(value) {
+  if (typeof value !== "string" || [...value].length < 1 || [...value].length > 100 ||
+      value === "." || value === ".." || value.includes("/") || value.includes("\\")) {
+    return false;
+  }
+  return ![...value].some((char) => {
+    const codePoint = char.codePointAt(0);
+    return codePoint <= 0x1f || (codePoint >= 0x7f && codePoint <= 0x9f);
+  });
+}
 
 export function canPreviewOfficialRepository({ loading, stale, slug }) {
-  return !loading && !stale && typeof slug === "string" && SLUG.test(slug);
+  return !loading && !stale && isSafeRepositorySlug(slug);
 }
 
 export function pinnedRepositoryImportRequest(preview) {
-  if (!preview || !SLUG.test(preview.slug || "") || !preview.default_branch ||
+  if (!preview || !isSafeRepositorySlug(preview.slug) || !preview.default_branch ||
       !FULL_COMMIT.test(preview.commit || "") || !SHA256.test(preview.preview_sha256 || "")) {
     throw new Error("请先刷新并确认有效的固定版本预览");
   }

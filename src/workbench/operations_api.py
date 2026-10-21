@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Literal
 from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.responses import FileResponse, Response
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from .operations import (approved_url, date_selection, enqueue_branch_comparison, enqueue_range,
                          range_plan, multimode_triage_preview, bind_multimode_triage)
 from .operations_store import Operations, END
@@ -18,7 +18,7 @@ from . import service
 from .agent_guidance import recommend_investigation_route
 from .source_catalog import (CatalogUnavailable, repository_catalog as public_repository_catalog,
                              repository_preview, validate_commit, validate_branch,
-                             validate_preview)
+                             validate_preview, validate_repository_slug)
 
 
 _MARKDOWN_INLINE_SPECIAL_CHARS = frozenset(chr(92) + "*_{}[]()#+-.!|<>~" + chr(96))
@@ -75,17 +75,37 @@ class Strict(BaseModel):
 
 
 class SyncRequest(Strict):
-    repository: str = Field(pattern=r"^openharmony/[A-Za-z0-9_-]{1,100}$")
+    repository: str = Field(min_length=13, max_length=112)
     url: str = Field(min_length=16, max_length=300)
     timeout_seconds: int = Field(default=900, ge=10, le=3600)
 
+    @field_validator("repository")
+    @classmethod
+    def valid_repository_name(cls, value):
+        prefix = "openharmony/"
+        if not value.startswith(prefix):
+            raise ValueError("repository must name one OpenHarmony repository")
+        validate_repository_slug(value[len(prefix):])
+        return value
+
+    @field_validator("url")
+    @classmethod
+    def valid_repository_url(cls, value):
+        approved_url(value)
+        return value
+
 
 class OfficialRepositoryPreviewRequest(Strict):
-    slug: str = Field(pattern=r"^[A-Za-z0-9_-]{1,100}$")
+    slug: str = Field(min_length=1, max_length=100)
+
+    @field_validator("slug")
+    @classmethod
+    def valid_slug(cls, value):
+        return validate_repository_slug(value)
 
 
 class OfficialRepositoryImportRequest(Strict):
-    slug: str = Field(pattern=r"^[A-Za-z0-9_-]{1,100}$")
+    slug: str = Field(min_length=1, max_length=100)
     branch: str = Field(min_length=1, max_length=200)
     commit: str = Field(pattern=r"^[0-9a-f]{40}$")
     preview_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
@@ -94,6 +114,11 @@ class OfficialRepositoryImportRequest(Strict):
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
     import_timeout_seconds: int = Field(default=1800, ge=30, le=3600)
+
+    @field_validator("slug")
+    @classmethod
+    def valid_slug(cls, value):
+        return validate_repository_slug(value)
 
 
 class EndpointTriageApproval(Strict):
@@ -800,10 +825,15 @@ def install_routes(app: FastAPI, settings, store):
 
     @router.post("/operations/source-sync", status_code=201)
     def source_sync(body: SyncRequest):
+        prefix = "openharmony/"
+        if not body.repository.startswith(prefix):
+            raise ValueError("repository must name one OpenHarmony repository")
+        slug = validate_repository_slug(body.repository[len(prefix):])
         url = approved_url(body.url)
-        expected = "/" + body.repository + (".git" if body.url.endswith(".git") else "")
-        from urllib.parse import urlsplit
-        if urlsplit(url).path != expected:
+        from urllib.parse import quote, urlsplit
+        path = urlsplit(url).path
+        expected = "/" + prefix + quote(slug, safe="") + (".git" if path.endswith(".git") else "")
+        if path != expected:
             raise ValueError("repository URL path must match the approved repository name")
         return ops.create("source_sync", {"name": body.repository, "url": url,
                                           "timeout_seconds": body.timeout_seconds})
@@ -820,12 +850,13 @@ def install_routes(app: FastAPI, settings, store):
     @router.post("/repositories/official-catalog/preview")
     def official_repository_preview(body: OfficialRepositoryPreviewRequest):
         try:
-            return repository_preview(settings, body.slug)
+            return repository_preview(settings, validate_repository_slug(body.slug))
         except CatalogUnavailable as exc:
             raise HTTPException(status_code=503, detail=str(exc)) from None
 
     @router.post("/operations/repository-import-scans", status_code=201)
     def import_repository_and_scan(body: OfficialRepositoryImportRequest):
+        validate_repository_slug(body.slug)
         branch = validate_branch(body.branch)
         commit = validate_commit(body.commit)
         try:

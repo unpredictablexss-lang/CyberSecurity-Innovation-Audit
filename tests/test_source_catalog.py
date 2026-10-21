@@ -1,11 +1,38 @@
 import json
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
+from urllib.parse import quote
 
 from src.workbench import source_catalog as catalog
 from src.workbench.settings import Settings
+
+
+DOTTED_GITCODE_REPOSITORIES = (
+    "kernel_linux_4.19",
+    "kernel_linux_5.10",
+    "third_party_rust_lazy-static.rs",
+    "kernel_linux_6.6",
+    "third_party_decimal.js",
+    ".gitcode",
+)
+
+
+def api_row(slug):
+    return {
+        "path": slug,
+        "namespace": {"path": "openharmony"},
+        "repo_type": "code",
+        "public": True,
+        "private": False,
+        "default_branch": "master",
+        "description": "fixture",
+        "language": "C++",
+        "pushed_at": "2026-10-21",
+        "size": 128,
+    }
 
 
 class SourceCatalogTests(unittest.TestCase):
@@ -74,6 +101,53 @@ class SourceCatalogTests(unittest.TestCase):
         self.assertIn("尚未独立验证", preview["tree_note"])
         self.assertEqual(len(preview["preview_sha256"]), 64)
         self.assertIn("独立身份认证", preview["provenance"]["identity_note"])
+
+    def test_real_dotted_names_survive_catalog_cache_and_preview_parameters(self):
+        records = catalog._normalize_page([api_row(slug) for slug in DOTTED_GITCODE_REPOSITORIES])
+        self.assertEqual({row["slug"] for row in records}, set(DOTTED_GITCODE_REPOSITORIES))
+        for row in records:
+            encoded = quote(row["slug"], safe="")
+            self.assertEqual(row["web_url"], "https://gitcode.com/openharmony/" + encoded)
+            self.assertEqual(row["clone_url"], "https://gitcode.com/openharmony/" + encoded + ".git")
+
+        saved = {"items": records, "total_count": 808, "saved_epoch": time.time(),
+                 "catalog_sha256": "a" * 64}
+        catalog._save_cache(self.settings, saved)
+        catalog._MEMORY_CACHE.clear()
+        with patch.object(catalog, "_fetch_catalog_pages",
+                          side_effect=AssertionError("fresh catalog cache should avoid network")):
+            listing = catalog.repository_catalog(self.settings, per_page=100)
+        self.assertEqual({row["slug"] for row in listing["items"]}, set(DOTTED_GITCODE_REPOSITORIES))
+        self.assertFalse(listing["stale"])
+        self.assertEqual(catalog._read_saved_cache(self.settings)["items"], records)
+
+        commit = "1" * 40
+        tree_sha = "2" * 40
+        for slug in DOTTED_GITCODE_REPOSITORIES:
+            row = next(item for item in records if item["slug"] == slug)
+            snapshot = {"items": [row], "catalog_sha256": "a" * 64, "stale": False}
+            with self.subTest(slug=slug), patch.object(
+                    catalog, "catalog_snapshot", return_value=snapshot), patch.object(
+                    catalog, "_request_json", side_effect=[
+                        ({"name": "master", "commit": {"id": commit}}, {}),
+                        ({"tree": [{"path": "src", "type": "tree", "sha": tree_sha}]}, {}),
+                    ]) as request:
+                preview = catalog.repository_preview(self.settings, slug)
+            encoded = quote(slug, safe="")
+            self.assertEqual(preview["slug"], slug)
+            self.assertEqual(preview["clone_url"], "https://gitcode.com/openharmony/" + encoded + ".git")
+            self.assertEqual(request.call_args_list[0].args[0],
+                             "/repos/openharmony/" + encoded + "/branches/master")
+            self.assertEqual(request.call_args_list[1].args[0],
+                             "/repos/openharmony/" + encoded + "/git/trees/" + commit)
+
+    def test_slug_rejects_only_empty_traversal_separators_and_controls(self):
+        invalid = ("", ".", "..", "../repo", "repo/sub", "repo" + chr(92) + "sub",
+                   "repo" + chr(10) + "name", "repo" + chr(0x85) + "name", "x" * 101)
+        for value in invalid:
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                catalog.validate_repository_slug(value)
+        self.assertEqual(catalog._normalize_page([api_row("../bad"), api_row("bad/name")]), [])
 
     def test_clone_url_rejects_path_escape_and_branch_traversal(self):
         with self.assertRaisesRegex(ValueError, "repository name"):

@@ -8,6 +8,7 @@ import signal
 import subprocess
 import time
 import uuid
+from urllib.parse import quote
 
 from . import service
 from .source_catalog import approved_clone_url, validate_branch, validate_commit
@@ -209,11 +210,12 @@ def import_and_queue_scan(settings, store, spec):
         fcntl.flock(lock, fcntl.LOCK_EX)
         root = None
         target = None
+        cache_component = quote(slug, safe="")
         for configured in settings.repository_cache_roots:
             try:
                 candidate_root = _safe_cache_root(configured)
                 candidate_namespace = candidate_root / "openharmony"
-                candidate_family = candidate_namespace / slug
+                candidate_family = candidate_namespace / cache_component
                 candidate_target = candidate_family / commit
                 if (candidate_namespace.is_symlink() or candidate_family.is_symlink()
                         or candidate_target.is_symlink()):
@@ -235,7 +237,7 @@ def import_and_queue_scan(settings, store, spec):
         namespace.mkdir(mode=0o700, exist_ok=True)
         if namespace.resolve(strict=True) != namespace:
             raise ValueError("repository cache namespace contains a symlink")
-        family = namespace / slug
+        family = namespace / cache_component
         if family.is_symlink():
             raise ValueError("repository cache path cannot be a symlink")
         family.mkdir(mode=0o700, exist_ok=True)

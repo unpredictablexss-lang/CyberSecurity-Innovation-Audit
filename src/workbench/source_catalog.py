@@ -9,6 +9,7 @@ from pathlib import Path
 import re
 import threading
 import time
+import unicodedata
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlencode
 from urllib.request import HTTPRedirectHandler, Request, build_opener
@@ -22,9 +23,27 @@ CATALOG_TTL_SECONDS = 300
 MAX_CATALOG_PAGES = 20
 MAX_PAGE_BYTES = 2 * 1024 * 1024
 MAX_TOTAL_BYTES = 32 * 1024 * 1024
-_SLUG = re.compile(r"^[A-Za-z0-9_-]{1,100}$")
 _BRANCH = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_./-]{0,199}$")
 _SHA = re.compile(r"^[0-9a-f]{40}$")
+
+
+def is_safe_repository_slug(value):
+    """Accept one GitCode path segment; dots are valid except for traversal segments."""
+    return (
+        isinstance(value, str)
+        and 1 <= len(value) <= 100
+        and value not in {".", ".."}
+        and all("/" != char and "\\" != char and unicodedata.category(char) != "Cc"
+                for char in value)
+    )
+
+
+def validate_repository_slug(value):
+    if not is_safe_repository_slug(value):
+        raise ValueError("invalid repository name")
+    return value
+
+
 _CACHE_LOCK = threading.Lock()
 _MEMORY_CACHE = {}
 
@@ -72,7 +91,7 @@ def _normalize_page(rows):
         slug = row.get("path")
         if (namespace.get("path") != "openharmony" or row.get("repo_type") != "code"
                 or row.get("public") is not True or row.get("private") is True
-                or not isinstance(slug, str) or not _SLUG.fullmatch(slug)
+                or not is_safe_repository_slug(slug)
                 ):
             continue
         branch = row.get("default_branch")
@@ -88,8 +107,8 @@ def _normalize_page(rows):
             "fork": bool(row.get("fork", False)),
             "size_kib": (row.get("size") if isinstance(row.get("size"), int)
                          and not isinstance(row.get("size"), bool) and row.get("size") >= 0 else None),
-            "web_url": "https://gitcode.com/openharmony/" + slug,
-            "clone_url": "https://gitcode.com/openharmony/" + slug + ".git",
+            "web_url": "https://gitcode.com/openharmony/" + quote(slug, safe=""),
+            "clone_url": approved_clone_url(slug),
             "catalog_source": "GitCode OpenHarmony public code repository listing",
         })
     return normalized
@@ -142,7 +161,7 @@ def _read_saved_cache(settings):
         records = value.get("items")
         saved = float(value.get("saved_epoch"))
         if (not isinstance(records, list) or len(records) > 2000
-                or any(not isinstance(row, dict) or not _SLUG.fullmatch(str(row.get("slug", ""))) for row in records)):
+                or any(not isinstance(row, dict) or not is_safe_repository_slug(row.get("slug")) for row in records)):
             return None
         return {"items": records, "total_count": int(value.get("total_count", len(records))),
                 "saved_epoch": saved, "catalog_sha256": value.get("catalog_sha256")}
@@ -224,7 +243,7 @@ def repository_catalog(settings, *, query="", page=1, per_page=50, refresh=False
 
 
 def _catalog_entry(settings, slug):
-    if not isinstance(slug, str) or not _SLUG.fullmatch(slug):
+    if not is_safe_repository_slug(slug):
         raise ValueError("invalid OpenHarmony repository name")
     snapshot = catalog_snapshot(settings)
     if snapshot.get("stale"):
@@ -272,7 +291,7 @@ def repository_preview(settings, slug):
         "commit_date": str(commit_row.get("committed_date") or "")[:80],
         "tree_note": "此处为 GitCode API 返回的目录项预览，尚未独立验证。完整根 Tree SHA 会在本地取得固定 Commit 后由 Git 对象核验并写入扫描任务。",
         "provenance": {"source": "GitCode public organization repository API",
-                       "branch_api": API_ROOT + "/repos/openharmony/" + slug + "/branches/" + branch,
+                       "branch_api": API_ROOT + "/repos/openharmony/" + quote(slug, safe="") + "/branches/" + quote(branch, safe=""),
                        "documentation": BRANCH_DOC,
                        "identity_note": "组织目录和 API 元数据说明来源，不等同于独立身份认证。"},
     }
@@ -287,9 +306,9 @@ def validate_preview(settings, slug, branch, commit, preview_sha256):
 
 
 def approved_clone_url(slug):
-    if not isinstance(slug, str) or not _SLUG.fullmatch(slug):
+    if not is_safe_repository_slug(slug):
         raise ValueError("invalid OpenHarmony repository name")
-    return "https://gitcode.com/openharmony/" + slug + ".git"
+    return "https://gitcode.com/openharmony/" + quote(slug, safe="") + ".git"
 
 
 def validate_branch(value):
