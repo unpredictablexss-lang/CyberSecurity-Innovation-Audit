@@ -77,6 +77,34 @@ def build_progressive_status(settings, ops, audit_id: str, *, store=None) -> dic
                              "result": result_row.get("result") if result_row else None}
                 latest_by_group.setdefault(group_id, {})["quick_screen"] = synthetic
             continue
+        if child.get("kind") == "progressive_deep_agent_batch":
+            child_result = None
+            if child.get("result_sha256"):
+                try:
+                    child_result = ops.result(child["id"])
+                except (KeyError, OSError, ValueError):
+                    child_result = None
+            results_by_group = {
+                row.get("group_id"): row for row in child_result.get("groups", [])
+                if isinstance(row, dict) and isinstance(row.get("group_id"), str)
+            } if isinstance(child_result, dict) else {}
+            for entry in child_spec.get("items", []):
+                item_spec = entry.get("spec") if isinstance(entry, dict) else None
+                group_id = item_spec.get("progressive_group_id") if isinstance(item_spec, dict) else None
+                if not isinstance(group_id, str):
+                    continue
+                result_row = results_by_group.get(group_id)
+                batch_active = child.get("status") in {"queued", "running"}
+                synthetic = {"id": child["id"], "kind": "agent_investigation",
+                             "created_at": child.get("created_at", ""), "spec": item_spec,
+                             "status": ("running" if batch_active and child.get("status") == "running"
+                                        else "queued" if batch_active
+                                        else "completed" if result_row and result_row.get("state") == "completed"
+                                        else "completed_with_limitations" if result_row
+                                        else "not_started_candidate"),
+                             "result": result_row.get("result") if result_row else None}
+                latest_by_group.setdefault(group_id, {})["deep_agent"] = synthetic
+            continue
         group = child_spec.get("group") if isinstance(child_spec.get("group"), dict) else {}
         group_id = (group.get("group_id") if child.get("kind") == "progressive_quick_screen"
                     else child_spec.get("progressive_group_id"))

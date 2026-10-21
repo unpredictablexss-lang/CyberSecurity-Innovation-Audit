@@ -24,7 +24,7 @@
 | 策略设置 | `progressive_triage/policy.py`：四档和自定义严格校验、私有版本化文件、原子替换、审计历史与 revision 冲突；多端点操作创建时持久化不可变策略快照；智能 consent 绑定策略 SHA | 每次保存只影响新任务；只读排序预算仍不等于真实模型调用额度 |
 | L0 归并 | `grouping.py` 生成可逆 manifest 和 SHA；固定来源、提交、报告、文件源码哈希、候选定位满足强条件才做重复归并；root-cause 候选组额外要求确定性源分析字段；多端点 Operation Worker 已调用 | 不使用 CWE/路径/行号/模型文本单独合并；来源哈希或字段不全的观察保持独立；快照单任务尚未接入 |
 | L1 排序 | `ranking.py` 对来源绑定、局部安全事实、未决义务、初判危害、版本变化排序；多端点 Operation 使用冻结策略并输出选择理由 | 只列优先组，不触发模型；unknown/partial 保留且不自动入选；快照单任务尚未接入 |
-| L2/L3/预算 | L2 `/operations/progressive-quick-screens/{preview,start}` 按固定 report/source SHA、冻结策略/L1 选择、Provider、脱敏版本、证据、nonce 和过期时间绑定授权；Worker 执行一次 no-tools 请求。L3 `/operations/progressive-deep-investigations/{preview,start}` 仅接受完成且建议 `investigate` 的 L2 结果，重新展示固定 Commit 的只读 Agent 发送范围并要求单独勾选授权；Worker 复用现有 Agent/Skeptic/报告流程，逐次请求经过父任务 SQLite 账本预留/结算，Provider 重试关闭，未知结果保守占额且不重放 | L2/L3 都是逐组手动预览和授权；没有自动队列。父任务预算和取消门已接到 L2/L3 Worker；完整的撤权联动、Provider 崩溃后的外部账单核对、自动调度及真实 Provider 验收仍未完成。美元限制仍为 `advisory_only` |
+| L2/L3/预算 | L2 `/operations/progressive-quick-screens/{preview,start}` 与批量入口按固定 report/source SHA、冻结策略/L1 选择、Provider、脱敏版本、证据、nonce 和过期时间绑定授权；Worker 执行 no-tools 请求。L3 单组入口与 `/operations/progressive-deep-investigation-batches/{preview,start}` 仅接受完成且建议 `investigate` 的 L2 结果，展示逐组固定 Commit、上下文、只读工具范围和预算，并要求单独勾选授权；批次 Worker 串行复用现有 Agent/Skeptic/报告流程，逐次请求经过父任务 SQLite 账本预留/结算，Provider 重试关闭，未知结果保守占额且不重放 | L2/L3 任务级批次需分别预览和授权，不会自动外发；批次按顺序执行，不提供并发加速。父任务预算和取消门已接到 L2/L3 Worker；完整的撤权联动、Provider 崩溃后的外部账单核对、自动调度及真实 Provider 验收仍未完成。美元限制仍为 `advisory_only` |
 | 风险中心设置 UI | `IntelligentAuditPolicySettings.tsx` 可读取/保存策略并显示集成状态 | 设置可见不代表审计使用它；三类创建表单、固定 consent hash、任务详情状态和继续调查尚未接线 |
 
 ## 冲突与集成顺序
@@ -87,7 +87,7 @@ flowchart TD
 | Phase 1 | policy 预设/校验/持久化/API、纯函数 grouping/ranking、设置页、500 候选控制测试 | 基础模块完成；本分支把 L0/L1 接到四类多端点 Operation。策略 revision/hash、每端点 SHA、500 全量保留/预算选择有测试 |
 | Phase 2 | L2 独立 operation 与状态/usage 持久化、preview/start 用户授权 | 已接入单扫描及四类多端点审计候选级 API→Worker；多端点使用父任务冻结策略与完成的 L0/L1 选择。mock Provider 覆盖未授权零请求、来源/策略/排序变化拒绝、严格 schema、no-tools、usage 结算、重复执行不重放、错误保留 candidate；真实 Provider 未调用 |
 | Phase 3 | 父 Operation 账本与真实调度门 | SQLite 事务预留/结算覆盖 L2/L3 单扫描及多端点父审计；组级幂等、并发/token/call/time 限制；父任务取消传播。L3 只在 L2 `investigate` 后二次预览授权，并复用现有 Agent；真实 Provider 崩溃后的外部账单核对与全链撤权仍未验收；USD 只有 advisory |
-| Phase 4 | 三类审计与现有 Agent/Risk UI 接线 | 快照/日期/分支/矩阵 × static/intelligent API→Worker；端点 SHA 独立、每条 selected/unselected/status/reason 可追溯；详情页已连接 L2→单独授权的 L3 操作。浏览器端到端与三类真实界面验收仍待完成 |
+| Phase 4 | 三类审计与现有 Agent/Risk UI 接线 | 快照/日期/分支/矩阵 × static/intelligent API→Worker；端点 SHA 独立、每条 selected/unselected/status/reason 可追溯；详情页已连接任务级 L2 批次→单独授权的 L3 批次和逐组结果。浏览器端到端与三类真实界面验收仍待完成 |
 | Phase 5 | 全量 QA、浏览器、真实 Provider 小样本与冻结 benchmark | 仓库全套 Python/Web/TypeScript/构建；mock E2E；经授权的真实 Provider；三类浏览器流程；vulnerable/fixed/safe frozen data；未执行项明确 unknown |
 
-交付硬约束：静态模式零模型外发；候选不因分组、未选或失败而删除；分数/模型意见不改变漏洞确认状态；不重写 Agent 主循环或 A/B/C/D Detector；不将 synthetic fixture、mock Provider 或组件 Harness 写成产品准确率/漏洞确认。L2/L3 目前逐组预览并显式授权，未启用批量自动排队；L3 只接受 L2 `investigate`。Phase 5 全量 QA、浏览器验收、经授权的真实 Provider 小样本与冻结 benchmark 仍未完成。
+交付硬约束：静态模式零模型外发；候选不因分组、未选或失败而删除；分数/模型意见不改变漏洞确认状态；不重写 Agent 主循环或 A/B/C/D Detector；不将 synthetic fixture、mock Provider 或组件 Harness 写成产品准确率/漏洞确认。L2/L3 批次都必须对各自完整清单逐项预览并显式授权，L3 只接受 L2 `investigate`，执行串行且受任务级账本控制。Phase 5 全量 QA、浏览器验收、经授权的真实 Provider 小样本与冻结 benchmark 仍未完成。

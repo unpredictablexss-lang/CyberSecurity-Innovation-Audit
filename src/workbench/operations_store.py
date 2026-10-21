@@ -291,7 +291,7 @@ class Operations:
                     and row["consent_sha256"] == consent_sha256)
 
     def create(self, kind, spec):
-        if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison", "progressive_quick_screen", "progressive_quick_screen_batch"}:
+        if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison", "progressive_quick_screen", "progressive_quick_screen_batch", "progressive_deep_agent_batch"}:
             raise ValueError("unknown operation kind")
         if kind == "progressive_quick_screen":
             from .progressive_triage.contracts import SHA256_RE, content_sha256
@@ -427,6 +427,115 @@ class Operations:
                     or manifest.get("provider_fingerprint") != spec.get("provider_fingerprint")
                     or manifest.get("model") != spec.get("provider_model")):
                 raise ValueError("task-level progressive quick-screen consent expired or Provider binding changed")
+        if kind == "progressive_deep_agent_batch":
+            from .progressive_triage.contracts import SHA256_RE, content_sha256
+            from .progressive_triage.policy import validate_policy, policy_envelope
+            manifest = spec.get("consent_manifest") if isinstance(spec, dict) else None
+            items = spec.get("items") if isinstance(spec, dict) else None
+            required = ("audit_operation_id", "l2_batch_operation_id", "l2_batch_result_sha256",
+                        "consent_nonce", "consent_sha256", "consent_expires_at")
+            if (not isinstance(spec, dict) or spec.get("source_submission_approved") is not True
+                    or any(not isinstance(spec.get(name), str) or not spec[name] for name in required)
+                    or not SHA256_RE.fullmatch(spec["consent_sha256"])
+                    or not SHA256_RE.fullmatch(spec["l2_batch_result_sha256"])
+                    or len(spec["consent_nonce"]) != 32
+                    or any(ch not in "0123456789abcdef" for ch in spec["consent_nonce"])
+                    or not isinstance(spec.get("progressive_policy"), dict)
+                    or not isinstance(manifest, dict) or not isinstance(items, list)
+                    or not 1 <= len(items) <= 100
+                    or content_sha256(manifest) != spec["consent_sha256"]
+                    or manifest.get("audit_operation_id") != spec["audit_operation_id"]
+                    or manifest.get("l2_batch_operation_id") != spec["l2_batch_operation_id"]
+                    or manifest.get("l2_batch_result_sha256") != spec["l2_batch_result_sha256"]
+                    or manifest.get("consent_nonce") != spec["consent_nonce"]
+                    or manifest.get("consent_expires_at") != spec["consent_expires_at"]):
+                raise ValueError("task-level progressive deep-Agent consent is incomplete or invalid")
+            try:
+                policy = validate_policy(spec["progressive_policy"].get("policy"))
+            except ValueError as error:
+                raise ValueError("task-level progressive deep-Agent policy is invalid") from error
+            policy_sha = policy_envelope(policy)["policy_sha256"]
+            if (policy_sha != spec["progressive_policy"].get("policy_sha256")
+                    or policy_sha != manifest.get("policy_sha256")
+                    or len(items) > policy["limits"]["deep_groups_per_audit"]):
+                raise ValueError("task-level progressive deep-Agent policy or quota changed")
+            try:
+                expiry = datetime.fromisoformat(spec["consent_expires_at"].replace("Z", "+00:00"))
+            except (AttributeError, TypeError, ValueError):
+                raise ValueError("task-level progressive deep-Agent consent expiry is invalid") from None
+            if (expiry.tzinfo is None or expiry <= datetime.now(timezone.utc)
+                    or manifest.get("provider_fingerprint") != spec.get("provider_fingerprint")
+                    or manifest.get("model") != spec.get("provider_model")):
+                raise ValueError("task-level progressive deep-Agent consent expired or Provider changed")
+            try:
+                l2 = self.get(spec["l2_batch_operation_id"])
+                l2_result = self.result(spec["l2_batch_operation_id"])
+            except (KeyError, ValueError, OSError):
+                raise ValueError("task-level progressive deep-Agent L2 batch is missing or unverifiable") from None
+            if (l2.get("kind") != "progressive_quick_screen_batch"
+                    or l2.get("status") not in {"completed", "completed_with_limitations"}
+                    or l2.get("result_sha256") != spec["l2_batch_result_sha256"]
+                    or l2.get("spec", {}).get("audit_operation_id") != spec["audit_operation_id"]
+                    or l2.get("spec", {}).get("progressive_policy") != spec["progressive_policy"]):
+                raise ValueError("task-level progressive deep-Agent batch is not bound to its fixed L2 result")
+            l2_items = {row.get("group_id"): row for row in l2["spec"].get("items", [])
+                        if isinstance(row, dict)}
+            l2_results = {row.get("group_id"): row for row in l2_result.get("groups", [])
+                          if isinstance(row, dict)}
+            expected = []
+            group_ids = set()
+            for item in items:
+                child = item.get("spec") if isinstance(item, dict) else None
+                group_id = item.get("group_id") if isinstance(item, dict) else None
+                l2_item = l2_items.get(group_id)
+                l2_row = l2_results.get(group_id)
+                l2_child = l2_item.get("spec") if isinstance(l2_item, dict) else None
+                if (not isinstance(child, dict) or not isinstance(group_id, str)
+                        or group_id in group_ids or not isinstance(l2_child, dict)
+                        or not isinstance(l2_row, dict) or l2_row.get("state") != "completed"
+                        or l2_row.get("quick_assessment") != "investigate"
+                        or child.get("progressive_group_id") != group_id
+                        or child.get("progressive_audit_operation_id") != spec["audit_operation_id"]
+                        or child.get("progressive_quick_screen_operation_id") != spec["l2_batch_operation_id"]
+                        or child.get("progressive_quick_screen_result_sha256") != spec["l2_batch_result_sha256"]
+                        or child.get("progressive_quick_screen_batch_group_id") != group_id
+                        or child.get("progressive_policy") != spec["progressive_policy"]
+                        or child.get("job_id") != l2_child.get("job_id")
+                        or child.get("candidate_id") != l2_child.get("candidate_id")
+                        or child.get("report_sha256") != l2_child.get("authorization", {}).get("report_sha256")
+                        or not SHA256_RE.fullmatch(child.get("progressive_consent_sha256", ""))
+                        or not SHA256_RE.fullmatch(child.get("source_consent_sha256", ""))
+                        or child.get("provider_fingerprint") != spec.get("provider_fingerprint")
+                        or child.get("provider_model") != spec.get("provider_model")):
+                    raise ValueError("an L3 member is not bound to a completed investigate L2 group")
+                group_ids.add(group_id)
+                expected.append({
+                    "group_id": group_id,
+                    "progressive_consent_sha256": child["progressive_consent_sha256"],
+                    "source_consent_sha256": child["source_consent_sha256"],
+                    "job_id": child["job_id"], "candidate_id": child["candidate_id"],
+                    "report_sha256": child["report_sha256"], "source_commit": child.get("source_commit"),
+                })
+            if manifest.get("items") != expected:
+                raise ValueError("task-level L3 manifest does not match its reviewed group scopes")
+            audit_id = spec["audit_operation_id"]
+            if audit_id == items[0]["spec"].get("job_id"):
+                job = self.store.job(audit_id)
+                job_spec = job.get("spec") if isinstance(job.get("spec"), dict) else {}
+                if (job.get("status") not in {"completed", "completed_with_limitations"}
+                        or job_spec.get("audit_mode") == "static_only"
+                        or job_spec.get("progressive_triage_policy") != spec["progressive_policy"]):
+                    raise ValueError("task-level L3 batch is not bound to its intelligent snapshot")
+            else:
+                parent = self.get(audit_id)
+                if (parent.get("kind") not in {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}
+                        or parent.get("status") not in {"completed", "completed_with_limitations"}
+                        or parent.get("cancel_requested") is True
+                        or parent.get("spec", {}).get("audit_mode") == "static_only"
+                        or parent.get("spec", {}).get("progressive_triage_policy") != spec["progressive_policy"]
+                        or any(item["spec"].get("job_id") not in parent.get("spec", {}).get("scan_ids", [])
+                               for item in items)):
+                    raise ValueError("task-level L3 batch is not bound to its frozen parent audit")
         if kind == "version_candidate_comparison":
             required = ("from_commit", "from_candidate_id", "to_commit", "to_candidate_id",
                         "consent_nonce", "consent_sha256", "consent_expires_at",
@@ -710,17 +819,18 @@ class Operations:
             batch_query = "SELECT id FROM smart_triage_batches WHERE audit_id=?"
             batch_args = [audit_id]
             operation_rows = db.execute(
-                "SELECT id,kind,status,spec FROM operations WHERE kind IN ('agent_investigation','progressive_quick_screen_batch')"
+                "SELECT id,kind,status,spec FROM operations WHERE kind IN ('agent_investigation','progressive_quick_screen_batch','progressive_deep_agent_batch')"
             ).fetchall()
             matching_operations = []
             for row in operation_rows:
                 spec = json.loads(row["spec"])
-                if row["kind"] == "progressive_quick_screen_batch":
+                if row["kind"] in {"progressive_quick_screen_batch", "progressive_deep_agent_batch"}:
                     matches_job = any(
                         isinstance(item, dict)
                         and isinstance(item.get("spec"), dict)
                         and item["spec"].get("job_id") == audit_id
-                        and (report_sha256 is None or item["spec"].get("authorization", {}).get("report_sha256") == report_sha256)
+                        and (report_sha256 is None or item["spec"].get("authorization", {}).get("report_sha256") == report_sha256
+                             or item["spec"].get("report_sha256") == report_sha256)
                         for item in spec.get("items", [])
                     )
                 else:
@@ -1122,14 +1232,14 @@ class Operations:
             raise ValueError("invalid progressive audit ID")
         with self.store.connect() as db:
             rows = list(db.execute(
-                "SELECT * FROM operations WHERE kind IN ('progressive_quick_screen','progressive_quick_screen_batch','agent_investigation') ORDER BY created_at",
+                "SELECT * FROM operations WHERE kind IN ('progressive_quick_screen','progressive_quick_screen_batch','agent_investigation','progressive_deep_agent_batch') ORDER BY created_at",
             ))
         matches = []
         for raw in rows:
             item = self.row(raw)
             spec = item.get("spec") if isinstance(item.get("spec"), dict) else {}
             bound_audit = (spec.get("audit_operation_id") if item["kind"] in {
-                "progressive_quick_screen", "progressive_quick_screen_batch"}
+                "progressive_quick_screen", "progressive_quick_screen_batch", "progressive_deep_agent_batch"}
                            else spec.get("progressive_audit_operation_id"))
             if bound_audit == audit_id:
                 matches.append(item)
@@ -1359,10 +1469,10 @@ class Operations:
             targets = [row]
             if row["kind"] in {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}:
                 for item in db.execute(
-                        "SELECT * FROM operations WHERE kind IN ('progressive_quick_screen','progressive_quick_screen_batch','agent_investigation')"):
+                        "SELECT * FROM operations WHERE kind IN ('progressive_quick_screen','progressive_quick_screen_batch','agent_investigation','progressive_deep_agent_batch')"):
                     child_spec = json.loads(item["spec"])
                     child_audit = (child_spec.get("audit_operation_id")
-                                   if item["kind"] in {"progressive_quick_screen", "progressive_quick_screen_batch"}
+                                   if item["kind"] in {"progressive_quick_screen", "progressive_quick_screen_batch", "progressive_deep_agent_batch"}
                                    else child_spec.get("progressive_audit_operation_id"))
                     if child_audit == key:
                         targets.append(self.row(item))

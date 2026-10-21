@@ -40,6 +40,7 @@ def _public_state(state: dict[str, Any]) -> dict[str, Any]:
             "quick_screen_executor": "task_level_explicit_consent_batch_and_individual_explicit_consent",
             "quick_screen_batch_max_items": 1_000,
             "quick_screen_batch_execution": "sequential_shared_task_budget_stop_on_cancel_or_gate",
+            "deep_agent_executor": "task_level_explicit_scope_consent_sequential_existing_agent_with_shared_budget",
             "task_budget_ledger": "shared_across_fixed_endpoints_for_l2_and_l3",
             "billing_hard_cap": False,
             "all_candidates_preserved": True,

@@ -9,6 +9,7 @@ import AgentAssessment from "./AgentAssessment";
 import AgentBlindReview from "./AgentBlindReview";
 import SourceSyncDetails from "./SourceSyncDetails";
 import ProgressiveDeepInvestigationAction from "./ProgressiveDeepInvestigationAction";
+import ProgressiveDeepInvestigationBatchAction from "./ProgressiveDeepInvestigationBatchAction";
 import ProgressiveQuickScreenBatchAction from "./ProgressiveQuickScreenBatchAction";
 import VersionCandidateComparison from "./VersionCandidateComparison";
 import { buildIntelligentReviewView } from "./operationProgressModel.js";
@@ -412,6 +413,10 @@ export default function OperationWorkspace({ view = "all", operationId, context 
           const result = selected.result;
           const groups = Array.isArray(result.groups) ? result.groups : [];
           return <>
+            <div className="section-gap"><ProgressiveDeepInvestigationBatchAction
+              quickScreenBatchId={selected.id}
+              enabled={groups.some((row: any) => row.state === "completed" && row.quick_assessment === "investigate")}
+            /></div>
             <Alert className="section-gap" type="info" showIcon
               message={`处理 ${result.processed_group_count ?? groups.length} / ${result.selected_group_count ?? "未知"} 组；已完成 ${result.completed_group_count ?? 0} 组`}
               description={`停止原因：${result.stop_reason || "未知"}。未开始、失败或结果未知的组仍为候选；本任务不会自动排除或确认漏洞。`} />
@@ -436,6 +441,30 @@ export default function OperationWorkspace({ view = "all", operationId, context 
                   candidateId={childSpec.candidate_id} quickScreenOperationId={selected.id}
                   progressiveGroupId={row.group_id} />;
               } },
+            ]} />
+            {Array.isArray(result.not_started) && result.not_started.length > 0 && <Alert type="warning" showIcon message={`${result.not_started.length} 组尚未开始，继续保留为候选`} description={result.not_started.map((row: any) => row.group_id).join("、")} />}
+          </>;
+        })()}
+      </Card>}
+      {selected.kind === "progressive_deep_agent_batch" && selected.result && <Card size="small" className="section-gap" title="任务级 L3 深度调查批次">
+        {(() => {
+          const result = selected.result;
+          const groups = Array.isArray(result.groups) ? result.groups : [];
+          return <>
+            <Alert className="section-gap" type="info" showIcon
+              message={`处理 ${result.processed_group_count ?? groups.length} / ${result.eligible_group_count ?? "未知"} 组；完成 ${result.completed_group_count ?? 0} 组`}
+              description={`停止原因：${result.stop_reason || "未知"}。失败、未知和未开始的候选仍保留；L3 结果不会自动确认漏洞。`} />
+            <Descriptions size="small" column={{ xs: 1, md: 2 }}>
+              <Descriptions.Item label="任务授权 SHA-256"><Hash value={result.consent_sha256} /></Descriptions.Item>
+              <Descriptions.Item label="确认漏洞数">{result.validated_vulnerability ?? 0}</Descriptions.Item>
+              <Descriptions.Item label="模型请求 / 在途">{result.budget?.usage ? `${result.budget.usage.model_calls_allocated} / ${result.budget.usage.model_calls_in_flight}` : "未知"}</Descriptions.Item>
+              <Descriptions.Item label="美元额度性质">{result.budget?.cost?.enforcement || "advisory_only"}</Descriptions.Item>
+            </Descriptions>
+            <Table<any> className="section-gap" size="small" rowKey="group_id" dataSource={groups} pagination={{ pageSize: 10 }} scroll={{ x: 720 }} columns={[
+              { title: "候选组", dataIndex: "group_id" },
+              { title: "候选", dataIndex: "candidate_id" },
+              { title: "L3 状态", dataIndex: "state", render: (value) => <Tag color={value === "completed" ? "green" : value === "unknown" ? "orange" : undefined}>{value || "unknown"}</Tag> },
+              { title: "结果 / 停止原因", render: (_: unknown, row: any) => row.reason || row.result?.status || "unknown" },
             ]} />
             {Array.isArray(result.not_started) && result.not_started.length > 0 && <Alert type="warning" showIcon message={`${result.not_started.length} 组尚未开始，继续保留为候选`} description={result.not_started.map((row: any) => row.group_id).join("、")} />}
           </>;
