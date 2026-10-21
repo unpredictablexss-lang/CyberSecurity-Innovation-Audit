@@ -47,7 +47,7 @@ DATA06_RISK_ASSESSMENT = {
         "kind": "isolated source-semantic ASan harness; OpenHarmony component not compiled",
         "entrypoint": "MessageSequenceImpl::CJ_ReadRemoteObjectArray allocation/count/typed-store semantics; count=4",
         "record": "research/deliveries/ipc/data06_runtime_poc_20261021/README.md",
-        "record_sha256": "1b9fd33ba62609e013014a9ac7698608fa7e571f58aaf48f2ad7cfeddcc2a78c",
+        "record_sha256": "eddf6ba05843a7888f89c138be720841790a4ee99367f7b0a433255019ae3209",
         "replay": "research/deliveries/ipc/data06_runtime_poc_20261021/run.sh",
         "replay_sha256": "7994b7e0ca6d404ba64292014df567eddd51b3fd2bd23d793a9cceacff154209",
         "raw_output": "research/deliveries/ipc/data06_runtime_poc_20261021/artifacts/vulnerable.stderr.raw.b64",

@@ -39,6 +39,24 @@
         "blob_oid": "d45a22a828af483f44b0fddba28f65cada1c348e",
         "source_sha256": "bf8dcdf22e00b721951d7f2200ac40569afdd875e11c95edf418144e957b908f",
         "bytes": 20598
+      },
+      {
+        "path": "tests/test_ipc_t74_cj_array_bounds_integration_challenge.py",
+        "blob_oid": "b6864ef2ce912c7e1790f3c117cd89646be8d720",
+        "source_sha256": "014278031642c8d60bff2bd0fa21088c2c1b39ac116af706ccbb70be93f3502c",
+        "bytes": 10456
+      },
+      {
+        "path": "tests/test_workbench.py",
+        "blob_oid": "135de6fb7ceb2e55686c57ebd86c8569207575c0",
+        "source_sha256": "225fff8d5f6ab81b1d59a8513520315760116d1c283242b2fde34c8dbfa069ac",
+        "bytes": 45509
+      },
+      {
+        "path": "web/src/pages/JobDetail.tsx",
+        "blob_oid": "83929337adb45388983548d5482ecab6ef6d2c4c",
+        "source_sha256": "1a438f505068f6263842070ded421fa15e18619e2768a333e3180744f84cf5e6",
+        "bytes": 61784
       }
     ]
   },
@@ -74,6 +92,77 @@
         "blob_oid": "d45a22a828af483f44b0fddba28f65cada1c348e",
         "source_sha256": "bf8dcdf22e00b721951d7f2200ac40569afdd875e11c95edf418144e957b908f",
         "bytes": 20598
+      },
+      {
+        "path": "tests/test_ipc_t74_cj_array_bounds_integration_challenge.py",
+        "blob_oid": "b6864ef2ce912c7e1790f3c117cd89646be8d720",
+        "source_sha256": "014278031642c8d60bff2bd0fa21088c2c1b39ac116af706ccbb70be93f3502c",
+        "bytes": 10456
+      },
+      {
+        "path": "tests/test_workbench.py",
+        "blob_oid": "cf72663de8bf4f8c3791893bc734f6eb817ca680",
+        "source_sha256": "75ecfe2ac8106457656f910cb6b70fc1230468bed505814a17f9e8fb7e869956",
+        "bytes": 44689
+      },
+      {
+        "path": "web/src/pages/JobDetail.tsx",
+        "blob_oid": "7316191403e570d391c2c7f6ceb928d1819ada45",
+        "source_sha256": "e2c9e4cfca14111549b07b84817757be8f4296d1d30086b3571a96d670f21c82",
+        "bytes": 57076
+      }
+    ]
+  },
+  "scanner_delivery": {
+    "commit": "f1d68e36098043c918acd025b7db0ccf584e6de3",
+    "tree": "7223b60e80b7cb3c0ab53afdecb388c35ed008bb",
+    "parents": [
+      "b957894ca0229d7a6b0557b87d35e1c2ac877b07"
+    ],
+    "commit_date": "2026-10-21",
+    "subject": "feat(ipc): deliver DATA-06 source-to-report demo",
+    "files": [
+      {
+        "path": "src/ohscanner/detectors/interface/detector.py",
+        "blob_oid": "a4a23140e69bb95a82ad4ff6ebe4c999cd38f035",
+        "source_sha256": "2786338dbc87de3e6b7b77dc2f0e269981a60a2855f9d4f4358ca74011a3ec85",
+        "bytes": 27455
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/ffi_array_bounds.py",
+        "blob_oid": "6eb84c25540c27e174c16d9e97dd10f42e6b7087",
+        "source_sha256": "41d822c9c3ecb3d07d9f0c9219181531b75c4d233919b0754e01e79a54e1c641",
+        "bytes": 9993
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/families/data06.py",
+        "blob_oid": "eba6e20905f7f211949b5a0ff714870dc27b9911",
+        "source_sha256": "a277339ae772c42a9465fc3b2063f8c80326ef770ea939598769c7ae4214074b",
+        "bytes": 487
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/models.py",
+        "blob_oid": "d45a22a828af483f44b0fddba28f65cada1c348e",
+        "source_sha256": "bf8dcdf22e00b721951d7f2200ac40569afdd875e11c95edf418144e957b908f",
+        "bytes": 20598
+      },
+      {
+        "path": "tests/test_ipc_t74_cj_array_bounds_integration_challenge.py",
+        "blob_oid": "de2633b58834dcc2ca5f293d4a33888389390d15",
+        "source_sha256": "8b33747bfe0d0330c4290da6e746434d9378c70f7e69076bb630b0720980b741",
+        "bytes": 11276
+      },
+      {
+        "path": "tests/test_workbench.py",
+        "blob_oid": "0765a82496cab5b2f2a67db5f529fcce4bf1d820",
+        "source_sha256": "966e276767092abdf139380f8c21571cf37f02669e9f09dd30c65fdc024b079e",
+        "bytes": 53030
+      },
+      {
+        "path": "web/src/pages/JobDetail.tsx",
+        "blob_oid": "b98f4ce3c91edf4d4019aea02da187c9872dbf87",
+        "source_sha256": "5d99cb20613a9ac22013f6ccf5441e39f8945780fa36f6e4328bd4596ea5aa3d",
+        "bytes": 62923
       }
     ]
   },

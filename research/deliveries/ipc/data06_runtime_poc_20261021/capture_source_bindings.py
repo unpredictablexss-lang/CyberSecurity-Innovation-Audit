@@ -47,6 +47,7 @@ def main() -> None:
     parser.add_argument("--scanner-git", type=Path, required=True)
     parser.add_argument("--scanner-commit", required=True)
     parser.add_argument("--scanner-closeout-commit", required=True)
+    parser.add_argument("--scanner-delivery-commit", required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
@@ -61,6 +62,9 @@ def main() -> None:
         "src/ohscanner/detectors/interface/ffi_array_bounds.py",
         "src/ohscanner/detectors/interface/families/data06.py",
         "src/ohscanner/detectors/interface/models.py",
+        "tests/test_ipc_t74_cj_array_bounds_integration_challenge.py",
+        "tests/test_workbench.py",
+        "web/src/pages/JobDetail.tsx",
     )
     commits = {
         "candidate_parent_of_fix": commit_binding(
@@ -86,6 +90,9 @@ def main() -> None:
         "possible_consequence": "out_of_bounds_write / CWE-787",
         "scanner_mainline": scanner,
         "scanner_b_closeout": closeout,
+        "scanner_delivery": commit_binding(
+            args.scanner_git, args.scanner_delivery_commit, scanner_paths
+        ),
         "ipc_source_objects": commits,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

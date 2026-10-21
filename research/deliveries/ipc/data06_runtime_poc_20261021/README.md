@@ -16,7 +16,8 @@ fields and their UI/API display; those edits are not needed here and were not
 carried forward. A network fetch of GitHub was unavailable during this replay,
 so “latest mainline” means the current local `origin/main` tracking object.
 The compared commits and exact DATA-06 scanner blobs are captured in
-`source_bindings.json`.
+`source_bindings.json`; `scanner_delivery` binds the committed detector, tests,
+and detail panel used for this demo.
 
 The mainline integration now attaches a traceable candidate-source assessment
 to DATA-06 details and keeps the finding at candidate/unknown. Its
@@ -193,6 +194,10 @@ the finding `candidate/unknown`, not product `confirmed`.
 
 1. Clone or use the official source Git repository and verify the commit/tree
    and `source_bindings.json` blob/hash values.
+   To refresh these bindings after a scanner change, run
+   `capture_source_bindings.py` with `--ipc-git`, `--scanner-git`,
+   `--scanner-commit`, `--scanner-closeout-commit`, and
+   `--scanner-delivery-commit` set to the local repositories and full commits.
 2. Replay the detector with the repository's pinned DATA-06 integration test:
 
    ```powershell

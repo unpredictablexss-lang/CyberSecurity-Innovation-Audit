@@ -9,11 +9,11 @@
     "fixed_file_sha256": "30ad2a9fa4f45792b83e75cef6c5106818b290ae523d9e17e48c88853854d777"
   },
   "local_workbench": {
-    "vulnerable_scan_commit": "fa57661af3c7c1f1c9c872a5f609be27f56b1976",
-    "fixed_scan_commit": "342cfb1658eeef752005a1faa82b45d378f0e666",
-    "vulnerable_report_sha256": "41bc8548b582e536949df64e9b497ae65fffeca9fcea31a3fbcb7a03083ca0d1",
-    "fixed_report_sha256": "89bcb956f0658e8190063d5950ebf329d4af6c9eefddef8c232d964a186d6a2c",
-    "finding_detail_sha256": "43ad3a4b43ca891a88ca2e553db01fea4e2aa37c47e3489038248150460eee28"
+    "vulnerable_scan_commit": "22d37f9fc1012877471b9985afcb09f596d07eea",
+    "fixed_scan_commit": "2c6b93f3ef0065b5449ec33a8a0463a4748f78d3",
+    "vulnerable_report_sha256": "94844a526fa3ced3df273ee87b8261c3ddb598c7b3f0cacd03318f3794dd247b",
+    "fixed_report_sha256": "5c24fb525d9874aba77d94737644dc02893f469b74f3d727f5228b34ad367247",
+    "finding_detail_sha256": "e0246517c53b74dfdd07bcfcb96fccd439843c4b6d1ea5167a9d1cf4e5f6f901"
   },
   "finding": {
     "rule_id": "ipc.parcel.array-allocation-width",
@@ -50,7 +50,7 @@
         "kind": "isolated source-semantic ASan harness; OpenHarmony component not compiled",
         "entrypoint": "MessageSequenceImpl::CJ_ReadRemoteObjectArray allocation/count/typed-store semantics; count=4",
         "record": "research/deliveries/ipc/data06_runtime_poc_20261021/README.md",
-        "record_sha256": "1b9fd33ba62609e013014a9ac7698608fa7e571f58aaf48f2ad7cfeddcc2a78c",
+        "record_sha256": "eddf6ba05843a7888f89c138be720841790a4ee99367f7b0a433255019ae3209",
         "replay": "research/deliveries/ipc/data06_runtime_poc_20261021/run.sh",
         "replay_sha256": "7994b7e0ca6d404ba64292014df567eddd51b3fd2bd23d793a9cceacff154209",
         "raw_output": "research/deliveries/ipc/data06_runtime_poc_20261021/artifacts/vulnerable.stderr.raw.b64",
@@ -73,7 +73,7 @@
   },
   "fixed_retest": {
     "rule_findings": 0,
-    "report_sha256": "89bcb956f0658e8190063d5950ebf329d4af6c9eefddef8c232d964a186d6a2c"
+    "report_sha256": "5c24fb525d9874aba77d94737644dc02893f469b74f3d727f5228b34ad367247"
   },
   "product_impact": "unknown",
   "poc_limit": "source-semantic harness; no component binary or Binder/DBinder reachability claim"
