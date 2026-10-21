@@ -887,29 +887,39 @@ class AgentExecutionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             repo = root / "repo"
-            source_path = repo / "src" / "guard.cpp"
+            source_path = repo / "src" / "caller.c"
+            definition_path = repo / "src" / "api.c"
             source_path.parent.mkdir(parents=True)
             subprocess.run(["git", "init", "-q", str(repo)], check=True)
             subprocess.run(["git", "-C", str(repo), "config", "user.name", "OHScanner test"], check=True)
             subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
-            source_text = ("void needle(int);\n"
-                           "void different_call();\n"
-                           "void guard() {\n"
-                           "  needle(\n"
-                           "    7);\n"
+            source_text = ("int needle(int value);\n"
+                           "void different_call(void);\n"
+                           "int guard(int input) {\n"
+                           "  int value = needle(input);\n"
                            "  different_call();\n"
+                           "  return value;\n"
                            "}\n")
+            definition_text = "int needle(int value) { return value; }\n"
             source_path.write_text(source_text, encoding="utf-8")
-            subprocess.run(["git", "-C", str(repo), "add", "src/guard.cpp"], check=True)
+            definition_path.write_text(definition_text, encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src"], check=True)
             subprocess.run(["git", "-C", str(repo), "commit", "-qm", "fixed callsite fixture"], check=True)
             commit = subprocess.check_output(
                 ["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
             blob = subprocess.check_output(
-                ["git", "-C", str(repo), "rev-parse", f"{commit}:src/guard.cpp"],
+                ["git", "-C", str(repo), "rev-parse", f"{commit}:src/caller.c"],
+                text=True).strip()
+            definition_blob = subprocess.check_output(
+                ["git", "-C", str(repo), "rev-parse", f"{commit}:src/api.c"],
                 text=True).strip()
             digest = hashlib.sha256(source_text.encode("utf-8")).hexdigest()
-            inventory = [{"file": "src/guard.cpp", "blob": blob, "sha256": digest}]
-            candidate = {"id": "candidate-callsite-loop", "file": "src/guard.cpp", "line": 3,
+            inventory = [
+                {"file": "src/api.c", "blob": definition_blob,
+                 "sha256": hashlib.sha256(definition_text.encode("utf-8")).hexdigest()},
+                {"file": "src/caller.c", "blob": blob, "sha256": digest},
+            ]
+            candidate = {"id": "candidate-callsite-loop", "file": "src/caller.c", "line": 3,
                 "source_sha256": digest, "symbol": "guard", "detector_id": "test.rule",
                 "detector_version": "0.1", "rule_id": "R1",
                 "evidence": {"analysis_status": "complete", "obligations": [
@@ -948,6 +958,9 @@ class AgentExecutionTests(unittest.TestCase):
                                      json.dumps(payload.get("input", []), ensure_ascii=False))
                     if payload.get("text", {}).get("format", {}).get("name") == "ohscanner_skeptic_review":
                         context = json.loads(payload["input"][0]["content"][0]["text"])
+                        evidence_files = {item["file"] for item in context["source_evidence"]}
+                        self.assertIn("src/caller.c", evidence_files)
+                        self.assertIn("src/api.c", evidence_files)
                         skeptic = {"reviews": [{"obligation_index": item["obligation_index"],
                             "result": "unknown", "citations": []}
                             for item in context["obligations_are_untrusted_routing_metadata"]]}
@@ -1030,6 +1043,12 @@ class AgentExecutionTests(unittest.TestCase):
                             for edge in graph["edges"]))
         self.assertEqual(result["tool_calls"][0]["evidence_kind"], "source_code")
         self.assertEqual(result["tool_calls"][0]["status"], "completed")
+        first_callsite = result["tool_calls"][0]["result"]["callsites"][0]
+        self.assertEqual(first_callsite["relationship"]["status"], "cross_file_syntax_candidate")
+        self.assertEqual(first_callsite["relationship"]["semantic_binding"], "unknown")
+        self.assertEqual(first_callsite["relationship"]["reachable"], "unknown")
+        self.assertEqual(first_callsite["relationship"]["cross_file_definition_candidate"]["file"],
+                         "src/api.c")
         self.assertGreater(result["model_usage"]["output_tokens"], task["spec"]["max_total_output_tokens"])
         self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
         self.assertEqual(result["vulnerability_state"], "candidate")
