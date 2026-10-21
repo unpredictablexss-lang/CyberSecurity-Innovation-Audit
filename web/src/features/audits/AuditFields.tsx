@@ -112,8 +112,8 @@ export function RuleNotice({ detectors }: { detectors: any[] }) {
   </div>;
 }
 export function ScopeAvailability() {
-  return <div className="scope-note"><Space wrap><Text strong>审计范围</Text><Text>单仓库 · 固定版本快照</Text></Space>
-    <p>每个任务固定一个已登记仓库和版本。官方仓库目录与多仓批量审计尚未开放；请先在设置中登记本地仓库，再按仓库分别创建任务。</p>
+  return <div className="scope-note"><Space wrap><Text strong>审计范围</Text><Text>单仓库 · 扫描版本快照</Text></Space>
+    <p>每个任务会记录所选仓库和提交版本，确保候选与证据对应同一版本。官方仓库目录与多仓批量审计尚未开放；请先在设置中登记本地仓库，再按仓库分别创建任务。</p>
     <Button type="link" onClick={() => go("/settings/sources")}>登记仓库或显式同步源码 →</Button></div>;
 }
 export const auditDefaults = { include_text: ".", timeout_seconds: 600, memory_mb: 2048, full_rules_research: false, audit_mode: "standard_review" };

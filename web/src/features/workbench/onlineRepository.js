@@ -18,7 +18,7 @@ export function canPreviewOfficialRepository({ loading, stale, slug }) {
 export function pinnedRepositoryImportRequest(preview) {
   if (!preview || !isSafeRepositorySlug(preview.slug) || !preview.default_branch ||
       !FULL_COMMIT.test(preview.commit || "") || !SHA256.test(preview.preview_sha256 || "")) {
-    throw new Error("请先刷新并确认有效的固定版本预览");
+    throw new Error("请先刷新并确认有效的扫描版本预览");
   }
   return {
     slug: preview.slug,

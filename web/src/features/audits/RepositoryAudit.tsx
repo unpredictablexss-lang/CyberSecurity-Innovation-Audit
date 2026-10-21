@@ -52,15 +52,15 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
   }
   let ready = false; try { ready = approvedDetectorIds(detectors, explicitIds).length > 0; } catch { /* blocked */ }
   return <>
-    <Header title="智能安全审计" description="固定仓库版本，先完成静态证据扫描，再由你决定是否授权模型辅助研判。" />
+    <Header title="智能安全审计" description="本次扫描记录的仓库版本，先完成静态证据扫描，再由你决定是否授权模型辅助研判。" />
     <Row gutter={24}><Col xs={24} xl={16}><Card title="配置源码审计">
       <ScopeAvailability />
       {auditMode === "standard_review" ? <Alert className="section-gap" type="info" showIcon
-        message="智能审计：先静态扫描，再自动追查固定源码证据"
+        message="智能审计：先静态扫描，再自动追查本次扫描源码证据"
         description="扫描不会在授权前外发源码。预览并确认模型目的地和源码范围后，扫描完成会自动调查可由源码证据回答的候选；无法回答的部分保留为待人工验证。" />
         : <Alert className="section-gap" type="info" showIcon
           message="静态扫描：生成代码证据供人工复核"
-          description="仅扫描并保存固定版本的静态证据，不调用模型，也不发送源码。" />}
+          description="仅扫描并保存扫描版本的静态证据，不调用模型，也不发送源码。" />}
       {provider && !provider.configured && <Alert className="section-gap" type="warning" showIcon
         message="模型服务尚未配置"
         description="静态扫描仍可使用；选择智能审计前，请在“设置 → Agent / LLM”完成配置。" />}
@@ -110,31 +110,31 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
           </Space>
         </Form.Item>}
         {includeSensitiveExposure && <Alert className="section-gap" type="info" showIcon
-          message="D 规则会随本次固定版本扫描运行"
+          message="D 规则会随本次扫描版本扫描运行"
           description="候选和源码证据会出现在任务详情与 report.json / report.md 中。报告可给出源码级复现步骤和修复建议；静态命中不等于产品漏洞确认，也不会生成可利用产品 PoC。" />}
         {includeKnownCves && <Alert className="section-gap" type="warning" showIcon
           message="已披露 CVE 规则只用于源码候选筛查"
-          description="规则不会自动启用。命中表示固定源码包含已知缺陷形态或受影响组件标记；必须另行核对产品构建、可达路径和影响。没有命中、解析不完整或规则未覆盖均不能证明安全。" />}
+          description="规则不会自动启用。命中表示本次扫描源码包含已知缺陷形态或受影响组件标记；必须另行核对产品构建、可达路径和影响。没有命中、解析不完整或规则未覆盖均不能证明安全。" />}
         {includeArkRuntime && <Alert className="section-gap" type="info" showIcon
           message="Ark Runtime 仅进行绑定源码的研究候选扫描"
           description="只适用于模型登记的仓库、提交和文件 blob；其他版本会保持未分析。partial / blocked 仍表示 unknown，候选不代表产品受影响或漏洞已确认。" />}
         <RuleNotice detectors={detectors} />
-        <Button className="section-gap" onClick={() => void preview()} loading={planning} disabled={!ready || busy || !repos.length}>预览审计计划</Button>
+        <Button className="section-gap" onClick={() => void preview()} loading={planning} disabled={!ready || busy || !repos.length}>检查扫描设置</Button>
         <AuditPlanView plan={plan} auditMode={auditMode} />
         {authorizeAutoTriage && plan?.triage_authorization_preview?.eligible && <Alert className="section-gap" type="warning" showIcon
           message={"智能审计授权确认 · " + plan.triage_authorization_preview.provider.endpoint_host + " · " + plan.triage_authorization_preview.provider.model}
           description={<>
-            <div>本次固定版本：<code>{plan.commit}</code></div>
+            <div>本次扫描版本：<code>{plan.commit}</code></div>
             <div>源码范围：{(plan.triage_authorization_preview.manifest.binding.include_paths || []).join(", ")}</div>
             <div>按服务商按量计费；OHScanner 不设本次累计 Token 或金额上限。实际费用请查看服务商账单。你可以随时取消调查。</div>
-            <div>仅在明确授权后发送候选摘要、固定源码摘录及证据义务；自动调查只读已扫描版本。模型结论仍为候选，需人工复核。</div>
+            <div>仅在明确授权后发送候选摘要、扫描时使用的源码片段及证据义务；自动调查只读已扫描版本。模型结论仍为候选，需人工复核。</div>
             <Checkbox checked={smartApproved} onChange={(event) => setSmartApproved(event.target.checked)}>
               我已核对来源、模型目的地和发送范围，并授权本次智能审计按量调用模型
             </Checkbox>
           </>} />}
-        <Button aria-label="冻结版本并开始扫描" className="section-gap" type="primary" htmlType="submit" size="large" loading={busy}
+        <Button aria-label="下载并开始扫描扫描" className="section-gap" type="primary" htmlType="submit" size="large" loading={busy}
           disabled={!ready || !repos.length || !plan?.plan_sha256 || !plan?.workflow_sha256 ||
-            (authorizeAutoTriage && (!plan?.triage_authorization_preview?.consent_sha256 || !smartApproved))}>固定版本并创建审计任务</Button>
+            (authorizeAutoTriage && (!plan?.triage_authorization_preview?.consent_sha256 || !smartApproved))}>开始扫描</Button>
       </Form>
     </Card></Col><Col xs={24} xl={8}><Card title="本次审计将保存">
       <ol className="audit-checklist"><li>完整 Commit 与 Git Tree</li><li>实际规则与版本</li><li>纳入范围、解析及执行覆盖</li><li>候选、证据义务与报告哈希</li></ol>

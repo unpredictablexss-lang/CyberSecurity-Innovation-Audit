@@ -116,7 +116,7 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
     try {
       const value = await api("/agent/blind-review-agreement", { session_ids: sessionIds });
       if (agreementRequest.current === request) setAgreement(value);
-      message.success("已按固定结果哈希计算复核人一致性");
+      message.success("已按保存的结果哈希比较复核结果一致性");
     } catch (error) { message.error(String(error)); }
     finally { setBusy(false); }
   };
@@ -133,16 +133,16 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
             setPairKeys(values);
           }} maxTagCount="responsive" />
         <Button type="primary" disabled={!experimentId || pairKeys.length < 1 || operationIds.length > 20 || busy} loading={busy} onClick={() => void createSession()}>
-          创建盲审会话
+          开始匿名复核
         </Button>
       </Space>
       <Text type="secondary">选择一组就会同时加入 R1 和 R2 两条结果；最多选 10 组。创建时服务端还会核对源码绑定、实验配置和同源码 R0 静态基线。复核条目随机排序；在线会话状态接口不返回源码包或未揭盲的组别映射。</Text>
       {experimentOptions.length === 0 && <Alert type="info" showIcon
         message="当前没有已完成的实验批次可供盲审"
-        description="先为固定候选完成人工 R0 静态基线，再按同一源码和实验配置完成 R1/R2。此面板只读取已完成结果，不会启动扫描或模型调用。" />}
+        description="先为本次扫描候选完成人工 R0 静态基线，再按同一源码和实验配置完成 R1/R2。此面板只读取已完成结果，不会启动扫描或模型调用。" />}
       {experimentId && pairing.eligibleOperationCount === 0 && <Alert type="info" showIcon
         message="这个实验批次还没有可用于盲审的已完成 R1/R2 结果"
-        description="先完成同一固定候选的 R1 单轮和 R2 工具 Agent；当前页面不会自动启动模型任务。" />}
+        description="先完成同一条扫描候选的 R1 单轮和 R2 工具 Agent；当前页面不会自动启动模型任务。" />}
       {experimentId && pairing.eligibleOperationCount > 0 && pairing.pairs.length === 0 && <Alert type="warning" showIcon
         message="暂时没有完整且唯一的 R1/R2 配对"
         description={`已完成结果 ${pairing.eligibleOperationCount} 条；缺少一侧的配对 ${pairing.incompletePairCount} 组，重复或有歧义的配对 ${pairing.ambiguousPairCount} 组。请检查实验批次和候选绑定后刷新。`} />}
@@ -152,7 +152,7 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
           setSession(null);
           setSessionId(event.target.value);
         }} placeholder="输入已创建的盲审会话编号" />
-        <Button loading={busy} disabled={!sessionId} onClick={() => void loadSession().catch((error) => message.error(String(error)))}>查看会话状态</Button>
+        <Button loading={busy} disabled={!sessionId} onClick={() => void loadSession().catch((error) => message.error(String(error)))}>查看复核进度</Button>
       </Space.Compact>
       <Space.Compact style={{ width: "100%" }}>
         <Input aria-label="独立复核会话编号" value={agreementSessionIds} onChange={(event) => {
@@ -160,12 +160,12 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
           setAgreement(null);
           setAgreementSessionIds(event.target.value);
         }} placeholder="输入同一批结果的 2-10 个已关闭盲审会话编号，以逗号或空格分隔" />
-        <Button loading={busy} disabled={agreementSessionIds.split(/[\s,;，；]+/).filter(Boolean).length < 2} onClick={() => void compareReviewers()}>计算复核人一致性</Button>
+        <Button loading={busy} disabled={agreementSessionIds.split(/[\s,;，；]+/).filter(Boolean).length < 2} onClick={() => void compareReviewers()}>比较复核结果一致性</Button>
       </Space.Compact>
       <Text type="secondary">一致性只统计同一结果哈希上各复核人标签的两两相同率，不校正偶然一致，也不能证明复核人身份独立或结论正确。</Text>
       {agreement && <>
         <Alert className="section-gap" type="info" showIcon message={`一致性报告：${agreement.matched_operation_count} 个相同结果，${agreement.blind_session_count} 个盲审会话`} description={`${agreement.interpretation} 报告 SHA-256：${agreement.report_sha256}`} />
-        <Button onClick={downloadAgreement}>下载一致性报告 JSON</Button>
+        <Button onClick={downloadAgreement}>下载一致性报告</Button>
         {(["single_shot", "tool_agent"] as const).map((mode) => {
           const row = agreement.per_arm[mode];
           const percent = (value: number | null) => value === null ? "unknown" : `${(value * 100).toFixed(1)}%`;
@@ -182,20 +182,20 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
         <Alert type={session.state === "closed" ? "warning" : "info"} showIcon
           message={`会话 ${session.id} · ${session.state === "closed" ? "已揭盲" : "盲审中"} · ${session.items.length} 条 · ${reviewed} 条已复核`} />
         {session.state === "open" && <Space wrap>
-          <Button type="primary" loading={busy} onClick={() => void exportPacket()}>下载匿名复核包 JSON</Button>
-          <Button href="/api/v1/agent/blind-reviewer.html" target="_blank">打开离线复核表单</Button>
+          <Button type="primary" loading={busy} onClick={() => void exportPacket()}>下载匿名复核材料</Button>
+          <Button href="/api/v1/agent/blind-reviewer.html" target="_blank">打开复核表单</Button>
           <input ref={importInput} type="file" accept="application/json,.json" style={{ display: "none" }}
             onChange={(event) => void importReviews(event.target.files?.[0])} />
-          <Button loading={busy} onClick={() => importInput.current?.click()}>导入复核人返回的 JSON</Button>
+          <Button loading={busy} onClick={() => importInput.current?.click()}>导入复核结果</Button>
           <Button danger loading={busy} disabled={!session.items.length || session.items.some((item: any) => !item.reviewed)} onClick={() => void closeSession()}>
             全部评价后揭盲
           </Button>
         </Space>}
         {session.state === "closed" && <>
           <Alert type="warning" showIcon message="揭盲证据包包含源码上下文和完整 Agent 结果"
-            description="仅在受控审查目录保存或分享。包内含 R0 记录、盲审评分、固定作业配置、结果哈希及总包哈希。" />
+            description="仅在受控审查目录保存或分享。包内含 R0 记录、盲审评分、已保存的作业配置、结果哈希及总包哈希。" />
           <Button className="section-gap" loading={busy} onClick={() => void exportEvidenceBundle()}>
-            下载揭盲审计证据包
+            下载复核记录包
           </Button>
         </>}
         {session.state === "closed" && session.blind_guess_summary && <Alert className="section-gap" type="info" showIcon

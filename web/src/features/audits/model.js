@@ -4,10 +4,10 @@ export function auditWorkflowLabel(plan, auditMode = plan?.audit_mode) {
   const workflow = plan?.workflow || {};
   if (mode === "static_only") return "仅静态扫描";
   if (workflow.automatic_model_calls) {
-    return "智能审计：对固定扫描范围内所有满足证据条件的候选逐项调查；高/严重且仍缺源码证据的候选继续追查。按服务商按量计费，可随时取消。";
+    return "智能审计：对本次扫描范围内所有满足证据条件的候选逐项调查；高/严重且仍缺源码证据的候选继续追查。按服务商按量计费，可随时取消。";
   }
   if (mode === "standard_review") {
-    return "智能审计：静态扫描后，对固定范围内满足证据条件的候选逐项预览并授权模型调查。";
+    return "智能审计：静态扫描后，对本次扫描范围内满足证据条件的候选逐项预览并授权模型调查。";
   }
   return "历史扫描任务：未记录审计方式";
 }

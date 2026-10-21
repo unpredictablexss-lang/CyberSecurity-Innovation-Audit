@@ -36,11 +36,11 @@ test("import submission is bound to the reviewed default branch, full commit, an
     preview_sha256: "2".repeat(64),
     include_paths: ["."],
   });
-  assert.throws(() => pinnedRepositoryImportRequest({ ...preview, commit: "short" }), /固定版本预览/);
-  assert.throws(() => pinnedRepositoryImportRequest({ ...preview, preview_sha256: "" }), /固定版本预览/);
+  assert.throws(() => pinnedRepositoryImportRequest({ ...preview, commit: "short" }), /扫描版本预览/);
+  assert.throws(() => pinnedRepositoryImportRequest({ ...preview, preview_sha256: "" }), /扫描版本预览/);
   for (const slug of ["kernel_linux_4.19", "kernel_linux_5.10", "third_party_rust_lazy-static.rs",
     "kernel_linux_6.6", "third_party_decimal.js", ".gitcode"]) {
     assert.equal(pinnedRepositoryImportRequest({ ...preview, slug }).slug, slug);
   }
-  assert.throws(() => pinnedRepositoryImportRequest({ ...preview, slug: "../escape" }), /固定版本预览/);
+  assert.throws(() => pinnedRepositoryImportRequest({ ...preview, slug: "../escape" }), /扫描版本预览/);
 });

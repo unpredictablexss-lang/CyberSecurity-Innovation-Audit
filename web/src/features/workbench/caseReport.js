@@ -40,7 +40,7 @@ export function caseRemediationDraftPresentation(draft, sourceAnchor) {
     ? { available: true, draft: draft.draft, provenance: draft.provenance || "未提供来源",
       aiBasis: draft.ai_basis || { state: "unknown", citations: [], note: "没有可核验的 AI 来源。" },
       reviewChecks: Array.isArray(draft.review_checks) ? draft.review_checks : [] }
-    : { available: false, reason: draft?.reason || "固定源码锚点未通过核验。" };
+    : { available: false, reason: draft?.reason || "扫描源码锚点未通过核验。" };
 }
 
 export function casePocPlanPresentation(plan, sourceAnchor) {
@@ -53,5 +53,5 @@ export function casePocPlanPresentation(plan, sourceAnchor) {
       && sameAnchor(step.source_anchor, sourceAnchor));
   return available
     ? { available: true, steps, authorization: plan.authorization || "仅为计划，未执行。" }
-    : { available: false, reason: plan?.reason || "计划或固定源码证据材料不足。" };
+    : { available: false, reason: plan?.reason || "计划或本次扫描源码证据材料不足。" };
 }

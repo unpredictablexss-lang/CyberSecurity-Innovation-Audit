@@ -81,11 +81,11 @@ function CaseReportOverview({ report, caseId }: { report: any; caseId: string })
         title={(candidate.detector_id || "静态检测") + " · " + (candidate.rule_id || "候选")}
         extra={<Button type="link" onClick={() => go("/tasks/" + row.job_id)}>查看源码与原始证据</Button>}>
         <Descriptions size="small" bordered column={2}>
-          <Descriptions.Item label="风险层级"><Tag color={risk.risk_tier === "high_confidence_candidate" ? "orange" : "blue"}>{risk.risk_tier_label || "来源绑定未知"}</Tag></Descriptions.Item>
+          <Descriptions.Item label="风险层级"><Tag color={risk.risk_tier === "high_confidence_candidate" ? "orange" : "blue"}>{risk.risk_tier_label || "源码版本未核对"}</Tag></Descriptions.Item>
           <Descriptions.Item label="观测状态"><Tag>candidate · 单条观测未确认</Tag></Descriptions.Item>
           <Descriptions.Item label="静态严重性 / 置信度">{String(risk.severity ?? "unknown")} / {String(risk.confidence ?? "unknown")}</Descriptions.Item>
           <Descriptions.Item label="代码位置">{candidate.file || "unknown"}:{candidate.line || "?"}</Descriptions.Item>
-          <Descriptions.Item label="固定来源">{row.repository || "unknown"} @ <Hash value={row.commit || "unknown"} /></Descriptions.Item>
+          <Descriptions.Item label="本次扫描来源">{row.repository || "unknown"} @ <Hash value={row.commit || "unknown"} /></Descriptions.Item>
           <Descriptions.Item label="报告 SHA-256"><Hash value={row.report_sha256 || "unknown"} /></Descriptions.Item>
         </Descriptions>
         <Paragraph className="section-gap"><Text strong>静态规则依据：</Text> {candidate.message || "规则未提供摘要"}</Paragraph>
@@ -98,19 +98,19 @@ function CaseReportOverview({ report, caseId }: { report: any; caseId: string })
           </li>)}</ul>
         </div>}
         {sourceAnchor.verified ? <div className="obligation">
-          <Text strong>固定源码证据锚点</Text>
+          <Text strong>本次扫描源码证据锚点</Text>
           <Paragraph><Text code>{sourceAnchor.file}:{sourceAnchor.line}</Text> · commit <Hash value={sourceAnchor.commit} /> · SHA-256 <Hash value={sourceAnchor.source_sha256} /></Paragraph>
           <pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", maxHeight: 240, overflow: "auto" }}>
             {sourceAnchor.excerpt}
           </pre>
         </div> : <Alert className="section-gap" type="warning" showIcon
-          message="固定源码材料不可用，相关报告建议保持 unknown" description={sourceAnchor.reason || "没有可核验的来源锚点。"} />}
+          message="扫描源码材料不可用，相关报告建议保持 unknown" description={sourceAnchor.reason || "没有可核验的来源锚点。"} />}
         {triage ? <div className="obligation">
           <Text strong>AI 调查摘要（{triage.assessment || "unknown"} · 仍为候选）</Text>
           {triageView.available
             ? <Paragraph>{triageView.summary || "模型未提供可读摘要"}</Paragraph>
             : <Alert type="warning" showIcon message="AI 结论与建议保持 unknown"
-                description={triage.citation_review?.reason || "固定源码引文材料不足；未展示未经绑定的模型文本。"} />}
+                description={triage.citation_review?.reason || "本次扫描源码引文材料不足；未展示未经绑定的模型文本。"} />}
           {!!triageView.supportedClaims.length && <>
             <Text strong>引用到的证据</Text>
             <ul>{triageView.supportedClaims.slice(0, 8).map((claim: any, index: number) => <li key={index}>
@@ -125,23 +125,23 @@ function CaseReportOverview({ report, caseId }: { report: any; caseId: string })
             <Text strong>AI 建议的下一步（未验证，不等于修复方案）</Text>
             <ul>{triageView.modelSuggestions.slice(0, 8).map((suggestion: any, index: number) => <li key={index}>
               <Tag color="gold">AI 建议 · 未验证</Tag> {suggestion.text}
-              <div><Text type="secondary">固定源码上下文：{suggestion.source_anchor?.file || "unknown"}:{suggestion.source_anchor?.line || "?"} @ {suggestion.source_anchor?.commit || "unknown"}；语义支持仍未验证。</Text></div>
+              <div><Text type="secondary">本次扫描源码上下文：{suggestion.source_anchor?.file || "unknown"}:{suggestion.source_anchor?.line || "?"} @ {suggestion.source_anchor?.commit || "unknown"}；语义支持仍未验证。</Text></div>
             </li>)}</ul>
           </>}
           <Text type="secondary">引用逐字匹配不证明语义结论；AI 摘要和建议均需人工复核。</Text>
-        </div> : <Alert className="section-gap" type="info" showIcon message="暂无绑定到该固定候选的 AI 调查结果" />}
+        </div> : <Alert className="section-gap" type="info" showIcon message="暂无绑定到这条候选的 AI 调查结果" />}
         <div className="obligation">
           <Text strong>修复建议草案</Text>
           {remediationView.available
             ? <><Paragraph>{remediationView.draft} <Tag color="gold">未验证 · 非补丁</Tag></Paragraph>
-              <Text type="secondary">依据：{remediationView.provenance}；固定源码锚点 {remediationDraft.source_anchor?.file}:{remediationDraft.source_anchor?.line} @ {remediationDraft.source_anchor?.commit}</Text>
+              <Text type="secondary">依据：{remediationView.provenance}；扫描源码锚点 {remediationDraft.source_anchor?.file}:{remediationDraft.source_anchor?.line} @ {remediationDraft.source_anchor?.commit}</Text>
               <Paragraph><Text strong>AI 源码依据：</Text> {remediationView.aiBasis.state} · {remediationView.aiBasis.note}</Paragraph>
               {!!remediationView.aiBasis.citations?.length && <ul>{remediationView.aiBasis.citations.slice(0, 8).map((citation: any, index: number) => <li key={index}>
                 {citation.file || "unknown"}:{citation.line_start || "?"}-{citation.line_end || "?"} · {citation.evidence_id || "evidence"}：“{citation.quote || ""}”
                 <Text type="secondary">（引文语义及其与修复草案的相关性仍需人工复核）</Text>
               </li>)}</ul>}
               <ul>{remediationView.reviewChecks.map((check: string, index: number) => <li key={index}>{check}</li>)}</ul></>
-            : <Paragraph type="secondary">unknown：{remediationView.reason || "没有足够的固定源码或 CWE 材料生成草案。"}</Paragraph>}
+            : <Paragraph type="secondary">unknown：{remediationView.reason || "没有足够的本次扫描源码或 CWE 材料生成草案。"}</Paragraph>}
         </div>
         <div className="obligation">
           <Text strong>安全验证 / PoC 计划</Text>
@@ -151,7 +151,7 @@ function CaseReportOverview({ report, caseId }: { report: any; caseId: string })
               <ol>{pocPlanView.steps.map((step: any) => <li key={step.id}>
                 <Text strong>{step.id}</Text> · {step.action} <Text type="secondary">（{step.status}；锚点 {step.source_anchor?.anchor_id}）</Text>
               </li>)}</ol></>
-            : <Paragraph type="secondary">unknown：{pocPlanView.reason || "固定源码材料不足；未生成伪造证据或可执行步骤。"}</Paragraph>}
+            : <Paragraph type="secondary">unknown：{pocPlanView.reason || "扫描源码材料不足；未生成伪造证据或可执行步骤。"}</Paragraph>}
         </div>
       </Card>;
     })}
@@ -159,7 +159,7 @@ function CaseReportOverview({ report, caseId }: { report: any; caseId: string })
     {!!validationOps.length && <ul>{validationOps.map((item: any) => <li key={item.id}>
       <Text code>{item.id.slice(0, 12)}</Text> · {item.status} · 门控 {item.validation_gate || "unknown"} · 产品可达性 {item.reachability_status || "unknown"}
     </li>)}</ul>}
-    <Text type="secondary">报告基于案例关联的固定扫描报告、已提交的调查结果与人工记录。案例 ID：{caseId}</Text>
+    <Text type="secondary">报告基于案例关联的扫描报告、已提交的调查结果与人工记录。案例 ID：{caseId}</Text>
   </Card>;
 }
 
@@ -237,14 +237,14 @@ function CaseReviewPanel({ caseId, onStatusChange }: { caseId: string; onStatusC
           </Form.Item>
         </Space>
         <Form.Item name="evidence_ids" label="案例来源证据（确认/可报告必填）">
-          <Select mode="multiple" allowClear placeholder={evidenceOptions.length ? "选择固定来源证据" : "暂无已登记来源证据；先从候选人工复核处追加证据"} options={evidenceOptions} />
+          <Select mode="multiple" allowClear placeholder={evidenceOptions.length ? "选择本次扫描来源证据" : "暂无已登记来源证据；先从候选人工复核处追加证据"} options={evidenceOptions} />
         </Form.Item>
         {requiresGate && <Alert className="section-gap" type="warning" showIcon
           message="确认门控要求运行时验证通过、产品可达性已验证、至少一条案例证据及明确未决项"
           description={validationOptions.length ? "只显示绑定到本案例且已通过验证门的运行操作。" : "当前案例没有合格运行验证；可先保存其他人工意见，不能提交 confirmed/reportable。"} />}
         <Form.Item name="validation_operation_ids" label="通过门控的验证操作（确认/可报告必填）">
           <Select mode="multiple" disabled={!validationOptions.length} options={validationOptions.map((item: any) => ({
-            value: item.id, label: item.id.slice(0, 12) + " · " + (item.commit || item.commits?.join(", ") || "固定提交") + " · reachability verified",
+            value: item.id, label: item.id.slice(0, 12) + " · " + (item.commit || item.commits?.join(", ") || "扫描代码版本") + " · reachability verified",
           }))} />
         </Form.Item>
         <Form.Item name="remaining_unknowns" label="仍未解决的未知项（每行一项；确认/可报告必填）">
@@ -253,7 +253,7 @@ function CaseReviewPanel({ caseId, onStatusChange }: { caseId: string; onStatusC
         <Form.Item name="notes" label="复核依据与说明" rules={[{ required: true, min: 1, max: 8000 }]}>
           <Input.TextArea rows={3} maxLength={8000} />
         </Form.Item>
-        <Button type="primary" htmlType="submit" loading={saving} disabled={loading}>追加人工案例审核</Button>
+        <Button type="primary" htmlType="submit" loading={saving} disabled={loading}>提交复核意见</Button>
       </Form>
       {(report?.assessments || []).length > 0 && <Card size="small" className="section-gap" title={"追加历史（" + report.assessments.length + "）"}>
         {(report.assessments as any[]).slice().reverse().map((item: any) =>
@@ -281,9 +281,11 @@ export default function Cases({ embedded = false }: { embedded?: boolean } = {})
       })
       .catch((e) => setError(String(e)));
   }, []);
-  const downloadReport = async (caseId: string, kind: "json" | "md") => {
+  const downloadReport = async (caseId: string, kind: "json" | "md" | "html" | "manifest.json" | "bundle.zip") => {
     try {
-      const response = await fetch("/api/v1/cases/" + caseId + "/report." + kind);
+      const endpoint = kind === "manifest.json" ? "report.manifest.json"
+        : kind === "bundle.zip" ? "report.bundle.zip" : "report." + kind;
+      const response = await fetch("/api/v1/cases/" + caseId + "/" + endpoint);
       if (!response.ok) throw new Error(await response.text());
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
@@ -314,7 +316,13 @@ export default function Cases({ embedded = false }: { embedded?: boolean } = {})
               return latest ? <Tag color="blue">人工意见：{caseOutcomeLabels[latest.outcome] || latest.outcome} · 未确认</Tag> : <Tag>调查中 · 未确认</Tag>;
             } },
             { title: "关联观测", render: (_: any, c: any) => c.links.length },
-            { title: "报告", render: (_: any, c: any) => <Space><Button size="small" onClick={() => void downloadReport(c.id, "json")}>JSON</Button><Button size="small" onClick={() => void downloadReport(c.id, "md")}>Markdown</Button></Space> },
+            { title: "报告", render: (_: any, c: any) => <Space wrap>
+              <Button size="small" type="primary" onClick={() => void downloadReport(c.id, "bundle.zip")}>下载完整报告包</Button>
+              <Button size="small" onClick={() => void downloadReport(c.id, "html")}>阅读报告</Button>
+              <Button size="small" onClick={() => void downloadReport(c.id, "md")}>Markdown</Button>
+              <Button size="small" onClick={() => void downloadReport(c.id, "json")}>JSON</Button>
+              <Button size="small" onClick={() => void downloadReport(c.id, "manifest.json")}>证据清单</Button>
+            </Space> },
             {
               title: "创建时间",
               dataIndex: "created_at",

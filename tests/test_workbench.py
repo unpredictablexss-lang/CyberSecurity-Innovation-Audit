@@ -11,6 +11,7 @@ import tempfile
 import threading
 import time
 import unittest
+import zipfile
 from unittest.mock import patch
 
 try:
@@ -733,7 +734,7 @@ class WorkbenchTests(unittest.TestCase):
         case = self.client.post("/api/v1/cases", headers=HEADERS, json={
             "title": "candidate linked after investigation",
             "links": [{"job_id": job["id"], "candidate_id": candidate["id"],
-                       "rationale": "fixed candidate report"}],
+                       "rationale": "fixed candidate report <script>alert(1)</script>"}],
         })
         self.assertEqual(case.status_code, 201, case.text)
         case_id = case.json()["id"]
@@ -776,6 +777,43 @@ class WorkbenchTests(unittest.TestCase):
         self.assertIn("观测状态：candidate（单条观测保持候选；案例人工结论单独记录）", markdown.text)
         self.assertIn("AI 建议：unknown", markdown.text)
         self.assertIn("AI 源码依据状态：unknown", markdown.text)
+        html_report = self.client.get(f"/api/v1/cases/{case_id}/report.html")
+        self.assertEqual(html_report.status_code, 200, html_report.text)
+        self.assertIn("<h1>OHScanner", html_report.text)
+        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", html_report.text)
+        self.assertNotIn("<script>alert(1)</script>", html_report.text)
+        self.assertIn("default-src 'none'", html_report.headers["content-security-policy"])
+        manifest = self.client.get(f"/api/v1/cases/{case_id}/report.manifest.json")
+        self.assertEqual(manifest.status_code, 200, manifest.text)
+        manifest_body = manifest.json()
+        canonical_json = json.dumps(body, ensure_ascii=False, sort_keys=True,
+                                    separators=(",", ":")).encode("utf-8")
+        self.assertEqual(manifest_body["artifacts"]["report.json"]["sha256"],
+                         hashlib.sha256(canonical_json).hexdigest())
+        self.assertEqual(manifest_body["artifacts"]["report.md"]["sha256"],
+                         hashlib.sha256(markdown.content).hexdigest())
+        self.assertEqual(manifest_body["artifacts"]["report.html"]["sha256"],
+                         hashlib.sha256(html_report.content).hexdigest())
+        self.assertEqual(manifest_body["source_bindings"][0]["candidate_id"], candidate["id"])
+        self.assertEqual(manifest_body["source_bindings"][0]["commit"], job["spec"]["commit"])
+        self.assertEqual(manifest_body["source_bindings"][0]["vulnerability_state"], "candidate")
+        bundle = self.client.get(f"/api/v1/cases/{case_id}/report.bundle.zip")
+        self.assertEqual(bundle.status_code, 200, bundle.text)
+        self.assertEqual(bundle.headers["content-type"], "application/zip")
+        with zipfile.ZipFile(io.BytesIO(bundle.content)) as archive:
+            self.assertEqual(set(archive.namelist()), {
+                "report.json", "report.md", "report.html", "manifest.json"})
+            bundled_json = archive.read("report.json")
+            bundled_markdown = archive.read("report.md")
+            bundled_html = archive.read("report.html")
+            bundled_manifest = json.loads(archive.read("manifest.json"))
+            self.assertEqual(bundled_manifest["artifacts"]["report.json"]["sha256"],
+                             hashlib.sha256(bundled_json).hexdigest())
+            self.assertEqual(bundled_manifest["artifacts"]["report.md"]["sha256"],
+                             hashlib.sha256(bundled_markdown).hexdigest())
+            self.assertEqual(bundled_manifest["artifacts"]["report.html"]["sha256"],
+                             hashlib.sha256(bundled_html).hexdigest())
+            self.assertEqual(json.loads(bundled_json)["case_id"], case_id)
 
         queued_validation = ops.create("validation", {"case_id": case_id})
         queued_report = self.client.get(f"/api/v1/cases/{case_id}/report.json")

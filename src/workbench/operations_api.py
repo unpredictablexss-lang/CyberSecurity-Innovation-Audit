@@ -1,10 +1,13 @@
 """Typed local API for long-running operations; every input becomes an immutable plan."""
 import hashlib
 from decimal import Decimal, InvalidOperation
+from html import escape as html_escape
+from io import BytesIO
 import json
 import re
 import subprocess
 import uuid
+import zipfile
 from pathlib import Path
 from typing import Literal
 from fastapi import APIRouter, FastAPI, HTTPException
@@ -30,6 +33,77 @@ def _markdown_inline_untrusted(value):
     normalized = " ".join(str(value if value is not None else "").split())
     return "".join(chr(92) + char if char in _MARKDOWN_INLINE_SPECIAL_CHARS else char
                    for char in normalized)
+
+
+def _case_markdown_to_html(markdown):
+    """Render the small Markdown subset used by case reports without raw HTML."""
+    escaped_markdown_chars = re.compile(r"\\([\\`*_{}\[\]()#+\-.!|<>~])")
+
+    def inline(value):
+        parts = re.split(r"(\*\*.*?\*\*|`[^`]*`)", value)
+        rendered = []
+        for part in parts:
+            if part.startswith("**") and part.endswith("**") and len(part) >= 4:
+                text = escaped_markdown_chars.sub(r"\1", part[2:-2])
+                rendered.append("<strong>" + html_escape(text) + "</strong>")
+            elif part.startswith("`") and part.endswith("`") and len(part) >= 2:
+                text = escaped_markdown_chars.sub(r"\1", part[1:-1])
+                rendered.append("<code>" + html_escape(text) + "</code>")
+            else:
+                text = escaped_markdown_chars.sub(r"\1", part)
+                rendered.append(html_escape(text))
+        return "".join(rendered)
+
+    body = []
+    list_kind = None
+
+    def close_list():
+        nonlocal list_kind
+        if list_kind:
+            body.append("</" + list_kind + ">")
+            list_kind = None
+
+    for raw_line in markdown.splitlines():
+        line = raw_line.strip()
+        if not line:
+            close_list()
+            continue
+        heading = re.match(r"^(#{1,4})\s+(.+)$", line)
+        if heading:
+            close_list()
+            level = len(heading.group(1))
+            body.append(f"<h{level}>" + inline(heading.group(2)) + f"</h{level}>")
+            continue
+        if line.startswith("> "):
+            close_list()
+            body.append("<blockquote>" + inline(line[2:]) + "</blockquote>")
+            continue
+        unordered = re.match(r"^-\s+(.+)$", line)
+        ordered = re.match(r"^\d+\.\s+(.+)$", line)
+        match, kind = (unordered, "ul") if unordered else (ordered, "ol") if ordered else (None, None)
+        if match:
+            if list_kind != kind:
+                close_list()
+                list_kind = kind
+                body.append("<" + kind + ">")
+            body.append("<li>" + inline(match.group(1)) + "</li>")
+            continue
+        close_list()
+        body.append("<p>" + inline(line) + "</p>")
+    close_list()
+    return """<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OHScanner case report</title>
+<style>
+body{margin:0;background:#f4f6fa;color:#243247;font:16px/1.75 system-ui,-apple-system,sans-serif}
+main{max-width:1000px;margin:32px auto;padding:36px 44px;background:#fff;border:1px solid #dfe6ef;border-radius:14px;box-shadow:0 8px 30px #20385812}
+h1,h2,h3,h4{color:#173b67;line-height:1.35;margin:1.5em 0 .55em}h1{margin-top:0;font-size:2em}
+p{margin:.6em 0}li{margin:.35em 0}blockquote{margin:1em 0;padding:.6em 1em;border-left:4px solid #7aa7e8;background:#f3f7ff;color:#526783}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere;color:#234d85}
+@media(max-width:700px){main{margin:0;padding:22px;border:0;border-radius:0}}
+@media print{body{background:#fff}main{max-width:none;margin:0;padding:0;border:0;box-shadow:none}}
+</style></head><body><main>""" + "\n".join(body) + "</main></body></html>"
 
 
 
@@ -2803,7 +2877,10 @@ def install_routes(app: FastAPI, settings, store):
 
     @router.get("/cases/{case_id}/report.md")
     def case_report_md(case_id: str):
-        data = case_report_json(case_id)
+        exports = _case_report_exports(case_id)
+        return Response(exports["markdown"], media_type="text/markdown; charset=utf-8")
+
+    def _case_report_markdown(data, case_id):
         md = _markdown_inline_untrusted
         case_state = ("人工确认（运行时门控通过）" if data["validated_vulnerability"]
                       else "candidate（尚未确认）")
@@ -2999,7 +3076,80 @@ def install_routes(app: FastAPI, settings, store):
         rows += ["", "## 限制", "", *["- " + md(x) for x in data["limitations"]],
                  "", "经门控确认的漏洞数：" + md(data["validated_vulnerability"]) +
                  "（候选数不计入；模型建议不能单独确认）。"]
-        return Response("\n".join(rows) + "\n", media_type="text/markdown")
+        return "\n".join(rows) + "\n"
+
+    def _case_report_exports(case_id):
+        data = case_report_json(case_id)
+        markdown = _case_report_markdown(data, case_id)
+        html_document = _case_markdown_to_html(markdown)
+        canonical_json = json.dumps(data, ensure_ascii=False, sort_keys=True,
+                                    separators=(",", ":")).encode("utf-8")
+        manifest = {
+            "schema_version": 1,
+            "case_id": case_id,
+            "hash_contract": "SHA-256 over UTF-8 bytes; report.json uses canonical JSON v1 (sorted keys, compact separators, no ASCII escaping).",
+            "artifacts": {
+                "report.json": {"sha256": hashlib.sha256(canonical_json).hexdigest(),
+                                "serialization": "canonical-json-v1"},
+                "report.md": {"sha256": hashlib.sha256(markdown.encode("utf-8")).hexdigest()},
+                "report.html": {"sha256": hashlib.sha256(html_document.encode("utf-8")).hexdigest()},
+            },
+            "source_bindings": [{
+                "job_id": row["job_id"],
+                "report_sha256": row["report_sha256"],
+                "repository": row["repository"],
+                "commit": row["commit"],
+                "candidate_id": row["candidate"]["id"],
+                "file": row["candidate"].get("file"),
+                "line": row["candidate"].get("line"),
+                "source_sha256": row["candidate"].get("source_sha256"),
+                "git_blob": (row.get("source_anchor") or {}).get("git_blob"),
+                "source_anchor_id": (row.get("source_anchor") or {}).get("anchor_id"),
+                "source_anchor_state": (row.get("source_anchor") or {}).get("state", "unknown"),
+                "risk_tier": (row.get("risk") or {}).get("risk_tier", "unknown"),
+                "vulnerability_state": "candidate",
+            } for row in data["candidates"]],
+            "operations": [{
+                "id": item["id"], "kind": item["kind"], "status": item["status"],
+                "result_sha256": item.get("result_sha256"),
+                "job_id": item.get("job_id"), "candidate_id": item.get("candidate_id"),
+            } for item in data["operations"]],
+            "human_assessment_ids": [item.get("id") for item in data["assessments"]
+                                     if item.get("reviewer_kind") == "human"],
+            "validated_vulnerability": data["validated_vulnerability"],
+            "limitations": data["limitations"],
+        }
+        return {"data": data, "json": canonical_json, "markdown": markdown,
+                "html": html_document, "manifest": manifest}
+
+    @router.get("/cases/{case_id}/report.html")
+    def case_report_html(case_id: str):
+        document = _case_report_exports(case_id)["html"]
+        return Response(document, media_type="text/html; charset=utf-8", headers={
+            "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+            "X-Content-Type-Options": "nosniff",
+            "X-Frame-Options": "DENY",
+        })
+
+    @router.get("/cases/{case_id}/report.manifest.json")
+    def case_report_manifest(case_id: str):
+        return _case_report_exports(case_id)["manifest"]
+
+    @router.get("/cases/{case_id}/report.bundle.zip")
+    def case_report_bundle(case_id: str):
+        exports = _case_report_exports(case_id)
+        manifest_json = json.dumps(exports["manifest"], ensure_ascii=False, sort_keys=True,
+                                   separators=(",", ":")).encode("utf-8")
+        bundle = BytesIO()
+        with zipfile.ZipFile(bundle, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr("report.json", exports["json"])
+            archive.writestr("report.md", exports["markdown"].encode("utf-8"))
+            archive.writestr("report.html", exports["html"].encode("utf-8"))
+            archive.writestr("manifest.json", manifest_json)
+        return Response(bundle.getvalue(), media_type="application/zip", headers={
+            "Content-Disposition": f'attachment; filename="ohscanner-case-{case_id}.zip"',
+            "X-Content-Type-Options": "nosniff",
+        })
 
     @router.post("/cases/{case_id}/agent-assessments", status_code=201)
     def agent_assessment(case_id: str, body: AgentProposalRequest):
