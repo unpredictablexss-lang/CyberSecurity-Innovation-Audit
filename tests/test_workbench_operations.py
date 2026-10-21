@@ -474,11 +474,14 @@ class OperationEndToEndTests(unittest.TestCase):
         self.assertEqual(range_result["result"]["endpoint"], self.commits[1])
 
         date_range = self.client.post("/api/v1/operations/date-ranges", headers=headers, json={
-            **base, "branch": "HEAD", "start": "2025-01-02T00:00:00+00:00",
+            **base, "audit_mode": "static_only", "branch": "HEAD",
+            "start": "2025-01-02T00:00:00+00:00",
             "end": "2025-01-03T00:00:00+00:00", "timezone": "UTC"})
         self.assertEqual(date_range.status_code, 201, date_range.text)
-        self.assertEqual(date_range.json()["spec"]["audit_mode"], "standard_review")
-        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in date_range.json()["spec"]["scan_ids"]], ["standard_review", "standard_review"])
+        self.assertEqual(date_range.json()["spec"]["audit_mode"], "static_only")
+        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in date_range.json()["spec"]["scan_ids"]], ["static_only", "static_only"])
+        self.assertTrue(all(self.store.triage_authorization(key) is None
+                            for key in date_range.json()["spec"]["scan_ids"]))
         selection = date_range.json()["spec"]["date_selection"]
         self.assertEqual(selection["selected_commits"], [self.commits[1]])
         self.assertEqual(selection["baseline"], self.commits[0])
@@ -518,11 +521,14 @@ class OperationEndToEndTests(unittest.TestCase):
         self.assertIn("refs/heads/main", {item["ref"] for item in refs})
         self.assertIn("refs/heads/feature", {item["ref"] for item in refs})
         branch_comparison = self.client.post("/api/v1/operations/branch-comparisons", headers=headers, json={
-            **base, "baseline_ref": "refs/heads/main", "endpoint_ref": "refs/heads/feature"})
+            **base, "audit_mode": "static_only", "baseline_ref": "refs/heads/main",
+            "endpoint_ref": "refs/heads/feature"})
         self.assertEqual(branch_comparison.status_code, 201, branch_comparison.text)
         branch_spec = branch_comparison.json()["spec"]
-        self.assertEqual(branch_spec["audit_mode"], "standard_review")
-        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in branch_spec["scan_ids"]], ["standard_review", "standard_review"])
+        self.assertEqual(branch_spec["audit_mode"], "static_only")
+        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in branch_spec["scan_ids"]], ["static_only", "static_only"])
+        self.assertTrue(all(self.store.triage_authorization(key) is None
+                            for key in branch_spec["scan_ids"]))
         self.assertEqual(branch_spec["baseline"], self.commits[2])
         self.assertEqual(branch_spec["endpoint"], self.feature_commit)
         self.assertEqual(branch_spec["baseline_ref"], "refs/heads/main")

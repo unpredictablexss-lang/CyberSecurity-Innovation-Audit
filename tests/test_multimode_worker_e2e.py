@@ -156,6 +156,8 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
             self.tool_call_sent = False
 
         def create_with_timeout(self, request, timeout):
+            if os.environ.get("OHSCANNER_TEST_PROVIDER_FAIL") == "quota":
+                raise agent.ProviderQuotaError("offline provider quota fixture")
             return self.create(request)
 
         @staticmethod
@@ -392,6 +394,85 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
             self.assertEqual(item["candidate_count"], batch["candidate_count"])
             self.assertFalse(item["model_result_is_product_vulnerability_confirmation"])
         return operation_view
+
+    def _create_single_intelligent_scan(self):
+        payload = {
+            "repository_id": self.repo["id"], "revision": self.commits[0],
+            "include_paths": ["."], "detector_ids": DETECTORS,
+            "timeout_seconds": 90, "memory_mb": 1024,
+            "audit_mode": "standard_review", "auto_triage": True,
+            "max_triage_candidates": 1, "max_r2_candidates": 0,
+        }
+        with patch.dict(os.environ, PROVIDER_ENV, clear=False):
+            planned = self.client.post("/api/v1/audit-plans", headers=HEADERS, json=payload)
+        self.assertEqual(planned.status_code, 200, planned.text)
+        plan = planned.json()
+        consent = plan["triage_authorization_preview"]
+        self.assertTrue(consent["eligible"], consent)
+        with patch.dict(os.environ, PROVIDER_ENV, clear=False):
+            created = self.client.post("/api/v1/scans", headers=HEADERS, json={
+                **payload, "expected_plan_sha256": plan["plan_sha256"],
+                "expected_workflow_sha256": plan["workflow_sha256"],
+                "expected_triage_consent_sha256": consent["consent_sha256"],
+                "triage_consent_nonce": consent["consent_nonce"],
+            })
+        self.assertEqual(created.status_code, 201, created.text)
+        scan_id = created.json()["id"]
+        with patch.dict(os.environ, PROVIDER_ENV, clear=False):
+            Worker(self.settings).run(once=True)
+        job = self.store.job(scan_id)
+        self.assertEqual(job["status"], "completed", job)
+        self.assertEqual(job["spec"]["audit_mode"], "standard_review")
+        self.assertIsNotNone(self.store.triage_authorization(scan_id))
+        report = read_report(self.settings, job)
+        self.assertTrue(findings(report))
+        self.assertEqual(report["validated_vulnerability"], 0)
+        ops = Operations(self.store)
+        batches = ops.triage_batches_for_job(scan_id, job["report_sha256"])
+        self.assertEqual(len(batches), 1, batches)
+        self.assertEqual(batches[0]["selected_count"], 1, batches[0])
+        tasks = ops.smart_triage_operations(batches[0]["id"])
+        self.assertEqual(len(tasks), 1, tasks)
+        return job, report, ops, batches[0], tasks[0]
+
+    def test_single_repository_intelligent_scan_authorizes_and_runs_fixed_candidate_r1(self):
+        job, _report, ops, batch, task = self._create_single_intelligent_scan()
+        worker_env, trace_path = self._fake_provider_environment()
+        with patch.dict(os.environ, worker_env, clear=False):
+            OperationWorker(self.settings).run(once=True)
+        finished = ops.get(task["id"])
+        self.assertIn(finished["status"], {"completed", "completed_with_limitations"}, finished)
+        result = ops.result(task["id"])
+        self.assertEqual(result["vulnerability_state"], "candidate")
+        self.assertEqual(result["validated_vulnerability"], 0)
+        self.assertEqual(result["binding"]["commit"], job["spec"]["commit"])
+        self.assertEqual(result["binding"]["report_sha256"], job["report_sha256"])
+        self.assertEqual(ops.triage_batch(batch["id"])["selected_count"], 1)
+        trace = [json.loads(line) for line in trace_path.read_text().splitlines()]
+        self.assertTrue(trace)
+        self.assertTrue(all(row["commit"] == job["spec"]["commit"] for row in trace))
+
+    def test_provider_quota_failure_keeps_the_completed_static_report_available(self):
+        job, report, ops, _batch, task = self._create_single_intelligent_scan()
+        worker_env, _trace_path = self._fake_provider_environment()
+        worker_env["OHSCANNER_TEST_PROVIDER_FAIL"] = "quota"
+        with patch.dict(os.environ, worker_env, clear=False):
+            OperationWorker(self.settings).run(once=True)
+        failed = ops.get(task["id"])
+        self.assertEqual(failed["status"], "failed", failed)
+        current_job = self.store.job(job["id"])
+        self.assertEqual(current_job["status"], "completed")
+        self.assertEqual(current_job["report_sha256"], job["report_sha256"])
+        self.assertEqual(read_report(self.settings, current_job), report)
+        self.assertEqual(current_job["spec"]["audit_mode"], "standard_review")
+
+    def test_single_repository_static_scan_does_not_queue_agent_work(self):
+        job, report = self._static_scan(self.commits[0])
+        self.assertEqual(job["spec"]["audit_mode"], "static_only")
+        self.assertIsNone(self.store.triage_authorization(job["id"]))
+        self.assertFalse(Operations(self.store).triage_batches_for_job(job["id"], job["report_sha256"]))
+        self.assertTrue(findings(report))
+        self.assertEqual(report["validated_vulnerability"], 0)
 
     def test_date_window_each_fixed_endpoint_has_independent_consent_and_finishes(self):
         payload = {
