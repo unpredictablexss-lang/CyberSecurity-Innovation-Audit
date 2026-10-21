@@ -245,8 +245,22 @@ def _case_markdown_to_html(markdown):
             body.append("</" + list_kind + ">")
             list_kind = None
 
+    code_fence = None
     for raw_line in markdown.splitlines():
         line = raw_line.strip()
+        if code_fence is not None:
+            if re.fullmatch(r"`{" + str(code_fence) + r",}\s*", line):
+                body.append("</code></pre>")
+                code_fence = None
+            else:
+                body.append(html_escape(raw_line) + "\n")
+            continue
+        fence = re.fullmatch(r"(`{3,})([A-Za-z0-9_+-]*)\s*", line)
+        if fence:
+            close_list()
+            code_fence = len(fence.group(1))
+            body.append("<pre><code>")
+            continue
         if not line:
             close_list()
             continue
@@ -273,6 +287,8 @@ def _case_markdown_to_html(markdown):
         close_list()
         body.append("<p>" + inline(line) + "</p>")
     close_list()
+    if code_fence is not None:
+        body.append("</code></pre>")
     return """<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -433,7 +449,7 @@ def _agent_citation_state(settings, store, result, job, candidate, source_anchor
             binding.get("job_id") != job.get("id"),
             binding.get("candidate_id") != candidate.get("id"),
             binding.get("report_sha256") != job.get("report_sha256"),
-            binding.get("commit") != job.get("spec", {}).get("commit"),
+            binding.get("commit") != (job.get("spec", {}).get("commit") or source_anchor.get("commit")),
             binding.get("source_sha256") != candidate.get("source_sha256"),
     )):
         return {"state": "unknown", "reason": "Agent 结果与本案例的固定候选绑定不匹配。"}
@@ -522,11 +538,16 @@ def _agent_citation_state(settings, store, result, job, candidate, source_anchor
     }}
     for citation in citations:
         if (not isinstance(citation, dict) or not isinstance(citation.get("evidence_id"), str)
-                or not isinstance(citation.get("file"), str)):
+                ):
             return {"state": "unknown", "reason": "Agent 引文没有固定源码证据 ID。"}
         entries = evidence.get(citation["evidence_id"], [])
         quote = citation.get("quote")
-        cited_file = citation["file"]
+        cited_file = citation.get("file")
+        if not isinstance(cited_file, str):
+            bound_files = {entry["file"] for entry in entries if isinstance(entry.get("file"), str)}
+            if len(bound_files) != 1:
+                return {"state": "unknown", "reason": "Agent 引文来源存在歧义。"}
+            cited_file = next(iter(bound_files))
         if (not cited_file or cited_file.startswith("/") or "\\" in cited_file
                 or ".." in Path(cited_file).parts):
             return {"state": "unknown", "reason": "Agent 引文路径不是安全的仓库相对路径。"}
@@ -3685,8 +3706,14 @@ def install_routes(app: FastAPI, settings, store):
         # when the immutable operation plan and committed result bind to the exact
         # candidate/report/source now linked to this case. Never share explicitly
         # case-bound operations with another case.
+        case_page = ops.report_operations_for_case(case_id, limit=20)
         operations = []
-        for operation in ops.list():
+        seen_operation_ids = set()
+        recovered_operation_count = 0
+        for operation in [*case_page["items"], *ops.list()]:
+            if operation["id"] in seen_operation_ids:
+                continue
+            seen_operation_ids.add(operation["id"])
             spec = operation["spec"]
             linked = records_by_candidate.get((spec.get("job_id"), spec.get("candidate_id")))
             case_bound = spec.get("case_id") == case_id
@@ -3713,9 +3740,12 @@ def install_routes(app: FastAPI, settings, store):
                     )):
                         continue
                 operations.append(operation)
+                if not case_bound:
+                    recovered_operation_count += 1
             elif case_bound:
                 operations.append(operation)
-        operation_page = {"total": len(operations), "truncated": len(operations) > 20}
+        total_operations = case_page["total"] + recovered_operation_count
+        operation_page = {"total": total_operations, "truncated": total_operations > 20, "limit": 20}
         operations = operations[:20]
         operation_summaries = []
         for x in operations:
@@ -3857,7 +3887,7 @@ def install_routes(app: FastAPI, settings, store):
                 "validation_basis": review_status["validated_by"],
                 "validated_vulnerability": review_status["validated_vulnerability"],
                 "poc_status": poc_status,
-                "limitations": ["Static candidates and component harness observations do not establish product reachability or reportability.",
+                "limitations": ["Static candidates and component harness observations do not establish product reachability or reportability.", "Product reachability is unknown unless a registered product-level validator binds the current candidate and source.",
                                 "A confirmed case count requires an append-only human assessment plus a matching passed runtime gate and verified product reachability.",
                                 "AI next steps are unverified investigation suggestions, not a reviewed remediation patch or an executed PoC plan."] +
                     (["One or more saved reports lacked fields needed for risk-tier enrichment; unknown means unavailable, not safe."]
@@ -3877,6 +3907,9 @@ def install_routes(app: FastAPI, settings, store):
                 "- 确认漏洞数：" + md(data["validated_vulnerability"]),
                 "- PoC / 受控验证：" + md(data["poc_status"]["label"]),
                 "", "## 候选与证据"]
+        operation_summary = data.get("operation_summaries") or {}
+        if operation_summary.get("truncated"):
+            rows += ["", "- 操作记录范围：展示 " + md(operation_summary.get("included")) + " / " + md(operation_summary.get("total")) + " 条；本文仅展示最近 20 条结果。", "- 未展开的 " + md(operation_summary.get("total", 0) - operation_summary.get("included", 0)) + " 条操作仍存在，不能据此推断没有结果。"]
         for row in data["candidates"]:
             c = row["candidate"]
             risk = row.get("risk") or {}
@@ -3891,6 +3924,10 @@ def install_routes(app: FastAPI, settings, store):
                      "- 观测状态：candidate（单条观测保持候选；案例人工结论单独记录）",
                      "- 来源证据 SHA-256：" + md(c.get("source_sha256", "unknown")),
                      "- 建立案例的理由：" + md(row.get("rationale", "未填写"))]
+            for evidence in row.get("source_evidence", []):
+                rows += ["- 人工登记源码证据：" + md(evidence.get("file") or c.get("file")) + ":" + md(evidence.get("start_line")) + "；" + md(evidence.get("note") or evidence.get("observation") or "未记录说明")]
+            for review in row.get("reviews", []):
+                rows += ["- 候选复核：" + md(review.get("status")) + "；" + md(review.get("reviewer")) + "；" + md(review.get("notes") or "未记录说明")]
             anchor = row.get("source_anchor") or {}
             if anchor.get("verified"):
                 rows += ["- 固定源码锚点：" + md(anchor.get("anchor_id")) + "；" +
@@ -4096,7 +4133,7 @@ def install_routes(app: FastAPI, settings, store):
                 else:
                     status_text = "状态未知"
                 rows += ["", "### PoC 验证计划（" + md(status_text) + "）",
-                         "> 未执行、未验证；candidate / unknown。这里展示的是验证计划，不是漏洞确认。"]
+                         "> AI 草案 · 未执行 · 未验证 · candidate / unknown", "> 未执行、未验证；candidate / unknown。这里展示的是验证计划，不是漏洞确认。"]
                 for label, key in (("标题", "title"), ("语言", "language"),
                                    ("预期观察", "expected_observation"), ("负向对照", "negative_control")):
                     if poc.get(key):
@@ -4302,17 +4339,9 @@ def install_routes(app: FastAPI, settings, store):
             "X-Content-Type-Options": "nosniff",
         })
 
-    @router.get("/cases/{case_id}/report.html")
-    def case_report_html(case_id: str):
-        data = case_report_json(case_id)
-        return Response(
-            _case_report_html_document(data),
-            media_type="text/html; charset=utf-8",
-            headers={"Content-Disposition": 'attachment; filename="ohscanner-case-report.html"'},
-        )
 
     @router.get("/cases/{case_id}/manifest.json")
-    def case_report_manifest(case_id: str):
+    def legacy_case_report_manifest(case_id: str):
         data = case_report_json(case_id)
         artifacts = {
             "report.json": JSONResponse(content=data).body,

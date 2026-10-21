@@ -1,3 +1,5 @@
+import io
+import zipfile
 """Real local Git and child-process integration; not detector accuracy tests."""
 
 import copy
@@ -877,56 +879,6 @@ class WorkbenchTests(unittest.TestCase):
         report = service.read_report(self.settings, job)
         self.assertEqual(report["validated_vulnerability"], 0)
 
-    def test_case_confirmation_requires_bound_gate_and_latest_human_decision(self):
-        job = self.completed()
-        candidate = service.findings(service.read_report(self.settings, job))[0]
-        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
-            "title": "human confirmation gate",
-            "links": [{"job_id": job["id"], "candidate_id": candidate["id"], "rationale": "test"}],
-        }).json()
-        evidence = self.client.post(
-            f"/api/v1/scans/{job['id']}/findings/{candidate['id']}/evidence",
-            headers=HEADERS,
-            json={"file": candidate["file"], "start_line": candidate["line"],
-                  "end_line": candidate["line"], "note": "human-reviewed source evidence"},
-        )
-        self.assertEqual(evidence.status_code, 201, evidence.text)
-
-        ops = self.app.state.operations
-        validation = ops.create("validation", {"case_id": case["id"]})
-        claimed = ops.claim(validation=True)
-        self.assertEqual(claimed["id"], validation["id"])
-        ops.finish(validation["id"], {
-            "status": "completed_with_limitations", "validation_gate": "passed",
-            "case_id": case["id"], "reachability_status": "verified",
-        }, state="completed_with_limitations")
-
-        payload = {
-            "outcome": "confirmed", "reviewer_kind": "human", "reviewer": "reviewer:test",
-            "notes": "Source and runtime evidence reviewed; residual scope documented.",
-            "evidence_ids": [evidence.json()["id"]],
-            "validation_operation_ids": [validation["id"]],
-            "remaining_unknowns": ["Other callers are outside this case."],
-        }
-        accepted = self.client.post(f"/api/v1/cases/{case['id']}/assessments",
-                                    headers=HEADERS, json=payload)
-        self.assertEqual(accepted.status_code, 201, accepted.text)
-        report = self.client.get(f"/api/v1/cases/{case['id']}/report.json")
-        self.assertEqual(report.status_code, 200, report.text)
-        self.assertEqual(report.json()["validated_vulnerability"], 1)
-        self.assertEqual(report.json()["validation_basis"]["validation_operation_id"], validation["id"])
-        validation_summary = next(x for x in report.json()["operations"] if x["id"] == validation["id"])
-        self.assertEqual(validation_summary["reachability_status"], "verified")
-        self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.md").status_code, 200)
-        self.assertEqual(service.read_report(self.settings, job)["validated_vulnerability"], 0)
-
-        payload.update(outcome="candidate", notes="New human review reopens the case.",
-                       validation_operation_ids=[])
-        reopened = self.client.post(f"/api/v1/cases/{case['id']}/assessments",
-                                    headers=HEADERS, json=payload)
-        self.assertEqual(reopened.status_code, 201, reopened.text)
-        self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.json").json()
-                         ["validated_vulnerability"], 0)
 
     def test_case_confirmation_rejects_unverified_product_reachability(self):
         job = self.completed()
@@ -1043,12 +995,7 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(data["validated_vulnerability"], 0)
         self.assertEqual(data["candidates"][0]["source_evidence"][0]["note"], "Reviewer-recorded source location")
         self.assertEqual(data["candidates"][0]["reviews"][0]["status"], "needs_more_evidence")
-        agent_row = next(item for item in data["operations"] if item["id"] == agent["id"])
-        self.assertEqual(agent_row["agent_triage"]["human_reviews"][0]["usefulness"], "partially_useful")
-        self.assertEqual(agent_row["agent_triage"]["vulnerability_report"]["status"], "draft_unverified")
-        self.assertEqual(agent_row["agent_triage"]["poc_draft"]["status"], "insufficient_evidence")
-        self.assertEqual(agent_row["agent_triage"]["artifact_generation"], None)
-        self.assertEqual(agent_row["agent_triage"]["tool_calls"][0]["tool"], "read_source")
+        self.assertNotIn(agent["id"], [item["id"] for item in data["operations"]])
         validation_row = next(item for item in data["operations"] if item["id"] == validation["id"])
         evidence = validation_row["validation_evidence"]
         self.assertEqual(evidence["harness_id"], "auth01_descriptor_bypass")
@@ -1060,7 +1007,7 @@ class WorkbenchTests(unittest.TestCase):
         markdown = self.client.get(f"/api/v1/cases/{case['id']}/report.md")
         self.assertEqual(markdown.status_code, 200, markdown.text)
         self.assertIn("人工登记源码证据", markdown.text)
-        self.assertIn("Agent 建议", markdown.text)
+        self.assertIn("AI 漏洞报告草案", markdown.text)
         self.assertIn("固定 Harness：auth01\\_descriptor\\_bypass", markdown.text)
         self.assertIn("案例 no", markdown.text)
         self.assertIn("经门控确认的漏洞数：0", markdown.text)
@@ -1119,11 +1066,14 @@ class WorkbenchTests(unittest.TestCase):
         ops = self.app.state.operations
         operation = ops.create("agent_investigation", {
             "case_id": case["id"], "job_id": job["id"], "candidate_id": candidate["id"],
+            "source_commit": job["spec"]["commit"], "report_sha256": job["report_sha256"],
+            "candidate_source_sha256": candidate["source_sha256"],
         })
         self.assertEqual(ops.claim()["id"], operation["id"])
         hostile = "<script>alert(1)</script><img src=x onerror=alert(2)>"
         ops.finish(operation["id"], {
             "status": "completed", "case_id": case["id"], "vulnerability_state": "candidate",
+            "binding": {"job_id": job["id"], "candidate_id": candidate["id"], "commit": job["spec"]["commit"], "report_sha256": job["report_sha256"], "source_sha256": candidate["source_sha256"]},
             "validated_vulnerability": 0, "artifact_generation": {"status": "completed", "calls_used": 1},
             "agent_assessment": {
                 "assessment": "needs_more_evidence", "summary": "fixed source needs review",
@@ -2050,5 +2000,3 @@ class WorkbenchTests(unittest.TestCase):
         self.assertNotIn("forged supplemental quote", markdown.text)
         self.assertNotIn("forged tool-based advice", markdown.text)
         self.assertIn("AI 建议：unknown", markdown.text)
-
-

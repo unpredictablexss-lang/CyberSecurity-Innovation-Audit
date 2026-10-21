@@ -392,7 +392,7 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
         progress = operation_view["intelligent_review_progress"]
         self.assertEqual(len(progress), len(operation["spec"]["scan_ids"]))
         for item, batch in zip(progress, endpoint_batches):
-            expected_state = ("completed" if batch["selected_count"] == batch["candidate_count"]
+            expected_state = ("completed_with_limitations" if batch["selected_count"] == batch["candidate_count"]
                               else "partially_completed")
             self.assertEqual(item["agent_status"], expected_state, item)
             self.assertTrue(item["agent_authorized"], item)
@@ -665,7 +665,7 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
         progress = view.json()["intelligent_review_progress"]
         self.assertEqual([item["scan_id"] for item in progress], [revoked_id, active_id])
         self.assertEqual(progress[0]["agent_status"], "revoked", progress[0])
-        self.assertEqual(progress[1]["agent_status"], "completed", progress[1])
+        self.assertEqual(progress[1]["agent_status"], "completed_with_limitations", progress[1])
         self.assertFalse(progress[0]["agent_authorized"])
         self.assertTrue(progress[1]["agent_authorized"])
         self.assertEqual(view.json()["result"]["validated_vulnerability"], 0)
@@ -722,7 +722,7 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
         progress = view.json()["intelligent_review_progress"]
         self.assertEqual([item["scan_id"] for item in progress], operation["spec"]["scan_ids"])
         self.assertEqual(progress[0]["agent_status"], "failed", progress[0])
-        self.assertEqual(progress[1]["agent_status"], "completed", progress[1])
+        self.assertEqual(progress[1]["agent_status"], "completed_with_limitations", progress[1])
         for item in progress:
             self.assertTrue(item["report_available"], item)
             self.assertTrue(item["agent_authorized"], item)

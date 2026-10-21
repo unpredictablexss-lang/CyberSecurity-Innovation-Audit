@@ -1,0 +1,17 @@
+{
+  "scanned_changed_files": 765,
+  "secret_pattern_filenames": [
+    "research/deliveries/integration/all_latest_20261021/local-16.patch",
+    "src/workbench/agent.py",
+    "tests/test_agent_workflow.py"
+  ],
+  "files_over_25_mib": [],
+  "exclusions": [
+    "ignored databases and provider configuration",
+    "third-party repository object caches",
+    "virtual environments",
+    "node_modules"
+  ],
+  "secret_pattern_review": "All matches were inspected: synthetic GitHub/PEM test fixtures and a task-policy identifier substring, not live credentials.",
+  "unresolved_secret_findings": 0
+}

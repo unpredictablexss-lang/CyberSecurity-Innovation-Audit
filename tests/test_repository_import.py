@@ -78,10 +78,8 @@ class RepositoryImportTests(unittest.TestCase):
         return git(stage, "rev-parse", commit + "^{tree}")
 
     def run_import(self, progress=None):
-        with patch.object(repository_import.service, "make_spec", return_value={
-                "commit": self.commit, "git_tree": self.tree, "timeout_seconds": 30}):
-            return repository_import.import_and_queue_scan(self.settings, self.store, self.spec,
-                                                            progress=progress)
+        return repository_import.import_and_queue_scan(self.settings, self.store, self.spec,
+                                                      progress=progress)
 
     def test_git_progress_output_is_normalized_for_the_operation_api(self):
         parsed = repository_import._parse_git_progress(

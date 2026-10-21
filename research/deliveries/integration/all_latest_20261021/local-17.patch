@@ -1,0 +1,1527 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 3996321b..d87d2825 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -19,6 +19,7 @@ jobs:
+   unit-tests:
+     name: Python unit tests
+     runs-on: ubuntu-22.04
++    needs: workbench-web
+     steps:
+       - name: Checkout repository
+         uses: actions/checkout@v4
+@@ -36,6 +37,12 @@ jobs:
+           python -m pip install --upgrade pip
+           python -m pip install -r requirements-web.txt
+ 
++      - name: Download production UI assets
++        uses: actions/download-artifact@v4
++        with:
++          name: workbench-web-dist
++          path: web/dist
++
+       - name: Run unit tests
+         run: python -m unittest discover -s tests -v
+ 
+@@ -55,3 +62,10 @@ jobs:
+       - name: Type-check and bundle offline UI assets
+         working-directory: web
+         run: npm run build
++      - name: Upload production UI assets for Python integration tests
++        uses: actions/upload-artifact@v4
++        with:
++          name: workbench-web-dist
++          path: web/dist
++          if-no-files-found: error
++          retention-days: 1
+diff --git a/docs/README.md b/docs/README.md
+index 46613fe4..c2330a08 100644
+--- a/docs/README.md
++++ b/docs/README.md
+@@ -1,6 +1,6 @@
+ # OHScanner：新 Agent 从这里开始
+ 
+-更新：2026-10-15。项目是 OpenHarmony 开源代码漏洞挖掘竞赛工具，不是通用 Web 漏扫器。
++更新：2026-10-16。项目是 OpenHarmony 开源代码漏洞挖掘竞赛工具，不是通用 Web 漏扫器。
+ 本目录六份 Markdown 是当前权威方案；其中“目标”不是“已实现”。
+ 历史教程、阶段路线图和长篇状态流水已从当前目录移除，证据可按 Git 固定提交追溯。
+ 
+@@ -19,7 +19,7 @@
+ 受控 PoC/动态验证 → CWE/CVE 与影响版本 → 修复重验 → 完整报告与性能数据。
+ 
+ 准确性、完整性、CWE/CVE、可执行 PoC、影响模块/版本、修复、性能和创新均需有实际证据。
+-当前可运行快照扫描、证据复核、源码同步/区间/版本/只读调查操作；Docker 运行时受当前环境阻塞，完整竞赛漏洞证据闭环尚未收口。
++当前可运行快照扫描、证据复核、源码同步/区间/版本/只读调查操作；运营面支持按 committer 时间预览 first-parent 区间和直接比较两个 branch/tag 端点。标准 WSL Docker Worker 仍不可用；一次 Windows 暂存桥接 AUTH-01 组件 Harness 不证明标准 WSL Worker 可重复运行或产品入口可达。完整竞赛漏洞证据闭环尚未收口。
+ 
+ 面板字体优先使用本机已安装的 MiSans；未安装时回退系统中文字体。仓库不打包 MiSans 字体文件。使用声明与许可说明见“开发协作与交付指南”。
+ 有价值的真实缺陷优先于告警数量、空菜单或把所有语言/工具列进能力清单。
+diff --git a/docs/开发协作与交付指南.md b/docs/开发协作与交付指南.md
+index f1c1e4c2..a9a6f107 100644
+--- a/docs/开发协作与交付指南.md
++++ b/docs/开发协作与交付指南.md
+@@ -1,6 +1,6 @@
+ # 开发、协作、复现与最终打包
+ 
+-更新：2026-10-15。当前本机使用 Ubuntu 22.04 WSL2，Python3.10、Node22。
++更新：2026-10-16。当前本机使用 Ubuntu 22.04 WSL2，Python3.10、Node22。
+ 一个 GitHub 项目；app 是实际源码，外围目录是管理入口，不整体当交付源码包。
+ 
+ ## 新环境安装
+@@ -24,8 +24,11 @@ Windows 浏览器 http://localhost:8765，同源 API 文档 /docs。
+ ```bash
+ cd ~/ohscanner/app
+ ../bin/oh doctor
+-../bin/oh check
+ ../bin/oh build
++../bin/oh check
++cd web
++npm test
++cd ..
+ ../bin/oh start
+ ```
+ 
+@@ -61,13 +64,17 @@ Web 面板的字体栈优先使用本机已安装的 MiSans / MiSans L3；没有
+ 
+ ```bash
+ python -m pip install -r requirements-web.txt
+-python -m unittest discover -s tests -q
+-git diff --check
+ cd web
+ npm ci
+ npm run build
++npm test
++cd ..
++python -m unittest discover -s tests -q
++git diff --check
+ ```
+ 
++工作台首页集成回归需要先构建 `web/dist`。CI 将 Web 构建产物传给 Python 测试 job，干净环境也按相同依赖顺序运行。
++
+ 只安装 requirements.txt 时工作台测试明确 skipped，是可选依赖而非偷偷忽略失败。
+ 真实组件对照（必须使用独立 data-dir，避免与正在运行的 Worker 争锁）：
+ ```bash
+diff --git a/docs/架构与公共协议.md b/docs/架构与公共协议.md
+index eaf57b49..0d63a5c1 100644
+--- a/docs/架构与公共协议.md
++++ b/docs/架构与公共协议.md
+@@ -1,6 +1,6 @@
+ # 架构、模块边界与公共协议
+ 
+-更新：2026-10-14。实现状态以本分支代码、固定实验和项目现状文档为准。
++更新：2026-10-16。实现状态以本分支代码、固定实验和项目现状文档为准。
+ 
+ ## 一套内核，多个入口
+ 
+@@ -35,7 +35,7 @@ Web 与 CLI 共用 execution.py；不得各造扫描器。历史工具对照与
+ | L1 索引 | indexing.py、frontend.py、parser | Tree-sitter 轻量 AST；不是完整类型/CFG/跨过程证明 |
+ | L2–L3 检测 | detectors/cpp、interface、runner.py | 已注册窄家族研究 Detector；语义增强由 A/B 做 |
+ | L4 证据/复核 | execution.py、workbench/service/store | 覆盖侧车、义务、源码绑定、追加复核已有；自动根因归并待评估 |
+-| L5 验证 | workbench/validation.py、validation_child.py、AUTH-01 Harness | Docker-only 服务与队列已接线；当前 WSL daemon/固定镜像不可用，真实容器验证 blocked |
++| L5 验证 | workbench/validation.py、validation_child.py、AUTH-01 Harness | Docker-only 服务与队列已接线；标准 WSL Docker Worker 不可用。2026-10-16 显式 Windows 暂存桥接通过一次组件 Harness，但不证明标准 Worker 可重复运行或产品入口可达 |
+ | L6 分类 | candidate CWE / 后续 CVE 绑定 | 关联须有来源，不能用名称猜 CVE 或严重度 |
+ | L7 影响/修复 | workbench/operations.py、案例报告 | 双 SHA/日期区间与版本矩阵候选比较已接入；影响状态均 unknown，修复重验未跑通 |
+ | L8 交付 | operations_api.py、JSON/Markdown 案例报告 | 原始扫描包与案例 JSON/Markdown 导出已接入；报告确认数不自动升级，产品闭环未验收 |
+@@ -82,7 +82,7 @@ detector ID/version/rule/scope/profile；缺什么就记录缺口。
+ 必要触发条件及具体 CIA 影响，记录可复核证据和仍未知项。
+ 满足证据门后应升级并交付 PoC、影响/修复/报告，不能永久停留在 candidate。
+ 
+-常规扫描 Worker 使用任务子进程与资源限制，不等于逐 Detector 沙箱。AUTH-01 动态 Harness 只允许走独立 Docker Worker；容器无网络、去 capabilities、只读根目录、限制资源。当前 WSL 缺 Docker daemon/固定镜像，实际 PoC 没有运行。
++常规扫描 Worker 使用任务子进程与资源限制，不等于逐 Detector 沙箱。AUTH-01 动态 Harness 只允许走独立 Docker Worker；容器无网络、去 capabilities、只读根目录、限制资源。标准 WSL Docker CLI/Worker 当前不可用；2026-10-16 一次明确授权的 Windows 暂存桥接运行通过组件 Harness，但不能证明 WSL Worker 可重复运行，也不能确认产品漏洞。
+ 超时不发布残缺候选包；缺失分析保持 unknown。
+ 数据库中的报告 hash、报告内 Markdown hash 与固定 blob 清单防意外混用，
+ 不保证主机/数据库被完全控制后的完整性。
+@@ -96,6 +96,6 @@ detector ID/version/rule/scope/profile；缺什么就记录缺口。
+ 
+ ## 本轮新增操作面与验收状态
+ 
+-workbench operations API 使用单独的 SQLite operation 表与迁移备份，范围包括显式仓库同步、固定双 SHA 区间、带时区的 committer-date 区间、版本矩阵、只读调查、验证任务、操作事件/取消/日志/结果 hash，以及案例 JSON/Markdown 报告。区间端点扫描与 operation 记录在同一事务创建；扫描仍只读本地固定对象。
++workbench operations API 使用单独的 SQLite operation 表与迁移备份，范围包括显式仓库同步、固定双 SHA 区间、带时区的 committer-date 区间预览、无需案例的 branch/tag 双端点比较、版本矩阵、只读调查、验证任务、操作事件/取消/日志/结果 hash，以及案例 JSON/Markdown 报告。区间端点扫描与 operation 记录在同一事务创建；branch comparison 在入队时解析并保存完整 SHA；扫描仍只读本地固定对象。
+ 
+ 运行时影响和漏洞确认仍是独立层。候选变化返回 added/persistent/disappeared/unknown 等观察关系，不推导漏洞引入或修复；版本矩阵 impact=unknown。候选聚类仅用于审查浏览，按固定快照、Detector 版本、规则、文件、符号、源码 SHA 聚合展示，原始候选身份和位置不变；聚类不代表共同根因。只读调查输出固定源码、义务、Git 历史和有限符号信息，不调用模型或 arbitrary shell。AUTH-01 组件触发不证明真实产品入口可达，confirmed/reportable 仍需人工审查与额外证据。
+diff --git a/docs/面板功能与验收.md b/docs/面板功能与验收.md
+index 0e9366ad..8ae0c0cc 100644
+--- a/docs/面板功能与验收.md
++++ b/docs/面板功能与验收.md
+@@ -1,6 +1,6 @@
+ # 面板功能与产品验收
+ 
+-更新：2026-10-15。Windows 浏览器 + WSL2 为当前单用户运行形态。
++更新：2026-10-16。Windows 浏览器 + WSL2 为当前单用户运行形态。
+ React/TypeScript/Ant Design/Monaco，本地构建；FastAPI 同源服务 + SQLite + 独立 Worker。
+ V1 不依赖 LLM、GPU、开发板或公网服务器。
+ 
+@@ -9,8 +9,8 @@ V1 不依赖 LLM、GPU、开发板或公网服务器。
+ | 页面 | 实际能力 | 不应误解为 |
+ |---|---|---|
+ | 概览 | 真实仓库、任务、Catalog 数及最近扫描 | 漏洞准确率或模型自评 |
+-| 仓库与版本 | 登记允许根目录内已有 Git；本地 refs/full SHA 选择 | 已验证官方身份或自动 clone |
+-| 新建审计 | 固定 commit/tree、include、Detector、时间/内存预算 | 全 OpenHarmony 无限完整扫描 |
++| 仓库与版本 | 登记允许根目录内已有 Git；可搜索仓库、加载仓库自身 refs/full SHA | 已验证官方身份或自动 clone |
++| 新建审计 | 固定 commit/tree、include、Detector、时间/内存预算；仓库切换清空旧 Ref 选择 | 全 OpenHarmony 无限完整扫描 |
+ | 任务详情 | 阶段、日志、候选分页、覆盖、取消/按原 SHA 重试 | 精确百分比或每插件独立超时 |
+ | 固定源码/候选 | Git blob/hash 核验、定位、义务、复核历史 | 工作区实时文件或完整路径证明 |
+ | 候选聚类 | 同快照/Detector版本/规则/文件/符号/hash 的重复观察分组；可展开原始候选 | 根因归并、准确率或漏洞确认 |
+@@ -27,10 +27,11 @@ V1 不依赖 LLM、GPU、开发板或公网服务器。
+ | 模式 | 最终交互与后端要求 | 状态 |
+ |---|---|---|
+ | A 快照 | 仓库 + ref/SHA + scope + Detector → 冻结快照 → 覆盖/候选/报告 | 已实现 |
+-| B 区间 | 两 SHA 或 committer-date+时区 → 固定端点扫描、拓扑跨度与候选对比 | API/队列/面板已接入，需浏览器全链路验证 |
+-| C 版本矩阵 | 案例 + 多个固定 SHA → 候选观察差异与证据链接 | 接口已接入；affected/fixed/not_present 仍 unknown |
++| B 区间 | 两 SHA 祖先区间或 committer-date+时区 → 固定端点扫描、拓扑跨度与候选对比 | API/Worker 有回归；页面日期时间选择及提交前预览已实现 |
++| B 跨分支 | 同一仓库两个 branch/tag 端点 → 固定 SHA 扫描、候选级比较 | API/Worker 回归覆盖非祖先分支与 ref 移动；浏览器烟测待完成 |
++| C 版本矩阵 | 案例 + 多个固定 SHA → 候选观察差异与证据链接 | 2026-10-16 隔离浏览器表单提交、队列、Worker 和详情查看通过；使用合成样例，影响仍 unknown |
+ 
+-B 不默认逐 commit 全扫，先端点 + 变更上下文；发现时间不等于引入时间。
++B 区间不默认逐 commit 全扫，先端点 + 变更上下文；跨分支只比较两个端点，不要求祖先关系。发现时间不等于引入时间。
+ C 的 affected/fixed/not_present/unknown 需要对应证据；文本 diff 只能给线索。
+ 多仓产品版本必须使用每组件实际 SHA，不给所有组件套一个 commit。
+ 
+@@ -39,8 +40,8 @@ Agent 是候选调查侧栏与轨迹，不做一个脱离证据的聊天首页
+ 
+ ## 下一阶段产品任务
+ 
+-1. 浏览器实测源码同步、双 SHA/日期区间、版本矩阵、取消/超时、案例报告下载和重启恢复。
+-2. 配置固定 Docker 镜像并启用 WSL integration，运行 AUTH-01 vulnerable/fixed/patch 三方重复控制；未满足前保持 blocked。
++1. 隔离浏览器已验证源码同步、排队取消、运行中扫描取消、案例报告下载、服务重启恢复，以及双 SHA/日期区间和版本矩阵表单提交；仓库/ref 选择、日期预览与跨分支端点比较已有构建和 API/Worker 回归，本轮浏览器 smoke 尚待完成。矩阵与跨分支结果只表示候选观察，影响仍 unknown。
++2. 标准 Ubuntu 22.04 WSL Docker Worker 仍不可用；2026-10-16 通过显式 Windows 暂存桥接运行 AUTH-01 vulnerable/fixed/patch 组件 Harness。该次结果不证明标准 WSL Worker 可重复运行或产品入口可达。
+ 3. 复核 A 的 229 条访问点候选并先按根因聚合；目前高密度组件容易形成告警噪声。
+ 4. 建立有真值的 holdout 与人工审查，确认真实入口/影响后才生成 reportable 报告。
+ 5. Agent 仍不调用模型；真实模型 R0/R1/R2 需要单独冻结样本、隐私/费用与评审协议。
+@@ -51,7 +52,7 @@ Agent 是候选调查侧栏与轨迹，不做一个脱离证据的聊天首页
+ 真实已有仓库 → 选择固定版本 → 提交任务 → Worker 完成 →
+ 覆盖中的 partial/unknown 清晰可见 → 定位固定源码 → 保存复核/摘录 →
+ 关联调查案例 → 导出可核验审计包 → 重启后记录保留。
+-操作 API 与 UI 已接入；Docker Runtime 当前仍受环境阻塞，版本影响与确认结论尚不提供。
++操作 API 与 UI 已接入；标准 WSL Docker Worker 受环境阻塞，虽有一次 Windows 暂存桥接组件 Harness 记录，版本影响与漏洞确认结论仍未知。
+ 
+ 目前服务仅监听 loopback；没有多人身份/公网部署验收。整任务内存预算是地址空间上限，
+ 不是测得峰值 RSS。SSE/热更新/PDF 不是首版必须，当前轮询/同源静态包/JSON-MD 可用。
+@@ -63,5 +64,53 @@ Agent 是候选调查侧栏与轨迹，不做一个脱离证据的聊天首页
+ 
+ - 浏览器登记仓库并扫描固定 `HEAD`，绑定 commit `6f5045c9e7784feaff3fef7a40d8f35abfde59ff`、tree `232a7d767ac5`；Detector `ohscanner.cpp.lifetime` `0.3.0` 在 0.32 秒内完成，纳入 2 个源码文件，输出 1 条 candidate：`vulnerable.cpp:13` / `CWE-416`，partial/failed/unparsed 为 0，confirmed 为 0。
+ - 候选详情显示源码 SHA-256 `64559050d0316d71639019191c3171a3d2c63b5b2847582656e919a7ee4f2a1a` 与 4 项 unknown 义务；聚类可展开回原始候选且根因仍显示“未推断”；报告页列出 JSON、Markdown、review 和 manifest 下载及其哈希。
+-- 浏览器查看了源码同步、双 SHA、日期、版本矩阵、验证和只读调查表单；本轮未提交联网同步、版本区间或动态验证任务。当前 WSL 无 Docker CLI，因此验证任务仍不能在本机重跑。
+-- 此烟测只验证 UI→API→Worker→固定源码→候选/覆盖→报告显示链路，不是安全准确率或真实漏洞验证。临时仓库、数据库和产物均在 `/tmp`，不属于交付源码。
++- 后续隔离验收仓库 `openharmony/uiacceptance` 使用两个固定提交：`f455d3ad21b50832c01b145f50b567f5a476939c`（vulnerable fixture）和 `9cb7f70c6f11a262bf2679a3a074f253f6977c87`（fixed fixture）。浏览器实际提交双 SHA 与日期区间，两个操作均由后台 Worker 扫描端点并生成 `completed_with_limitations` 报告；候选差异如实保持 `vulnerability_introduced_or_fixed=unknown`。版本矩阵经本地 API 创建并由 Worker 完成，结果经浏览器操作队列展示，含两个版本和一组比较，影响保持 unknown。
++- 自动化新增 5 项：三类操作 API/Worker 执行；操作子进程取消、超时与重启恢复；TestClient 提供预构建首页并通过 scan API、Worker 取回 JSON/Markdown/manifest，不是浏览器 JavaScript E2E。新 Store 可重新读取操作结果，result SHA 校验通过。测试共 517 项：513 项通过、4 项跳过、0 项失败；Web 构建和 `git diff --check` 通过。
++- 本轮未做真实 Docker Harness（WSL 当前无 Docker CLI）；未进行外网源码同步。浏览器实测只用临时样例，不是安全准确率或真实漏洞验证。临时仓库、数据库和产物均在 `/tmp`，不属于交付源码。
++
++## 2026-10-15 浏览器验收补充
++
++本次使用独立目录 `/tmp/ohscanner-mainline-browser-20261015c/`、loopback 端口 `18767` 和临时 SQLite，未读写项目正式数据，也未修改 A/B 目录。
++
++- 通过网页源码同步表单拉取 `openharmony/commonlibrary_c_utils`（Gitee）；操作完成，固定本地 HEAD `634d5c9d0aa3642f697938c7e5706e53ec069ba1`，远端 refs 已记录。此操作只同步 Git 对象，没有 checkout 或扫描。
++- 通过“新建源码审计”页登记的临时仓库扫描固定 commit `8e9ab7b7293aa0fadc472cb5f6d751cea0153e17`，tree `f2ee7b416068…`；`ohscanner.cpp.lifetime 0.3.0` 完成，纳入源码 1 个、候选 1 条（`demo.cpp:13` / CWE-416），部分/失败/未解析为 0，确认漏洞为 0。
++- 在任务页选中候选并建立“临时 UI 验收候选案例”，案例关联 1 条候选；在案例页点击 JSON 和 Markdown 导出。两个报告 API 均返回成功，JSON 可解析，含 1 条候选且 `validated_vulnerability=0`；Markdown 含报告标题与限制说明。
++- 取消验收发现并修复一个真实 UI bug：取消按钮原先调用通用 API 时未传 body，导致发 GET，而服务端取消端点要求 POST。按钮现以空 JSON body 发送 POST。用不启动操作 Worker 的隔离服务保持操作 queued 后，从面板取消，状态变为 `cancelled`。
++- 停止并重启完整服务，再刷新页面；已完成同步操作、扫描任务、调查案例和 cancelled 状态均从同一临时数据库恢复。该项验证的是本机服务重启，不代表 Windows 重启恢复。
++- 本次分支全量测试：517 项总计，513 passed、4 skipped、0 failed；Web 构建 `tsc --noEmit && node build.mjs` 通过。没有运行 Docker Harness；Docker daemon / WSL integration 未在本次确认可用。
++
++当时的限制：页面运行中取消尚未用慢任务实测；操作进程的取消/超时由现有自动化测试覆盖。随后同日收尾补充了运行中取消验收，详见下节。以上是产品路径与样例仓库验收，不提供真实漏洞准确率或可利用性结论。
++
++
++## 2026-10-15 浏览器验收收尾
++
++本轮沿用隔离目录 /tmp/ohscanner-mainline-browser-20261015c/、loopback 端口 18767 和临时 SQLite。验收样本均为本地合成 fixture；没有改正式目标源码，也没有访问 A/B 工作区。
++
++- **运行中取消**：扩展临时仓库到 1,800 个 .cpp 文件后，从浏览器新建固定 Commit 扫描。任务进入“运行中”后点击“取消任务”；页面最终显示“已取消”，实际运行 5.82 秒，并显示 Cancelled by user; incomplete analysis remains unknown。验证了运行任务取消和覆盖未知语义，不把取消解释为安全。
++- **双 SHA 区间**：页面提交 baseline 8e9ab7b7293aa0fadc472cb5f6d751cea0153e17、endpoint b8f08f1db1bec81f91352f87f715180ebb8a82cc。Worker 完成两个端点扫描，结果 completed_with_limitations，result SHA-256 fc8f638feaca442ef74fba400facdca98ab3e4ae6a5a12430e36cccf7ed9cb34；报告列出 ui_acceptance_marker.cpp 变更及一个候选的跨版本关联，但 vulnerability_introduced_or_fixed=unknown。
++- **日期区间**：页面以 master、2026-10-15T18:00:00 至 2026-10-15T20:00:00、Asia/Shanghai 提交。报告记录半开区间 [start,end)、committer 时间、first-parent 拓扑、选中 endpoint b8f08f1db1bec81f91352f87f715180ebb8a82cc、baseline 8e9ab7b7293aa0fadc472cb5f6d751cea0153e17；Worker 完成，result SHA-256 f259d015fe397f36f30edb5d0ee60e61a2655dc8b11ebdbf8711929a882d0577。候选的引入/修复仍是 unknown。
++- **版本矩阵**：通过本地 API 创建矩阵操作，Worker 扫描并完成；随后在浏览器操作队列打开详情，看到两个固定版本、一个候选比较和 result SHA-256 b9960225649a921807c534d4fcbed65cf90bc3d9872842c139bf82370da7e3b4。此次未将“浏览器表单提交”记为通过：重新加载后逐项选择案例、仓库、检测器并填写两个 SHA，点击提交后仍触发表单必填校验，操作队列没有新增记录；页面显示值与 Ant Design Form 实际收集值可能不一致，需修复或用浏览器 DOM 自动化复测。API/Worker 结果不能替代此项 UI 验收。impact=unknown，没有把候选相关性当成影响结论。
++- **Docker**：Windows 侧 Docker Desktop Engine 29.6.2 本轮可连接；Ubuntu 22.04 内仍缺 docker 命令，Docker Desktop 的该发行版 WSL integration 未开启。因此 Docker-only Validation Worker 未运行，本轮没有 AUTH-01 新运行证据，也没有回退到宿主执行。
++
++以上结束了浏览器端的运行中取消专项和本轮双 SHA/日期区间复测。自动回归、构建和全量测试的最近一次结果仍绑定 2146c229e00e63c4464da85f46fde303019fbeaa：517 项总计，513 passed、4 skipped、0 failed，前端构建通过；真实漏洞准确率、产品入口可达性、动态验证结果仍未由这轮证明。
++
++## 2026-10-16 Docker 受控验证与 A 线同步
++
++代码工作区仍为 `feat/workbench-status-misans-hardening`，验证启动时固定 HEAD 为 `2146c229e00e63c4464da85f46fde303019fbeaa`。本次只更新 `origin` 远端跟踪引用：A 线 `origin/codex/full-runtime-performance-audit-20261014` 到 `c09965c`（2026-10-16，`feat(a): finalize halfyear and cross-version evidence tooling`）；未切换、合并、修改或推送 A/B 任何分支。
++
++本次 AUTH-01 使用 Windows Docker Desktop Engine 29.6.2 执行。Ubuntu 22.04 WSL 的 Docker Integration 未开启，因此采用显式暂存桥接：只将主线 `src/`、已固定目标 Git 对象库和本次 operation 输入/输出暂存到 Windows 临时目录，再由 Windows Docker CLI 调用现有验证镜像。容器仍使用固定镜像 digest `sha256:bfb8cbdda14a4654fccf5d61463d37c0ece1a2bd1af13520b21f7af0e539e712`、`--network none`、`--cap-drop ALL`、`--read-only`、非 root UID、CPU/内存/PID/超时限制；临时 Git safe.directory 配置只对 `/input/target` 生效并在结束后删除。没有修改 Docker Desktop 的 WSL 安全设置，也没有回退到宿主机执行。
++
++- Operation：`f4888d67890647568609a496f0d5b3b2`，案例 `e647fac67fb3447fbc5039bf681f158f`，Harness `auth01_descriptor_bypass`；目标 `openharmony/inputmethod_imf` vulnerable SHA `e663b47013d534a56165ab7467fbb3e14bf7172b`，fixed SHA `5eaddcab19bc4b22544f4bee1e8894fc2d6505dc`，依赖 `commonlibrary_c_utils` SHA `b807d3dadb7dbb7639fe85b3a5f72da18d318da2`。
++- 结果状态 `completed_with_limitations`，验证门 `passed`，结果 SHA-256 `ec1316eb6078b8bee09649870b3dd04ad4c29f451dfbea7115ca2321b002e9ac`，输入 manifest SHA-256 `f35a141bf380b545ee9b44720a062c158b777edf1b0c8895b2acf5fe7fbb6724`。
++- Vulnerable 版本的无 token 路径 3/3 稳定触发；正确 token 控制及错误 token 路径未触发目标行为。Fixed 和 patch revision 的 no-token / foreign-token 两个攻击用例均 3/3 稳定拒绝，正确 token 控制 3/3 正常触发。编译使用 Ubuntu clang 14、ASan+UBSan；Docker exit code 0。
++- 结论严格限定为组件 Harness 复现。Harness 直接调用真实组件桩，Parcel token 方法使用转发 shim，消息处理以记录调用为观测；真实系统 IPC 入口可达性、进程/SA 权限和产品影响没有证明。因此 `validated_vulnerability=0`，不能据此报告为已确认产品漏洞。
++- 完整 API operation/result 已保存到本机工作区之外的 `/home/audit/ohscanner-workbench/validation-evidence/auth01_validation_20261016.json`。首次容器运行因 Windows bind mount 所有权触发 Git `dubious ownership` 而失败；第二次配置仅针对 `/input/target` 后通过，失败记录保留在 operation `322aa0b0b4904b7a9c0514163909047e`，没有覆盖或伪装成成功。
++
++**版本矩阵 UI 已于 2026-10-16 在隔离浏览器复测通过。** 页面提交、持久化队列、Worker 扫描和结果查看均显示完成；操作与结果哈希、合成样例范围及漏洞结论边界见本节末的隔离浏览器复测记录。产品影响仍为 unknown，validated_vulnerability=0。
++
++
++## 2026-10-16 版本矩阵表单隔离浏览器复测
++
++临时服务端口 18767 使用独立 SQLite 和临时 fixture 仓库 openharmony/matrix-fixture。页面逐项选择案例、仓库和 ohscanner.cpp.lifetime，填写两个完整 commit SHA 后提交成功；队列出现 version_matrix，刷新后状态为 completed_with_limitations。操作 ID 1e9aac54c7d04cd89db6428ff7ab5290，result SHA-256 3a1ebfbb67d8bb35184a6014e612131fc10d51a89e99c56dd7477a634f67a4d6。
++
++版本比较显示候选消失，但 vulnerability_introduced_or_fixed=unknown、impact=unknown、validated_vulnerability=0。只确认矩阵页面提交、队列、Worker 和结果查看链路；合成 fixture 不能证明产品漏洞或漏洞准确率。此记录补齐此前“矩阵 UI 提交待浏览器复测”的状态。
+diff --git a/docs/项目现状与下一步.md b/docs/项目现状与下一步.md
+index 286f3593..97e27d89 100644
+--- a/docs/项目现状与下一步.md
++++ b/docs/项目现状与下一步.md
+@@ -1,6 +1,6 @@
+ # 项目现状与下一步
+ 
+-更新：2026-10-15（中国标准时间）。本文件是当前状态入口；原始实验日志按文中本机路径保存。
++更新：2026-10-16（中国标准时间）。本文件是当前状态入口；原始实验日志按文中本机路径保存。
+ 
+ ## 人话版：一页看懂
+ 
+@@ -15,9 +15,9 @@
+ - 已接入三类窄范围检测能力：C/C++ 生命周期、`shared_ptr` 并发候选、IPC/接口边界候选。
+   这些结果默认都是 candidate，不是“已确认漏洞”。
+ - 已跑通源码同步、提交区间、日期区间、版本对比、只读调查和案例报告等操作入口。
+-- AUTH-01 组件 Harness 曾有 Docker vulnerable / fixed / patched 三方对照通过记录，
+-  三次重放稳定；但本次检查的 WSL 环境找不到 Docker CLI，当前无法重跑，故本机现状为 blocked。
+-  历史 Harness 结果只证明组件样例可复现，不能证明真实产品可利用。
++- AUTH-01 组件 Harness 有 Docker vulnerable / fixed / patched 三方对照通过记录，三次重放稳定；
++  2026-10-16 又通过显式 Windows 暂存桥接完成一次受控重跑。标准 WSL Docker CLI/Worker 仍不可用，
++  因此不代表标准 Worker 可重复运行。Harness 只证明组件样例行为，不能证明真实产品入口可达或可利用。
+ - 11 个固定组件做了两轮性能测试，均 11/11 成功。这个数据说明平台跑得动，不代表漏洞检出率高。
+ - 当前主线基线原为 `de4d42a025404d87bdef59013c8999ff22a6d3a0`（状态文档提交）；最近一次全量代码测试对应其代码父提交 `9d8749d68b5826b016aff27f731034c0c1b676bd`：512 项通过、4 项跳过；Detector 测试 66/66 通过，compileall 与 `git diff --check` 通过。4 项跳过包括两项依赖本地历史源码快照的复核，以及两项按设计禁止宿主机运行的 Docker PoC 测试。当前 Docker CLI 在 WSL 不可用，不能把这次历史验证写成当前可重复运行。
+ - 两个缺失的固定源码对象已经补齐，五组件逐文件扫描清单已恢复，并完成同一范围复扫。
+@@ -41,18 +41,19 @@
+ 
+ - 本地开发分支 `feat/workbench-status-misans-hardening` 从当时 `main` `de4d42a025404d87bdef59013c8999ff22a6d3a0` 建立；本轮工作未涉及 A/B 的工作目录或分支。
+ - 修正本状态页的当前 SHA 与历史测试关系：512 passed / 4 skipped 是 `9d8749d` 代码基线上的记录，`de4d42a` 是之后的状态文档提交。该历史测试数字不冒充本轮重新运行结果。
+-- 重新核对 WSL 环境时 `docker` 命令不存在；历史记录中的 Docker AUTH-01 通过结果仍作为历史实验保存，但目前在本环境不能重跑，当前状态标为 blocked。
++- （2026-10-15 历史状态）重新核对 WSL 环境时 `docker` 命令不存在；当时 Docker AUTH-01 无法重跑。2026-10-16 的受控桥接结果见下文。
+ - 修正能力页中 Agent、动态验证、版本影响三个已过期描述；概览文案现在说明动态验证只能调用注册 Docker Harness、环境缺失时 blocked 且不自动升级结论。
+ - Web 字体栈优先尝试本机安装的 MiSans / MiSans L3，页脚和交付指南注明使用；没有把字体二进制放进仓库或构建包。小米官方许可限制字体文件再分发，未安装字体时使用系统回退。
+ - 独立浏览器烟测详见《面板功能与验收》2026-10-15 节：临时仓库 scan → 候选证据/unknown 义务 → 聚类展开 → 报告下载列表全链路通过；不声称动态验证或漏洞确认。
++- 本次再用独立临时仓库 `openharmony/uiacceptance`（commit `f455d3ad21b50832c01b145f50b567f5a476939c` → `9cb7f70c6f11a262bf2679a3a074f253f6977c87`）实测：浏览器提交双 SHA 与提交者日期区间，Worker 扫描两端，区间报告显示候选消失但 `vulnerability_introduced_or_fixed=unknown`；版本矩阵 UI 于 2026-10-16 在隔离浏览器成功提交，Worker 完成并显示结果，版本影响仍 unknown。报告 result SHA 已由持久化存储校验。
++- 新增自动化回归 5 项：固定 SHA 区间、日期区间、版本矩阵从 API 规划到扫描 Worker、操作 Worker 与哈希结果落盘；子进程取消、硬超时终止、Worker 重启标记 interrupted、新 Store 重读已完成操作结果；TestClient 提供预构建首页并验证 scan API → Worker → JSON/Markdown/manifest 下载，不是浏览器 JavaScript E2E。全量测试共 517 项：513 项通过、4 项跳过、0 项失败；Web 构建、compileall、`git diff --check` 通过。
+ 
+ ### 接下来按这个顺序做
+ 
+ 1. `shared_ptr` mixed-access 与 lifetime invalidation 扩展、方法卡、PoC、回归和五组件同范围复扫已收口。
+ 2. 人工复核当前 208 条 shared_ptr 候选，并保留旧 229 条基线身份；先处理 `kv_store` 的密集结果，按独立根因归并，
+    建立可复用的真值集和 holdout。没有真值集前，不报 Precision/Recall。
+-3. 把网页端剩下的一轮验收补齐：提交区间、版本矩阵、源码同步、取消/超时、候选展开、
+-   报告下载和重启恢复。顺便补齐干净 checkout 下仍缺的历史基线文件。
++3. 浏览器专项验收已覆盖运行中取消、双 SHA、日期区间、报告导出和服务重启恢复；版本矩阵页面表单、队列、Worker 与结果查看已于 2026-10-16 在隔离数据中通过。仓库/ref 动态选择、committer 时间区间预览和无需案例的跨分支端点比较已实现并通过 API/Worker 回归，待当前浏览器 UI smoke。Python 集成测试依赖预构建 `web/dist`；CI 已安排 Web 构建产物传递给测试 job。补齐干净 checkout 下仍缺的历史基线文件。
+ 4. 挑一个最有希望的真实问题，完成竞赛闭环：真实入口/权限边界、触发条件、CIA 影响、
+    可运行 PoC、修复、修复重验、CWE/CVE、影响版本和完整报告。证据不够就继续留在 candidate。
+ 5. 等真值集冻结后，再做 R0 / R1 / R2 的人工、单轮模型、工具型 Agent 对照。
+@@ -175,10 +176,69 @@
+ ## 下一步优先级
+ 
+ 1. 人工复核当前 208 条逐访问点候选并保留旧 229 条基线身份，优先处理 kv_store 密集结果；按独立根因建立正例、修复例、安全例、无关例和 holdout。
+-2. 完成区间、版本矩阵、源码同步、取消/超时、候选聚类展开、案例报告下载及重启恢复的浏览器验收。
++2. 完成候选聚类展开的浏览器专项验收；源码同步、排队取消、运行中取消、案例报告下载及本机服务重启恢复已通过隔离验收。
+ 3. 以一个真实候选完成入口、权限、触发、CIA 影响、PoC、修复重验、CWE/CVE、影响版本和报告闭环；只有证据满足门槛才升级 confirmed/reportable。
+ 4. 完成独立真值集后再做 R0/R1/R2 模型对照；不把静态平台性能、模型自评或合成样本写成检测准确率。
+ 
+ ## 结论边界
+ 
+ main 已包含统一工作台、v2 结果、选择性 A/B 检测器、源码同步/区间/版本/只读调查入口和 Docker-only 验证框架。Docker 组件级 gate 已通过，但产品级漏洞闭环和候选准确率仍未验证；主线合入不代表竞赛题目已全部完成。
++
++## 2026-10-15 主线面板验收补充
++
++本轮在 `/home/audit/ohscanner/app` 的 `feat/workbench-status-misans-hardening` 上继续工作，代码基线 HEAD `2146c229e00e63c4464da85f46fde303019fbeaa`。A/B 工作区与分支未改动。以下实验全部使用 `/tmp/ohscanner-mainline-browser-20261015c/` 临时数据和 loopback 端口 `18767`。
++
++- 源码同步 UI 成功拉取 `openharmony/commonlibrary_c_utils`，记录的本地 HEAD 为 `634d5c9d0aa3642f697938c7e5706e53ec069ba1`。这是 Git fetch 结果，不等于组件扫描或源码安全验证。
++- 固定临时 fixture 仓库 commit `8e9ab7b7293aa0fadc472cb5f6d751cea0153e17`，通过面板执行扫描：1 个源码文件、1 条 candidate（`demo.cpp:13`，CWE-416）、partial/failed/unparsed 0、confirmed 0。
++- 面板完成候选→案例关联，案例含 1 个观测；从 UI 点击 JSON/Markdown 导出，报告端点成功，JSON 含候选来源、报告 hash、证据义务和限制，确认漏洞数为 0。
++- UI 取消按钮原来将无 body 的 API 调用发为 GET，而取消端点要求 POST。已修复为传入空对象，重新构建后用 queued 操作从 UI 取消，持久化状态为 `cancelled`。运行中操作取消已用慢任务在浏览器专项验收。
++- 完整服务关闭/重启后刷新页面，同步记录、扫描任务、案例及 cancelled 操作均恢复。该测试使用同一临时 SQLite，未验证 Windows 整机重启。
++- 全量 `../bin/oh check` 为 517 项总计，513 passed、4 skipped、0 failed；前端构建通过。该时点 Docker Harness 未运行。WSL Docker daemon / integration 需现场复查，不能因 Web 验收通过推断动态验证可用。
++
++### 当前判断
++
++主线平台的浏览器路径现已覆盖外网源码同步、固定 SHA 扫描、候选关联案例、报告导出、排队取消和服务重启恢复。公开源码同步成功只证明 Git 拉取链路；临时 fixture 候选只证明静态扫描和报告流程。漏洞准确率、真实产品可达性和报告级确认仍未由浏览器烟测证明。版本矩阵 UI 表单、队列、Worker 和详情查看已于 2026-10-16 在隔离数据中通过；合成样例上的候选变化仍为 unknown，不构成产品漏洞确认。
++
++
++### 2026-10-15 浏览器验收收尾
++
++固定项目 HEAD 2146c229e00e63c4464da85f46fde303019fbeaa，本次只补充隔离实验和验收文档，没有修改生产代码、没有触碰 A/B 工作区，也没有提交或推送。详细操作 ID、SHA 和结果哈希见《面板功能与验收》同日收尾记录。
++
++- 运行中扫描任务 17783a5a53e249979aad0e716e69fff4 由页面取消；运行 5.82 秒后状态 cancelled，覆盖提示明确保留 unknown。
++- 双 SHA 操作 1739c4658a1d45b9bec9d6f92252249c、日期区间操作 eed445fbbab0463d954070745a3a4541 均由面板提交，Worker 完成并生成哈希结果，状态为 completed_with_limitations。
++- 版本矩阵操作 dd9dc2ba8b7c4624ae91e58d44797ad0 通过本地 API 创建、Worker 完成，浏览器可查看两个版本及候选对比；矩阵表单的浏览器提交本轮未确认成功，因此不宣称 UI 全链路通过。
++- Docker Desktop Windows Engine 29.6.2 可用；WSL Ubuntu 22.04 的 Docker integration 仍关闭，Docker-only Harness 本轮 blocked，未在宿主机运行。
++- 验收样本是临时合成仓库，报告中的候选身份关联不证明漏洞引入或修复，validated_vulnerability=0；真实漏洞准确率、产品端可达性仍 unknown。
++- 最近一次代码验证绑定上述 HEAD：全量 517 项总计，513 passed、4 skipped、0 failed，Web 构建通过。由于当时只有文档变化，没有重复跑代码测试；最终 git diff --check 在本轮收尾时复查。
++
++## 2026-10-16 Docker 受控验证与 A 线同步
++
++代码工作区仍为 `feat/workbench-status-misans-hardening`，验证启动时固定 HEAD 为 `2146c229e00e63c4464da85f46fde303019fbeaa`。本次只更新 `origin` 远端跟踪引用：A 线 `origin/codex/full-runtime-performance-audit-20261014` 到 `c09965c`（2026-10-16，`feat(a): finalize halfyear and cross-version evidence tooling`）；未切换、合并、修改或推送 A/B 任何分支。
++
++本次 AUTH-01 使用 Windows Docker Desktop Engine 29.6.2 执行。Ubuntu 22.04 WSL 的 Docker Integration 未开启，因此采用显式暂存桥接：只将主线 `src/`、已固定目标 Git 对象库和本次 operation 输入/输出暂存到 Windows 临时目录，再由 Windows Docker CLI 调用现有验证镜像。容器仍使用固定镜像 digest `sha256:bfb8cbdda14a4654fccf5d61463d37c0ece1a2bd1af13520b21f7af0e539e712`、`--network none`、`--cap-drop ALL`、`--read-only`、非 root UID、CPU/内存/PID/超时限制；临时 Git safe.directory 配置只对 `/input/target` 生效并在结束后删除。没有修改 Docker Desktop 的 WSL 安全设置，也没有回退到宿主机执行。
++
++- Operation：`f4888d67890647568609a496f0d5b3b2`，案例 `e647fac67fb3447fbc5039bf681f158f`，Harness `auth01_descriptor_bypass`；目标 `openharmony/inputmethod_imf` vulnerable SHA `e663b47013d534a56165ab7467fbb3e14bf7172b`，fixed SHA `5eaddcab19bc4b22544f4bee1e8894fc2d6505dc`，依赖 `commonlibrary_c_utils` SHA `b807d3dadb7dbb7639fe85b3a5f72da18d318da2`。
++- 结果状态 `completed_with_limitations`，验证门 `passed`，结果 SHA-256 `ec1316eb6078b8bee09649870b3dd04ad4c29f451dfbea7115ca2321b002e9ac`，输入 manifest SHA-256 `f35a141bf380b545ee9b44720a062c158b777edf1b0c8895b2acf5fe7fbb6724`。
++- Vulnerable 版本的无 token 路径 3/3 稳定触发；正确 token 控制及错误 token 路径未触发目标行为。Fixed 和 patch revision 的 no-token / foreign-token 两个攻击用例均 3/3 稳定拒绝，正确 token 控制 3/3 正常触发。编译使用 Ubuntu clang 14、ASan+UBSan；Docker exit code 0。
++- 结论严格限定为组件 Harness 复现。Harness 直接调用真实组件桩，Parcel token 方法使用转发 shim，消息处理以记录调用为观测；真实系统 IPC 入口可达性、进程/SA 权限和产品影响没有证明。因此 `validated_vulnerability=0`，不能据此报告为已确认产品漏洞。
++- 完整 API operation/result 已保存到本机工作区之外的 `/home/audit/ohscanner-workbench/validation-evidence/auth01_validation_20261016.json`。首次容器运行因 Windows bind mount 所有权触发 Git `dubious ownership` 而失败；第二次配置仅针对 `/input/target` 后通过，失败记录保留在 operation `322aa0b0b4904b7a9c0514163909047e`，没有覆盖或伪装成成功。
++
++**版本矩阵 UI 已于 2026-10-16 在隔离浏览器复测通过。** 页面提交、持久化队列、Worker 扫描和结果查看均显示完成；操作与结果哈希、合成样例范围及漏洞结论边界见本节末的隔离浏览器复测记录。产品影响仍为 unknown，validated_vulnerability=0。
++
++
++### 2026-10-16 版本矩阵表单浏览器验收补充
++
++在独立数据目录 /tmp/ohscanner-matrix-acceptance-20261016、端口 18767 和临时 Git 仓库 openharmony/matrix-fixture 上完成浏览器复测；负责人正式工作台数据库未写入本次验收记录。当前代码工作区分支 feat/workbench-status-misans-hardening，HEAD 2146c229e00e63c4464da85f46fde303019fbeaa，测试时保留原五处未提交改动。
++
++- 页面选择临时案例、登记仓库和 ohscanner.cpp.lifetime，提交两个固定版本 20c9ebc75ca960b44350a3def6a8f6e42acf6555 与 9f4694d4a20e827a44b7c365419417157fe9f001。操作 1e9aac54c7d04cd89db6428ff7ab5290 从 UI 成功创建，Worker 完成状态为 completed_with_limitations，result SHA-256 3a1ebfbb67d8bb35184a6014e612131fc10d51a89e99c56dd7477a634f67a4d6。页面刷新后队列和详情均显示完成。
++- 报告观察到候选在第二个 fixture 版本消失；vulnerability_introduced_or_fixed=unknown、版本 impact=unknown、validated_vulnerability=0。这是合成样例的 UI/API/Worker 验收，不是产品漏洞确认或准确率结论。
++- 本次前端 npm run build 通过；git diff --check 随文档更新复核。此前文档记载的表单必填校验失败保留为修复前历史。
++
++### 2026-10-16 仓库、时间区间与跨分支操作
++
++负责人主线在原 dirty worktree 上新增运营能力；没有改 A/B 工作目录。仓库选择项可搜索并显示路径，切换仓库会清理旧 ref/版本；新建扫描与运营表单从所选仓库加载 refs。committer 日期区间使用浏览器日期时间控件，默认 `Asia/Shanghai`，支持提交前只读预览；后端语义仍是 first-parent、committer-time、半开区间 `[start,end)`。
++
++- 新增 `POST /api/v1/operations/date-ranges/preview`，返回 tip、固定基线/终点 SHA、所选提交、拓扑跨度外提交和时区，不入队。
++- 新增无需案例的 `POST /api/v1/operations/branch-comparisons`。服务端将同仓库两个 refs 解析为完整 SHA 后原子排入两端扫描；允许非祖先端点并在结果中保留 refs、SHA、候选差异和 unknown 影响边界。
++- 集成回归覆盖日期边界/Asia-Shanghai 解析、无效时间、无效或相同 refs、非祖先分支、入队后 ref 移动仍使用已固定 SHA、扫描失败时比较与影响保持 unknown。当前新 UI 的浏览器 smoke 尚未完成；`:8765` 正在运行的服务仍是旧 API 进程，尚未对其重启。
++- 本次工作树验证：`../bin/oh check` 为 518 tests OK、4 skipped；`web/npm test` 为 1 passed；`npm run build` 与 `git diff --check` 通过。测试结果绑定当前 dirty worktree，不代表 HEAD `2146c229` 单独包含这些变化。
+diff --git a/src/workbench/api.py b/src/workbench/api.py
+index 4e339b49..d4f90063 100644
+--- a/src/workbench/api.py
++++ b/src/workbench/api.py
+@@ -13,6 +13,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
+ from .settings import Settings
+ from .store import Store, TERMINAL
+ from . import service
++from .confidence import confidence_review
+ 
+ 
+ class StrictModel(BaseModel):
+@@ -42,6 +43,8 @@ class ReviewInput(StrictModel):
+         "under_review",
+         "plausible_unproven",
+         "likely_false_positive",
++        "human_confirmed_candidate",
++        "human_false_positive",
+         "refuted",
+         "unassessed",
+     ]
+@@ -140,6 +143,51 @@ def create_app(settings=None):
+             except BlockingIOError:
+                 return True
+ 
++    def confidence_reviews(key, job, report, items):
++        fallback = {item["id"]: confidence_review(item, None, {}) for item in items}
++        operations = getattr(app.state, "operations", None)
++        if operations is None or not items:
++            return fallback
++        wanted = {item["id"]: item for item in items}
++        inventory = {
++            entry["file"]: entry.get("sha256")
++            for entry in report.get("_workbench", {}).get("source_inventory", [])
++        }
++        resolved = set()
++        try:
++            tasks = operations.list()
++        except Exception:
++            return fallback
++        for task in tasks:
++            spec = task.get("spec") or {}
++            identity = spec.get("candidate_id")
++            if (
++                task.get("kind") != "investigation"
++                or spec.get("job_id") != key
++                or identity not in wanted
++                or identity in resolved
++                or task.get("status") not in {"completed", "completed_with_limitations"}
++            ):
++                continue
++            resolved.add(identity)
++            try:
++                investigation = operations.result(task["id"])
++            except (KeyError, OSError, ValueError):
++                continue
++            item = wanted[identity]
++            binding = {
++                "job_id": key,
++                "candidate_id": identity,
++                "repository": report["repository"],
++                "commit": report["commit"],
++                "git_tree": report["git_tree"],
++                "report_sha256": job["report_sha256"],
++                "source_file": item["file"],
++                "source_sha256": item.get("source_sha256") or inventory.get(item["file"]),
++            }
++            fallback[identity] = confidence_review(item, investigation, binding)
++        return fallback
++
+     @app.get("/api/v1/health")
+     def health():
+         return {
+@@ -251,12 +299,15 @@ def create_app(settings=None):
+     ):
+         if offset < 0 or not 1 <= limit <= 200:
+             raise ValueError("invalid pagination")
+-        report = service.read_report(settings, store.job(key))
++        job = store.job(key)
++        report = service.read_report(settings, job)
+         items = service.findings(report)
++        confidence = confidence_reviews(key, job, report, items)
+         latest = {}
+         for entry in store.reviews(key):
+             latest[entry["candidate_id"]] = entry
+         for item in items:
++            item["confidence_review"] = confidence[item["id"]]
+             item["latest_review"] = latest.get(item["id"])
+             item["review_status"] = (
+                 item["latest_review"]["status"]
+@@ -306,6 +357,7 @@ def create_app(settings=None):
+         job = store.job(key)
+         report = service.read_report(settings, job)
+         item = service.finding(report, identity)
++        item["confidence_review"] = confidence_reviews(key, job, report, [item])[identity]
+         return {
+             **item,
+             "source": service.source(settings, store, job, item["file"]),
+diff --git a/src/workbench/confidence.py b/src/workbench/confidence.py
+new file mode 100644
+index 00000000..938b1801
+--- /dev/null
++++ b/src/workbench/confidence.py
+@@ -0,0 +1,81 @@
++"""Human-review triage for detector findings and bound AI investigations."""
++
++
++def confidence_review(candidate, investigation, expected_binding):
++    """Return a display-only tier; this never confirms a vulnerability."""
++    base = {
++        "level": "candidate",
++        "label": "候选",
++        "summary": "尚无完整且绑定到本次源码版本的智能调查结论。",
++        "supporting_evidence": [],
++        "counterevidence": [],
++        "unknowns": [],
++        "human_review_required": True,
++        "validated_vulnerability": 0,
++    }
++    if not isinstance(investigation, dict):
++        return base
++    if (
++        investigation.get("kind") != "smart_investigation"
++        or investigation.get("status") != "completed"
++        or investigation.get("model_called") is not True
++    ):
++        return {**base, "summary": "智能调查未完整调用模型；静态命中仍作为候选复核。"}
++    binding = investigation.get("binding")
++    if not isinstance(binding, dict) or not expected_binding:
++        return {**base, "summary": "智能调查缺少候选与源码版本绑定。"}
++    if any(not value or binding.get(key) != value for key, value in expected_binding.items()):
++        return {**base, "summary": "智能调查与当前候选或源码版本不一致。"}
++
++    assessment = investigation.get("assessment")
++    if not isinstance(assessment, dict):
++        return {**base, "summary": "智能调查没有结构化的支持与反证结论。"}
++    counterevidence = assessment.get("counterevidence")
++    if not isinstance(counterevidence, list):
++        return {**base, "summary": "智能调查没有明确记录反向证据检查结果。"}
++    unknowns = assessment.get("unknowns", [])
++    if counterevidence:
++        return {
++            **base,
++            "summary": "智能调查发现反向证据，暂不列为高可信。",
++            "counterevidence": counterevidence[:20],
++            "unknowns": unknowns[:20] if isinstance(unknowns, list) else [],
++        }
++    if assessment.get("conclusion") != "supports_candidate":
++        return {**base, "summary": "智能调查未明确支持该候选，暂保留候选状态。"}
++
++    summary = assessment.get("summary")
++    refs = assessment.get("supporting_evidence")
++    source_bindings = investigation.get("source_bindings")
++    if not isinstance(summary, str) or not summary.strip() or not isinstance(refs, list) or not refs or not isinstance(source_bindings, dict):
++        return {**base, "summary": "智能调查缺少可展示的源码证据或结论摘要。"}
++
++    validated = []
++    for item in refs[:20]:
++        if not isinstance(item, dict):
++            return {**base, "summary": "智能调查的源码支持证据格式无法核验。"}
++        file, start, end, digest = item.get("file"), item.get("start_line"), item.get("end_line"), item.get("source_sha256")
++        if (
++            not isinstance(file, str) or not file
++            or not isinstance(start, int) or not isinstance(end, int)
++            or start < 1 or end < start
++            or not isinstance(digest, str)
++            or source_bindings.get(file) != digest
++        ):
++            return {**base, "summary": "智能调查的源码支持证据未绑定到固定源码对象。"}
++        validated.append({
++            "file": file, "start_line": start, "end_line": end,
++            "source_sha256": digest, "reason": str(item.get("reason") or "")[:500],
++        })
++    if not isinstance(unknowns, list):
++        unknowns = ["部分调查问题尚未解决"]
++    return {
++        "level": "high_confidence_review",
++        "label": "高可信 · 待人工复核",
++        "summary": summary.strip()[:1000],
++        "supporting_evidence": validated,
++        "counterevidence": [],
++        "unknowns": [str(x)[:500] for x in unknowns[:20]],
++        "human_review_required": True,
++        "validated_vulnerability": 0,
++    }
+\ No newline at end of file
+diff --git a/src/workbench/operations.py b/src/workbench/operations.py
+index 1cc63045..2f68d072 100644
+--- a/src/workbench/operations.py
++++ b/src/workbench/operations.py
+@@ -60,6 +60,25 @@ def enqueue_range(settings, store, ops, body):
+         repo["id"], (a, b))
+ 
+ 
++def enqueue_branch_comparison(settings, store, ops, body):
++    repo = store.repository(body["repository_id"])
++    service.check_repository(settings, repo["path"])
++    before = service.revision(repo, body["baseline_ref"])
++    after = service.revision(repo, body["endpoint_ref"])
++    if before["commit"] == after["commit"]:
++        raise ValueError("branch comparison refs must resolve to different commits")
++    specs = [service.make_spec(repo, item["commit"], body["include_paths"], body["detector_ids"],
++                               body["timeout_seconds"], body["memory_mb"])
++             for item in (before, after)]
++    return ops.create_with_scans("branch_comparison", {
++        "repository_id": repo["id"],
++        "baseline_ref": body["baseline_ref"], "baseline": before["commit"],
++        "endpoint_ref": body["endpoint_ref"], "endpoint": after["commit"],
++        "timeout_seconds": body["timeout_seconds"] * 2 + 60,
++        "memory_mb": body["memory_mb"],
++    }, repo["id"], specs)
++
++
+ def date_selection(settings, store, repository_id, branch, start, end, timezone):
+     zone = ZoneInfo(timezone)
+     def epoch(value):
+@@ -84,7 +103,7 @@ def date_selection(settings, store, repository_id, branch, start, end, timezone)
+     if len(parents) < 2:
+         raise ValueError("earliest selected commit has no baseline parent; choose explicit SHAs")
+     selected = [rows[i][0] for i in indices]
+-    return {"tip": tip, "baseline": parents[1], "endpoint": rows[low][0],
++    return {"branch": branch, "tip": tip, "baseline": parents[1], "endpoint": rows[low][0],
+             "selected_commits": selected,
+             "intervening_outside_date": [sha for sha, _ in rows[low:high + 1] if sha not in selected],
+             "time_basis": "committer", "timezone": timezone, "start": start, "end": end,
+@@ -228,6 +247,13 @@ def execute(settings, store, ops, task):
+         return execute_validation(settings, store, ops, task)
+     reports = wait_reports(settings, store, spec["scan_ids"])
+     if any(r is None for r in reports):
++        if kind == "branch_comparison":
++            return {"status": "blocked", "baseline_ref": spec["baseline_ref"],
++                    "baseline": spec["baseline"], "endpoint_ref": spec["endpoint_ref"],
++                    "endpoint": spec["endpoint"], "scan_ids": spec["scan_ids"],
++                    "candidate_comparison": [{"status": "unknown", "vulnerability_introduced_or_fixed": "unknown"}],
++                    "impact": "unknown", "validated_vulnerability": 0,
++                    "reason": "An endpoint scan failed or was cancelled; branch comparison remains unknown."}
+         return {"status": "blocked", "scan_ids": spec["scan_ids"], "reason": "Endpoint scan failed/cancelled; comparison unknown"}
+     if kind == "revision_range":
+         repo = store.repository(spec["repository_id"])
+@@ -258,4 +284,24 @@ def execute(settings, store, ops, task):
+                               "source_snapshot_sha256": r["snapshot_sha256"]} for r in reports],
+                 "comparisons": comparisons, "validated_vulnerability": 0,
+                 "limitations": ["Version association is a candidate-level observation; affected/fixed requires bound evidence and review."]}
++    if kind == "branch_comparison":
++        repo = store.repository(spec["repository_id"])
++        try:
++            delta = changes(repo["path"], spec["baseline"], spec["endpoint"])
++            compared = compare_reports(reports[0], reports[1], delta)
++        except (ValueError, subprocess.SubprocessError):
++            delta, compared = [], [{"status": "unknown", "reason": "comparison unavailable",
++                                    "vulnerability_introduced_or_fixed": "unknown"}]
++        return {"status": "completed_with_limitations", "repository_id": repo["id"],
++                "baseline_ref": spec["baseline_ref"], "baseline": spec["baseline"],
++                "endpoint_ref": spec["endpoint_ref"], "endpoint": spec["endpoint"],
++                "scan_ids": spec["scan_ids"], "changes": delta,
++                "candidate_comparison": compared, "impact": "unknown",
++                "versions": [{"ref": ref, "commit": report["commit"],
++                              "candidate_count": report["diagnostic_count"],
++                              "impact": "unknown", "source_snapshot_sha256": report["snapshot_sha256"]}
++                             for ref, report in ((spec["baseline_ref"], reports[0]),
++                                                 (spec["endpoint_ref"], reports[1]))],
++                "validated_vulnerability": 0,
++                "limitations": ["Branch endpoint comparison is candidate-level observation; it does not prove vulnerability introduction, remediation, affected versions, or product impact."]}
+     raise ValueError("unimplemented operation")
+diff --git a/src/workbench/operations_api.py b/src/workbench/operations_api.py
+index 4f691818..cfa52e09 100644
+--- a/src/workbench/operations_api.py
++++ b/src/workbench/operations_api.py
+@@ -7,7 +7,7 @@ from typing import Literal
+ from fastapi import APIRouter, FastAPI
+ from fastapi.responses import Response
+ from pydantic import BaseModel, ConfigDict, Field
+-from .operations import approved_url, date_selection, enqueue_range
++from .operations import approved_url, date_selection, enqueue_branch_comparison, enqueue_range
+ from .operations_store import Operations, END
+ from . import service
+ 
+@@ -44,6 +44,14 @@ class DateRangeRequest(Strict):
+     memory_mb: int = Field(default=2048, ge=256, le=8192)
+ 
+ 
++class DateRangePreviewRequest(Strict):
++    repository_id: str
++    branch: str = Field(min_length=1, max_length=200)
++    start: str = Field(min_length=10, max_length=40)
++    end: str = Field(min_length=10, max_length=40)
++    timezone: str = Field(min_length=1, max_length=100)
++
++
+ class MatrixRequest(Strict):
+     case_id: str
+     repository_id: str
+@@ -54,6 +62,16 @@ class MatrixRequest(Strict):
+     memory_mb: int = Field(default=2048, ge=256, le=8192)
+ 
+ 
++class BranchComparisonRequest(Strict):
++    repository_id: str
++    baseline_ref: str = Field(min_length=1, max_length=200)
++    endpoint_ref: str = Field(min_length=1, max_length=200)
++    include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
++    detector_ids: list[str] = Field(min_length=1, max_length=10)
++    timeout_seconds: int = Field(default=600, ge=30, le=3600)
++    memory_mb: int = Field(default=2048, ge=256, le=8192)
++
++
+ class ValidationRequest(Strict):
+     case_id: str
+     harness_id: Literal["auth01_descriptor_bypass"]
+@@ -112,6 +130,15 @@ def install_routes(app: FastAPI, settings, store):
+                      "date_selection": selection})
+         return enqueue_range(settings, store, ops, spec)
+ 
++    @router.post("/operations/date-ranges/preview")
++    def date_range_preview(body: DateRangePreviewRequest):
++        return date_selection(settings, store, body.repository_id, body.branch,
++                              body.start, body.end, body.timezone)
++
++    @router.post("/operations/branch-comparisons", status_code=201)
++    def branch_comparison(body: BranchComparisonRequest):
++        return enqueue_branch_comparison(settings, store, ops, body.model_dump())
++
+     @router.post("/operations/version-matrices", status_code=201)
+     def version_matrix(body: MatrixRequest):
+         if len(set(body.commits)) != len(body.commits):
+@@ -272,4 +299,4 @@ def install_routes(app: FastAPI, settings, store):
+         return ops.assessment(case_id, record)
+ 
+     app.include_router(router)
+-    return ops
+\ No newline at end of file
++    return ops
+diff --git a/src/workbench/operations_store.py b/src/workbench/operations_store.py
+index b1834637..39a6785f 100644
+--- a/src/workbench/operations_store.py
++++ b/src/workbench/operations_store.py
+@@ -44,7 +44,7 @@ class Operations:
+         return self.store.root / "operations" / key
+ 
+     def create(self, kind, spec):
+-        if kind not in {"source_sync", "revision_range", "version_matrix", "validation", "investigation"}:
++        if kind not in {"source_sync", "revision_range", "version_matrix", "branch_comparison", "validation", "investigation"}:
+             raise ValueError("unknown operation kind")
+         key = uuid.uuid4().hex
+         with self.store.connect() as db:
+@@ -58,7 +58,7 @@ class Operations:
+ 
+     def create_with_scans(self, kind, spec, repository_id, scan_specs):
+         """Create an operation and its immutable endpoint jobs in one DB transaction."""
+-        if kind not in {"revision_range", "version_matrix"} or not scan_specs:
++        if kind not in {"revision_range", "version_matrix", "branch_comparison"} or not scan_specs:
+             raise ValueError("invalid scan operation")
+         key = uuid.uuid4().hex
+         job_ids = [uuid.uuid4().hex for _ in scan_specs]
+diff --git a/tests/test_confidence_triage.py b/tests/test_confidence_triage.py
+new file mode 100644
+index 00000000..9caf5df1
+--- /dev/null
++++ b/tests/test_confidence_triage.py
+@@ -0,0 +1,70 @@
++import unittest
++
++from src.workbench.api import ReviewInput
++from src.workbench.confidence import confidence_review
++
++
++class ConfidenceTriageTests(unittest.TestCase):
++    def setUp(self):
++        self.candidate = {"id": "c1", "file": "src/service.cpp", "source_sha256": "a" * 64}
++        self.binding = {
++            "job_id": "j1", "candidate_id": "c1", "repository": "openharmony/demo",
++            "commit": "b" * 40, "git_tree": "c" * 40, "report_sha256": "d" * 64,
++            "source_file": "src/service.cpp", "source_sha256": "a" * 64,
++        }
++        self.result = {
++            "kind": "smart_investigation", "status": "completed", "model_called": True,
++            "binding": dict(self.binding),
++            "source_bindings": {"src/guard.cpp": "e" * 64},
++            "assessment": {
++                "conclusion": "supports_candidate",
++                "summary": "敏感操作前没有找到有效授权检查。",
++                "supporting_evidence": [{
++                    "file": "src/guard.cpp", "start_line": 18, "end_line": 24,
++                    "source_sha256": "e" * 64,
++                }],
++                "counterevidence": [], "unknowns": ["产品入口是否可达"],
++            },
++        }
++
++    def test_no_counterevidence_allows_high_confidence_review_with_unknowns(self):
++        result = confidence_review(self.candidate, self.result, self.binding)
++        self.assertEqual(result["level"], "high_confidence_review")
++        self.assertEqual(result["validated_vulnerability"], 0)
++        self.assertEqual(result["unknowns"], ["产品入口是否可达"])
++
++    def test_read_only_investigation_never_promotes(self):
++        result = confidence_review(
++            self.candidate,
++            {**self.result, "kind": "read_only_investigation", "model_called": False},
++            self.binding,
++        )
++        self.assertEqual(result["level"], "candidate")
++
++    def test_counterevidence_blocks_high_confidence(self):
++        assessment = {
++            **self.result["assessment"],
++            "counterevidence": [{"reason": "authorization check found"}],
++        }
++        result = confidence_review(
++            self.candidate, {**self.result, "assessment": assessment}, self.binding
++        )
++        self.assertEqual(result["level"], "candidate")
++
++    def test_wrong_commit_or_unbound_evidence_blocks_high_confidence(self):
++        wrong_binding = {**self.result, "binding": {**self.binding, "commit": "f" * 40}}
++        self.assertEqual(confidence_review(self.candidate, wrong_binding, self.binding)["level"], "candidate")
++        wrong_source = {
++            **self.result,
++            "source_bindings": {"src/guard.cpp": "0" * 64},
++        }
++        self.assertEqual(confidence_review(self.candidate, wrong_source, self.binding)["level"], "candidate")
++
++    def test_human_actions_are_review_states(self):
++        for status in ("human_confirmed_candidate", "human_false_positive"):
++            record = ReviewInput(status=status, reviewer="reviewer", notes="人工已检查证据。")
++            self.assertEqual(record.status, status)
++
++
++if __name__ == "__main__":
++    unittest.main()
+\ No newline at end of file
+diff --git a/tests/test_workbench.py b/tests/test_workbench.py
+index 7803abdb..f952573b 100644
+--- a/tests/test_workbench.py
++++ b/tests/test_workbench.py
+@@ -100,6 +100,25 @@ class WorkbenchTests(unittest.TestCase):
+         self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+         return job
+ 
++    def test_prebuilt_homepage_api_worker_and_report_artifacts(self):
++        page = self.client.get("/")
++        self.assertEqual(page.status_code, 200)
++        self.assertIn("OHScanner", page.text)
++        self.assertIn("assets/app", page.text)
++
++        job = self.completed()
++        detail = self.client.get(f"/api/v1/scans/{job['id']}")
++        self.assertEqual(detail.status_code, 200, detail.text)
++        report = self.client.get(f"/api/v1/scans/{job['id']}/artifacts/report.json")
++        markdown = self.client.get(f"/api/v1/scans/{job['id']}/artifacts/report.md")
++        manifest = self.client.get(f"/api/v1/scans/{job['id']}/artifacts/manifest.json")
++        self.assertEqual(report.status_code, 200, report.text)
++        self.assertEqual(markdown.status_code, 200, markdown.text)
++        self.assertEqual(manifest.status_code, 200, manifest.text)
++        self.assertEqual(manifest.json()["artifacts"]["report.json"], job["report_sha256"])
++        self.assertEqual(json.loads(report.text)["commit"], self.commit)
++        self.assertIn("OHScanner", markdown.text)
++
+     def test_catalog_research_only(self):
+         r = self.client.get("/api/v1/detectors")
+         self.assertEqual({x["id"] for x in r.json()}, set(IDS))
+diff --git a/tests/test_workbench_operations.py b/tests/test_workbench_operations.py
+index a5da8b26..4a7ffa43 100644
+--- a/tests/test_workbench_operations.py
++++ b/tests/test_workbench_operations.py
+@@ -1,5 +1,8 @@
++import os
+ import json
++import subprocess
+ import tempfile
++import time
+ import threading
+ import unittest
+ from concurrent.futures import ThreadPoolExecutor
+@@ -9,10 +12,14 @@ from unittest.mock import patch
+ from fastapi.testclient import TestClient
+ from src.workbench.api import create_app
+ from src.workbench.operations import approved_url, compare_reports, date_selection
++from src.workbench import operations
+ from src.workbench.operations_store import Operations
+ from src.workbench.settings import Settings
+ from src.workbench.store import Store
+ from src.workbench import validation
++from src.workbench.operation_worker import OperationWorker
++from src.workbench.worker import Worker
++from src.workbench import service
+ 
+ 
+ class OperationsStoreTests(unittest.TestCase):
+@@ -141,6 +148,19 @@ class PlanningTests(unittest.TestCase):
+         self.assertEqual(rows[0]["status"], "unknown")
+         self.assertEqual(rows[0]["vulnerability_introduced_or_fixed"], "unknown")
+ 
++    def test_failed_branch_endpoint_keeps_comparison_and_impact_unknown(self):
++        task = {"kind": "branch_comparison", "spec": {
++            "baseline_ref": "refs/heads/main", "baseline": "a" * 40,
++            "endpoint_ref": "refs/heads/feature", "endpoint": "b" * 40,
++            "scan_ids": ["1" * 32, "2" * 32],
++        }}
++        with patch.object(operations, "wait_reports", return_value=[None, None]):
++            result = operations.execute(None, None, None, task)
++        self.assertEqual(result["status"], "blocked")
++        self.assertEqual(result["impact"], "unknown")
++        self.assertEqual(result["candidate_comparison"][0]["status"], "unknown")
++        self.assertEqual(result["validated_vulnerability"], 0)
++
+ 
+ class DockerBoundaryTests(unittest.TestCase):
+     def test_runtime_never_falls_back_to_host_when_docker_is_not_ready(self):
+@@ -174,5 +194,243 @@ class OperationsApiTests(unittest.TestCase):
+             self.assertIn(response.status_code, (409, 422))
+ 
+ 
++class OperationEndToEndTests(unittest.TestCase):
++    """Drive fixed-source operations through API, isolated Worker, and saved report."""
++
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name)
++        self.repo_path = self.root / "targets" / "repo"
++        self.repo_path.mkdir(parents=True)
++        self.repo_path.joinpath("demo.cpp").write_text(
++            (Path(__file__).parent / "detectors/fixtures/cpp_lifetime/vulnerable_unserialized.cpp").read_text()
++        )
++        subprocess.run(["git", "init", "-q"], cwd=self.repo_path, check=True)
++        subprocess.run(["git", "config", "user.name", "fixture"], cwd=self.repo_path, check=True)
++        subprocess.run(["git", "config", "user.email", "fixture@example.invalid"], cwd=self.repo_path, check=True)
++        self.commits = []
++        self._commit("2025-01-01T00:00:00Z", "vulnerable endpoint")
++        self.repo_path.joinpath("demo.cpp").write_text(
++            (Path(__file__).parent / "detectors/fixtures/cpp_lifetime/fixed_alias_rebind.cpp").read_text()
++        )
++        self._commit("2025-01-02T00:00:00Z", "fixed endpoint")
++        self.repo_path.joinpath("notes.txt").write_text("third revision\n")
++        self._commit("2025-01-03T00:00:00Z", "later revision")
++        subprocess.run(["git", "branch", "-M", "main"], cwd=self.repo_path, check=True)
++        subprocess.run(["git", "checkout", "-q", "-b", "feature", self.commits[0]], cwd=self.repo_path, check=True)
++        self.repo_path.joinpath("feature.txt").write_text("divergent branch endpoint\n")
++        self._commit("2025-01-04T00:00:00Z", "feature endpoint")
++        self.feature_commit = self.commits[-1]
++        subprocess.run(["git", "checkout", "-q", "main"], cwd=self.repo_path, check=True)
++
++        self.settings = Settings(self.root / "data", (self.root / "targets",))
++        self.client = TestClient(create_app(self.settings))
++        self.addCleanup(self.client.close)
++        self.store = self.client.app.state.store
++        response = self.client.post("/api/v1/repositories", headers={"X-OHScanner-Client": "workbench-v1"},
++                                    json={"name": "openharmony/flow-test", "path": str(self.repo_path)})
++        self.assertEqual(response.status_code, 201, response.text)
++        self.repo = response.json()
++        self.detectors = ["ohscanner.cpp.lifetime"]
++
++    def _commit(self, stamp, message):
++        subprocess.run(["git", "add", "."], cwd=self.repo_path, check=True)
++        env = {**os.environ, "GIT_AUTHOR_NAME": "fixture", "GIT_AUTHOR_EMAIL": "fixture@example.invalid",
++               "GIT_COMMITTER_NAME": "fixture", "GIT_COMMITTER_EMAIL": "fixture@example.invalid",
++               "GIT_AUTHOR_DATE": stamp, "GIT_COMMITTER_DATE": stamp}
++        subprocess.run(["git", "commit", "-q", "-m", message], cwd=self.repo_path, env=env, check=True)
++        self.commits.append(subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=self.repo_path, text=True).strip())
++
++    def _scan(self, commit):
++        response = self.client.post("/api/v1/scans", headers={"X-OHScanner-Client": "workbench-v1"},
++                                    json={"repository_id": self.repo["id"], "revision": commit,
++                                          "detector_ids": self.detectors})
++        self.assertEqual(response.status_code, 201, response.text)
++        Worker(self.settings).run(once=True)
++        job = self.store.job(response.json()["id"])
++        self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
++        return job
++
++    def _run_operation(self, operation):
++        thread = threading.Thread(target=lambda: OperationWorker(self.settings).run(once=True))
++        thread.start()
++        deadline = time.monotonic() + 40
++        while thread.is_alive() and time.monotonic() < deadline:
++            for scan_id in operation["spec"]["scan_ids"]:
++                if self.store.job(scan_id)["status"] == "queued":
++                    Worker(self.settings).run(once=True)
++                    break
++            thread.join(0.05)
++        if thread.is_alive():
++            raise AssertionError("operation worker did not finish within 40 seconds")
++        completed = self.client.get("/api/v1/operations/" + operation["id"])
++        self.assertEqual(completed.status_code, 200, completed.text)
++        item = completed.json()
++        self.assertEqual(item["status"], "completed_with_limitations", item)
++        self.assertEqual(len(item["result"]["scan_ids"]), len(operation["spec"]["scan_ids"]))
++        self.assertEqual(len(item["result_sha256"]), 64)
++        return item
++
++    def test_sha_range_date_range_and_version_matrix_reach_persisted_reports(self):
++        source_job = self._scan(self.commits[0])
++        report = service.read_report(self.settings, source_job)
++        candidates = service.findings(report)
++        self.assertTrue(candidates, "fixture must produce a reviewable candidate")
++        case_response = self.client.post("/api/v1/cases", headers={"X-OHScanner-Client": "workbench-v1"},
++            json={"title": "temporary integration case", "links": [{"job_id": source_job["id"],
++                  "candidate_id": candidates[0]["id"], "rationale": "isolated test fixture"}]})
++        self.assertEqual(case_response.status_code, 201, case_response.text)
++        case_id = case_response.json()["id"]
++
++        headers = {"X-OHScanner-Client": "workbench-v1"}
++        base = {"repository_id": self.repo["id"], "include_paths": ["."], "detector_ids": self.detectors,
++                "timeout_seconds": 30, "memory_mb": 512}
++        sha_range = self.client.post("/api/v1/operations/revision-ranges", headers=headers, json={
++            **base, "baseline": self.commits[0], "endpoint": self.commits[1]})
++        self.assertEqual(sha_range.status_code, 201, sha_range.text)
++        self.assertEqual(sha_range.json()["spec"]["commits"], [self.commits[1]])
++        range_result = self._run_operation(sha_range.json())
++        self.assertEqual(range_result["result"]["baseline"], self.commits[0])
++        self.assertEqual(range_result["result"]["endpoint"], self.commits[1])
++
++        date_range = self.client.post("/api/v1/operations/date-ranges", headers=headers, json={
++            **base, "branch": "HEAD", "start": "2025-01-02T00:00:00+00:00",
++            "end": "2025-01-03T00:00:00+00:00", "timezone": "UTC"})
++        self.assertEqual(date_range.status_code, 201, date_range.text)
++        selection = date_range.json()["spec"]["date_selection"]
++        self.assertEqual(selection["selected_commits"], [self.commits[1]])
++        self.assertEqual(selection["baseline"], self.commits[0])
++        self.assertEqual(selection["endpoint"], self.commits[1])
++        operation_count_before_preview = len(self.client.get("/api/v1/operations").json())
++        preview = self.client.post("/api/v1/operations/date-ranges/preview", headers=headers, json={
++            "repository_id": self.repo["id"], "branch": "refs/heads/main", "start": "2025-01-02T00:00:00",
++            "end": "2025-01-03T00:00:00", "timezone": "UTC"})
++        self.assertEqual(preview.status_code, 200, preview.text)
++        self.assertEqual(preview.json()["branch"], "refs/heads/main")
++        self.assertEqual(preview.json()["selected_commits"], [self.commits[1]])
++        shanghai_preview = self.client.post("/api/v1/operations/date-ranges/preview", headers=headers, json={
++            "repository_id": self.repo["id"], "branch": "refs/heads/main", "start": "2025-01-02T08:00:00",
++            "end": "2025-01-02T08:00:01", "timezone": "Asia/Shanghai"})
++        self.assertEqual(shanghai_preview.status_code, 200, shanghai_preview.text)
++        self.assertEqual(shanghai_preview.json()["selected_commits"], [self.commits[1]])
++        empty_preview = self.client.post("/api/v1/operations/date-ranges/preview", headers=headers, json={
++            "repository_id": self.repo["id"], "branch": "refs/heads/main", "start": "2025-01-02T08:00:00",
++            "end": "2025-01-02T08:00:00", "timezone": "Asia/Shanghai"})
++        self.assertEqual(empty_preview.status_code, 409)
++        self.assertEqual(len(self.client.get("/api/v1/operations").json()), operation_count_before_preview)
++        date_result = self._run_operation(date_range.json())
++        self.assertEqual(date_result["result"]["date_selection"]["boundary"], "[start,end)")
++
++        matrix = self.client.post("/api/v1/operations/version-matrices", headers=headers, json={
++            **base, "case_id": case_id, "commits": self.commits[:2]})
++        self.assertEqual(matrix.status_code, 201, matrix.text)
++        self.assertEqual(matrix.json()["spec"]["commits"], self.commits[:2])
++        matrix_result = self._run_operation(matrix.json())
++        self.assertEqual(len(matrix_result["result"]["versions"]), 2)
++        self.assertEqual(len(matrix_result["result"]["comparisons"]), 1)
++        self.assertEqual(matrix_result["result"]["validated_vulnerability"], 0)
++
++        refs = self.client.get("/api/v1/repositories/" + self.repo["id"] + "/revisions").json()
++        self.assertIn("refs/heads/main", {item["ref"] for item in refs})
++        self.assertIn("refs/heads/feature", {item["ref"] for item in refs})
++        branch_comparison = self.client.post("/api/v1/operations/branch-comparisons", headers=headers, json={
++            **base, "baseline_ref": "refs/heads/main", "endpoint_ref": "refs/heads/feature"})
++        self.assertEqual(branch_comparison.status_code, 201, branch_comparison.text)
++        branch_spec = branch_comparison.json()["spec"]
++        self.assertEqual(branch_spec["baseline"], self.commits[2])
++        self.assertEqual(branch_spec["endpoint"], self.feature_commit)
++        self.assertEqual(branch_spec["baseline_ref"], "refs/heads/main")
++        self.assertEqual(branch_spec["endpoint_ref"], "refs/heads/feature")
++        self.assertNotEqual(branch_spec["baseline"], branch_spec["endpoint"])
++        invalid_ref = self.client.post("/api/v1/operations/branch-comparisons", headers=headers, json={
++            **base, "baseline_ref": "refs/heads/not-present", "endpoint_ref": "refs/heads/feature"})
++        self.assertEqual(invalid_ref.status_code, 409)
++        same_ref = self.client.post("/api/v1/operations/branch-comparisons", headers=headers, json={
++            **base, "baseline_ref": "refs/heads/main", "endpoint_ref": "refs/heads/main"})
++        self.assertEqual(same_ref.status_code, 409)
++        # Move the selected branch after queueing; the operation must keep its pinned object ID.
++        subprocess.run(["git", "update-ref", "refs/heads/feature", self.commits[1]], cwd=self.repo_path, check=True)
++        branch_result = self._run_operation(branch_comparison.json())
++        self.assertEqual(branch_result["result"]["baseline"], self.commits[2])
++        self.assertEqual(branch_result["result"]["endpoint"], self.feature_commit)
++        self.assertEqual(branch_result["result"]["impact"], "unknown")
++        self.assertEqual(branch_result["result"]["validated_vulnerability"], 0)
++        self.assertEqual(len(branch_result["result"]["candidate_comparison"]), 1)
++
++        # A newly opened Store sees the exact same hashed operation artifact.
++        reopened = Operations(Store(self.settings.data_dir))
++        self.assertEqual(reopened.result(range_result["id"]), range_result["result"])
++
++
++class OperationLifecycleTests(unittest.TestCase):
++    """Exercise persisted operation state transitions without touching live data."""
++
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name)
++        self.settings = Settings(self.root / "data", (self.root / "targets",))
++        self.settings.initialize()
++        self.store = Store(self.settings.data_dir)
++        self.ops = Operations(self.store)
++
++    def test_worker_restart_marks_running_operations_interrupted(self):
++        task = self.ops.create("investigation", {"job_id": "j" * 32})
++        self.assertEqual(self.ops.claim()["id"], task["id"])
++
++        # Starting a fresh operation worker performs crash recovery before claims.
++        OperationWorker(self.settings).run(once=True)
++
++        recovered = self.ops.get(task["id"])
++        self.assertEqual(recovered["status"], "interrupted")
++        self.assertIsNone(recovered["result_sha256"])
++        self.assertIn("retry explicitly", recovered["error"])
++
++    def test_running_operation_cancel_terminates_its_child(self):
++        task = self.ops.create("investigation", {"job_id": "j" * 32, "timeout_seconds": 10})
++        claimed = self.ops.claim()
++        real_popen = subprocess.Popen
++        processes = []
++
++        def sleeper(*args, **kwargs):
++            proc = real_popen(["/usr/bin/python3", "-c", "import time; time.sleep(30)"], **kwargs)
++            processes.append(proc)
++            return proc
++
++        cancel = threading.Thread(target=lambda: (time.sleep(0.3), self.ops.cancel(task["id"])))
++        cancel.start()
++        with patch("src.workbench.operation_worker.subprocess.Popen", side_effect=sleeper):
++            OperationWorker(self.settings).execute(claimed)
++        cancel.join()
++
++        self.assertEqual(self.ops.get(task["id"])["status"], "cancelled")
++        self.assertIsNone(self.ops.get(task["id"])["result_sha256"])
++        self.assertTrue(processes)
++        self.assertIsNotNone(processes[0].poll())
++
++    def test_operation_hard_timeout_terminates_child_and_records_no_result(self):
++        task = self.ops.create("investigation", {"job_id": "j" * 32, "timeout_seconds": 1})
++        claimed = self.ops.claim()
++        real_popen = subprocess.Popen
++        processes = []
++
++        def sleeper(*args, **kwargs):
++            proc = real_popen(["/usr/bin/python3", "-c", "import time; time.sleep(30)"], **kwargs)
++            processes.append(proc)
++            return proc
++
++        start = time.monotonic()
++        with patch("src.workbench.operation_worker.subprocess.Popen", side_effect=sleeper):
++            OperationWorker(self.settings).execute(claimed)
++
++        result = self.ops.get(task["id"])
++        self.assertLess(time.monotonic() - start, 5)
++        self.assertEqual(result["status"], "timed_out")
++        self.assertIsNone(result["result_sha256"])
++        self.assertTrue(processes)
++        self.assertIsNotNone(processes[0].poll())
++
++
+ if __name__ == "__main__":
+-    unittest.main()
+\ No newline at end of file
++    unittest.main()
+diff --git a/web/package.json b/web/package.json
+index c7cc76fb..82f07626 100644
+--- a/web/package.json
++++ b/web/package.json
+@@ -4,7 +4,8 @@
+   "private": true,
+   "type": "module",
+   "scripts": {
+-    "build": "tsc --noEmit && node build.mjs"
++    "build": "tsc --noEmit && node build.mjs",
++    "test": "node --test tests/*.test.js"
+   },
+   "dependencies": {
+     "@ant-design/icons": "^5.0.0",
+diff --git a/web/src/components.tsx b/web/src/components.tsx
+index 69cfdc79..7a63b99a 100644
+--- a/web/src/components.tsx
++++ b/web/src/components.tsx
+@@ -62,6 +62,9 @@ export const labels: Record<string, string> = {
+   under_review: "复核中",
+   plausible_unproven: "合理怀疑 · 待补证",
+   likely_false_positive: "可能误报",
++  human_confirmed_candidate: "人工确认候选 · 待验证",
++  human_false_positive: "人工判定误报",
++  high_confidence_review: "高可信 · 待人工复核",
+   refuted: "已驳回",
+   partial: "部分覆盖",
+   complete: "完整覆盖",
+diff --git a/web/src/pages/JobDetail.tsx b/web/src/pages/JobDetail.tsx
+index 40596726..8dc661bd 100644
+--- a/web/src/pages/JobDetail.tsx
++++ b/web/src/pages/JobDetail.tsx
+@@ -296,6 +296,8 @@ export default function JobDetail({ id }: { id: string }) {
+                               "under_review",
+                               "plausible_unproven",
+                               "likely_false_positive",
++                              "human_confirmed_candidate",
++                              "human_false_positive",
+                               "refuted",
+                             ].includes(x),
+                           )
+@@ -350,6 +352,17 @@ export default function JobDetail({ id }: { id: string }) {
+                           />
+                         ),
+                       },
++                      {
++                        title: "智能研判",
++                        render: (_: any, f: any) => (
++                          <Space direction="vertical" size={2}>
++                            <Tag color={f.confidence_review?.level === "high_confidence_review" ? "orange" : "default"}>
++                              {f.confidence_review?.label || "候选"}
++                            </Tag>
++                            <Text type="secondary">{f.confidence_review?.summary || ""}</Text>
++                          </Space>
++                        ),
++                      },
+                       {
+                         title: "人工复核",
+                         dataIndex: "review_status",
+@@ -640,6 +653,25 @@ export default function JobDetail({ id }: { id: string }) {
+               message={detail.rule_id + " · " + detail.candidate_cwe}
+               description={detail.message}
+             />
++            <Alert
++              className="section-gap"
++              type={detail.confidence_review?.level === "high_confidence_review" ? "warning" : "info"}
++              message={detail.confidence_review?.label || "候选 · 待复核"}
++              description={
++                <Space direction="vertical">
++                  <div>{detail.confidence_review?.summary || "尚无智能调查摘要。"}</div>
++                  {(detail.confidence_review?.supporting_evidence || []).map((e: any, i: number) => (
++                    <div key={i}>
++                      证据：{e.file}:{e.start_line}-{e.end_line}{e.reason ? " · " + e.reason : ""}
++                    </div>
++                  ))}
++                  {(detail.confidence_review?.unknowns || []).map((x: string, i: number) => (
++                    <div key={"unknown-" + i}>待核实：{x}</div>
++                  ))}
++                  <Text type="secondary">高可信只表示优先交给人工复核，不等同于已确认漏洞。</Text>
++                </Space>
++              }
++            />
+             <CodeView source={detail.source} line={detail.line} />
+             <SourceEvidence
+               key={detail.id}
+@@ -702,6 +734,8 @@ export default function JobDetail({ id }: { id: string }) {
+                           "under_review",
+                           "plausible_unproven",
+                           "likely_false_positive",
++                          "human_confirmed_candidate",
++                          "human_false_positive",
+                           "refuted",
+                           "unassessed",
+                         ].map((value) => ({ value, label: labels[value] }))}
+@@ -721,9 +755,21 @@ export default function JobDetail({ id }: { id: string }) {
+                     >
+                       <Input.TextArea rows={5} maxLength={8000} />
+                     </Form.Item>
+-                    <Button type="primary" htmlType="submit">
+-                      保存追加记录
+-                    </Button>
++                    <Space wrap>
++                      <Button type="primary" onClick={() => {
++                        reviewForm.setFieldValue("status", "human_confirmed_candidate");
++                        reviewForm.submit();
++                      }}>
++                        人工确认候选
++                      </Button>
++                      <Button danger onClick={() => {
++                        reviewForm.setFieldValue("status", "human_false_positive");
++                        reviewForm.submit();
++                      }}>
++                        标记为误报
++                      </Button>
++                      <Button htmlType="submit">保存其他复核状态</Button>
++                    </Space>
+                   </Form>
+                   <Timeline
+                     className="section-gap"
+diff --git a/web/src/pages/NewScan.tsx b/web/src/pages/NewScan.tsx
+index 91dffb9c..be82396f 100644
+--- a/web/src/pages/NewScan.tsx
++++ b/web/src/pages/NewScan.tsx
+@@ -54,6 +54,10 @@ export default function NewScan({
+ }) {
+   const [form] = Form.useForm();
+   const [refs, setRefs] = useState<any[]>([]);
++  const [selectedRef, setSelectedRef] = useState("");
++  const [selectedRepository, setSelectedRepository] = useState("");
++  const [refsByRepository, setRefsByRepository] = useState<Record<string, any[]>>({});
++  const refsRequest = useRef(0);
+   const [busy, setBusy] = useState(false);
+   const [error, setError] = useState("");
+   return (
+@@ -102,20 +106,33 @@ export default function NewScan({
+               >
+                 <Select
+                   placeholder="选择已登记仓库"
+-                  options={repos.map((r) => ({ value: r.id, label: r.name }))}
+-                  onChange={(id) =>
+-                    api("/repositories/" + id + "/revisions")
+-                      .then(setRefs)
+-                      .catch((e) => setError(String(e)))
+-                  }
++                  showSearch
++                  optionFilterProp="label"
++                  options={repos.map((r) => ({ value: r.id, label: r.name + " · " + r.path }))}
++                  onOpenChange={(open) => { if (open) void refresh().catch((e) => setError(String(e))); }}
++                  onChange={(id) => {
++                    setSelectedRepository(id);
++                    setSelectedRef("");
++                    setRefs([]);
++                    form.setFieldValue("revision", undefined);
++                    const request = ++refsRequest.current;
++                    void api("/repositories/" + id + "/revisions")
++                      .then((items) => {
++                        setRefsByRepository((previous) => ({ ...previous, [id]: items }));
++                        if (refsRequest.current === request) setRefs(items);
++                      })
++                      .catch((e) => { if (refsRequest.current === request) setError(String(e)); });
++                  }}
+                 />
+               </Form.Item>
+-              <Form.Item label="从 Ref 选择（可选）">
++              <Form.Item label="从当前仓库 Ref 选择（可选）">
+                 <Select
+                   showSearch
+                   allowClear
+-                  options={refs.map((r) => ({ value: r.ref, label: r.ref }))}
+-                  onChange={(r) => r && form.setFieldValue("revision", r)}
++                  value={selectedRef || undefined}
++                  optionFilterProp="label"
++                  options={(refsByRepository[selectedRepository] || refs).map((r) => ({ value: r.ref, label: r.ref }))}
++                  onChange={(r) => { setSelectedRef(r || ""); form.setFieldValue("revision", r || undefined); }}
+                 />
+               </Form.Item>
+               <Form.Item
+diff --git a/web/src/pages/Operations.tsx b/web/src/pages/Operations.tsx
+index 7cb5e717..28acb89d 100644
+--- a/web/src/pages/Operations.tsx
++++ b/web/src/pages/Operations.tsx
+@@ -1,7 +1,8 @@
+-import React, { useEffect, useState } from "react";
++import React, { useCallback, useEffect, useRef, useState } from "react";
+ import { Alert, Button, Card, Form, Input, InputNumber, Select, Space, Table, Tabs, Tag, Typography, message } from "antd";
+ import { api, terminal } from "../api";
+ import { Header, Hash } from "../components";
++import { refreshSelectedOperation } from "./operationSelection";
+ 
+ const { Text } = Typography;
+ const commaList = (value: string) => value.split(",").map((x) => x.trim()).filter(Boolean);
+@@ -10,43 +11,91 @@ export default function OperationsPage() {
+   const [repos, setRepos] = useState<any[]>([]);
+   const [detectors, setDetectors] = useState<any[]>([]);
+   const [cases, setCases] = useState<any[]>([]);
++  const [refsByRepository, setRefsByRepository] = useState<Record<string, any[]>>({});
+   const [rows, setRows] = useState<any[]>([]);
+   const [selected, setSelected] = useState<any>(null);
+   const [busy, setBusy] = useState(false);
+-  const refresh = async () => {
++  const [datePreview, setDatePreview] = useState<any>(null);
++  const [revisionForm] = Form.useForm();
++  const [dateForm] = Form.useForm();
++  const [branchForm] = Form.useForm();
++  const [matrixForm] = Form.useForm();
++  const selectedOperationId = useRef<string | null>(null);
++  const refresh = useCallback(async (operationId: string | null = selectedOperationId.current) => {
+     const [r, d, c, o] = await Promise.all([api("/repositories"), api("/detectors"), api("/cases"), api("/operations")]);
+     setRepos(r); setDetectors(d); setCases(c); setRows(o);
+-    if (selected) setSelected(await api("/operations/" + selected.id));
++    if (operationId) await refreshSelectedOperation(operationId, (id) => api("/operations/" + id), () => selectedOperationId.current, setSelected);
++  }, []);
++  const showOperation = async (id: string) => {
++    selectedOperationId.current = id;
++    try { await refreshSelectedOperation(id, (key) => api("/operations/" + key), () => selectedOperationId.current, setSelected); }
++    catch (e) { message.error(String(e)); }
+   };
+-  useEffect(() => { void refresh().catch((e) => message.error(String(e))); const t = setInterval(() => void refresh().catch(() => {}), 2500); return () => clearInterval(t); }, [selected?.id]);
++  useEffect(() => { void refresh().catch((e) => message.error(String(e))); const t = setInterval(() => void refresh().catch(() => {}), 2500); return () => clearInterval(t); }, [refresh]);
+   const submit = async (path: string, values: any, transform: (v: any) => any = (v) => v) => {
+     setBusy(true);
+-    try { const item = await api(path, transform(values)); setSelected(item); await refresh(); message.success("任务已加入队列"); }
++    try { const item = await api(path, transform(values)); selectedOperationId.current = item.id; setSelected(item); await refresh(item.id); message.success("任务已加入队列"); }
+     catch (e) { message.error(String(e)); }
+     finally { setBusy(false); }
+   };
+-  const common = <>
+-    <Form.Item name="repository_id" label="已登记仓库" rules={[{ required: true }]}><Select options={repos.map((r) => ({ value: r.id, label: r.name + " · " + r.path }))} /></Form.Item>
++  const loadRefs = async (repositoryId: string) => {
++    if (refsByRepository[repositoryId]) return;
++    const refs = await api("/repositories/" + repositoryId + "/revisions");
++    setRefsByRepository((previous) => ({ ...previous, [repositoryId]: refs }));
++  };
++  const common = (form: any, clearFields: string[], onRepositoryChange?: () => void) => <>
++    <Form.Item name="repository_id" label="已登记仓库" rules={[{ required: true }]}><Select
++      showSearch
++      optionFilterProp="label"
++      options={repos.map((r) => ({ value: r.id, label: r.name + " · " + r.path }))}
++      onOpenChange={(open) => { if (open) void refresh().catch((e) => message.error(String(e))); }}
++      onChange={(id) => {
++        form.setFieldsValue(Object.fromEntries(clearFields.map((field) => [field, undefined])));
++        onRepositoryChange?.();
++        void loadRefs(id).catch((e) => message.error(String(e)));
++      }}
++    /></Form.Item>
+     <Form.Item name="detector_ids" label="检测器" rules={[{ required: true }]}><Select mode="multiple" options={detectors.map((d) => ({ value: d.id, label: d.id }))} /></Form.Item>
+     <Form.Item name="include_paths_text" label="纳入路径（逗号分隔）" initialValue="."><Input /></Form.Item>
+     <Form.Item name="timeout_seconds" label="单端点超时（秒）" initialValue={600}><InputNumber min={30} max={3600} /></Form.Item>
+     <Form.Item name="memory_mb" label="内存上限（MiB）" initialValue={2048}><InputNumber min={256} max={8192} /></Form.Item>
+   </>;
+-  const rangeForm = (date: boolean) => <Form layout="vertical" onFinish={(v) => submit(date ? "/operations/date-ranges" : "/operations/revision-ranges", v, (x) => ({
++  const refSelect = (form: any, name: string, label: string) => <Form.Item noStyle shouldUpdate={(previous, current) => previous.repository_id !== current.repository_id}>
++    {() => <Form.Item name={name} label={label} rules={[{ required: true }]}>
++      <Select showSearch optionFilterProp="label" placeholder="选择当前仓库的 branch 或 tag"
++        options={(refsByRepository[form.getFieldValue("repository_id")] || []).map((item) => ({ value: item.ref, label: item.ref }))} />
++    </Form.Item>}
++  </Form.Item>;
++  const rangeForm = (date: boolean) => {
++    const form = date ? dateForm : revisionForm;
++    return <Form form={form} layout="vertical" onValuesChange={() => date && setDatePreview(null)} onFinish={(v) => submit(date ? "/operations/date-ranges" : "/operations/revision-ranges", v, (x) => ({
+     ...x, include_paths: commaList(x.include_paths_text || "."), include_paths_text: undefined,
+   }))}>
+-    {common}
++    {common(form, date ? ["branch"] : [])}
+     {date ? <>
+-      <Form.Item name="branch" label="固定分支或标签" rules={[{ required: true }]}><Input placeholder="refs/remotes/origin/master" /></Form.Item>
+-      <Form.Item name="start" label="起始时间（半开区间含起点）" rules={[{ required: true }]}><Input placeholder="2025-01-01T00:00:00" /></Form.Item>
+-      <Form.Item name="end" label="结束时间（不含终点）" rules={[{ required: true }]}><Input placeholder="2025-02-01T00:00:00" /></Form.Item>
+-      <Form.Item name="timezone" label="时区" initialValue="Asia/Shanghai"><Input /></Form.Item>
++      {refSelect(dateForm, "branch", "分支或标签")}
++      <Form.Item name="start" label="起始日期时间（包含）" rules={[{ required: true }]}><Input type="datetime-local" step={1} /></Form.Item>
++      <Form.Item name="end" label="结束日期时间（不包含）" rules={[{ required: true }]}><Input type="datetime-local" step={1} /></Form.Item>
++      <Form.Item name="timezone" label="所选时间的时区" initialValue="Asia/Shanghai" rules={[{ required: true }]}>
++        <Select options={["Asia/Shanghai", "UTC", "America/Los_Angeles", "Europe/London"].map((zone) => ({ value: zone, label: zone }))} />
++      </Form.Item>
++      <Alert type="info" showIcon message="提交者时间 · first-parent · 半开区间 [start,end)；时间区间跨度内可能包含区间外提交，预览会列出。" />
++      <Button className="section-gap" onClick={async () => {
++        try {
++          const values = await dateForm.validateFields(["repository_id", "branch", "start", "end", "timezone"]);
++          const preview = await api("/operations/date-ranges/preview", values);
++          setDatePreview(preview);
++        } catch (e) { message.error(String(e)); }
++      }}>预览时间区间</Button>
++      {datePreview && <Alert className="section-gap" type="success" showIcon message={`${datePreview.branch} · 命中 ${datePreview.selected_commits.length} 个提交 · 拓扑跨度外提交 ${datePreview.intervening_outside_date.length} 个`}
++        description={<Space direction="vertical"><div>时间区间：[{datePreview.start}, {datePreview.end}) · {datePreview.timezone} · committer time</div><Space wrap>Tip <Hash value={datePreview.tip} /> 基线 <Hash value={datePreview.baseline} /> 终点 <Hash value={datePreview.endpoint} /></Space><Space wrap>所选提交：{datePreview.selected_commits.map((sha: string) => <Hash key={sha} value={sha} />)}</Space></Space>} />}
+     </> : <>
+       <Form.Item name="baseline" label="Baseline 完整 SHA" rules={[{ required: true }]}><Input /></Form.Item>
+       <Form.Item name="endpoint" label="Endpoint 完整 SHA" rules={[{ required: true }]}><Input /></Form.Item>
+     </>}
+     <Button type="primary" htmlType="submit" loading={busy}>创建固定源码任务</Button>
+   </Form>;
++  };
+   const items = [
+     { key: "sync", label: "同步源码", children: <Form layout="vertical" onFinish={(v) => submit("/operations/source-sync", v)}>
+       <Form.Item name="repository" label="OpenHarmony 仓库名" rules={[{ required: true }]}><Input placeholder="openharmony/commonlibrary_c_utils" /></Form.Item>
+@@ -57,9 +106,25 @@ export default function OperationsPage() {
+     </Form> },
+     { key: "range", label: "两个 SHA 区间", children: rangeForm(false) },
+     { key: "date", label: "提交者日期区间", children: rangeForm(true) },
+-    { key: "matrix", label: "版本矩阵", children: <Form layout="vertical" onFinish={(v) => submit("/operations/version-matrices", { ...v, commits: commaList(v.commits_text), include_paths: commaList(v.include_paths_text || "."), include_paths_text: undefined })}>
++    { key: "branches", label: "跨分支比较", children: <Form form={branchForm} layout="vertical" onFinish={(v) => submit("/operations/branch-comparisons", {
++      ...v, include_paths: commaList(v.include_paths_text || "."), include_paths_text: undefined,
++    })}>
++      {common(branchForm, ["baseline_ref", "endpoint_ref"])}
++      {refSelect(branchForm, "baseline_ref", "基准分支或标签")}
++      {refSelect(branchForm, "endpoint_ref", "对比分支或标签")}
++      <Alert type="info" showIcon message="提交时服务端固定两个 ref 对应的 Commit / Tree；支持无祖先关系的分支端点比较，不扫描整段历史。" />
++      <Button type="primary" htmlType="submit" loading={busy}>扫描并比较两个端点</Button>
++    </Form> },
++    { key: "matrix", label: "版本矩阵", children: <Form form={matrixForm} layout="vertical" onFinish={(v) => {
++      const { commits_text, include_paths_text, ...payload } = v;
++      return submit("/operations/version-matrices", {
++        ...payload,
++        commits: commaList(commits_text),
++        include_paths: commaList(include_paths_text || "."),
++      });
++    }}>
+       <Form.Item name="case_id" label="调查案例" rules={[{ required: true }]}><Select options={cases.map((c) => ({ value: c.id, label: c.title }))} /></Form.Item>
+-      {common}
++      {common(matrixForm, ["commits_text"])}
+       <Form.Item name="commits_text" label="2–8 个完整 SHA（逗号分隔）" rules={[{ required: true }]}><Input.TextArea rows={3} /></Form.Item>
+       <Button type="primary" htmlType="submit" loading={busy}>创建版本矩阵</Button>
+     </Form> },
+@@ -86,14 +151,14 @@ export default function OperationsPage() {
+     { title: "种类", dataIndex: "kind" },
+     { title: "状态", dataIndex: "status", render: (s: string) => <Tag color={s === "blocked" ? "orange" : s === "failed" ? "red" : s === "completed" ? "green" : "blue"}>{s}</Tag> },
+     { title: "创建时间", dataIndex: "created_at", render: (s: string) => new Date(s).toLocaleString() },
+-    { title: "操作", render: (_: any, row: any) => <Space><Button onClick={async () => setSelected(await api("/operations/" + row.id))}>查看</Button>{!terminal.has(row.status) && !["blocked", "completed_with_limitations"].includes(row.status) && <Button danger onClick={() => api("/operations/" + row.id + "/cancel").then(refresh)}>取消</Button>}</Space> },
++    { title: "操作", render: (_: any, row: any) => <Space><Button onClick={() => void showOperation(row.id)}>查看</Button>{!terminal.has(row.status) && !["blocked", "completed_with_limitations"].includes(row.status) && <Button danger onClick={() => api("/operations/" + row.id + "/cancel", {}).then(() => refresh())}>取消</Button>}</Space> },
+   ];
+   return <>
+     <Header title="源码运营与证据闭环" description="同步与扫描分开；区间按两个固定 SHA；验证只运行注册的 Docker Harness；调查工具只读。" />
+     <Alert className="section-gap" type="info" showIcon message="结果边界" description="版本差异是候选变化，不自动说明漏洞引入/修复。动态组件复现也不等于产品可达或可报告漏洞。" />
+     <Card className="section-gap"><Tabs items={items} /></Card>
+     <Card className="section-gap" title="持久化操作队列"><Table rowKey="id" columns={columns} dataSource={rows} pagination={{ pageSize: 8 }} /></Card>
+-    {selected && <Card className="section-gap" title={<Space>操作详情 <Text type="secondary">{selected.id}</Text></Space>} extra={<Button onClick={() => setSelected(null)}>收起</Button>}>
++    {selected && <Card className="section-gap" title={<Space>操作详情 <Text type="secondary">{selected.id}</Text></Space>} extra={<Button onClick={() => { selectedOperationId.current = null; setSelected(null); }}>收起</Button>}>
+       <Space className="section-gap"><Tag>{selected.kind}</Tag><Tag>{selected.status}</Tag>{selected.result_sha256 && <><Text>Result SHA-256</Text><Hash value={selected.result_sha256} /></>}</Space>
+       {selected.error && <Alert type="error" message={selected.error} />}
+       <pre className="json-view">{JSON.stringify(selected.result || selected.spec, null, 2)}</pre>
+@@ -101,4 +166,4 @@ export default function OperationsPage() {
+       <pre className="json-view">{JSON.stringify(selected.events || [], null, 2)}</pre>
+     </Card>}
+   </>;
+-}
+\ No newline at end of file
++}
+diff --git a/web/src/pages/operationSelection.d.ts b/web/src/pages/operationSelection.d.ts
+new file mode 100644
+index 00000000..c01ede9a
+--- /dev/null
++++ b/web/src/pages/operationSelection.d.ts
+@@ -0,0 +1,6 @@
++export function refreshSelectedOperation<T>(
++  operationId: string,
++  load: (id: string) => Promise<T>,
++  getSelectedId: () => string | null,
++  apply: (item: T) => void,
++): Promise<T>;
+diff --git a/web/src/pages/operationSelection.js b/web/src/pages/operationSelection.js
+new file mode 100644
+index 00000000..869aacf2
+--- /dev/null
++++ b/web/src/pages/operationSelection.js
+@@ -0,0 +1,6 @@
++/** Load an operation detail without allowing an older response to replace a newer selection. */
++export async function refreshSelectedOperation(operationId, load, getSelectedId, apply) {
++  const item = await load(operationId);
++  if (getSelectedId() === operationId) apply(item);
++  return item;
++}
+diff --git a/web/tests/operationSelection.test.js b/web/tests/operationSelection.test.js
+new file mode 100644
+index 00000000..3839728b
+--- /dev/null
++++ b/web/tests/operationSelection.test.js
+@@ -0,0 +1,22 @@
++import test from "node:test";
++import assert from "node:assert/strict";
++import { refreshSelectedOperation } from "../src/pages/operationSelection.js";
++
++test("an old detail response cannot replace a newer selected operation", async () => {
++  let selectedId = "old";
++  let displayed = { id: "old", detail: "initial" };
++  let resolveOld;
++  const oldRequest = refreshSelectedOperation(
++    "old",
++    () => new Promise((resolve) => { resolveOld = resolve; }),
++    () => selectedId,
++    (item) => { displayed = item; },
++  );
++
++  selectedId = "new";
++  displayed = { id: "new", detail: "fresh" };
++  resolveOld({ id: "old", detail: "stale" });
++  await oldRequest;
++
++  assert.deepEqual(displayed, { id: "new", detail: "fresh" });
++});

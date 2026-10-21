@@ -1,0 +1,2628 @@
+diff --git a/docs/research/tool_matrix_2026-10-17.md b/docs/research/tool_matrix_2026-10-17.md
+new file mode 100644
+index 00000000..1a2a9104
+--- /dev/null
++++ b/docs/research/tool_matrix_2026-10-17.md
+@@ -0,0 +1,289 @@
++# B 线 · 工具矩阵与对比口径（2026-10-17）
++
++会话定位：OHScanner B 线的「工具矩阵与对比口径」会话，与另外两个会话并行。
++本文件只记录**本会话实际执行过的**事，以及它明确**没有**做的事。
++
++骨架落在 `research/experiments/tool_matrix/`，口径规范在
++`research/experiments/tool_matrix/protocol.md`。机器可读的探测证据在
++`research/experiments/tool_matrix/probes/tool_availability_2026-10-17.json`（每个被引用的
++原始产物都带 sha256，产物本体在仓库外）。
++
++**边界（本轮全程遵守）**：未切 `CyberSecurity-Innovation-Audit` 的分支；未改 `src/`、`catalog.py`、
++`tests/`、`PROGRAM_STATUS.md` 及 owner 共享面；未 push/PR/merge；全部生成的运行产物写在
++`/home/audit/wtmp/tool_matrix/` 下，仓库内只新增 `research/experiments/tool_matrix/` 与本文件。
++未对任何线上服务做任何事；本轮的"动态"仅指本地进程执行，没有任何目标侧运行。
++
++---
++
++## 一、任务 A：工具可用性探测
++
++### 1.1 探测基线
++
++| 样本 | 内容 | sha256 |
++|---|---|---|
++| `fixtures/minimal_iremote_stub.cpp` | 自造最小 `IRemoteStub` TU，含 AUTH-01 / AUTH-02 / DATA-01 / CAP-01 四种形状，类内定义 | `4af8dfe9…` |
++| `fixtures/minimal_iremote_stub_outofline.cpp` | 同上但 dispatcher 为**类外定义**——用于区分「解析了没命中」与「规则形状不匹配」 | `1fde05a0…` |
++| `fixtures/calibration_overflow.cpp` | **阳性对照**：4 字节缓冲区装 17 字节字面量，第 36 行 | `b4696c5d…` |
++| 真实文件（pin 后抽取） | `security_access_token@17d88bfb` 的 `accesstoken_callback_stubs.cpp`，144 行 | `a0b148f9…` |
++
++真实文件用 `git -C <pinned tree> show <sha>:<path>` 取得，不读工作树。
++
++### 1.2 能跑起来的
++
++| 工具 | 版本 | 装法 | 完整命令 | 最小样本 | 真实文件 |
++|---|---|---|---|---|---|
++| cppcheck | 2.7 | apt（本轮装） | `cppcheck --enable=all --inconclusive --std=c++17 --template='{file}:{line}:{column}:{severity}:{id}:{message}' <f>` | exit 0；12 条，**全部**是 `style:unusedFunction`/`performance:functionStatic`/`missingIncludeSystem`；安全类 0 条 | exit 0；部分解析（`unusedVariable` + missingInclude），安全类 0 条 |
++| clang-tidy | 14.0.0 | apt（本轮装） | `clang-tidy <f> -- -std=c++17` | exit 0，零输出 | exit 1，TU 无法解析 |
++| clang --analyze | 14.0.0 | apt（本轮装） | `clang++ --analyze -std=c++17 -Xanalyzer -analyzer-output=text <f>` | exit 0，零输出 | exit 1 |
++| g++ -fanalyzer | GCC 11.4.0 | 预装 | `g++ -fanalyzer -std=c++17 -c <f> -o /dev/null` | exit 0，零输出 | exit 1 |
++| semgrep-core | 1.180.0 | 既有 native 引擎 | `semgrep-core -rules <ipc ruleset> -lang cpp -json_nodots -j 1 <f>` | 类内 0 条；**类外 1 条 `ipc-baseline-descriptor` L70** | 0 条 |
++| Joern | 4.0.652（Temurin JDK 21.0.12.1+1） | 既有 | `joern-parse <dir> -o <cpg>` → `joern --script joern-ipc.sc --param cpgFile=… --param outFile=…` | 2 条，其中 1 条是对**纯虚声明**的误报 | 1 条**降级结果**：`file:"<empty>"`、`symbol:"<unresolvedNamespace>.OnRemoteRequest:<unresolvedSignature>(4)"`、line 1 |
++| CodeQL | 2.27.2（cpp-all 12.2.0；`codeql pack download codeql/cpp-queries` 成功装到 1.9.1） | 既有 CLI + pack 下载 | `codeql database create <db> --language=cpp --source-root=<d> --command="g++ …"` → `codeql database analyze\|query run` | DB exit 0；自建 `IpcBoundary` 2 条（与 Joern 同款误报）；自建 `ParcelFlow` 0 条；内置套件在阳性对照上 1 条并带 file/line | **DB exit 2**，建不起来 |
++
++`joern-parse --version` 不是合法选项（`Error: Unknown option --version`），Joern 版本取自
++`research/experiments/interface/ipc/environment.json`，不是从二进制自报里读的。
++
++### 1.3 装不上 / 未执行
++
++| 工具 | 状态 | 原始原因 |
++|---|---|---|
++| frama-c | `unexecuted` | `apt-get install frama-c` → `E: Unable to locate package frama-c`；`apt-cache search --names-only frama` 无结果；opam 不存在。Ubuntu 22.04 仓库无此包。 |
++| Infer | `unexecuted` | 四个已知工具根目录均无；apt 无此包；**PyPI 上名为 `infer` 的项目是 0.1 版，自述 "A machine learning toolkit for classification and assisted experimentation"——与 facebook/infer 同名不同物**，装它不等于装分析器；官方 release 资产取不到（curl github.com 超时，HTTP 000）。 |
++
++网络：github.com 三次探测结果不一致（首次 200、其后 40s 超时、再其后 000），而
++`objects.githubusercontent.com` 返回 404、`raw.githubusercontent.com` 返回 301——都在响应。
++所以 **Infer 的不可得是"通道不稳"，不是"证明不可能"**。同时注意：`codeql pack download`
++成功了，而 github.com 的 release 下载路径超时，说明两者走的是不同的网络路径。
++
++### 1.4 交叉发现（对任务 B 直接有用）
++
++**(1) 同一个误报被两个工具独立复现。** Joern 与 CodeQL 都把 `IRemoteObject` 的**纯虚声明**
++`OnRemoteRequest` 判成 AUTH-01 候选。工具侧候选数因此被"声明"虚增。对比口径必须要求命中点
++落在**定义体**而非声明上，否则两个工具的数字都不可用。
++
++**(2) 同一个「0」有两种成因，已在 semgrep 上实证。** 同一套规则：类内定义的 fixture 0 条，
++类外定义的变体 1 条。前者是**规则形状不匹配**（规则锚在 `$RET $C::OnRemoteRequest`），
++后者才是真正的"解析了没命中"。所以任何裸的"0 发现"必须附规则形状说明。
++
++**(3) 真实文件上所有编译型引擎被同一类 include 闭包挡住。** clang-tidy / clang --analyze /
++g++ -fanalyzer / CodeQL 都停在 `accesstoken_callback_stubs.h` → `i_permission_state_callback.h`
++→ `iremote_broker.h` → … 这条链上（更早的轮次停在 `linux/ashmem.h: No such file or directory`，
++内核 UAPI 头在 Ubuntu 上不存在）。这是 `failed`/`partial`，**不是"无发现"**。
++附带线索：`accesstoken_callback_stubs.h` 实际位于 **perf-corpus 树内**
++（`perf-corpus/<component>/interfaces/innerkits/accesstoken/include/`），说明"以整个 pinned 组件树为根、
++补全闭包"的重试是可行的——**本轮没做，记为未执行**。
++
++**(4) 阳性对照结果（4 字节装 17 字节，第 36 行）：**
++
++| 引擎 | 结果 |
++|---|---|
++| cppcheck 2.7 | `error: bufferAccessOutOfBounds` @ line 36 |
++| g++ -fanalyzer 11.4 | `warning: … writing 17 bytes into a region of size 4 overflows the destination [-Wstringop-overflow=]` @ 36:16 |
++| CodeQL 2.27.2 内置套件 | `Likely overrunning write`，`file=/calibration_overflow.cpp`、`start_line=36`、`start_col=5` |
++| **clang --analyze 14.0.0** | **0 条**（默认 checker 集在这一条上没有命中） |
++
++结论：「跑起来了」与「能给出带定位的发现」是两件事。clang 的 0 与另外三家的 0 承载的
++信息量不同，矩阵里必须分列——一个引擎的 0 不能和另一个引擎的 0 当同一个东西读。
++
++### 1.5 任务 A 明确是 `unknown` 的项（不是结论）
++
++- frama-c 在 OpenHarmony 语料上的检测能力：**unknown**（装不上）。
++- Infer 同上：**unknown**（装不上，且通道不稳）。
++- clang-tidy 在阳性对照上的检测下限：**unknown**（本轮没对它跑阳性对照）。
++- clang-tidy / clang SA / g++ -fanalyzer / CodeQL 在真实组件上的检测能力：**unknown**——
++  它们**没能解析**这些文件，所以"它们会报什么"没有任何数据。
++- Joern 在真实组件上的行为：只有 1 条 unresolved-namespace 占位，**无法据此推断**它的
++  真检测能力（既不能说强，也不能说弱）。
++- CodeQL 自建 `IpcBoundary` 输出的 file/line：该查询 `select` 的是裸名字而不是 Location，
++  所以 CSV 里没有位置。这是**查询写法**的限制，不是 CodeQL 的限制（内置套件能给出位置）。
++  在补上 select 子句之前，该查询的行在对比里 `file` 为空，不可参与求交。
++
++---
++
++## 二、任务 B：对比口径骨架
++
++### 2.1 四条硬要求落在哪
++
++| 要求 | 落地 | 机制保证（不是口头保证） |
++|---|---|---|
++| 同 repo + 同完整 commit + 同文件集 + 同 profile | `corpus.py`、`run_matrix.py` | 文件集规则**在运行时 import** `PRODUCTION_EXCLUDED_SEGMENTS` 与 `SOURCE_LANGUAGES`；import 失败直接 `SystemExit(3)`，**不回落**到内置副本。每次运行记 `file_set_sha256` + `file_count`，并与自建侧 `counts.source_files_audited` 交叉核对，不一致置 `file_count_conflict` |
++| 归一化成 `{tool, tool_version, command, repo, commit, file, line, rule_or_query_id, message, artifact_sha256}` | `schema/normalized_record.schema.json` + `adapters.py` | `adapters._finalize` 在记录离开模块前校验必需键，缺键就地报错；`artifact_sha256` 一律是本次进程写出的原始产物的哈希 |
++| 每个数字追溯到一次真实执行；`unexecuted` 是一等状态 | `run_matrix.py`、`matrix.md` | 装不上/跑不动的工具必须具名进入 `UNRUNNABLE`，以 `unexecuted` + 原始 `reason` 出现在表里；汇总表里未执行单元格写 `unexecuted` 而不是 0；"引擎没有任何可解析输出"也单独记成一条记录而不是静默的 0 |
++| 自建候选与工具告警**逐条**求交/差 | `run_matrix._compare` | `identity_key=(family,file,line)`；族映射优先取**工具自己的规则元数据**（semgrep 规则集带 `metadata.family`），其次是一张显式声明的 id 表并置 `family_mapping_declared=True`，落表外的进 `unmapped`（计数，但不参与求交）。同时输出宽松 `(family,file)` 与严格 `(family,file,line)` 两个视图，只报总数是被禁止的。自建侧的族名读候选自带的 `message` 前缀，再用生产 `emit()` 抽取表交叉核对（见 2.3 缺陷 2） |
++
++### 2.2 骨架文件
++
++```
++protocol.md                          口径规范 P1..P8
++schema/normalized_record.schema.json 归一化记录 Schema
++corpus.py                            10 组件 pin + 文件集（import 生产口径）
++adapters.py                          semgrep / cppcheck / clang-tidy / gcc / clang SA / CodeQL / Joern / 自建
++run_matrix.py                        执行 + 归一化 + 逐条求交差 + 渲染
++selfcheck.py                         10 组件自检 + 口径不变量断言
++probes/tool_availability_2026-10-17.json  任务 A 的机器可读证据（40 个产物哈希）
++fixtures/                            三个探针样本
++```
++
++`selfcheck.py` 只打印表是证明不了任何东西的，所以它对口径不变量做**断言**：
++10 个组件齐全且带 40 位 commit；每个组件有文件集 sha256；请求过的工具一个都不能从汇总里消失；
++至少有一个工具被记为 `unexecuted`；每条 `completed` 的工具记录都能追到一个原始产物哈希；
++每个 `unexecuted` 单元格都带原始原因；自建侧文件数与 corpus 文件集一致；渲染表里工具侧与自建侧分列。
++
++### 2.3 自检结果（10 个 perf-corpus 组件）
++
++命令（一次运行产出本节全部数字）：
++
++```
++cd /home/audit/openharmony-audit/wt-tool-matrix
++PYTHONPATH=. <B clone>/.venv/bin/python -u -m research.experiments.tool_matrix.selfcheck \
++  --out /home/audit/wtmp/tool_matrix/selfcheck-20261017
++```
++
++产物在**仓库外**：`/home/audit/wtmp/tool_matrix/selfcheck-20261017/{matrix.md,matrix.json,selfcheck.json,raw/,selfbuilt/}`。
++本节数字只出自这一次运行，未与任何历史表混用。
++
++**工具侧与自建侧分列，两列不相加、不相减：**
++
++| 组件 | commit | 文件数 | semgrep 行 | cppcheck 行 | clang-tidy | clang-sa | gcc-analyzer | codeql | joern | 自建候选 |
++|---|---|---|---|---|---|---|---|---|---|---|
++| communication_ipc | `bbb92dbb2f52` | 252 | 18 *[10 行引擎错误]* | 229 *[54 解析失败]* | unexecuted | unexecuted | unexecuted | unexecuted | unexecuted | 12 |
++| inputmethod_imf | `7777cba9eb19` | 412 | 2 *[2]* | 218 *[118]* | unexecuted | unexecuted | unexecuted | unexecuted | unexecuted | 4 |
++| multimedia_camera_framework | `085a5d0e2dc1` | 1123 | 4 *[1]* | 805 *[389]* | unexecuted | unexecuted | unexecuted | unexecuted | unexecuted | 9 |
++| multimedia_player_framework | `9f9a285ff489` | 920 | 66 *[28]* | 846 *[302]* | unexecuted | unexecuted | unexecuted | unexecuted | unexecuted | 24 |
++| notification_common_event_service | `aaaaf6d10aa8` | 146 | 7 *[2]* | 116 *[36]* | unexecuted | unexecuted | unexecuted | unexecuted | unexecuted | 0 |
++| resourceschedule_background_task_mgr | `cff2ff475e38` | 196 | 4 *[1]* | 119 *[63]* | unexecuted | unexecuted | unexecuted | unexecuted | unexecuted | 2 |
++| security_access_token | `17d88bfb36be` | 550 | 45 *[8]* | 311 *[174]* | unexecuted | unexecuted | unexecuted | unexecuted | unexecuted | 0 |
++| telephony_call_manager | `6638d1b37f27` | 395 | 9 *[2]* | 280 *[99]* | unexecuted | unexecuted | unexecuted | unexecuted | unexecuted | 2 |
++| update_updateservice | `e4942a33cc5e` | 219 | 2 *[1]* | 102 *[74]* | unexecuted | unexecuted | unexecuted | unexecuted | unexecuted | 2 |
++| window_window_manager | `8b0d8fe1b973` | 1112 | 14 *[8]* | 945 *[311]* | unexecuted | unexecuted | unexecuted | unexecuted | unexecuted | 10 |
++
++`unexecuted` 是 50 个单元格（5 个工具 × 10 个组件），一个都没写成 0。斜体括号内的行是
++`match_status=not_run`（引擎没解析出结果），它们**不是**"没发现问题"。记录总账：
++工具侧 4192 条（`hit` 2459 + `not_run` 1733，其中 50 条来自 unexecuted 工具），自建候选 65 条。
++
++**逐族：工具侧命中的行 vs 自建候选**（`unmapped` 不在此表内，它们被计数但被排除在求交之外）
++
++| 组件 | 工具侧 AUTH-01 | 工具侧 AUTH-04 | 工具侧 DATA-01 | 工具侧 CAP-01 | 工具侧 `unmapped` | 自建各族 |
++|---|---|---|---|---|---|---|
++| communication_ipc | 8 | 0 | 0 | 0 | 244 | AUTH-01 10, AUTH-02 2 |
++| inputmethod_imf | 0 | 0 | 0 | 0 | 225 | AUTH-01 4 |
++| multimedia_camera_framework | 3 | 0 | 0 | 0 | 811 | AUTH-01 7, AUTH-02 1, AUTH-04 1 |
++| multimedia_player_framework | 26 | 11 | 1 | 0 | 879 | AUTH-01 24 |
++| notification_common_event_service | 0 | 5 | 0 | 0 | 123 | — |
++| resourceschedule_background_task_mgr | 0 | 3 | 0 | 0 | 125 | AUTH-03 2 |
++| security_access_token | 1 | 36 | 0 | 0 | 324 | — |
++| telephony_call_manager | 7 | 0 | 0 | 0 | 287 | AUTH-02 2 |
++| update_updateservice | 0 | 1 | 0 | 0 | 108 | AUTH-04 2 |
++| window_window_manager | 1 | 2 | 0 | 3 | 958 | CAP-01 10 |
++| **合计** | **46** | **58** | **1** | **3** | **4084** | **65** |
++
++工具侧映射进族的 108 行全部来自 semgrep 的 4 条 baseline 规则
++（`ipc-baseline-descriptor` 46、`ipc-baseline-ignored-guard` 58、`ipc-baseline-capability` 3、
++`ipc-baseline-parcel-taint` 1）。cppcheck 有 2351 条 `hit`，**一条都没映射进族**——
++它报的是 CWE 通用缺陷类，不是 IPC 族；把它的行数读成 IPC 检测能力是错的。
++
++**逐条求交/差**（宽松 `(族,文件)` / 严格 `(族,文件,行)`，两个视图都给）：
++
++| 组件 | 宽松 both | 宽松 仅工具 | 宽松 仅自建 | 严格 both | 严格 仅工具 | 严格 仅自建 |
++|---|---|---|---|---|---|---|
++| communication_ipc | 4 | 4 | 2 | 0 | 8 | 12 |
++| inputmethod_imf | 0 | 0 | 1 | 0 | 0 | 4 |
++| multimedia_camera_framework | 3 | 0 | 2 | 0 | 3 | 9 |
++| multimedia_player_framework | 11 | 20 | 0 | 0 | 38 | 24 |
++| notification_common_event_service | 0 | 4 | 0 | 0 | 5 | 0 |
++| resourceschedule_background_task_mgr | 0 | 2 | 1 | 0 | 3 | 2 |
++| security_access_token | 0 | 12 | 0 | 0 | 37 | 0 |
++| telephony_call_manager | 0 | 7 | 1 | 0 | 7 | 2 |
++| update_updateservice | 1 | 0 | 0 | 0 | 1 | 2 |
++| window_window_manager | 2 | 2 | 4 | **3** | 3 | 7 |
++
++严格视图上唯一的交集出现在 window_window_manager 的 CAP-01，**同一文件同一行**，
++两个独立引擎各自报出：
++
++| 文件 | 行 | semgrep 规则 | 自建规则 |
++|---|---|---|---|
++| `window_scene/session_manager_service/src/session_manager_service_stub.cpp` | 37 | `ipc-baseline-capability` | `ipc.capability.export` |
++| 同上 | 41 | `ipc-baseline-capability` | `ipc.capability.export` |
++| `wmserver/src/zidl/window_manager_stub.cpp` | 389 | `ipc-baseline-capability` | `ipc.capability.export` |
++
++这三条是**同一口径下的两点确认**，不是漏洞结论：两边都只是 `candidate`。
++同一组件里自建侧另有 7 条 CAP-01 候选（`scene_session_manager_stub.cpp` 4 条、
++`session_stage_stub.cpp`、`session_stub.cpp`、`screen_session_manager_stub.cpp` 各 1 条）
++semgrep 的 baseline 规则没有报；反方向在这个族上是 0。
++
++**不变量断言：12/12 通过**（`selfcheck.json`）：
++
++| 断言 | 结果 |
++|---|---|
++| 10 个组件齐全 | PASS |
++| 每个组件带 pinned 文件集（count + sha256） | PASS |
++| 每个组件带 40 位完整 commit | PASS |
++| 请求过的工具一个都没从汇总里消失 | PASS |
++| 至少有一个工具被记为 `unexecuted`（不是静默的 0） | PASS |
++| 每条 `completed` 工具记录都能追到一个原始产物哈希 | PASS |
++| 每个 `unexecuted` 单元格都带原始原因 | PASS |
++| 生产 `emit()` 族表可读 | PASS |
++| rule id 有已知族的自建行不得落 `unmapped` | PASS |
++| 自建侧文件数与 corpus 文件集一致 | PASS |
++| 自建侧在 10 个组件上都真的跑了 | PASS |
++| 渲染表里工具侧与自建侧分列 | PASS |
++
++#### 自检自己抓出来的两个缺陷（这两处必须写明，否则第一轮的表会被误读）
++
++1. **第一轮的断言根本没跑。** `selfcheck.py` 第 98 行写成 `not net`（应为 `nonet`），
++   第 3 步 `NameError` 直接崩；所以第一轮只产出了表，一条不变量都没有被检查过。
++   更要紧的是**这个崩溃没有从退出码上看出来**：那一轮的日志里有完整 traceback，
++   但承载它的后台命令被上报为退出码 0。断言崩溃这件事只有读日志才能发现——
++   所以下面的重跑把 `echo EXIT=$?` 加在了重定向之后。修好后重跑才有上面的 12/12。
++2. **第一轮的自建侧族名全错。** `adapt_self_built` 把 `rule_id` 当族名用
++   （`ipc.relay.descriptor-boundary` 不以 `AUTH-` 开头），于是 65 条自建候选**全部**落
++   `unmapped`，第一轮表里那些「仅自建 0」是适配器的产物，不是测量结果。修法：族名优先读
++   候选自己的 `message` 前缀（`AUTH-01 candidate:`，产物自带，不猜），再用从生产检测器
++   `emit()` 调用里**运行时抽取**的 rule→族表交叉核对，两者冲突则记 `unmapped` 并写明冲突。
++   抽取表 8 条族—规则对；注意它与 `research/experiments/interface/ipc/summarize.py` 那份
++   手写表已经**不一致**（生产发 `ipc.parcel.position-underflow`，手写表写
++   `ipc.parcel.position-range`；手写表里的 `ipc.auth.service-identity` /
++   `ipc.auth.request-identity` 在生产 `emit()` 里不存在）。所以这里取生产源，不取那份文档。
++   最后补了一条断言专盯这个形状——它是这条缺陷暴露**之后**才加的，等于承认第一轮的表
++   没有这道保护。
++3. 第一轮那个「仅工具 8 / 仅自建 0」（communication_ipc）同时也是**假象**：修好后是
++   宽松 both 4 / 仅工具 4 / 仅自建 2，严格 仅工具 8 / 仅自建 12。
++
++---
++
++## 三、剩余限制
++
++1. 本轮的"工具侧"只有 **semgrep 与 cppcheck** 真正跑到了 10 组件文件集上；clang-tidy / clang SA /
++   g++ -fanalyzer / CodeQL / Joern 在本轮是 `unexecuted`（原因见 1.3、1.4）。
++2. semgrep 的 profile 是**逐文件**（`-lang` 不接受多目标，`-targets` 要 ATD 配置不是路径列表；
++   两个原始报错均已记录）。单进程形式不存在，所以「逐文件 vs 单进程」的等价性**没有被测过**。
++3. semgrep 只被喂 C/C++ 后缀，文件集因此比 corpus 文件集小（少 `.ets/.js/.ts`）；这个收窄记在
++   `tool_file_count` / `tool_file_set_sha256`，可见但**是**一个口径差异。
++4. cppcheck 在真实语料上的行数主要由**解析失败**构成（见自检表括号里的 parse-err 数），
++   把它读成"发现"是错的；adapter 已把 `syntaxError`/`missingInclude*` 记为
++   `parse_status=partial, match_status=not_run`。
++5. 工具侧告警一律 `candidate` / `possible_hit`。本文件不含任何漏洞结论，`validated_vulnerability` 仍为 0。
++6. 文件集枚举走文件系统，而自建检测器走 Git 索引；对 pinned 检出两者一致（已用
++   `file_count_conflict` 逐组件核对），但这个等价性**不是**对任意工作树的普遍性质。
++7. 本轮的族级交集实质上是「**semgrep 的 4 条 baseline 规则 vs 自建检测器**」，
++   不是「工具矩阵 vs 自建」：工具侧映射进族的 108 行全部出自 semgrep，cppcheck 的 2351 条
++   命中一条都没入族，其余 5 个工具是 `unexecuted`。所以 2.3 的交集/差**不能**被读成
++   "第三方工具整体与自建的一致性"。
++8. semgrep 有 63 行是引擎错误，即 63 个文件 semgrep 没能解析——这 63 行进 `not_run`，
++   不进"未命中"。所以任何一个 semgrep 的 0 都要先减掉它。
++9. baseline 规则（`ipc-baseline-*`）与自建规则的作用域不同：baseline 是裸的正则式模式，
++   没有 dispatcher 作用域；因此**宽松 `(族,文件)` 视图只是文件级可比**，两个视图必须成对读，
++   单独引用宽松视图会高估一致性（communication_ipc 宽松 4 both，严格 0）。
++10. 自建侧的族映射依赖候选 `message` 前缀这一文本约定；若将来该前缀改写，映射会整体
++    落到 `unmapped`（不会静默错配，但会退化成不可比）。断言 9 只能在 `emit()` 表可用时守住。
++
++## 四、本会话没有做的事
++
++- 没有把 CodeQL 的 `IpcBoundary.ql` 补上 Location 的 select 子句（所以它现在没有 file/line）。
++- 没有以整个 pinned 组件树为根去补全 include 闭包重试编译型引擎（1.4(3) 的线索）。
++- 没有对 clang-tidy 跑阳性对照。
++- 没有修 `research/experiments/interface/ipc/summarize.py` 里那份与生产 `emit()` 已经不一致的
++  手写族表（属 owner/既有实验面，本轮只记录差异）。
++- 没有动任何 owner 共享面，没有 push / PR / merge。新文件只有
++  `docs/research/tool_matrix_2026-10-17.md` 与 `research/experiments/tool_matrix/`（`git status` 已核对）；
++  运行产物全在仓库外 `/home/audit/wtmp/tool_matrix/`。
+diff --git a/research/experiments/tool_matrix/README.md b/research/experiments/tool_matrix/README.md
+new file mode 100644
+index 00000000..592d2413
+--- /dev/null
++++ b/research/experiments/tool_matrix/README.md
+@@ -0,0 +1,83 @@
++# tool_matrix — 多工具对比口径与骨架
++
++这个目录不是一个新的扫描框架。它是一层**接口层**：把已经存在的第三方工具的输出，
++和 B 线自建检测器 `ohscanner.interface.ipc` 的候选，归一化成同一种记录，然后逐条求交/差。
++
++为什么需要它：把「Semgrep 报了 45 条」和「自建报了 3 条」写在同一行里，本身是没有意义的——
++两个数字的口径、文件集、版本、乃至"0"的含义都不同。这里做的事就是把这些差异变成
++可检查的字段，而不是留在读者的想象里。
++
++对照的口径写在 [protocol.md](protocol.md)，那是这个目录的规范来源；本文件只讲怎么跑。
++
++---
++
++## 目录
++
++```
++protocol.md                  口径的规范来源（P1..P8）。改口径先改它。
++schema/normalized_record.schema.json   归一化记录的 JSON Schema
++corpus.py                    10 个 perf-corpus 组件的 pin + 文件集（import 生产口径，不复制）
++adapters.py                  各工具原生输出 -> 归一化记录
++run_matrix.py                跑工具、归一化、逐条求交/差，产出 matrix.json / matrix.md
++selfcheck.py                 10 组件自检 + 对口径不变量的断言
++fixtures/                    探针样本（最小 IRemoteStub、类外定义变体、阳性对照）
++```
++
++## 跑
++
++在做这件事之前先说清楚：**产物不许进仓库**（AGENTS.md）。`--out` 必须指向仓库外的
++路径，`run_matrix.py` 会在 `--out` 落在仓库内时直接拒绝执行，而不是打印一条警告后照写。
++
++```bash
++cd <repo root>
++PYTHONPATH=. .venv/bin/python -m research.experiments.tool_matrix.selfcheck \
++    --corpus ~/openharmony-audit/perf-corpus \
++    --out    /home/audit/wtmp/tool_matrix/selfcheck-<date>
++```
++
++单独跑一个组件、一个工具：
++
++```bash
++PYTHONPATH=. .venv/bin/python -m research.experiments.tool_matrix.run_matrix \
++    --components security_access_token --tools semgrep \
++    --selfbuilt-dir /home/audit/wtmp/tool_matrix/selfbuilt \
++    --out /home/audit/wtmp/tool_matrix/smoke
++```
++
++只想看文件集与 pin：
++
++```bash
++PYTHONPATH=. .venv/bin/python -m research.experiments.tool_matrix.corpus --list
++```
++
++## 产出
++
++| 文件 | 内容 |
++|---|---|
++| `matrix.json` | 全部归一化记录 + 每组件汇总 + 逐条对比结果 |
++| `matrix.md` | 人看的表。工具侧与自建侧**分列**，未执行单元格写 `unexecuted` 而不是 0 |
++| `raw/` | 每个 (组件, 工具) 的原生输出，未加工；`artifact_sha256` 指的是这里 |
++| `selfcheck.json` | 口径不变量的逐条断言结果 |
++
++`raw/<组件>.<工具>.argv.json` 里记着 `argv`、`cwd`、超时、文件集 sha256、调用次数，
++以及 `command_is_template`——逐文件 profile 的命令是一个模板（`<file>` 占位），
++不会伪装成一条字面命令。
++
++## 加一个工具
++
++1. 在 `run_matrix.py` 的 `--tools` 分支里加 argv、版本探测、adapter；
++2. 在 `adapters.py` 里写 adapter。三件事不许做：编造位置、升级 evidence 类别、
++   把解析失败写成规则未命中；
++3. 如果这个工具**装不上或跑不起来**，把它加进 `UNRUNNABLE`，reason 写原始报错原文。
++   它会以 `unexecuted` 出现在表里。**不要**省略它——省略和"0 发现"在表上是同一个东西，
++   而那正是这个目录要消灭的混淆。
++
++## 已知限制
++
++- `semgrep-core` 1.180.0 的 profile 是**逐文件**：`-lang` 不接受多目标，`-targets`
++  要的是 ATD 配置不是路径列表（两个原始报错都在 `protocol.md` 引用的运行记录里）。
++  逐文件也是既有 `research/experiments/interface/ipc/run_semgrep.py` 的口径。
++  单进程形式不存在，所以"逐文件 vs 单进程"的等价性**没有被测过**，只被记为限制。
++- `semgrep` 只被喂 C/C++ 后缀，所以它的文件集比 corpus 文件集小（少了 `.ets/.js/.ts`）。
++  这个收窄记在 `tool_file_count` / `tool_file_set_sha256` 里，两个数字都能看到。
++- 工具侧的告警永远是 `candidate` / `possible_hit`。这个目录不产生任何漏洞结论。
+diff --git a/research/experiments/tool_matrix/adapters.py b/research/experiments/tool_matrix/adapters.py
+new file mode 100644
+index 00000000..b34fed75
+--- /dev/null
++++ b/research/experiments/tool_matrix/adapters.py
+@@ -0,0 +1,423 @@
++#!/usr/bin/env python3
++"""Native tool output -> normalized records (protocol P4/P6).
++
++Design rules
++------------
++* An adapter never invents a location. If the engine's own words carry no file,
++  the record says so (`file_attribution`) instead of pointing at line 1.
++* An adapter never upgrades evidence. Tool output is `pattern`/`syntax`; a tool
++  that advertises dataflow does not thereby make the row `dataflow`.
++* Family comes from the mechanism that is closest to the tool's own definition,
++  in this order of preference:
++    1. the tool's own rule metadata (`semgrep` ruleset `metadata.family`);
++    2. a declared id table in this file, marked `family_mapping_declared=True`;
++    3. `unmapped`, which is counted but excluded from intersection/difference.
++
++Every returned record is validated against the required key set before it leaves
++this module, so a silently-short record fails here rather than in a summary.
++"""
++
++from __future__ import annotations
++
++import csv
++import hashlib
++import json
++import re
++from pathlib import Path
++
++SCHEMA_VERSION = 1
++
++REQUIRED = (
++    "schema_version", "record_id", "kind", "tool", "tool_version", "command",
++    "repo", "commit", "file", "line", "rule_or_query_id", "message",
++    "artifact_sha256", "execution_status", "family", "identity_key",
++)
++
++# --- declared id tables (used only where the tool carries no family of its own)
++
++FAMILY_KEYS = ("AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "DATA-01", "CAP-01")
++
++# The self-built artifact labels each candidate with its family in the message
++# ("AUTH-01 candidate: ...") but has no `family` field. The label is read, never
++# guessed; the rule-id table used to cross-check it is extracted from the
++# production detector's own emit() calls, so the two can only disagree if the
++# detector changed under the run.
++_EMIT_PAIR = re.compile(r'emit\(\s*"([A-Z]+-[0-9]+)"\s*,\s*"([a-z0-9.\-]+)"')
++_FAMILY_PREFIX = re.compile(r"^\s*([A-Z]+-[0-9]+)\b")
++
++DETECTOR_SOURCE_REL = "src/ohscanner/detectors/interface/analysis.py"
++
++
++def _find_detector_source() -> Path | None:
++    """Locate the production detector source by content, not by counting parents."""
++    for cand in [Path(__file__).resolve(), *Path(__file__).resolve().parents]:
++        p = cand / DETECTOR_SOURCE_REL if cand.is_dir() else None
++        if p and p.is_file():
++            return p
++    return None
++
++
++def production_rule_families(source: Path | None = None) -> dict:
++    """rule id -> family, read off the production detector's own `emit()` calls.
++
++    Returns {} (never a fallback table) when the source cannot be read; callers
++    must then record the rows as `unmapped` and say why.
++    """
++    src = source or _find_detector_source()
++    if not src or not Path(src).is_file():
++        return {}
++    text = Path(src).read_text(encoding="utf-8", errors="replace")
++    return {rule: fam for fam, rule in _EMIT_PAIR.findall(text)}
++
++
++# cppcheck / clang / gcc report CWE-generic defect classes, not IPC families.
++# Only the two bounds-related ids below have a defensible one-to-one reading into
++# DATA-01 ("Parcel length used as a bound"). Everything else stays `unmapped`,
++# which keeps it in the counts and out of the set comparison.
++DECLARED_FAMILY_MAP = {
++    # cppcheck
++    "bufferAccessOutOfBounds": "DATA-01",
++    "arrayIndexOutOfBounds": "DATA-01",
++    "arrayIndexOutOfBoundsCond": "DATA-01",
++    "negativeIndex": "DATA-01",
++    # clang static analyzer / clang-tidy
++    "clang-analyzer-security.ArrayBound": "DATA-01",
++    "clang-analyzer-security.ArrayBoundV2": "DATA-01",
++    "clang-analyzer-alpha.security.ArrayBoundV2": "DATA-01",
++    "clang-analyzer-unix.Malloc": "unmapped",
++    # gcc -fanalyzer / compiler diagnostics
++    "Wstringop-overflow": "DATA-01",
++    "Warray-bounds": "DATA-01",
++}
++
++
++def _sha256_file(p: Path) -> str:
++    h = hashlib.sha256()
++    with open(p, "rb") as fh:
++        for chunk in iter(lambda: fh.read(65536), b""):
++            h.update(chunk)
++    return h.hexdigest()
++
++
++def _record_id(**kw) -> str:
++    h = hashlib.sha256()
++    for k in sorted(kw):
++        h.update("{0}={1}\x00".format(k, kw[k]).encode("utf-8"))
++    return h.hexdigest()[:16]
++
++
++def _identity_key(family: str, file, line) -> str:
++    return "{0}|{1}|{2}".format(family, file if file is not None else "<none>",
++                                "" if line is None else line)
++
++
++def _finalize(rec: dict) -> dict:
++    for k in REQUIRED:
++        if k not in rec:
++            raise ValueError("adapter produced a record missing {0!r}: {1!r}".format(k, rec))
++    if rec["execution_status"] != "completed" and not rec.get("execution_reason"):
++        raise ValueError("non-completed record must carry execution_reason: {0!r}".format(rec))
++    return rec
++
++
++def _base(ctx: dict, **over) -> dict:
++    rec = {
++        "schema_version": SCHEMA_VERSION,
++        "kind": "tool_alert",
++        "tool": ctx["tool"],
++        "tool_version": ctx["tool_version"],
++        "tool_model_version": None,
++        "command": list(ctx["command"]),
++        "command_is_template": bool(ctx.get("command_is_template", False)),
++        "repo": ctx["repo"],
++        "commit": ctx["commit"],
++        "git_tree": ctx.get("git_tree"),
++        "file": None,
++        "line": None,
++        "column": None,
++        "symbol": None,
++        "file_attribution": "not_applicable",
++        "file_resolution": "none",
++        "rule_or_query_id": "",
++        "rule_version": None,
++        "message": "",
++        "severity": "unassessed",
++        "confidence": "unassessed",
++        "candidate_cwe": None,
++        "evidence_type": "pattern",
++        "family": "unmapped",
++        "family_mapping_declared": False,
++        "identity_key": "",
++        "execution_status": "completed",
++        "execution_reason": None,
++        "parse_status": "complete",
++        "match_status": "hit",
++        "exit_code": ctx.get("exit_code"),
++        "source_sha256": ctx.get("source_sha256"),
++        "artifact_sha256": ctx.get("artifact_sha256"),
++        "native_artifact": str(ctx["raw_path"]) if ctx.get("raw_path") else None,
++        "elapsed_seconds": ctx.get("elapsed_seconds"),
++        "limitations": [],
++    }
++    rec.update(over)
++    rec["identity_key"] = _identity_key(rec["family"], rec["file"], rec["line"])
++    rec["record_id"] = _record_id(kind=rec["kind"], tool=rec["tool"],
++                                  tool_version=rec["tool_version"],
++                                  commit=rec["commit"], file=rec["file"],
++                                  line=rec["line"],
++                                  rule_or_query_id=rec["rule_or_query_id"],
++                                  message=rec["message"][:80])
++    return _finalize(rec)
++
++
++def unexecuted_record(ctx: dict, reason: str, parse_status="not_run") -> dict:
++    """The first-class state. Never a zero, never a silence."""
++    return _base(ctx, execution_status="unexecuted", execution_reason=reason,
++                 parse_status=parse_status, match_status="not_run")
++
++
++# --------------------------------------------------------------------------
++# semgrep-core (native OSS engine, JSON output)
++
++def load_semgrep_family_map(ruleset_path: Path) -> dict:
++    """family per rule id, read from the ruleset's own metadata.
++
++    Mechanical, not declared: if the ruleset changes its metadata the mapping
++    changes with it, and `family_mapping_declared` stays False.
++    """
++    doc = json.loads(Path(ruleset_path).read_text(encoding="utf-8"))
++    rules = doc["rules"] if isinstance(doc, dict) else doc
++    out = {}
++    for r in rules:
++        fam = (r.get("metadata") or {}).get("family")
++        out[r["id"]] = fam if fam in {
++            "AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "DATA-01", "CAP-01"} else "unmapped"
++    return out
++
++
++def adapt_semgrep_core(raw_path: Path, ctx: dict, family_map: dict) -> list:
++    doc = json.loads(Path(raw_path).read_text(encoding="utf-8"))
++    out = []
++    for m in doc.get("results", []):
++        extra = m.get("extra") or {}
++        rid = m.get("check_id", "")
++        fam = family_map.get(rid.rsplit(".", 1)[-1], family_map.get(rid, "unmapped"))
++        out.append(_base(
++            ctx,
++            file=m.get("path"),
++            line=(m.get("start") or {}).get("line"),
++            column=(m.get("start") or {}).get("col"),
++            file_attribution="resolved",
++            file_resolution="absolute_in_tree",
++            rule_or_query_id=rid,
++            message=extra.get("message", ""),
++            severity=extra.get("severity", "unassessed") or "unassessed",
++            candidate_cwe=((extra.get("metadata") or {}).get("cwe") or None),
++            evidence_type="pattern",
++            family=fam,
++            family_mapping_declared=False,
++        ))
++    for e in doc.get("errors", []) or []:
++        out.append(_base(ctx, execution_status="failed",
++                         execution_reason=json.dumps(e)[:400],
++                         parse_status="partial", match_status="not_run",
++                         rule_or_query_id="<engine-error>",
++                         message="semgrep-core reported a parse/engine error"))
++    return out
++
++
++# --------------------------------------------------------------------------
++# line-oriented diagnostics: cppcheck, clang-tidy, clang --analyze, g++ -fanalyzer
++
++_CPPCHECK_RE = re.compile(
++    r"^(?P<file>.+?):(?P<line>\d+):(?P<col>\d+):(?P<sev>\w+):(?P<id>[\w.:]+):(?P<msg>.*)$")
++_CLANG_TIDY_RE = re.compile(
++    r"^(?P<file>.+?):(?P<line>\d+):(?P<col>\d+):\s*(?P<sev>\w+):\s*(?P<msg>.*?)(?:\s*\[(?P<id>[^\]]+)\])?$")
++_GCC_RE = re.compile(
++    r"^(?P<file>.+?):(?P<line>\d+):(?P<col>\d+):\s*(?P<sev>warning|error|note):\s*(?P<msg>.*?)(?:\s*\[(?P<id>-W[\w=-]+)\])?$")
++
++
++def _adapt_lines(raw_path: Path, ctx: dict, rx, default_id: str) -> list:
++    out = []
++    text = Path(raw_path).read_text(encoding="utf-8", errors="replace")
++    for ln in text.splitlines():
++        m = rx.match(ln.strip())
++        if not m:
++            continue
++        g = m.groupdict()
++        rid = g.get("id") or default_id
++        fam = DECLARED_FAMILY_MAP.get(rid, "unmapped")
++        # A parse failure is not a finding. cppcheck's `syntaxError` id is the
++        # clearest case: it means the tool could not read the file, so the row is
++        # recorded with parse_status=partial and match_status=not_run. Counting it
++        # as a rule hit would turn "could not parse" into "reported something".
++        parse_failure = rid in ("syntaxError", "missingInclude", "missingIncludeSystem")
++        out.append(_base(
++            ctx,
++            file=g["file"],
++            line=int(g["line"]),
++            column=int(g["col"]),
++            file_attribution="resolved",
++            file_resolution="absolute_in_tree",
++            rule_or_query_id=rid,
++            message=g["msg"],
++            severity=g["sev"],
++            evidence_type=("unknown" if parse_failure else "pattern"),
++            family=fam,
++            family_mapping_declared=(fam != "unmapped"),
++            parse_status=("partial" if parse_failure else "complete"),
++            match_status=("not_run" if parse_failure else "hit"),
++        ))
++    return out
++
++
++def adapt_cppcheck(raw_path: Path, ctx: dict) -> list:
++    return _adapt_lines(raw_path, ctx, _CPPCHECK_RE, "<no-id>")
++
++
++def adapt_clang_tidy(raw_path: Path, ctx: dict) -> list:
++    return _adapt_lines(raw_path, ctx, _CLANG_TIDY_RE, "<no-check>")
++
++
++def adapt_gcc_analyzer(raw_path: Path, ctx: dict) -> list:
++    return _adapt_lines(raw_path, ctx, _GCC_RE, "<no-warning-flag>")
++
++
++def adapt_clang_sa(raw_path: Path, ctx: dict) -> list:
++    return _adapt_lines(raw_path, ctx, _GCC_RE, "<no-checker>")
++
++
++# --------------------------------------------------------------------------
++# CodeQL CSV
++
++def adapt_codeql_csv(raw_path: Path, ctx: dict) -> list:
++    """CodeQL's CSV is heterogeneous: a vendor query emits
++    name,description,severity,message,file,start_line,...; a hand-written
++    `@kind problem` query that selects a string emits no location at all.
++    Both are read honestly: the second yields file_attribution='not_applicable'
++    rather than a guessed line.
++    """
++    out = []
++    with open(raw_path, newline="", encoding="utf-8") as fh:
++        rows = list(csv.DictReader(fh))
++    for r in rows:
++        keys = {k.lower(): k for k in r.keys() if k}
++        def col(*names):
++            for n in names:
++                if n in keys:
++                    return r[keys[n]]
++            return None
++        f = col("file")
++        ln = col("start_line", "line")
++        rid = col("name") or ctx.get("query_id") or "<unnamed-query>"
++        raw_msg = col("message") or ""
++        desc = col("description") or ""
++        fam = DECLARED_FAMILY_MAP.get(rid, "unmapped")
++        out.append(_base(
++            ctx,
++            file=(f.lstrip("/") if isinstance(f, str) else None),
++            line=(int(ln) if ln not in (None, "") else None),
++            column=(int(col("start_col") or 0) or None),
++            file_attribution="resolved" if f else "not_applicable",
++            file_resolution="repo_relative" if f else "none",
++            rule_or_query_id=rid,
++            message=(raw_msg + (" — " + desc if desc else "")).strip(),
++            severity=(col("severity") or "unassessed"),
++            evidence_type="pattern",
++            family=fam,
++            family_mapping_declared=(fam != "unmapped"),
++            limitations=([] if f else [
++                "This query selects a bare entity name, not a Location, so the "
++                "record carries no file/line. Recorded as absent, not as line 1."]),
++        ))
++    return out
++
++
++# --------------------------------------------------------------------------
++# Joern (findings JSON written by joern-ipc.sc)
++
++def adapt_joern_json(raw_path: Path, ctx: dict) -> list:
++    doc = json.loads(Path(raw_path).read_text(encoding="utf-8"))
++    rows = doc if isinstance(doc, list) else doc.get("findings", [])
++    out = []
++    for r in rows:
++        f = r.get("file")
++        line = r.get("line")
++        placeholder = (f in (None, "", "<empty>") or not isinstance(f, str)
++                       or "<unresolved" in str(r.get("symbol", "")))
++        fam = {"AUTH-01": "AUTH-01", "AUTH-02": "AUTH-02",
++               "AUTH-03": "AUTH-03", "CAP-01": "CAP-01"}.get(r.get("family"), "unmapped")
++        out.append(_base(
++            ctx,
++            file=(None if placeholder else f),
++            line=(None if placeholder else line),
++            symbol=r.get("symbol"),
++            file_attribution=("unresolved_namespace" if placeholder else "resolved"),
++            file_resolution=("none" if placeholder else "absolute_in_tree"),
++            rule_or_query_id=r.get("rule") or r.get("rule_id") or "<joern-query>",
++            message=r.get("message", ""),
++            evidence_type="syntax",
++            family=fam,
++            family_mapping_declared=False,
++            limitations=([] if not placeholder else [
++                "Joern attributed this row to an unresolved namespace placeholder, "
++                "not to a source location. Countable; not a candidate at a location."]),
++        ))
++    return out
++
++
++# --------------------------------------------------------------------------
++# the first-party detector's own candidates
++
++def adapt_self_built(report_path: Path, ctx: dict) -> list:
++    doc = json.loads(Path(report_path).read_text(encoding="utf-8"))
++    rule_map = production_rule_families(ctx.get("detector_source"))
++    out = []
++    for c in doc.get("candidates", []):
++        fam, fam_note = _self_built_family(c, rule_map)
++        extra = [fam_note] if fam_note else []
++        out.append(_base(
++            dict(ctx, tool=c.get("interpretation_id", "ohscanner.interface.ipc"),
++                 tool_version=c.get("detector_version", ctx.get("tool_version", "")),
++                 command=list(ctx["command"]), artifact_sha256=str(report_path)),
++            kind="self_built_candidate",
++            tool_model_version=c.get("model_version"),
++            file=c.get("file"),
++            line=c.get("line"),
++            file_attribution="resolved",
++            file_resolution="repo_relative",
++            rule_or_query_id=c.get("rule_id", ""),
++            rule_version=c.get("rule_version"),
++            message=c.get("message", ""),
++            severity=c.get("severity", "unassessed"),
++            confidence=c.get("confidence", "unassessed"),
++            candidate_cwe=c.get("candidate_cwe"),
++            evidence_type=c.get("evidence_type", "syntax"),
++            family=fam,
++            family_mapping_declared=False,
++            family_mapping_source=("artifact_label+production_emit_table" if fam != "unmapped"
++                                   else "unmapped"),
++            source_sha256=c.get("source_sha256"),
++            limitations=["Self-built candidate: unverified evidence, not a vulnerability."] + extra,
++        ))
++    return out
++
++
++def _self_built_family(c: dict, rule_map: dict) -> tuple:
++    """(family, note). `unmapped` is returned with a note rather than silently."""
++    m = _FAMILY_PREFIX.match(c.get("message") or "")
++    by_label = m.group(1) if m and m.group(1) in FAMILY_KEYS else None
++    by_rule = rule_map.get(c.get("rule_id", ""))
++    if by_label and by_rule and by_label != by_rule:
++        return "unmapped", (
++            "family conflict for rule {0!r}: artifact label says {1}, the production emit() "
++            "table says {2}; recorded unmapped so the row cannot enter the set comparison"
++            .format(c.get("rule_id"), by_label, by_rule))
++    fam = by_label or by_rule
++    if fam:
++        return fam, None
++    if not rule_map:
++        return "unmapped", ("family unmapped: the production detector source was not readable, "
++                            "so only the artifact's own label was available and it carried none")
++    return "unmapped", ("family unmapped: rule id {0!r} has no emit() pair in the production "
++                        "detector and no family label in the message".format(c.get("rule_id")))
+diff --git a/research/experiments/tool_matrix/corpus.py b/research/experiments/tool_matrix/corpus.py
+new file mode 100644
+index 00000000..3b0b8478
+--- /dev/null
++++ b/research/experiments/tool_matrix/corpus.py
+@@ -0,0 +1,187 @@
++#!/usr/bin/env python3
++"""Corpus + file-set definition for the tool matrix.
++
++Runnable as:
++    .venv/bin/python -m research.experiments.tool_matrix.corpus --list
++    .venv/bin/python -m research.experiments.tool_matrix.corpus --files security_access_token
++
++Protocol P2: the file set has exactly one definition, and it is the one the
++first-party detector already uses in production scope. This module imports that
++definition; it never carries a copy. If the import fails we abort rather than
++fall back, because a fallback copy would turn "same file set" from a mechanical
++guarantee into a verbal promise, and the difference between the two is invisible
++in the resulting numbers.
++
++Outputs of anything run from here belong outside the repository (see README).
++"""
++
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import os
++import sys
++from pathlib import Path
++
++# --- the single definition of the production scope -------------------------
++try:
++    from src.ohscanner.git_source import SOURCE_LANGUAGES
++    from src.ohscanner.detectors.interface.audit import PRODUCTION_EXCLUDED_SEGMENTS
++except Exception as exc:  # pragma: no cover - depends on the caller's cwd/sys.path
++    sys.stderr.write(
++        "FATAL: could not import the production scope definition.\n"
++        "  Imported from: src.ohscanner.git_source / src.ohscanner.detectors.interface.audit\n"
++        "  Error: {0!r}\n"
++        "  Run from the repository root with the project interpreter, e.g.\n"
++        "    PYTHONPATH=. .venv/bin/python -m research.experiments.tool_matrix.corpus --list\n"
++        "  Refusing to fall back to a private copy of the rule (protocol P2).\n".format(exc)
++    )
++    raise SystemExit(3)
++
++PROTOCOL_VERSION = "tool-matrix-protocol/1"
++
++# The 10 perf-corpus components, each pinned at the commit its tree sits at.
++# `commit` was read with `git -C <tree> rev-parse HEAD` on 2026-10-16.
++COMPONENTS = (
++    ("communication_ipc", "openharmony/communication_ipc",
++     "bbb92dbb2f52aca54ab268307c9476ac1802f3ff"),
++    ("inputmethod_imf", "openharmony/inputmethod_imf",
++     "7777cba9eb19085af8e7b90088531028d2937460"),
++    ("multimedia_camera_framework", "openharmony/multimedia_camera_framework",
++     "085a5d0e2dc1c90a4b676bad55675a1cf12a6380"),
++    ("multimedia_player_framework", "openharmony/multimedia_player_framework",
++     "9f9a285ff489afa66861a85dcc4213336a463b36"),
++    ("notification_common_event_service", "openharmony/notification_common_event_service",
++     "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f"),
++    ("resourceschedule_background_task_mgr", "openharmony/resourceschedule_background_task_mgr",
++     "cff2ff475e3885ee814651f6a13d7f8a5782efdd"),
++    ("security_access_token", "openharmony/security_access_token",
++     "17d88bfb36bea6c9370ba919ac41a22d16dd66b3"),
++    ("telephony_call_manager", "openharmony/telephony_call_manager",
++     "6638d1b37f278d7ed380d907674820e7467cedf8"),
++    ("update_updateservice", "openharmony/update_updateservice",
++     "e4942a33cc5ed29040e5c720bea3b2a8e4a79221"),
++    ("window_window_manager", "openharmony/window_window_manager",
++     "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7"),
++)
++
++SKIP_SEGMENTS = tuple(sorted(PRODUCTION_EXCLUDED_SEGMENTS))
++SOURCE_SUFFIXES = tuple(sorted(SOURCE_LANGUAGES))
++
++
++def component_names() -> list[str]:
++    return [c[0] for c in COMPONENTS]
++
++
++def component(name: str) -> dict:
++    for n, repo, commit in COMPONENTS:
++        if n == name:
++            return {"component": n, "repository": repo, "commit": commit}
++    raise KeyError("unknown component: {0!r}; known: {1}".format(name, ", ".join(component_names())))
++
++
++def file_set(root: Path) -> list[str]:
++    """Repo-relative source paths after the production skip rule.
++
++    Whole-segment matching, so `testing/` survives while `tests/` does not, and
++    `protest.cpp` is not caught by `test`. VCS and dot directories are pruned.
++    """
++    root = Path(root)
++    out: list[str] = []
++    skip = set(SKIP_SEGMENTS)
++    for dirpath, dirnames, filenames in os.walk(root):
++        dirnames[:] = sorted(d for d in dirnames if d not in skip and not d.startswith("."))
++        for fn in sorted(filenames):
++            if fn.endswith(SOURCE_SUFFIXES):
++                out.append(os.path.relpath(os.path.join(dirpath, fn), root))
++    return sorted(out)
++
++
++def file_set_sha256(paths: list[str]) -> str:
++    h = hashlib.sha256()
++    for p in sorted(paths):
++        h.update(p.encode("utf-8"))
++        h.update(b"\n")
++    return h.hexdigest()
++
++
++def file_set_record(root: Path, comp: str) -> dict:
++    meta = component(comp)
++    paths = file_set(root)
++    total = 0
++    for p in paths:
++        try:
++            total += (Path(root) / p).stat().st_size
++        except OSError:
++            pass
++    return {
++        "protocol_version": PROTOCOL_VERSION,
++        "component": comp,
++        "repository": meta["repository"],
++        "commit": meta["commit"],
++        "root": str(root),
++        "profile": {
++            "skip_rule_source": "src.ohscanner.detectors.interface.audit.PRODUCTION_EXCLUDED_SEGMENTS",
++            "skip_segments": list(SKIP_SEGMENTS),
++            "language_rule_source": "src.ohscanner.git_source.SOURCE_LANGUAGES",
++            "suffixes": list(SOURCE_SUFFIXES),
++            "match": "whole_path_segment",
++        },
++        "file_count": len(paths),
++        "bytes": total,
++        "file_set_sha256": file_set_sha256(paths),
++        "files": paths,
++    }
++
++
++def main(argv=None) -> int:
++    ap = argparse.ArgumentParser(description="Tool-matrix corpus definition (protocol P1/P2).")
++    ap.add_argument("--corpus", default=str(Path.home() / "openharmony-audit" / "perf-corpus"),
++                    help="Root holding one directory per component.")
++    ap.add_argument("--list", action="store_true", help="Print the corpus manifest as JSON.")
++    ap.add_argument("--files", metavar="COMPONENT", help="Print the file set for one component.")
++    ap.add_argument("--json-out", default=None, help="Write the file-set record here.")
++    args = ap.parse_args(argv)
++
++    root = Path(args.corpus)
++    if args.files:
++        rec = file_set_record(root / args.files, args.files)
++        if args.json_out:
++            Path(args.json_out).write_text(json.dumps(rec, indent=2) + "\n", encoding="utf-8")
++        else:
++            print("\n".join(rec["files"]))
++        return 0
++
++    manifest = {"protocol_version": PROTOCOL_VERSION, "corpus_root": str(root), "components": []}
++    for name in component_names():
++        meta = component(name)
++        rec = file_set_record(root / name, name)
++        rec.pop("files")
++        recon = root / name
++        rec["tree_present"] = recon.is_dir()
++        rec["head_matches_pin"] = _head_matches(recon, meta["commit"])
++        manifest["components"].append(rec)
++
++    text = json.dumps(manifest, indent=2)
++    if args.json_out:
++        Path(args.json_out).write_text(text + "\n", encoding="utf-8")
++    print(text)
++    return 0
++
++
++def _head_matches(root: Path, commit: str):
++    """None when it cannot be checked, so 'unchecked' never reads as 'matches'."""
++    from subprocess import run
++    try:
++        r = run(["git", "-C", str(root), "rev-parse", "HEAD"],
++                capture_output=True, text=True, timeout=20)
++    except Exception:
++        return None
++    if r.returncode != 0:
++        return None
++    return r.stdout.strip() == commit
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/research/experiments/tool_matrix/fixtures/calibration_overflow.cpp b/research/experiments/tool_matrix/fixtures/calibration_overflow.cpp
+new file mode 100644
+index 00000000..89c81901
+--- /dev/null
++++ b/research/experiments/tool_matrix/fixtures/calibration_overflow.cpp
+@@ -0,0 +1,38 @@
++/*
++ * Tool-matrix calibration fixture, 2026-10-17.
++ *
++ * NOT an OpenHarmony excerpt and NOT an IPC sample. It exists to calibrate the
++ * detection floor of each engine on a defect that every C/C++ analyzer claims to
++ * catch: a fixed-size stack buffer written from an unbounded source.
++ *
++ * Purpose: separate "the engine has no findings on our IPC fixtures" into
++ *   (i)  the engine is wired up, ran, and reported nothing, versus
++ *   (ii) the engine is wired up but its queries never reach this defect class.
++ * A run of the same engine over this file should produce at least one finding;
++ * if it does not, the engine's plugin path is suspect rather than the input.
++ *
++ * Synthetic input. Not a vulnerability report. Not derived from any component.
++ */
++
++#include <cstring>
++#include <cstdio>
++
++/* Case A (heuristic): the source is an unmodeled parameter, so whether any
++ * engine flags this depends on its unbounded-source model. */
++void CopyName(const char *untrusted)
++{
++    char name[16];
++    std::strcpy(name, untrusted);   /* fixed 16-byte buffer, unbounded copy */
++    std::printf("%s\n", name);
++}
++
++/* Positive control: the overflow is provable from this translation unit alone
++ * (literal longer than the destination). Any engine that runs at all and can
++ * emit a location must flag this. A zero here means the plugin path is broken,
++ * not that the input is clean. */
++void CopyLiteral(void)
++{
++    char small[4];
++    std::strcpy(small, "0123456789ABCDEF");   /* 16 bytes into 4 */
++    std::printf("%s\n", small);
++}
+diff --git a/research/experiments/tool_matrix/fixtures/minimal_iremote_stub.cpp b/research/experiments/tool_matrix/fixtures/minimal_iremote_stub.cpp
+new file mode 100644
+index 00000000..75f01a91
+--- /dev/null
++++ b/research/experiments/tool_matrix/fixtures/minimal_iremote_stub.cpp
+@@ -0,0 +1,130 @@
++/*
++ * Minimal, self-contained replica of the OpenHarmony IPC stub shape used by the
++ * OHScanner B-line tool matrix (tool-matrix session, 2026-10-17).
++ *
++ * Purpose: give every tool under test a translation unit that needs ZERO
++ * OpenHarmony include resolution, so that "the tool produced no finding" can
++ * never be confused with "the tool could not parse the file". It carries the
++ * same three shapes the B-line detector models on the real components:
++ *
++ *   AUTH-01  a dispatcher that never reads/compares the interface token
++ *   AUTH-02  a sensitive operation reached with no caller-authorization guard
++ *   DATA-01  a Parcel-derived length used directly as a loop bound
++ *
++ * This file is a SYNTHETIC INPUT, not a vulnerability and not a component
++ * excerpt. It is deliberately NOT registered in any expected-finding manifest:
++ * it exists so tools produce raw output that can be normalized and compared.
++ */
++
++#include <cstdint>
++#include <string>
++#include <vector>
++
++namespace OHOS {
++
++class IRemoteObject;
++
++class MessageParcel {
++public:
++    std::u16string ReadInterfaceToken() { return std::u16string(); }
++    int32_t ReadInt32() { return 0; }
++    uint32_t ReadUint32() { return 0; }
++    std::u16string ReadString16() { return std::u16string(); }
++    bool WriteInt32(int32_t value) { (void)value; return true; }
++    bool WriteRemoteObject(const IRemoteObject* object) { (void)object; return true; }
++};
++
++class MessageOption {
++public:
++    bool IsRemote() const { return true; }
++};
++
++class IRemoteObject {
++public:
++    virtual ~IRemoteObject() = default;
++    virtual int OnRemoteRequest(uint32_t code, MessageParcel& data,
++                                MessageParcel& reply, MessageOption& option) = 0;
++};
++
++template <typename T>
++class IRemoteStub : public IRemoteObject {
++public:
++    static const std::u16string& GetDescriptor();
++};
++
++class IPlatformCallback : public IRemoteObject {
++public:
++    static const std::u16string& GetDescriptor() { return descriptor_; }
++    enum : uint32_t { NOTIFY_EVENT = 1 };
++
++private:
++    static const std::u16string descriptor_;
++};
++
++/*
++ * AUTH-01 shape: the dispatcher below never calls ReadInterfaceToken() and
++ * never compares against IPlatformCallback::GetDescriptor(), so any transaction
++ * number in range is served. This mirrors the defect shape of
++ * openharmony/inputmethod_imf @ e663b470 services/src/platform_callback_stub.cpp.
++ */
++class PlatformCallbackStub : public IRemoteStub<IPlatformCallback> {
++public:
++    int OnRemoteRequest(uint32_t code, MessageParcel& data,
++                        MessageParcel& reply, MessageOption& option) override
++    {
++        (void)option;
++        switch (code) {
++            case IPlatformCallback::NOTIFY_EVENT: {
++                int32_t eventId = data.ReadInt32();
++                uint32_t userId = data.ReadUint32();
++
++                /* DATA-01 shape: Parcel-derived length used directly as a loop bound. */
++                int32_t size = data.ReadInt32();
++                std::vector<std::u16string> eventContent;
++                for (int32_t i = 0; i < size; i++) {
++                    eventContent.push_back(data.ReadString16());
++                }
++
++                /* AUTH-02 shape: sensitive effect reached with no caller check. */
++                return NotifyEvent(eventId, userId, eventContent);
++            }
++            case 2: {
++                reply.WriteInt32(0);
++                return 0;
++            }
++            default:
++                return -1;
++        }
++    }
++
++private:
++    int NotifyEvent(int32_t eventId, uint32_t userId,
++                    const std::vector<std::u16string>& eventContent)
++    {
++        (void)userId;
++        (void)eventContent;
++        return eventId;
++    }
++};
++
++/*
++ * CAP-01 shape: an internal remote object handed back to the caller of the
++ * transaction, on a path with no permission predicate and no caller check.
++ */
++class RenderSessionHolder : public IRemoteStub<IPlatformCallback> {
++public:
++    int OnRemoteRequest(uint32_t code, MessageParcel& data,
++                        MessageParcel& reply, MessageOption& option) override
++    {
++        (void)code;
++        (void)data;
++        (void)option;
++        reply.WriteRemoteObject(renderSession_);
++        return 0;
++    }
++
++private:
++    IRemoteObject* renderSession_ = nullptr;
++};
++
++} // namespace OHOS
+diff --git a/research/experiments/tool_matrix/fixtures/minimal_iremote_stub_outofline.cpp b/research/experiments/tool_matrix/fixtures/minimal_iremote_stub_outofline.cpp
+new file mode 100644
+index 00000000..bc0fd140
+--- /dev/null
++++ b/research/experiments/tool_matrix/fixtures/minimal_iremote_stub_outofline.cpp
+@@ -0,0 +1,106 @@
++/*
++ * Tool-matrix fixture, 2026-10-17. Variant of minimal_iremote_stub.cpp whose
++ * dispatcher is defined OUT OF LINE (`Class::OnRemoteRequest`), which is the
++ * shape the OpenHarmony components actually use and the shape the existing
++ * first-party Semgrep ruleset matches on.
++ *
++ * It exists to separate two different reasons for a zero-result run:
++ *   (i)  the tool parsed the file and found nothing;
++ *   (ii) the rule pattern could not match this file's syntactic shape.
++ * Run the same ruleset against both fixtures; the difference is the answer.
++ *
++ * Same three shapes as the in-class fixture: AUTH-01 (no interface-token
++ * check), AUTH-02 (unguarded sensitive effect), DATA-01 (Parcel length as loop
++ * bound). Synthetic input, not a component excerpt, not a vulnerability.
++ */
++
++#include <cstdint>
++#include <string>
++#include <vector>
++
++namespace OHOS {
++
++class IRemoteObject;
++
++class MessageParcel {
++public:
++    std::u16string ReadInterfaceToken() { return std::u16string(); }
++    int32_t ReadInt32() { return 0; }
++    uint32_t ReadUint32() { return 0; }
++    std::u16string ReadString16() { return std::u16string(); }
++    bool WriteInt32(int32_t value) { (void)value; return true; }
++    bool WriteRemoteObject(const IRemoteObject* object) { (void)object; return true; }
++};
++
++class MessageOption {
++public:
++    bool IsRemote() const { return true; }
++};
++
++class IRemoteObject {
++public:
++    virtual ~IRemoteObject() = default;
++    virtual int OnRemoteRequest(uint32_t code, MessageParcel& data,
++                                MessageParcel& reply, MessageOption& option) = 0;
++};
++
++template <typename T>
++class IRemoteStub : public IRemoteObject {
++public:
++    static const std::u16string& GetDescriptor();
++};
++
++class IPlatformCallback : public IRemoteObject {
++public:
++    static const std::u16string& GetDescriptor();
++    enum : uint32_t { NOTIFY_EVENT = 1 };
++};
++
++class PlatformCallbackStub : public IRemoteStub<IPlatformCallback> {
++public:
++    int OnRemoteRequest(uint32_t code, MessageParcel& data,
++                        MessageParcel& reply, MessageOption& option) override;
++
++private:
++    int NotifyEvent(int32_t eventId, uint32_t userId,
++                    const std::vector<std::u16string>& eventContent);
++};
++
++/* AUTH-01: no ReadInterfaceToken() anywhere on this path. */
++int PlatformCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel& data,
++                                          MessageParcel& reply, MessageOption& option)
++{
++    (void)option;
++    switch (code) {
++        case IPlatformCallback::NOTIFY_EVENT: {
++            int32_t eventId = data.ReadInt32();
++            uint32_t userId = data.ReadUint32();
++
++            /* DATA-01: Parcel-derived length used directly as a loop bound. */
++            int32_t size = data.ReadInt32();
++            std::vector<std::u16string> eventContent;
++            for (int32_t i = 0; i < size; i++) {
++                eventContent.push_back(data.ReadString16());
++            }
++
++            /* AUTH-02: sensitive effect with no caller-authorization guard. */
++            return NotifyEvent(eventId, userId, eventContent);
++        }
++        case 2: {
++            reply.WriteInt32(0);
++            return 0;
++        }
++        default:
++            return -1;
++    }
++}
++
++int PlatformCallbackStub::NotifyEvent(int32_t eventId, uint32_t userId,
++                                      const std::vector<std::u16string>& eventContent)
++{
++    (void)userId;
++    (void)eventContent;
++    return eventId;
++}
++
++} // namespace OHOS
+diff --git a/research/experiments/tool_matrix/probes/tool_availability_2026-10-17.json b/research/experiments/tool_matrix/probes/tool_availability_2026-10-17.json
+new file mode 100644
+index 00000000..de4d2fc1
+--- /dev/null
++++ b/research/experiments/tool_matrix/probes/tool_availability_2026-10-17.json
+@@ -0,0 +1,363 @@
++{
++  "schema": "tool-matrix/probe-availability/1",
++  "generated_for": "OHScanner B line, tool-matrix session",
++  "generated_at_utc": "2026-10-17",
++  "samples": {
++    "fixture_inclass": {
++      "ref": "research/experiments/tool_matrix/fixtures/minimal_iremote_stub.cpp",
++      "sha256": "4af8dfe9ca07d045f00fe6cc38c2e635aec3c81bacc9cb2ee715512c6cb2e433"
++    },
++    "fixture_outofline": {
++      "ref": "research/experiments/tool_matrix/fixtures/minimal_iremote_stub_outofline.cpp",
++      "sha256": "1fde05a07ddf5a511d4ef20563981e9c2a57dafdcc0bdf40044ead6cc2660eef"
++    },
++    "calibration_overflow": {
++      "ref": "research/experiments/tool_matrix/fixtures/calibration_overflow.cpp",
++      "sha256": "b4696c5d3a7bf15f528e3f935d60122f98e390c51b2977a21031f890939a9a76"
++    },
++    "real_pinned": {
++      "ref": "security_access_token@17d88bfb:interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
++      "sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340"
++    }
++  },
++  "artifact_policy": "Raw probe outputs stay outside the repository; only path + sha256 are recorded here.",
++  "funnel_rule": "Every row below that says a tool 'found nothing' is a structural candidate statement. No row is a vulnerability, and no unexecuted tool is recorded as a zero.",
++  "tools": [
++    {
++      "tool": "cppcheck",
++      "channel": "apt",
++      "install": "apt-get install -y cppcheck",
++      "version": "2.7",
++      "runs": true,
++      "command": "cppcheck --enable=all --inconclusive --std=c++17 --template='{file}:{line}:{column}:{severity}:{id}:{message}' <file>",
++      "profile_result": {
++        "fixture_inclass": "exit 0; 12 rows, all style/performance/missingIncludeSystem; 0 security-class ids",
++        "real_pinned": "exit 0; partial parse (unusedVariable + missingInclude); 0 security-class ids",
++        "calibration_overflow": "exit 0; bufferAccessOutOfBounds at line 36 (positive control HIT)"
++      },
++      "artifacts": [
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/cppcheck_fixture.out",
++          "sha256": "4207dfb0854c6cc7da465f2912aac0016ba52d32518c0e519ac720f4e689cf62",
++          "bytes": 125
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/cppcheck_fixture.err",
++          "sha256": "044499de2f61ea12eaa33a7c803dcddbff741346f9d2bd8ba77414a1d46f241e",
++          "bytes": 3088
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/cppcheck_real.out",
++          "sha256": "c03896887922d81107b71a89aebca5775d62ef43b799232b7909742d1dc1fad7",
++          "bytes": 174
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/cppcheck_real.err",
++          "sha256": "7e608926f70c61830cd7b0e5ce2563be1d521521cb52b67dde8c34142cd29d1e",
++          "bytes": 230
++        }
++      ],
++      "note": "The positive-control hit proves the plugin path can emit a located finding; the zero on the fixture is therefore a real non-match, not a wiring failure."
++    },
++    {
++      "tool": "clang-tidy",
++      "channel": "apt",
++      "install": "apt-get install -y clang-tidy",
++      "version": "14.0.0",
++      "runs": "fixture only",
++      "command": "clang-tidy <file> -- -std=c++17",
++      "profile_result": {
++        "fixture_inclass": "exit 0; zero output (default check set: clang-diagnostic-* + clang-analyzer-*)",
++        "real_pinned": "exit 1; translation unit cannot be parsed"
++      },
++      "artifacts": [
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/clangtidy_fixture.out",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/clangtidy_fixture.err",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/clangtidy_real.out",
++          "sha256": "830177ab68b57a704b4edd2b628dcd9c23911d3357b728dd5c129c44b885b807",
++          "bytes": 501
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/clangtidy_real.err",
++          "sha256": "585cab566a1748db0e037ce714e9e6a129701e9470bad24998b02c7055e7e9fa",
++          "bytes": 134
++        }
++      ],
++      "not_run": "calibration_overflow: clang-tidy was not run against the positive control in this session, so its detection floor for that defect class is unknown (not zero)."
++    },
++    {
++      "tool": "clang --analyze",
++      "channel": "apt",
++      "install": "apt-get install -y clang",
++      "version": "14.0.0",
++      "runs": "fixture only",
++      "command": "clang++ --analyze -std=c++17 -Xanalyzer -analyzer-output=text <file>",
++      "profile_result": {
++        "fixture_inclass": "exit 0; zero output",
++        "real_pinned": "exit 1; blocked by the include closure",
++        "calibration_overflow": "exit 0; ZERO findings on a provable literal 17-into-4 strcpy overflow (while cppcheck, g++ -fanalyzer and CodeQL all found it)"
++      },
++      "artifacts": [
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/clangsa_fixture.out",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/clangsa_fixture.err",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/clangsa_real.out",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/clangsa_real.err",
++          "sha256": "f6d0fa9a13a49f37a19e9c8f8dd03363c67fe4a1be2ed34101f3141a1271e586",
++          "bytes": 1140
++        }
++      ],
++      "note": "Default checker set. The calibration miss means a zero from this engine carries less information than a zero from the other three, and the two must not be read alike."
++    },
++    {
++      "tool": "g++ -fanalyzer",
++      "channel": "preinstalled (gcc 11.4.0)",
++      "install": null,
++      "version": "GCC 11.4.0",
++      "runs": "fixture only",
++      "command": "g++ -fanalyzer -std=c++17 -c <file> -o /dev/null",
++      "profile_result": {
++        "fixture_inclass": "exit 0; zero output",
++        "real_pinned": "exit 1; blocked by the include closure",
++        "calibration_overflow": "exit 0; -Wstringop-overflow= at line 36 (positive control HIT)"
++      },
++      "artifacts": [
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/gccanalyzer_fixture.out",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/gccanalyzer_fixture.err",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/gccanalyzer_real.out",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/gccanalyzer_real.err",
++          "sha256": "b383f7c5d45849684acb0d5632bd9e3ab0a244ea2f2cd109d1a4ede63e4effa6",
++          "bytes": 522
++        }
++      ]
++    },
++    {
++      "tool": "frama-c",
++      "channel": "apt (unavailable)",
++      "install": "apt-get install -y frama-c",
++      "version": null,
++      "runs": false,
++      "command": null,
++      "profile_result": {
++        "any": "UNEXECUTED. `E: Unable to locate package frama-c`; `apt-cache search --names-only frama` returns nothing; opam absent."
++      },
++      "artifacts": [],
++      "status": "unexecuted",
++      "reason": "not packaged for Ubuntu 22.04 (jammy) and no opam to build it. Recorded as unexecuted, NOT as 'found nothing'."
++    },
++    {
++      "tool": "semgrep (native OSS core)",
++      "channel": "pre-existing local install",
++      "install": null,
++      "version": "1.180.0",
++      "command": "semgrep-core -rules <ipc ruleset> -lang cpp -json_nodots -j 1 <file>",
++      "profile_result": {
++        "fixture_inclass": "exit 0; 0 results",
++        "fixture_outofline": "exit 0; 1 result: ipc-baseline-descriptor at line 70 (AUTH-01)",
++        "real_pinned": "exit 0; 0 results",
++        "profile_equivalence": "one-process form does not exist for this ruleset: `-lang` refuses multiple targets and `-targets` wants an ATD config, not a path list (both raw errors captured). Per-file profile used throughout."
++      },
++      "artifacts": [
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/semgrep_fixture.out",
++          "sha256": "f974c9f9db29d6bd0fdbb88a4b5a78a49d13c4c5692f1f85cfd4609a714ba036",
++          "bytes": 1604
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/semgrep_fixture.err",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/semgrep_fixture_outofline.out",
++          "sha256": "0565127b16c82de577676d0746a5d130ad691932cebb29c07ff06aab67a3cd2f",
++          "bytes": 2413
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/semgrep_fixture_outofline.err",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/semgrep_real.out",
++          "sha256": "7978c66e6c7143a62ea09a2bce8d69d40189a88fd018a8d2b44c2eed021b12f5",
++          "bytes": 1564
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/semgrep_real.err",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        }
++      ],
++      "note": "The in-class zero is a RULE-SHAPE limitation, proved by the out-of-line variant firing on the same ruleset. Two different zeros in the same tool: this is why a bare '0' is not a result."
++    },
++    {
++      "tool": "Joern",
++      "channel": "pre-existing local install",
++      "install": null,
++      "version": "4.0.652 (JDK Temurin 21.0.12.1+1)",
++      "command": "joern-parse <dir> -o <cpg>  then  joern --script joern-ipc.sc --param cpgFile=<cpg> --param outFile=<json>",
++      "profile_result": {
++        "fixture_outofline": "2 findings: AUTH-01 joern-descriptor-existence at line 70 on PlatformCallbackStub::OnRemoteRequest, PLUS a spurious hit on the pure-virtual IRemoteObject::OnRemoteRequest declaration (line 43)",
++        "real_pinned": "1 finding with file='<empty>' and symbol='<unresolvedNamespace>.OnRemoteRequest:<unresolvedSignature>(4)' at line 1 \u2014 an unresolved-namespace placeholder, NOT a source location"
++      },
++      "artifacts": [
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/joern_parse_fixture.err",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/joern_parse_real.err",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/joern_query_fixture.out",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/joern_query_fixture.err",
++          "sha256": "0edd4e13414896bffa949bb1eb8738582802b034e0d9a4fea0a90350ca36ad3f",
++          "bytes": 679
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/joern_query_real.out",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/joern_query_real.err",
++          "sha256": "097d4b2e532cb8bcb7f8dec771a4b7373ab35804dee8f377630109a6a859d5ed",
++          "bytes": 661
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/joern/fixture.findings.json",
++          "sha256": "a4ffbc85febf5e052fdf1408c628301bdca5834bff56c558270d223ca46722d7",
++          "bytes": 543
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/joern/real.findings.json",
++          "sha256": "6932a222975c0bc930db9cc88908aec839f888b392da814be230a0598138a2a0",
++          "bytes": 195
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/joern/fixture.cpg",
++          "sha256": "615abdcc473a8c78080b1615a597dbc41a5501f4bfbe118cf74fe829fc33676b",
++          "bytes": 121879
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/joern/real.cpg",
++          "sha256": "1fc8c1de7b1712082196e4e4124af9d937e97ac9c6d5ec571a1cf8a6e28be2c1",
++          "bytes": 105855
++        }
++      ],
++      "note": "`joern-parse --version` is not a supported option; the version above comes from research/experiments/interface/ipc/environment.json, not from the binary."
++    },
++    {
++      "tool": "CodeQL",
++      "channel": "pre-existing CLI + `codeql pack download`",
++      "install": "codeql pack download codeql/cpp-queries  (succeeded: cpp-queries@1.9.1)",
++      "version": "2.27.2 (cpp-all 12.2.0, cpp-queries 1.9.1)",
++      "command": "codeql database create <db> --language=cpp --source-root=<d> --command=\"g++ ...\"  ;  codeql database analyze|query run ... --format=csv",
++      "profile_result": {
++        "fixture_outofline": "database exit 0; custom IpcBoundary -> 2 AUTH-01 rows, both named OnRemoteRequest (same pure-virtual-declaration false positive as Joern); custom ParcelFlow -> 0 rows (fixture has no memcpy sink); the CSV for the custom query carries NO file/line because it selects a bare name",
++        "calibration_overflow": "database exit 0; vendor suite (7 CWE-119/120/787 queries) -> 1 row: 'Likely overrunning write' with file and start_line=36 \u2014 locations DO arrive for queries of @kind problem",
++        "real_pinned": "database create exit 2 at every include configuration tried: the build step cannot compile the pinned file"
++      },
++      "artifacts": [
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/codeql_db_fixture.err",
++          "sha256": "5cf0f7de06ccb2173974fbae1bda000f35db41cef99df62451d8d4a00a095479",
++          "bytes": 1482
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/codeql_fixture_IpcBoundary.out",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/codeql_fixture_ParcelFlow.out",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/codeql_db_real.err",
++          "sha256": "90b37874365a9c482d3f55f99d46a3c4188c57f4d621117caea9f913d4ede9ad",
++          "bytes": 553
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/codeql_db_real5.out",
++          "sha256": "1956d58ab159a1826c75c7e3bde6f625b6f7301549933d701014b03f7eb3e771",
++          "bytes": 1347
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/codeql_db_real5.err",
++          "sha256": "30ef5543604cae6c66244eda4c4a1db776e3f803d8f0407d8b254ced14e84eda",
++          "bytes": 1415
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/codeql_cal_vendor2.out",
++          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++          "bytes": 0
++        },
++        {
++          "path": "/home/audit/wtmp/tool_matrix/raw/codeql_cal_vendor2.err",
++          "sha256": "47f79be856b301d9736bb4d614e6786f3f5a33a9c9f9648a469cad7bcaa143df",
++          "bytes": 2377
++        }
++      ],
++      "note": "The vendor pack downloads; the built-in suite is usable. What fails is the BUILD, i.e. the same include closure that stops g++ and clang. `codeql pack download` reaching the registry while a github.com release asset did not (curl timeout) is a network-path difference, not evidence about Infer or frama-c."
++    },
++    {
++      "tool": "Infer",
++      "channel": "none reachable",
++      "install": null,
++      "version": null,
++      "runs": false,
++      "command": null,
++      "profile_result": {
++        "any": "UNEXECUTED."
++      },
++      "artifacts": [],
++      "status": "unexecuted",
++      "reason": "not present under any known tool root; no apt package; the PyPI project named `infer` is version 0.1, described as 'A machine learning toolkit for classification and assisted experimentation' \u2014 a NAME COLLISION with facebook/infer, not the analyzer. The official release asset could not be fetched: curl to github.com timed out (HTTP 000) while objects.githubusercontent.com answered 404.",
++      "network_caveat": "github.com answered 200 on the first probe and timed out on two later probes. The acquisition path is unstable, so 'cannot install' is not established as impossible \u2014 only as not accomplished here."
++    }
++  ]
++}
+diff --git a/research/experiments/tool_matrix/protocol.md b/research/experiments/tool_matrix/protocol.md
+new file mode 100644
+index 00000000..5e04f516
+--- /dev/null
++++ b/research/experiments/tool_matrix/protocol.md
+@@ -0,0 +1,136 @@
++# 工具矩阵对比口径（comparison protocol）
++
++版本：`tool-matrix-protocol/1`（2026-10-17 冻结）
++适用：`research/experiments/tool_matrix/` 下的全部运行。
++
++这个文件的用途只有一个：让「第三方工具的告警数」和「自建检测器的候选数」这两个数字
++**可以放在同一行里看**，并且任何一个数字都能被复算。任何一条不满足的口径，结论就不
++成立——不是"约等于"，是不成立。
++
++---
++
++## P1 · 钉死三件身份
++
++一次运行的身份是 `(repository, commit, file_set)` 三元组，三者缺一不可：
++
++| 字段 | 取值来源 | 强制 |
++|---|---|---|
++| `repository` | `openharmony/<component>` 声明名 | 是 |
++| `commit` | 40 位小写 SHA，`git rev-parse HEAD` 于 pinned 树 | 是 |
++| `file_set_sha256` | 对排序后的相对路径列表做 sha256 | 是 |
++| `git_tree` | `git rev-parse HEAD^{tree}` | 建议 |
++| `snapshot_sha256` | 自建侧 manifest 提供 | 有则记 |
++
++**声明名不是身份**。`repository` 只是一个声明；真正的身份是 commit 加本地 Git 对象。
++这条沿用自建侧 manifest 自己的 `limitations`。
++
++源码内容必须从 pinned 对象读，不读工作树。自建侧已经这么做（`Source excerpts are read
++from the pinned Git blob`），工具侧没有这个能力，所以在对比时**必须**把被分析副本的
++`sha256` 记进每条记录（`artifact_sha256` 之外还有 `source_sha256`）。
++
++## P2 · 文件集只有一份定义，不许各写各的
++
++对比必须在同一个文件集上。文件集规则**不重新发明**，直接沿用自建检测器在生产口径下
++用的那一套，在运行时 import：
++
++- 语言集：`src.ohscanner.git_source.SOURCE_LANGUAGES`
++  （现为 `.c .cc .cpp .cxx .ets .h .hh .hpp .js .ts`）
++- 跳过规则：`src.ohscanner.detectors.interface.audit.PRODUCTION_EXCLUDED_SEGMENTS`
++  （整段匹配 `test tests unittest unittests fuzztest fuzz mock mocks sample samples
++  example examples demo demos benchmark benchmarks third_party thirdparty 3rdparty`）
++
++任务书里点名的 `/test/` `/unittest/` `/fuzztest/` 是这套规则的子集，所以沿用既有规则
++而不是另立一份。**整段匹配**而不是子串匹配：`testing/` 和 `protest.cpp` 不该被误杀。
++
++`corpus.py` 在 import 失败时**直接报错退出**，不允许回落到一份内置副本——回落会让
++"同一文件集"从机制保证退化成口头保证，而两者的差别在数字上是看不见的。
++
++每次运行记录 `file_set_sha256` 与 `file_count`；文件数还要和自建侧 artifact 的
++`counts.source_files_audited` 交叉核对，不一致必须显式报冲突而不是取其一。
++
++## P3 · profile 是身份的一部分
++
++每个工具的调用命令逐字进记录（`command`，列表形式，不是拼好的字符串）：
++可执行文件、全部参数、语言、并发、超时。换一个参数就是换一个 profile，两个 profile 的
++数字不可比。**没有 `command` 的数字不进表。**
++
++装不上的工具不是"参数没配好"，是 `unexecuted`，见 P5。
++
++## P4 · 归一化成一条记录
++
++所有工具的输出都映射到同一个记录形状（`schema/normalized_record.schema.json`）。
++字段由任务书指定：
++
++```
++tool, tool_version, command, repo, commit, file, line,
++rule_or_query_id, message, artifact_sha256
++```
++
++额外强制字段：`kind`（`tool_alert` / `self_built_candidate`）、`record_id`、
++`identity_key`、`family`、`execution_status`、`source_sha256`、`native_artifact`。
++
++`artifact_sha256` 是**该次运行原始输出文件**的 sha256，用来证明这条记录不是手写的。
++`evidence_type` 只允许用检测器契约 v1 的取值集合
++（`pattern syntax dataflow control_flow symbolic historical runtime permission
++web_dynamic human_review unknown`）。工具告警一律是 `pattern` 或 `syntax`，
++**不许**因为工具自称做了数据流就照抄 `dataflow`。
++
++## P5 · 三个状态各自独立，`unexecuted` 是一等状态
++
++三件事分开记，互不推导：
++
++| 轴 | 取值 | 含义 |
++|---|---|---|
++| 执行 | `completed` `failed` `timeout` `unexecuted` | 进程有没有真的跑完 |
++| 解析 | `complete` `partial` `failed` `not_run` `not_applicable` | 输入有没有被真正解析 |
++| 匹配 | `hit` `no_match` `not_run` | 规则有没有机会命中 |
++
++**硬规则：**
++
++1. `unexecuted` 必须出现在汇总表里，**不能当成 0**。任务书原话：未执行是一等状态。
++   任何汇总里"未执行"和"0"必须能分辨；一个缺字段和一个 0 是两个不同的陈述。
++2. 装不上 → `unexecuted` + `unexecuted_reason` 原文。**禁止**把"没装上"写成
++   "工具没发现问题"。
++3. 解析失败（头文件闭包断在 `linux/ashmem.h` 之类）→ `failed`/`partial`，
++   **不是** `no_match`。编译型引擎在真实组件上大量处于这个状态。
++4. `hit` 只说明规则匹配，永远是 `possible_hit` / `candidate`。**禁止**把任何第三方
++   工具的告警直接写成漏洞。
++
++## P6 · 逐条求交/差，不许比总数
++
++总候选数是不可比的：两个工具报同一处会算 2，一个工具报 10 处无关的会算 10。
++所以只在**条目层面**做交/差，且必须落在同一**族**里：
++
++- `identity_key = (family, file, line)`，`family ∈ {AUTH-01, AUTH-02, AUTH-03, AUTH-04,
++  DATA-01, CAP-01, unmapped}`
++- `rule_or_query_id → family` 的取法按"离工具自己的定义有多近"排序，不许反过来先猜：
++  1. 工具自己的规则元数据（semgrep 规则集带 `metadata.family`）；
++  2. 自建侧读候选产物的 `message` 族前缀，并用**从生产检测器 `emit()` 调用里运行时抽取**
++     的 rule→族表交叉核对；两者冲突就记 `unmapped` 并写明冲突，不挑一个；
++  3. 显式声明表（`adapters.py`），记录带 `family_mapping_declared: true`；
++  4. 落表外的进 `unmapped`，参与计数、**不参与**交/差，并单列。
++- 一个把 rule id 直接当族名用的适配器会让**全部**自建行落 `unmapped`，此时"仅自建 0"
++  是适配器的产物而不是测量结果——`selfcheck.py` 有一条断言专盯这个形状。
++- 输出三个集合：`both`、`tool_only`、`self_built_only`，以及单元集合
++  `tool_unmapped`、`selfbuilt_unmapped`。
++- **行号是弱键**：同一处在两侧行号可能差几行（声明 vs 定义、宏展开）。
++  因此交/差按 `(family, file)` 出一个宽松视图、按 `(family, file, line)` 出一个严格视图，
++  **两个都报**，且不允许只报大的那个。
++
++## P7 · 版本是变量，不是常数
++
++自建侧的候选数随模型版本变化，已在本次探测中实测：`security_access_token` 在同一 commit、
++同一 550 文件集上，artifact（detector 0.5.0 / model `oh-ipc-2026.10-v3`，2026-10-15）报 3 条，
++本会话重跑（detector 0.8.0 / model `oh-ipc-2026.10-v6`）报 0 条。
++
++推论，写进口径：
++
++- 拿工具告警去比**历史 artifact** 会产出假差异，**禁止**。两侧必须在同一会话重跑。
++- `self_built_candidate` 记录必须带 `detector_version` 与 `model_version`；
++  和工具侧的 `tool_version` 同等对待。
++- 两侧版本都变了的时候，差异**不能说成**"工具多发现了什么"。
++
++## P8 · 不可解释的差异要留在表里
++
++差集里的每一条只能有三种归属：真差异、映射不足、行号漂移。分不清的写 `unexplained`，
++**不许**归到最小的一类里凑一个干净结论。
+diff --git a/research/experiments/tool_matrix/run_matrix.py b/research/experiments/tool_matrix/run_matrix.py
+new file mode 100644
+index 00000000..c5d8b789
+--- /dev/null
++++ b/research/experiments/tool_matrix/run_matrix.py
+@@ -0,0 +1,513 @@
++#!/usr/bin/env python3
++"""Run the tool matrix and emit normalized records + the comparison summary.
++
++    PYTHONPATH=. .venv/bin/python -m research.experiments.tool_matrix.run_matrix \
++        --components all --tools semgrep,cppcheck \
++        --selfbuilt-dir /home/audit/wtmp/tool_matrix/selfbuilt \
++        --out /home/audit/wtmp/tool_matrix/run-YYYYMMDD
++
++Writes, under --out (which must live OUTSIDE the repository):
++    raw/            native stdout/stderr per (component, tool), untouched
++    matrix.json     normalized records + per-component summary
++    matrix.md       the human table
++
++Hard rules enforced here, not just documented:
++  * every record's `artifact_sha256` is the hash of a file this process wrote;
++  * a tool that did not run produces `unexecuted` rows with its raw reason and
++    NEVER a zero;
++  * `--components all` requires every component to be present and pinned; a
++    missing tree is an error, not a skip;
++  * the tool file set is recorded separately from the corpus file set, so any
++    narrowing (e.g. semgrep is cpp-only, so .ets/.js/.ts are not passed to it) is
++    visible in the numbers instead of hidden in the plumbing.
++"""
++
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import os
++import shutil
++import subprocess
++import sys
++import time
++from pathlib import Path
++
++HERE = Path(__file__).resolve().parent
++sys.path.insert(0, str(HERE))
++
++
++def find_repo_root(start: Path):
++    """Walk up to the directory that holds AGENTS.md and src/ohscanner.
++
++    Counting `parents[n]` is how this file first got the wrong root (it landed on
++    the parent of the worktree, so the self-built side failed to import for every
++    component). Identifying the repo by its contents removes that failure mode.
++    """
++    for cand in [start, *start.parents]:
++        if (cand / "AGENTS.md").is_file() and (cand / "src" / "ohscanner").is_dir():
++            return cand
++    return None
++
++
++REPO_ROOT = find_repo_root(HERE)
++if REPO_ROOT is None:
++    sys.stderr.write("FATAL: could not locate the repository root above {0}\n".format(HERE))
++    raise SystemExit(3)
++sys.path.insert(0, str(REPO_ROOT))
++
++import adapters as A  # noqa: E402
++import corpus as C  # noqa: E402
++
++CXX_SUFFIXES = (".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp")
++SEMGREP_CORE = Path("/home/audit/openharmony-audit/ipc-research/tools/semgrep-native/"
++                    "semgrep-1.180.0.data/purelib/semgrep/bin/semgrep-core")
++SEMGREP_RULES = HERE.parent / "interface" / "ipc" / "semgrep-rules.json"
++
++# Tools we know how to drive. A tool listed in `--tools` but present in
++# UNRUNNABLE gets honest `unexecuted` rows, not silence.
++UNRUNNABLE = {
++    "clang-tidy": (
++        "probe (2026-10-17) exit=1 on every real component file: the translation unit "
++        "cannot be parsed in this environment. The include closure stops at "
++        "'linux/ashmem.h: No such file or directory' (kernel UAPI header absent on Ubuntu 22.04) "
++        "after accesstoken_callback_stubs.h -> i_permission_state_callback.h -> iremote_broker.h. "
++        "Not run over the 10 components. This is NOT 'no findings'."),
++    "clang-sa": (
++        "probe (2026-10-17) exit=1 on every real component file, same include-closure failure as "
++        "clang-tidy. Not run over the 10 components. NOT 'no findings'."),
++    "gcc-analyzer": (
++        "probe (2026-10-17) exit=1 on every real component file, same include-closure failure. "
++        "Not run over the 10 components. NOT 'no findings'."),
++    "codeql": (
++        "requires a working build command: `codeql database create ... --command=g++ ...` exits 2 "
++        "when the same include closure fails. Database creation completed only on the self-contained "
++        "fixture. Not run over the 10 components. NOT 'no findings'."),
++    "joern": (
++        "parsed only the two probe samples (fixture.cpg, real.cpg). Not run over the 10 components "
++        "in this session. On the real sample its single row was an unresolved-namespace placeholder "
++        "carrying no file/line. NOT 'no findings'."),
++}
++
++
++def detector_identity():
++    """(version, model_version) of the first-party detector, or (None, None).
++
++    Needed because a 0-candidate report carries no candidate to read the version
++    from, and "0 candidates" must still say WHICH detector produced that zero.
++    """
++    try:
++        from src.ohscanner.detectors.interface.detector import IpcInterfaceDetector as D
++        return D.version, D.model_version
++    except Exception:
++        return None, None
++
++
++def sha256_file(p: Path) -> str:
++    h = hashlib.sha256()
++    with open(p, "rb") as fh:
++        for c in iter(lambda: fh.read(65536), b""):
++            h.update(c)
++    return h.hexdigest()
++
++
++def sha256_paths(paths) -> str:
++    h = hashlib.sha256()
++    for p in sorted(paths):
++        h.update(p.encode("utf-8"))
++        h.update(b"\n")
++    return h.hexdigest()
++
++
++def git_tree(root: Path):
++    try:
++        r = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD^{tree}"],
++                           capture_output=True, text=True, timeout=20)
++        return r.stdout.strip() or None if r.returncode == 0 else None
++    except Exception:
++        return None
++
++
++def run_tool(argv, cwd, timeout):
++    t0 = time.time()
++    try:
++        p = subprocess.run(argv, cwd=str(cwd), capture_output=True, text=True,
++                           errors="replace", timeout=timeout)
++        return p.returncode, p.stdout, p.stderr, time.time() - t0, None
++    except subprocess.TimeoutExpired as e:
++        return None, (e.stdout or b"").decode("utf-8", "replace") if isinstance(e.stdout, bytes) else (e.stdout or ""), \
++               (e.stderr or ""), time.time() - t0, "timeout after {0}s".format(timeout)
++    except FileNotFoundError as e:
++        return None, "", str(e), time.time() - t0, "executable not found: {0}".format(argv[0])
++
++
++def main(argv=None) -> int:
++    ap = argparse.ArgumentParser(description="Tool matrix runner (protocol P1-P5).")
++    ap.add_argument("--corpus", default=str(Path.home() / "openharmony-audit" / "perf-corpus"))
++    ap.add_argument("--components", default="all", help="comma list, or 'all'")
++    ap.add_argument("--tools", default="semgrep,cppcheck")
++    ap.add_argument("--selfbuilt-dir", default=None,
++                    help="Directory of <component>.json detector reports. Absent => self-built side is unexecuted.")
++    ap.add_argument("--out", required=True, help="Output directory; MUST be outside the repository.")
++    ap.add_argument("--timeout", type=int, default=900, help="Per (component, tool) wall-clock cap, seconds.")
++    args = ap.parse_args(argv)
++
++    out = Path(args.out).resolve()
++    repo_root = REPO_ROOT.resolve()
++    if out == repo_root or repo_root in out.parents:
++        print("REFUSING: --out is inside the repository ({0}). Generated artifacts must not be "
++              "committable (AGENTS.md). Use a path under /home/audit/wtmp/.".format(out),
++              file=sys.stderr)
++        return 2
++    (out / "raw").mkdir(parents=True, exist_ok=True)
++
++    components = C.component_names() if args.components == "all" else args.components.split(",")
++    tools = [t.strip() for t in args.tools.split(",") if t.strip()]
++
++    fam_map = A.load_semgrep_family_map(SEMGREP_RULES)
++
++    matrix = {
++        "protocol_version": C.PROTOCOL_VERSION,
++        "corpus_root": args.corpus,
++        "selfbuilt_dir": args.selfbuilt_dir,
++        "generated_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
++        "tools_requested": tools,
++        "components": [],
++        "records": [],
++    }
++
++    for comp in components:
++        root = Path(args.corpus) / comp
++        if not root.is_dir():
++            print("ERROR: pinned tree missing for {0}: {1}".format(comp, root), file=sys.stderr)
++            return 4
++        meta = C.component(comp)
++        fs = C.file_set_record(root, comp)
++        tree = git_tree(root)
++        cxx = [p for p in fs["files"] if p.endswith(CXX_SUFFIXES)]
++
++        entry = {
++            "component": comp, "repository": meta["repository"], "commit": meta["commit"],
++            "git_tree": tree, "root": str(root),
++            "file_count": fs["file_count"], "file_set_sha256": fs["file_set_sha256"],
++            "bytes": fs["bytes"],
++            "tools": {}, "self_built": {}, "unexecuted": [],
++            "comparison": {},
++        }
++        print("[{0}] files={1} sha={2} tree={3}".format(
++            comp, fs["file_count"], fs["file_set_sha256"][:12], (tree or "?")[:12]))
++
++        for tool in tools:
++            rec_ctx = {
++                "tool": tool, "tool_version": "?", "command": [],
++                "repo": meta["repository"], "commit": meta["commit"], "git_tree": tree,
++                "exit_code": None,
++            }
++            if tool in UNRUNNABLE:
++                reason = UNRUNNABLE[tool]
++                rec_ctx["command"] = ["<not executed>", tool]
++                # one unexecuted row per component; the file count is carried in
++                # the summary, not fabricated as rows.
++                r = A.unexecuted_record(rec_ctx, reason)
++                r["file"] = None
++                r["identity_key"] = A._identity_key("unmapped", "<not executed>", None)
++                matrix["records"].append(r)
++                entry["tools"][tool] = {"execution_status": "unexecuted",
++                                        "reason": reason, "records": 0}
++                entry["unexecuted"].append(tool)
++                print("    {0:<14} UNEXECUTED".format(tool))
++                continue
++
++            if tool == "semgrep":
++                # Profile: ONE INVOCATION PER TARGET FILE. semgrep-core 1.180.0
++                # refuses `-lang` with multiple targets (raw error captured
++                # 2026-10-17), and its `-targets` flag wants an ATD config, not a
++                # path list. Per-file is also the profile the existing first-party
++                # driver research/experiments/interface/ipc/run_semgrep.py uses, so
++                # the numbers stay comparable with the project's earlier results.
++                #
++                # The equivalence of this profile against a single-process run
++                # could not be tested, because no single-process form exists for
++                # this ruleset. Recorded as a limitation, not assumed.
++                version = "1.180.0"
++                adapter = lambda p, c: A.adapt_semgrep_core(p, c, fam_map)
++                raw_stdout = out / "raw" / "{0}.semgrep.json".format(comp)
++                perfile = out / "raw" / "{0}.semgrep.perfile".format(comp)
++                perfile.mkdir(parents=True, exist_ok=True)
++                agg = {"version": version, "aggregation": "one_invocation_per_target",
++                       "invocations": 0, "results": [], "errors": [],
++                       "paths": {"scanned": []}, "per_file_raw_dir": str(perfile)}
++                t0 = time.time()
++                fail = None
++                for i, rel in enumerate(cxx):
++                    one = [str(SEMGREP_CORE), "-rules", str(SEMGREP_RULES),
++                           "-lang", "cpp", "-json_nodots", "-j", "1", rel]
++                    code, so, se, el, err = run_tool(one, root, min(120, args.timeout))
++                    agg["invocations"] += 1
++                    agg["paths"]["scanned"].append(rel)
++                    (perfile / "{0:05d}.json".format(i)).write_text(so, encoding="utf-8")
++                    if err:
++                        agg["errors"].append({"path": rel, "error": err})
++                        fail = fail or err
++                        continue
++                    try:
++                        d = json.loads(so)
++                    except Exception as exc:
++                        agg["errors"].append({"path": rel, "error": "unparseable: {0!r}".format(exc)})
++                        continue
++                    agg["results"].extend(d.get("results", []))
++                    agg["errors"].extend(d.get("errors", []) or [])
++                raw_stdout.write_text(json.dumps(agg, indent=1), encoding="utf-8")
++                (out / "raw" / "{0}.semgrep.stderr.txt".format(comp)).write_text(
++                    json.dumps([e for e in agg["errors"]], indent=1), encoding="utf-8")
++                parse_target = raw_stdout
++                code = 0 if not fail else 1
++                err = fail
++                elapsed = time.time() - t0
++                so = ""
++                se = ""
++                raw_argv = ["{0} -rules {1} -lang cpp -json_nodots -j 1 <file>".format(
++                    SEMGREP_CORE, SEMGREP_RULES)]
++            elif tool == "cppcheck":
++                argv = ["cppcheck", "--enable=all", "--inconclusive", "--std=c++17", "-j", "8",
++                        "--template={file}:{line}:{column}:{severity}:{id}:{message}",
++                        "--quiet"] + cxx
++                version = subprocess.run(["cppcheck", "--version"], capture_output=True,
++                                         text=True).stdout.strip() or "?"
++                adapter = A.adapt_cppcheck
++                raw_stdout = out / "raw" / "{0}.cppcheck.captured.txt".format(comp)
++            else:
++                reason = ("no runner implemented in this skeleton for '{0}'; the tool is known to "
++                          "this matrix but was not driven over the file set in this run.".format(tool))
++                rec_ctx["command"] = ["<not executed>", tool]
++                r = A.unexecuted_record(rec_ctx, reason)
++                matrix["records"].append(r)
++                entry["tools"][tool] = {"execution_status": "unexecuted", "reason": reason, "records": 0}
++                entry["unexecuted"].append(tool)
++                print("    {0:<14} UNEXECUTED (no runner)".format(tool))
++                continue
++
++            tool_fs_sha = sha256_paths(cxx)
++            pre_ran = (tool == "semgrep")   # ran one invocation per target above
++            if not pre_ran:
++                code, so, se, elapsed, err = run_tool(argv, root, args.timeout)
++                record_argv = list(argv)
++            else:
++                record_argv = list(raw_argv)
++            (out / "raw" / "{0}.{1}.argv.json".format(comp, tool)).write_text(
++                json.dumps({"argv": record_argv, "cwd": str(root), "timeout_s": args.timeout,
++                            "file_set_sha256": tool_fs_sha, "file_count": len(cxx),
++                            "invocations": (len(cxx) if pre_ran else 1),
++                            "command_is_template": bool(pre_ran)},
++                           indent=2) + "\n", encoding="utf-8")
++
++            if pre_ran:
++                parse_target = raw_stdout       # aggregate written by the per-file loop
++            else:
++                (out / "raw" / "{0}.{1}.stdout.txt".format(comp, tool)).write_text(so, encoding="utf-8")
++                (out / "raw" / "{0}.{1}.stderr.txt".format(comp, tool)).write_text(se, encoding="utf-8")
++                raw_stdout.write_text(so + "\n" + se, encoding="utf-8")
++                parse_target = raw_stdout
++
++            art_sha = sha256_file(parse_target)
++            status = "completed" if (code == 0 and err is None) else ("timeout" if err else "failed")
++
++            rec_ctx = {
++                "tool": tool, "tool_version": version, "command": record_argv,
++                "command_is_template": bool(pre_ran),
++                "repo": meta["repository"], "commit": meta["commit"], "git_tree": tree,
++                "exit_code": code, "raw_path": parse_target,
++                "artifact_sha256": art_sha, "elapsed_seconds": round(elapsed, 3),
++            }
++            rows = []
++            if status == "completed" or (status == "failed" and parse_target.stat().st_size > 0):
++                try:
++                    rows = adapter(parse_target, rec_ctx)
++                except Exception as exc:
++                    rows = [A.unexecuted_record(rec_ctx, "adapter failed: {0!r}".format(exc),
++                                                parse_status="failed")]
++            if status != "completed":
++                for r in rows:
++                    r["execution_status"] = status
++                    r["execution_reason"] = err or "exit code {0}".format(code)
++                    r["parse_status"] = "partial" if rows else "failed"
++            if not rows:
++                rows = [A.unexecuted_record(
++                    rec_ctx,
++                    "engine produced no parseable rows (exit={0}); this records absence of output, "
++                    "which is not the same statement as 'the engine found nothing'.".format(code))]
++
++            matrix["records"].extend(rows)
++            by_fam = {}
++            for r in rows:
++                by_fam[r["family"]] = by_fam.get(r["family"], 0) + 1
++            entry["tools"][tool] = {
++                "execution_status": status,
++                "exit_code": code,
++                "exit_reason": err,
++                "tool_version": version,
++                "command": record_argv,
++                "command_is_template": bool(pre_ran),
++                "invocations": (len(cxx) if pre_ran else 1),
++                "artifact_sha256": art_sha,
++                "native_artifact": str(parse_target),
++                "tool_file_count": len(cxx),
++                "tool_file_set_sha256": tool_fs_sha,
++                "records": len(rows),
++                # rows whose meaning is "the engine could not parse this file":
++                # counted, reported, and never presented as findings.
++                "parse_error_rows": sum(1 for r in rows if r["parse_status"] == "partial"
++                                        and r["match_status"] == "not_run"),
++                "by_family": by_fam,
++                "elapsed_seconds": round(elapsed, 3),
++            }
++            print("    {0:<14} {1:<9} rows={2} exit={3} {4}s".format(tool, status, len(rows), code, round(elapsed, 1)))
++
++        # ---- self-built side -------------------------------------------------
++        sb_dir = Path(args.selfbuilt_dir) if args.selfbuilt_dir else None
++        sb_path = (sb_dir / "{0}.json".format(comp)) if sb_dir else None
++        if sb_path and sb_path.exists():
++            sb_doc = json.loads(sb_path.read_text(encoding="utf-8"))
++            _cand = (sb_doc.get("candidates") or [{}])[0]
++            ver = _cand.get("detector_version") or sb_doc.get("detector_version")
++            mv = _cand.get("model_version") or sb_doc.get("model_version")
++            vsrc = "artifact" if ver else None
++            if not ver:
++                _dv, _dm = detector_identity()
++                ver, mv, vsrc = _dv, _dm, ("live_import" if _dv else None)
++            command = sb_doc.get("scope", {}).get("command") or [
++                "python", "-m", "src.ohscanner.detectors.interface.audit",
++                "--repo-dir", str(root), "--repository", meta["repository"],
++                "--commit", meta["commit"], "--out-dir", str(sb_dir)]
++            rec_ctx = {
++                "tool": "ohscanner.interface.ipc",
++                "tool_version": ver or "(unknown)",
++                "command": command, "repo": meta["repository"], "commit": meta["commit"],
++                "git_tree": sb_doc.get("git_tree") or tree,
++                "artifact_sha256": sha256_file(sb_path),
++                "raw_path": sb_path,
++                "detector_source": str(REPO_ROOT / "src/ohscanner/detectors/interface/analysis.py"),
++            }
++            rows = A.adapt_self_built(sb_path, rec_ctx)
++            matrix["records"].extend(rows)
++            audited = sb_doc.get("counts", {}).get("source_files_audited")
++            conflict = (audited is not None and audited != fs["file_count"])
++            entry["self_built"] = {
++                "execution_status": "completed",
++                "report": str(sb_path),
++                "artifact_sha256": sha256_file(sb_path),
++                "candidates": len(rows),
++                "by_family": _by_family(rows),
++                "validated_vulnerability": sb_doc.get("validated_vulnerability"),
++                "detector_version": ver,
++                "model_version": mv,
++                "version_source": vsrc,
++                "files_audited": audited,
++                "file_count_conflict": conflict,
++            }
++            if ver is None:
++                entry["self_built"]["version_warning"] = (
++                    "detector version could not be recovered from the artifact (0 candidates carry "
++                    "it) and the detector module could not be imported; this zero is unlabelled.")
++            if conflict:
++                entry["self_built"]["conflict_detail"] = (
++                    "corpus enumerated {0} files, detector audited {1}; the two sides are NOT on the "
++                    "same file set and their counts must not be compared until this is resolved."
++                    .format(fs["file_count"], audited))
++            print("    {0:<14} candidates={1} (audited={2})".format(
++                "self-built", len(rows), audited))
++        else:
++            entry["self_built"] = {"execution_status": "unexecuted",
++                                   "reason": "no detector report at {0}".format(sb_path)}
++            print("    {0:<14} UNEXECUTED (no report)".format("self-built"))
++
++        entry["comparison"] = _compare(entry, matrix["records"], comp)
++        matrix["components"].append(entry)
++
++    (out / "matrix.json").write_text(json.dumps(matrix, indent=2), encoding="utf-8")
++    (out / "matrix.md").write_text(render_md(matrix), encoding="utf-8")
++    print("\nwrote {0} and {1}".format(out / "matrix.json", out / "matrix.md"))
++    return 0
++
++
++def _by_family(rows):
++    d = {}
++    for r in rows:
++        d[r["family"]] = d.get(r["family"], 0) + 1
++    return d
++
++
++def _compare(entry, all_records, comp):
++    """Per-item intersection/difference, strictly inside one family (protocol P6)."""
++    tool_rows = [r for r in all_records
++                 if r.get("repo") and r["commit"] == entry["commit"]
++                 and r["kind"] == "tool_alert" and r["execution_status"] == "completed"
++                 and r["match_status"] == "hit"]
++    sb_rows = [r for r in all_records
++               if r["kind"] == "self_built_candidate" and r["commit"] == entry["commit"]]
++    out = {}
++    loose_t = {(r["family"], r["file"]) for r in tool_rows if r["family"] != "unmapped" and r["file"]}
++    loose_s = {(r["family"], r["file"]) for r in sb_rows if r["family"] != "unmapped" and r["file"]}
++    strict_t = {(r["family"], r["file"], r["line"]) for r in tool_rows if r["family"] != "unmapped" and r["file"]}
++    strict_s = {(r["family"], r["file"], r["line"]) for r in sb_rows if r["family"] != "unmapped" and r["file"]}
++    out["tool_unmapped"] = sum(1 for r in tool_rows if r["family"] == "unmapped")
++    out["self_built_unmapped"] = sum(1 for r in sb_rows if r["family"] == "unmapped")
++    out["loose_family_file"] = {
++        "both": sorted(loose_t & loose_s), "tool_only": sorted(loose_t - loose_s),
++        "self_built_only": sorted(loose_s - loose_t)}
++    out["strict_family_file_line"] = {
++        "both": sorted(strict_t & strict_s), "tool_only": sorted(strict_t - strict_s),
++        "self_built_only": sorted(strict_s - strict_t)}
++    out["unexplained"] = "not attempted: unexplained differences require a review pass and are " \
++                         "never folded into the smallest bucket (protocol P8)."
++    return out
++
++
++def render_md(m):
++    L = []
++    L.append("# Tool matrix run\n")
++    L.append("protocol `{0}` · generated {1}\n".format(m["protocol_version"], m["generated_at_utc"]))
++    L.append("Tool-side and self-built counts are **separate columns on purpose**: one merged "
++             "number would hide which side a difference came from.\n")
++    L.append("| component | commit | files | " + " | ".join(m["tools_requested"]) +
++             " | self-built | unexecuted |")
++    L.append("|---" * (4 + len(m["tools_requested"])) + "|")
++    for e in m["components"]:
++        cells = []
++        for t in m["tools_requested"]:
++            info = e["tools"].get(t, {})
++            if info.get("execution_status") == "unexecuted":
++                cells.append("**unexecuted**")
++            else:
++                cells.append("{0}{1}{2}".format(
++                    info.get("records", 0),
++                    "" if info.get("execution_status") == "completed"
++                    else " ({0})".format(info.get("execution_status")),
++                    "" if not info.get("parse_error_rows")
++                    else " [{0} parse-err]".format(info["parse_error_rows"])))
++        sb = e.get("self_built", {})
++        sbc = "**unexecuted**" if sb.get("execution_status") != "completed" else str(sb.get("candidates", 0))
++        L.append("| {0} | `{1}` | {2} | {3} | {4} | {5} |".format(
++            e["component"], e["commit"][:12], e["file_count"], " | ".join(cells), sbc,
++            ", ".join(e["unexecuted"]) or "—"))
++    L.append("")
++    L.append("## Per-item comparison (inside one family; totals are not reported)\n")
++    for e in m["components"]:
++        c = e["comparison"]
++        if not c:
++            continue
++        L.append("### {0}\n".format(e["component"]))
++        L.append("loose `(family,file)` — both {0} · tool-only {1} · self-built-only {2}".format(
++            len(c["loose_family_file"]["both"]), len(c["loose_family_file"]["tool_only"]),
++            len(c["loose_family_file"]["self_built_only"])))
++        L.append("strict `(family,file,line)` — both {0} · tool-only {1} · self-built-only {2}\n".format(
++            len(c["strict_family_file_line"]["both"]), len(c["strict_family_file_line"]["tool_only"]),
++            len(c["strict_family_file_line"]["self_built_only"])))
++        L.append("unmapped rows — tool {0} · self-built {1}\n".format(
++            c["tool_unmapped"], c["self_built_unmapped"]))
++    return "\n".join(L) + "\n"
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/research/experiments/tool_matrix/schema/normalized_record.schema.json b/research/experiments/tool_matrix/schema/normalized_record.schema.json
+new file mode 100644
+index 00000000..27cc38f6
+--- /dev/null
++++ b/research/experiments/tool_matrix/schema/normalized_record.schema.json
+@@ -0,0 +1,104 @@
++{
++  "$schema": "http://json-schema.org/draft-07/schema#",
++  "$id": "ohscanner/research/tool_matrix/normalized_record.schema.json",
++  "title": "Tool-matrix normalized record",
++  "description": "One finding-shaped row, from any tool or from the first-party detector. Provenance fields are mandatory: a row without a real command and a real raw-artifact hash must not be written.",
++  "type": "object",
++  "required": [
++    "schema_version", "record_id", "kind", "tool", "tool_version", "command",
++    "repo", "commit", "file", "line", "rule_or_query_id", "message",
++    "artifact_sha256", "execution_status", "family", "identity_key"
++  ],
++  "additionalProperties": false,
++  "properties": {
++    "schema_version": { "const": 1 },
++
++    "record_id": {
++      "type": "string",
++      "description": "Deterministic id: sha256 over (kind, tool, tool_version, command, repo, commit, file, line, rule_or_query_id), first 16 hex chars."
++    },
++
++    "kind": { "enum": ["tool_alert", "self_built_candidate"] },
++
++    "tool": {
++      "type": "string",
++      "description": "Tool identity. For the first-party detector this is 'ohscanner.interface.ipc'."
++    },
++    "tool_version": {
++      "type": "string",
++      "description": "Version string as the tool itself reports it. For the detector: '0.8.0'."
++    },
++    "tool_model_version": {
++      "type": ["string", "null"],
++      "description": "Model/ruleset generation where the project has one (detector: 'oh-ipc-2026.10-v6'). Equal in standing to tool_version for the self-built side."
++    },
++    "command": {
++      "type": "array",
++      "items": { "type": "string" },
++      "minItems": 1,
++      "description": "The invocation, verbatim, as an argv list. Never a shell string. A record whose command was not actually executed must carry execution_status=unexecuted."
++    },
++    "command_is_template": {
++      "type": "boolean",
++      "description": "True when the profile is one invocation per target file, so `command` is the argv with '<file>' standing for one target and the real invocation count is in the run summary. A template is recorded rather than disguised as a single literal command."
++    },
++
++    "repo": { "type": "string", "description": "Declared repository, e.g. openharmony/security_access_token. A declaration, not an identity." },
++    "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
++    "git_tree": { "type": ["string", "null"] },
++
++    "file": {
++      "type": ["string", "null"],
++      "description": "Repo-relative path. Null only when the engine could not attribute the finding to a file (e.g. Joern unresolved-namespace placeholders) — and then file_attribution must say why."
++    },
++    "line": { "type": ["integer", "null"], "minimum": 1 },
++    "column": { "type": ["integer", "null"], "minimum": 1 },
++    "symbol": { "type": ["string", "null"] },
++    "file_attribution": {
++      "enum": ["resolved", "empty_placeholder", "unresolved_namespace", "not_applicable"],
++      "description": "'empty_placeholder' records a tool result that names no real source location. Such a row is countable but is not a candidate at a location."
++    },
++    "file_resolution": {
++      "enum": ["repo_relative", "absolute_in_tree", "none"],
++      "description": "CodeQL's CSV emits paths like '/calibration_overflow.cpp' (tree-relative, leading slash); adapters must record how they mapped it, not silently rewrite it."
++    },
++
++    "rule_or_query_id": { "type": "string" },
++    "rule_version": { "type": ["string", "null"] },
++    "message": { "type": "string" },
++    "severity": { "type": "string" },
++    "confidence": { "type": "string" },
++
++    "candidate_cwe": { "type": ["string", "null"] },
++    "evidence_type": {
++      "enum": ["pattern", "syntax", "dataflow", "control_flow", "symbolic", "historical",
++               "runtime", "permission", "web_dynamic", "human_review", "unknown"]
++    },
++
++    "family": {
++      "enum": ["AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "DATA-01", "CAP-01", "unmapped"],
++      "description": "Comparison family. 'unmapped' is counted but excluded from intersection/difference."
++    },
++    "family_mapping_declared": {
++      "type": "boolean",
++      "description": "True when family came from the adapter's explicit rule-id table rather than from the tool's own words."
++    },
++    "identity_key": { "type": "string", "description": "(family, file, line) rendered canonically." },
++
++    "execution_status": { "enum": ["completed", "failed", "timeout", "unexecuted"] },
++    "execution_reason": { "type": ["string", "null"], "description": "Raw reason/error text. Required when execution_status != completed." },
++    "parse_status": { "enum": ["complete", "partial", "failed", "not_run", "not_applicable"] },
++    "match_status": { "enum": ["hit", "no_match", "not_run"] },
++    "exit_code": { "type": ["integer", "null"] },
++
++    "source_sha256": { "type": ["string", "null"], "description": "sha256 of the analysed source revision. Required for self_built_candidate; required for tool_alert when a pinned blob was analysed." },
++    "artifact_sha256": {
++      "type": ["string", "null"],
++      "description": "sha256 of the raw native output file this row was parsed from. Null is legal only for self_built_candidate rows, which point at their own report artifact instead."
++    },
++    "native_artifact": { "type": ["string", "null"], "description": "Path to that raw output file." },
++
++    "elapsed_seconds": { "type": ["number", "null"] },
++    "limitations": { "type": "array", "items": { "type": "string" } }
++  }
++}
+diff --git a/research/experiments/tool_matrix/selfcheck.py b/research/experiments/tool_matrix/selfcheck.py
+new file mode 100644
+index 00000000..6386111e
+--- /dev/null
++++ b/research/experiments/tool_matrix/selfcheck.py
+@@ -0,0 +1,184 @@
++#!/usr/bin/env python3
++"""Self-check: run the matrix over the 10 perf-corpus components and check that
++the protocol's invariants actually hold in the produced artifacts.
++
++A self-check that only prints a table proves nothing. This one asserts, and a
++failed assertion is a failed self-check even if the table looks tidy.
++
++    PYTHONPATH=. .venv/bin/python -m research.experiments.tool_matrix.selfcheck \
++        --out /home/audit/wtmp/tool_matrix/selfcheck-20261017
++
++Steps:
++  1. self-built side, at the CURRENT detector version, all 10 components;
++  2. tool side, over the same file set, with the tools that can actually run;
++  3. every tool that cannot run is asked for by name, so it lands in the table as
++     `unexecuted` with its raw reason instead of vanishing;
++  4. the invariants below.
++"""
++
++from __future__ import annotations
++
++import argparse
++import json
++import os
++import subprocess
++import sys
++import time
++from pathlib import Path
++
++HERE = Path(__file__).resolve().parent
++sys.path.insert(0, str(HERE))
++
++import run_matrix as RM  # noqa: E402
++import corpus as C  # noqa: E402
++
++REPO = RM.REPO_ROOT
++
++PY = Path("/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/.venv/bin/python")
++if not PY.exists():   # the worktree itself has no venv; any project venv will do
++    import glob
++    cands = glob.glob("/home/audit/openharmony-audit/*/.venv/bin/python")
++    if not cands:
++        sys.stderr.write("FATAL: no project virtualenv found; the detector cannot be re-run.\n")
++        raise SystemExit(3)
++    PY = Path(cands[0])
++
++# Asked for by name on purpose: these must appear in the table as unexecuted.
++ALL_TOOLS = "semgrep,cppcheck,clang-tidy,clang-sa,gcc-analyzer,codeql,joern"
++
++
++def run_self_built(corpus_root: Path, comp: str, out_dir: Path) -> dict:
++    meta = C.component(comp)
++    argv = [str(PY), "-m", "src.ohscanner.detectors.interface.audit",
++            "--repo-dir", str(corpus_root / comp),
++            "--repository", meta["repository"],
++            "--commit", meta["commit"],
++            "--passes", "complete-ast,all-files",
++            "--out-dir", str(out_dir)]
++    t0 = time.time()
++    env = dict(os.environ)
++    env["PYTHONPATH"] = str(REPO)
++    env["PYTHONUNBUFFERED"] = "1"
++    p = subprocess.run(argv, cwd=str(REPO), capture_output=True, text=True,
++                       errors="replace", env=env)
++    return {"argv": argv, "exit": p.returncode, "stdout": p.stdout[-2000:],
++            "stderr": p.stderr[-2000:], "elapsed_seconds": round(time.time() - t0, 2)}
++
++
++def check(matrix: dict) -> list:
++    """Returns a list of (ok:bool, label:str, detail:str)."""
++    res = []
++    comps = matrix["components"]
++    req = matrix["tools_requested"]
++
++    res.append((len(comps) == 10, "all 10 components present",
++                "got {0}".format(len(comps))))
++    res.append((all(e.get("file_set_sha256") and e.get("file_count") for e in comps),
++                "every component has a pinned file set (count + sha256)", "protocol P1"))
++    res.append((all(e.get("commit") and len(e["commit"]) == 40 for e in comps),
++                "every component carries a full 40-hex commit", "protocol P1"))
++
++    missing = [(e["component"], t) for e in comps for t in req
++               if t not in e["tools"] and t not in e["unexecuted"]]
++    res.append((not missing, "no requested tool vanished from the summary",
++                "missing: {0}".format(missing[:5])))
++
++    unex = [(e["component"], t) for e in comps for t in e["unexecuted"]]
++    res.append((bool(unex), "at least one tool is recorded as unexecuted (not silently zero)",
++                "{0} cells".format(len(unex))))
++
++    bad = [r["record_id"] for r in matrix["records"]
++           if r["kind"] == "tool_alert" and r["execution_status"] == "completed"
++           and not r.get("artifact_sha256")]
++    res.append((not bad, "every completed tool row traces to a raw artifact hash",
++                "offenders: {0}".format(bad[:3])))
++
++    nonet = [(e["component"], t) for e in comps for t in e["unexecuted"]
++             if not e["tools"].get(t, {}).get("reason")]
++    res.append((not nonet, "every unexecuted cell carries its raw reason",
++                "cells without a reason: {0}".format(nonet[:5])))
++
++    # The first version of the self-built adapter read the family off `rule_id`
++    # as if the rule id WERE the family, so every self-built row landed in
++    # `unmapped` and the intersection read "self-built-only 0" for reasons that
++    # had nothing to do with the corpus. Assert against that shape explicitly.
++    import adapters as A
++    rule_map = A.production_rule_families()
++    res.append((bool(rule_map), "the production emit() family table was readable",
++                "{0} rule ids".format(len(rule_map))))
++    stuck = [(e["component"], r["rule_or_query_id"]) for e in comps
++             for r in matrix["records"]
++             if r["kind"] == "self_built_candidate" and r["family"] == "unmapped"
++             and rule_map.get(r["rule_or_query_id"])]
++    res.append((not stuck, "no self-built row is unmapped while its rule id has a known family",
++                "offenders: {0}".format(stuck[:3])))
++
++    conflict = [(e["component"], e["self_built"].get("files_audited"), e["file_count"])
++                for e in comps if e.get("self_built", {}).get("file_count_conflict")]
++    res.append((not conflict, "self-built file count agrees with the corpus file set",
++                "conflicts: {0}".format(conflict)))
++
++    sbrun = [e["component"] for e in comps
++             if e.get("self_built", {}).get("execution_status") == "completed"]
++    res.append((len(sbrun) == len(comps), "self-built side ran on every component",
++                "ran on {0}/{1}".format(len(sbrun), len(comps))))
++
++    md = (Path(matrix["_out"]) / "matrix.md")
++    text = md.read_text(encoding="utf-8") if md.exists() else ""
++    res.append(("self-built" in text and "unexecuted" in text,
++                "the rendered table keeps tool and self-built counts in separate columns",
++                "protocol P6"))
++    return res
++
++
++def main(argv=None) -> int:
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--corpus", default=str(Path.home() / "openharmony-audit" / "perf-corpus"))
++    ap.add_argument("--out", required=True)
++    ap.add_argument("--tools", default=ALL_TOOLS)
++    ap.add_argument("--skip-selfbuilt", action="store_true")
++    args = ap.parse_args(argv)
++
++    out = Path(args.out).resolve()
++    out.mkdir(parents=True, exist_ok=True)
++    sb = out / "selfbuilt"
++    sb.mkdir(exist_ok=True)
++    log = []
++
++    if not args.skip_selfbuilt:
++        print("== step 1: self-built side, current detector version, 10 components ==")
++        for comp in C.component_names():
++            r = run_self_built(Path(args.corpus), comp, sb)
++            log.append({"component": comp, **{k: r[k] for k in ("argv", "exit", "elapsed_seconds")}})
++            tail = [l for l in r["stdout"].splitlines() if "candidates:" in l or "audited files" in l]
++            print("  {0:<38} exit={1} {2}s {3}".format(comp, r["exit"], r["elapsed_seconds"],
++                                                       " | ".join(tail)[:120]))
++            if r["exit"] != 0:
++                print("    stderr tail: {0}".format(r["stderr"][-300:]))
++        (out / "selfbuilt.log.json").write_text(json.dumps(log, indent=2), encoding="utf-8")
++
++    print("\n== step 2: tool side + comparison ==")
++    rc = RM.main(["--corpus", args.corpus, "--components", "all", "--tools", args.tools,
++                  "--selfbuilt-dir", str(sb), "--out", str(out)])
++    if rc != 0:
++        print("run_matrix returned {0}".format(rc), file=sys.stderr)
++        return rc
++
++    matrix = json.loads((out / "matrix.json").read_text(encoding="utf-8"))
++    matrix["_out"] = str(out)
++
++    print("\n== step 3: protocol invariants ==")
++    results = check(matrix)
++    for ok, label, detail in results:
++        print("  [{0}] {1}{2}".format("PASS" if ok else "FAIL", label,
++                                      "" if ok else "  <- " + str(detail)))
++    (out / "selfcheck.json").write_text(json.dumps(
++        [{"ok": ok, "label": label, "detail": str(detail)} for ok, label, detail in results],
++        indent=2), encoding="utf-8")
++
++    print("\n{0}/{1} invariants hold".format(sum(1 for r in results if r[0]), len(results)))
++    return 0 if all(r[0] for r in results) else 1
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())

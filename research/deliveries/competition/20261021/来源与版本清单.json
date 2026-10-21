@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "package_date": "2026-10-21",
+  "timezone": "Asia/Shanghai",
+  "purpose": "Curated judge-facing experiment evidence index for OHScanner; not a product vulnerability certification.",
+  "collection_repo": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit",
+  "collection_branch_base": {
+    "branch": "docs/judge-evidence-bd-agent-20261019",
+    "head": "5f878ee05e8d11e4f9df87c524147d906dad4d72",
+    "origin_main_at_collection": "db77164fdc2af0da02e4d3efc056d84694fd68e8"
+  },
+  "lane_snapshots": [
+    {
+      "lane": "A",
+      "topic": "C/C++ memory safety",
+      "worktree": "/home/audit/ohscanner/worktrees/review-a-static",
+      "head": "e9563f918dbd155b30c2a54810e592e12ab18590",
+      "checkout_state": "detached clean snapshot",
+      "included": "A线/A_MEMORY_SAFETY_DELIVERY_20261017.md and source hash list",
+      "limitations": "No independent labelled holdout for global precision/recall."
+    },
+    {
+      "lane": "B",
+      "topic": "IPC/interface authorization",
+      "worktree": "/home/audit/ohscanner/worktrees/parallel-ipc-20261017",
+      "head": "a77dbdb235a08fb8bae2be3c3f6cdce7de33b3e7",
+      "checkout_state": "clean at capture",
+      "included": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12",
+      "team_repository_head": "7579a16344fa3164bfbea3e26db783854a1793b6",
+      "limitations": "Fixed vulnerable/fixed replay only; some files partial and all product impact remains unknown."
+    },
+    {
+      "lane": "C",
+      "topic": "ArkTS/JS/runtime source research",
+      "worktree": "/home/audit/ohscanner/worktrees/c4-ark-runtime-20261018",
+      "head": "ea492ce51f19ed611479ac3ed28826f71fe94444",
+      "checkout_state": "clean at capture",
+      "included": "C线/c1_20261017 through C线/c4_20261018 experiment records",
+      "limitations": "Per-record coverage and holdout status govern; no blanket recall or product-vulnerability claim."
+    },
+    {
+      "lane": "D",
+      "topic": "sensitive data exposure and disclosed-CVE replay",
+      "worktree": "/home/audit/ohscanner/worktrees/d-commercial-expansion-20261018",
+      "head": "03f13b0ea04b2b5cfa15a9961d8776507eddc5aa",
+      "checkout_state": "clean at capture",
+      "included": "D review, selected D30/D31 component replays, D50 component replay summary/data",
+      "limitations": "Component reproduction/source match does not establish OpenHarmony product applicability."
+    },
+    {
+      "lane": "AgentLLM",
+      "topic": "read-only Agent workflow and provider comparison",
+      "worktree": "/home/audit/ohscanner/worktrees/agent-llm-20261018",
+      "base_head": "1c21ac60890fca0ce6be5d50d82e4757dd5e4623",
+      "checkout_state": "source worktree dirty; only selected reports/results copied and individually hashed",
+      "included": "AgentLLM workflow report, DeepSeek R0/R1/R2 historical run, offline Fake Provider smoke output",
+      "limitations": "One old live-provider pair is not a quality benchmark; Fake Provider only tests wiring."
+    }
+  ],
+  "external_drive": {
+    "root": "G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\results",
+    "selected_reports_copied": [
+      "执行总结.md",
+      "ABCD线实测分析与改进建议_20261018.md",
+      "未扫描仓库覆盖说明.md",
+      "未扫描仓库覆盖说明.json",
+      "候选诊断数量拆解_20261018.md",
+      "detector-stats.json",
+      "B线当前版披露漏洞复测_20261019/v0.12.1/*"
+    ],
+    "raw_workbook_not_in_git": {
+      "path": "G:\\OpenHarmony-GitCode-Mirror\\campaign-100-20261017\\results\\OpenHarmony-100扫描结果_20261018_part211.xlsx",
+      "bytes": 55844523,
+      "sha256": "A77E79BEF0151835DE1B61ECC953742F511A5D3141C43788DA26C27C336993C6",
+      "reason": "Large generated artifact; the XLSX sheet expands beyond 1 GB. Keep as a separate judge attachment and verify this SHA-256 before delivery."
+    },
+    "report_hashes": {
+      "执行总结.md": "84AAFC5AF86AE7C7C30851BE9C34F62EDCDFF405908E690D34A5F9982AF1A385",
+      "ABCD线实测分析与改进建议_20261018.md": "C43233E623880302670116EA0D36C3ABC1F3B2AE9440F8AA8C25F2359577DCD4",
+      "候选诊断数量拆解_20261018.md": "effd4ae76f1da66f0e8e24246e221dca11954df80a13255398f44cbf79deb2b7"
+    },
+    "limitations": "Historical external-drive snapshot; not the latest B detector. The separate 0.12.12 B report is included from its clean pushed worktree snapshot."
+  },
+  "claim_policy": {
+    "product_confirmed_vulnerabilities_in_this_package": 0,
+    "all_static_findings_remain_candidates_unless_source_report_explicitly_states_component_harness_result": true,
+    "precision_recall_claimed": false,
+    "unknown_partial_blocked_and_failed_are_not_safe_negatives": true
+  },
+  "integrity": "See 文件哈希清单.json for SHA-256 and byte size of every file copied into this package.",
+  "text_normalizations": [
+    {
+      "path": "外接盘_OpenHarmony100/候选诊断数量拆解_20261018.md",
+      "source_sha256": "effd4ae76f1da66f0e8e24246e221dca11954df80a13255398f44cbf79deb2b7",
+      "transformation": "去掉原文件末尾多余的一行空白；其余内容保持原样；打包文件 SHA-256 见文件哈希清单.json"
+    }
+  ]
+}

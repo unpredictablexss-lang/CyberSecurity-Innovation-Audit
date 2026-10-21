@@ -280,7 +280,7 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
             completed = self.client.get(
                 "/api/v1/operations/" + operation_id, headers=fixtures.HEADERS).json()
             final_progress = completed["intelligent_review_progress"]
-            self.assertTrue(all(item["agent_status"] == "partially_completed" for item in final_progress))
+            self.assertTrue(all(item["agent_status"] == ("partially_completed" if item["r1_selected_count"] < item["candidate_count"] else "completed_with_limitations") for item in final_progress), final_progress)
             for index, (item, batch) in enumerate(zip(final_progress, triage_batches)):
                 self.assertEqual(len(item["r1_operations"]), 1)
                 completed_summary = item["r1_operations"][0]

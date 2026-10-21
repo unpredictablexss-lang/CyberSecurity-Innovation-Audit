@@ -1,0 +1,2592 @@
+[
+  {
+    "path": "research/deliveries/cpp/A_LINE_FAST_CLOSEOUT_PARALLEL_PLAN_20261020.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "938f91dcf642c4acf5596a8d78bcb09e7af4ed3518ef877a3462f9da3a2ef5d9"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/README.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "2888dcfddc86bc381211023cdeb0104f2bc5d71ae77dde6a99ef4d662fc49cda"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/T1_product_evidence_review_20261018.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "5f195a7fef66970528f2c411256951b01cc209d812406384e542183a44f92bb1"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/adjacent_findings.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "016790f722f855917860e9bc936d2e034f89c269b4e99079b5a634dc5b0b46b1"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/candidate_reviews.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "46d35eeb05e6e30e94883b4e6464683ab22f421affcb6591d0d2ff94cac890da"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/environment.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "65b76dceb446fdd5b082524a3fe13837652bde8f72c38195c144693a1babdd34"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/hashes.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "06ae700e4754e5255761f4fa5577e2a311e7f3fbedc2e78f6bab6a77ff5a9f63"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/high_priority_ipc_contexts.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "01f2ca105b2360bd653547dd40737d456106f0f723d38e22e131c48271959a78"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/provenance.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "5f50f0c9f09fdd54295fa114dc7841b1abb89cb5d4b5fe34f7b9d367c5b8746e"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/provenance_adjacent.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "a2a98987b11b09bc5e8308ab185f83155070fb2fd55a6c9c703730ff719d9834"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/reconciliation.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "2dec8af684f38a4b3c9e0c469464a13d209f8e8489dbc4aa3a65a1f69abc9cd1"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sample_manifest.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "22e6f54a758684e48bc52e3acbc0e1e6ac88a74c523da42630d6fab868d38372"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sample_reproducibility.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "a3a93d1640f62e56c11dab9e3624924ba61818278a67071c624753d9e9b5b39e"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/README.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "b5ce2aef3a573f1716ff6ca060ddc3891d73173e16c75d2987df9fceba8a72b7"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/docker_version.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "548b1db15e597eeada10ee97c061da483a8546a41be883f4356f8d73b9531249"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/image_inspect.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "c772d6ce7090b97b19ef52654ed096f8eff0d860bb89631550de049546f01338"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/method_controls/copy_range_model.cpp",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "1132733930347d64b8f2fd9af7c76c98f215c4c0f62643e19371c857dbf02654"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/method_controls/copy_range_safe_control.cpp",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "7beadede2e4275804c164049c8161d1e66c8997010dc4c95e6023678fac5cf28"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/method_controls/copy_range_unsafe_control.cpp",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "2289562bc25bf3291fde911208be85b01f9dac31cf0b284cdc813d239aec2d21"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/method_controls/run_all.sh",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "a924f7c320e60ede53344992f44e2facea8f5e0be8933b1331c32536230edc8a"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/method_controls/shared_ptr_tsan_atomic_control.cpp",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "9a2ef438b23753fff2a0704fef93071322e47c7c65410515bc199c914e6c2f16"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/method_controls/shared_ptr_tsan_unsafe_control.cpp",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "635cb086986e22800dad69d3f24a5c16ae52ae35773cb32f5e94274057540f6f"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/sandbox_file_hashes.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "8b3df69e793fbf7ce6af88a60d874409509d5e894f4a43d4a87cf126c75e7b59"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/sandbox_results.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "b36084995dce0a2929419d5e5051255e5f204b7efda2d22b1b4c12751a7b84de"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/scratch/compiler_version.txt",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "a008cd496af8f765e763e8ad343d0fa85daeff3ba2e23383e3e6d8efb9850925"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/scratch/completed_at.txt",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "453b3d6b0fe49f70d3b975561d15a1a6629f07249c13c2f39f67b409a9590f5a"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/scratch/os-release.txt",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "4bde2c39f541afb5ac413a03c8e5f57aa99b8fab304a62386dc0b16044cc0e2d"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/scratch/run_summary.tsv",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "815d153f68fcae1cbd8aece7fae079bf420bb2dba7ab6a059df3febbb9297554"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/sandbox/scratch/uname.txt",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "11c701ef283b4e9ee1904778193402f3796dd94c487a01806b7bd63e6c44c3e2"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/tools/build_candidate_reviews.py",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "5cd64c3deecc7087e71efeab2249d825ac71237e723669b346013537a3f4724f"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/tools/build_sample.py",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "9996b2ecf7cd951feca9c74d0c34ef17b8eff6c073894eb0096caf19b0da1a7d"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/tools/extract_contexts_wsl.py",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "04637541cb628dfcb7e060920249d71d5c199787500ff037bb50eacc9f36ad67"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/evidence/tools/verify_provenance_wsl.py",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "007eb889760afe4876ed1f3b2bc611875bf6499afe637af1e9cc5d56310e9008"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/openharmony-a-line-sample30.xlsx",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "1bd7f27136dc1405dbd38c8e7c9f4b1ddb64e62c9d8f41f5d7d261eb24b1f0b7"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/openharmony-a-line-sample30.xlsx.inspect.ndjson",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "4b72f4e754bd9fb8fe26b440a88fbce94fdb690342f11e6729cc7bdd9365cafd"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/README.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "820a5d2a9d0bbc2e8dce90215d7e66f9016228f942d0971ea1c4813fa9a61c35"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/index.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "216979ee73d3fd2d206c0447867f4c895c940bb561308b13953448573e1d3c8b"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/extract_target_functions.py",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "a831917566db2d76d531a781517452deb6725aa2f794f217cf311606e4e51459"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/generated/batch_insert_one_by_one.inc",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "36806eea09c6b3f52bed78a72ee17f55b387708af09ba0df98f94e74e3f63c56"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/generated/build_portrait_value.inc",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "d4b6261d71918a8f2643f23b70800103d526a770fe385dc751b4a07a6016aaac"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/generated/contacts_batch_insert.inc",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "d065ea01cf629b719b294ca7dd65edd52956e3a609b543d3d50740c81ec88325"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/generated/datashare_stub_batch_insert.inc",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "124e5cd4bc25781a115194d18b170318fe04b4eccc1791411bc35a21c9f02214"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/generated/extraction_manifest.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "04cbdd0a002cf9fe3731b3cd25c2f2f53a78fe00eb3dff2bc569bf62346d4593"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/generated/file_utils_delete_file.inc",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "5e0ff2d73a112908f124e0999a45956363b915f82a34ea835d79e34ce428a11d"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/generated/file_utils_get_group_path.inc",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "57624eb2fdbf162669efd3a4b70866dfe89daad9fb7c7a044ca77ae36e862d8c"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/generated/get_portrait_value.inc",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "417a0134bfd3bb3391a64e96d6fc6eeb00863e41ee4615e57d7bba987731f622"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/generated/get_string_value.inc",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "c3222f346a8d53a2d44fd2a9eb5df07b6493d6d442fe96c5bd4ccde1fbc972ef"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/generated/handle_contact_portrait.inc",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "a988128ed2b52c3aed3d6805dbfbd3f3cdf355e1eeb4c03776a85fcac54a9888"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/generated/process_single_insert.inc",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "3d4018b94f5b8e7495efe652f80f5dc13884fe0af1c0ba31ad1baea46d1fa95f"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/generated/save_portrait_file_and_blob.inc",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "72032d1758fbf1962b6da70c3a5d8ebbf2233d27b8d69682e764a51db4a50b76"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/patched_target_adapter.cpp",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "1ca464c205d16deddd2fb4cf26b686701ddf14b2f37a0760d605e9aeb1a07255"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/results-ubsan/logs/artifact_hashes.txt",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "c52d31e720759d536ce24437dc6001f4ca1d565e1e01197901a57097ffeadd07"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/results-ubsan/logs/asan_ubsan_probe_status.txt",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "9040b38f076206b5ef95eebae3b56c15392e270d172d0bcfd7bd79b3041b7a3e"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/results-ubsan/logs/completed_at.txt",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "71056874b2ded12290422e781c7d692412a790d4276761ef72fc93ae931ba212"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/results-ubsan/run_summary.tsv",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "6a213959aa9b063ed94af724ca644632e792e7a32759bbc8c90571a9cf0ac696"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/run.sh",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "e55e675cd308b0f94b0f53f2c418bc2c377d85d9168bf551d0c5c39cef359db2"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/run_all.sh",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "da5303eadca59cf363f79133b2cd97aeaa3149c683e0ba1ef27b52f1e6b860cc"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/run_ubsan.sh",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "5568fc10d96b4bed9307b973f9d9f19f25d24633437872a47bc613f47d68925a"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/source_manifest.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "b9234fc08f8b3bef54565443c1e9ac601cdfa40a22c5cd9aa1e243bc3e299d2c"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/target_adapter.cpp",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "c5c2c2495b2d15c0cfbc0158b250c974cb87096cda092513891888b2c4108447"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/poc/ohscanner-contacts-path-traversal/target_adapter_common.hpp",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "b211316bbbfddef60cab28b28efb8f56a97837034f21ccfdabb66030b8e500c4"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/remote-package.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "3d774215c24942e312bf5f944df6c10b27370c4a9805abe73538ba79fbe62858"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/report/technical-report.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "8f17eb3c749abfc89f66cca226581c5f409faa48508ed55a1688a5b6af742533"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/sample30/report/technical-report.pdf",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "603c5c6cb8fdbe91718b0d2121e93fd88951e632f5922002cbb3200b33bd8598"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/triage/README.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "390d668c7d37a646a7977024daa4cec0c15c801fe460e61506946b7ea2d5d692"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/triage/family_audit.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "048a0fe08626c890a7dd0a84dea8cbb8e42ff34fdfbe55afb95df77e45fb034f"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/triage/output_hashes.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "0c7d50c8fb6d3f51b82e1cb27a9f9d55c633af5ca3312b23a03c6d9d469c8e7f"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/triage/queue.csv",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "a174c0a74986e8410c53f173b84bb446c59000c3867add612a14e8aab4396d27"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/triage/queue.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "e79a8c5aeb0afa0e8abdf3ba91cce1fc6ad5cb72502900f73b84c260ffac23eb"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/triage/reconciliation.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "15e6fc71e8fdabd1cdd59e339b75e441dea2d131c7ef0b7509f647891097958f"
+  },
+  {
+    "path": "research/deliveries/cpp/a0_original_20261018/triage/verify_queue.py",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "eae7be13a65f69cb580bdae5b066c741127817d3f21252c2f1bc70b25c088d9c"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/acceptance.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "e86e6c9717a8c09a81a2f819c119354b6c5010087c6e8108cb214cdd2d1aaeee"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/contacts-path-traversal-current.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "99b5f6440679d6f291d76920f1076cf3c5e594b9865e8a51be36bf2fc22045e7"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/contacts-path-traversal-current.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "4d868f0b3a2d41d51ef099e635c970cbf77deea175878f7f1a5d38c1d2135615"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/curl-cve2026-92391-fixed.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "3977ebcf8cbdb82dfe630e9634373abfb75d8ec70327096d7961f12ed4f05f44"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/curl-cve2026-92391-fixed.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "49d951eded1c2828543bd946b21f79c679f8070b5d51ad8f8cc311441d75cf96"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/curl-cve2026-92391-vulnerable.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "ebf85f7cb9225d6a775566b1bad441e14409dc05f83c1ad1724e46d91a9d9494"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/curl-cve2026-92391-vulnerable.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "ca29b2070e1ca38a694c0dd4ec1ab51ddba8934446624915a1d722703d1d3db8"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/cve2025-0587-fixed.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "6c974a7a595e02212c567589bc89eb061e98d4bb91aaffbff27d7a9c9275dd8a"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/cve2025-0587-fixed.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "a30e164479ba5b3291ac97501d1b9ccbf7bcdfbbea712777af86a05f7a0af802"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/cve2025-0587-vulnerable.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "2aafe67eb1621def7256ac03b95d096c694916248ec0214f92d65f8978b13d0b"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/cve2025-0587-vulnerable.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "16fae0adae42481d777ee7204444c5bcf232037129cc42b20dac0d8b50d5ebcb"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/cve2025-23420-fixed.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "cafd5f406f452b7498fa45ab9fb32dddf5ae0f679940df5064866b19c48cc65f"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/cve2025-23420-fixed.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "5eaec8e076e7e8da41053096d271838c3a1e47318fe45e34c6bdda2c2f1121f9"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/cve2025-23420-safe-control.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "2e35b91af6c8c3acbd89350f228c113bcb13418cda49a476ba1e57997246ff98"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/cve2025-23420-safe-control.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "f540cf8b36d10f807cfaf5b38e13a666fe70cd96b4b45e12e93c41f09355ba04"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/cve2025-23420-vulnerable.json",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "f66d436f7c0005a3deec2aff1ab677c571603291cc815998452bf0131250e214"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/cve2025-23420-vulnerable.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "3c2a6351594f9650fd46c54972943c0015b647f1876f6b235090d9c7ac1a33a5"
+  },
+  {
+    "path": "research/evidence/cpp/a_final_closeout_20261020/verify_a0_preservation.py",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "9c8fffc36b68b30a243ab6de867c98a0a7b65576cd2be9ba81af5fb10ccf5dac"
+  },
+  {
+    "path": "research/evidence/cpp/c_alias_profile_replay_20261020.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "e22d1e0bdf2bc443a34751873f47ae42316126f663dc123eceb3bc5d2b457ae2"
+  },
+  {
+    "path": "research/evidence/cpp/d3-libpng-46675-closeout-20261020.md",
+    "source_ref": "origin/codex/a-line-final-closeout-20261020",
+    "sha256": "8bfc2e63dc54754472999aa61f70ea437448ebd1f56712dbd2ecc4cf8fb6a071"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/SHA256SUMS",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "9832b7588e28849f38b5e31362f4227628da6bde6a34d1f4d8c172026f0e59ef"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/contacts_parser_replay.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "19ad613ca2e226a7529e1c0c851c86385cfc52e978b7b4382f804db7129a86f1"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/cve_candidate_comparison.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "5fb9deaf6a2decdf234728bf89a3923ab3f0c4b78599fe33400f1927dc7f491b"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2022-42463/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "8f347083da55423558bfffe0c6c5f97741ebf4e0592adb5b2da6ee74af6822f2"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2022-42463/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "17ec08921e982f591c883f5efd918dd4de27d9330fe42bed8669fc23766c143c"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2022-42463/fixed_locator_replay.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "7083d87b6306e1c7b93997dc2adcd096a60688d4b16611e0e1312deb1c04833f"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2022-42463/fixed_locator_replay.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "7f914831564e31a0fc3b7b09d363e21b480068bc519cc1bb6b64d4c3e36c8ce9"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2022-42463/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "9475d4ef7381fdf58eefceb924bbd17e148a183dd51ac5146efd8ec4fa5de380"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2022-42463/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "1de466d5503926a331007b0c9984bb8445a5fd0aaa3a4231706dc8ec19bcc273"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2023-0035/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "473ddc277191d1c7fb6ac6327514b43533a950aca4f9d734186ad9dd24ed90ad"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2023-0035/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "82d4c5878e53363916c084cd7f6dbc3e3116919399ad488f51d019c8b3e4aa6c"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2023-0035/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "f2344307512aa1f685000be6fbaa21e2a273833d7ae54087ac16afa8d213fe94"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2023-0035/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "25f08835d8520cd8bf51746751ef37b013f8e472d9385fc1ad286aefa35e5476"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2023-0036/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "b8842617d388a8d99a126ff7a7c25bafffcade68ec219a7e53e3401b82ff5d87"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2023-0036/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "728ba7e2dbcd4eb7488488e5d8e15c23bce9aea5c7a4af667582c62def24be0e"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2023-0036/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "1fc25612dfee801ed814eb0159cc69d34bd0c3882d41c88b5685eb7456696361"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2023-0036/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "a97f931fb67091ccb7d4506211b6b06b20a7bc59289016194da33a068c894a3d"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2023-25176/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "6b8eac4b6fc19cfd723ac331c37586e711ad278d3e337636e5862ffc6b821fb9"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2023-25176/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "7313751039a4ff641c093bdf46d326d644cd5072a2258e44d6e13f4b6ce1155d"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2023-25176/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "210f97097fdba6aedc39b5a86bee93e252c682bd0af5431831a0b74f8d86e3d8"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2023-25176/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "d5592a8d0191ed7e6e5f987c13bc18e9ab25e22812be5a7bc2064970d4ff21d8"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-12082/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "8b6a25e35bb3b5b4c400237c52ebdae55b68226323acb40654afef57b835dbb6"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-12082/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "e8488382d1d21dfe945a89910fc35b22fc548e7de19eba073ba91042fe4d6d0d"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-12082/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "4c2e9b693a0239f1d46a6cf918dac1c2eb0618c3869721fdaa94507792d6e8ae"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-12082/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "f640db84e3dabe135c4fab71271032d9e9e8bdd999a6e04289ac888b862adc1f"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-21816/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "80a8f0a4c3b1715c8a7c6cbcef8757b0d3d642e3bd1cc4afd79615e53efb43da"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-21816/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "d9e98a6a6e0593bd4df7e562d6c866eb5b2020ff66302f3d3e0d14bf7e98c4c9"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-21816/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "7dea4879c40b0b1fdfe6e98253bf2c9617ab32b5a6327c1ac174a044b3f6c98d"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-21816/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "c3fa79274bfc36f04d77679e5995202cc389b78fdcf1c1855193962401689d7f"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-38382/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "c67efd46db81d9d0bff6db911439ab1f0be11425c72bcbfcca284fe5f31558d2"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-38382/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "6b6112d84d9987db03c5bd97d7225c27eec8488811105111cb737b14450aa0ae"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-38382/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "bc73c8fdae90d6f401fa18951c7cf53eb0eaa0b34812136a1f081635901deac1"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-38382/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "843b5626524e6b4f455478fb188ea6d3cf38d929578cf6234b659a300fc733f6"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-39612/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "819857684d4a45951e7ae586de445660325cf38f1d82731e0776096fb2ce48ad"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-39612/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "454d24ff8ae85493daf3a0a28bf7afc21b79676e196e63f8117419ccd4c0e387"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-39612/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "dce91241976a5684cc5a0594677202ed25c13de5aa16ec9cc352487204099999"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-39612/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "de949c5d42cf619baf3ba9d0988e79f3b45cc452b48e9d5f0b94df2f49b5d41d"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-39775/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "aab70343a62f0ce635d6b7e8564a9da7e194c4cffd722493110d36e00affcf0e"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-39775/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "2e0618cf97c017d522fdc810545cfe24e12f56d097fe949e698b7932ed84eb4b"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-39775/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "fcd34c6c6d0dd922be70d1c15a3ae9834f533b825e88f2d2dd85ac8a7973fdce"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2024-39775/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "06deecfc65a11610b57579153e20cfe1aea1180c6448a0aefec4dbc6f1403898"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-25212/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "bd65f891877e2d0c98b61211a398ff8af4931965efdc0faa3dad5d0d8b1db7b8"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-25212/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "58732356da3cc9bc969d246a7374e63b3c47bf13f7a869f4708b7c4b12620b41"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-25212/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "d40aab52f71fea70bcd3926b89c3c553dec32601323f6c7a776ef39d428621f0"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-25212/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "df265f612330d78cef9b62d8d592bbc9d1a2090d4f9df36d33fcbb1962303fd7"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-26691/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "7efd072d62fed70a8825832860f6686c41153b98616d9ae2f2344a026860742e"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-26691/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "d239dd10b9d09b1c6a04019375ae33ae748f2634a063948110ece7a3f6018735"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-26691/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "979510fbd324350795d5125a4f51100600d746487e7bebbf94a2a62336d50f55"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-26691/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "9936e6ac02f37d59cb125b675af20e60f902c3a2412be69761cecc22400cce99"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-26693/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "d5e649ed07697bb1a29fda207bb3e7bcfca61d9fa13bf1b2515884baac1fbcac"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-26693/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "54df69f79fbfe0cf18127f7539fa068e5430fbe5adbe9f2899ab40257a0dad75"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-26693/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "1a5e03464f469bdf7db0fb366c02be85e2008df069b74fcf2751098030e94b0f"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-26693/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "57107e59acf95b3a4fd5cb51742a46046208d614487a26bd5550beb05e18c1e4"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-27247/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "2d24b9c2c556687d05ee7c4a2435c2185df780209f9f6e55af782fa835481ec9"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-27247/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "a5184e81daf9c24bf72ad3dbe361635162e2cac5b610855916538ebd5f352815"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-27247/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "b8ee2229452b540c550951928db4fd4d3313f2631756128efaf7cdb07a2b1af3"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-27247/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "de623ff533ccd5698b52c9c3426370d939deaf7d3b7928063c651c862e1b1c55"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-27563/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "b5d6af66aa9e47310ff8f5aa2c55f2417a8c247aaf72eb92f6808fe03d63a9be"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-27563/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "851cadf6692b8bd74bd3d56f89139ecda6a330fcfe487d74d0acce155c29f0ee"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-27563/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "64f2421e2ea40b45520319132f1cd80d4c4f6bd4601d1424f30c1d806e57bbf3"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/cve-2025-27563/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "45b6bfee058436024956908c0fde7f07f620b57fdd46f9bf47679854f487c317"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/disclosed_cve_0.12.13/summary.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "b8a06572fbf6e75fdeabc811ca7c67134c4be3e5717bcd178276be14bf9f7fd8"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/aafwk_standard.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "b9f102edbdc21ff76825156ef2f3752dbf921aea247ff0f5ab76e052d96c6f53"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/aafwk_standard.log",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "1e5a32c2fdecfa850d59c51e761379b1657493fdf1b35f0fcb52d74d06209fce"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/aafwk_standard.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "49a5e221e928d2849c18c304dd606405c979606bc7448ed852b8c913c3f7a6eb"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/applications_contacts_data.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "ab21c8cf451eb8a6e4e06afe6647ca33214f9c0b1c174f51a3fefa8d9b2d7104"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/applications_contacts_data.log",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "fcf7adb5ebec04454d7441bf3004ab1286f5d354ec3124d213c8ad31ff8aa73e"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/applications_contacts_data.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "6efb4b9afec5c82ee63460732556aba2dae726b367c5b6f6463cffdb969a2821"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/communication_netmanager_ext.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "9ed5befc13f5ee38efa7f9cb87924f5a26d29977ab58f5db84bb8d2d6ad53eee"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/communication_netmanager_ext.log",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "fb6cac122ccfc0074b006db1fa13862f930827ac59db2f1934d2bf544e2dd13d"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/communication_netmanager_ext.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "c7bcf27ea33055679e83e915897d416e2146605e7d9a4b9dfed7a1e045a8ebc0"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/distributeddatamgr_relational_store.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "f349628329f03fc796934efac31e83fee2ad0a36a001ac08137fe3b3b46c09fd"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/distributeddatamgr_relational_store.log",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "2a3e48caa6a2de2f4da6b9ce6b639dab7c8a3f7fc59f0c10fadc46356339ecf3"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/distributeddatamgr_relational_store.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "4abdeb9233f2661e5e458d8c505dd2d4099b9e3d46d4b0805ffa907a20ab42e2"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/graphic_standard.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "cd10768964b8eb26e391b8bba482fc8f6bade145fc0913d7cc264da2b7a07f41"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/graphic_standard.log",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "407a79e379fc3bc6ab9f97112531aae177ff0a14d03264f7310ac7ad1105c5bb"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/graphic_standard.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "7b4af46900bc8a0d54d4f46e5c4cd5ff8a2e5e8d7c46f1920467c3af220214f7"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/miscservices_pasteboard.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "e190e6e968cfda2e2e82b703513336c34f9fe768e316a93d7e53d242bde9d024"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/miscservices_pasteboard.log",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "ca9f0e8d36a5aa6e7c281132686cff14868ff58a7c8b97e736d52ae4768d995e"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/miscservices_pasteboard.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "b4f3fb1e6fb9b91f693de2ce04422a6cebb03d6e5351110794e039ee3815b5d3"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/multimedia_histreamer.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "d58fe272bdbb54b09f2529a197c835fd511b067878da33cd999e7cb051b7053d"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/multimedia_histreamer.log",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "99a4cc92c73f05b95ba633c66c0f4a0818c0da852524403421c7220b4fe962db"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/multimedia_histreamer.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "76326afc5b2955de2ffdb72bbc939b420eb71662609c28bf8e7ec76976f31e2a"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/security_deviceauth.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "749d7ef2e11ec70fa7957b4f8f6b57c88c75bb2bbce52cc3f6a6e26989565a21"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/security_deviceauth.log",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "58a7d3226f22b5164eb549a2a7f1891c83efa0f1663002dfdbbf3cc02a72e28c"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/security_deviceauth.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "501f9fe9a7449fa537a9708bc4f97cefdf988bc427f692ade77dcddd8abe7acc"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_0.12.13/summary.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "b391c1c4c3d9e01856511b71604f02489c034fd89d842285f0fc2138f4b445af"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/eight_repo_candidate_comparison.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "492ed1437f5d690324efda60588c8d2a3dbaa1a1cf9b5a273e34533a4b5eb9a6"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-contacts-preprocessor-whitespace-parser-gap.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "e8c879e55156371f50b200d9bd29832d2e352383791993edbf16cfbe24196936"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-contacts-private-normalization-replay.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "01333f6eb52eb78f8e1e50777d2415cc8373c3ae4f256b516ef2b55799b4c9aa"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/README.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "53d4c69ee866e9b71f7d081b9d3fe80be5cb5ca88aae96bbee0c8f4ff77a29cc"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2022-42463/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "adda2248cd42ab92f7ff67869b91246a9f7d6dc1d668b419d4ac217be7d728c7"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2022-42463/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "e9ae6515eedf5cb1ab3661fc587f98b228c65b7a0ae93bbd0a48577568590b29"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2022-42463/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "33ecd1519aedae8007ce06671744a31561eea53185769dae5b68844190abdb2e"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2022-42463/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "e0ee0d7dda00977e056bc5c373d75fc0a7acd035d3753c0e53c49f1340256258"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2023-0035/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "fa16131eec7bffe7c34f412bdf12b23671f43c874fc382b081a3fc7bd43b0ead"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2023-0035/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "bd8e4274f7d8ab56d95c6216601b02871faca5b4a56e1eda0dd9b52be55a0b7b"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2023-0035/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "9db011022452259a98742d240579affcce5faf5d007eecf2c1201be5412a0594"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2023-0035/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "cca9928a4f801305ebba5c33c0aca20fa9e4b53c1f8a5c8a18c678919e70772c"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2023-0036/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "6ecb36eb0db23e4ab1d64fc259fd7faa078986224da29737d7d66fb7604ce614"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2023-0036/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "6df8eb4c7fdb9781c9bf021b70582f57eeae02b1b1595e628c31028fd413717c"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2023-0036/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "19ad40c0f28043895899a585060b0bed0925b367e31929dd8d6d947ab1cb7e37"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2023-0036/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "03a89548e3c0e89dc0a1d14e5e039dd311bd4302c946ac94cf6a7dca05c717d8"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2023-25176/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "67095066642e6469c44bfdb8944ba78b3c5bb20043d63db3a2b44402c53dc457"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2023-25176/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "0c11311c2b2020afb4b30126b9c0aa46c364abc8858151eb5a7fa4af0b467cf1"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2023-25176/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "9b2e575a967bbbb578f56c7b5bb83146f652b52d08d9455a271ca1ff8be663e0"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2023-25176/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "c607c17fb23422b7667ed28b25f5101b17912a7edee8f8846189a6d525b0c108"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-12082/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "1bed2a0a30dc91a3a13445237b8884714ea606a714acbb1335a6cda040aeb2fd"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-12082/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "c14be34aff7449758ccded2a0de618c96c9ba3e3b42bca7e8d4ba25a82f96de9"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-12082/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "25ad9c78991f2bc69dd1de9a729749e5c7374bdd702bd6f4730e88b0f3936ac6"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-12082/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "8b5d10575b5ca3c05cb0e24bace21eed2d58478461031522ffb6d51e116a0daf"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-21816/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "03da9773d59203dc0da26359aa8b098a6fe305ee2892f454d3beabbc0a2c7166"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-21816/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "5b183d18bf8f39bec09be8aa0f72441e791018da4d027f0cfa0f30ee29669278"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-21816/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "da5bb2d30f72736255b6d085d99eb9457bd5cefeccc3e3246498b639b92fa442"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-21816/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "0f2769d0547fc03cbce6b578baace28c71a77eaa9f1a0a91559a7b000c72e51e"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-38382/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "1f8be3769b99ced9a79b9845ec6d5da31ea9045b59f2a04bb302e74688ee220d"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-38382/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "457b9ab3dcae6201007f30ec4c01b7809978868484304ff702900db320fb63c1"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-38382/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "4b9bd838749bbae4c1940bfa5b6d799cd89e6d3e520dc6727a639ffc48489020"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-38382/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "9c1e09f06d8cc7fe95e6dba969373ac05b839b7afe17ef4f2a81c54bbb43b546"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-39612/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "ce5a3f80db80da592d58823331977064b4a75da224c359429c446dfbeb5f4081"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-39612/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "9341558a4cdc2c9c41a187c632a6508df36440f323451e3aab981b24e78a430c"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-39612/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "b6235e8f4f9c7261f099b1f251812c40e7659897cdc47c3cf73cb4a56c71cb1c"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-39612/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "9c66de404b3abac0bccdbdcfa52dfb6e0159182b27c0fe30d67bb4372f82ed22"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-39775/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "6bf91b981b7ef306616673849075123939521873ef21b3bdb94110879431e91b"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-39775/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "6946bd11aa434d8e72c266bbf3906093a05e50ec4826657e4f380ec81863cb21"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-39775/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "f19134e0bbebb86da70dd0da84f9a137575c1e830c698edab4921e818f9ab56a"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2024-39775/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "27fb922084d903ec752c7574218ad050ccdb60cca4d40a4f8abc5fa343f8ca26"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-25212/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "7c283b8d23349d1a1279d9688800d9807ad524c7cbc0ab056f7a1df6482a2c2d"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-25212/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "451f7ac1e834ec119c3d055a419dc33893e048bb8c8bf3aa8036abc2d71af7a5"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-25212/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "3cc61d9b559294c17240ca3c42d33e86caca12d4d018fb8467d92e4aa1293d61"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-25212/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "bd525ee46aefdb32a6fb44f62fe1b0f0abfe79e5d385e508338d34ddf8b4bc8b"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-26691/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "937ef271308e1b41e0297acb1e27b0d8ad3df789b605deaa8405b69b85ce5c01"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-26691/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "55ddc3a12cd6e0c2221dcfdd545e558d1cb235289fa6b9aee7b94a9894da1873"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-26691/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "b392aa224e6970de302fc123cf9da5ea09665b5569c1a9cd33706a570aa058e5"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-26691/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "3833f77c1967b000f11ce91394921ce4ee6285ddf7fa78b5da259425172440cd"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-26693/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "6d9314ab74b24465fdbe4a4ff6a4b2c8e1d0d43384333cb846324a2a6b2efa3a"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-26693/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "93c9676caa66ae2e0b8a8429520c2f953545a178d5f417afb7089d8e3f4c9a75"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-26693/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "851e242793b71e4859a16e3e1de6a4177aa078e39fb416d1821fe7395ddeb46b"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-26693/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "111e195613703b684ce9c2c2666509e6daf12e89b94fe3512f3c427f7f165d99"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-27247/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "bda7d608f41fb2c433303a809cd8b0dcbbdfe61e2295d2f836a18d11c98196c7"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-27247/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "c65d39d327550e41f8991db991eceb62bde6ba6a0cbc2dc832e4cca41bf241a4"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-27247/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "213c7a45c2607a6d40abc3026293759432d2e217d01b90734a20888eed14f9ee"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-27247/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "3141b5e0dfc9eaa9d8a15213792aa8bdf2ab3198b63f2c168b982480d894e7e9"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-27563/fixed.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "f3edc825d27fc9dae00d409420da0f3b90c71d89619c6125e038f8a02462ab17"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-27563/fixed.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "2e09174d44dfed5723a23893b2a96d4656970d0abcc2a10a6d5136d40cf1e5dd"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-27563/vulnerable.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "6862dbeec7c3cdf01a90eee7ff026d27714ae0017451ceb1029bd46ade5d430a"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/cve-2025-27563/vulnerable.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "20af27700bba9e39a11f595cd1f22ae38246293e17089edc99911bd201e4cdcc"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/replay_current_pairs.py",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "86948af0c9e44f6d1fa3311d67e90fba01ed5a04e070fe444c1acbfbaa065a5c"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-current-cve-replay-v0.12.12/summary.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "4c912ef9ea7d266e786a838f78a4eee1ae5812b1a298a2e7a8a69ab03f93acc0"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-candidate-triage-v0.12.12/SHA256SUMS",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "d050c56697a22b5af43812db3ae12f7d41870ca854b97c844a5456e898498cd5"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-candidate-triage-v0.12.12/candidate_triage.csv",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "0f2a928b0d3ddd99ed75d2cbb8114b6aa30b48c7a7477a61d48be9bc049cbbad"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-candidate-triage-v0.12.12/manifest.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "7a45d48ee3edd85c3bc52be186c94166ef658a9b20b0df348baf114fa5b60ee8"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-candidate-triage-v0.12.12/首轮复核.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "a9d55414f700296e142b7df87de3d0853a314d840a1f8e427251b6fe35bfe01e"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/README.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "e2730f14474ee27a02425c23cf3ac88c6b994edc66d2b93e9cb278b9389ad959"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/SHA256SUMS",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "ea2ebd06cfc92f36daf74b893ef0c5de9262a1e05f11cd75a7d88cf581a410a1"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/_targets.txt",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "b9a4c2381d0eab4383b06a70ff45fb7cd4b47ec125480fb7d4120849d3fbb278"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/aafwk_standard.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "d5e134a65471aaa8b2e696623acf28e887c42a0e7a15861be31732273baf6b3d"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/aafwk_standard.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "4791f034f23c386a3be1bcbbba42837ae4070cbe07ebebe219632bdccfbb7882"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/applications_contacts_data.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "bf4efd492755defd0cd7d6a1295334cf8d35260fb2960431a322db4448458b52"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/applications_contacts_data.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "ea6971eb4aeedb675f370a99553caeb29c748b14a5b322c8195e013254b74c1c"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/communication_netmanager_ext.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "bd04b6937d2b47a9cbf07d8c7b546e3a1ee384cf32f1c3184405b906163bd8da"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/communication_netmanager_ext.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "097b7181fcdcebf43c53208c35f84cdfc1698f3f4cfbefc5719a60b539581e24"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/distributeddatamgr_relational_store.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "3dc949db8e6c80b809b59996b33a343e87b46d81e3ee71a36868ebbee4404922"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/distributeddatamgr_relational_store.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "8985a6c7289625e2c5dfa001434c66df5e042b239373e62aecb5fd3af2aca7b6"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/graphic_standard.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "a2a643e13accd55b1f13644d9cfac18017e139a8acfe561e93be0dc0e8d35b59"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/graphic_standard.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "648c2c94db89f2d90b35ed68a24b7788409de0087ea51be89ec9c9fb51bef370"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/manifest.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "72ef1843fb749c062c2a08d4de1c4c3ac8ed0ad622b19b0efa2306382be42707"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/miscservices_pasteboard.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "ce478cff27810745175aebcc7256fed278bcbd3ec17e49eb5753525c97c69bc4"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/miscservices_pasteboard.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "fa86daa3f4c9f7a1fadc16548aa0dbf163790bb49048d79f1ac93f0c1431bf59"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/multimedia_histreamer.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "3a09dc269f535807a53a6e162830bb0de3937e2c0dc77cdd805231ed455df93c"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/multimedia_histreamer.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "5ed74c9ef2de9d89e53b761c54166679471810b3183634bf9b4b4bd1f21e109b"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/security_deviceauth.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "a6f44fb00b301b070c4d6985417aa9bd5132a73514530f449eb0b7f9b6b3b42b"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-current-v0.12.12/security_deviceauth.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "6050b6068892b8b992060d2421adc117529708d0a9fcb4df93184b71d84f4340"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/README.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "f499b9f0462e98ea1cfad233b721e5090b5ce09e6027bb7b0bda34b2cc5944bc"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/SHA256SUMS",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "4c9bca19112f39fd7ba99524def5d517bdfafa56bfad5c6374388ce1f0d32aef"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/aafwk_standard.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "b96b39209b1f42687295497149d0b1a0cff5c3c66fe78178742c736d71d89971"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/aafwk_standard.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "5023cc5240fd52411343df26606cca04ec2bca32bf72cb185cb862e9f8516164"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/applications_contacts_data.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "7aea83660fce8537e9329f09b4357a397c6004db6a47e325d121d02663a5e9f9"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/applications_contacts_data.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "ea6971eb4aeedb675f370a99553caeb29c748b14a5b322c8195e013254b74c1c"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/candidate_parse_status.csv",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "e5cff5e919803986101345ffdf5c004107f9f69f572d796b52bab659a6d8d20b"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/communication_netmanager_ext.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "876e4c7e5cf87a2babcbb72d2697d0a5cdb8242062aeb7fab02e36a29d3ee7e2"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/communication_netmanager_ext.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "7a87b09c70457876e7acd49aee3ed160ebe29bbbc3e058388827572379d06634"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/distributeddatamgr_relational_store.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "cf26395affb354f281b421162aa9118680ebe3f71e96ffae8502ec2ebd608358"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/distributeddatamgr_relational_store.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "7eb652d3b18f27ace0c8dc20a0b61089d0c434408bddd24a302caf3c8d860637"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/graphic_standard.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "8b9627221692b2af2594d11f117248541dccb9feae23bb58f69804ca089af136"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/graphic_standard.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "c4d96a5c7083020329d6cc32d650f539e010570692115cdd1ac94771803ad44d"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/manifest.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "d7f903f94a42d9681b804e63c594e223070a2966ac6fb6ac339c368b3eaa25d9"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/miscservices_pasteboard.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "1863256ac95263dcabf80c56be22f49b8c976eb1279e253aa1f1719bdbb0243c"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/miscservices_pasteboard.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "ed213bb058b72097adfa4c5144c264cf4d98b4bfcdda03649118e97ce412cbfe"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/multimedia_histreamer.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "e0f51ee30167b230258916f730bc0fef0cbc735bc9ad309b09b67b6f2ac85250"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/multimedia_histreamer.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "a606196a2b251627d50cba13ad59ccaa942e6a815c1e093fa133c642b9852e75"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/security_deviceauth.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "69c0bb7566e739594eccfa1f43143868dfe53aefbae2b77146bf472a82e15279"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-member-pointer-normalization-v0.12.12/security_deviceauth.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "6050b6068892b8b992060d2421adc117529708d0a9fcb4df93184b71d84f4340"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-rule-coverage-audit/README.md",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "11335744c45e883dcf8844079f79e9fb999316ab3b53b6312b78d1d5e277f606"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-rule-coverage-audit/SHA256SUMS",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "51923b0e5868cceb2ca524a2a7ef8ae544be109366e0b6524bbd22c00ff6dc9a"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-rule-coverage-audit/manifest.json",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "425bf1baa1b551339da67b0b8c54ec50f66d1f6298aa7f0ef8e199d929cd27bc"
+  },
+  {
+    "path": "research/evidence/interface/ipc/bline_closeout_20261020/historical_inputs/research/deliveries/ipc/20261019-eight-component-rule-coverage-audit/rule_coverage.csv",
+    "source_ref": "origin/codex/b-ipc-closeout-20261020",
+    "sha256": "32513231581c90252ec151fd527dc3e251cedd688bf114548ab5f00c4a3274da"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/C_LINE_ARK_STAGE_DELIVERY_20261020.md",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "3f4dde34becdb8ebbdacc200af3cc8c3fb7d70ed34ac6c5fe4eaae8a24bf046a"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/C_LINE_RUNTIME_CLOSEOUT_PARALLEL_PLAN_20261020.md",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "85d8f1df20a7016541261229a6a4f2bfcdfdcadaa93461e0268ee0c80a73262a"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/C_LINE_RUNTIME_CLOSEOUT_TASK_TREE_20261020.json",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "f4db363316747065ae80cc411eca67cc3f8d6e98afae4617c3d21a7766131078"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/C_RUNTIME_TEST_ORACLE_20261020.md",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "8638a46c8a6a4d9a73265c4241624a311131680f3233fa8963718b410700e3f0"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/float32-missing-helper.json",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "40fe5ad3645269cfd46f1315cbae7506b5456373b85ff824a2ea818ce80db96c"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/float32-missing-helper.md",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "9211bc8fdb77d2bf93659efd8554f1cb5eb9a45616e28e9d7d26549e1b807be3"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/float32-parent.json",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "8e4c006247637b98863f88dbe2f4577071a1c09149fc04e702dd13c0f42e374c"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/float32-parent.md",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "c2bf43aec90f3f6dff9108698b51b46cc0b30e028dee3341cd2b13bdb656e29f"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/float32-wrong-repo.json",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "18b2cb7664838ecc98736579aa0d3cc0ec0a622d640a02f95cd46845cf865c80"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/float32-wrong-repo.md",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "161ff9a4a17e59fc3ff9df6915cdf9477642620a02bad46b6278b249f8a0a6ee"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/typedarray-set-missing-decl.json",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "b567dc5f5f0a5224d3ae233e67f118911350ebb91b4d50e1ae5bb5ac23ca3016"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/typedarray-set-missing-decl.md",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "fc8caaebe187b6744dc8cb51e06e1e40d609b17a29cf8cb0aa2f594894e48069"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/typedarray-set-parent.json",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "cd4c7d9e6c8ed634fc47b95a7a36cc450ef121a74241df06f9a507f16f870261"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/typedarray-set-parent.md",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "3b858b0d022714a3913205a06028fa6233ba5681c23c104947f1d36ef5125818"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/typedarray-set-wrong-commit.json",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "d3734179b51310d412dead775efcd8d5a6e87e8b0a28e3d11ec5ec6f12767993"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/typedarray-set-wrong-commit.md",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "9c9b39a09143132df62a643257d0df2ceb7ee21a1be1c8de07ea6824280bc92c"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/unrelated-input.json",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "005b965a26eb6a720f7287c319601311fa4e3b53c74425580e01c398696585f0"
+  },
+  {
+    "path": "research/deliveries/c-line/stage_20261020/cli/unrelated-input.md",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "9b8937875a4b9473fca973fcd412c3b4a3b6feb135d351ef7933951df076ffc0"
+  },
+  {
+    "path": "research/deliveries/c-line/typedarray_set_offset_runtime_acceptance_addendum_20261020.md",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "2b9bbff995fd660ba83a8cdb5c9f6b11e399d9d5525fd5bcd494570ec198f7bb"
+  },
+  {
+    "path": "research/deliveries/c-line/typedarray_set_offset_runtime_independent_20261020.md",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "1f6983d4b48aa16dd4290a02bcaa944e80bac994b36cf8fe5b3dfd9e2a8814e0"
+  },
+  {
+    "path": "research/deliveries/c-line/typedarray_set_offset_source_delta_independent_20261021.md",
+    "source_ref": "origin/codex/c-runtime-test-closeout-20261020",
+    "sha256": "5c145d0651584aa1d14747a39664782b3de53dfdcda49fc6b611f79a6b4efbed"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/README.md",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "d1ec627f6016f6b223e3185f120528cef389c830dd0225693bcc7bf126d9913b"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/SHA256SUMS.txt",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "46786dabced0d00b84699a27d230cd6a285c744ea2a74c8f436bdcad29e0a838"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/component_harness.exit",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/component_harness.log",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "8d2f670944f59bb5dea5e64e9b1e169db2448aeefedd8da0836b078058f4dc09"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/d1a58_source_replay.exit",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/d1a58_source_replay.log",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "9b619909ba0009d204dd5fb96ad0b3c370fab8900c1dc34f9ca61a81d3ca74d3"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/detector_regression_11.command.txt",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "8265ea8c82daeaf142296319889418533146e4315ffc4cebbaa260b0c7d4a6b8"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/detector_regression_11.exit",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/detector_regression_11.log",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "749ee78e4a1586a15eaee852aad2eb3c697d925e07217f23a692545323053b84"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/host_selection_hb_set.log",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "817c513f25297e4b9357141052b3504d06c8b65a33d6497ae1f9771fea3ec6fe"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/host_selection_shell_exit.txt",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "9556b82499cc0aaf86aee7f0d253e17c61b7ef73d48a295f37d98f08b04ffa7f"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/independent_source_delta_review.md",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "5c145d0651584aa1d14747a39664782b3de53dfdcda49fc6b611f79a6b4efbed"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/rk3568_args.gn",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "4cafcd7f23b2d31b80170f63648355f88ef09859e3df572b68f9197e3af18276"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/rk3568_gn_error.log",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "47e96a1a802795404189efd58e7592aecf9b90f609245b2cfb19be1bd8bb5da0"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/rk3568_hb_build.log",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "354a8cf04f71d86d8812d953232ca65c5731f25697ef6f7f4c8e3122eb8f0601"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/rk3568_shell_exit.txt",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "ce8bafb38615aeb5d44ebbabe78ec14ac35a5de87bdc5ad5ea82a72656024ce4"
+  },
+  {
+    "path": "research/deliveries/c-line/runtime_evidence_20261021/validate_closeout_package.py",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "c3865a4b0c87a750418776ba4b0dec8a305e9d7d941cf068845319540222fce6"
+  },
+  {
+    "path": "research/deliveries/c-line/typedarray_set_boundary_harness_20261021.js",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "c49f023914cca5db4a2ca64c4d4a5ea6da3d346f5f412f7396f767ea7973fa96"
+  },
+  {
+    "path": "research/deliveries/c-line/typedarray_set_boundary_harness_20261021.json",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "8d2f670944f59bb5dea5e64e9b1e169db2448aeefedd8da0836b078058f4dc09"
+  },
+  {
+    "path": "research/deliveries/c-line/typedarray_set_d1a58_source_component_report_20261021.md",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "d3aa829429eeffe7aba40678230ebfad823df5f7b0ecd17270e838ee37f8cde9"
+  },
+  {
+    "path": "research/deliveries/c-line/typedarray_set_d1a58_source_replay.py",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "2a8d7a91d7af6094602e6f2d0bd427c20ba45173fe8360c58a5cf0935d74c427"
+  },
+  {
+    "path": "research/deliveries/c-line/typedarray_set_d1a58_source_replay_20261021.json",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "9b619909ba0009d204dd5fb96ad0b3c370fab8900c1dc34f9ca61a81d3ca74d3"
+  },
+  {
+    "path": "research/deliveries/c-line/typedarray_set_offset_task_tree_20261021.json",
+    "source_ref": "origin/codex/c-line-typedarrayset-mainline-20261021",
+    "sha256": "7f93714caab064edd8d914b95ca59d1e6866090ced414a7099d7fd997d9bc171"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/AgentLLM/deepseek-r0-r1-r2-live-results-20261018.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "d62096fc1bc3bf25b3f443c096b203697fe51b797746e4013a69498c5801c890"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/AgentLLM/selected-taskflow-offline-smoke-20261019.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "092a3f2626375d1aaad0c662925b15b79dddf3e6246765b467a5e5ab0f93c9c6"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/AgentLLM/大模型层Agent工作流与实验设计_评委版.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "8b56dcbe2e721643f2b01bc0df67f0931e0bd8af9456f7ad34ecb1e86e768306"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/A线/A_MEMORY_SAFETY_DELIVERY_20261017.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "36984ea20b378ba4d9ec12056ef28114aa9b448061caeaac30f47a29ef6bf46d"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/A线/A_MEMORY_SAFETY_SOURCE_HASHES_20261017.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "4d70b0b0717d78d27eb17dca205614fb0304cc18e02549aa8db8f81703f345f1"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2022-42463-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "70e4e942f8699702b605af9394be7f3133a9c99440bee4cadd8684b74f3fc954"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2022-42463-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "e56c4ec49d842356035cf47a7a990ff554323cf6ad89ac92891f45c1aa30357c"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2022-42463-vulnerable.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "54d9e06285a5bf1eb7f7b7be056f8f56c24d987a949c7d86d5269f3b838669a7"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2022-42463-vulnerable.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "5464475f72aef111f5801c9783d93847c2f3854892934d0e0f47b541a4083954"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2023-25176-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "de90d2906c15f9bde95dcb1031a8ceda8830b7845105633be2bc86b295612a6b"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2023-25176-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "0c11311c2b2020afb4b30126b9c0aa46c364abc8858151eb5a7fa4af0b467cf1"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2023-25176-vulnerable.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "42ecf684dcaea00d422d6528816c69af8882471cc4686785f80409c92fc36169"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2023-25176-vulnerable.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "c607c17fb23422b7667ed28b25f5101b17912a7edee8f8846189a6d525b0c108"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-12082-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "a38bf7486184ee3ba221d8e09bcc2d65ff259637fdd3549972af5073d528a321"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-12082-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "90eda27233791260b0c48fbbc03ec42286c6830da71e40b026e7aea8023d7a37"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-12082-vulnerable.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "dcb269fe0c3b9d8c7157ee603f5d8d670854cf9c25cfe93a21863291f5a19eab"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-12082-vulnerable.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "5dcc96e31303fc8154c1d89a871aaf290586e018806688ff3768a357fc5083eb"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-38382-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "2eab86d04d3ea1430a3e350701fb2dbf354394f8b515eaafde8189f670367ee0"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-38382-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "c0ec1b37a46c77798bcff47afc160943edd24e9e5261976ae51f2c58d9cdacec"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-38382-vulnerable.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "eaaaff9ac31572dc53985d807fc2fe5162b66eb25a6d5547fad963eb970b1fd0"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-38382-vulnerable.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "308228c7e39622e6ba0485f6aa8c0ac39857da16b7a3da341c9ec7fac1f9e6e7"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-39775-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "37ae8f3b058ed3000fe56845c6bbebefb195bfa42f0e0261c0db6f42be4ccf32"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-39775-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "2e6c07fd2b2b7885a96718abbb20d93230313fdbe2eeaa1cf4100234facf37e7"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-39775-vulnerable.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "e18e3cc9e8c2e6519902aeffcc25023158a6b27129cee714b462010e88770d30"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-39775-vulnerable.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "23f3b62972a98f81375f3c551a25494f82d01638e8fc68f8b98325539b449976"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-25212-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "8c5d763edcfbec75fe37b7390d6ca487fbf08366a781bf062ddf687df136945b"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-25212-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "9ef4d7ea1719411851a2d21e8a423d739766f12eb7fa51d27a58992ba3a5470c"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-25212-vulnerable.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "a2de9b4d9eff11f6a77e15db1263d8c4cdea18d5e12ea0d74cba2ef7ab533d58"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-25212-vulnerable.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "373979df6ca88fce9c10e40575214aa9c44d77cdd87c0ca05d3ebfb03da5694d"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27247-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "d44c6fc42f58dfd2066e127789b91ce71544b60cddc180bc5ee8dc10594f2176"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27247-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "fc87da1cb1e6f49957b1981403d0f23fcb4dfcea96b46eb24c1b4b63e884e625"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27247-vulnerable.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "d3309dab0c0f0ff3fd766d55e1d75ac9c64d90a497e4fb74779d26c632283f87"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27247-vulnerable.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "15ccd8521f2bd8dd492a738ff56ffca0dfd04f765cfce202ef02100ff69eba1e"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27563-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "22b68dd7bebab74bec178214fe6b292d20f62d1a2e2eb52ce2968f6224852849"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27563-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "4b54e628fe87767ee209609a82739cd78a77abb7198dd2ef3d87fae7e6def542"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27563-vulnerable.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "8ffb9b6f1c7e354232e5c910aad22afdf607f69c0399b2f6913abf9f1a51e288"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27563-vulnerable.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "99fa714401d1c0e9f980a08598f910e077b05ecfc36500951441e0b4ed5e43ae"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/README.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "69c2ef1f7ac37c251eca3a854753ee0763b7bc3b12150e72d42f472c06ca4c00"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/SHA256SUMS",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "38b6b9f5ce8659d7e22d5579f0845f53956e4cc95250ebd4d2c7bcbaed499e3d"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/manifest.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "ed4ac7f87b98ab635b0621bfef80d531bd807cf88addf2bf6dadc136d777a790"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c1_20261017/C1_RESEARCH_PLAN.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "2acf18a8232317a196e5a3c6add8f0059caa207042b08e0f60544d540875e15e"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c1_20261017/case_matrix.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "83bed3df9bc84a0733d72d082aaf9bb0b88fcdd724347dce3e90112498ccf086"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c1_20261017/parser_probe_result.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "77675dc29c8d743f5d6a8c25f5dbd5271dd14f4257ef48ef3beb41a695eaae30"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c1_20261017/probe_parser.py",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "d2d69eb901c47d9167d7d9cb945cac9d287e34b32e9d23a48b9d06e2ea5f80a0"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c1_20261017/source_evidence.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "57b1efbf52d643ed75028d34ff00f69231fc73547c7c08fc5580d48533f81e9a"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c2_20261017/C2_REPORT.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "9106911f183b56bde03e62d9dee17822a9d06b0830874054fa2f7e64f294f05a"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c2_20261017/PARTIAL_ADMISSION_RFC.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "9f138a19df7cf3ea4555ca686940fe1cf939145e2845031d282d071064ca7f9f"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c2_20261017/artifact_hashes.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "985b2e3645b26d0745d03c010f6376cd0f2641c4995a51683c5a3bef5f039b14"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c2_20261017/historical_results.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "5c1e4fd8e3b9485e2e445e3cf9d4b529c9a187cebc50c5dfb9bb82b9a5061a00"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c2_20261017/replay.py",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "61833181322c684299969162778e15917bf800e2cff958e7a9a9eb1792da5b6a"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c2_20261017/run_manifest.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "46ef7d2f21b36329d36a878607a8a731ef840460e7e9f2f2caf12e2dfc2357e4"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c2_20261017/source_evidence.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "7e023201e092a8f62c4ad174a7d122c847331a86f29004cc76af925cad726293"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c2_20261017/test_results.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "6c4553d6a4135d861346974c35ab3a57ad5c71026a29733473ac574b9c74b924"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c2_20261017/verification_summary.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "8480c156758f4ab4c07f73133103f69c4b12f71e7e32d1ba57919a4e83fd5921"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_ARTIFACT_HASHES.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "cfec4407b88aa3b658d47ed83deaf8a273569ee5b6274bcebe447ef40e0c90e0"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_BASELINE.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "8e84c8b316889c42beacb489665c2f06567ee73bc10d721892a1bf698b7a6191"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_CENSUS.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "d02394af17f9948483d902372e7086d671aaa41e778016b03ef5eac060ab57e2"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_GENERALIZATION.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "0d1fd87dee2fdb78a3138de63e67a6ca4c5f2acef133c4a63fa638887e7e0da1"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_HANDOFF.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "b0e0b601ee58d4ecab2e167fa8a601a2ffbbfc4b8baa516117c92b5aebee6e52"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_HISTORY.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "bcac4457f6026088f93f256b0a7a5d3077c5aa9d6933e9c4de295e2ef2d23443"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_HOLDOUT_LABELS.template.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "2ec0aaefa1a242f3b303043062001481309b0357576e163c32831906733f1667"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_HOLDOUT_MANIFEST.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "0e0c354e565b3a001946e0d1e48dfe103d1ae688abbe6f1f37309bebc32a364a"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_IMPLEMENTATION.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "1cc621d0b030b9ce21b29ef08725620d06c7afedd45e12986dfd12b75453c205"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_LEGACY_CASES.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "eb07aa18cd7212aa98fbcb7222528575e60451cb9c451d8ae89d6765c08f3bfc"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_LIMITATIONS.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "69b55352764bd636f6a7a35283f07283e93be2017f6d08684c58e8074f4d8262"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_MECHANISMS.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "1b0094bbc6fb6114b6cb24f25a8874bd1620b4da8664b02b6039de2b740e2d06"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_PARTIAL_RFC_UPDATE.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "4ee5e9d7b1e431f8d7d199242407dbaf9ac754828df108b1776242923c96fd6c"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_REAL_SOURCE_SCAN.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "ecd94611df0b9202b7495635c3ecbf844d9fa9874ef7588b39cebaa0193b4d89"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "3bd4a74ff6dca9f6936065e4afef2fc6c79fb039536e6e1671a1d53f51e63d8e"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_RUN_MANIFEST.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "482f74f3b7abfd7f2d0a7c8c5ab3145ac047a37536e99cfcbf516fd89e25d4ad"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_SOURCE_EVIDENCE.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "88a2d0de24dbbd400d3920cfb59e6aa2fca67ec28c5e9c79cb14784a2c0a6aca"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/C3_VALIDATION.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "dc3b66252f76f204c523922daf8c97e2e41a1f834e445bd02335e77d75ca5fcf"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H01.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "c633c9b96d4766a48ba6c4a515a733c2a52575ee23512a53663fa131a19cae3b"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H02.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "5b982a72a36972ce0c72f911b3002f7f25228e5838943e03942b78c3b1d1b7f0"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H03.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "5d57b6e71a068359c29044c4fb8bac7ab7c0811e3180b75120c4294fc922d93a"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H04.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "fe3b7a99f8a8d4dc5412b97c4e9beba9dab9b8c1ec99c43596022011d8b41c2a"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H05.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "eb18cbef78d1484264f391a84b84d5c3fb9f4038329e3d39c5a4c99f8dea4a2c"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H06.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "8b3895ed6e0789d06c828327709d06bb4111f318373a8fc8effd693b845ca183"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H07.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "6d8fc766317b4c5a30cafc5b1d067a9bc312309d526df6f66106318ff1ed7e51"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H08.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "cab61c04e02d2e69e7d585598ab999ff9468cf33fff6c813e4eb0d24ef7b8a1c"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H09.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "f7d9fbaf995236650288035b95f5e5060c0c29a4729839f10a1b3430fdc07748"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H10.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "f4c635c2eb7c96e63dad114aac7d8f478b1427796e59fcdd5da9ad55686683d3"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H11.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "56b2ef044c9d2c276b13f53552d60f3e41baa0635c5fb3aa50d1d171305c4377"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H12.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "5393d4b87c0427adbe28c46fa761b365c0962d02ac2123f630731451f984b41c"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H13.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "23b6330bd79afb92dce28e843ffd0d9574d467ca8aa795d56877ea4d6cfe97ed"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H14.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "3fef6b85dd33b87eb3bcbb56752056624535c4849033ebc657e947521cbe683e"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H15.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "64ed2ca6de402d620c10d5a66a330df873d12a7ddf7c204845b0d45b321e5298"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/holdout/H16.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "cf0b0de5da4141112cf68d48b3bd8b4b6d4e06f5faaaddc812b3d6028b782ddd"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/prepare_holdout.py",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "1eb971673546738704c96837e26af7b6bc30b934c89b487c8dc9923fa8a3769b"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c3_20261017/replay.py",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "385ec23be372f47d098f9a375cbfcfe90ed2e72585b14d1e3e1a4089c8f0737a"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/C4_EXCEPTION_GUARD.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "20548f866569af82db08fd153d1193870fa7d4b968321a42e920b93888d6b97a"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/C4_HANDOFF.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "70bb94cfd818f1d121684a1543f30e84cefab61821ffe8cf09377a12f40c8741"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/C4_HISTORICAL_FIX.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "7367ddf27668d69e78bce3a2dce45c646daa50499235e896e82329f2904fc514"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/C4_HOLDOUT_REVIEW.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "9a44e653150ad422cd1328d7739091a985edb02d3f6e26bcd3f4f830e4d571eb"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/C4_PARTIAL_RFC.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "052cac3ce741833f38dfde9b22e4cb66fb5a212a73e5f7c8827530d4ed95987d"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/C4_PERFORMANCE.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "54a5b7fa1abe5af35a4f40dda22993b5f502de14ab7714696e75a024b07aa1c9"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/C4_PERFORMANCE.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "a3edc0872c07ee2cd0d020eed5ec97218e8e45cacce90f67b84b46843903b68b"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/C4_REAL_SOURCE_SCAN.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "1f66128834ee52e3f0409a4da0ba3e72d339784e0179f3a454e5fe8c4ac45ecb"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/C4_SOURCE_BINDINGS.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "0da14b27aa2dbf192a2010642847213a6fc5d7683e0e5a9bcf2d52706b9ef8e0"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/C4_UNKNOWN_CASES.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "de0f8ff8493d89b081d1a598726b2802bdee021453abcd19d2f3281838f90959"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/C4_VALIDATION.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "6d3a96a9f2837f2776d171dbea11bd483a176704f548a47f774b68c7b8a4e7d7"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/TEAMMATE_HANDOFF.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "8e2b3ab4ecf32865d47ca1852582ff12805c8ea36b15bdd9c13a61d0c5f3bfcd"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet.zip",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "5f433a2dddded9d63083c384336b86048d1ffe3374d1b11304afd674c1774410"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/README_FOR_REVIEWER.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "a3a63e49f55d44bc98e3f91fed3bbdb4fe32cf71cdc1a690c3871c43be50e224"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/SHA256SUMS",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "53e5528760181db99011b94866dc583671f95e6d0c1d22b7d20e85282196c41c"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H01.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "c633c9b96d4766a48ba6c4a515a733c2a52575ee23512a53663fa131a19cae3b"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H02.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "5b982a72a36972ce0c72f911b3002f7f25228e5838943e03942b78c3b1d1b7f0"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H03.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "5d57b6e71a068359c29044c4fb8bac7ab7c0811e3180b75120c4294fc922d93a"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H04.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "fe3b7a99f8a8d4dc5412b97c4e9beba9dab9b8c1ec99c43596022011d8b41c2a"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H05.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "eb18cbef78d1484264f391a84b84d5c3fb9f4038329e3d39c5a4c99f8dea4a2c"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H06.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "8b3895ed6e0789d06c828327709d06bb4111f318373a8fc8effd693b845ca183"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H07.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "6d8fc766317b4c5a30cafc5b1d067a9bc312309d526df6f66106318ff1ed7e51"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H08.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "cab61c04e02d2e69e7d585598ab999ff9468cf33fff6c813e4eb0d24ef7b8a1c"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H09.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "f7d9fbaf995236650288035b95f5e5060c0c29a4729839f10a1b3430fdc07748"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H10.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "f4c635c2eb7c96e63dad114aac7d8f478b1427796e59fcdd5da9ad55686683d3"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H11.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "56b2ef044c9d2c276b13f53552d60f3e41baa0635c5fb3aa50d1d171305c4377"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H12.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "5393d4b87c0427adbe28c46fa761b365c0962d02ac2123f630731451f984b41c"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H13.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "23b6330bd79afb92dce28e843ffd0d9574d467ca8aa795d56877ea4d6cfe97ed"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H14.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "3fef6b85dd33b87eb3bcbb56752056624535c4849033ebc657e947521cbe683e"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H15.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "64ed2ca6de402d620c10d5a66a330df873d12a7ddf7c204845b0d45b321e5298"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/cases/H16.cpp",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "cf0b0de5da4141112cf68d48b3bd8b4b6d4e06f5faaaddc812b3d6028b782ddd"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/C线/c4_20261018/independent_review_packet/labels.template.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "2ec0aaefa1a242f3b303043062001481309b0357576e163c32831906733f1667"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/D线/D30_LIBPNG_CVE_2026_46675_REPLAY.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "fb4b0295249db72f3fd57aa5c3643f19a7407c136ea2310874aa9720dc964697"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/D线/D30_LIBPNG_CVE_2026_46675_REPORT.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "b9729e5e80d0440aadf606ab29912e8e8811929e06240edecdf3dde40dbcddfa"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/D线/D31_LIBTIFF_CVE_2025_9900_REPLAY.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "22e82b0a3f089803539bfb0ffe26a33aa46bd277b89754d2fbd16a9e4935477f"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/D线/D31_LIBTIFF_CVE_2025_9900_REPORT.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "dafa50f9526e072d32d4f50409a2f30ad3c279ad28826a6b2aeb88a7e452609a"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/D线/D_KNOWN_CVE_POC_REMEDIATION_INDEX.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "337b02f41ceb018a54d644444f818763a12fb5087b535962b3a6b76a6d6fa569"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/D线/D_REVIEW.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "cda8ccb72d8504af65f0fc6aeb95bba51c8cd681d660cd1ab37208c193ee27e9"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/D线/README.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "e8182b9857acef54238c42a48d1832f8c97cb4302d7fd432fe0f3ca5f4466b75"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/D线/appdomain.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "ab7024503793a0805adfe4c079d9033a0a6c3db0c4f10a9b4b9a55e40740e038"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/D线/pasteboard.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "b4279e00373c889f0c5142e2582412fc04c489dd4271167aa7b0223936edf9f4"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/D线/storage.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "f36cd40ad8a79839311cd399798e0b8d6b15bc94c4d4bd1d2483aa81977671a2"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/README.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "949d3909e0eb327fa606e650f7ad4e257c6bfbc594078cbd5b75a7887976320b"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/ABCD线实测分析与改进建议_20261018.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "c43233e623880302670116ea0d36c3abc1f3b2ae9440f8aa8c25f2359577dcd4"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/SHA256SUMS",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "59c60a69c205e1e199bd833f599d394b48dc91588b018293d27978567d6215a0"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2022-42463-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "e47c2efdb3afefcbb33da7267d8e681c62df4aad2981d38e589deef11d137a4d"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2022-42463-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "633834672d62dc08affbcbf36ffe2d22436f0ff47164f721f3d060577214b908"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2022-42463-vuln.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "0ff4992eb2b8dbfb67a7ad0c335dd5290421b4a113ebaede181c3f6594d2daff"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2022-42463-vuln.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "85b3917ebcc1e0f7bbdf515dad92a070c5251daaefb866539ebc5f5252779ecc"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0035-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "1143fb0b51e66b0d4584de1e0213554b2657685ab9cf234a4f9653544ed0dfb7"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0035-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "b1002c9aa999e7d4d7756c7b44b5f58fc6b57378ecfeeb70154f0a9f1a1ae2fe"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0035-vuln.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "35465abbe3e296e7972686bceb4a085b78176ffe18c5e74a4adf0f4a8923e7f6"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0035-vuln.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "0217a376c8fc4f2b02a4a93ce1da10b4425f40613df617b0a2b953d75ea80e4e"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0036-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "e1930c84fb87efe73b3142b0190636a093fecd99aa56a1ff5828065326690056"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0036-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "b8c1e728da683f97941618011a028d43d48268a16cc7abedd35baeeeb6aef67a"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0036-vuln.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "fd70cf00aaccce3b69e5c3a321c0becca27487357f043399f3c1595758873026"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0036-vuln.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "0e4a2fb9d2872e95560d79c2370ce035cb35a79e7212d4409ea5a0c317e2b4e7"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2023-25176-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "5a43da4ab34088c2605a9229640f4a0699bd34b9029440a90e46b621e992ef46"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2023-25176-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "d5316d788c88538cf99d68bfc6a9e140b93485fd4674856a3398bd92ac02505d"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2023-25176-vuln.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "c3809b727b7dc8356feffa017f1c1b95379d2bc6f05fc55d330ab34ded6379e2"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2023-25176-vuln.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "37fe8102784c438d45518efe77310ecbc35133c7bb47e75ef757a1a0991f83c8"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2024-39775-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "8194e6ee06c9450aa9d560c47c13040bc75adda2875eefb91cba9e887cc1dac9"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2024-39775-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "7fe301a1a524b3f3b2ebdd6ec63677a3e01d46b1b40af78f1d753dba62cbeb02"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2024-39775-vuln.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "cc37f0052dc81ab87915ff228b6274d9eb1b503025180d7627c9999f770e6bbd"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2024-39775-vuln.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "ea6eb588cffd47ff16ee17721e8d20ceb4bde9aed6663ac3e0462c09a182f19a"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-25212-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "fa0d43fed035cb65c0bc04e67043edea7baac19a7f8d80b3cdf6ffe5b9af0b5c"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-25212-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "b8ca564447a760e9c3008d8f7f8bc898f9a966f24beb40a0eb10e5a78ea271e4"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-25212-vuln.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "879293fe4ecb78feb0682b7697f519eb57cc511b66fd4411e15dfba09727daa7"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-25212-vuln.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "0ba10c7f6a8e3df3651380fdfd8d22a8ca3a3509fec46ba1f70b139769dbc090"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26691-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "56afc616756e497879ad0d53149f5aa593bffb35910c6cdf3f2b72a7326dc788"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26691-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "f5a0ce9a1e617d2f76e0b2f3eacd3bd26b230e8418900b573b9ab16258d4cd58"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26691-vuln.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "6eef406d6e4fd6271aad20c16716c6c958581a184e6eaeb2e1a472753006d55d"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26691-vuln.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "6fe87d586d79a8e67f7a9f19d460bfaac97eeb07eacd0afb80b981e6d4d9c708"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26693-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "7a6a29fe07dddf6417d668a3050f2f63009f0546149dd1411a98b18b4f6ebd52"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26693-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "4d247365a6f6ca916736b2093aaf9d0cb0424c6219811e5227120ee22ec7a4c4"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26693-vuln.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "d4450f1dedf8911ed6b131ebddbd0c0e99f39c5cad5aed1eaf5b41575e6f9360"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26693-vuln.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "2d5e040b657ca919b9afb1691a8e7707c848a0d8bcfd769a067fb0ba45033ce0"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27247-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "91350e7adc56549911634f59d5f9bfa7fed836f58518165cd25729fb806fa7e2"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27247-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "86d2fd39d591bd0d0d5588b97899b8f9539eea9363455fa2b424b560129d49d4"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27247-vuln.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "abce1245592f4016b813f9b8fe62889e30aa7a45c8a60f8ee81558f5dcc3a521"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27247-vuln.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "1af60da4ec9510c2fad1378c9c459d7b16c1236ee63aca3c1cf4b3f069e41e03"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27563-fixed.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "fad55e51670e5f3d29dc0356f177a3f1d0f96dd8b199437f93305408b2e111ce"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27563-fixed.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "53de016ec99360e1983ddf336db7dc1cfb3b89994dfc64b26618431a17696b5d"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27563-vuln.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "ec798e41e51afb48543bd15a58566b3b65c19aea95606ba1a8bbe579814fe860"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27563-vuln.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "b11ca20ff1e31b03f9a281eee862ddbc1ba71390970c32bf9f6b5d9530c2c9d0"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/manifest.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "2670181e72c240b9555f757b1c49b386bada4c8ddb7c69681e257bdf5ee3c3d8"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/B线v0.12.1/复测矩阵.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "963d713b8c7cb62b806859f0108f6b793eb5210b95adae6d4029937ce08b1401"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/README.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "ffef6df2e2d98dd711abb98adc649c97a2666d8e8d3ac807fe2821adc8b2c18d"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/detector-stats.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "9c8be3571285e7e894f496e693576a0762482ff801906c3de6d5a414d85137d5"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/候选诊断数量拆解_20261018.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "8c1daef5eaf210f00164a1a6cc573b8fe34e7b2d890e66d555be1059eb351238"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/执行总结.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "84aafc5af86ae7c7c30851be9c34f62edcdff405908e690d34a5f9982af1a385"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/未扫描仓库覆盖说明.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "ef6f8b9b84a20da0552ad0cbf217a8ce9db570e93e09c79db8875020dab0bf44"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/外接盘_OpenHarmony100/未扫描仓库覆盖说明.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "18a747d91c66394ba3c611a5a4b5559e5321b9ad5d1093328ce779ab2e9c1f70"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/实验材料总览与复现入口.md",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "cc212dad18cd324671fae9760b3b77f773cc781445a5b7623086c1afd6d338ba"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/文件哈希清单.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "eb9402d7c8690db6c913c5ed28850f7dcc71a04de14d948fe317ee22094fc972"
+  },
+  {
+    "path": "research/deliveries/competition/20261021/来源与版本清单.json",
+    "source_ref": "origin/docs/competition-evidence-20261021",
+    "sha256": "b6176accf7eda4435e5d407cbdd3942c5079d3a5bb2266f6d750e8c82a0bb151"
+  }
+]

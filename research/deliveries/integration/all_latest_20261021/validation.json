@@ -1,0 +1,41 @@
+{
+  "baseline_main": "4f75a65775b202b8220a208ebdb50fdb5c8dbb4d",
+  "integration_branch": "integration/all-latest-main-20261021",
+  "validation": {
+    "web_build": "passed",
+    "web_node": {
+      "run": 126,
+      "passed": 126
+    },
+    "c_runtime_unittest": {
+      "run": 212,
+      "skipped": 3,
+      "failures": 0
+    },
+    "multimode_and_joint_worker_e2e": {
+      "run": 12,
+      "failures": 0
+    },
+    "imports_sync_and_lifecycle": {
+      "run": 54,
+      "failures": 0
+    },
+    "case_report_compatibility": {
+      "run": 3,
+      "failures": 0
+    },
+    "source_whitespace_check": "passed; immutable imported evidence and raw patch bytes excluded",
+    "compileall": "passed",
+    "full_suite": "Final result is recorded by the integration PR CI; local final rerun was active at publication snapshot."
+  },
+  "evidence": {
+    "imported_files_verified": 518,
+    "initial_local_patches_verified": 24,
+    "extra_concurrent_policy_patch": true
+  },
+  "limits": [
+    "No real Provider calls, product PoC or scale benchmark was run.",
+    "Progressive policy Worker enforcement is not connected.",
+    "Original worktrees, local indexes, credentials and existing running services were preserved."
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "source_hash_manifest_files": 97,
+  "source_hash_manifest_bytes": 4364747,
+  "source_hash_manifest_formats": {
+    ".json": 17,
+    ".cpp": 7,
+    ".sh": 4,
+    ".log": 36,
+    ".md": 4,
+    ".txt": 7,
+    ".tsv": 2,
+    ".py": 5,
+    ".xlsx": 1,
+    ".ndjson": 1,
+    ".inc": 11,
+    ".hpp": 1,
+    ".pdf": 1
+  },
+  "missing_hash_entries": [],
+  "mismatched_hash_entries": [],
+  "queue_items": 345,
+  "unique_candidate_ids": 345,
+  "original_status_counts": {
+    "not_reproduced": 9,
+    "not_testable": 336
+  },
+  "risk_priority_counts": {
+    "high": 283,
+    "normal": 62
+  },
+  "first_batch_count": 5,
+  "not_reproduced_count": 9,
+  "source_reconciliation": {
+    "sample_reports": 30,
+    "candidate_bearing_reports": 20,
+    "zero_candidate_reports": 10,
+    "scan_candidates": 345,
+    "high_priority_candidates": 283,
+    "normal_priority_candidates": 62,
+    "scan_candidate_confirmed_vulnerabilities": 0,
+    "adjacent_confirmed_vulnerabilities": 1,
+    "confirmed_vulnerabilities": 1,
+    "dedicated_pocs": 1,
+    "detail_rows": 346
+  },
+  "json_md_xlsx_pdf_counts_from_hash_manifest": {
+    "JSON": 17,
+    "Markdown": 4,
+    "Excel": 1,
+    "PDF": 1
+  },
+  "hash_validation_pass": true,
+  "candidate_source_file_analysis_counts": {
+    "partial": 56,
+    "coverage_listed_no_partial_obligation": 289
+  },
+  "not_testable_with_target_file_detector_partial": 47,
+  "queue_status_counts": {
+    "queued_not_reproduced": 9,
+    "queued_first_batch": 5,
+    "paused_pending_evidence": 331
+  },
+  "not_reproduced_queue_count": 9
+}

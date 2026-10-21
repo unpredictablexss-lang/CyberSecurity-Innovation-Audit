@@ -1,0 +1,894 @@
+{
+  "schema_version": "a0-family-leakage-audit-v1",
+  "duplicate_key_definition": [
+    "repository",
+    "rule_id",
+    "path",
+    "source_sha256"
+  ],
+  "candidate_count": 345,
+  "family_key_count": 102,
+  "repeated_family_count": 48,
+  "records_in_repeated_families": 291,
+  "largest_family_size": 25,
+  "repeated_families": [
+    {
+      "family_key": {
+        "repository": "openharmony/resourceschedule_resource_schedule_service",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/include/supervisor.h",
+        "source_sha256": "8fa6f2fa21dc48e65c2d89b61b8e3de7d4da8c5945a915b9567e6fe0c55947cb"
+      },
+      "candidate_ids": [
+        "CR-0001",
+        "CR-0002",
+        "CR-0003",
+        "CR-0004"
+      ],
+      "count": 4
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/distributeddatamgr_data_share",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "frameworks/ets/ani/include/datashare_ani.h",
+        "source_sha256": "29411099bc310dc28cb67785e58b1aee52cb0199ec8ada631c599086420b5273"
+      },
+      "candidate_ids": [
+        "CR-0006",
+        "CR-0007",
+        "CR-0008",
+        "CR-0009"
+      ],
+      "count": 4
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/distributeddatamgr_data_share",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "frameworks/native/provider/include/datashare_stub_impl.h",
+        "source_sha256": "81df12f7bf672ed146509837fc73c7ad857237d08f47cb4af54341311ebc284c"
+      },
+      "candidate_ids": [
+        "CR-0012",
+        "CR-0013",
+        "CR-0014",
+        "CR-0015"
+      ],
+      "count": 4
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/distributeddatamgr_data_share",
+        "rule": "ipc.capability.export",
+        "path": "frameworks/native/provider/src/datashare_stub.cpp",
+        "source_sha256": "cc742b1811c6c6ce2c351e27619a74ec1e5f472502a7a712c50d49fbaeed667a"
+      },
+      "candidate_ids": [
+        "CR-0017",
+        "CR-0018"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "frameworks/js/napi/common/include/js_proxy.h",
+        "source_sha256": "1109ad9bb63edf57c6fd22558cc87b98fea9692889bca6ec4c75269b83339958"
+      },
+      "candidate_ids": [
+        "CR-0020",
+        "CR-0021"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "source_sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf"
+      },
+      "candidate_ids": [
+        "CR-0022",
+        "CR-0023",
+        "CR-0024",
+        "CR-0025",
+        "CR-0026",
+        "CR-0027",
+        "CR-0028",
+        "CR-0029",
+        "CR-0030",
+        "CR-0031",
+        "CR-0032",
+        "CR-0033",
+        "CR-0034",
+        "CR-0035",
+        "CR-0036",
+        "CR-0037",
+        "CR-0038",
+        "CR-0039",
+        "CR-0040"
+      ],
+      "count": 19
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "source_sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651"
+      },
+      "candidate_ids": [
+        "CR-0041",
+        "CR-0042",
+        "CR-0043",
+        "CR-0044",
+        "CR-0045",
+        "CR-0046",
+        "CR-0047",
+        "CR-0048",
+        "CR-0049",
+        "CR-0050",
+        "CR-0051",
+        "CR-0052",
+        "CR-0053",
+        "CR-0054",
+        "CR-0055",
+        "CR-0056",
+        "CR-0057",
+        "CR-0058",
+        "CR-0059",
+        "CR-0060",
+        "CR-0061",
+        "CR-0062",
+        "CR-0063",
+        "CR-0064",
+        "CR-0065"
+      ],
+      "count": 25
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "source_sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9"
+      },
+      "candidate_ids": [
+        "CR-0066",
+        "CR-0067",
+        "CR-0068",
+        "CR-0069",
+        "CR-0070",
+        "CR-0071",
+        "CR-0072",
+        "CR-0073",
+        "CR-0074",
+        "CR-0075",
+        "CR-0076",
+        "CR-0077",
+        "CR-0078",
+        "CR-0079",
+        "CR-0080",
+        "CR-0081",
+        "CR-0082",
+        "CR-0083",
+        "CR-0084",
+        "CR-0085",
+        "CR-0086",
+        "CR-0087",
+        "CR-0088",
+        "CR-0089",
+        "CR-0090"
+      ],
+      "count": 25
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+        "source_sha256": "4b4f6e8e9f7f8e4d06887b93f67352ba9c5e9cf9b697c7814cc713573c0b7dfe"
+      },
+      "candidate_ids": [
+        "CR-0091",
+        "CR-0092",
+        "CR-0093",
+        "CR-0094",
+        "CR-0095",
+        "CR-0096"
+      ],
+      "count": 6
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+        "source_sha256": "140266d2693d7a0028767c80670d01682c2e7deca2634412028a59504a976e29"
+      },
+      "candidate_ids": [
+        "CR-0097",
+        "CR-0098",
+        "CR-0099",
+        "CR-0100",
+        "CR-0101",
+        "CR-0102",
+        "CR-0103",
+        "CR-0104",
+        "CR-0105",
+        "CR-0106",
+        "CR-0107",
+        "CR-0108",
+        "CR-0109",
+        "CR-0110",
+        "CR-0111",
+        "CR-0112",
+        "CR-0113",
+        "CR-0114",
+        "CR-0115"
+      ],
+      "count": 19
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "interfaces/innerkits/backtrace/fp_backtrace.cpp",
+        "source_sha256": "8c2638e165b098c315184590fddbd1c76341e414fea3917dfcac591277cdd99a"
+      },
+      "candidate_ids": [
+        "CR-0119",
+        "CR-0120",
+        "CR-0121",
+        "CR-0122",
+        "CR-0123"
+      ],
+      "count": 5
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+        "source_sha256": "d430edfd937adf1594857a8c984df5f0f183ecd27a9aaad5cfeffe41408503b7"
+      },
+      "candidate_ids": [
+        "CR-0128",
+        "CR-0129",
+        "CR-0130",
+        "CR-0131",
+        "CR-0132",
+        "CR-0133",
+        "CR-0134",
+        "CR-0135",
+        "CR-0136",
+        "CR-0137",
+        "CR-0138",
+        "CR-0139",
+        "CR-0140",
+        "CR-0141",
+        "CR-0142"
+      ],
+      "count": 15
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+        "source_sha256": "896972bd561e65c8eb41f3f21f53eb3b451c968837c8a7443b5e51a9806507c5"
+      },
+      "candidate_ids": [
+        "CR-0145",
+        "CR-0146",
+        "CR-0147",
+        "CR-0148",
+        "CR-0149",
+        "CR-0150",
+        "CR-0151",
+        "CR-0152",
+        "CR-0153",
+        "CR-0154",
+        "CR-0155",
+        "CR-0156"
+      ],
+      "count": 12
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "tools/process_dump/dfx_process.h",
+        "source_sha256": "8806f468a40a0f837ce0046161abec7a7f681f7742b9ac68132228c28b80131c"
+      },
+      "candidate_ids": [
+        "CR-0158",
+        "CR-0159",
+        "CR-0160",
+        "CR-0161"
+      ],
+      "count": 4
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "tools/process_dump/dfx_thread.h",
+        "source_sha256": "b770b4c897ed50e8867fe1c3a466fe1bf50aea624a2dfe5f3f775145ef5244c2"
+      },
+      "candidate_ids": [
+        "CR-0162",
+        "CR-0163",
+        "CR-0164"
+      ],
+      "count": 3
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+        "source_sha256": "6866983cecb880139368f22a897f05035f16d879b4a788a0d48d50c450ace37f"
+      },
+      "candidate_ids": [
+        "CR-0165",
+        "CR-0166",
+        "CR-0167",
+        "CR-0168"
+      ],
+      "count": 4
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/hiviewdfx_faultloggerd",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+        "source_sha256": "b210f28efec72b2115cd5d1af915998a7189dc9d2aed1433da36fe3a1d4b9b95"
+      },
+      "candidate_ids": [
+        "CR-0169",
+        "CR-0170",
+        "CR-0171",
+        "CR-0172",
+        "CR-0173"
+      ],
+      "count": 5
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_player_framework",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+        "source_sha256": "b0abc341d5c0efcabe72bf1b7b82f21288744c31329b09a6c55b202701fc86af"
+      },
+      "candidate_ids": [
+        "CR-0174",
+        "CR-0175",
+        "CR-0176"
+      ],
+      "count": 3
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_player_framework",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+        "source_sha256": "275ab05c4c017d1b0a583ace2b08d87c327e9d61ca6ffb7b403cd41266ebbe5a"
+      },
+      "candidate_ids": [
+        "CR-0177",
+        "CR-0178"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_player_framework",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+        "source_sha256": "56428347857ecd879c68a1d8551efeddbe1d8a2453a971365bc38d20de37b273"
+      },
+      "candidate_ids": [
+        "CR-0179",
+        "CR-0180"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_player_framework",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+        "source_sha256": "ea101e1addc925f8059104aa706ba585f12e054c8a47209993d7c1ad2eb769ed"
+      },
+      "candidate_ids": [
+        "CR-0181",
+        "CR-0182",
+        "CR-0183"
+      ],
+      "count": 3
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_player_framework",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp",
+        "source_sha256": "0e0292b7e4c28d6d3b63accd8e10f053b224849ebf74edf4f9011318e47d540c"
+      },
+      "candidate_ids": [
+        "CR-0184",
+        "CR-0185"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_player_framework",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/services/player/ipc/player_listener_stub.cpp",
+        "source_sha256": "788c307868be7caf7654fcf4b7088b9c3ab10374881912c9e92c62c23d1d7c2e"
+      },
+      "candidate_ids": [
+        "CR-0186",
+        "CR-0187",
+        "CR-0188",
+        "CR-0189"
+      ],
+      "count": 4
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_player_framework",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/services/recorder/ipc/recorder_service_stub.cpp",
+        "source_sha256": "30ca38f8cb2372ed82bb666714593a629dc929bc67c5b4c21edc5bf3ed2f84ad"
+      },
+      "candidate_ids": [
+        "CR-0191",
+        "CR-0192"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_player_framework",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/services/transcoder/ipc/transcoder_listener_stub.cpp",
+        "source_sha256": "7b53294897ae58d20c047c705f62b1d7ad45d8140bbbf5a0db455ecf409c65fd"
+      },
+      "candidate_ids": [
+        "CR-0194",
+        "CR-0195"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6"
+      },
+      "candidate_ids": [
+        "CR-0197",
+        "CR-0198",
+        "CR-0199",
+        "CR-0200",
+        "CR-0201",
+        "CR-0202",
+        "CR-0203",
+        "CR-0204",
+        "CR-0205",
+        "CR-0206",
+        "CR-0207",
+        "CR-0208",
+        "CR-0209",
+        "CR-0210",
+        "CR-0211",
+        "CR-0212"
+      ],
+      "count": 16
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/systemabilitymgr_samgr",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/samgr/native/source/system_ability_manager_stub.cpp",
+        "source_sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433"
+      },
+      "candidate_ids": [
+        "CR-0217",
+        "CR-0218"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/systemabilitymgr_samgr",
+        "rule": "ipc.capability.export",
+        "path": "services/samgr/native/source/system_ability_manager_stub.cpp",
+        "source_sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433"
+      },
+      "candidate_ids": [
+        "CR-0219",
+        "CR-0220",
+        "CR-0221",
+        "CR-0222",
+        "CR-0223",
+        "CR-0224",
+        "CR-0225",
+        "CR-0226"
+      ],
+      "count": 8
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/systemabilitymgr_samgr",
+        "rule": "ipc.capability.export",
+        "path": "services/samgr/native/test/unittest/src/system_ability_mgr_proxy_test.cpp",
+        "source_sha256": "d53ef4ec001a999b97983fde6cb4947d4ff7b3dcbf72caa1efa1383c69257b17"
+      },
+      "candidate_ids": [
+        "CR-0227",
+        "CR-0229"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/systemabilitymgr_samgr",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/samgr/native/test/unittest/src/system_ability_mgr_proxy_test.cpp",
+        "source_sha256": "d53ef4ec001a999b97983fde6cb4947d4ff7b3dcbf72caa1efa1383c69257b17"
+      },
+      "candidate_ids": [
+        "CR-0228",
+        "CR-0230"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "interfaces/innerkits/safwk/expire_lru_cache.h",
+        "source_sha256": "9eb5ce4db56c91311de4351d639949d56566733ede610f5039a39ff0148265e3"
+      },
+      "candidate_ids": [
+        "CR-0231",
+        "CR-0232",
+        "CR-0233",
+        "CR-0234",
+        "CR-0235",
+        "CR-0236",
+        "CR-0237",
+        "CR-0238",
+        "CR-0239",
+        "CR-0240",
+        "CR-0241",
+        "CR-0242",
+        "CR-0243"
+      ],
+      "count": 13
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/safwk/src/local_ability_manager_stub.cpp",
+        "source_sha256": "e3992a67f44b497f120d96e73d3692bf3b62e158a7191babb9506d379cb84f16"
+      },
+      "candidate_ids": [
+        "CR-0244",
+        "CR-0245"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/systemabilitymgr_safwk",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "test/services/safwk/unittest/listen_ability/src/listen_ability_stub.cpp",
+        "source_sha256": "90e79b5a013f3d18a21db2bf0652f668be4ae36a21e8933e56f9ca634390a39e"
+      },
+      "candidate_ids": [
+        "CR-0247",
+        "CR-0248",
+        "CR-0249",
+        "CR-0250"
+      ],
+      "count": 4
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/powermgr_battery_statistics",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "test/unittest/include/stats_test.h",
+        "source_sha256": "c1113bea553ef18ffe9450df4b13865075bb2e54b42b44188f424e9cfb127c91"
+      },
+      "candidate_ids": [
+        "CR-0252",
+        "CR-0253",
+        "CR-0254"
+      ],
+      "count": 3
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_camera_framework",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "frameworks/taihe/include/camera_auto_ref_taihe.h",
+        "source_sha256": "d43b2035615f59cfd6307730ae8e247f6f89153597b954d1a02dc6b6b42005ba"
+      },
+      "candidate_ids": [
+        "CR-0258",
+        "CR-0259",
+        "CR-0260",
+        "CR-0261"
+      ],
+      "count": 4
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_camera_framework",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "frameworks/taihe/include/camera_event_listener_taihe.h",
+        "source_sha256": "4af3371f674207beed7d1331e2757493df6b6c886fe4dfd7fdb306a7ee55a37a"
+      },
+      "candidate_ids": [
+        "CR-0262",
+        "CR-0263",
+        "CR-0264"
+      ],
+      "count": 3
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_camera_framework",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "interfaces/kits/js/camera_napi/include/camera_napi_event_listener.h",
+        "source_sha256": "34eb42f47c43789d9583f8bb646b6aebf45e25bfcd9ce914f4b5cf48394df7a6"
+      },
+      "candidate_ids": [
+        "CR-0267",
+        "CR-0268",
+        "CR-0269"
+      ],
+      "count": 3
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_camera_framework",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "interfaces/kits/js/camera_napi/include/camera_napi_param_parser.h",
+        "source_sha256": "e9d4009f7a81fc6fc8e9fc5edf30c86437fd9dafc08c2e32d0939927447b5d9c"
+      },
+      "candidate_ids": [
+        "CR-0271",
+        "CR-0272",
+        "CR-0273",
+        "CR-0274",
+        "CR-0275"
+      ],
+      "count": 5
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_camera_framework",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "mediastream/include/buffer/buffer_wrapper_base.h",
+        "source_sha256": "575d137d75a281a88e0cf411d8330574d89495a25f2eb71188c3a7415cc32ce9"
+      },
+      "candidate_ids": [
+        "CR-0276",
+        "CR-0277",
+        "CR-0278"
+      ],
+      "count": 3
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_camera_framework",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "moviefile/include/pipeline/producer/unified_pipeline_audio_capture_wrap.h",
+        "source_sha256": "cc83094c7138a82dbe167edcd31476b8b829daae63a8e8c06d342da90ed2b0c6"
+      },
+      "candidate_ids": [
+        "CR-0280",
+        "CR-0281",
+        "CR-0282",
+        "CR-0283",
+        "CR-0284",
+        "CR-0285"
+      ],
+      "count": 6
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_camera_framework",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "services/camera_service/include/camera_rotate_strategy_parser.h",
+        "source_sha256": "fdfebd429798df1bca8ddcb5253192f0c03a52844d36aafb7b734ba4e8498606"
+      },
+      "candidate_ids": [
+        "CR-0286",
+        "CR-0287"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_camera_framework",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "services/deferred_processing_service/include/schedule/video_processor/deferred_video_processor.h",
+        "source_sha256": "bf0bf468b2bdd9d325aadfe6c11017531ddd231c72bac7ad9c7597c6e6a356d9"
+      },
+      "candidate_ids": [
+        "CR-0289",
+        "CR-0290"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_camera_framework",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp",
+        "source_sha256": "46ed4ab82e888847f7e0d074a5537f78678b34701c669aa2baa3d63b016fa349"
+      },
+      "candidate_ids": [
+        "CR-0291",
+        "CR-0292",
+        "CR-0293",
+        "CR-0294"
+      ],
+      "count": 4
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/multimedia_camera_framework",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/camera_service/binder/server/src/hstream_capture_thumbnail_callback_stub.cpp",
+        "source_sha256": "67aa51a34278dd5ee609e8c6c456bf19032ab8efd12aa12fdadb3d6f5eb8fb5b"
+      },
+      "candidate_ids": [
+        "CR-0295",
+        "CR-0296"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/ai_intelligent_voice_framework",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "services/intell_voice_engine/server/base/engine_util.h",
+        "source_sha256": "db1c9317dd3d170334ed98b4cbe2de93c34ab5dab328d684cab6babcfab0f3eb"
+      },
+      "candidate_ids": [
+        "CR-0302",
+        "CR-0303",
+        "CR-0304"
+      ],
+      "count": 3
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/customization_enterprise_device_management",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/edm/src/delay_unload_manager.cpp",
+        "source_sha256": "521c2422f6ccf095b07057b09290811bab161698fd79f4339a67c5fa22d19727"
+      },
+      "candidate_ids": [
+        "CR-0307",
+        "CR-0308"
+      ],
+      "count": 2
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/customization_enterprise_device_management",
+        "rule": "ipc.relay.descriptor-boundary",
+        "path": "services/edm/src/enterprise_device_mgr_stub.cpp",
+        "source_sha256": "8facf2e55d286d57be52de84a54ba10457774419477ba2aa0a074946b1f81d2a"
+      },
+      "candidate_ids": [
+        "CR-0309",
+        "CR-0310",
+        "CR-0311",
+        "CR-0312"
+      ],
+      "count": 4
+    },
+    {
+      "family_key": {
+        "repository": "openharmony/communication_wifi",
+        "rule": "ohcpp-shared-ptr-race-candidate-001",
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "source_sha256": "f5b5de6a96ae54bbe3563bc93206fcb625c3f8d19c299d1b6f82fe1df7123f01"
+      },
+      "candidate_ids": [
+        "CR-0317",
+        "CR-0318",
+        "CR-0319",
+        "CR-0320",
+        "CR-0321",
+        "CR-0322",
+        "CR-0323",
+        "CR-0324",
+        "CR-0325",
+        "CR-0326",
+        "CR-0327",
+        "CR-0328",
+        "CR-0329",
+        "CR-0330",
+        "CR-0331",
+        "CR-0332",
+        "CR-0333",
+        "CR-0334"
+      ],
+      "count": 18
+    }
+  ],
+  "historical_benchmark_checks": [
+    {
+      "file": "arkcompiler_ets_runtime_jsarray_sort_oob.json",
+      "sample_id": "arkcompiler_ets_runtime-jsarray-sort-oob-2025-02",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "vulnerable_commit": "aeee3fd12c03193545edea4b8e0fdfa3d9a03d11",
+      "fixed_commit": "1b23531531e768398682582969c2a9f17e72cafe",
+      "affected_files": [
+        "ecmascript/js_array.cpp"
+      ],
+      "candidate_repo_present": false,
+      "candidate_commit_match": false,
+      "candidate_affected_path_match": false
+    },
+    {
+      "file": "communication_dsoftbus_null_deref.json",
+      "sample_id": "communication_dsoftbus_null_deref_001",
+      "repository": "openharmony/communication_dsoftbus",
+      "vulnerable_commit": "258662cd9840b55a31546a72d91027f6368cea84",
+      "fixed_commit": "192f3e11d74beeaa3d879333471deb8a24a7e1c5",
+      "affected_files": [
+        "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp"
+      ],
+      "candidate_repo_present": false,
+      "candidate_commit_match": false,
+      "candidate_affected_path_match": false
+    },
+    {
+      "file": "c_utils_singleton_uaf.json",
+      "sample_id": "c_utils-singleton-uaf-2026-01",
+      "repository": "openharmony/commonlibrary_c_utils",
+      "vulnerable_commit": "bdfafdaafddb01ab7ae13354ce2ada9555d7935c",
+      "fixed_commit": "9a3f281120307ec7dcce17fae882dcc4e6a6f4d7",
+      "affected_files": [
+        "base/include/singleton.h"
+      ],
+      "candidate_repo_present": false,
+      "candidate_commit_match": false,
+      "candidate_affected_path_match": false
+    },
+    {
+      "file": "kernel_liteos_a_getgroups_oob.json",
+      "sample_id": "kernel_liteos_a-getgroups-oob-2025-03",
+      "repository": "openharmony/kernel_liteos_a",
+      "vulnerable_commit": "6ac8e246b0efd57a28ea05b6e6973ae0602fe032",
+      "fixed_commit": "940a5a8c2cd1ced84d435933dbcdbb1a7fbf3000",
+      "affected_files": [
+        "syscall/process_syscall.c"
+      ],
+      "candidate_repo_present": false,
+      "candidate_commit_match": false,
+      "candidate_affected_path_match": false
+    }
+  ],
+  "exact_repository_commit_or_affected_file_intersections": 0,
+  "thematic_overlap": "possible: A0 shared_ptr concurrency-rule family is thematically related to the historical kernel concurrency benchmark; same root-cause identity is not established.",
+  "historical_benchmark_holdout": "not independent; benchmark corpus is small and the A0 sample was reviewed in a workflow using method/control harnesses.",
+  "other_historical_poc_tuning_identity": "unknown; no exhaustive artifact index keyed by source SHA, commit, family, or tuning lineage was present in A0 delivery.",
+  "reviewed_reference": "benchmarks/historical/README.md and four JSON entries; A0 technical-report section 4."
+}

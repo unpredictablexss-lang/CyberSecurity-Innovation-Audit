@@ -66,6 +66,7 @@ def _commit_provider_quota_failure(ops, task, result):
         return True
     return False
 
+
 def _authorized_smart_batch(store, ops, task):
     spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
     job_id = spec.get("job_id")
@@ -73,7 +74,7 @@ def _authorized_smart_batch(store, ops, task):
     authorization_sha256 = spec.get("triage_authorization_sha256")
     batch_id = spec.get("smart_triage_batch_id")
     if (task.get("kind") != "agent_investigation"
-            or spec.get("no_cumulative_token_ceiling") is not True
+            or not (spec.get("no_cumulative_token_ceiling") is True or spec.get("continuous_investigation") is True)
             or not all(isinstance(value, str) and value for value in
                        (job_id, report_sha256, authorization_sha256, batch_id))):
         return False
@@ -92,7 +93,6 @@ def _authorized_smart_batch(store, ops, task):
     except (KeyError, ValueError):
         return False
 
-
 class OperationWorker:
     def __init__(self, settings, validation=False):
         self.settings = settings
@@ -105,7 +105,6 @@ class OperationWorker:
         folder.mkdir(parents=True, exist_ok=True)
         proc = None
         start = time.monotonic()
-        uncapped_smart = _authorized_smart_batch(self.store, self.ops, task)
         try:
             with (folder / "worker.log").open("wb") as log:
                 proc = subprocess.Popen([sys.executable, "-m", "src.workbench.operation_worker",
@@ -117,10 +116,7 @@ class OperationWorker:
                                 task.get("kind") == "agent_investigation"
                                 or _is_consented_joint_comparison(task, self.ops)))),
                          "OHSCANNER_DATA": str(self.settings.data_dir),
-                         "OHSCANNER_TARGET_ROOTS": os.pathsep.join(map(str, self.settings.target_roots)),
-                         "OHSCANNER_REPOSITORY_CACHE_ROOTS": os.pathsep.join(map(str, self.settings.repository_cache_roots)),
-                         "OHSCANNER_REPOSITORY_CACHE_MAX_BYTES": str(self.settings.repository_cache_max_bytes),
-                         "OHSCANNER_REPOSITORY_CACHE_MIN_FREE_BYTES": str(self.settings.repository_cache_min_free_bytes)})
+                         "OHSCANNER_TARGET_ROOTS": os.pathsep.join(map(str, self.settings.target_roots))})
                 while proc.poll() is None:
                     if self.ops.get(task["id"])["cancel_requested"]:
                         self.ops.cancel(task["id"])
@@ -130,17 +126,14 @@ class OperationWorker:
                     hard_deadline = _hard_deadline_seconds(task)
                     if hard_deadline is not None and time.monotonic() - start > hard_deadline:
                         Worker.terminate(proc)
-                        for key in spec.get("scan_ids", []):
+                        for key in task["spec"].get("scan_ids", []):
                             self.store.cancel(key)
                         self.ops.finish(task["id"], state="timed_out", error="Operation hard deadline exceeded")
                         return
-                    log_path = folder / "worker.log"
-                    if log_path.stat().st_size > 10 * 1024 * 1024:
-                        if not uncapped_smart:
+                    if (folder / "worker.log").stat().st_size > 10 * 1024 * 1024:
+                        if not _authorized_smart_batch(self.store, self.ops, task):
                             raise ValueError("operation log quota exceeded")
-                        # Retain a bounded diagnostic tail without stopping a
-                        # source-authorized smart investigation on cumulative log bytes.
-                        with log_path.open("r+b") as log:
+                        with (folder / "worker.log").open("r+b") as log:
                             log.seek(-1024 * 1024, os.SEEK_END)
                             tail = log.read()
                             log.seek(0)
@@ -150,7 +143,7 @@ class OperationWorker:
             if proc.returncode:
                 raise RuntimeError("Operation child exited " + str(proc.returncode) + "; inspect log")
             data = (folder / "child-result.json").read_bytes()
-            if len(data) > 16 * 1024 * 1024 and not uncapped_smart:
+            if len(data) > 16 * 1024 * 1024 and not _authorized_smart_batch(self.store, self.ops, task):
                 raise ValueError("operation result quota exceeded")
             result = json.loads(data)
             if _commit_provider_quota_failure(self.ops, task, result):
@@ -228,13 +221,7 @@ def main():
             remove_agent_provider_environment(os.environ)
         memory = task["spec"].get("memory_mb", 2048) * 1024 * 1024
         resource.setrlimit(resource.RLIMIT_AS, (memory, memory))
-        if _authorized_smart_batch(store, ops, task):
-            # Result size follows the finite fixed-source investigation; do not
-            # apply an aggregate output-file quota to the explicitly authorized path.
-            resource.setrlimit(resource.RLIMIT_FSIZE,
-                               (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
-        else:
-            resource.setrlimit(resource.RLIMIT_FSIZE, (64 * 1024 * 1024,) * 2)
+        resource.setrlimit(resource.RLIMIT_FSIZE, (64 * 1024 * 1024,) * 2)
         from .operations import execute
         child_started = time.monotonic()
         try:

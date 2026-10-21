@@ -502,4 +502,3 @@ class BudgetLedgerTests(unittest.TestCase):
             Path(directory).chmod(0o755)
             with self.assertRaises(ValueError):
                 BudgetLedger(Path(directory) / "ledger.sqlite")
-

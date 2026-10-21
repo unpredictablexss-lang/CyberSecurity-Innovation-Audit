@@ -1,0 +1,26 @@
+diff --git a/tests/test_ipc_detector.py b/tests/test_ipc_detector.py
+index c79d6b97..a45a3134 100644
+--- a/tests/test_ipc_detector.py
++++ b/tests/test_ipc_detector.py
+@@ -58,6 +58,21 @@ class IpcDetectorTests(unittest.TestCase):
+         ctx=ScanContext(ctx.request,ctx.units,{})
+         self.assertEqual(IpcInterfaceDetector().detect(ctx,ctx.units).status,'blocked')
+ 
++    def test_partial_parse_candidates_remain_candidates_with_unknown_obligations(self):
++        text=(BASE/'auth_positive.cpp').read_text()
++        complete=context(text)
++        partial_unit=SourceUnit(
++            complete.units[0].path, complete.units[0].language, text,
++            complete.units[0].sha256, 'partial', ('synthetic parser gap',))
++        partial=ScanContext(complete.request,(partial_unit,),complete.shared_facts)
++        run=IpcInterfaceDetector().detect(partial,partial.units)
++        self.assertEqual(run.status,'blocked')
++        self.assertTrue(run.findings, 'a partial parse must not erase visible candidates')
++        self.assertTrue(all(f.evidence_obligations for f in run.findings))
++        self.assertTrue(all(
++            obligation.status == 'unknown'
++            for finding in run.findings for obligation in finding.evidence_obligations))
++
+     def test_permission_binding_policy(self):
+         ctx=context((BASE/'auth_fixed.cpp').read_text())
+         policy=IpcPolicy(expected_permissions=(('StartAbility','"ohos.permission.OTHER"'),))

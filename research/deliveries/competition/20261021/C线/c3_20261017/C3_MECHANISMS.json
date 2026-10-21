@@ -1,0 +1,1232 @@
+[
+  {
+    "id": "G01",
+    "source_sha256": "27e2f7b068fbac61e20bc76bb55dcd69a28d66b94e372aad6982570c4f8b0f4a",
+    "expected": "candidate",
+    "actual": "candidate",
+    "outcome": "PASS",
+    "rationale": "Destination alias and two token copies preserve distinct origins.",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "candidate",
+          "line": 7,
+          "column": 1,
+          "reason": "different_origin_with_species_creation",
+          "target_identity": "new:281",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+          "token_line": 3,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            6,
+            6,
+            7
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 462,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 7,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G02",
+    "source_sha256": "051fcf738efcd16106061ffc8b36125a619620cef5af558f5089d0385f82bf89",
+    "expected": "matched",
+    "actual": "matched",
+    "outcome": "PASS",
+    "rationale": "Two copies of a fresh destination token retain the same origin.",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "matched",
+          "line": 8,
+          "column": 1,
+          "reason": "target_origin_or_proved_type_equality",
+          "target_identity": "new:281",
+          "token_origin": "new:281",
+          "token_line": 6,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 471,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 7,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G03",
+    "source_sha256": "943c0f3343f676be67b1832cf40509e4348dd87a280121225e3720bbd6ddde48",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "Unknown effects inside declaration initializers invalidate stale tokens.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 8,
+          "column": 1,
+          "reason": "unresolved_target_or_type_origin",
+          "target_identity": "",
+          "token_origin": "new:281",
+          "token_line": 6,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 476,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ],
+            [
+              7,
+              "Mutate"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 6,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G04",
+    "source_sha256": "ed3dc949b74006a13712ac96d82304b8b9e87c01cf336eb301513a5f50e24ddc",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "Unknown effects in assignment RHS invalidate stale tokens.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 8,
+          "column": 1,
+          "reason": "unresolved_target_or_type_origin",
+          "target_identity": "",
+          "token_origin": "new:281",
+          "token_line": 6,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 468,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ],
+            [
+              7,
+              "Mutate"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 6,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G05",
+    "source_sha256": "8fc37b4a5d0a733b8dcd838c12570149bfe07e9ccb253df6955020cf5ead354a",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "Unknown member-call arguments may escape the destination.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 8,
+          "column": 1,
+          "reason": "unresolved_target_or_type_origin",
+          "target_identity": "",
+          "token_origin": "new:281",
+          "token_line": 6,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 466,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ],
+            [
+              7,
+              "foreign.Mutate"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 6,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G06",
+    "source_sha256": "bd84dbfc9645d1e308b144fa866175753228819a02c2c2866dca0dee4c155a6b",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "Nested calls cannot retain old type observations.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 8,
+          "column": 1,
+          "reason": "unresolved_target_or_type_origin",
+          "target_identity": "",
+          "token_origin": "new:281",
+          "token_line": 6,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 467,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ],
+            [
+              7,
+              "Mutate"
+            ],
+            [
+              7,
+              "Observe"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 6,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G07",
+    "source_sha256": "1a12bdaeea1223e5b6001665de9845f9f6cd1098e024f6fe9a57a61c58db3fda",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "Unmodelled global effects cannot prove type stability.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 8,
+          "column": 1,
+          "reason": "creation_relationship_invalidated_by_call",
+          "target_identity": "new:281",
+          "token_origin": "new:281",
+          "token_line": 6,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 465,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ],
+            [
+              7,
+              "UnknownGlobalEffect"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 6,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G08",
+    "source_sha256": "d00cc7af0979f34dd9556be35453021904646972f9378c93fe582bbf24947dff",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "Condition evaluation can have effects before either generated successor.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 10,
+          "column": 1,
+          "reason": "unresolved_target_or_type_origin",
+          "target_identity": "",
+          "token_origin": "new:281",
+          "token_line": 6,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "constraints": [
+            [
+              8,
+              "Mutate(output)",
+              true
+            ]
+          ],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 525,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ],
+            [
+              8,
+              "Mutate"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 8,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G09",
+    "source_sha256": "ec9253e0131f378f7064bb415fee27cb1b78dec0208db6e21410e937d6b90077",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "Sink argument effects must be applied before checking type evidence.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 7,
+          "column": 1,
+          "reason": "unresolved_target_or_type_origin",
+          "target_identity": "",
+          "token_origin": "new:281",
+          "token_line": 6,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 450,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ],
+            [
+              7,
+              "Mutate"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 5,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G10",
+    "source_sha256": "15c62ad2af5380a9cefe88b19fd6f6ea10e1f829612d6ca27565524db1d55342",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "An invalidated destination cannot support an old mismatch candidate.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 7,
+          "column": 1,
+          "reason": "unresolved_target_or_type_origin",
+          "target_identity": "",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+          "token_line": 3,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 414,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ],
+            [
+              6,
+              "Mutate"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 5,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G11",
+    "source_sha256": "1c4f1e8a7dd8ded071c7ddfe4123642102feedf596455b52d5d236096521b884",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "A successful type guard must not survive an unknown effect.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 11,
+          "column": 1,
+          "reason": "creation_relationship_invalidated_by_call",
+          "target_identity": "new:281",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+          "token_line": 3,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "constraints": [
+            [
+              8,
+              "Int32Equal(inputTag, tag)",
+              true
+            ]
+          ],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 574,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ],
+            [
+              10,
+              "Mutate"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 9,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G12",
+    "source_sha256": "bb66d5da64386ee9d9c92afb5b2e0784df77284ce7b417520df9ca4097bc56d2",
+    "expected": "candidate",
+    "actual": "candidate",
+    "outcome": "PASS",
+    "rationale": "A guard comparing two source tokens says nothing about the destination.",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "candidate",
+          "line": 10,
+          "column": 1,
+          "reason": "different_origin_with_species_creation",
+          "target_identity": "new:281",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+          "token_line": 3,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "constraints": [
+            [
+              8,
+              "Int32Equal(inputTag, tag)",
+              true
+            ]
+          ],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 540,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 8,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G13",
+    "source_sha256": "cf90703717f49c2ce01387db36ea8ea77ca78ee05e85c38693138e6c6741e5db",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "A shadowed equality operation cannot justify a same-type guarantee.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 11,
+          "column": 1,
+          "reason": "unresolved_target_or_type_origin",
+          "target_identity": "new:281",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "constraints": [
+            [
+              9,
+              "Int32Equal(inputTag, tag)",
+              true
+            ]
+          ],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 571,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ],
+            [
+              9,
+              "Int32Equal"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 9,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G14",
+    "source_sha256": "04bc96eab77a68c65a0f9603cb66a9c2cf75a6907c9d6af68fec7ebf727f030c",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "A sink beyond unknown generated control is unknown, not proven unreachable.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 6,
+          "column": 1,
+          "reason": "unmodeled_control:UNMODELED_IR",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 414,
+          "effect_sites": []
+        },
+        {
+          "kind": "unknown",
+          "line": 7,
+          "column": 1,
+          "reason": "generated_predecessor_unavailable",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 414,
+          "effect_sites": []
+        }
+      ],
+      "limitations": [
+        "unmodeled_control:UNMODELED_IR:6",
+        "unresolved_local_observations"
+      ],
+      "steps": 4,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G15",
+    "source_sha256": "0df5ba6d6f1543c9ea014f0730a5414da91b20e125bf944cfdcb195b497829ce",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "Return expressions must not hide unanalysed effectful calls.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 6,
+          "column": 1,
+          "reason": "unmodeled_host_return_expression",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 404,
+          "effect_sites": []
+        }
+      ],
+      "limitations": [
+        "unmodeled_host_return_expression:6",
+        "unresolved_local_observations"
+      ],
+      "steps": 4,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G16",
+    "source_sha256": "c1ffd8a6b4206f6934da0c19d7a9da45153d8ba7795e654b4384809fb31acf21",
+    "expected": "not_analyzed",
+    "actual": "not_analyzed",
+    "outcome": "PASS",
+    "rationale": "A detached generated block without a predecessor has no analysed sink path.",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "unreachable",
+          "line": 7,
+          "column": 1,
+          "reason": "no_generated_predecessor_path",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 461,
+          "effect_sites": []
+        }
+      ],
+      "limitations": [],
+      "steps": 5,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G17",
+    "source_sha256": "1ab81f0f41ff486091a68b4845eaf81dcc5ee786515fb84025d6f8543b7524c8",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "An unresolved jump is an unknown edge, not proof of absence.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 6,
+          "column": 1,
+          "reason": "unresolved_generated_edge",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 414,
+          "effect_sites": []
+        },
+        {
+          "kind": "unknown",
+          "line": 7,
+          "column": 1,
+          "reason": "generated_predecessor_unavailable",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 414,
+          "effect_sites": []
+        }
+      ],
+      "limitations": [
+        "unresolved_label_target:6",
+        "unresolved_local_observations"
+      ],
+      "steps": 4,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G18",
+    "source_sha256": "cc90de45e7c16b1f2ec8d59b7fe2ae16a50a93d8a110c770dc7c66ac213261b5",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "Rebinding alias to the source does not make the old destination token match.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 8,
+          "column": 1,
+          "reason": "creation_relationship_invalidated_by_call",
+          "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+          "token_origin": "new:281",
+          "token_line": 6,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 479,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 7,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G19",
+    "source_sha256": "aa02a754734b3face03723f8171991dbec868b77e95aed31c8e4440648f806f5",
+    "expected": "candidate",
+    "actual": "candidate",
+    "outcome": "PASS",
+    "rationale": "Token redefinition does not retroactively change a prior copied token.",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "candidate",
+          "line": 7,
+          "column": 1,
+          "reason": "different_origin_with_species_creation",
+          "target_identity": "new:281",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+          "token_line": 3,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            6,
+            7
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 462,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 6,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G20",
+    "source_sha256": "8bc17d702a77c0339e45f0b998496392a4fddbfc4f6ee7c0d71c9d139b48254f",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "Unmodelled host-C++ merge does not justify either origin.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 6,
+          "column": 1,
+          "reason": "unsupported_host_control_or_macro",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 429,
+          "effect_sites": []
+        },
+        {
+          "kind": "unknown",
+          "line": 7,
+          "column": 1,
+          "reason": "generated_predecessor_unavailable",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 429,
+          "effect_sites": []
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations",
+        "unsupported_host_control_or_macro:6"
+      ],
+      "steps": 4,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G21",
+    "source_sha256": "5e26678e54d014b92e4454ea5a3ab03c52dde3b30b3b7ca58600e005756b4b26",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "The same sink spelling on another receiver is not a model binding.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 7,
+          "column": 1,
+          "reason": "unresolved_sink_receiver",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 449,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ],
+            [
+              7,
+              "foreign.StoreTypedArrayElement"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 5,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G22",
+    "source_sha256": "ec2d458e574ab9e63bab790baedfff442f7652a1bfd943974bb1130c4bd2d112",
+    "expected": "unknown",
+    "actual": "unknown",
+    "outcome": "PASS",
+    "rationale": "Repeated allocation sites require iteration-sensitive identity; retain unknown.",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 7,
+          "column": 1,
+          "reason": "host_rebinding_across_generated_blocks_unmodeled",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 540,
+          "effect_sites": []
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations",
+        "unsupported_host_expression_effects"
+      ],
+      "steps": 0,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G23",
+    "source_sha256": "53c388f5e7e1787d10cde0cdc0880f06a455e88bdabdca36c1e762c2dde33fb0",
+    "expected": "candidate",
+    "actual": "candidate",
+    "outcome": "PASS",
+    "rationale": "Reassigning a token must use its new source origin.",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "candidate",
+          "line": 9,
+          "column": 1,
+          "reason": "different_origin_with_species_creation",
+          "target_identity": "new:281",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+          "token_line": 7,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 503,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 7,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  },
+  {
+    "id": "G24",
+    "source_sha256": "5a247bc832360e60f15868934754a7929de4c6251da52de8fbf82ccd9966aa12",
+    "expected": "matched",
+    "actual": "matched",
+    "outcome": "PASS",
+    "rationale": "A bound, uninvalidated equality guard is a narrow same-type proof.",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "matched",
+          "line": 9,
+          "column": 1,
+          "reason": "target_origin_or_proved_type_equality",
+          "target_identity": "new:281",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+          "token_line": 3,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            7,
+            8,
+            9
+          ],
+          "constraints": [
+            [
+              7,
+              "Int32Equal(inputTag, tag)",
+              true
+            ]
+          ],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 541,
+          "effect_sites": [
+            [
+              5,
+              "builder.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 8,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    },
+    "sample_role": "development_not_holdout"
+  }
+]
