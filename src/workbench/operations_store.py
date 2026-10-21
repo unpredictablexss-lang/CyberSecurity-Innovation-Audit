@@ -2187,4 +2187,3 @@ class Operations:
             db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
                        (new_key, stamp, "retry_queued", "Explicit retry of failed repository import " + key))
         return self.get(new_key)
-

@@ -923,4 +923,3 @@ def execute(settings, store, ops, task):
                 "validated_vulnerability": 0,
                 "limitations": ["Branch endpoint comparison is candidate-level observation; it does not prove vulnerability introduction, remediation, affected versions, or product impact."]}
     raise ValueError("unimplemented operation")
-

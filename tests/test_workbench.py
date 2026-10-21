@@ -2007,4 +2007,3 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(rejected.status_code, 409, rejected.text)
         self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.json").json()
                          ["validated_vulnerability"], 0)
-

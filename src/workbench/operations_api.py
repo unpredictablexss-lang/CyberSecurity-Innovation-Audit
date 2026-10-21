@@ -4459,4 +4459,3 @@ def _case_product_validation_binding(settings, store, case_id):
     )):
         return None
     return binding
-
