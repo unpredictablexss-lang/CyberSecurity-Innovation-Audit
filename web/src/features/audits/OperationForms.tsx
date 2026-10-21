@@ -787,7 +787,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
             <Descriptions.Item label="模型端点">{pairPreview.provider?.endpoint_host} · {pairPreview.provider?.model}</Descriptions.Item>
             <Descriptions.Item label="固定候选" span={2}>{pairPreview.candidate?.repository} @ {pairPreview.candidate?.commit} · {pairPreview.candidate?.candidate_id}</Descriptions.Item>
             <Descriptions.Item label="单轮模型研判">每候选一个 Provider 请求，单次输出上限 {pairPreview.aggregate_budget?.single_shot_max_output_tokens_per_request ?? pairPreview.arms?.[0]?.preview?.budgets?.max_output_tokens} tokens，45 秒超时</Descriptions.Item>
-            <Descriptions.Item label="跨文件工具调查">不设平台累计 Token、费用、调用次数或总时长上限；Provider 账户计费和额度适用</Descriptions.Item>
+            <Descriptions.Item label="跨文件工具调查">按授权预览的累计 Token、调用次数和总时限执行；实际账单以 Provider 为准</Descriptions.Item>
           </Descriptions>
           <Text type="secondary">整组预览 SHA-256：{pairPreview.consent_sha256}</Text>
           {pairPreview.arms?.map((arm: any) => <Card key={arm.mode} className="section-gap" size="small" title={arm.mode === "single_shot" ? "单轮模型研判" : "跨文件智能调查"}>
@@ -820,7 +820,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
       <Collapse className="section-gap" items={[{ key: "execution-budget", label: "单次请求设置", children: <Space wrap>
         <Form.Item name="max_output_tokens" label="单次 Provider 输出上限"><InputNumber min={128} max={3000} /></Form.Item>
       </Space> }]} />
-      <Text type="secondary">平台不设调查累计 Token、费用、模型/工具调用次数或总时长上限；服务商账户计费和额度适用。单次请求最多输出此处设置的 Token，45 秒无响应会结束该次请求。工具只读并限定在本次固定候选及扫描源码范围；连续 3 轮没有新增源码证据时会请求总结，用户也可随时取消。</Text>
+      <Text type="secondary">调查执行本次预览中的累计 Token、模型/工具调用次数和总时限；费用估计按记录的费率卡计算。单次请求最多输出此处设置的 Token，45 秒无响应会结束该次请求。工具只读并限定在本次固定候选及扫描源码范围；连续 3 轮没有新增源码证据时会请求总结，用户也可随时取消。</Text>
       <Button className="section-gap" loading={previewBusy} disabled={!ready || !context.job_id || !context.candidate_id}
         onClick={() => void requestPreview()}>预览本次将发送的数据</Button>
       {preview && <Card className="section-gap" size="small" title="外发预览：仅限本次扫描候选">

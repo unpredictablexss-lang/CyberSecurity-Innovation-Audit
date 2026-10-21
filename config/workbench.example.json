@@ -4,5 +4,10 @@
     "~/openharmony-targets",
     "~/oh-audit-targets",
     "~/openharmony-audit/perf-corpus"
-  ]
+  ],
+  "repository_cache": {
+    "roots": ["~/ohscanner-workbench/data/repo-cache"],
+    "max_bytes": 0,
+    "minimum_free_bytes": 1073741824
+  }
 }
