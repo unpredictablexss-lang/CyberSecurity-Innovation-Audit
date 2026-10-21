@@ -2539,12 +2539,39 @@ def install_routes(app: FastAPI, settings, store):
 
     @router.post("/operations/progressive-deep-investigation-batches", status_code=201)
     def progressive_deep_investigation_batch(body: ProgressiveDeepInvestigationBatchRequest):
+        from datetime import datetime
         from .agent import ProviderConfig
         if body.source_submission_approved is not True:
             raise HTTPException(status_code=428, detail="请先检查本任务全部 L3 范围并明确授权")
         if not body.consent_sha256 or not body.consent_expires_at:
             raise HTTPException(status_code=428, detail="缺少任务级 L3 清单摘要或有效期")
         _require_consent_nonce(body)
+        try:
+            l2 = ops.get(body.progressive_quick_screen_batch_id)
+            audit_id = l2.get("spec", {}).get("audit_operation_id")
+            if isinstance(audit_id, str) and audit_id:
+                for prior in ops.progressive_operations_for_audit(audit_id):
+                    prior_spec = prior.get("spec") if isinstance(prior.get("spec"), dict) else {}
+                    if (prior.get("kind") != "progressive_deep_agent_batch"
+                            or prior_spec.get("consent_sha256") != body.consent_sha256):
+                        continue
+                    try:
+                        expires = datetime.fromisoformat(body.consent_expires_at.replace("Z", "+00:00"))
+                    except (AttributeError, TypeError, ValueError):
+                        raise HTTPException(status_code=409, detail="L3 授权有效期无效；请重新预览") from None
+                    if (expires.tzinfo is None
+                            or prior_spec.get("consent_nonce") != body.consent_nonce
+                            or prior_spec.get("consent_expires_at") != body.consent_expires_at
+                            or prior_spec.get("audit_operation_id") != audit_id
+                            or prior_spec.get("l2_batch_operation_id") != l2.get("id")
+                            or prior_spec.get("l2_batch_result_sha256") != l2.get("result_sha256")
+                            or not isinstance(prior_spec.get("consent_manifest"), dict)):
+                        raise HTTPException(status_code=409, detail="相同 L3 授权已存在但当前绑定已变化；请重新预览")
+                    return prior
+        except HTTPException:
+            raise
+        except (KeyError, ValueError, OSError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
         provider = ProviderConfig.from_env(settings.data_dir)
         if not provider.configured:
             raise HTTPException(status_code=503, detail="真实模型未配置；没有发送 Provider 请求")

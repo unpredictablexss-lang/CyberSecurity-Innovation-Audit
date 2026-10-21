@@ -293,6 +293,18 @@ class Operations:
     def create(self, kind, spec):
         if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison", "progressive_quick_screen", "progressive_quick_screen_batch", "progressive_deep_agent_batch"}:
             raise ValueError("unknown operation kind")
+        if kind == "progressive_deep_agent_batch" and isinstance(spec, dict):
+            # A retry must recover the already-created batch even after its short
+            # consent window or Provider configuration has changed. Exact spec
+            # equality ensures this lookup can never widen the approved scope.
+            with self.store.connect() as db:
+                for row in db.execute("SELECT * FROM operations WHERE kind=?", (kind,)):
+                    existing_spec = json.loads(row["spec"])
+                    if existing_spec.get("consent_sha256") != spec.get("consent_sha256"):
+                        continue
+                    if existing_spec != spec:
+                        raise ValueError("existing L3 batch conflicts with this consent digest")
+                    return self.row(row)
         if kind == "progressive_quick_screen":
             from .progressive_triage.contracts import SHA256_RE, content_sha256
             required = ("consent_nonce", "consent_sha256", "job_id", "candidate_id",
@@ -627,6 +639,13 @@ class Operations:
                 for row in db.execute("SELECT * FROM operations WHERE kind=?", (kind,)):
                     existing_spec = json.loads(row["spec"])
                     if existing_spec.get("consent_sha256") == spec["consent_sha256"]:
+                        return self.row(row)
+            elif kind == "progressive_deep_agent_batch":
+                for row in db.execute("SELECT * FROM operations WHERE kind=?", (kind,)):
+                    existing_spec = json.loads(row["spec"])
+                    if existing_spec.get("consent_sha256") == spec["consent_sha256"]:
+                        if existing_spec != spec:
+                            raise ValueError("existing L3 batch conflicts with this consent digest")
                         return self.row(row)
             if kind == "repository_import_scan":
                 prior = db.execute("SELECT id FROM operations WHERE kind=? AND spec=? AND status IN ('queued','running') ORDER BY created_at DESC LIMIT 1",
