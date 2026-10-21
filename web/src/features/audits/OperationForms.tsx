@@ -353,22 +353,44 @@ export function InvestigationForm({ busy, submit, context = {} }: Pick<Operation
   </Form></Card>;
 }
 export function ValidationForm({ repos, cases, busy, submit, context = {} }: Omit<OperationFormProps, "detectors">) {
+  const [form] = Form.useForm();
+  const selectedHarness = Form.useWatch("harness_id", form) || "auth01_descriptor_bypass";
+  const [tests, setTests] = useState<any[]>([]);
+  const [catalogError, setCatalogError] = useState("");
+  useEffect(() => {
+    let active = true;
+    void api("/validation-tests").then((result) => {
+      if (active) { setTests(Array.isArray(result?.tests) ? result.tests : []); setCatalogError(""); }
+    }).catch((error) => { if (active) setCatalogError("读取已接入复现测试失败：" + String(error)); });
+    return () => { active = false; };
+  }, []);
+  const selectedTest = tests.find((item) => item.id === selectedHarness);
+  const needsTarget = selectedTest?.requires_target_support !== false;
+  const selectedBlocked = selectedTest?.source_status === "blocked";
   const target = repos.filter((r) => r.name === "openharmony/inputmethod_imf");
   const support = repos.filter((r) => r.name === "openharmony/commonlibrary_c_utils");
-  return <Card title="受控 AUTH-01 验证计划">{context.candidate_id && <Alert className="section-gap" type="info" message={"来源候选 " + context.candidate_id} description="须先关联适用案例。当前仅有已登记的 AUTH-01 Harness，其他家族尚未接入此验证入口。" action={<Button onClick={() => go("/tasks/" + context.job_id)}>返回来源任务</Button>} />}<Alert type="warning" showIcon message="仅限注册的 Docker Harness；组件复现不等于产品漏洞确认。" description="缺少 Docker daemon 或指定镜像时 Worker 会返回 blocked。当前未提供通用 PoC 上传、任意命令执行或产品确认能力。" />
-    <Form name="validation-plan" className="section-gap" layout="vertical" initialValues={{ harness_id: "auth01_descriptor_bypass", repeats: 3 }} onFinish={({ approval, ...payload }) => void submit("/operations/validations", payload)}>
+  return <Card title="受控组件复现计划">{context.candidate_id && <Alert className="section-gap" type="info" message={"来源候选 " + context.candidate_id} description="先关联案例以便归档。不同测试绑定各自固定源码或样例；组件复现结果不代表该候选已复现。" action={<Button onClick={() => go("/tasks/" + context.job_id)}>返回来源任务</Button>} />}<Alert type="warning" showIcon message="复现只运行已接入的固定测试，并在隔离 Docker 容器内执行。" description="缺少 Docker daemon 或固定镜像时任务会显示受阻。组件结果不证明产品入口可达或漏洞已确认。" />
+    <Form form={form} name="validation-plan" className="section-gap" layout="vertical" initialValues={{ harness_id: "auth01_descriptor_bypass", repeats: 3 }} onFinish={({ approval, ...values }) => {
+      const payload = { ...values };
+      if (!needsTarget) for (const key of ["target_repository_id", "target_commit", "cutils_repository_id", "cutils_commit"]) delete payload[key];
+      void submit("/operations/validations", payload);
+    }}>
       <Form.Item name="case_id" label="调查案例" rules={[{ required: true }]}><Select options={cases.map((c) => ({ value: c.id, label: c.title }))} /></Form.Item>
-      <Form.Item name="harness_id" label="已注册 Harness"><Select options={[{ value: "auth01_descriptor_bypass", label: "AUTH-01 描述符边界" }]} /></Form.Item>
-      <Form.Item name="target_repository_id" label="inputmethod_imf 仓库" rules={[{ required: true }]}><Select options={target.map((r) => ({ value: r.id, label: r.path }))} /></Form.Item>
-      <Form.Item name="target_commit" label="Harness 目标版本 SHA" rules={[{ required: true }]}><Input /></Form.Item>
-      <Form.Item name="cutils_repository_id" label="commonlibrary_c_utils 仓库" rules={[{ required: true }]}><Select options={support.map((r) => ({ value: r.id, label: r.path }))} /></Form.Item>
-      <Form.Item name="cutils_commit" label="支持源码完整 SHA" rules={[{ required: true }]}><Input /></Form.Item>
+      <Form.Item name="harness_id" label="已接入的复现测试" rules={[{ required: true }]}><Select loading={!tests.length && !catalogError} options={tests.map((item) => ({ value: item.id, label: item.source_status === "blocked" ? item.label + "（当前受阻）" : item.label }))} /></Form.Item>
+      {catalogError && <Alert type="error" message={catalogError} />}
+      {selectedTest && <Alert className="section-gap" type={selectedBlocked ? "warning" : "info"} showIcon message={selectedBlocked ? "固定测试源码不可用" : selectedTest.label} description={selectedBlocked ? selectedTest.source_reason : selectedTest.description} />}
+      {needsTarget && <>
+        <Form.Item name="target_repository_id" label="inputmethod_imf 仓库" rules={[{ required: true }]}><Select options={target.map((r) => ({ value: r.id, label: r.path }))} /></Form.Item>
+        <Form.Item name="target_commit" label="AUTH-01 目标版本 SHA" rules={[{ required: true }]}><Input /></Form.Item>
+        <Form.Item name="cutils_repository_id" label="commonlibrary_c_utils 仓库" rules={[{ required: true }]}><Select options={support.map((r) => ({ value: r.id, label: r.path }))} /></Form.Item>
+        <Form.Item name="cutils_commit" label="支持源码完整 SHA" rules={[{ required: true }]}><Input /></Form.Item>
+      </>}
       <Form.Item name="repeats" label="每个攻击/控制用例重复次数"><InputNumber min={3} max={3} /></Form.Item>
       <Form.Item name="approval" valuePropName="checked" rules={[{ validator: (_, v) => v ? Promise.resolve() : Promise.reject(new Error("请确认审阅验证对象和环境限制")) }]}>
-        <Radio>已审阅所选来源与注册 Harness，仅申请受控组件验证</Radio>
+        <Radio>已查看所选复现测试范围，仅申请受控执行</Radio>
       </Form.Item>
-      {(!target.length || !support.length || !cases.length) && <Alert type="info" message="需先登记目标版本/支持源码，并关联满足 Harness 要求的案例。" />}
-      <Button className="section-gap" type="primary" htmlType="submit" loading={busy} disabled={!target.length || !support.length || !cases.length}>提交验证任务</Button>
+      {(!cases.length || (needsTarget && (!target.length || !support.length))) && <Alert type="info" message={needsTarget ? "需先登记 AUTH-01 目标和支持源码仓库，并关联案例。" : "需先关联一个案例用于归档。"} />}
+      <Button className="section-gap" type="primary" htmlType="submit" loading={busy} disabled={!selectedTest || selectedBlocked || !cases.length || (needsTarget && (!target.length || !support.length))}>提交复现任务</Button>
     </Form>
   </Card>;
 }

@@ -89,6 +89,26 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(r.status_code, 201, r.text)
         self.repo_id = r.json()["id"]
 
+    def test_validation_catalog_lists_auth_and_cpp_reproduction_tests(self):
+        response = self.client.get("/api/v1/validation-tests")
+        self.assertEqual(response.status_code, 200, response.text)
+        tests = response.json()["tests"]
+        self.assertEqual({item["id"] for item in tests}, {
+            "auth01_descriptor_bypass", "cpp_lifetime_unique_ptr_alias",
+            "cpp_shared_ptr_delayed_singleton",
+        })
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "C++ reproduction integration",
+            "links": [{"job_id": job["id"], "candidate_id": candidate["id"], "rationale": "archive test"}],
+        }).json()
+        created = self.client.post("/api/v1/operations/validations", headers=HEADERS, json={
+            "case_id": case["id"], "harness_id": "cpp_lifetime_unique_ptr_alias",
+        })
+        self.assertEqual(created.status_code, 201, created.text)
+        self.assertEqual(created.json()["spec"]["validation_scope"], "synthetic_harness")
+        self.assertEqual(created.json()["spec"]["harness_id"], "cpp_lifetime_unique_ptr_alias")
     def queue(self, **extra):
         data = {
             "repository_id": self.repo_id,

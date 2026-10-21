@@ -610,6 +610,29 @@ export default function OperationWorkspace({ view = "all", operationId, context 
       </Card>}
       {(selected.kind === "version_matrix" || selected.kind === "recent_window_comparison") && <VersionCandidateComparison operation={selected}
         onOperationCreated={(item: any) => { if (item?.id) void show(item.id); }} />}
+      {selected.kind === "validation" && selected.result && <Card className="section-gap" size="small" title="复现范围与结果">
+        {(() => {
+          const result = selected.result;
+          const evidence = result.validation_evidence || {};
+          const details = result.result || result;
+          const builds = Array.isArray(evidence.builds || details.builds) ? (evidence.builds || details.builds) : [];
+          const runs = Array.isArray(evidence.runs || details.runs) ? (evidence.runs || details.runs) : [];
+          return <>
+            <Alert type="info" showIcon message={evidence.scope_explanation || details.scope_explanation || "组件复现结果不证明产品入口可达或漏洞已经确认。"}
+              description={`测试：${evidence.harness_id || details.harness_id || selected.spec?.harness_id || "未知"}；结果：${evidence.outcome || details.outcome || result.status || "未知"}；validated_vulnerability=${result.validated_vulnerability ?? 0}`} />
+            <Descriptions className="section-gap" size="small" bordered column={{ xs: 1, md: 2 }}>
+              <Descriptions.Item label="验证范围">{evidence.validation_scope || details.validation_scope || selected.spec?.validation_scope || "组件 Harness"}</Descriptions.Item>
+              <Descriptions.Item label="源码绑定">{evidence.source_binding_status || details.source_binding_status || "见输入清单"}</Descriptions.Item>
+              <Descriptions.Item label="编译项 / 运行项">{builds.length} / {runs.length}</Descriptions.Item>
+              <Descriptions.Item label="Docker 日志 SHA-256">{result.docker_log_sha256 || "未知"}</Descriptions.Item>
+              <Descriptions.Item label="结果文件">{evidence.result_file || details.result_file || "validation-result.json"}</Descriptions.Item>
+              <Descriptions.Item label="复现报告">{evidence.report_file || details.report_file || "见原始结果 JSON"}</Descriptions.Item>
+            </Descriptions>
+            <Text type="secondary">限制：{(evidence.limitations || details.limitations || []).join("；") || "组件复现范围有限，产品入口与影响未知。"}</Text>
+            {(evidence.report_markdown || details.report_markdown) && <pre className="json-view">{evidence.report_markdown || details.report_markdown}</pre>}
+          </>;
+        })()}
+      </Card>}
       {["source_sync", "source_sync_batch"].includes(selected.kind) ? <SourceSyncDetails operation={selected} />
         : selected.kind === "agent_investigation" && selected.result ? <AgentAssessment result={selected.result} reviews={selected.agent_reviews || []}
         onSubmit={async (review: any) => { await api("/operations/" + selected.id + "/agent-reviews", review); await show(selected.id); }} /> : null}
