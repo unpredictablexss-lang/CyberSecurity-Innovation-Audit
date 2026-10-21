@@ -114,13 +114,13 @@
     ]
   },
   "scanner_delivery": {
-    "commit": "f1d68e36098043c918acd025b7db0ccf584e6de3",
-    "tree": "7223b60e80b7cb3c0ab53afdecb388c35ed008bb",
+    "commit": "658da6171ffebdad56c33ef65b0a8d6e8ebe910a",
+    "tree": "a793425905ccab7582e97747baa5a3533effa43f",
     "parents": [
-      "b957894ca0229d7a6b0557b87d35e1c2ac877b07"
+      "f1d68e36098043c918acd025b7db0ccf584e6de3"
     ],
     "commit_date": "2026-10-21",
-    "subject": "feat(ipc): deliver DATA-06 source-to-report demo",
+    "subject": "docs(ipc): bind DATA-06 source and UI delivery",
     "files": [
       {
         "path": "src/ohscanner/detectors/interface/detector.py",
@@ -130,8 +130,8 @@
       },
       {
         "path": "src/ohscanner/detectors/interface/ffi_array_bounds.py",
-        "blob_oid": "6eb84c25540c27e174c16d9e97dd10f42e6b7087",
-        "source_sha256": "41d822c9c3ecb3d07d9f0c9219181531b75c4d233919b0754e01e79a54e1c641",
+        "blob_oid": "d39461b6492a1f48378d11177ec0b214f604a204",
+        "source_sha256": "828c8b0a1e7c47161a104aa90129ef8daf6cab4d83567d69bf721f3e8c8864a6",
         "bytes": 9993
       },
       {
