@@ -37,3 +37,10 @@ test("accepted and legacy statuses do not show a rejection alert", () => {
   assert.equal(structuredAnswerRejection("accepted", "invalid_json"), null);
   assert.equal(structuredAnswerRejection(undefined, undefined), null);
 });
+
+
+test("schema and source citation failures have distinct Chinese explanations", () => {
+  assert.match(structuredAnswerRejection("rejected_after_repeated_validation_error", "invalid_schema"), /顶层字段/);
+  assert.match(structuredAnswerRejection("rejected_after_repeated_validation_error", "invalid_claim_structure"), /obligation_indices/);
+  assert.match(structuredAnswerRejection("rejected_after_repeated_validation_error", "invalid_source_line_range"), /连续 8 行/);
+});

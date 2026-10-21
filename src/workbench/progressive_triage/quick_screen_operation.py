@@ -213,7 +213,8 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
         "model": provider.model,
     }
     # Validate the request before showing a consent screen, not after the user submits it.
-    build_quick_screen_request(group, evidence, authorization, provider.fingerprint, provider.model)
+    build_quick_screen_request(group, evidence, authorization, provider.fingerprint, provider.model,
+                               max_output_tokens=getattr(provider, "request_output_tokens", agent.DEFAULT_AGENT_OUTPUT_TOKENS))
     expires_at = consent_expires_at or (
         datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
     try:
@@ -225,6 +226,7 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
     manifest = {
         "consent_nonce": consent_nonce,
         "consent_expires_at": expires_at,
+        "request_output_tokens": getattr(provider, "request_output_tokens", agent.DEFAULT_AGENT_OUTPUT_TOKENS),
         "quick_screen_version": QUICK_SCREEN_VERSION,
         "prompt_version": PROMPT_VERSION,
         "group": group,
@@ -260,7 +262,7 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
         "disclosure": {
             "model_calls": 1,
             "tools_enabled": False,
-            "max_output_tokens": 512,
+            "max_output_tokens": manifest["request_output_tokens"],
             "timeout_seconds": 90,
             "source_excerpt_count": 1,
             "source_excerpt_bytes": len(excerpt.encode("utf-8")),
@@ -401,6 +403,7 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         payload, _ = build_quick_screen_request(
             spec["group"], spec["evidence"], spec["authorization"],
             provider.fingerprint, provider.model,
+            max_output_tokens=manifest.get("request_output_tokens", MAX_RESPONSE_TOKENS),
         )
     except (KeyError, TypeError, ValueError) as error:
         return {"state": "quick_unknown", "reason_code": "request_preflight:" + str(error),
@@ -426,7 +429,8 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         reservation = ledger.reserve(
             audit_id, audit_id + ":quick:" + spec["consent_sha256"],
             spec["job_id"], group_id, "quick_screen",
-            max_input_tokens=input_reservation, max_output_tokens=MAX_RESPONSE_TOKENS,
+            max_input_tokens=input_reservation,
+            max_output_tokens=manifest.get("request_output_tokens", MAX_RESPONSE_TOKENS) or 65536,
             reauthorized_quick_screen=True,
         )
         if reservation.get("idempotent_replay"):
@@ -447,6 +451,7 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         client, spec["group"], spec["evidence"], spec["authorization"],
         provider_fingerprint=provider.fingerprint, model=provider.model,
         timeout_seconds=timeout_seconds,
+        max_output_tokens=manifest.get("request_output_tokens", MAX_RESPONSE_TOKENS),
     )
     try:
         if result.get("state") == "completed":

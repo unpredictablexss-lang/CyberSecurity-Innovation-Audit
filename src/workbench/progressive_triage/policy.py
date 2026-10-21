@@ -123,8 +123,11 @@ def _validate_limits(value: Any) -> dict[str, Any]:
     return result
 
 
+_OUTPUT_UNSET = object()
+
+
 def build_policy(profile: str = "standard", limits: dict[str, Any] | None = None,
-                 family_quotas: bool | None = None) -> dict[str, Any]:
+                 family_quotas: bool | None = None, *, request_output_tokens=_OUTPUT_UNSET) -> dict[str, Any]:
     """Create a strict, JSON-safe policy snapshot from a preset or custom values."""
     if profile not in PROFILES:
         raise PolicyError("profile must be economical, standard, deep, or custom")
@@ -142,7 +145,7 @@ def build_policy(profile: str = "standard", limits: dict[str, Any] | None = None
         resolved_family_quotas = preset["family_quotas"]
     if not isinstance(resolved_family_quotas, bool):
         raise PolicyError("family_quotas must be a boolean")
-    return {
+    result = {
         "policy_version": POLICY_VERSION,
         "profile": profile,
         "limits": resolved_limits,
@@ -151,6 +154,12 @@ def build_policy(profile: str = "standard", limits: dict[str, Any] | None = None
         "consent_required": True,
     }
 
+    if request_output_tokens is not _OUTPUT_UNSET:
+        if request_output_tokens is not None and (type(request_output_tokens) is not int or not 128 <= request_output_tokens <= 65536):
+            raise PolicyError("单次输出额度必须为 128–65536 的整数或不设本地上限")
+        result["request_output_tokens"] = request_output_tokens
+    return result
+
 
 def validate_policy(value: Any) -> dict[str, Any]:
     """Validate a stored policy, rejecting unknown fields and unsafe coercions."""
@@ -158,7 +167,7 @@ def validate_policy(value: Any) -> dict[str, Any]:
         "policy_version", "profile", "limits", "family_quotas",
         "preserve_all_candidates", "consent_required",
     }
-    if not isinstance(value, dict) or set(value) != expected:
+    if not isinstance(value, dict) or set(value) not in (expected, expected | {"request_output_tokens"}):
         raise PolicyError("policy fields do not match the supported schema")
     if value["policy_version"] != POLICY_VERSION:
         raise PolicyError("unsupported policy version")
@@ -166,7 +175,8 @@ def validate_policy(value: Any) -> dict[str, Any]:
         raise PolicyError("preserving every original candidate is mandatory")
     if value["consent_required"] is not True:
         raise PolicyError("task-level consent is mandatory")
-    return build_policy(value["profile"], value["limits"], value["family_quotas"])
+    return build_policy(value["profile"], value["limits"], value["family_quotas"],
+                        request_output_tokens=value.get("request_output_tokens", _OUTPUT_UNSET))
 
 
 def policy_envelope(policy: dict[str, Any]) -> dict[str, Any]:

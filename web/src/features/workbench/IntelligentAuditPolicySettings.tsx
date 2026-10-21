@@ -21,6 +21,7 @@ export default function IntelligentAuditPolicySettings() {
   const [profile, setProfile] = useState<Profile>("standard");
   const [limits, setLimits] = useState<Limits>({});
   const [familyQuotas, setFamilyQuotas] = useState(true);
+  const [requestOutput, setRequestOutput] = useState<number | null>(5000);
   const [presets, setPresets] = useState<Record<string, { limits: Limits; family_quotas: boolean }>>({});
   const [integration, setIntegration] = useState<Record<string, unknown>>({});
 
@@ -36,6 +37,7 @@ export default function IntelligentAuditPolicySettings() {
       setProfile(body.policy.profile);
       setLimits(body.policy.limits);
       setFamilyQuotas(body.policy.family_quotas);
+      setRequestOutput(body.policy.request_output_tokens === null ? null : (body.policy.request_output_tokens ?? 5000));
       setPresets(body.presets || {});
       setIntegration(body.integration || {});
     } catch (reason) {
@@ -87,6 +89,7 @@ export default function IntelligentAuditPolicySettings() {
         headers: { "Content-Type": "application/json", "X-OHScanner-Client": "workbench-v1" },
         body: JSON.stringify({
           expected_revision: revision,
+          request_output_tokens: requestOutput,
           profile,
           ...(isCustom ? { limits, family_quotas: familyQuotas } : {}),
         }),
@@ -98,6 +101,7 @@ export default function IntelligentAuditPolicySettings() {
       setProfile(body.policy.profile);
       setLimits(body.policy.limits);
       setFamilyQuotas(body.policy.family_quotas);
+      setRequestOutput(body.policy.request_output_tokens === null ? null : (body.policy.request_output_tokens ?? 5000));
       message.success("智能审计策略已保存到本机设置");
     } catch (reason) {
       setError(String(reason));
@@ -112,6 +116,16 @@ export default function IntelligentAuditPolicySettings() {
     <Alert type="info" showIcon message="智能审计使用范围"
       description={`运行状态：L0/L1 ${String(integration.grouping_and_ranking || "unknown")}；Worker 门禁 ${String(integration.worker_enforcement || "unknown")}；L2 ${String(integration.quick_screen_executor || "unknown")}；L3 ${String(integration.deep_agent_executor || "unknown")}。静态审计只做本地分析；L2/L3 会先展示固定源码范围并要求授权。平台不设累计 Token、模型调用或调查时长上限；真实额度和费用由模型服务商账户决定，调查可随时取消。`} />
     {error && <Alert type="error" showIcon message="策略读取或保存失败" description={error} />}
+    <Card title="单次模型输出额度（统一配置）">
+      <Space wrap>
+        <Switch checked={requestOutput === null} disabled={saving} onChange={(checked) => setRequestOutput(checked ? null : 5000)} />
+        <Text>不设本地 Token 上限（实验）</Text>
+        {requestOutput !== null && <InputNumber aria-label="单次模型输出额度" min={128} max={65536} precision={0}
+          value={requestOutput} disabled={saving} addonAfter="Token" onChange={(value) => { if (value != null) setRequestOutput(Number(value)); }} />}
+      </Space>
+      <Paragraph type="secondary" style={{ marginTop: 12 }}>默认 5000，包含模型思考与回答。AI 初步分析、深入追查、反证复核和报告草案统一读取这里；实验模式不向模型服务商传输出 Token 上限，服务商自身限制仍可能生效。保存后新建任务使用新值，旧任务保留原额度；修改后须重新预览授权。</Paragraph>
+      <Button type="primary" loading={saving} onClick={() => void save()}>保存单次输出设置</Button>
+    </Card>
     <Card title="选择策略" extra={<Tag color={updatedAt ? "green" : "blue"}>{updatedAt ? `已保存 · 修订 ${revision}` : "使用默认标准策略"}</Tag>}>
       <Radio.Group value={profile} onChange={(event) => selectProfile(event.target.value)}>
         <Space wrap>

@@ -861,10 +861,10 @@ def enqueue_authorized_triage(settings, store, ops, job):
         })
     preview_spec = {
         **agent.bounded_agent_spec({"mode": "single_shot",
-                                    "max_output_tokens": 3000,
+                                    "max_output_tokens": provider.request_output_tokens,
                                     "no_cumulative_token_ceiling": True}),
         "mode": "single_shot",
-        "max_output_tokens": 3000,
+        "max_output_tokens": provider.request_output_tokens,
         "max_request_context_tokens": 65536,
         "max_request_context_bytes": agent.MAX_SMART_REQUEST_CONTEXT_BYTES,
         "request_timeout_seconds": 45,
@@ -1110,7 +1110,9 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
     selected = eligible[:limit] if not auth_error else []
     selected_ids = {item[0]["id"] for item in selected}
     r2_preview_spec = {
-        **agent.bounded_agent_spec({"mode": "tool_agent"}),
+        **agent.bounded_agent_spec({"mode": "tool_agent",
+                                    "max_output_tokens": provider.request_output_tokens,
+                                    "no_cumulative_token_ceiling": True}),
         "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
         "continuous_investigation": False,
         "include_paths": list(job.get("spec", {}).get("include_paths", [])),

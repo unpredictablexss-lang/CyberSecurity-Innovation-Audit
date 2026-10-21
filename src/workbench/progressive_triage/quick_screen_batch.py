@@ -190,6 +190,7 @@ def prepare_quick_screen_batch(settings, store, ops, audit_id: str, provider,
         "source_sha256": item["spec"]["evidence"][0]["source_sha256"],
         "excerpt": item["spec"]["evidence"][0]["text"],
         "redactions": item["spec"]["evidence"][0].get("sensitive_redactions", []),
+        "request_output_tokens": item["spec"]["consent_manifest"].get("request_output_tokens", 512),
         "consent_sha256": item["spec"]["consent_sha256"],
     } for item in items]
     return {

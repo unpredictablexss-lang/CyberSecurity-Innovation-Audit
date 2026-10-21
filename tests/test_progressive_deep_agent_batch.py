@@ -219,7 +219,7 @@ class ProgressiveDeepAgentBatchTests(unittest.TestCase):
             },
         }]}
         provider = SimpleNamespace(
-            configured=True, provider="test-provider", model="test-model",
+            configured=True, provider="test-provider", model="test-model", request_output_tokens=5000,
             fingerprint="1" * 64, endpoint_host="provider.test",
             public={"provider": "test-provider", "model": "test-model"},
         )

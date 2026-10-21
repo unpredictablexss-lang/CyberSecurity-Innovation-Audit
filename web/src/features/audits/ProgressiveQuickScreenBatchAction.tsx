@@ -62,6 +62,7 @@ export default function ProgressiveQuickScreenBatchAction({ auditOperationId, en
           <Descriptions.Item label="L1 选中 / 本次执行">{preview.selected_group_count} / {preview.scheduled_group_count} 组</Descriptions.Item>
           <Descriptions.Item label="累计调查额度">平台不设 Token、调用次数、时长或费用上限</Descriptions.Item>
           <Descriptions.Item label="计费与停止方式">按 Provider 账户实际额度计费；可随时取消</Descriptions.Item>
+          <Descriptions.Item label="单次输出额度">{preview.disclosures?.[0]?.request_output_tokens == null ? "无本地上限，由服务商决定" : String(preview.disclosures[0].request_output_tokens) + " tokens"}</Descriptions.Item>
           <Descriptions.Item label="授权摘要 SHA-256" span={2}>{preview.consent_sha256}</Descriptions.Item>
         </Descriptions>
         {preview.skipped?.length > 0 && <Alert className="section-gap" type="info" showIcon

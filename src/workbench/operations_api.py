@@ -48,7 +48,7 @@ from .operation_limits import MAX_DETECTOR_IDS
 from .store import now
 from . import service
 from .agent_guidance import recommend_investigation_route
-from .triage_limits import (MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
+from .triage_limits import (DEFAULT_AGENT_OUTPUT_TOKENS, MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
                             MAX_AUTOMATIC_TRIAGE_ENDPOINTS)
 
 
@@ -566,9 +566,9 @@ class AgentInvestigationRequest(Strict):
                                       pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
     mode: Literal["single_shot", "tool_agent"] = "tool_agent"
     max_steps: int = Field(default=4, ge=1, le=6)
-    max_output_tokens: int = Field(default=1200, ge=128, le=3000)
+    max_output_tokens: int | None = Field(default=DEFAULT_AGENT_OUTPUT_TOKENS, ge=128, le=65536)
     max_total_input_tokens: int = Field(default=128000, ge=1000, le=512000)
-    max_total_output_tokens: int = Field(default=4000, ge=512, le=12000)
+    max_total_output_tokens: int = Field(default=8000, ge=512, le=12000)
     timeout_seconds: int = Field(default=240, ge=90, le=480)
     source_submission_approved: bool = False
     consent_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
@@ -615,9 +615,9 @@ class AgentBatchInvestigationRequest(Strict):
     candidate_ids: list[str] = Field(min_length=1, max_length=5)
     mode: Literal["single_shot", "tool_agent"] = "tool_agent"
     max_steps: int = Field(default=4, ge=1, le=6)
-    max_output_tokens: int = Field(default=1200, ge=128, le=3000)
+    max_output_tokens: int | None = Field(default=DEFAULT_AGENT_OUTPUT_TOKENS, ge=128, le=65536)
     max_total_input_tokens: int = Field(default=128000, ge=1000, le=512000)
-    max_total_output_tokens: int = Field(default=4000, ge=512, le=12000)
+    max_total_output_tokens: int = Field(default=8000, ge=512, le=12000)
     timeout_seconds: int = Field(default=240, ge=90, le=480)
     source_submission_approved: bool = False
     consent_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
@@ -2046,8 +2046,15 @@ def install_routes(app: FastAPI, settings, store):
         result["checked_at"] = persisted.get("checked_at") if persisted else None
         return result
 
+    def _apply_request_output_policy(body, provider):
+        if ("max_output_tokens" in body.model_fields_set
+                and body.max_output_tokens != provider.request_output_tokens):
+            raise HTTPException(status_code=409, detail="单次输出额度已统一由系统设置的智能审计策略配置；请重新预览授权")
+        body.max_output_tokens = provider.request_output_tokens
+
     def _agent_consent_preview(body, provider, *, continuous=None, progressive_bounded=False):
         from .agent import consent_preview
+        _apply_request_output_policy(body, provider)
         job = store.job(body.job_id)
         if job["status"] not in {"completed", "completed_with_limitations"} or not job.get("report_sha256"):
             raise ValueError("只允许预览已有完整报告的候选")
@@ -2059,7 +2066,8 @@ def install_routes(app: FastAPI, settings, store):
         # one Provider request. Per-request controls and fixed read-only scope remain.
         preview_spec["continuous_investigation"] = continuous is True
         preview_spec["no_cumulative_token_ceiling"] = (
-            body.mode == "tool_agent" and (not progressive_bounded or continuous is True))
+            (body.mode == "tool_agent" and (not progressive_bounded or continuous is True))
+            or body.max_output_tokens is None)
         preview_spec["provider_request_timeout_seconds"] = 45
         preview_spec["max_provider_retries"] = 0 if progressive_bounded else 1
         preview = consent_preview(settings, store, job, report, candidate, preview_spec, provider)
@@ -2666,7 +2674,7 @@ def install_routes(app: FastAPI, settings, store):
             "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
             "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
             "continuous_investigation": False,
-            "no_cumulative_token_ceiling": body.mode == "tool_agent",
+            "no_cumulative_token_ceiling": body.mode == "tool_agent" or body.max_output_tokens is None,
             "source_submission_approved": True, "source_submission_approved_at": now(),
             "source_consent_sha256": preview["consent_sha256"], "consent_nonce": body.consent_nonce,
             "consent_preview_version": CONSENT_PREVIEW_VERSION,
@@ -2686,6 +2694,7 @@ def install_routes(app: FastAPI, settings, store):
         return ops.get(item["id"])
 
     def _agent_batch_preview(body, provider):
+        _apply_request_output_policy(body, provider)
         if len(set(body.candidate_ids)) != len(body.candidate_ids):
             raise ValueError("候选列表包含重复 ID")
         job = store.job(body.job_id)
@@ -2810,7 +2819,7 @@ def install_routes(app: FastAPI, settings, store):
                 "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
                 "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
                 "continuous_investigation": False,
-                "no_cumulative_token_ceiling": body.mode == "tool_agent",
+                "no_cumulative_token_ceiling": body.mode == "tool_agent" or body.max_output_tokens is None,
                 "source_submission_approved": True, "source_submission_approved_at": now(),
                 "source_consent_sha256": child_preview["consent_sha256"], "consent_nonce": body.consent_nonce,
                 "consent_preview_version": CONSENT_PREVIEW_VERSION,
@@ -2830,6 +2839,7 @@ def install_routes(app: FastAPI, settings, store):
                 "note": "每个候选一个独立任务；结论仍为候选，等待人工审核。"}
 
     def _agent_pair_previews(body, provider):
+        _apply_request_output_policy(body, provider)
         previews = []
         for mode in ("single_shot", "tool_agent"):
             child = AgentInvestigationRequest(job_id=body.job_id, candidate_id=body.candidate_id,
@@ -2930,7 +2940,7 @@ def install_routes(app: FastAPI, settings, store):
                 "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
                 "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
                 "continuous_investigation": False,
-                "no_cumulative_token_ceiling": arm["mode"] == "tool_agent",
+                "no_cumulative_token_ceiling": arm["mode"] == "tool_agent" or body.max_output_tokens is None,
                 "source_submission_approved": True, "source_submission_approved_at": now(),
                 "source_consent_sha256": arm_preview["consent_sha256"], "consent_nonce": body.consent_nonce,
                 "consent_preview_version": CONSENT_PREVIEW_VERSION,

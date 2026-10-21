@@ -617,7 +617,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
     </Space>}
     {providerCheckError && <Alert className="section-gap" type="error" showIcon message={providerCheckError} />}
     {previewError && <Alert className="section-gap" type="error" showIcon message={previewError} />}
-    <Form name="agent-candidate-investigation" form={form} layout="vertical" initialValues={{ mode: "tool_agent", max_steps: 4, max_total_input_tokens: 128000, max_total_output_tokens: 4000, timeout_seconds: 240, max_output_tokens: 1200, job_id: context.job_id, candidate_id: context.candidate_id, case_id: context.case_id }}
+    <Form name="agent-candidate-investigation" form={form} layout="vertical" initialValues={{ mode: "tool_agent", max_steps: 4, max_total_input_tokens: 128000, max_total_output_tokens: 8000, timeout_seconds: 240, job_id: context.job_id, candidate_id: context.candidate_id, case_id: context.case_id }}
       onValuesChange={(changed) => {
         if (!("source_submission_approved" in changed)) invalidatePreview();
         setPairPreview(null); setPairError(""); setPairDisclosureOpened([]); setPairSubmissionApproved(false);
@@ -634,7 +634,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
       <Form.Item name="job_id" label="已完成扫描任务 ID" rules={[{ required: true }]}><Input readOnly /></Form.Item>
       <Form.Item name="candidate_id" label="扫描候选 ID" rules={[{ required: true }]}><Input readOnly /></Form.Item>
       <Form.Item name="max_steps" hidden><InputNumber /></Form.Item>
-      <Form.Item name="max_output_tokens" hidden><InputNumber /></Form.Item>
+      <Alert className="section-gap" type="info" message="单次模型输出额度统一在系统设置 → 智能审计策略与资源预算中配置；本次外发预览会显示实际额度。" />
       <Form.Item name="max_total_input_tokens" hidden><InputNumber /></Form.Item>
       <Form.Item name="max_total_output_tokens" hidden><InputNumber /></Form.Item>
       <Form.Item name="timeout_seconds" hidden><InputNumber /></Form.Item>
@@ -790,12 +790,12 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
             <Descriptions.Item label="实验批次">{pairPreview.experiment_id}</Descriptions.Item>
             <Descriptions.Item label="模型端点">{pairPreview.provider?.endpoint_host} · {pairPreview.provider?.model}</Descriptions.Item>
             <Descriptions.Item label="固定候选" span={2}>{pairPreview.candidate?.repository} @ {pairPreview.candidate?.commit} · {pairPreview.candidate?.candidate_id}</Descriptions.Item>
-            <Descriptions.Item label="单轮模型研判">每候选一个 Provider 请求，单次输出上限 {pairPreview.aggregate_budget?.single_shot_max_output_tokens_per_request ?? pairPreview.arms?.[0]?.preview?.budgets?.max_output_tokens} tokens，45 秒超时</Descriptions.Item>
+            <Descriptions.Item label="AI 初步分析">每候选一个 Provider 请求，单次输出上限 {pairPreview.aggregate_budget?.single_shot_max_output_tokens_per_request == null ? "无本地上限，由服务商决定" : String(pairPreview.aggregate_budget.single_shot_max_output_tokens_per_request) + " tokens"}，45 秒超时</Descriptions.Item>
             <Descriptions.Item label="跨文件工具调查">平台不设累计 Token、调用次数、费用或总时长上限；每次请求仍有输出上限和 45 秒超时，可随时取消</Descriptions.Item>
           </Descriptions>
           <Text type="secondary">整组预览 SHA-256：{pairPreview.consent_sha256}</Text>
-          {pairPreview.arms?.map((arm: any) => <Card key={arm.mode} className="section-gap" size="small" title={arm.mode === "single_shot" ? "单轮模型研判" : "跨文件智能调查"}>
-            <Text>上下文 UTF-8 字节：{arm.preview?.initial_context_utf8_bytes} · 工具思考：{arm.preview?.inference_settings?.tool_call_reasoning_effort || "无"} · 结构化输出思考：{arm.preview?.inference_settings?.structured_output_reasoning_effort || "服务商默认"} · 单次输出上限：{arm.preview?.budgets?.max_output_tokens} tokens · 源码 SHA-256：{arm.preview?.binding?.source_sha256}</Text>
+          {pairPreview.arms?.map((arm: any) => <Card key={arm.mode} className="section-gap" size="small" title={arm.mode === "single_shot" ? "AI 初步分析" : "AI 深入追查"}>
+            <Text>上下文 UTF-8 字节：{arm.preview?.initial_context_utf8_bytes} · 工具思考：{arm.preview?.inference_settings?.tool_call_reasoning_effort || "无"} · 结构化输出思考：{arm.preview?.inference_settings?.structured_output_reasoning_effort || "服务商默认"} · 单次输出上限：{arm.preview?.budgets?.max_output_tokens_per_request == null && arm.preview?.budgets?.max_output_tokens == null ? "无本地上限，由服务商决定" : String(arm.preview?.budgets?.max_output_tokens_per_request ?? arm.preview?.budgets?.max_output_tokens) + " tokens"} · 源码 SHA-256：{arm.preview?.binding?.source_sha256}</Text>
             <Alert type="warning" showIcon message="自动脱敏不是完整 DLP，请检查本组完整外发预览"
               description={redactionNotice(arm.preview)} />
             <Collapse activeKey={pairDisclosureOpened.includes(String(arm.mode)) ? [String(arm.mode)] : []}
@@ -822,7 +822,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
       ]} /></Form.Item>
 
       <Collapse className="section-gap" items={[{ key: "execution-budget", label: "单次请求设置", children: <Space wrap>
-        <Form.Item name="max_output_tokens" label="单次 Provider 输出上限"><InputNumber min={128} max={3000} /></Form.Item>
+        <Text type="secondary">单次输出额度统一使用系统设置中的智能审计策略。</Text>
       </Space> }]} />
       <Text type="secondary">工具增强调查不设累计 Token、模型/工具调用、总时长或费用上限；每次请求仍受单次输出 Token 设置、上下文长度和 45 秒 Provider 超时约束。工具只读并限定在本次固定候选及扫描源码范围；连续 3 轮没有新增源码证据时会请求总结，用户也可随时取消。实际账单与账户配额由 Provider 决定。</Text>
       <Button className="section-gap" loading={previewBusy} disabled={!ready || !context.job_id || !context.candidate_id}

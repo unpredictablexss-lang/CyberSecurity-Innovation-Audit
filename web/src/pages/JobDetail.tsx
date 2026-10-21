@@ -1377,7 +1377,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
             <Descriptions.Item label="模型端点">{batchPreview.provider?.endpoint_host || "未显示"}</Descriptions.Item>
             <Descriptions.Item label="候选数">{batchPreview.candidate_count}</Descriptions.Item>
             <Descriptions.Item label="请求次数语义">{batchMode === "single_shot" ? "每候选恰好 1 次 Provider 请求" : "无平台累计模型调用上限，直到终止条件"}</Descriptions.Item>
-            <Descriptions.Item label="每请求输出上限">{batchPreview.aggregate_budget?.max_output_tokens_per_provider_request ?? "未知"} tokens</Descriptions.Item>
+            <Descriptions.Item label="每请求输出上限">{batchPreview.aggregate_budget?.max_output_tokens_per_provider_request == null ? "无本地上限，由模型服务商决定" : String(batchPreview.aggregate_budget.max_output_tokens_per_provider_request) + " tokens"}</Descriptions.Item>
             <Descriptions.Item label="单次 Provider 请求超时">{batchPreview.aggregate_budget?.provider_request_timeout_seconds ?? 45} 秒</Descriptions.Item>
             <Descriptions.Item label="累计 Token / 费用 / 总时长">{batchMode === "single_shot" ? "单次请求；按所选模式限制为一次" : "平台不设累计上限；Provider 账户计费与额度适用"}</Descriptions.Item>
             <Descriptions.Item label="整批预算费用最高估算（非硬上限）">{batchPreview.aggregate_budget_cost_estimate
