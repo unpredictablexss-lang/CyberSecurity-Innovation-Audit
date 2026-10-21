@@ -966,7 +966,7 @@ _TOOLS = [
                      "required": ["file", "start_line", "line_count"], "additionalProperties": False},
      "strict": True},
     {"type": "function", "name": "find_callsite_candidates",
-     "description": "Search bounded fixed-commit C/C++ blobs for Tree-sitter call_expression occurrences and conservative same-file syntax relation candidates. A relation candidate needs one preceding file-scope definition, exact direct-identifier syntax, matching argument count, no observed local shadow/prototype/overload or unsupported scope. Every semantic binding and reachability remains unknown; cross-file name matches are unresolved, never caller proof.",
+     "description": "Search bounded fixed-commit C/C++ blobs for Tree-sitter call_expression occurrences and conservative same-file syntax relation candidates. For C only, it may also return a cross-file syntax candidate when the caller file has one non-static prototype and the bounded complete C scope has one non-static definition with a matching argument count. Every semantic binding and reachability remains unknown; syntax candidates are not compiler binding or caller proof.",
      "parameters": {"type": "object", "properties": {"identifier": {"type": "string"}},
                      "required": ["identifier"], "additionalProperties": False}, "strict": True},
 ]
@@ -1078,7 +1078,7 @@ You may use only the supplied read-only functions. For source follow-up, request
 Exact-symbol search is lexical only: a text match alone does not establish a caller/callee relationship, shared implementation, type identity, reachability, or execution. Infer such a relationship only when explicit source control flow in the cited code establishes it; otherwise keep the relationship unknown. Follow initial_context.evidence_routing: only indices in agent_source_review_indices may receive evidence_found or contrary_evidence. Keep human_or_runtime_review_indices, unclassified_indices, and every other index unresolved with no citations; carry their unresolved requirements to unknowns and next_steps for a human or authorized runtime check. Incomplete scan or detector coverage is a separate limitation, not evidence that a specific candidate is safe or vulnerable. Every supported_claim must name one or more obligation_indices that it directly addresses; each index must be in agent_source_review_indices. A likely_true_positive assessment requires at least one supported claim mapped to an evidence_found source obligation; a likely_false_positive assessment requires one mapped to a contrary_evidence source obligation. If neither basis exists, choose needs_more_evidence or unknown. Do not make free-floating claims or use a source-reviewable obligation as a pretext to assert a separate human/runtime conclusion. The server rejects missing, invalid, or non-source obligation mappings. Return exactly one obligation_reviews item for every evidence_obligations entry in the supplied order, using its zero-based index. Use evidence_found only when relevant source evidence is present, contrary_evidence when source evidence points against the stated obligation, and unresolved when the fixed evidence cannot decide it. These labels are model triage, not proof that an obligation is satisfied or that a vulnerability is real. Every evidence_found or contrary_evidence item must cite at least one evidence_id, exact repository-relative file, and one-based line_start/line_end range from that source excerpt; unresolved may have no citations. Cite every supported claim the same way. The server derives the displayed quote from those fixed-source lines. When a complete Tree-sitter span is available, candidate-file citations must stay within that one enclosing function. Only direct fixed-source code excerpts (the initial source excerpt or output from read_candidate_source, read_candidate_enclosing_function, lookup_symbol_in_fixed_commit, or read_fixed_source_range) may support a claim or a decided evidence obligation. Evidence-obligation descriptions are scanner metadata; commit subjects are history metadata. They can guide which source to inspect but are not source proof and must never be cited as support. If no direct source quote supports a claim or decided obligation, mark it unresolved or put it in unsupported_claims. The server checks that each cited ID is source-code evidence and that the cited line range exists in its bound excerpt, then derives the displayed quote; it does not decide whether the quote semantically supports the interpretation. Place in unsupported_claims any tempting conclusion that lacks evidence. Return only the required JSON object. Do not invent citations, paths, line numbers, CVEs, or test outcomes."""
 
 _INSTRUCTIONS += """
-The find_callsite_candidates tool is bounded to the fixed scan source_inventory and audit include_paths and parses regular fixed-commit C/C++ Git blobs only. It matches exact simple-identifier Tree-sitter call_expression nodes. It can emit a same-file syntax-candidate relation only when one preceding unconditional file-scope function definition has matching argument count and no observed local shadow, prototype/overload ambiguity, or unsupported scope. Such a relation is not compiler-resolved binding. It emits positional argument edges and direct parameter-return syntax only; type compatibility, conversions, overloads, templates, macros/preprocessing, linkage, dynamic dispatch, include-based translation-unit identity, runtime reachability, and execution remain unknown. Cross-file same-name definitions are explicitly unresolved and never caller proof. Each edge carries fixed blob/source hashes, line references, parse state and bounded numbered source excerpts; only those excerpts are citable source, not relationship metadata. Partial parse, archives, unsupported languages and any time/file/byte/result cap make coverage partial. Zero results are not evidence that no caller exists or that a candidate is safe."""
+The find_callsite_candidates tool is bounded to the fixed scan source_inventory and audit include_paths and parses regular fixed-commit C/C++ Git blobs only. It matches exact simple-identifier Tree-sitter call_expression nodes. It can emit a same-file syntax-candidate relation only when one preceding unconditional file-scope function definition has matching argument count and no observed local shadow, prototype/overload ambiguity, or unsupported scope. For C files only, it may emit a cross-file syntax candidate when the caller file has exactly one non-static prototype and the complete bounded audited C scope has exactly one non-static C definition with a matching argument count. This is a syntactic triage edge, not compiler-resolved binding. It emits positional argument edges and direct parameter-return syntax only; type compatibility, conversions, C/C++ linkage, preprocessing, translation-unit identity, dynamic dispatch, runtime reachability, and execution remain unknown. Other cross-file same-name definitions remain unresolved and never caller proof. Each edge carries fixed blob/source hashes, line references, parse state and bounded numbered source excerpts; only those excerpts are citable source, not relationship metadata. Partial parse, archives, unsupported languages and any time/file/byte/result cap make coverage partial. Zero results are not evidence that no caller exists or that a candidate is safe."""
 _INSTRUCTIONS += " For find_callsite_candidates, the callsite/caller/definition excerpts are fixed-source evidence, but relation status, argument/return edges, hashes, cross-file matches, and parse metadata are routing/provenance only: they do not prove semantic binding, type flow, reachability, execution, or vulnerability. Keep those conclusions unknown unless independent source evidence establishes them."
 
 
@@ -1374,7 +1374,7 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
     tool_scope = (
         ["Up to five commit subjects touching the candidate file at the fixed commit.",
          f"Exact symbol text search and up to 40 numbered lines per read, only within source-like files in the {len(inventory_files)}-file scan inventory (inventory SHA-256 {inventory_sha256}); up to eight symbol matches with two lines of surrounding context. C/C++ candidates may also expose one complete Tree-sitter syntax function at the fixed finding line when the translation unit parses completely and the function is below 12 KiB. Neither syntax spans nor text search establish callability, reachability, overload identity, or semantics.",
-         "find_callsite_candidates reads only files in that fixed source inventory that also fall inside the audit include_paths; it parses at most 12 C/C++ files and 8 MiB total within a 15-second budget and returns at most 12 exact simple-identifier call_expression occurrences, each with up to five numbered lines of AST-span context. It may add same-file syntax-candidate edges only for one preceding file-scope definition with matching argument count and no observed shadow/prototype ambiguity; arguments and direct returns are syntax positions only. Every semantic binding and reachable field remains unknown; cross-file same-name matches remain unresolved. Partial parses, archive members, unsupported languages, and caps are reported as incomplete; no result is a safety conclusion.",
+         "find_callsite_candidates reads only files in that fixed source inventory that also fall inside the audit include_paths; it parses at most 12 C/C++ files and 8 MiB total within a 15-second budget and returns at most 12 exact simple-identifier call_expression occurrences, each with up to five numbered lines of AST-span context. It may add same-file syntax-candidate edges only for one preceding file-scope definition with matching argument count and no observed shadow/prototype ambiguity; C may also receive a cross-file syntax candidate for one caller-file prototype and one non-static C definition within the complete bounded scope. Arguments and direct returns are syntax positions only. Every semantic binding and reachable field remains unknown; unsupported cross-file same-name matches remain unresolved. Partial parses, archive members, unsupported languages, and caps are reported as incomplete; no result is a safety conclusion.",
          SKEPTIC_CONSENT_DISCLOSURE,
          *( [CONTINUOUS_INVESTIGATION_DISCLOSURE] if continuous else [] )]
         if mode == "tool_agent" else []
@@ -1624,6 +1624,11 @@ def _callsite_cst_function_parameters(function_declarator, source):
     return result, True
 
 
+def _callsite_cst_is_static(node, source):
+    return any(_callsite_cst_text(item, source) == "static"
+               for item in _callsite_cst_nodes(node, "storage_class_specifier"))
+
+
 def _callsite_cst_scope(node):
     """Name only definitions that are direct children of the translation unit."""
     parent = node.parent
@@ -1680,6 +1685,7 @@ def _callsite_cst_index_file(file_name, source, git_blob, source_sha256, languag
             "git_blob": git_blob, "source_sha256": source_sha256,
             "scope": _callsite_cst_scope(node), "parameters": parameters,
             "parameters_supported": parameters_supported,
+            "language": language, "is_static": _callsite_cst_is_static(node, source),
         })
     for node in root.named_children:
         if node.type != "declaration":
@@ -1695,7 +1701,13 @@ def _callsite_cst_index_file(file_name, source, git_blob, source_sha256, languag
                and function_declarator.type != "function_declarator"):
             function_declarator = function_declarator.child_by_field_name("declarator")
         if function_declarator is not None:
-            record["function_declarations"].setdefault(name, []).append(node)
+            parameters, parameters_supported = _callsite_cst_function_parameters(
+                function_declarator, source)
+            record["function_declarations"].setdefault(name, []).append({
+                "node": node, "parameters": parameters,
+                "parameters_supported": parameters_supported,
+                "is_static": _callsite_cst_is_static(node, source),
+            })
         else:
             record["global_value_names"].add(name)
         for item in _callsite_cst_nodes(node, "init_declarator"):
@@ -1890,23 +1902,66 @@ def _callsite_cst_relationship(identifier, callsite, file_record, raw_call,
             function, identifier, source)):
         reasons.append("callee_name_is_shadowed_in_the_enclosing_function")
     args = _callsite_cst_arguments(raw_call, source) if raw_call is not None else []
-    parameter_records = same_file_definitions[0]["parameters"] if len(same_file_definitions) == 1 else []
-    parameters_supported = same_file_definitions[0]["parameters_supported"] if len(same_file_definitions) == 1 else False
-    if same_file_definitions and not parameters_supported:
+    same_file_parameter_records = (same_file_definitions[0]["parameters"]
+                                   if len(same_file_definitions) == 1 else [])
+    same_file_parameters_supported = (same_file_definitions[0]["parameters_supported"]
+                                      if len(same_file_definitions) == 1 else False)
+    if same_file_definitions and not same_file_parameters_supported:
         reasons.append("formal_parameter_shape_is_not_supported")
-    if same_file_definitions and len(args) != len(parameter_records):
+    if same_file_definitions and len(args) != len(same_file_parameter_records):
         reasons.append("argument_count_does_not_match_the_unique_definition")
+    same_file_syntax_candidate = not reasons
+    ordered_cross_file = sorted(other_file_definitions,
+                                 key=lambda item: (item["file"], item["node"].start_byte))
+    caller_prototypes = same_file_prototypes
+    cross_file_definitions = [
+        item for item in ordered_cross_file
+        if item["scope"] == "file_scope" and not item.get("is_static")
+        and item.get("language") == "c" and Path(item["file"]).suffix.lower() == ".c"
+        and item.get("parameters_supported")
+        and len(item["parameters"]) == len(args)
+    ]
+    external_c_prototypes = [
+        item for item in caller_prototypes
+        if not item.get("is_static") and item.get("parameters_supported")
+        and len(item["parameters"]) == len(args)
+    ]
+    caller_is_c = (file_record["language"] == "c"
+                   and Path(file_name).suffix.lower() == ".c")
+    cross_file_syntax_candidate = (
+        not same_file_syntax_candidate
+        and "no_same_file_function_definition" in reasons
+        and "same_name_function_declaration_or_overload_is_present" in reasons
+        and caller_is_c and caller_record is not None
+        and caller_record["scope"] == "file_scope"
+        and direct_identifier and raw_call is not None
+        and not _callsite_cst_shadowed(function, identifier, source)
+        and identifier not in global_value_names
+        and len(caller_prototypes) == 1 and len(external_c_prototypes) == 1
+        and len(ordered_cross_file) == 1 and len(cross_file_definitions) == 1
+        and coverage_complete
+    )
+    if cross_file_syntax_candidate:
+        parameter_records = cross_file_definitions[0]["parameters"]
+        parameters_supported = cross_file_definitions[0]["parameters_supported"]
+        reasons = [reason for reason in reasons if reason not in {
+            "no_same_file_function_definition",
+            "same_name_function_declaration_or_overload_is_present",
+        }]
+    else:
+        parameter_records = same_file_parameter_records
+        parameters_supported = same_file_parameters_supported
+    relation_candidate = same_file_syntax_candidate or cross_file_syntax_candidate
     reasons = list(dict.fromkeys(reasons))
-    syntax_candidate = not reasons
     public_candidate = (_callsite_cst_public_function(same_file_definitions[0], include_excerpt=False)
                         if len(same_file_definitions) == 1 else None)
+    public_cross_candidate = (_callsite_cst_public_function(cross_file_definitions[0], include_excerpt=False)
+                              if cross_file_syntax_candidate else None)
     # The unique candidate is already represented above. Repeating its complete
     # source binding here for every callsite needlessly inflates model input.
     public_same_file = ([_callsite_cst_public_function(item, include_excerpt=False)
                          for item in same_file_definitions[:4]]
                         if len(same_file_definitions) > 1 else [])
-    ordered_cross_file = sorted(other_file_definitions,
-                                 key=lambda item: (item["file"], item["node"].start_byte))
     public_cross_file = [_callsite_cst_public_function(item, include_excerpt=False)
                          for item in ordered_cross_file[:1]]
     argument_edges = []
@@ -1915,21 +1970,24 @@ def _callsite_cst_relationship(identifier, callsite, file_record, raw_call,
                           if index < len(parameter_records) else None)
         argument_edges.append({
             "kind": "argument_to_formal_parameter_position",
-            "status": "syntax_candidate" if syntax_candidate and parameter_name else "unresolved",
+            "status": "syntax_candidate" if relation_candidate and parameter_name else "unresolved",
             "argument_index": index,
             "argument_expression": expression,
             "parameter_name": parameter_name,
             "limitation": ("Tree-sitter argument order only; overload/type/conversion binding is unknown"
-                           if syntax_candidate and parameter_name else
+                           if relation_candidate and parameter_name else
                            "no supported callee/formal-parameter binding was established"),
         })
     return_flow = (_callsite_cst_return_flow(raw_call, source)
                    if raw_call is not None and function is not None else
                    {"kind": "call_result_destination", "status": "unresolved",
                     "reason": "call expression or enclosing function is unavailable"})
+    relation_definition = (
+        same_file_definitions[0] if same_file_syntax_candidate else
+        cross_file_definitions[0] if cross_file_syntax_candidate else None)
     callee_return_edges, callee_return_excerpts = (
-        _callsite_cst_return_parameter_edges(same_file_definitions[0])
-        if syntax_candidate else ([], []))
+        _callsite_cst_return_parameter_edges(relation_definition)
+        if relation_definition is not None else ([], []))
     evidence_excerpts = []
     if caller_record is not None:
         excerpt = _callsite_cst_excerpt(function, source, max_lines=2)
@@ -1940,31 +1998,39 @@ def _callsite_cst_relationship(identifier, callsite, file_record, raw_call,
             "parse_status": "complete", "text": excerpt["text"],
             "truncated": excerpt["truncated"],
         })
-    if syntax_candidate:
-        excerpt = _callsite_cst_excerpt(same_file_definitions[0]["node"],
-                                        same_file_definitions[0]["source"], max_lines=2)
+    if relation_candidate:
+        definition = (same_file_definitions[0] if same_file_syntax_candidate
+                      else cross_file_definitions[0])
+        excerpt = _callsite_cst_excerpt(definition["node"], definition["source"], max_lines=2)
         evidence_excerpts.append({
-            "kind": "same_file_callee_definition", "file": file_name,
+            "kind": ("same_file_callee_definition" if same_file_syntax_candidate
+                     else "cross_file_callee_definition"),
+            "file": definition["file"],
             "start_line": excerpt["start_line"], "end_line": excerpt["end_line"],
-            "git_blob": same_file_definitions[0]["git_blob"],
-            "source_sha256": same_file_definitions[0]["source_sha256"],
+            "git_blob": definition["git_blob"],
+            "source_sha256": definition["source_sha256"],
             "parse_status": "complete", "text": excerpt["text"],
             "truncated": excerpt["truncated"],
         })
         for item in callee_return_excerpts[:4]:
             evidence_excerpts.append({
-                **item, "file": file_name,
-                "git_blob": same_file_definitions[0]["git_blob"],
-                "source_sha256": same_file_definitions[0]["source_sha256"],
+                **item, "file": definition["file"],
+                "git_blob": definition["git_blob"],
+                "source_sha256": definition["source_sha256"],
                 "parse_status": "complete",
             })
     return {
-        "status": "same_file_syntax_candidate" if syntax_candidate else "unresolved",
+        "status": ("same_file_syntax_candidate" if same_file_syntax_candidate
+                   else "cross_file_syntax_candidate" if cross_file_syntax_candidate
+                   else "unresolved"),
         "basis": ("unique_same_file_file_scope_definition_precedes_direct_call"
-                  if syntax_candidate else None),
+                  if same_file_syntax_candidate else
+                  "unique_scoped_external_c_definition_and_single_caller_file_prototype"
+                  if cross_file_syntax_candidate else None),
         "caller": caller_ref,
         "same_file_definition_candidate": public_candidate,
         "same_file_definition_candidates": public_same_file,
+        "cross_file_definition_candidate": public_cross_candidate,
         "cross_file_name_matches": public_cross_file,
         "cross_file_name_match_count": len(other_file_definitions),
         "cross_file_name_matches_truncated": len(ordered_cross_file) > len(public_cross_file),

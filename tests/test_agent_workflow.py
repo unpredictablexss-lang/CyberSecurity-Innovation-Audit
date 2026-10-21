@@ -2362,6 +2362,83 @@ class AgentFixedCommitToolTests(unittest.TestCase):
             self.assertEqual(overloaded["semantic_binding"], "unknown")
             self.assertTrue(overloaded["cross_file_search_complete"])
 
+    def test_callsite_cross_file_c_prototype_is_only_a_syntax_candidate(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo = root / "repo"
+            source_dir = repo / "src"
+            source_dir.mkdir(parents=True)
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "OHScanner test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            (source_dir / "api.c").write_text(
+                "int *inspect(int *value) { return value; }\n", encoding="utf-8")
+            (source_dir / "caller.c").write_text(
+                "int *inspect(int *value);\n"
+                "int *caller(int *data) { return inspect(data); }\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "bounded C call relation"], check=True)
+            commit = subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+            inventory = []
+            for file in ("src/api.c", "src/caller.c"):
+                data = subprocess.check_output(["git", "-C", str(repo), "show", f"{commit}:{file}"])
+                blob = subprocess.check_output(["git", "-C", str(repo), "rev-parse", f"{commit}:{file}"],
+                                               text=True).strip()
+                inventory.append({"file": file, "blob": blob,
+                                  "sha256": hashlib.sha256(data).hexdigest()})
+            app = create_app(Settings(root / "data", (root,)))
+            repository = app.state.store.add_repository("controlled/callsite-cross-c", str(repo))
+            tools = agent._tool_specs(None, app.state.store,
+                {"repository_id": repository["id"], "spec": {"include_paths": ["src"]}},
+                {"commit": commit, "_workbench": {"source_inventory": inventory}},
+                {"file": "src/caller.c", "line": 2}, {}, "", (1, 1))
+
+            result = tools["find_callsite_candidates"]({"identifier": "inspect"})
+            self.assertEqual(result["status"], "complete")
+            self.assertEqual(result["callsite_count"], 1)
+            relationship = result["callsites"][0]["relationship"]
+            self.assertEqual(relationship["status"], "cross_file_syntax_candidate")
+            self.assertEqual(relationship["basis"],
+                             "unique_scoped_external_c_definition_and_single_caller_file_prototype")
+            self.assertEqual(relationship["cross_file_definition_candidate"]["file"], "src/api.c")
+            self.assertEqual(relationship["semantic_binding"], "unknown")
+            self.assertEqual(relationship["reachable"], "unknown")
+            self.assertEqual(relationship["cross_file_name_matches_are_binding_evidence"], False)
+            self.assertEqual(relationship["argument_edges"][0]["status"], "syntax_candidate")
+            self.assertEqual(relationship["argument_edges"][0]["parameter_name"], "value")
+            self.assertEqual(relationship["callee_formal_to_return_edges"][0]["parameter_name"], "value")
+            definition_evidence = next(
+                item for item in relationship["source_excerpts"]
+                if item["kind"] == "cross_file_callee_definition")
+            self.assertEqual(definition_evidence["file"], "src/api.c")
+            self.assertEqual(definition_evidence["git_blob"], inventory[0]["blob"])
+            self.assertEqual(definition_evidence["source_sha256"], inventory[0]["sha256"])
+            self.assertIn(definition_evidence["text"],
+                          agent._source_evidence_texts("find_callsite_candidates", result))
+
+            (source_dir / "api.c").write_text(
+                "static int *inspect(int *value) { return value; }\\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src/api.c"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "make definition file-local"], check=True)
+            static_commit = subprocess.check_output(
+                ["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+            static_inventory = []
+            for file in ("src/api.c", "src/caller.c"):
+                data = subprocess.check_output(
+                    ["git", "-C", str(repo), "show", f"{static_commit}:{file}"])
+                blob = subprocess.check_output(
+                    ["git", "-C", str(repo), "rev-parse", f"{static_commit}:{file}"],
+                    text=True).strip()
+                static_inventory.append({"file": file, "blob": blob,
+                                         "sha256": hashlib.sha256(data).hexdigest()})
+            static_tools = agent._tool_specs(None, app.state.store,
+                {"repository_id": repository["id"], "spec": {"include_paths": ["src"]}},
+                {"commit": static_commit, "_workbench": {"source_inventory": static_inventory}},
+                {"file": "src/caller.c", "line": 2}, {}, "", (1, 1))
+            static_result = static_tools["find_callsite_candidates"]({"identifier": "inspect"})
+            self.assertEqual(static_result["callsites"][0]["relationship"]["status"], "unresolved")
+            self.assertEqual(static_result["callsites"][0]["relationship"]["semantic_binding"], "unknown")
+
     def test_callsite_lookup_reports_file_and_result_budget_truncation(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
