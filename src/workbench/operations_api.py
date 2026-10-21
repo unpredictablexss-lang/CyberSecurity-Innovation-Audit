@@ -70,6 +70,50 @@ def _aggregate_agent_budget_cost_estimates(estimates):
     return result
 
 
+def _smart_operation_retry_available(store, ops, task):
+    spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
+    if (task.get("kind") != "agent_investigation" or task.get("status") != "interrupted"
+            or task.get("result_sha256") or task.get("cancel_requested")
+            or spec.get("no_cumulative_token_ceiling") is not True):
+        return False
+    audit_id, report_sha256 = spec.get("job_id"), spec.get("report_sha256")
+    authorization_sha256 = spec.get("triage_authorization_sha256")
+    batch_id, candidate_id = spec.get("smart_triage_batch_id"), spec.get("candidate_id")
+    if not all(isinstance(value, str) and value for value in
+               (audit_id, report_sha256, authorization_sha256, batch_id, candidate_id)):
+        return False
+    try:
+        job = store.job(audit_id)
+        authorization = store.triage_authorization(audit_id)
+        if (job.get("report_sha256") != report_sha256 or not authorization
+                or authorization.get("revoked")
+                or authorization.get("consent_sha256") != authorization_sha256
+                or ops.triage_cancellation(audit_id, report_sha256)):
+            return False
+        batch = next((item for item in ops.triage_batches_for_job(audit_id, report_sha256)
+                      if item["id"] == batch_id
+                      and item["authorization_sha256"] == authorization_sha256), None)
+        if batch is None:
+            return False
+        if spec.get("mode") == "single_shot":
+            member_ids = batch["operation_ids"]
+            manifest = batch["candidate_manifest"]
+        elif spec.get("mode") == "tool_agent":
+            member_ids = batch["r2_operation_ids"]
+            manifest = batch["r2_candidate_manifest"]
+        else:
+            return False
+        if (task["id"] not in member_ids
+                or not any(isinstance(row, dict) and row.get("candidate_id") == candidate_id
+                           and row.get("state") == "selected" for row in manifest)):
+            return False
+        return not any(item["id"] != task["id"]
+                       and item["spec"].get("candidate_id") == candidate_id
+                       and item["status"] in {"queued", "running"}
+                       for item in ops.smart_triage_operations(batch_id))
+    except (KeyError, ValueError, TypeError):
+        return False
+
 class Strict(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -128,9 +172,9 @@ class EndpointTriageApproval(Strict):
 
 class AuthorizedOperationRequest(Strict):
     auto_triage: bool = False
-    max_triage_candidates: int = Field(default=3, ge=1, le=5)
-    max_r2_candidates: int = Field(default=0, ge=0, le=5)
-    max_cost_usd: str | None = Field(default=None, pattern=r"^\d{1,6}(?:\.\d{1,8})?$")
+    max_triage_candidates: int = Field(default=3)
+    max_r2_candidates: int = Field(default=0)
+    max_cost_usd: str | None = None  # Legacy client field; ignored for ordinary smart review.
     triage_approvals: list[EndpointTriageApproval] = Field(default_factory=list, max_length=8)
 
 
@@ -460,7 +504,6 @@ def _combined_audit_report_markdown(document):
     risks = document["risk_snapshot"]
     triage = document["triage"]
     authorization = triage.get("authorization") or {}
-    cost_budget = authorization.get("cost_budget") or {}
     rows = [
         "# OHScanner 智能安全审计报告",
         "",
@@ -471,9 +514,7 @@ def _combined_audit_report_markdown(document):
         "- Tree：`" + md(scan["tree"]) + "`",
         "- 静态扫描：" + md(scan["status"]) + "；智能研判：" + md(triage["state"]),
         "- 漏洞确认数：" + str(document["validated_vulnerability"]),
-        "- 工作台模型费用预算：" + ("USD " + md(cost_budget.get("maximum_usd"))
-            + "（费率卡估算上限 USD " + md(cost_budget.get("estimated_maximum_usd"))
-            + "；不代表 Provider 账单硬上限）" if cost_budget else "未设置任务级自动研判预算"),
+        "- 智能调查费用：由 Provider 按量计费；OHScanner 不设任务累计 Token、请求数或金额上限；实际账单以 Provider 账户为准。",
         "",
         "## 风险分层",
         "",
@@ -886,12 +927,8 @@ def install_routes(app: FastAPI, settings, store):
         request = schemas[body.kind].model_validate(body.payload)
         if not request.auto_triage or request.audit_mode != "standard_review":
             raise ValueError("select intelligent review before previewing model source disclosure")
-        if request.max_r2_candidates > request.max_triage_candidates:
-            raise ValueError("deep research limit cannot exceed candidate limit")
         if request.triage_approvals:
             raise ValueError("preview does not accept previously approved source consent")
-        if request.max_cost_usd is None:
-            raise ValueError("automatic model triage requires a USD budget")
         payload = request.model_dump()
         if body.kind == "date":
             selection = date_selection(settings, store, request.repository_id, request.branch,
@@ -934,10 +971,10 @@ def install_routes(app: FastAPI, settings, store):
         return {
             "kind": body.kind, "endpoint_count": len(previews),
             "endpoints": previews,
-            "aggregate_estimated_cost": _aggregate_agent_budget_cost_estimates(
-                item.get("estimated_cost") for item in previews),
-            "note": ("Each endpoint has a separate fixed-commit model disclosure consent. "
-                     "This preview does not send source; approval binds exact source and provider."),
+            "aggregate_estimated_cost": None,
+            "billing_disclosure": "Provider pay-as-you-go; no cumulative Token, request-count or amount ceiling is enforced by OHScanner. Actual charges must be checked in the provider account.",
+            "note": ("Each endpoint has separate consent bound to its fixed source and provider. "
+                     "This preview does not send source; no model request occurs before approval."),
         }
 
     @router.post("/operations/revision-ranges", status_code=201)
@@ -1456,8 +1493,8 @@ def install_routes(app: FastAPI, settings, store):
                 "created_at": authorization["created_at"],
                 "revoked_at": authorization["revoked_at"],
                 "provider": snapshot.get("provider"),
-                "candidate_limit": snapshot.get("candidate_limit"),
-                "conditional_r2_candidate_limit": snapshot.get("r2_candidate_limit", 0),
+                "candidate_selection": "all eligible candidates in the fixed scope",
+                "conditional_r2_selection": "all critical/high candidates with unresolved source obligations",
                 "budget": snapshot.get("budgets"),
                 "estimated_cost": snapshot.get("estimated_cost"),
                 "cost_budget": snapshot.get("cost_budget"),
@@ -1492,6 +1529,28 @@ def install_routes(app: FastAPI, settings, store):
                 "limitation": "静态报告尚未提交，模型研判未开始。",
             }
         items = ops.agent_investigations_for_job(key, job["report_sha256"])
+        for summary in items:
+            operation_item = ops.get(summary["id"])
+            summary["retry_available"] = _smart_operation_retry_available(
+                store, ops, operation_item)
+            summary["investigation_limitations"] = []
+            if operation_item.get("result_sha256"):
+                try:
+                    operation_result = ops.result(summary["id"])
+                    summary["assessment"] = (operation_result.get("agent_assessment") or {}).get(
+                        "assessment", "unknown")
+                    summary["investigation_limitations"] = [
+                        str(value) for value in operation_result.get("limitations", [])
+                        if isinstance(value, str) and any(
+                            marker in value.lower()
+                            for marker in ("24 kib", "per-request", "single-request", "unknown-outcome")
+                        )
+                    ]
+                except (KeyError, ValueError):
+                    summary["assessment"] = "unknown"
+                    summary["investigation_limitations"] = [
+                        "调查结果不可读取；候选保持未知。"
+                    ]
         batches = ops.triage_batches_for_job(key, job["report_sha256"])
         counts = {}
         for item in items:
@@ -1610,7 +1669,7 @@ def install_routes(app: FastAPI, settings, store):
             "batches": batch_views,
             "authorization": auth_view or {"authorized": False, "revoked": False},
             "authorization_required": not bool(authorization),
-            "limitation": "模型辅助研判输出仍为待复核候选或未知状态；高优先级或模型倾向不能自动确认漏洞。未入选、未授权和预算外候选仍是未研判，不代表安全。",
+            "limitation": "模型辅助研判输出仍为待复核候选或未知状态；高优先级或模型倾向不能自动确认漏洞。未授权、固定范围外、无可由固定源码回答的义务或因单次请求边界未完成的候选仍是未研判，不代表安全。",
         }
 
     @router.post("/scans/{key}/triage/cancel")
@@ -1898,6 +1957,7 @@ def install_routes(app: FastAPI, settings, store):
     @router.get("/operations/{key}")
     def operation(key: str):
         item = ops.get(key)
+        item["retry_available"] = _smart_operation_retry_available(store, ops, item)
         item["events"] = ops.events(key)
         if item["result_sha256"]:
             item["result"] = ops.result(key)
@@ -2057,6 +2117,26 @@ def install_routes(app: FastAPI, settings, store):
     @router.post("/agent/blind-sessions/{session_id}/close")
     def close_agent_blind_session(session_id: str):
         return ops.close_agent_blind_session(session_id)
+
+    @router.post("/operations/{key}/retry", status_code=201)
+    def retry_interrupted_smart_operation(key: str):
+        item = ops.get(key)
+        if not _smart_operation_retry_available(store, ops, item):
+            raise HTTPException(status_code=409, detail="此任务当前不可重试；请核对任务状态、授权、固定报告和候选队列")
+        from .agent import ProviderConfig
+        from .smart_audit import _authorization_is_current
+        job = store.job(item["spec"]["job_id"])
+        provider = ProviderConfig.from_env(settings.data_dir)
+        _authorization, authorization_error = _authorization_is_current(
+            settings, store, job, provider)
+        if authorization_error:
+            raise HTTPException(status_code=409, detail="原源码外发授权已不再匹配当前 Provider 或程序版本，请重新预览并授权")
+        try:
+            retried = ops.retry_interrupted_smart_operation(key)
+        except (KeyError, ValueError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+        retried["retry_available"] = False
+        return retried
 
     @router.get("/operations/{key}/result")
     def operation_result(key: str):

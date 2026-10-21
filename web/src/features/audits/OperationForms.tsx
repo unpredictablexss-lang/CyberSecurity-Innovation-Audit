@@ -10,7 +10,7 @@ const { Text } = Typography;
 export type SourceContext = { job_id?: string; candidate_id?: string; repository_id?: string; case_id?: string };
 export type OperationFormProps = { context?: SourceContext; repos: any[]; detectors: any[]; cases: any[]; busy: boolean; submit: (path: string, payload: any) => Promise<void> };
 export function ComparisonForm({ kind, repos, detectors, cases, busy, submit, context = {} }: OperationFormProps & { kind: "date" | "branches" | "range" | "matrix" }) {
-  const [form] = Form.useForm(); const repository = Form.useWatch("repository_id", form); const auditMode = Form.useWatch("audit_mode", form) || "standard_review"; const autoTriage = Form.useWatch("auto_triage", form) === true;
+  const [form] = Form.useForm(); const repository = Form.useWatch("repository_id", form); const auditMode = Form.useWatch("audit_mode", form) || "standard_review";
   const { refs, error: refError } = useRepositoryRefs(repository);
   const [preview, setPreview] = useState<any>(null); const [previewBusy, setPreviewBusy] = useState(false);
   const [error, setError] = useState(""); const gate = useRef(requestGate());
@@ -27,7 +27,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, submit, co
     {kind !== "matrix" && <ScopeAvailability />}
     {error && <Alert className="section-gap" type="error" showIcon message={error} />}
     {refError && <Alert type="warning" message={refError} />}
-    <Form name={"audit-" + kind} form={form} layout="vertical" initialValues={{ ...auditDefaults, timezone: "Asia/Shanghai", repository_id: context.repository_id, auto_triage: true, max_triage_candidates: 5, max_r2_candidates: 2, max_cost_usd: "5.00" }} onValuesChange={invalidate}
+    <Form name={"audit-" + kind} form={form} layout="vertical" initialValues={{ ...auditDefaults, timezone: "Asia/Shanghai", repository_id: context.repository_id }} onValuesChange={invalidate}
       onFinish={async (values) => {
         try {
           const payload = operationPayload(kind, values, detectors);
@@ -44,24 +44,16 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, submit, co
       <Form.Item name="audit_mode" label="审计方式">
         <Radio.Group>
           <Space direction="vertical">
-            <Radio value="standard_review">智能安全审计（标准研判）</Radio>
-            <Radio value="static_only">仅静态扫描</Radio>
+            <Radio value="static_only">静态扫描：查看代码证据并人工复核</Radio>
+            <Radio value="standard_review">智能审计：自动追查源码证据</Radio>
           </Space>
         </Radio.Group>
       </Form.Item>
       <Alert className="section-gap" type="info" showIcon
         message={auditMode === "standard_review" ? "静态扫描后自动 AI 追查（需授权）" : "本次只运行静态扫描"}
         description={auditMode === "standard_review"
-          ? "先固定所有比较端点，再逐端点预览模型外发范围；只有确认并授权后才会自动运行多步证据追查。候选仍需人工验证。"
-          : "纯静态模式不会产生模型外发；后续可在候选详情单独授权调查。"} />
-      {auditMode === "standard_review" && <>
-        <Form.Item name="auto_triage" valuePropName="checked"><Checkbox>扫描完成后自动进行 AI 证据研判（需要本次外发授权）</Checkbox></Form.Item>
-        <Space wrap>
-          <Form.Item name="max_triage_candidates" label="每个版本最多研判候选数"><InputNumber min={1} max={5} /></Form.Item>
-          <Form.Item name="max_r2_candidates" label="每个版本最多深入追查候选数"><InputNumber min={0} max={5} /></Form.Item>
-          <Form.Item name="max_cost_usd" label="每个版本预算上限（美元）"><Input placeholder="5.00" /></Form.Item>
-        </Space>
-      </>}
+          ? "先固定所有比较端点，再核对模型目的地和源码范围并授权；扫描后会自动追查可由源码回答的候选。模型结果仍需人工复核。"
+          : "纯静态模式不会调用模型或发送源码。"} />
       <RepositoryField repos={repos} onChange={() => {
         form.setFieldsValue({ branch: undefined, baseline_ref: undefined, endpoint_ref: undefined, baseline: undefined, endpoint: undefined, commits_text: undefined }); invalidate();
       }} />
@@ -98,30 +90,27 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, submit, co
           try {
             const values = await form.validateFields();
             const payload = operationPayload(kind, values, detectors);
-            if (!payload.auto_triage) throw new Error("请先勾选自动 AI 研判，或直接提交仅静态扫描。");
+            if (!payload.auto_triage) throw new Error("请先选择智能审计，或直接提交静态扫描。");
             const result = await api("/operations/intelligent-previews", { kind, payload });
             if (gate.current.current(ticket)) setSmartPreview(result);
           } catch (e) { if (gate.current.current(ticket)) setError(String(e)); }
           finally { if (gate.current.current(ticket)) setSmartBusy(false); }
-        }}>预览各版本源码外发与模型预算</Button>
+        }}>检查智能审计授权范围</Button>
         {smartPreview && <Card size="small" className="section-gap" title={"智能研判授权确认 · " + smartPreview.endpoint_count + " 个固定版本"}>
-          <Alert type="warning" showIcon message="每个版本的授权独立绑定；模型输出不会直接确认漏洞"
-            description="下面是任务级外发上限，不是扫描结果。预算按版本分别限制；Provider 实际账单不受该估算硬限制。" />
+          <Alert type="warning" showIcon message="每个固定版本分别授权；模型结果仍是候选"
+            description="按服务商按量计费；OHScanner 不设本次累计 Token、请求数或金额上限。实际费用请查看服务商账单；调查可随时取消。" />
           {smartPreview.endpoints.map((item: any, index: number) => <Descriptions key={index} size="small" bordered column={1} className="section-gap">
-            <Descriptions.Item label={"端点 " + (index + 1) + " / 固定 Commit"}><Hash value={item.commit} /></Descriptions.Item>
+            <Descriptions.Item label={"固定版本 " + (index + 1)}><Hash value={item.commit} /></Descriptions.Item>
             <Descriptions.Item label="模型目的地">{item.provider?.endpoint_host || "未配置"} · {item.provider?.model || "未知"}</Descriptions.Item>
             <Descriptions.Item label="源码范围">{(item.manifest?.binding?.include_paths || []).join(", ")}</Descriptions.Item>
-            <Descriptions.Item label="最多候选">{item.manifest?.candidate_limit}</Descriptions.Item>
-            <Descriptions.Item label="深入追查上限">{item.manifest?.r2_candidate_limit}</Descriptions.Item>
-            <Descriptions.Item label="预计最大费用（非账单硬上限）">USD {item.estimated_cost?.maximum_usd || "未知"}</Descriptions.Item>
-            <Descriptions.Item label="外发信息">候选元数据、固定源码摘要、证据义务；符合条件时有界只读补查</Descriptions.Item>
+            <Descriptions.Item label="发送内容">候选摘要、固定源码摘录和证据义务；后续只读追查仍限定在此版本</Descriptions.Item>
           </Descriptions>)}
           <Checkbox checked={smartApproved} onChange={(e) => setSmartApproved(e.target.checked)}>
-            我已核对上述每个版本的来源、模型目的地、源码外发范围及预算，并授权本次自动研判
+            我已核对所有版本的来源、模型目的地和发送范围，并授权按量调用模型
           </Checkbox>
         </Card>}
       </div>}
-      <Button aria-label={submitLabel} className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length || (kind === "matrix" && !cases.length) || (auditMode === "standard_review" && autoTriage && (!smartApproved || !smartPreview))}>{auditMode === "standard_review" && autoTriage ? "开始智能审计" : submitLabel}</Button>
+      <Button aria-label={submitLabel} className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length || (kind === "matrix" && !cases.length) || (auditMode === "standard_review" && (!smartApproved || !smartPreview))}>{auditMode === "standard_review" ? "开始智能审计" : submitLabel}</Button>
     </Form>
   </Card>;
 }

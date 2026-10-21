@@ -403,7 +403,7 @@ def risk_snapshot(settings, store, ops, job, report):
         "limitations": [
             "A high-confidence tier is a human-review priority: either a bound AI investigation provides a supported source claim with a fixed-file line citation and no source-level contrary finding, or a complete quoted human R0 review supports investigation.",
             "AI citations prove source and quote presence only; they do not prove semantic support, product reachability, trigger conditions, or CIA impact. Every tier remains candidate until the human/runtime confirmation gate passes.",
-            "Unreviewed, skipped, budget-limited, partial, or unknown items are not safe and remain visible as untriaged or requiring validation.",
+            "Unreviewed, skipped, per-request-limited, partial, or unknown items are not safe and remain visible as untriaged or requiring validation.",
             "Validated vulnerabilities are counted only through the existing human assessment and passed runtime-reachability gate; this static risk view does not set that state.",
         ],
     }
@@ -454,7 +454,7 @@ def _authorization_is_current(settings, store, job, provider):
 
 
 def enqueue_authorized_triage(settings, store, ops, job):
-    """Persist and queue at most five eligible R1 tasks only under an active task consent."""
+    """Persist and queue every eligible fixed-scope R1 task under active task consent."""
     spec = job["spec"]
     if spec.get("audit_mode") != "standard_review":
         return None
@@ -478,9 +478,11 @@ def enqueue_authorized_triage(settings, store, ops, job):
     candidate_manifest = []
     eligible = []
     preview_spec = {
-        "mode": "single_shot", "max_steps": 1, "max_output_tokens": 1200,
-        "max_total_input_tokens": 24000, "max_total_output_tokens": 2400,
-        "timeout_seconds": 180, "max_provider_retries": 1,
+        "mode": "single_shot", "max_output_tokens": 1200,
+        "max_request_context_tokens": 65536,
+        "max_request_context_bytes": agent.MAX_SMART_REQUEST_CONTEXT_BYTES,
+        "request_timeout_seconds": 45,
+        "max_provider_retries": 1, "no_cumulative_token_ceiling": True,
         "consent_nonce": snapshot.get("consent_nonce"),
     }
     if error:
@@ -522,16 +524,10 @@ def enqueue_authorized_triage(settings, store, ops, job):
         -item[2], -_severity(item[0]), item[0].get("file", ""),
         int(item[0].get("line") or 0), item[0]["id"],
     ))
-    limit = int(snapshot["candidate_limit"])
-    selected = eligible[:limit]
-    selected_ids = {item[0]["id"] for item in selected}
+    selected = eligible
     for _, _, _, row in eligible:
-        if row["candidate_id"] in selected_ids:
-            row["state"] = "selected"
-            row["reason"] = "selected by deterministic priority within task budget"
-        else:
-            row["state"] = "not_triaged"
-            row["reason"] = "candidate budget reached; not assessed as safe"
+        row["state"] = "selected"
+        row["reason"] = "automatically included: source-reviewable candidate within the authorized fixed scope"
     batch_consent = _digest({
         "task_authorization_sha256": authorization["consent_sha256"],
         "report_sha256": job["report_sha256"],
@@ -546,7 +542,7 @@ def enqueue_authorized_triage(settings, store, ops, job):
         "candidate_count": len(candidates), "selected_count": len(selected),
         "candidate_manifest": candidate_manifest, "operation_ids": [],
         "created_at": now(), "error": None,
-        "r2_status": "awaiting_r1" if selected and snapshot.get("r2_candidate_limit", 0) else "not_requested",
+        "r2_status": "awaiting_r1" if selected else "not_needed",
     }
     if not selected:
         return ops.record_triage_batch(record)
@@ -675,19 +671,20 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
         -len(item[3]), -_severity(item[0]), item[0].get("file", ""),
         int(item[0].get("line") or 0), item[0]["id"],
     ))
-    limit = int(authorization["snapshot"].get("r2_candidate_limit", 0))
-    selected = eligible[:limit] if not auth_error else []
+    selected = eligible if not auth_error else []
     selected_ids = {item[0]["id"] for item in selected}
     r2_preview_spec = {
-        "mode": "tool_agent", "max_steps": 2, "max_output_tokens": 1000,
-        "max_total_input_tokens": 36000, "max_total_output_tokens": 5200,
-        "timeout_seconds": 240, "max_provider_retries": 1,
+        "mode": "tool_agent", "max_output_tokens": 1000,
+        "max_request_context_tokens": 65536,
+        "max_request_context_bytes": agent.MAX_SMART_REQUEST_CONTEXT_BYTES,
+        "request_timeout_seconds": 45,
+        "max_provider_retries": 1, "no_cumulative_token_ceiling": True,
         "consent_nonce": authorization["snapshot"].get("consent_nonce"),
     }
     selected_specs = []
     for candidate, r1_operation, _r1_result, unresolved, row in eligible:
         if candidate["id"] not in selected_ids:
-            row.update({"state": "not_selected", "reason": "conditional R2 candidate budget reached"})
+            row.update({"state": "not_selected", "reason": "authorization changed before deep research"})
             continue
         try:
             prepared = agent._prepare_candidate_context(settings, store, job, report, candidate)
@@ -727,7 +724,7 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
     if auth_error:
         status = "blocked_authorization_changed"
     elif selected_specs:
-        status = "budget_limited" if len(eligible) > limit else "queued"
+        status = "queued"
     elif any(row.get("state") == "blocked" for row in manifest) or eligible:
         status = "failed_selection"
     else:

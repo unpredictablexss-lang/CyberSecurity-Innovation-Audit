@@ -444,6 +444,43 @@ class OperationLifecycleTests(unittest.TestCase):
         self.assertTrue(processes)
         self.assertIsNotNone(processes[0].poll())
 
+    def test_authorized_smart_worker_trims_logs_without_stopping_and_accepts_large_result(self):
+        task = self.ops.create("agent_investigation", {
+            "job_id": "a" * 32, "report_sha256": "b" * 64,
+            "smart_triage_batch_id": "c" * 32, "triage_authorization_sha256": "d" * 64,
+            "no_cumulative_token_ceiling": True, "timeout_seconds": 1, "memory_mb": 512})
+        claimed = self.ops.claim()
+        child_result = {"status": "completed_with_limitations", "padding": "x" * (16 * 1024 * 1024 + 1)}
+
+        class FakeChild:
+            def __init__(self, command, **kwargs):
+                self.returncode = None
+                self.poll_count = 0
+                kwargs["stdout"].write(b"diagnostic\n" * (1024 * 1024))
+                kwargs["stdout"].flush()
+                child_id = command[command.index("--child") + 1]
+                self_result_path = self_outer.ops.directory(child_id) / "child-result.json"
+                self_result_path.write_text(json.dumps(child_result))
+            def poll(self):
+                self.poll_count += 1
+                if self.poll_count == 1:
+                    return None
+                self.returncode = 0
+                return self.returncode
+
+        self_outer = self
+        with patch("src.workbench.operation_worker._authorized_smart_batch", return_value=True), \
+             patch("src.workbench.operation_worker.subprocess.Popen", side_effect=FakeChild):
+            OperationWorker(self.settings).execute(claimed)
+
+        final = self.ops.get(task["id"])
+        self.assertEqual(final["status"], "completed_with_limitations", final)
+        stored = self.ops.result(task["id"])
+        self.assertEqual(len(stored["padding"]), 16 * 1024 * 1024 + 1)
+        log = (self.ops.directory(task["id"]) / "worker.log").read_bytes()
+        self.assertIn(b"older diagnostic output trimmed", log)
+        self.assertLess(len(log), 2 * 1024 * 1024)
+
     def test_operation_hard_timeout_terminates_child_and_records_no_result(self):
         task = self.ops.create("investigation", {"job_id": "j" * 32, "timeout_seconds": 1})
         claimed = self.ops.claim()

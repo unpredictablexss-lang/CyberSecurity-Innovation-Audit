@@ -345,8 +345,8 @@ class Operations:
         return self.triage_batch_row(row)
 
     def create_authorized_triage_batch(self, record, specs):
-        if not specs or len(specs) > 5:
-            raise ValueError("authorized triage batch must contain between one and five candidates")
+        if not specs:
+            raise ValueError("authorized triage batch must contain at least one candidate")
         if any(spec.get("triage_authorization_sha256") != record["authorization_sha256"]
                or spec.get("smart_triage_batch_id") != record["id"] for spec in specs):
             raise ValueError("triage operation does not match its audit authorization batch")
@@ -370,7 +370,13 @@ class Operations:
                                  or cancellation[0] == record["report_sha256"]):
                 return None, []
             active = db.execute("SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0]
-            if active + len(specs) > 100:
+            uncapped_smart_batch = all(
+                spec.get("no_cumulative_token_ceiling") is True
+                and spec.get("smart_triage_batch_id") == record["id"]
+                and spec.get("triage_authorization_sha256") == record["authorization_sha256"]
+                for spec in specs
+            )
+            if not uncapped_smart_batch and active + len(specs) > 100:
                 raise ValueError("operation queue full")
             db.execute(
                 "INSERT INTO smart_triage_batches(id,audit_id,report_sha256,authorization_sha256,batch_consent_sha256,status,candidate_count,selected_count,candidate_manifest,operation_ids,created_at,error,r2_status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -504,9 +510,9 @@ class Operations:
 
     def create_authorized_r2_batch(self, batch_id, decision_sha256, candidate_manifest,
                                    specs, status, error=None):
-        allowed = {"queued", "not_needed", "budget_limited",
+        allowed = {"queued", "not_needed", "budget_limited", "selection_limited",
                    "blocked_authorization_changed", "failed_selection"}
-        if status not in allowed or (specs and status not in {"queued", "budget_limited"}):
+        if status not in allowed or (specs and status not in {"queued", "budget_limited", "selection_limited"}):
             raise ValueError("invalid conditional R2 batch decision")
         keys = [uuid.uuid4().hex for _ in specs]
         stamp = now()
@@ -535,19 +541,27 @@ class Operations:
                 saved = self.triage_batch_row(db.execute(
                     "SELECT * FROM smart_triage_batches WHERE id=?", (batch_id,)).fetchone())
                 return saved, []
-            r1_ids = batch["operation_ids"]
+            r1_ids = set(batch["operation_ids"])
             r1_rows = {}
             if r1_ids:
-                placeholders = ",".join("?" for _ in r1_ids)
                 rows = db.execute(
-                    "SELECT id,status,spec,result_sha256 FROM operations WHERE id IN (" + placeholders + ")",
-                    r1_ids,
+                    "SELECT id,status,spec,result_sha256 FROM operations WHERE kind='agent_investigation'"
                 ).fetchall()
-                if len(rows) != len(r1_ids) or any(item["status"] not in END for item in rows):
+                for item in rows:
+                    spec = json.loads(item["spec"])
+                    if item["id"] in r1_ids and spec.get("smart_triage_batch_id") == batch_id:
+                        r1_rows[item["id"]] = item
+                if (len(r1_rows) != len(r1_ids)
+                        or any(item["status"] not in END for item in r1_rows.values())):
                     return batch, []
-                r1_rows = {item["id"]: item for item in rows}
             snapshot = json.loads(authorization["snapshot"])
-            if len(specs) > int(snapshot.get("r2_candidate_limit", 0)):
+            uncapped_smart_r2 = all(
+                spec.get("no_cumulative_token_ceiling") is True
+                and spec.get("smart_triage_batch_id") == batch_id
+                and spec.get("triage_authorization_sha256") == batch["authorization_sha256"]
+                for spec in specs
+            ) if specs else False
+            if not uncapped_smart_r2 and len(specs) > int(snapshot.get("r2_candidate_limit", 0)):
                 raise ValueError("conditional R2 candidate budget exceeded")
             selected_r1_candidates = {
                 row.get("candidate_id") for row in batch["candidate_manifest"]
@@ -574,7 +588,7 @@ class Operations:
                     raise ValueError("conditional R2 operation is outside its completed fixed R1 result")
             if specs:
                 active = db.execute("SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0]
-                if active + len(specs) > 100:
+                if not uncapped_smart_r2 and active + len(specs) > 100:
                     raise ValueError("operation queue full")
                 for key, spec in zip(keys, specs):
                     db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
@@ -848,6 +862,116 @@ class Operations:
                 "limitations": ["The legacy candidate_review_batch pointer is not executed; only a separate task-level consent can queue bounded R1 work.",
                                 "Zero-candidate and partial/unanalyzed source coverage remain in scan reports and are not second-pass Agent reviews."]}
 
+    def retry_interrupted_smart_operation(self, key):
+        """Queue an explicit retry while preserving the interrupted attempt and its consent binding."""
+        new_key = uuid.uuid4().hex
+        stamp = now()
+        with self.store.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            old = db.execute("SELECT * FROM operations WHERE id=?", (key,)).fetchone()
+            if old is None:
+                raise KeyError("operation not found")
+            spec = json.loads(old["spec"])
+            if (old["kind"] != "agent_investigation" or old["status"] != "interrupted"
+                    or old["result_sha256"] or old["cancel_requested"]
+                    or spec.get("no_cumulative_token_ceiling") is not True):
+                raise ValueError("only an interrupted, result-free authorized smart investigation can be retried")
+            batch_id = spec.get("smart_triage_batch_id")
+            audit_id = spec.get("job_id")
+            report_sha256 = spec.get("report_sha256")
+            authorization_sha256 = spec.get("triage_authorization_sha256")
+            if not all(isinstance(value, str) and value for value in
+                       (batch_id, audit_id, report_sha256, authorization_sha256)):
+                raise ValueError("interrupted operation is not bound to a task-level smart audit")
+            authorization = db.execute(
+                "SELECT consent_sha256,revoked_at FROM triage_authorizations WHERE audit_id=?",
+                (audit_id,),
+            ).fetchone()
+            if (authorization is None or authorization["revoked_at"] is not None
+                    or authorization["consent_sha256"] != authorization_sha256):
+                raise ValueError("task-level source-egress authorization is missing, changed, or revoked")
+            batch_row = db.execute(
+                "SELECT * FROM smart_triage_batches WHERE id=? AND audit_id=? AND report_sha256=? AND authorization_sha256=?",
+                (batch_id, audit_id, report_sha256, authorization_sha256),
+            ).fetchone()
+            if batch_row is None:
+                raise ValueError("original smart batch, report, or authorization binding is unavailable")
+            batch = self.triage_batch_row(batch_row)
+            current_job = db.execute("SELECT report_sha256 FROM jobs WHERE id=?", (audit_id,)).fetchone()
+            if current_job is None or current_job["report_sha256"] != report_sha256:
+                raise ValueError("the original fixed report is no longer the current audit report")
+            member_ids = set(batch["operation_ids"] + batch["r2_operation_ids"])
+            if key not in member_ids:
+                raise ValueError("operation is not part of the original smart audit batch")
+            candidate_id = spec.get("candidate_id")
+            if spec.get("mode") == "single_shot":
+                eligible_manifest = batch["candidate_manifest"]
+            elif spec.get("mode") == "tool_agent":
+                eligible_manifest = batch["r2_candidate_manifest"]
+            else:
+                eligible_manifest = []
+            if not any(isinstance(row, dict) and row.get("candidate_id") == candidate_id
+                       and row.get("state") == "selected" for row in eligible_manifest):
+                raise ValueError("candidate is not selected in the original authorized audit batch")
+            cancellation = db.execute(
+                "SELECT report_sha256 FROM triage_cancellations WHERE audit_id=?",
+                (audit_id,),
+            ).fetchone()
+            if cancellation and cancellation[0] in {None, report_sha256}:
+                raise ValueError("the original audit's smart investigation was cancelled")
+            candidate_id = spec.get("candidate_id")
+            if not isinstance(candidate_id, str) or not candidate_id:
+                raise ValueError("interrupted operation lacks a fixed candidate identity")
+            siblings = []
+            for row in db.execute(
+                    "SELECT id,status,spec FROM operations WHERE kind='agent_investigation'"):
+                sibling_spec = json.loads(row["spec"])
+                if (sibling_spec.get("smart_triage_batch_id") == batch_id
+                        and sibling_spec.get("candidate_id") == candidate_id):
+                    siblings.append((row, sibling_spec))
+            if any(row["status"] in {"queued", "running"} for row, _ in siblings):
+                raise ValueError("another attempt for this fixed candidate is already active")
+            root_key = spec.get("retry_root_operation_id") or key
+            retry_attempt = 1 + max(
+                (int(sibling_spec.get("retry_attempt", 0))
+                 for _, sibling_spec in siblings
+                 if isinstance(sibling_spec.get("retry_attempt", 0), int)
+                 and not isinstance(sibling_spec.get("retry_attempt", 0), bool)),
+                default=0,
+            )
+            retry_spec = dict(spec)
+            retry_spec.update({
+                "retry_parent_operation_id": key,
+                "retry_root_operation_id": root_key,
+                "retry_attempt": retry_attempt,
+            })
+            db.execute(
+                "INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
+                (new_key, "agent_investigation", json.dumps(retry_spec, sort_keys=True), "queued", stamp),
+            )
+            if spec.get("mode") == "single_shot":
+                operation_ids = list(batch["operation_ids"])
+                operation_ids.append(new_key)
+                db.execute("UPDATE smart_triage_batches SET operation_ids=? WHERE id=?",
+                           (json.dumps(operation_ids), batch_id))
+            else:
+                operation_ids = list(batch["r2_operation_ids"])
+                operation_ids.append(new_key)
+                db.execute("UPDATE smart_triage_batches SET r2_operation_ids=? WHERE id=?",
+                           (json.dumps(operation_ids), batch_id))
+            message = ("Explicit retry queued as " + new_key
+                       + "; same candidate, commit, report and source-egress consent; "
+                       + "the Provider may be called again and may bill this attempt.")
+            db.execute(
+                "INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
+                (key, stamp, "retry_created", message),
+            )
+            db.execute(
+                "INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
+                (new_key, stamp, "queued",
+                 "Explicit retry of " + key + "; source, report and original consent bindings are unchanged."),
+            )
+        return self.get(new_key)
     def event(self, key, stage, message):
         with self.store.connect() as db:
             db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",

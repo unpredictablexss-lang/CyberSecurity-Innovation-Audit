@@ -41,7 +41,7 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
         self.tmp.cleanup()
 
     @staticmethod
-    def fake_preview(plan, workflow, paths, candidates, nonce, provider, r2, *, max_cost_usd):
+    def fake_preview(plan, workflow, paths, candidates, nonce, provider, r2):
         digest = hashlib.sha256((plan["plan_sha256"] + workflow + nonce).encode()).hexdigest()
         return {"eligible": True, "consent_sha256": digest, "consent_nonce": nonce,
                 "manifest": {"binding": {"plan_sha256": plan["plan_sha256"],
@@ -164,8 +164,9 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
         good = RangeRequest.model_validate({**base, "auto_triage": True, "max_cost_usd": "5.00"})
         self.assertTrue(good.auto_triage)
         for cost in ("abc", "0x55", "5.2.1", "-1", "5 USD"):
-            with self.subTest(cost=cost), self.assertRaises(Exception):
-                RangeRequest.model_validate({**base, "max_cost_usd": cost})
+            with self.subTest(cost=cost):
+                request = RangeRequest.model_validate({**base, "max_cost_usd": cost})
+                self.assertEqual(request.max_cost_usd, cost)  # Legacy field is ignored by smart-audit policy.
         with self.assertRaises(Exception):
             BranchComparisonRequest.model_validate({
                 "repository_id": self.repo["id"], "baseline_ref": "main", "endpoint_ref": "dev",

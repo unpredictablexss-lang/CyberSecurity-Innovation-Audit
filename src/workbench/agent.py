@@ -42,6 +42,9 @@ TARGETED_REPAIR_CODES = frozenset({
 })
 MAX_RESPONSE_BYTES = 2 * 1024 * 1024
 MAX_TOOL_RESULT_BYTES = 24 * 1024
+# Conservative single-request context envelope; aggregate investigation usage is uncapped
+# only for explicitly consented automatic smart-review tasks.
+MAX_SMART_REQUEST_CONTEXT_BYTES = 256 * 1024
 MAX_CONTEXT_FILE_BYTES = 1024 * 1024
 MAX_SYMBOL_GREP_BYTES = 128 * 1024
 MAX_SYMBOL_CONTEXT_FILES = 8
@@ -626,101 +629,48 @@ def _normalize_task_cost_budget_usd(value):
 def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candidates,
                                consent_nonce, provider, max_r2_candidates=0,
                                *, max_cost_usd=None):
-    """Preview bounded task-level R1 and conditional R2 authorization without calling a Provider."""
+    """Preview an explicitly authorized, all-eligible-candidate smart audit."""
     if not provider.configured:
         return {"eligible": False, "reason": "LLM provider is not configured"}
-    if not isinstance(max_candidates, int) or isinstance(max_candidates, bool) or not 1 <= max_candidates <= 5:
-        raise ValueError("automatic triage candidate budget must be between one and five")
-    if (not isinstance(max_r2_candidates, int) or isinstance(max_r2_candidates, bool)
-            or not 0 <= max_r2_candidates <= max_candidates):
-        raise ValueError("conditional R2 candidate budget must be between zero and the R1 candidate budget")
-    cost_cap, cost_cap_text = _normalize_task_cost_budget_usd(max_cost_usd)
     if not isinstance(consent_nonce, str) or not re.fullmatch(r"[0-9a-f]{32}", consent_nonce):
         raise ValueError("invalid automatic triage consent nonce")
     source = plan.get("source") if isinstance(plan, dict) else None
     if not isinstance(source, dict):
         raise ValueError("scan plan has no fixed source binding")
     r1_budget = {
-        "max_steps": 1,
-        "max_output_tokens": 1200,
-        "max_total_input_tokens": 24000,
-        "max_total_output_tokens": 2400,
-        "timeout_seconds": 180,
-        "max_provider_retries": 1,
+        "max_output_tokens_per_request": 1200,
+        "max_request_context_tokens": 65536,
+        "max_request_context_bytes": MAX_SMART_REQUEST_CONTEXT_BYTES,
+        "request_timeout_seconds": 45,
+        "max_provider_retries_per_request": 1,
+        "no_cumulative_token_ceiling": True,
     }
     r2_budget = {
-        "max_steps": 2,
-        "max_output_tokens": 1000,
-        "max_total_input_tokens": 36000,
-        "max_total_output_tokens": 5200,
-        "timeout_seconds": 240,
-        "max_provider_retries": 1,
+        "max_output_tokens_per_request": 1000,
+        "max_request_context_tokens": 65536,
+        "max_request_context_bytes": MAX_SMART_REQUEST_CONTEXT_BYTES,
+        "request_timeout_seconds": 45,
+        "max_provider_retries_per_request": 1,
+        "no_cumulative_token_ceiling": True,
     }
-    r2_calls_per_candidate = (r2_budget["max_steps"] + 1 + MAX_VALIDATION_REPAIRS
-                              if max_r2_candidates else 0)
     budgets = {
-        "r1_max_candidates": max_candidates,
-        "r2_max_candidates": max_r2_candidates,
-        "r1_max_model_calls": max_candidates,
-        "r2_max_model_calls": max_r2_candidates * r2_calls_per_candidate,
-        "r1_max_requests": max_candidates * 2,
-        "r2_max_requests": max_r2_candidates * r2_calls_per_candidate * 2,
-        "max_requests": (max_candidates + max_r2_candidates * r2_calls_per_candidate) * 2,
-        "max_http_attempts_per_request": 2,
-        "per_candidate_timeout_seconds": 180,
-        "r2_per_candidate_timeout_seconds": r2_budget["timeout_seconds"],
-        "aggregate_max_input_tokens": (max_candidates * r1_budget["max_total_input_tokens"]
-                                       + max_r2_candidates * r2_budget["max_total_input_tokens"]),
-        "aggregate_max_output_tokens": (max_candidates * r1_budget["max_total_output_tokens"]
-                                        + max_r2_candidates * r2_budget["max_total_output_tokens"]),
-        "retry_policy": "one bounded retry for HTTP 429/5xx; no retry after timeout or connection loss because provider outcome may be unknown",
-    }
-    cost = _budget_cost_estimate(provider, r1_budget, "single_shot")
-    r2_cost = _budget_cost_estimate(provider, r2_budget, "tool_agent") if max_r2_candidates else None
-    aggregate_cost = None
-    if cost is not None and (not max_r2_candidates or r2_cost is not None):
-        amount = (Decimal(cost["maximum_usd"]) * Decimal(max_candidates)
-                  + Decimal(r2_cost["maximum_usd"]) * Decimal(max_r2_candidates)
-                  if r2_cost is not None else Decimal(cost["maximum_usd"]) * Decimal(max_candidates))
-        aggregate_cost = {
-            **cost,
-            "maximum_usd": format(amount.quantize(Decimal("0.00000001")), "f"),
-            "candidate_count": max_candidates,
-            "conditional_r2_candidate_count": max_r2_candidates,
-            "hard_spend_cap": False,
-        }
-        if "maximum_cny" in cost and (r2_cost is None or "maximum_cny" in r2_cost):
-            cny_amount = Decimal(cost["maximum_cny"]) * Decimal(max_candidates)
-            if r2_cost is not None:
-                cny_amount += Decimal(r2_cost["maximum_cny"]) * Decimal(max_r2_candidates)
-            aggregate_cost["maximum_cny"] = format(cny_amount.quantize(Decimal("0.00000001")), "f")
-    if aggregate_cost is None:
-        raise ValueError(
-            "当前 Provider / 模型没有已复核费率卡，无法按费用预算授权自动批量研判；"
-            "请先仅静态扫描，或在扫描后逐条预览并授权。"
-        )
-    estimate_usd = Decimal(aggregate_cost["maximum_usd"])
-    if estimate_usd > cost_cap:
-        raise ValueError(
-            "当前计划的最坏费率卡估算 USD " + aggregate_cost["maximum_usd"]
-            + " 高于费用预算 USD " + cost_cap_text
-            + "；请提高费用上限或减少候选 / R2 名额后重新预览。"
-        )
-    cost_budget = {
-        "currency": "USD",
-        "maximum_usd": cost_cap_text,
-        "estimated_maximum_usd": aggregate_cost["maximum_usd"],
-        "rate_card_id": aggregate_cost["rate_card_id"],
-        "rate_card_retrieved_at": aggregate_cost["rate_card_retrieved_at"],
-        "rate_source_url": aggregate_cost["rate_source_url"],
-        "platform_enforced": True,
-        "provider_invoice_hard_cap": False,
-        "enforcement": "fixed_rate_card_upper_estimate_must_fit_before_authorization",
+        "candidate_selection": "all_source_reviewable_candidates_in_fixed_scope",
+        "conditional_deep_research_selection": "all_critical_high_candidates_with_unresolved_source_obligations",
+        "per_request_context_tokens": 65536,
+        "per_request_context_bytes": MAX_SMART_REQUEST_CONTEXT_BYTES,
+        "per_request_output_tokens_r1": r1_budget["max_output_tokens_per_request"],
+        "per_request_output_tokens_r2": r2_budget["max_output_tokens_per_request"],
+        "request_timeout_seconds": 45,
+        "max_provider_retries_per_request": 1,
+        "retry_policy": "one bounded retry for explicit HTTP 429/5xx; no retry after timeout or connection loss because provider outcome may be unknown",
+        "cumulative_token_ceiling": None,
+        "cumulative_request_ceiling": None,
+        "cumulative_spend_ceiling": None,
     }
     manifest = {
-        "schema_version": 1,
+        "schema_version": 3,
         "consent_nonce": consent_nonce,
-        "policy_id": "ohscanner-task-triage-r1-conditional-r2-v2",
+        "policy_id": "ohscanner-authorized-smart-investigation-no-aggregate-token-request-or-spend-ceiling-v2",
         "binding": {
             "plan_sha256": plan.get("plan_sha256"),
             "workflow_sha256": workflow_sha256,
@@ -742,34 +692,36 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
             "consent_preview_version": CONSENT_PREVIEW_VERSION,
             "redaction_policy_version": REDACTION_POLICY_VERSION,
         },
-        "selection_policy": "evidence_route_then_severity_then_fixed_candidate_id",
-        "candidate_limit": max_candidates,
-        "r1_candidate_limit": max_candidates,
-        "r2_candidate_limit": max_r2_candidates,
+        "selection_policy": "all_eligible_fixed_scope_candidates_ordered_by_evidence_then_severity_then_id",
+        "candidate_selection": "all source-reviewable candidates in the fixed audit scope; no count cap",
         "conditional_r2": {
-            "enabled": bool(max_r2_candidates),
-            "maximum_candidates": max_r2_candidates,
+            "enabled": True,
+            "selection": "all R1-completed critical/high candidates with unresolved source-reviewable obligations",
             "only_if": "R1 is complete, the finding is critical/high severity, and one or more source-reviewable obligations remain unresolved",
             "mode": "tool_agent",
-            "allowed_tools": [item["name"] for item in _TOOLS] if max_r2_candidates else [],
-            "max_steps_per_candidate": r2_budget["max_steps"] if max_r2_candidates else 0,
+            "allowed_tools": [item["name"] for item in _TOOLS],
         },
-        "mode": "single_shot",
+        "mode": "multi_stage_read_only_investigation",
         "source_disclosure": [
-            "At most the budgeted number of eligible finding metadata, bounded candidate-file excerpts, and recorded evidence obligations from this fixed scan will be sent.",
-            "Candidate source is limited to the scanner report inventory and this audit include-path scope; model-selected paths and additional repository tools are not enabled for R1.",
-            "If the deterministic R2 gate is met, bounded fixed-commit history and exact-symbol source excerpts from the immutable scan inventory may also be sent using read-only tools.",
-            "One retry is allowed only after an explicit HTTP 429 or 5xx response; retry responses can incur a separate Provider charge. Timeouts and connection failures are not retried because their outcome may be unknown.",
+            "All eligible candidate summaries and bounded source excerpts from this fixed scan may be sent to the selected model provider.",
+            "Candidate source is limited to the scanner report inventory and this audit include-path scope; arbitrary model-selected paths are not enabled.",
+            "If the evidence gate selects a candidate for deeper research, the listed fixed-commit read-only tools may send additional source excerpts.",
             "Credential-like values are redacted by the current fixed redaction policy before Provider transmission.",
-            "Candidate selection is deterministic and budget-limited; skipped candidates remain untriaged and are not considered safe.",
-            "The task USD ceiling is enforced against this fixed official rate-card worst-case token estimate before authorization; it does not cap the Provider's actual invoice.",
+            "This authorization has no cumulative Token, request-count or spending ceiling enforced by OHScanner. The provider charges according to its pay-as-you-go terms; actual total charges must be checked in the provider account. You may cancel the investigation at any time.",
+            "Per-request context/output limits, read-only tools, source binding and cancellation remain enforced. A provider rejection, insufficient account balance, network failure or cancellation can end the run; partial static and model evidence remain available.",
         ],
         "budgets": budgets,
-        "per_candidate_budgets": {"r1": r1_budget,
-                                  "r2": r2_budget if max_r2_candidates else None},
-        "estimated_cost": aggregate_cost,
-        "cost_budget": cost_budget,
-        "cost_limit_semantics": "OHScanner refuses task authorization unless the full selected R1 and conditional R2 worst-case token budget at the reviewed fixed rate card fits the user's USD ceiling. The Provider's actual invoice is not enforceable as a hard spend cap by this integration.",
+        "per_candidate_budgets": {"r1": r1_budget, "r2": r2_budget},
+        "estimated_cost": None,
+        "cost_budget": None,
+        "billing_policy": {
+            "provider_pay_as_you_go": True,
+            "aggregate_token_ceiling": None,
+            "aggregate_request_ceiling": None,
+            "aggregate_spend_ceiling": None,
+            "actual_invoice_verified": False,
+            "reporting": "Observed Provider usage is recorded when returned; the workbench does not retrieve or cap the provider invoice.",
+        },
     }
     return {
         "eligible": True,
@@ -778,9 +730,10 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
         "provider": {key: value for key, value in provider.public.items()
                      if key not in {"missing", "source_consent_required"}},
         "manifest": manifest,
-        "estimated_cost": aggregate_cost,
-        "cost_budget": cost_budget,
-        "platform_cost_budget_enforced": True,
+        "estimated_cost": None,
+        "cost_budget": None,
+        "billing_disclosure": "Provider pay-as-you-go; all in-scope eligible candidates are selected; OHScanner imposes no cumulative Token/request/amount ceiling.",
+        "platform_cost_budget_enforced": False,
         "hard_spend_cap": False,
     }
 
@@ -1153,11 +1106,32 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
         "implementation_sha256": implementation_fingerprint(),
         "source_sha256": prepared["source"]["sha256"],
     }
-    budgets = {key: spec[key] for key in ("max_steps", "max_output_tokens",
-        "max_total_input_tokens", "max_total_output_tokens", "timeout_seconds")}
-    budgets["max_provider_retries"] = spec.get("max_provider_retries", 0)
-    budgets["max_validation_repairs"] = MAX_VALIDATION_REPAIRS if mode == "tool_agent" else 0
-    budget_cost_estimate = _budget_cost_estimate(provider, budgets, mode)
+    no_cumulative_ceiling = spec.get("no_cumulative_token_ceiling") is True
+    if no_cumulative_ceiling:
+        budgets = {
+            "max_output_tokens_per_request": spec["max_output_tokens"],
+            "max_request_context_tokens": spec.get("max_request_context_tokens", 65536),
+            "max_request_context_bytes": spec.get(
+                "max_request_context_bytes", MAX_SMART_REQUEST_CONTEXT_BYTES),
+            "request_timeout_seconds": spec.get("request_timeout_seconds", 45),
+            "max_provider_retries_per_request": spec.get("max_provider_retries", 0),
+            "cumulative_token_ceiling": None,
+            "cumulative_request_ceiling": None,
+            "cumulative_spend_ceiling": None,
+        }
+    else:
+        budgets = {key: spec[key] for key in (
+            "max_steps", "max_output_tokens", "max_total_input_tokens",
+            "max_total_output_tokens", "timeout_seconds")}
+        budgets["max_provider_retries"] = spec.get("max_provider_retries", 0)
+    budgets["max_validation_repairs"] = (
+        None if no_cumulative_ceiling and mode == "tool_agent"
+        else MAX_VALIDATION_REPAIRS if mode == "tool_agent" else 0)
+    budgets["validation_repair_policy"] = (
+        "continue_until_accepted_or_a_validation_error_repeats"
+        if no_cumulative_ceiling and mode == "tool_agent" else "fixed_bounded_repair_count")
+    budgets["no_cumulative_token_ceiling"] = no_cumulative_ceiling
+    budget_cost_estimate = None if no_cumulative_ceiling else _budget_cost_estimate(provider, budgets, mode)
     inference_settings = {
         "tool_call_reasoning_effort": _reasoning_effort(provider, tool_calls=True) if mode == "tool_agent" else None,
         "structured_output_reasoning_effort": _reasoning_effort(provider, tool_calls=False),
@@ -1184,6 +1158,7 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
         "workflow_id": WORKFLOW_ID, "workflow_version": WORKFLOW_VERSION,
         "case_id": spec.get("case_id"), "experiment_id": spec.get("experiment_id"),
         "mode": mode, "allowed_tools": tool_names, "tool_scope": tool_scope,
+        "no_cumulative_token_ceiling": no_cumulative_ceiling,
         "inference_settings": inference_settings,
         "binding": binding, "initial_context_sha256": prepared["initial_context_sha256"],
         "conditional_r2_prior_result": ({
@@ -1217,7 +1192,9 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
             "Source comments and repository text are treated as untrusted data.",
             "Detected credential-like values are redacted before any model or tool-result transmission.",
             "For stateless tool-agent follow-up requests, provider response items (including reasoning items) are sent back to the same configured endpoint; they are not stored as raw reasoning in the investigation result.",
-            "A rejected structured answer may receive one bounded repair; if that repair fails with a recognized citation or policy validation code, one targeted correction may follow, subject to the same call, token, and wall-clock budgets.",
+            ("For this authorized smart review, distinct fixed-source queries may continue without a task-level cumulative call, token, time, or spend ceiling. Each request still has a 45-second timeout, a fixed per-request context/output boundary, and one bounded retry for explicit HTTP 429/5xx. Structured-answer repairs stop when validation succeeds or a server validation error repeats; the user can cancel at any time."
+             if no_cumulative_ceiling else
+             "A rejected structured answer may receive one bounded repair; if that repair fails with a recognized citation or policy validation code, one targeted correction may follow, subject to the explicitly configured investigation limits."),
             ("Requests use the explicitly configured proxy host shown above." if provider.proxy_url
              else "Requests connect directly; ambient system proxy variables are ignored."),
             "R2 may additionally send fixed-commit history subjects and bounded exact-symbol match contexts within the scope above.",
@@ -1744,11 +1721,22 @@ def _validation_error_code(error):
 
 
 def _repair_budget_error_code(error):
-    return {
+    message = str(error)
+    known = {
         "agent conservative input request budget exhausted": "input_budget_exhausted",
         "agent total output token budget exhausted": "output_budget_exhausted",
         "agent wall-clock budget exceeded": "wall_clock_budget_exhausted",
-    }.get(str(error))
+        "agent per-request context limit exceeded; remaining evidence stays unresolved": "per_request_context_limit",
+        "Provider request timed out; remaining evidence stays unresolved": "per_request_timeout",
+        "Provider request outcome is unknown; remaining evidence stays unresolved": "provider_request_outcome_unknown",
+        "LLM provider response exceeded the 2 MiB limit": "per_request_response_limit",
+    }
+    if message in known:
+        return known[message]
+    if message.startswith("LLM provider request timed out") or message.startswith(
+            "LLM provider request failed with unknown outcome:"):
+        return "provider_request_outcome_unknown"
+    return None
 
 
 def _rejected_structured_answer(obligation_count):
@@ -1918,6 +1906,12 @@ def execute_agent(settings, store, ops, task, client=None):
                        and batch["authorization_sha256"] == task_authorization_sha256
                        for batch in batches):
                 raise ValueError("automatic triage batch no longer matches the authorized audit")
+    no_cumulative_ceiling = spec.get("no_cumulative_token_ceiling") is True
+    if no_cumulative_ceiling and not (
+            task_authorization_sha256
+            and spec.get("smart_triage_batch_id")
+            and spec.get("report_sha256") == job.get("report_sha256")):
+        raise ValueError("uncapped aggregate usage is available only to an authorized smart-review batch")
     if job["status"] not in {"completed", "completed_with_limitations"} or not job.get("report_sha256"):
         raise ValueError("candidate source scan has no complete published report")
     report = service.read_report(settings, job)
@@ -1941,7 +1935,12 @@ def execute_agent(settings, store, ops, task, client=None):
     input_items = [{"role": "user", "content": [{"type": "input_text", "text": context_text}]}]
     client = client or ResponsesClient(
         config, max_retries=spec.get("max_provider_retries", 0))
-    max_steps = spec["max_steps"]
+    mode = spec.get("mode", "tool_agent")
+    if mode not in {"single_shot", "tool_agent"}:
+        raise ValueError("unsupported Agent investigation mode")
+    max_steps = None if no_cumulative_ceiling else spec["max_steps"]
+    max_model_calls = (None if no_cumulative_ceiling else
+                       (max_steps + 1 + MAX_VALIDATION_REPAIRS if mode == "tool_agent" else 1))
     per_call_tokens = spec["max_output_tokens"]
     tool_trace, model_trace = [], []
     evidence_texts = {initial_evidence_id: [initial_context["source_excerpt"]]}
@@ -1969,6 +1968,10 @@ def execute_agent(settings, store, ops, task, client=None):
     reasoning_usage_complete = True
     tool_calls_used = 0
     model_tool_calls_skipped = 0
+    tool_query_hashes = set()
+    tool_calls_skipped_by_budget = 0
+    oversized_tool_queries = set()
+    oversized_tool_query_repeated = False
 
     def ask(with_tools, request_phase=None):
         nonlocal calls, input_total, output_total, output_reserved
@@ -1978,21 +1981,32 @@ def execute_agent(settings, store, ops, task, client=None):
         nonlocal cached_input_tokens_observed, reasoning_tokens_observed
         nonlocal cached_input_usage_complete, reasoning_usage_complete
         nonlocal retry_output_reserve, provider_http_attempts
-        if time.monotonic() - started > spec["timeout_seconds"]:
+        if (not no_cumulative_ceiling
+                and time.monotonic() - started > spec["timeout_seconds"]):
             raise TimeoutError("agent wall-clock budget exceeded")
-        max_model_calls = (max_steps + 1 + MAX_VALIDATION_REPAIRS) if mode == "tool_agent" else 1
-        if calls >= max_model_calls:
+        if max_model_calls is not None and calls >= max_model_calls:
             raise ValueError("agent model call budget exhausted")
         if ops.get(task["id"])["cancel_requested"]:
             raise InterruptedError("agent investigation cancelled")
-        remaining_tokens = spec["max_total_output_tokens"] - output_reserved
-        # Preserve a small response reserve for each bounded server-validated
-        # repair; measured Provider usage replaces reservations as calls finish.
-        if mode == "tool_agent" and calls < max_model_calls:
-            remaining_tokens -= min(128 * MAX_VALIDATION_REPAIRS, spec["max_total_output_tokens"])
-        requested_tokens = min(per_call_tokens, remaining_tokens)
-        if requested_tokens < 128:
-            raise ValueError("agent total output token budget exhausted")
+        if no_cumulative_ceiling:
+            requested_tokens = per_call_tokens
+            request_context_tokens = spec.get("max_request_context_tokens", 65536)
+            request_context_bytes = spec.get(
+                "max_request_context_bytes", MAX_SMART_REQUEST_CONTEXT_BYTES)
+            if (not isinstance(request_context_tokens, int) or isinstance(request_context_tokens, bool)
+                    or not 1024 <= request_context_tokens <= 262144
+                    or not isinstance(request_context_bytes, int) or isinstance(request_context_bytes, bool)
+                    or not 16 * 1024 <= request_context_bytes <= 1024 * 1024):
+                raise ValueError("invalid per-request context limit")
+        else:
+            remaining_tokens = spec["max_total_output_tokens"] - output_reserved
+            # Preserve a small response reserve for each bounded server-validated
+            # repair; measured Provider usage replaces reservations as calls finish.
+            if mode == "tool_agent" and calls < max_model_calls:
+                remaining_tokens -= min(128 * MAX_VALIDATION_REPAIRS, spec["max_total_output_tokens"])
+            requested_tokens = min(per_call_tokens, remaining_tokens)
+            if requested_tokens < 128:
+                raise ValueError("agent total output token budget exhausted")
         payload = {"model": config.model, "instructions": _INSTRUCTIONS,
                    "input": input_items, "store": False,
                    "max_output_tokens": requested_tokens}
@@ -2012,6 +2026,8 @@ def execute_agent(settings, store, ops, task, client=None):
         # while retaining a conservative bound for newly appended tool data.
         serialized_payload = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         request_bytes = max(1, len(serialized_payload))
+        if no_cumulative_ceiling and request_bytes > request_context_bytes:
+            raise ValueError("agent per-request context limit exceeded; remaining evidence stays unresolved")
         if previous_payload_bytes is not None and previous_request_input_tokens is not None:
             request_input_upper_bound = previous_request_input_tokens + abs(request_bytes - previous_payload_bytes)
         else:
@@ -2020,37 +2036,60 @@ def execute_agent(settings, store, ops, task, client=None):
         if (not isinstance(max_provider_retries, int) or isinstance(max_provider_retries, bool)
                 or not 0 <= max_provider_retries <= 1):
             raise ValueError("invalid bounded Provider retry budget")
-        remaining_input_budget = (spec["max_total_input_tokens"] - input_total
-                                  - input_unknown_reserve)
-        effective_provider_retries = _provider_retries_within_input_budget(
-            max_provider_retries, request_input_upper_bound, remaining_input_budget)
-        if effective_provider_retries is None:
-            raise ValueError("agent conservative input request budget exhausted")
+        if no_cumulative_ceiling:
+            effective_provider_retries = max_provider_retries
+        else:
+            remaining_input_budget = (spec["max_total_input_tokens"] - input_total
+                                      - input_unknown_reserve)
+            effective_provider_retries = _provider_retries_within_input_budget(
+                max_provider_retries, request_input_upper_bound, remaining_input_budget)
+            if effective_provider_retries is None:
+                raise ValueError("agent conservative input request budget exhausted")
         attempt_reserve = effective_provider_retries + 1
         if effective_provider_retries < max_provider_retries:
             ops.event(task["id"], "agent_retry_budget_reduced",
                       "call=" + str(calls + 1) + " retries=" + str(effective_provider_retries) +
-                      "; aggregate input budget only reserves one request")
+                      "; bounded request policy")
         input_preflight_bytes_total += request_bytes * attempt_reserve
         input_preflight_token_upper_bound_total += request_input_upper_bound * attempt_reserve
         output_reserved += requested_tokens * attempt_reserve
         request_hash = _hash(payload)
-        remaining_seconds = spec["timeout_seconds"] - (time.monotonic() - started)
-        if remaining_seconds <= 0:
+        request_timeout = (spec.get("request_timeout_seconds", 45)
+                           if no_cumulative_ceiling else
+                           spec["timeout_seconds"] - (time.monotonic() - started))
+        if no_cumulative_ceiling and (
+                not isinstance(request_timeout, (int, float)) or isinstance(request_timeout, bool)
+                or not 1 <= request_timeout <= 300):
+            raise ValueError("invalid per-request timeout")
+        if not no_cumulative_ceiling and request_timeout <= 0:
             raise TimeoutError("agent wall-clock budget exceeded")
         call_started = time.monotonic()
         try:
             create_with_timeout = getattr(client, "create_with_timeout", None)
             if getattr(client, "supports_per_request_retry_budget", False):
                 response = client.create_with_timeout(
-                    payload, remaining_seconds, max_retries=effective_provider_retries)
+                    payload, request_timeout, max_retries=effective_provider_retries)
             elif callable(create_with_timeout):
-                response = create_with_timeout(payload, remaining_seconds)
+                response = create_with_timeout(payload, request_timeout)
             else:
                 response = client.create(payload)
         except Exception as exc:
             ops.event(task["id"], "agent_provider_error",
                       type(exc).__name__ + "; request sha256=" + request_hash)
+            if (no_cumulative_ceiling and isinstance(exc, (TimeoutError, OSError))):
+                provider_http_attempts += 1
+                raise ValueError(
+                    "Provider request outcome is unknown; remaining evidence stays unresolved") from None
+            if (no_cumulative_ceiling and isinstance(exc, ValueError)
+                    and (str(exc).startswith("LLM provider request timed out")
+                         or str(exc).startswith("LLM provider request failed with unknown outcome:"))):
+                provider_http_attempts += 1
+                raise ValueError(
+                    "Provider request outcome is unknown; remaining evidence stays unresolved") from None
+            if (no_cumulative_ceiling and isinstance(exc, ValueError)
+                    and str(exc) == "LLM provider response exceeded the 2 MiB limit"):
+                provider_http_attempts += 1
+                raise ValueError(str(exc)) from None
             raise
         calls += 1
         attempts_used = response.get("_ohscanner_transport_attempts", 1)
@@ -2068,20 +2107,28 @@ def execute_agent(settings, store, ops, task, client=None):
             raise
         duration_ms = int(1000 * (time.monotonic() - call_started))
         if isinstance(usage["input_tokens"], int):
-            if (usage["input_tokens"] > request_input_upper_bound
-                    or input_total + input_unknown_reserve
-                    + request_input_upper_bound * max(0, attempts_used - 1)
-                    + usage["input_tokens"] > spec["max_total_input_tokens"]):
-                ops.event(task["id"], "agent_input_budget_exceeded",
-                          "call=" + str(calls) + " response sha256=" + response_hash + "; input token budget exceeded")
-                raise ValueError("agent provider input token usage exceeded conservative preflight budget")
-            input_unknown_reserve += request_input_upper_bound * max(0, attempts_used - 1)
+            exceeds_request_context = (
+                no_cumulative_ceiling
+                and usage["input_tokens"] > request_context_tokens)
+            exceeds_legacy_ceiling = (
+                not no_cumulative_ceiling
+                and (usage["input_tokens"] > request_input_upper_bound
+                     or input_total + input_unknown_reserve
+                     + request_input_upper_bound * max(0, attempts_used - 1)
+                     + usage["input_tokens"] > spec["max_total_input_tokens"]))
+            if exceeds_request_context or exceeds_legacy_ceiling:
+                ops.event(task["id"], "agent_input_limit_exceeded",
+                          "call=" + str(calls) + " response sha256=" + response_hash)
+                raise ValueError("agent provider input usage exceeded the authorized request context limit")
+            if not no_cumulative_ceiling:
+                input_unknown_reserve += request_input_upper_bound * max(0, attempts_used - 1)
             input_total += usage["input_tokens"]
             previous_payload_bytes = request_bytes
             previous_request_input_tokens = usage["input_tokens"]
         else:
             input_usage_complete = False
-            input_unknown_reserve += request_input_upper_bound * attempts_used
+            if not no_cumulative_ceiling:
+                input_unknown_reserve += request_input_upper_bound * attempts_used
             previous_payload_bytes = None
             previous_request_input_tokens = None
         input_details = usage["input_tokens_details"]
@@ -2091,10 +2138,12 @@ def execute_agent(settings, store, ops, task, client=None):
             cached_input_usage_complete = False
         if isinstance(usage["output_tokens"], int):
             if (usage["output_tokens"] > requested_tokens
-                    or output_total + retry_output_reserve + usage["output_tokens"] > spec["max_total_output_tokens"]):
-                ops.event(task["id"], "agent_output_budget_exceeded",
-                          "call=" + str(calls) + " response sha256=" + response_hash + "; output token budget exceeded")
-                raise ValueError("agent provider output token usage exceeded configured budget")
+                    or (not no_cumulative_ceiling
+                        and output_total + retry_output_reserve + usage["output_tokens"]
+                        > spec["max_total_output_tokens"])):
+                ops.event(task["id"], "agent_output_limit_exceeded",
+                          "call=" + str(calls) + " response sha256=" + response_hash)
+                raise ValueError("agent provider output token usage exceeded the authorized per-request limit")
             output_total += usage["output_tokens"]
             if output_usage_complete:
                 output_reserved = output_total + retry_output_reserve
@@ -2128,25 +2177,47 @@ def execute_agent(settings, store, ops, task, client=None):
         input_items.extend(response["output"])
         return response
 
-    ops.event(task["id"], "agent_started", "Bounded read-only model investigation; source transmission was explicitly approved")
+    ops.event(task["id"], "agent_started",
+              "Read-only model investigation; source transmission was explicitly approved; "
+              + ("no cumulative token or spend ceiling" if no_cumulative_ceiling
+                 else "bounded investigation limits"))
     final_response = None
     provider_incomplete_reason = None
-    mode = spec.get("mode", "tool_agent")
-    if mode not in {"single_shot", "tool_agent"}:
-        raise ValueError("unsupported Agent investigation mode")
     if mode == "single_shot":
-        response = ask(with_tools=False)
-        if response.get("status") != "completed":
-            reason = (response.get("incomplete_details") or {}).get("reason")
-            provider_incomplete_reason = reason if reason == "max_output_tokens" else "provider_incomplete"
+        try:
+            response = ask(with_tools=False)
+        except (ValueError, TimeoutError) as request_error:
+            request_error_code = _repair_budget_error_code(request_error)
+            if not no_cumulative_ceiling or request_error_code not in {
+                    "per_request_context_limit", "per_request_timeout",
+                    "per_request_response_limit", "provider_request_outcome_unknown"}:
+                raise
+            provider_incomplete_reason = request_error_code
+            ops.event(task["id"], "agent_request_incomplete",
+                      "Single request stopped at its per-request boundary; candidate remains unknown; reason=" + request_error_code)
         else:
-            final_response = response
-    for _ in range(max_steps if mode == "tool_agent" else 0):
+            if response.get("status") != "completed":
+                reason = (response.get("incomplete_details") or {}).get("reason")
+                provider_incomplete_reason = reason if reason == "max_output_tokens" else "provider_incomplete"
+            else:
+                final_response = response
+    tool_turns = 0
+    while mode == "tool_agent" and (no_cumulative_ceiling or tool_turns < max_steps):
         if provider_incomplete_reason:
             break
-        if tool_calls_used >= max_steps:
+        try:
+            response = ask(with_tools=True)
+        except (ValueError, TimeoutError) as request_error:
+            request_error_code = _repair_budget_error_code(request_error)
+            if not no_cumulative_ceiling or request_error_code not in {
+                    "per_request_context_limit", "per_request_timeout",
+                    "per_request_response_limit", "provider_request_outcome_unknown"}:
+                raise
+            provider_incomplete_reason = request_error_code
+            ops.event(task["id"], "agent_request_incomplete",
+                      "Read-only request stopped at its per-request boundary; remaining evidence stays unknown; reason=" + request_error_code)
             break
-        response = ask(with_tools=True)
+        tool_turns += 1
         if response.get("status") != "completed":
             reason = (response.get("incomplete_details") or {}).get("reason")
             provider_incomplete_reason = reason if reason == "max_output_tokens" else "provider_incomplete"
@@ -2183,9 +2254,13 @@ def execute_agent(settings, store, ops, task, client=None):
             call_ids.add(call_id)
             validated_calls.append((call_id, name, args))
 
-        remaining_tool_calls = max_steps - tool_calls_used
-        skipped_calls = validated_calls[remaining_tool_calls:]
-        validated_calls = validated_calls[:remaining_tool_calls]
+        remaining_tool_calls = (None if no_cumulative_ceiling
+                                else max_steps - tool_calls_used)
+        skipped_calls = (validated_calls[remaining_tool_calls:]
+                         if remaining_tool_calls is not None else [])
+        validated_calls = (validated_calls[:remaining_tool_calls]
+                           if remaining_tool_calls is not None else validated_calls)
+        new_tool_queries_this_turn = 0
         for call_id, _, _ in skipped_calls:
             input_items.append({"type": "function_call_output", "call_id": call_id,
                                 "output": json.dumps({
@@ -2195,8 +2270,35 @@ def execute_agent(settings, store, ops, task, client=None):
                                 })})
 
         for call_id, name, args in validated_calls:
-            if time.monotonic() - started > spec["timeout_seconds"]:
-                ops.event(task["id"], "agent_timeout", "total wall-time budget expired before tool execution")
+            query_key = _hash({"tool": name, "arguments": args})
+            if no_cumulative_ceiling and query_key in tool_query_hashes:
+                repeated_oversized_query = query_key in oversized_tool_queries
+                input_items.append({"type": "function_call_output", "call_id": call_id,
+                                    "output": json.dumps({
+                                        "status": "not_executed",
+                                        "error_code": ("oversized_tool_query_repeated"
+                                                       if repeated_oversized_query else
+                                                       "duplicate_tool_query"),
+                                        "message": (
+                                            "This exact fixed-source query already exceeded the 24 KiB single-tool response limit. "
+                                            "Do not repeat it; narrow the line range or symbol query. If no narrower query can answer the obligation, leave it unresolved."
+                                            if repeated_oversized_query else
+                                            "This exact read-only query was already executed; use its prior evidence or leave the obligation unresolved.")
+                                    })})
+                model_tool_calls_skipped += 1
+                if repeated_oversized_query:
+                    oversized_tool_query_repeated = True
+                    ops.event(task["id"], "agent_tool_result_limit_repeated",
+                              name + " repeated an exact query that exceeded the per-tool output limit; candidate will remain unknown")
+                ops.event(task["id"], "agent_duplicate_tool_query",
+                          name + " exact arguments already executed; no repeated source read")
+                continue
+            if no_cumulative_ceiling:
+                tool_query_hashes.add(query_key)
+            new_tool_queries_this_turn += 1
+            if (not no_cumulative_ceiling
+                    and time.monotonic() - started > spec["timeout_seconds"]):
+                ops.event(task["id"], "agent_timeout", "bounded investigation deadline expired before tool execution")
                 raise TimeoutError("agent wall-clock budget exceeded")
             if ops.get(task["id"])["cancel_requested"]:
                 ops.event(task["id"], "agent_cancelled", "cancel requested before read-only tool execution")
@@ -2228,8 +2330,16 @@ def execute_agent(settings, store, ops, task, client=None):
             clipped = len(encoded) > MAX_TOOL_RESULT_BYTES
             if clipped:
                 original = hashlib.sha256(encoded).hexdigest()
-                result = {"truncated": True, "notice": "tool output exceeded the 24 KiB per-tool budget",
-                          "original_result_sha256": original, "original_bytes": len(encoded)}
+                oversized_tool_queries.add(query_key)
+                tool_error_code = "tool_result_too_large"
+                result = {"status": "rejected", "error_code": tool_error_code,
+                          "message": (
+                              "This fixed-source tool response exceeded the 24 KiB single-tool output limit. "
+                              "Retry with a narrower line range, fewer lines, or a more specific symbol. "
+                              "If the evidence cannot be divided into smaller reads, leave the obligation unresolved."),
+                          "max_bytes": MAX_TOOL_RESULT_BYTES,
+                          "observed_bytes": len(encoded),
+                          "original_result_sha256": original}
                 encoded = json.dumps(result, ensure_ascii=False, sort_keys=True).encode()
             digest = hashlib.sha256(encoded).hexdigest()
             source_texts = _source_evidence_texts(name, result)
@@ -2256,7 +2366,10 @@ def execute_agent(settings, store, ops, task, client=None):
                                "result": result, "duration_ms": int(1000 * (time.monotonic() - started_tool)),
                                "truncated": clipped, "argument_redactions": argument_redactions,
                                "status": "rejected" if tool_error_code else "completed"})
-            if not tool_error_code:
+            if tool_error_code == "tool_result_too_large":
+                ops.event(task["id"], "agent_tool_result_limited",
+                          name + " exceeded the 24 KiB per-tool response limit; returned a range-too-wide hint for a narrower retry")
+            elif not tool_error_code:
                 ops.event(task["id"], "agent_tool", name + " completed; result sha256=" + digest)
             input_items.append({"type": "function_call_output", "call_id": call_id,
                                 "output": json.dumps({"evidence_id": evidence_id,
@@ -2264,10 +2377,15 @@ def execute_agent(settings, store, ops, task, client=None):
                                                       "result": result}, ensure_ascii=False)})
             tool_calls_used += 1
         if skipped_calls:
+            tool_calls_skipped_by_budget += len(skipped_calls)
             model_tool_calls_skipped += len(skipped_calls)
             ops.event(task["id"], "agent_tool_budget_exhausted",
                       str(len(skipped_calls)) + " model-requested read-only tool call(s) were not executed; remaining within fixed budget")
             break
+        if oversized_tool_query_repeated:
+            provider_incomplete_reason = "repeated_tool_result_limit"
+            ops.event(task["id"], "agent_tool_result_limited",
+                      "The model repeated an identical source query after receiving the 24 KiB range-too-wide hint; remaining obligations stay unknown")
 
     if final_response is None and provider_incomplete_reason is None:
         # Force a final answer with a strict schema after the tool budget is used.
@@ -2314,13 +2432,19 @@ def execute_agent(settings, store, ops, task, client=None):
             current_error = first_error
             final = None
             if mode == "tool_agent":
-                while validation_repair_attempts < MAX_VALIDATION_REPAIRS:
+                repair_error_codes = set()
+                while (no_cumulative_ceiling
+                       or validation_repair_attempts < MAX_VALIDATION_REPAIRS):
                     error_code = _validation_error_code(current_error)
+                    if no_cumulative_ceiling and error_code in repair_error_codes:
+                        ops.event(task["id"], "agent_final_rejected",
+                                  "The same structured-output validation failure repeated; stopping this repair stage with obligations unresolved")
+                        break
+                    repair_error_codes.add(error_code)
                     is_targeted = validation_repair_attempts > 0
                     if is_targeted and error_code not in TARGETED_REPAIR_CODES:
                         break
-                    max_model_calls = max_steps + 1 + MAX_VALIDATION_REPAIRS
-                    if calls >= max_model_calls:
+                    if max_model_calls is not None and calls >= max_model_calls:
                         break
                     phase = "structured_targeted_repair" if is_targeted else "structured_repair"
                     rejection_hash = hashlib.sha256(str(current_error).encode("utf-8")).hexdigest()
@@ -2401,9 +2525,9 @@ def execute_agent(settings, store, ops, task, client=None):
     citation_count = claim_citation_count + obligation_citation_count
     if provider_http_attempts > len(model_trace):
         cost_estimate = {
-            "status": "unknown_due_to_transient_http_retry",
+            "status": "unknown_due_to_unresolved_provider_attempt",
             "actual_charge_verified": False,
-            "note": "A failed 429/5xx attempt may be billed separately; successful-response token usage does not account for it.",
+            "note": "A provider request had no accepted response; it may still have been billed and successful-response token usage does not account for it.",
         }
     else:
         cost_estimate = _cost_estimate(config, {
@@ -2496,12 +2620,24 @@ def execute_agent(settings, store, ops, task, client=None):
             "reasoning_usage_complete": reasoning_usage_complete and output_usage_complete,
             "input_preflight_request_bytes_total": input_preflight_bytes_total,
             "input_preflight_token_upper_bound_total": input_preflight_token_upper_bound_total,
-            "input_budget_method": "first_request_utf8_json_byte_bound_then_measured_prior_request_tokens_plus_appended_byte_bound; every authorized retry reserves another full request bound; missing usage reserves the full byte bound; provider usage enforced after each successful response",
+            "input_budget_method": (
+                "per-request UTF-8 JSON context envelope plus observed Provider usage; no cumulative ceiling"
+                if no_cumulative_ceiling else
+                "first_request UTF-8 JSON bound then measured prior tokens plus appended-byte bound; aggregate limits enforced"),
             "input_usage_complete": input_usage_complete,
             "output_usage_complete": output_usage_complete,
             "usage_complete": input_usage_complete and output_usage_complete,
-            "input_budget_tokens": spec["max_total_input_tokens"],
-            "output_budget_tokens": spec["max_total_output_tokens"],
+            "input_budget_tokens": (None if no_cumulative_ceiling else spec["max_total_input_tokens"]),
+            "output_budget_tokens": (None if no_cumulative_ceiling else spec["max_total_output_tokens"]),
+            "max_request_context_tokens": (spec.get("max_request_context_tokens")
+                                           if no_cumulative_ceiling else None),
+            "max_request_context_bytes": (spec.get("max_request_context_bytes",
+                                                    MAX_SMART_REQUEST_CONTEXT_BYTES)
+                                           if no_cumulative_ceiling else None),
+            "max_output_tokens_per_request": per_call_tokens if no_cumulative_ceiling else None,
+            "max_model_calls": None if no_cumulative_ceiling else max_model_calls,
+            "aggregate_token_ceiling": None if no_cumulative_ceiling else "configured",
+            "aggregate_spend_ceiling": None if no_cumulative_ceiling else "configured",
             "total_tokens": input_total + output_total if input_usage_complete and output_usage_complete else None,
             "cost": "unknown",
             "cost_estimate": cost_estimate},
@@ -2535,11 +2671,28 @@ def execute_agent(settings, store, ops, task, client=None):
                          "Tool results are limited to the fixed scan commit; unresolved obligations remain unknown."],
     }
     if final_validation_status == "provider_incomplete":
+        if final_validation_error_code in {"per_request_context_limit", "per_request_timeout",
+                                           "provider_request_outcome_unknown", "per_request_response_limit",
+                                           "repeated_tool_result_limit"}:
+            result["limitations"].append(
+                "The investigation reached a single-request context, response, timeout, unknown-outcome, or repeated oversized tool query boundary; unreviewed obligations remain unresolved and the finding remains a candidate.")
+        else:
+            result["limitations"].append(
+                "The provider response did not complete; partial model output was discarded and all evidence obligations remain unresolved.")
+    elif final_validation_error_code in {"per_request_context_limit", "per_request_timeout",
+                                             "provider_request_outcome_unknown", "per_request_response_limit",
+                                             "repeated_tool_result_limit"}:
         result["limitations"].append(
-            "The provider response did not complete; partial model output was discarded and all evidence obligations remain unresolved.")
+            "The investigation reached a single-request, repeated oversized tool query, or timeout boundary; unreviewed obligations remain unresolved and the finding remains a candidate.")
     if model_tool_calls_skipped:
         result["limitations"].append(
-            "The provider requested more read-only tool calls than the remaining fixed budget; excess calls were not executed.")
+            "Repeated read-only query requests were deduplicated; no additional source read was performed for duplicates.")
+    if tool_calls_skipped_by_budget:
+        result["limitations"].append(
+            "excess calls were not executed under the explicit bounded research-operation tool budget; remaining evidence stays unresolved.")
+    if oversized_tool_queries:
+        result["limitations"].append(
+            "At least one tool read exceeded the 24 KiB single-response limit. The model received a range-too-wide hint and could continue with narrower fixed-source reads; oversized content was discarded.")
     ops.event(task["id"], "agent_completed", "Investigation note committed as candidate-only evidence")
     return result
 

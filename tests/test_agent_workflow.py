@@ -575,34 +575,41 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertFalse(estimate["actual_charge_verified"])
         self.assertEqual(estimate["rate_source_url"], agent.MIMO_RATE_SOURCE_URL)
 
-    def test_mimo_task_budget_preview_aggregates_usd_and_cny_without_r2(self):
-        config = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
-        preview = agent.audit_task_consent_preview(
-            {"plan_sha256": "a" * 64,
-             "source": {"repository": "openharmony/demo", "commit": "b" * 40, "git_tree": "c" * 40}},
-            "d" * 64, ["."], 2, "e" * 32, config,
-            max_cost_usd="0.03")
-        self.assertEqual(preview["estimated_cost"]["maximum_usd"], "0.02505600")
-        self.assertEqual(preview["estimated_cost"]["maximum_cny"], "0.17280000")
-        self.assertEqual(preview["manifest"]["estimated_cost"], preview["estimated_cost"])
-        self.assertEqual(preview["cost_budget"]["maximum_usd"], "0.03")
-        self.assertTrue(preview["platform_cost_budget_enforced"])
-        self.assertEqual(preview["manifest"]["cost_budget"], preview["cost_budget"])
-
-    def test_task_consent_rejects_budget_below_worst_case_or_unknown_rate(self):
+    def test_task_smart_consent_has_no_cumulative_budget_and_accepts_unpriced_provider(self):
         plan = {"plan_sha256": "a" * 64,
                 "source": {"repository": "openharmony/demo", "commit": "b" * 40,
                            "git_tree": "c" * 40}}
-        config = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
-        with self.assertRaisesRegex(ValueError, "高于费用预算"):
-            agent.audit_task_consent_preview(
-                plan, "d" * 64, ["."], 2, "e" * 32, config,
-                max_cost_usd="0.02")
-        unknown = agent.ProviderConfig("https://api.openai.com/v1", "unpriced-model", "secret")
-        with self.assertRaisesRegex(ValueError, "没有已复核费率卡"):
-            agent.audit_task_consent_preview(
-                plan, "d" * 64, ["."], 2, "e" * 32, unknown,
-                max_cost_usd="1.00")
+        provider = agent.ProviderConfig("https://api.openai.com/v1", "unpriced-model", "secret")
+        preview = agent.audit_task_consent_preview(
+            plan, "d" * 64, ["."], 1, "e" * 32, provider, 0,
+            max_cost_usd="0.01")
+        manifest = preview["manifest"]
+        self.assertTrue(preview["eligible"])
+        self.assertIsNone(preview["estimated_cost"])
+        self.assertIsNone(preview["cost_budget"])
+        self.assertFalse(preview["platform_cost_budget_enforced"])
+        self.assertEqual(manifest["candidate_selection"],
+                         "all source-reviewable candidates in the fixed audit scope; no count cap")
+        self.assertIsNone(manifest["budgets"]["cumulative_token_ceiling"])
+        self.assertIsNone(manifest["budgets"]["cumulative_request_ceiling"])
+        self.assertIsNone(manifest["budgets"]["cumulative_spend_ceiling"])
+        self.assertEqual(manifest["budgets"]["per_request_context_tokens"], 65536)
+        self.assertEqual(manifest["budgets"]["per_request_output_tokens_r2"], 1000)
+        self.assertIn("no cumulative Token, request-count or spending ceiling", " ".join(manifest["source_disclosure"]))
+
+    def test_legacy_candidate_and_cost_fields_do_not_change_smart_consent_policy(self):
+        plan = {"plan_sha256": "a" * 64,
+                "source": {"repository": "openharmony/demo", "commit": "b" * 40,
+                           "git_tree": "c" * 40}}
+        provider = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
+        first = agent.audit_task_consent_preview(
+            plan, "d" * 64, ["."], 1, "e" * 32, provider, 0,
+            max_cost_usd="0.01")
+        second = agent.audit_task_consent_preview(
+            plan, "d" * 64, ["."], 1000, "e" * 32, provider, 900,
+            max_cost_usd="5000")
+        self.assertEqual(first["consent_sha256"], second["consent_sha256"])
+        self.assertEqual(first["manifest"]["candidate_selection"], second["manifest"]["candidate_selection"])
 
     def test_aggregate_budget_cost_estimate_requires_matching_known_rate_cards(self):
         from src.workbench.agent import DEEPSEEK_V4_PRO_RATE_CARD
@@ -3554,6 +3561,365 @@ class AgentToolBudgetFallbackTests(unittest.TestCase):
             self.assertEqual(result["validated_vulnerability"], 0)
             self.assertTrue(any(event[1] == "agent_tool_budget_exhausted" for event in ops.events))
             self.assertIn("excess calls were not executed", " ".join(result["limitations"]))
+        finally:
+            import shutil
+            shutil.rmtree(root)
+
+
+class AuthorizedSmartAuditUncappedUsageTests(unittest.TestCase):
+    def test_authorized_smart_review_continues_past_legacy_aggregate_token_limits(self):
+        root = Path(tempfile.mkdtemp())
+        job = {"id": "job-uncapped", "repository_id": "repo-1", "status": "completed",
+               "report_sha256": "b" * 64}
+        candidate = {"id": "candidate-uncapped", "file": "src/sample.cpp", "line": 1,
+            "source_sha256": "a" * 64, "symbol": "run", "detector_id": "test.rule",
+            "detector_version": "0.1", "rule_id": "TEST-01",
+            "evidence": {"analysis_status": "partial", "obligations": [
+                {"kind": "callee_and_policy", "description": "Review the fixed source behavior.",
+                 "status": "unknown"}]}}
+        report = {"repository": "openharmony/sample", "commit": "c" * 40,
+                  "git_tree": "d" * 40, "snapshot_sha256": "e" * 64}
+        source = {"sha256": "a" * 64, "blob": "f" * 40,
+                  "text": "int run() { return 1; }\n"}
+        auth_sha, batch_id = "d" * 64, "1" * 32
+
+        class FakeStore:
+            def job(self, key): return job
+            def repository(self, key): return {"id": "repo-1", "path": str(root)}
+            def triage_authorization(self, key):
+                return {"revoked": False, "consent_sha256": auth_sha}
+
+        class FakeOps:
+            def __init__(self): self.events = []
+            def get(self, key): return {"cancel_requested": False}
+            def event(self, *args): self.events.append(args)
+            def triage_batches_for_job(self, key, report_sha256=None):
+                return [{"id": batch_id, "authorization_sha256": auth_sha}]
+
+        class OverLegacyBudgetClient:
+            def __init__(self): self.payloads = []
+            def create(self, payload):
+                self.payloads.append(payload)
+                call_index = len(self.payloads)
+                usage = {"input_tokens": 13000, "output_tokens": 1500, "total_tokens": 14500}
+                if "tools" in payload and call_index <= 5:
+                    return {"status": "completed", "output": [{"type": "function_call",
+                        "name": "lookup_symbol_in_fixed_commit",
+                        "arguments": json.dumps({"symbol": "unique_symbol_" + str(call_index)}),
+                        "call_id": "unique-call-" + str(call_index)}], "usage": usage}
+                if "tools" in payload:
+                    return {"status": "completed", "output": [{"type": "message", "content": [
+                        {"type": "output_text", "text": "No further distinct source queries."}]}],
+                        "usage": usage}
+                final = {"summary": "The source-only review remains inconclusive.",
+                    "assessment": "unknown", "supported_claims": [],
+                    "obligation_reviews": [{"obligation_index": 0,
+                        "disposition": "unresolved", "citations": []}],
+                    "unsupported_claims": [], "unknowns": ["Reachability and policy remain unknown."],
+                    "next_steps": ["Human review of the fixed source."]}
+                return {"status": "completed", "output": [{"type": "message", "content": [
+                    {"type": "output_text", "text": json.dumps(final)}]}], "usage": usage}
+
+        task = {"id": "task-uncapped", "spec": {
+            "job_id": job["id"], "candidate_id": candidate["id"],
+            "report_sha256": job["report_sha256"], "mode": "tool_agent",
+            "no_cumulative_token_ceiling": True, "smart_triage_batch_id": batch_id,
+            "triage_authorization_sha256": auth_sha, "source_submission_approved": True,
+            "max_output_tokens": 2000, "max_request_context_tokens": 65536,
+            "max_request_context_bytes": agent.MAX_SMART_REQUEST_CONTEXT_BYTES,
+            "request_timeout_seconds": 45, "max_provider_retries": 0,
+            "provider_fingerprint": "unused", "prompt_version": agent.PROMPT_VERSION,
+            "tool_policy_version": agent.TOOL_POLICY_VERSION}}
+        store, ops, client = FakeStore(), FakeOps(), OverLegacyBudgetClient()
+        try:
+            with patch.dict(os.environ, {"OHSCANNER_LLM_BASE_URL": "https://api.deepseek.com",
+                                         "OHSCANNER_LLM_MODEL": "deepseek-v4-pro",
+                                         "OHSCANNER_LLM_API_KEY": "test-secret"}, clear=False):
+                config = agent.ProviderConfig.from_env()
+                task["spec"]["provider_fingerprint"] = config.fingerprint
+                bind_test_consent(task, store, report, candidate, source)
+                with patch.object(agent.service, "read_report", return_value=report), \
+                     patch.object(agent.service, "finding", return_value=candidate), \
+                     patch.object(agent.service, "source", return_value=source), \
+                     patch.object(agent, "_tool_specs", return_value={
+                         "read_evidence_obligations": lambda args: {"obligations": candidate["evidence"]["obligations"], "obligations_truncated": False},
+                         "lookup_symbol_in_fixed_commit": lambda args: {"matches": []}}):
+                    result = agent.execute_agent(None, store, ops, task, client=client)
+            self.assertEqual(len(client.payloads), 7)
+            self.assertGreater(result["model_usage"]["input_tokens"], 24000)
+            self.assertGreater(result["model_usage"]["output_tokens"], 4000)
+            self.assertIsNone(result["model_usage"]["max_model_calls"])
+            self.assertIsNone(result["model_usage"]["input_budget_tokens"])
+            self.assertIsNone(result["model_usage"]["output_budget_tokens"])
+            self.assertEqual(result["structured_answer_validation"], "accepted")
+            self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
+            self.assertEqual(result["vulnerability_state"], "candidate")
+            self.assertEqual(result["validated_vulnerability"], 0)
+        finally:
+            import shutil
+            shutil.rmtree(root)
+
+    def test_oversized_tool_result_returns_narrower_query_hint_and_continues(self):
+        root = Path(tempfile.mkdtemp())
+        job = {"id": "job-tool-range", "repository_id": "repo-1", "status": "completed",
+               "report_sha256": "b" * 64}
+        candidate = {"id": "candidate-tool-range", "file": "src/sample.cpp", "line": 1,
+            "source_sha256": "a" * 64, "symbol": "run", "detector_id": "test.rule",
+            "detector_version": "0.1", "rule_id": "TEST-01",
+            "evidence": {"analysis_status": "partial", "obligations": [
+                {"kind": "callee_and_policy", "description": "Review fixed source behavior.",
+                 "status": "unknown"}]}}
+        report = {"repository": "openharmony/sample", "commit": "c" * 40,
+                  "git_tree": "d" * 40, "snapshot_sha256": "e" * 64}
+        source = {"sha256": "a" * 64, "blob": "f" * 40,
+                  "text": "int run() { return 1; }\n"}
+        auth_sha, batch_id = "d" * 64, "3" * 32
+
+        class FakeStore:
+            def job(self, key): return job
+            def repository(self, key): return {"id": "repo-1", "path": str(root)}
+            def triage_authorization(self, key):
+                return {"revoked": False, "consent_sha256": auth_sha}
+
+        class FakeOps:
+            def __init__(self): self.events = []
+            def get(self, key): return {"cancel_requested": False}
+            def event(self, *args): self.events.append(args)
+            def triage_batches_for_job(self, key, report_sha256=None):
+                return [{"id": batch_id, "authorization_sha256": auth_sha}]
+
+        final = {"summary": "The available source evidence remains inconclusive.",
+            "assessment": "unknown", "supported_claims": [],
+            "obligation_reviews": [{"obligation_index": 0,
+                "disposition": "unresolved", "citations": []}],
+            "unsupported_claims": [], "unknowns": ["The required policy and reachability evidence is unresolved."],
+            "next_steps": ["Continue manual review of the fixed source."]}
+
+        class NarrowingClient:
+            def __init__(self): self.payloads = []
+            def create(self, payload):
+                self.payloads.append(payload)
+                index = len(self.payloads)
+                usage = {"input_tokens": 100, "output_tokens": 100, "total_tokens": 200}
+                if index in {1, 2}:
+                    symbol = "wide_symbol" if index == 1 else "narrow_symbol"
+                    return {"status": "completed", "output": [{"type": "function_call",
+                        "name": "lookup_symbol_in_fixed_commit",
+                        "arguments": json.dumps({"symbol": symbol}), "call_id": "range-call-" + str(index)}],
+                        "usage": usage}
+                if index == 3:
+                    return {"status": "completed", "output": [{"type": "message", "content": [
+                        {"type": "output_text", "text": "No further distinct source reads are needed."}]}],
+                        "usage": usage}
+                return {"status": "completed", "output": [{"type": "message", "content": [
+                    {"type": "output_text", "text": json.dumps(final)}]}], "usage": usage}
+
+        tool_queries = []
+        def lookup(args):
+            tool_queries.append(args["symbol"])
+            if args["symbol"] == "wide_symbol":
+                return {"matches": [{"file": "src/sample.cpp", "text": "x" * 30000}]}
+            return {"matches": []}
+
+        task = {"id": "task-tool-range", "spec": {
+            "job_id": job["id"], "candidate_id": candidate["id"],
+            "report_sha256": job["report_sha256"], "mode": "tool_agent",
+            "no_cumulative_token_ceiling": True, "smart_triage_batch_id": batch_id,
+            "triage_authorization_sha256": auth_sha, "source_submission_approved": True,
+            "max_output_tokens": 1000, "max_request_context_tokens": 65536,
+            "max_request_context_bytes": agent.MAX_SMART_REQUEST_CONTEXT_BYTES,
+            "request_timeout_seconds": 45, "max_provider_retries": 0,
+            "provider_fingerprint": "unused", "prompt_version": agent.PROMPT_VERSION,
+            "tool_policy_version": agent.TOOL_POLICY_VERSION}}
+        store, ops, client = FakeStore(), FakeOps(), NarrowingClient()
+        try:
+            with patch.dict(os.environ, {"OHSCANNER_LLM_BASE_URL": "https://api.deepseek.com",
+                                         "OHSCANNER_LLM_MODEL": "deepseek-v4-pro",
+                                         "OHSCANNER_LLM_API_KEY": "test-secret"}, clear=False):
+                config = agent.ProviderConfig.from_env()
+                task["spec"]["provider_fingerprint"] = config.fingerprint
+                bind_test_consent(task, store, report, candidate, source)
+                with patch.object(agent.service, "read_report", return_value=report), \
+                     patch.object(agent.service, "finding", return_value=candidate), \
+                     patch.object(agent.service, "source", return_value=source), \
+                     patch.object(agent, "_tool_specs", return_value={
+                         "read_evidence_obligations": lambda args: {
+                             "obligations": candidate["evidence"]["obligations"],
+                             "obligations_truncated": False},
+                         "lookup_symbol_in_fixed_commit": lookup}):
+                    result = agent.execute_agent(None, store, ops, task, client=client)
+            self.assertEqual(len(client.payloads), 4)
+            self.assertEqual(tool_queries, ["wide_symbol", "narrow_symbol"])
+            self.assertEqual(result["tool_calls"][0]["result"]["error_code"], "tool_result_too_large")
+            self.assertIn("narrower line range", result["tool_calls"][0]["result"]["message"])
+            self.assertTrue(result["tool_calls"][0]["truncated"])
+            self.assertEqual(result["tool_calls"][1]["status"], "completed")
+            self.assertEqual(result["structured_answer_validation"], "accepted")
+            self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
+            self.assertEqual(result["vulnerability_state"], "candidate")
+            self.assertEqual(result["validated_vulnerability"], 0)
+            self.assertTrue(any("could continue with narrower" in item
+                                for item in result["limitations"]))
+        finally:
+            import shutil
+            shutil.rmtree(root)
+
+    def test_repeated_oversized_tool_query_becomes_visible_unknown(self):
+        root = Path(tempfile.mkdtemp())
+        job = {"id": "job-tool-repeat", "repository_id": "repo-1", "status": "completed",
+               "report_sha256": "b" * 64}
+        candidate = {"id": "candidate-tool-repeat", "file": "src/sample.cpp", "line": 1,
+            "source_sha256": "a" * 64, "symbol": "run", "detector_id": "test.rule",
+            "detector_version": "0.1", "rule_id": "TEST-01",
+            "evidence": {"analysis_status": "partial", "obligations": [
+                {"kind": "callee_and_policy", "description": "Review fixed source behavior.",
+                 "status": "unknown"}]}}
+        report = {"repository": "openharmony/sample", "commit": "c" * 40,
+                  "git_tree": "d" * 40, "snapshot_sha256": "e" * 64}
+        source = {"sha256": "a" * 64, "blob": "f" * 40,
+                  "text": "int run() { return 1; }\n"}
+        auth_sha, batch_id = "d" * 64, "4" * 32
+
+        class FakeStore:
+            def job(self, key): return job
+            def repository(self, key): return {"id": "repo-1", "path": str(root)}
+            def triage_authorization(self, key):
+                return {"revoked": False, "consent_sha256": auth_sha}
+
+        class FakeOps:
+            def __init__(self): self.events = []
+            def get(self, key): return {"cancel_requested": False}
+            def event(self, *args): self.events.append(args)
+            def triage_batches_for_job(self, key, report_sha256=None):
+                return [{"id": batch_id, "authorization_sha256": auth_sha}]
+
+        class RepeatingClient:
+            def __init__(self): self.payloads = []
+            def create(self, payload):
+                self.payloads.append(payload)
+                call_id = "repeat-call-" + str(len(self.payloads))
+                return {"status": "completed", "output": [{"type": "function_call",
+                    "name": "lookup_symbol_in_fixed_commit",
+                    "arguments": json.dumps({"symbol": "large_symbol"}), "call_id": call_id}],
+                    "usage": {"input_tokens": 100, "output_tokens": 100, "total_tokens": 200}}
+
+        task = {"id": "task-tool-repeat", "spec": {
+            "job_id": job["id"], "candidate_id": candidate["id"],
+            "report_sha256": job["report_sha256"], "mode": "tool_agent",
+            "no_cumulative_token_ceiling": True, "smart_triage_batch_id": batch_id,
+            "triage_authorization_sha256": auth_sha, "source_submission_approved": True,
+            "max_output_tokens": 1000, "max_request_context_tokens": 65536,
+            "max_request_context_bytes": agent.MAX_SMART_REQUEST_CONTEXT_BYTES,
+            "request_timeout_seconds": 45, "max_provider_retries": 0,
+            "provider_fingerprint": "unused", "prompt_version": agent.PROMPT_VERSION,
+            "tool_policy_version": agent.TOOL_POLICY_VERSION}}
+        store, ops, client = FakeStore(), FakeOps(), RepeatingClient()
+        try:
+            with patch.dict(os.environ, {"OHSCANNER_LLM_BASE_URL": "https://api.deepseek.com",
+                                         "OHSCANNER_LLM_MODEL": "deepseek-v4-pro",
+                                         "OHSCANNER_LLM_API_KEY": "test-secret"}, clear=False):
+                config = agent.ProviderConfig.from_env()
+                task["spec"]["provider_fingerprint"] = config.fingerprint
+                bind_test_consent(task, store, report, candidate, source)
+                with patch.object(agent.service, "read_report", return_value=report), \
+                     patch.object(agent.service, "finding", return_value=candidate), \
+                     patch.object(agent.service, "source", return_value=source), \
+                     patch.object(agent, "_tool_specs", return_value={
+                         "read_evidence_obligations": lambda args: {
+                             "obligations": candidate["evidence"]["obligations"],
+                             "obligations_truncated": False},
+                         "lookup_symbol_in_fixed_commit": lambda args: {
+                             "matches": [{"text": "x" * 30000}]}}):
+                    result = agent.execute_agent(None, store, ops, task, client=client)
+            self.assertEqual(len(client.payloads), 2)
+            self.assertEqual(len(result["tool_calls"]), 1)
+            self.assertEqual(result["structured_answer_validation"], "provider_incomplete")
+            self.assertEqual(result["structured_answer_validation_error_code"],
+                             "repeated_tool_result_limit")
+            self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
+            self.assertEqual(result["vulnerability_state"], "candidate")
+            self.assertEqual(result["validated_vulnerability"], 0)
+            self.assertTrue(any("exceeded the 24 KiB single-response limit" in item
+                                for item in result["limitations"]))
+            self.assertTrue(any("repeated oversized tool query" in item
+                                for item in result["limitations"]))
+        finally:
+            import shutil
+            shutil.rmtree(root)
+
+    def test_single_request_context_limit_keeps_a_candidate_result(self):
+        root = Path(tempfile.mkdtemp())
+        job = {"id": "job-context-limit", "repository_id": "repo-1", "status": "completed",
+               "report_sha256": "b" * 64}
+        candidate = {"id": "candidate-context-limit", "file": "src/sample.cpp", "line": 1,
+            "source_sha256": "a" * 64, "symbol": "run", "detector_id": "test.rule",
+            "detector_version": "0.1", "rule_id": "TEST-01",
+            "evidence": {"analysis_status": "partial", "obligations": [
+                {"kind": "callee_and_policy", "description": "Review fixed source behavior.",
+                 "status": "unknown"}]}}
+        report = {"repository": "openharmony/sample", "commit": "c" * 40,
+                  "git_tree": "d" * 40, "snapshot_sha256": "e" * 64}
+        source = {"sha256": "a" * 64, "blob": "f" * 40,
+                  "text": "int run() { return 1; }\n"}
+        auth_sha, batch_id = "d" * 64, "2" * 32
+
+        class FakeStore:
+            def job(self, key): return job
+            def repository(self, key): return {"id": "repo-1", "path": str(root)}
+            def triage_authorization(self, key):
+                return {"revoked": False, "consent_sha256": auth_sha}
+
+        class FakeOps:
+            def __init__(self): self.events = []
+            def get(self, key): return {"cancel_requested": False}
+            def event(self, *args): self.events.append(args)
+            def triage_batches_for_job(self, key, report_sha256=None):
+                return [{"id": batch_id, "authorization_sha256": auth_sha}]
+
+        class ContextGrowthClient:
+            def __init__(self): self.payloads = []
+            def create(self, payload):
+                self.payloads.append(payload)
+                return {"status": "completed", "output": [{"type": "function_call",
+                    "name": "lookup_symbol_in_fixed_commit",
+                    "arguments": json.dumps({"symbol": "unique_symbol"}), "call_id": "grow-context"}],
+                    "usage": {"input_tokens": 100, "output_tokens": 100, "total_tokens": 200}}
+
+        task = {"id": "task-context-limit", "spec": {
+            "job_id": job["id"], "candidate_id": candidate["id"],
+            "report_sha256": job["report_sha256"], "mode": "tool_agent",
+            "no_cumulative_token_ceiling": True, "smart_triage_batch_id": batch_id,
+            "triage_authorization_sha256": auth_sha, "source_submission_approved": True,
+            "max_output_tokens": 1000, "max_request_context_tokens": 65536,
+            "max_request_context_bytes": 16 * 1024, "request_timeout_seconds": 45,
+            "max_provider_retries": 0, "provider_fingerprint": "unused",
+            "prompt_version": agent.PROMPT_VERSION,
+            "tool_policy_version": agent.TOOL_POLICY_VERSION}}
+        store, ops, client = FakeStore(), FakeOps(), ContextGrowthClient()
+        try:
+            with patch.dict(os.environ, {"OHSCANNER_LLM_BASE_URL": "https://api.deepseek.com",
+                                         "OHSCANNER_LLM_MODEL": "deepseek-v4-pro",
+                                         "OHSCANNER_LLM_API_KEY": "test-secret"}, clear=False):
+                config = agent.ProviderConfig.from_env()
+                task["spec"]["provider_fingerprint"] = config.fingerprint
+                bind_test_consent(task, store, report, candidate, source)
+                with patch.object(agent.service, "read_report", return_value=report), \
+                     patch.object(agent.service, "finding", return_value=candidate), \
+                     patch.object(agent.service, "source", return_value=source), \
+                     patch.object(agent, "_tool_specs", return_value={
+                         "read_evidence_obligations": lambda args: {
+                             "obligations": candidate["evidence"]["obligations"],
+                             "obligations_truncated": False},
+                         "lookup_symbol_in_fixed_commit": lambda args: {
+                             "matches": [], "bounded_metadata": "x" * 19000}}):
+                    result = agent.execute_agent(None, store, ops, task, client=client)
+            self.assertEqual(len(client.payloads), 1)
+            self.assertEqual(result["status"], "completed_with_limitations")
+            self.assertEqual(result["structured_answer_validation"], "provider_incomplete")
+            self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
+            self.assertEqual(result["vulnerability_state"], "candidate")
+            self.assertEqual(result["validated_vulnerability"], 0)
+            self.assertIn("single-request context", " ".join(result["limitations"]))
         finally:
             import shutil
             shutil.rmtree(root)

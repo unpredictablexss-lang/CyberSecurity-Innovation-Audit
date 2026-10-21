@@ -3,23 +3,15 @@ export function auditWorkflowLabel(plan, auditMode = plan?.audit_mode) {
   const mode = auditMode ?? plan?.audit_mode;
   const workflow = plan?.workflow || {};
   if (mode === "static_only") return "仅静态扫描";
-  const limit = Number.isInteger(workflow.candidate_limit_per_authorized_batch)
-    ? "最多 " + workflow.candidate_limit_per_authorized_batch + " 条候选"
-    : "候选";
-  if (workflow.triage_stage === "task_authorized_bounded_r1_conditional_r2") {
-    const r2Limit = Number.isInteger(workflow.conditional_r2_candidate_limit)
-      ? "最多补充核查 " + workflow.conditional_r2_candidate_limit + " 条"
-      : "有限数量的补充核查";
-    return "标准研判：静态扫描后，" + limit + "单轮研判；高/严重且仍有源码义务未解决时，" + r2Limit;
-  }
   if (workflow.automatic_model_calls) {
-    return "标准研判：静态扫描后，" + limit + "单轮模型辅助研判";
+    return "智能审计：对固定扫描范围内所有满足证据条件的候选逐项调查；高/严重且仍缺源码证据的候选继续追查。按服务商按量计费，可随时取消。";
   }
   if (mode === "standard_review") {
-    return "标准研判：静态扫描后，候选需逐批预览并授权模型调用";
+    return "智能审计：静态扫描后，对固定范围内满足证据条件的候选逐项预览并授权模型调查。";
   }
   return "历史扫描任务：未记录审计方式";
 }
+
 export function defaultRepositoryRevision(refs) {
   if (!Array.isArray(refs)) return "";
   const row = refs.find((item) => item && item.is_default === true && typeof item.ref === "string");
@@ -82,23 +74,9 @@ export function snapshotPayload(values, detectors, explicitIds = []) {
 export function planPayload(values, detectors, explicitIds = []) {
   return snapshotPayload(values, detectors, explicitIds);
 }
-export function isValidTaskCostBudget(value) {
-  const text = typeof value === "string" || typeof value === "number" ? String(value).trim() : "";
-  if (!/^\d{1,6}(?:\.\d{1,8})?$/.test(text)) return false;
-  const amount = Number(text);
-  return Number.isFinite(amount) && amount > 0;
-}
 export function taskAuthorizationPayload(values) {
-  const enabled = values?.audit_mode === "standard_review" && values?.auto_triage === true;
-  const maxCandidates = Number(values?.max_triage_candidates || 3);
-  const maxR2 = enabled && values?.auto_r2 === true
-    ? Math.min(Number(values?.max_r2_candidates ?? 2), maxCandidates) : 0;
-  return {
-    auto_triage: enabled,
-    max_triage_candidates: maxCandidates,
-    max_r2_candidates: maxR2,
-    max_cost_usd: enabled ? String(values?.max_cost_usd || "").trim() : null,
-  };
+  const enabled = values?.audit_mode === "standard_review";
+  return { auto_triage: enabled };
 }
 export function auditErrorMessage(error) {
   const fieldMessages = Array.isArray(error?.errorFields)
@@ -122,15 +100,10 @@ export function operationPayload(kind, values, detectors, explicitIds = []) {
   const payload = common(values, detectors, explicitIds);
   const auditMode = values.audit_mode || "standard_review";
   if (!["standard_review", "static_only"].includes(auditMode)) throw new Error("审计方式无效，请重新选择。");
-  const authorized = auditMode === "standard_review" && values.auto_triage === true;
+  const authorized = auditMode === "standard_review";
   const scanPayload = {
     ...payload, audit_mode: auditMode,
-    ...(authorized ? {
-      auto_triage: true,
-      max_triage_candidates: Number(values.max_triage_candidates ?? 5),
-      max_r2_candidates: Number(values.max_r2_candidates ?? 2),
-      max_cost_usd: String(values.max_cost_usd ?? "5.00"),
-    } : {}),
+    ...(authorized ? { auto_triage: true } : {}),
   };
   if (kind === "date") return { ...scanPayload, ...datePreviewPayload(values) };
   if (kind === "branches") {

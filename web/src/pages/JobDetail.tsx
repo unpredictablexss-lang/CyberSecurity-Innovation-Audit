@@ -79,6 +79,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const [batchOpen, setBatchOpen] = useState(false);
   const [batchBusy, setBatchBusy] = useState(false);
   const [snapshotBusy, setSnapshotBusy] = useState(false);
+  const [retryBusyId, setRetryBusyId] = useState<string | null>(null);
   const [batchPreview, setBatchPreview] = useState<any>(null);
   const [batchDisclosureOpened, setBatchDisclosureOpened] = useState<string[]>([]);
   const [batchSubmissionApproved, setBatchSubmissionApproved] = useState(false);
@@ -312,6 +313,18 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
       setBatchBusy(false);
     }
   }
+  async function retryAgentOperation(operationId: string) {
+    setRetryBusyId(operationId);
+    try {
+      const retried = await api("/operations/" + operationId + "/retry", {});
+      message.warning("已创建新的调查任务。它会再次调用模型，可能产生新的费用；原任务和审计记录保留。");
+      go("/tasks/operations/" + retried.id);
+    } catch (e) {
+      message.error(String(e));
+    } finally {
+      setRetryBusyId(null);
+    }
+  }
   if (!job) return error ? <Alert type="error" showIcon message={error} /> : <Spin />;
   const parse = report?.source_parsing.parsing_status || {};
   const coverage = report
@@ -503,8 +516,8 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               <Descriptions className="section-gap" size="small" column={1} bordered>
                 <Descriptions.Item label="任务级授权">{triageSummary.authorization.revoked ? "已撤销" : "有效"}</Descriptions.Item>
                 <Descriptions.Item label="模型目的地">{triageSummary.authorization.provider?.endpoint_host} · {triageSummary.authorization.provider?.model}</Descriptions.Item>
-                <Descriptions.Item label="自动研判预算">最多 {triageSummary.authorization.candidate_limit} 条候选；Token 与请求次数受限</Descriptions.Item>
-                {triageSummary.authorization.conditional_r2_candidate_limit > 0 && <Descriptions.Item label="补充核查预算">最多 {triageSummary.authorization.conditional_r2_candidate_limit} 条高/严重候选；只在源码义务仍未解决时追加</Descriptions.Item>}
+                <Descriptions.Item label="调查范围">固定扫描范围内全部符合条件的候选；严重/高危且仍有源码义务未解决的候选会继续深度调查</Descriptions.Item>
+                <Descriptions.Item label="Token 与费用">不设任务级累计上限；按模型实际用量计费，任务可随时取消</Descriptions.Item>
                 <Descriptions.Item label="工作台费用预算">{triageSummary.authorization.platform_cost_budget_enforced
                   ? "USD " + triageSummary.authorization.cost_budget.maximum_usd
                     + "（固定费率卡最坏估算 USD " + triageSummary.authorization.cost_budget.estimated_maximum_usd + "）"
@@ -535,13 +548,18 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
             {!agentProvider?.configured && <Alert className="section-gap" type="warning" showIcon
               message="模型服务未配置"
               description={<>静态扫描结果可继续复核。配置服务后才能生成模型外发预览。<Button type="link" onClick={() => go("/settings/agent")}>前往设置</Button></>} />}
+            {triageSummary?.items?.some((item: any) => item.retry_available) && <Alert className="section-gap" type="warning" showIcon
+              message="部分智能调查在产生结果前中断，可显式重试"
+              description="重试会创建新任务，沿用原固定源码、扫描报告和外发授权；模型请求可能再次计费。旧任务记录不会覆盖。" />}
             {triageSummary?.items?.length > 0 && <Table className="section-gap" size="small" rowKey="id" pagination={false}
               dataSource={triageSummary.items}
               columns={[
                 { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value || "").slice(0, 12)}</Text> },
                 { title: "方式", dataIndex: "mode", render: (value: string) => value === "single_shot" ? "模型辅助研判（单轮）" : "工具增强调查（只读）" },
                 { title: "状态", dataIndex: "status", render: (value: string) => <State value={value} /> },
-                { title: "任务", dataIndex: "id", render: (value: string) => <Button size="small" onClick={() => go("/tasks/operations/" + value)}>查看</Button> },
+                { title: "模型研判", dataIndex: "assessment", render: (value: string) => value || "尚无结果（未知）" },
+                { title: "调查边界", render: (_: unknown, row: any) => row.investigation_limitations?.length ? <Text type="warning">{row.investigation_limitations.join("；")}</Text> : row.result_sha256 ? "未记录额外单次限制" : "尚无结果；候选保持未知" },
+                { title: "任务", dataIndex: "id", render: (value: string, row: any) => <Space><Button size="small" onClick={() => go("/tasks/operations/" + value)}>查看</Button>{row.retry_available && <Button size="small" loading={retryBusyId === value} onClick={() => void retryAgentOperation(value)}>重试</Button>}</Space> },
               ]} />}
           </> : auditMode === "static_only" ? <Alert type="info" showIcon
             message="本任务按“仅静态扫描”创建"

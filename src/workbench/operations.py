@@ -72,15 +72,14 @@ def multimode_triage_preview(scan_specs, body, provider, nonces):
         raise ValueError("invalid endpoint count or consent nonce count")
     max_candidates = body.get("max_triage_candidates", 3)
     max_r2 = body.get("max_r2_candidates", 0)
-    cap = body.get("max_cost_usd")
     previews = []
     for spec, nonce in zip(scan_specs, nonces):
         workflow = service.audit_workflow_sha256(
-            spec["plan_sha256"], "standard_review", True, max_candidates, max_r2, cap
+            spec["plan_sha256"], "standard_review", True
         )
         preview = audit_task_consent_preview(
             spec["audit_plan"], workflow, spec["include_paths"], max_candidates,
-            nonce, provider, max_r2, max_cost_usd=cap
+            nonce, provider, max_r2
         )
         if not preview.get("eligible"):
             raise ValueError("endpoint automatic triage unavailable: " + preview.get("reason", "unknown"))
@@ -109,12 +108,10 @@ def bind_multimode_triage(settings, scan_specs, body):
     enriched = []
     for spec, approval, preview in zip(scan_specs, approvals, previews):
         if approval.get("consent_sha256") != preview["consent_sha256"]:
-            raise ValueError("endpoint consent expired: source, model, policy or budget changed")
+            raise ValueError("endpoint consent expired: source, model, policy or provider changed")
         enriched.append({
             **spec, "audit_mode": "standard_review",
             "workflow_sha256": preview["workflow_sha256"],
-            "max_r2_candidates": body.get("max_r2_candidates", 0),
-            "max_cost_usd": body.get("max_cost_usd"),
             "triage_authorization": {
                 "authorized": True, "consent_sha256": preview["consent_sha256"],
                 "snapshot": preview["manifest"],
