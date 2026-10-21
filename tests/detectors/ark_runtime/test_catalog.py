@@ -16,7 +16,7 @@ class ArkRuntimeCatalogTests(unittest.TestCase):
         metadata = catalog_metadata()[DETECTOR_ID]
         self.assertEqual(metadata["kind"], "research_candidate")
         self.assertFalse(metadata["default_enabled"])
-        self.assertIn("research_only_explicit_selection", metadata["admission_reason"])
+        self.assertIn("explicit_selection_required", metadata["admission_reason"])
         self.assertEqual(build_registry((DETECTOR_ID,)).detectors()[0].detector_id, DETECTOR_ID)
 
 

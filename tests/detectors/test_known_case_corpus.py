@@ -216,11 +216,11 @@ class KnownCaseCorpusTests(unittest.TestCase):
         self.assertEqual("explicit-unknown", resolve_source_identity(wrong_hash, Lookup()).status)
 
     def test_repository_control_public_pairs_replay_parent_to_fixed(self):
-        pinned = "db77164fdc2af0da02e4d3efc056d84694fd68e8"
-        tree = "8c5a296d8304d98193a29a4695aaf61ca0c0996c"
         pairs = (
             (
                 "CVE-2026-58313",
+                "b3de56e3915fa54dd04ae2e6b2bde95bd37f4297",
+                "24641c868cdc790d73c751ed8f7a429f11a8a4a8",
                 "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_vulnerable.h",
                 "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_fixed.h",
                 "frameworks/common/include/utils/lru_cache_util.h",
@@ -229,6 +229,8 @@ class KnownCaseCorpusTests(unittest.TestCase):
             ),
             (
                 "CVE-2026-33636",
+                "2dcc06062d0c9dce95b7a2d4330caf7843815d3f",
+                "bdd6fe8e880777e1815f71ef280caa3a3f2ac5ab",
                 "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.55-palette_neon_intrinsics.c",
                 "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.56-palette_neon_intrinsics.c",
                 "third_party/libpng/arm/palette_neon_intrinsics.c",
@@ -236,7 +238,7 @@ class KnownCaseCorpusTests(unittest.TestCase):
                 "0967ea1aebd718907fda1e767957deeddbe676b3",
             ),
         )
-        for symbol, parent_path, fixed_path, scan_path, parent_blob, fixed_blob in pairs:
+        for symbol, pinned, tree, parent_path, fixed_path, scan_path, parent_blob, fixed_blob in pairs:
             with self.subTest(symbol=symbol):
                 self.assertEqual(parent_blob, self.pinned_blob_id(pinned, parent_path))
                 self.assertEqual(fixed_blob, self.pinned_blob_id(pinned, fixed_path))

@@ -13,6 +13,7 @@ from .ark_runtime.model import c_line_static_model
 from .cpp.null_dereference_detector import NullDereferenceDetector
 from .cpp.resource_lifetime_detector import CppResourceLifetimeDetector
 from .cpp.unsafe_memory_call_detector import CppUnsafeMemoryCallDetector
+from .cpp.path_traversal_detector import CppPathTraversalDetector
 from .interface.m2_adapter import M2IpcInterfaceDetector
 from .interface.arkts_js import ArkTsJsInterfaceDetector
 from .data.sensitive_exposure import SensitiveExposureDetector
@@ -86,7 +87,15 @@ _APPROVED = {
         "factory": CppUnsafeMemoryCallDetector,
         "kind": "research_candidate",
         "summary": "A: reviewed unsafe memory-call candidate with explicit proof obligations",
-    },    "ohscanner.cpp.shared_ptr_race": {
+    },
+    "ohscanner.cpp.path_traversal": {
+        "factory": CppPathTraversalDetector,
+        "kind": "research_candidate",
+        "default_enabled": False,
+        "admission_reason": "explicit_selection_required: bounded source-to-file-sink candidate; review a bounded scope first",
+        "summary": "A: bounded path traversal source-to-file-sink candidate; not a vulnerability verdict",
+    },
+    "ohscanner.cpp.shared_ptr_race": {
         "factory": M2SharedPtrRaceDetector,
         "kind": "research_candidate",
         "summary": "A: narrow non-atomic shared_ptr member candidate (CWE-362); not confirmed",
