@@ -22,11 +22,8 @@ from src.ohscanner.contracts import (
 
 
 RULE_ID = "ohcpp-null-dereference-candidate-001"
-RULE_VERSION = "1.4.0"
+RULE_VERSION = "2.0.0"
 RULE_LINEAGE_ID = "A-NULL-01:ohcpp-null-dereference-candidate"
-WEAK_RETURN_RULE_ID = "ohcpp-null-dereference-unknown-return-observation-001"
-WEAK_RETURN_RULE_VERSION = "0.1.0"
-WEAK_RETURN_RULE_LINEAGE_ID = "A-NULL-RETURN-OBSERVATION-01:unknown-return-nullability"
 MAX_UNIT_BYTES = 1024 * 1024
 MAX_TOTAL_BYTES = 32 * 1024 * 1024
 _CONTROL_WORDS = frozenset({"if", "for", "while", "switch", "catch", "return", "sizeof", "do", "else"})
@@ -54,6 +51,15 @@ class NullSource:
     source_path: str
     source_sha256: str
     type_text: str = ""
+
+
+def _is_reportable_source(source: NullSource) -> bool:
+    """Require explicit evidence that NULL is possible before reporting."""
+    if source.kind in ("local", "member") and source.nullability == "explicit_null":
+        return True
+    if source.kind == "nothrow_allocation" and source.nullability == "may_be_null":
+        return True
+    return source.kind == "return_value" and source.nullability == "explicit_nullable"
 
 
 @dataclass(frozen=True)
@@ -1032,7 +1038,7 @@ def _finding_identity(
 
 class NullDereferenceDetector:
     detector_id = "ohscanner.cpp.null_dereference"
-    version = "0.6.0"
+    version = "0.7.0"
     supported_languages = ("c", "cpp")
     required_facts = ()
     ast_scope = "per_file"
@@ -1048,6 +1054,7 @@ class NullDereferenceDetector:
         findings: List[DetectorFinding] = []
         limitations: List[str] = []
         total_bytes = 0
+        suppressed_sources_observed = False
 
         for unit in ordered:
             if unit.language not in self.supported_languages:
@@ -1080,7 +1087,10 @@ class NullDereferenceDetector:
             template_present = any(item.kind == "template" for item in unsupported)
             sources_by_function: Dict[Tuple[int, int], Tuple[NullSource, ...]] = {}
             for function in functions:
-                sources_by_function[(function.span.start, function.span.end)] = _sources_for_function(unit, masked, function, classes, unsupported)
+                all_sources = _sources_for_function(unit, masked, function, classes, unsupported)
+                reportable_sources = tuple(source for source in all_sources if _is_reportable_source(source))
+                suppressed_sources_observed = suppressed_sources_observed or len(reportable_sources) != len(all_sources)
+                sources_by_function[(function.span.start, function.span.end)] = reportable_sources
 
             class_sources: Dict[str, Dict[str, NullSource]] = {}
             for function in functions:
@@ -1128,30 +1138,18 @@ class NullDereferenceDetector:
                     if source is None and template_present and "." in sink.symbol:
                         owner = function.class_name or function.name
                         source = NullSource(sink.symbol, "member", sink.position, "unknown", (sink.position, sink.position + len(sink.symbol)), f"member:{unit.path}:{owner}:{sink.symbol}", unit.path, unit.sha256, "template-dependent member pointer")
-                    if source is None:
+                    if source is None or not _is_reportable_source(source):
                         continue
                     if _source_rebound_before(source, sink, masked):
                         continue
                     if _short_circuit_guarded(source, sink, masked, aliases):
-                        continue
-                    if source.nullability in ("explicit_null", "explicit_nullable", "may_be_null") or source.kind == "return_value":
-                        emit = True
-                    else:
-                        emit = bool(_span_candidates(unsupported, sink.position, sink.position + 1) or function_unsupported)
-                    if not emit:
                         continue
                     evaluation = _evaluate_guard(source, sink, guards, function_unsupported, masked, aliases)
                     if evaluation.error_path.startswith("lexical_protecting_"):
                         unknown_reasons.append("guard_dominance_unknown_without_compile_context")
                         continue
                     line, column = _line_column(unit.text, sink.position)
-                    weak_unknown_return = source.kind == "return_value" and source.nullability == "unknown"
-                    message_prefix = (
-                        "Weak observation/needs review; unknown return nullability is not a strong source: "
-                        if weak_unknown_return else
-                        "Bounded same-function NULL-dereference candidate/unassessed: "
-                    )
-                    message = message_prefix + (
+                    message = "Bounded explicit-source NULL-dereference candidate/unassessed: " + (
                         f"null_source={_source_role(source)}; sink={sink.shape}; "
                         f"guard_relation={evaluation.relation}; error_path={evaluation.error_path}; "
                         "syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact."
@@ -1163,27 +1161,20 @@ class NullDereferenceDetector:
                         file=unit.path,
                         line=line,
                         column=column,
-                        rule_id=WEAK_RETURN_RULE_ID if weak_unknown_return else RULE_ID,
+                        rule_id=RULE_ID,
                         message=message,
                         evidence_type="syntax",
                         candidate_cwe="CWE-476",
                         symbol=source.symbol,
                         evidence_obligations=_OBLIGATIONS,
                         source_sha256=unit.sha256,
-                        rule_version=WEAK_RETURN_RULE_VERSION if weak_unknown_return else RULE_VERSION,
-                        rule_lineage_id=WEAK_RETURN_RULE_LINEAGE_ID if weak_unknown_return else RULE_LINEAGE_ID,
+                        rule_version=RULE_VERSION,
+                        rule_lineage_id=RULE_LINEAGE_ID,
                         symbol_identity=symbol_identity,
                         ast_fingerprint=ast_fingerprint,
                         identity_quality=identity_quality,
                     )
                     unit_findings.append((sink.position, finding))
-                    if source.nullability == "unknown":
-                        if source.kind == "return_value":
-                            unknown_reasons.extend(("unresolved_function_return_nullability", "function_return_nullability_unknown", "cross_function_alias"))
-                        elif "unique_ptr" in source.type_text:
-                            unknown_reasons.append("smart_pointer_value_unknown_nullability")
-                        elif source.kind == "member":
-                            unknown_reasons.append("type_system_unknown")
                     if evaluation.relation == "unknown":
                         unknown_reasons.append("guard_dominance_unknown_without_compile_context")
 
@@ -1211,6 +1202,10 @@ class NullDereferenceDetector:
                 limitations.append("narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.")
             limitations.extend("unknown_reason: " + item for item in unknown_reasons)
 
+        if suppressed_sources_observed:
+            limitations.append(
+                "Suppressed all pointer parameters, smart pointers with unknown nullability, and function returns without an explicit nullable contract."
+            )
         if any(value == "failed" for _, value in outcomes):
             status = "failed"
         elif any(value in ("partial", "not_analyzed") for _, value in outcomes):

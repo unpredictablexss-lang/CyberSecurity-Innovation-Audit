@@ -76,8 +76,8 @@ _APPROVED = {
         "factory": NullDereferenceDetector,
         "kind": "research_candidate",
         "default_enabled": False,
-        "admission_reason": "explicit_selection_required: unknown-return nullability produces broad weak candidates; review a bounded scope first",
-        "summary": "A: narrow same-function C/C++ null-source/deref candidate; default unassessed",
+        "admission_reason": "candidate_only: reports explicit NULL sources, nothrow allocation results, and explicit nullable returns; all pointer parameters are suppressed",
+        "summary": "A: explicit-source C/C++ null-dereference candidates; pointer parameters are suppressed",
     },
     "ohscanner.cpp.path_traversal": {
         "factory": CppPathTraversalDetector,
