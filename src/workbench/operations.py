@@ -824,6 +824,9 @@ def execute(settings, store, ops, task):
     if kind == "investigation":
         return investigation(settings, store, spec)
     if kind == "agent_investigation":
+        if spec.get("progressive_quick_screen_operation_id"):
+            from .progressive_triage.deep_agent_operation import execute_progressive_deep_agent
+            return execute_progressive_deep_agent(settings, store, ops, task)
         from .agent import execute_agent
         return execute_agent(settings, store, ops, task)
     if kind == "progressive_quick_screen":

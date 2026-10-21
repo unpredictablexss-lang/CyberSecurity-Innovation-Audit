@@ -111,6 +111,9 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
             "evidence": candidate.get("evidence"),
         }],
     }
+    parent_plan_sha256 = None
+    selected = None
+    ranking = None
     if audit_parent:
         if audit_parent.get("cancel_requested") or audit_parent.get("status") in {
                 "cancelled", "failed", "timed_out", "interrupted"}:
@@ -147,6 +150,9 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
         if not planned_group or not plan_decision or plan_decision.get("selected") is not True:
             raise ValueError("candidate is not selected by the frozen task-wide L1 ranking")
         group = {**planned_group, "representative_candidate_id": candidate_id}
+        parent_plan_sha256 = content_sha256(audit_parent_plan)
+        ranking = {"decisions": [plan_decision], "plan_sha256": parent_plan_sha256}
+        selected = plan_decision
     else:
         policy_state = PolicyStore(settings.data_dir).read()
         policy = validate_policy(policy_state["policy"])
@@ -155,9 +161,10 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
             raise ValueError("progressive triage policy changed while preparing quick-screen consent")
         policy_revision = policy_state["revision"]
         audit_operation_id = job_id
-    ranking = rank_groups([group], policy["limits"]["quick_screen_groups_per_audit"],
-                          family_quotas=policy["family_quotas"])
-    selected = next((row for row in ranking["decisions"] if row["group_id"] == group["group_id"]), None)
+        ranking = rank_groups([group], policy["limits"]["quick_screen_groups_per_audit"],
+                              family_quotas=policy["family_quotas"])
+        selected = next((row for row in ranking["decisions"]
+                         if row["group_id"] == group["group_id"]), None)
     if not selected or not selected["selected"]:
         raise ValueError("local evidence ranking did not select this candidate for quick screen")
     authorization = {
@@ -198,8 +205,7 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
         "policy_sha256": policy_sha256,
         "ranking": ranking,
         "audit_operation_id": audit_operation_id,
-        "audit_parent_plan_sha256": (content_sha256(audit_parent_plan)
-                                      if audit_parent_plan else None),
+        "audit_parent_plan_sha256": parent_plan_sha256,
     }
     consent_sha256 = content_sha256(manifest)
     authorization["consent_sha256"] = consent_sha256
@@ -239,11 +245,13 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
     spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
     provider = provider or ProviderConfig.from_env(settings.data_dir)
     manifest = spec.get("consent_manifest")
+    expires_at = spec.get("consent_expires_at")
     audit_operation_id = spec.get("audit_operation_id") or spec.get("job_id")
     if not isinstance(audit_operation_id, str) or not audit_operation_id:
         return {"state": "quick_unknown", "reason_code": "audit_budget_binding_missing",
                 "vulnerability_state": "candidate", "validated_vulnerability": 0}
     if audit_operation_id != spec.get("job_id"):
+        parent_plan = None
         try:
             parent = ops.get(audit_operation_id) if ops else None
             if (not parent or spec.get("job_id") not in parent.get("spec", {}).get("scan_ids", [])
@@ -268,10 +276,9 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
                                for decision in parent_plan.get("ranking", {}).get("decisions", [])
                                if isinstance(decision, dict))):
                 raise ValueError("parent L0/L1 plan changed or did not select this group")
-        except (KeyError, TypeError, ValueError) as error:
+        except (KeyError, OSError, TypeError, ValueError) as error:
             return {"state": "quick_unknown", "reason_code": "parent_audit_binding:" + str(error),
                     "vulnerability_state": "candidate", "validated_vulnerability": 0}
-    expires_at = spec.get("consent_expires_at")
     try:
         expiry = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
     except (AttributeError, TypeError, ValueError):
@@ -305,12 +312,21 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
                 or manifest.get("policy") != policy
                 or manifest.get("policy_revision") != policy_snapshot["revision"]):
             raise ValueError("quick-screen policy snapshot changed")
-        ranking = rank_groups([spec["group"]], policy["limits"]["quick_screen_groups_per_audit"],
-                              family_quotas=policy["family_quotas"])
-        ranked = next((row for row in ranking["decisions"]
-                       if row["group_id"] == spec["group"].get("group_id")), None)
-        if not ranked or not ranked["selected"] or manifest.get("ranking") != ranking:
-            raise ValueError("quick-screen candidate is not selected by its frozen local ranking")
+        if audit_operation_id != spec.get("job_id"):
+            plan_decision = next((row for row in parent_plan["ranking"]["decisions"]
+                                  if row.get("group_id") == spec["group"].get("group_id")), None)
+            expected_ranking = {"decisions": [plan_decision],
+                                "plan_sha256": content_sha256(parent_plan)}
+            if (not plan_decision or plan_decision.get("selected") is not True
+                    or manifest.get("ranking") != expected_ranking):
+                raise ValueError("quick-screen candidate is not selected by its frozen parent L1 ranking")
+        else:
+            ranking = rank_groups([spec["group"]], policy["limits"]["quick_screen_groups_per_audit"],
+                                  family_quotas=policy["family_quotas"])
+            ranked = next((row for row in ranking["decisions"]
+                           if row["group_id"] == spec["group"].get("group_id")), None)
+            if not ranked or not ranked["selected"] or manifest.get("ranking") != ranking:
+                raise ValueError("quick-screen candidate is not selected by its frozen local ranking")
     except (KeyError, TypeError, ValueError) as error:
         return {"state": "quick_unknown", "reason_code": str(error),
                 "vulnerability_state": "candidate", "validated_vulnerability": 0}

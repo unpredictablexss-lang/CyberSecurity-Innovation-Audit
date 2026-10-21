@@ -241,14 +241,9 @@ class BudgetLedger:
             if not dispatch or dispatch["status"] not in {"queued", "running"}:
                 db.rollback()
                 raise BudgetError("group is not queued for this model stage")
-            if stage == "deep_agent":
-                steps = db.execute(
-                    "SELECT count(*) FROM budget_reservation WHERE audit_id=? AND group_id=? AND stage='deep_agent' AND status!='known_not_sent'",
-                    (audit_id, group_id),
-                ).fetchone()[0]
-                if steps >= limits["max_tool_steps_per_group"]:
-                    db.rollback()
-                    raise BudgetError("per-group deep Agent step budget exhausted")
+            # Deep Agent tool-step limits are enforced by the existing Agent
+            # loop's max_steps. Reservations here count model requests, including
+            # repairs, Skeptic, and report stages, against the shared task budget.
             inflight = db.execute(
                 "SELECT count(*) FROM budget_reservation WHERE audit_id=? AND status='reserved'",
                 (audit_id,),
