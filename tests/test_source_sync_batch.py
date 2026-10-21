@@ -293,6 +293,24 @@ class SourceSyncBatchIntegrationTests(unittest.TestCase):
         self.assertEqual(persisted["repositories"][0]["status"], "failed")
         self.assertTrue(persisted["summary"]["disk_safety_stop"])
 
+    def test_selected_destination_downloads_only_and_persists_repository_allowlist(self):
+        name = "openharmony/selected-location-fixture"
+        self._repository(name)
+        destination = self.root / "chosen-downloads"
+        entry = self._entry(name, scan=False)
+        entry["destination_dir"] = str(destination)
+
+        _task, result, calls = self._run([entry])
+
+        target = destination / name.split("/", 1)[1]
+        self.assertEqual(calls, [("clone", name)])
+        self.assertTrue(target.is_dir())
+        self.assertEqual(result["repositories"][0]["destination_dir"], str(destination))
+        self.assertEqual(result["repositories"][0]["scan_status"], "not_requested")
+        self.assertIsNone(result["repositories"][0]["scan_job_id"])
+        self.assertIn(destination, self.settings.target_roots)
+        self.assertEqual(self.store.repositories()[0]["path"], str(target))
+
     def test_batch_api_caps_selection_and_counts_duplicate_timeout_once(self):
         request = SyncRequest(
             repository="openharmony/api-batch-fixture",

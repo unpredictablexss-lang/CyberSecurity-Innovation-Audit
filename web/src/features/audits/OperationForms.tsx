@@ -199,7 +199,6 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
   const [form] = Form.useForm();
   const scanAfterSync = Form.useWatch("scan_after_sync", form) === true;
   const selectedNames: string[] = Form.useWatch("catalog_selection", form) || [];
-  let defaults: string[] = []; try { defaults = approvedDetectorIds(detectors); } catch { /* no approved detectors */ }
   const [catalog, setCatalog] = useState<any>(null), [catalogPage, setCatalogPage] = useState(1);
   const [selectedCatalog, setSelectedCatalog] = useState<Record<string, any>>({});
   const [catalogBusy, setCatalogBusy] = useState(false), [catalogError, setCatalogError] = useState("");
@@ -243,6 +242,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
           revision: item.default_branch ? "refs/remotes/origin/" + item.default_branch : "HEAD",
           include_paths: values.include_paths?.length ? values.include_paths : ["."],
           detector_ids: values.detector_ids?.length ? values.detector_ids : null,
+          destination_dir: values.destination_dir?.trim() || null,
           audit_mode: "static_only",
           scan_timeout_seconds: values.scan_timeout_seconds, memory_mb: values.memory_mb,
         }));
@@ -281,7 +281,12 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
     const gb = value / (1024 ** 3);
     return gb >= 1 ? `${gb.toFixed(1)} GiB` : `${(value / (1024 ** 2)).toFixed(0)} MiB`;
   };
-  return <Card title="在线仓库中心 · 同步与扫描"><Form name="source-sync" form={form} layout="vertical" initialValues={{ timeout_seconds: 900, scan_after_sync: false, revision: "HEAD", include_paths: ["."], detector_ids: defaults, audit_mode: "static_only", scan_timeout_seconds: 600, memory_mb: 2048 }} onFinish={finish}>
+  return <Card title="下载源码到本地（可选扫描）"><Form name="source-sync" form={form} layout="vertical" initialValues={{ timeout_seconds: 900, scan_after_sync: false, revision: "HEAD", include_paths: ["."], audit_mode: "static_only", scan_timeout_seconds: 600, memory_mb: 2048 }} onFinish={finish}>
+    <Alert className="section-gap" type="info" showIcon message="选择服务端保存位置；默认只下载，不会自动扫描"
+      description="路径属于运行 OHScanner 的服务器。Windows 系统示例：D:\OpenHarmony；Ubuntu 示例：/home/audit/OpenHarmony；WSL 示例：/mnt/d/OpenHarmony。当前 WSL 服务会自动转换 Windows 盘符路径。留空使用默认源码缓存。" />
+    <Form.Item name="destination_dir" label="源码保存位置（可选）" extra="每个仓库会放在此目录下的独立子目录；批量下载会复用同一个保存位置。">
+      <Input placeholder="例如 /mnt/d/OpenHarmony 或 D:\OpenHarmony" />
+    </Form.Item>
     <Space wrap className="section-gap">
       <Button loading={catalogBusy} onClick={() => void loadCatalog(1)}>加载 OpenHarmony 仓库目录</Button>
       {catalog && <><Button disabled={catalogBusy || catalog.page <= 1} onClick={() => void loadCatalog(catalog.page - 1)}>上一页</Button><Text type="secondary">第 {catalog.page} 页，每页最多 {catalog.per_page} 项</Text><Button disabled={catalogBusy || !catalog.next_page} onClick={() => void loadCatalog(catalog.next_page)}>下一页</Button></>}
@@ -310,12 +315,11 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
         ? <Form.Item name="revision" label="同步后扫描版本" rules={[{ required: true }]}><Input placeholder="HEAD 或 refs/remotes/origin/master" /></Form.Item>
         : <Alert className="section-gap" type="info" showIcon message="批量扫描使用各仓库目录中的默认分支" description="每个扫描任务固定自己的提交和文件树；批量扫描只运行静态检测，不会自动调用模型。" />}
       <Form.Item name="include_paths" label="纳入路径"><Select mode="tags" tokenSeparators={[",", "\n"]} /></Form.Item>
-      <Form.Item name="detector_ids" label="扫描器"><Select mode="multiple" options={detectors.filter((item) => item.kind === "research_candidate" && item.default_enabled !== false).map((item) => ({ value: item.id, label: item.id + " · " + item.version }))} /></Form.Item>
       {!selectedNames.length && <Form.Item name="audit_mode" label="扫描后的审计方式"><Radio.Group><Space direction="vertical"><Radio value="static_only">仅静态扫描</Radio><Radio value="standard_review">标准研判（结果中提供 Agent 入口）</Radio></Space></Radio.Group></Form.Item>}
       <Form.Item name="scan_timeout_seconds" label="单次扫描超时（秒）"><InputNumber min={30} max={3600} /></Form.Item>
       <Form.Item name="memory_mb" label="扫描内存预算（MB）"><InputNumber min={256} max={8192} /></Form.Item>
     </>}
-    <Alert type="info" message={scanAfterSync ? "同步成功后创建固定版本扫描任务" : "同步仓库到本地源码目录"} description="同步不会运行仓库构建脚本。单仓标准研判也不会自动发送源码给模型；Agent 分析需单独预览并授权。" />
+    <Alert type="info" message={scanAfterSync ? "下载成功后创建固定版本静态扫描任务" : "下载源码，不创建扫描任务"} description="下载不会运行仓库构建脚本。需要扫描时再勾选上方选项；静态扫描不会自动发送源码给模型。" />
     <Button className="section-gap" type="primary" htmlType="submit" loading={busy || preflightBusy}>
       预览同步计划
     </Button>
@@ -331,6 +335,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
             <Tag color={item.eligible ? "blue" : "red"}>{item.action === "clone" ? "首次下载" : item.action === "fetch" ? "更新本地副本" : "无法同步"}</Tag>
           </Space>}>
           <Space direction="vertical" size={2}>
+            <Text type="secondary">保存到：{item.destination_dir}</Text>
             <Text type="secondary">来源：{item.source_id}</Text>
             {item.current_head && <Text type="secondary">当前本地提交：{item.current_head.slice(0, 12)}</Text>}
             {item.scan_after_sync && <Text type="secondary">同步后扫描版本：{item.requested_revision}</Text>}
@@ -628,14 +633,13 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
       }}>
       <Form.Item name="job_id" label="已完成扫描任务 ID" rules={[{ required: true }]}><Input readOnly /></Form.Item>
       <Form.Item name="candidate_id" label="扫描候选 ID" rules={[{ required: true }]}><Input readOnly /></Form.Item>
-      <Collapse className="section-gap" items={[{ key: "investigation-budget", label: "调查预算", children: <>
-        <Form.Item name="max_steps" label="最多只读工具调用" rules={[{ required: true }]}><InputNumber min={1} max={6} /></Form.Item>
-        <Form.Item name="max_output_tokens" label="单次输出 Token 上限" rules={[{ required: true }]}><InputNumber min={128} max={3000} /></Form.Item>
-        <Form.Item name="max_total_input_tokens" label="累计输入 Token 上限" rules={[{ required: true }]}><InputNumber min={1000} max={512000} /></Form.Item>
-        <Form.Item name="max_total_output_tokens" label="累计输出 Token 上限" rules={[{ required: true }]}><InputNumber min={512} max={12000} /></Form.Item>
-        <Form.Item name="timeout_seconds" label="调查总时限（秒）" rules={[{ required: true }]}><InputNumber min={90} max={480} /></Form.Item>
-        <Text type="secondary">达到预算时保留已收集证据与未决义务；候选不会因此变为安全。修改预算后需重新预览授权。</Text>
-      </> }]} />
+      <Form.Item name="max_steps" hidden><InputNumber /></Form.Item>
+      <Form.Item name="max_output_tokens" hidden><InputNumber /></Form.Item>
+      <Form.Item name="max_total_input_tokens" hidden><InputNumber /></Form.Item>
+      <Form.Item name="max_total_output_tokens" hidden><InputNumber /></Form.Item>
+      <Form.Item name="timeout_seconds" hidden><InputNumber /></Form.Item>
+      <Alert className="section-gap" type="info" showIcon message="智能调查会持续追查，不因累计用量停止"
+        description="平台不设累计 Token、模型调用、工具步骤、调查时长或费用上限。调查会在模型完成、连续没有新增源码证据、服务商/API 出错或你手动取消时结束；实际账户额度和费用由模型服务商决定。" />
 
       <Collapse className="section-gap" items={[{ key: "research-settings", label: "研究实验设置（可选）", children: <>
         <Form.Item name="experiment_id" label="实验批次 ID" extra="仅用于人工基线或模型对照实验；普通单次调查可留空。">

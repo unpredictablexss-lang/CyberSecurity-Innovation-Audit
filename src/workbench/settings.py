@@ -42,6 +42,12 @@ class Settings:
             Path(row["path"]) for row in load_managed_roots(self.data_dir)
             if managed_root_is_current(row)
         )
+        from .download_locations import download_location_is_current, load_download_locations
+
+        roots.extend(
+            Path(row["path"]) for row in load_download_locations(self.data_dir)
+            if download_location_is_current(row)
+        )
         roots.extend(self.repository_cache_roots)
         unique = []
         seen = set()

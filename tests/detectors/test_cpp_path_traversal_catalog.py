@@ -18,18 +18,17 @@ RULE = "ohcpp-path-traversal-source-to-file-sink-candidate-001"
 
 
 class ContactsCatalogAdmissionTests(unittest.TestCase):
-    def test_registered_opt_in_detector_and_explicit_planning(self):
+    def test_registered_detector_runs_by_default_and_explicit_subsets_still_work(self):
         metadata = catalog_metadata()[IDENT]
         self.assertEqual(metadata["kind"], "research_candidate")
-        self.assertFalse(metadata["default_enabled"])
-        self.assertIn("explicit_selection_required", metadata["admission_reason"])
-        self.assertNotIn(IDENT, default_detector_ids())
+        self.assertTrue(metadata.get("default_enabled", True))
+        self.assertIn(IDENT, default_detector_ids())
         self.assertEqual(build_registry((IDENT,)).detectors()[0].version, "0.3.0")
 
         automatic = plan_audit(manifest(), approved_metadata())
         row = next(item for item in automatic["detectors"] if item["id"] == IDENT)
-        self.assertEqual(row["decision"], "skipped")
-        self.assertIn("explicit_selection_required", row["reason_codes"])
+        self.assertEqual(row["decision"], "planned")
+        self.assertIn(IDENT, automatic["suggested_detector_ids"])
 
         explicit = plan_audit(manifest(), approved_metadata(), selected_detector_ids=[IDENT])
         row = next(item for item in explicit["detectors"] if item["id"] == IDENT)
@@ -45,7 +44,7 @@ class ContactsCatalogApiWorkerTests(unittest.TestCase):
         metadata = self.client.get("/api/v1/detectors")
         self.assertEqual(metadata.status_code, 200)
         row = next(item for item in metadata.json() if item["id"] == IDENT)
-        self.assertFalse(row["default_enabled"])
+        self.assertTrue(row.get("default_enabled", True))
 
         source = r'''
 struct Bucket { Value Get(const std::string &key) const; };

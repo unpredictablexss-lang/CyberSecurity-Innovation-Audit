@@ -107,8 +107,8 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
               <li key={lineIndex}>{line.replace(/\bR1\b/g, "初步调查").replace(/\bR2\b/g, "深入追查")}</li>)}</ul>
             <Descriptions size="small" column={1}>
               <Descriptions.Item label="候选超限处理">超过每个版本的授权上限时，未入选候选保持待研判，不会视为安全。</Descriptions.Item>
-              <Descriptions.Item label="单次输出 Token 限制">{manifest.per_candidate_budgets?.r1?.max_output_tokens_per_request == null ? "由本次授权的有限 Token 预算约束" : String(manifest.per_candidate_budgets.r1.max_output_tokens_per_request) + " tokens"}；单次超时 {manifest.per_candidate_budgets?.r1?.provider_request_timeout_seconds || "未知"} 秒</Descriptions.Item>
-              {manifest.per_candidate_budgets?.r2 && <Descriptions.Item label="深入追查输出 Token 限制">{manifest.per_candidate_budgets.r2.max_output_tokens_per_request == null ? "由本次授权的有限 Token 预算约束" : String(manifest.per_candidate_budgets.r2.max_output_tokens_per_request) + " tokens"}；单次超时 {manifest.per_candidate_budgets.r2.provider_request_timeout_seconds} 秒</Descriptions.Item>}
+              <Descriptions.Item label="单次输出长度">{manifest.per_candidate_budgets?.r1?.max_output_tokens_per_request == null ? "由模型服务商和模型决定" : String(manifest.per_candidate_budgets.r1.max_output_tokens_per_request) + " tokens"}；单次超时 {manifest.per_candidate_budgets?.r1?.provider_request_timeout_seconds || "未知"} 秒</Descriptions.Item>
+              {manifest.per_candidate_budgets?.r2 && <Descriptions.Item label="深入追查单次输出长度">{manifest.per_candidate_budgets.r2.max_output_tokens_per_request == null ? "由模型服务商和模型决定" : String(manifest.per_candidate_budgets.r2.max_output_tokens_per_request) + " tokens"}；单次超时 {manifest.per_candidate_budgets.r2.provider_request_timeout_seconds} 秒</Descriptions.Item>}
               <Descriptions.Item label="扫描计划 SHA-256">{item.plan_sha256 || manifest.binding?.plan_sha256 || "未返回"}</Descriptions.Item>
               <Descriptions.Item label="工作流 SHA-256">{item.workflow_sha256 || manifest.binding?.workflow_sha256 || "未返回"}</Descriptions.Item>
               <Descriptions.Item label="授权摘要 SHA-256">{item.consent_sha256 || "未返回"}</Descriptions.Item>

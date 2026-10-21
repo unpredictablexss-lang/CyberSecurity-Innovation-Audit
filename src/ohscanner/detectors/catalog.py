@@ -14,7 +14,6 @@ from .cpp.null_dereference_detector import NullDereferenceDetector
 from .cpp.path_traversal_detector import CppPathTraversalDetector
 from .cpp.resource_lifetime_detector import CppResourceLifetimeDetector
 from .cpp.unsafe_memory_call_detector import CppUnsafeMemoryCallDetector
-from .cpp.path_traversal_detector import CppPathTraversalDetector
 from .interface.m2_adapter import M2IpcInterfaceDetector
 from .interface.arkts_js import ArkTsJsInterfaceDetector
 from .data.sensitive_exposure import SensitiveExposureDetector
@@ -34,22 +33,19 @@ _APPROVED = {
     "ohscanner.ark.runtime.type_safety": {
         "factory": lambda: ArkRuntimeTypeSafetyDetector(model=c_line_static_model()),
         "kind": "research_candidate",
-        "default_enabled": False,
-        "admission_reason": "research_only_explicit_selection; explicit_selection_required: exact C1 repository/commit/target/creator blob profile only; partial or unsupported source remains unknown",
+        "admission_reason": "candidate_only: exact C1 repository/commit/target/creator blob profile only; partial or unsupported source remains unknown",
         "summary": "C: source-bound Ark Runtime TypedArray static candidates; product impact is unverified",
     },
     "ohscanner.data.sensitive_exposure": {
         "factory": SensitiveExposureDetector,
         "kind": "research_candidate",
-        "default_enabled": False,
-        "admission_reason": "explicit_selection_required: reviewed source profiles plus blocked candidate-only fallback for unknown revisions; partial coverage remains unknown",
+        "admission_reason": "candidate_only: reviewed source profiles plus blocked candidate-only fallback for unknown revisions; partial coverage remains unknown",
         "summary": "D: sensitive-data exposure candidates; unknown revisions remain blocked/partial, not a vulnerability verdict",
     },
     "ohscanner.known_disclosed_cves": {
         "factory": KnownDisclosedCveDetector,
         "kind": "research_candidate",
-        "default_enabled": False,
-        "admission_reason": "explicit_selection_required: public-CVE rule development corpus is not an independent holdout; product reachability and impact remain unverified",
+        "admission_reason": "candidate_only: public-CVE rule development corpus is not an independent holdout; product reachability and impact remain unverified",
         "summary": "Narrow source signatures for selected public CVEs; product reachability remains unverified",
     },
     CppCopyCallExampleDetector.detector_id: {
@@ -75,15 +71,13 @@ _APPROVED = {
     "ohscanner.cpp.null_dereference": {
         "factory": NullDereferenceDetector,
         "kind": "research_candidate",
-        "default_enabled": False,
         "admission_reason": "candidate_only: reports explicit NULL sources, nothrow allocation results, and explicit nullable returns; all pointer parameters are suppressed",
         "summary": "A: explicit-source C/C++ null-dereference candidates; pointer parameters are suppressed",
     },
     "ohscanner.cpp.path_traversal": {
         "factory": CppPathTraversalDetector,
         "kind": "research_candidate",
-        "default_enabled": False,
-        "admission_reason": "explicit_selection_required: bounded lexical C/C++ source-to-file-sink candidate; interprocedural path semantics and impact remain unknown",
+        "admission_reason": "candidate_only: bounded lexical C/C++ source-to-file-sink candidate; interprocedural path semantics and impact remain unknown",
         "summary": "A: bounded C/C++ source-to-file-sink path candidate; containment, reachability and impact remain unverified",
     },
     "ohscanner.cpp.resource_lifetime": {
@@ -96,13 +90,6 @@ _APPROVED = {
         "kind": "research_candidate",
         "summary": "A: reviewed unsafe memory-call candidate with explicit proof obligations",
     },
-    "ohscanner.cpp.path_traversal": {
-        "factory": CppPathTraversalDetector,
-        "kind": "research_candidate",
-        "default_enabled": False,
-        "admission_reason": "explicit_selection_required: bounded source-to-file-sink candidate; review a bounded scope first",
-        "summary": "A: bounded path traversal source-to-file-sink candidate; not a vulnerability verdict",
-    },
     "ohscanner.cpp.shared_ptr_race": {
         "factory": M2SharedPtrRaceDetector,
         "kind": "research_candidate",
@@ -112,14 +99,14 @@ _APPROVED = {
 
 
 def default_detector_ids():
-    """Approved security research detectors selected for ordinary scans.
+    """All registered first-party research detectors selected for ordinary scans.
 
     The example detector is intentionally excluded and must remain an explicit
     demonstration-only choice.
     """
     return tuple(
         name for name, spec in sorted(_APPROVED.items())
-        if spec["kind"] != "example" and spec.get("default_enabled", True)
+        if spec["kind"] == "research_candidate"
     )
 
 

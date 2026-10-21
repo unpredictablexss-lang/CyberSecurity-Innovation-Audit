@@ -13,6 +13,7 @@ import uuid
 from urllib.parse import quote
 
 from . import service
+from .download_locations import ensure_download_dir
 from .source_catalog import approved_clone_url, validate_branch, validate_commit
 
 
@@ -71,9 +72,10 @@ def _directory_size(root):
     return total
 
 
-def _choose_root(settings, required_free=0, required_size=0):
+def _choose_root(settings, required_free=0, required_size=0, explicit_root=None):
     failures = []
-    for configured in settings.repository_cache_roots:
+    roots = [explicit_root] if explicit_root is not None else settings.repository_cache_roots
+    for configured in roots:
         try:
             root = _safe_cache_root(configured)
             usage = shutil.disk_usage(root)
@@ -290,6 +292,8 @@ def import_and_queue_scan(settings, store, spec, progress=None):
         raise ValueError("invalid catalog repository size metadata")
     expected_bytes = (estimated or 0) * 1024
     report("running", "preparing", "正在准备固定版本下载")
+    explicit_root = (ensure_download_dir(settings, spec["destination_dir"])
+                     if spec.get("destination_dir") else None)
     lockdir = Path(settings.data_dir) / "sync-locks"
     if lockdir.is_symlink():
         raise ValueError("repository import lock directory is unsafe")
@@ -304,7 +308,8 @@ def import_and_queue_scan(settings, store, spec, progress=None):
         root = None
         target = None
         cache_component = quote(slug, safe="")
-        for configured in settings.repository_cache_roots:
+        cache_roots = [explicit_root] if explicit_root is not None else settings.repository_cache_roots
+        for configured in cache_roots:
             try:
                 candidate_root = _safe_cache_root(configured)
                 candidate_namespace = candidate_root / "openharmony"
@@ -323,7 +328,8 @@ def import_and_queue_scan(settings, store, spec, progress=None):
         if root is None:
             root = _choose_root(settings,
                                 required_free=expected_bytes + max(1024 ** 2, expected_bytes // 2),
-                                required_size=expected_bytes)
+                                required_size=expected_bytes,
+                                explicit_root=explicit_root)
         namespace = root / "openharmony"
         if namespace.is_symlink():
             raise ValueError("repository cache namespace cannot be a symlink")
@@ -395,6 +401,7 @@ def import_and_queue_scan(settings, store, spec, progress=None):
         report("completed", "scan_queued", "静态扫描任务已创建并排队", percent=100,
                repository_id=repo["id"], scan_job_id=job["id"], commit=commit)
         return {"status": "completed", "repository": {"id": repo["id"], "name": repo["name"]},
+                "destination_dir": str(root),
                 "commit": commit, "git_tree": tree, "scan_job": {"id": job["id"], "status": "queued"},
                 "cache": "downloaded" if fetched else "hit",
                 "source_provenance": "GitCode public OpenHarmony organization catalog; metadata is not independent ownership verification",

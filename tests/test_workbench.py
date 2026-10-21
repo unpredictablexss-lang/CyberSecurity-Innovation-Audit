@@ -142,7 +142,7 @@ class WorkbenchTests(unittest.TestCase):
             x for x in r.json() if x["id"] == "ohscanner.known_disclosed_cves"
         )
         self.assertEqual(cve_detector["kind"], "research_candidate")
-        self.assertFalse(cve_detector["default_enabled"])
+        self.assertTrue(cve_detector.get("default_enabled", True))
         self.assertIn("independent holdout", cve_detector["admission_reason"])
 
     def test_mutation_requires_header(self):

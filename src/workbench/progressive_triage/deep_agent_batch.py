@@ -131,7 +131,9 @@ def execute_progressive_deep_agent_batch(settings, store, ops, task):
                             "state": state, "reason": type(error).__name__ + ": " + message[:500]})
             if any(value in lowered for value in ("budget", "quota", "cancel", "authorization", "consent",
                                                    "provider changed", "source-bound", "parent audit changed")):
-                stop_reason = "budget_exhausted" if any(value in lowered for value in ("budget", "quota")) else "authorization_revoked"
+                stop_reason = ("provider_quota_exhausted" if "quota" in lowered
+                               else "budget_exhausted" if "budget" in lowered
+                               else "authorization_revoked")
                 break
 
     finished = {row["group_id"] for row in results}
@@ -157,7 +159,7 @@ def execute_progressive_deep_agent_batch(settings, store, ops, task):
         "stop_reason": stop_reason, "groups": results, "not_started": not_started,
         "budget": ledger, "candidate_disposition_changed": False,
         "validated_vulnerability": 0,
-        "limitations": ["Deep Agent, Skeptic and draft reporting use the existing bounded workflow.",
+        "limitations": ["Deep Agent, Skeptic and draft reporting continue without a cumulative local usage ceiling.",
                         "Unknown, failed and not-started findings remain candidates; no result confirms a product vulnerability.",
                         "USD remains advisory without a verified Provider-side hard cap."],
     }

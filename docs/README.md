@@ -1,6 +1,6 @@
 # OHScanner：新 Agent 从这里开始
 
-更新：2026-10-20。PR [#36](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/36) 已合入 `main`，合并提交 `2a807d58007c48b9fc87795cf961ba4057f89240` 包含当前 8765 源码快照、A 路径遍历候选、最新 B IPC 0.12.13、C 显式研究候选及前端修改。实跑的 8765 服务仍来自 `/home/audit/ohscanner/worktrees/ohscanner-8765-integrated-20261019`，分支 `integration/ohscanner-8765-20261019`，HEAD `99556c81dbd013e981f3c472e391ce2e5902c5e5`；服务返回 HTTP 200，原工作树仍有两处未提交侧栏 UI 修改，尚未重启至 main 代码。发布验证及证据边界见[当前状态](项目现状与下一步.md)。项目是 OpenHarmony 开源代码漏洞挖掘竞赛工具，不是通用 Web 漏扫器。
+更新：2026-10-22。8765 当前运行于 `/home/audit/ohscanner/worktrees/all-main-sync-20261021`，分支 `main`，HEAD `3069f49a29f31c76aa88de0e9d26f81d9c6fe262`（与 `origin/main` 一致），健康检查 HTTP 200。静态审计默认纳入全部 13 个研究型检测规则，页面不显示逐规则开关；`example` 规则除外。Contacts 演示仓库实扫得到 921 条候选、0 条高可信、0 条确认；空指针规则单独产生 847 条，路径规则的 3 条仍待人工核验，当前不能称为误报已充分收紧。Agent Provider 尚未配置，本次没有 LLM 复核。工作树含未提交的全开规则/UI 与跨平台下载位置改动，未推送；测试和扫描限制见[当前状态](项目现状与下一步.md)。本项目是 OpenHarmony 开源代码漏洞挖掘竞赛工具，不是通用 Web 漏扫器。
 本目录六份 Markdown 是当前权威方案；其中“目标”不是“已实现”。
 历史教程、阶段路线图和长篇状态流水已从当前目录移除，证据可按 Git 固定提交追溯。
 

@@ -114,7 +114,7 @@ class ProgressiveQuickScreenBatchTests(unittest.TestCase):
         self.assertTrue(all(item["spec"]["source_submission_approved"] for item in preview["items"]))
         self.assertEqual(preview["vulnerability_state_after_review"], "candidate")
 
-    def test_worker_stops_on_shared_budget_gate_and_keeps_remaining_groups_candidate(self):
+    def test_worker_stops_on_provider_quota_error_and_keeps_remaining_groups_candidate(self):
         policy, frozen, plan, audit, store, ops, provider, prepare = make_batch_fixture()
         with tempfile.TemporaryDirectory() as directory, \
                 patch("src.workbench.progressive_triage.quick_screen_operation.prepare_quick_screen",
@@ -136,7 +136,7 @@ class ProgressiveQuickScreenBatchTests(unittest.TestCase):
         settings = SimpleNamespace(data_dir=Path(directory))
         responses = [
             {"state": "completed", "quick_screen": {"state": "completed", "quick_assessment": "investigate"}},
-            {"state": "quick_unknown", "reason_code": "budget_gate:task-wide model-call budget exhausted"},
+            {"state": "quick_unknown", "reason_code": "provider_quota_exhausted"},
         ]
         with patch("src.workbench.agent.ProviderConfig.from_env", return_value=provider), \
                 patch("src.workbench.progressive_triage.quick_screen_operation.execute_quick_screen",
@@ -144,7 +144,7 @@ class ProgressiveQuickScreenBatchTests(unittest.TestCase):
             result = execute_quick_screen_batch(
                 settings, store, ops, {"id": "batch-task", "spec": spec})
         self.assertEqual(execute.call_count, 2)
-        self.assertEqual(result["stop_reason"], "budget_exhausted")
+        self.assertEqual(result["stop_reason"], "provider_quota_exhausted")
         self.assertEqual(result["processed_group_count"], 2)
         self.assertEqual(result["not_started"], [{"group_id": "group-3", "state": "not_started_candidate"}])
         self.assertFalse(result["candidate_disposition_changed"])

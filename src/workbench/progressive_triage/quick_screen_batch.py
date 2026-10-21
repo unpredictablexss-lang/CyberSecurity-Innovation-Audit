@@ -208,9 +208,19 @@ def prepare_quick_screen_batch(settings, store, ops, audit_id: str, provider,
         "scheduled_group_count": len(items),
         "skipped": skipped,
         "vulnerability_state_after_review": "candidate",
-        "budget_limits": policy["limits"],
+        "budget_limits": {
+            "quick_screen_groups_per_audit": policy["limits"]["quick_screen_groups_per_audit"],
+            "deep_groups_per_audit": policy["limits"]["deep_groups_per_audit"],
+            "max_model_concurrency": policy["limits"]["max_model_concurrency"],
+            "max_cost_usd": policy["limits"]["max_cost_usd"],
+            "max_model_calls_per_audit": None,
+            "max_input_tokens_per_audit": None,
+            "max_output_tokens_per_audit": None,
+            "max_ai_wall_seconds": None,
+            "cumulative_usage_limits_enforced": False,
+        },
         "limitations": [
-            "Each selected group receives one bounded no-tools L2 request, sequentially, under this single preview and consent.",
+            "Each selected group receives one no-tools L2 request under this preview and consent. There is no local cumulative token, call-count, or time ceiling.",
             "L3 deep Agent still requires its own fixed-source preview and explicit approval.",
             "Unselected, skipped, failed, and not-yet-scheduled observations remain candidates.",
         ],
@@ -307,8 +317,11 @@ def execute_quick_screen_batch(settings, store, ops, task):
                         "result": result})
         reason = results[-1]["reason_code"]
         if isinstance(reason, str) and (reason.startswith("budget_gate:")
+                                        or reason == "provider_quota_exhausted"
                                         or reason in {"authorization_binding_changed", "parent_plan_binding_changed"}):
-            stop_reason = "budget_exhausted" if reason.startswith("budget_gate:") else "authorization_revoked"
+            stop_reason = ("provider_quota_exhausted" if reason == "provider_quota_exhausted"
+                           else "budget_exhausted" if reason.startswith("budget_gate:")
+                           else "authorization_revoked")
             break
 
     finished_ids = {row["group_id"] for row in results}

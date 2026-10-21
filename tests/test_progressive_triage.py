@@ -1125,6 +1125,56 @@ class BudgetLedgerTests(unittest.TestCase):
             self.assertEqual(snapshot["cost"]["actual_usd"], None)
             self.assertEqual(snapshot["cost"]["enforcement"], "advisory_only")
 
+    def test_cumulative_token_call_and_time_values_are_advisory_only(self):
+        with tempfile.TemporaryDirectory() as directory:
+            limits = {
+                **build_policy()["limits"],
+                "quick_screen_groups_per_audit": 130,
+                "deep_groups_per_audit": 0,
+                "max_model_calls_per_audit": 120,
+                "max_input_tokens_per_audit": 1_024,
+                "max_output_tokens_per_audit": 256,
+                "max_ai_wall_seconds": 60,
+                "max_model_concurrency": 1,
+            }
+            policy = build_policy("custom", limits, True)
+            ledger, policy, sha = self.create(directory, policy)
+            ledger.create_audit("audit-no-cumulative-cap", policy, sha)
+            db = ledger._connect()
+            try:
+                db.execute("UPDATE audit_budget SET created_at=0 WHERE audit_id=?",
+                           ("audit-no-cumulative-cap",))
+            finally:
+                db.close()
+
+            for index in range(130):
+                group_id = f"group-{index}"
+                endpoint_id = f"endpoint-{index}"
+                ledger.dispatch_group("audit-no-cumulative-cap", group_id, endpoint_id,
+                                      "quick_screen", evidence_gate="ranked_and_selected")
+                reservation = ledger.reserve(
+                    "audit-no-cumulative-cap", f"request-{index}", endpoint_id, group_id,
+                    "quick_screen", max_input_tokens=1_000, max_output_tokens=512,
+                )
+                settled = ledger.settle(
+                    reservation["reservation_id"], outcome="completed",
+                    input_tokens=1_500, output_tokens=700,
+                    quick_assessment="investigate",
+                )
+                self.assertEqual(settled["status"], "completed")
+
+            snapshot = ledger.get("audit-no-cumulative-cap")
+            self.assertEqual(snapshot["status"], "active")
+            self.assertIsNone(snapshot["stop_reason"])
+            self.assertEqual(snapshot["usage"]["model_calls_allocated"], 130)
+            self.assertEqual(snapshot["usage"]["input_tokens_allocated"], 195_000)
+            self.assertEqual(snapshot["usage"]["output_tokens_allocated"], 91_000)
+            self.assertFalse(snapshot["usage"]["cumulative_usage_limits_enforced"])
+            self.assertIsNone(snapshot["usage"]["max_model_calls"])
+            self.assertIsNone(snapshot["usage"]["max_input_tokens"])
+            self.assertIsNone(snapshot["usage"]["max_output_tokens"])
+            self.assertIsNone(snapshot["usage"]["wall_seconds_remaining"])
+
     def test_deep_agent_requires_completed_investigate_and_policy_sha_is_immutable(self):
         from src.workbench.progressive_triage.ledger import BudgetError, BudgetConflict
         with tempfile.TemporaryDirectory() as directory:
@@ -1312,7 +1362,7 @@ class BudgetLedgerTests(unittest.TestCase):
 
 
 class ProgressiveDeepApiIntegrationTests(unittest.TestCase):
-    def test_deep_preview_and_start_bind_bounded_agent_and_l2_result(self):
+    def test_deep_preview_and_start_bind_uncapped_agent_and_l2_result(self):
         import os
         from unittest.mock import patch
         from src.workbench.operations_store import Operations
@@ -1357,14 +1407,18 @@ class ProgressiveDeepApiIntegrationTests(unittest.TestCase):
                 response = client.post(endpoint + "/preview", headers=headers, json=body)
                 self.assertEqual(response.status_code, 200, response.text)
                 preview = response.json()
-                self.assertEqual(preview["budgets"]["local_cumulative_token_budget"], "bounded")
+                self.assertEqual(preview["budgets"]["local_cumulative_token_budget"], "none")
+                self.assertEqual(preview["budgets"]["local_total_model_call_budget"], "none")
+                self.assertEqual(preview["budgets"]["local_total_wall_time_budget"], "until_terminal_condition")
+                self.assertFalse(preview["budgets"]["cumulative_usage_limits_enforced"])
                 self.assertEqual(preview["progressive_binding"]["quick_screen_result_sha256"], quick["result_sha256"])
                 approved = {**body, "source_submission_approved": True,
                             "consent_nonce": preview["consent_nonce"], "consent_sha256": preview["consent_sha256"]}
                 started = client.post(endpoint, headers=headers, json=approved)
                 self.assertEqual(started.status_code, 201, started.text)
                 spec = started.json()["spec"]
-                self.assertFalse(spec["no_cumulative_token_ceiling"])
+                self.assertTrue(spec["no_cumulative_token_ceiling"])
+                self.assertTrue(spec["continuous_investigation"])
                 self.assertEqual(spec["max_provider_retries"], 0)
                 replay = client.post(endpoint, headers=headers, json=approved)
                 self.assertEqual(replay.json()["id"], started.json()["id"])

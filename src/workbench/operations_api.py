@@ -39,6 +39,7 @@ from typing import Any, Literal
 from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.responses import FileResponse, JSONResponse, Response
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from .download_locations import normalize_download_dir
 from .operations import (MAX_SOURCE_SYNC_BATCH_REPOSITORIES, approved_url, date_selection,
                          enqueue_branch_comparison, enqueue_range, range_plan,
                          recent_window_selections, source_sync_preflight)
@@ -348,6 +349,7 @@ class OfficialRepositoryImportRequest(Strict):
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
     import_timeout_seconds: int = Field(default=1800, ge=30, le=3600)
+    destination_dir: str | None = Field(default=None, max_length=4096)
 
     @field_validator("slug")
     @classmethod
@@ -401,6 +403,7 @@ class SyncRequest(Strict):
     audit_mode: Literal["standard_review", "static_only"] = "static_only"
     scan_timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
+    destination_dir: str | None = Field(default=None, max_length=4096)
 
     @field_validator("repository")
     @classmethod
@@ -1676,6 +1679,7 @@ def install_routes(app: FastAPI, settings, store):
             if urlsplit(url).path != expected:
                 raise ValueError("repository URL path must match the approved repository name")
             canonical = repository.casefold()
+            values["destination_dir"] = normalize_download_dir(settings, values.get("destination_dir"))
             normalized = {"name": repository, "url": url, **values}
             prior = seen.get(canonical)
             if prior is not None and prior != normalized:
@@ -1714,8 +1718,9 @@ def install_routes(app: FastAPI, settings, store):
         expected = "/" + prefix + quote(slug, safe="") + (".git" if path.endswith(".git") else "")
         if path != expected:
             raise ValueError("repository URL path must match the approved repository name")
-        return ops.create("source_sync", {"name": body.repository, "url": url,
-                                          **body.model_dump(exclude={"repository", "url"})})
+        values = body.model_dump(exclude={"repository", "url"})
+        values["destination_dir"] = normalize_download_dir(settings, values.get("destination_dir"))
+        return ops.create("source_sync", {"name": body.repository, "url": url, **values})
 
     @router.post("/operations/scan-previews")
     def operation_scan_preview(body: OperationScanPreviewRequest):
@@ -1760,6 +1765,8 @@ def install_routes(app: FastAPI, settings, store):
         from .source_catalog import approved_clone_url
         spec = {
             "slug": body.slug, "name": preview["name"], "branch": branch,
+            "destination_dir": normalize_download_dir(settings, body.destination_dir)
+                if body.destination_dir else None,
             "commit": commit, "preview_sha256": body.preview_sha256,
             "catalog_sha256": preview.get("catalog_sha256"),
             "clone_url": approved_clone_url(body.slug),
@@ -2050,9 +2057,9 @@ def install_routes(app: FastAPI, settings, store):
         # Keep the user-selected mode. Explicitly consented tool-agent runs
         # have no local cumulative usage ceiling; single-shot still performs
         # one Provider request. Per-request controls and fixed read-only scope remain.
-        preview_spec["continuous_investigation"] = False
+        preview_spec["continuous_investigation"] = continuous is True
         preview_spec["no_cumulative_token_ceiling"] = (
-            body.mode == "tool_agent" and not progressive_bounded)
+            body.mode == "tool_agent" and (not progressive_bounded or continuous is True))
         preview_spec["provider_request_timeout_seconds"] = 45
         preview_spec["max_provider_retries"] = 0 if progressive_bounded else 1
         preview = consent_preview(settings, store, job, report, candidate, preview_spec, provider)
@@ -2267,18 +2274,14 @@ def install_routes(app: FastAPI, settings, store):
         policy_sha = content_sha256(policy)
         if frozen.get("policy_sha256") != policy_sha:
             raise HTTPException(status_code=409, detail="冻结策略摘要校验失败")
-        max_steps = min(body.max_steps, policy["limits"]["max_tool_steps_per_group"])
-        bounded = body.model_copy(update={
-            "max_steps": max_steps,
-            "max_total_input_tokens": min(body.max_total_input_tokens,
-                                           policy["limits"]["max_input_tokens_per_audit"]),
-            "max_total_output_tokens": min(body.max_total_output_tokens,
-                                            policy["limits"]["max_output_tokens_per_audit"]),
-            "timeout_seconds": min(body.timeout_seconds,
-                                    max(90, policy["limits"]["max_ai_wall_seconds"])),
-        })
+        # Progressive L3 follows the same continuously authorized, no-cumulative-
+        # ceiling Agent path as a direct tool investigation. The frozen policy
+        # still controls candidate selection and group scope, while legacy
+        # token/call/time values do not truncate this investigation.
+        max_steps = body.max_steps
+        bounded = body
         _, _, _, preview = _agent_consent_preview(
-            bounded, provider, continuous=False, progressive_bounded=True)
+            bounded, provider, continuous=True, progressive_bounded=True)
         if not preview["agent_execution"]["eligible"]:
             raise HTTPException(status_code=409, detail=preview["agent_execution"]["reason"])
         group = quick_spec.get("group") if isinstance(quick_spec.get("group"), dict) else {}
@@ -2306,11 +2309,12 @@ def install_routes(app: FastAPI, settings, store):
             "consent_sha256": progressive_consent_sha256,
             "progressive_binding": binding, "progressive_policy": frozen,
             "budgets": {**preview["budgets"],
-                        "progressive_task_shared_input_tokens": policy["limits"]["max_input_tokens_per_audit"],
-                        "progressive_task_shared_output_tokens": policy["limits"]["max_output_tokens_per_audit"],
-                        "progressive_task_shared_model_calls": policy["limits"]["max_model_calls_per_audit"],
-                        "progressive_task_shared_wall_seconds": policy["limits"]["max_ai_wall_seconds"],
-                        "max_steps": max_steps},
+                        "progressive_task_shared_input_tokens": None,
+                        "progressive_task_shared_output_tokens": None,
+                        "progressive_task_shared_model_calls": None,
+                        "progressive_task_shared_wall_seconds": None,
+                        "cumulative_usage_limits_enforced": False,
+                        "max_steps": bounded.max_steps},
         })
         return bounded, quick_task, preview
 
@@ -2347,7 +2351,7 @@ def install_routes(app: FastAPI, settings, store):
             "max_total_output_tokens": bounded.max_total_output_tokens,
             "timeout_seconds": bounded.timeout_seconds,
             "provider_request_timeout_seconds": 45, "max_provider_retries": 0,
-            "continuous_investigation": False, "no_cumulative_token_ceiling": False,
+            "continuous_investigation": True, "no_cumulative_token_ceiling": True,
             "source_submission_approved": True, "source_submission_approved_at": now(),
             "source_consent_sha256": preview["agent_consent_sha256"],
             "progressive_consent_sha256": preview["consent_sha256"],
@@ -2452,7 +2456,7 @@ def install_routes(app: FastAPI, settings, store):
                 "max_total_output_tokens": bounded.max_total_output_tokens,
                 "timeout_seconds": bounded.timeout_seconds,
                 "provider_request_timeout_seconds": 45, "max_provider_retries": 0,
-                "continuous_investigation": False, "no_cumulative_token_ceiling": False,
+                "continuous_investigation": True, "no_cumulative_token_ceiling": True,
                 "source_submission_approved": True,
                 "source_consent_sha256": preview["agent_consent_sha256"],
                 "progressive_consent_sha256": preview["consent_sha256"],
@@ -2520,7 +2524,16 @@ def install_routes(app: FastAPI, settings, store):
             "consent_sha256": digest, "consent_manifest": consent_manifest,
             "items": items, "disclosures": disclosures,
             "selected_group_count": len(selected), "skipped": skipped,
-            "budget_limits": policy["limits"], "vulnerability_state_after_review": "candidate",
+            "budget_limits": {
+                "deep_groups_per_audit": policy["limits"]["deep_groups_per_audit"],
+                "max_model_concurrency": policy["limits"]["max_model_concurrency"],
+                "max_cost_usd": policy["limits"]["max_cost_usd"],
+                "max_model_calls_per_audit": None,
+                "max_input_tokens_per_audit": None,
+                "max_output_tokens_per_audit": None,
+                "max_ai_wall_seconds": None,
+                "cumulative_usage_limits_enforced": False,
+            }, "vulnerability_state_after_review": "candidate",
         }
 
     @router.post("/operations/progressive-deep-investigation-batches/preview")

@@ -343,7 +343,7 @@ export function SettingsView({ repos, detectors, health, refresh, tab }: { repos
     <Tabs activeKey={settingsTab(tab)} onChange={(key) => go("/settings/" + key)} items={[
       { key: "sources", label: "仓库与源码管理", children: <><Alert type="info" message="在线仓库目录" description="浏览 OpenHarmony 仓库，选择后同步到本地并按需排队扫描。" />
         <Repositories repos={repos} roots={health?.target_roots || []} refresh={refresh} embedded />
-        <OperationWorkspace view="sync" /></> },
+        <div id="source-sync-panel"><OperationWorkspace view="sync" /></div></> },
       { key: "capabilities", label: "语言与规则", children: <Capabilities detectors={detectors} embedded /> },
       { key: "policy", label: "智能审计策略与资源预算", children: <IntelligentAuditPolicySettings /> },
       { key: "agent", label: "Agent / LLM", children: <AgentProviderSettings /> },

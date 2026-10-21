@@ -114,8 +114,9 @@ class BudgetedAgentClient:
             self.before_request()
         encoded = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         output_cap = payload.get("max_output_tokens")
-        if not isinstance(output_cap, int) or isinstance(output_cap, bool) or output_cap <= 0:
-            raise BudgetError("deep Agent request has no enforceable output-token cap")
+        if output_cap is not None and (
+                not isinstance(output_cap, int) or isinstance(output_cap, bool) or output_cap <= 0):
+            raise BudgetError("deep Agent request has an invalid Provider output-token hint")
         input_reservation = len(encoded) + 1024
         self._call_index += 1
         reservation = self.ledger.reserve(
@@ -123,7 +124,9 @@ class BudgetedAgentClient:
             f"{self.operation_id}:deep:{self._call_index}",
             self.endpoint_id, self.group_id, "deep_agent",
             max_input_tokens=input_reservation,
-            max_output_tokens=output_cap,
+            # The ledger needs a positive estimate for its usage display. This
+            # is not sent to the Provider and is not an enforcement limit.
+            max_output_tokens=output_cap or 4096,
             phase=self._budget_phase,
         )
         if reservation.get("idempotent_replay"):
@@ -131,10 +134,9 @@ class BudgetedAgentClient:
         try:
             if self.before_request is not None:
                 self.before_request()
-            remaining = self.ledger.get(self.audit_id)["usage"]["wall_seconds_remaining"] - 1
-            if remaining <= 0:
-                raise BudgetError("deep Agent wall-time budget exhausted before Provider dispatch")
-            request_timeout = min(timeout, remaining)
+            # A per-request network timeout protects the Worker from a stuck
+            # socket. The audit itself has no cumulative wall-time cutoff.
+            request_timeout = timeout
         except Exception:
             self.ledger.settle(reservation["reservation_id"], outcome="known_not_sent")
             raise
@@ -144,7 +146,7 @@ class BudgetedAgentClient:
             self.ledger.settle(reservation["reservation_id"], outcome="unknown_outcome")
             raise
         try:
-            usage = _usage(response)
+            usage = _usage(response, allow_partial=True)
         except (TypeError, ValueError):
             self.ledger.settle(reservation["reservation_id"], outcome="unknown_outcome")
             raise BudgetError("Provider usage is missing; reserved budget remains charged conservatively") from None
@@ -153,7 +155,7 @@ class BudgetedAgentClient:
             input_tokens=usage["input_tokens"], output_tokens=usage["output_tokens"],
         )
         if settled.get("status") != "completed":
-            raise BudgetError("Provider usage exceeded the reserved task budget")
+            raise BudgetError("Provider request usage could not be recorded")
         return response
 
 

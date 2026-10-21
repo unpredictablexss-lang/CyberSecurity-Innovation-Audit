@@ -14,37 +14,37 @@ from src.workbench import service
 
 
 class AdmissionBoundaryTests(unittest.TestCase):
-    def test_c_is_an_explicit_only_approved_candidate(self):
+    def test_c_is_a_default_candidate_but_not_an_admitted_vulnerability(self):
         ident = "ohscanner.ark.runtime.type_safety"
-        self.assertNotIn(ident, default_detector_ids())
+        self.assertIn(ident, default_detector_ids())
         self.assertNotIn(ident, {row["id"] for row in pending_admissions()})
         metadata = catalog_metadata()[ident]
         self.assertEqual(metadata["kind"], "research_candidate")
-        self.assertFalse(metadata["default_enabled"])
+        self.assertTrue(metadata.get("default_enabled", True))
         detector = build_registry((ident,)).detectors()[0]
         self.assertEqual(detector.version, "0.6.2")
         automatic = plan_audit(manifest(), approved_metadata())
         automatic_row = next(row for row in automatic["detectors"] if row["id"] == ident)
-        self.assertEqual(automatic_row["decision"], "skipped")
-        self.assertIn("explicit_selection_required", automatic_row["reason_codes"])
+        self.assertEqual(automatic_row["decision"], "planned")
+        self.assertIn(ident, automatic["suggested_detector_ids"])
         explicit = plan_audit(manifest(), approved_metadata(), selected_detector_ids=[ident])
         explicit_row = next(row for row in explicit["detectors"] if row["id"] == ident)
         self.assertEqual(explicit_row["decision"], "planned")
         self.assertIn(ident, explicit["suggested_detector_ids"])
 
-    def test_d_is_available_only_by_explicit_research_selection(self):
+    def test_d_is_a_default_candidate_and_still_keeps_coverage_gates(self):
         ident = 'ohscanner.data.sensitive_exposure'
-        self.assertNotIn(ident, default_detector_ids())
+        self.assertIn(ident, default_detector_ids())
         metadata = catalog_metadata()[ident]
         self.assertEqual(metadata['kind'], 'research_candidate')
-        self.assertFalse(metadata['default_enabled'])
+        self.assertTrue(metadata.get('default_enabled', True))
         detector = build_registry((ident,)).detectors()[0]
         self.assertEqual(detector.version, '0.21.17')
         self.assertNotIn(ident, {row['id'] for row in pending_admissions()})
         automatic = plan_audit(manifest(), approved_metadata())
         automatic_row = next(row for row in automatic['detectors'] if row['id'] == ident)
-        self.assertEqual(automatic_row['decision'], 'skipped')
-        self.assertIn('explicit_selection_required', automatic_row['reason_codes'])
+        self.assertEqual(automatic_row['decision'], 'planned')
+        self.assertIn(ident, automatic['suggested_detector_ids'])
         explicit = plan_audit(manifest(), approved_metadata(), selected_detector_ids=[ident])
         explicit_row = next(row for row in explicit['detectors'] if row['id'] == ident)
         self.assertEqual(explicit_row['decision'], 'planned')
@@ -80,7 +80,7 @@ class AdmissionApiTests(unittest.TestCase):
         before = self.client.get("/api/v1/scans").json()
         self.assertEqual(self.client.get("/api/v1/scans").json(), before)
 
-    def test_real_plan_keeps_c_opt_in_without_running_it(self):
+    def test_real_plan_includes_default_candidates_without_running_them(self):
         c_id = "ohscanner.ark.runtime.type_safety"
         before = self.client.get("/api/v1/scans").json()
         result = self.client.post("/api/v1/audit-plans", headers=wb.HEADERS,
@@ -89,6 +89,7 @@ class AdmissionApiTests(unittest.TestCase):
         plan = result.json()
         row = next(d for d in plan["detectors"] if d["id"] == c_id)
         self.assertFalse(row.get("admission"))
-        self.assertEqual(row["decision"], "skipped")
-        self.assertIn("explicit_selection_required", row["reason_codes"])
+        self.assertIn(c_id, default_detector_ids())
+        self.assertNotIn("explicit_selection_required", row["reason_codes"])
+        self.assertIn(row["decision"], {"planned", "skipped"})
         self.assertEqual(self.client.get("/api/v1/scans").json(), before)
