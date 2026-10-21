@@ -1,0 +1,296 @@
+{
+  "remote_main": "4f75a65775b202b8220a208ebdb50fdb5c8dbb4d",
+  "local_base": "e6d9a1ae0589dcb26c3f1d9b5ff4d9957443c1c0",
+  "sources": [
+    {
+      "branch": "codex/a-line-final-closeout-20261020",
+      "head": "b49b9e33b3ffce4f1e7ed6109fc17d8005cdbe78",
+      "local_git_object": "available",
+      "main_counts": [
+        "27",
+        "7"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/a-line-mainline-closeout-20261021",
+      "head": "e32a41816c9380c6d519933264fc511f2400d5a2",
+      "local_git_object": "available",
+      "main_counts": [
+        "7",
+        "0"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/b-data06-demo-20261021",
+      "head": "16e2cf2fe500bbf90ccf6f3f4d38d30e1b2d9683",
+      "local_git_object": "available",
+      "main_counts": [
+        "14",
+        "0"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/b-ipc-closeout-20261020",
+      "head": "96cfc453c15263ec3ec83ce87aa75d08d221b445",
+      "local_git_object": "available",
+      "main_counts": [
+        "25",
+        "6"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c9-exception-guard-acceptance-20261020",
+      "head": "bc6b383ddf5b01044735f673192bac9bee5398ef",
+      "local_git_object": "available",
+      "main_counts": [
+        "153",
+        "13"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c9-known-case-gaps-20261020",
+      "head": "47486a368b7d2d4f76a2bd3e3ea6ebcd5ebbe6f9",
+      "local_git_object": "available",
+      "main_counts": [
+        "153",
+        "16"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c9-partial-owner-acceptance-20261020",
+      "head": "5f03fb8350778ca0b1c6ab05f080f39905ce5957",
+      "local_git_object": "available",
+      "main_counts": [
+        "153",
+        "13"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c9-type-origin-acceptance-20261020",
+      "head": "8715828b7f930fcb93947e4d94d48271a2a0bd8b",
+      "local_git_object": "available",
+      "main_counts": [
+        "153",
+        "13"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c11-alias-cross-helper-20261020",
+      "head": "3d9274ba2c3d37f1fec8f633036049a3a208922f",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "4"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c11-known-case-corpus-20261020",
+      "head": "c778bbb5bd7218fef4028f74ffa613abd7f3c63d",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "4"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c11-performance-admission-20261020",
+      "head": "600001f5428e4a3a1942d9a970ecae3a055bf9d0",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "4"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c12-ark-deep-semantics-20261020",
+      "head": "7bf57a898e0a64c83a3aa34c04e42ac98a5b6561",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "7"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c12-product-admission-20261020",
+      "head": "042abc03cc6cff23519e6ee8f346bf511e34b63c",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "7"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c12-source-adapters-20261020",
+      "head": "30e4549baae1fa731fb524981b203bb57688edee",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "7"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c13-ark-real-replay-20261019",
+      "head": "40fd4d53d10fe52b5d8b925126e14271d3f6cb26",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "10"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c13-cross-file-facts-20261019",
+      "head": "e26c605b3c5449f7e0a2285d88b274c35624fb47",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "11"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c13-holdout-product-gate-20261019",
+      "head": "c6842cd548cc107522b8a39dc468d1535d41b982",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "10"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c13-parallel-integration-20261019",
+      "head": "24038152b90746d07ec8a3b64711f33bf0ecf9cb",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "15"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c13-test-artifacts-20261019",
+      "head": "ecfd7c0a08f5bc4682e5ddb71d21248f0902dd5f",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "16"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c13-test-runtime-state-20261019",
+      "head": "e1837bd0f660e12010630d5f6ff76fd3a4e070a7",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "17"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c-line-known-vuln-optimization-20261019",
+      "head": "842948084660207fd64399cfd598ed93e5593dcc",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "9"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c-line-parallel-plan-20261020",
+      "head": "8fa51f6ce08796d4a6ecfb19ea8520672ea8253a",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "153"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c-line-scanner-optimization-20261019",
+      "head": "448bd1b14906e883199168653360df30863c095a",
+      "local_git_object": "available",
+      "main_counts": [
+        "153",
+        "13"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/c-line-typedarrayset-mainline-20261021",
+      "head": "f6a65c2c1758d80487d69efa12d22de6344986dc",
+      "local_git_object": "available",
+      "main_counts": [
+        "1",
+        "0"
+      ],
+      "tree_equal_to_main": true
+    },
+    {
+      "branch": "codex/closeout-materials-20261021",
+      "head": "886aa75bef4a1ea7557b3983a4116dfc78a386c8",
+      "local_git_object": "not_available; retrieved through connected GitHub API"
+    },
+    {
+      "branch": "codex/d-integration-20261020",
+      "head": "c380a474718e8ec4497aff55b18a1dd38bafa13f",
+      "local_git_object": "available",
+      "main_counts": [
+        "22",
+        "0"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/d-owner-20261020-01a1571f",
+      "head": "d39685ba504d9bd31978107fce7e19f803cf1353",
+      "local_git_object": "available",
+      "main_counts": [
+        "60",
+        "162"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "codex/full-runtime-performance-audit-20261014",
+      "head": "bb81f8ed21ca87f8461e40695d83a0cc06eb1955",
+      "local_git_object": "available",
+      "main_counts": [
+        "178",
+        "72"
+      ],
+      "tree_equal_to_main": false
+    },
+    {
+      "branch": "work/issues-39-42-completion-20261021",
+      "head": "b9b1f4ad3aa4615817ea6a9781e2c6e7ff969655",
+      "local_git_object": "not_available; retrieved through connected GitHub API"
+    },
+    {
+      "branch": "work/pr38-44-e2e-followup-20261020",
+      "head": "b469f623b34ca5fd752ab72de66e53927b9dcd9c",
+      "local_git_object": "available",
+      "main_counts": [
+        "22",
+        "69"
+      ],
+      "tree_equal_to_main": false
+    }
+  ]
+}

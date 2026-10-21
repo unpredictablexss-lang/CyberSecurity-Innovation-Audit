@@ -1,0 +1,346 @@
+[93m[OHOS WARNING][0m  compile option "disable_package_image" will be deprecated,                             please consider use other options
+[93m[OHOS WARNING][0m  Failed to find ccache, ccache disabled.
+[OHOS INFO] [PRELOAD] generated build prop info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/build.prop
+[OHOS INFO] [PRELOAD] generated build config info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/build_config.json
+[OHOS INFO] [PRELOAD] generated product parts info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/parts.json
+[OHOS INFO] [PRELOAD] generated parts config info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/parts_config.json
+[OHOS INFO] [PRELOAD] generated build gnargs prop info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/build_gnargs.prop
+[OHOS INFO] [PRELOAD] generated features info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/features.json
+[OHOS INFO] [PRELOAD] generated syscap info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/syscap.json
+[OHOS INFO] [PRELOAD] generated exclusion modules info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/exclusion_modules.json
+[OHOS INFO] [PRELOAD] generated dependency pruning info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/dependency_pruning.json
+[OHOS INFO] [PRELOAD] generated platforms build info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/platforms.build
+[OHOS INFO] [PRELOAD] generated subsystem config info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/subsystem_config.json
+[OHOS INFO] [PRELOAD] generated system capability info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/systemcapability.json
+[OHOS INFO] [PRELOAD] generated compile_standard_whitelist info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/compile_standard_whitelist.json
+[OHOS INFO] [PRELOAD] generated compile_env_allowlist info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/compile_env_allowlist.json
+[OHOS INFO] [PRELOAD] generated hvigor_compile_whitelist info to /home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/hvigor_compile_hap_whitelist.json
+[OHOS INFO]  The run time for _prebuild_and_preload is 0.08 s
+[OHOS INFO] [LOAD] Checking all build args...
+[OHOS INFO] [LOAD] subsytem config scan completed costed is 10.03 s
+[93m[OHOS WARNING][0m [LOAD] condition target '//arkcompiler/ets_runtime/compiler_service:static_app_install_aot_enable_list.conf' in '/home/kali/ohscanner-ark-native-20261021/arkcompiler/ets_runtime/bundle.json' does not exist in 'sub_component', 'modules', 'group_type', 'inner_kits', 'inner_api' or 'test'
+warning: subsystem name config incorrect in '/home/kali/ohscanner-ark-native-20261021/vendor/hihope/rk3568/ohos.build', build file subsystem name is product_hihope,configured subsystem name is product_rk3568.
+warning: subsystem name config incorrect in '/home/kali/ohscanner-ark-native-20261021/device/board/hihope/rk3568/ohos.build', build file subsystem name is rockchip_products,configured subsystem name is device_rk3568.
+[OHOS INFO] [LOAD] all parts scan completed
+[OHOS INFO] [LOAD] Loading configuration file...
+
+[OHOS INFO] [LOAD] loader args:['platforms_config_file="/home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/platforms.build"', 'subsystem_config_file="/home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/subsystem_config.json"', 'example_subsystem_file=""', 'exclusion_modules_config_file="/home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/exclusion_modules.json"', 'source_root_dir="/home/kali/ohscanner-ark-native-20261021/"', 'gn_root_out_dir="out/rk3568"', 'build_platform_name=phone', 'build_xts=False', 'load_test_config=True', 'target_os=ohos', 'target_cpu=arm', 'os_level=standard', "ignore_api_check=['xts', 'common', 'testfwk']", 'scalable_build=False', 'skip_partlist_check=True', 'enable_scan_optimization=False']
+[OHOS INFO] [LOAD] Checking parts config...
+[OHOS INFO] [LOAD] generated subsystem build config to '/home/kali/ohscanner-ark-native-20261021/out/rk3568/build_configs/subsystem_info/subsystem_build_config.json'
+[OHOS INFO] [LOAD] generated src subsystem info to '/home/kali/ohscanner-ark-native-20261021/out/rk3568/build_configs/subsystem_info/src_subsystem_info.json'
+[OHOS INFO] [LOAD] generated no src subsystem info to '/home/kali/ohscanner-ark-native-20261021/out/rk3568/build_configs/subsystem_info/no_src_subsystem_info.json'
+[OHOS INFO] [LOAD] generate target platform parts to '/home/kali/ohscanner-ark-native-20261021/out/rk3568/build_configs/target_platforms_parts.json'
+[OHOS INFO] [LOAD] generated system capabilities to '/home/kali/ohscanner-ark-native-20261021/out/rk3568/build_configs/phone_system_capabilities.json'
+[OHOS INFO] [LOAD] generated platforms parts by src to '/home/kali/ohscanner-ark-native-20261021/out/rk3568/build_configs/platforms_parts_by_src.json'
+[OHOS INFO] [LOAD] generate required parts targets to '/home/kali/ohscanner-ark-native-20261021/out/rk3568/build_configs/required_parts_targets.json'
+[OHOS INFO] [LOAD] generate build targets list file to '/home/kali/ohscanner-ark-native-20261021/out/rk3568/build_configs/required_parts_targets_list.json'
+[OHOS INFO] [LOAD] generated parts src flag to '/home/kali/ohscanner-ark-native-20261021/out/rk3568/build_configs/subsystem_info/parts_src_flag.json'
+[OHOS INFO] [LOAD] generate auto install part to '/home/kali/ohscanner-ark-native-20261021/out/rk3568/build_configs/auto_install_parts.json'
+[OHOS INFO] [LOAD] generate platforms list to '/home/kali/ohscanner-ark-native-20261021/out/rk3568/build_configs/platforms_list.gni'
+[OHOS INFO] [LOAD] generate part different info to '/home/kali/ohscanner-ark-native-20261021/out/rk3568/build_configs/parts_different_info.json'
+[OHOS INFO] [LOAD] generate infos for testfwk to '/home/kali/ohscanner-ark-native-20261021/out/rk3568/build_configs/infos_for_testfwk.json'
+[OHOS INFO] [LOAD] Checking all product features...
+[OHOS INFO] [LOAD] generate syscap info file to '/home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/system/etc/SystemCapability.json'
+[OHOS INFO] [LOAD] generate syscap info with part name list to '/home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/system/etc/syscap.json'
+[OHOS INFO] [LOAD] generate target syscap for init list to '/home/kali/ohscanner-ark-native-20261021/out/preloader/rk3568/system/etc/param/syscap.para'
+
+[OHOS INFO] [GN] Excuting gn command: /home/kali/ohscanner-ark-native-20261021/prebuilts/build-tools/linux-x86/bin/gn gen --args="product_name=\"rk3568\" target_cpu=\"arm\" precise_branch=\"\" is_standard_system=true product_path=\"/home/kali/ohscanner-ark-native-20261021/vendor/hihope/rk3568\" product_config_path=\"/home/kali/ohscanner-ark-native-20261021/vendor/hihope/rk3568\" device_name=\"rk3568\" device_path=\"/home/kali/ohscanner-ark-native-20261021/device/board/rockchip/rk3568\" device_company=\"rockchip\" device_config_path=\"/home/kali/ohscanner-ark-native-20261021/device/board/rockchip/rk3568\" ohos_build_compiler_specified=\"\" ohos_build_time=1792519706298 ohos_build_datetime=\"2026-10-21 10:08:26\" ace_engine_feature_enable_accessibility=true ace_engine_feature_enable_web=true ace_engine_feature_enable_upgrade_skia=true os_account_multiple_active_accounts=false datamgr_service_udmf=true access_token_enhance_capability=false code_signature_support_oh_code_sign=false code_signature_support_oh_release_app=true code_signature_support_app_allow_list=false init_feature_ab_partition=true hiview_feature_bbox_userspace=true hiview_enable_leak_detector=true hiview_enable_performance_monitor=true t2stack_feature_vtp=true t2stack_feature_coap=true t2stack_feature_dfile=true dsoftbus_feature_coap=true dsoftbus_feature_vtp=true dsoftbus_feature_dfile=true dsoftbus_feature_disc_ble=true dsoftbus_feature_disc_coap=true dsoftbus_feature_disc_coap_custdata=true dsoftbus_feature_disc_lnn_coap=true dsoftbus_feature_conn_pv1=true dsoftbus_feature_conn_br=true dsoftbus_feature_conn_ble=true dsoftbus_feature_conn_tcp_proxy=true dsoftbus_feature_conn_tcp_comm=true dsoftbus_feature_trans_udp_stream=true dsoftbus_feature_trans_udp_file=true dsoftbus_feature_trans_udp=true dsoftbus_feature_trans_proxy_file=true dsoftbus_feature_trans_qos=true dsoftbus_feature_trans_br_proxy=true dsoftbus_feature_lnn_ble=true dsoftbus_feature_lnn_wifi=true dsoftbus_feature_lnn_cloud_sync=true dsoftbus_feature_lnn_channel_rating=true dsoftbus_feature_lnn_lane_mgr=true dsoftbus_feature_lnn_lane_qos=true dsoftbus_feature_lnn_frame=true wifi_feature_non_seperate_p2p=true wifi_feature_non_hdf_driver=true wifi_feature_p2p_random_mac_addr=true fusion_connectivity_partner_agent_feature=true updater_feature_use_ptable=false updater_feature_updater_gen_executable=true updater_feature_sign_on_server=false sys_installer_feature_ohos_cfg=true graphic_2d_feature_rs_enable_eglimage=true graphic_2d_feature_use_texgine=true graphic_2d_feature_upgrade_skia=true av_codec_fcodec_enable_dmabuffer_at_buffermode=false audio_framework_feature_dtmf_tone=true audio_framework_feature_opensl_es=true audio_framework_feature_support_os_account=false audio_framework_feature_audiosuite_support=true audio_framework_feature_hdmi_detect_audio=true image_framework_feature_upgrade_skia=true input_feature_combination_key=true input_feature_pointer_drawing=true input_feature_interceptor=true input_feature_monitor=true input_feature_keyboard=true input_feature_mouse=true input_feature_touchscreen=true input_feature_input_device=true battery_manager_feature_enable_charger=true memmgr_purgeable_memory=true memmgr_hyperhold_memory=true usb_manager_feature_pop_up_func_switch_model=false usb_manager_feature_host=true usb_manager_feature_device=true usb_manager_feature_port=true device_status_interaction_coordination=false wpa_supplicant_driver_nl80211=true skia_feature_upgrade=true libuv_use_ffrt=true hdf_core_platform_test_support=false hdf_core_default_peripheral_config=false drivers_interface_display_community=true drivers_interface_display_vdi_default=true drivers_peripheral_input_feature_model=true drivers_peripheral_input_feature_support_ddk=true drivers_peripheral_display_community=true drivers_peripheral_display_vdi_default=true drivers_peripheral_wlan_feature_enable_HDF_NL80211=true drivers_peripheral_wlan_feature_enable_HDF_UT=false drivers_peripheral_wlan_feature_vendor=\"default\" drivers_peripheral_wlan_p2p_name=\"p2p-dev-wlan0\" drivers_peripheral_sensor_feature_model=true drivers_peripheral_audio_feature_full_test_suite=true drivers_peripheral_audio_feature_alsa_lib=false drivers_peripheral_audio_feature_effect=true drivers_peripheral_light_feature_model=true drivers_peripheral_vibrator_feature_model=true drivers_peripheral_codec_feature_support_omx_extend_test=true drivers_peripheral_codec_feature_support_hdi_v1=true smartperf_host_device=true drivers_interface_audio_community=true alsa_lib_feature_config_enable=true ohos_build_type=\"debug\" device_type=\"default\" build_variant=\"root\" ohos_components_checktype=4 ohos_interception_rule_switch=1023 root_perf_main=\"main\" runtime_mode=\"release\"" --args=product_name="rk3568" target_cpu="arm" precise_branch="" is_standard_system=true product_path="/home/kali/ohscanner-ark-native-20261021/vendor/hihope/rk3568" product_config_path="/home/kali/ohscanner-ark-native-20261021/vendor/hihope/rk3568" device_name="rk3568" device_path="/home/kali/ohscanner-ark-native-20261021/device/board/rockchip/rk3568" device_company="rockchip" device_config_path="/home/kali/ohscanner-ark-native-20261021/device/board/rockchip/rk3568" ohos_build_compiler_specified="" ohos_build_time=1792519706298 ohos_build_datetime="2026-10-21 10:08:26" ace_engine_feature_enable_accessibility=true ace_engine_feature_enable_web=true ace_engine_feature_enable_upgrade_skia=true os_account_multiple_active_accounts=false datamgr_service_udmf=true access_token_enhance_capability=false code_signature_support_oh_code_sign=false code_signature_support_oh_release_app=true code_signature_support_app_allow_list=false init_feature_ab_partition=true hiview_feature_bbox_userspace=true hiview_enable_leak_detector=true hiview_enable_performance_monitor=true t2stack_feature_vtp=true t2stack_feature_coap=true t2stack_feature_dfile=true dsoftbus_feature_coap=true dsoftbus_feature_vtp=true dsoftbus_feature_dfile=true dsoftbus_feature_disc_ble=true dsoftbus_feature_disc_coap=true dsoftbus_feature_disc_coap_custdata=true dsoftbus_feature_disc_lnn_coap=true dsoftbus_feature_conn_pv1=true dsoftbus_feature_conn_br=true dsoftbus_feature_conn_ble=true dsoftbus_feature_conn_tcp_proxy=true dsoftbus_feature_conn_tcp_comm=true dsoftbus_feature_trans_udp_stream=true dsoftbus_feature_trans_udp_file=true dsoftbus_feature_trans_udp=true dsoftbus_feature_trans_proxy_file=true dsoftbus_feature_trans_qos=true dsoftbus_feature_trans_br_proxy=true dsoftbus_feature_lnn_ble=true dsoftbus_feature_lnn_wifi=true dsoftbus_feature_lnn_cloud_sync=true dsoftbus_feature_lnn_channel_rating=true dsoftbus_feature_lnn_lane_mgr=true dsoftbus_feature_lnn_lane_qos=true dsoftbus_feature_lnn_frame=true wifi_feature_non_seperate_p2p=true wifi_feature_non_hdf_driver=true wifi_feature_p2p_random_mac_addr=true fusion_connectivity_partner_agent_feature=true updater_feature_use_ptable=false updater_feature_updater_gen_executable=true updater_feature_sign_on_server=false sys_installer_feature_ohos_cfg=true graphic_2d_feature_rs_enable_eglimage=true graphic_2d_feature_use_texgine=true graphic_2d_feature_upgrade_skia=true av_codec_fcodec_enable_dmabuffer_at_buffermode=false audio_framework_feature_dtmf_tone=true audio_framework_feature_opensl_es=true audio_framework_feature_support_os_account=false audio_framework_feature_audiosuite_support=true audio_framework_feature_hdmi_detect_audio=true image_framework_feature_upgrade_skia=true input_feature_combination_key=true input_feature_pointer_drawing=true input_feature_interceptor=true input_feature_monitor=true input_feature_keyboard=true input_feature_mouse=true input_feature_touchscreen=true input_feature_input_device=true battery_manager_feature_enable_charger=true memmgr_purgeable_memory=true memmgr_hyperhold_memory=true usb_manager_feature_pop_up_func_switch_model=false usb_manager_feature_host=true usb_manager_feature_device=true usb_manager_feature_port=true device_status_interaction_coordination=false wpa_supplicant_driver_nl80211=true skia_feature_upgrade=true libuv_use_ffrt=true hdf_core_platform_test_support=false hdf_core_default_peripheral_config=false drivers_interface_display_community=true drivers_interface_display_vdi_default=true drivers_peripheral_input_feature_model=true drivers_peripheral_input_feature_support_ddk=true drivers_peripheral_display_community=true drivers_peripheral_display_vdi_default=true drivers_peripheral_wlan_feature_enable_HDF_NL80211=true drivers_peripheral_wlan_feature_enable_HDF_UT=false drivers_peripheral_wlan_feature_vendor="default" drivers_peripheral_wlan_p2p_name="p2p-dev-wlan0" drivers_peripheral_sensor_feature_model=true drivers_peripheral_audio_feature_full_test_suite=true drivers_peripheral_audio_feature_alsa_lib=false drivers_peripheral_audio_feature_effect=true drivers_peripheral_light_feature_model=true drivers_peripheral_vibrator_feature_model=true drivers_peripheral_codec_feature_support_omx_extend_test=true drivers_peripheral_codec_feature_support_hdi_v1=true smartperf_host_device=true drivers_interface_audio_community=true alsa_lib_feature_config_enable=true ohos_build_type="debug" device_type="default" build_variant="root" ohos_components_checktype=4 ohos_interception_rule_switch=1023 root_perf_main="main" runtime_mode="release" /home/kali/ohscanner-ark-native-20261021/out/rk3568
+[OHOS INFO] [GN] root_out_dir=//out/rk3568
+[OHOS INFO] [GN] root_build_dir=//out/rk3568
+[OHOS INFO] [GN] root_gen_dir=//out/rk3568/gen
+[OHOS INFO] [GN] current_toolchain=//build/toolchain/ohos:ohos_clang_arm
+[OHOS INFO] [GN] host_toolchain=//build/toolchain/linux:clang_x64
+[OHOS INFO] [GN] ERROR at //build/ohos/app/app_internal.gni:413:11: OHOS component : (weex-loader) not found.
+[OHOS INFO] [GN]           "weex-loader:weex_loader_ark_hap"
+[OHOS INFO] [GN]           ^--------------------------------
+[OHOS INFO] [GN] See //build/ohos/app/app_internal.gni:358:3: whence it was called.
+[OHOS INFO] [GN]   action_with_pydeps(target_name) {
+[OHOS INFO] [GN]   ^--------------------------------
+[OHOS INFO] [GN] See //build/ohos/app/app.gni:684:3: whence it was called.
+[OHOS INFO] [GN]   compile_js_assets(_js_assets_target) {
+[OHOS INFO] [GN]   ^-------------------------------------
+[OHOS INFO] [GN] See //base/global/system_resources/systemres/BUILD.gn:28:1: whence it was called.
+[OHOS INFO] [GN] ohos_hap("systemres_hap") {
+[OHOS INFO] [GN] ^--------------------------
+[OHOS INFO] [GN] See //build/ohos/ohos_part.gni:29:16: which caused the file to be included.
+[OHOS INFO] [GN]     _deps += [ get_label_info(module_label, "label_with_toolchain") ]
+[OHOS INFO] [GN]                ^--------------------------------------------------
+[OHOS INFO] [GN] thermal_interface_service
+[OHOS INFO] [GN] vibrator_service
+[OHOS INFO] [GN] Debug info gen_utils_abc file path:  //out/rk3568/obj/commonlibrary/ets_utils/js_concurrent_module/utils/utils.abc
+[OHOS INFO] [GN] memory_tracker_interface_service
+[OHOS INFO] [GN] rk3568_group in
+[OHOS INFO] [GN] miscdevice_feature_vibrator_custom = true
+[OHOS INFO] [GN] input_service
+[OHOS INFO] [GN] hid_ddk
+[OHOS INFO] [GN] hid_ddk
+[OHOS INFO] [GN] E2FSPROGS_DIR is /home/kali/ohscanner-ark-native-20261021/out/rk3568/gen/third_party/e2fsprogs/e2fsprogs
+[OHOS INFO] [GN] Support dsoftbus.
+[OHOS INFO] [GN] support hearing aid
+[OHOS INFO] [GN] callmanager call transfer
+[OHOS INFO] [GN] has_hisysevent_part = true
+[OHOS INFO] [GN] event ces_hitrace_usage = true
+[OHOS INFO] [GN] effect_host
+[OHOS INFO] [GN] audio_service
+[OHOS INFO] [GN] audio_service
+[OHOS INFO] [GN] ["--haptobin", "../../developtools/packing_tool/adapter/ohos", "--haptobinOutput", "obj/developtools/packing_tool/jar/haptobin_tool.jar", "--unpackOutput", "obj/developtools/packing_tool/jar/app_unpacking_tool.jar", "--packOutput", "obj/developtools/packing_tool/jar/app_packing_tool.jar", "--outpath", "obj/developtools/packing_tool/jar", "--checkOutput", "obj/developtools/packing_tool/jar/app_check_tool.jar", "--toolchain", "//build/toolchain/ohos:ohos_clang_arm", "--compileTarget", "image"]
+[OHOS INFO] [GN] cups_action is exec
+[OHOS INFO] [GN] ************libhilog_base use_musl ***************
+[OHOS INFO] [GN] wlan_service
+[OHOS INFO] [GN] wlan_service
+[OHOS INFO] [GN] wlan_service
+[OHOS INFO] [GN] wpa_service
+[OHOS INFO] [GN] hostapd_service
+[OHOS INFO] [GN] chip
+[OHOS INFO] [GN] chip
+[OHOS INFO] [GN] location_gnss
+[OHOS INFO] [GN] nnrt
+[OHOS INFO] [GN] nnrt
+[OHOS INFO] [GN] nnrt
+[OHOS INFO] [GN] drivers_peripheral_huks
+[OHOS INFO] [GN] drivers_peripheral_huks
+[OHOS INFO] [GN] Reading plugin sources: ets (//build/toolchain/ohos:ohos_clang_arm)
+[OHOS INFO] [GN] sensor_service
+[OHOS INFO] [GN] sensor_convert_service
+[OHOS INFO] [GN] sensor_service
+[OHOS INFO] [GN] low_power_player_service
+[OHOS INFO] [GN] drivers_peripheral_fingerprint_auth
+[OHOS INFO] [GN] ril_service
+[OHOS INFO] [GN] ril_service
+[OHOS INFO] [GN] ril_service
+[OHOS INFO] [GN] ril_service
+[OHOS INFO] [GN] ril_service
+[OHOS INFO] [GN] hisysevent_usage = false
+[OHOS INFO] [GN] ans_hitrace_usage = true
+[OHOS INFO] [GN] light_service
+[OHOS INFO] [GN] Build curl is_cares_on: true
+[OHOS INFO] [GN] Build curl support_gmssl: true
+[OHOS INFO] [GN] ############ toolchain enable compressed pointer = false #############
+[OHOS INFO] [GN] Cares install
+[OHOS INFO] [GN] location_geofence
+[OHOS INFO] [GN] distributed_camera_provider_service
+[OHOS INFO] [GN] location_geofence
+[OHOS INFO] [GN] camera_service
+[OHOS INFO] [GN] camera_service
+[OHOS INFO] [GN] camera_service
+[OHOS INFO] [GN] camera_service
+[OHOS INFO] [GN] camera_service
+[OHOS INFO] [GN] camera_service
+[OHOS INFO] [GN] camera_service
+[OHOS INFO] [GN] camera_service
+[OHOS INFO] [GN] camera_service
+[OHOS INFO] [GN] codec_service
+[OHOS INFO] [GN] codec_service
+[OHOS INFO] [GN] codec_service
+[OHOS INFO] [GN] Msdp motion ability is disabled.
+[OHOS INFO] [GN] midi
+[OHOS INFO] [GN] bluetooth_hci
+[OHOS INFO] [GN] bluetooth_a2dp
+[OHOS INFO] [GN] bluetooth_lp_ble
+[OHOS INFO] [GN] drivers_peripheral_pin_auth
+[OHOS INFO] [GN] daudio
+[OHOS INFO] [GN] daudio
+[OHOS INFO] [GN] daudioext
+[OHOS INFO] [GN] daudioext
+[OHOS INFO] [GN] ######### ets_runtime public enable compressed pointer = false #########
+[OHOS INFO] [GN] ########## ets_runtime disable cmc-gc ##############
+[OHOS INFO] [GN] current_cpu = arm
+[OHOS INFO] [GN] current_os = ohos
+[OHOS INFO] [GN] host_os = linux
+[OHOS INFO] [GN] is_mingw = false
+[OHOS INFO] [GN] ############ ets_runtime enable compressed pointer = false #############
+[OHOS INFO] [GN] ffmpeg selected cplatform
+[OHOS INFO] [GN] default_toolchain =  //build/toolchain/ohos:ohos_clang_arm
+[OHOS INFO] [GN] current_toolchain =  //build/toolchain/ohos:ohos_clang_arm
+[OHOS INFO] [GN] host_toolchain =  //build/toolchain/linux:clang_x64
+[OHOS INFO] [GN] root_out_dir =  //out/rk3568
+[OHOS INFO] [GN] root_output_dir_proto =  out/rk3568/clang_x64
+[OHOS INFO] [GN] display_buffer
+[OHOS INFO] [GN] display_buffer
+[OHOS INFO] [GN] display_buffer
+[OHOS INFO] [GN] display_composer
+[OHOS INFO] [GN] display_composer
+[OHOS INFO] [GN] display_commontype
+[OHOS INFO] [GN] display_buffer
+[OHOS INFO] [GN] display_commontype
+[OHOS INFO] [GN] display_buffer
+[OHOS INFO] [GN] display_composer
+[OHOS INFO] [GN] display_composer
+[OHOS INFO] [GN] display_composer
+[OHOS INFO] [GN] display_commontype
+[OHOS INFO] [GN] display_composer
+[OHOS INFO] [GN] display_commontype
+[OHOS INFO] [GN] display_commontype
+[OHOS INFO] [GN] display_commontype
+[OHOS INFO] [GN] display_commontype
+[OHOS INFO] [GN] drivers_peripheral_face_auth
+[OHOS INFO] [GN] drivers_peripheral_user_auth
+[OHOS INFO] [GN] drivers_peripheral_user_auth
+[OHOS INFO] [GN] libunwind_action is exec
+[OHOS INFO] [GN] location_agnss
+[OHOS INFO] [GN] location_agnss
+[OHOS INFO] [GN] motion_service
+[OHOS INFO] [GN] motion_service
+[OHOS INFO] [GN] usbd
+[OHOS INFO] [GN] usbd
+[OHOS INFO] [GN] usbfn_mtp
+[OHOS INFO] [GN] usbd
+[OHOS INFO] [GN] usb_ddk
+[OHOS INFO] [GN] usbd
+[OHOS INFO] [GN] usbd
+[OHOS INFO] [GN] usb_ddk
+[OHOS INFO] [GN] serial
+[OHOS INFO] [GN] usb_ddk
+[OHOS INFO] [GN] scsi_ddk
+[OHOS INFO] [GN] usb_serial_ddk
+[OHOS INFO] [GN] backends_action is exec
+[OHOS INFO] [GN] partitionslot_interface_service
+[OHOS INFO] [GN] //out/rk3568/obj/foundation/arkui/advanced_ui_component/customappbar/atomicservicemenubar/atomicservicemenubar.abc
+[OHOS INFO] [GN] nearlink_hci
+[OHOS INFO] [GN] nearlink_hci
+[OHOS INFO] [GN] off_find
+[OHOS INFO] [GN] ethernet_service
+[OHOS INFO] [GN] drm_interface_service
+[OHOS INFO] [GN] drm_interface_service
+[OHOS INFO] [GN] drm_interface_service
+[OHOS INFO] [GN] battery_interface_service
+[OHOS INFO] [GN] intell_voice_engine_service
+[OHOS INFO] [GN] intell_voice_engine_service
+[OHOS INFO] [GN] intell_voice_engine_service
+[OHOS INFO] [GN] intell_voice_engine_service
+[OHOS INFO] [GN] intell_voice_trigger_service
+[OHOS INFO] [GN] intell_voice_trigger_service
+[OHOS INFO] [GN] intell_voice_trigger_service
+[OHOS INFO] [GN] ["OS_ACCOUNT_EDM_ENABLE"]
+[OHOS INFO] [GN] power_interface_service
+[OHOS INFO] [GN] power_interface_service
+[OHOS INFO] [GN] power_interface_service
+[OHOS INFO] [GN] power_interface_service
+
+[91m[OHOS ERROR][0m [GN] command failed: "/home/kali/ohscanner-ark-native-20261021/prebuilts/build-tools/linux-x86/bin/gn gen --json=gn_log.json --args=product_name="rk3568" target_cpu="arm" precise_branch="" is_standard_system=true product_path="/home/kali/ohscanner-ark-native-20261021/vendor/hihope/rk3568" product_config_path="/home/kali/ohscanner-ark-native-20261021/vendor/hihope/rk3568" device_name="rk3568" device_path="/home/kali/ohscanner-ark-native-20261021/device/board/rockchip/rk3568" device_company="rockchip" device_config_path="/home/kali/ohscanner-ark-native-20261021/device/board/rockchip/rk3568" ohos_build_compiler_specified="" ohos_build_time=1792519706298 ohos_build_datetime="2026-10-21 10:08:26" ace_engine_feature_enable_accessibility=true ace_engine_feature_enable_web=true ace_engine_feature_enable_upgrade_skia=true os_account_multiple_active_accounts=false datamgr_service_udmf=true access_token_enhance_capability=false code_signature_support_oh_code_sign=false code_signature_support_oh_release_app=true code_signature_support_app_allow_list=false init_feature_ab_partition=true hiview_feature_bbox_userspace=true hiview_enable_leak_detector=true hiview_enable_performance_monitor=true t2stack_feature_vtp=true t2stack_feature_coap=true t2stack_feature_dfile=true dsoftbus_feature_coap=true dsoftbus_feature_vtp=true dsoftbus_feature_dfile=true dsoftbus_feature_disc_ble=true dsoftbus_feature_disc_coap=true dsoftbus_feature_disc_coap_custdata=true dsoftbus_feature_disc_lnn_coap=true dsoftbus_feature_conn_pv1=true dsoftbus_feature_conn_br=true dsoftbus_feature_conn_ble=true dsoftbus_feature_conn_tcp_proxy=true dsoftbus_feature_conn_tcp_comm=true dsoftbus_feature_trans_udp_stream=true dsoftbus_feature_trans_udp_file=true dsoftbus_feature_trans_udp=true dsoftbus_feature_trans_proxy_file=true dsoftbus_feature_trans_qos=true dsoftbus_feature_trans_br_proxy=true dsoftbus_feature_lnn_ble=true dsoftbus_feature_lnn_wifi=true dsoftbus_feature_lnn_cloud_sync=true dsoftbus_feature_lnn_channel_rating=true dsoftbus_feature_lnn_lane_mgr=true dsoftbus_feature_lnn_lane_qos=true dsoftbus_feature_lnn_frame=true wifi_feature_non_seperate_p2p=true wifi_feature_non_hdf_driver=true wifi_feature_p2p_random_mac_addr=true fusion_connectivity_partner_agent_feature=true updater_feature_use_ptable=false updater_feature_updater_gen_executable=true updater_feature_sign_on_server=false sys_installer_feature_ohos_cfg=true graphic_2d_feature_rs_enable_eglimage=true graphic_2d_feature_use_texgine=true graphic_2d_feature_upgrade_skia=true av_codec_fcodec_enable_dmabuffer_at_buffermode=false audio_framework_feature_dtmf_tone=true audio_framework_feature_opensl_es=true audio_framework_feature_support_os_account=false audio_framework_feature_audiosuite_support=true audio_framework_feature_hdmi_detect_audio=true image_framework_feature_upgrade_skia=true input_feature_combination_key=true input_feature_pointer_drawing=true input_feature_interceptor=true input_feature_monitor=true input_feature_keyboard=true input_feature_mouse=true input_feature_touchscreen=true input_feature_input_device=true battery_manager_feature_enable_charger=true memmgr_purgeable_memory=true memmgr_hyperhold_memory=true usb_manager_feature_pop_up_func_switch_model=false usb_manager_feature_host=true usb_manager_feature_device=true usb_manager_feature_port=true device_status_interaction_coordination=false wpa_supplicant_driver_nl80211=true skia_feature_upgrade=true libuv_use_ffrt=true hdf_core_platform_test_support=false hdf_core_default_peripheral_config=false drivers_interface_display_community=true drivers_interface_display_vdi_default=true drivers_peripheral_input_feature_model=true drivers_peripheral_input_feature_support_ddk=true drivers_peripheral_display_community=true drivers_peripheral_display_vdi_default=true drivers_peripheral_wlan_feature_enable_HDF_NL80211=true drivers_peripheral_wlan_feature_enable_HDF_UT=false drivers_peripheral_wlan_feature_vendor="default" drivers_peripheral_wlan_p2p_name="p2p-dev-wlan0" drivers_peripheral_sensor_feature_model=true drivers_peripheral_audio_feature_full_test_suite=true drivers_peripheral_audio_feature_alsa_lib=false drivers_peripheral_audio_feature_effect=true drivers_peripheral_light_feature_model=true drivers_peripheral_vibrator_feature_model=true drivers_peripheral_codec_feature_support_omx_extend_test=true drivers_peripheral_codec_feature_support_hdi_v1=true smartperf_host_device=true drivers_interface_audio_community=true alsa_lib_feature_config_enable=true ohos_build_type="debug" device_type="default" build_variant="root" ohos_components_checktype=4 ohos_interception_rule_switch=1023 root_perf_main="main" runtime_mode="release" /home/kali/ohscanner-ark-native-20261021/out/rk3568" , ret_code: 1
+
+[91m[OHOS ERROR][0m [GN] ERROR at //build/ohos/app/app_internal.gni:413:11: OHOS component : (weex-loader) not found.
+
+[91m[OHOS ERROR][0m [GN]           "weex-loader:weex_loader_ark_hap"
+
+[91m[OHOS ERROR][0m [GN]           ^--------------------------------
+
+[91m[OHOS ERROR][0m [GN] See //build/ohos/app/app_internal.gni:358:3: whence it was called.
+
+[91m[OHOS ERROR][0m [GN]   action_with_pydeps(target_name) {
+
+[91m[OHOS ERROR][0m [GN]   ^--------------------------------
+
+[91m[OHOS ERROR][0m [GN] See //build/ohos/app/app.gni:684:3: whence it was called.
+
+[91m[OHOS ERROR][0m [GN]   compile_js_assets(_js_assets_target) {
+
+[91m[OHOS ERROR][0m [GN]   ^-------------------------------------
+
+[91m[OHOS ERROR][0m [GN] See //base/global/system_resources/systemres/BUILD.gn:28:1: whence it was called.
+
+[91m[OHOS ERROR][0m [GN] ohos_hap("systemres_hap") {
+
+[91m[OHOS ERROR][0m [GN] ^--------------------------
+
+[91m[OHOS ERROR][0m [GN] See //build/ohos/ohos_part.gni:29:16: which caused the file to be included.
+
+[91m[OHOS ERROR][0m [GN]     _deps += [ get_label_info(module_label, "label_with_toolchain") ]
+
+[91m[OHOS ERROR][0m [GN]                ^--------------------------------------------------
+
+[91m[OHOS ERROR][0m [GN] thermal_interface_service
+
+[91m[OHOS ERROR][0m [GN] vibrator_service
+
+[91m[OHOS ERROR][0m [GN] Debug info gen_utils_abc file path:  //out/rk3568/obj/commonlibrary/ets_utils/js_concurrent_module/utils/utils.abc
+
+[91m[OHOS ERROR][0m [GN] memory_tracker_interface_service
+
+[91m[OHOS ERROR][0m [GN] rk3568_group in
+
+[91m[OHOS ERROR][0m [GN] miscdevice_feature_vibrator_custom = true
+
+[91m[OHOS ERROR][0m [GN] input_service
+
+[91m[OHOS ERROR][0m [GN] hid_ddk
+
+[91m[OHOS ERROR][0m [GN] hid_ddk
+
+[91m[OHOS ERROR][0m [GN] E2FSPROGS_DIR is /home/kali/ohscanner-ark-native-20261021/out/rk3568/gen/third_party/e2fsprogs/e2fsprogs
+
+[91m[OHOS ERROR][0m [GN] Support dsoftbus.
+
+[91m[OHOS ERROR][0m [GN] support hearing aid
+
+[91m[OHOS ERROR][0m [GN] callmanager call transfer
+
+[91m[OHOS ERROR][0m [GN] has_hisysevent_part = true
+
+[91m[OHOS ERROR][0m [GN] event ces_hitrace_usage = true
+
+[91m[OHOS ERROR][0m [GN] effect_host
+
+[91m[OHOS ERROR][0m [GN] audio_service
+
+[91m[OHOS ERROR][0m [GN] audio_service
+
+[91m[OHOS ERROR][0m [GN] ["--haptobin", "../../developtools/packing_tool/adapter/ohos", "--haptobinOutput", "obj/developtools/packing_tool/jar/haptobin_tool.jar", "--unpackOutput", "obj/developtools/packing_tool/jar/app_unpacking_tool.jar", "--packOutput", "obj/developtools/packing_tool/jar/app_packing_tool.jar", "--outpath", "obj/developtools/packing_tool/jar", "--checkOutput", "obj/developtools/packing_tool/jar/app_check_tool.jar", "--toolchain", "//build/toolchain/ohos:ohos_clang_arm", "--compileTarget", "image"]
+
+[91m[OHOS ERROR][0m [GN] cups_action is exec
+
+[91m[OHOS ERROR][0m [GN] ************libhilog_base use_musl ***************
+
+[91m[OHOS ERROR][0m [GN] wlan_service
+
+[91m[OHOS ERROR][0m [GN] wlan_service
+
+[91m[OHOS ERROR][0m [GN] wlan_service
+
+[91m[OHOS ERROR][0m [GN] wpa_service
+
+[91m[OHOS ERROR][0m [GN] hostapd_service
+
+[91m[OHOS ERROR][0m [GN] chip
+
+[91m[OHOS ERROR][0m [GN] chip
+
+[91m[OHOS ERROR][0m [GN] location_gnss
+
+[91m[OHOS ERROR][0m [GN] nnrt
+
+[91m[OHOS ERROR][0m [GN] nnrt
+
+[91m[OHOS ERROR][0m [GN] nnrt
+
+[91m[OHOS ERROR][0m [GN] drivers_peripheral_huks
+
+[91m[OHOS ERROR][0m [GN] drivers_peripheral_huks
+
+[91m[OHOS ERROR][0m [GN] Reading plugin sources: ets (//build/toolchain/ohos:ohos_clang_arm)
+
+[91m[OHOS ERROR][0m [GN] Traceback (most recent call last):
+[91m[OHOS ERROR][0m [GN]   File "/home/kali/ohscanner-ark-native-20261021/build/hb/containers/status.py", line 47, in wrapper
+[91m[OHOS ERROR][0m [GN]     return func(*args, **kwargs)
+[91m[OHOS ERROR][0m [GN]            ^^^^^^^^^^^^^^^^^^^^^
+[91m[OHOS ERROR][0m [GN]   File "/home/kali/ohscanner-ark-native-20261021/build/hb/services/gn.py", line 133, in _execute_gn_gen_cmd
+[91m[OHOS ERROR][0m [GN]     SystemUtil.exec_command(gn_gen_cmd, self.config.log_path)
+[91m[OHOS ERROR][0m [GN]   File "/home/kali/ohscanner-ark-native-20261021/build/hb/util/system_util.py", line 142, in exec_command
+[91m[OHOS ERROR][0m [GN]     LogUtil.get_failed_log(log_path, cmd)
+[91m[OHOS ERROR][0m [GN]   File "/home/kali/ohscanner-ark-native-20261021/build/hb/util/log_util.py", line 219, in get_failed_log
+[91m[OHOS ERROR][0m [GN]     LogUtil.get_gn_failed_log(log_path)
+[91m[OHOS ERROR][0m [GN]   File "/home/kali/ohscanner-ark-native-20261021/build/hb/util/log_util.py", line 153, in get_gn_failed_log
+[91m[OHOS ERROR][0m [GN]     raise OHOSException(
+[91m[OHOS ERROR][0m [GN] exceptions.ohos_exception.OHOSException: GN Failed! Please check error in /home/kali/ohscanner-ark-native-20261021/out/rk3568/error.log, and for more build information in /home/kali/ohscanner-ark-native-20261021/out/rk3568/build.log
+[91m[OHOS ERROR][0m [GN] 
+
+[91m[OHOS ERROR][0m [GN] Code:        3000
+[91m[OHOS ERROR][0m [GN] 
+[91m[OHOS ERROR][0m [GN] Reason:      GN Failed! Please check error in /home/kali/ohscanner-ark-native-20261021/out/rk3568/error.log, and for more build information in /home/kali/ohscanner-ark-native-20261021/out/rk3568/build.log
+[91m[OHOS ERROR][0m [GN] 
+[91m[OHOS ERROR][0m [GN] Error Type:  UNKNOWN
+[91m[OHOS ERROR][0m [GN] 
+[91m[OHOS ERROR][0m [GN] Description: An unknown error occurred while executing 'gn gen'.
+[91m[OHOS ERROR][0m [GN] 
+[91m[OHOS ERROR][0m [GN] Solution:    There is no solution available. You can check the 'gn_error.log' in the output directory for more information
+[91m[OHOS ERROR][0m [GN] 

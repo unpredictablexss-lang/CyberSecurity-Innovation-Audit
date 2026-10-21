@@ -1,0 +1,4 @@
+default-species-getter=DefaultDerived
+custom-species-getter=Uint16Species
+DefaultDerived source=DefaultDerived result=DefaultDerived values=1,-1,3
+CustomDerived source=CustomDerived result=Uint16Species values=1,65535,3

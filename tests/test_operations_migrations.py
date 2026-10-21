@@ -12,7 +12,7 @@ from src.workbench.store import Store
 
 
 class OperationsMigrationConcurrencyTests(unittest.TestCase):
-    def test_parallel_v7_to_v9_migrations_are_serialized(self):
+    def test_parallel_v7_to_v11_migrations_are_serialized(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             data = root / "data"
@@ -66,16 +66,22 @@ class OperationsMigrationConcurrencyTests(unittest.TestCase):
             self.assertTrue(all(code == 0 for code, _ in outputs), repr(outputs))
             with sqlite3.connect(store.path) as db:
                 self.assertEqual(db.execute(
-                    "SELECT max(version) FROM schema_migrations").fetchone()[0], 9)
+                    "SELECT max(version) FROM schema_migrations").fetchone()[0], 11)
                 cancellation_columns = {row[1] for row in db.execute(
                     "PRAGMA table_info(triage_cancellations)")}
                 columns = {row[1] for row in db.execute(
                     "PRAGMA table_info(smart_triage_batches)")}
+                ticket_columns = {row[1] for row in db.execute(
+                    "PRAGMA table_info(joint_comparison_preview_tickets)")}
             self.assertTrue({
                 "r2_status", "r2_operation_ids", "r2_candidate_manifest",
                 "r2_decision_sha256", "r2_error",
             }.issubset(columns))
             self.assertTrue({"audit_id", "report_sha256", "created_at"}.issubset(cancellation_columns))
+            self.assertTrue({
+                "consent_nonce", "consent_sha256", "expires_at", "issued_at",
+                "consumed_by", "consumed_at",
+            }.issubset(ticket_columns))
 
 
 if __name__ == "__main__":

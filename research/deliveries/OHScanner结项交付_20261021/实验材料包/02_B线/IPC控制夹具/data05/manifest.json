@@ -1,0 +1,35 @@
+[
+  {
+    "sample_id": "tlv_fixed_width_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-05",
+    "expected_rule": "ipc.tlv.fixed-width-length",
+    "file": "tlv_fixed_width_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "tlv_fixed_width_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-05",
+    "expected_rule": null,
+    "file": "tlv_fixed_width_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.tlv.fixed-width-length"
+    ]
+  },
+  {
+    "sample_id": "tlv_fixed_width_safe",
+    "data_origin": "synthetic",
+    "family": "DATA-05",
+    "expected_rule": null,
+    "file": "tlv_fixed_width_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.tlv.fixed-width-length"
+    ]
+  }
+]

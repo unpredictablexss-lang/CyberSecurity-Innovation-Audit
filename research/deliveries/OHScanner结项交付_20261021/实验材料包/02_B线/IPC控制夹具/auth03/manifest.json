@@ -1,0 +1,126 @@
+[
+  {
+    "sample_id": "caller_class_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": "ipc.auth.caller-class",
+    "file": "caller_class_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "A caller-class-sensitive operation (GetPermissionUsedRecordsAsync) runs behind a caller permission check and no named caller-role predicate. The permission fact is honest and insufficient: a permission is not a caller class, so the boundary the rule asks about is exactly the one that is absent."
+  },
+  {
+    "sample_id": "caller_class_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "caller_class_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "notes": "caller_class_positive plus one line: a named caller-role predicate (IPCSkeleton::IsSystemAppCalling) rejects callers outside the class before the operation. The pair differs in exactly that line, so the suppressed candidate is attributable to the caller-class fact and not to a widened guard set.",
+    "control_rules": [
+      "ipc.auth.caller-class"
+    ]
+  },
+  {
+    "sample_id": "caller_class_unreviewed_name_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "caller_class_unreviewed_name_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "notes": "A look-alike permission-usage query (GetPermissionUsageSummary) at the same site. The rule is scoped to a reviewed set of names rather than to a call shape, so a sibling API that is not on that set raises nothing.",
+    "control_rules": [
+      "ipc.auth.caller-class"
+    ]
+  },
+  {
+    "sample_id": "identity_domain_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": "ipc.auth.identity-domain",
+    "file": "identity_domain_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "AccessTokenKit::VerifyAccessToken is a reviewed result-domain predicate; it is called with the calling UID where its result domain is a caller TokenID. The same call also loses its permission credit -- the submitted identity is a different domain, so the guarded operation is recorded as unguarded as well as mis-domained. That coupling is the rule's point and is why this positive carries three candidates."
+  },
+  {
+    "sample_id": "identity_domain_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "identity_domain_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "notes": "identity_domain_positive with the submitted identity changed from IPCSkeleton::GetCallingUid() to IPCSkeleton::GetCallingTokenID() -- the remediation the rule names, and no other line changes.",
+    "control_rules": [
+      "ipc.auth.identity-domain"
+    ]
+  },
+  {
+    "sample_id": "request_identity_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "request_identity_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.auth.request-identity"
+    ],
+    "notes": "request_identity_positive with the principal changed from a Parcel-supplied token to the IPC caller TokenID; the candidate rule must be suppressed."
+  },
+  {
+    "sample_id": "identity_domain_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "identity_domain_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.auth.identity-domain"
+    ],
+    "notes": "A caller TokenID is passed to VerifyAccessToken, so the identity domain matches the predicate; this checks the rule does not report the correctly typed caller identity."
+  },
+  {
+    "sample_id": "service_identity_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "service_identity_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.auth.service-identity"
+    ],
+    "notes": "The sensitive operation is authorized against the original IPC caller TokenID, not a service/self token."
+  },
+  {
+    "sample_id": "request_identity_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "request_identity_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.auth.request-identity"
+    ],
+    "notes": "A request-supplied token is used only as a lookup argument; the authorization predicate is bound to the IPC caller TokenID."
+  },
+  {
+    "sample_id": "object_owner_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "object_owner_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.auth.object-owner"
+    ],
+    "notes": "The owner UID is first materialized from the requested target, compared against the calling UID, and only then passed to the sensitive background-task operation."
+  }
+]

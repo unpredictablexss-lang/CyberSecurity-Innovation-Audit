@@ -1,0 +1,297 @@
+{
+  "detector": {
+    "id": "ohscanner.data.sensitive_exposure",
+    "sink_model_version": "0.8.0",
+    "version": "0.18.0"
+  },
+  "file_outcomes": [
+    [
+      "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp",
+      "partial"
+    ]
+  ],
+  "finding_count": 10,
+  "findings": [
+    {
+      "line": 127,
+      "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp:121 source heuristic suspected sensitive field credentialAbstract -> 121 assign credentialAbstract -> 127 unresolved call AniUtils::GenerateCredArray",
+      "obligations": [
+        {
+          "description": "Resolve the exact overload, receiver, and implementation for AniUtils::GenerateCredArray.",
+          "kind": "callee_binding"
+        },
+        {
+          "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+          "kind": "sink_behavior"
+        },
+        {
+          "description": "No log exposure or reader reachability is established by this call alone.",
+          "kind": "runtime_log_visibility"
+        },
+        {
+          "description": "Establish recoverable sensitive material and concrete impact independently.",
+          "kind": "security_impact"
+        }
+      ],
+      "rule_id": "data.sensitive.unresolved-escape",
+      "source_sha256": "81381d6a4978990b93f9219cbd1c9f2bf1d7a30743dd5420dd7b6ce03f042e98"
+    },
+    {
+      "line": 157,
+      "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp:147 source heuristic suspected sensitive field credential -> 147 assign credential -> 157 unresolved call AniUtils::GenerateCredDetailArrayObj",
+      "obligations": [
+        {
+          "description": "Resolve the exact overload, receiver, and implementation for AniUtils::GenerateCredDetailArrayObj.",
+          "kind": "callee_binding"
+        },
+        {
+          "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+          "kind": "sink_behavior"
+        },
+        {
+          "description": "No log exposure or reader reachability is established by this call alone.",
+          "kind": "runtime_log_visibility"
+        },
+        {
+          "description": "Establish recoverable sensitive material and concrete impact independently.",
+          "kind": "security_impact"
+        }
+      ],
+      "rule_id": "data.sensitive.unresolved-escape",
+      "source_sha256": "81381d6a4978990b93f9219cbd1c9f2bf1d7a30743dd5420dd7b6ce03f042e98"
+    },
+    {
+      "line": 188,
+      "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp:188 source heuristic suspected sensitive identifier credentialObj -> 188 unresolved call env->Object_SetPropertyByName_Ref | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp:215 source heuristic suspected sensitive identifier credentialObj -> 215 call CMResultBuilder::credentialSetStringProperty argument 0 -> 188 unresolved call env->Object_SetPropertyByName_Ref",
+      "obligations": [
+        {
+          "description": "Resolve the exact overload, receiver, and implementation for env->Object_SetPropertyByName_Ref.",
+          "kind": "callee_binding"
+        },
+        {
+          "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+          "kind": "sink_behavior"
+        },
+        {
+          "description": "No log exposure or reader reachability is established by this call alone.",
+          "kind": "runtime_log_visibility"
+        },
+        {
+          "description": "Establish recoverable sensitive material and concrete impact independently.",
+          "kind": "security_impact"
+        }
+      ],
+      "rule_id": "data.sensitive.unresolved-escape",
+      "source_sha256": "81381d6a4978990b93f9219cbd1c9f2bf1d7a30743dd5420dd7b6ce03f042e98"
+    },
+    {
+      "line": 192,
+      "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp:192 source heuristic suspected sensitive identifier credentialObj -> 192 unresolved call env->Object_SetPropertyByName_Ref | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp:215 source heuristic suspected sensitive identifier credentialObj -> 215 call CMResultBuilder::credentialSetStringProperty argument 0 -> 192 unresolved call env->Object_SetPropertyByName_Ref",
+      "obligations": [
+        {
+          "description": "Resolve the exact overload, receiver, and implementation for env->Object_SetPropertyByName_Ref.",
+          "kind": "callee_binding"
+        },
+        {
+          "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+          "kind": "sink_behavior"
+        },
+        {
+          "description": "No log exposure or reader reachability is established by this call alone.",
+          "kind": "runtime_log_visibility"
+        },
+        {
+          "description": "Establish recoverable sensitive material and concrete impact independently.",
+          "kind": "security_impact"
+        }
+      ],
+      "rule_id": "data.sensitive.unresolved-escape",
+      "source_sha256": "81381d6a4978990b93f9219cbd1c9f2bf1d7a30743dd5420dd7b6ce03f042e98"
+    },
+    {
+      "line": 196,
+      "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp:196 source heuristic suspected sensitive identifier credentialObj -> 196 unresolved call env->Object_SetPropertyByName_Ref | Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp:215 source heuristic suspected sensitive identifier credentialObj -> 215 call CMResultBuilder::credentialSetStringProperty argument 0 -> 196 unresolved call env->Object_SetPropertyByName_Ref",
+      "obligations": [
+        {
+          "description": "Resolve the exact overload, receiver, and implementation for env->Object_SetPropertyByName_Ref.",
+          "kind": "callee_binding"
+        },
+        {
+          "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+          "kind": "sink_behavior"
+        },
+        {
+          "description": "No log exposure or reader reachability is established by this call alone.",
+          "kind": "runtime_log_visibility"
+        },
+        {
+          "description": "Establish recoverable sensitive material and concrete impact independently.",
+          "kind": "security_impact"
+        }
+      ],
+      "rule_id": "data.sensitive.unresolved-escape",
+      "source_sha256": "81381d6a4978990b93f9219cbd1c9f2bf1d7a30743dd5420dd7b6ce03f042e98"
+    },
+    {
+      "line": 210,
+      "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp:210 source heuristic suspected sensitive identifier credentialObj -> 210 unresolved call AniUtils::GenerateCredentialObj",
+      "obligations": [
+        {
+          "description": "Resolve the exact overload, receiver, and implementation for AniUtils::GenerateCredentialObj.",
+          "kind": "callee_binding"
+        },
+        {
+          "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+          "kind": "sink_behavior"
+        },
+        {
+          "description": "No log exposure or reader reachability is established by this call alone.",
+          "kind": "runtime_log_visibility"
+        },
+        {
+          "description": "Establish recoverable sensitive material and concrete impact independently.",
+          "kind": "security_impact"
+        }
+      ],
+      "rule_id": "data.sensitive.unresolved-escape",
+      "source_sha256": "81381d6a4978990b93f9219cbd1c9f2bf1d7a30743dd5420dd7b6ce03f042e98"
+    },
+    {
+      "line": 226,
+      "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp:226 source heuristic suspected sensitive identifier credentialObj -> 226 unresolved call env->Object_SetPropertyByName_Int",
+      "obligations": [
+        {
+          "description": "Resolve the exact overload, receiver, and implementation for env->Object_SetPropertyByName_Int.",
+          "kind": "callee_binding"
+        },
+        {
+          "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+          "kind": "sink_behavior"
+        },
+        {
+          "description": "No log exposure or reader reachability is established by this call alone.",
+          "kind": "runtime_log_visibility"
+        },
+        {
+          "description": "Establish recoverable sensitive material and concrete impact independently.",
+          "kind": "security_impact"
+        }
+      ],
+      "rule_id": "data.sensitive.unresolved-escape",
+      "source_sha256": "81381d6a4978990b93f9219cbd1c9f2bf1d7a30743dd5420dd7b6ce03f042e98"
+    },
+    {
+      "line": 231,
+      "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp:231 source heuristic suspected sensitive identifier credentialObj -> 231 unresolved call env->Object_SetPropertyByName_Int",
+      "obligations": [
+        {
+          "description": "Resolve the exact overload, receiver, and implementation for env->Object_SetPropertyByName_Int.",
+          "kind": "callee_binding"
+        },
+        {
+          "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+          "kind": "sink_behavior"
+        },
+        {
+          "description": "No log exposure or reader reachability is established by this call alone.",
+          "kind": "runtime_log_visibility"
+        },
+        {
+          "description": "Establish recoverable sensitive material and concrete impact independently.",
+          "kind": "security_impact"
+        }
+      ],
+      "rule_id": "data.sensitive.unresolved-escape",
+      "source_sha256": "81381d6a4978990b93f9219cbd1c9f2bf1d7a30743dd5420dd7b6ce03f042e98"
+    },
+    {
+      "line": 236,
+      "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp:236 source heuristic suspected sensitive identifier credentialObj -> 236 unresolved call env->Object_SetPropertyByName_Ref",
+      "obligations": [
+        {
+          "description": "Resolve the exact overload, receiver, and implementation for env->Object_SetPropertyByName_Ref.",
+          "kind": "callee_binding"
+        },
+        {
+          "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+          "kind": "sink_behavior"
+        },
+        {
+          "description": "No log exposure or reader reachability is established by this call alone.",
+          "kind": "runtime_log_visibility"
+        },
+        {
+          "description": "Establish recoverable sensitive material and concrete impact independently.",
+          "kind": "security_impact"
+        }
+      ],
+      "rule_id": "data.sensitive.unresolved-escape",
+      "source_sha256": "81381d6a4978990b93f9219cbd1c9f2bf1d7a30743dd5420dd7b6ce03f042e98"
+    },
+    {
+      "line": 240,
+      "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp:240 source heuristic suspected sensitive identifier credentialObj -> 240 unresolved call env->Object_SetPropertyByName_Ref",
+      "obligations": [
+        {
+          "description": "Resolve the exact overload, receiver, and implementation for env->Object_SetPropertyByName_Ref.",
+          "kind": "callee_binding"
+        },
+        {
+          "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+          "kind": "sink_behavior"
+        },
+        {
+          "description": "No log exposure or reader reachability is established by this call alone.",
+          "kind": "runtime_log_visibility"
+        },
+        {
+          "description": "Establish recoverable sensitive material and concrete impact independently.",
+          "kind": "security_impact"
+        }
+      ],
+      "rule_id": "data.sensitive.unresolved-escape",
+      "source_sha256": "81381d6a4978990b93f9219cbd1c9f2bf1d7a30743dd5420dd7b6ce03f042e98"
+    }
+  ],
+  "limitations": [
+    "Candidate only: runtime log readers, production enablement and impact require independent review.",
+    "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+    "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+    "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+    "No reviewed sensitive-source model for this repository/commit; heuristic candidates are incomplete and the scan is blocked.",
+    "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+    "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: bounded same-file helper expansion; cross-file and deeper call flows remain unknown",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: branch merge is may-flow; no path feasibility proof",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: loop body analyzed for may-flow only at line 81; iteration count/path feasibility unresolved",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: modeled status-return API; argument escape remains a candidate: AniUtils::GenerateCredentialObj",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: modeled status-return API; argument escape remains a candidate: env->Object_SetPropertyByName_Ref",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: pointer/member assignment requires alias proof",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: preprocessor/build context not expanded",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: short-circuit effects are may-flow; no path feasibility proof",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: unknown field/alias propagation",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: unmodeled call may mutate/escape sensitive value: AniUtils::GenerateCredArray",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: unmodeled call may mutate/escape sensitive value: AniUtils::GenerateCredDetailArrayObj",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: unmodeled call may mutate/escape sensitive value: AniUtils::GenerateCredentialObj",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: unmodeled call may mutate/escape sensitive value: env->Object_SetPropertyByName_Int",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: unmodeled call may mutate/escape sensitive value: env->Object_SetPropertyByName_Ref",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: unresolved transform/call AniUtils::GenerateCredArray",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: unresolved transform/call AniUtils::GenerateCredDetailArrayObj",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: unreviewed sensitive-field-name heuristic source; semantics unknown",
+    "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp: unreviewed sensitive-name heuristic source; semantics unknown"
+  ],
+  "network_access": "not attempted",
+  "schema": 1,
+  "source": {
+    "blob": "dab8f8d2358da084923e6ab786c9b373957bfe3c",
+    "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+    "file": "interfaces/kits/ani/cm_ani_common/builder/src/cm_result_builder.cpp",
+    "repository": "openharmony/security_certificate_manager",
+    "snapshot_sha256": "d5c13a56b985f29c5dd3df34179f168eac9b4b20193313a5733e9aa40fafe355",
+    "source_sha256": "81381d6a4978990b93f9219cbd1c9f2bf1d7a30743dd5420dd7b6ce03f042e98"
+  },
+  "source_checkout_or_head_change": "not attempted",
+  "status": "blocked",
+  "study": "D43 CM_LOG format and status-return development replay",
+  "validated_vulnerability": 0
+}

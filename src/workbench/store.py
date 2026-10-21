@@ -155,6 +155,28 @@ class Store:
                 )
         return self.job(key)
 
+    def register_repository_and_create_job(self, name, path, spec):
+        """Atomically register a cache-backed repository and enqueue its fixed scan."""
+        repo_id, job_id = uuid.uuid4().hex, uuid.uuid4().hex
+        stamp = now()
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT * FROM repositories WHERE path=?", (str(path),)).fetchone()
+            if row is None:
+                db.execute("INSERT INTO repositories VALUES(?,?,?,?)",
+                           (repo_id, name, str(path), stamp))
+            else:
+                repo_id = row["id"]
+                if row["name"] != name:
+                    raise ValueError("repository cache path is registered under a conflicting name")
+            if db.execute("SELECT count(*) FROM jobs WHERE status IN ('queued','running')").fetchone()[0] >= 100:
+                raise ValueError("queue capacity reached")
+            db.execute("INSERT INTO jobs(id,repository_id,spec,status,stage,created_at) VALUES(?,?,?,?,?,?)",
+                       (job_id, repo_id, json.dumps(spec, sort_keys=True), "queued", "source_pinned", stamp))
+            db.execute("INSERT INTO events(job_id,created_at,stage,message) VALUES(?,?,?,?)",
+                       (job_id, stamp, "source_pinned", "Fixed repository revision pinned from the public catalog"))
+        return self.repository(repo_id), self.job(job_id)
+
     def triage_authorization(self, audit_id):
         with self.connect() as db:
             row = db.execute(

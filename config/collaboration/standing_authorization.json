@@ -1,0 +1,10 @@
+{
+  "decision_date": "2026-10-20",
+  "scope": "D:\\openHarmonyScanner and descendant repositories/worktrees",
+  "source": "Explicit project team lead authorization, supplied by the user",
+  "valid_until": "explicitly revoked by the user",
+  "authorized": ["project code, tests and documentation", "necessary shared-file edits", "public source retrieval", "local builds and isolated component PoCs", "fixes and revalidation", "local commits and routine branch delivery/integration"],
+  "not_development_blockers": ["product fingerprints or images", "complete build profiles", "independent holdout or formal accuracy", "human reviewers, adjudicators or custodians", "sealed custody or all-case closure", "historical read-only, ownership and per-action signoff rules"],
+  "requirements": ["preserve other work and original evidence", "protect secrets and isolate target-code execution", "unknown remains unknown", "not_run remains not_run", "a waiver is not a passing test", "do not fabricate accuracy or product impact"],
+  "exclusions": ["platform permission changes", "unrelated third-party messaging", "destructive data operations", "attacks on live services"]
+}

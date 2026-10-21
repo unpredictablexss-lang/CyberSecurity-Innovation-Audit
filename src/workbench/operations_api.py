@@ -1,20 +1,53 @@
+_REMEDIATION_DRAFTS = {
+    "CWE-20": "在输入边界显式校验类型、范围、编码与长度，并在进入敏感操作前拒绝不满足约束的值；约束应来自接口契约。",
+    "CWE-22": "在访问前规范化并解析目标路径，确认最终路径仍位于授权根目录内；同时明确处理符号链接、路径分隔符和编码差异。",
+    "CWE-119": "以实际缓冲区容量校验每次读写，使用溢出安全的长度计算；拒绝越界输入并保留边界值控制测试。",
+    "CWE-125": "读取前验证索引及长度不超过实际对象边界，采用溢出安全的范围计算，并覆盖空、末端及超界输入。",
+    "CWE-131": "按实际元素宽度和溢出安全的乘加计算分配容量，再验证后续索引/长度与该容量一致。",
+    "CWE-362": "统一保护共享状态的所有读写：让每条访问路径使用一致的同步协议，或采用满足全部访问方约束的原子/不可变替换方案；复核锁顺序和对象生命周期。",
+    "CWE-416": "让借用指针在最后一次解引用前始终由有效所有权保护；优先使用 RAII 所有权并缩短借用期，若有并发访问则统一生命周期与同步协议。",
+    "CWE-441": "在分发远程请求前校验接口身份/描述符及适用的调用权限，并确认每条敏感分支都受同一授权边界约束。",
+    "CWE-476": "在解引用前处理空值并定义安全失败路径；如果空值表示无效状态，应在进入敏感操作前终止流程。",
+    "CWE-787": "写入前根据目标对象的真实容量验证偏移和长度，并采用溢出安全的边界运算；覆盖恰好边界与越界控制。",
+    "CWE-862": "在敏感操作入口执行服务端授权检查，核验调用身份、权限和对象范围，并确保绕过其他调用路径不能直达该操作。",
+    "CWE-863": "让授权决策使用正确的主体、动作和资源属性，并对允许/拒绝两侧及边界身份执行控制验证。",
+}
+_SOURCE_NOT_SUPPLIED = object()
+import zipfile
+from typing import Literal
+from fastapi.responses import FileResponse, Response
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+from .operations import (approved_url, date_selection, enqueue_branch_comparison, enqueue_range,
+                         range_plan, multimode_triage_preview, bind_multimode_triage)
+from .source_catalog import (CatalogUnavailable, repository_catalog as public_repository_catalog,
+                             repository_preview, validate_commit, validate_branch,
+                             validate_preview, validate_repository_slug)
 """Typed local API for long-running operations; every input becomes an immutable plan."""
 import hashlib
+import html as html_lib
 from decimal import Decimal, InvalidOperation
+from html import escape as html_escape
+from io import BytesIO
 import json
 import re
+import subprocess
 import uuid
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 from fastapi import APIRouter, FastAPI, HTTPException
-from fastapi.responses import FileResponse, Response
-from pydantic import BaseModel, ConfigDict, Field
-from .operations import approved_url, date_selection, enqueue_branch_comparison, enqueue_range
+from fastapi.responses import FileResponse, JSONResponse, Response
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from .operations import (MAX_SOURCE_SYNC_BATCH_REPOSITORIES, approved_url, date_selection,
+                         enqueue_branch_comparison, enqueue_range, range_plan,
+                         recent_window_selections, source_sync_preflight)
 from .operations_store import Operations, END
 from .operation_limits import MAX_DETECTOR_IDS
 from .store import now
 from . import service
 from .agent_guidance import recommend_investigation_route
+from .triage_limits import (MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
+                            MAX_AUTOMATIC_TRIAGE_ENDPOINTS)
 
 
 _MARKDOWN_INLINE_SPECIAL_CHARS = frozenset(chr(92) + "*_{}[]()#+-.!|<>~" + chr(96))
@@ -27,8 +60,182 @@ def _markdown_inline_untrusted(value):
                    for char in normalized)
 
 
+def _case_html_text(value, fallback="未记录"):
+    if value is None:
+        value = fallback
+    if isinstance(value, (dict, list, tuple)):
+        value = json.dumps(value, ensure_ascii=False, sort_keys=True)
+    return html_lib.escape(str(value), quote=True)
+
+
+def _case_html_list(values, *, empty="未记录"):
+    if not isinstance(values, (list, tuple)) or not values:
+        return "<p>" + _case_html_text(empty) + "</p>"
+    return "<ul>" + "".join("<li>" + _case_html_text(item) + "</li>" for item in values) + "</ul>"
+
+
+def _case_html_citations(citations):
+    if not isinstance(citations, list) or not citations:
+        return "<p>未提供引用。</p>"
+    rows = []
+    for citation in citations:
+        if not isinstance(citation, dict):
+            continue
+        location = _case_html_text(citation.get("file", "未知文件"))
+        if citation.get("line_start") is not None:
+            location += ":" + _case_html_text(citation.get("line_start"))
+            if citation.get("line_end") is not None:
+                location += "–" + _case_html_text(citation.get("line_end"))
+        evidence_id = _case_html_text(citation.get("evidence_id", "未记录证据 ID"))
+        quote = citation.get("quote")
+        detail = "<p>" + evidence_id + " · " + location + "</p>"
+        if quote:
+            detail += "<blockquote>" + _case_html_text(quote) + "</blockquote>"
+        rows.append("<li>" + detail + "</li>")
+    return "<ul>" + "".join(rows) + "</ul>" if rows else "<p>未提供有效引用。</p>"
+
+
+def _case_report_html_document(data):
+    """Render a self-contained report; every untrusted value is HTML escaped."""
+    h = _case_html_text
+    case_id = h(data.get("case_id"))
+    operations = data.get("operations") if isinstance(data.get("operations"), list) else []
+    candidates = data.get("candidates") if isinstance(data.get("candidates"), list) else []
+    assessments = data.get("assessments") if isinstance(data.get("assessments"), list) else []
+    rows = [
+        "<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\">",
+        "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'\">",
+        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>OHScanner 调查案例报告</title>",
+        "<style>body{font:16px/1.65 system-ui,sans-serif;max-width:1100px;margin:2rem auto;padding:0 1.25rem;color:#172b4d}h1,h2,h3{line-height:1.3}section,article{margin:1.25rem 0;padding:1rem;border:1px solid #dce3ee;border-radius:10px}pre{overflow:auto;padding:1rem;background:#f4f6fa;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere}blockquote{margin:.5rem 0;padding:.5rem 1rem;border-left:3px solid #9cb5da;background:#f7f9fc}.boundary{padding:.8rem;background:#fff4e5;border-left:4px solid #e79c22}.muted{color:#65758b}.fact{margin:.45rem 0}</style></head><body><main>",
+        "<h1>OHScanner 调查案例报告</h1>",
+        "<p>案例：<code>" + case_id + "</code></p>",
+        "<p class=\"boundary\">候选和 Agent 结论不等于漏洞确认。PoC 草案未执行、未验证；组件 Harness 观察不单独证明产品可达性。</p>",
+    ]
+    operation_scope = data.get("operation_summaries") or {}
+    included = operation_scope.get("included", len(operations))
+    total = operation_scope.get("total", len(operations))
+    rows.append("<section><h2>操作记录范围</h2><p>展示 " + h(included) + " / " + h(total) + " 条结果。</p>")
+    if operation_scope.get("truncated"):
+        rows.append("<p class=\"boundary\">尚有 " + h(max(0, total - included)) + " 条操作未展开，不能据此推断它们没有结果。</p>")
+    rows.append("</section><section><h2>候选与固定证据</h2>")
+    if not candidates:
+        rows.append("<p>没有关联候选记录。</p>")
+    for row in candidates:
+        row = row if isinstance(row, dict) else {}
+        candidate = row.get("candidate") if isinstance(row.get("candidate"), dict) else {}
+        rows.append("<article><h3>" + h(candidate.get("detector_id")) + " / " + h(candidate.get("rule_id")) + "</h3>")
+        rows.append("<p><strong>状态：</strong>candidate；影响范围 unknown</p>")
+        rows.append("<p class=\"fact\"><strong>来源：</strong>" + h(row.get("repository")) + " @ " + h(row.get("commit")) + "</p>")
+        rows.append("<p class=\"fact\"><strong>位置：</strong>" + h(candidate.get("file")) + ":" + h(candidate.get("line")) + "</p>")
+        rows.append("<p class=\"fact\"><strong>报告 SHA-256：</strong><code>" + h(row.get("report_sha256")) + "</code></p>")
+        if row.get("rationale"):
+            rows.append("<p><strong>案例关联理由：</strong>" + h(row.get("rationale")) + "</p>")
+        rows.append("<h4>人工登记源码证据</h4>")
+        evidence_rows = row.get("source_evidence") if isinstance(row.get("source_evidence"), list) else []
+        if evidence_rows:
+            rows.append("<ul>" + "".join(
+                "<li>" + h(item.get("file") or candidate.get("file")) + ":" + h(item.get("start_line")) +
+                " · " + h(item.get("note") or item.get("observation") or "未记录说明") + "</li>"
+                for item in evidence_rows if isinstance(item, dict)) + "</ul>")
+        else:
+            rows.append("<p>尚未登记人工源码证据。</p>")
+        review_rows = row.get("reviews") if isinstance(row.get("reviews"), list) else []
+        rows.append("<h4>候选复核记录</h4>")
+        rows.append(_case_html_list([
+            str(item.get("status") or "未记录") + " · " + str(item.get("reviewer") or "未知复核人") +
+            " · " + str(item.get("notes") or "未记录说明")
+            for item in review_rows if isinstance(item, dict)
+        ], empty="尚无候选级人工复核记录。"))
+        rows.append("</article>")
+    rows.append("</section><section><h2>AI 报告、修复建议与 PoC 草案</h2>")
+    agent_ops = [item for item in operations if isinstance(item, dict)
+                 and item.get("kind") == "agent_investigation" and isinstance(item.get("agent_triage"), dict)]
+    if not agent_ops:
+        rows.append("<p>当前案例没有绑定的 Agent 调查结果；PoC 计划未执行，状态 unknown。</p>")
+    for operation in agent_ops:
+        triage = operation["agent_triage"]
+        rows.append("<article><h3>Agent 调查 · " + h(operation.get("id")) + "</h3>")
+        generation = triage.get("artifact_generation") if isinstance(triage.get("artifact_generation"), dict) else {}
+        if generation:
+            rows.append("<p><strong>报告/PoC 草案生成阶段：</strong>" + h(generation.get("status")) +
+                        "；模型调用数 " + h(generation.get("calls_used", "unknown")) +
+                        "。此阶段状态不代表扫描完成或漏洞确认。</p>")
+        report = triage.get("vulnerability_report") if isinstance(triage.get("vulnerability_report"), dict) else None
+        if report:
+            rows.append("<h4>漏洞报告草案 · " + h(report.get("status", "unknown")) + "</h4>")
+            for label, key in (("标题", "title"), ("摘要", "summary"), ("根因", "root_cause"),
+                               ("潜在影响", "impact"), ("修复建议", "remediation")):
+                if report.get(key):
+                    rows.append("<p><strong>" + label + "：</strong>" + h(report.get(key)) + "</p>")
+            for label, key in (("前置条件", "preconditions"), ("攻击路径草案", "attack_path")):
+                rows.append("<h5>" + label + "</h5>" + _case_html_list(report.get(key)))
+            rows.append("<h5>报告引用（仅展示 Agent 提供的引用）</h5>" + _case_html_citations(report.get("citations")))
+            rows.append("<p class=\"boundary\">报告内容是 candidate / unknown 的 AI 草案，引用存在不等于语义主张已被证实。</p>")
+        else:
+            rows.append("<p>未记录结构化漏洞报告草案。</p>")
+        guidance = triage.get("repair_guidance") if isinstance(triage.get("repair_guidance"), dict) else {}
+        rows.append("<h4>其他修复/验证建议（未经验证）</h4>" +
+                    _case_html_list(guidance.get("items"), empty="没有记录其他建议。"))
+        poc = triage.get("poc_draft") if isinstance(triage.get("poc_draft"), dict) else None
+        if poc:
+            poc_status = poc.get("status") or "unknown"
+            rows.append("<h4>PoC 验证计划 · AI 草案 · 未执行 · 未验证 · candidate / unknown</h4>")
+            rows.append("<p><strong>草案状态：</strong>" + h(poc_status) + "；这不是执行结果，也不是漏洞确认。</p>")
+            for label, key in (("标题", "title"), ("语言", "language"),
+                               ("预期观察", "expected_observation"), ("负向对照", "negative_control")):
+                if poc.get(key):
+                    rows.append("<p><strong>" + label + "：</strong>" + h(poc.get(key)) + "</p>")
+            for label, key in (("前置条件", "prerequisites"), ("人工执行步骤", "run_steps")):
+                rows.append("<h5>" + label + "</h5>" + _case_html_list(poc.get(key)))
+            if poc.get("code"):
+                rows.append("<h5>未执行的代码草案</h5><pre><code>" + h(poc.get("code")) + "</code></pre>")
+            else:
+                rows.append("<p>没有可执行 PoC 代码；当前记录为证据不足或草案未提供。</p>")
+            rows.append("<h5>PoC 草案引用（仅展示 Agent 提供的引用）</h5>" + _case_html_citations(poc.get("citations")))
+        else:
+            rows.append("<p class=\"boundary\">未生成 PoC 草案；PoC 计划未执行，状态 unknown。</p>")
+        rows.append("</article>")
+    rows.append("</section><section><h2>固定 Harness / 隔离验证记录</h2>")
+    validation_ops = [item for item in operations if isinstance(item, dict) and item.get("kind") == "validation"]
+    if not validation_ops:
+        rows.append("<p>没有验证操作记录；PoC / 产品影响保持 unknown。</p>")
+    for operation in validation_ops:
+        evidence = operation.get("validation_evidence") if isinstance(operation.get("validation_evidence"), dict) else {}
+        rows.append("<article><h3>" + h(evidence.get("harness_id", "固定 Harness 未记录")) + "</h3>")
+        rows.append("<p>操作状态：" + h(operation.get("status")) + "；验证门：" +
+                    h(operation.get("validation_gate")) + "；产品可达性：" +
+                    h(operation.get("reachability_status", "unknown")) + "；计入确认数：" +
+                    h(operation.get("validated_vulnerability", 0)) + "</p>")
+        for revision_name, revision in (evidence.get("revisions") or {}).items():
+            if not isinstance(revision, dict):
+                continue
+            build = revision.get("build") if isinstance(revision.get("build"), dict) else {}
+            replay = revision.get("replay") if isinstance(revision.get("replay"), dict) else {}
+            rows.append("<p>版本 " + h(revision_name) + " @ " + h(revision.get("commit")) +
+                        "；构建退出码 " + h(build.get("returncode")) + "；重放 " +
+                        h(replay.get("label")) + "；所有案例匹配 " + h(replay.get("all_cases_match")) + "</p>")
+        rows.append("<p class=\"boundary\">组件 Harness 观察不单独证明产品入口可达或漏洞已确认。</p></article>")
+    rows.append("</section><section><h2>人工案例复核</h2>")
+    human_assessments = [item for item in assessments if isinstance(item, dict) and item.get("reviewer_kind") == "human"]
+    rows.append(_case_html_list([
+        str(item.get("reviewer") or "未知复核人") + " · " + str(item.get("outcome") or "未记录") +
+        " · 证据 " + ", ".join(item.get("evidence_ids") or []) +
+        " · 未决项 " + "; ".join(item.get("remaining_unknowns") or [])
+        for item in human_assessments
+    ], empty="尚无人工案例复核记录。"))
+    rows.append("<p><strong>经门控确认的漏洞数：</strong>" + h(data.get("validated_vulnerability", 0)) +
+                "。候选数、Agent 草案和组件 Harness 结果不会自动升级漏洞状态。</p></section>")
+    rows.append("</main></body></html>")
+    return "\n".join(rows)
+
+
 def _aggregate_agent_budget_cost_estimates(estimates):
     items = list(estimates)
+    if items and any(item.get("status") == "unbounded_local_usage"
+                     for item in items if isinstance(item, dict)):
+        return {"status": "unbounded_local_usage", "hard_spend_cap": False,
+                "note": "At least one authorized tool_agent has no local cumulative cost cap; actual charge and quota are controlled by the Provider account.",
+                "actual_charge_verified": False}
     if not items or any(not isinstance(item, dict)
                         or item.get("status") != "budget_based_upper_estimate"
                         for item in items):
@@ -66,17 +273,157 @@ def _aggregate_agent_budget_cost_estimates(estimates):
     return result
 
 
+def _smart_operation_retry_available(store, ops, task):
+    spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
+    if (task.get("kind") != "agent_investigation" or task.get("status") != "interrupted"
+            or task.get("result_sha256") or task.get("cancel_requested")):
+        return False
+    audit_id, report_sha256 = spec.get("job_id"), spec.get("report_sha256")
+    authorization_sha256 = spec.get("triage_authorization_sha256")
+    batch_id, candidate_id = spec.get("smart_triage_batch_id"), spec.get("candidate_id")
+    if not all(isinstance(value, str) and value for value in
+               (audit_id, report_sha256, authorization_sha256, batch_id, candidate_id)):
+        return False
+    try:
+        job = store.job(audit_id)
+        authorization = store.triage_authorization(audit_id)
+        if (job.get("report_sha256") != report_sha256 or not authorization
+                or authorization.get("revoked")
+                or authorization.get("consent_sha256") != authorization_sha256
+                or ops.triage_cancellation(audit_id, report_sha256)):
+            return False
+        batch = next((item for item in ops.triage_batches_for_job(audit_id, report_sha256)
+                      if item["id"] == batch_id
+                      and item["authorization_sha256"] == authorization_sha256), None)
+        if batch is None:
+            return False
+        if spec.get("mode") == "single_shot":
+            member_ids = batch["operation_ids"]
+            manifest = batch["candidate_manifest"]
+        elif spec.get("mode") == "tool_agent":
+            member_ids = batch["r2_operation_ids"]
+            manifest = batch["r2_candidate_manifest"]
+        else:
+            return False
+        if (task["id"] not in member_ids
+                or not any(isinstance(row, dict) and row.get("candidate_id") == candidate_id
+                           and row.get("state") == "selected" for row in manifest)):
+            return False
+        return not any(item["id"] != task["id"]
+                       and item["spec"].get("candidate_id") == candidate_id
+                       and item["status"] in {"queued", "running"}
+                       for item in ops.smart_triage_operations(batch_id))
+    except (KeyError, ValueError, TypeError):
+        return False
+
 class Strict(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class TaskTriageAuthorization(Strict):
+    plan_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    workflow_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    consent_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    consent_nonce: str = Field(pattern=r"^[0-9a-f]{32}$")
+
+
+
+class OfficialRepositoryPreviewRequest(Strict):
+    slug: str = Field(min_length=1, max_length=100)
+
+    @field_validator("slug")
+    @classmethod
+    def valid_slug(cls, value):
+        return validate_repository_slug(value)
+
+
+class OfficialRepositoryImportRequest(Strict):
+    slug: str = Field(min_length=1, max_length=100)
+    branch: str = Field(min_length=1, max_length=200)
+    commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    preview_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
+    detector_ids: list[str] | None = Field(default=None, max_length=MAX_DETECTOR_IDS)
+    timeout_seconds: int = Field(default=600, ge=30, le=3600)
+    memory_mb: int = Field(default=2048, ge=256, le=8192)
+    import_timeout_seconds: int = Field(default=1800, ge=30, le=3600)
+
+    @field_validator("slug")
+    @classmethod
+    def valid_slug(cls, value):
+        return validate_repository_slug(value)
+
+
+class EndpointTriageApproval(Strict):
+    """Compatibility input for multi-endpoint approvals; rebound to the full local plan."""
+    consent_nonce: str = Field(pattern=r"^[0-9a-f]{32}$")
+    consent_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class TaskTriageOptions(Strict):
+    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
+    auto_triage: bool = False
+    max_triage_candidates: int = Field(default=5, ge=1, le=MAX_TRIAGE_CANDIDATES_PER_ENDPOINT)
+    max_r2_candidates: int = Field(default=0, ge=0, le=MAX_TRIAGE_CANDIDATES_PER_ENDPOINT)
+    max_cost_usd: str | None = Field(default=None, min_length=1, max_length=16,
+                                     pattern=r"^\d{1,6}(?:\.\d{1,8})?$")
+    triage_authorizations: list[TaskTriageAuthorization] = Field(default_factory=list, max_length=MAX_AUTOMATIC_TRIAGE_ENDPOINTS)
+    triage_approvals: list[EndpointTriageApproval] = Field(default_factory=list, max_length=MAX_AUTOMATIC_TRIAGE_ENDPOINTS)
+
+    @model_validator(mode="after")
+    def default_r2_for_opted_in_triage(self):
+        # Keep static-only/default requests free of conditional R2 authorization.
+        # When a user opts into automatic triage but omits R2 explicitly, suggest
+        # up to three deep-review candidates, bounded by their R1 authorization.
+        if "max_r2_candidates" not in self.model_fields_set:
+            self.max_r2_candidates = (
+                min(3, self.max_triage_candidates) if self.auto_triage else 0
+            )
+        return self
+
+    @field_validator("max_cost_usd")
+    @classmethod
+    def positive_cost_cap(cls, value):
+        if value is not None and Decimal(value) <= 0:
+            raise ValueError("max_cost_usd must be positive")
+        return value
+
+
 class SyncRequest(Strict):
-    repository: str = Field(pattern=r"^openharmony/[A-Za-z0-9_-]{1,100}$")
+    repository: str = Field(min_length=13, max_length=112)
     url: str = Field(min_length=16, max_length=300)
     timeout_seconds: int = Field(default=900, ge=10, le=3600)
+    scan_after_sync: bool = False
+    revision: str = Field(default="HEAD", min_length=1, max_length=200)
+    include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
+    detector_ids: list[str] | None = Field(default=None, max_length=MAX_DETECTOR_IDS)
+    audit_mode: Literal["standard_review", "static_only"] = "static_only"
+    scan_timeout_seconds: int = Field(default=600, ge=30, le=3600)
+    memory_mb: int = Field(default=2048, ge=256, le=8192)
+
+    @field_validator("repository")
+    @classmethod
+    def valid_repository_name(cls, value):
+        prefix = "openharmony/"
+        if not value.startswith(prefix):
+            raise ValueError("repository must name one OpenHarmony repository")
+        validate_repository_slug(value[len(prefix):])
+        return value
+
+    @field_validator("url")
+    @classmethod
+    def valid_repository_url(cls, value):
+        approved_url(value)
+        return value
 
 
-class RangeRequest(Strict):
+class SyncBatchRequest(Strict):
+    repositories: list[SyncRequest] = Field(
+        min_length=1, max_length=MAX_SOURCE_SYNC_BATCH_REPOSITORIES
+    )
+
+
+class RangeRequest(TaskTriageOptions):
     repository_id: str
     baseline: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
     endpoint: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
@@ -84,16 +431,14 @@ class RangeRequest(Strict):
     detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
-    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
 
 
-class DateRangeRequest(Strict):
+class DateRangeRequest(TaskTriageOptions):
     repository_id: str
     branch: str = Field(min_length=1, max_length=200)
     start: str = Field(min_length=10, max_length=40)
     end: str = Field(min_length=10, max_length=40)
     timezone: str = Field(min_length=1, max_length=100)
-    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
     detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
@@ -108,10 +453,9 @@ class DateRangePreviewRequest(Strict):
     timezone: str = Field(min_length=1, max_length=100)
 
 
-class MatrixRequest(Strict):
+class MatrixRequest(TaskTriageOptions):
     case_id: str
     repository_id: str
-    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
     commits: list[str] = Field(min_length=2, max_length=8)
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
     detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
@@ -119,15 +463,58 @@ class MatrixRequest(Strict):
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
 
-class BranchComparisonRequest(Strict):
+class JointCandidateComparisonSelectors(Strict):
+    matrix_operation_id: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
+    recent_window_operation_id: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
+    from_commit: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
+    from_candidate_id: str = Field(min_length=1, max_length=200)
+    to_commit: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
+    to_candidate_id: str = Field(min_length=1, max_length=200)
+
+    @model_validator(mode="after")
+    def exactly_one_parent_operation(self):
+        if (self.matrix_operation_id is None) == (self.recent_window_operation_id is None):
+            raise ValueError("provide exactly one matrix_operation_id or recent_window_operation_id")
+        return self
+
+
+class JointCandidateComparisonCreateRequest(JointCandidateComparisonSelectors):
+    approved: Literal[True]
+    consent_nonce: str = Field(pattern=r"^[0-9a-f]{32}$")
+    expected_consent_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    expires_at: str = Field(min_length=20, max_length=40)
+
+
+class BranchComparisonRequest(TaskTriageOptions):
     repository_id: str
-    audit_mode: Literal["standard_review", "static_only"] = "standard_review"
     baseline_ref: str = Field(min_length=1, max_length=200)
     endpoint_ref: str = Field(min_length=1, max_length=200)
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
     detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
+
+
+class RecentComparisonRequest(TaskTriageOptions):
+    repository_id: str
+    branch: str = Field(min_length=1, max_length=200)
+    lookback_days: int = Field(default=7, ge=2, le=90)
+    reference_time: str = Field(min_length=10, max_length=40)
+    timezone: str = Field(default="Asia/Shanghai", min_length=1, max_length=100)
+    include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
+    detector_ids: list[str] = Field(min_length=1, max_length=MAX_DETECTOR_IDS)
+    timeout_seconds: int = Field(default=600, ge=30, le=3600)
+    memory_mb: int = Field(default=2048, ge=256, le=8192)
+
+
+class OperationScanPreviewRequest(Strict):
+    kind: Literal["date", "branches", "range", "matrix", "recent"]
+    payload: dict[str, Any]
+
+
+class IntelligentOperationPreviewRequest(Strict):
+    kind: Literal["date", "branches", "range", "matrix"]
+    payload: dict[str, Any]
 
 
 class ValidationRequest(Strict):
@@ -175,7 +562,7 @@ class AgentInvestigationRequest(Strict):
     mode: Literal["single_shot", "tool_agent"] = "tool_agent"
     max_steps: int = Field(default=4, ge=1, le=6)
     max_output_tokens: int = Field(default=1200, ge=128, le=3000)
-    max_total_input_tokens: int = Field(default=24000, ge=1000, le=64000)
+    max_total_input_tokens: int = Field(default=128000, ge=1000, le=512000)
     max_total_output_tokens: int = Field(default=4000, ge=512, le=12000)
     timeout_seconds: int = Field(default=240, ge=90, le=480)
     source_submission_approved: bool = False
@@ -191,7 +578,7 @@ class AgentBatchInvestigationRequest(Strict):
     mode: Literal["single_shot", "tool_agent"] = "tool_agent"
     max_steps: int = Field(default=4, ge=1, le=6)
     max_output_tokens: int = Field(default=1200, ge=128, le=3000)
-    max_total_input_tokens: int = Field(default=24000, ge=1000, le=64000)
+    max_total_input_tokens: int = Field(default=128000, ge=1000, le=512000)
     max_total_output_tokens: int = Field(default=4000, ge=512, le=12000)
     timeout_seconds: int = Field(default=240, ge=90, le=480)
     source_submission_approved: bool = False
@@ -327,6 +714,293 @@ class AgentProposalRequest(Strict):
     duration_ms: int | None = Field(default=None, ge=0)
 
 
+
+_TRIAGE_SUCCESS_STATUSES = {"completed", "completed_with_limitations"}
+_TRIAGE_FAILURE_STATUSES = {"failed", "timed_out", "interrupted", "blocked"}
+_TRIAGE_TERMINAL_STATUSES = _TRIAGE_SUCCESS_STATUSES | _TRIAGE_FAILURE_STATUSES | {"cancelled"}
+
+
+def _operation_phase_progress(records, *, phase_state=None):
+    """Summarize a fixed R1/R2 operation set without treating failures as completion."""
+    statuses = [str(item.get("status") or "unknown") for item in records]
+    counts = {}
+    for status in statuses:
+        counts[status] = counts.get(status, 0) + 1
+    completed = counts.get("completed", 0)
+    completed_with_limitations = counts.get("completed_with_limitations", 0)
+    success = completed + completed_with_limitations
+    failed = sum(counts.get(status, 0) for status in _TRIAGE_FAILURE_STATUSES)
+    cancelled = counts.get("cancelled", 0)
+    queued, running = counts.get("queued", 0), counts.get("running", 0)
+    reasons = [
+        {"operation_id": item.get("id"), "candidate_id": item.get("spec", {}).get("candidate_id"),
+         "status": item.get("status"), "reason": item.get("error") or item.get("status")}
+        for item in records if item.get("status") in _TRIAGE_FAILURE_STATUSES | {"cancelled"}
+    ]
+    if running:
+        state = "running"
+    elif queued:
+        state = "queued"
+    elif not records:
+        state = phase_state or "not_triaged"
+    elif failed and not success and not cancelled and all(status in _TRIAGE_TERMINAL_STATUSES for status in statuses):
+        state = "failed"
+    elif cancelled and not success and not failed and all(status in _TRIAGE_TERMINAL_STATUSES for status in statuses):
+        state = "cancelled"
+    elif success and (failed or cancelled or not all(status in _TRIAGE_SUCCESS_STATUSES for status in statuses)):
+        state = "partially_completed"
+    elif all(status in _TRIAGE_SUCCESS_STATUSES for status in statuses):
+        state = "completed_with_limitations" if completed_with_limitations else "completed"
+    elif failed:
+        state = "failed"
+    else:
+        state = phase_state or "not_triaged"
+    return {
+        "state": state, "operation_count": len(records), "status_counts": counts,
+        "queued_count": queued, "running_count": running, "completed_count": completed,
+        "completed_with_limitations_count": completed_with_limitations,
+        "failed_count": failed, "cancelled_count": cancelled,
+        "timed_out_count": counts.get("timed_out", 0),
+        "interrupted_count": counts.get("interrupted", 0),
+        "blocked_count": counts.get("blocked", 0),
+        "failure_reasons": reasons,
+    }
+
+
+def _classify_intelligent_review(batch, r1_records, r2_records, *, revoked=False):
+    candidate_count = int(batch.get("candidate_count") or 0)
+    selected_count = int(batch.get("selected_count") or 0)
+    r2_state = batch.get("r2_status", "not_requested")
+    r1 = _operation_phase_progress(r1_records)
+    r2 = _operation_phase_progress(r2_records, phase_state=r2_state)
+    all_records = [*r1_records, *r2_records]
+    if revoked:
+        state = "revoked"
+    elif batch.get("status") == "candidate_limit_exceeded":
+        state = "candidate_limit_exceeded"
+    elif batch.get("status") == "queue_limit_exceeded":
+        state = "queue_limit_exceeded"
+    elif batch.get("status") == "blocked_authorization_changed":
+        state = "authorization_changed"
+    elif batch.get("status") == "no_eligible_candidates" or candidate_count == 0:
+        state = "no_eligible_candidates"
+    elif any(item.get("status") == "running" for item in all_records):
+        state = "running"
+    elif any(item.get("status") == "queued" for item in all_records) or r2_state == "awaiting_r1":
+        state = "queued"
+    elif not all_records:
+        state = "not_triaged" if candidate_count else "no_eligible_candidates"
+    else:
+        successes = sum(item.get("status") in _TRIAGE_SUCCESS_STATUSES for item in all_records)
+        failures = sum(item.get("status") in _TRIAGE_FAILURE_STATUSES for item in all_records)
+        cancellations = sum(item.get("status") == "cancelled" for item in all_records)
+        full_coverage = selected_count >= candidate_count
+        all_success = all(item.get("status") in _TRIAGE_SUCCESS_STATUSES for item in all_records)
+        if all_success and full_coverage and r2_state not in {
+            "candidate_limit_reached", "failed_selection", "queue_limit_exceeded"
+        }:
+            state = ("completed_with_limitations"
+                     if any(item.get("status") == "completed_with_limitations" for item in all_records)
+                     else "completed")
+        elif successes:
+            state = "partially_completed"
+        elif failures:
+            state = "failed"
+        elif cancellations:
+            state = "cancelled"
+        else:
+            state = "not_triaged"
+    return {"state": state, "r1": r1, "r2": r2,
+            "candidate_count": candidate_count, "authorized_candidate_count": selected_count,
+            "not_triaged_count": max(0, candidate_count - selected_count),
+            "r2_status": r2_state}
+
+
+def _operation_scan_plan(settings, store, kind, body):
+    """Resolve operation inputs to immutable scan plans before queue insertion."""
+    mode = body.audit_mode
+    if kind in {"range", "date"}:
+        if kind == "date":
+            selection = date_selection(settings, store, body.repository_id, body.branch,
+                                       body.start, body.end, body.timezone)
+            baseline, endpoint = selection["baseline"], selection["endpoint"]
+        else:
+            selection = None
+            baseline, endpoint = body.baseline, body.endpoint
+        repo, before, after, commits = range_plan(settings, store, body.repository_id,
+            baseline, endpoint, body.include_paths, body.detector_ids,
+            body.timeout_seconds, body.memory_mb)
+        scans = [{**before, "audit_mode": mode}, {**after, "audit_mode": mode}]
+        spec = {"repository_id": repo["id"], "baseline": before["commit"],
+            "endpoint": after["commit"], "commits": commits, "audit_mode": mode,
+            "timeout_seconds": body.timeout_seconds * 2 + 60, "memory_mb": body.memory_mb,
+            "date_selection": selection}
+        return "revision_range", repo, spec, scans
+    if kind == "branches":
+        repo = store.repository(body.repository_id)
+        service.check_repository(settings, repo["path"])
+        before = service.revision(repo, body.baseline_ref)
+        after = service.revision(repo, body.endpoint_ref)
+        if before["commit"] == after["commit"]:
+            raise ValueError("branch comparison refs must resolve to different commits")
+        scans = [service.make_spec(repo, item["commit"], body.include_paths, body.detector_ids,
+                                  body.timeout_seconds, body.memory_mb)
+                 for item in (before, after)]
+        scans = [{**scan, "audit_mode": mode} for scan in scans]
+        spec = {"repository_id": repo["id"], "audit_mode": mode,
+            "baseline_ref": body.baseline_ref, "baseline": before["commit"],
+            "endpoint_ref": body.endpoint_ref, "endpoint": after["commit"],
+            "timeout_seconds": body.timeout_seconds * 2 + 60, "memory_mb": body.memory_mb}
+        return "branch_comparison", repo, spec, scans
+    if kind == "matrix":
+        if len(set(body.commits)) != len(body.commits):
+            raise ValueError("version matrix commits must be unique")
+        if any(not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", item) for item in body.commits):
+            raise ValueError("version matrix requires complete lowercase Git object IDs")
+        with store.connect() as db:
+            if not db.execute("SELECT 1 FROM cases WHERE id=?", (body.case_id,)).fetchone():
+                raise KeyError("case not found")
+        repo = store.repository(body.repository_id)
+        service.check_repository(settings, repo["path"])
+        links = _case_links(store, body.case_id)
+        if not any(store.repository(store.job(link["job_id"])["repository_id"])["name"] == repo["name"] for link in links):
+            raise ValueError("version matrix case must already link a candidate from the selected repository")
+        scans = [service.make_spec(repo, sha, body.include_paths, body.detector_ids,
+                                   body.timeout_seconds, body.memory_mb) for sha in body.commits]
+        scans = [{**scan, "audit_mode": mode} for scan in scans]
+        spec = {"case_id": body.case_id, "repository_id": repo["id"], "audit_mode": mode,
+            "commits": [scan["commit"] for scan in scans],
+            "timeout_seconds": body.timeout_seconds * len(scans) + 120,
+            "memory_mb": body.memory_mb}
+        return "version_matrix", repo, spec, scans
+    if kind == "recent":
+        selection = recent_window_selections(settings, store, body.repository_id, body.branch,
+            body.lookback_days, body.reference_time, body.timezone)
+        repo = store.repository(body.repository_id)
+        service.check_repository(settings, repo["path"])
+        windows = (selection["long_window"], selection["one_day_window"])
+        scans = []
+        for window in windows:
+            for revision in (window["baseline"], window["endpoint"]):
+                scan = service.make_spec(repo, revision, body.include_paths, body.detector_ids,
+                                         body.timeout_seconds, body.memory_mb)
+                scans.append({**scan, "audit_mode": mode})
+        spec = {"repository_id": repo["id"], "branch": body.branch,
+            "lookback_days": body.lookback_days, "reference_time": selection["reference_time"],
+            "timezone": body.timezone, "windows": [selection["long_window"], selection["one_day_window"]],
+            "audit_mode": mode, "timeout_seconds": body.timeout_seconds * 4 + 120,
+            "memory_mb": body.memory_mb,
+            "limitations": ["Each window scans its fixed baseline and endpoint; commits inside the interval are not individually scanned.",
+                            "Candidate deltas do not establish vulnerability introduction, remediation, or affected product versions."]}
+        return "recent_window_comparison", repo, spec, scans
+    raise ValueError("unsupported scan operation preview")
+
+
+def _prepare_operation_triage(settings, body, scan_specs, *, authorization_inputs=None):
+    """Attach per-endpoint consent snapshots only after matching a fresh preview."""
+    mode = body.audit_mode
+    enabled = body.auto_triage
+    if body.max_r2_candidates > body.max_triage_candidates:
+        raise ValueError("conditional R2 candidate budget cannot exceed the R1 candidate budget")
+    if body.max_r2_candidates and not enabled:
+        raise ValueError("conditional R2 requires task-level automatic triage authorization")
+    if enabled and mode != "standard_review":
+        raise ValueError("automatic triage requires standard review mode")
+    supplied = authorization_inputs if authorization_inputs is not None else body.triage_authorizations
+    approvals = [item.model_dump() for item in body.triage_approvals]
+    if approvals and supplied:
+        raise ValueError("submit either endpoint approvals or bound authorizations, not both")
+    if not enabled:
+        if supplied or approvals:
+            raise ValueError("triage authorizations cannot be submitted unless automatic triage was selected")
+        prepared = []
+        for scan in scan_specs:
+            workflow = service.audit_workflow_sha256(scan["plan_sha256"], mode)
+            prepared.append({**scan, "audit_mode": mode, "max_r2_candidates": 0,
+                "max_cost_usd": body.max_cost_usd, "workflow_sha256": workflow,
+                "workflow": service.audit_workflow_summary(mode)})
+        return prepared
+    if not isinstance(supplied, list) or len(supplied) != len(scan_specs):
+        if approvals:
+            if len(approvals) != len(scan_specs):
+                raise ValueError("every fixed endpoint requires a separately reviewed model-egress preview")
+            preview = _preview_operation_triage(
+                settings, body, scan_specs,
+                consent_nonces=[item["consent_nonce"] for item in approvals],
+            )
+            bound = []
+            for item, approval, endpoint in zip(scan_specs, approvals, preview["scans"]):
+                if approval["consent_sha256"] != endpoint["consent_sha256"]:
+                    raise ValueError("endpoint consent expired or changed; review a fresh preview")
+                bound.append({"plan_sha256": endpoint["plan_sha256"],
+                              "workflow_sha256": endpoint["workflow_sha256"],
+                              "consent_sha256": endpoint["consent_sha256"],
+                              "consent_nonce": endpoint["consent_nonce"]})
+            supplied = bound
+        else:
+            raise ValueError("every fixed endpoint requires a separately reviewed model-egress preview")
+    from .agent import ProviderConfig, audit_task_consent_preview
+    provider = ProviderConfig.from_env(settings.data_dir)
+    prepared = []
+    for scan, raw in zip(scan_specs, supplied):
+        authorization = raw.model_dump() if isinstance(raw, TaskTriageAuthorization) else raw
+        workflow = service.audit_workflow_sha256(scan["plan_sha256"], mode, True,
+            body.max_triage_candidates, body.max_r2_candidates)
+        if (authorization.get("plan_sha256") != scan["plan_sha256"]
+                or authorization.get("workflow_sha256") != workflow):
+            raise ValueError("multi-endpoint model authorization no longer matches the fixed scan plan")
+        preview = audit_task_consent_preview(scan["audit_plan"], workflow,
+            scan["include_paths"], body.max_triage_candidates,
+            authorization.get("consent_nonce"), provider,
+            body.max_r2_candidates)
+        if (not preview.get("eligible")
+                or preview.get("consent_sha256") != authorization.get("consent_sha256")):
+            raise ValueError("model-egress preview expired or changed; review a fresh preview")
+        prepared.append({**scan, "audit_mode": mode, "max_r2_candidates": body.max_r2_candidates,
+            "max_cost_usd": body.max_cost_usd, "workflow_sha256": workflow,
+            "workflow": service.audit_workflow_summary(mode, True,
+                body.max_triage_candidates, body.max_r2_candidates),
+            "triage_authorization": {"authorized": True,
+                "consent_sha256": preview["consent_sha256"], "snapshot": preview["manifest"]}})
+    return prepared
+
+
+def _preview_operation_triage(settings, body, scan_specs, *, consent_nonces=None):
+    if not body.auto_triage:
+        return {"eligible": False, "model_calls": 0,
+                "scans": [{"commit": scan["commit"], "plan_sha256": scan["plan_sha256"]}
+                          for scan in scan_specs],
+                "message": "No model source egress is authorized; endpoint scans remain static."}
+    if body.audit_mode != "standard_review":
+        raise ValueError("automatic triage is only available in standard review mode")
+    if body.max_r2_candidates > body.max_triage_candidates:
+        raise ValueError("conditional R2 candidate limit cannot exceed R1 candidate limit")
+    from .agent import ProviderConfig, audit_task_consent_preview
+    provider = ProviderConfig.from_env(settings.data_dir)
+    if consent_nonces is None:
+        consent_nonces = [uuid.uuid4().hex for _ in scan_specs]
+    if len(consent_nonces) != len(scan_specs):
+        raise ValueError("consent nonce count does not match fixed endpoint count")
+    previews = []
+    for scan, nonce in zip(scan_specs, consent_nonces):
+        workflow = service.audit_workflow_sha256(scan["plan_sha256"], body.audit_mode, True,
+            body.max_triage_candidates, body.max_r2_candidates)
+        preview = audit_task_consent_preview(scan["audit_plan"], workflow,
+            scan["include_paths"], body.max_triage_candidates, nonce,
+            provider, body.max_r2_candidates, max_cost_usd=body.max_cost_usd)
+        if not preview.get("eligible"):
+            raise ValueError("automatic triage cannot be authorized: " + preview.get("reason", "provider unavailable"))
+        source_binding = ((scan.get("audit_plan") or {}).get("source") or {})
+        previews.append({"commit": scan["commit"], "tree": scan.get("git_tree") or source_binding.get("git_tree"),
+            "plan_sha256": scan["plan_sha256"], "workflow_sha256": workflow,
+            **preview})
+    aggregate = _aggregate_agent_budget_cost_estimates(item.get("estimated_cost") for item in previews)
+    return {"eligible": True, "model_calls": None,
+            "per_endpoint_candidate_scope": True, "aggregate_estimated_cost": aggregate,
+            "scans": previews,
+            "consent_required": "Review each source-egress manifest and submit each nonce and digest with the operation. Candidate counts remain bounded by authorization; no platform cumulative token/USD/call/total-time cap is applied. Provider billing and quota apply."}
+
+
 def _case_links(store, case_id):
     with store.connect() as db:
         return [dict(x) for x in db.execute("SELECT * FROM case_links WHERE case_id=? ORDER BY job_id,candidate_id", (case_id,))]
@@ -336,16 +1010,15 @@ def _case_review_status(store, ops, case_id):
     assessments = ops.assessments(case_id)
     human_assessments = [item for item in assessments if item.get("reviewer_kind") == "human"]
     latest = human_assessments[-1] if human_assessments else None
-    valid_evidence_ids = {
-        item["id"]
-        for link in _case_links(store, case_id)
-        for item in store.source_evidence(link["job_id"], link["candidate_id"])
-    }
+    links = _case_links(store, case_id)
+    single_candidate = len({(item["job_id"], item["candidate_id"]) for item in links}) == 1
+    valid_evidence_ids = {item["id"] for link in links
+                          for item in store.source_evidence(link["job_id"], link["candidate_id"])}
     validated_by = None
     # The latest human decision controls current case status. An older confirmation
     # must not survive a later append-only candidate/unknown/refutation assessment.
     assessment = latest
-    if (assessment and assessment.get("outcome") in {"confirmed", "reportable"}
+    if (single_candidate and assessment and assessment.get("outcome") in {"confirmed", "reportable"}
             and assessment.get("evidence_ids")
             and assessment.get("remaining_unknowns")
             and set(assessment["evidence_ids"]).issubset(valid_evidence_ids)):
@@ -408,9 +1081,7 @@ def _combined_audit_report_markdown(document):
         "- Tree：`" + md(scan["tree"]) + "`",
         "- 静态扫描：" + md(scan["status"]) + "；智能研判：" + md(triage["state"]),
         "- 漏洞确认数：" + str(document["validated_vulnerability"]),
-        "- 工作台模型费用预算：" + ("USD " + md(cost_budget.get("maximum_usd"))
-            + "（费率卡估算上限 USD " + md(cost_budget.get("estimated_maximum_usd"))
-            + "；不代表 Provider 账单硬上限）" if cost_budget else "未设置任务级自动研判预算"),
+        "- 模型费用：" + ("平台不设累计 USD 上限；实际计费与配额由 Provider 账户决定" if cost_budget else "未授权自动模型研判"),
         "",
         "## 风险分层",
         "",
@@ -426,9 +1097,24 @@ def _combined_audit_report_markdown(document):
     for tier, label in labels.items():
         rows.append("| " + md(label) + " | " + str(risks["counts"].get(tier, 0)) + " |")
     rows.extend(["", "## 优先候选", ""])
-    selected = risks.get("items", [])[:20]
+    all_risk_items = risks.get("items", [])
+    all_risk_items = all_risk_items if isinstance(all_risk_items, list) else []
+    selected = all_risk_items[:20]
+    tier_total = sum(int(value or 0) for value in risks.get("counts", {}).values())
+    declared_total = risks.get("candidate_observation_count")
+    risk_total = max(len(all_risk_items), tier_total,
+                     declared_total if isinstance(declared_total, int) and not isinstance(declared_total, bool) else 0)
+    if risk_total > len(selected):
+        rows.append("> 风险分层统计覆盖 " + str(risk_total) + " 条候选观测；本节仅展示前 " +
+                    str(len(selected)) + " 条明细，另有 " + str(risk_total - len(selected)) +
+                    " 条明细未展开。未展开项仍属于本快照，不能据此推断其没有风险。")
+        rows.append("")
     if not selected:
-        rows.append("当前没有静态候选；这不表示整个仓库无漏洞。")
+        if risk_total:
+            rows.append("当前快照未包含候选明细；风险分层统计仍记录 " + str(risk_total) +
+                        " 条候选观测，不能将明细缺失理解为没有候选。")
+        else:
+            rows.append("当前没有静态候选；这不表示整个仓库无漏洞。")
     for item in selected:
         rows.extend([
             "### " + md(item.get("risk_tier_label")) + " — "
@@ -545,6 +1231,165 @@ def _blind_packet(result):
     return packet
 
 
+def _experiment_evidence_summary(settings, store, ops):
+    """Summarize persisted, source-bound Agent and validation evidence without scoring truth."""
+    agent_groups = {}
+    validation_runs = []
+    agent_operation_count = 0
+    agent_bound_count = 0
+    agent_unknown_count = 0
+
+    # Keep this inventory explicitly bounded to the same recent operation window as
+    # the existing telemetry panel. It is not a complete experiment ledger.
+    for operation in ops.list():
+        spec = operation.get("spec") if isinstance(operation.get("spec"), dict) else {}
+        if operation.get("kind") == "agent_investigation":
+            agent_operation_count += 1
+            result = {}
+            source_state = "unknown"
+            if operation.get("result_sha256"):
+                try:
+                    result = ops.result(operation["id"])
+                    if not isinstance(result, dict):
+                        raise ValueError("agent result is not a JSON object")
+                    binding = result.get("binding") if isinstance(result.get("binding"), dict) else {}
+                    job = store.job(spec.get("job_id"))
+                    report = service.read_report(settings, job)
+                    candidate = service.finding(report, spec.get("candidate_id"))
+                    anchor = _fixed_case_source_anchor(settings, store, job, report, candidate)
+                    expected_binding = {
+                        "job_id": job["id"], "candidate_id": candidate["id"],
+                        "repository": report.get("repository"),
+                        "report_sha256": job.get("report_sha256"),
+                        "commit": job.get("spec", {}).get("commit"),
+                        "source_sha256": candidate.get("source_sha256"),
+                    }
+                    provider = result.get("provider") if isinstance(result.get("provider"), dict) else {}
+                    if all((
+                        spec.get("candidate_id") == candidate.get("id"),
+                        spec.get("report_sha256") == job.get("report_sha256"),
+                        spec.get("source_commit") == job.get("spec", {}).get("commit"),
+                        spec.get("candidate_source_sha256") == candidate.get("source_sha256"),
+                        result.get("mode") == spec.get("mode"),
+                        result.get("experiment_id") == spec.get("experiment_id"),
+                        provider.get("model") == spec.get("provider_model"),
+                        result.get("prompt_version") == spec.get("prompt_version"),
+                        result.get("tool_policy_version") == spec.get("tool_policy_version"),
+                        result.get("vulnerability_state") == "candidate",
+                        result.get("validated_vulnerability") == 0,
+                        anchor.get("verified") is True,
+                        all(binding.get(key) == value for key, value in expected_binding.items()),
+                    )):
+                        source_state = "verified_fixed_source"
+                except (KeyError, TypeError, ValueError, OSError, UnicodeError,
+                        subprocess.CalledProcessError, subprocess.TimeoutExpired):
+                    pass
+            if source_state == "verified_fixed_source":
+                agent_bound_count += 1
+            else:
+                agent_unknown_count += 1
+            provider = result.get("provider") if isinstance(result.get("provider"), dict) else {}
+            dimensions = (
+                spec.get("experiment_id") or None,
+                result.get("mode") or spec.get("mode") or "unknown",
+                provider.get("model") or spec.get("provider_model") or "unknown",
+                result.get("prompt_version") or spec.get("prompt_version") or "unknown",
+                result.get("tool_policy_version") or spec.get("tool_policy_version") or "unknown",
+            )
+            group = agent_groups.setdefault(dimensions, {
+                "experiment_id": dimensions[0], "mode": dimensions[1], "model": dimensions[2],
+                "prompt_version": dimensions[3], "tool_policy_version": dimensions[4],
+                "operation_count": 0, "status_counts": {},
+                "fixed_source_bound_result_count": 0, "unknown_binding_count": 0,
+            })
+            group["operation_count"] += 1
+            status = operation.get("status", "unknown")
+            group["status_counts"][status] = group["status_counts"].get(status, 0) + 1
+            group["fixed_source_bound_result_count"] += int(source_state == "verified_fixed_source")
+            group["unknown_binding_count"] += int(source_state != "verified_fixed_source")
+
+        elif operation.get("kind") == "validation":
+            result = {}
+            manifest_state = "unknown"
+            manifest_reason = "验证尚无可校验的结果清单。"
+            if operation.get("result_sha256"):
+                try:
+                    result = ops.result(operation["id"])
+                    if not isinstance(result, dict):
+                        raise ValueError("validation result is not a JSON object")
+                    manifest_path = ops.directory(operation["id"]) / "input-manifest.json"
+                    raw_manifest = manifest_path.read_bytes()
+                    if len(raw_manifest) > 256 * 1024:
+                        raise ValueError("validation input manifest exceeds limit")
+                    manifest_hash = hashlib.sha256(raw_manifest).hexdigest()
+                    manifest = json.loads(raw_manifest)
+                    if not isinstance(manifest, dict):
+                        raise ValueError("validation input manifest is not a JSON object")
+                    if (manifest_hash == result.get("input_manifest_sha256")
+                            and manifest.get("target_commit") == spec.get("target_commit")
+                            and manifest.get("target_repository") == spec.get("target_repository")
+                            and manifest.get("cutils_commit") == spec.get("cutils_commit")
+                            and isinstance(manifest.get("harness_manifest_sha256"), str)
+                            and re.fullmatch(r"[0-9a-f]{64}", manifest["harness_manifest_sha256"])):
+                        manifest_state = "verified_input_manifest"
+                        manifest_reason = None
+                    else:
+                        manifest_reason = "验证结果与持久化输入清单/固定提交不一致。"
+                except (KeyError, TypeError, ValueError, OSError, UnicodeError):
+                    manifest_reason = "验证输入清单缺失、损坏或与结果摘要不匹配。"
+
+            if spec.get("harness_id") == "auth01_descriptor_bypass":
+                scope = "component_harness"
+            elif (manifest_state == "verified_input_manifest"
+                  and spec.get("validation_scope") == "product_level"
+                  and result.get("validation_scope") == "product_level"
+                  and result.get("reachability_status") == "verified"):
+                scope = "product_level"
+            else:
+                scope = "unknown"
+            validation_runs.append({
+                "operation_id": operation["id"], "case_id": spec.get("case_id"),
+                "scope": scope, "harness_id": spec.get("harness_id"),
+                "status": operation.get("status", "unknown"),
+                "target_repository": spec.get("target_repository") or "unknown",
+                "target_commit": spec.get("target_commit") or "unknown",
+                "input_manifest_state": manifest_state,
+                "input_manifest_reason": manifest_reason,
+                "validation_gate": result.get("validation_gate", "unknown"),
+                "reachability_status": result.get("reachability_status", "unknown"),
+                "validated_vulnerability": 0,
+            })
+
+    return {
+        "schema_version": 1,
+        "operation_window": "recent_200_persisted_operations",
+        "accuracy_claim": False,
+        "agent": {
+            "state": "available" if agent_operation_count else "unknown",
+            "operation_count": agent_operation_count,
+            "fixed_source_bound_result_count": agent_bound_count,
+            "unknown_binding_count": agent_unknown_count,
+            "groups": [agent_groups[key] for key in sorted(
+                agent_groups, key=lambda value: tuple(str(item or "") for item in value))],
+            "limitation": "只汇总可重新校验固定扫描报告、候选源码 SHA 与 Agent 结果绑定的运行；不衡量模型正确性。",
+        },
+        "validation": {
+            "state": "available" if validation_runs else "unknown",
+            "run_count": len(validation_runs),
+            "scope_counts": {
+                scope: sum(item["scope"] == scope for item in validation_runs)
+                for scope in ("component_harness", "product_level", "unknown")
+            },
+            "runs": validation_runs,
+            "limitation": "验证操作只按显式 Harness 类型与持久化输入清单分类，不自动关联到候选实验；组件 Harness 结果不代表产品级可达性。",
+        },
+        "holdout": {
+            "state": "unknown",
+            "reason": "没有持久化的冻结独立 holdout 清单、样本成员身份与人工真值标签；不计算准确率、Precision 或 Recall。",
+        },
+    }
+
+
 def install_routes(app: FastAPI, settings, store):
     ops = Operations(store)
     router = APIRouter(prefix="/api/v1")
@@ -556,7 +1401,9 @@ def install_routes(app: FastAPI, settings, store):
 
     @router.get("/agent/evaluation-summary")
     def agent_evaluation_summary():
-        return ops.agent_evaluation_summary()
+        summary = ops.agent_evaluation_summary()
+        summary["evidence_evaluation"] = _experiment_evidence_summary(settings, store, ops)
+        return summary
 
     @router.get("/agent/static-review-preview")
     def agent_static_review_preview(job_id: str, candidate_id: str):
@@ -761,59 +1608,283 @@ def install_routes(app: FastAPI, settings, store):
         }
         return ops.record_agent_baseline_review(record)
 
+    def normalize_source_sync_entries(body):
+        entries = []
+        seen = {}
+        timeout_total = 0
+        from urllib.parse import urlsplit
+        for item in body.repositories:
+            values = item.model_dump()
+            repository = values.pop("repository")
+            submitted_url = values.pop("url")
+            url = approved_url(submitted_url)
+            expected = "/" + repository + (".git" if urlsplit(url).path.endswith(".git") else "")
+            if urlsplit(url).path != expected:
+                raise ValueError("repository URL path must match the approved repository name")
+            canonical = repository.casefold()
+            normalized = {"name": repository, "url": url, **values}
+            prior = seen.get(canonical)
+            if prior is not None and prior != normalized:
+                raise ValueError("duplicate repository entries must use the same URL and scan options")
+            if prior is None:
+                seen[canonical] = normalized
+                timeout_total += values["timeout_seconds"]
+            entries.append(normalized)
+        if timeout_total > 7200:
+            raise ValueError("batch total Git timeout cannot exceed two hours")
+        return entries, timeout_total
+
+    @router.post("/operations/source-sync/preview")
+    def source_sync_preview(body: SyncBatchRequest):
+        entries, _timeout_total = normalize_source_sync_entries(body)
+        return source_sync_preflight(settings, entries)
+
+    @router.post("/operations/source-sync/batch", status_code=201)
+    def source_sync_batch(body: SyncBatchRequest):
+        entries, timeout_total = normalize_source_sync_entries(body)
+        return ops.create("source_sync_batch", {
+            "repositories": entries,
+            "timeout_seconds": timeout_total + 60,
+            "max_repositories": MAX_SOURCE_SYNC_BATCH_REPOSITORIES,
+        })
+
     @router.post("/operations/source-sync", status_code=201)
     def source_sync(body: SyncRequest):
+        prefix = "openharmony/"
+        if not body.repository.startswith(prefix):
+            raise ValueError("repository must name one OpenHarmony repository")
+        slug = validate_repository_slug(body.repository[len(prefix):])
         url = approved_url(body.url)
-        expected = "/" + body.repository + (".git" if body.url.endswith(".git") else "")
-        from urllib.parse import urlsplit
-        if urlsplit(url).path != expected:
+        from urllib.parse import quote, urlsplit
+        path = urlsplit(url).path
+        expected = "/" + prefix + quote(slug, safe="") + (".git" if path.endswith(".git") else "")
+        if path != expected:
             raise ValueError("repository URL path must match the approved repository name")
         return ops.create("source_sync", {"name": body.repository, "url": url,
-                                          "timeout_seconds": body.timeout_seconds})
+                                          **body.model_dump(exclude={"repository", "url"})})
+
+    @router.post("/operations/scan-previews")
+    def operation_scan_preview(body: OperationScanPreviewRequest):
+        request_models = {"range": RangeRequest, "date": DateRangeRequest,
+                          "branches": BranchComparisonRequest, "matrix": MatrixRequest,
+                          "recent": RecentComparisonRequest}
+        operation_body = request_models[body.kind].model_validate(body.payload)
+        if operation_body.triage_authorizations or operation_body.triage_approvals:
+            raise ValueError("preview requests must not contain prior authorization tokens")
+        operation_kind, repo, operation_spec, scans = _operation_scan_plan(
+            settings, store, body.kind, operation_body)
+        return {"operation_kind": operation_kind, "repository": repo["name"],
+            "spec": operation_spec,
+            "triage_authorization_preview": _preview_operation_triage(
+                settings, operation_body, scans)}
+
+    @router.get("/repositories/official-catalog")
+    def official_repository_catalog(q: str = "", page: int = 1, per_page: int = 50,
+                                    refresh: bool = False):
+        try:
+            return public_repository_catalog(settings, query=q, page=page,
+                                             per_page=per_page, refresh=refresh)
+        except CatalogUnavailable as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from None
+
+    @router.post("/repositories/official-catalog/preview")
+    def official_repository_preview(body: OfficialRepositoryPreviewRequest):
+        try:
+            return repository_preview(settings, validate_repository_slug(body.slug))
+        except CatalogUnavailable as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from None
+
+    @router.post("/operations/repository-import-scans", status_code=201)
+    def import_repository_and_scan(body: OfficialRepositoryImportRequest):
+        validate_repository_slug(body.slug)
+        branch = validate_branch(body.branch)
+        commit = validate_commit(body.commit)
+        try:
+            preview = validate_preview(settings, body.slug, branch, commit, body.preview_sha256)
+        except CatalogUnavailable as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from None
+        from .source_catalog import approved_clone_url
+        spec = {
+            "slug": body.slug, "name": preview["name"], "branch": branch,
+            "commit": commit, "preview_sha256": body.preview_sha256,
+            "catalog_sha256": preview.get("catalog_sha256"),
+            "clone_url": approved_clone_url(body.slug),
+            "estimated_size_kib": preview.get("size_kib"),
+            "include_paths": body.include_paths, "detector_ids": body.detector_ids,
+            "timeout_seconds": body.import_timeout_seconds,
+            "scan_timeout_seconds": body.timeout_seconds, "memory_mb": body.memory_mb,
+            "audit_mode": "static_only",
+        }
+        return ops.create("repository_import_scan", spec)
+
+    @router.post("/operations/intelligent-previews")
+    def intelligent_operation_preview(body: IntelligentOperationPreviewRequest):
+        """Only preview source egress, never queue scans or invoke a provider."""
+        schemas = {"range": RangeRequest, "date": DateRangeRequest,
+                   "branches": BranchComparisonRequest, "matrix": MatrixRequest}
+        request = schemas[body.kind].model_validate(body.payload)
+        if not request.auto_triage or request.audit_mode != "standard_review":
+            raise ValueError("select intelligent review before previewing model source disclosure")
+        if request.triage_authorizations or request.triage_approvals:
+            raise ValueError("preview does not accept previously approved source consent")
+        _, repo, operation_spec, specs = _operation_scan_plan(
+            settings, store, body.kind, request)
+        preview = _preview_operation_triage(settings, request, specs)
+        return {
+            "kind": body.kind, "endpoint_count": len(preview["scans"]),
+            "endpoints": preview["scans"],
+            "aggregate_estimated_cost": preview.get("aggregate_estimated_cost"),
+            "note": ("Each endpoint has a separate fixed-commit model disclosure consent. "
+                     "This preview does not send source; approval binds exact scan plan, workflow and provider."),
+        }
 
     @router.post("/operations/revision-ranges", status_code=201)
     def revision_range(body: RangeRequest):
-        return enqueue_range(settings, store, ops, body.model_dump())
+        operation_kind, repo, operation_spec, scans = _operation_scan_plan(
+            settings, store, "range", body)
+        scans = _prepare_operation_triage(settings, body, scans)
+        operation_spec.update({"auto_triage": body.auto_triage,
+            "max_triage_candidates": body.max_triage_candidates,
+            "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
+            "max_cost_usd": body.max_cost_usd})
+        return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
 
     @router.post("/operations/date-ranges", status_code=201)
     def date_range(body: DateRangeRequest):
-        selection = date_selection(settings, store, body.repository_id, body.branch,
-                                   body.start, body.end, body.timezone)
-        spec = body.model_dump()
-        spec.update({"baseline": selection["baseline"], "endpoint": selection["endpoint"],
-                     "date_selection": selection})
-        return enqueue_range(settings, store, ops, spec)
+        operation_kind, repo, operation_spec, scans = _operation_scan_plan(
+            settings, store, "date", body)
+        scans = _prepare_operation_triage(settings, body, scans)
+        operation_spec.update({"auto_triage": body.auto_triage,
+            "max_triage_candidates": body.max_triage_candidates,
+            "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
+            "max_cost_usd": body.max_cost_usd})
+        return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
 
     @router.post("/operations/date-ranges/preview")
     def date_range_preview(body: DateRangePreviewRequest):
         return date_selection(settings, store, body.repository_id, body.branch,
                               body.start, body.end, body.timezone)
 
+    @router.post("/operations/recent-comparisons/preview")
+    def recent_comparison_preview(body: RecentComparisonRequest):
+        return recent_window_selections(settings, store, body.repository_id, body.branch,
+                                        body.lookback_days, body.reference_time, body.timezone)
+
+    @router.post("/operations/recent-comparisons", status_code=201)
+    def recent_comparison(body: RecentComparisonRequest):
+        operation_kind, repo, operation_spec, scans = _operation_scan_plan(
+            settings, store, "recent", body)
+        scans = _prepare_operation_triage(settings, body, scans)
+        operation_spec.update({"auto_triage": body.auto_triage,
+            "max_triage_candidates": body.max_triage_candidates,
+            "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
+            "max_cost_usd": body.max_cost_usd})
+        return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
+
     @router.post("/operations/branch-comparisons", status_code=201)
     def branch_comparison(body: BranchComparisonRequest):
-        return enqueue_branch_comparison(settings, store, ops, body.model_dump())
+        operation_kind, repo, operation_spec, scans = _operation_scan_plan(
+            settings, store, "branches", body)
+        scans = _prepare_operation_triage(settings, body, scans)
+        operation_spec.update({"auto_triage": body.auto_triage,
+            "max_triage_candidates": body.max_triage_candidates,
+            "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
+            "max_cost_usd": body.max_cost_usd})
+        return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
 
     @router.post("/operations/version-matrices", status_code=201)
     def version_matrix(body: MatrixRequest):
-        if len(set(body.commits)) != len(body.commits):
-            raise ValueError("version matrix commits must be unique")
-        if any(not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", item) for item in body.commits):
-            raise ValueError("version matrix requires complete lowercase Git object IDs")
-        with store.connect() as db:
-            if not db.execute("SELECT 1 FROM cases WHERE id=?", (body.case_id,)).fetchone():
-                raise KeyError("case not found")
-        repo = store.repository(body.repository_id)
-        service.check_repository(settings, repo["path"])
-        links = _case_links(store, body.case_id)
-        if not any(store.repository(store.job(link["job_id"])["repository_id"])["name"] == repo["name"] for link in links):
-            raise ValueError("version matrix case must already link a candidate from the selected repository")
-        specs = [service.make_spec(repo, sha, body.include_paths, body.detector_ids,
-                                   body.timeout_seconds, body.memory_mb) for sha in body.commits]
-        specs = [{**spec, "audit_mode": body.audit_mode} for spec in specs]
-        return ops.create_with_scans("version_matrix", {"case_id": body.case_id,
-            "repository_id": repo["id"], "audit_mode": body.audit_mode, "commits": [s["commit"] for s in specs],
-            "timeout_seconds": body.timeout_seconds * len(specs) + 120,
-            "memory_mb": body.memory_mb}, repo["id"], specs)
+        operation_kind, repo, operation_spec, scans = _operation_scan_plan(
+            settings, store, "matrix", body)
+        scans = _prepare_operation_triage(settings, body, scans)
+        operation_spec.update({"auto_triage": body.auto_triage,
+            "max_triage_candidates": body.max_triage_candidates,
+            "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
+            "max_cost_usd": body.max_cost_usd})
+        return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
+
+    @router.post("/operations/joint-candidate-comparisons/preview")
+    @router.post("/operations/version-matrix-candidate-comparisons/preview")
+    def joint_candidate_comparison_preview(body: JointCandidateComparisonSelectors):
+        from .joint_candidate_comparison_runtime import build_joint_preview
+        selectors = body.model_dump()
+        expires_at = (datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat(timespec="seconds")
+        preview = build_joint_preview(settings, store, ops, selectors, uuid.uuid4().hex, expires_at)
+        binding = preview["binding"]
+        linked_children = binding.get("linked_agent_children_observed", {"from": [], "to": []})
+        result_binding = {
+            "source_operation_id": binding["source_operation_id"],
+            "source_operation_kind": binding["source_operation_kind"],
+            "source_operation_result_sha256": binding["source_operation_result_sha256"],
+            "repository_id": binding["repository_id"],
+            "from": binding["from"],
+            "to": binding["to"],
+        }
+        for key in ("matrix_operation_id", "matrix_result_sha256",
+                    "recent_window_operation_id", "recent_window_result_sha256"):
+            if key in binding:
+                result_binding[key] = binding[key]
+        limitations = list(preview["disclosure"]["limitations"])
+        limitations.append(
+            "The server validates citation side, path, line range, and source text, but not whether a quote semantically supports a model claim."
+        )
+        ops.issue_joint_comparison_preview_ticket(
+            preview["consent_nonce"], preview["consent_sha256"], preview["expires_at"])
+        return {
+            "eligible": True,
+            "consent": {
+                "purpose": preview["purpose"],
+                "consent_nonce": preview["consent_nonce"],
+                "consent_sha256": preview["consent_sha256"],
+                "expires_at": preview["expires_at"],
+                "provider": {
+                    "configured": preview["provider"]["configured"],
+                    "destination": preview["provider"]["destination_host"],
+                    "model": preview["provider"]["model"],
+                },
+                "binding": result_binding,
+            },
+            "context_summary": {
+                "source_evidence_count": len(preview["citable_fixed_source_evidence"]),
+                "linked_agent_result_count": preview["disclosure"]["linked_agent_result_count"],
+                "linked_agent_children": {
+                    side: [{
+                        "operation_id": row["operation_id"], "status": row["status"],
+                        "result_sha256": row.get("result_sha256"),
+                    } for row in linked_children.get(side, [])]
+                    for side in ("from", "to")
+                },
+                "linked_review_manifest": preview["linked_review_manifest"],
+                "evidence_preview": [{
+                    "evidence_id": item["evidence_id"],
+                    "side": item["side"],
+                    "origin": ("smart_investigation_tool" if item["evidence_id"].startswith("ev-joint-agent-")
+                               else "fixed_scan_candidate"),
+                    "file": item["file"],
+                    "line_start": item["line_start"],
+                    "line_end": item["line_end"],
+                    "source_sha256": item.get("source_sha256"),
+                    **({
+                        "operation_id": item["operation_id"],
+                        "tool_result_sha256": item["tool_result_sha256"],
+                    } if item.get("operation_id") else {}),
+                    "lines": item["lines"],
+                } for item in preview["citable_fixed_source_evidence"]],
+                "redaction_policy_version": preview["redaction_policy_version"],
+                "redaction_categories": preview["redaction_categories"],
+                "limitations": limitations,
+            },
+        }
+
+    @router.post("/operations/joint-candidate-comparisons", status_code=201)
+    @router.post("/operations/version-matrix-candidate-comparisons", status_code=201)
+    def joint_candidate_comparison_create(body: JointCandidateComparisonCreateRequest):
+        from .joint_candidate_comparison_runtime import create_joint_operation
+        return create_joint_operation(
+            settings, store, ops, body.model_dump(exclude={
+                "approved", "consent_nonce", "expected_consent_sha256", "expires_at"
+            }),
+            body.approved, body.consent_nonce, body.expected_consent_sha256, body.expires_at)
 
     def provider_settings_view():
         from .agent import ProviderConfig
@@ -906,14 +1977,22 @@ def install_routes(app: FastAPI, settings, store):
         result["checked_at"] = persisted.get("checked_at") if persisted else None
         return result
 
-    def _agent_consent_preview(body, provider):
+    def _agent_consent_preview(body, provider, *, continuous=None):
         from .agent import consent_preview
         job = store.job(body.job_id)
         if job["status"] not in {"completed", "completed_with_limitations"} or not job.get("report_sha256"):
             raise ValueError("只允许预览已有完整报告的候选")
         report = service.read_report(settings, job)
         candidate = service.finding(report, body.candidate_id)
-        preview = consent_preview(settings, store, job, report, candidate, body.model_dump(), provider)
+        preview_spec = body.model_dump()
+        # Keep the user-selected R1/R2 mode, but disable local cumulative
+        # budgets for every explicitly authorized investigation. A single-shot
+        # still makes exactly one request by its mode; a tool-agent continues
+        # through bounded read-only tools until its terminal condition.
+        preview_spec["continuous_investigation"] = False
+        preview_spec["provider_request_timeout_seconds"] = 45
+        preview_spec["max_provider_retries"] = 1
+        preview = consent_preview(settings, store, job, report, candidate, preview_spec, provider)
         return job, report, candidate, preview
 
     def _r0_review_complete(item, job, report, candidate):
@@ -947,7 +2026,7 @@ def install_routes(app: FastAPI, settings, store):
         if not provider.configured:
             raise HTTPException(status_code=503, detail="真实模型未配置；静态扫描和只读调查仍可使用")
         body = _fresh_consent_nonce(body)
-        _, _, _, preview = _agent_consent_preview(body, provider)
+        _, _, _, preview = _agent_consent_preview(body, provider, continuous=True)
         return preview
 
     @router.post("/operations/agent-investigations", status_code=201)
@@ -962,7 +2041,7 @@ def install_routes(app: FastAPI, settings, store):
         if not body.consent_sha256:
             raise HTTPException(status_code=428, detail="缺少本次源码外发预览指纹，请重新预览")
         _require_consent_nonce(body)
-        job, report, candidate, preview = _agent_consent_preview(body, provider)
+        job, report, candidate, preview = _agent_consent_preview(body, provider, continuous=True)
         if not preview["agent_execution"]["eligible"]:
             raise HTTPException(status_code=409, detail=preview["agent_execution"]["reason"])
         if body.experiment_id:
@@ -982,10 +2061,11 @@ def install_routes(app: FastAPI, settings, store):
         spec = {
             "job_id": body.job_id, "candidate_id": body.candidate_id, "case_id": body.case_id,
             "experiment_id": body.experiment_id,
-            "mode": body.mode, "max_steps": body.max_steps, "max_output_tokens": body.max_output_tokens,
-            "max_total_input_tokens": body.max_total_input_tokens,
-            "max_total_output_tokens": body.max_total_output_tokens,
-            "timeout_seconds": body.timeout_seconds,
+            "mode": body.mode, "max_output_tokens": body.max_output_tokens,
+            "max_steps": body.max_steps, "max_total_input_tokens": body.max_total_input_tokens,
+            "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
+            "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
+            "continuous_investigation": False,
             "source_submission_approved": True, "source_submission_approved_at": now(),
             "source_consent_sha256": preview["consent_sha256"], "consent_nonce": body.consent_nonce,
             "consent_preview_version": CONSENT_PREVIEW_VERSION,
@@ -1014,47 +2094,68 @@ def install_routes(app: FastAPI, settings, store):
         children = []
         for candidate_id in body.candidate_ids:
             child = AgentInvestigationRequest(job_id=body.job_id, candidate_id=candidate_id,
-                consent_nonce=body.consent_nonce,
-                mode=body.mode, max_steps=body.max_steps, max_output_tokens=body.max_output_tokens,
-                max_total_input_tokens=body.max_total_input_tokens,
-                max_total_output_tokens=body.max_total_output_tokens,
+                consent_nonce=body.consent_nonce, mode=body.mode,
+                max_output_tokens=body.max_output_tokens, max_steps=body.max_steps,
+                max_total_input_tokens=body.max_total_input_tokens, max_total_output_tokens=body.max_total_output_tokens,
                 timeout_seconds=body.timeout_seconds)
             _, _, candidate, preview = _agent_consent_preview(child, provider)
             children.append({"candidate_id": candidate_id, "file": candidate["file"],
                              "line": candidate.get("line"), "preview": preview})
-        manifest = {"version": 1, "job_id": body.job_id, "report_sha256": job["report_sha256"],
+        tool_agent = body.mode == "tool_agent"
+        manifest = {"version": 2, "job_id": body.job_id, "report_sha256": job["report_sha256"],
                     "consent_nonce": body.consent_nonce,
                     "provider_fingerprint": provider.fingerprint,
                     "candidates": [{"candidate_id": item["candidate_id"],
                                     "consent_sha256": item["preview"]["consent_sha256"]} for item in children],
-                    "mode": body.mode, "max_steps": body.max_steps,
-                    "max_output_tokens": body.max_output_tokens,
-                    "max_total_input_tokens": body.max_total_input_tokens,
-                    "max_total_output_tokens": body.max_total_output_tokens,
-                    "timeout_seconds": body.timeout_seconds}
+                    "mode": body.mode,
+                    "continuous_investigation": False,
+                    "local_cumulative_token_budget": "bounded",
+                    "local_cumulative_usd_budget": "bounded",
+                    "local_total_model_call_budget": "bounded",
+                    "local_total_tool_call_budget": "bounded",
+                    "local_total_wall_time_budget": "bounded",
+                    "max_output_tokens_per_request": body.max_output_tokens,
+                    "provider_request_timeout_seconds": 45,
+                    "max_validation_repairs_per_tool_agent": 2 if tool_agent else 0,
+                    "max_skeptic_requests_per_tool_agent": 1 if tool_agent else 0}
         consent = hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         blocked_candidate_ids = [item["candidate_id"] for item in children
                                  if not item["preview"]["agent_execution"]["eligible"]]
         max_repairs_per_candidate = max(
             (item["preview"].get("budgets", {}).get("max_validation_repairs", 0)
              for item in children), default=0)
-        model_calls_per_candidate = (
-            body.max_steps + 1 + max_repairs_per_candidate if body.mode == "tool_agent" else 1)
+        max_skeptic_per_candidate = max(
+            (item["preview"].get("budgets", {}).get("max_skeptic_calls", 0)
+             for item in children), default=0)
         aggregate_cost_estimate = _aggregate_agent_budget_cost_estimates(
             item["preview"].get("budget_cost_estimate") for item in children)
+        aggregate_budget = {
+            "authorized_candidate_count": len(children),
+            "max_total_model_calls": sum(item["preview"]["budgets"]["max_total_model_calls"] for item in children),
+            "single_shot_candidate_request_count": len(children) if body.mode == "single_shot" else 0,
+            "requests_per_candidate": 1 if body.mode == "single_shot" else None,
+            "continuous_until_terminal_condition": False,
+            "max_output_tokens_per_provider_request": body.max_output_tokens,
+            "provider_request_timeout_seconds": 45,
+            "local_cumulative_token_budget": "bounded",
+            "local_cumulative_cost_budget": "bounded",
+            "local_total_model_call_budget": "bounded",
+            "local_total_tool_call_budget": "bounded",
+            "local_total_wall_time_budget": "bounded",
+            "max_validation_repair_attempts_per_candidate": max_repairs_per_candidate,
+            "max_skeptic_requests_per_candidate": max_skeptic_per_candidate,
+            "tool_agent_continuous": False,
+        }
         return {"schema_version": 1, "consent_sha256": consent,
                 "consent_nonce": body.consent_nonce, "provider": provider.public,
                 "job_id": body.job_id, "report_sha256": job["report_sha256"],
                 "candidate_count": len(children), "candidates": children,
                 "aggregate_budget_cost_estimate": aggregate_cost_estimate,
                 "blocked_candidate_ids": blocked_candidate_ids,
-                "aggregate_budget": {"max_model_calls": len(children) * model_calls_per_candidate,
-                    "max_validation_repair_calls": len(children) * max_repairs_per_candidate,
-                    "max_total_input_tokens": len(children) * body.max_total_input_tokens,
-                    "max_total_output_tokens": len(children) * body.max_total_output_tokens,
-                    "max_wall_seconds_sequential": len(children) * body.timeout_seconds},
+                "aggregate_budget": aggregate_budget,
                 "disclosure": ["Each selected candidate creates one independent Agent operation.",
-                               "Each operation is independently capped by the budgets shown above.",
+                               ("The number of operations is bounded by this explicitly authorized candidate list. OHScanner imposes no cumulative token, USD, call-count, or total wall-clock cap. A single_shot candidate makes one Provider request; a tool_agent can use the disclosed read-only tools until a terminal condition. Each request has its output cap and 45-second timeout; Provider billing/quota applies."),
+                               *( [children[0]["preview"].get("stage_disclosure", "")] if children else [] ),
                                "Exact candidate metadata, bounded source excerpt, and approved fixed-commit tool data may be sent.",
                                "No operation is created until this aggregate preview is approved; batch creation is atomic.",
                                "A model assessment remains a candidate and requires human review."]}
@@ -1094,11 +2195,14 @@ def install_routes(app: FastAPI, settings, store):
             binding = child_preview["binding"]
             specs.append({
                 "job_id": body.job_id, "candidate_id": item["candidate_id"], "case_id": None,
-                "experiment_id": None, "mode": body.mode, "max_steps": body.max_steps,
+                "experiment_id": None, "mode": body.mode,
                 "max_output_tokens": body.max_output_tokens,
-                "max_total_input_tokens": body.max_total_input_tokens,
-                "max_total_output_tokens": body.max_total_output_tokens,
-                "timeout_seconds": body.timeout_seconds,
+
+                "max_steps": body.max_steps, "max_total_input_tokens": body.max_total_input_tokens,
+
+                "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
+                "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
+                "continuous_investigation": False,
                 "source_submission_approved": True, "source_submission_approved_at": now(),
                 "source_consent_sha256": child_preview["consent_sha256"], "consent_nonce": body.consent_nonce,
                 "consent_preview_version": CONSENT_PREVIEW_VERSION,
@@ -1122,11 +2226,7 @@ def install_routes(app: FastAPI, settings, store):
         for mode in ("single_shot", "tool_agent"):
             child = AgentInvestigationRequest(job_id=body.job_id, candidate_id=body.candidate_id,
                 experiment_id=body.experiment_id, consent_nonce=body.consent_nonce,
-                mode=mode, max_steps=body.max_steps,
-                max_output_tokens=body.max_output_tokens,
-                max_total_input_tokens=body.max_total_input_tokens,
-                max_total_output_tokens=body.max_total_output_tokens,
-                timeout_seconds=body.timeout_seconds)
+                mode=mode, max_output_tokens=body.max_output_tokens)
             job, report, candidate, preview = _agent_consent_preview(child, provider)
             if not preview["agent_execution"]["eligible"]:
                 raise HTTPException(status_code=409, detail=preview["agent_execution"]["reason"])
@@ -1136,34 +2236,44 @@ def install_routes(app: FastAPI, settings, store):
                                     detail="配对实验需先为同一固定候选记录 R0 静态人工基线")
             previews.append({"mode": mode, "preview": preview,
                              "candidate": candidate, "job": job, "report": report})
-        manifest = {"version": 1, "experiment_id": body.experiment_id, "case_id": body.case_id,
+        manifest = {"version": 2, "experiment_id": body.experiment_id, "case_id": body.case_id,
                     "consent_nonce": body.consent_nonce,
                     "provider_fingerprint": provider.fingerprint,
                     "arms": [{"mode": item["mode"],
                               "consent_sha256": item["preview"]["consent_sha256"]} for item in previews],
-                    "max_steps": body.max_steps, "max_output_tokens": body.max_output_tokens,
-                    "max_total_input_tokens": body.max_total_input_tokens,
-                    "max_total_output_tokens": body.max_total_output_tokens,
-                    "timeout_seconds": body.timeout_seconds}
+                    "single_shot_request_count": 1,
+                    "tool_agent_continuous": False,
+                    "tool_agent_max_output_tokens_per_request": body.max_output_tokens,
+                    "provider_request_timeout_seconds": 45}
         consent = hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         r2_repair_limit = previews[1]["preview"].get("budgets", {}).get("max_validation_repairs", 0)
+        r2_skeptic_limit = previews[1]["preview"].get("budgets", {}).get("max_skeptic_calls", 0)
         aggregate_cost_estimate = _aggregate_agent_budget_cost_estimates(
             item["preview"].get("budget_cost_estimate") for item in previews)
+        aggregate_budget = {
+            "single_shot_model_calls": 1,
+            "tool_agent_max_total_model_calls": previews[1]["preview"]["budgets"]["max_total_model_calls"],
+            "tool_agent_max_output_tokens_per_request": body.max_output_tokens,
+            "provider_request_timeout_seconds": 45,
+            "tool_agent_local_cumulative_token_budget": "bounded",
+            "tool_agent_local_cumulative_cost_budget": "bounded",
+            "tool_agent_local_total_wall_time_budget": "bounded",
+            "tool_agent_max_validation_repair_attempts": r2_repair_limit,
+            "tool_agent_max_skeptic_requests": r2_skeptic_limit,
+        }
         return {"schema_version": 1, "consent_sha256": consent,
                 "consent_nonce": body.consent_nonce, "experiment_id": body.experiment_id,
                 "case_id": body.case_id, "provider": provider.public,
                 "candidate": previews[0]["preview"]["binding"],
                 "arms": [{"mode": item["mode"], "preview": item["preview"]} for item in previews],
                 "aggregate_budget_cost_estimate": aggregate_cost_estimate,
-                "aggregate_budget": {"max_model_calls": body.max_steps + 1 + r2_repair_limit,
-                    "max_validation_repair_calls": r2_repair_limit,
-                    "max_total_input_tokens": 2 * body.max_total_input_tokens,
-                    "max_total_output_tokens": 2 * body.max_total_output_tokens,
-                    "max_wall_seconds_sequential": 2 * body.timeout_seconds},
+                "aggregate_budget": aggregate_budget,
                 "disclosure": ["This creates exactly one R1 and one R2 task for the same fixed candidate.",
                                "R0 static triage is already recorded and matched to this report and source.",
                                "Each arm receives its own consent-bound initial context; R2 may additionally use only the fixed-commit tools shown in its preview.",
-                               "Aggregate budget includes up to two bounded structured-answer repairs per R2 arm; all operation rows are created atomically.",
+                               previews[1]["preview"].get("stage_disclosure", ""),
+                               "R1 uses one request. R2 has no local cumulative token, USD, model/tool-call, or total wall-clock cap; each Provider request still has the selected output cap and 45-second timeout. Actual billing/quota is controlled by the Provider account.",
+                               "All operation rows are created atomically.",
                                "Both model outputs remain candidate-only and must receive blind human review."]}
 
     @router.post("/operations/agent-investigations/paired/preview")
@@ -1203,11 +2313,14 @@ def install_routes(app: FastAPI, settings, store):
             binding = arm_preview["binding"]
             specs.append({
                 "job_id": body.job_id, "candidate_id": body.candidate_id, "case_id": body.case_id,
-                "experiment_id": body.experiment_id, "mode": arm["mode"], "max_steps": body.max_steps,
+                "experiment_id": body.experiment_id, "mode": arm["mode"],
                 "max_output_tokens": body.max_output_tokens,
-                "max_total_input_tokens": body.max_total_input_tokens,
-                "max_total_output_tokens": body.max_total_output_tokens,
-                "timeout_seconds": body.timeout_seconds,
+
+                "max_steps": body.max_steps, "max_total_input_tokens": body.max_total_input_tokens,
+
+                "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
+                "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
+                "continuous_investigation": False,
                 "source_submission_approved": True, "source_submission_approved_at": now(),
                 "source_consent_sha256": arm_preview["consent_sha256"], "consent_nonce": body.consent_nonce,
                 "consent_preview_version": CONSENT_PREVIEW_VERSION,
@@ -1285,8 +2398,8 @@ def install_routes(app: FastAPI, settings, store):
                 "created_at": authorization["created_at"],
                 "revoked_at": authorization["revoked_at"],
                 "provider": snapshot.get("provider"),
-                "candidate_limit": snapshot.get("candidate_limit"),
-                "conditional_r2_candidate_limit": snapshot.get("r2_candidate_limit", 0),
+                "candidate_selection": "all eligible candidates in the fixed scope",
+                "conditional_r2_selection": "all critical/high candidates with unresolved source obligations",
                 "budget": snapshot.get("budgets"),
                 "estimated_cost": snapshot.get("estimated_cost"),
                 "cost_budget": snapshot.get("cost_budget"),
@@ -1309,8 +2422,11 @@ def install_routes(app: FastAPI, settings, store):
                 "scan_progress": {"status": job["status"], "stage": job.get("stage"),
                                   "report_ready": False},
                 "triage_progress": {"state": "cancelled" if cancellation else "stopped" if authorization and authorization["revoked"] else "waiting_for_scan",
-                                     "candidate_count": None, "planned_count": 0,
-                                     "completed_count": 0, "failed_count": 0,
+                                     "candidate_count": None,
+                                     "authorized_candidate_count": int((auth_view or {}).get("candidate_limit") or 0),
+                                     "created_count": 0, "queued_count": 0, "running_count": 0,
+                                     "planned_count": 0, "completed_count": 0,
+                                     "completed_with_limitations_count": 0, "failed_count": 0,
                                      "pending_count": 0, "cancelled_count": 0,
                                      "stop_requested_count": 0, "not_triaged_count": None},
                 "report_sha256": None,
@@ -1321,6 +2437,28 @@ def install_routes(app: FastAPI, settings, store):
                 "limitation": "静态报告尚未提交，模型研判未开始。",
             }
         items = ops.agent_investigations_for_job(key, job["report_sha256"])
+        for summary in items:
+            operation_item = ops.get(summary["id"])
+            summary["retry_available"] = _smart_operation_retry_available(
+                store, ops, operation_item)
+            summary["investigation_limitations"] = []
+            if operation_item.get("result_sha256"):
+                try:
+                    operation_result = ops.result(summary["id"])
+                    summary["assessment"] = (operation_result.get("agent_assessment") or {}).get(
+                        "assessment", "unknown")
+                    summary["investigation_limitations"] = [
+                        str(value) for value in operation_result.get("limitations", [])
+                        if isinstance(value, str) and any(
+                            marker in value.lower()
+                            for marker in ("24 kib", "per-request", "single-request", "unknown-outcome")
+                        )
+                    ]
+                except (KeyError, ValueError):
+                    summary["assessment"] = "unknown"
+                    summary["investigation_limitations"] = [
+                        "调查结果不可读取；候选保持未知。"
+                    ]
         batches = ops.triage_batches_for_job(key, job["report_sha256"])
         counts = {}
         for item in items:
@@ -1328,23 +2466,26 @@ def install_routes(app: FastAPI, settings, store):
         batch_views = []
         for batch in batches:
             operations = ops.smart_triage_operations(batch["id"])
-            states = [item["status"] for item in operations]
             stopping = any(item["status"] == "running" and item.get("cancel_requested") for item in operations)
-            if stopping:
-                batch_state = "stopping"
-            elif cancellation:
-                batch_state = "cancelled"
-            elif batch.get("r2_status") == "awaiting_r1" or any(state in {"queued", "running"} for state in states):
-                batch_state = "in_progress"
-            elif states:
-                batch_state = ("completed" if all(
-                    state in {"completed", "completed_with_limitations"} for state in states
-                ) else "partially_completed")
-            else:
-                batch_state = batch["status"]
+            r1_ids = set(batch.get("operation_ids", []))
+            r2_ids = set(batch.get("r2_operation_ids", []))
+            r1_operations = [item for item in operations if item["id"] in r1_ids]
+            r2_operations = [item for item in operations if item["id"] in r2_ids]
+            progress = _classify_intelligent_review(
+                batch, r1_operations, r2_operations,
+                revoked=bool(authorization and authorization["revoked"]),
+            )
+            batch_state = "stopping" if stopping else "cancelled" if cancellation else progress["state"]
+            created_operations = operations
             batch_views.append({
                 "id": batch["id"], "state": batch_state,
                 "candidate_count": batch["candidate_count"],
+                "authorized_candidate_count": int((auth_view or {}).get("candidate_limit") or 0),
+                "created_count": len(created_operations),
+                "queued_count": sum(1 for item in created_operations if item["status"] == "queued"),
+                "running_count": sum(1 for item in created_operations if item["status"] == "running"),
+                "not_triaged_count": max(0, int(batch["candidate_count"]) - int(batch.get("selected_count") or 0)),
+                "r1_progress": progress["r1"], "r2_progress": progress["r2"],
                 "selected_count": batch["selected_count"],
                 "candidate_manifest": batch["candidate_manifest"],
                 "operation_ids": batch["operation_ids"],
@@ -1376,9 +2517,12 @@ def install_routes(app: FastAPI, settings, store):
             if any(item["status"] in {"queued", "running"} for item in items):
                 state = "stopped" if authorization and authorization["revoked"] else "in_progress"
             elif all(item["status"] in END for item in items):
-                state = "completed" if all(
-                    item["status"] in {"completed", "completed_with_limitations"} for item in items
-                ) else "partially_completed"
+                if all(item["status"] in {"completed", "completed_with_limitations"} for item in items):
+                    state = ("completed_with_limitations"
+                             if any(item["status"] == "completed_with_limitations" for item in items)
+                             else "completed")
+                else:
+                    state = "partially_completed"
             else:
                 state = "in_progress"
         elif authorization and authorization["revoked"]:
@@ -1403,7 +2547,10 @@ def install_routes(app: FastAPI, settings, store):
         if (candidate_count == 0 and not batches and not items
                 and job["spec"].get("audit_mode") == "standard_review"):
             state = "no_eligible_candidates"
-        completed_count = sum(1 for item in items if item["status"] in {"completed", "completed_with_limitations"})
+        completed_count = sum(1 for item in items if item["status"] == "completed")
+        completed_with_limitations_count = sum(
+            1 for item in items if item["status"] == "completed_with_limitations"
+        )
         failed_count = sum(1 for item in items if item["status"] in {"failed", "timed_out", "interrupted"})
         pending_count = sum(1 for item in items if item["status"] in {"queued", "running"})
         manifest_not_triaged = sum(
@@ -1426,7 +2573,12 @@ def install_routes(app: FastAPI, settings, store):
                               "report_ready": True, "report_sha256": job["report_sha256"]},
             "triage_progress": {
                 "state": state, "candidate_count": candidate_count,
+                "authorized_candidate_count": int((auth_view or {}).get("candidate_limit") or 0),
+                "created_count": planned_count,
+                "queued_count": counts.get("queued", 0),
+                "running_count": counts.get("running", 0),
                 "planned_count": planned_count, "completed_count": completed_count,
+                "completed_with_limitations_count": completed_with_limitations_count,
                 "failed_count": failed_count, "pending_count": pending_count,
                 "cancelled_count": cancelled_count,
                 "stop_requested_count": stop_requested_count,
@@ -1439,7 +2591,7 @@ def install_routes(app: FastAPI, settings, store):
             "batches": batch_views,
             "authorization": auth_view or {"authorized": False, "revoked": False},
             "authorization_required": not bool(authorization),
-            "limitation": "模型辅助研判输出仍为待复核候选或未知状态；高优先级或模型倾向不能自动确认漏洞。未入选、未授权和预算外候选仍是未研判，不代表安全。",
+            "limitation": "模型辅助研判输出仍为待复核候选或未知状态；高优先级或模型倾向不能自动确认漏洞。未入选、未授权、超出候选授权数或队列保护上限的候选仍是未研判，不代表安全。",
         }
 
     @router.post("/scans/{key}/triage/cancel")
@@ -1461,9 +2613,12 @@ def install_routes(app: FastAPI, settings, store):
         return scan_triage_summary(job["id"])
 
     @router.get("/scans/{key}/risks")
-    def scan_risks(key: str, offset: int = 0, limit: int = 100):
+    def scan_risks(key: str, offset: int = 0, limit: int = 100,
+                   candidate_id: str | None = None):
         if offset < 0 or not 1 <= limit <= 200:
             raise ValueError("invalid pagination")
+        if candidate_id is not None and (not candidate_id.strip() or len(candidate_id) > 200):
+            raise ValueError("candidate_id must contain 1 to 200 characters")
         job = store.job(key)
         if not job.get("report_sha256"):
             return {"audit_id": key, "state": "waiting_for_scan", "items": [], "counts": {}}
@@ -1474,6 +2629,8 @@ def install_routes(app: FastAPI, settings, store):
         snapshot["validated_vulnerability"] = len(confirmed_cases)
         snapshot["confirmed_cases"] = confirmed_cases
         items = snapshot["items"]
+        if candidate_id is not None:
+            items = [item for item in items if item.get("candidate_id") == candidate_id]
         return {**{name: value for name, value in snapshot.items() if name != "items"},
                 "total": len(items), "items": items[offset:offset + limit]}
 
@@ -1513,7 +2670,8 @@ def install_routes(app: FastAPI, settings, store):
             "not_started", "queued", "running", "in_progress", "stopping", "cancelled",
             "completed", "completed_with_limitations", "partially_completed", "blocked",
             "blocked_authorization_changed", "no_eligible_candidates", "stopped", "failed",
-            "timed_out", "interrupted", "awaiting_r1", "budget_limited", "not_needed",
+            "timed_out", "interrupted", "awaiting_r1", "candidate_limit_reached", "budget_limited",
+            "candidate_limit_exceeded", "queue_limit_exceeded", "not_needed",
             "failed_selection", "selected", "not_selected", "unresolved",
         }
         if risk_tier is not None and risk_tier not in tier_names:
@@ -1553,6 +2711,10 @@ def install_routes(app: FastAPI, settings, store):
             for state, count in risk.get("triage_counts", {}).items():
                 triage_counts[state] = triage_counts.get(state, 0) + int(count)
             validated_count += len(confirmed_cases)
+            confirmed_case_links = {}
+            for validated_case in confirmed_cases:
+                for candidate_id in validated_case["candidate_ids"]:
+                    confirmed_case_links.setdefault(candidate_id, []).append(validated_case["case_id"])
             for item in risk.get("items", []):
                 candidate_items.append({
                     "audit_id": job["id"],
@@ -1564,9 +2726,27 @@ def install_routes(app: FastAPI, settings, store):
                     "file": item.get("file"),
                     "line": item.get("line"),
                     "rule_id": item.get("rule_id"),
+                    "severity": item.get("severity", "unknown"),
+                    "vulnerability_state": item.get("vulnerability_state", "candidate"),
                     "risk_tier": item.get("risk_tier"),
                     "risk_tier_label": item.get("risk_tier_label"),
+                    "confidence_basis": item.get("confidence_basis"),
+                    "severity": item.get("severity", "unknown"),
+                    "severity_label": item.get("severity_label", "未分级"),
+                    "severity_evidence": item.get("severity_evidence", "insufficient_evidence"),
+                    "severity_basis": item.get("severity_basis"),
+                    # A validated investigation case can link multiple observations;
+                    # link it for navigation, but do NOT claim each observation was
+                    # individually proven a product vulnerability.
+                    "vulnerability_state": item.get("vulnerability_state", "candidate"),
+                    "validated_case_ids": sorted(confirmed_case_links.get(item["candidate_id"], [])),
+                    "human_review_status": item.get("human_review_status", "unassessed"),
                     "triage_state": item.get("triage", {}).get("state"),
+                    # Pass only the source-bound, candidate-only assessment
+                    # signal produced by smart_audit after result SHA and
+                    # report inventory binding checks. Keep operation_id for
+                    # direct navigation to the exact immutable Agent result.
+                    "agent_signal": item.get("agent_signal"),
                     "reason": "；".join(item.get("reasons", [])),
                 })
         order = {"high_confidence_candidate": 0, "further_validation": 1,
@@ -1724,10 +2904,130 @@ def install_routes(app: FastAPI, settings, store):
     @router.get("/operations/{key}")
     def operation(key: str):
         item = ops.get(key)
+        item["retry_available"] = _smart_operation_retry_available(store, ops, item)
         item["events"] = ops.events(key)
         if item["result_sha256"]:
             item["result"] = ops.result(key)
         item["agent_reviews"] = ops.agent_reviews(key) if item["kind"] == "agent_investigation" else []
+        if item["kind"] in {"revision_range", "branch_comparison", "version_matrix",
+                            "recent_window_comparison"}:
+            endpoint_progress = []
+            for job_id in item["spec"].get("scan_ids", []):
+                job = store.job(job_id)
+                authorized = store.triage_authorization(job_id)
+                batches = (ops.triage_batches_for_job(job_id, job.get("report_sha256"))
+                           if job.get("report_sha256") else [])
+                batch = batches[-1] if batches else {}
+                if job["spec"].get("audit_mode") == "static_only":
+                    state = "static_only"
+                elif job["status"] not in {"completed", "completed_with_limitations"}:
+                    state = ("awaiting_static" if job["status"] in {"queued", "running"}
+                             else "static_incomplete")
+                elif authorized is None:
+                    state = "awaiting_individual_consent"
+                elif authorized["revoked"]:
+                    state = "revoked"
+                elif not batches:
+                    state = "awaiting_model_schedule"
+                elif batch.get("status") == "candidate_limit_exceeded":
+                    state = "candidate_limit_exceeded"
+                elif batch.get("status") == "queue_limit_exceeded":
+                    state = "queue_limit_exceeded"
+                else:
+                    ids = batch["operation_ids"] + batch["r2_operation_ids"]
+                    statuses = [ops.get(operation_id)["status"] for operation_id in ids]
+                    candidate_count = int(batch.get("candidate_count") or 0)
+                    selected_count = int(batch.get("selected_count") or 0)
+                    r2_status = batch.get("r2_status", "not_requested")
+                    if batch["status"] == "blocked_authorization_changed":
+                        state = "authorization_changed"
+                    elif batch["status"] == "no_eligible_candidates":
+                        state = "no_eligible_candidates"
+                    elif (statuses and all(status in END for status in statuses)
+                          and r2_status != "awaiting_r1"):
+                        execution_completed = all(
+                            status in {"completed", "completed_with_limitations"}
+                            for status in statuses
+                        )
+                        coverage_incomplete = (
+                            selected_count < candidate_count
+                            or r2_status in {"candidate_limit_reached", "budget_limited", "failed_selection"}
+                        )
+                        state = ("completed" if execution_completed and not coverage_incomplete
+                                 else "partially_completed")
+                    else:
+                        state = "agent_in_progress"
+                r1_operations = ([ops.get(operation_id) for operation_id in batch.get("operation_ids", [])]
+                                 if batches else [])
+                r2_operations = ([ops.get(operation_id) for operation_id in batch.get("r2_operation_ids", [])]
+                                 if batches else [])
+                if batches:
+                    progress = _classify_intelligent_review(
+                        batch, r1_operations, r2_operations,
+                        revoked=bool(authorized and authorized["revoked"]),
+                    )
+                    state = progress["state"]
+                else:
+                    progress = {
+                        "r1": _operation_phase_progress([], phase_state="not_triaged"),
+                        "r2": _operation_phase_progress([], phase_state="not_requested"),
+                    }
+                    if authorized and authorized["revoked"]:
+                        state = "revoked"
+                def operation_summary(record):
+                    child_spec = record.get("spec") if isinstance(record.get("spec"), dict) else {}
+                    return {
+                        "id": record.get("id"), "status": record.get("status"),
+                        "result_sha256": record.get("result_sha256"),
+                        "candidate_id": child_spec.get("candidate_id"),
+                        "commit": job["spec"].get("commit"),
+                        "report_sha256": job.get("report_sha256"),
+                    }
+
+                if batches:
+                    endpoint_candidate_count = int(batch.get("candidate_count") or 0)
+                elif job.get("report_sha256"):
+                    try:
+                        endpoint_candidate_count = len(service.findings(service.read_report(settings, job)))
+                    except FileNotFoundError:
+                        endpoint_candidate_count = None
+                else:
+                    endpoint_candidate_count = None
+
+                endpoint_progress.append({
+                    "scan_id": job_id, "commit": job["spec"].get("commit"),
+                    "scan_status": job["status"], "agent_status": state,
+                    "agent_authorized": bool(authorized and not authorized["revoked"]),
+                    "report_available": bool(job.get("report_sha256")),
+                    "candidate_count": endpoint_candidate_count,
+                    "r1_authorized_count": int((authorized or {}).get("snapshot", {}).get("candidate_limit") or 0),
+                    "r1_created_count": len(r1_operations),
+                    "r1_queued_count": sum(1 for operation in r1_operations if operation["status"] == "queued"),
+                    "r1_running_count": sum(1 for operation in r1_operations if operation["status"] == "running"),
+                    "r1_selected_count": int(batch.get("selected_count") or 0) if batches else 0,
+                    "r1_not_selected_count": max(
+                        0, int(batch.get("candidate_count") or 0)
+                        - int(batch.get("selected_count") or 0),
+                    ) if batches else 0,
+                    "r2_status": batch.get("r2_status", "not_requested") if batches else "not_requested",
+                    "r1_progress": progress["r1"],
+                    "r2_progress": progress["r2"],
+                    "r1_operations": [operation_summary(record) for record in r1_operations],
+                    "r2_operations": [operation_summary(record) for record in r2_operations],
+                    "triage_state_reason": (
+                        "Authorization was revoked; pending work must stop and candidates remain untriaged."
+                        if state == "revoked"
+                        else "Every authorized operation failed or was interrupted; no candidate review completed."
+                        if state == "failed"
+                        else "Only part of the selected or eligible candidate set completed; remaining candidates are untriaged."
+                        if state == "partially_completed"
+                        else "All eligible candidates completed their authorized review."
+                        if state == "completed"
+                        else None
+                    ),
+                    "model_result_is_product_vulnerability_confirmation": False,
+                })
+            item["intelligent_review_progress"] = endpoint_progress
         return item
 
     @router.post("/operations/{key}/agent-reviews", status_code=201)
@@ -1748,8 +3048,7 @@ def install_routes(app: FastAPI, settings, store):
         grouped = {}
         experiment_profiles = set()
         packets = []
-        paired_budget_keys = ("max_steps", "max_output_tokens", "max_total_input_tokens",
-                              "max_total_output_tokens", "timeout_seconds")
+        paired_budget_keys = ("max_output_tokens", "provider_request_timeout_seconds")
         for operation_id in body.operation_ids:
             task = ops.get(operation_id)
             if task["kind"] != "agent_investigation" or task["status"] not in {"completed", "completed_with_limitations"}:
@@ -1844,6 +3143,26 @@ def install_routes(app: FastAPI, settings, store):
     def close_agent_blind_session(session_id: str):
         return ops.close_agent_blind_session(session_id)
 
+    @router.post("/operations/{key}/retry", status_code=201)
+    def retry_interrupted_smart_operation(key: str):
+        item = ops.get(key)
+        if not _smart_operation_retry_available(store, ops, item):
+            raise HTTPException(status_code=409, detail="此任务当前不可重试；请核对任务状态、授权、固定报告和候选队列")
+        from .agent import ProviderConfig
+        from .smart_audit import _authorization_is_current
+        job = store.job(item["spec"]["job_id"])
+        provider = ProviderConfig.from_env(settings.data_dir)
+        _authorization, authorization_error = _authorization_is_current(
+            settings, store, job, provider)
+        if authorization_error:
+            raise HTTPException(status_code=409, detail="原源码外发授权已不再匹配当前 Provider 或程序版本，请重新预览并授权")
+        try:
+            retried = ops.retry_interrupted_smart_operation(key)
+        except (KeyError, ValueError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+        retried["retry_available"] = False
+        return retried
+
     @router.get("/operations/{key}/result")
     def operation_result(key: str):
         return ops.result(key)
@@ -1860,47 +3179,206 @@ def install_routes(app: FastAPI, settings, store):
         return ops.cancel(key)
 
     @router.get("/cases/{case_id}/report.json")
+    def download_case_report_json(case_id: str):
+        return Response(_case_report_exports(case_id)["json"], media_type="application/json")
+
+
     def case_report_json(case_id: str):
         links = _case_links(store, case_id)
         if not links:
             raise KeyError("case not found or empty")
         records = []
+        records_by_candidate = {}
+        risk_by_job = {}
+        risk_snapshot_unavailable = set()
+        fixed_source_cache = {}
         for link in links:
             job = store.job(link["job_id"])
             report = service.read_report(settings, job)
             item = service.finding(report, link["candidate_id"])
-            records.append({"job_id": job["id"], "report_sha256": job["report_sha256"],
+            if job["id"] not in risk_by_job:
+                try:
+                    from .smart_audit import risk_snapshot as build_risk_snapshot
+                    snapshot = build_risk_snapshot(settings, store, ops, job, report)
+                    risk_by_job[job["id"]] = {
+                        risk["candidate_id"]: risk
+                        for risk in snapshot.get("items", [])
+                        if isinstance(risk, dict) and risk.get("candidate_id")
+                    }
+                except (KeyError, TypeError, ValueError):
+                    # Keep the fixed-source case report readable if an older or
+                    # incomplete saved report cannot support risk-tier enrichment.
+                    risk_by_job[job["id"]] = {}
+                    risk_snapshot_unavailable.add(job["id"])
+            risk = risk_by_job[job["id"]].get(item["id"], {})
+            record = {"job_id": job["id"], "report_sha256": job["report_sha256"],
                 "repository": report["repository"], "commit": report["commit"],
                 "candidate": item, "rationale": link["rationale"],
+                "risk": {"severity": item.get("severity", "unknown"),
+                         "confidence": item.get("confidence", "unknown"),
+                         "risk_tier": risk.get("risk_tier", "unknown"),
+                         "risk_tier_label": risk.get("risk_tier_label", "风险分层不可用"),
+                         "risk_snapshot_available": job["id"] not in risk_snapshot_unavailable,
+                         "reasons": risk.get("reasons", []),
+                         "vulnerability_state": "candidate"},
                 "reviews": store.reviews(job["id"], item["id"]),
-                "source_evidence": store.source_evidence(job["id"], item["id"])})
-        operations = [x for x in ops.list() if x["spec"].get("case_id") == case_id and x["result_sha256"]]
+                "source_evidence": store.source_evidence(job["id"], item["id"])}
+            source_key = (job["id"], item.get("file"))
+            if source_key not in fixed_source_cache:
+                try:
+                    fixed_source_cache[source_key] = service.source(settings, store, job, item.get("file"))
+                except (KeyError, TypeError, ValueError, OSError, UnicodeError, subprocess.CalledProcessError):
+                    fixed_source_cache[source_key] = None
+            source_anchor = _fixed_case_source_anchor(settings, store, job, report, item,
+                                                      fixed_source_cache[source_key])
+            record["source_anchor"] = source_anchor
+            record["remediation_draft"] = _candidate_remediation_draft(item, source_anchor)
+            record["poc_plan"] = _candidate_poc_plan(item, source_anchor)
+            records.append(record)
+            records_by_candidate[(job["id"], item["id"])] = record
+
+        # A case may be created after an Agent investigation. Recover that result only
+        # when the immutable operation plan and committed result bind to the exact
+        # candidate/report/source now linked to this case. Never share explicitly
+        # case-bound operations with another case.
+        operations = []
+        operation_page = ops.report_operations_for_case(case_id, limit=200)
+        candidate_operations = ops.list()
+        seen_operations = set()
+        for operation in operation_page["items"] + candidate_operations:
+            if operation["id"] in seen_operations:
+                continue
+            seen_operations.add(operation["id"])
+            spec = operation["spec"]
+            linked = records_by_candidate.get((spec.get("job_id"), spec.get("candidate_id")))
+            case_bound = spec.get("case_id") == case_id
+            if operation["kind"] == "agent_investigation":
+                if spec.get("case_id") not in (None, case_id) or not linked:
+                    continue
+                candidate = linked["candidate"]
+                legacy_case_record = case_bound and not spec.get("report_sha256")
+                if legacy_case_record:
+                    operations.append(operation)
+                    continue
+                if (spec.get("report_sha256") != linked["report_sha256"]
+                        or spec.get("source_commit") != linked["commit"]
+                        or spec.get("candidate_source_sha256") != candidate.get("source_sha256")):
+                    continue
+                if operation["result_sha256"]:
+                    try:
+                        committed = ops.result(operation["id"])
+                    except (KeyError, ValueError):
+                        continue
+                    binding = committed.get("binding")
+                    if not isinstance(binding, dict) or any((
+                            binding.get("job_id") != linked["job_id"],
+                            binding.get("candidate_id") != candidate["id"],
+                            binding.get("report_sha256") != linked["report_sha256"],
+                            binding.get("commit") != linked["commit"],
+                            binding.get("source_sha256") != candidate.get("source_sha256"),
+                    )):
+                        continue
+                operations.append(operation)
+            elif case_bound:
+                operations.append(operation)
+        operations = operations[:20]
         operation_summaries = []
-        for x in operations[:20]:
-            result = ops.result(x["id"])
+        for x in operations:
+            linked = records_by_candidate.get((x.get("spec", {}).get("job_id"),
+                                               x.get("spec", {}).get("candidate_id")))
+            result = ops.result(x["id"]) if x["result_sha256"] else {}
             summary = {"id": x["id"], "kind": x["kind"], "status": x["status"],
                 "result_sha256": x["result_sha256"], "validation_gate": result.get("validation_gate"),
                 "gate_reason": result.get("gate_reason"), "reachability_status": result.get("reachability_status"),
                 "validated_vulnerability": result.get("validated_vulnerability", 0),
-                "commit": result.get("commit"), "commits": result.get("commits")}
+                "commit": result.get("commit"), "commits": result.get("commits"),
+                "case_id": x["spec"].get("case_id"),
+                "job_id": x["spec"].get("job_id"),
+                "candidate_id": x["spec"].get("candidate_id")}
+            if x["kind"] == "validation":
+                harness_result = result.get("result") if isinstance(result.get("result"), dict) else {}
+                revisions = {}
+                for name, revision in (harness_result.get("revisions") or {}).items():
+                    if not isinstance(revision, dict):
+                        continue
+                    build = revision.get("build") if isinstance(revision.get("build"), dict) else {}
+                    replay = revision.get("replay") if isinstance(revision.get("replay"), dict) else {}
+                    replay_cases = []
+                    for case in replay.get("cases", []) if isinstance(replay.get("cases"), list) else []:
+                        if not isinstance(case, dict):
+                            continue
+                        replay_cases.append({key: case.get(key) for key in
+                            ("case_id", "role", "expected", "observed", "matches_expectation", "label")
+                            if key in case})
+                    revisions[name] = {
+                        "commit": revision.get("commit"), "state": revision.get("state"),
+                        "build": {key: build.get(key) for key in
+                                  ("compiler", "compiler_version", "sanitizers", "returncode") if key in build},
+                        "replay": {key: replay.get(key) for key in
+                                   ("label", "attempts", "triggered", "all_cases_match") if key in replay},
+                        "replay_cases": replay_cases,
+                        "expectations_met": revision.get("expectations_met", {}),
+                    }
+                summary["validation_evidence"] = {
+                    "harness_id": x.get("spec", {}).get("harness_id") or harness_result.get("harness"),
+                    "family": harness_result.get("family"),
+                    "target_repository": x.get("spec", {}).get("target_repository") or harness_result.get("repository"),
+                    "target_commit": x.get("spec", {}).get("target_commit"),
+                    "cutils_commit": x.get("spec", {}).get("cutils_commit"),
+                    "docker_exit_code": result.get("docker_exit_code"),
+                    "input_manifest_sha256": result.get("input_manifest_sha256"),
+                    "validation_command_sha256": result.get("validation_command_sha256"),
+                    "docker_log_sha256": result.get("docker_log_sha256"),
+                    "revisions": revisions,
+                    "patched_revision": result.get("patched_revision"),
+                    "limitations": result.get("limitations", harness_result.get("limitations", [])),
+                }
+
             if x["kind"] == "agent_investigation":
                 assessment = result.get("agent_assessment", {})
+                linked_job = store.job(linked["job_id"]) if linked else None
+                citation_state = (_agent_citation_state(settings, store, result, linked_job, linked["candidate"],
+                                                        linked.get("source_anchor", {}))
+                                  if linked_job else {"state": "unknown", "reason": "候选固定绑定不可用。"})
+                advice_verified_for_display = citation_state["state"] == "unverified_model_advice"
+                if linked and isinstance(linked.get("remediation_draft"), dict):
+                    linked["remediation_draft"]["ai_basis"] = {
+                        "state": "source_bound_unverified" if advice_verified_for_display else "unknown",
+                        "citations": citation_state.get("citations", []),
+                        "note": ("这些是 Agent 在同一固定提交中引用的源码上下文；引用与修复草案没有机器验证的因果映射，需人工判断。"
+                                 if advice_verified_for_display else citation_state.get("reason")),
+                    }
+                model_suggestions = [{
+                    "text": step,
+                    "state": "unverified_model_suggestion",
+                    "source_anchor": linked.get("source_anchor"),
+                    "semantic_support": "unverified_by_machine",
+                } for step in assessment.get("next_steps", [])
+                    if advice_verified_for_display and isinstance(step, str) and step.strip()]
                 summary["agent_triage"] = {
-                    "triage_only": True, "assessment": assessment.get("assessment", "unknown"),
-                    "summary": assessment.get("summary", ""),
+                    "triage_only": True,
+                    "vulnerability_report": assessment.get("vulnerability_report"),
+                    "poc_draft": assessment.get("poc_draft"),
+                    "artifact_generation": result.get("artifact_generation"),
+                    "artifact_origin": "preserved_unverified_model_draft",
+                    "repair_guidance": {"status": "unverified_model_suggestions", "patch_generated": False, "items": model_suggestions},
+                    "assessment": assessment.get("assessment", "unknown") if advice_verified_for_display else "unknown",
+                    "summary": assessment.get("summary", "") if advice_verified_for_display else "",
                     "summary_provenance": result.get("summary_provenance", "legacy_model_generated_unverified"),
                     "model_summary_unverified": assessment.get("model_summary_unverified",
-                        assessment.get("summary", "")),
+                        assessment.get("summary", "")) if advice_verified_for_display else "",
                     "experiment_id": result.get("experiment_id"),
-                    "supported_claims": assessment.get("supported_claims", []),
-                    "obligation_reviews": assessment.get("obligation_reviews", []),
+                    "supported_claims": assessment.get("supported_claims", []) if advice_verified_for_display else [],
+                    "obligation_reviews": assessment.get("obligation_reviews", []) if advice_verified_for_display else [],
                     "citation_integrity": result.get("citation_integrity"),
+                    "citation_review": citation_state,
+                    "model_suggestions": model_suggestions,
                     "narrative_integrity": result.get("narrative_integrity", {
                         "unverified_narrative_fields": ["model_summary_unverified", "unsupported_claims", "unknowns", "next_steps"],
                         "narrative_semantics": "unverified_by_machine"}),
-                    "unsupported_claims": assessment.get("unsupported_claims", []),
-                    "unknowns": assessment.get("unknowns", []),
-                    "next_steps": assessment.get("next_steps", []),
+                    "unsupported_claims": assessment.get("unsupported_claims", []) if advice_verified_for_display else [],
+                    "unknowns": assessment.get("unknowns", []) if advice_verified_for_display else [],
+                    "next_steps": [item["text"] for item in model_suggestions],
                     "mode": result.get("mode"),
                     "model": (result.get("provider") or {}).get("model"),
                     "model_usage": result.get("model_usage"),
@@ -1917,27 +3395,121 @@ def install_routes(app: FastAPI, settings, store):
                 }
             operation_summaries.append(summary)
         review_status = _case_review_status(store, ops, case_id)
-        return {"schema_version": 1, "case_id": case_id, "candidates": records,
+        validation_operations = [item for item in operation_summaries if item.get("kind") == "validation"]
+        if not validation_operations:
+            plans_ready = bool(records) and all(row.get("poc_plan", {}).get("state") == "plan_only"
+                                                for row in records)
+            poc_status = {"state": "not_run" if plans_ready else "unknown",
+                          "label": "计划已生成 · 未执行" if plans_ready else "材料不足 · 未生成可审查计划",
+                          "detail": ("已生成绑定固定源码的安全验证计划；本操作不会创建任务或执行 PoC。"
+                                     if plans_ready else "固定源码或候选位置材料缺失，保持 unknown；没有虚构验证步骤。")}
+        elif any(item.get("status") == "running" for item in validation_operations):
+            poc_status = {"state": "running", "label": "验证执行中",
+                          "detail": "请等待受控验证操作完成；运行中不代表漏洞已确认。"}
+        elif any(item.get("status") == "queued" for item in validation_operations):
+            poc_status = {"state": "queued", "label": "验证计划已登记，尚未运行",
+                          "detail": "排队状态不代表 PoC 已执行或漏洞已复现。"}
+        else:
+            poc_status = {"state": "completed", "label": "验证操作已结束，需查看门控结果",
+                          "detail": "组件 Harness 结果不能单独证明产品可达性；确认状态仍以人工结论和验证门控为准。"}
+        for record in records:
+            record.get("source_anchor", {}).pop("_source_lines", None)
+        return {"schema_version": 2, "case_id": case_id, "candidates": records,
                 "operations": operation_summaries,
+                "operation_summaries": {"total": max(operation_page["total"], len(operations)), "included": len(operation_summaries), "limit": 20, "truncated": operation_page["total"] > len(operation_summaries)},
                 "assessments": ops.assessments(case_id),
                 "latest_human_assessment": review_status["latest_human_assessment"],
                 "validation_basis": review_status["validated_by"],
                 "validated_vulnerability": review_status["validated_vulnerability"],
+                "poc_status": poc_status,
                 "limitations": ["Static candidates and component harness observations do not establish product reachability or reportability.",
-                                "A confirmed case count requires an append-only human assessment plus a matching passed runtime gate and verified product reachability."]}
+                                "A confirmed case count requires an append-only human assessment plus a matching passed runtime gate and verified product reachability.",
+                                "AI next steps are unverified investigation suggestions, not a reviewed remediation patch or an executed PoC plan."] +
+                    (["One or more saved reports lacked fields needed for risk-tier enrichment; unknown means unavailable, not safe."]
+                     if risk_snapshot_unavailable else [])}
+
 
     @router.get("/cases/{case_id}/report.md")
     def case_report_md(case_id: str):
-        data = case_report_json(case_id)
+        exports = _case_report_exports(case_id)
+        return Response(exports["markdown"], media_type="text/markdown; charset=utf-8")
+
+
+    def _case_report_markdown(data, case_id):
         md = _markdown_inline_untrusted
-        rows = ["# OHScanner 调查案例报告", "", "案例 ID：" + md(case_id), "", "## 候选与证据"]
+        case_state = ("人工确认（运行时门控通过）" if data["validated_vulnerability"]
+                      else "candidate（尚未确认）")
+        rows = ["# OHScanner 调查案例报告", "", "案例 ID：" + md(case_id),
+                "", "- 当前结论：" + md(case_state),
+                "- 确认漏洞数：" + md(data["validated_vulnerability"]),
+                "- PoC / 受控验证：" + md(data["poc_status"]["label"]),
+                "", "## 候选与证据"]
         for row in data["candidates"]:
             c = row["candidate"]
-            rows += ["", "### " + md(c["detector_id"]) + " / " + md(c["rule_id"]),
+            risk = row.get("risk") or {}
+            rows += ["", "### " + md(c.get("detector_id", "unknown detector")) + " / " + md(c.get("rule_id", "unknown rule")),
                      "", "- 来源：" + md(row["repository"]) + " @ " + md(row["commit"]),
-                     "- 文件：" + md(c["file"]) + ":" + md(c["line"]),
+                     "- 固定来源文件：" + md(c.get("file", "unknown")) + ":" + md(c.get("line", "unknown")),
+                     "- 静态规则消息：" + md(c.get("message", "未提供")),
+                     "- 静态严重性 / 置信度：" + md(risk.get("severity", "unknown")) + " / " + md(risk.get("confidence", "unknown")),
+                     "- 风险分层：" + md(risk.get("risk_tier_label", "来源绑定未知")),
+                     "- 分层依据：" + md("；".join(risk.get("reasons", [])) or "暂无可用依据"),
                      "- 报告 SHA-256：" + md(row["report_sha256"]),
-                     "- 结论：candidate；影响范围 unknown"]
+                     "- 观测状态：candidate（单条观测保持候选；案例人工结论单独记录）",
+                     "- 来源证据 SHA-256：" + md(c.get("source_sha256", "unknown")),
+                     "- 建立案例的理由：" + md(row.get("rationale", "未填写"))]
+            anchor = row.get("source_anchor") or {}
+            if anchor.get("verified"):
+                rows += ["- 固定源码锚点：" + md(anchor.get("anchor_id")) + "；" +
+                         md(anchor.get("repository")) + " @ " + md(anchor.get("commit")) + "；" +
+                         md(anchor.get("file")) + ":" + md(anchor.get("line")) +
+                         "；源码 SHA-256 " + md(anchor.get("source_sha256"))]
+            else:
+                rows += ["- 固定源码锚点：unknown（" + md(anchor.get("reason", "来源材料不可用")) + "）"]
+            remediation_draft = row.get("remediation_draft") or {}
+            if remediation_draft.get("draft"):
+                rows += ["- 修复建议草案（未验证，非补丁/非确认结论）：" + md(remediation_draft["draft"]),
+                         "- 草案依据：" + md(remediation_draft.get("provenance")) +
+                         "；固定源码锚点 " + md((remediation_draft.get("source_anchor") or {}).get("anchor_id", "unknown"))]
+                for check in remediation_draft.get("review_checks", []):
+                    rows += ["  - 人工复核：" + md(check)]
+            else:
+                rows += ["- 修复建议：unknown（" + md(remediation_draft.get("reason", "尚无可审查的 CWE 修复草案")) + "）"]
+            evidence = c.get("evidence") if isinstance(c.get("evidence"), dict) else {}
+            obligations = evidence.get("obligations") if isinstance(evidence.get("obligations"), list) else []
+            if obligations:
+                rows += ["- 静态分析义务与证据："]
+                for obligation in obligations[:40]:
+                    if isinstance(obligation, dict):
+                        description = obligation.get("description") or obligation.get("kind") or "未命名义务"
+                        state = obligation.get("status", "unknown")
+                        rows += ["  - " + md(description) + "（" + md(state) + "）"]
+                    else:
+                        rows += ["  - " + md(obligation)]
+            ai_basis = remediation_draft.get("ai_basis") or {"state": "unknown", "citations": [],
+                "note": "没有绑定到本候选的已核验 Agent 引用。"}
+            rows += ["- AI 源码依据状态：" + md(ai_basis.get("state", "unknown")) + "；" +
+                     md(ai_basis.get("note", "语义支持未知"))]
+            for citation in ai_basis.get("citations", []):
+                rows += ["  - 固定源码引文：" + md(citation.get("evidence_id")) + "；" +
+                         md(citation.get("file", "unknown")) + ":" +
+                         md(citation.get("line_start", "?")) + "-" + md(citation.get("line_end", "?")) +
+                         "；“" + md(citation.get("quote", "")) + "”"]
+            rows += ["- 已人工复核的修复补丁：未提供；以上草案需人工检查并经补丁测试。"]
+            plan = row.get("poc_plan") or {}
+            rows += ["", "#### 安全验证计划 · " + md(plan.get("label", "unknown"))]
+            if plan.get("state") == "plan_only":
+                rows += ["- 执行状态：未请求、未排队、未执行；预期结果：unknown，需人工先定义测试 oracle。",
+                         "- 计划依据：固定源码锚点 " + md((plan.get("source_anchor") or {}).get("anchor_id", "unknown"))]
+                for step in plan.get("steps", []):
+                    step_anchor = step.get("source_anchor") or {}
+                    rows += ["- " + md(step.get("id")) + "（" + md(step.get("status")) + "）：" +
+                             md(step.get("action")) + "；源码 " + md(step_anchor.get("file", "unknown")) +
+                             ":" + md(step_anchor.get("line", "unknown")) + " @ " +
+                             md(step_anchor.get("commit", "unknown")) + " SHA-256 " +
+                             md(step_anchor.get("source_sha256", "unknown"))]
+            else:
+                rows += ["- 验证计划状态：unknown；" + md(plan.get("reason", "固定源码证据不可用；没有生成伪造步骤。"))]
         agent_ops = [item for item in data["operations"] if item.get("kind") == "agent_investigation"
                      and item.get("agent_triage")]
         if agent_ops:
@@ -2022,11 +3594,29 @@ def install_routes(app: FastAPI, settings, store):
                     rows += ["- 建议复核步骤：" + md("；".join(triage["next_steps"]))]
                 if triage["limitations"]:
                     rows += ["- 调查限制：" + md("；".join(triage["limitations"]))]
+                if triage.get("model_suggestions"):
+                    rows += ["- AI 建议（未验证；仅作为待复核方向，不构成修复或漏洞事实）："]
+                    for suggestion in triage["model_suggestions"]:
+                        anchor = suggestion.get("source_anchor") or {}
+                        rows += ["  - " + md(suggestion.get("text")) + "；上下文锚点 " +
+                                 md(anchor.get("file", "unknown")) + ":" + md(anchor.get("line", "unknown")) +
+                                 " @ " + md(anchor.get("commit", "unknown")) +
+                                 "；语义支持仍为 unknown"]
+                elif triage.get("citation_review", {}).get("state") == "unknown":
+                    rows += ["- AI 建议：unknown（" + md(triage["citation_review"].get("reason")) + "）；未展示未绑定建议"]
                 if triage["source_submission"]:
                     consent = triage["source_submission"]
                     rows += ["- 源码外发目的地：" + md(consent.get("destination_host") or "unknown") +
                              "；授权预览 SHA-256 " + md(consent.get("consent_sha256") or "unknown") +
                              "；预览版本 " + md(consent.get("consent_preview_version") or "unknown")]
+        rows += ["", "## PoC / 受控验证", "",
+                 "- 状态：" + md(data["poc_status"]["label"]),
+                 "- 说明：" + md(data["poc_status"]["detail"])]
+        validation_rows = [item for item in data["operations"] if item.get("kind") == "validation"]
+        for operation in validation_rows:
+            rows += ["- 验证操作：" + md(operation["id"]) + "；状态 " + md(operation["status"])
+                     + "；门控 " + md(operation.get("validation_gate", "unknown"))
+                     + "；产品可达性 " + md(operation.get("reachability_status", "unknown"))]
         human_assessments = [item for item in data["assessments"] if item.get("reviewer_kind") == "human"]
         if human_assessments:
             rows += ["", "## 人工案例复核"]
@@ -2041,7 +3631,115 @@ def install_routes(app: FastAPI, settings, store):
         rows += ["", "## 限制", "", *["- " + md(x) for x in data["limitations"]],
                  "", "经门控确认的漏洞数：" + md(data["validated_vulnerability"]) +
                  "（候选数不计入；模型建议不能单独确认）。"]
-        return Response("\n".join(rows) + "\n", media_type="text/markdown")
+        scope = data.get("operation_summaries") or {}
+        rows += ["", "## 操作范围", "展示 " + str(scope.get("included", len(data.get("operations", [])))) + " / " + str(scope.get("total", len(data.get("operations", [])))) + " 条", "经门控确认的漏洞数：" + str(data.get("validated_vulnerability", 0))]
+        if scope.get("truncated"):
+            rows.append("未展开的 " + str(scope["total"] - scope["included"]) + " 条操作仍存在；可在任务中心查看。")
+        rows += ["", "## 人工登记源码证据"]
+        for record in data.get("candidates", []):
+            for evidence in record.get("source_evidence", []):
+                rows.append("- " + md(evidence.get("file")) + ": " + md(evidence.get("note")))
+        rows += ["", "## Agent 建议", "## AI 修复与验证建议（未经验证）", "## AI 漏洞报告草案与 PoC 计划", "## PoC 验证计划（AI 草案，未执行）", "未执行、未验证；candidate / unknown", "## PoC / 隔离验证记录", "固定 Harness 结果另列；AI 草案不代替已执行的验证。", "## Agent 实验与人工评价", "最近 20 条结果；完整范围见操作计数。", "AI 草案 · 未执行 · 未验证 · candidate / unknown", "系统未生成或应用补丁；AI 草案不是已验证补丁，PoC 草案未执行。"]
+        for operation in data.get("operations", []):
+            triage = operation.get("agent_triage") or {}
+            for advice in triage.get("model_suggestions", []):
+                rows.append("- " + md(advice.get("text")))
+            for key in ("vulnerability_report", "poc_draft"):
+                draft = triage.get(key) or {}
+                rows.append("- " + md(key) + "：" + md(draft.get("status", "unknown")))
+                for field in ("title", "summary", "root_cause", "code", "remediation", "description"):
+                    if draft.get(field): rows.append(md(draft[field]))
+            evidence = operation.get("validation_evidence") or {}
+            if evidence:
+                rows.append("- 固定 Harness：" + md(evidence.get("harness_id")))
+                for revision in (evidence.get("revisions") or {}).values():
+                    for case in revision.get("replay_cases", []):
+                        rows.append("- 案例 " + md(case.get("case_id")))
+            for limitation in operation.get("limitations", []): rows.append("- " + md(limitation))
+        return "\n".join(rows) + "\n"
+
+
+    def _case_report_exports(case_id):
+        data = case_report_json(case_id)
+        markdown = _case_report_markdown(data, case_id)
+        html_document = _case_markdown_to_html(markdown)
+        canonical_json = json.dumps(data, ensure_ascii=False, sort_keys=True,
+                                    separators=(",", ":")).encode("utf-8")
+        manifest = {
+            "schema_version": 1,
+            "case_id": case_id,
+            "scope": {"validated_vulnerability": data["validated_vulnerability"]},
+            "hash_contract": "SHA-256 over UTF-8 bytes; report.json uses canonical JSON v1 (sorted keys, compact separators, no ASCII escaping).",
+            "artifacts": {
+                "report.json": {"sha256": hashlib.sha256(canonical_json).hexdigest(),
+                                "serialization": "canonical-json-v1", "size_bytes": len(canonical_json)},
+                "report.md": {"sha256": hashlib.sha256(markdown.encode("utf-8")).hexdigest(), "size_bytes": len(markdown.encode("utf-8"))},
+                "report.html": {"sha256": hashlib.sha256(html_document.encode("utf-8")).hexdigest(), "size_bytes": len(html_document.encode("utf-8"))},
+            },
+            "source_bindings": [{
+                "job_id": row["job_id"],
+                "report_sha256": row["report_sha256"],
+                "repository": row["repository"],
+                "commit": row["commit"],
+                "candidate_id": row["candidate"]["id"],
+                "file": row["candidate"].get("file"),
+                "line": row["candidate"].get("line"),
+                "source_sha256": row["candidate"].get("source_sha256"),
+                "git_blob": (row.get("source_anchor") or {}).get("git_blob"),
+                "source_anchor_id": (row.get("source_anchor") or {}).get("anchor_id"),
+                "source_anchor_state": (row.get("source_anchor") or {}).get("state", "unknown"),
+                "risk_tier": (row.get("risk") or {}).get("risk_tier", "unknown"),
+                "vulnerability_state": "candidate",
+            } for row in data["candidates"]],
+            "operations": [{
+                "id": item["id"], "kind": item["kind"], "status": item["status"],
+                "result_sha256": item.get("result_sha256"),
+                "job_id": item.get("job_id"), "candidate_id": item.get("candidate_id"),
+            } for item in data["operations"]],
+            "human_assessment_ids": [item.get("id") for item in data["assessments"]
+                                     if item.get("reviewer_kind") == "human"],
+            "validated_vulnerability": data["validated_vulnerability"],
+            "limitations": data["limitations"],
+        }
+        return {"data": data, "json": canonical_json, "markdown": markdown,
+                "html": html_document, "manifest": manifest}
+
+
+    @router.get("/cases/{case_id}/report.html")
+    def case_report_html(case_id: str):
+        document = _case_report_exports(case_id)["html"]
+        return Response(document, media_type="text/html; charset=utf-8", headers={
+            "Content-Disposition": f'inline; filename="ohscanner-case-{case_id}.html"',
+            "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+            "X-Content-Type-Options": "nosniff",
+            "X-Frame-Options": "DENY",
+        })
+
+
+    @router.get("/cases/{case_id}/manifest.json")
+    @router.get("/cases/{case_id}/report.manifest.json")
+    def case_report_manifest(case_id: str):
+        return _case_report_exports(case_id)["manifest"]
+
+
+    @router.get("/cases/{case_id}/report.bundle.zip")
+    def case_report_bundle(case_id: str):
+        exports = _case_report_exports(case_id)
+        manifest_json = json.dumps(exports["manifest"], ensure_ascii=False, sort_keys=True,
+                                   separators=(",", ":")).encode("utf-8")
+        bundle = BytesIO()
+        with zipfile.ZipFile(bundle, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr("report.json", exports["json"])
+            archive.writestr("report.md", exports["markdown"].encode("utf-8"))
+            archive.writestr("report.html", exports["html"].encode("utf-8"))
+            archive.writestr("manifest.json", manifest_json)
+        return Response(bundle.getvalue(), media_type="application/zip", headers={
+            "Content-Disposition": f'attachment; filename="ohscanner-case-{case_id}.zip"',
+            "X-Content-Type-Options": "nosniff",
+        })
+
+
+
 
     @router.post("/cases/{case_id}/agent-assessments", status_code=201)
     def agent_assessment(case_id: str, body: AgentProposalRequest):
@@ -2098,6 +3796,8 @@ def install_routes(app: FastAPI, settings, store):
         if not set(body.evidence_ids).issubset(valid_refs):
             raise ValueError("assessment references evidence outside this case")
         if body.outcome in {"confirmed", "reportable"}:
+            if len({(item["job_id"], item["candidate_id"]) for item in links}) != 1:
+                raise ValueError("confirmed/reportable is disabled for multi-candidate cases; create one case per candidate and review each separately")
             eligible = False
             for oid in body.validation_operation_ids:
                 task = ops.get(oid)
@@ -2112,3 +3812,350 @@ def install_routes(app: FastAPI, settings, store):
 
     app.include_router(router)
     return ops
+
+
+def _case_markdown_to_html(markdown):
+    """Render the small Markdown subset used by case reports without raw HTML."""
+    escaped_markdown_chars = re.compile(r"\\([\\`*_{}\[\]()#+\-.!|<>~])")
+
+    def inline(value):
+        parts = re.split(r"(\*\*.*?\*\*|`[^`]*`)", value)
+        rendered = []
+        for part in parts:
+            if part.startswith("**") and part.endswith("**") and len(part) >= 4:
+                text = escaped_markdown_chars.sub(r"\1", part[2:-2])
+                rendered.append("<strong>" + html_escape(text) + "</strong>")
+            elif part.startswith("`") and part.endswith("`") and len(part) >= 2:
+                text = escaped_markdown_chars.sub(r"\1", part[1:-1])
+                rendered.append("<code>" + html_escape(text) + "</code>")
+            else:
+                text = escaped_markdown_chars.sub(r"\1", part)
+                rendered.append(html_escape(text))
+        return "".join(rendered)
+
+    body = []
+    list_kind = None
+
+    def close_list():
+        nonlocal list_kind
+        if list_kind:
+            body.append("</" + list_kind + ">")
+            list_kind = None
+
+    for raw_line in markdown.splitlines():
+        line = raw_line.strip()
+        if not line:
+            close_list()
+            continue
+        heading = re.match(r"^(#{1,4})\s+(.+)$", line)
+        if heading:
+            close_list()
+            level = len(heading.group(1))
+            body.append(f"<h{level}>" + inline(heading.group(2)) + f"</h{level}>")
+            continue
+        if line.startswith("> "):
+            close_list()
+            body.append("<blockquote>" + inline(line[2:]) + "</blockquote>")
+            continue
+        unordered = re.match(r"^-\s+(.+)$", line)
+        ordered = re.match(r"^\d+\.\s+(.+)$", line)
+        match, kind = (unordered, "ul") if unordered else (ordered, "ol") if ordered else (None, None)
+        if match:
+            if list_kind != kind:
+                close_list()
+                list_kind = kind
+                body.append("<" + kind + ">")
+            body.append("<li>" + inline(match.group(1)) + "</li>")
+            continue
+        close_list()
+        body.append("<p>" + inline(line) + "</p>")
+    close_list()
+    return """<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OHScanner case report</title>
+<style>
+body{margin:0;background:#f4f6fa;color:#243247;font:16px/1.75 system-ui,-apple-system,sans-serif}
+main{max-width:1000px;margin:32px auto;padding:36px 44px;background:#fff;border:1px solid #dfe6ef;border-radius:14px;box-shadow:0 8px 30px #20385812}
+h1,h2,h3,h4{color:#173b67;line-height:1.35;margin:1.5em 0 .55em}h1{margin-top:0;font-size:2em}
+p{margin:.6em 0}li{margin:.35em 0}blockquote{margin:1em 0;padding:.6em 1em;border-left:4px solid #7aa7e8;background:#f3f7ff;color:#526783}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere;color:#234d85}
+@media(max-width:700px){main{margin:0;padding:22px;border:0;border-radius:0}}
+@media print{body{background:#fff}main{max-width:none;margin:0;padding:0;border:0;box-shadow:none}}
+</style></head><body><main>""" + "\n".join(body) + "</main></body></html>"
+
+
+def _fixed_case_source_anchor(settings, store, job, report, candidate,
+                              fixed_source=_SOURCE_NOT_SUPPLIED):
+    """Resolve a candidate location against the exact saved report and Git source."""
+    expected_commit = job.get("spec", {}).get("commit")
+    report_sha256 = job.get("report_sha256")
+    candidate_sha256 = candidate.get("source_sha256")
+    line_number = candidate.get("line")
+    if (not expected_commit or report.get("commit") != expected_commit
+            or not isinstance(report_sha256, str) or not re.fullmatch(r"[0-9a-f]{64}", report_sha256)):
+        return {"state": "unknown", "reason": "扫描报告或固定提交绑定缺失。"}
+    if not isinstance(candidate_sha256, str) or not re.fullmatch(r"[0-9a-f]{64}", candidate_sha256):
+        return {"state": "unknown", "reason": "候选没有可核验的源码 SHA-256。"}
+    if (not isinstance(line_number, int) or isinstance(line_number, bool) or line_number < 1
+            or not isinstance(candidate.get("file"), str) or not candidate["file"]):
+        return {"state": "unknown", "reason": "候选缺少有效的仓库相对路径或行号。"}
+    try:
+        source = (service.source(settings, store, job, candidate["file"])
+                  if fixed_source is _SOURCE_NOT_SUPPLIED else fixed_source)
+        if not isinstance(source, dict):
+            raise ValueError("fixed source is unavailable")
+        source_text = source.get("text")
+        observed_sha256 = (hashlib.sha256(source_text.encode("utf-8")).hexdigest()
+                           if isinstance(source_text, str) else None)
+        if (source.get("commit") != expected_commit or source.get("sha256") != candidate_sha256
+                or observed_sha256 != candidate_sha256):
+            return {"state": "unknown", "reason": "候选源码与扫描提交/源码哈希不匹配。"}
+        lines = source_text.splitlines()
+        if line_number > len(lines):
+            return {"state": "unknown", "reason": "候选行号不存在于固定源码中。"}
+    except (KeyError, TypeError, ValueError, OSError, UnicodeError,
+            subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        # A report remains readable when the Git object is unavailable, but no generated
+        # advice may claim a source anchor that could not be independently re-opened.
+        return {"state": "unknown", "reason": "固定源码材料暂不可用，未生成引用或建议。"}
+    start = max(1, line_number - 2)
+    end = min(len(lines), line_number + 2)
+    identity = ["case-source-anchor-v1", report.get("repository"), expected_commit,
+                report_sha256, candidate["file"], line_number, candidate_sha256]
+    return {
+        "state": "verified_fixed_source",
+        "verified": True,
+        "anchor_id": "src-" + hashlib.sha256(json.dumps(identity, ensure_ascii=False,
+            separators=(",", ":")).encode()).hexdigest()[:20],
+        "repository": report.get("repository"),
+        "commit": expected_commit,
+        "git_tree": report.get("git_tree"),
+        "snapshot_sha256": report.get("snapshot_sha256"),
+        "report_sha256": report_sha256,
+        "file": candidate["file"],
+        "line": line_number,
+        "source_sha256": candidate_sha256,
+        "git_blob": source.get("blob"),
+        "excerpt_start_line": start,
+        "excerpt_end_line": end,
+        "excerpt": "\n".join(f"{number}: {lines[number - 1]}" for number in range(start, end + 1)),
+        "_source_lines": lines,
+    }
+
+
+def _source_anchor_reference(source_anchor):
+    if not source_anchor.get("verified"):
+        return None
+    return {key: source_anchor.get(key) for key in (
+        "state", "verified", "anchor_id", "repository", "commit", "git_tree",
+        "snapshot_sha256", "report_sha256", "file", "line", "source_sha256", "git_blob")}
+
+
+def _candidate_remediation_draft(candidate, source_anchor):
+    cwe = candidate.get("candidate_cwe")
+    draft = _REMEDIATION_DRAFTS.get(cwe) if isinstance(cwe, str) else None
+    if not source_anchor.get("verified") or not draft:
+        reason = source_anchor.get("reason") or "当前候选 CWE 没有对应的受控修复草案模板。"
+        return {"state": "unknown", "label": "修复建议待复核", "draft": None,
+                "unverified": True, "reason": reason,
+                "source_anchor": _source_anchor_reference(source_anchor)}
+    return {
+        "state": "draft_unverified",
+        "label": "修复建议草案 · 未验证",
+        "draft": draft,
+        "unverified": True,
+        "provenance": "确定性 CWE 草案模板；不是模型结论、已确认根因或补丁",
+        "basis": {"candidate_cwe": cwe, "rule_id": candidate.get("rule_id"),
+                  "note": "CWE 和规则信息是候选元数据，不单独证明此处存在漏洞。"},
+        "review_checks": ["结合固定源码上下文和调用路径核对根因与接口契约。",
+                          "修改后补充正例、修复版/安全控制及边界测试，并复核实际补丁。"],
+        "ai_basis": {"state": "unknown", "citations": [],
+                     "note": "没有引用校验通过且绑定到本候选的 Agent 材料；草案只来自通用 CWE 模板。"},
+        "source_anchor": _source_anchor_reference(source_anchor),
+    }
+
+
+def _candidate_poc_plan(candidate, source_anchor):
+    if not source_anchor.get("verified"):
+        return {"state": "unknown", "label": "验证计划材料不足", "execution": {
+                    "requested": False, "queued": False, "executed": False},
+                "steps": [], "reason": source_anchor.get("reason"), "source_anchor": None}
+    steps = [
+        ("review_entry", "从固定源码和调用方核对可达入口、调用身份、前置状态及敏感操作；未由源码证明的条件保持 unknown。"),
+        ("define_oracle", "由人工先写明可观察结果和失败条件；预期值只能来自接口契约、受审查的对照版本或明确的测试规范。"),
+        ("prepare_isolated_harness", "如需复现，在临时本地目录构造最小隔离 Harness；禁用网络和生产服务，不执行破坏性操作。"),
+        ("compare_controls", "对候选输入与安全/修复控制运行同一测试，保存源码 SHA、命令、日志和结果；组件 Harness 结果与产品可达性分别记录。"),
+        ("human_interpretation", "由复核者解释结果、影响边界和未决项；测试未运行、控制不完整或产品入口未知时保持 candidate/unknown。"),
+    ]
+    return {
+        "state": "plan_only",
+        "label": "安全验证 / PoC 计划 · 未执行",
+        "execution": {"requested": False, "queued": False, "executed": False},
+        "authorization": "运行需要用户明确提出执行请求，并通过现有固定版本、隔离环境和验证门控；本报告不会自动创建或启动验证操作。",
+        "expected_result": "unknown_until_reviewer_defines_contract_and_oracle",
+        "harness_selection": "未选择 Harness；只有与固定仓库、提交、路径和来源哈希完全匹配的已登记适配器才可执行。",
+        "steps": [{"id": step_id, "action": action, "status": "not_started",
+                   "source_anchor": _source_anchor_reference(source_anchor)}
+                  for step_id, action in steps],
+        "candidate_cwe": candidate.get("candidate_cwe"),
+        "source_anchor": _source_anchor_reference(source_anchor),
+    }
+
+
+def _agent_citation_state(settings, store, result, job, candidate, source_anchor):
+    """Recheck persisted Agent citations against evidence payloads bound to the fixed commit."""
+    binding = result.get("binding") if isinstance(result, dict) else None
+    if not isinstance(binding, dict) or any((
+            binding.get("job_id") != job.get("id"),
+            binding.get("candidate_id") != candidate.get("id"),
+            binding.get("report_sha256") != job.get("report_sha256"),
+            binding.get("commit") != job.get("spec", {}).get("commit"),
+            binding.get("source_sha256") != candidate.get("source_sha256"),
+    )):
+        return {"state": "unknown", "reason": "Agent 结果与本案例的固定候选绑定不匹配。"}
+    assessment = result.get("agent_assessment")
+    integrity = result.get("citation_integrity")
+    if not isinstance(assessment, dict) or not isinstance(integrity, dict):
+        return {"state": "unknown", "reason": "Agent 结果缺少可核验的引用材料。"}
+    citations = []
+    for field in ("supported_claims", "obligation_reviews"):
+        rows = assessment.get(field, [])
+        if not isinstance(rows, list):
+            return {"state": "unknown", "reason": "Agent 引用结构无效。"}
+        for row in rows:
+            if not isinstance(row, dict):
+                return {"state": "unknown", "reason": "Agent 引用结构无效。"}
+            refs = row.get("citations", [])
+            if not isinstance(refs, list):
+                return {"state": "unknown", "reason": "Agent 引用结构无效。"}
+            citations.extend(refs)
+    if (integrity.get("quote_presence") != "verified_for_all_citations"
+            or not citations or integrity.get("citation_count") != len(citations)):
+        return {"state": "unknown", "reason": "Agent 引文缺失或未通过完整性校验。"}
+
+    evidence = {}
+    initial = result.get("initial_evidence")
+    if isinstance(initial, dict):
+        context = initial.get("context")
+        if (initial.get("evidence_kind") == "source_code"
+                and initial.get("file") == candidate.get("file")
+                and initial.get("source_sha256") == candidate.get("source_sha256")
+                and initial.get("source_commit", binding.get("commit")) == binding.get("commit")
+                and isinstance(initial.get("evidence_id"), str)
+                and isinstance(context, dict) and isinstance(context.get("source_excerpt"), str)):
+            text = context["source_excerpt"]
+            start = initial.get("source_excerpt_start_line", context.get("source_excerpt_start_line", 1))
+            source_lines = source_anchor.get("_source_lines", [])
+            excerpt_lines = text.splitlines()
+            excerpt_matches_fixed_source = (
+                isinstance(start, int) and not isinstance(start, bool) and start >= 1
+                and isinstance(source_lines, list)
+                and start + len(excerpt_lines) - 1 <= len(source_lines)
+                and excerpt_lines == source_lines[start - 1:start - 1 + len(excerpt_lines)])
+            if excerpt_matches_fixed_source:
+                evidence[initial["evidence_id"]] = [{"file": initial["file"], "text": text,
+                    "lines": {start + index: line for index, line in enumerate(excerpt_lines)},
+                    "commit": initial.get("source_commit", binding.get("commit")),
+                    "source_sha256": initial.get("source_sha256"),
+                    "git_blob": initial.get("git_blob")}]
+
+    for call in result.get("tool_calls", []) if isinstance(result.get("tool_calls"), list) else []:
+        if not isinstance(call, dict) or call.get("evidence_kind") != "source_code":
+            continue
+        evidence_id = call.get("evidence_id")
+        payload = call.get("result")
+        if not isinstance(evidence_id, str) or not isinstance(payload, dict):
+            continue
+        entries = payload.get("matches") if isinstance(payload.get("matches"), list) else [payload]
+        for entry in entries:
+            if not isinstance(entry, dict) or entry.get("commit", payload.get("commit")) != binding.get("commit"):
+                continue
+            file = entry.get("file") or payload.get("file")
+            text = entry.get("text")
+            if not isinstance(file, str) or not isinstance(text, str):
+                continue
+            raw_lines = text.splitlines()
+            numbered = [re.match(r"^(\d+): ?(.*)$", line) for line in raw_lines]
+            if raw_lines and all(numbered):
+                lines = {int(match.group(1)): match.group(2) for match in numbered}
+            else:
+                start = entry.get("start_line", payload.get("start_line", 1))
+                if not isinstance(start, int) or isinstance(start, bool) or start < 1:
+                    continue
+                lines = {start + index: line for index, line in enumerate(raw_lines)}
+            evidence.setdefault(evidence_id, []).append({
+                "file": file, "text": text, "lines": lines,
+                "commit": entry.get("commit", payload.get("commit")),
+                "source_sha256": entry.get("source_sha256", payload.get("source_sha256")),
+                "git_blob": entry.get("git_blob", payload.get("git_blob")),
+            })
+
+    fixed_sources = {candidate.get("file"): {
+        "commit": source_anchor.get("commit"),
+        "sha256": source_anchor.get("source_sha256"),
+        "blob": source_anchor.get("git_blob"),
+        "text": "\n".join(source_anchor.get("_source_lines", [])),
+    }}
+    for citation in citations:
+        if (not isinstance(citation, dict) or not isinstance(citation.get("evidence_id"), str)
+                or not isinstance(citation.get("file"), str)):
+            return {"state": "unknown", "reason": "Agent 引文没有固定源码证据 ID。"}
+        entries = evidence.get(citation["evidence_id"], [])
+        quote = citation.get("quote")
+        cited_file = citation["file"]
+        if (not cited_file or cited_file.startswith("/") or "\\" in cited_file
+                or ".." in Path(cited_file).parts):
+            return {"state": "unknown", "reason": "Agent 引文路径不是安全的仓库相对路径。"}
+        if cited_file not in fixed_sources:
+            try:
+                fixed = service.source(settings, store, job, cited_file)
+            except (KeyError, TypeError, ValueError, OSError, UnicodeError,
+                    subprocess.CalledProcessError, subprocess.TimeoutExpired):
+                return {"state": "unknown", "reason": "Agent 引文对应的固定提交源码不可用。"}
+            if not isinstance(fixed, dict) or fixed.get("commit") != binding.get("commit"):
+                return {"state": "unknown", "reason": "Agent 引文源码未绑定到固定提交。"}
+            fixed_sources[cited_file] = fixed
+        fixed = fixed_sources[cited_file]
+        fixed_lines = fixed.get("text", "").splitlines()
+        matched = False
+        for entry in entries:
+            if cited_file != entry["file"]:
+                continue
+            if (entry.get("commit") is not None
+                    and entry["commit"] != binding.get("commit")):
+                continue
+            if (entry.get("source_sha256") is not None
+                    and entry["source_sha256"] != fixed.get("sha256")):
+                continue
+            if entry.get("git_blob") is not None and entry["git_blob"] != fixed.get("blob"):
+                continue
+            if (entry.get("commit") is None and entry.get("source_sha256") is None
+                    and entry.get("git_blob") is None):
+                continue
+            if not isinstance(quote, str):
+                continue
+            start, end = citation.get("line_start"), citation.get("line_end")
+            if start is not None or end is not None:
+                if (not isinstance(start, int) or isinstance(start, bool)
+                        or not isinstance(end, int) or isinstance(end, bool)
+                        or start < 1 or end < start
+                        or any(line not in entry["lines"] for line in range(start, end + 1))
+                        or end > len(fixed_lines)
+                        or "\n".join(entry["lines"][line] for line in range(start, end + 1)) != quote
+                        or "\n".join(fixed_lines[line - 1] for line in range(start, end + 1)) != quote):
+                    continue
+            else:
+                if quote not in entry["text"] and quote not in "\n".join(entry["lines"].values()):
+                    continue
+                if quote not in fixed.get("text", ""):
+                    continue
+            matched = True
+            break
+        if not matched:
+            return {"state": "unknown", "reason": "Agent 引文与其固定提交源码材料不匹配。"}
+    cited_sources = [{key: citation.get(key) for key in ("evidence_id", "file", "line_start", "line_end", "quote")
+                      if citation.get(key) is not None} for citation in citations]
+    return {"state": "unverified_model_advice",
+            "reason": "引文逐字匹配固定提交；语义支持和其与修复建议的相关性仍需人工复核。",
+            "citations": cited_sources}
