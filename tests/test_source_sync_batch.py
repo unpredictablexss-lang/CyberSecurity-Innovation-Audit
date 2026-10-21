@@ -134,6 +134,7 @@ class SourceSyncBatchIntegrationTests(unittest.TestCase):
         subprocess.run(["git", "clone", "-q", "--no-checkout", str(bare), str(target)],
                        check=True, capture_output=True,
                        env={**os.environ, "GIT_ALLOW_PROTOCOL": "file"})
+        git(target, "remote", "set-url", "origin", "https://github.com/" + first + ".git")
         registered = self.store.add_repository(first, str(target))
         (work / "sample.cpp").write_text("int sample() { return 3; }\n", encoding="utf-8")
         git(work, "add", "sample.cpp")

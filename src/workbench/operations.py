@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo
 from . import service
 from .store import TERMINAL
 from .operations_store import Operations
+from .source_identity import repository_source_id
 
 
 def git(repo, *args):
@@ -143,6 +144,66 @@ def enqueue_branch_comparison(settings, store, ops, body):
         "timeout_seconds": body["timeout_seconds"] * 2 + 60,
         "memory_mb": body["memory_mb"],
     }, repo["id"], specs)
+
+
+def source_sync_preflight(settings, entries):
+    """Describe a bounded source-sync plan without network access or filesystem writes."""
+    cache_root = settings.data_dir / "repo-cache"
+    base = cache_root.resolve(strict=False)
+    volume_path = cache_root if cache_root.exists() else settings.data_dir
+    free_bytes = shutil.disk_usage(volume_path).free
+    results = []
+    for entry in entries:
+        name = entry["name"]
+        url = approved_url(entry["url"])
+        expected = "/" + name + (".git" if urlsplit(url).path.endswith(".git") else "")
+        if urlsplit(url).path != expected:
+            raise ValueError("repository URL path must match the approved repository name")
+        source_id = repository_source_id(url)
+        target = base / name.split("/", 1)[1]
+        row = {
+            "repository": name, "source_id": source_id,
+            "action": "fetch" if target.exists() else "clone",
+            "cache_state": "present" if target.exists() else "absent",
+            "current_head": None, "remote_ref_count": None,
+            "scan_after_sync": entry.get("scan_after_sync") is True,
+            "requested_revision": entry.get("revision", "HEAD"),
+            "eligible": True, "reason": "",
+        }
+        if target.is_symlink() or target.resolve(strict=False).parent != base:
+            row.update(eligible=False, cache_state="unsafe_path", reason="缓存目录安全校验失败")
+        elif target.exists():
+            try:
+                checked = service.check_repository(settings, str(target))
+                urls = git(checked, "config", "--get-all", "remote.origin.url").decode().splitlines()
+                cached_sources = {repository_source_id(value) for value in urls if value.strip()}
+                if not cached_sources or cached_sources != {source_id}:
+                    row.update(eligible=False, cache_state="source_conflict",
+                               reason="缓存目录已绑定到不同或未知的源码地址，拒绝混合同名仓库")
+                else:
+                    refs = service.revisions({"path": str(checked)})
+                    row["remote_ref_count"] = len(refs)
+                    try:
+                        row["current_head"] = service.revision({"path": str(checked)}, "HEAD")["commit"]
+                    except (OSError, ValueError, subprocess.TimeoutExpired):
+                        row["current_head"] = None
+            except (OSError, ValueError, subprocess.TimeoutExpired):
+                row.update(eligible=False, cache_state="unusable", reason="现有缓存不是可用的 Git 仓库")
+        if free_bytes <= SOURCE_SYNC_MIN_FREE_BYTES:
+            row.update(eligible=False, reason="可用磁盘空间不足，系统需要保留至少 512 MiB")
+        results.append(row)
+    return {
+        "eligible": all(row["eligible"] for row in results),
+        "repositories": results,
+        "repository_count": len(results),
+        "available_disk_bytes": free_bytes,
+        "minimum_free_disk_bytes": SOURCE_SYNC_MIN_FREE_BYTES,
+        "repository_size_estimate_bytes": None,
+        "limitations": [
+            "预览不会访问 Git 服务器或创建任务；仓库下载大小未知，下载期间仍会检查磁盘余量。",
+            "目录中的组织名称和 source ID 用于定位来源，不证明官方身份或镜像关系。",
+        ],
+    }
 
 
 def date_selection(settings, store, repository_id, branch, start, end, timezone):
@@ -482,6 +543,13 @@ def _sync_source_batch_item(settings, store, ops, task, entry, index, total):
                        "-c", "credential.helper="]
             if was_present:
                 service.check_repository(settings, str(target))
+                try:
+                    cached_urls = git(target, "config", "--get-all", "remote.origin.url").decode().splitlines()
+                except ValueError as exc:
+                    raise ValueError("cached repository has no pinned source identity") from exc
+                cached_sources = {repository_source_id(value) for value in cached_urls if value.strip()}
+                if cached_sources != {repository_source_id(url)}:
+                    raise ValueError("cached repository source identity mismatch; refusing to mix same-named sources")
                 command += ["-C", str(target), "fetch", "--no-recurse-submodules",
                             "--prune", "--tags", url, "+refs/heads/*:refs/remotes/origin/*"]
             else:
@@ -499,6 +567,9 @@ def _sync_source_batch_item(settings, store, ops, task, entry, index, total):
                     _remove_new_sync_target(target, base)
                 return {"repository": name, "status": "cancelled", "sync_action": action,
                         "scan_status": "not_started"}
+            if clone_attempted:
+                # Persist the approved HTTPS identity even when a local transport test seam rewrites clone's URL.
+                git(target, "remote", "set-url", "origin", url)
             sync_finished = True
     except Exception:
         if clone_attempted and not sync_finished:
@@ -528,6 +599,7 @@ def _sync_source_batch_item(settings, store, ops, task, entry, index, total):
         scan_error = type(exc).__name__ + ": " + str(exc)[:500]
     return {
         "repository": name,
+        "source_id": repository_source_id(url),
         "repository_id": repo["id"],
         "status": "completed_with_limitations" if scan_error else "completed",
         "sync_action": action,
@@ -702,6 +774,7 @@ def execute(settings, store, ops, task):
             "status": row.get("status", "failed"),
             "repository": repository,
             "url": url,
+            "source_id": row.get("source_id", repository_source_id(url)),
             "sync_action": row.get("sync_action"),
             "local_head_after_sync": row.get("local_head_after_sync"),
             "git_tree_after_sync": row.get("git_tree_after_sync"),

@@ -131,6 +131,7 @@ class SourceSyncHandlerIntegrationTests(unittest.TestCase):
                 text=True,
                 env={**os.environ, "GIT_ALLOW_PROTOCOL": "file"},
             )
+            git(target, "remote", "set-url", "origin", APPROVED_URL)
             registered = self.store.add_repository(REPOSITORY_NAME, str(target))
             expected_commit = self._commit("fixture version two")
             git(self.work, "push", "origin", "main")
@@ -226,6 +227,23 @@ class SourceSyncHandlerIntegrationTests(unittest.TestCase):
         claimed = self.ops.claim()
         self.assertEqual(claimed["id"], task["id"])
         return task, claimed
+
+    def test_existing_cache_with_different_source_identity_fails_before_fetch(self):
+        target = self.cache / "source-sync-fixture"
+        subprocess.run(["git", "clone", "-q", "--no-checkout", str(self.bare), str(target)],
+                       check=True, capture_output=True,
+                       env={**os.environ, "GIT_ALLOW_PROTOCOL": "file"})
+        git(target, "remote", "set-url", "origin",
+            "https://gitee.com/openharmony/source-sync-fixture.git")
+        self.store.add_repository(REPOSITORY_NAME, str(target))
+        task, claimed = self._task()
+        with patch.object(operations, "_start_source_sync_process",
+                          side_effect=AssertionError("source mismatch must stop before network")):
+            result = execute(self.settings, self.store, self.ops, claimed)
+        self.ops.finish(task["id"], result)
+        self.assertEqual(result["status"], "failed")
+        self.assertIn("source identity mismatch", result["error"])
+        self.assertTrue(target.exists())
 
     def test_single_sync_cancel_stops_git_and_removes_partial_clone(self):
         task, claimed = self._task()

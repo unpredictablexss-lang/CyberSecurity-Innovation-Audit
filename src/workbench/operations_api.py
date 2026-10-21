@@ -14,7 +14,7 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from .operations import (MAX_SOURCE_SYNC_BATCH_REPOSITORIES, approved_url, date_selection,
                          enqueue_branch_comparison, enqueue_range, range_plan,
-                         recent_window_selections)
+                         recent_window_selections, source_sync_preflight)
 from .operations_store import Operations, END
 from .operation_limits import MAX_DETECTOR_IDS
 from .store import now
@@ -1324,13 +1324,12 @@ def install_routes(app: FastAPI, settings, store):
         }
         return ops.record_agent_baseline_review(record)
 
-    @router.post("/operations/source-sync/batch", status_code=201)
-    def source_sync_batch(body: SyncBatchRequest):
+    def normalize_source_sync_entries(body):
         entries = []
         seen = {}
         timeout_total = 0
         from urllib.parse import urlsplit
-        for index, item in enumerate(body.repositories, start=1):
+        for item in body.repositories:
             values = item.model_dump()
             repository = values.pop("repository")
             submitted_url = values.pop("url")
@@ -1349,6 +1348,16 @@ def install_routes(app: FastAPI, settings, store):
             entries.append(normalized)
         if timeout_total > 7200:
             raise ValueError("batch total Git timeout cannot exceed two hours")
+        return entries, timeout_total
+
+    @router.post("/operations/source-sync/preview")
+    def source_sync_preview(body: SyncBatchRequest):
+        entries, _timeout_total = normalize_source_sync_entries(body)
+        return source_sync_preflight(settings, entries)
+
+    @router.post("/operations/source-sync/batch", status_code=201)
+    def source_sync_batch(body: SyncBatchRequest):
+        entries, timeout_total = normalize_source_sync_entries(body)
         return ops.create("source_sync_batch", {
             "repositories": entries,
             "timeout_seconds": timeout_total + 60,

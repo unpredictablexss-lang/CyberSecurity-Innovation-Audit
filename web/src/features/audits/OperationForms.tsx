@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, Button, Card, Checkbox, Collapse, Descriptions, Form, Input, InputNumber, Modal, Radio, Select, Space, Tabs, Typography, message } from "antd";
+import { Alert, Button, Card, Checkbox, Collapse, Descriptions, Form, Input, InputNumber, Modal, Radio, Select, Space, Tabs, Tag, Typography, message } from "antd";
 import { api } from "../../api";
 import { Hash, go } from "../../components";
 import { analysisStatusLabel, coverageStatusLabel, triageStateLabel } from "../workbench/riskLabels.js";
@@ -203,6 +203,8 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
   const [catalog, setCatalog] = useState<any>(null), [catalogPage, setCatalogPage] = useState(1);
   const [selectedCatalog, setSelectedCatalog] = useState<Record<string, any>>({});
   const [catalogBusy, setCatalogBusy] = useState(false), [catalogError, setCatalogError] = useState("");
+  const [preflightBusy, setPreflightBusy] = useState(false), [preflightError, setPreflightError] = useState("");
+  const [preflight, setPreflight] = useState<any>(null), [preparedSubmission, setPreparedSubmission] = useState<any>(null);
   const loadCatalog = async (page = catalogPage) => {
     setCatalogBusy(true); setCatalogError("");
     try { const result = await api("/repositories/online-catalog?page=" + page); setCatalog(result); setCatalogPage(result.page); }
@@ -228,11 +230,14 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
   const finish = async ({ catalog_selection, ...values }: any) => {
     try {
       const names: string[] = Array.isArray(catalog_selection) ? catalog_selection : [];
+      let path: string;
+      let payload: any;
+      let repositories: any[];
       if (names.length) {
         if (names.length > 8) throw new Error("每批最多同步 8 个仓库。");
         const items = names.map((name) => selectedCatalog[name]).filter(Boolean);
         if (items.length !== names.length) throw new Error("部分仓库信息已失效，请重新加载目录并选择。");
-        const repositories = items.map((item: any) => ({
+        repositories = items.map((item: any) => ({
           repository: item.name, url: item.url, timeout_seconds: values.timeout_seconds,
           scan_after_sync: values.scan_after_sync === true,
           revision: item.default_branch ? "refs/remotes/origin/" + item.default_branch : "HEAD",
@@ -241,11 +246,40 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
           audit_mode: "static_only",
           scan_timeout_seconds: values.scan_timeout_seconds, memory_mb: values.memory_mb,
         }));
-        await submit("/operations/source-sync/batch", { repositories });
+        path = "/operations/source-sync/batch";
+        payload = { repositories };
       } else {
-        await submit("/operations/source-sync", values);
+        path = "/operations/source-sync";
+        payload = values;
+        repositories = [values];
       }
+      setPreflightBusy(true);
+      setPreflightError("");
+      setPreflight(null);
+      const plan = await api("/operations/source-sync/preview", { repositories });
+      setPreparedSubmission({ path, payload });
+      setPreflight(plan);
     } catch (error) { setCatalogError(String(error)); }
+    finally { setPreflightBusy(false); }
+  };
+  const confirmPreparedSync = async () => {
+    if (!preflight?.eligible || !preparedSubmission) return;
+    setPreflightError("");
+    try {
+      await submit(preparedSubmission.path, preparedSubmission.payload);
+      setPreflight(null);
+      setPreparedSubmission(null);
+    } catch (error) { setPreflightError(String(error)); }
+  };
+  const dismissPreflight = () => {
+    setPreflight(null);
+    setPreparedSubmission(null);
+    setPreflightError("");
+  };
+  const formatBytes = (value: number) => {
+    if (!Number.isFinite(value) || value < 0) return "未知";
+    const gb = value / (1024 ** 3);
+    return gb >= 1 ? `${gb.toFixed(1)} GiB` : `${(value / (1024 ** 2)).toFixed(0)} MiB`;
   };
   return <Card title="在线仓库中心 · 同步与扫描"><Form name="source-sync" form={form} layout="vertical" initialValues={{ timeout_seconds: 900, scan_after_sync: false, revision: "HEAD", include_paths: ["."], detector_ids: defaults, audit_mode: "static_only", scan_timeout_seconds: 600, memory_mb: 2048 }} onFinish={finish}>
     <Space wrap className="section-gap">
@@ -282,9 +316,31 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
       <Form.Item name="memory_mb" label="扫描内存预算（MB）"><InputNumber min={256} max={8192} /></Form.Item>
     </>}
     <Alert type="info" message={scanAfterSync ? "同步成功后创建固定版本扫描任务" : "同步仓库到本地源码目录"} description="同步不会运行仓库构建脚本。单仓标准研判也不会自动发送源码给模型；Agent 分析需单独预览并授权。" />
-    <Button className="section-gap" type="primary" htmlType="submit" loading={busy}>
-      {selectedNames.length > 1 ? "批量同步所选仓库" : selectedNames.length === 1 ? "同步所选仓库" : scanAfterSync ? "同步并排队扫描" : "排队同步"}
+    <Button className="section-gap" type="primary" htmlType="submit" loading={busy || preflightBusy}>
+      预览同步计划
     </Button>
+    <Modal open={Boolean(preflight)} title="确认源码同步计划" okText="确认并排队" cancelText="返回修改"
+      confirmLoading={busy} okButtonProps={{ disabled: !preflight?.eligible }}
+      onCancel={dismissPreflight} onOk={() => void confirmPreparedSync()}>
+      {preflight && <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+        <Alert type={preflight.eligible ? "info" : "error"} showIcon
+          message={`计划处理 ${preflight.repository_count} 个仓库 · 可用空间 ${formatBytes(preflight.available_disk_bytes)}`}
+          description="预览不会下载源码。仓库大小需下载时确定，系统下载期间会保留至少 512 MiB 可用空间；自动排队的扫描只运行静态检测，不会发送源码给模型。" />
+        {(preflight.repositories || []).map((item: any) => <Card size="small" key={item.repository}
+          title={<Space wrap><Text strong>{item.repository}</Text>
+            <Tag color={item.eligible ? "blue" : "red"}>{item.action === "clone" ? "首次下载" : item.action === "fetch" ? "更新本地副本" : "无法同步"}</Tag>
+          </Space>}>
+          <Space direction="vertical" size={2}>
+            <Text type="secondary">来源：{item.source_id}</Text>
+            {item.current_head && <Text type="secondary">当前本地提交：{item.current_head.slice(0, 12)}</Text>}
+            {item.scan_after_sync && <Text type="secondary">同步后扫描版本：{item.requested_revision}</Text>}
+            {item.reason && <Text type="danger">{item.reason}</Text>}
+          </Space>
+        </Card>)}
+        {preflightError && <Alert type="error" showIcon message="同步任务未创建" description={preflightError} />}
+        {(preflight.limitations || []).map((item: string) => <Text type="secondary" key={item}>{item}</Text>)}
+      </Space>}
+    </Modal>
   </Form></Card>;
 }
 export function InvestigationForm({ busy, submit, context = {} }: Pick<OperationFormProps, "busy" | "submit" | "context">) {

@@ -16,6 +16,7 @@ from urllib.request import Request, urlopen
 
 from . import service
 from .source_roots import load_managed_roots, managed_root_is_current, record_root_check
+from .source_identity import repository_source_id
 
 
 DISCOVERY_MAX_DEPTH = 6
@@ -79,6 +80,7 @@ def online_repository_catalog(page=1):
         description = row.get("description")
         repositories.append({
             "name": full_name,
+            "source_id": repository_source_id("https://github.com/openharmony/" + name + ".git"),
             "url": "https://github.com/openharmony/" + name + ".git",
             "web_url": "https://github.com/openharmony/" + name,
             "description": description[:500] if isinstance(description, str) else "",
