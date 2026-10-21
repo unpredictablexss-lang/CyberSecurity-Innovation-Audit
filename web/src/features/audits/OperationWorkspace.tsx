@@ -8,6 +8,7 @@ import { AgentInvestigationForm, ComparisonForm, InvestigationForm, SyncForm, Va
 import AgentAssessment from "./AgentAssessment";
 import AgentBlindReview from "./AgentBlindReview";
 import SourceSyncDetails from "./SourceSyncDetails";
+import ProgressiveDeepInvestigationAction from "./ProgressiveDeepInvestigationAction";
 import VersionCandidateComparison from "./VersionCandidateComparison";
 import { buildIntelligentReviewView } from "./operationProgressModel.js";
 const { Text } = Typography;
@@ -356,11 +357,9 @@ export default function OperationWorkspace({ view = "all", operationId, context 
               </Descriptions.Item>
             </Descriptions>
             <Text type="secondary">引文 ID：{listText(result.evidence_citations)}</Text>
-            <Alert className="section-gap" type="info" showIcon message="L3 深度 Agent 尚未自动排队" description="当前结果只完成单次、无工具的 L2 快速研判。点击继续会回到固定扫描候选并重新展示深度 Agent 的源码范围与单独授权；可能反证只作为线索，不会自动标误报。" />
+            <Alert className="section-gap" type="info" showIcon message="L3 深度 Agent 需要单独授权" description="只有 L2 完成并建议 investigate 才能继续。提交后复用现有固定版本只读 Agent；它仍是候选调查意见，不会自动确认漏洞或标记误报。" />
             {result.quick_assessment === "investigate" && selected.spec?.job_id && selected.spec?.candidate_id &&
-              <Button className="section-gap" type="primary" onClick={() => go(`/tasks/${encodeURIComponent(selected.spec.job_id)}?tab=findings&candidate_id=${encodeURIComponent(selected.spec.candidate_id)}`)}>
-                继续深度调查 · 重新预览授权
-              </Button>}
+              <ProgressiveDeepInvestigationAction jobId={selected.spec.job_id} candidateId={selected.spec.candidate_id} quickScreenOperationId={selected.id} />}
           </>;
         })()}
       </Card>}

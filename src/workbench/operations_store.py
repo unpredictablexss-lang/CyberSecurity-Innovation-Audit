@@ -380,6 +380,12 @@ class Operations:
                     if prior and json.loads(prior["spec"]).get("consent_sha256") == spec["consent_sha256"]:
                         return self.row(prior)
                     raise ValueError("joint comparison approval ticket has already been used")
+            elif kind == "agent_investigation" and spec.get("progressive_consent_sha256"):
+                for row in db.execute("SELECT * FROM operations WHERE kind=?", (kind,)):
+                    existing_spec = json.loads(row["spec"])
+                    if (existing_spec.get("progressive_consent_sha256") == spec["progressive_consent_sha256"]
+                            and existing_spec.get("source_consent_sha256") == spec.get("source_consent_sha256")):
+                        return self.row(row)
             elif kind == "agent_investigation" and spec.get("source_consent_sha256"):
                 # Consent hashes include a fresh preview nonce. A network/client retry with
                 # the same explicit approval must return the original operation, avoiding
@@ -1218,9 +1224,14 @@ class Operations:
                 raise ValueError("candidate review batches cannot be cancelled; all candidates must remain queued until review or explicit resolution")
             targets = [row]
             if row["kind"] in {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}:
-                targets.extend(self.row(item) for item in db.execute(
-                    "SELECT * FROM operations WHERE kind='progressive_quick_screen'")
-                    if json.loads(item["spec"]).get("audit_operation_id") == key)
+                for item in db.execute(
+                        "SELECT * FROM operations WHERE kind IN ('progressive_quick_screen','agent_investigation')"):
+                    child_spec = json.loads(item["spec"])
+                    child_audit = (child_spec.get("audit_operation_id")
+                                   if item["kind"] == "progressive_quick_screen"
+                                   else child_spec.get("progressive_audit_operation_id"))
+                    if child_audit == key:
+                        targets.append(self.row(item))
             pair_id = row["spec"].get("pair_id")
             if pair_id and row["kind"] == "agent_investigation" and row["status"] not in END:
                 targets = [self.row(item) for item in db.execute(
