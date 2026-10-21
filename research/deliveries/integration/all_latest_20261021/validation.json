@@ -54,7 +54,18 @@
       "failures": 0
     },
     "web_build": "passed",
-    "full_suite": "Final PR #52 CI and fresh local run after the main update are authoritative."
+    "full_suite": {
+      "run": 2089,
+      "passed": 2077,
+      "skipped": 12,
+      "failures": 0,
+      "errors": 0,
+      "elapsed_seconds": 230.257,
+      "command": "python -m unittest discover -s tests -v",
+      "log": "full_suite_after_main51.log",
+      "tested_source_commit": "1b707841ff94d16bd3f5ef0c383f40f0cd3aeed2"
+    }
   },
-  "active_c_model": "C13 0.8.15 from PR #51; earlier C12 adapter retained as a patch and in Git history"
+  "active_c_model": "C13 0.8.15 from PR #51; earlier C12 adapter retained as a patch and in Git history",
+  "github_ci_at_final_publication": "queued; not claimed as passed"
 }
