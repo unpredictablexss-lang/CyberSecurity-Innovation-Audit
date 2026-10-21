@@ -69,12 +69,23 @@ def evidence_status() -> None:
         fail("component harness overstates runtime or backing-store evidence")
     if task["status"] != "COMPLETED_WITH_BUILD_BLOCKER" or task["evidence"]["ark_runtime_execution"] != "NOT_RUN":
         fail("task terminal state is inconsistent")
-    if task["evidence"]["detector_regression"]["passed"] != 11:
+    regression = task["evidence"]["detector_regression"]
+    if regression["passed"] != 11 or regression["failed"] != 0 or regression["exit_code"] != 0:
         fail("task regression count is not 11")
+    if regression["code_commit"] != "45c2694dbcb9851dfd42f3663ba63e1b4d6d924a":
+        fail("detector regression code commit is not pinned to the tested C-line revision")
+    if regression["code_tree"] != "34473d7ed1f9e582ceb5ce4a85750ca70ee8712a":
+        fail("detector regression code tree mismatch")
+    if regression["command"] != "python -m unittest tests.detectors.ark_runtime.test_arraylike_set_bounds -v":
+        fail("detector regression reproduction command mismatch")
 
     regression_log = (EVIDENCE_DIR / "detector_regression_11.log").read_text(encoding="utf-8")
     if "Ran 11 tests" not in regression_log or not regression_log.rstrip().endswith("OK"):
         fail("11-test regression log is incomplete or failing")
+    regression_command = (EVIDENCE_DIR / "detector_regression_11.command.txt").read_text(encoding="utf-8")
+    for expected in (regression["code_branch"], regression["code_commit"], regression["code_tree"], regression["command"]):
+        if expected not in regression_command:
+            fail(f"detector regression command record is missing {expected}")
     if (EVIDENCE_DIR / "detector_regression_11.exit").read_text().strip() != "0":
         fail("detector regression exit marker is not zero")
     if (EVIDENCE_DIR / "rk3568_shell_exit.txt").read_text().strip() != "255":
