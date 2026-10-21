@@ -38,7 +38,11 @@ class BudgetLedger:
         try:
             fd = os.open(self.path, os.O_RDWR | nofollow)
         except FileNotFoundError:
-            fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_RDWR | nofollow, 0o600)
+            try:
+                fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_RDWR | nofollow, 0o600)
+            except FileExistsError:
+                # Another Worker created the ledger after our first open.
+                fd = os.open(self.path, os.O_RDWR | nofollow)
         try:
             metadata = os.fstat(fd)
             if not stat.S_ISREG(metadata.st_mode) or metadata.st_mode & 0o077:
@@ -76,9 +80,15 @@ class BudgetLedger:
                 CREATE INDEX IF NOT EXISTS idx_budget_reservation_audit_status
                     ON budget_reservation(audit_id, status);
             """)
+            # Serialise schema migration across concurrent Worker processes;
+            # the old SQLite ledger can be opened safely by the new release.
+            db.execute("BEGIN IMMEDIATE")
             columns = {row[1] for row in db.execute("PRAGMA table_info(triage_dispatch)")}
             if "quick_assessment" not in columns:
                 db.execute("ALTER TABLE triage_dispatch ADD COLUMN quick_assessment TEXT")
+            if "deep_operation_id" not in columns:
+                db.execute("ALTER TABLE triage_dispatch ADD COLUMN deep_operation_id TEXT")
+            db.commit()
 
     def _connect(self):
         db = sqlite3.connect(self.path, timeout=15, isolation_level=None)
@@ -190,6 +200,32 @@ class BudgetLedger:
             db.commit()
         return {"audit_id": audit_id, "group_id": group_id, "endpoint_id": endpoint_id,
                 "stage": stage, "evidence_gate": evidence_gate, "status": "queued"}
+
+    def claim_deep_operation(self, audit_id: str, group_id: str,
+                             endpoint_id: str, operation_id: str) -> dict[str, Any]:
+        """Atomically bind one L3 group to one consented operation (single flight)."""
+        audit_id = self._id(audit_id, "audit ID")
+        group_id = self._id(group_id, "group ID")
+        endpoint_id = self._id(endpoint_id, "endpoint ID")
+        operation_id = self._id(operation_id, "operation ID")
+        with closing(self._connect()) as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT * FROM triage_dispatch WHERE audit_id=? AND group_id=? AND stage='deep_agent'",
+                (audit_id, group_id),
+            ).fetchone()
+            if not row or row["endpoint_id"] != endpoint_id or row["status"] not in {"queued", "running"}:
+                db.rollback()
+                raise BudgetError("deep Agent group cannot be claimed or replayed")
+            if row["deep_operation_id"] not in (None, operation_id):
+                db.rollback()
+                raise BudgetConflict("deep Agent group already belongs to another operation")
+            db.execute(
+                "UPDATE triage_dispatch SET deep_operation_id=? WHERE audit_id=? AND group_id=? AND stage='deep_agent'",
+                (operation_id, audit_id, group_id),
+            )
+            db.commit()
+            return {**dict(row), "deep_operation_id": operation_id}
 
     def reserve(self, audit_id: str, idempotency_key: str, endpoint_id: str,
                 group_id: str, stage: str, *, max_input_tokens: int,
@@ -343,8 +379,14 @@ class BudgetLedger:
                 "UPDATE budget_reservation SET status=?,actual_input_tokens=?,actual_output_tokens=?,estimated_cost_usd=?,finished_at=? WHERE reservation_id=?",
                 (status, actual_in, actual_out, estimated_cost_usd, now, reservation_id),
             )
-            dispatch_status = ("partial" if status in {"unknown_outcome", "budget_violation"}
-                               else "completed" if status == "completed" else "known_not_sent")
+            # A successful L3 Provider call is NOT completion of the
+            # multi-request Agent/Skeptic/report workflow. Keep its group
+            # running so the next separately reserved call can proceed.
+            if row["stage"] == "deep_agent":
+                dispatch_status = "running" if status == "completed" else "partial"
+            else:
+                dispatch_status = ("partial" if status in {"unknown_outcome", "budget_violation"}
+                                   else "completed" if status == "completed" else "known_not_sent")
             db.execute(
                 "UPDATE triage_dispatch SET status=?,quick_assessment=? WHERE audit_id=? AND group_id=? AND stage=?",
                 (dispatch_status, quick_assessment if row["stage"] == "quick_screen" and status == "completed" else None,
@@ -352,6 +394,48 @@ class BudgetLedger:
             )
             db.commit()
         return self.reservation(reservation_id)
+
+    def finish_deep_group(self, audit_id: str, group_id: str, endpoint_id: str,
+                          operation_id: str, *, success: bool) -> dict[str, Any]:
+        """Finalise L3 only after the *whole* investigation returns."""
+        audit_id = self._id(audit_id, "audit ID")
+        group_id = self._id(group_id, "group ID")
+        endpoint_id = self._id(endpoint_id, "endpoint ID")
+        operation_id = self._id(operation_id, "operation ID")
+        if not isinstance(success, bool):
+            raise BudgetError("deep Agent final status must be boolean")
+        with closing(self._connect()) as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT * FROM triage_dispatch WHERE audit_id=? AND group_id=? AND stage='deep_agent'",
+                (audit_id, group_id),
+            ).fetchone()
+            if (not row or row["endpoint_id"] != endpoint_id
+                    or row["deep_operation_id"] != operation_id):
+                db.rollback()
+                raise BudgetConflict("deep Agent final status has an invalid operation owner")
+            if row["status"] == "completed" and success:
+                db.commit()
+                return dict(row)
+            if row["status"] not in {"queued", "running"}:
+                db.rollback()
+                raise BudgetError("deep Agent cannot change a terminal or partial group")
+            if success:
+                statuses = [item[0] for item in db.execute(
+                    "SELECT status FROM budget_reservation WHERE audit_id=? AND group_id=? AND endpoint_id=? AND stage='deep_agent'",
+                    (audit_id, group_id, endpoint_id),
+                )]
+                if not statuses or "completed" not in statuses or any(
+                        status != "completed" for status in statuses):
+                    db.rollback()
+                    raise BudgetError("deep Agent has incomplete or unknown Provider reservations")
+            next_status = "completed" if success else "partial"
+            db.execute(
+                "UPDATE triage_dispatch SET status=? WHERE audit_id=? AND group_id=? AND stage='deep_agent'",
+                (next_status, audit_id, group_id),
+            )
+            db.commit()
+        return {**dict(row), "status": next_status}
 
     def stop(self, audit_id: str, reason: str) -> dict[str, Any]:
         audit_id = self._id(audit_id, "audit ID")

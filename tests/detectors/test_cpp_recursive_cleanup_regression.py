@@ -34,6 +34,15 @@ class RecursiveCleanupRegressionTests(unittest.TestCase):
         run=scan(VULNERABLE,'partial')
         self.assertEqual(run.status,'blocked')
         self.assertTrue(any(f.rule_id==RULE_RECURSIVE_CLEANUP for f in run.findings))
+    def test_partial_callback_cycle_uses_recursive_cwe_not_uaf(self):
+        run = scan(VULNERABLE, 'partial')
+        candidates = [item for item in run.findings if item.rule_id == RULE_RECURSIVE_CLEANUP]
+        self.assertTrue(candidates)
+        for candidate in candidates:
+            self.assertEqual(candidate.candidate_cwe, "CWE-674")
+            self.assertEqual(candidate.consequence_cwe, "CWE-674")
+            self.assertEqual(candidate.consequence_impact, "availability")
+
     def test_partial_without_candidate_stays_unknown(self):
         run=scan(UNRELATED,'partial')
         self.assertEqual(run.status,'blocked')
