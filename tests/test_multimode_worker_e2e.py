@@ -499,6 +499,25 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
         self._finish_operation_scans(operation)
         self._finish_agent_children(operation, previews)
 
+    def test_date_range_intelligent_mode_authorizes_both_fixed_endpoints_and_finishes(self):
+        payload = {
+            "repository_id": self.repo["id"], "branch": "refs/heads/main",
+            "start": "2025-01-02T00:00:00+00:00",
+            "end": "2025-01-03T00:00:00+00:00", "timezone": "UTC",
+            "include_paths": ["."], "detector_ids": DETECTORS,
+            "timeout_seconds": 90, "memory_mb": 1024,
+            "audit_mode": "standard_review", "auto_triage": True,
+            "max_triage_candidates": 1, "max_r2_candidates": 0,
+        }
+        operation, previews = self._preview_and_submit(
+            "date", "/api/v1/operations/date-ranges", payload,
+            [self.commits[0], self.commits[1]])
+        self.assertEqual(operation["kind"], "revision_range")
+        self.assertEqual(operation["spec"]["date_selection"]["selected_commits"],
+                         [self.commits[1]])
+        self._finish_operation_scans(operation)
+        self._finish_agent_children(operation, previews)
+
     def test_branch_comparison_each_fixed_endpoint_has_independent_consent_and_finishes(self):
         payload = {
             "repository_id": self.repo["id"],
