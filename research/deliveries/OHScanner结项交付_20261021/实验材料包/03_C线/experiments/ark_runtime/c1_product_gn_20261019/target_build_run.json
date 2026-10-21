@@ -1,0 +1,262 @@
+{
+  "schema": "ohscanner.c1.target-build-overlay-run/v1",
+  "target": "obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set/builtins_typedarray_stub_builder.o",
+  "source_tree_mount": "read-only",
+  "byte_identical_source_overlays": [
+    {
+      "kind": "license_notice",
+      "path": "arkcompiler/ets_runtime/LICENSE",
+      "bytes": 10349,
+      "source_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef",
+      "overlay_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+    },
+    {
+      "kind": "license_notice",
+      "path": "arkcompiler/runtime_core/LICENSE",
+      "bytes": 10773,
+      "source_sha256": "d59c05f05ecc2d0b0045b0ccd32fc52a62127c081276066e84657ee1a3dd539a",
+      "overlay_sha256": "d59c05f05ecc2d0b0045b0ccd32fc52a62127c081276066e84657ee1a3dd539a"
+    },
+    {
+      "kind": "license_notice",
+      "path": "base/customization/config_policy/LICENSE",
+      "bytes": 10173,
+      "source_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9",
+      "overlay_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+    },
+    {
+      "kind": "license_notice",
+      "path": "base/hiviewdfx/faultloggerd/LICENSE",
+      "bytes": 10174,
+      "source_sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "overlay_sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "kind": "license_notice",
+      "path": "base/hiviewdfx/hilog/LICENSE",
+      "bytes": 10349,
+      "source_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef",
+      "overlay_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+    },
+    {
+      "kind": "license_notice",
+      "path": "base/hiviewdfx/hilog/frameworks/libhilog/LICENSE",
+      "bytes": 579,
+      "source_sha256": "fdd44dc5e81eea8382e496c39cb9274c2dbbae8bfd705e8389f34fcea9a49f8b",
+      "overlay_sha256": "fdd44dc5e81eea8382e496c39cb9274c2dbbae8bfd705e8389f34fcea9a49f8b"
+    },
+    {
+      "kind": "license_notice",
+      "path": "base/hiviewdfx/hisysevent/LICENSE",
+      "bytes": 10349,
+      "source_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef",
+      "overlay_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+    },
+    {
+      "kind": "license_notice",
+      "path": "base/hiviewdfx/hitrace/LICENSE",
+      "bytes": 10173,
+      "source_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9",
+      "overlay_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+    },
+    {
+      "kind": "license_notice",
+      "path": "base/hiviewdfx/hiview/LICENSE",
+      "bytes": 10351,
+      "source_sha256": "eb3d7b5485466acbd81f2b496f595ab637d2792e268206b27d99e793bdb67549",
+      "overlay_sha256": "eb3d7b5485466acbd81f2b496f595ab637d2792e268206b27d99e793bdb67549"
+    },
+    {
+      "kind": "license_notice",
+      "path": "base/startup/init/LICENSE",
+      "bytes": 10349,
+      "source_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef",
+      "overlay_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+    },
+    {
+      "kind": "license_notice",
+      "path": "commonlibrary/c_utils/LICENSE",
+      "bytes": 10173,
+      "source_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9",
+      "overlay_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+    },
+    {
+      "kind": "license_notice",
+      "path": "foundation/ability/idl_tool/LICENSE",
+      "bytes": 10349,
+      "source_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef",
+      "overlay_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+    },
+    {
+      "kind": "license_notice",
+      "path": "foundation/communication/ipc/LICENSE",
+      "bytes": 10175,
+      "source_sha256": "809fa1ed21450f59827d1e9aec720bbc4b687434fa22283c6cb5dd82a47ab9c0",
+      "overlay_sha256": "809fa1ed21450f59827d1e9aec720bbc4b687434fa22283c6cb5dd82a47ab9c0"
+    },
+    {
+      "kind": "license_notice",
+      "path": "foundation/filemanagement/storage_service/LICENSE",
+      "bytes": 10173,
+      "source_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9",
+      "overlay_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+    },
+    {
+      "kind": "license_notice",
+      "path": "foundation/resourceschedule/ffrt/LICENSE",
+      "bytes": 11357,
+      "source_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "overlay_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "kind": "license_notice",
+      "path": "foundation/resourceschedule/qos_manager/LICENSE",
+      "bytes": 11558,
+      "source_sha256": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6",
+      "overlay_sha256": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6"
+    },
+    {
+      "kind": "license_notice",
+      "path": "foundation/systemabilitymgr/samgr/LICENSE",
+      "bytes": 10349,
+      "source_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef",
+      "overlay_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+    },
+    {
+      "kind": "license_notice",
+      "path": "third_party/FreeBSD/COPYRIGHT",
+      "bytes": 6109,
+      "source_sha256": "4ce916521645614401dd3f625bd534a2281c5e494fe50a631718de1a7c3fb064",
+      "overlay_sha256": "4ce916521645614401dd3f625bd534a2281c5e494fe50a631718de1a7c3fb064"
+    },
+    {
+      "kind": "license_notice",
+      "path": "third_party/bounds_checking_function/LICENSE",
+      "bytes": 9172,
+      "source_sha256": "a60fd35084fbae31b57d35b339ef60d110fb5fd50cf429bdef9887b192989f73",
+      "overlay_sha256": "a60fd35084fbae31b57d35b339ef60d110fb5fd50cf429bdef9887b192989f73"
+    },
+    {
+      "kind": "license_notice",
+      "path": "third_party/cJSON/LICENSE",
+      "bytes": 1084,
+      "source_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+      "overlay_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c"
+    },
+    {
+      "kind": "license_notice",
+      "path": "third_party/json/LICENSE.MIT",
+      "bytes": 1076,
+      "source_sha256": "46a65cffd1ea955132d95a8dd921640714a8d6b537d2e4e482d31145ae95b603",
+      "overlay_sha256": "46a65cffd1ea955132d95a8dd921640714a8d6b537d2e4e482d31145ae95b603"
+    },
+    {
+      "kind": "license_notice",
+      "path": "third_party/lzma/LICENSE",
+      "bytes": 464,
+      "source_sha256": "0e34c282400072e6bac7b094a0703f9f0f008f6ca088f86572f9b17aa55c239a",
+      "overlay_sha256": "0e34c282400072e6bac7b094a0703f9f0f008f6ca088f86572f9b17aa55c239a"
+    },
+    {
+      "kind": "license_notice",
+      "path": "third_party/musl/COPYRIGHT",
+      "bytes": 6196,
+      "source_sha256": "b870108ec5e7790e9f9919064f1b9421d62d5f9b0e6c230c6adf7ea2da62e97b",
+      "overlay_sha256": "b870108ec5e7790e9f9919064f1b9421d62d5f9b0e6c230c6adf7ea2da62e97b"
+    },
+    {
+      "kind": "license_notice",
+      "path": "third_party/optimized-routines/LICENSE",
+      "bytes": 13491,
+      "source_sha256": "650afbf29f214451e02241adc42534e82c9d6ae2b38e2444b92b5a1ffcaf9346",
+      "overlay_sha256": "650afbf29f214451e02241adc42534e82c9d6ae2b38e2444b92b5a1ffcaf9346"
+    },
+    {
+      "kind": "license_notice",
+      "path": "third_party/pcre2/pcre2/LICENCE.md",
+      "bytes": 3867,
+      "source_sha256": "9cf7ac6976099a1d856826d3ef1b093bd6b84489dc6100628ac79e740cf9885a",
+      "overlay_sha256": "9cf7ac6976099a1d856826d3ef1b093bd6b84489dc6100628ac79e740cf9885a"
+    },
+    {
+      "kind": "license_notice",
+      "path": "third_party/selinux/NOTICE",
+      "bytes": 47407,
+      "source_sha256": "9bc76875deefffac3f1abc46a069c1e8b2e0e41c301c7cfcd10beeaa8fd18690",
+      "overlay_sha256": "9bc76875deefffac3f1abc46a069c1e8b2e0e41c301c7cfcd10beeaa8fd18690"
+    },
+    {
+      "kind": "license_notice",
+      "path": "third_party/selinux/libselinux/LICENSE",
+      "bytes": 1034,
+      "source_sha256": "86657b4c0fe868d7cbd977cb04c63b6c667e08fa51595a7bc846ad4bed8fc364",
+      "overlay_sha256": "86657b4c0fe868d7cbd977cb04c63b6c667e08fa51595a7bc846ad4bed8fc364"
+    },
+    {
+      "kind": "license_notice",
+      "path": "third_party/zlib/LICENSE",
+      "bytes": 1002,
+      "source_sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2",
+      "overlay_sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2"
+    },
+    {
+      "kind": "idl_write",
+      "path": "base/hiviewdfx/hiview/adapter/service/client/IHiviewServiceAbility.idl",
+      "bytes": 2685,
+      "source_sha256": "9991e83a4c58f2213f9105964f868e355fcb4003aa40723237b0c3b1a3b0e839",
+      "overlay_sha256": "9991e83a4c58f2213f9105964f868e355fcb4003aa40723237b0c3b1a3b0e839"
+    },
+    {
+      "kind": "idl_write",
+      "path": "base/hiviewdfx/hiview/adapter/service/client/IRequestTraceCallback.idl",
+      "bytes": 764,
+      "source_sha256": "335fef6d321636ee509b0bc1ed48dd19f098141c509f32f44b23417c34554563",
+      "overlay_sha256": "335fef6d321636ee509b0bc1ed48dd19f098141c509f32f44b23417c34554563"
+    },
+    {
+      "kind": "idl_write",
+      "path": "base/hiviewdfx/hiview/adapter/service/client/IRequestUiTreeCallback.idl",
+      "bytes": 743,
+      "source_sha256": "9b043cb3a49a44a791df870bf52673068b6717085dcd3a375f5966a7111c9016",
+      "overlay_sha256": "9b043cb3a49a44a791df870bf52673068b6717085dcd3a375f5966a7111c9016"
+    },
+    {
+      "kind": "idl_write",
+      "path": "base/startup/init/interfaces/innerkits/IDeviceInfo.idl",
+      "bytes": 1294,
+      "source_sha256": "c4c080991222f83604224fa31008c1597a4ab693979b7fbc5a291abdd42d91c8",
+      "overlay_sha256": "c4c080991222f83604224fa31008c1597a4ab693979b7fbc5a291abdd42d91c8"
+    },
+    {
+      "kind": "idl_write",
+      "path": "base/startup/init/services/param/watcher/IWatcher.idl",
+      "bytes": 769,
+      "source_sha256": "79f21f3b61d01060f48f5d6719b1d6a2c0ebe003bd9d04b9a596ef0e4606b8cd",
+      "overlay_sha256": "79f21f3b61d01060f48f5d6719b1d6a2c0ebe003bd9d04b9a596ef0e4606b8cd"
+    },
+    {
+      "kind": "idl_write",
+      "path": "base/startup/init/services/param/watcher/IWatcherManager.idl",
+      "bytes": 1100,
+      "source_sha256": "e494b67aeb4b6e18d43b70e7d2591c530201e43ab2bf03181a64d951ca1ca130",
+      "overlay_sha256": "e494b67aeb4b6e18d43b70e7d2591c530201e43ab2bf03181a64d951ca1ca130"
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "exit_code": 0,
+      "status": "succeeded",
+      "license_overlays": 28,
+      "idl_write_overlays": 6,
+      "new_overlays": [],
+      "log": "/home/deepsleep/c-line-c1-profile-20261018/target_build_overlay_retry1_20261019.log",
+      "log_bytes": 104988,
+      "tail": "ninja: warning: multiple rules generate ohos_ets/arkts\nninja: warning: multiple rules generate ohos_ets/kits\nninja: warning: multiple rules generate ohos_static/api\nninja: warning: multiple rules generate ohos_static/api/@internal/full\nninja: warning: multiple rules generate ohos_static/arkts\nninja: warning: multiple rules generate ohos_static/kits\nninja: warning: multiple rules generate ohos_static/kits\n[1/2] CXX obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set/builtins_typedarray_stub_builder.o"
+    }
+  ],
+  "overlay_counts": {
+    "license_notice": 28,
+    "idl_write": 6
+  }
+}

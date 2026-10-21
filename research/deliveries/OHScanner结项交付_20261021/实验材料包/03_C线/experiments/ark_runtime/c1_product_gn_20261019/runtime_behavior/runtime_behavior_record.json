@@ -1,0 +1,198 @@
+{
+  "schema": "ohscanner.c1.typedarray-runtime-behavior/v1",
+  "recorded_date": "2026-10-19",
+  "status": "candidate",
+  "reason": "A reproducible current-C1 runtime behavior divergence was observed under QEMU: the species getter on an Int8Array subclass is visible when read directly, but TypedArray.filter ignores it and returns Int8Array. This is an API behavior candidate only, not a product vulnerability conclusion.",
+  "product_profile": {
+    "product": "rk3568@hihope",
+    "runtime_repository": "arkcompiler/ets_runtime",
+    "runtime_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+    "runtime_tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+    "typedarray_filter_target_blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+    "typedarray_creator_blob": "991ac5ac034a1a027e3200787ec25c55b3f15b69",
+    "target_object_sha256": "865a1639c3f73f24f7235400228d0bd341930aa903231cd2c4ff21de25f220d5"
+  },
+  "artifacts": {
+    "ark_js_vm": {
+      "path_in_c1_profile": "out-gn-20261019-replay2/rk3568/arkcompiler/ets_runtime/ark_js_vm",
+      "format": "ELF32 ARM EABI5, dynamic, musl interpreter",
+      "sha256": "c6b51a8036fc40415da3c02a7bb1e1b732f9e7fe094fca33ce5f29ad19c9c4c5"
+    },
+    "es2abc": {
+      "path_in_c1_profile": "out-gn-20261019-replay2/rk3568/clang_x64/arkcompiler/ets_frontend/es2abc",
+      "format": "ELF64 x86_64",
+      "sha256": "84029e93a9b067df86f6bf5a9880f199187beedd7292da42a4c169c48943a474",
+      "build_log": "es2abc_host_build_20261019_retry2.log",
+      "build_result": "success"
+    },
+    "qemu_arm_static": {
+      "version": "8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+      "sha256": "47a63bcbdf3030cf42230a0521dae38ff9d62ba1268d5cafc7d8ccf7da7c761c"
+    },
+    "typedarray_species_behavior_control.js": {
+      "sha256": "11a85c0e468edacf808cf91f66c75401618af28ff3c80460a5d2b8f1ddb69d72",
+      "notes": "Copy of the repository control script with a conditional test_end() marker appended for the exact C1 VM harness."
+    },
+    "typedarray_species_behavior_control.abc": {
+      "sha256": "81932760e8f1dc6d5aa8a1c7cd675f6f230e507dad2eb06fc0c930474c62a25e",
+      "compiler_arguments": "es2abc --output <source.abc> <source.js> --target-api-sub-version=beta3"
+    },
+    "vm_entry_smoke.js": {
+      "sha256": "0d4b687a026229d515b17c86dae71ec6186decdc21bf46935309213b28442fd5",
+      "abc_sha256": "f401a1088b75cd962609a03f26d9e29c2b5d48e719bf26208ec488c35fd1784a9",
+      "contents": "assert_true(true); test_end();",
+      "result": "exit 0; exact C1 runtime test-completion hook is confirmed."
+    },
+    "subclass_species_probe": {
+      "source_sha256": "9bdb5bdcc92adc3612063b50469cac0ed314d6c04729f2f5ee10fc6b5dc91465",
+      "abc_sha256": "c6e1f2092366d3aa65affdfb123afd9a9e8b62cf601ffd167970ec6083d75a93",
+      "product_stdout_sha256": "c8e778d833b182d20dd63410642bca7dc31ba55bfe024da71c0c8f6b448e9e55",
+      "node_stdout_sha256": "5b87899ba3d680af7bec5a3ac965e41b58546b53607fc2101590439ba6018891",
+      "product_exit_code": 0,
+      "node_version": "v22.14.0",
+      "product_asm_interpreter_false": {
+        "exit_code": 0,
+        "stdout_sha256": "63702b7ccf02a5249a1d2364c1f5b9f0df0843bda37c354a30b5acbd04ad9d19",
+        "same_result": true
+      }
+    },
+    "species_dispatch_probe": {
+      "source_sha256": "323ba7703e62d3a2eac434a17a48f5a19e6df43c4af58f54cf2b6fae18ad03455",
+      "abc_sha256": "9df99214370e1fa7cc434a17a48f5a19e6df43c4af58f54cf2b6fae18ad03455",
+      "stdout_sha256": "580cc7dd2ef3eb84a0595e18e3117a162696283677909fe4a189f31bf44fd24b",
+      "product_exit_code": 0,
+      "product_asm_interpreter_false": {
+        "exit_code": 0,
+        "stdout_sha256": "3ae04816f211c769505944749a7b628509ee4c8227cec1cdcdabc0477512937d7",
+        "all_four_controls_passed": true
+      },
+      "observation": "Subclass static @@species was ignored; an own source.constructor[Symbol.species] override selected Uint16Species/Uint16Array and converted -1 to 65535."
+    },
+    "typedarray_runtime_additional_controls": {
+      "source_sha256": "ad89858f9206234408cb3f2c2f6c692b186d5f619443b6c54f98da0614495407",
+      "abc_sha256": "c8420a9339532aadd7aa3b984c3ca19813c99796005df74bb777e014824e454b",
+      "stdout_sha256": "c508aee20c497b5e5b5b1721b22c51c8635922c1d424a1c487e78d96681825bc",
+      "product_exit_code": 0,
+      "passed_controls": [
+        "Number/BigInt species content mismatch throws TypeError",
+        "callbacks complete before species constructor and constructor exception identity propagates",
+        "constructor mutation during Filter callback is observed during result creation",
+        "Set/CopyWithin/With do not read @@species; With returns intrinsic same-type result"
+      ]
+    },
+    "species_protector_perturbation": {
+      "source_sha256": "1b037ec5ee6119e68c9fcf957a3ea13705ffac0557e7e70d49e1da04afbb8a03",
+      "abc_sha256": "17e812613c1936b367b190ebca38491b936aec36e0f398ab4137203c43daf1a4",
+      "product_stdout_sha256": "f6ab0cbeb3549bf265bf9be380d19e1cb588d528ee505de9bee26c5986972aad",
+      "product_stderr_sha256": "eaf207a27a08b0aa41906e4c296b140633fbf20c264f7bfd1c2b3e04ca933aa5",
+      "product_exit_code": 0,
+      "execution_mode": "--asm-interpreter=false --test-assert=true --enable-print-execute-time=true",
+      "same_process_observations": {
+        "before_protector_invalidation": "filter on Int8Array subclass returned Int8Array",
+        "protector_invalidation": "defined a getter for Symbol.species on Object.getPrototypeOf(Int8Array), the intrinsic %TypedArray% constructor",
+        "species_getter_calls_after_invalidation": 1,
+        "after_protector_invalidation": "filter returned Uint16Array",
+        "first_result_value": 6
+      },
+      "interpretation": "Perturbation is consistent with the TypedArray species protector guarding the fast path; invalidating it forces observable species lookup. This supports a runtime semantic-divergence root cause but establishes no product entrypoint, attacker control, or security impact."
+    },
+    "species_callback_mutation_probe": {
+      "source_sha256": "6897e69b7c3ebbdf5bdfb7182a1d3368eefadf606cafd472eac12ff05f63463b",
+      "abc_sha256": "b3706773c0f3f051db4e6665f14ffb55ae57ab41f9db8a6c3fd60795c9ccf31f",
+      "product_stdout_sha256": "852a403879f65017421ac192118cb742ef3bf5e70cb3bc78e7e872d42cc4015a",
+      "product_stderr_sha256": "eaf207a27a08b0aa41906e4c296b140633fbf20c264f7bfd1c2b3e04ca933aa5",
+      "product_exit_code": 0,
+      "execution_mode": "--asm-interpreter=false --test-assert=true --enable-print-execute-time=true",
+      "observation": {
+        "callback_calls": 2,
+        "species_getter_calls": 1,
+        "result_type": "Uint8Array",
+        "result_length": 2,
+        "result_values": [
+          120,
+          121
+        ]
+      },
+      "interpretation": "The callback changes %TypedArray%[Symbol.species] on the first iteration; the current C1 result-creation path observes the protector invalidation after callback iteration. Scoped current-runtime control only."
+    },
+    "individual_method_probes": {
+      "set": {
+        "source_sha256": "0b8fc6bb68d818bdf30c90fc9469e8e4cc39fdf649a2fe73b95939e9a902b7a4",
+        "abc_sha256": "adf201d143a848c8f07efac844610aa456f6cda05f45d37189ffd09b6769be46",
+        "product_stdout_sha256": "5f1363e0b79b554ac9ac14d494e8e9ce61c72dd164ee71669f6b82a854ade9f9",
+        "product_stderr_sha256": "eaf207a27a08b0aa41906e4c296b140633fbf20c264f7bfd1c2b3e04ca933aa5",
+        "product_exit_code": 0,
+        "execution_mode": "--asm-interpreter=false --test-assert=true --enable-print-execute-time=true",
+        "observation": "verified that Set mutates [1,2,3] to [1,9,3] without reading the subclass @@species getter",
+        "stdout_marker": "set_no_species_read:pass"
+      },
+      "copywithin": {
+        "source_sha256": "be0cd8de4c08abc09ac25d0a4b9d3dc6686b382356f1dbf0c2d006503ea93675",
+        "abc_sha256": "a3d52ba043f260a77743b28c9e2e5422f808c93b3ffe1d373fcd4a0632642f8f",
+        "product_stdout_sha256": "35107dce28dc7c39b8a4f892a0e1e679a0ec223933b59070509f7a7a17f7d078",
+        "product_stderr_sha256": "eaf207a27a08b0aa41906e4c296b140633fbf20c264f7bfd1c2b3e04ca933aa5",
+        "product_exit_code": 0,
+        "execution_mode": "--asm-interpreter=false --test-assert=true --enable-print-execute-time=true",
+        "observation": "verified that CopyWithin mutates [1,2,3] to [1,1,3] without reading the subclass @@species getter",
+        "stdout_marker": "copywithin_no_species_read:pass"
+      },
+      "with": {
+        "source_sha256": "8f10a5f4e87cc3d3780c0d6095b141ab5423d7900f22e72f33916840b133594a",
+        "abc_sha256": "a32691348892390fc28d85fc64abb8c1a81dbbcf41ae41f0b2f809e88271b0d1",
+        "product_stdout_sha256": "9e9e82858ed304fefea01d7ec6d616fca64376f34ac14ef5b90de36c7af37ef3",
+        "product_stderr_sha256": "eaf207a27a08b0aa41906e4c296b140633fbf20c264f7bfd1c2b3e04ca933aa5",
+        "product_exit_code": 0,
+        "execution_mode": "--asm-interpreter=false --test-assert=true --enable-print-execute-time=true",
+        "observation": "verified that With returns intrinsic Int8Array [7,2,3] without reading the subclass @@species getter",
+        "stdout_marker": "with_no_species_read_intrinsic_result:pass"
+      }
+    }
+  },
+  "execution": {
+    "emulator": "qemu-arm-static -L <C1 sysroot>",
+    "environment": "LD_LIBRARY_PATH=/lib",
+    "vm_arguments": "default entry _GLOBAL::func_main_0; --asm-interpreter=false --test-assert=true --enable-print-execute-time=true <control.abc>",
+    "exit_code": 134,
+    "observed_stderr": "HiLogAdapter_init: Can't connect to server. Errno: 2 (repeated); qemu: uncaught target signal 6 (Aborted) - core dumped.",
+    "stdout_bytes": 0,
+    "interpretation": "The aggregate control script stops at its cross-type subclass species assertion. Isolated output proves the observed product result; later controls in the aggregate script are not completed.",
+    "captured_stderr_sha256": "e3e048d7185abca03cc83efa8aa5f8c1b68e6bbd258329f0c1a35e745f99515f",
+    "captured_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "runner_smoke_exit_code": 0,
+    "qemu_binary_sha256": "47a63bcbdf3030cf42230a0521dae38ff9d62ba1268d5cafc7d8ccf7da7c761c",
+    "qemu_sysroot": "/home/deepsleep/c-line-c1-profile-20261018/qemu-runtime-20261019/sysroot"
+  },
+  "runtime_observations": {
+    "source_file": "arkcompiler/ets_runtime/ecmascript/base/typed_array_helper.cpp",
+    "source_file_sha256": "3c42388b716e82601cee4e43aedddc8ac709fe1363b0753c7efa24745380110d",
+    "source_location": "TypedArraySpeciesCreate fast-path condition near line 949",
+    "observed_current_c1": {
+      "direct_custom_species_getter": "Uint16Species",
+      "default_derived_filter_result": "Int8Array",
+      "custom_derived_filter_result": "Int8Array",
+      "own_constructor_species_result": "Uint16Species",
+      "own_constructor_builtin_species_result": "Uint16Array"
+    },
+    "node_v22_14_reference": {
+      "default_derived_filter_result": "DefaultDerived",
+      "custom_derived_filter_result": "Uint16Species"
+    },
+    "candidate_classification": "current product-runtime semantic divergence; no memory-safety or security impact established",
+    "protector_perturbation": {
+      "object_operator_source_blob": "d885881517adb4a892ec9968cfd3e457e2bc2afd",
+      "object_operator_source_sha256": "05f1eed11c34f0dd178b35515ca7b7fbbe737a5468fdb8abb2727d8e1abfe21b",
+      "object_operator_location": "DefinePropertyByName species-symbol branch near lines 392-398 sets TypedArraySpeciesProtectDetector for the intrinsic TypedArray constructor",
+      "typed_array_helper_source_sha256": "3c42388b716e82601cee4e43aedddc8ac709fe1363b0753c7efa24745380110d",
+      "typed_array_helper_location": "TypedArraySpeciesCreate fast path requires !GetTypedArraySpeciesProtectDetector() near lines 949-975",
+      "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "causal_status": "perturbation-supported guard-to-slow-species-dispatch explanation; candidate only"
+    }
+  },
+  "limitations": [
+    "QEMU execution is not an OpenHarmony device or complete product image.",
+    "The aggregate behavior script stops at the subclass species divergence; isolated BigInt, exception/effect, callback mutation, and Set/CopyWithin/With controls pass, while the remaining aggregate controls are partial.",
+    "No historical vulnerable parent runtime was built or compared.",
+    "No product entrypoint, attacker control, or security impact is established.",
+    "Public Runner admission remains C / blocked / execution_enabled=false."
+  ]
+}

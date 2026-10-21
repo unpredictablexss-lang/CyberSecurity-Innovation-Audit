@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "task": "D74 read-only design review plus D74-4 minimal remediation",
+  "date": "2026-10-20",
+  "status": "concrete_false_positive_reproduced_and_fixed; direct_source_probes_passed",
+  "scope": "Reviewed the D73 detector overlay and changed only the new ffi_array_bounds.py to remove comment/literal text from regex input. No tests, A detectors, holdout files, teammate changes, or existing IPC test/fixture files changed.",
+  "identity": {
+    "worktree": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020",
+    "base_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "working_tree_dirty": true,
+    "reviewed_module": "src/ohscanner/detectors/interface/ffi_array_bounds.py",
+    "module_sha256_after_fix": "fc44c96ac584c28d4ac0106b9a4e7125a7ab71cd0d8b280a7cc3ff75a062a173",
+    "tracked_git_diff_binary_sha256": "9d1bc3fe6c5c73e2207ba739101d8480feedf8ccb6d2115319cc47e20e90f3b4",
+    "tracked_git_diff_bytes": 98123
+  },
+  "implementation_review": {
+    "path_scope": "Exact declared repository `openharmony/communication_ipc` and exact relative file `interfaces/innerkits/cj/src/message_sequence_impl.cpp`; tested wrong-case repository and prefixed path return no candidate.",
+    "parser": "Tree-sitter C++ parses the file and rejects an error tree; it selects the qualified target function definition. Regex checks then evaluate masked body text. Only units with complete parser status reach the helper through detector integration.",
+    "rule_identity": {
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.13",
+      "model_version": "oh-ipc-2026.10-v33",
+      "family": "DATA-06",
+      "rule": "ipc.parcel.array-allocation-width",
+      "rule_version": "0.1.0",
+      "mechanism": "CWE-131",
+      "possible_consequence": "out_of_bounds_write / CWE-787"
+    },
+    "catalogue_consistency": "DATA-06 family is registered; rule appears in IMPACT_BY_RULE and RULE_VERSION_BY_RULE, and maps to out_of_bounds_write.",
+    "contract_note": "The helper does not require CheckReadLength; it reports the count-byte allocation and indexed typed store shape with or without that parcel guard. I aligned the helper docstring with this behavior: CheckReadLength may be present but cannot prove output allocation capacity."
+  },
+  "finding_and_fix": {
+    "defect": "Before fix, raw regex scanning included comment text inside the selected function. A syntactically valid qualified CJ_ReadRemoteObjectArray with the entire matching count, guard, loop, typed mallocs, and indexed stores only in line comments emitted a candidate.",
+    "reproduction": "Constructed in-memory SourceUnit with exact repo/path and qualified function, valid C++ syntax, and all matching tokens inside // comments. Before remediation: ipc.parcel.array-allocation-width at line 2. No source was written for this reproduction.",
+    "change": "Added `_mask_non_code`: recursively masks Tree-sitter comment, string_literal, raw_string_literal, and char_literal byte spans in the function body, preserving CR/LF and byte offsets; then existing regex matching runs on that masked body. Target function selection and line reporting still use the original syntax tree/source. This also prevents string/character contents from satisfying the pattern.",
+    "post_fix_negative": "Same comment-only shape now returns no finding.",
+    "residual_limit": "Regexes still match lexical tokens without proving full control/data-flow dominance across branches or aliases. The hard-coded repository/file/function and paired typed-array sinks make the prototype narrow, but a production-ready rule should add AST binding/flow checks if the function evolves substantially."
+  },
+  "direct_probes": {
+    "command": "From integration worktree, Python calls `git show <revision>:interfaces/innerkits/cj/src/message_sequence_impl.cpp`, constructs a complete cpp SourceUnit, then calls find_remote_array_width_candidate with repository `openharmony/communication_ipc`.",
+    "results": [
+      {
+        "revision": "c10c8a5",
+        "expected": "vulnerable",
+        "result": "one ipc.parcel.array-allocation-width root",
+        "line": 1115
+      },
+      {
+        "revision": "84d681288793785e8f39f71c824f211edaed8f1e",
+        "expected": "vulnerable after !1837, before !2037",
+        "result": "one ipc.parcel.array-allocation-width root",
+        "line": 1188
+      },
+      {
+        "revision": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+        "expected": "fixed by !2037",
+        "result": "no finding"
+      },
+      {
+        "revision": "in-memory comment-only candidate",
+        "expected": "no executable source pattern",
+        "result": "no finding after fix"
+      }
+    ],
+    "official_repository": "https://gitee.com/openharmony/communication_ipc.git",
+    "run_type": "direct developer probes only; no tests were added or run"
+  },
+  "independent_test_seam": {
+    "source": "D:/openHarmonyScanner/records/parallel-20261020/t73_test_oracle_and_feedback-20261020.json",
+    "test_file": "c-line-static-pr/tests/test_t73_cj_array_bounds_oracle.py",
+    "test_sha256": "2a8275b2d49558d3595e0e5eea8cb6f888265c2a8f642408eb58c86e1685fd35",
+    "result": "5 passed as reported by T73",
+    "interpretation": "T73 binds the official wrapper and count/byte behavior and supplies vulnerable/fixed/control oracles. It was not executed against this exact post-fix overlay in this review. T74 owns tests per parent instruction."
+  },
+  "follow_up": {
+    "no_change_follow_up": "After T74's focused test rerun, if its vulnerable/fixed/safe/unrelated/comment-only expectations pass, close the source-level prototype. The only code change from this round was the comment/literal masking correction in the new detector file; all previous teammate dirt and the frozen holdout were preserved.",
+    "holdout": "No holdout manifest modification or admission is proposed.",
+    "product_scope": "Caller reachability through a deployed FFI/Parcel route, product inclusion, and runtime impact remain unresolved; the rule reports a source-level candidate only."
+  },
+  "actions": false
+}
