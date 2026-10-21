@@ -1071,6 +1071,7 @@ def _combined_audit_report_markdown(document):
     risks = document["risk_snapshot"]
     triage = document["triage"]
     authorization = triage.get("authorization") or {}
+    cost_budget = authorization.get("cost_budget") or {}
     rows = [
         "# OHScanner 智能安全审计报告",
         "",
@@ -3209,56 +3210,68 @@ def install_routes(app: FastAPI, settings, store):
                          "vulnerability_state": "candidate"},
                 "reviews": store.reviews(job["id"], item["id"]),
                 "source_evidence": store.source_evidence(job["id"], item["id"])}
+            source_key = (job["id"], item.get("file"))
+            if source_key not in fixed_source_cache:
+                try:
+                    fixed_source_cache[source_key] = service.source(settings, store, job, item.get("file"))
+                except (KeyError, TypeError, ValueError, OSError, UnicodeError, subprocess.CalledProcessError):
+                    fixed_source_cache[source_key] = None
+            source_anchor = _fixed_case_source_anchor(settings, store, job, report, item,
+                                                      fixed_source_cache[source_key])
+            record["source_anchor"] = source_anchor
+            record["remediation_draft"] = _candidate_remediation_draft(item, source_anchor)
+            record["poc_plan"] = _candidate_poc_plan(item, source_anchor)
             records.append(record)
             records_by_candidate[(job["id"], item["id"])] = record
-        operation_page = ops.report_operations_for_case(case_id, limit=20)
-        operations = operation_page["items"]
+
+        # A case may be created after an Agent investigation. Recover that result only
+        # when the immutable operation plan and committed result bind to the exact
+        # candidate/report/source now linked to this case. Never share explicitly
+        # case-bound operations with another case.
+        operations = []
+        for operation in ops.list():
+            spec = operation["spec"]
+            linked = records_by_candidate.get((spec.get("job_id"), spec.get("candidate_id")))
+            case_bound = spec.get("case_id") == case_id
+            if operation["kind"] == "agent_investigation":
+                if spec.get("case_id") not in (None, case_id) or not linked:
+                    continue
+                candidate = linked["candidate"]
+                if (spec.get("report_sha256") != linked["report_sha256"]
+                        or spec.get("source_commit") != linked["commit"]
+                        or spec.get("candidate_source_sha256") != candidate.get("source_sha256")):
+                    continue
+                if operation["result_sha256"]:
+                    try:
+                        committed = ops.result(operation["id"])
+                    except (KeyError, ValueError):
+                        continue
+                    binding = committed.get("binding")
+                    if not isinstance(binding, dict) or any((
+                            binding.get("job_id") != linked["job_id"],
+                            binding.get("candidate_id") != candidate["id"],
+                            binding.get("report_sha256") != linked["report_sha256"],
+                            binding.get("commit") != linked["commit"],
+                            binding.get("source_sha256") != candidate.get("source_sha256"),
+                    )):
+                        continue
+                operations.append(operation)
+            elif case_bound:
+                operations.append(operation)
+        operations = operations[:20]
         operation_summaries = []
         for x in operations:
-            result = ops.result(x["id"])
+            linked = records_by_candidate.get((x.get("spec", {}).get("job_id"),
+                                               x.get("spec", {}).get("candidate_id")))
+            result = ops.result(x["id"]) if x["result_sha256"] else {}
             summary = {"id": x["id"], "kind": x["kind"], "status": x["status"],
                 "result_sha256": x["result_sha256"], "validation_gate": result.get("validation_gate"),
                 "gate_reason": result.get("gate_reason"), "reachability_status": result.get("reachability_status"),
                 "validated_vulnerability": result.get("validated_vulnerability", 0),
-                "commit": result.get("commit"), "commits": result.get("commits")}
-            if x["kind"] == "validation":
-                harness_result = result.get("result") if isinstance(result.get("result"), dict) else {}
-                revisions = {}
-                for name, revision in (harness_result.get("revisions") or {}).items():
-                    if not isinstance(revision, dict):
-                        continue
-                    build = revision.get("build") if isinstance(revision.get("build"), dict) else {}
-                    replay = revision.get("replay") if isinstance(revision.get("replay"), dict) else {}
-                    replay_cases = []
-                    for case in replay.get("cases", []) if isinstance(replay.get("cases"), list) else []:
-                        if not isinstance(case, dict):
-                            continue
-                        replay_cases.append({key: case.get(key) for key in
-                            ("case_id", "role", "expected", "observed", "matches_expectation", "label")
-                            if key in case})
-                    revisions[name] = {
-                        "commit": revision.get("commit"), "state": revision.get("state"),
-                        "build": {key: build.get(key) for key in
-                                  ("compiler", "compiler_version", "sanitizers", "returncode") if key in build},
-                        "replay": {key: replay.get(key) for key in
-                                   ("label", "attempts", "triggered", "all_cases_match") if key in replay},
-                        "replay_cases": replay_cases,
-                        "expectations_met": revision.get("expectations_met", {}),
-                    }
-                summary["validation_evidence"] = {
-                    "harness_id": x.get("spec", {}).get("harness_id") or harness_result.get("harness"),
-                    "family": harness_result.get("family"),
-                    "target_repository": x.get("spec", {}).get("target_repository") or harness_result.get("repository"),
-                    "target_commit": x.get("spec", {}).get("target_commit"),
-                    "cutils_commit": x.get("spec", {}).get("cutils_commit"),
-                    "docker_exit_code": result.get("docker_exit_code"),
-                    "input_manifest_sha256": result.get("input_manifest_sha256"),
-                    "validation_command_sha256": result.get("validation_command_sha256"),
-                    "docker_log_sha256": result.get("docker_log_sha256"),
-                    "revisions": revisions,
-                    "patched_revision": result.get("patched_revision"),
-                    "limitations": result.get("limitations", harness_result.get("limitations", [])),
-                }
+                "commit": result.get("commit"), "commits": result.get("commits"),
+                "case_id": x["spec"].get("case_id"),
+                "job_id": x["spec"].get("job_id"),
+                "candidate_id": x["spec"].get("candidate_id")}
             if x["kind"] == "agent_investigation":
                 assessment = result.get("agent_assessment", {})
                 linked_job = store.job(linked["job_id"]) if linked else None
@@ -3288,24 +3301,17 @@ def install_routes(app: FastAPI, settings, store):
                     "model_summary_unverified": assessment.get("model_summary_unverified",
                         assessment.get("summary", "")) if advice_verified_for_display else "",
                     "experiment_id": result.get("experiment_id"),
-                    "supported_claims": assessment.get("supported_claims", []),
-                    "obligation_reviews": assessment.get("obligation_reviews", []),
-                    "vulnerability_report": assessment.get("vulnerability_report"),
-                    "poc_draft": assessment.get("poc_draft"),
-                    "artifact_generation": result.get("artifact_generation"),
+                    "supported_claims": assessment.get("supported_claims", []) if advice_verified_for_display else [],
+                    "obligation_reviews": assessment.get("obligation_reviews", []) if advice_verified_for_display else [],
                     "citation_integrity": result.get("citation_integrity"),
                     "citation_review": citation_state,
                     "model_suggestions": model_suggestions,
                     "narrative_integrity": result.get("narrative_integrity", {
                         "unverified_narrative_fields": ["model_summary_unverified", "unsupported_claims", "unknowns", "next_steps"],
                         "narrative_semantics": "unverified_by_machine"}),
-                    "unsupported_claims": assessment.get("unsupported_claims", []),
-                    "unknowns": assessment.get("unknowns", []),
-                    "next_steps": assessment.get("next_steps", []),
-                    "repair_guidance": {"status": "unverified_model_suggestions",
-                        "items": assessment.get("next_steps", []),
-                        "patch_generated": False,
-                        "human_review_required": True},
+                    "unsupported_claims": assessment.get("unsupported_claims", []) if advice_verified_for_display else [],
+                    "unknowns": assessment.get("unknowns", []) if advice_verified_for_display else [],
+                    "next_steps": [item["text"] for item in model_suggestions],
                     "mode": result.get("mode"),
                     "model": (result.get("provider") or {}).get("model"),
                     "model_usage": result.get("model_usage"),
@@ -3343,12 +3349,6 @@ def install_routes(app: FastAPI, settings, store):
             record.get("source_anchor", {}).pop("_source_lines", None)
         return {"schema_version": 2, "case_id": case_id, "candidates": records,
                 "operations": operation_summaries,
-                "operation_summaries": {
-                    "total": operation_page["total"],
-                    "included": len(operation_summaries),
-                    "truncated": operation_page["truncated"],
-                    "limit": operation_page["limit"],
-                },
                 "assessments": ops.assessments(case_id),
                 "latest_human_assessment": review_status["latest_human_assessment"],
                 "validation_basis": review_status["validated_by"],
@@ -3360,26 +3360,22 @@ def install_routes(app: FastAPI, settings, store):
                     (["One or more saved reports lacked fields needed for risk-tier enrichment; unknown means unavailable, not safe."]
                      if risk_snapshot_unavailable else [])}
 
+
     @router.get("/cases/{case_id}/report.md")
     def case_report_md(case_id: str):
         exports = _case_report_exports(case_id)
         return Response(exports["markdown"], media_type="text/markdown; charset=utf-8")
 
+
     def _case_report_markdown(data, case_id):
         md = _markdown_inline_untrusted
-        operation_summary = data.get("operation_summaries") or {}
-        operation_total = operation_summary.get("total", len(data.get("operations", [])))
-        operation_included = operation_summary.get("included", len(data.get("operations", [])))
-        operation_limit = operation_summary.get("limit", operation_included)
-        rows = ["# OHScanner 调查案例报告", "", "案例 ID：" + md(case_id), "",
-                "## 操作记录范围",
-                "- 已生成结果的操作记录：展示 " + md(operation_included) + " / " + md(operation_total) + " 条。"]
-        if operation_summary.get("truncated"):
-            rows += ["> 本报告仅展开最近 " + md(operation_limit) + " 条结果，共有 " +
-                     md(operation_total) + " 条；未展开的 " +
-                     md(max(0, operation_total - operation_included)) +
-                     " 条操作仍存在，不能根据本文推断它们没有结果。"]
-        rows += ["", "## 候选与证据"]
+        case_state = ("人工确认（运行时门控通过）" if data["validated_vulnerability"]
+                      else "candidate（尚未确认）")
+        rows = ["# OHScanner 调查案例报告", "", "案例 ID：" + md(case_id),
+                "", "- 当前结论：" + md(case_state),
+                "- 确认漏洞数：" + md(data["validated_vulnerability"]),
+                "- PoC / 受控验证：" + md(data["poc_status"]["label"]),
+                "", "## 候选与证据"]
         for row in data["candidates"]:
             c = row["candidate"]
             risk = row.get("risk") or {}
@@ -3391,18 +3387,61 @@ def install_routes(app: FastAPI, settings, store):
                      "- 风险分层：" + md(risk.get("risk_tier_label", "来源绑定未知")),
                      "- 分层依据：" + md("；".join(risk.get("reasons", [])) or "暂无可用依据"),
                      "- 报告 SHA-256：" + md(row["report_sha256"]),
-                     "- 结论：candidate；影响范围 unknown"]
-            if row.get("rationale"):
-                rows += ["- 案例关联理由：" + md(row["rationale"])]
-            for evidence in row.get("source_evidence", []):
-                location = md(evidence.get("file") or c.get("file")) + ":" + md(evidence.get("start_line", "?"))
-                if evidence.get("end_line") is not None:
-                    location += "-" + md(evidence.get("end_line"))
-                rows += ["- 人工登记源码证据 " + md(evidence.get("id")) + "：" + location +
-                         "；" + md(evidence.get("note") or evidence.get("observation") or "未记录说明")]
-            for review in row.get("reviews", []):
-                rows += ["- 候选复核记录：" + md(review.get("status")) + "；复核人 " +
-                         md(review.get("reviewer")) + "；" + md(review.get("notes") or "未记录说明")]
+                     "- 观测状态：candidate（单条观测保持候选；案例人工结论单独记录）",
+                     "- 来源证据 SHA-256：" + md(c.get("source_sha256", "unknown")),
+                     "- 建立案例的理由：" + md(row.get("rationale", "未填写"))]
+            anchor = row.get("source_anchor") or {}
+            if anchor.get("verified"):
+                rows += ["- 固定源码锚点：" + md(anchor.get("anchor_id")) + "；" +
+                         md(anchor.get("repository")) + " @ " + md(anchor.get("commit")) + "；" +
+                         md(anchor.get("file")) + ":" + md(anchor.get("line")) +
+                         "；源码 SHA-256 " + md(anchor.get("source_sha256"))]
+            else:
+                rows += ["- 固定源码锚点：unknown（" + md(anchor.get("reason", "来源材料不可用")) + "）"]
+            remediation_draft = row.get("remediation_draft") or {}
+            if remediation_draft.get("draft"):
+                rows += ["- 修复建议草案（未验证，非补丁/非确认结论）：" + md(remediation_draft["draft"]),
+                         "- 草案依据：" + md(remediation_draft.get("provenance")) +
+                         "；固定源码锚点 " + md((remediation_draft.get("source_anchor") or {}).get("anchor_id", "unknown"))]
+                for check in remediation_draft.get("review_checks", []):
+                    rows += ["  - 人工复核：" + md(check)]
+            else:
+                rows += ["- 修复建议：unknown（" + md(remediation_draft.get("reason", "尚无可审查的 CWE 修复草案")) + "）"]
+            evidence = c.get("evidence") if isinstance(c.get("evidence"), dict) else {}
+            obligations = evidence.get("obligations") if isinstance(evidence.get("obligations"), list) else []
+            if obligations:
+                rows += ["- 静态分析义务与证据："]
+                for obligation in obligations[:40]:
+                    if isinstance(obligation, dict):
+                        description = obligation.get("description") or obligation.get("kind") or "未命名义务"
+                        state = obligation.get("status", "unknown")
+                        rows += ["  - " + md(description) + "（" + md(state) + "）"]
+                    else:
+                        rows += ["  - " + md(obligation)]
+            ai_basis = remediation_draft.get("ai_basis") or {"state": "unknown", "citations": [],
+                "note": "没有绑定到本候选的已核验 Agent 引用。"}
+            rows += ["- AI 源码依据状态：" + md(ai_basis.get("state", "unknown")) + "；" +
+                     md(ai_basis.get("note", "语义支持未知"))]
+            for citation in ai_basis.get("citations", []):
+                rows += ["  - 固定源码引文：" + md(citation.get("evidence_id")) + "；" +
+                         md(citation.get("file", "unknown")) + ":" +
+                         md(citation.get("line_start", "?")) + "-" + md(citation.get("line_end", "?")) +
+                         "；“" + md(citation.get("quote", "")) + "”"]
+            rows += ["- 已人工复核的修复补丁：未提供；以上草案需人工检查并经补丁测试。"]
+            plan = row.get("poc_plan") or {}
+            rows += ["", "#### 安全验证计划 · " + md(plan.get("label", "unknown"))]
+            if plan.get("state") == "plan_only":
+                rows += ["- 执行状态：未请求、未排队、未执行；预期结果：unknown，需人工先定义测试 oracle。",
+                         "- 计划依据：固定源码锚点 " + md((plan.get("source_anchor") or {}).get("anchor_id", "unknown"))]
+                for step in plan.get("steps", []):
+                    step_anchor = step.get("source_anchor") or {}
+                    rows += ["- " + md(step.get("id")) + "（" + md(step.get("status")) + "）：" +
+                             md(step.get("action")) + "；源码 " + md(step_anchor.get("file", "unknown")) +
+                             ":" + md(step_anchor.get("line", "unknown")) + " @ " +
+                             md(step_anchor.get("commit", "unknown")) + " SHA-256 " +
+                             md(step_anchor.get("source_sha256", "unknown"))]
+            else:
+                rows += ["- 验证计划状态：unknown；" + md(plan.get("reason", "固定源码证据不可用；没有生成伪造步骤。"))]
         agent_ops = [item for item in data["operations"] if item.get("kind") == "agent_investigation"
                      and item.get("agent_triage")]
         if agent_ops:
@@ -3502,167 +3541,14 @@ def install_routes(app: FastAPI, settings, store):
                     rows += ["- 源码外发目的地：" + md(consent.get("destination_host") or "unknown") +
                              "；授权预览 SHA-256 " + md(consent.get("consent_sha256") or "unknown") +
                              "；预览版本 " + md(consent.get("consent_preview_version") or "unknown")]
-        rows += ["", "## AI 漏洞报告草案与 PoC 计划", "",
-                 "> 以下模型产物均为 candidate / unknown 的待复核草案；PoC 草案没有执行或验证。固定 Harness 结果另列，不与草案混同。"]
-        if not agent_ops:
-            rows += ["- 本案例没有绑定的 Agent 调查结果；未生成 PoC 草案，PoC 计划未执行，状态 unknown。"]
-        for operation in agent_ops:
-            triage = operation["agent_triage"]
-            generation = triage.get("artifact_generation")
-            if isinstance(generation, dict):
-                rows += ["", "### 报告/PoC 草案生成阶段",
-                         "- 阶段状态：" + md(generation.get("status", "unknown")) +
-                         "；模型调用数：" + md(generation.get("calls_used", "unknown")) +
-                         "。该状态不代表扫描完成、PoC 执行或漏洞确认。"]
-            report = triage.get("vulnerability_report")
-            if isinstance(report, dict):
-                rows += ["", "### " + md(report.get("title") or "漏洞报告草案") +
-                         "（" + md(report.get("status") or "状态未知") + "；candidate / unknown）"]
-                for label, key in (("摘要", "summary"), ("根因", "root_cause"),
-                                   ("潜在影响", "impact"), ("修复建议", "remediation")):
-                    if report.get(key):
-                        rows += ["- " + label + "：" + md(report.get(key))]
-                for label, key in (("前置条件", "preconditions"), ("攻击路径草案", "attack_path")):
-                    rows += ["- " + label + "："]
-                    values = report.get(key) if isinstance(report.get(key), list) else []
-                    rows.extend(["  - " + md(value) for value in values] or ["  - 未记录"])
-                rows += ["- 报告引用（只展示模型结果中已有的引用）："]
-                citations = report.get("citations") if isinstance(report.get("citations"), list) else []
-                if citations:
-                    for citation in citations:
-                        if not isinstance(citation, dict):
-                            continue
-                        location = md(citation.get("file", "未知文件"))
-                        if citation.get("line_start") is not None:
-                            location += ":" + md(citation.get("line_start"))
-                            if citation.get("line_end") is not None:
-                                location += "–" + md(citation.get("line_end"))
-                        citation_text = "  - " + md(citation.get("evidence_id", "未记录证据 ID")) + " · " + location
-                        if citation.get("quote"):
-                            citation_text += "：“" + md(citation.get("quote")) + "”"
-                        rows.append(citation_text)
-                else:
-                    rows.append("  - 未提供引用。")
-            else:
-                rows += ["", "### 漏洞报告草案", "- 未记录结构化漏洞报告。"]
-
-            poc = triage.get("poc_draft")
-            if isinstance(poc, dict):
-                poc_status = poc.get("status") or "unknown"
-                if poc_status == "draft_unexecuted":
-                    status_text = "AI 草案，未执行"
-                elif poc_status == "insufficient_evidence":
-                    status_text = "证据不足，未生成可执行草案"
-                else:
-                    status_text = "状态未知"
-                rows += ["", "### PoC 验证计划（" + md(status_text) + "）",
-                         "> 未执行、未验证；candidate / unknown。这里展示的是验证计划，不是漏洞确认。"]
-                for label, key in (("标题", "title"), ("语言", "language"),
-                                   ("预期观察", "expected_observation"), ("负向对照", "negative_control")):
-                    if poc.get(key):
-                        rows += ["- " + label + "：" + md(poc.get(key))]
-                for label, key in (("前置条件", "prerequisites"), ("建议步骤", "run_steps")):
-                    rows += ["- " + label + "："]
-                    values = poc.get(key) if isinstance(poc.get(key), list) else []
-                    rows.extend(["  - " + md(value) for value in values] or ["  - 未记录"])
-                code = poc.get("code")
-                if isinstance(code, str) and code.strip():
-                    language = str(poc.get("language") or "text")
-                    if not re.fullmatch(r"[A-Za-z0-9_+.-]{1,48}", language):
-                        language = "text"
-                    longest_fence = max((len(match.group(0)) for match in re.finditer(r"`+", code)), default=2)
-                    fence = "`" * max(3, longest_fence + 1)
-                    rows += ["", "未执行代码草案：", fence + language, code, fence]
-                else:
-                    rows += ["- 没有可执行 PoC 代码；当前草案为空或证据不足。"]
-                rows += ["- PoC 引用（只展示模型结果中已有的引用）："]
-                citations = poc.get("citations") if isinstance(poc.get("citations"), list) else []
-                if citations:
-                    for citation in citations:
-                        if not isinstance(citation, dict):
-                            continue
-                        location = md(citation.get("file", "未知文件"))
-                        if citation.get("line_start") is not None:
-                            location += ":" + md(citation.get("line_start"))
-                            if citation.get("line_end") is not None:
-                                location += "–" + md(citation.get("line_end"))
-                        citation_text = "  - " + md(citation.get("evidence_id", "未记录证据 ID")) + " · " + location
-                        if citation.get("quote"):
-                            citation_text += "：“" + md(citation.get("quote")) + "”"
-                        rows.append(citation_text)
-                else:
-                    rows.append("  - 未提供引用。")
-            else:
-                rows += ["", "### PoC 验证计划（未执行）",
-                         "- 未生成 PoC 草案；计划未执行，状态 unknown。"]
-
-        rows += ["", "## AI 修复与验证建议（未经验证）"]
-        suggestions = [(operation["id"], item)
-                       for operation in agent_ops
-                       for item in (operation["agent_triage"].get("repair_guidance", {}).get("items") or [])]
-        if suggestions:
-            for operation_id, suggestion in suggestions:
-                rows += ["- Agent 建议（操作 " + md(operation_id) + "，待人工复核）：“" + md(suggestion) + "”"]
-        else:
-            rows += ["- 当前没有绑定到本案例的 Agent 修复建议。"]
-        rows += ["- 系统未生成或应用补丁；建议文本不构成修复证明，必须单独审查补丁并在固定版本上重新扫描和验证。"]
-        validation_ops = [item for item in data["operations"] if item.get("kind") == "validation"]
-        rows += ["", "## PoC / 隔离验证记录"]
-        if validation_ops:
-            for operation in validation_ops:
-                rows += ["- 操作 " + md(operation["id"]) + "；状态 " + md(operation.get("status")) +
-                         "；验证门 " + md(operation.get("validation_gate") or "未通过/未知") +
-                         "；产品可达性 " + md(operation.get("reachability_status") or "unknown") +
-                         "；计入确认数 " + md(operation.get("validated_vulnerability", 0)) +
-                         "；结果 SHA-256 " + md(operation.get("result_sha256"))]
-                if operation.get("gate_reason"):
-                    rows += ["  - 门控说明：" + md(operation["gate_reason"])]
-                evidence = operation.get("validation_evidence") or {}
-                if evidence:
-                    rows += ["  - 固定 Harness：" + md(evidence.get("harness_id") or "结果未记录") +
-                             "；目标仓库 " + md(evidence.get("target_repository") or "结果未记录") +
-                             " @ " + md(evidence.get("target_commit") or "结果未记录") +
-                             "；支持库提交 " + md(evidence.get("cutils_commit") or "结果未记录")]
-                    for revision_name, revision in evidence.get("revisions", {}).items():
-                        build = revision.get("build") or {}
-                        replay = revision.get("replay") or {}
-                        rows += ["  - 修订 " + md(revision_name) + " @ " + md(revision.get("commit") or "unknown") +
-                                 "；编译退出码 " + md(build.get("returncode", "unknown")) +
-                                 "；重放 " + md(replay.get("label", "unknown")) +
-                                 "；全部测试案例匹配 " + md(replay.get("all_cases_match", "unknown"))]
-                        for case in revision.get("replay_cases", []):
-                            rows += ["    - 案例 " + md(case.get("case_id", "unknown")) +
-                                     "（" + md(case.get("role", "unknown")) + "）：预期 " +
-                                     md(case.get("expected", "unknown")) + "；观察 " +
-                                     md(case.get("observed", "unknown")) + "；匹配 " +
-                                     md(case.get("matches_expectation", "unknown"))]
-                    for label, digest in (("输入清单", evidence.get("input_manifest_sha256")),
-                                          ("运行命令", evidence.get("validation_command_sha256")),
-                                          ("Docker 日志", evidence.get("docker_log_sha256"))):
-                        if digest:
-                            rows += ["  - " + label + " SHA-256：" + md(digest)]
-                    for limitation in evidence.get("limitations", []):
-                        rows += ["  - Harness 限制：" + md(limitation)]
-            rows += ["> 固定 Harness 的组件级结果不自动证明产品受影响；只有验证门通过、产品可达性已验证且存在匹配人工评估时才计为确认。"]
-        else:
-            rows += ["- 尚无已完成的隔离验证操作；PoC / 产品影响状态保持 unknown。"]
-        rows += ["", "## Agent 实验与人工评价",
-                 "",
-                 "> 本节按案例中已包含的 Agent 操作展示人工分诊反馈；它不等于独立盲评、模型准确率或漏洞真值。"]
-        if agent_ops:
-            for operation in agent_ops:
-                triage = operation["agent_triage"]
-                rows += ["- 实验 " + md(triage.get("experiment_id") or "未标记") +
-                         "；模式 " + md(triage.get("mode") or "unknown") +
-                         "；人工评价数 " + md(len(triage.get("human_reviews", []))) +
-                         "；分诊倾向 " + md(triage.get("assessment", "unknown")) +
-                         "（不是漏洞真值或准确率）"]
-                for review in triage.get("human_reviews", []):
-                    rows += ["  - " + md(review.get("reviewer")) + "：有用性 " + md(review.get("usefulness")) +
-                             "；引文准确性 " + md(review.get("citation_accuracy")) +
-                             "；处理后意见 " + md(review.get("post_review_disposition") or "未记录")]
-        else:
-            rows += ["- 尚无 Agent 调查结果；不能给出模型效能结论。"]
+        rows += ["", "## PoC / 受控验证", "",
+                 "- 状态：" + md(data["poc_status"]["label"]),
+                 "- 说明：" + md(data["poc_status"]["detail"])]
+        validation_rows = [item for item in data["operations"] if item.get("kind") == "validation"]
+        for operation in validation_rows:
+            rows += ["- 验证操作：" + md(operation["id"]) + "；状态 " + md(operation["status"])
+                     + "；门控 " + md(operation.get("validation_gate", "unknown"))
+                     + "；产品可达性 " + md(operation.get("reachability_status", "unknown"))]
         human_assessments = [item for item in data["assessments"] if item.get("reviewer_kind") == "human"]
         if human_assessments:
             rows += ["", "## 人工案例复核"]
@@ -3678,6 +3564,7 @@ def install_routes(app: FastAPI, settings, store):
                  "", "经门控确认的漏洞数：" + md(data["validated_vulnerability"]) +
                  "（候选数不计入；模型建议不能单独确认）。"]
         return "\n".join(rows) + "\n"
+
 
     def _case_report_exports(case_id):
         data = case_report_json(case_id)
@@ -3723,6 +3610,7 @@ def install_routes(app: FastAPI, settings, store):
         return {"data": data, "json": canonical_json, "markdown": markdown,
                 "html": html_document, "manifest": manifest}
 
+
     @router.get("/cases/{case_id}/report.html")
     def case_report_html(case_id: str):
         document = _case_report_exports(case_id)["html"]
@@ -3733,9 +3621,11 @@ def install_routes(app: FastAPI, settings, store):
             "X-Frame-Options": "DENY",
         })
 
+
     @router.get("/cases/{case_id}/report.manifest.json")
     def case_report_manifest(case_id: str):
         return _case_report_exports(case_id)["manifest"]
+
 
     @router.get("/cases/{case_id}/report.bundle.zip")
     def case_report_bundle(case_id: str):
@@ -3753,45 +3643,8 @@ def install_routes(app: FastAPI, settings, store):
             "X-Content-Type-Options": "nosniff",
         })
 
-    @router.get("/cases/{case_id}/report.html")
-    def case_report_html(case_id: str):
-        data = case_report_json(case_id)
-        return Response(
-            _case_report_html_document(data),
-            media_type="text/html; charset=utf-8",
-            headers={"Content-Disposition": 'attachment; filename="ohscanner-case-report.html"'},
-        )
 
-    @router.get("/cases/{case_id}/manifest.json")
-    def case_report_manifest(case_id: str):
-        data = case_report_json(case_id)
-        artifacts = {
-            "report.json": JSONResponse(content=data).body,
-            "report.md": case_report_md(case_id).body,
-            "report.html": case_report_html(case_id).body,
-        }
-        operation_scope = data.get("operation_summaries") or {}
-        manifest = {
-            "schema_version": 1,
-            "case_id": case_id,
-            "artifacts": {
-                name: {"sha256": hashlib.sha256(content).hexdigest(), "size_bytes": len(content)}
-                for name, content in artifacts.items()
-            },
-            "scope": {
-                "operations_total": operation_scope.get("total", len(data.get("operations", []))),
-                "operations_included": operation_scope.get("included", len(data.get("operations", []))),
-                "operations_truncated": bool(operation_scope.get("truncated", False)),
-                "validated_vulnerability": data.get("validated_vulnerability", 0),
-                "boundary": "AI reports and PoC plans remain candidate/unknown drafts; fixed Harness observations do not alone prove product reachability.",
-            },
-        }
-        body = json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
-        return Response(
-            body,
-            media_type="application/json; charset=utf-8",
-            headers={"Content-Disposition": 'attachment; filename="ohscanner-case-manifest.json"'},
-        )
+
 
     @router.post("/cases/{case_id}/agent-assessments", status_code=201)
     def agent_assessment(case_id: str, body: AgentProposalRequest):

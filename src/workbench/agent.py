@@ -3965,6 +3965,7 @@ def execute_agent(settings, store, ops, task, client=None):
     tool_turns = 0
     model_tool_calls_skipped = 0
     seen_tool_queries = set()
+    oversized_tool_queries = set()
     consecutive_no_progress = 0
     no_progress_guard_triggered = False
 
@@ -3998,7 +3999,7 @@ def execute_agent(settings, store, ops, task, client=None):
                 raise ValueError("agent total output token budget exhausted")
         if input_override is not None:
             request_input = input_override
-        elif continuous:
+        elif mode == "tool_agent":
             request_input = _compact_continuous_request_input(input_items, tool_trace)
         else:
             request_input = input_items
@@ -4541,7 +4542,7 @@ def execute_agent(settings, store, ops, task, client=None):
                            + preview.get("budgets", {}).get("max_artifact_generation_calls", 0))
         shared_reserve_remaining = max(0, MAX_VALIDATION_REPAIRS - validation_repair_attempts)
         if (not continuous and (
-                calls >= max_model_calls or shared_reserve_remaining < MAX_SKEPTIC_CALLS
+                calls >= max_model_calls
                 or time.monotonic() - started >= spec["timeout_seconds"])):
             skeptic_review.update({
                 "status": "skipped_budget_limited",
