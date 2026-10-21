@@ -1,0 +1,7 @@
+[OK] M2 pinned-source candidate evidence run; NOT validated vulnerabilities
+[OK] source commit: e4942a33cc5ed29040e5c720bea3b2a8e4a79221
+[OK] first-party detectors: 2
+[OK] unverified diagnostics: 0
+[OK] run coverage: completed_with_limitations
+[OK] JSON report: /mnt/d/openHarmonyScanner/worktrees/c-line-task-tree-20261020/research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/ext4_hot_components/update_updateservice.json
+[OK] Markdown report: /mnt/d/openHarmonyScanner/worktrees/c-line-task-tree-20261020/research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/ext4_hot_components/update_updateservice.md

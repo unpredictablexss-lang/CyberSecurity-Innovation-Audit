@@ -8,7 +8,7 @@
 |---|---|---|
 | E0 | 无 AST 缓存全量基线 | 已完成；原始记录 `E0_no_cache.json` 和组件 JSON/log |
 | E1 | 仅扫描 Git 变更文件 | **三文件合成风险夹具已完成；固定语料计时未运行**。样本证明仅扫描变更文件会漏掉未变文件候选，因此拒绝作为完整扫描方案 |
-| E2 | 变更依赖闭包 + 不可证明时全量回退 | 实现差异规划、完整 SHA/祖先校验、增删改重命名解析；base/head 两端构建 tracked quoted-include 反向索引，并由固定 commit 的 C/C++ 语法 AST 形成保守函数名/callers 候选闭包。头文件删除会使用 base 索引。重载/命名空间/宏/函数指针/虚派发无法从轻量 AST 证明，因此歧义与解析不完整显式记录，检测器仍全量执行；配置变化、无法解析 include、baseline 读取失败也触发 full fallback。临时 Git 等价测试覆盖结果/位置/解析/覆盖/状态。固定语料 E2 未运行：11 个 checkout 均 shallow；虽取得 communication_ipc first-parent SHA，独立 bare fetch 仍无法连接 github.com:443，11 个 parent tree 未取得。 |
+| E2 | 变更依赖闭包 + 不可证明时全量回退 | 固定 11 组件 base→head 冷/热对照已完成。官方 commit 元数据和源码归档重建出的 11/11 base Git 对象、tree、head first-parent 和祖先关系均通过 SHA 验证；配置变化触发 full fallback。热缓存复用 AST 与允许缓存的完整单文件检测器结果，但仍扫描完整 head 清单。与同环境 E0 相比，热跑墙钟 -29.7%、CPU -62.1%，输出签名和覆盖 11/11 一致；冷缓存填充成本更高，不宣称冷跑更快。 |
 | E3 | P0/P1 冷缓存/热缓存和共享事实按需机制 | 冷/热原始结果已归档；冷/热与 E0 的结果身份、状态及覆盖 11/11 一致。按需 facts provider 由单测验证，但当前示例语料没有消费 `facts_v1` 的 detector；不把它计入性能增益 |
 | E4 | Agent 证据收益排序、重复只读动作复用 | 离线 helper 夹具已完成：根因键、义务动作排序、同请求 memo 命中；墙钟/CPU 仅为本地 Python helper 时间。真实 Provider 调用数为 0，模型延迟、Token、成本和质量仍 `not_run` / `unknown`。 |
 
@@ -26,6 +26,28 @@
 | 输出一致性 | — | 与 E0 一致 | 与 E0 一致 | 诊断身份/源码定位/解析状态/检测器覆盖/整体状态均一致，11/11 |
 
 解析调用数不等于全仓解析文件数；AST 缓存仅接管 C/C++ 共享轻量大纲。CPU 配额利用率仍为 `unknown`：WSL2 没有暴露可读 cgroup quota。系统逻辑核数不用于代替配额或瞬时 CPU 占用率。
+
+## E0 / E2 固定语料增量与热缓存对照
+
+为解决浅 checkout 缺少 base commit 的问题，本轮从官方 GitHub commit 元数据与精确源码归档重建了临时 bare repository 中的 Git 对象。11/11 base commit object SHA、base tree SHA、head first-parent、次级 merge parent 元数据和 `merge-base --is-ancestor` 均核验通过；原有 pinned checkout 未改动。材料记录于 `E2_parent_objects/materialized_base_evidence.json`，实现校验的 helper 为 `materialize_e2_base_objects.py`。E2 manifest 固定 11 个 head/base SHA，运行两个真实 M2 detector，覆盖 9,508 个 head 文件。
+
+对比使用同一工作区代码 revision `a87b953fac20da0c4f2e0fb8d5c7262aa6eb36fe`、WSL2/Python 3.14 和同一隔离 targets。E0 无缓存与 E2 冷/热缓存的缓存目录均按实验要求隔离；E2 最终计时使用 WSL 原生 ext4 `/tmp/ohscanner-e2-cache-ext4-20261022`。报告与日志在 `E2_fixed_corpus/`。此前缓存落在 Windows 挂载盘的探索数据也保留，但未用于性能结论，因为小文件缓存 I/O 使其明显变慢。
+
+| 指标 | 同环境 E0 无缓存 | E2 冷缓存（ext4） | E2 热缓存（ext4） | 热缓存相对 E0 |
+|---|---:|---:|---:|---:|
+| 总墙钟 | 94.800 s | 164.627 s | 66.618 s | -29.7% |
+| 进程 CPU | 81.636 s | 121.325 s | 30.950 s | -62.1% |
+| AST 解析 CPU | 33.884 s | 36.621 s | 1.392 s | -95.9% |
+| Detector 阶段墙钟 | 40.828 s | 65.119 s | 19.755 s | -51.6% |
+| 最大组件 RSS | 206,476 KB | 336,376 KB | 333,552 KB | 热跑内存峰值更高，不能宣称内存改善 |
+| parser 调用 / AST cache hit | 9,508 / 0 | 9,478 / 30 | 201 / 9,307 | — |
+| detector 结果 cache hit / miss | 0 / 0 | 0 / 13,144 | 13,037 / 107 | — |
+| 有 detector 结果复用的源码路径 | 0 | 0 | 6,571 | 其余文件及所有 head inventory 仍纳入扫描 |
+| 候选诊断 / 状态 | 63 / 11 `completed_with_limitations` | 63 / 11 `completed_with_limitations` | 63 / 11 `completed_with_limitations` | 签名/覆盖 11/11 等价 |
+
+冷跑高于无缓存基线，反映首次构建 AST 与检测器结果缓存的填充开销。热跑继续检查完整 Git head inventory；所有组件的 build/analysis 配置变化触发保守 full fallback，未缩小候选文件覆盖。热缓存只复用检测器明确声明为完整单文件结果且身份键匹配的条目，其他 miss 继续执行检测器。E0 与 E2 热缓存以及 E2 冷/热的规范化结果签名一致；均有 63 条未验证候选诊断、0 个已验证漏洞。该对照只说明两个 M2 detector 的固定源码处理成本，不是 ABCD 全量漏洞扫描或准确率实验。
+
+复现实验的 Python 环境、目标路径、cache 路径和命令见 `experiments.json` 的 E2 `commands` 字段。由于目标仓库与 ext4 cache 位于本机临时目录，后续复跑需先按 `materialize_e2_base_objects.py` 与 `E2_parent_objects/` 的记录重新构建目标对象和空 cache 目录。
 
 ## P3 当前代码复测补充
 
@@ -89,19 +111,22 @@ git diff --check
 ## 复现与证据文件
 
 - 固定语料 manifest：`benchmarks/perf_scale_corpus_2026-10-10.json`
+- E2 增量 manifest 与 11 个 base 对象校验：`E2_parent_objects/perf_scale_corpus_with_base_20261010.json`、`E2_parent_objects/materialized_base_evidence.json`
+- E2 同环境 E0 / ext4 冷 / ext4 热原始汇总、逐组件 JSON/log、Markdown 与签名等价检查：`E2_fixed_corpus/`
+- E2 汇总和逐组件原始文件 SHA-256 清单：`E2_fixed_corpus/SHA256SUMS.txt`（生成后已逐项校验）
 - 原环境、命令和阶段指标细节：`outputs/reports/perf_ast_cache_stagecpu_20261021/README.md`
 - E0 原始汇总与 11 组件 JSON/log：`E0_no_cache.json`、`E0_components/`
 - E3 冷缓存汇总与组件 JSON/log：`E3_cold_cache.json`、`E3_cold_components/`
 - E3 热缓存汇总与组件 JSON/log：`E3_hot_cache.json`、`E3_hot_components/`
-- E1/E2/E4 状态及不可比较原因，以及 P4 最终报告恢复检查点：`experiments.json`
+- E1/E2/E4 实验状态与原始元数据，以及 P4 最终报告恢复检查点：`experiments.json`
 - E4 离线 Agent 调度 helper 复现记录：`scripts/perf_agent_scheduler_fixture.py` → `E4_offline_scheduler.json`；不代表真实模型实验
-- 汇总表（含原始实验与 P5 设计更新、P3 当前代码复测和 P2 单文件缓存页）：`OHScanner_Efficiency_E0-E4_20261021.xlsx`
+- 汇总表（含原始实验与 P5 设计更新、P3 当前代码复测及 P2/E2 固定语料对照页）：`OHScanner_Efficiency_E0-E4_20261021.xlsx`
 - P2 双提交单文件缓存验证：`p2_result_cache_fixture/comparison.json`、`p2_result_cache_fixture/*/report.json`
 - P2 固定 11 组件 detector-result cache 冷/热对照：`p2_corpus_result_cache/README.md`、E0/E3 JSON 和逐组件 `*_components/`；Excel 页“P2 fixed corpus”
 - P2 Workbench API/UI 固定基线提交：`validation_p2_api_latest.log`、`validation_p2_frontend_latest.log`
 - P3 当前代码三轮实验和结果等价：`p3_facts_current/README.md`、`p3_facts_current/p3_summary.json`、`p3_facts_current/E0_no_cache*.json`、`p3_facts_current/E3_cold_cache*`、`p3_facts_current/E3_hot_cache*`
 
-重现 E0/E3 的具体命令位于上述阶段指标 README。E1 不应作为性能成果；E2 下次固定语料对照应使用相同 head commit 并传入 `--base-commit <完整祖先 SHA>`；当前实现会全量 fallback，目标是验证报告和输出等价，而不是加速。
+重现 E0/E3 的具体命令位于上述阶段指标 README；E2 固定语料复现命令与精确 parent 来源记录位于 `experiments.json` 和 `E2_parent_objects/`。E1 只作为风险夹具，不作为可接受的完整扫描方案。
 
 
 ### P4 中途恢复复核
@@ -110,7 +135,7 @@ git diff --check
 
 ## 最终综合回归（2026-10-21）
 
-对 P2–P5 相关代码运行最新综合回归：`218 passed, 1 skipped, 22 subtests passed`，仅有一条 Starlette/httpx 弃用提示。覆盖 detector 检查点、增量规划与全量等价、事实提供器、资源模式、CPU 配额探测、Worker 并发、Workbench API 与 Agent workflow。`git diff --check` 与 `python -m compileall -q src scripts` 均通过。精确命令已记入 `experiments.json`。固定组件 E2 仍未运行：可用浅 checkout 不含 manifest 要求的父提交对象，独立 bare fetch 未成功；因此本轮没有 E2 固定语料性能或等价结论。
+对 P2–P5 相关代码运行综合回归：`218 passed, 1 skipped, 22 subtests passed`，仅有一条 Starlette/httpx 弃用提示。覆盖 detector 检查点、增量规划与全量等价、事实提供器、资源模式、CPU 配额探测、Worker 并发、Workbench API 与 Agent workflow。之后还完成固定语料 E2 冷/热对照；结果与复核命令见下节。
 
 ## P2 实际 M2 detector 固定语料对照
 

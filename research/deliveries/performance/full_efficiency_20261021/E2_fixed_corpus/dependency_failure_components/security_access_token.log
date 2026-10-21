@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/mnt/d/openHarmonyScanner/worktrees/c-line-task-tree-20261020/src/cli/__main__.py", line 1, in <module>
+    from src.cli.main import main
+  File "/mnt/d/openHarmonyScanner/worktrees/c-line-task-tree-20261020/src/cli/main.py", line 7, in <module>
+    from src.benchmark.historical import run_historical_benchmark, write_reports as write_historical_reports
+  File "/mnt/d/openHarmonyScanner/worktrees/c-line-task-tree-20261020/src/benchmark/__init__.py", line 10, in <module>
+    from .historical import (
+    ...<5 lines>...
+    )
+  File "/mnt/d/openHarmonyScanner/worktrees/c-line-task-tree-20261020/src/benchmark/historical.py", line 12, in <module>
+    from src.parser.ast import parse_source
+  File "/mnt/d/openHarmonyScanner/worktrees/c-line-task-tree-20261020/src/parser/ast.py", line 4, in <module>
+    import tree_sitter_c
+ModuleNotFoundError: No module named 'tree_sitter_c'

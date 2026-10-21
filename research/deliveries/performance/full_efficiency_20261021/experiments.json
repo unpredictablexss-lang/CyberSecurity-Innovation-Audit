@@ -31,19 +31,23 @@
       "interpretation": "Changed-files-only execution omitted all three candidates in unchanged files and is rejected as a complete scan; fixed corpus E1 timing not run."
     },
     "E2": {
-      "status": "unit_validated_full_corpus_not_run_missing_parent_objects",
-      "mode": "dependency_plan_with_full_fallback",
-      "reason": "11 个固定语料 checkout 均为 shallow；已从 communication_ipc 本地 commit object 得到 first parent 093c0af2c28815cf147d2d41208f7a857d4958cb，但独立 bare fetch 仍无法连接 github.com:443，parent tree 未取得。即使取得 parent，当前 detectors 未声明经验证跨文件依赖，执行器仍会完整扫描",
+      "status": "fixed_corpus_cold_hot_completed_equivalent",
+      "mode": "base_head_scan_with_conservative_full_fallback_ast_and_declared_detector_result_caches",
+      "reason": "所有11个固定 head 的 first-parent commit/tree 均从官方 GitHub commit 元数据与源码归档验证并重建为精确 Git 对象；提交对象 SHA、tree SHA、head first-parent 关系及祖先关系 11/11 验证。构建配置变化会触发完整 head fallback。",
       "retrieval_attempt": {
-        "pinned_head": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
-        "first_parent": "093c0af2c28815cf147d2d41208f7a857d4958cb",
-        "second_parent": "6435478d22658623b4d9d7220eb179f01bcac9cb",
-        "temporary_bare_fetch": "failed_connect_github_com_443_after_21_seconds",
-        "source_tree_modified": false
+        "initial_git_transport": "github.com:443 unavailable for direct git fetch",
+        "recovery": "official GitHub REST commit metadata plus codeload source archive; reconstructed Git objects validated against official SHA/tree",
+        "validated_repositories": 11,
+        "base_commit_object_sha_verified": "11/11",
+        "base_tree_sha_verified": "11/11",
+        "head_first_parent_verified": "11/11",
+        "secondary_parent_objects_verified": "all merge second-parent metadata loaded; histories marked shallow in isolated bare repositories",
+        "git_ancestor_check": "11/11",
+        "source_tree_modified": false,
+        "evidence": "E2_parent_objects/materialized_base_evidence.json"
       },
-      "reused_files": 0,
-      "full_scan_corpus_timing": "not_run_this_slice",
-      "result_equivalence": "implementation_fallback_is_full_head_scan",
+      "full_scan_corpus_timing": "completed; full head inventory and coverage retained; per-file result reuse is restricted to declared complete single-file detector cache contract",
+      "result_equivalence": "E0_vs_E2_hot_and_E2_cold_vs_hot_identical_11_of_11_signatures_and_coverage",
       "unit_equivalence": {
         "status": "passed",
         "interpretation": "temporary Git repository; full-head execution fallback; not fixed corpus timing",
@@ -59,7 +63,105 @@
         "tests": 12,
         "command": "python -m pytest tests/test_incremental_plan.py tests/test_incremental_scan_equivalence.py -q (12 tests collected)"
       },
-      "fixed_corpus_note": "All 11 manifest head commits were re-verified exact in local checkouts; 0/11 parent commit objects are available. E2 requires base/head and was not benchmarked."
+      "fixed_corpus_note": "Verified base/head fixed-corpus comparison completed. All 11 components scanned all 9,508 scoped files; the configuration changes triggered conservative full-head fallbacks. Hot AST and eligible detector-result reuse reduced parser calls, but did not narrow scan coverage. See E2_fixed_corpus/ and materialized_base_evidence.json.",
+      "source_revision": "a87b953fac20da0c4f2e0fb8d5c7262aa6eb36fe",
+      "environment": {
+        "host": "WSL2",
+        "python": "3.14 (isolated /tmp/ohscan-e2-venv)",
+        "tree_sitter": "0.26.0",
+        "tree_sitter_c": "0.24.2",
+        "tree_sitter_cpp": "0.23.4",
+        "cache_filesystem": "WSL2 native ext4 (/tmp/ohscanner-e2-cache-ext4-20261022)",
+        "targets": "isolated bare repositories with exact pinned head and reconstructed verified base objects",
+        "cpu_quota": "unlimited/not exposed as a finite WSL2 cgroup quota"
+      },
+      "fixed_corpus": {
+        "components": 11,
+        "scanned_files": 9508,
+        "detectors": [
+          "ohscanner.cpp.lifetime@0.4.0",
+          "ohscanner.cpp.shared_ptr_race@0.5.1"
+        ],
+        "results": {
+          "E0_same_environment": {
+            "wall_seconds": 94.8001,
+            "process_cpu_seconds": 81.636422,
+            "ast_parse_cpu_seconds": 33.883533074,
+            "detector_stage_wall_seconds": 40.827939079,
+            "parser_calls": 9508,
+            "ast_cache_hits": 0,
+            "detector_result_hits": 0,
+            "diagnostics": 63,
+            "completed_with_limitations_components": 11,
+            "peak_component_rss_kb": 206476
+          },
+          "E2_ext4_cold": {
+            "wall_seconds": 164.627,
+            "process_cpu_seconds": 121.324781,
+            "ast_parse_cpu_seconds": 36.62076058,
+            "detector_stage_wall_seconds": 65.118521872,
+            "parser_calls": 9478,
+            "ast_cache_hits": 30,
+            "ast_cache_misses": 9277,
+            "detector_result_hits": 0,
+            "detector_result_misses": 13144,
+            "diagnostics": 63,
+            "completed_with_limitations_components": 11,
+            "peak_component_rss_kb": 336376,
+            "interpretation": "Cold cache materialization overhead exceeds uncached baseline; do not claim a cold-run speedup.",
+            "reused_detector_source_paths": 0
+          },
+          "E2_ext4_hot": {
+            "wall_seconds": 66.6179,
+            "process_cpu_seconds": 30.94975,
+            "ast_parse_cpu_seconds": 1.391975938,
+            "detector_stage_wall_seconds": 19.75486656,
+            "parser_calls": 201,
+            "ast_cache_hits": 9307,
+            "detector_result_hits": 13037,
+            "detector_result_misses": 107,
+            "diagnostics": 63,
+            "completed_with_limitations_components": 11,
+            "peak_component_rss_kb": 333552,
+            "result_equivalence_to_E2_cold": "identical_11_of_11",
+            "result_equivalence_to_E0": "identical_11_of_11",
+            "reused_detector_source_paths": 6571,
+            "recomputed_detector_results": 107
+          }
+        },
+        "hot_vs_e0_percent": {
+          "wall_seconds": -29.7,
+          "process_cpu_seconds": -62.1,
+          "ast_parse_cpu_seconds": -95.9,
+          "detector_stage_wall_seconds": -51.6
+        },
+        "cache_location_diagnostic": {
+          "status": "superseded_for_performance_conclusion",
+          "reason": "An exploratory cache under the Windows-mounted D: workspace incurred high per-file I/O overhead; its raw cold/hot logs remain in E2_fixed_corpus/cold.json and hot.json. The reported E2 comparison uses native ext4 cache."
+        },
+        "quality_boundary": "M2 detector processing-cost experiment only; 63 unvalidated candidate diagnostics, zero validated vulnerabilities, no precision/recall claim, not ABCD full-scan performance.",
+        "coverage_scope": "All 9,508 head files were inventoried. Build/config and cross-file dependency uncertainty kept conservative full-head fallback enabled; result reuse was limited to the detector-declared single-file cache contract."
+      },
+      "commands": {
+        "environment_setup": "wsl.exe bash -lc \"cd /mnt/d/openHarmonyScanner/worktrees/c-line-task-tree-20261020 && python -m venv /tmp/ohscan-e2-venv && /tmp/ohscan-e2-venv/bin/python -m pip install -r requirements.txt -r requirements-web.txt\"",
+        "base_objects": "python research/deliveries/performance/full_efficiency_20261021/materialize_e2_base_objects.py --manifest research/deliveries/performance/full_efficiency_20261021/E2_parent_objects/perf_scale_corpus_with_base_20261010.json --metadata-root /mnt/c/Users/DeepSleep/AppData/Local/Temp/ohscanner-e2-parents-20261021 --secondary-metadata-root /mnt/c/Users/DeepSleep/AppData/Local/Temp/ohscanner-e2-second-parents-20261021 --source-root /home/kali --targets-root /tmp/ohscanner-e2-targets-20261022-replay --evidence-out research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/materialized_base_evidence_replay.json",
+        "E0_same_environment": "python scripts/perf_scale_scan.py --python /tmp/ohscan-e2-venv/bin/python --manifest research/deliveries/performance/full_efficiency_20261021/E2_parent_objects/perf_scale_corpus_with_base_20261010.json --targets-root /tmp/ohscanner-e2-targets-20261021-v6 --detector ohscanner.cpp.lifetime ohscanner.cpp.shared_ptr_race --json-out research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/same_environment_e0.json --md-out research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/same_environment_e0.md",
+        "E2_ext4_cold": "python scripts/perf_scale_scan.py --python /tmp/ohscan-e2-venv/bin/python --manifest research/deliveries/performance/full_efficiency_20261021/E2_parent_objects/perf_scale_corpus_with_base_20261010.json --targets-root /tmp/ohscanner-e2-targets-20261021-v6 --detector ohscanner.cpp.lifetime ohscanner.cpp.shared_ptr_race --ast-cache-dir /tmp/ohscanner-e2-cache-ext4-20261022/ast --detector-result-cache-dir /tmp/ohscanner-e2-cache-ext4-20261022/results --json-out research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/ext4_cold.json --md-out research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/ext4_cold.md",
+        "E2_ext4_hot": "python scripts/perf_scale_scan.py --python /tmp/ohscan-e2-venv/bin/python --manifest research/deliveries/performance/full_efficiency_20261021/E2_parent_objects/perf_scale_corpus_with_base_20261010.json --targets-root /tmp/ohscanner-e2-targets-20261021-v6 --detector ohscanner.cpp.lifetime ohscanner.cpp.shared_ptr_race --ast-cache-dir /tmp/ohscanner-e2-cache-ext4-20261022/ast --detector-result-cache-dir /tmp/ohscanner-e2-cache-ext4-20261022/results --compare-json research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/ext4_cold.json --json-out research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/ext4_hot.json --md-out research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/ext4_hot.md"
+      },
+      "evidence_files": [
+        "E2_parent_objects/materialized_base_evidence.json",
+        "E2_parent_objects/perf_scale_corpus_with_base_20261010.json",
+        "E2_fixed_corpus/equivalence.json",
+        "E2_fixed_corpus/same_environment_e0.json",
+        "E2_fixed_corpus/ext4_cold.json",
+        "E2_fixed_corpus/ext4_hot.json",
+        "E2_parent_fetch_attempt.txt",
+        "E2_fixed_corpus/SHA256SUMS.txt"
+      ],
+      "reused_source_paths": 6571,
+      "recomputed_detector_results": 107,
+      "reused_scan_files_for_coverage_reduction": 0
     },
     "E3_cold": {
       "status": "completed",
