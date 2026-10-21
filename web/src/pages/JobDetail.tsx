@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   Button,
@@ -45,6 +45,7 @@ import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
 import AuditPlanView from "../features/audits/AuditPlanView";
 import SourceEvidence from "../SourceEvidence";
+import CandidateIdentifiers, { candidateSourceKey, reportCandidateIndex } from "../features/workbench/CandidateIdentifiers";
 import CandidateActions from "../features/workbench/CandidateActions";
 import ProgressiveQuickScreenAction from "../features/audits/ProgressiveQuickScreenAction";
 import ProgressiveQuickScreenBatchAction from "../features/audits/ProgressiveQuickScreenBatchAction";
@@ -101,6 +102,7 @@ function HighConfidenceCandidateReason({ risk, jobId }: { risk: any; jobId: stri
 export default function JobDetail({ id, initialTab = "findings", candidateId, sourceFile, sourceLine, health }: { id: string; initialTab?: string; candidateId?: string; sourceFile?: string; sourceLine?: number; health?: any }) {
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
+  const identifierIndex = useMemo(() => reportCandidateIndex(report), [report]);
   const [triageSummary, setTriageSummary] = useState<any>(null);
   const [progressiveTriage, setProgressiveTriage] = useState<any>(null);
   const [progressiveStatus, setProgressiveStatus] = useState<any>(null);
@@ -603,7 +605,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
             { title: "未研判候选", value: riskSummary?.triage_counts?.not_triaged ?? "未知" },
             { title: "人工验证漏洞", value: riskSummary?.validated_vulnerability ?? "未知" },
           ].map((x) => <Col xs={12} sm={8} xl={4} key={x.title}><Card size="small"><Statistic {...x} /></Card></Col>)}</Row>
-          <Table size="small" rowKey="candidate_id" pagination={false}
+          <Table size="small" rowKey="candidate_id" pagination={false} scroll={{ x: 1500 }}
             dataSource={(riskSummary?.items || []).slice(0, 20)}
             columns={[
               { title: "可信程度", render: (_: unknown, row: any) =>
@@ -611,7 +613,10 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               { title: "危害等级（初判）", render: (_: unknown, row: any) =>
                   <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag> },
               { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value).slice(0, 12)}</Text> },
-              { title: "规则", dataIndex: "rule_id" },
+              { title: "规则 / CWE / CVE", width: 300, render: (_: unknown, row: any) => <>
+                  <div>{row.rule_id}</div>
+                  <CandidateIdentifiers candidate={row} related={identifierIndex.get(candidateSourceKey(row))} />
+                </> },
               { title: "位置", render: (_: unknown, row: any) => row.file + ":" + row.line },
               { title: "研判", render: (_: unknown, row: any) => triageStateLabel(row.triage?.state) },
               { title: "下一步", render: (_: unknown, row: any) => riskReasonsLabel(row.reasons) },
@@ -753,6 +758,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                   </Space>
                   <Table<any>
                     rowKey="id"
+                    scroll={{ x: 1600 }}
                     dataSource={items}
                     rowSelection={{
                       selectedRowKeys: selected,
@@ -776,13 +782,14 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                         ),
                       },
                       {
-                        title: "规则 / CWE 候选",
+                        title: "规则 / CWE / CVE 候选",
+                        width: 320,
                         render: (_: any, f: any) => (
                           <>
                             {f.rule_id === "ohcpp-null-dereference-unknown-return-observation-001" &&
                               <Tag color="gold">弱候选 · 待复核</Tag>}
                             <Text code>{f.rule_id}</Text>
-                            <div className="muted">{f.candidate_cwe}</div>
+                            <div><CandidateIdentifiers candidate={f} /></div>
                           </>
                         ),
                       },
@@ -1111,7 +1118,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               message={<Space wrap>
                 <Tag color="gold">规则候选 · 尚未确认</Tag>
                 <Text code>{detail.rule_id}</Text>
-                {detail.candidate_cwe && <Tag>{detail.candidate_cwe}</Tag>}
+                <CandidateIdentifiers candidate={detail} />
                 <Tag color={candidateSeverityColor(detail.risk_presentation?.severity)}>
                   {candidateSeverityLabel(detail.risk_presentation?.severity)} · 初判
                 </Tag>
@@ -1131,7 +1138,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
             >
               <Descriptions size="small" column={2} bordered>
                 <Descriptions.Item label="风险身份">
-                  {detail.risk_assessment.identifier} · {(detail.risk_assessment.cwe || []).join(" / ")}
+                  <CandidateIdentifiers candidate={detail} />
                 </Descriptions.Item>
                 {detail.risk_assessment.mapping_basis && <Descriptions.Item label="CVE 映射依据" span={2}>
                   {detail.risk_assessment.mapping_basis}
