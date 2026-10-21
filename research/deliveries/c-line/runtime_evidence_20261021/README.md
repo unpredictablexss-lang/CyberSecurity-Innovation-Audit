@@ -12,28 +12,37 @@ The a65 candidate source is `openharmony/arkcompiler_ets_runtime` commit `a65a28
 | [`independent_source_delta_review.md`](independent_source_delta_review.md) | Independent a65 → d1a58 object/hash/path review; explicitly says runtime not run and no backing-buffer OOB shown |
 | [`../typedarray_set_d1a58_source_replay.py`](../typedarray_set_d1a58_source_replay.py), [`../typedarray_set_d1a58_source_replay_20261021.json`](../typedarray_set_d1a58_source_replay_20261021.json) | Recomputable d1a58 source-object/hash/AST replay; runtime remains `not_run` |
 | [`../typedarray_set_boundary_harness_20261021.js`](../typedarray_set_boundary_harness_20261021.js), [`../typedarray_set_boundary_harness_20261021.json`](../typedarray_set_boundary_harness_20261021.json), [`component_harness.log`](component_harness.log) | Source arithmetic model and Node/V8 control only; not Ark Runtime execution |
-| [`detector_regression_11.log`](detector_regression_11.log), [`detector_regression_11.exit`](detector_regression_11.exit) | Exact a65-bound production detector regression: 11 passed, exit 0; d1a58 was not added to production CLI |
+| [`detector_regression_11.log`](detector_regression_11.log), [`detector_regression_11.exit`](detector_regression_11.exit), [`detector_regression_11.command.txt`](detector_regression_11.command.txt) | Exact a65-bound production detector regression: 11 passed, exit 0. Test code is pinned to C-line commit `45c2694dbcb9851dfd42f3663ba63e1b4d6d924a` (tree `34473d7ed1f9e582ceb5ce4a85750ca70ee8712a`); d1a58 was not added to production CLI |
 | [`typedarray_set_offset_task_tree_20261021.json`](../typedarray_set_offset_task_tree_20261021.json) | Case-specific terminal state and limits |
 | [`SHA256SUMS.txt`](SHA256SUMS.txt) | SHA-256 for the closeout artifacts and updated status entry (manifest excludes itself) |
 
 ## Reproduction commands
 
-Run the source replay and component-model harness from the C-line worktree root:
+Run the source replay and component-model harness from the C-line worktree root. For source replay, use a local clone of the Ark Runtime repository checked out at the pinned d1a58 commit:
 
 ```powershell
+$ArkRuntime = Join-Path $env:TEMP 'arkcompiler_ets_runtime-d1a58'
+git clone https://gitee.com/openharmony/arkcompiler_ets_runtime.git $ArkRuntime
+git -C $ArkRuntime checkout --detach d1a58d59166777e16574ceed64c15f0b2f44a76c
 python research/deliveries/c-line/typedarray_set_d1a58_source_replay.py `
-  --source-repo D:\openHarmonyScanner\tmp\arkruntime-d1a58d5 `
+  --source-repo $ArkRuntime `
   --json-out research/deliveries/c-line/typedarray_set_d1a58_source_replay_20261021.json
 node research/deliveries/c-line/typedarray_set_boundary_harness_20261021.js
 ```
 
-Run the detector regression from the clean nested code worktree `worktrees/c-line-ark-stage-20261020`:
+Run the detector regression against its exact scanner source revision. The mainline evidence-only proposal does not contain this feature test module, so check out the C-line source commit explicitly:
 
 ```powershell
+$Scanner = Join-Path $env:TEMP 'ohscanner-c-line-regression'
+git clone https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git $Scanner
+git -C $Scanner fetch origin codex/c-line-parallel-plan-20261020
+git -C $Scanner checkout --detach 45c2694dbcb9851dfd42f3663ba63e1b4d6d924a
+git -C $Scanner show -s --format="%H %T"
+Set-Location $Scanner
 python -m unittest tests.detectors.ark_runtime.test_arraylike_set_bounds -v
 ```
 
-The checked output is 11 tests passed, zero failed. This is scanner regression evidence, not an Ark VM run.
+The expected checkout identity is commit `45c2694dbcb9851dfd42f3663ba63e1b4d6d924a`, tree `34473d7ed1f9e582ceb5ce4a85750ca70ee8712a`; the checked output is 11 tests passed, zero failed. This is scanner regression evidence, not an Ark VM run. The nested worktree name is not required for reproduction.
 
 ## Natural build blockers
 
