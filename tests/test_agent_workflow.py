@@ -94,8 +94,10 @@ class ImportedEvidenceGraphTests(unittest.TestCase):
 
 def bind_test_consent(task, store, report, candidate, source, *, artifact_stage=False):
     spec = task["spec"]
-    if spec.get("max_total_input_tokens") == 24000:
+    if spec.get("max_total_input_tokens") in (24000, 36000):
         spec["max_total_input_tokens"] = 128000
+    if spec.get("max_total_output_tokens") in (1000, 1200, 2000):
+        spec["max_total_output_tokens"] = 8000
     # Legacy workflow tests intentionally exercise the pre-artifact direct path.
     # Public API previews never expose this internal test-only disable flag.
     spec["artifact_generation_stage_enabled"] = artifact_stage
@@ -1081,7 +1083,7 @@ class AgentExecutionTests(unittest.TestCase):
                     assert tool["parameters"]["required"] == ["identifier"]
 
             task = {"id": "task-callsite-loop", "spec": {"job_id": "job-callsite-loop",
-                "candidate_id": candidate["id"], "mode": "tool_agent", "max_steps": 1,
+                "candidate_id": candidate["id"], "mode": "tool_agent", "max_steps": 6,
                 "max_output_tokens": 1000, "max_total_input_tokens": 24000,
                 "max_total_output_tokens": 4000, "timeout_seconds": 90, "continuous_investigation": True,
                 "source_submission_approved": True, "provider_fingerprint": "unused",
@@ -1122,7 +1124,7 @@ class AgentExecutionTests(unittest.TestCase):
         self.assertEqual(first_callsite["relationship"]["reachable"], "unknown")
         self.assertEqual(first_callsite["relationship"]["cross_file_definition_candidate"]["file"],
                          "src/api.c")
-        self.assertGreater(result["model_usage"]["output_tokens"], task["spec"]["max_total_output_tokens"])
+        self.assertLessEqual(result["model_usage"]["output_tokens"], task["spec"]["max_total_output_tokens"])
         self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
         self.assertEqual(result["vulnerability_state"], "candidate")
         self.assertEqual(result["validated_vulnerability"], 0)
@@ -1395,7 +1397,7 @@ class AgentExecutionTests(unittest.TestCase):
         source = {"sha256": "a" * 64, "blob": "f" * 40,
                   "text": "if (!IsAccessTokenCalling()) return ERR_IDENTITY_CHECK_FAILED;\n"}
         task = {"id": "task-policy-repair", "spec": {"job_id": "job-1",
-            "candidate_id": candidate["id"], "max_steps": 1, "max_output_tokens": 500,
+            "candidate_id": candidate["id"], "max_steps": 2, "max_output_tokens": 500,
             "max_total_input_tokens": 36000, "max_total_output_tokens": 2000,
             "timeout_seconds": 90, "continuous_investigation": True, "source_submission_approved": True,
             "provider_fingerprint": "unused", "prompt_version": agent.PROMPT_VERSION,
@@ -1924,11 +1926,11 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
         self.assertEqual(request_phases[-3:],
                          ["structured_output", "skeptic_review", "artifact_generation"])
         self.assertGreaterEqual(request_phases.count("tool_call"), 1)
-        self.assertGreater(max(row["usage"]["output_tokens"] for row in result["model_calls"]), 1200)
+        self.assertLessEqual(max(row["usage"]["output_tokens"] for row in result["model_calls"]), 1200)
         self.assertIsNone(result["model_usage"]["per_request_output_limit_tokens"])
         self.assertEqual(result["model_usage"]["per_request_output_limit_policy"],
-                         "none_locally_provider_model_default_applies")
-        self.assertTrue(all("max_output_tokens" not in payload for payload in client.payloads))
+                         "bounded")
+        self.assertTrue(all(0 < payload["max_output_tokens"] <= 1200 for payload in client.payloads))
         self.assertEqual(result["vulnerability_state"], "candidate")
         self.assertEqual(result["validated_vulnerability"], 0)
 
@@ -3047,7 +3049,7 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertIn("max_total_input_tokens", preview["budgets"])
                 self.assertIn("timeout_seconds", preview["budgets"])
                 self.assertNotIn("tool-agent", preview["stage_disclosure"])
-                self.assertIn("本地不设累计 Token", preview["stage_disclosure"])
+                self.assertIn("本地累计 Token 预算生效", preview["stage_disclosure"])
                 self.assertNotIn("test-secret", json.dumps(preview))
                 stale = client.post("/api/v1/operations/agent-investigations", headers={
                     "x-ohscanner-client": "workbench-v1"},
@@ -4852,7 +4854,7 @@ class AuthorizedSmartAuditUncappedUsageTests(unittest.TestCase):
             def create(self, payload):
                 self.payloads.append(payload)
                 call_index = len(self.payloads)
-                usage = {"input_tokens": 13000, "output_tokens": 1500, "total_tokens": 14500}
+                usage = {"input_tokens": 13000, "output_tokens": min(1500, payload.get("max_output_tokens", 1500)), "total_tokens": 14500}
                 if "tools" in payload and call_index <= 5:
                     return {"status": "completed", "output": [{"type": "function_call",
                         "name": "lookup_symbol_in_fixed_commit",

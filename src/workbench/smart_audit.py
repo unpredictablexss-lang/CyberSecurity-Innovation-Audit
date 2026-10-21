@@ -1137,6 +1137,8 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
             selected_ids.discard(candidate["id"])
     if auth_error:
         status = "blocked_authorization_changed"
+    elif limit == 0:
+        status = "not_needed"
     elif selected_specs:
         status = "candidate_limit_reached" if len(eligible) > limit else "queued"
     elif any(row.get("state") == "blocked" for row in manifest) or eligible:

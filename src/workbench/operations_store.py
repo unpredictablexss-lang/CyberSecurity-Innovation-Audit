@@ -1018,8 +1018,7 @@ class Operations:
                 raise KeyError("operation not found")
             spec = json.loads(old["spec"])
             if (old["kind"] != "agent_investigation" or old["status"] != "interrupted"
-                    or old["result_sha256"] or old["cancel_requested"]
-                    or spec.get("no_cumulative_token_ceiling") is not True):
+                    or old["result_sha256"] or old["cancel_requested"]):
                 raise ValueError("only an interrupted, result-free authorized smart investigation can be retried")
             batch_id = spec.get("smart_triage_batch_id")
             audit_id = spec.get("job_id")

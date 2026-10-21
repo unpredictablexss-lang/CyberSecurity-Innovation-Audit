@@ -4533,9 +4533,6 @@ def execute_agent(settings, store, ops, task, client=None):
         mode == "tool_agent"
         and preview.get("budgets", {}).get("skeptic_stage_enabled") is True
         and preview.get("budgets", {}).get("max_skeptic_calls") == MAX_SKEPTIC_CALLS
-        and (continuous or (
-            preview.get("budgets", {}).get("shared_auxiliary_call_reserve") == MAX_VALIDATION_REPAIRS
-            and preview.get("budgets", {}).get("skeptic_shares_validation_repair_reserve") is True))
     )
     if mode == "tool_agent" and final_validation_status == "accepted" and skeptic_authorized:
         max_model_calls = (max_steps + 1 + MAX_VALIDATION_REPAIRS + MAX_SKEPTIC_CALLS
