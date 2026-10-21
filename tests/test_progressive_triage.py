@@ -17,6 +17,8 @@ from src.workbench.progressive_triage.policy import (
     PolicyRevisionConflict,
     PolicyStoreError,
 )
+from src.workbench.progressive_triage.contracts import content_sha256
+from src.workbench.progressive_triage.runtime import build_operation_plan
 
 
 REPOSITORY = "open-harmony/example"
@@ -59,6 +61,44 @@ class GroupingAndRankingTests(unittest.TestCase):
         self.assertEqual(ranked["selected_group_count"], 0)
         self.assertTrue(all(row["coverage_unknown"] for row in ranked["decisions"]))
         self.assertEqual([item["status"] for item in candidates], ["unassessed", "unassessed"])
+
+    def test_multiscan_runtime_freezes_policy_and_preserves_ranked_candidates(self):
+        policy = build_policy("custom", {
+            **build_policy()["limits"], "quick_screen_groups_per_audit": 1,
+            "deep_groups_per_audit": 0, "max_model_calls_per_audit": 1,
+        }, True)
+        report = {"repository": REPOSITORY, "commit": COMMIT,
+                  "snapshot_sha256": SNAPSHOT, "status": "completed"}
+        findings = [
+            {"id": "candidate-a", "detector_id": "cpp.memory", "detector_version": "1.0.0",
+             "rule_id": "memory.rule", "file": "src/a.cpp", "line": 10,
+             "source_sha256": SOURCE, "severity": "high", "status": "unassessed"},
+            {"id": "candidate-b", "detector_id": "ipc.auth", "detector_version": "1.0.0",
+             "rule_id": "ipc.rule", "file": "src/b.cpp", "line": 20,
+             "source_sha256": "d" * 64, "severity": "medium", "status": "unassessed"},
+        ]
+
+        class FakeStore:
+            def job(self, scan_id):
+                return {"id": scan_id, "status": "completed", "report_sha256": "e" * 64}
+
+        task = {"id": "audit-parent", "kind": "revision_range", "spec": {
+            "scan_ids": ["scan-a"],
+            "progressive_triage_policy": {"revision": 3, "policy": policy,
+                                           "policy_sha256": content_sha256(policy)},
+        }}
+        result = build_operation_plan(
+            object(), FakeStore(), task,
+            read_report=lambda settings, job: report,
+            findings=lambda value: findings,
+            source_binding_valid=lambda value, candidate: True,
+        )
+        self.assertEqual(result["state"], "ranked_waiting_for_authorized_quick_screen")
+        self.assertEqual(result["original_observation_count"], 2)
+        self.assertEqual(result["ranking"]["selected_group_count"], 1)
+        self.assertEqual(sum(1 for group in result["groups"] if group["state"] == "selected_for_quick_screen"), 1)
+        self.assertTrue(all(group["quick_screen_state"] == "not_scheduled" for group in result["groups"]))
+        self.assertEqual(result["validated_vulnerability"], 0)
 
     def test_root_cause_grouping_requires_deterministic_source_identity(self):
         identity = {
@@ -204,6 +244,13 @@ except ModuleNotFoundError as error:
 
 @unittest.skipIf(TestClient is None, "optional workbench dependencies: install requirements-web.txt")
 class PolicyApiTests(unittest.TestCase):
+    def test_policy_digest_changes_the_frozen_consent_workflow(self):
+        from src.workbench.operations_api import _progressive_workflow_sha256
+
+        baseline = _progressive_workflow_sha256("a" * 64, "b" * 64)
+        self.assertEqual(baseline, _progressive_workflow_sha256("a" * 64, "b" * 64))
+        self.assertNotEqual(baseline, _progressive_workflow_sha256("a" * 64, "c" * 64))
+
     def test_policy_routes_reject_weak_requests_and_preserve_revision(self):
         with tempfile.TemporaryDirectory() as directory:
             settings = Settings(Path(directory) / "data", ())
@@ -213,6 +260,8 @@ class PolicyApiTests(unittest.TestCase):
                 self.assertEqual(current.status_code, 200, current.text)
                 self.assertEqual(current.json()["policy"]["profile"], "standard")
                 self.assertEqual(current.json()["integration"]["worker_enforcement"], "not_connected")
+                self.assertEqual(current.json()["integration"]["grouping_and_ranking"],
+                                 "connected_to_multi_endpoint_operation_results")
 
                 body = {"expected_revision": 0, "profile": "deep"}
                 headers = {"x-ohscanner-client": "workbench-v1"}

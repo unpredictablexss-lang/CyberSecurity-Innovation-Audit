@@ -27,6 +27,7 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
   const evidence = sourceLines(preview);
   const consentExpiry = preview?.expires_at || preview?.consent?.expires_at;
   const provider = preview?.provider || endpoints[0]?.provider || {};
+  const progressive = preview?.progressive_policy || null;
   const eligible = preview?.eligible === true && endpoints.length > 0;
   return <Modal
     title="智能审计：确认模型外发范围"
@@ -48,6 +49,13 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
       {provider && <Descriptions size="small" bordered column={{ xs: 1, sm: 2 }}>
         <Descriptions.Item label="模型服务">{provider.endpoint_host || provider.destination_host || provider.destination || "目的地未知"}</Descriptions.Item>
         <Descriptions.Item label="模型">{provider.model || "未知"}</Descriptions.Item>
+        {progressive && <>
+          <Descriptions.Item label="渐进策略">{progressive.policy?.profile || "unknown"} · 修订 {progressive.revision ?? "unknown"}</Descriptions.Item>
+          <Descriptions.Item label="策略摘要 SHA-256">{short(progressive.policy_sha256)}</Descriptions.Item>
+          <Descriptions.Item label="本次本地排序名额" span={2}>
+            {progressive.policy?.limits?.quick_screen_groups_per_audit ?? "未知"} 个候选组；只用于 L0/L1 计划排序，L2/L3 调度与任务级模型额度尚未接入。
+          </Descriptions.Item>
+        </>}
         {endpoints.map((item: any, index: number) => {
           const manifest = item.manifest || {};
           const binding = manifest.binding || {};

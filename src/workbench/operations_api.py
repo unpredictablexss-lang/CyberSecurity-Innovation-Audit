@@ -899,6 +899,15 @@ def _operation_scan_plan(settings, store, kind, body):
 
 def _prepare_operation_triage(settings, body, scan_specs, *, authorization_inputs=None):
     """Attach per-endpoint consent snapshots only after matching a fresh preview."""
+    from .progressive_triage.policy import PolicyStore
+    policy_state = PolicyStore(settings.data_dir).read()
+    policy_snapshot = {"revision": policy_state["revision"],
+                       "policy": policy_state["policy"],
+                       "policy_sha256": policy_state["policy_sha256"]}
+
+    def with_policy(scan):
+        return {**scan, "progressive_triage_policy": policy_snapshot}
+
     mode = body.audit_mode
     enabled = body.auto_triage
     if body.max_r2_candidates > body.max_triage_candidates:
@@ -917,9 +926,9 @@ def _prepare_operation_triage(settings, body, scan_specs, *, authorization_input
         prepared = []
         for scan in scan_specs:
             workflow = service.audit_workflow_sha256(scan["plan_sha256"], mode)
-            prepared.append({**scan, "audit_mode": mode, "max_r2_candidates": 0,
+            prepared.append(with_policy({**scan, "audit_mode": mode, "max_r2_candidates": 0,
                 "max_cost_usd": body.max_cost_usd, "workflow_sha256": workflow,
-                "workflow": service.audit_workflow_summary(mode)})
+                "workflow": service.audit_workflow_summary(mode)}))
         return prepared
     if not isinstance(supplied, list) or len(supplied) != len(scan_specs):
         if approvals:
@@ -945,30 +954,47 @@ def _prepare_operation_triage(settings, body, scan_specs, *, authorization_input
     prepared = []
     for scan, raw in zip(scan_specs, supplied):
         authorization = raw.model_dump() if isinstance(raw, TaskTriageAuthorization) else raw
-        workflow = service.audit_workflow_sha256(scan["plan_sha256"], mode, True,
-            body.max_triage_candidates, body.max_r2_candidates)
+        workflow = _progressive_workflow_sha256(
+            service.audit_workflow_sha256(scan["plan_sha256"], mode, True,
+                body.max_triage_candidates, body.max_r2_candidates), policy_snapshot["policy_sha256"])
         if (authorization.get("plan_sha256") != scan["plan_sha256"]
                 or authorization.get("workflow_sha256") != workflow):
             raise ValueError("multi-endpoint model authorization no longer matches the fixed scan plan")
         preview = audit_task_consent_preview(scan["audit_plan"], workflow,
             scan["include_paths"], body.max_triage_candidates,
             authorization.get("consent_nonce"), provider,
-            body.max_r2_candidates)
+            body.max_r2_candidates, max_cost_usd=body.max_cost_usd)
         if (not preview.get("eligible")
                 or preview.get("consent_sha256") != authorization.get("consent_sha256")):
             raise ValueError("model-egress preview expired or changed; review a fresh preview")
-        prepared.append({**scan, "audit_mode": mode, "max_r2_candidates": body.max_r2_candidates,
+        prepared.append(with_policy({**scan, "audit_mode": mode, "max_r2_candidates": body.max_r2_candidates,
             "max_cost_usd": body.max_cost_usd, "workflow_sha256": workflow,
             "workflow": service.audit_workflow_summary(mode, True,
                 body.max_triage_candidates, body.max_r2_candidates),
             "triage_authorization": {"authorized": True,
-                "consent_sha256": preview["consent_sha256"], "snapshot": preview["manifest"]}})
+                "consent_sha256": preview["consent_sha256"], "snapshot": preview["manifest"]}}))
     return prepared
 
 
+def _progressive_workflow_sha256(base_workflow_sha256, policy_sha256):
+    import hashlib
+    import json
+    return hashlib.sha256(json.dumps({
+        "base_workflow_sha256": base_workflow_sha256,
+        "progressive_policy_sha256": policy_sha256,
+        "progressive_workflow_version": "progressive-triage-v1",
+    }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+
 def _preview_operation_triage(settings, body, scan_specs, *, consent_nonces=None):
+    from .progressive_triage.policy import PolicyStore
+    policy_state = PolicyStore(settings.data_dir).read()
+    policy_snapshot = {"revision": policy_state["revision"],
+                       "policy": policy_state["policy"],
+                       "policy_sha256": policy_state["policy_sha256"]}
     if not body.auto_triage:
         return {"eligible": False, "model_calls": 0,
+                "progressive_policy": policy_snapshot,
                 "scans": [{"commit": scan["commit"], "plan_sha256": scan["plan_sha256"]}
                           for scan in scan_specs],
                 "message": "No model source egress is authorized; endpoint scans remain static."}
@@ -984,8 +1010,9 @@ def _preview_operation_triage(settings, body, scan_specs, *, consent_nonces=None
         raise ValueError("consent nonce count does not match fixed endpoint count")
     previews = []
     for scan, nonce in zip(scan_specs, consent_nonces):
-        workflow = service.audit_workflow_sha256(scan["plan_sha256"], body.audit_mode, True,
-            body.max_triage_candidates, body.max_r2_candidates)
+        workflow = _progressive_workflow_sha256(
+            service.audit_workflow_sha256(scan["plan_sha256"], body.audit_mode, True,
+                body.max_triage_candidates, body.max_r2_candidates), policy_snapshot["policy_sha256"])
         preview = audit_task_consent_preview(scan["audit_plan"], workflow,
             scan["include_paths"], body.max_triage_candidates, nonce,
             provider, body.max_r2_candidates, max_cost_usd=body.max_cost_usd)
@@ -997,6 +1024,7 @@ def _preview_operation_triage(settings, body, scan_specs, *, consent_nonces=None
             **preview})
     aggregate = _aggregate_agent_budget_cost_estimates(item.get("estimated_cost") for item in previews)
     return {"eligible": True, "model_calls": None,
+            "progressive_policy": policy_snapshot,
             "per_endpoint_candidate_scope": True, "aggregate_estimated_cost": aggregate,
             "scans": previews,
             "consent_required": "Review each source-egress manifest and submit each nonce and digest with the operation. Candidate counts remain bounded by authorization; no platform cumulative token/USD/call/total-time cap is applied. Provider billing and quota apply."}
@@ -1725,9 +1753,10 @@ def install_routes(app: FastAPI, settings, store):
         return {
             "kind": body.kind, "endpoint_count": len(preview["scans"]),
             "endpoints": preview["scans"],
+            "progressive_policy": preview.get("progressive_policy"),
             "aggregate_estimated_cost": preview.get("aggregate_estimated_cost"),
             "note": ("Each endpoint has a separate fixed-commit model disclosure consent. "
-                     "This preview does not send source; approval binds exact scan plan, workflow and provider."),
+                     "This preview does not send source; approval binds exact scan plan, workflow, progressive-policy digest and provider."),
         }
 
     @router.post("/operations/revision-ranges", status_code=201)
@@ -1739,6 +1768,7 @@ def install_routes(app: FastAPI, settings, store):
             "max_triage_candidates": body.max_triage_candidates,
             "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
             "max_cost_usd": body.max_cost_usd})
+        operation_spec["progressive_triage_policy"] = scans[0]["progressive_triage_policy"]
         return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
 
     @router.post("/operations/date-ranges", status_code=201)
@@ -1750,6 +1780,7 @@ def install_routes(app: FastAPI, settings, store):
             "max_triage_candidates": body.max_triage_candidates,
             "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
             "max_cost_usd": body.max_cost_usd})
+        operation_spec["progressive_triage_policy"] = scans[0]["progressive_triage_policy"]
         return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
 
     @router.post("/operations/date-ranges/preview")
@@ -1771,6 +1802,7 @@ def install_routes(app: FastAPI, settings, store):
             "max_triage_candidates": body.max_triage_candidates,
             "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
             "max_cost_usd": body.max_cost_usd})
+        operation_spec["progressive_triage_policy"] = scans[0]["progressive_triage_policy"]
         return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
 
     @router.post("/operations/branch-comparisons", status_code=201)
@@ -1782,6 +1814,7 @@ def install_routes(app: FastAPI, settings, store):
             "max_triage_candidates": body.max_triage_candidates,
             "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
             "max_cost_usd": body.max_cost_usd})
+        operation_spec["progressive_triage_policy"] = scans[0]["progressive_triage_policy"]
         return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
 
     @router.post("/operations/version-matrices", status_code=201)
@@ -1793,6 +1826,7 @@ def install_routes(app: FastAPI, settings, store):
             "max_triage_candidates": body.max_triage_candidates,
             "max_r2_candidates": body.max_r2_candidates if body.auto_triage else 0,
             "max_cost_usd": body.max_cost_usd})
+        operation_spec["progressive_triage_policy"] = scans[0]["progressive_triage_policy"]
         return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
 
     @router.post("/operations/joint-candidate-comparisons/preview")

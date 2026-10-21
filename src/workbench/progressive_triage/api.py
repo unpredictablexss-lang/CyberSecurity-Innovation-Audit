@@ -35,7 +35,7 @@ def _public_state(state: dict[str, Any]) -> dict[str, Any]:
         "policy_sha256": state["policy_sha256"],
         "presets": PRESETS,
         "integration": {
-            "grouping_and_ranking": "pure_functions_not_connected_to_worker",
+            "grouping_and_ranking": "connected_to_multi_endpoint_operation_results",
             "worker_enforcement": "not_connected",
             "quick_screen_executor": "bounded_no_tools_not_scheduled",
             "task_budget_ledger": "available_but_not_connected_to_operations",
