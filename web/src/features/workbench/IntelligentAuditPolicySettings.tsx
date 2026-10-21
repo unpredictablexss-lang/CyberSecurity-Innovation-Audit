@@ -27,6 +27,7 @@ export default function IntelligentAuditPolicySettings() {
   const [limits, setLimits] = useState<Limits>({});
   const [familyQuotas, setFamilyQuotas] = useState(true);
   const [presets, setPresets] = useState<Record<string, { limits: Limits; family_quotas: boolean }>>({});
+  const [integration, setIntegration] = useState<Record<string, unknown>>({});
 
   const load = async () => {
     setLoading(true);
@@ -41,6 +42,7 @@ export default function IntelligentAuditPolicySettings() {
       setLimits(body.policy.limits);
       setFamilyQuotas(body.policy.family_quotas);
       setPresets(body.presets || {});
+      setIntegration(body.integration || {});
     } catch (reason) {
       setError(String(reason));
     } finally {
@@ -112,8 +114,8 @@ export default function IntelligentAuditPolicySettings() {
 
   if (loading) return <Card><Spin /></Card>;
   return <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-    <Alert type="warning" showIcon message="策略已可保存，尚未接入审计 Worker"
-      description="本页配置只为之后接入调度器的新任务准备，目前不会改变任务队列、触发模型或限制实际费用。单纯静态审计仍为零模型调用；任务级源码外发仍须单独预览并授权。美元数值是策略建议，不是 Provider 账单硬封顶。" />
+    <Alert type="warning" showIcon message="已接入多端点任务的 L0 归并与 L1 排序；模型调度仍未接入"
+      description={`运行状态：${String(integration.grouping_and_ranking || "unknown")}；Worker 额度强制：${String(integration.worker_enforcement || "unknown")}；L2 快速研判：${String(integration.quick_screen_executor || "unknown")}；任务账本：${String(integration.task_budget_ledger || "unknown")}。静态审计仍不调用模型；L2/L3 源码外发须独立预览和授权。美元数值是策略建议，不是 Provider 账单硬封顶。`} />
     {error && <Alert type="error" showIcon message="策略读取或保存失败" description={error} />}
     <Card title="选择策略" extra={<Tag color={updatedAt ? "green" : "blue"}>{updatedAt ? `已保存 · 修订 ${revision}` : "使用默认标准策略"}</Tag>}>
       <Radio.Group value={profile} onChange={(event) => selectProfile(event.target.value)}>
@@ -151,7 +153,7 @@ export default function IntelligentAuditPolicySettings() {
         <Text>启用漏洞家族覆盖配额</Text>
       </Space>
       <Paragraph type="secondary" style={{ marginTop: 12 }}>
-        当前代码中的分组和本地证据排序是确定性纯函数；设置保存成功不表示这些上限已由 Worker 执行。
+        日期、区间、分支和矩阵操作结果会按任务冻结的策略分组和排序；当前组数只形成快筛待授权队列，任务账本还没有限制真实 Provider 调用。
         未选入模型预算的静态候选仍保留供人工查看，不会变成误报或安全结论。
       </Paragraph>
       <Space>

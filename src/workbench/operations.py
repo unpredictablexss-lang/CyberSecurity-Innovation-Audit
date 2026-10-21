@@ -826,6 +826,12 @@ def execute(settings, store, ops, task):
     if kind == "agent_investigation":
         from .agent import execute_agent
         return execute_agent(settings, store, ops, task)
+    if kind == "progressive_quick_screen":
+        from .progressive_triage.quick_screen_operation import execute_quick_screen
+        result = execute_quick_screen(settings, task, ops=ops)
+        result["status"] = ("completed" if result.get("state") == "completed"
+                            else "completed_with_limitations")
+        return result
     if kind == "version_candidate_comparison":
         from .joint_candidate_comparison_runtime import execute_joint_comparison
         return execute_joint_comparison(settings, store, ops, task)

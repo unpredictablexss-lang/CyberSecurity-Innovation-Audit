@@ -97,7 +97,7 @@ function RecentWindowSummary({ result, openScan }: { result: any; openScan: (id:
   </Card>;
 }
 export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "agent" | "agent_research" | "sync" | "queue";
-const kinds: Record<string, string> = { source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", candidate_review_batch: "历史候选队列（已停用）" };
+const kinds: Record<string, string> = { source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", progressive_quick_screen: "渐进式 L2 快速研判", candidate_review_batch: "历史候选队列（已停用）" };
 const headings: Record<OperationView, [string, string]> = {
   all: ["高级源码与验证操作", "保留既有操作入口；任务持久化，候选变化与安全影响分别记录。"],
   date: ["时间增量扫描", "按明确时区固定时间端点；支持单一区间和 N 日 / 1 日双窗口候选对照。"],
@@ -305,6 +305,65 @@ export default function OperationWorkspace({ view = "all", operationId, context 
       {selected.kind === "agent_investigation" && !selected.result_sha256 && ["failed", "interrupted", "timed_out", "cancelled"].includes(selected.status) && <Alert className="section-gap" type="warning" showIcon message="本次调查没有可复核结果；候选仍为 unknown" description="任务结束不代表候选是误报或安全。若 Worker 在 Provider 已处理请求后、结果落盘前退出，上游调用和费用仍可能发生。重试前请核对执行事件及 Provider 账单，再重新预览并单独批准新任务。" />}
       {selected.result?.scan_job_id && <Button className="section-gap" onClick={() => go("/tasks/" + selected.result.scan_job_id)}>打开同步后扫描任务 · {String(selected.result.scan_job_id).slice(0, 12)}</Button>}
       {selected.spec?.scan_ids && <Space wrap className="section-gap">端点扫描：{selected.spec.scan_ids.map((id: string) => <Button key={id} size="small" onClick={() => go("/tasks/" + id)}>{id.slice(0, 12)}</Button>)}</Space>}
+      {selected.result?.progressive_triage && <Card size="small" className="section-gap" title="渐进式筛选 · L0 归并 / L1 排序">
+        {(() => {
+          const plan = selected.result.progressive_triage;
+          const groups = Array.isArray(plan.groups) ? plan.groups : [];
+          return <>
+            <Alert type="info" showIcon
+              message={`固定策略 ${plan.policy_profile || "unknown"} · ${groups.length} 个候选组 · ${plan.ranking?.selected_group_count ?? 0} 组列为优先复核`}
+              description="本结果只完成确定性归并与预算排序。L2 快速研判、L3 Agent 尚未调度；未选或未知仍是候选，不代表安全或误报。" />
+            <Descriptions className="section-gap" size="small" column={{ xs: 1, md: 2 }}>
+              <Descriptions.Item label="策略修订 / 摘要 SHA-256">{plan.policy_revision ?? "未知"} · <Hash value={plan.policy_sha256} /></Descriptions.Item>
+              <Descriptions.Item label="原始候选观察">{plan.original_observation_count ?? "未知"}</Descriptions.Item>
+              <Descriptions.Item label="调度状态">{plan.state || "unknown"}</Descriptions.Item>
+              <Descriptions.Item label="确认漏洞数">{plan.validated_vulnerability ?? 0}</Descriptions.Item>
+            </Descriptions>
+            <Table<any> size="small" rowKey="group_id" dataSource={groups} pagination={{ pageSize: 5 }} scroll={{ x: 720 }} columns={[
+              { title: "排序", dataIndex: ["ranking", "rank"], width: 70 },
+              { title: "组 / 家族", render: (_: any, row: any) => <><Text>{row.group_id}</Text><div className="muted">{row.ranking?.family_bucket || "unknown"}</div></> },
+              { title: "候选成员", render: (_: any, row: any) => Array.isArray(row.members) ? row.members.length : 0 },
+              { title: "队列状态", render: (_: any, row: any) => row.ranking?.selected
+                ? <Tag color="blue">优先组 · 尚未调度</Tag> : <Tag>保留候选</Tag> },
+              { title: "选择依据", render: (_: any, row: any) => (row.ranking?.reason_codes || []).join(" · ") || "无" },
+            ]} />
+          </>;
+        })()}
+      </Card>}
+      {selected.kind === "progressive_quick_screen" && selected.result && <Card size="small" className="section-gap" title="L2 快速研判结果">
+        {(() => {
+          const result = selected.result.quick_screen || {};
+          const state = result.state || selected.result.state || "quick_unknown";
+          const assessmentLabels: Record<string, string> = {
+            investigate: "建议进入深度调查", defer: "暂缓", possible_refutation: "发现待复核反证线索",
+            insufficient_context: "上下文不足", quick_unknown: "研判未知",
+          };
+          const listText = (value: unknown) => Array.isArray(value) && value.length ? value.join("、") : "无";
+          return <>
+            <Alert type={state === "completed" ? "info" : "warning"} showIcon
+              message={`${assessmentLabels[result.quick_assessment] || assessmentLabels.quick_unknown} · ${result.review_status || "model_unverified"}`}
+              description={result.reason_code || result.rationale || "没有可复核的模型研判；候选仍保留为待复核状态。模型意见不确认漏洞或误报。"} />
+            <Descriptions className="section-gap" bordered size="small" column={{ xs: 1, md: 2 }}>
+              <Descriptions.Item label="候选处置">candidate · validated_vulnerability={selected.result.validated_vulnerability ?? 0}</Descriptions.Item>
+              <Descriptions.Item label="请求状态">{state}</Descriptions.Item>
+              <Descriptions.Item label="缺失证据">{listText(result.missing_obligations)}</Descriptions.Item>
+              <Descriptions.Item label="建议下一步">{listText(result.next_tool_hints)}</Descriptions.Item>
+              <Descriptions.Item label="不确定项" span={2}>{listText(result.uncertainties)}</Descriptions.Item>
+              <Descriptions.Item label="输入 / 输出 Token">{result.usage?.input_tokens ?? "未知"} / {result.usage?.output_tokens ?? "未知"}</Descriptions.Item>
+              <Descriptions.Item label="预算结算">{selected.result.budget?.usage?.state || selected.result.budget?.status || "未知"}</Descriptions.Item>
+              <Descriptions.Item label="来源 / consent SHA" span={2}>
+                {selected.result.source_binding?.repository || "未知"} @ {String(selected.result.source_binding?.commit || "未知").slice(0, 12)} · {selected.result.source_binding?.consent_sha256 || "未知"}
+              </Descriptions.Item>
+            </Descriptions>
+            <Text type="secondary">引文 ID：{listText(result.evidence_citations)}</Text>
+            <Alert className="section-gap" type="info" showIcon message="L3 深度 Agent 尚未自动排队" description="当前结果只完成单次、无工具的 L2 快速研判。点击继续会回到固定扫描候选并重新展示深度 Agent 的源码范围与单独授权；可能反证只作为线索，不会自动标误报。" />
+            {result.quick_assessment === "investigate" && selected.spec?.job_id && selected.spec?.candidate_id &&
+              <Button className="section-gap" type="primary" onClick={() => go(`/tasks/${encodeURIComponent(selected.spec.job_id)}?tab=findings&candidate_id=${encodeURIComponent(selected.spec.candidate_id)}`)}>
+                继续深度调查 · 重新预览授权
+              </Button>}
+          </>;
+        })()}
+      </Card>}
       {selected.kind === "recent_window_comparison" && selected.result && <RecentWindowSummary
         result={selected.result} openScan={(id) => go("/tasks/" + id)} />}
       {Array.isArray(selected.intelligent_review_progress) && <Card size="small" className="section-gap" title="固定版本静态与智能审计进度">

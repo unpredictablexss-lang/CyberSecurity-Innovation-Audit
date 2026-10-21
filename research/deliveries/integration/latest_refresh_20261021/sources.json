@@ -1,0 +1,626 @@
+{
+  "captured_utc": "2026-10-21T15:39:08.289621+00:00",
+  "base": "4ce0951f9dc61018328c06b6ff9f0a35bafaf417",
+  "remote_feature": "c5a6431f9b422312e7360cb54c57eacf6cb95cb0",
+  "local_feature": "/mnt/e/读研/网络安全创新大赛/workspace/progressive-triage-latest-20261021",
+  "inventory": [
+    {
+      "path": "/home/audit/wtmp/ark-runtime-research-admission-20261020",
+      "head": "03619f07d6ed42dbe2acbaf9753e90583dde4b84",
+      "branch": "codex/ark-runtime-research-admission-20261020",
+      "baseline": "03619f07d6ed42dbe2acbaf9753e90583dde4b84",
+      "new_head": true,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/wtmp/scanner-eval-20261020",
+      "head": "316b129ed47255ec1445dc51b1cc825706969409",
+      "branch": "",
+      "baseline": "316b129ed47255ec1445dc51b1cc825706969409",
+      "new_head": true,
+      "status_count": 16,
+      "changed_count": 16
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/issues-39-42-local-20261020",
+      "head": "e80aa8656b4477b28c4b24742b60855e35c0b3bc",
+      "branch": "work/issues-39-42-local-20261020",
+      "baseline": "e80aa8656b4477b28c4b24742b60855e35c0b3bc",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/judge-evidence-20261019",
+      "head": "d4196315366983e7c76135a4ad6f39335eb86978",
+      "branch": "docs/competition-evidence-20261021",
+      "baseline": "d4196315366983e7c76135a4ad6f39335eb86978",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/high-recall-platform-implementation-20261018",
+      "head": "53db1f0e83d5c97bc7a84ce1f331324ae59e3421",
+      "branch": "work/high-recall-agent-queue-20261018",
+      "baseline": "ca24c57326dfd2c90ec55f361698d6cbd933af3a",
+      "new_head": false,
+      "status_count": 5,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/owner-unified-20261017",
+      "head": "cdbb1e5aaecf35ed71a72e3cc57181ec96e62248",
+      "branch": "integration/owner-unified-20261017",
+      "baseline": "cdbb1e5aaecf35ed71a72e3cc57181ec96e62248",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/parallel-ipc-20261017",
+      "head": "a77dbdb235a08fb8bae2be3c3f6cdce7de33b3e7",
+      "branch": "work/ipc-20261017",
+      "baseline": "a77dbdb235a08fb8bae2be3c3f6cdce7de33b3e7",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/ohscanner-mainline",
+      "head": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+      "branch": "docs/mainline-status-refresh",
+      "baseline": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/teammate-d-20261018",
+      "head": "bf369f387e3eb6ae6181a8c86cf9fc43bf4ee466",
+      "branch": "work/teammate-d-20261018",
+      "baseline": "bf369f387e3eb6ae6181a8c86cf9fc43bf4ee466",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/progressive-triage-agent-policy-20261021",
+      "head": "b9b1f4ad3aa4615817ea6a9781e2c6e7ff969655",
+      "branch": "feat/progressive-triage-agent-policy-20261021",
+      "baseline": "a907dd831563d4c4b342abfa8c308676436cbdf4",
+      "new_head": false,
+      "status_count": 7,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/pr38-44-e2e-followup-20261020",
+      "head": "154438bf7d3ac45b55210fc988fb2bd2fc258cac",
+      "branch": "work/issues-39-42-completion-20261021",
+      "baseline": "154438bf7d3ac45b55210fc988fb2bd2fc258cac",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/c4-ark-runtime-20261018",
+      "head": "ea492ce51f19ed611479ac3ed28826f71fe94444",
+      "branch": "work/c4-ark-runtime-20261018",
+      "baseline": "ea492ce51f19ed611479ac3ed28826f71fe94444",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/agent-triage-policy-20261021",
+      "head": "4f75a65775b202b8220a208ebdb50fdb5c8dbb4d",
+      "branch": "feat/agent-triage-policy-20261021",
+      "baseline": "96fb196dff717f275d8d16f2f986f3d877fe5657",
+      "new_head": false,
+      "status_count": 9,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/owner-cd-admission-20261017",
+      "head": "1f8c7d31478f64cfd8586a46931b628844f96f64",
+      "branch": "integration/cd-admission-20261017",
+      "baseline": "9978bea9ee5f323af0612dc5fa35b069179c7925",
+      "new_head": false,
+      "status_count": 2,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/ohscanner-8765-integrated-20261019",
+      "head": "99556c81dbd013e981f3c472e391ce2e5902c5e5",
+      "branch": "integration/ohscanner-8765-20261019",
+      "baseline": "f5a8c08b7e79ca26061238d5e88290ed0fc9f615",
+      "new_head": false,
+      "status_count": 2,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/integration-perf-scale-portable-20261019",
+      "head": "5f719a0cf090f762308986ce4acdcc17b19ea830",
+      "branch": "integration/perf-scale-portable-20261019",
+      "baseline": "5f719a0cf090f762308986ce4acdcc17b19ea830",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/parallel-integration-20261017",
+      "head": "149baf74f0094ef82e2a0e715c09b9956df2b33e",
+      "branch": "integration/parallel-baseline-20261017",
+      "baseline": "2fa2d71bc299e1576cb07aea86d171a8a0e933f1",
+      "new_head": false,
+      "status_count": 9,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/ipc-current-review-20261017",
+      "head": "d68ee35cf0dbafdbe98292f231a0b1f6db8fad7e",
+      "branch": "review/ipc-current-20261017",
+      "baseline": "d68ee35cf0dbafdbe98292f231a0b1f6db8fad7e",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/issue-39-impl-20261021",
+      "head": "4f0697164149f9258412692ff526bf2816727688",
+      "branch": "work/issue-39-impl-20261021",
+      "baseline": "e9733466d162fa33926b02e110e1646ba1f0f088",
+      "new_head": false,
+      "status_count": 8,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/agent-llm-20261018",
+      "head": "1c21ac60890fca0ce6be5d50d82e4757dd5e4623",
+      "branch": "work/agent-llm-20261018",
+      "baseline": "708f985d959392331b568ca26884faa8e5c6c12b",
+      "new_head": false,
+      "status_count": 42,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/teammate-d-20261018-pushed",
+      "head": "5ba0141209e234c428bd47c5e395162eada8bcd6",
+      "branch": "feat/teammate-d-sensitive-exposure-20261017",
+      "baseline": "e80bbd518ec04692f12f2de7c31afb3648b78c07",
+      "new_head": false,
+      "status_count": 60,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/integration-ipc-v01212-20261019",
+      "head": "20acf32d722f5f91f11d1b32d1c32fa946c0f83c",
+      "branch": "integration/ipc-v01212-20261019",
+      "baseline": "20acf32d722f5f91f11d1b32d1c32fa946c0f83c",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/d-commercial-expansion-20261018",
+      "head": "03f13b0ea04b2b5cfa15a9961d8776507eddc5aa",
+      "branch": "feat/d-commercial-readiness-20261019",
+      "baseline": "03f13b0ea04b2b5cfa15a9961d8776507eddc5aa",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/ohscanner-8765-dirty-preserved-20261019",
+      "head": "32549decd0435012c88857b49a31116c338b66dd",
+      "branch": "integration/ohscanner-8765-dirty-preserved-20261019",
+      "baseline": "32549decd0435012c88857b49a31116c338b66dd",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/main-integration-20261018",
+      "head": "53db1f0e83d5c97bc7a84ce1f331324ae59e3421",
+      "branch": "integration/main-reviewed-20261018",
+      "baseline": "53db1f0e83d5c97bc7a84ce1f331324ae59e3421",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/review-a-static",
+      "head": "e9563f918dbd155b30c2a54810e592e12ab18590",
+      "branch": "",
+      "baseline": "e9563f918dbd155b30c2a54810e592e12ab18590",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/all-main-sync-20261021",
+      "head": "4ce0951f9dc61018328c06b6ff9f0a35bafaf417",
+      "branch": "main",
+      "baseline": "4ce0951f9dc61018328c06b6ff9f0a35bafaf417",
+      "new_head": true,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/progressive-triage-policy-20261021",
+      "head": "9e31f46a363d671f59c3031dca1f067ec8d9abf2",
+      "branch": "feat/progressive-triage-policy-20261021-live",
+      "baseline": "2214980bfd15cf5f7be518d2ed5b13f5838b6c4f",
+      "new_head": false,
+      "status_count": 7,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/issue-42-impl-20261021",
+      "head": "0cb2bdf144e3d3c54c2abed3aca1a8b35618480f",
+      "branch": "work/issue-42-impl-20261021",
+      "baseline": "0cb2bdf144e3d3c54c2abed3aca1a8b35618480f",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/issue-40-impl-20261021",
+      "head": "7126e8a146aac709322742bd319e2e33f249810e",
+      "branch": "work/issue-40-impl-20261021",
+      "baseline": "5f9d47635dd5fc33e4c3bb9dac9611401db805fd",
+      "new_head": false,
+      "status_count": 1,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/parallel-platform-20261017",
+      "head": "121db7b17da5defdcc6e4b92d6b6c94de6fa6bdc",
+      "branch": "work/platform-20261017",
+      "baseline": "121db7b17da5defdcc6e4b92d6b6c94de6fa6bdc",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/b-high-recall-implementation-20261018",
+      "head": "635b3e0449c552f0ccc25118850d245962845568",
+      "branch": "work/b-high-recall-implementation-20261018",
+      "baseline": "e15001abc7074e8b6aaa4d53d2af07278c1a37f2",
+      "new_head": false,
+      "status_count": 1,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/integration-owner-panel-agent-20261019",
+      "head": "ae6b2c8e7f00c2b2f79f15b97ad70fa412c1f01a",
+      "branch": "integration/owner-panel-agent-20261019",
+      "baseline": "ae6b2c8e7f00c2b2f79f15b97ad70fa412c1f01a",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/progressive-triage-runtime-20261021",
+      "head": "154438bf7d3ac45b55210fc988fb2bd2fc258cac",
+      "branch": "feat/progressive-triage-runtime-20261021",
+      "baseline": "5d7ff2e10ec8fe1c1726176270e9746af159ea56",
+      "new_head": false,
+      "status_count": 7,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/panel-manual-main",
+      "head": "e510c99c67f31ec6c73365f9ab749c79ca6ff0a1",
+      "branch": "main",
+      "baseline": "e510c99c67f31ec6c73365f9ab749c79ca6ff0a1",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/b-high-recall-review-20261018",
+      "head": "1c21ac60890fca0ce6be5d50d82e4757dd5e4623",
+      "branch": "work/b-high-recall-review-20261018",
+      "baseline": "ce24ca6cfbd3a702be6b7ac35da1124dae3a7b33",
+      "new_head": false,
+      "status_count": 7,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/ohscanner-8765-ac-integrated-20261019",
+      "head": "631901a90513748d7d72e8c15fa9f9f131132259",
+      "branch": "integration/ohscanner-8765-ac-20261019",
+      "baseline": "631901a90513748d7d72e8c15fa9f9f131132259",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/main-release-current-20261020",
+      "head": "a866b382b67ec40e75951e690d311427b809e239",
+      "branch": "integration/release-main-20261020",
+      "baseline": "a866b382b67ec40e75951e690d311427b809e239",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/d-commercial-next-20261019",
+      "head": "0f4560c4712dbf914d762948e2220942f16324ad",
+      "branch": "feat/d-commercial-next-20261019",
+      "baseline": "0f4560c4712dbf914d762948e2220942f16324ad",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/main-postmerge-docs-20261020",
+      "head": "a0d81ec419b6633a7159baa2c1c434d59ec8fa1a",
+      "branch": "docs/record-mainline-merge-20261020",
+      "baseline": "a0d81ec419b6633a7159baa2c1c434d59ec8fa1a",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/ipc-panel-integration-20261017",
+      "head": "61e6818dfc148805d0905577a7aae516d8a852e4",
+      "branch": "integration/ipc-panel-20261017",
+      "baseline": "5de1247f9b32f776355b79b02ae4c1d82dfd9e3e",
+      "new_head": false,
+      "status_count": 6,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/parallel-ui-20261017",
+      "head": "615f3d2087a8aae0bfdbfa779ad0b13525b76db8",
+      "branch": "work/ui-20261017",
+      "baseline": "615f3d2087a8aae0bfdbfa779ad0b13525b76db8",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/parallel-cpp-20261017",
+      "head": "91e6291242c6917fdef7cf732f80b3860c836ebe",
+      "branch": "work/cpp-20261017",
+      "baseline": "91e6291242c6917fdef7cf732f80b3860c836ebe",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/main-release-20261020",
+      "head": "6708f8647c4a226e4a7e2ac5931fff15bf115b8d",
+      "branch": "integration/main-release-20261020",
+      "baseline": "5ee6aa17bbd54c31641645c794c827461c4a4f75",
+      "new_head": false,
+      "status_count": 5,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/worktrees/agent-llm-20261017",
+      "head": "1f8c7d31478f64cfd8586a46931b628844f96f64",
+      "branch": "work/agent-llm-20261017",
+      "baseline": "fa0a47dfc40017a401ea8a0695989a7c4321d5ff",
+      "new_head": false,
+      "status_count": 17,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/app",
+      "head": "2146c229e00e63c4464da85f46fde303019fbeaa",
+      "branch": "feat/workbench-status-misans-hardening",
+      "baseline": "ee4bdc87a220a37550b01f3f7193b52f2ed44776",
+      "new_head": false,
+      "status_count": 22,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/deployments/pr38-validation-20261020",
+      "head": "264800523762a1d3055db87080c127f723b4b146",
+      "branch": "",
+      "baseline": "264800523762a1d3055db87080c127f723b4b146",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner/deployments/pr38-product-20261020",
+      "head": "264800523762a1d3055db87080c127f723b4b146",
+      "branch": "",
+      "baseline": "264800523762a1d3055db87080c127f723b4b146",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+      "head": "7579a16344fa3164bfbea3e26db783854a1793b6",
+      "branch": "feat/interface-ipc-detector",
+      "baseline": "7579a16344fa3164bfbea3e26db783854a1793b6",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/openharmony-audit/ipc-cve-replay-push",
+      "head": "818d3eb8d9760505a67eee7c2cca600ff783e152",
+      "branch": "feat/interface-ipc-detector",
+      "baseline": "818d3eb8d9760505a67eee7c2cca600ff783e152",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/openharmony-audit/wt-candidate-review",
+      "head": "32f641ee011891e8b7d5d663778d03d07fbbeb5f",
+      "branch": "feat/candidate-review",
+      "baseline": "1a25ea2983512453cfb4bb8d590ce9142baf5107",
+      "new_head": false,
+      "status_count": 1,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/openharmony-audit/owner-ipc-platform-20261011",
+      "head": "86fbf9951967aaab879d24748a8231744d6977aa",
+      "branch": "feat/owner-ipc-platform-integration",
+      "baseline": "86fbf9951967aaab879d24748a8231744d6977aa",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/openharmony-audit/wt-tool-matrix",
+      "head": "32f641ee011891e8b7d5d663778d03d07fbbeb5f",
+      "branch": "feat/tool-matrix",
+      "baseline": "67f58c3d8ddd6e093b6fcd2e8de7fd035abc4215",
+      "new_head": false,
+      "status_count": 2,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit",
+      "head": "48578dc08229af2f72358060170c1a5e9009f808",
+      "branch": "feat/ohscanner-core",
+      "baseline": "5a5981d4c42bd7e5819a1e67b0de9e7d56768bc3",
+      "new_head": false,
+      "status_count": 8,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/openharmony-audit/review-shared-ptr-mgate-20261010",
+      "head": "6afb7d0a589056bf68f0373c723678b7f5fd2275",
+      "branch": "",
+      "baseline": "6afb7d0a589056bf68f0373c723678b7f5fd2275",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner-workbench/worktrees/integration",
+      "head": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+      "branch": "feat/workbench-integration",
+      "baseline": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner-workbench/worktrees/ui",
+      "head": "9ce2aecbee36bc7dda03f72bddb1f10a0b78e618",
+      "branch": "feat/workbench-evidence-review",
+      "baseline": "9ce2aecbee36bc7dda03f72bddb1f10a0b78e618",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner-workbench/worktrees/foundation",
+      "head": "83e17b5f7237794bf0f5869eb9678b655eaaf6a1",
+      "branch": "feat/workbench-jobs-api",
+      "baseline": "83e17b5f7237794bf0f5869eb9678b655eaaf6a1",
+      "new_head": false,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/ohscanner-workbench/main-integration-20261021",
+      "head": "b5f460b0996d2f56d1ed6d36b77f7dfad3acd94b",
+      "branch": "codex/main-demo-integration-20261021",
+      "baseline": "d24374365aad71f7a2ee03968df23d04c86ee0b3",
+      "new_head": true,
+      "status_count": 0,
+      "changed_count": 0
+    },
+    {
+      "path": "/home/audit/progressive-triage-20261021",
+      "head": "4f75a65775b202b8220a208ebdb50fdb5c8dbb4d",
+      "branch": "feat/progressive-triage-policy-20261021",
+      "baseline": "1fd5378f3d8c02fdf6b828f5e336f0fabd9972f5",
+      "new_head": false,
+      "status_count": 7,
+      "changed_count": 0
+    },
+    {
+      "path": "/mnt/e/读研/网络安全创新大赛/workspace/progressive-triage-20261021",
+      "head": "4f75a65775b202b8220a208ebdb50fdb5c8dbb4d",
+      "branch": "feat/progressive-triage-policy-20261021",
+      "baseline": "4f75a65775b202b8220a208ebdb50fdb5c8dbb4d",
+      "new_head": true,
+      "status_count": 1354,
+      "changed_count": 1349
+    }
+  ],
+  "remote_unreviewed": [],
+  "evidence": [
+    {
+      "file": "scanner-eval/cjson-rerun.json",
+      "sha256": "e3919564b537df00a7d130bd9fbd7993add9cf25836f8988b4345ab428f15ef4"
+    },
+    {
+      "file": "scanner-eval/cjson.md",
+      "sha256": "f252e2450671ce2fd600c1943ce2d1e4c3fa27758eb1b669a3a21b8745bf37b1"
+    },
+    {
+      "file": "scanner-eval/dsoftbus-ipc-fixed.json",
+      "sha256": "b948274cbb6d19a1f59385c28e2e9b87b261741f56a154f62a73bdd17748f2db"
+    },
+    {
+      "file": "scanner-eval/dsoftbus-ipc-fixed.md",
+      "sha256": "da12852422996d91502088c8f66462be3b2429f5ce075d3704550b2e6e747710"
+    },
+    {
+      "file": "scanner-eval/cjson.json",
+      "sha256": "3689c25f588510d4f786b6c154a90972552596c91df7dc481f87e08622f0c764"
+    },
+    {
+      "file": "scanner-eval/cjson-fixed.md",
+      "sha256": "b2bd012d04f7082f37f3b86ff151df2fb33005edded39636b57385cbb933dbb6"
+    },
+    {
+      "file": "scanner-eval/arkts-static-sample.md",
+      "sha256": "dd2834a66f182ceac8b46443e6686da0a2aaeafd3481b884adc21486809c6adf"
+    },
+    {
+      "file": "scanner-eval/cjson-fixed.json",
+      "sha256": "a97652e53c9d4115bcb7ee212c0802a6c1a08f614eb2fd6c6f1ed6b6a83720cf"
+    },
+    {
+      "file": "scanner-eval/arkts-static-sample.json",
+      "sha256": "a7944d4e27a36756eceb51b4ff3551cbc614b8d1513f35b0965526a329fd4158"
+    },
+    {
+      "file": "scanner-eval/cjson-defaults.json",
+      "sha256": "2c41ccae91bb7c708831aedf5b710ddace2f16773f1671cbadc484504e3f5016"
+    },
+    {
+      "file": "scanner-eval/dsoftbus-ipc.json",
+      "sha256": "2e73fdfa2d15d69b9a9fc282c59dafa3cc57907381da05f7db6204b72c106e49"
+    },
+    {
+      "file": "scanner-eval/dsoftbus-ipc.md",
+      "sha256": "87cd53938447e14af4308f65016fc357c8b406f5a191e2367cb7075204ab6844"
+    },
+    {
+      "file": "scanner-eval/cjson-defaults.md",
+      "sha256": "0804eb242914802e528f91bfa8376bceadd31c8ab30efdc19443a3ab3f7d033b"
+    },
+    {
+      "file": "scanner-eval/cjson-rerun.md",
+      "sha256": "f252e2450671ce2fd600c1943ce2d1e4c3fa27758eb1b669a3a21b8745bf37b1"
+    }
+  ],
+  "dispositions": [
+    "Latest local L2 implementation integrated as active code with parent-binding fixes.",
+    "Legacy policy_store/progress callback prototype preserved as a patch; incompatible with newer policy/runtime API.",
+    "Sparse Windows checkout missing files are not intentional deletion requests.",
+    "Scanner eval partial-file fix and detector regression are byte-identical to main; reports archived.",
+    "D9 local orphan head bf369f3 predates current D 0.21.17 and is superseded.",
+    "Other original local dirty snapshots match the previous integration cutoff.",
+    "origin/unrelated 88163ad1 is a disconnected CI pinned-fixture history; latest change only normalizes .gitattributes line endings, no newer product implementation."
+  ],
+  "local_cutoff": "2026-10-21 23:40 Asia/Shanghai; tracked delta and new-file source-binding/cancellation improvements included."
+}

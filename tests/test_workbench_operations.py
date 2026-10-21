@@ -39,6 +39,56 @@ class OperationsStoreTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_quick_screen_approval_is_idempotent_and_digest_bound(self):
+        from datetime import datetime, timedelta, timezone
+        from src.workbench.progressive_triage.contracts import content_sha256
+        from src.workbench.progressive_triage.policy import build_policy, policy_envelope
+
+        expires = (datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat()
+        policy = build_policy()
+        policy_sha256 = policy_envelope(policy)["policy_sha256"]
+        ranking = {"decisions": [{"group_id": "g1", "selected": True}]}
+        manifest = {"consent_nonce": "a" * 32, "consent_expires_at": expires,
+                    "audit_operation_id": "job-1",
+                    "group": {"group_id": "g1"}, "evidence": [{"evidence_id": "e1"}],
+                    "policy_revision": 0, "policy": policy,
+                    "policy_sha256": policy_sha256, "ranking": ranking}
+        digest = content_sha256(manifest)
+        spec = {"source_submission_approved": True, "consent_nonce": "a" * 32,
+                "consent_sha256": digest, "consent_expires_at": expires,
+                "audit_operation_id": "job-1",
+                "job_id": "job-1", "candidate_id": "candidate-1",
+                "consent_manifest": manifest, "group": manifest["group"],
+                "evidence": manifest["evidence"],
+                "progressive_policy": {"revision": 0, "policy": policy,
+                                       "policy_sha256": policy_sha256},
+                "ranking": ranking,
+                "authorization": {"authorized": True, "consent_sha256": digest}}
+        first = self.ops.create("progressive_quick_screen", spec)
+        replay = self.ops.create("progressive_quick_screen", spec)
+        self.assertEqual(first["id"], replay["id"])
+        self.assertEqual(first["kind"], "progressive_quick_screen")
+
+        tampered = {**spec, "evidence": [{"evidence_id": "e2"}]}
+        with self.assertRaisesRegex(ValueError, "fixed, explicit consent"):
+            self.ops.create("progressive_quick_screen", tampered)
+
+    def test_endpoint_resolves_to_one_multi_endpoint_budget_owner(self):
+        parent = self.ops.create("version_matrix", {"scan_ids": ["endpoint-a", "endpoint-b"]})
+        self.assertEqual(self.ops.audit_parent_for_scan("endpoint-a")["id"], parent["id"])
+        self.assertIsNone(self.ops.audit_parent_for_scan("standalone-scan"))
+
+    def test_quick_screen_unknown_is_a_reviewable_limited_operation_result(self):
+        from src.workbench.operations import execute
+        for state, expected in (("completed", "completed"),
+                                ("quick_unknown", "completed_with_limitations")):
+            with self.subTest(state=state), patch(
+                    "src.workbench.progressive_triage.quick_screen_operation.execute_quick_screen",
+                    return_value={"state": state, "vulnerability_state": "candidate"}):
+                result = execute(self.settings, self.store, self.ops,
+                                 {"kind": "progressive_quick_screen", "spec": {}})
+            self.assertEqual(result["status"], expected)
+
     def test_legacy_r2_budget_status_is_exposed_as_candidate_limit(self):
         row = {"r2_status": "budget_limited", "candidate_manifest": "[]",
                "operation_ids": "[]", "r2_operation_ids": "[]",
