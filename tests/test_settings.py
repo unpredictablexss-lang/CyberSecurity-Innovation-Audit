@@ -67,6 +67,52 @@ class SettingsPortabilityTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "data_dir"):
                     Settings.from_env()
 
+    def test_repository_cache_configuration_is_portable_and_bounded(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config = root / "portable.json"
+            config.write_text(json.dumps({
+                "data_dir": "./state",
+                "target_roots": [],
+                "repository_cache": {"roots": ["./cache-a", "./cache-b"],
+                                     "max_bytes": 4096, "minimum_free_bytes": 1024},
+            }), encoding="utf-8")
+            with patch.dict(os.environ, {"OHSCANNER_CONFIG": str(config)}, clear=True):
+                settings = Settings.from_env()
+            self.assertEqual(settings.repository_cache_roots,
+                             ((root / "cache-a").resolve(), (root / "cache-b").resolve()))
+            self.assertEqual(settings.repository_cache_max_bytes, 4096)
+            self.assertEqual(settings.repository_cache_min_free_bytes, 1024)
+            settings.initialize()
+            self.assertTrue((root / "cache-a").is_dir())
+            self.assertTrue((root / "cache-b").is_dir())
+
+    def test_repository_cache_config_rejects_symlink_roots(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "real-cache"
+            target.mkdir()
+            link = root / "cache-link"
+            link.symlink_to(target, target_is_directory=True)
+            config = root / "portable.json"
+            config.write_text(json.dumps({
+                "data_dir": "./state", "target_roots": [],
+                "repository_cache": {"roots": [str(link)]},
+            }), encoding="utf-8")
+            with patch.dict(os.environ, {"OHSCANNER_CONFIG": str(config)}, clear=True):
+                with self.assertRaisesRegex(ValueError, "symbolic links"):
+                    Settings.from_env()
+
+    def test_negative_repository_cache_limit_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config = root / "portable.json"
+            config.write_text(json.dumps({"data_dir": "./state", "target_roots": [],
+                                          "repository_cache": {"max_bytes": -1}}), encoding="utf-8")
+            with patch.dict(os.environ, {"OHSCANNER_CONFIG": str(config)}, clear=True):
+                with self.assertRaisesRegex(ValueError, "non-negative"):
+                    Settings.from_env()
+
 
 if __name__ == "__main__":
     unittest.main()

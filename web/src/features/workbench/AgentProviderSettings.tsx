@@ -29,7 +29,7 @@ export default function AgentProviderSettings() {
   };
   const test = () => modal.confirm({
     title: "测试模型 API 连通性？",
-    content: "将向已配置端点发送一条固定的无源码请求，验证 API 连通性和调查所用的 JSON Schema 结构化输出（最多输出 32 tokens），可能产生少量 API 费用；不会创建调查任务或发送候选源码。该检查不验证工具调用、代码分析、引用正确性或模型质量。",
+    content: "将向已配置端点发送一条预设的无源码请求，验证 API 连通性和调查所用的 JSON Schema 结构化输出（最多输出 32 tokens），可能产生少量 API 费用；不会创建调查任务或发送候选源码。该检查不验证工具调用、代码分析、引用正确性或模型质量。",
     okText: "发送无源码测试", cancelText: "取消",
     onOk: async () => {
       setBusy(true); setError(""); setProbe(null);

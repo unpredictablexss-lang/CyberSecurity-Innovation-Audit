@@ -24,7 +24,7 @@ export default function SourceEvidence({
 }) {
   const [form] = Form.useForm();
   return (
-    <Card className="section-gap" title="补充固定源码证据">
+    <Card className="section-gap" title="补充本次扫描源码证据">
       <Alert
         type="info"
         message="源码摘录由服务器按本次 commit 校验"
@@ -60,7 +60,7 @@ export default function SourceEvidence({
             );
             form.setFieldValue("note", "");
             await reload();
-            message.success("已保存固定来源的源码证据");
+            message.success("已保存本次扫描来源的源码证据");
           } catch (e) {
             message.error(String(e));
           }
@@ -100,7 +100,7 @@ export default function SourceEvidence({
         >
           <Input.TextArea rows={3} maxLength={4000} />
         </Form.Item>
-        <Button htmlType="submit">保存源码证据</Button>
+        <Button htmlType="submit">保存证据</Button>
       </Form>
     </Card>
   );

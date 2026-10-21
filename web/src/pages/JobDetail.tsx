@@ -48,8 +48,10 @@ import SourceEvidence from "../SourceEvidence";
 import CandidateActions from "../features/workbench/CandidateActions";
 import { requestGate } from "../features/audits/model";
 import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
-import { analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
+import { analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, highConfidenceAiSummary, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
 const { Text, Title, Paragraph } = Typography;
+const severityLabels: Record<string, string> = { critical: "严重", high: "高危", medium: "中危", low: "低危", info: "提示" };
+const severityColors: Record<string, string> = { critical: "red", high: "volcano", medium: "orange", low: "blue" };
 export default function JobDetail({ id, initialTab = "findings", candidateId, sourceFile, sourceLine, health }: { id: string; initialTab?: string; candidateId?: string; sourceFile?: string; sourceLine?: number; health?: any }) {
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
@@ -68,6 +70,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("");
   const [detail, setDetail] = useState<any>(null);
+  const selectedRisk = (riskSummary?.items || []).find((item: any) => item.candidate_id === detail?.id);
   const selectedDetailId = useRef<string | null>(null);
   const detailGate = useRef(requestGate());
   const candidateAutoOpened = useRef<string | null>(null);
@@ -76,6 +79,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const [batchOpen, setBatchOpen] = useState(false);
   const [batchBusy, setBatchBusy] = useState(false);
   const [snapshotBusy, setSnapshotBusy] = useState(false);
+  const [retryBusyId, setRetryBusyId] = useState<string | null>(null);
   const [batchPreview, setBatchPreview] = useState<any>(null);
   const [batchDisclosureOpened, setBatchDisclosureOpened] = useState<string[]>([]);
   const [batchSubmissionApproved, setBatchSubmissionApproved] = useState(false);
@@ -219,7 +223,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
     if (!report || initialTab !== "source" || !sourceFile) return;
     const allowed = report._workbench?.source_inventory?.some((item: any) => item.file === sourceFile);
     if (!allowed) {
-      setError("引用源码不在本次扫描的固定源码清单中");
+      setError("所引用的文件不属于本次扫描范围");
       return;
     }
     let live = true;
@@ -309,6 +313,18 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
       setBatchBusy(false);
     }
   }
+  async function retryAgentOperation(operationId: string) {
+    setRetryBusyId(operationId);
+    try {
+      const retried = await api("/operations/" + operationId + "/retry", {});
+      message.warning("已创建新的调查任务。它会再次调用模型，可能产生新的费用；原任务和审计记录保留。");
+      go("/tasks/operations/" + retried.id);
+    } catch (e) {
+      message.error(String(e));
+    } finally {
+      setRetryBusyId(null);
+    }
+  }
   if (!job) return error ? <Alert type="error" showIcon message={error} /> : <Spin />;
   const parse = report?.source_parsing.parsing_status || {};
   const coverage = report
@@ -353,16 +369,16 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
             <State value={job.status} />
             {auditCanCancel ? (
               <Button danger onClick={() => void action("cancel")}>
-                取消整个审计
+                停止扫描和调查
               </Button>
             ) : (
               <Button onClick={() => void action("retry")}>
-                按原 Commit 重试
+                重试扫描
               </Button>
             )}
             {triageCanCancel && <Button danger loading={batchBusy}
               onClick={() => void cancelTaskTriage()}>
-              仅停止智能研判
+              停止 AI 调查
             </Button>}
           </Space>
         }
@@ -450,20 +466,30 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         </Row>
         <Card className="section-gap" title="证据风险分层">
           <Alert type="info" showIcon
-            message="风险层级由固定源码绑定、静态证据和人工逐项复核决定"
+            message="风险层级由扫描源码、静态证据和人工逐项复核决定"
             description="模型自报置信度或引文存在性不会提升风险层级。高可信风险仍是待复核候选；未研判和未知不代表安全。" />
           <Row gutter={18} className="section-gap">{[
             { title: "高可信候选", value: riskSummary?.counts?.high_confidence_candidate ?? "未知" },
             { title: "待进一步验证", value: riskSummary?.counts?.further_validation ?? "未知" },
             { title: "低优先级线索", value: riskSummary?.counts?.low_priority_manual ?? "未知" },
-            { title: "来源绑定未知", value: riskSummary?.counts?.unknown_source_binding ?? "未知" },
+            { title: "源码版本未核对", value: riskSummary?.counts?.unknown_source_binding ?? "未知" },
             { title: "未研判候选", value: riskSummary?.triage_counts?.not_triaged ?? "未知" },
             { title: "人工验证漏洞", value: riskSummary?.validated_vulnerability ?? "未知" },
           ].map((x) => <Col xs={12} sm={8} xl={4} key={x.title}><Card size="small"><Statistic {...x} /></Card></Col>)}</Row>
           <Table size="small" rowKey="candidate_id" pagination={false}
             dataSource={(riskSummary?.items || []).slice(0, 20)}
             columns={[
-              { title: "风险层级", dataIndex: "risk_tier_label" },
+              { title: "严重程度", render: (_: unknown, row: any) => {
+                const labels: Record<string, string> = { critical: "严重", high: "高", medium: "中", low: "低", info: "提示" };
+                const colors: Record<string, string> = { critical: "red", high: "volcano", medium: "orange", low: "blue" };
+                return <Tag color={colors[row.severity]}>{labels[row.severity] || "未分级"}</Tag>;
+              } },
+              { title: "可信度", render: (_: unknown, row: any) => row.risk_tier === "high_confidence_candidate"
+                ? <Tag color="gold">高可信候选 · 待复核</Tag>
+                : <Tag>{row.risk_tier_label || "待进一步验证"}</Tag> },
+              { title: "漏洞状态", render: (_: unknown, row: any) => row.vulnerability_state === "confirmed"
+                ? <Tag color="green">已确认</Tag>
+                : row.vulnerability_state === "unknown" ? <Tag>未知</Tag> : <Tag>候选</Tag> },
               { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value).slice(0, 12)}</Text> },
               { title: "规则", dataIndex: "rule_id" },
               { title: "位置", render: (_: unknown, row: any) => row.file + ":" + row.line },
@@ -488,16 +514,16 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               description={triageSummary?.limitation || "静态扫描报告与候选已保存。未授权的任务不会发送源码；模型输出不会修改候选或确认状态。"} />
             {triageSummary?.state === "cancelled" && <Alert className="section-gap" type="warning" showIcon
               message="本审计的后续模型研判已停止"
-              description="静态扫描和已保存结果保留；其他审计不受影响。若要继续，可从候选详情单独创建新的调查预览并授权。" />}
+              description="静态扫描和已保存结果保留；其他审计不受影响。若要继续，可从候选详情重新发起 AI 调查，并先检查本次发送内容。" />}
             {triageSummary?.authorization?.authorized && <>
               <Descriptions className="section-gap" size="small" column={1} bordered>
                 <Descriptions.Item label="任务级授权">{triageSummary.authorization.revoked ? "已撤销" : "有效"}</Descriptions.Item>
                 <Descriptions.Item label="模型目的地">{triageSummary.authorization.provider?.endpoint_host} · {triageSummary.authorization.provider?.model}</Descriptions.Item>
-                <Descriptions.Item label="自动研判预算">最多 {triageSummary.authorization.candidate_limit} 条候选；Token 与请求次数受限</Descriptions.Item>
-                {triageSummary.authorization.conditional_r2_candidate_limit > 0 && <Descriptions.Item label="补充核查预算">最多 {triageSummary.authorization.conditional_r2_candidate_limit} 条高/严重候选；只在源码义务仍未解决时追加</Descriptions.Item>}
+                <Descriptions.Item label="调查范围">本次扫描范围内全部符合条件的候选；严重/高危且仍有源码义务未解决的候选会继续深度调查</Descriptions.Item>
+                <Descriptions.Item label="Token 与费用">不设任务级累计上限；按模型实际用量计费，任务可随时取消</Descriptions.Item>
                 <Descriptions.Item label="工作台费用预算">{triageSummary.authorization.platform_cost_budget_enforced
                   ? "USD " + triageSummary.authorization.cost_budget.maximum_usd
-                    + "（固定费率卡最坏估算 USD " + triageSummary.authorization.cost_budget.estimated_maximum_usd + "）"
+                    + "（当前费率卡最坏估算 USD " + triageSummary.authorization.cost_budget.estimated_maximum_usd + "）"
                   : "未设置可执行的费用预算"}</Descriptions.Item>
                 <Descriptions.Item label="Provider 账单">实际账单金额无法由本平台硬限制</Descriptions.Item>
               </Descriptions>
@@ -525,17 +551,22 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
             {!agentProvider?.configured && <Alert className="section-gap" type="warning" showIcon
               message="模型服务未配置"
               description={<>静态扫描结果可继续复核。配置服务后才能生成模型外发预览。<Button type="link" onClick={() => go("/settings/agent")}>前往设置</Button></>} />}
+            {triageSummary?.items?.some((item: any) => item.retry_available) && <Alert className="section-gap" type="warning" showIcon
+              message="部分智能调查在产生结果前中断，可显式重试"
+              description="重试会创建新任务，沿用原扫描版本的源码、扫描报告和外发授权；模型请求可能再次计费。旧任务记录不会覆盖。" />}
             {triageSummary?.items?.length > 0 && <Table className="section-gap" size="small" rowKey="id" pagination={false}
               dataSource={triageSummary.items}
               columns={[
                 { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value || "").slice(0, 12)}</Text> },
-                { title: "方式", dataIndex: "mode", render: (value: string) => value === "single_shot" ? "模型辅助研判（单轮）" : "工具增强调查（只读）" },
+                { title: "方式", dataIndex: "mode", render: (value: string) => value === "single_shot" ? "AI 分析（单次）" : "AI 追查源码（只读）" },
                 { title: "状态", dataIndex: "status", render: (value: string) => <State value={value} /> },
-                { title: "任务", dataIndex: "id", render: (value: string) => <Button size="small" onClick={() => go("/tasks/operations/" + value)}>查看</Button> },
+                { title: "模型研判", dataIndex: "assessment", render: (value: string) => value || "尚无结果（未知）" },
+                { title: "调查边界", render: (_: unknown, row: any) => row.investigation_limitations?.length ? <Text type="warning">{row.investigation_limitations.join("；")}</Text> : row.result_sha256 ? "未记录额外单次限制" : "尚无结果；候选保持未知" },
+                { title: "任务", dataIndex: "id", render: (value: string, row: any) => <Space><Button size="small" onClick={() => go("/tasks/operations/" + value)}>查看</Button>{row.retry_available && <Button size="small" loading={retryBusyId === value} onClick={() => void retryAgentOperation(value)}>重试</Button>}</Space> },
               ]} />}
           </> : auditMode === "static_only" ? <Alert type="info" showIcon
             message="本任务按“仅静态扫描”创建"
-            description="静态候选和覆盖报告已保存。若之后决定使用模型，可从候选详情单独发起外发预览并授权。" />
+            description="静态候选和覆盖报告已保存。若之后决定使用模型，可从候选详情发起 AI 调查，并先检查发送内容。" />
             : <Alert type="info" showIcon message="历史任务未记录研判方式"
               description="此任务按已有静态报告展示；后续模型调用仍需单独预览和授权。" />}
         </Card>
@@ -589,15 +620,15 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                     <Select aria-label="模型研判方式" value={batchMode} style={{ minWidth: 220 }}
                       onChange={(value) => setBatchMode(value)}
                       options={[
-                        { value: "single_shot", label: "模型辅助研判（单轮）" },
-                        { value: "tool_agent", label: "工具增强调查（只读）" },
+                        { value: "single_shot", label: "AI 分析（单次）" },
+                        { value: "tool_agent", label: "AI 追查源码（只读）" },
                       ]} />
                     <Button
                       type="primary"
                       disabled={!selected.length || selected.length > 5 || !job?.report_sha256 || !agentProvider?.configured}
                       onClick={() => void previewAgentBatch()}
                     >
-                      预览并授权（{selected.length}/5）
+                      查看发送内容（{selected.length}/5）
                     </Button>
                   </Space>
                   <Table<any>
@@ -813,7 +844,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
             },
             {
               key: "source",
-              label: "固定版本源码",
+              label: "本次扫描源码",
               children: report ? (
                 <>
                   <Select
@@ -957,6 +988,34 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 </div>
               </div>}
             />
+            {selectedRisk?.risk_tier === "high_confidence_candidate" && <Card className="section-gap"
+              title={<Space><Tag color="gold">高可信候选</Tag><Text>优先人工复核</Text></Space>}>
+              <Space wrap className="section-gap">
+                <Text strong>严重程度</Text>
+                <Tag color={severityColors[detail.severity]}>
+                  {severityLabels[detail.severity] || "未分级"}
+                </Tag>
+                <Tag>漏洞状态：候选</Tag>
+              </Space>
+              {selectedRisk.confidence_basis === "ai_source_evidence" ? <>
+                {highConfidenceAiSummary(selectedRisk.ai_summary).state === "available"
+                  ? <Paragraph><Text strong>AI 调查理由：</Text>{highConfidenceAiSummary(selectedRisk.ai_summary).text}</Paragraph>
+                  : <Alert type="warning" showIcon message="AI 摘要不可用"
+                      description={highConfidenceAiSummary(selectedRisk.ai_summary).text} />}
+                <Space direction="vertical" size={4} style={{ width: "100%" }}>
+                  <Text strong>关键源码证据</Text>
+                  {(selectedRisk.ai_evidence || []).map((citation: any, index: number) => <Button key={citation.evidence_id + ":" + index}
+                    type="link" className="source-citation-link" style={{ height: "auto", whiteSpace: "normal", textAlign: "left", paddingInline: 0 }}
+                    onClick={() => go("/tasks/" + encodeURIComponent(id) + "?tab=source&source_file="
+                      + encodeURIComponent(citation.file) + "&source_line=" + citation.line_start)}>
+                    {citation.file}:{citation.line_start}-{citation.line_end} · {citation.quote}
+                  </Button>)}
+                  {!(selectedRisk.ai_evidence || []).length && <Text type="secondary">没有可定位的 AI 源码引文，摘要和证据保持 unknown。</Text>}
+                </Space>
+                <Text type="secondary">引用指向本次扫描源码。AI 判断仍需人工核对；产品入口、触发条件和实际影响没有由这项源码分析确认。</Text>
+              </> : <Paragraph>该标记来自完整的静态人工复核。它表示值得优先复核，不代表漏洞已经确认。</Paragraph>}
+            </Card>}
+
             {detail.risk_assessment && <Card
               className="section-gap"
               title="公开组件风险依据与修复验证"
@@ -1050,6 +1109,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 <Text code copyable>{report?.snapshot_sha256 || "unavailable"}</Text>
               </Descriptions.Item>
             </Descriptions>
+
             {detail.source ? <>
               <CandidateActions job={job} candidate={detail} />
               <CodeView source={detail.source} line={detail.line} />
@@ -1063,13 +1123,13 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               className="section-gap"
               type="warning"
               showIcon
-              message="固定源码暂不可读"
-              description={<>{detail.source_limitation || "候选和报告仍保留；恢复固定源码访问前，复核结论保持未知。"} <Button type="link" onClick={() => go("/settings/sources")}>检查源码目录</Button></>}
+              message="本次扫描源码暂不可读"
+              description={<>{detail.source_limitation || "候选和报告仍保留；恢复本次扫描源码访问前，复核结论保持未知。"} <Button type="link" onClick={() => go("/settings/sources")}>检查源码目录</Button></>}
             />}
             <Row gutter={20} className="section-gap">
               <Col span={12}>
                 <Card title="证据义务">
-                  <Text type="secondary">以下是规则生成的核查提示，需结合固定源码逐项验证；当前标签不是漏洞结论。</Text>
+                  <Text type="secondary">以下是规则生成的核查提示，需结合本次扫描源码逐项验证；当前标签不是漏洞结论。</Text>
                   {(detail.evidence.obligations || []).map(
                     (o: any, i: number) => (
                       <div className="obligation" key={i}>
@@ -1155,7 +1215,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                     type="info"
                     showIcon
                     message="暂不能追加源码复核"
-                    description="请先恢复此任务固定源码的授权读取，再打开候选证据并记录引用。"
+                    description="请先恢复此任务本次扫描源码的授权读取，再打开候选证据并记录引用。"
                   />}
                   <Timeline
                     className="section-gap"
@@ -1185,7 +1245,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         open={batchOpen}
         width={900}
         confirmLoading={batchBusy}
-        okText="批准并创建逐候选任务"
+        okText="确认并开始 AI 调查"
         cancelText="取消"
         okButtonProps={{ disabled: !batchPreview || !batchDisclosureReviewed || !batchSubmissionApproved }}
         onOk={() => void enqueueAgentBatch()}

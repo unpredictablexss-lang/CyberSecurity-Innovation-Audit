@@ -73,7 +73,8 @@ class OwnerIntegrationTests(unittest.TestCase):
             plan = self.plan(auto_triage=True, max_triage_candidates=2, max_cost_usd="0.10")
             consent = plan["triage_authorization_preview"]
             self.assertTrue(consent["eligible"])
-            self.assertEqual(consent["manifest"]["candidate_limit"], 2)
+            self.assertEqual(consent["manifest"]["candidate_selection"],
+                             "all source-reviewable candidates in the fixed audit scope; no count cap")
             self.assertEqual(consent["manifest"]["binding"]["commit"], self.commit)
             self.assertFalse(consent["hard_spend_cap"])
             self.assertNotIn("test-provider-key", json.dumps(consent))
@@ -107,7 +108,7 @@ class OwnerIntegrationTests(unittest.TestCase):
             self.assertEqual(self.store.triage_authorization(job["id"])["consent_sha256"],
                              consent["consent_sha256"])
 
-    def test_task_cost_budget_is_required_and_bound_to_preview(self):
+    def test_task_budget_fields_do_not_cap_or_rebind_authorized_smart_audit(self):
         with patch.dict("os.environ", {
             "OHSCANNER_LLM_BASE_URL": "https://api.xiaomimimo.com/v1",
             "OHSCANNER_LLM_MODEL": "mimo-v2.6-pro",
@@ -115,22 +116,23 @@ class OwnerIntegrationTests(unittest.TestCase):
         }, clear=False):
             no_budget = self.client.post(
                 "/api/v1/audit-plans",
-                json=self.request(auto_triage=True, max_triage_candidates=2),
+                json=self.request(auto_triage=True, max_triage_candidates=1),
                 headers=fixtures.HEADERS,
             )
-            self.assertEqual(no_budget.status_code, 409, no_budget.text)
-            self.assertIn("费用上限", no_budget.text)
+            self.assertEqual(no_budget.status_code, 200, no_budget.text)
+            self.assertIsNone(no_budget.json()["triage_authorization_preview"]["cost_budget"])
 
-            plan = self.plan(auto_triage=True, max_triage_candidates=2,
-                             max_cost_usd="0.10")
-            changed_plan = self.plan(auto_triage=True, max_triage_candidates=2,
-                                     max_cost_usd="0.11")
-            self.assertNotEqual(plan["workflow_sha256"], changed_plan["workflow_sha256"])
+            plan = self.plan(auto_triage=True, max_triage_candidates=1,
+                             max_r2_candidates=0, max_cost_usd="0.10")
+            changed_plan = self.plan(auto_triage=True, max_triage_candidates=500,
+                                     max_r2_candidates=100, max_cost_usd="5000")
+            self.assertEqual(plan["workflow_sha256"], changed_plan["workflow_sha256"])
             consent = plan["triage_authorization_preview"]
-            stale = self.client.post(
+            accepted = self.client.post(
                 "/api/v1/scans",
                 json=self.request(
-                    auto_triage=True, max_triage_candidates=2, max_cost_usd="0.11",
+                    auto_triage=True, max_triage_candidates=500, max_r2_candidates=100,
+                    max_cost_usd="5000",
                     expected_plan_sha256=plan["plan_sha256"],
                     expected_workflow_sha256=plan["workflow_sha256"],
                     expected_triage_consent_sha256=consent["consent_sha256"],
@@ -138,10 +140,11 @@ class OwnerIntegrationTests(unittest.TestCase):
                 ),
                 headers=fixtures.HEADERS,
             )
-            self.assertEqual(stale.status_code, 409, stale.text)
-            self.assertIn("workflow changed", stale.text.lower())
+            self.assertEqual(accepted.status_code, 201, accepted.text)
+            self.assertEqual(self.store.triage_authorization(accepted.json()["id"])["consent_sha256"],
+                             consent["consent_sha256"])
 
-    def test_authorized_scan_queues_bounded_r1_once_without_calling_provider(self):
+    def test_authorized_scan_queues_every_eligible_r1_once_without_calling_provider(self):
         import hashlib
         from src.workbench.operations_store import Operations
 
@@ -187,8 +190,10 @@ class OwnerIntegrationTests(unittest.TestCase):
                 batch = batches[0]
                 self.assertEqual(batch["candidate_count"], service.findings(
                     service.read_report(self.settings, self.store.job(job["id"]))).__len__())
+                selected_manifest = [row for row in batch["candidate_manifest"]
+                                     if row.get("state") == "selected"]
                 self.assertGreater(batch["selected_count"], 0)
-                self.assertLessEqual(batch["selected_count"], 2)
+                self.assertEqual(batch["selected_count"], len(selected_manifest))
                 queued = operations.smart_triage_operations(batch["id"])
                 self.assertEqual(len(queued), batch["selected_count"])
                 self.assertTrue(all(item["status"] == "queued" for item in queued))
@@ -200,6 +205,50 @@ class OwnerIntegrationTests(unittest.TestCase):
                 Worker(self.settings).run(once=True)
                 self.assertEqual(len(operations.smart_triage_operations(batch["id"])),
                                  batch["selected_count"])
+
+                # A result-free interrupted Provider call can only be recovered
+                # through a new, explicitly billed attempt bound to the same audit.
+                old_attempt = operations.smart_triage_operations(batch["id"])[0]
+                with self.store.connect() as db:
+                    db.execute("UPDATE operations SET status='interrupted',finished_at=? WHERE id=?",
+                               ("2026-10-21T00:00:00+00:00", old_attempt["id"]))
+                detail = self.client.get(
+                    "/api/v1/operations/" + old_attempt["id"], headers=fixtures.HEADERS)
+                self.assertEqual(detail.status_code, 200, detail.text)
+                self.assertTrue(detail.json()["retry_available"])
+                triage = self.client.get(
+                    "/api/v1/scans/" + job["id"] + "/triage", headers=fixtures.HEADERS)
+                self.assertEqual(triage.status_code, 200, triage.text)
+                triage_item = next(item for item in triage.json()["items"]
+                                   if item["id"] == old_attempt["id"])
+                self.assertTrue(triage_item["retry_available"])
+                retry = self.client.post(
+                    "/api/v1/operations/" + old_attempt["id"] + "/retry",
+                    json={}, headers=fixtures.HEADERS)
+                self.assertEqual(retry.status_code, 201, retry.text)
+                new_attempt = retry.json()
+                self.assertEqual(new_attempt["status"], "queued")
+                self.assertEqual(new_attempt["spec"]["retry_parent_operation_id"], old_attempt["id"])
+                self.assertEqual(new_attempt["spec"]["retry_root_operation_id"], old_attempt["id"])
+                self.assertEqual(new_attempt["spec"]["retry_attempt"], 1)
+                for field in ("job_id", "report_sha256", "candidate_id", "smart_triage_batch_id",
+                              "triage_authorization_sha256", "source_submission_approved",
+                              "source_consent_sha256", "source_sha256", "source_commit"):
+                    if field in old_attempt["spec"]:
+                        self.assertEqual(new_attempt["spec"].get(field), old_attempt["spec"].get(field), field)
+                self.assertEqual(operations.get(old_attempt["id"])["status"], "interrupted")
+                self.assertFalse(operations.get(old_attempt["id"])["result_sha256"])
+                old_events = operations.events(old_attempt["id"])
+                self.assertTrue(any(event["stage"] == "retry_created"
+                                    and new_attempt["id"] in event["message"]
+                                    and "may bill" in event["message"] for event in old_events))
+                retry_events = operations.events(new_attempt["id"])
+                self.assertTrue(any(event["stage"] == "queued"
+                                    and old_attempt["id"] in event["message"] for event in retry_events))
+                updated_batch = operations.triage_batches_for_job(
+                    job["id"], self.store.job(job["id"])["report_sha256"])[0]
+                self.assertIn(new_attempt["id"], updated_batch["operation_ids"])
+
                 revoked = self.client.post(
                     "/api/v1/scans/" + job["id"] + "/triage/revoke",
                     json={"consent_sha256": consent["consent_sha256"]},
@@ -207,8 +256,76 @@ class OwnerIntegrationTests(unittest.TestCase):
                 )
                 self.assertEqual(revoked.status_code, 200, revoked.text)
                 self.assertTrue(revoked.json()["authorization"]["revoked"])
+                final_operations = operations.smart_triage_operations(batch["id"])
+                self.assertEqual(operations.get(old_attempt["id"])["status"], "interrupted")
                 self.assertTrue(all(item["status"] == "cancelled"
-                                    for item in operations.smart_triage_operations(batch["id"])))
+                                    for item in final_operations if item["id"] != old_attempt["id"]))
+
+    def test_authorized_smart_queue_persists_all_candidates_above_legacy_100_limit(self):
+        import uuid
+        from src.workbench.operations_store import Operations
+
+        job = self.scan()
+        Worker(self.settings).run(once=True)
+        job = self.store.job(job["id"])
+        self.assertTrue(job["report_sha256"])
+        ops = Operations(self.store)
+        batch_id = uuid.uuid4().hex
+        authorization_sha = "a" * 64
+        candidate_count = 101
+        actual_candidates = service.findings(service.read_report(self.settings, job))
+        self.assertTrue(actual_candidates)
+        risk_candidate = actual_candidates[0]
+        manifest = [{"candidate_id": risk_candidate["id"], "state": "selected"}]
+        manifest.extend({"candidate_id": "candidate-" + str(index), "state": "selected"}
+                        for index in range(1, candidate_count))
+        record = {
+            "id": batch_id, "audit_id": job["id"],
+            "report_sha256": job["report_sha256"],
+            "authorization_sha256": authorization_sha,
+            "batch_consent_sha256": "b" * 64,
+            "candidate_count": candidate_count, "selected_count": candidate_count,
+            "candidate_manifest": manifest, "r2_status": "not_requested",
+        }
+        specs = [{"job_id": job["id"], "report_sha256": job["report_sha256"],
+                  "candidate_id": item["candidate_id"],
+                  "smart_triage_batch_id": batch_id,
+                  "triage_authorization_sha256": authorization_sha,
+                  "no_cumulative_token_ceiling": True}
+                 for item in manifest]
+        saved_batch, created = ops.create_authorized_triage_batch(record, specs)
+        self.assertEqual(saved_batch["selected_count"], candidate_count)
+        self.assertEqual(len(created), candidate_count)
+        self.assertTrue(all(item["status"] == "queued" for item in created))
+        recovered = ops.triage_batches_for_job(job["id"], job["report_sha256"])
+        self.assertEqual(len(recovered), 1)
+        self.assertEqual(len(recovered[0]["operation_ids"]), candidate_count)
+        self.assertEqual(len(ops.smart_triage_operations(batch_id)), candidate_count)
+
+        risk_operation = next(item for item in created
+                              if item["spec"]["candidate_id"] == risk_candidate["id"])
+        claimed = ops.claim()
+        self.assertEqual(claimed["id"], risk_operation["id"])
+        ops.finish(risk_operation["id"], {
+            "status": "completed_with_limitations", "vulnerability_state": "candidate",
+            "validated_vulnerability": 0,
+            "agent_assessment": {"assessment": "unknown",
+                                 "summary": "人工复核授权策略与可达性。"},
+        })
+        risk_response = self.client.get(
+            "/api/v1/scans/" + job["id"] + "/risks", headers=fixtures.HEADERS)
+        self.assertEqual(risk_response.status_code, 200, risk_response.text)
+        risk_item = next(item for item in risk_response.json()["items"]
+                         if item["candidate_id"] == risk_candidate["id"])
+        self.assertEqual(risk_item["agent_operations"][0]["operation_id"], risk_operation["id"])
+        self.assertEqual(risk_item["agent_operations"][0]["status"], "completed_with_limitations")
+        detail = self.client.get("/api/v1/operations/" + risk_operation["id"],
+                                 headers=fixtures.HEADERS)
+        self.assertEqual(detail.status_code, 200, detail.text)
+        self.assertEqual(detail.json()["result"]["agent_assessment"]["summary"],
+                         "人工复核授权策略与可达性。")
+        self.assertEqual(detail.json()["result"]["vulnerability_state"], "candidate")
+        self.assertEqual(detail.json()["result"]["validated_vulnerability"], 0)
 
     def test_overview_risk_summary_is_bounded_evidence_labeled_and_path_free(self):
         job = self.scan()
@@ -223,6 +340,10 @@ class OwnerIntegrationTests(unittest.TestCase):
         self.assertEqual(summary["available_report_count"], 1)
         self.assertGreater(summary["candidate_observation_count"], 0)
         self.assertGreater(summary["counts"]["further_validation"], 0)
+        first_risk = summary["items"][0]
+        self.assertIn("severity", first_risk)
+        self.assertIn("confidence_basis", first_risk)
+        self.assertEqual(first_risk["vulnerability_state"], "candidate")
         self.assertEqual(summary["validated_vulnerability"], 0)
         self.assertIn("not deduplicated", summary["semantics"])
         self.assertTrue(summary["detector_counts"])
@@ -476,8 +597,9 @@ class OwnerIntegrationTests(unittest.TestCase):
                              max_cost_usd="0.10")
             consent = plan["triage_authorization_preview"]
             self.assertEqual(consent["manifest"]["conditional_r2"]["mode"], "tool_agent")
-            self.assertEqual(consent["manifest"]["r2_candidate_limit"], 1)
-            self.assertEqual(consent["manifest"]["budgets"]["max_requests"], 14)
+            self.assertEqual(consent["manifest"]["conditional_r2"]["selection"],
+                             "all R1-completed critical/high candidates with unresolved source-reviewable obligations")
+            self.assertIsNone(consent["manifest"]["budgets"]["cumulative_request_ceiling"])
             job = self.scan(
                 auto_triage=True, max_triage_candidates=2, max_r2_candidates=1,
                 max_cost_usd="0.10",
@@ -496,7 +618,9 @@ class OwnerIntegrationTests(unittest.TestCase):
                     job["id"], self.store.job(job["id"])["report_sha256"])[0]
                 self.assertEqual(batch["r2_status"], "awaiting_r1")
                 r1_operations = ops.smart_triage_operations(batch["id"])
-                self.assertEqual(len(r1_operations), 2)
+                self.assertGreater(len(r1_operations), 0)
+                self.assertTrue(all(item["spec"].get("no_cumulative_token_ceiling")
+                                    for item in r1_operations))
                 report = service.read_report(self.settings, self.store.job(job["id"]))
                 candidates = []
                 completed_r1 = []
@@ -532,15 +656,16 @@ class OwnerIntegrationTests(unittest.TestCase):
                     saved = enqueue_authorized_r2_followups(
                         self.settings, self.store, ops, batch["id"])
                     self.assertTrue(source_gate.called, repr(saved.get("r2_candidate_manifest")))
-                    self.assertEqual(saved["r2_status"], "budget_limited")
-                    self.assertEqual(len(saved["r2_operation_ids"]), 1)
+                    self.assertEqual(saved["r2_status"], "queued")
+                    self.assertEqual(len(saved["r2_operation_ids"]), len(completed_r1))
                     r2 = ops.get(saved["r2_operation_ids"][0])
                     parent = next(item for item in completed_r1
                                   if item["id"] == r2["spec"]["r1_operation_id"])
                     selected_candidate = next(item for item in candidates
                                               if item["id"] == r2["spec"]["candidate_id"])
                     self.assertEqual(r2["spec"]["mode"], "tool_agent")
-                    self.assertEqual(r2["spec"]["max_steps"], 2)
+                    self.assertNotIn("max_steps", r2["spec"])
+                    self.assertTrue(r2["spec"]["no_cumulative_token_ceiling"])
                     self.assertEqual(r2["spec"]["r1_result_sha256"], parent["result_sha256"])
                     prepared = {
                         "source": {"sha256": selected_candidate["source_sha256"]},
@@ -556,7 +681,8 @@ class OwnerIntegrationTests(unittest.TestCase):
                     again = enqueue_authorized_r2_followups(
                         self.settings, self.store, ops, batch["id"])
                     self.assertEqual(again["r2_operation_ids"], saved["r2_operation_ids"])
-                    self.assertEqual(len(ops.smart_triage_operations(batch["id"])), 3)
+                    self.assertEqual(len(ops.smart_triage_operations(batch["id"])),
+                                     len(completed_r1) + len(saved["r2_operation_ids"]))
                     summary = self.client.get(
                         "/api/v1/scans/" + job["id"] + "/triage",
                         headers=fixtures.HEADERS,
@@ -564,7 +690,7 @@ class OwnerIntegrationTests(unittest.TestCase):
                     self.assertEqual(summary.status_code, 200, summary.text)
                     batch_view = next(item for item in summary.json()["batches"]
                                       if item["id"] == batch["id"])
-                    self.assertEqual(batch_view["conditional_r2"]["state"], "budget_limited")
+                    self.assertEqual(batch_view["conditional_r2"]["state"], "queued")
                     self.assertEqual(batch_view["conditional_r2"]["operation_ids"],
                                      saved["r2_operation_ids"])
                     revoked = self.client.post(
@@ -574,6 +700,101 @@ class OwnerIntegrationTests(unittest.TestCase):
                     )
                     self.assertEqual(revoked.status_code, 200, revoked.text)
                     self.assertEqual(ops.get(r2["id"])["status"], "cancelled")
+
+    def test_ai_source_evidence_can_raise_review_priority_without_confirming_product_vulnerability(self):
+        from src.workbench.operations_store import Operations
+
+        job = self.scan()
+        Worker(self.settings).run(once=True)
+        job = self.store.job(job["id"])
+        report = service.read_report(self.settings, job)
+        candidate = service.findings(report)[0]
+        ops = Operations(self.store)
+        source = service.source(self.settings, self.store, job, candidate["file"])
+        citation_quote = source["text"].splitlines()[candidate["line"] - 1].strip()
+        self.assertGreaterEqual(len(citation_quote), 8)
+
+        self.assertGreaterEqual(len(candidate["evidence"]["obligations"]), 2,
+                                "the relaxed-confidence control needs one supported and one unresolved obligation")
+
+        def create_result(assessment, *, positive):
+            operation = ops.create("agent_investigation", {
+                "job_id": job["id"], "candidate_id": candidate["id"],
+                "report_sha256": job["report_sha256"], "mode": "tool_agent",
+            })
+            claimed = ops.claim()
+            self.assertEqual(claimed["id"], operation["id"])
+            obligations = candidate["evidence"]["obligations"]
+            review_rows = [
+                {"obligation_index": index,
+                 "disposition": "evidence_found" if positive and index == 0 else "unresolved",
+                 "citations": ([{"evidence_id": "source-1", "file": candidate["file"],
+                                 "line_start": candidate["line"], "line_end": candidate["line"],
+                                 "quote": citation_quote}]
+                               if positive and index == 0 else [])}
+                for index in range(len(obligations))
+            ]
+            if positive:
+                self.assertTrue(any(row["disposition"] == "unresolved" for row in review_rows))
+            supported_claims = ([{
+                "claim": "固定源码中的候选路径到达了需要复核的敏感操作。",
+                "obligation_indices": [0],
+                "citations": [{"evidence_id": "source-1", "file": candidate["file"],
+                               "line_start": candidate["line"], "line_end": candidate["line"],
+                               "quote": citation_quote}],
+            }] if positive else [])
+            result = {
+                "status": "completed_with_limitations",
+                "structured_answer_validation": "accepted",
+                "summary_provenance": "server_generated_from_structured_triage",
+                "binding": {"job_id": job["id"], "candidate_id": candidate["id"],
+                            "report_sha256": job["report_sha256"], "source_sha256": candidate["source_sha256"],
+                            "commit": report["commit"]},
+                "citation_integrity": {"quote_presence": "verified_for_all_citations" if positive else "no_citations"},
+                "agent_assessment": {
+                    "assessment": assessment,
+                    "unsupported_claims": [],
+                    "supported_claims": supported_claims,
+                    "obligation_reviews": review_rows,
+                },
+                "agent_verdict": {
+                    "status": "likely_true_positive" if positive else "needs_more_evidence",
+                    "confidence": "medium" if positive else "low",
+                    "scope": "fixed_source_code", "product_status": "unknown",
+                },
+                "initial_evidence": {"context": {
+                    "evidence_routing": {
+                        "agent_source_review_indices": list(range(len(candidate["evidence"]["obligations"])))},
+                }},
+                "vulnerability_state": "candidate", "validated_vulnerability": 0,
+            }
+            ops.finish(operation["id"], result)
+            return operation
+
+        create_result("likely_true_positive", positive=True)
+        risks = self.client.get("/api/v1/scans/" + job["id"] + "/risks",
+                                headers=fixtures.HEADERS)
+        self.assertEqual(risks.status_code, 200, risks.text)
+        high = next(item for item in risks.json()["items"]
+                    if item["candidate_id"] == candidate["id"])
+        self.assertEqual(high["risk_tier"], "high_confidence_candidate")
+        self.assertEqual(high["confidence_basis"], "ai_source_evidence")
+        self.assertEqual(high["ai_summary"], "固定源码中的候选路径到达了需要复核的敏感操作。")
+        self.assertEqual(high["ai_evidence"][0]["file"], candidate["file"])
+        self.assertEqual(high["ai_evidence"][0]["line_start"], candidate["line"])
+        self.assertEqual(high["severity"], candidate.get("severity", "unknown"))
+        self.assertEqual(high["vulnerability_state"], "candidate")
+        self.assertEqual(risks.json()["validated_vulnerability"], 0)
+
+        create_result("needs_more_evidence", positive=False)
+        latest = self.client.get("/api/v1/scans/" + job["id"] + "/risks",
+                                 headers=fixtures.HEADERS)
+        self.assertEqual(latest.status_code, 200, latest.text)
+        current = next(item for item in latest.json()["items"]
+                       if item["candidate_id"] == candidate["id"])
+        self.assertEqual(current["risk_tier"], "further_validation")
+        self.assertIsNone(current["ai_summary"])
+        self.assertEqual(latest.json()["validated_vulnerability"], 0)
 
     def test_risk_tiers_require_complete_human_evidence_and_report_snapshots_are_immutable(self):
         import hashlib

@@ -1,12 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { agentConfidenceLabel, agentScopeLabel, agentVerdictLabel, agentVerdictReasonLabel, analysisStatusLabel, coverageStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, productStatusLabel, reportLimitationLabel, riskReasonLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../src/features/workbench/riskLabels.js";
+import { agentConfidenceLabel, agentScopeLabel, agentVerdictLabel, agentVerdictReasonLabel, analysisStatusLabel, coverageStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, highConfidenceAiSummary, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, productStatusLabel, reportLimitationLabel, riskReasonLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../src/features/workbench/riskLabels.js";
 
 test("Agent verdict labels separate source evidence from product confirmation", () => {
   assert.equal(agentVerdictLabel("confirmed"), "源码证据门通过（产品状态仍未知）");
   assert.equal(agentVerdictLabel("false_positive"), "源码证据支持误报解释（仍需人工复核）");
   assert.equal(agentConfidenceLabel("high"), "高（模型自评）");
-  assert.equal(agentScopeLabel("fixed_source_code"), "固定提交源码");
+  assert.equal(agentScopeLabel("fixed_source_code"), "本次扫描源码");
   assert.equal(productStatusLabel("candidate"), "待复核候选");
   assert.match(
     agentVerdictReasonLabel("All source-review obligations have cited support and no unsupported claims remain."),
@@ -73,6 +73,17 @@ test("risk explanations preserve evidence limits in user-facing language", () =>
     "候选分析不完整或状态未知；尚未完成带源码引用的静态人工复核。",
   );
   assert.equal(riskReasonsLabel([]), "需要进一步核对本项证据。");
+});
+
+test("high-confidence detail never invents an AI summary when the stored rationale is empty", () => {
+  assert.deepEqual(highConfidenceAiSummary("  source-bound reason  "), {
+    state: "available", text: "source-bound reason",
+  });
+  assert.deepEqual(highConfidenceAiSummary(null), {
+    state: "unknown",
+    text: "AI 摘要不可用；页面不推测模型理由，请依据本次扫描源码证据人工复核。",
+  });
+  assert.equal(highConfidenceAiSummary("  ").state, "unknown");
 });
 
 test("report caveats are readable in Chinese while unknown messages are preserved", () => {

@@ -5,10 +5,9 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import re
 import subprocess
 import time
-from urllib.parse import urlsplit
+from urllib.parse import quote, unquote, urlsplit
 from zoneinfo import ZoneInfo
 from . import service
 from .store import TERMINAL
@@ -27,10 +26,24 @@ def git(repo, *args):
 
 def approved_url(value):
     url = urlsplit(value)
-    if (any(ord(ch) < 33 or ord(ch) == 127 for ch in value)
-            or url.scheme != "https" or url.hostname not in {"github.com", "gitee.com", "gitcode.com"}
-            or url.username or url.password or url.port or url.query or url.fragment
-            or not re.fullmatch(r"/openharmony/[A-Za-z0-9_-]+(?:\.git)?", url.path)):
+    valid = (isinstance(value, str)
+             and not any(ord(ch) < 33 or ord(ch) == 127 for ch in value)
+             and url.scheme == "https"
+             and url.hostname in {"github.com", "gitee.com", "gitcode.com"}
+             and not (url.username or url.password or url.port or url.query or url.fragment))
+    prefix = "/openharmony/"
+    path = url.path
+    suffix = path.endswith(".git")
+    encoded_slug = path[len(prefix):-4] if suffix and path.startswith(prefix) else (
+        path[len(prefix):] if path.startswith(prefix) else "")
+    try:
+        slug = unquote(encoded_slug, encoding="utf-8", errors="strict")
+        from .source_catalog import validate_repository_slug
+        validate_repository_slug(slug)
+    except (UnicodeDecodeError, ValueError):
+        valid = False
+        slug = ""
+    if not valid or encoded_slug != quote(slug, safe=""):
         raise ValueError("only explicit HTTPS OpenHarmony repositories on approved hosts are allowed")
     return value
 
@@ -49,12 +62,70 @@ def range_plan(settings, store, repository_id, baseline, endpoint, includes, det
     return repo, a, b, commits
 
 
+
+def multimode_triage_preview(scan_specs, body, provider, nonces):
+    """Build a separately consented, immutable source-egress preview per endpoint."""
+    from .agent import audit_task_consent_preview
+    if body.get("audit_mode") != "standard_review" or not body.get("auto_triage"):
+        raise ValueError("automatic model triage requires standard review and an explicit preview")
+    if len(scan_specs) != len(nonces) or not scan_specs or len(scan_specs) > 8:
+        raise ValueError("invalid endpoint count or consent nonce count")
+    max_candidates = body.get("max_triage_candidates", 3)
+    max_r2 = body.get("max_r2_candidates", 0)
+    previews = []
+    for spec, nonce in zip(scan_specs, nonces):
+        workflow = service.audit_workflow_sha256(
+            spec["plan_sha256"], "standard_review", True
+        )
+        preview = audit_task_consent_preview(
+            spec["audit_plan"], workflow, spec["include_paths"], max_candidates,
+            nonce, provider, max_r2
+        )
+        if not preview.get("eligible"):
+            raise ValueError("endpoint automatic triage unavailable: " + preview.get("reason", "unknown"))
+        previews.append({"commit": spec["commit"], "plan_sha256": spec["plan_sha256"],
+                         "workflow_sha256": workflow, **preview})
+    return previews
+
+
+def bind_multimode_triage(settings, scan_specs, body):
+    """Fail closed on every endpoint before any scan or operation is queued."""
+    approvals = body.get("triage_approvals") or []
+    if not body.get("auto_triage", False):
+        if approvals:
+            raise ValueError("model authorization submitted for a static-only operation")
+        return scan_specs
+    if body.get("audit_mode") != "standard_review":
+        raise ValueError("automatic triage is only supported in standard review mode")
+    if len(approvals) != len(scan_specs):
+        raise ValueError("each fixed endpoint needs its own reviewed model consent")
+    from .agent import ProviderConfig
+    provider = ProviderConfig.from_env(settings.data_dir)
+    if not provider.configured:
+        raise ValueError("model provider not configured; static endpoint scans remain available")
+    nonces = [row.get("consent_nonce") if isinstance(row, dict) else None for row in approvals]
+    previews = multimode_triage_preview(scan_specs, body, provider, nonces)
+    enriched = []
+    for spec, approval, preview in zip(scan_specs, approvals, previews):
+        if approval.get("consent_sha256") != preview["consent_sha256"]:
+            raise ValueError("endpoint consent expired: source, model, policy or provider changed")
+        enriched.append({
+            **spec, "audit_mode": "standard_review",
+            "workflow_sha256": preview["workflow_sha256"],
+            "triage_authorization": {
+                "authorized": True, "consent_sha256": preview["consent_sha256"],
+                "snapshot": preview["manifest"],
+            },
+        })
+    return enriched
+
+
 def enqueue_range(settings, store, ops, body):
     repo, a, b, commits = range_plan(settings, store, body["repository_id"], body["baseline"],
                                     body["endpoint"], body["include_paths"], body["detector_ids"],
                                     body["timeout_seconds"], body["memory_mb"])
     audit_mode = body.get("audit_mode", "standard_review")
-    scans = [{**a, "audit_mode": audit_mode}, {**b, "audit_mode": audit_mode}]
+    scans = bind_multimode_triage(settings, [{**a, "audit_mode": audit_mode}, {**b, "audit_mode": audit_mode}], body)
     return ops.create_with_scans("revision_range", {"repository_id": repo["id"], "baseline": a["commit"],
         "endpoint": b["commit"], "commits": commits, "audit_mode": audit_mode,
         "timeout_seconds": body["timeout_seconds"] * 2 + 60,
@@ -73,7 +144,7 @@ def enqueue_branch_comparison(settings, store, ops, body):
                                body["timeout_seconds"], body["memory_mb"])
              for item in (before, after)]
     audit_mode = body.get("audit_mode", "standard_review")
-    specs = [{**spec, "audit_mode": audit_mode} for spec in specs]
+    specs = bind_multimode_triage(settings, [{**spec, "audit_mode": audit_mode} for spec in specs], body)
     return ops.create_with_scans("branch_comparison", {
         "repository_id": repo["id"], "audit_mode": audit_mode,
         "baseline_ref": body["baseline_ref"], "baseline": before["commit"],
@@ -213,10 +284,30 @@ def investigation(settings, store, spec):
 
 def execute(settings, store, ops, task):
     spec, kind = task["spec"], task["kind"]
+    if kind == "repository_import_scan":
+        from .repository_import import import_and_queue_scan
+        ops.event(task["id"], "repository_import", "Importing the catalog-selected immutable revision and queueing a static scan")
+        def report_import_progress(progress):
+            try:
+                ops.event(task["id"], "repository_import_progress",
+                          json.dumps(progress, sort_keys=True, ensure_ascii=False,
+                                     separators=(",", ":")))
+            except Exception as exc:
+                # Progress is best-effort: a telemetry write must not orphan a running
+                # Git process or change the outcome of fixed-source validation.
+                print("repository import progress event unavailable: " + type(exc).__name__,
+                      flush=True)
+        try:
+            return import_and_queue_scan(settings, store, spec,
+                                         progress=report_import_progress)
+        except Exception:
+            report_import_progress({"state": "failed", "phase": "failed",
+                                    "message": "固定版本导入失败；请查看错误详情后重试"})
+            raise
     if kind == "source_sync":
         url = approved_url(spec["url"])
-        base = (settings.data_dir / "repo-cache").resolve()
-        base.mkdir(parents=True, exist_ok=True)
+        from .repository_import import _choose_root, git_environment
+        base = _choose_root(settings)
         target = base / spec["name"].split("/")[1]
         if target.is_symlink() or target.resolve().parent != base:
             raise ValueError("unsafe repository cache path")
@@ -225,16 +316,14 @@ def execute(settings, store, ops, task):
         import fcntl
         with (lockdir / (target.name + ".lock")).open("a") as lock:
             fcntl.flock(lock, fcntl.LOCK_EX)
-            command = ["git", "-c", "core.hooksPath=/dev/null", "-c", "protocol.file.allow=never",
+            command = ["git", "-c", "core.hooksPath=/dev/null", "-c", "http.followRedirects=false", "-c", "protocol.file.allow=never",
                        "-c", "protocol.ext.allow=never", "-c", "credential.helper="]
             if target.exists():
                 service.check_repository(settings, str(target))
                 command += ["-C", str(target), "fetch", "--prune", "--tags", url, "+refs/heads/*:refs/remotes/origin/*"]
             else:
-                command += ["clone", "--no-checkout", "--", url, str(target)]
-            env = {**os.environ, "GIT_TERMINAL_PROMPT": "0", "GIT_CONFIG_NOSYSTEM": "1",
-                   "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null",
-                   "GIT_ALLOW_PROTOCOL": "https"}
+                command += ["clone", "--no-checkout", "--no-recurse-submodules", "--", url, str(target)]
+            env = git_environment()
             ops.event(task["id"], "git_sync", "Explicit approved clone/fetch, no checkout/build")
             subprocess.run(command, env=env, check=True, timeout=spec["timeout_seconds"])
         existing = next((r for r in store.repositories() if r["path"] == str(target)), None)

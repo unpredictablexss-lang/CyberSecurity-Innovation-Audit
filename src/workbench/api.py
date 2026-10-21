@@ -46,10 +46,9 @@ class AuditPlanInput(StrictModel):
     memory_mb: int = Field(default=2048, ge=256, le=8192)
     audit_mode: Literal["standard_review", "static_only"] = "standard_review"
     auto_triage: bool = False
-    max_triage_candidates: int = Field(default=3, ge=1, le=5)
-    max_r2_candidates: int = Field(default=0, ge=0, le=5)
-    max_cost_usd: str | None = Field(default=None, min_length=1, max_length=16,
-                                     pattern=r"^\d{1,6}(?:\.\d{1,8})?$")
+    max_triage_candidates: int = Field(default=3)
+    max_r2_candidates: int = Field(default=0)
+    max_cost_usd: str | None = None  # Legacy client field; ignored for ordinary smart review.
 
 
 class ScanInput(AuditPlanInput):
@@ -183,6 +182,8 @@ def create_app(settings=None):
                 "detector_admission": True,
                 "operations_framework": True,
                 "source_sync": True,
+                "online_repository_catalog": True,
+                "repository_import_scan": True,
                 "revision_range": True,
                 "read_only_investigation": True,
                 "manual_review": True,
@@ -267,12 +268,6 @@ def create_app(settings=None):
 
     @app.post("/api/v1/audit-plans")
     def audit_plan(body: AuditPlanInput):
-        if body.max_r2_candidates > body.max_triage_candidates:
-            raise ValueError("conditional R2 candidate budget cannot exceed the R1 candidate budget")
-        if body.max_r2_candidates and not body.auto_triage:
-            raise ValueError("conditional R2 requires task-level automatic triage authorization")
-        if body.auto_triage and body.max_cost_usd is None:
-            raise ValueError("任务级自动研判需要设置大于零的 USD 费用上限。")
         repo = store.repository(body.repository_id)
         service.check_repository(settings, repo["path"])
         _, plan = service.audit_plan(
@@ -281,8 +276,7 @@ def create_app(settings=None):
         )
         workflow_sha256 = service.audit_workflow_sha256(
             plan["plan_sha256"], body.audit_mode, body.auto_triage,
-            body.max_triage_candidates, body.max_r2_candidates,
-            body.max_cost_usd)
+            body.max_triage_candidates, body.max_r2_candidates)
         triage_preview = None
         if body.auto_triage:
             if body.audit_mode != "standard_review":
@@ -292,7 +286,6 @@ def create_app(settings=None):
             triage_preview = audit_task_consent_preview(
                 plan, workflow_sha256, body.include_paths, body.max_triage_candidates,
                 uuid.uuid4().hex, provider, body.max_r2_candidates,
-                max_cost_usd=body.max_cost_usd,
             )
             if not triage_preview.get("eligible"):
                 raise ValueError("automatic triage cannot be authorized: " + triage_preview.get("reason", "provider unavailable"))
@@ -302,7 +295,7 @@ def create_app(settings=None):
             "workflow_sha256": workflow_sha256,
             "workflow": service.audit_workflow_summary(
                 body.audit_mode, body.auto_triage, body.max_triage_candidates,
-                body.max_r2_candidates, body.max_cost_usd),
+                body.max_r2_candidates),
         }
         if triage_preview is not None:
             result["triage_authorization_preview"] = triage_preview
@@ -310,12 +303,6 @@ def create_app(settings=None):
 
     @app.post("/api/v1/scans", status_code=201)
     def scan(body: ScanInput):
-        if body.max_r2_candidates > body.max_triage_candidates:
-            raise ValueError("conditional R2 candidate budget cannot exceed the R1 candidate budget")
-        if body.max_r2_candidates and not body.auto_triage:
-            raise ValueError("conditional R2 requires task-level automatic triage authorization")
-        if body.auto_triage and body.max_cost_usd is None:
-            raise ValueError("任务级自动研判需要设置大于零的 USD 费用上限。")
         repo = store.repository(body.repository_id)
         service.check_repository(settings, repo["path"])
         spec = service.make_spec(
@@ -330,13 +317,10 @@ def create_app(settings=None):
             raise ValueError("Source or rule plan changed since preview; refresh the plan before scanning")
         workflow_sha256 = service.audit_workflow_sha256(
             spec["plan_sha256"], body.audit_mode, body.auto_triage,
-            body.max_triage_candidates, body.max_r2_candidates,
-            body.max_cost_usd)
+            body.max_triage_candidates, body.max_r2_candidates)
         if body.expected_workflow_sha256 and body.expected_workflow_sha256 != workflow_sha256:
             raise ValueError("Audit workflow changed since preview; refresh the plan before scanning")
         spec["audit_mode"] = body.audit_mode
-        spec["max_r2_candidates"] = body.max_r2_candidates
-        spec["max_cost_usd"] = body.max_cost_usd if body.auto_triage else None
         spec["workflow_sha256"] = workflow_sha256
         if body.auto_triage:
             if body.audit_mode != "standard_review":
@@ -348,10 +332,10 @@ def create_app(settings=None):
             preview = audit_task_consent_preview(
                 spec["audit_plan"], workflow_sha256, body.include_paths,
                 body.max_triage_candidates, body.triage_consent_nonce, provider,
-                body.max_r2_candidates, max_cost_usd=body.max_cost_usd,
+                body.max_r2_candidates,
             )
             if preview["consent_sha256"] != body.expected_triage_consent_sha256:
-                raise ValueError("task-level source egress preview expired; provider, source, scope, policy or budget changed")
+                raise ValueError("task-level source egress preview expired; provider, source, scope, policy or provider changed")
             spec["triage_authorization"] = {
                 "authorized": True,
                 "consent_sha256": preview["consent_sha256"],

@@ -15,14 +15,14 @@ test("symbol-search citations resolve to exact matching lines and file", () => {
     { file: "src/b.cpp", line: 8, context_start_line: 6, text: "6: unrelated\n8: const int UID = 3020;" },
   ] } }] };
   assert.equal(evidenceLocation(result, "tool-1", "const int UID = 3020;"),
-    "src/a.cpp:42-42；src/b.cpp:8-8 · 固定提交");
+    "src/a.cpp:42-42；src/b.cpp:8-8 · 扫描代码版本");
 });
 
 test("missing exact quote falls back to the bounded source context", () => {
   const result = { tool_calls: [{ evidence_id: "tool-2", result: { matches: [
     { file: "src/a.cpp", line: 12, context_start_line: 10, text: "10: a\n11: b\n12: c\n13: d\n14: e" },
   ] } }] };
-  assert.equal(evidenceLocation(result, "tool-2", "not present"), "src/a.cpp:10-14 · 固定提交");
+  assert.equal(evidenceLocation(result, "tool-2", "not present"), "src/a.cpp:10-14 · 扫描代码版本");
 });
 
 test("unavailable evidence is explicit and does not invent a source location", () => {
@@ -61,7 +61,7 @@ test("multiline fixed-source citations strip displayed line numbers and resolve 
   assert.deepEqual(evidenceSourceLocation(result, "range-1", quote),
     { file: "src/helper.cpp", line: 100 });
   assert.equal(evidenceLocation(result, "range-1", quote),
-    "src/helper.cpp:100-102 · 固定提交");
+    "src/helper.cpp:100-102 · 扫描代码版本");
 });
 
 test("explicit line-range citations stay bound to one file when symbol search found several files", () => {
